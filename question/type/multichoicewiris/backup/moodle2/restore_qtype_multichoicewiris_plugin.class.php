@@ -37,6 +37,35 @@ class restore_qtype_multichoicewiris_plugin extends restore_qtype_multichoice_pl
         return $paths; // And we return the interesting paths.
     }
 
+    public static function convert_backup_to_questiondata(array $backupdata): \stdClass {
+
+        // Moodle abstract implementation for this function assumes that the qtype plugin options are stored in the
+        // ['plugin_qtype_{qtypename}_question']['{qtypename}'] array, so we need map the options from the base qtype.
+        if (isset($backupdata['plugin_qtype_multichoicewiris_question']['multichoice'])) {
+            $backupdata['plugin_qtype_multichoicewiris_question']['multichoicewiris'] = $backupdata['plugin_qtype_multichoicewiris_question']['multichoice'];
+        }
+
+        // Convert the backup data to question data.
+        $questiondata = parent::convert_backup_to_questiondata($backupdata);
+
+        // Include Wiris question XML if it exists.
+        if (isset($backupdata['plugin_qtype_multichoicewiris_question']['question_xml'][0]['xml'])) {
+            $questiondata->options->wirisquestion = $backupdata['plugin_qtype_multichoicewiris_question']['question_xml'][0]['xml'];
+        }
+
+        return $questiondata;
+    }
+
+    protected function define_excluded_identity_hash_fields(): array {
+        // Only truefalsewiris uses wirisoptions. Exclude them for other qtypes.
+        return array_merge(
+            parent::define_excluded_identity_hash_fields(),
+            [
+                '/options/wirisoptions'
+            ]
+        );
+    }
+
     public function process_qtype_wq_multichoicewiris($data) {
         global $DB;
 
@@ -64,7 +93,7 @@ class restore_qtype_multichoicewiris_plugin extends restore_qtype_multichoice_pl
 
     protected function decode_html_entities($xml) {
         $htmlentitiestable = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES, 'UTF-8');
-        $xmlentitiestable = get_html_translation_table(HTML_SPECIALCHARS , ENT_COMPAT, 'UTF-8');
+        $xmlentitiestable = get_html_translation_table(HTML_SPECIALCHARS, ENT_COMPAT, 'UTF-8');
         $entitiestable = array_diff($htmlentitiestable, $xmlentitiestable);
         $decodetable = array_flip($entitiestable);
         $xml = str_replace(array_keys($decodetable), array_values($decodetable), $xml);
