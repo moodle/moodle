@@ -174,7 +174,11 @@ class edit_item_form extends moodleform {
 
         /// hiding
         if ($item->cancontrolvisibility) {
-            $mform->addElement('advcheckbox', 'hidden', get_string('hidden', 'grades'), '', [], [0, 1]);
+
+            // BEGIN LSU Visibility Issues.
+            $mform->addElement('advcheckbox', 'hidden', get_string('hidden', 'grades'));
+            // END LSU Visibility Issues.
+
             $mform->addElement('date_time_selector', 'hiddenuntil', get_string('hiddenuntil', 'grades'), array('optional'=>true));
             $mform->disabledIf('hidden', 'hiddenuntil[enabled]', 'checked');
         } else {

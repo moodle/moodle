@@ -142,12 +142,15 @@ if ($mform->is_cancelled()) {
     }
 
     $hide = empty($data->hiddenuntil) ? 0 : $data->hiddenuntil;
+
     if (!$hide) {
         $hide = empty($data->hidden) ? 0 : $data->hidden;
     }
 
-    unset($data->hidden);
-    unset($data->hiddenuntil);
+      // BEGIN LSU Visibility updates.
+      // unset($data->hidden);
+      // unset($data->hiddenuntil);
+      // END LSU Visibility updates.
 
     $locked   = empty($data->locked) ? 0: $data->locked;
     $locktime = empty($data->locktime) ? 0: $data->locktime;
@@ -215,11 +218,21 @@ if ($mform->is_cancelled()) {
     }
 
     // BEGIN LSU Visibility Issues.
+    if ($hide > 1) {
+        $gradeitem->hiddenuntil = $hide;
+    } else {
+        $gradeitem->hidden = $hide;
+    }
+
     $gradeitem->set_hidden($hide, true);
     // END LSU Visibility Issues.
 
     $gradeitem->set_locktime($locktime); // Locktime first - it might be removed when unlocking.
     $gradeitem->set_locked($locked, false, true);
+
+    // BEGIN LSU Visibility Issues.
+    $gradeitem->update();
+    // END LSU Visibility Issues.
 
     redirect($returnurl);
 }

@@ -647,6 +647,7 @@ class grade_edit_tree {
 
         $hidden      = empty($itemdata->hidden) ? 0 : $itemdata->hidden;
         $hiddenuntil = empty($itemdata->hiddenuntil) ? 0 : $itemdata->hiddenuntil;
+
         unset($itemdata->hidden);
         unset($itemdata->hiddenuntil);
 

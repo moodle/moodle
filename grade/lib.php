@@ -1945,37 +1945,48 @@ class grade_structure {
             $title = get_string('editgrade', 'grades');
         } else if (($element['type'] == 'item') || ($element['type'] == 'categoryitem') ||
             ($element['type'] == 'courseitem')) {
-            $url = new moodle_url('#');
+            $url = new moodle_url('/grade/edit/tree/item.php',
+                    ['courseid' => $this->courseid, 'id' => $object->id]);
             if (empty($object->outcomeid) || empty($CFG->enableoutcomes)) {
                 return html_writer::link($url, get_string('itemsedit', 'grades'), [
                     'class' => 'dropdown-item',
                     'aria-label' => get_string('itemsedit', 'grades'),
                     'role' => 'menuitem',
-                    'data-gprplugin' => $gpr->plugin,
-                    'data-courseid' => $this->courseid,
-                    'data-itemid' => $object->id, 'data-trigger' => 'add-item-form'
+
+                    // BEGIN LSU Visibility updates.
+                    //'data-gprplugin' => $gpr->plugin,
+                    //'data-courseid' => $this->courseid,
+                    //'data-itemid' => $object->id, 'data-trigger' => 'add-item-form'
+                    // END LSU Visibility updates.
                 ]);
             } else if (count(grade_outcome::fetch_all_available($this->courseid)) > 0) {
                 return html_writer::link($url, get_string('itemsedit', 'grades'), [
                     'class' => 'dropdown-item',
                     get_string('itemsedit', 'grades'),
                     'role' => 'menuitem',
-                    'data-gprplugin' => $gpr->plugin,
-                    'data-courseid' => $this->courseid,
-                    'data-itemid' => $object->id, 'data-trigger' => 'add-outcome-form'
+
+                    // BEGIN LSU Visibility updates.
+                    //'data-gprplugin' => $gpr->plugin,
+                    //'data-courseid' => $this->courseid,
+                    //'data-itemid' => $object->id, 'data-trigger' => 'add-outcome-form'
+                    // END LSU Visibility updates.
                 ]);
             }
         } else if ($element['type'] == 'category') {
-            $url = new moodle_url('#');
+            $url = new moodle_url('/grade/edit/tree/category.php',
+                    ['courseid' => $this->courseid, 'id' => $object->id]);
             $title = get_string('categoryedit', 'grades');
             return html_writer::link($url, $title, [
                 'class' => 'dropdown-item',
                 'aria-label' => $title,
                 'role' => 'menuitem',
-                'data-gprplugin' => $gpr->plugin,
-                'data-courseid' => $this->courseid,
-                'data-category' => $object->id,
-                'data-trigger' => 'add-category-form'
+                // BEGIN LSU Visibility updates.
+                //'data-gprplugin' => $gpr->plugin,
+                //'data-courseid' => $this->courseid,
+                //'data-category' => $object->id,
+                //'data-trigger' => 'add-category-form'
+                // END LSU Visibility updates.
+
             ]);
         }
         return html_writer::link($url, $title,
@@ -2477,6 +2488,10 @@ class grade_structure {
                         if ($object->itemmodule !== 'quiz') {
                             $context->hideurl = $this->get_hiding_link($element, $gpr);
                         }
+
+                        // BEGIN LSU Visibility Issues.
+                        $context->hideurl = $this->get_hiding_link($element, $gpr);
+                        // END LSU Visibility Issues.
                     }
                     $context->lockurl = $this->get_locking_link($element, $gpr);
                 }

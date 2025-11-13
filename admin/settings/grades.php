@@ -195,6 +195,14 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                          '4' => '4',
                                                          '5' => '5')));
     }
+
+    // BEGIN LSU Visibility Issues.
+    $temp->add(new admin_setting_configcheckbox('gradevisibleoverride',
+        'Override grade visibility',
+        'Override the grade visibility regardless of module controls.', 0)
+    );
+    // END LSU Visibility Issues.
+
     $ADMIN->add('grades', $temp);
 
 

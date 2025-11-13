@@ -2644,10 +2644,36 @@ class grade_item extends grade_object {
      * @return bool
      */
     public function can_control_visibility() {
-        if (core_component::get_plugin_directory($this->itemtype, $this->itemmodule)) {
-            return !plugin_supports($this->itemtype, $this->itemmodule, FEATURE_CONTROLS_GRADE_VISIBILITY, false);
+
+        // BEGIN LSU visibility fixes.
+        global $CFG;
+
+        // If we've configured this.
+        if (isset($CFG->gradevisibleoverride)) {
+
+            // Set visible to be a strict true/false version of our setting.
+            if ($CFG->gradevisibleoverride == 1) {
+                $visible = true;
+            } else {
+
+                // We have not configured this to be so. Default back to the original method.
+                if (core_component::get_plugin_directory($this->itemtype, $this->itemmodule)) {
+                    $visible = !plugin_supports($this->itemtype, $this->itemmodule, FEATURE_CONTROLS_GRADE_VISIBILITY, false);
+                }
+                $visible = parent::can_control_visibility();
+            }
+
+        } else {
+
+                // We have not configured this at all. Default back to the original method.
+                if (core_component::get_plugin_directory($this->itemtype, $this->itemmodule)) {
+                    $visible = !plugin_supports($this->itemtype, $this->itemmodule, FEATURE_CONTROLS_GRADE_VISIBILITY, false);
+                }
+                $visible = parent::can_control_visibility();
         }
-        return parent::can_control_visibility();
+
+        return $visible;
+        // END LSU visibility fixes.
     }
 
     /**
