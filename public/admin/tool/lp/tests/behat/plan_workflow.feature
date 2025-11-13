@@ -16,16 +16,10 @@ Feature: Manage plan workflow
       | usermanageownplan | User manage own plan role | user |
       | manageplan | Manager all plans role | manager |
     And the following "role capabilities" exist:
-      | role                   | moodle/competency:planmanageowndraft | moodle/competency:planmanageown |
-      | usermanageowndraftplan | allow                                |                                 |
-      | usermanageownplan      | allow                                | allow                           |
-      | manageplan             | allow                                | allow                           |
-    And the following "role capability" exists:
-      | role                                | manageplan |
-      | moodle/competency:planmanage        | allow      |
-      | moodle/competency:planview          | allow      |
-      | moodle/competency:planreview        | allow      |
-      | moodle/competency:planrequestreview | allow      |
+      | role                   | moodle/competency:planmanageowndraft | moodle/competency:planmanageown | moodle/competency:planmanage | moodle/competency:planview | moodle/competency:planreview | moodle/competency:planrequestreview |
+      | usermanageowndraftplan | allow                                |                                 |                              |                            |                              |                                     |
+      | usermanageownplan      | allow                                | allow                           |                              |                            |                              |                                     |
+      | manageplan             | allow                                | allow                           | allow                        | allow                      | allow                        | allow                               |
     And the following "role assigns" exist:
       | user  | role | contextlevel | reference |
       | user1 | usermanageowndraftplan | System |  |
@@ -53,8 +47,7 @@ Feature: Manage plan workflow
       | lp                      | System       | 1         | my-index        | content       |
 
   Scenario: User can manages his own plan draft
-    Given I log in as "user1"
-    And I follow "Profile" in the user menu
+    Given I am on the "user1" "user > profile" page logged in as user1
     When I follow "Learning plans"
     Then I should see "List of learning plans"
     And I should see "Test-Plan1"
@@ -63,11 +56,9 @@ Feature: Manage plan workflow
     And I should see "Waiting for review"
     And I click on "Cancel review" of edit menu in the "Test-Plan1" row
     And I should see "Draft"
-    And I log out
 
   Scenario: User can manages his own plan
-    Given I log in as "user2"
-    And I follow "Profile" in the user menu
+    Given I am on the "user2" "user > profile" page logged in as user2
     When I follow "Learning plans"
     Then I should see "List of learning plans"
     And I should see "Test-Plan2"
@@ -82,11 +73,11 @@ Feature: Manage plan workflow
     And I should see "Active"
     And I click on "Complete this learning plan" of edit menu in the "Test-Plan2" row
     And I click on "Complete this learning plan" "button" in the "Confirm" "dialogue"
+    And I wait until the page is ready
     And I should see "Complete"
     And I click on "Reopen this learning plan" of edit menu in the "Test-Plan2" row
     And I click on "Reopen this learning plan" "button" in the "Confirm" "dialogue"
     And I should see "Active"
-    And I log out
 
   Scenario: Manager can see learning plan with status waiting for review
     Given the following "core_competency > plans" exist:
@@ -96,7 +87,6 @@ Feature: Manage plan workflow
     When I log in as "manager1"
     Then I should see "Test-Plan3"
     And I should not see "Test-Plan4"
-    And I log out
 
   Scenario: Manager can start review of learning plan with status waiting for review
     Given the following "core_competency > plans" exist:
@@ -108,7 +98,6 @@ Feature: Manage plan workflow
     And I should see "Test-Plan3"
     When I follow "Start review"
     Then I should see "In review"
-    And I log out
 
   Scenario: Manager can reject a learning plan with status in review
     Given the following "core_competency > plans" exist:
@@ -121,7 +110,6 @@ Feature: Manage plan workflow
     And I should see "In review"
     When I follow "Finish review"
     Then I should see "Draft"
-    And I log out
 
   Scenario: Manager can accept a learning plan with status in review
     Given the following "core_competency > plans" exist:
@@ -134,7 +122,6 @@ Feature: Manage plan workflow
     And I should see "In review"
     When I follow "Make active"
     Then I should see "Active"
-    And I log out
 
   Scenario: Manager send back to draft an active learning plan
     Given the following "core_competency > plans" exist:
@@ -150,7 +137,6 @@ Feature: Manage plan workflow
     And I follow "Learning plans"
     Then I should see "Draft"
     And I should not see "Active"
-    And I log out
 
   Scenario: Manager change an active learning plan to completed
     Given the following "core_competency > plans" exist:
@@ -169,7 +155,6 @@ Feature: Manage plan workflow
     And I follow "Learning plans"
     Then I should see "Complete"
     And I should not see "Active"
-    And I log out
 
   Scenario: Manager reopen a complete learning plan
     Given the following "core_competency > plans" exist:
@@ -187,4 +172,67 @@ Feature: Manage plan workflow
     And I follow "Learning plans"
     Then I should see "Active"
     And I should not see "Complete"
-    And I log out
+
+  Scenario: Student learning plan derived from templates can be completed
+    Given the following "core_competency > templates" exist:
+      | shortname |
+      | LPT1      |
+    And the following "core_competency > template_competencies" exist:
+      | template | competency |
+      | LPT1     | Test-Comp1 |
+    And I log in as "admin"
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    # Select 1 user to assign to create learning plans for using template.
+    And I click on ".template-userplans" "css_element" in the "LPT1" "table_row"
+    And I set the field "Select users" to "user1"
+    And I press "Create learning plans"
+    And I click on "LPT1" "link" in the "LPT1" "table_row"
+    When I click on "Complete this learning plan" "link"
+    And I click on "Complete this learning plan" "button" in the "Confirm" "dialogue"
+    # Add a short wait to ensure the page has loaded before checking that "Complete" "text" exists.
+    And I wait until the page is ready
+    # Confirm that student's learning plan template is marked as Completed.
+    Then "Complete" "text" should exist
+    And "Reopen this learning plan" "link" should exist
+
+  Scenario: Learning plan template updates are not reflected on plans already completed
+    Given the following "core_competency > templates" exist:
+      | shortname |
+      | LPT1      |
+    And the following "core_competency > template_competencies" exist:
+      | template | competency |
+      | LPT1     | Test-Comp1 |
+    And I log in as "admin"
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    # Select 2 users to assign to create learning plans for using template.
+    And I click on ".template-userplans" "css_element" in the "LPT1" "table_row"
+    And I set the field "Select users" to "user1"
+    And I press "Create learning plans"
+    And I set the field "Select users" to "user2"
+    And I press "Create learning plans"
+    # Complete the learning plan for User 1.
+    And I click on "LPT1" "link" in the "User 1" "table_row"
+    And I click on "Complete this learning plan" "link"
+    And I click on "Complete this learning plan" "button" in the "Confirm" "dialogue"
+    # Add another competency to the learning plan template.
+    And the following "core_competency > template_competencies" exist:
+      | template | competency |
+      | LPT1     | Test-Comp2 |
+    # Navigate back to the list of Learning plan templates in order to access User 1's learning plan.
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    And I click on ".template-userplans" "css_element" in the "LPT1" "table_row"
+    # Confirm that only the first competency is reflected on User 1's learning plan since it's already completed.
+    When I click on "LPT1" "link" in the "User 1" "table_row"
+    Then "Test-Comp2" "link" should not exist
+    And "Test-Comp2" "text" should not exist
+    And "Test-Comp1" "link" should exist
+    And "Test-Comp1" "text" should exist
+    # Navigate back to list of Learning plan templates in order to access User 2's learning plan.
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    And I click on ".template-userplans" "css_element" in the "LPT1" "table_row"
+    # Confirm that both competencies are reflected on User 2's learning plan since it's not yet completed.
+    And I click on "LPT1" "link" in the "User 2" "table_row"
+    And "Test-Comp2" "link" should exist
+    And "Test-Comp2" "text" should exist
+    And "Test-Comp1" "link" should exist
+    And "Test-Comp1" "text" should exist
