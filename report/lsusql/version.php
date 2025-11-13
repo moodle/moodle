@@ -26,10 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022063000;
+$plugin->version   = 2025110500;
 $plugin->requires  = 2020061500;
 $plugin->component = 'report_lsusql';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0 for Moodle 3.9+';
-
+$plugin->release   = '1.1-Unanimous_Undulations';
 $plugin->outestssufficient = true;

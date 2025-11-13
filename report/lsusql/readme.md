@@ -70,5 +70,12 @@ https://<moodle_url>/webservice/pluginfile.php/1/report_lsusql/download/<report_
 <token>       = The user who is explicitly defined in the report's moodle access token.
 <data_format> = The data format of your choice. This must be installed in your moodle. Example: csv
 
+## Optional: report parms
+URL parms are named the same as in the report, so :urlparm1 would be appended to the complete url as &urlparm1=value.
+If you have multiple url parms, append them as you did the 1st. &urlparm1=value1&urlparm2=value2&urlparm3=value3 if you have three.
+A real world example would be:
+
+https://<moodle_url>/webservice/pluginfile.php/1/report_lsusql/download/100?token=jklrdhfgzdkjfghs786&dataformat=xml&semester=fall&department=cm
+
 "Who can view this query" must be defined as "Anyone who can view this report (report/lsusql:view)".
 Limit to these users mulst be the usernames of anyone whos token you wish to use.
