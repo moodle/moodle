@@ -73,7 +73,7 @@ class user_select_table extends html_table implements renderable {
         $this->data = [];
 
         $this->id = 'merge_users_tool_user_select_table';
-        $this->attributes['class'] = 'generaltable boxaligncenter';
+        $this->attributes['class'] = 'generaltable table-reboot boxaligncenter';
 
         $columns = [
             'col_select_olduser' => get_string('olduser', 'tool_mergeusers'),

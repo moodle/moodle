@@ -93,7 +93,7 @@ class user_review_table extends html_table implements renderable {
 
         // Show the selected users to merge. At least, there is one selected user for merging.
         $this->id = 'merge_users_tool_user_review_table';
-        $this->attributes['class'] = 'generaltable boxaligncenter';
+        $this->attributes['class'] = 'generaltable table-reboot boxaligncenter';
 
         if (
             (isset($this->olduser->idnumber) && !empty($this->olduser->idnumber))

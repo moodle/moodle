@@ -1,5 +1,9 @@
 # Release notes
 
+## 2025102100
+
+1. 2025-10-21: bug: #379: remove table lines for >= Moodle 5.0 and Bootstrap 5.0. Thanks @lucaboesch.
+
 ## 2025101701
 
 1. 2025-10-17: task: #383: Moodle 5.1 compatible.

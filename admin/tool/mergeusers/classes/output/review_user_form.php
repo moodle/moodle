@@ -118,7 +118,7 @@ class review_user_form extends moodleform {
             $mform->disable_form_change_checker();
         }
         $htmltable = new html_table();
-        $htmltable->attributes['class'] = 'clearfix';
+        $htmltable->attributes['class'] = 'clearfix table-reboot';
         $htmltable->data = $buttonarray;
 
         $mform->addElement('static', 'buttonar', '', html_writer::table($htmltable));
