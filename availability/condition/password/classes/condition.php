@@ -35,7 +35,6 @@ use core_availability\info_module;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class condition extends \core_availability\condition {
-
     /**
      * The configured password for this condition.
      *
@@ -152,8 +151,10 @@ class condition extends \core_availability\condition {
             $str = \core\output\html_writer::link($url, $str, ['class' => 'availability_password-popup']);
 
             if (!$jsadded) {
-                $PAGE->requires->strings_for_js(['enterpassword', 'wrongpassword', 'passwordintro', 'passwordprotection'],
-                    'availability_password');
+                $PAGE->requires->strings_for_js(
+                    ['enterpassword', 'wrongpassword', 'passwordintro', 'passwordprotection'],
+                    'availability_password'
+                );
                 $PAGE->requires->strings_for_js(['submit', 'cancel'], 'core');
 
                 $jsadded = true;
@@ -170,7 +171,7 @@ class condition extends \core_availability\condition {
      * @return string Text representation of parameters
      */
     protected function get_debug_string() {
-        return 'Password = '.$this->password;
+        return 'Password = ' . $this->password;
     }
 
     /**
@@ -218,7 +219,6 @@ class condition extends \core_availability\condition {
                 $USER->availability_password[$cm->id] = [];
             }
             $USER->availability_password[$cm->id][] = $this->password;
-
         } else {
             // Save the entered password in the DB, in case the password is changed or there are multiple passwords
             // on an activity (no idea why that would be done, but, in theory, it is supported by the code).

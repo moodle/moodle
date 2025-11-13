@@ -26,8 +26,7 @@ require(__DIR__ . '/../../../config.php');
 global $PAGE, $OUTPUT;
 
 $cmid = required_param('id', PARAM_INT);
-/** @var cm_info $cm */
-list($course, $cm) = get_course_and_cm_from_cmid($cmid);
+[$course, $cm] = get_course_and_cm_from_cmid($cmid);
 
 $url = new \core\url('/availability/condition/password/index.php', ['id' => $cm->id]);
 $PAGE->set_url($url);

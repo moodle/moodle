@@ -39,10 +39,10 @@ use core_privacy\local\request\helper as request_helper;
  * @copyright  2018 Alexander Bias, Ulm University <alexander.bias@uni-ulm.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\plugin\provider,
-        \core_privacy\local\request\core_userlist_provider {
-
+class provider implements
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\plugin\provider {
     /**
      * Returns meta data about this system.
      *
@@ -52,14 +52,14 @@ class provider implements \core_privacy\local\metadata\provider,
      */
     public static function get_metadata(collection $collection): collection {
         $collection->add_database_table(
-                'availability_password_grant',
-                [
+            'availability_password_grant',
+            [
                         'courseid' => 'privacy:metadata:availability_password_grant:courseid',
                         'cmid' => 'privacy:metadata:availability_password_grant:cmid',
                         'userid' => 'privacy:metadata:availability_password_grant:userid',
                         'password' => 'privacy:metadata:availability_password_grant:password',
                 ],
-                'privacy:metadata:availability_password_grant'
+            'privacy:metadata:availability_password_grant'
         );
 
         return $collection;
@@ -108,7 +108,7 @@ class provider implements \core_privacy\local\metadata\provider,
         $user = $contextlist->get_user();
         $userid = $user->id;
 
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
         $sql = "SELECT
                     c.id AS contextid,
@@ -213,13 +213,10 @@ class provider implements \core_privacy\local\metadata\provider,
 
         // Delete all password records for the given users in the given course module context.
         $userids = $userlist->get_userids();
-        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        [$usql, $params] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $select = "userid $usql AND cmid = :cmid";
         $params['cmid'] = $context->instanceid;
 
         $DB->delete_records_select('availability_password_grant', $select, $params);
     }
 }
-
-
-

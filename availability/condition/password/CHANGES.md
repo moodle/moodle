@@ -4,6 +4,11 @@ moodle-availability_password
 Changes
 -------
 
+### v4.5-r2
+
+* 2025-10-15 - Make codechecker happy again
+* 2025-10-15 - Tests: Switch Github actions workflows to reusable workflows by Moodle an Hochschulen e.V.
+
 ### v4.5-r1
 
 * 2024-10-14 - Upgrade: Adopt changes from MDL-82183 and use new \core\output\html_writer
@@ -54,7 +59,7 @@ Changes
 
 ### v4.0-r2
 
-* 2023-03-19 - Bugfix: Availability password restrictions could not be edited anymore in lesson and external tool activity instances, solves #22. 
+* 2023-03-19 - Bugfix: Availability password restrictions could not be edited anymore in lesson and external tool activity instances, solves #22.
 * 2023-03-09 - Make codechecker happy again
 * 2022-02-28 - Fix location of Bootstrap in phpunit.xml
 * 2022-11-28 - Updated Moodle Plugin CI to latest upstream recommendations

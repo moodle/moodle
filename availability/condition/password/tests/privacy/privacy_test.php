@@ -124,8 +124,8 @@ final class privacy_test extends \core_privacy\tests\provider_testcase {
      * @covers \availability_password\privacy\privacy_test::get_users_on_page()
      */
     public function test_get_users_in_context(): void {
-        list($pages, ) = $this->setup_data();
-        list($p1, $p2, $p3, $p4) = $pages;
+        [$pages, ] = $this->setup_data();
+        [$p1, $p2, $p3, $p4] = $pages;
 
         $this->assertCount(2, $this->get_users_on_page($p1));
         $this->assertCount(1, $this->get_users_on_page($p2));
@@ -140,9 +140,9 @@ final class privacy_test extends \core_privacy\tests\provider_testcase {
      * @covers ::delete_data_for_users()
      */
     public function test_delete_data_for_users(): void {
-        list($pages, $users) = $this->setup_data();
-        list($p1, $p2, $p3, $p4) = $pages;
-        list($u1, $u2, $u3) = $users;
+        [$pages, $users] = $this->setup_data();
+        [$p1, $p2, $p3, $p4] = $pages;
+        [$u1, $u2, $u3] = $users;
 
         // Delete u1 + u3 from page 1.
         $ctx = \context_module::instance($p1->cmid);
