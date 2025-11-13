@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Class bulkenrol_form
@@ -39,33 +39,38 @@ require_once($CFG->libdir.'/formslib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class bulkenrol_form extends moodleform {
-
     /**
      * Form definition. Abstract method - always override!
      */
     protected function definition() {
         global $CFG, $SESSION;
 
-        require_once($CFG->dirroot.'/local/bulkenrol/lib.php');
+        require_once($CFG->dirroot . '/local/bulkenrol/lib.php');
 
         $mform = $this->_form;
 
         // Infotext.
         $msg = get_string('bulkenrol_form_intro', 'local_bulkenrol');
-        $mform->addElement('html', '<div id="intro">'.$msg.'</div>');
+        $mform->addElement('html', '<div id="intro">' . $msg . '</div>');
 
         // Textarea for Emails.
-        $mform->addElement('textarea', 'usermails',
-                get_string('usermails', 'local_bulkenrol'), 'wrap="virtual" rows="10" cols="80"');
+        $mform->addElement(
+            'textarea',
+            'usermails',
+            get_string('usermails', 'local_bulkenrol'),
+            'wrap="virtual" rows="10" cols="80"'
+        );
         $mform->addRule('usermails', null, 'required');
         $mform->addHelpButton('usermails', 'usermails', 'local_bulkenrol');
 
         // Add form content if the user came back to check his input.
         $localbulkenroleditlist = optional_param('editlist', 0, PARAM_ALPHANUMEXT);
         if (!empty($localbulkenroleditlist)) {
-            $localbulkenroldata = $localbulkenroleditlist.'_data';
-            if (!empty($localbulkenroldata) && !empty($SESSION->local_bulkenrol_inputs) &&
-                    array_key_exists($localbulkenroldata, $SESSION->local_bulkenrol_inputs)) {
+            $localbulkenroldata = $localbulkenroleditlist . '_data';
+            if (
+                !empty($localbulkenroldata) && !empty($SESSION->local_bulkenrol_inputs) &&
+                    array_key_exists($localbulkenroldata, $SESSION->local_bulkenrol_inputs)
+            ) {
                 $formdatatmp = $SESSION->local_bulkenrol_inputs[$localbulkenroldata];
                 $mform->setDefault('usermails', $formdatatmp);
             }

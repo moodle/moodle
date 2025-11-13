@@ -25,25 +25,25 @@
 defined('MOODLE_INTERNAL') || die;
 
 // Require library.
-require_once($CFG->dirroot.'/local/bulkenrol/lib.php');
+require_once($CFG->dirroot . '/local/bulkenrol/lib.php');
 
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_bulkenrol', get_string('pluginname', 'local_bulkenrol', null, true));
 
     if ($ADMIN->fulltree) {
-
         // Create enrolment chooser widget.
         $enroloptions = [];
         foreach (enrol_get_plugins(true) as $name => $plugin) {
-            $enroloptions[$name] = get_string('pluginname', 'enrol_'.$name);
+            $enroloptions[$name] = get_string('pluginname', 'enrol_' . $name);
         }
         $settings->add(
-                new admin_setting_configselect(
-                        'local_bulkenrol/enrolplugin',
-                        get_string('enrolplugin', 'local_bulkenrol'),
-                        get_string('enrolplugin_desc', 'local_bulkenrol'),
-                        key($enroloptions),
-                        $enroloptions)
+            new admin_setting_configselect(
+                'local_bulkenrol/enrolplugin',
+                get_string('enrolplugin', 'local_bulkenrol'),
+                get_string('enrolplugin_desc', 'local_bulkenrol'),
+                key($enroloptions),
+                $enroloptions
+            )
         );
         unset($enroloptions);
 
@@ -69,12 +69,13 @@ if ($hassiteconfig) {
             $firststudentroleid = '';
         }
         $settings->add(
-                new admin_setting_configselect(
-                        'local_bulkenrol/role',
-                        get_string('role', 'local_bulkenrol'),
-                        get_string('role_description', 'local_bulkenrol'),
-                        $firststudentroleid,
-                        $roleoptions)
+            new admin_setting_configselect(
+                'local_bulkenrol/role',
+                get_string('role', 'local_bulkenrol'),
+                get_string('role_description', 'local_bulkenrol'),
+                $firststudentroleid,
+                $roleoptions
+            )
         );
         unset($roleoptions);
 
@@ -83,12 +84,13 @@ if ($hassiteconfig) {
                 LOCALBULKENROL_NAV_PARTICIPANTS => get_string('nav_participants', 'local_bulkenrol'),
                 LOCALBULKENROL_NAV_BOTH => get_string('nav_both', 'local_bulkenrol'), ];
         $settings->add(
-                new admin_setting_configselect(
-                        'local_bulkenrol/navigation',
-                        get_string('navigation', 'local_bulkenrol'),
-                        get_string('navigation_desc', 'local_bulkenrol'),
-                        LOCALBULKENROL_NAV_PARTICIPANTS,
-                        $navigationoptions)
+            new admin_setting_configselect(
+                'local_bulkenrol/navigation',
+                get_string('navigation', 'local_bulkenrol'),
+                get_string('navigation_desc', 'local_bulkenrol'),
+                LOCALBULKENROL_NAV_PARTICIPANTS,
+                $navigationoptions
+            )
         );
         unset($navigationoptions);
     }
