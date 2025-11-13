@@ -392,11 +392,11 @@ class exifremover_service extends service implements file_redactor_service_inter
             }
         }
 
-        $icon = $OUTPUT->pix_icon('i/externallink', get_string('opensinnewwindow'));
+        $icon = $OUTPUT->pix_icon('i/externallink', get_string('opensinnewwindow'), attributes: ['class' => 'ms-1']);
         $a = (object) [
             'link' => html_writer::link(
                 url: 'https://exiftool.sourceforge.net/install.html',
-                text: "https://exiftool.sourceforge.net/install.html $icon",
+                text: 'https://exiftool.sourceforge.net/install.html' . $icon,
                 attributes: ['role' => 'opener', 'rel' => 'noreferrer', 'target' => '_blank'],
             ),
         ];
