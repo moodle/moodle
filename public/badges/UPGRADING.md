@@ -1,5 +1,19 @@
 # core_badges (subsystem) Upgrade notes
 
+## 5.2dev
+
+### Changed
+
+- The create_issued_badge generator now returns the issued badge object.
+
+  For more information see [MDL-85621](https://tracker.moodle.org/browse/MDL-85621)
+
+### Deprecated
+
+- The class core_badges_assertion has been deprecated and replaced by \core_badges\achievement_credential. The method badges_get_default_issuer() has also been deprecated because it is no longer needed. The file badges/endorsement.php has been removed because it stopped being used when MDL-84323 was integrated.
+
+  For more information see [MDL-85621](https://tracker.moodle.org/browse/MDL-85621)
+
 ## 5.1
 
 ### Added

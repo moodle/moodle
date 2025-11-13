@@ -1,5 +1,13 @@
 # core_grades (subsystem) Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- In Moodle 4.2, the legacy Gradebook base widget from 4.1 has been removed and replaced with a simpler class-based system due to a breaking change and excessive complexity in the old pattern. The files `core/grades/basewidget.js` and templates in `grade/templates/searchwidget/` have been deleted, with minimal expected third-party impact.
+
+  For more information see [MDL-78325](https://tracker.moodle.org/browse/MDL-78325)
+
 ## 5.1
 
 ### Added

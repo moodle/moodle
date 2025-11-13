@@ -9,4 +9,3 @@
   For example: - `And I drag "Move Created by" "button" and I drop it in "Move T" "button"`
 
   For more information see [MDL-86855](https://tracker.moodle.org/browse/MDL-86855)
-
