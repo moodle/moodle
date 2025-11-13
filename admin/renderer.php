@@ -1809,6 +1809,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $table = new html_table();
         $table->id = 'plugins-control-panel';
+        $table->attributes['class'] = 'generaltable table table-striped table-hover';
         $table->head = array(
             get_string('displayname', 'core_plugin'),
             get_string('version', 'core_plugin'),
