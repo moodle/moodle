@@ -133,33 +133,51 @@ class retrieve_etextbooks extends \core\task\scheduled_task {
         $notfound = " ";
         $found = " ";
         $tbook->courseid = "";
+
+        // Make sure we're dealing with dashes.
+        $section = str_replace('_', '-', $tbook->section);
+
+        // Repopulate this.
+        $tbook->section = $section;
+
+        // Build out the parms.
+        $parms = [
+            'dept' => $tbook->dept,
+            'course_number' => $tbook->course_number,
+            'section' => $section,
+            'instructor' => $tbook->instructor,
+            'term' => $tbook->term
+        ];
+
+        // For logging.
         $coursenameregexp = trim($tbook->term) . ' '
                                 . trim($tbook->dept) . ' '
-                                . trim($tbook->course_number)
-                                . ' ' . trim(str_pad($tbook->section, 3, "0", STR_PAD_LEFT));
+                                . trim($tbook->course_number) . ' '
+                                . trim($section);
 
-        echo "\n\n Section is: " . $tbook->section . "\n Course is: " . $coursenameregexp . "\n";
+        echo "\n\n Section is: " . $coursenameregexp . "\n";
 
-        $sqlt = "SELECT DISTINCT(c.id)
-                FROM {enrol_ues_semesters} sem
-                    INNER JOIN {enrol_ues_sections} sec ON sec.semesterid = sem.id
-                    INNER JOIN {enrol_ues_courses} cou ON cou.id = sec.courseid
-                    INNER JOIN {course} c ON c.idnumber = sec.idnumber
-                WHERE sec.idnumber IS NOT NULL
-                    AND c.idnumber IS NOT NULL
-                    AND sec.idnumber <> ''
-                    AND c.idnumber <> ''
-                    AND CONCAT(sem.year, ' '
-                            , sem.name
-                            , ' '
-                            , cou.department
-                            , ' '
-                            , cou.cou_number
-                            , ' '
-                            , sec.sec_number) = :coursename";
+        $sqlt = "SELECT c.id
+                FROM {enrol_wds_periods} per
+                    INNER JOIN {enrol_wds_sections} sec
+                        ON sec.academic_period_id = per.academic_period_id
+                    INNER JOIN {enrol_wds_courses} cou
+                        ON cou.course_listing_id = sec.course_listing_id
+                    INNER JOIN {enrol_wds_teacher_enroll} te
+                        ON te.section_listing_id = sec.section_listing_id
+                    INNER JOIN {enrol_wds_teachers} tea
+                        ON tea.universal_id = te.universal_id
+                    INNER JOIN {course} c
+                        ON c.id = sec.moodle_status
+                WHERE sec.wd_status IN ('Closed','Open','Waitlist')
+                    AND cou.course_subject_abbreviation = :dept
+                    AND cou.course_number = :course_number
+                    AND per.academic_period_id = :term
+                    AND sec.section_number = :section
+                GROUP BY c.id";
 
-        if ($records = $DB->get_record_sql($sqlt, array('coursename' => $coursenameregexp))) {
-            $tbook->courseid = $records->id;
+        if ($record = $DB->get_record_sql($sqlt, $parms)) {
+            $tbook->courseid = $record->id;
             $DB->insert_record('block_etextbook', $tbook);
             $found = $tbook->dept . " " . $tbook->course_number;
 
