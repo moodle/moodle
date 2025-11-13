@@ -25,18 +25,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Combined question type for oumultiresponse.
+ */
 class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_combinable_type_base {
 
+    /**
+     * The question type identifier.
+     *
+     * @var string
+     */
     protected $identifier = 'multiresponse';
 
+    #[\Override]
     protected function extra_question_properties() {
         return $this->combined_feedback_properties();
     }
 
+    #[\Override]
     protected function extra_answer_properties() {
-        return array('feedback' => array('text' => '', 'format' => FORMAT_PLAIN));
+        return ['feedback' => ['text' => '', 'format' => FORMAT_PLAIN]];
     }
 
+    #[\Override]
     public function subq_form_fragment_question_option_fields() {
         return [
             'shuffleanswers' => (bool) get_config('qtype_combined', 'shuffleanswers_multiresponse'),
@@ -44,26 +55,27 @@ class qtype_combined_combinable_type_oumultiresponse extends qtype_combined_comb
         ];
     }
 
+    #[\Override]
     protected function transform_subq_form_data_to_full($subqdata) {
         $data = parent::transform_subq_form_data_to_full($subqdata);
         foreach ($data->answer as $anskey => $answer) {
-            $data->answer[$anskey] = array('text' => $answer['text'], 'format' => $answer['format']);
+            $data->answer[$anskey] = ['text' => $answer['text'], 'format' => $answer['format']];
         }
         return $this->add_per_answer_properties($data);
     }
 
+    #[\Override]
     protected function third_param_for_default_question_text() {
         return 'v';
     }
 }
 
+/**
+ * Class question type for combined combinable oumultiresponse.
+ */
 class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinable_accepts_vertical_or_horizontal_layout_param {
 
-    /**
-     * @param moodleform      $combinedform
-     * @param MoodleQuickForm $mform
-     * @param                 $repeatenabled
-     */
+    #[\Override]
     public function add_form_fragment(moodleform $combinedform, MoodleQuickForm $mform, $repeatenabled) {
         $mform->addElement('advcheckbox', $this->form_field_name('shuffleanswers'),
             get_string('shuffle', 'qtype_combined'));
@@ -75,12 +87,12 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
         $mform->setDefault($this->form_field_name('answernumbering'),
                 get_config('qtype_combined', 'answernumbering_multiresponse'));
 
-        $answerels = array();
+        $answerels = [];
         $answerels[] = $mform->createElement('editor', $this->form_field_name('answer'),
-                get_string('choiceno', 'qtype_multichoice', '{no}'), ['rows' => 1]);
+                get_string('choiceno', 'qtype_multichoice', '{no}'), ['rows' => 2]);
         $mform->setType($this->form_field_name('answer'), PARAM_RAW);
         $answerels[] = $mform->createElement('advcheckbox', $this->form_field_name('correctanswer'),
-                get_string('correct', 'question'), get_string('correct', 'question'));
+                '', get_string('correct', 'question'));
 
         $answergroupel = $mform->createElement('group',
                 $this->form_field_name('answergroup'),
@@ -93,9 +105,9 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
             $repeatsatstart = max(5, QUESTION_NUMANS_START);
         }
 
-        $combinedform->repeat_elements(array($answergroupel),
+        $combinedform->repeat_elements([$answergroupel],
             $repeatsatstart,
-            array(),
+            [],
             $this->form_field_name('noofchoices'),
             $this->form_field_name('morechoices'),
             QUESTION_NUMANS_ADD,
@@ -103,8 +115,9 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
             true);
     }
 
+    #[\Override]
     public function data_to_form($context, $fileoptions) {
-        $mroptions = array('answer' => array(), 'correctanswer' => array());
+        $mroptions = ['answer' => [], 'correctanswer' => []];
         if ($this->questionrec !== null) {
             foreach ($this->questionrec->options->answers as $questionrecanswer) {
                 $mroptions['answer'][] = [
@@ -117,9 +130,10 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
         return parent::data_to_form($context, $fileoptions) + $mroptions;
     }
 
+    #[\Override]
     public function validate() {
-        $errors = array();
-        $nonemptyanswerblanks = array();
+        $errors = [];
+        $nonemptyanswerblanks = [];
         foreach ($this->formdata->answer as $anskey => $answer) {
             $answer = $answer['text'];
             if ('' !== trim($answer)) {
@@ -138,6 +152,7 @@ class qtype_combined_combinable_oumultiresponse extends qtype_combined_combinabl
         return $errors;
     }
 
+    #[\Override]
     public function has_submitted_data() {
         return $this->submitted_data_array_not_empty('correctanswer') ||
                 $this->html_field_has_submitted_data($this->form_field_name('answer')) ||

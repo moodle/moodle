@@ -25,14 +25,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2020121800;
-$plugin->requires  = 2020061500;
+$plugin->version   = 2025071500;
+$plugin->requires  = 2024042200;
 $plugin->component = 'qtype_oumultiresponse';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '2.3 for Moodle 3.9+';
+$plugin->release   = '2.5 for Moodle 4.4+';
 
-$plugin->dependencies = array(
-    'qtype_multichoice' => 2020061500,
-);
+$plugin->dependencies = [
+    'qtype_multichoice' => 2024042200,
+];
 
 $plugin->outestssufficient = true;

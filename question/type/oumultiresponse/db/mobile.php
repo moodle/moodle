@@ -29,8 +29,8 @@ $addons = [
         'handlers' => [
             'oumultiresponse' => [
                 'delegate' => 'CoreQuestionDelegate',
-                'method' => 'oumr_view'
-            ]
-        ]
-    ]
+                'method' => 'oumr_view',
+            ],
+        ],
+    ],
 ];

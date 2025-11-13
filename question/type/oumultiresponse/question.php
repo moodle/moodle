@@ -52,6 +52,7 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
         return $page->get_renderer('qtype_oumultiresponse');
     }
 
+    #[\Override]
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         if ($preferredbehaviour == 'interactive') {
             return question_engine::make_behaviour(
@@ -60,6 +61,7 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
         return question_engine::make_archetypal_behaviour($preferredbehaviour, $qa);
     }
 
+    #[\Override]
     public function classify_response(array $response) {
         $choices = parent::classify_response($response);
         $numright = $this->get_num_correct_choices();
@@ -69,6 +71,7 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
         return $choices;
     }
 
+    #[\Override]
     public function grade_response(array $response) {
         list($numright, $total) = $this->get_num_parts_right($response);
         $numwrong = $this->get_num_selected_choices($response) - $numright;
@@ -81,17 +84,19 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
             $state = question_state::$gradedpartial;
         }
 
-        return array($fraction, $state);
+        return [$fraction, $state];
     }
 
+    #[\Override]
     protected function disable_hint_settings_when_too_many_selected(
             question_hint_with_parts $hint) {
         parent::disable_hint_settings_when_too_many_selected($hint);
         $hint->showchoicefeedback = false;
     }
 
+    #[\Override]
     public function compute_final_grade($responses, $totaltries) {
-        $responsehistories = array();
+        $responsehistories = [];
         foreach ($this->order as $key => $ansid) {
             $fieldname = $this->field($key);
             $responsehistories[$ansid] = '';
@@ -123,7 +128,7 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
             $penalty, $questionnumtries) {
         // First we reverse the strings to get the most recent responses to the start, then
         // distinguish right and wrong by replacing 1 with 2 for right answers.
-        $workspace = array();
+        $workspace = [];
         $numright = 0;
         foreach ($responsehistory as $id => $string) {
             $workspace[$id] = strrev($string);
@@ -151,7 +156,7 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
             }
             if ($numselected > $numright) {
                 $numtoclear = $numselected - $numright;
-                $newworkspace = array();
+                $newworkspace = [];
                 foreach ($workspace as $string) {
                     if (substr($string, $try, 1) == '2' && $numtoclear > 0) {
                         $string = self::replace_char_at($string, $try, '0');
@@ -183,6 +188,13 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
         return array_sum($scores);
     }
 
+    /**
+     * Replace a character at a given position.
+     *
+     * @param string $string The string to modify.
+     * @param int $pos The position of the character to replace (0-based).
+     * @param string $newchar The new character to insert.
+     */
     public static function replace_char_at($string, $pos, $newchar) {
         return substr($string, 0, $pos) . $newchar . substr($string, $pos + 1);
     }

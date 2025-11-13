@@ -22,6 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace qtype_oumultiresponse;
+
+use qtype_oumultiresponse;
+use test_question_maker;
+use question_possible_response;
+use question_answer;
+use question_check_specified_fields_expectation;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,27 +42,30 @@ require_once($CFG->dirroot . '/question/type/oumultiresponse/questiontype.php');
  *
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \qtype_oumultiresponse
  */
-class qtype_oumultiresponse_test extends question_testcase {
+final class questiontype_test extends \question_testcase {
     /**
      * @var qtype_oumultiresponse
      */
     private $qtype;
 
     public function setUp(): void {
+        parent::setUp();
         $this->qtype = new qtype_oumultiresponse();
     }
 
-    public function assert_same_xml($expectedxml, $xml) {
+    #[\Override]
+    public function assert_same_xml($expectedxml, $xml): void {
         $this->assertEquals(str_replace("\r\n", "\n", $expectedxml),
                 str_replace("\r\n", "\n", $xml));
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'oumultiresponse');
     }
 
-    public function test_initialise_question_instance() {
+    public function test_initialise_question_instance(): void {
         $qdata = test_question_maker::get_question_data('oumultiresponse', 'two_of_four');
         $expectedq = test_question_maker::make_question('oumultiresponse', 'two_of_four');
         $qdata->stamp = $expectedq->stamp;
@@ -68,36 +78,36 @@ class qtype_oumultiresponse_test extends question_testcase {
         $this->assertEquals($expectedq, $question);
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_get_possible_responses() {
-        $q = new stdClass();
+    public function test_get_possible_responses(): void {
+        $q = new \stdClass();
         $q->id = 1;
-        $q->options = new stdClass();
+        $q->options = new \stdClass();
         $q->options->answers = [
-            1 => (object) array('answer' => 'frog', 'fraction' => 1),
-            2 => (object) array('answer' => 'toad', 'fraction' => 1),
-            3 => (object) array('answer' => 'newt', 'fraction' => 0),
+            1 => (object) ['answer' => 'frog', 'fraction' => 1],
+            2 => (object) ['answer' => 'toad', 'fraction' => 1],
+            3 => (object) ['answer' => 'newt', 'fraction' => 0],
         ];
         $responses = $this->qtype->get_possible_responses($q);
 
-        $this->assertEquals(array(
-            1 => array(1 => new question_possible_response('frog', 0.5)),
-            2 => array(2 => new question_possible_response('toad', 0.5)),
-            3 => array(3 => new question_possible_response('newt', 0)),
-        ), $this->qtype->get_possible_responses($q));
+        $this->assertEquals([
+            1 => [1 => new question_possible_response('frog', 0.5)],
+            2 => [2 => new question_possible_response('toad', 0.5)],
+            3 => [3 => new question_possible_response('newt', 0)],
+        ], $this->qtype->get_possible_responses($q));
     }
 
-    public function test_get_random_guess_score() {
-        $questiondata = new stdClass();
-        $questiondata->options = new stdClass();
-        $questiondata->options->answers = array(
+    public function test_get_random_guess_score(): void {
+        $questiondata = new \stdClass();
+        $questiondata->options = new \stdClass();
+        $questiondata->options->answers = [
             1 => new question_answer(1, 'A', 1, '', FORMAT_HTML),
             2 => new question_answer(2, 'B', 0, '', FORMAT_HTML),
             3 => new question_answer(3, 'C', 0, '', FORMAT_HTML),
-        );
+        ];
         $this->assertEquals(1 / 3,
                 $this->qtype->get_random_guess_score($questiondata), '', 0.000001);
 
@@ -110,7 +120,7 @@ class qtype_oumultiresponse_test extends question_testcase {
                 $this->qtype->get_random_guess_score($questiondata), '', 0.000001);
     }
 
-    public function test_xml_import() {
+    public function test_xml_import(): void {
         $xml = '  <question type="oumultiresponse">
     <name>
       <text>OU multiple response question</text>
@@ -173,11 +183,11 @@ class qtype_oumultiresponse_test extends question_testcase {
   </question>';
         $xmldata = xmlize($xml);
 
-        $importer = new qformat_xml();
+        $importer = new \qformat_xml();
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'oumultiresponse');
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'oumultiresponse';
         $expectedq->name = 'OU multiple response question';
         $expectedq->questiontext = 'Which are the odd numbers?';
@@ -189,44 +199,51 @@ class qtype_oumultiresponse_test extends question_testcase {
         $expectedq->penalty = 0.3333333;
 
         $expectedq->shuffleanswers = 1;
-        $expectedq->correctfeedback = array('text' => 'Well done.',
-                'format' => FORMAT_HTML);
-        $expectedq->partiallycorrectfeedback = array('text' => 'Not entirely.',
-                'format' => FORMAT_HTML);
+        $expectedq->correctfeedback = [
+            'text' => 'Well done.',
+            'format' => FORMAT_HTML,
+        ];
+        $expectedq->partiallycorrectfeedback = [
+            'text' => 'Not entirely.',
+            'format' => FORMAT_HTML,
+        ];
         $expectedq->shownumcorrect = false;
-        $expectedq->incorrectfeedback = array('text' => 'Completely wrong!',
-                'format' => FORMAT_HTML);
+        $expectedq->incorrectfeedback = [
+            'text' => 'Completely wrong!',
+            'format' => FORMAT_HTML,
+        ];
 
-        $expectedq->answer = array(
-            array('text' => 'One', 'format' => FORMAT_HTML),
-            array('text' => 'Two', 'format' => FORMAT_HTML),
-            array('text' => 'Three', 'format' => FORMAT_HTML),
-            array('text' => 'Four', 'format' => FORMAT_HTML),
-        );
-        $expectedq->correctanswer = array(1, 0, 1, 0);
-        $expectedq->feedback = array(
-            array('text' => 'Specific feedback to correct answer.',
-                    'format' => FORMAT_HTML),
-            array('text' => 'Specific feedback to wrong answer.',
-                    'format' => FORMAT_HTML),
-            array('text' => 'Specific feedback to correct answer.',
-                    'format' => FORMAT_HTML),
-            array('text' => 'Specific feedback to wrong answer.',
-                    'format' => FORMAT_HTML),
-        );
+        $expectedq->answer = [
+            ['text' => 'One', 'format' => FORMAT_HTML],
+            ['text' => 'Two', 'format' => FORMAT_HTML],
+            ['text' => 'Three', 'format' => FORMAT_HTML],
+            ['text' => 'Four', 'format' => FORMAT_HTML],
+        ];
+        $expectedq->correctanswer = [1, 0, 1, 0];
+        $expectedq->feedback = [
+            ['text' => 'Specific feedback to correct answer.',
+                'format' => FORMAT_HTML],
+            ['text' => 'Specific feedback to wrong answer.',
+                'format' => FORMAT_HTML],
+            ['text' => 'Specific feedback to correct answer.',
+                'format' => FORMAT_HTML],
+            ['text' => 'Specific feedback to wrong answer.',
+                'format' => FORMAT_HTML],
+        ];
 
-        $expectedq->hint = array(
-                array('text' => 'Try again.', 'format' => FORMAT_HTML),
-                array('text' => 'Hint 2.', 'format' => FORMAT_HTML));
-        $expectedq->hintshownumcorrect = array(true, true);
-        $expectedq->hintclearwrong = array(false, true);
-        $expectedq->hintshowchoicefeedback = array(false, true);
+        $expectedq->hint = [
+            ['text' => 'Try again.', 'format' => FORMAT_HTML],
+            ['text' => 'Hint 2.', 'format' => FORMAT_HTML],
+        ];
+        $expectedq->hintshownumcorrect = [true, true];
+        $expectedq->hintclearwrong = [false, true];
+        $expectedq->hintshowchoicefeedback = [false, true];
 
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
         $this->assertEquals($expectedq->answer, $q->answer);
     }
 
-    public function test_xml_import_legacy() {
+    public function test_xml_import_legacy(): void {
         $xml = '  <question type="oumultiresponse">
     <name>
       <text>008 OUMR feedback test</text>
@@ -303,11 +320,11 @@ class qtype_oumultiresponse_test extends question_testcase {
   </question>';
         $xmldata = xmlize($xml);
 
-        $importer = new qformat_xml();
+        $importer = new \qformat_xml();
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'oumultiresponse');
 
-        $expectedq = new stdClass();
+        $expectedq = new \stdClass();
         $expectedq->qtype = 'oumultiresponse';
         $expectedq->name = '008 OUMR feedback test';
         $expectedq->questiontext = '<p>OUMR question.</p><p>Right answers are ' .
@@ -321,48 +338,55 @@ class qtype_oumultiresponse_test extends question_testcase {
 
         $expectedq->shuffleanswers = 1;
         $expectedq->answernumbering = 'abc';
-        $expectedq->correctfeedback = array('text' => 'Correct overall feedback',
-                'format' => FORMAT_HTML);
-        $expectedq->partiallycorrectfeedback = array(
-                'text' => 'Partially correct overall feedback.',
-                'format' => FORMAT_HTML);
+        $expectedq->correctfeedback = [
+            'text' => 'Correct overall feedback',
+            'format' => FORMAT_HTML,
+        ];
+        $expectedq->partiallycorrectfeedback = [
+            'text' => 'Partially correct overall feedback.',
+            'format' => FORMAT_HTML,
+        ];
         $expectedq->shownumcorrect = false;
-        $expectedq->incorrectfeedback = array('text' => 'Incorrect overall feedback.',
-                'format' => FORMAT_HTML);
+        $expectedq->incorrectfeedback = [
+            'text' => 'Incorrect overall feedback.',
+            'format' => FORMAT_HTML,
+        ];
 
-        $expectedq->answer = array(
-            array('text' => 'eighta', 'format' => FORMAT_HTML),
-            array('text' => 'eightb', 'format' => FORMAT_HTML),
-            array('text' => 'one', 'format' => FORMAT_HTML),
-            array('text' => 'two', 'format' => FORMAT_HTML));
-        $expectedq->correctanswer = array(1, 1, 0, 0);
-        $expectedq->feedback = array(
-            array('text' => '<p>Specific feedback to correct answer.</p>',
-                    'format' => FORMAT_HTML),
-            array('text' => '<p>Specific feedback to correct answer.</p>',
-                    'format' => FORMAT_HTML),
-            array('text' => '<p>Specific feedback to wrong answer.</p>',
-                    'format' => FORMAT_HTML),
-            array('text' => '<p>Specific feedback to wrong answer.</p>',
-                    'format' => FORMAT_HTML),
-        );
+        $expectedq->answer = [
+            ['text' => 'eighta', 'format' => FORMAT_HTML],
+            ['text' => 'eightb', 'format' => FORMAT_HTML],
+            ['text' => 'one', 'format' => FORMAT_HTML],
+            ['text' => 'two', 'format' => FORMAT_HTML],
+        ];
+        $expectedq->correctanswer = [1, 1, 0, 0];
+        $expectedq->feedback = [
+            ['text' => '<p>Specific feedback to correct answer.</p>',
+                'format' => FORMAT_HTML],
+            ['text' => '<p>Specific feedback to correct answer.</p>',
+                'format' => FORMAT_HTML],
+            ['text' => '<p>Specific feedback to wrong answer.</p>',
+                'format' => FORMAT_HTML],
+            ['text' => '<p>Specific feedback to wrong answer.</p>',
+                'format' => FORMAT_HTML],
+        ];
 
-        $expectedq->hint = array(
-                array('text' => 'Hint 1.', 'format' => FORMAT_HTML),
-                array('text' => 'Hint 2.', 'format' => FORMAT_HTML));
-        $expectedq->hintshownumcorrect = array(false, false);
-        $expectedq->hintclearwrong = array(false, false);
-        $expectedq->hintshowchoicefeedback = array(true, true);
+        $expectedq->hint = [
+            ['text' => 'Hint 1.', 'format' => FORMAT_HTML],
+            ['text' => 'Hint 2.', 'format' => FORMAT_HTML],
+        ];
+        $expectedq->hintshownumcorrect = [false, false];
+        $expectedq->hintclearwrong = [false, false];
+        $expectedq->hintshowchoicefeedback = [true, true];
 
         $this->assertEquals($expectedq->answer, $q->answer);
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
 
-    public function test_xml_export() {
+    public function test_xml_export(): void {
         $qdata = test_question_maker::get_question_data('oumultiresponse', 'two_of_four');
         $qdata->defaultmark = 6;
 
-        $exporter = new qformat_xml();
+        $exporter = new \qformat_xml();
         $xml = $exporter->writequestion($qdata);
 
         $expectedxml = '<!-- question: 0  -->

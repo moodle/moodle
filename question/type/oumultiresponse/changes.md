@@ -1,5 +1,22 @@
 # Change log for the OU Multi-response question type
 
+## Changes in 2.5
+
+* This version is compatible with Moodle 5.0.
+* Added option to use the qtype_multichoice site-wide default setting for Show standard instruction.
+* Fixed the misalignment of correct and incorrect icons for Multiresponse sub-questions in
+  Combined questions with horizontal layout.
+* Increased the size of the Choice and Feedback text areas in the Answers section to two lines.
+* Fixed automated tests.
+* Fixed a theme issue where the Choice Tiny Editor disrupted the theme’s column layout on the edit question page.
+* Added required attribute for the answer field when used in a Combined question.
+
+
+## Changes in 2.4
+
+* This version works with Moodle 4.0.
+
+
 ## Changes in 2.3
 
 * Option added to hide the 'Select one or more:' message.

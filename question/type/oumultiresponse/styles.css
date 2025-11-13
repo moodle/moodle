@@ -1,52 +1,24 @@
-.que.oumultiresponse .answer .specificfeedback {
-    display: inline;
-    padding: 0 0.7em;
-    background: #fff3bf;
-}
 .que.oumultiresponse .answer div.r0,
 .que.oumultiresponse .answer div.r1 {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-}
-.que.oumultiresponse .answer div.r0 label,
-.que.oumultiresponse .answer div.r1 label,
-.que.oumultiresponse .answer div.r0 div.specificfeedback,
-.que.oumultiresponse .answer div.r1 div.specificfeedback {
-    /* In Chrome and IE, the text-indent above is applied to any embedded table
-       cells or <li>s, which screws up the intended layout. This fixes it again. */
-    text-indent: 0;
-}
-
-.que.oumultiresponse .answer div.r0 label,
-.que.oumultiresponse .answer div.r1 label {
-    flex: 1 1;
-}
-
-.que.oumultiresponse .answer div.r0 div.specificfeedback,
-.que.oumultiresponse .answer div.r1 div.specificfeedback {
-    display: flex;
-    flex: 1 1 100%;
+    margin: 0.25rem 0;
+    align-items: flex-start;
 }
 
 .que.oumultiresponse .answer div.r0 input,
 .que.oumultiresponse .answer div.r1 input {
-    margin: 0 5px;
-    padding: 0;
-    width: 15px;
+    margin: 0.3rem 0.5rem;
+    width: 14px;
 }
 
-.que.oumultiresponse .answer div.r0 span.answernumber,
-.que.oumultiresponse .answer div.r1 span.answernumber {
-    white-space: nowrap;
+.que.oumultiresponse .answer .answernumber {
+    min-width: 1.5em;
 }
 
-/* Fix positioning of icons in Moodle 3.5+. */
-.que.oumultiresponse .answer div.r0 .icon.fa-check,
-.que.oumultiresponse .answer div.r1 .icon.fa-check,
-.que.oumultiresponse .answer div.r0 .icon.fa-remove,
-.que.oumultiresponse .answer div.r1 .icon.fa-remove {
-    text-indent: 0;
+.que.oumultiresponse .answer .specificfeedback {
+    display: inline;
+    padding: 0 0.7em;
+    background: #fff3bf;
 }
 
 /* Editing form. */

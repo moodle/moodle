@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Backup plugin for the OU multiple response question type.
+ *
  * @package    qtype_oumultiresponse
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Provides the information to backup oumultiresponse questions.
@@ -51,18 +49,19 @@ class backup_qtype_oumultiresponse_plugin extends backup_qtype_plugin {
         $this->add_question_question_answers($pluginwrapper);
 
         // Now create the qtype own structures.
-        $oumultiresponse = new backup_nested_element('oumultiresponse', array('id'), array(
+        $oumultiresponse = new backup_nested_element('oumultiresponse', ['id'], [
             'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering',
-            'shownumcorrect', 'showstandardinstruction'));
+            'shownumcorrect', 'showstandardinstruction',
+        ]);
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($oumultiresponse);
 
         // Set source to populate the data.
         $oumultiresponse->set_source_table('question_oumultiresponse',
-                array('questionid' => backup::VAR_PARENTID));
+            ['questionid' => backup::VAR_PARENTID]);
 
         // Don't need to annotate ids nor files.
 
@@ -76,9 +75,10 @@ class backup_qtype_oumultiresponse_plugin extends backup_qtype_plugin {
      * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        return array(
+        return [
             'correctfeedback' => 'question_created',
             'partiallycorrectfeedback' => 'question_created',
-            'incorrectfeedback' => 'question_created');
+            'incorrectfeedback' => 'question_created',
+        ];
     }
 }
