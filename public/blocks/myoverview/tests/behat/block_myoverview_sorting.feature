@@ -26,7 +26,7 @@ Feature: The my overview block allows users to easily sort their courses
       | student1 | C4     | student |
       | student1 | C5     | student |
     And the following config values are set as admin:
-  	  | courselistshortnames | 1 |
+      | courselistshortnames | 1 |
 
   Scenario Outline: Check the function of available course sorting options
     Given I am on the "Course 5" course page logged in as "student1"
