@@ -43,20 +43,25 @@ class answer {
     /** @var string $value The value of this response (if applicable). */
     public $value;
 
+    /** @var string $value The other value of this response (if applicable). */
+    public $otheresponse;
+
     /**
      * Answer constructor.
      * @param null $id
      * @param null $responseid
      * @param null $questionid
      * @param null $choiceid
+     * @param null $otheresponse
      * @param null $value
      */
-    public function __construct($id = null, $responseid = null, $questionid = null, $choiceid = null, $value = null) {
+    public function __construct($id = null, $responseid = null, $questionid = null, $choiceid = null, $value = null, $otheresponse = null) {
         $this->id = $id;
         $this->responseid = $responseid;
         $this->questionid = $questionid;
         $this->choiceid = $choiceid;
         $this->value = $value;
+        $this->otheresponse = $otheresponse;
     }
 
     /**
@@ -78,6 +83,6 @@ class answer {
         }
 
         return new answer($answerdata['id'], $answerdata['responseid'], $answerdata['questionid'], $answerdata['choiceid'],
-            $answerdata['value']);
+                $answerdata['value'], $answerdata['otheresponse']);
     }
 }

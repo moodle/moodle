@@ -39,7 +39,7 @@ class backup_questionnaire_activity_structure_step extends backup_activity_struc
         $questionnaire = new backup_nested_element('questionnaire', array('id'), array(
             'course', 'name', 'intro', 'introformat', 'qtype',
             'respondenttype', 'resp_eligible', 'resp_view', 'notifications', 'opendate',
-            'closedate', 'resume', 'navigate', 'grade', 'sid', 'timemodified', 'completionsubmit', 'autonum'));
+            'closedate', 'resume', 'navigate', 'grade', 'sid', 'timemodified', 'completionsubmit', 'autonum', 'removeafter'));
 
         $surveys = new backup_nested_element('surveys');
 

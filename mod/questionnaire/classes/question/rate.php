@@ -336,8 +336,22 @@ class rate extends question {
                 if ($this->osgood_rate_scale()) {
                     list($content, $contentright) = array_merge(preg_split('/[|]/', $content), array(' '));
                 }
-                $cols[] = ['colstyle' => 'text-align: '.$textalign.';',
-                           'coltext' => format_text($content, FORMAT_HTML, ['noclean' => true]).'&nbsp;'];
+                if ($choice->is_other_choice()) {
+                    $othertext = $choice->other_choice_display();
+                    $oname = $cid . '_qother';
+                    $oid = $cid . '-other';
+                    $odata = isset($response->answers[$this->id][$cid]) ? $response->answers[$this->id][$cid]->value : '';
+                    if (isset($odata)) {
+                        $ovalue = stripslashes($odata);
+                    }
+                    $content = $othertext;
+                    $cols[] = ['oname' => $oname, 'oid' => $oid, 'ovalue' => $ovalue,
+                            'colstyle' => 'text-align: ' . $textalign . ';',
+                            'coltext' => format_text($content, FORMAT_HTML, ['noclean' => true]) . '&nbsp;'];
+                } else {
+                    $cols[] = ['colstyle' => 'text-align: '.$textalign.';',
+                            'coltext' => format_text($content, FORMAT_HTML, ['noclean' => true]) . '&nbsp;'];
+                }
 
                 $bg = 'c0 raterow';
                 $hasnotansweredchoice = false;
@@ -511,6 +525,12 @@ class rate extends question {
                 }
                 if ($this->osgood_rate_scale()) {
                     list($content, $contentright) = array_merge(preg_split('/[|]/', $content), array(' '));
+                }
+                if ($choice->is_other_choice()) {
+                    $content = $choice->other_choice_display();
+                    if (isset($response->answers[$this->id][$cid]->otheresponse)) {
+                        $rowobj->othercontent = $response->answers[$this->id][$cid]->otheresponse;
+                    }
                 }
                 $rowobj->content = format_text($content, FORMAT_HTML, ['noclean' => true]).'&nbsp;';
                 $bg = 'c0';

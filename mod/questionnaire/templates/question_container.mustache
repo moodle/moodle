@@ -58,7 +58,7 @@
             {{{required}}}
         </div>
     {{/qnum}}
-    <div class="qn-content">
+    <div class="qn-content" {{#questionname}}data-question-name="{{questionname}}"{{/questionname}}>
         <div class="qn-question {{skippedclass}}">
             {{#label}}<label for="{{label.for}}">{{/label}}
             {{{qcontent}}}

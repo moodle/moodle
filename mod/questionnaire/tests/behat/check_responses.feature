@@ -34,47 +34,43 @@ Feature: Review responses
     And I follow "Test questionnaire"
     Then I should see "View all responses"
     And I navigate to "View all responses" in current page administration
-    Then I should see "View all responses."
-    And I should see "All participants."
     And I should see "View Default order"
-    And I should see "Responses: 6"
+    And I should see "Responses: 7 (Submissions: 6 | In progress: 1)"
+    And I set the field "View" to "Full submissions"
+    And I should see "Submissions: 6"
+    And I set the field "View" to "Responses not submitted"
+    And I should see "Responses: 1"
     And I follow "Ascending order"
-    Then I should see "View all responses."
-    And I should see "All participants."
     And I should see "Ascending order"
-    And I should see "Responses: 6"
+    And I should see "Responses: 7"
     And I follow "Descending order"
-    Then I should see "View all responses."
-    And I should see "All participants."
     And I should see "Descending order"
-    And I should see "Responses: 6"
+    And I should see "Responses: 7"
     And I follow "List of responses"
-    Then I should see "Individual responses  : All participants"
+    Then I should see "Individual responses  : All responses"
     And I follow "Admin User"
-    Then I should see "1 / 6"
+    Then I should see "1 / 7"
     And I should see "Respondent:"
     And I should see "Admin User"
     And I should see "Submitted on:"
 #    And I should see "Thursday, 14 January 2016, 9:22 pm"
     And I should see "Test questionnaire"
     And I follow "Next"
-    Then I should see "2 / 6"
+    Then I should see "2 / 7"
 #    And I should see "Thursday, 14 January 2016, 8:53 pm"
     And I follow "Last Respondent"
-    Then I should see "6 / 6"
+    Then I should see "7 / 7"
 #    And I should see "Friday, 19 December 2014, 5:58 pm"
     And I follow "Delete this Response"
     Then I should see "Are you sure you want to delete the response"
 #    And I should see "Friday, 19 December 2014, 5:58 pm"
     And I press "Delete"
-    Then I should see "Individual responses  : All participants"
+    Then I should see "Individual responses  : All responses"
     And I follow "Admin User"
-    Then I should see "1 / 5"
+    Then I should see "1 / 6"
     And I follow "Summary"
-    Then I should see "View all responses."
-    And I should see "All participants."
     And I should see "View Default order"
-    And I should see "Responses: 5"
+    And I should see "Responses: 6 (Submissions: 6 | In progress: 0)"
     And I follow "Delete ALL Responses"
     Then I should see "Are you sure you want to delete ALL the responses in this questionnaire?"
     And I press "Delete"
@@ -121,3 +117,28 @@ Feature: Review responses
     And I follow "Test questionnaire"
     And I navigate to "View all responses" in current page administration
     Then "//b[text()='One']" "xpath_element" should exist
+
+  Scenario: Check auto numbering setting in responses
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1 | 0 |
+    And the following "activities" exist:
+      | activity | name | description | course | idnumber |
+      | questionnaire | Test questionnaire | Test questionnaire description | C1 | questionnaire0 |
+    And "Test questionnaire" has questions and responses
+    And I am on the "Course 1" "Course" page logged in as "admin"
+    And I follow "Test questionnaire"
+    When I navigate to "View all responses" in current page administration
+    Then ".qn-number" "css_element" should exist
+    Given I follow "List of responses"
+    When I follow "Admin User"
+    Then ".qn-number" "css_element" should exist
+    # Check auto numbering not show in response when turned off.
+    Given I navigate to "Settings" in current page administration
+    And I set the field "Auto numbering" to "Do not number questions or pages"
+    And I press "Save and display"
+    When I navigate to "View all responses" in current page administration
+    Then ".qn-number" "css_element" should not exist
+    Given I follow "List of responses"
+    When I follow "Admin User"
+    Then ".qn-number" "css_element" should not exist

@@ -11,6 +11,10 @@
     color: gray;
 }
 
+#page-mod-questionnaire-questions .qcontainer .qnums ~ input[type=image] {
+    max-height: 1em;
+}
+
 #page-mod-questionnaire-questions .qcontainer .fstatic {
     width: 97%;
     margin-right: 1em;
@@ -170,9 +174,27 @@ td.selected {
     margin-top: 10px;
 }
 
+#page-mod-questionnaire-print .printdropdown input:first-child,
+#page-mod-questionnaire-print .printdropdown label:first-of-type,
+#page-mod-questionnaire-print .printdropdown br:first-of-type {
+    display: none;
+}
+
+#page-mod-questionnaire-print .print-text {
+    min-width: 100%;
+    box-sizing: border-box;
+    height: 30px;
+}
+
 #page-mod-questionnaire-complete .notice .buttons div,
 #page-mod-questionnaire-complete .notice .buttons form {
     display: inline;
+}
+
+@media print {
+    #page-mod-questionnaire-report #print-button {
+        display: none;
+    }
 }
 
 #page-mod-questionnaire-complete .notice .buttons input {
@@ -426,7 +448,23 @@ td.selected {
 #page-mod-questionnaire-report .generaltable.questionnairereport td {
     border: 1px solid silver;
 }
+#page-mod-questionnaire-report .generaltable[id]  th.qn-handcursor {
+    cursor: pointer;
+}
 
+#page-mod-questionnaire-report  th.c0 a span[class^='icon-container-'],
+#page-mod-questionnaire-report  th.c1 a span.icon-container-asc,
+#page-mod-questionnaire-report  th.asc a span.icon-container-desc,
+#page-mod-questionnaire-report  th.desc a span.icon-container-asc {
+    display: none;
+}
+
+#page-mod-questionnaire-report  th.asc a span.icon-container-asc,
+#page-mod-questionnaire-report  th.desc a span.icon-container-desc {
+    display: inline-block;
+}
+
+#page-mod-questionnaire-report .frtlst,
 .qn-container .smalltext {
     font-size: 0.75em;
 }
@@ -542,4 +580,72 @@ td.selected {
     width: 2px;
     height: 2px;
     left: 50%;
+}
+
+/* Styles for the print blank page. */
+#page-mod-questionnaire-print .slider {
+    position: relative;
+    width: 100%;
+}
+
+#page-mod-questionnaire-print.path-mod-questionnaire .question-slider.print-slider {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#page-mod-questionnaire-print.path-mod-questionnaire .print-slider .left-side-label,
+#page-mod-questionnaire-print.path-mod-questionnaire .print-slider .right-side-label,
+#page-mod-questionnaire-print.path-mod-questionnaire .print-slider .slider {
+    margin: 0;
+}
+
+#page-mod-questionnaire-print input[type="range"] {
+    appearance: none;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #ddd;
+}
+
+#page-mod-questionnaire-print input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0;
+    height: 0;
+}
+
+#page-mod-questionnaire-print input[type="range"]::-moz-range-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0;
+    height: 0;
+}
+
+#page-mod-questionnaire-print input[type="range"]::-ms-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0;
+    height: 0;
+}
+
+#page-mod-questionnaire-print .path-mod-questionnaire .right-side-label,
+#page-mod-questionnaire-print .path-mod-questionnaire .left-side-label {
+    margin: 0;
+}
+
+#page-mod-questionnaire-print .bubble {
+    display: none;
+}
+
+@media print {
+    #page-mod-questionnaire-print .slider {
+        position: relative;
+        width: 100%;
+    }
+
+    #page-mod-questionnaire-print input[type="range"] {
+        appearance: none;
+        width: 100%;
+        border: 1px solid #000000;
+        border-radius: 5px;
+    }
 }

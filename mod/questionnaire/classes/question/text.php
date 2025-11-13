@@ -93,6 +93,7 @@ class text extends question {
             format_string(stripslashes($response->answers[$this->id][0]->value)) : '');
         $choice->id = self::qtypename($this->type_id) . $this->id;
         $questiontags->qelements->choice = $choice;
+        $questiontags->isprint = $this->get_isprint();
         return $questiontags;
     }
 

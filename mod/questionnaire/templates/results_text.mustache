@@ -50,11 +50,51 @@
     }}
 <!-- Begin HTML generated from results_text template. -->
 {{#responses.0}}
-<table class="generaltable">
+<table class="generaltable"  {{#tableid}}id="{{tableid}}"{{/tableid}}>
     <thead>
     <tr>
-        <th class="header c0" style="text-align:left;" scope="col">{{#str}} respondent, mod_questionnaire {{/str}}</th>
-        <th class="header c1 lastcol" style="text-align:right;" scope="col">{{#str}} response, mod_questionnaire {{/str}}</th>
+        <th class="header c0 {{#tableid}}qn-handcursor{{/tableid}}" style="text-align:left;" scope="col" data-value="{{#str}} respondent, mod_questionnaire {{/str}}">
+                {{#sortresponse}}
+                    <a href="#"
+                       title="{{#str}} respondent, mod_questionnaire {{/str}}"
+                       role="link"
+                       aria-label="{{#str}} respondent, mod_questionnaire {{/str}}" onclick="return false;">
+                        {{#str}} respondent, mod_questionnaire {{/str}}
+                        <span class="icon-container-asc">
+                            {{#pix}} t/sort_asc, moodle, {{#str}} sortbyx {{/str}}{{/pix}}
+                        </span>
+                        <span class="icon-container-desc">
+                            {{#pix}} t/sort_desc, moodle, {{#str}} sortbyxreverse {{/str}}{{/pix}}
+                        </span>
+                    </a>
+                {{/sortresponse}}
+                {{^sortresponse}}
+                    {{#str}} respondent, mod_questionnaire {{/str}}
+                {{/sortresponse}}
+                {{#tableid}}
+                <div class="frtlst">{{#str}} firstname {{/str}}/{{#str}} lastname {{/str}}</div>
+                <th class="header c1 {{#tableid}}qn-handcursor{{/tableid}} desc" style="text-align:center;" scope="col" data-value="{{#str}} date {{/str}}">
+                    {{#sortresponse}}
+                        <a href="#"
+                           title="{{#str}} date {{/str}}"
+                           role="link"
+                           aria-label="{{#str}} date {{/str}}" onclick="return false;">
+                            {{#str}} date {{/str}}
+                            <span class="icon-container-asc">
+                                {{#pix}} t/sort_asc, moodle, {{#str}} sortbyx {{/str}}{{/pix}}
+                            </span>
+                            <span class="icon-container-desc">
+                                {{#pix}} t/sort_desc, moodle, {{#str}} sortbyxreverse {{/str}}{{/pix}}
+                            </span>
+                        </a>
+                    {{/sortresponse}}
+                    {{^sortresponse}}
+                        {{#str}} date {{/str}}
+                    {{/sortresponse}}
+                </th>
+            {{/tableid}}
+        </th>
+        <th class="header c2 lastcol" style="text-align:right;" scope="col">{{#str}} response, mod_questionnaire{{/str}}</th>
     </tr>
     </thead>
     <tbody>
@@ -63,21 +103,29 @@
     {{#response}}
     <tr class="">
         <td class="cell c0" style="text-align:left;">{{{response.respondent}}}</td>
-        <td class="cell c1 lastcol" style="text-align:right;">{{{response.text}}}</td>
+        {{#tableid}}
+            <td class="cell c1" style="text-align:center;">{{{response.date}}}</td>
+        {{/tableid}}
+        <td class="cell c2 lastcol" style="text-align:right;">{{{response.text}}}</td>
     </tr>
     {{/response}}
 {{/responses}}
+{{#responses.0}}
+</tbody>
+<tfoot>
+{{/responses.0}}
 {{#total}}
     <tr>
-        <td colspan="2"><div class="tabledivider"></div></td>
+        <td colspan={{#tableid}}"3"{{/tableid}}{{^tableid}}"2"{{/tableid}}><div class="tabledivider"></div></td>
     </tr>
     <tr class="lastrow">
-        <td class="cell c0" style="text-align:left;">{{#str}} totalresponses, mod_questionnaire{{/str}}</td>
+        <td class="cell c0" {{#tableid}} colspan="2"{{/tableid}} style="text-align:left;">
+            {{#str}} totalresponses, mod_questionnaire{{/str}}</td>
         <td class="cell c1 lastcol" style="text-align:right;">{{total}}</td>
     </tr>
 {{/total}}
 {{#responses.0}}
-    </tbody>
+</tfoot>
 </table>
 {{/responses.0}}
 {{^responses}}

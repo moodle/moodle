@@ -1,8 +1,26 @@
 Release Notes
 
-Release 4.1.0 (Build - 2023081100)
+Release 4.4.0 (Build - 2025110900)
+New Features:
+* [PR590](https://github.com/PoetOS/moodle-mod_questionnaire/pull/590): Allow responses to be deleted automatically after a specified time. This is disabled by default.
 
-Initial release for Moodle 4.1 forward.
+Improvements:
+* [PR618](https://github.com/PoetOS/moodle-mod_questionnaire/pull/618): Make printable questionnaire more readable.
+* Updated deprecated functions.
+* [PR589](https://github.com/PoetOS/moodle-mod_questionnaire/pull/589): Allow selection of submitted responses or in progress responses on results pages.
+* [PR596](https://github.com/PoetOS/moodle-mod_questionnaire/pull/596): Allow sorting on name and submission date on summary page.
+* [PR588](https://github.com/PoetOS/moodle-mod_questionnaire/pull/588): Add a print button to the My report page.
+* [PR378](https://github.com/PoetOS/moodle-mod_questionnaire/pull/378): Add open and close dates back to view page.
+* [PR604](https://github.com/PoetOS/moodle-mod_questionnaire/pull/604): Show all "other" free choices for rate questions individually on report pages.
+* [PR616](https://github.com/PoetOS/moodle-mod_questionnaire/pull/616): Only show dependent questions answered on response page.
+* [I120](https://github.com/PoetOS/moodle-mod_questionnaire/issues/120): Added idnumber to export.
+
+Bug Fixes:
+* Ensure numbering doesn't appear on results pages when they are turned off.
+* Mobile - ensure pull to refresh doesn't resend question responses.
+* Fixed empty key error.
+* Fixed oversize icon display in 4.5.
+* Thank you page header is now filtered.
 
 Release 4.1.1 (Build - 2024082900)
 
@@ -33,6 +51,10 @@ Bug Fixes:
 * PR523 - Behat activity completion fix.
 * PR514 - Section text qtype should not support feedback.
 * PR516 - Course description displays properly.
+
+Release 4.1.0 (Build - 2023081100)
+
+Initial release for Moodle 4.1 forward.
 
 (see CHANGES.md in release 4.00 for earlier changes.)
 

@@ -78,8 +78,8 @@
 }}
 {{=<% %>=}}
 <div>
-    <core-course-module-info [module]="module" description="<%intro%>" component="mod_questionnaire" componentId="<%cmid%>"
-        [courseId]="courseId"></core-course-module-info>
+    <core-course-module-info *ngIf="module" [module]="module" description="<%intro%>" component="mod_questionnaire"
+        componentId="<%cmid%>" [courseId]="courseId"></core-course-module-info>
     <%#notifications%>
     <ion-card>
         <ion-card-content>
@@ -92,13 +92,13 @@
         <ion-card-content>
             <%#resume%>
             <ion-button expand="block" core-site-plugins-new-content component="mod_questionnaire"
-                    method="mobile_view_activity" [args]="{cmid: <%cmid%>, action: 'resume'}">
+                    method="mobile_view_activity" [args]="{cmid: <%cmid%>, action: 'resume'}" [ptrEnabled]="false">
                 {{ 'plugin.mod_questionnaire.resumesurvey' | translate }}
             </ion-button>
             <%/resume%>
             <%^resume%>
             <ion-button expand="block" core-site-plugins-new-content component="mod_questionnaire"
-                    method="mobile_view_activity" [args]="{cmid: <%cmid%>, action: 'respond'}">
+                    method="mobile_view_activity" [args]="{cmid: <%cmid%>, action: 'respond'}" [ptrEnabled]="false">
                 {{ 'plugin.mod_questionnaire.answerquestions' | translate }}
             </ion-button>
             <%/resume%>

@@ -220,7 +220,7 @@ abstract class responsetype {
                 $pagetags->total->width2 = $percent * 1.4;
                 $pagetags->total->image2 = $imageurl . 'thbar.gif';
                 $pagetags->total->percent = sprintf('&nbsp;%.'.$precision.'f%%', $percent);
-                $pagetags->total->total = "$respondents/$participants";
+                $pagetags->total->total = "($respondents)";
                 $pagetags->total->evencolor = $evencolor;
             }
         }
@@ -287,6 +287,7 @@ abstract class responsetype {
             $userfieldsarr = get_all_user_name_fields();
         }
         $userfieldsarr = array_merge($userfieldsarr, ['username', 'department', 'institution']);
+        $userfieldsarr = array_merge($userfieldsarr, ['username', 'department', 'institution', 'idnumber']);
         $userfields = '';
         foreach ($userfieldsarr as $field) {
             $userfields .= $userfields === '' ? '' : ', ';

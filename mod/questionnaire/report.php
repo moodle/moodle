@@ -36,6 +36,7 @@ $individualresponse = optional_param('individualresponse', false, PARAM_INT);
 $currentgroupid = optional_param('group', 0, PARAM_INT); // Groupid.
 $user = optional_param('user', '', PARAM_INT);
 $outputtarget = optional_param('target', 'html', PARAM_ALPHA); // Default 'html'. Could be 'pdf'.
+$userview = optional_param('responsestats', '0', PARAM_ALPHANUM);
 
 $userid = $USER->id;
 switch ($action) {
@@ -87,7 +88,7 @@ if ($outputtarget == 'pdf') {
 
 // If you can't view the questionnaire, or can't view a specified response, error out.
 $context = context_module::instance($cm->id);
-if (!$questionnaire->can_view_all_responses() && !$individualresponse) {
+if (!$questionnaire->can_view_all_responses(null, true) && !$individualresponse) {
     // Should never happen, unless called directly by a snoop...
     throw new \moodle_exception('nopermissions', 'mod_questionnaire');
 }
@@ -125,6 +126,7 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 if ($outputtarget == 'print') {
     $PAGE->set_pagelayout('popup');
+    $PAGE->requires->js_init_call('M.mod_questionnaire.init_printing');
 }
 
 // Tab setup.
@@ -204,6 +206,14 @@ if ($usergraph) {
         }
     }
 }
+
+$responsestatus = [
+        'y' => get_string('fullsubmissions', 'questionnaire'),
+        '0' => get_string('allresponses', 'questionnaire'),
+        'n' => get_string('responsesnotsubmitted', 'questionnaire'),
+];
+// Set default userview to all responses.
+$userview = array_key_exists($userview, $responsestatus) ? $userview : '0';
 
 switch ($action) {
 
@@ -582,7 +592,7 @@ switch ($action) {
         if ($currentgroupid > 0) {
             $groupname = get_string('group').': <strong>'.groups_get_group_name($currentgroupid).'</strong>';
         } else {
-            $groupname = '<strong>'.get_string('allparticipants').'</strong>';
+            $groupname = '<strong>'.$responsestatus[$userview].'</strong>';
         }
 
         // Available group modes (0 = no groups; 1 = separate groups; 2 = visible groups).
@@ -627,9 +637,9 @@ switch ($action) {
             if ($currentgroupid > 0) {
                 $groupname = get_string('group') . ': <strong>' . groups_get_group_name($currentgroupid) . '</strong>';
             } else {
-                $groupname = '<strong>' . get_string('allparticipants') . '</strong>';
+                $groupname = '<strong>' . $responsestatus[$userview] . '</strong>';
             }
-            $respinfo = get_string('viewallresponses', 'questionnaire') . '. ' . $groupname . '. ';
+            $respinfo = get_string('view') . ' ' . $groupname;
             $strsort = get_string('order_' . $sort, 'questionnaire');
             $respinfo .= $strsort;
             $questionnaire->page->add_to_page('respondentinfo', $respinfo);
@@ -650,13 +660,15 @@ switch ($action) {
             if ($outputtarget != 'print') {
                 $linkname = get_string('downloadpdf', 'mod_questionnaire');
                 $link = new moodle_url('/mod/questionnaire/report.php',
-                    ['action' => 'vall', 'instance' => $instance, 'group' => $currentgroupid, 'target' => 'pdf']);
+                        ['action' => 'vall', 'instance' => $instance, 'group' => $currentgroupid, 'target' => 'pdf',
+                                'responsestats' => $userview]);
                 $downpdficon = new pix_icon('f/pdf', $linkname);
                 $respinfo .= $questionnaire->renderer->action_link($link, null, null, null, $downpdficon);
 
                 $linkname = get_string('print', 'mod_questionnaire');
                 $link = new \moodle_url('/mod/questionnaire/report.php',
-                    ['action' => 'vall', 'instance' => $instance, 'group' => $currentgroupid, 'target' => 'print']);
+                        ['action' => 'vall', 'instance' => $instance, 'group' => $currentgroupid, 'target' => 'print',
+                                'responsestats' => $userview]);
                 $htmlicon = new pix_icon('t/print', $linkname);
                 $options = ['menubar' => true, 'location' => false, 'scrollbars' => true, 'resizable' => true,
                     'height' => 600, 'width' => 800, 'title' => $linkname];
@@ -666,7 +678,7 @@ switch ($action) {
                 $respinfo .= $questionnaire->renderer->action_link($link, null, $action,
                         ['class' => $class, 'title' => $linkname], $htmlicon) . '&nbsp;';
 
-                $respinfo .= get_string('viewallresponses', 'questionnaire') . '. ' . $groupname . '. ';
+                $respinfo .= $questionnaire->renderer->viewresponse_print_menu($url->out(), $responsestatus, $userview);
                 $strsort = get_string('order_' . $sort, 'questionnaire');
                 $respinfo .= $strsort;
                 $respinfo .= $questionnaire->renderer->help_icon('orderresponses', 'questionnaire');
@@ -763,7 +775,7 @@ switch ($action) {
             if ($currentgroupid > 0) {
                 $groupname = get_string('group') . ': <strong>' . groups_get_group_name($currentgroupid) . '</strong>';
             } else {
-                $groupname = '<strong>' . get_string('allparticipants') . '</strong>';
+                $groupname = '<strong>' . $responsestatus[$userview] . '</strong>';
             }
             if (!$byresponse) { // Show respondents individual responses.
                 $questionnaire->view_response($rid, '', $resps, true, true, false, $currentgroupid, $outputtarget);
@@ -797,7 +809,7 @@ switch ($action) {
 
             $groupname = get_string('group').': <strong>'.groups_get_group_name($currentgroupid).'</strong>';
             if ($currentgroupid == 0 ) {
-                $groupname = get_string('allparticipants');
+                $groupname = $responsestatus[$userview];
             }
             if ($byresponse) {
                 $respinfo = '';

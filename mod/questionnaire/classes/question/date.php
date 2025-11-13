@@ -85,6 +85,7 @@ class date extends question {
         $choice->value = (isset($response->answers[$this->id][0]->value) ? $response->answers[$this->id][0]->value : '');
         $questiontags->qelements = new \stdClass();
         $questiontags->qelements->choice = $choice;
+        $questiontags->isprint = $this->get_isprint();
         return $questiontags;
     }
 

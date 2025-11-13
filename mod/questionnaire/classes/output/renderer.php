@@ -54,6 +54,10 @@ class renderer extends \plugin_renderer_base {
      */
     public function render_reportpage($page) {
         $data = $page->export_for_template($this);
+        $printparam = optional_param('target', '', PARAM_TEXT);
+
+        $data->printparam = $printparam == 'print';
+
         return $this->render_from_template('mod_questionnaire/reportpage', $data);
     }
 
@@ -240,7 +244,8 @@ class renderer extends \plugin_renderer_base {
                 $pagetags->notifications = $this->notification($notification, \core\output\notification::NOTIFY_ERROR);
             }
         }
-
+        $pagetags->questionname = $question->name;
+        
         return $this->render_from_template('mod_questionnaire/question_container', $pagetags);
     }
 
@@ -563,5 +568,24 @@ class renderer extends \plugin_renderer_base {
         );
 
         return $this->render_from_template('mod_questionnaire/dataformat_selector', $data);
+    }
+
+    /**
+     * @param $urlroot
+     * @param $options
+     * @param $userview
+     * @return string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public function viewresponse_print_menu($urlroot, $options, $userview) {
+        if (!$urlroot instanceof \moodle_url) {
+            $urlroot = new \moodle_url($urlroot);
+        }
+        $select = new \single_select($urlroot, 'responsestats', $options, $userview, null);
+        $select->label = get_string('view');
+        $select->class = 'm-1';
+        $output = $this->render($select);
+        return $output;
     }
 }

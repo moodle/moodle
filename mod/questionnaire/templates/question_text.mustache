@@ -29,6 +29,7 @@
 
     Example context (json):
     {
+        "isprint": false,
         "qelements": {
             "choice": {
                 "onkeypress": "dosomething()",
@@ -44,7 +45,7 @@
 <!-- Begin HTML generated from question_text template. -->
 {{#qelements}}
 {{#choice}}
-<input {{#choice.onkeypress}}onkeypress="{{.}}"{{/choice.onkeypress}} type="text" size="{{choice.size}}" name="{{choice.name}}" {{#choice.maxlength}}maxlength="{{choice.maxlength}}"{{/choice.maxlength}} value="{{choice.value}}" id="{{choice.id}}" />
+<input {{#isprint}}class="print-text"{{/isprint}} {{#choice.onkeypress}}onkeypress="{{.}}"{{/choice.onkeypress}} type="text" size="{{choice.size}}" name="{{choice.name}}" {{#choice.maxlength}}maxlength="{{choice.maxlength}}"{{/choice.maxlength}} value="{{choice.value}}" id="{{choice.id}}" />
 {{/choice}}
 {{/qelements}}
 <!-- End HTML generated from question_text template. -->

@@ -140,6 +140,7 @@
       <td {{#colstyle}}style="{{.}}"{{/colstyle}}{{#colclass}} class="{{.}}"{{/colclass}}{{#coltitle}} title="{{.}}"{{/coltitle}}
 			{{#colinput}} onclick="if('{{id}}'.length>0) document.getElementById('{{id}}').click()"{{/colinput}}>
         {{#coltext}}{{{.}}}{{/coltext}}
+        {{#oname}}<input size="25" name="{{oname}}" id="{{oid}}" value="" type="text" />{{/oname}}
         {{#colhiddentext}}<span class="accesshide">{{{.}}}</span>{{/colhiddentext}}
         {{#colinput}}<input type="radio" name="{{name}}" id="{{id}}" value="{{value}}"{{#checked}} checked="checked"{{/checked}}{{#disabled}} disabled="disabled"{{/disabled}}{{#onclick}} onclick="{{.}}"{{/onclick}}>
         {{#label}}<label for="{{id}}" class="accesshide">{{{.}}}</label>{{/label}}{{/colinput}}

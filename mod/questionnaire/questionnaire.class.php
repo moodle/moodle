@@ -423,6 +423,10 @@ class questionnaire {
         }
         $pdf = ($outputtarget == 'pdf') ? true : false;
         foreach ($this->questions as $question) {
+            // Only show eligible questions in the response.
+            if (!$question->dependency_fulfilled($rid, $this->questions)) {
+                continue;
+            }
             if ($question->type_id < QUESPAGEBREAK) {
                 $i++;
             }
@@ -709,10 +713,12 @@ class questionnaire {
 
     /**
      * True if the user can view the responses to this questionnaire, and there are valid responses.
+     *
      * @param null|int $usernumresp
+     * @param bool $isviewreport
      * @return bool
      */
-    public function can_view_all_responses($usernumresp = null) {
+    public function can_view_all_responses($usernumresp = null, $isviewreport = false) {
         global $USER, $SESSION;
 
         $owner = $this->is_survey_owner();
@@ -738,7 +744,7 @@ class questionnaire {
         }
 
         $grouplogic = $canviewgroups || $canviewallgroups;
-        $respslogic = ($numresp > 0) && ($numselectedresps > 0);
+        $respslogic = ($numresp > 0) && ($numselectedresps > 0) || $isviewreport;
         return $this->can_view_all_responses_anytime($grouplogic, $respslogic) ||
             $this->can_view_all_responses_with_restrictions($usernumresp, $grouplogic, $respslogic);
     }
@@ -851,15 +857,20 @@ class questionnaire {
             $sql = 'SELECT r.* ' .
                 'FROM {questionnaire_response} r ' .
                 $groupsql .
-                'WHERE r.questionnaireid = :questionnaireid AND r.complete = :status' . $groupcnd;
+                'WHERE r.questionnaireid = :questionnaireid' . $groupcnd;
             $params['questionnaireid'] = $this->id;
-            $params['status'] = 'y';
         }
         if ($userid) {
             $sql .= ' AND r.userid = :userid';
             $params['userid'] = $userid;
         }
 
+        $status = optional_param('responsestats', '0', PARAM_ALPHANUM);
+        if ($status) {
+            $status = ($status === 'n') ? 'n' : 'y';
+            $sql .= ' AND r.complete = :status';
+            $params['status'] = $status;
+        }
         $sql .= ' ORDER BY r.id';
         return $DB->get_records_sql($sql, $params) ?? [];
     }
@@ -1620,6 +1631,7 @@ class questionnaire {
                 } else {
                     $dependants = [];
                 }
+                $this->questions[$questionid]->set_isprint($referer === 'print');
                 $output .= $this->renderer->question_output($this->questions[$questionid], $this->responses[0] ?? [],
                     $i++, null, $dependants);
                 $this->page->add_to_page('questions', $output);
@@ -2512,7 +2524,7 @@ class questionnaire {
             $this->page->add_to_page('progressbar',
                     $this->renderer->render_progress_bar(count($this->questionsbysec) + 1, $this->questionsbysec));
         }
-        $this->page->add_to_page('title', $thankhead);
+        $this->page->add_to_page('title', format_string($thankhead));
         $this->page->add_to_page('addinfo',
             format_text(file_rewrite_pluginfile_urls($thankbody, 'pluginfile.php',
                 $this->context->id, 'mod_questionnaire', 'thankbody', $this->survey->id), FORMAT_HTML, ['noclean' => true]));
@@ -2858,6 +2870,7 @@ class questionnaire {
             $numresps = 1;
         } else {
             $navbar = false;
+            $userview = optional_param('responsestats', 0, PARAM_ALPHA);
             if ($uid !== false) { // One participant only.
                 $rows = $this->get_responses($uid);
                 // All participants or all members of a group.
@@ -2874,8 +2887,29 @@ class questionnaire {
                 return;
             }
             $numresps = count($rows);
+            $respondentstring = get_string('responses', 'questionnaire');
+            if ($userview === 'y') {
+                $respondentstring = get_string('submissions', 'questionnaire');
+            }
+            if (!$userview) {
+                $completedcount = 0;
+                $inprogresscount = 0;
+
+                foreach ($rows as $row) {
+                    if ($row->complete === 'y') {
+                        $completedcount++;
+                    } else if ($row->complete === 'n') {
+                        $inprogresscount++;
+                    }
+                }
+                $numresps .= ' ' . get_string('responses_breakdown', 'questionnaire',
+                    [
+                        'responses' => $completedcount,
+                        'incomplete' => $inprogresscount,
+                    ]);
+            }
             $this->page->add_to_page('respondentinfo',
-                ' '.get_string('responses', 'questionnaire').': <strong>'.$numresps.'</strong>');
+                    ' ' . $respondentstring . ': <strong>' . $numresps . '</strong>');
             if (empty($rows)) {
                 $errmsg = get_string('erroropening', 'questionnaire') .' '. get_string('noresponsedata', 'questionnaire');
                 return($errmsg);
@@ -2915,11 +2949,11 @@ class questionnaire {
             }
             if (!$pdf) {
                 $this->page->add_to_page('responses', $this->renderer->container_start('qn-container'));
-                $this->page->add_to_page('responses', $this->renderer->container_start('qn-info'));
-                if ($question->is_numbered()) {
+                if ($this->questions_autonumbered() && $question->is_numbered()) {
+                    $this->page->add_to_page('responses', $this->renderer->container_start('qn-info'));
                     $this->page->add_to_page('responses', $this->renderer->heading($qnum, 2, 'qn-number'));
+                    $this->page->add_to_page('responses', $this->renderer->container_end()); // End qn-info.
                 }
-                $this->page->add_to_page('responses', $this->renderer->container_end()); // End qn-info.
                 $this->page->add_to_page('responses', $this->renderer->container_start('qn-content'));
             }
             // If question text is "empty", i.e. 2 non-breaking spaces were inserted, do not display any question text.
@@ -2928,7 +2962,7 @@ class questionnaire {
             }
             if ($pdf) {
                 $response = new stdClass();
-                if ($question->is_numbered()) {
+                if ($this->questions_autonumbered() && $question->is_numbered()) {
                     $response->qnum = $qnum;
                 }
                 $response->qcontent = format_text(file_rewrite_pluginfile_urls($question->content, 'pluginfile.php',
@@ -2999,6 +3033,7 @@ class questionnaire {
             $userfieldsarr = get_all_user_name_fields();
         }
         $userfieldsarr = array_merge($userfieldsarr, ['username', 'department', 'institution']);
+        $userfieldsarr = array_merge($userfieldsarr, ['username', 'department', 'institution', 'idnumber']);
         return $userfieldsarr;
     }
 
@@ -3169,6 +3204,9 @@ class questionnaire {
         if (in_array('id', $options)) {
             array_push($positioned, $uid);
         }
+        if (in_array('useridnumber', $options)) {
+            array_push($positioned, $user->idnumber);
+        }
         if (in_array('fullname', $options)) {
             array_push($positioned, $fullname);
         }
@@ -3228,7 +3266,7 @@ class questionnaire {
         $columns = array();
         $types = array();
         foreach ($options as $option) {
-            if (in_array($option, array('response', 'submitted', 'id'))) {
+            if (in_array($option, array('response', 'submitted', 'id', 'useridnumber'))) {
                 $columns[] = get_string($option, 'questionnaire');
                 $types[] = 0;
             } else if ($option == 'useridentityfields') {
@@ -3923,7 +3961,7 @@ class questionnaire {
                 // Just in case a question pertaining to a section has been deleted or made not required
                 // after being included in scorecalculation.
                 if (isset($qscore[$qid])) {
-                    $key = ($key == 0) ? 1 : $key;
+                    $key = empty($key) ? 1 : $key;
                     $score[$section] += round($qscore[$qid] * $key);
                     $maxscore[$section] += round($qmax[$qid] * $key);
                     if ($compare  || $allresponses) {
@@ -4175,5 +4213,63 @@ class questionnaire {
                 WHERE u.id = ?";
         $row = $DB->get_record_sql($sql, array_merge($params, [$userid]));
         return $row;
+    }
+
+    /**
+     * Output the questionnair information.
+     *
+     * @param array $messages any access messages that should be described.
+     */
+    public function view_information() {
+        $messages = [];
+
+        if (isset($this->qtype)) {
+            switch ($this->qtype) {
+                case QUESTIONNAIREUNLIMITED:
+                    $typestring = get_string('unlimited', 'questionnaire');
+                    break;
+                case QUESTIONNAIREONCE:
+                    $typestring = get_string('once', 'questionnaire');
+                    break;
+                case QUESTIONNAIREDAILY:
+                    $typestring = get_string('daily', 'questionnaire');
+                    break;
+                case QUESTIONNAIREWEEKLY:
+                    $typestring = get_string('weekly', 'questionnaire');
+                    break;
+                case QUESTIONNAIREMONTHLY:
+                    $typestring = get_string('monthly', 'questionnaire');
+                    break;
+                default:
+                    $typestring = '';
+                    break;
+            }
+            array_push($messages, get_string('attemptsallowed', 'questionnaire', $typestring));
+        }
+
+        if ($this->is_open() && !$this->is_closed()) {
+            if ($this->opendate > 0) {
+                array_push($messages, get_string('openedat', 'questionnaire', userdate($this->opendate)));
+            }
+            if ($this->closedate > 0) {
+                array_push($messages, get_string('closesat', 'questionnaire', userdate($this->closedate)));
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
+     * Print each message in an array, surrounded by &lt;p>, &lt;/p> tags.
+     *
+     * @param array $messages the array of message strings.
+     * @return string HTML to output.
+     */
+    public function access_messages($messages) {
+        $output = '';
+        foreach ($messages as $message) {
+            $output .= html_writer::tag('p', $message) . "\n";
+        }
+        return $output;
     }
 }

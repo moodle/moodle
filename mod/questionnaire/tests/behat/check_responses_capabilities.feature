@@ -31,10 +31,9 @@ Feature: Review responses with different capabilities
     And I follow "Test questionnaire"
     Then I should see "View all responses"
     And I navigate to "View all responses" in current page administration
-    Then I should see "View all responses."
-    And I should see "All participants."
+    Then I should see "All responses"
     And I should see "View Default order"
-    And I should see "Responses: 6"
+    And I should see "Responses: 7 (Submissions: 6 | In progress: 1)"
     And I log out
 
   @javascript

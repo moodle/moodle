@@ -102,6 +102,12 @@ if ($questionnaire->capabilities->editquestions && !$questionnaire->questions &&
         get_string('addquestions', 'questionnaire') . '</a>');
 }
 
+// Time zone message (if required).
+if (!$message && $questionnaire->is_open() && !$questionnaire->is_closed()) {
+    $info = $questionnaire->view_information();
+    $questionnaire->page->add_to_page('info', $questionnaire->access_messages($info));
+}
+
 if (isguestuser()) {
     $guestno = html_writer::tag('p', get_string('noteligible', 'questionnaire'));
     $liketologin = html_writer::tag('p', get_string('liketologin'));

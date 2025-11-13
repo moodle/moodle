@@ -419,4 +419,55 @@ class responsetypes_test extends \advanced_testcase {
         $this->assertArrayHasKey($responseid, $responses);
         $this->assertEquals($responseid, $responses[$responseid]->id);
     }
+
+    public function test_create_old_response_boolean() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Some common variables used below.
+        $userid = 1;
+
+        // Set up a questionnaire with one boolean response question.
+        $course = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_questionnaire');
+        // Add a questionnaire that will delete old responses after one month.
+        $questionnaire1 = $generator->create_test_questionnaire($course, QUESYESNO, ['content' => 'Enter yes or no']);
+        $question1 = reset($questionnaire1->questions);
+        $response1 = $generator->create_question_response($questionnaire1, $question1, 'y', $userid);
+
+        $questionnaire2 = $generator->create_test_questionnaire($course, QUESYESNO, ['content' => 'Enter yes or no']);
+        $question2 = reset($questionnaire2->questions);
+        $response2 = $generator->create_question_response($questionnaire2, $question2, 'y', $userid);
+
+        $this->response_tests($questionnaire1->id, $response1->id, $userid);
+        $this->response_tests($questionnaire2->id, $response2->id, $userid);
+
+        // Set the removeafterfield for questionnaires.
+        $newquestionairre1 = new \stdClass();
+        $newquestionairre1->id = $questionnaire1->id;
+        $newquestionairre1->removeafter = 2592000;
+        $newquestionairre2 = new \stdClass();
+        $newquestionairre2->id = $questionnaire2->id;
+        $newquestionairre2->removeafter = 2592000;
+        $DB->update_record('questionnaire', $newquestionairre1);
+        $DB->update_record('questionnaire', $newquestionairre2);
+        // Retrieve the specific boolean response.
+        $booleanresponses1 = $DB->get_record('questionnaire_response', ['id' => $response1->id]);
+        $booleanresponses2 = $DB->get_record('questionnaire_response', ['id' => $response2->id]);
+        // Set the submitted time to 31 day in the past.
+        $booleanresponses1->submitted = $booleanresponses1->submitted - 2592000 - 86400;
+        $booleanresponses2->submitted = $booleanresponses2->submitted - 2592000 - 86400;
+        $DB->update_record('questionnaire_response', $booleanresponses1);
+        $DB->update_record('questionnaire_response', $booleanresponses2);
+        questionnaire_delete_old_responses();
+        $responseresult1 = $DB->record_exists('questionnaire_response', ['id' => $response1->id]);
+        $responseresult2 = $DB->record_exists('questionnaire_response', ['id' => $response2->id]);
+        $this->assertEmpty($responseresult1);
+        $this->assertEmpty($responseresult2);
+        $boolresponseresult1 = $DB->record_exists('questionnaire_response_bool', ['response_id' => $response1->id]);
+        $boolresponseresult2 = $DB->record_exists('questionnaire_response_bool', ['response_id' => $response2->id]);
+        $this->assertEmpty($boolresponseresult1);
+        $this->assertEmpty($boolresponseresult2);
+    }
 }

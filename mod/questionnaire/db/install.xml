@@ -26,6 +26,7 @@
         <FIELD NAME="completionsubmit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Questionnaire marked as 'complete' when submitted."/>
         <FIELD NAME="autonum" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="3" SEQUENCE="false" COMMENT="option for auto numbering questions and pages (both selected by default)"/>
         <FIELD NAME="progressbar" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Display a progress bar at top of questionnaire."/>
+        <FIELD NAME="removeafter" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Remove old responses after certain period. 1 for one month, 2 for two months...12 for one year, 13 for two years and 14 for three years."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

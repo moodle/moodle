@@ -882,7 +882,8 @@ function questionnaire_get_recent_mod_activity(&$activities, &$index, $timestart
     $params['timestart'] = $timestart;
     $params['questionnaireid'] = $questionnaire->id;
 
-    $ufields = user_picture::fields('u', null, 'useridagain');
+    $userfieldsapi = \core_user\fields::for_userpic();
+    $ufields = $userfieldsapi->get_sql('u', false, '', 'useridagain', false)->selects;
     if (!$attempts = $DB->get_records_sql("
                     SELECT qr.*,
                     {$ufields}
@@ -956,7 +957,10 @@ function questionnaire_get_recent_mod_activity(&$activities, &$index, $timestart
         $tmpactivity->content = new stdClass();
         $tmpactivity->content->attemptid = $attempt->id;
 
-        $userfields = explode(',', user_picture::fields());
+        $userfieldsapi = \core_user\fields::for_userpic();
+        $allnamefields = $userfieldsapi->get_sql('', false, '', '', false)->selects;
+        $selects = str_replace(', ', ',', $allnamefields);
+        $userfields = explode(',', $selects);
         $tmpactivity->user = new stdClass();
         foreach ($userfields as $userfield) {
             if ($userfield == 'id') {

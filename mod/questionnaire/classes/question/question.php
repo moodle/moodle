@@ -109,6 +109,9 @@ abstract class question {
     /** @var mixed $extradata Any custom data for the question type. */
     public $extradata = '';
 
+    /** @var boolean $isprint The isprint flag. */
+    public $isprint = false;
+
     /** @var array $qtypenames List of all question names. */
     private static $qtypenames = [
         QUESYESNO => 'yesno',
@@ -465,6 +468,24 @@ abstract class question {
         } else {
             return $this->notifications;
         }
+    }
+
+    /**
+     * Sets the print status of the page.
+     *
+     * @param bool $isprint Optional. Defaults to false. If true, sets the page as a print page.
+     */
+    public function set_isprint(bool $isprint = false) {
+        $this->isprint = $isprint;
+    }
+
+    /**
+     * Retrieves the print status of the page.
+     *
+     * @return bool True if the page is a print page, otherwise false.
+     */
+    public function get_isprint(): bool {
+        return (bool) $this->isprint;
     }
 
     /**

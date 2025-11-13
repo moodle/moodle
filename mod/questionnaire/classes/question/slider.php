@@ -121,6 +121,7 @@ class slider extends question {
         $extradata->id = self::qtypename($this->type_id) . $this->id;
         $questiontags->qelements = new \stdClass();
         $questiontags->qelements->extradata = $extradata;
+        $questiontags->isprint = $this->get_isprint();
         return $questiontags;
     }
 

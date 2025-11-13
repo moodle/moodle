@@ -268,6 +268,16 @@ M.mod_questionnaire.init_sendmessage = function(Y) {
     }, '#checkstarted');
 
 };
+
+M.mod_questionnaire.init_printing = function(Y) {
+    var printbutton = Y.one('#print-button');
+    if (printbutton) {
+        printbutton.on('click', function(e) {
+            e.preventDefault();
+            window.print();
+        });
+    }
+};
 M.mod_questionnaire.init_slider = function() {
     const allRanges = document.querySelectorAll(".question-slider");
     allRanges.forEach(wrap => {

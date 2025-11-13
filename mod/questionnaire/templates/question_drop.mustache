@@ -29,6 +29,7 @@
 
     Example context (json):
     {
+        "isprint": false,
         "qelements": {
             "choice": {
                 "id": "choiceid1",
@@ -54,11 +55,22 @@
 <!-- Begin HTML generated from question_drop template. -->
 {{#qelements}}
 {{#choice}}
-<select id="{{choice.id}}" name="{{choice.name}}" class="{{choice.class}}" {{#choice.onchange}}onchange="{{.}}"{{/choice.onchange}}>
-{{#choice.options}}
-<option {{#selected}}selected="selected" {{/selected}}value="{{value}}">{{label}}</option>
-{{/choice.options}}
-</select>
+    {{#isprint}}
+        <div class="printdropdown">
+            {{#choice.options}}
+                <input id="{{value}}" value="{{choice.value}}" {{#selected}}checked="checked"{{/selected}} name="{{choice.name}}" type="checkbox" aria-label="{{label}}"/>
+                <label for="{{value}}">{{label}}</label>
+                <br/>
+            {{/choice.options}}
+        </div>
+    {{/isprint}}
+    {{^isprint}}
+        <select id="{{choice.id}}" name="{{choice.name}}" class="{{choice.class}}" {{#choice.onchange}}onchange="{{.}}"{{/choice.onchange}}>
+            {{#choice.options}}
+                <option {{#selected}}selected="selected" {{/selected}}value="{{value}}">{{label}}</option>
+            {{/choice.options}}
+        </select>
+    {{/isprint}}
 {{/choice}}
 {{/qelements}}
 <!-- End HTML generated from question_drop template. -->

@@ -43,5 +43,9 @@ class cleanup extends \core\task\scheduled_task {
         require_once($CFG->dirroot . '/mod/questionnaire/locallib.php');
 
         questionnaire_cleanup();
+        $isautodelete = (bool) get_config('questionnaire', 'autodeleteresponse');
+        if ($isautodelete) {
+            questionnaire_delete_old_responses();
+        }
     }
 }

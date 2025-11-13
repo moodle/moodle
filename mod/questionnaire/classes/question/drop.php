@@ -117,6 +117,7 @@ class drop extends question {
         $chobj->class = 'select custom-select menu q'.$this->id;
         $chobj->options = $options;
         $choicetags->qelements->choice = $chobj;
+        $choicetags->isprint = $this->get_isprint();
 
         return $choicetags;
     }

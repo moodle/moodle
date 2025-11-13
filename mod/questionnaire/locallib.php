@@ -949,3 +949,65 @@ function questionnaire_get_standard_page_items($id = null, $a = null) {
 
     return (array($cm, $course, $questionnaire));
 }
+
+
+/**
+ * Create options for remove old responses in the questionare.
+ *
+ * @return array
+ */
+function questionnaire_create_remove_options() {
+    $options = [];
+    $options[0] = get_string('removeoldresponsesdefault', 'questionnaire');
+    for ($i = 1; $i <= 36; $i++) {
+        $options[$i * 2592000] = $i > 1 ? get_string('nummonths', 'moodle', $i) : get_string('onemonth', 'questionnaire');
+    }
+    return $options;
+}
+
+/**
+ * Delete all the old responses when we have setting the questionnaire.
+ *
+ * @throws coding_exception
+ * @throws dml_exception
+ */
+function questionnaire_delete_old_responses() {
+    global $DB;
+    $currenttime = time();
+
+    $sql = "SELECT qr.id
+              FROM {questionnaire} q
+              JOIN {questionnaire_response} qr ON qr.questionnaireid = q.id AND qr.complete = 'y'
+             WHERE q.removeafter <> 0 AND (q.removeafter < :currenttime - qr.submitted)";
+
+    // Get all old response IDs from questionnaires.
+    $oldresponses = $DB->get_records_sql($sql, ['currenttime' => $currenttime]);
+
+    if (!empty($oldresponses)) {
+        try {
+            $oldresponsesid = array_keys($oldresponses);
+            $count = count($oldresponsesid);
+            if (!PHPUNIT_TEST) {
+                mtrace("\nBeginning deleting $count old responses requests");
+            }
+            // Tables to delete responses from.
+            $responsetables = [
+                    'questionnaire_response_bool', 'questionnaire_response_date', 'questionnaire_resp_multiple',
+                    'questionnaire_response_other', 'questionnaire_response_rank', 'questionnaire_resp_single',
+                    'questionnaire_response_text'];
+
+            // Delete related response data.
+            foreach ($responsetables as $tablename) {
+                $DB->delete_records_list($tablename, 'response_id', $oldresponsesid);
+            }
+
+            // Delete from the main response table.
+            $DB->delete_records_list('questionnaire_response', 'id', $oldresponsesid);
+            if (!PHPUNIT_TEST) {
+                mtrace("\nCompleted deleting $count old responses requests");
+            }
+        } catch (\dml_exception $ex) {
+            debugging('Error: ' . $ex->getMessage(), DEBUG_DEVELOPER);
+        }
+    }
+}

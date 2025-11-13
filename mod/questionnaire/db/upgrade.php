@@ -1002,6 +1002,20 @@ function xmldb_questionnaire_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2022121600.02, 'questionnaire');
     }
 
+    if ($oldversion < 2022121601.01) {
+        // Add removeafter fields.
+        $table = new xmldb_table('questionnaire');
+        $field = new xmldb_field('removeafter', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'progressbar');
+
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Questionnaire savepoint reached.
+        upgrade_mod_savepoint(true, 2022121601.01, 'questionnaire');
+    }
+
     return true;
 }
 

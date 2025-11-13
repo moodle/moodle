@@ -70,7 +70,7 @@
     </tr>
     {{#rows}}
     <tr>
-        <td style="text-align:{{textalign}}">{{{content}}}</td>
+        <td style="text-align:{{textalign}}">{{{content}}} {{#othercontent}} <span class="response text">{{.}}</span>{{/othercontent}}</td>
         {{#cols}}
         {{#checked}}
         <td style="text-align:center;" class="selected">

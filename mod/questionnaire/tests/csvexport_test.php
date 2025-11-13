@@ -199,7 +199,7 @@ class csvexport_test extends \advanced_testcase {
      * @return string[]
      */
     private function expected_complete_output() {
-        return ["Institution	Department	Course	Group	Full name	Username	Q01_Text Box 1000	Q02_Essay Box 1002	" .
+        return ["Institution	Department	Course	Group	User idnumber	Full name	Username	Q01_Text Box 1000	Q02_Essay Box 1002	" .
             "Q03_Numeric 1004	Q04_Date 1006	Q05_Radio Buttons 1008	Q06_Drop Down 1010	Q07_Check Boxes 1012->four	" .
             "Q07_Check Boxes 1012->five	Q07_Check Boxes 1012->six	Q07_Check Boxes 1012->seven	Q07_Check Boxes 1012->eight	" .
             "Q07_Check Boxes 1012->nine	Q07_Check Boxes 1012->ten	Q07_Check Boxes 1012->eleven	" .
@@ -207,13 +207,13 @@ class csvexport_test extends \advanced_testcase {
             "Q08_Rate Scale 1014->fifteen	Q08_Rate Scale 1014->sixteen	Q08_Rate Scale 1014->seventeen	" .
             "Q08_Rate Scale 1014->eighteen	Q08_Rate Scale 1014->nineteen	Q08_Rate Scale 1014->twenty	" .
             "Q08_Rate Scale 1014->happy	Q08_Rate Scale 1014->sad	Q08_Rate Scale 1014->jealous	Q09_Slider 1016",
-            "		Test course 1		Testy Lastname1	username1	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname1	username1	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5",
-            "		Test course 1		Testy Lastname2	username2	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname2	username2	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5",
-            "		Test course 1		Testy Lastname3	username3	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname3	username3	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5",
-            "		Test course 1		Testy Lastname4	username4	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname4	username4	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5"];
     }
 
@@ -222,7 +222,7 @@ class csvexport_test extends \advanced_testcase {
      * @return string[]
      */
     private function expected_incomplete_output() {
-        return ["Institution	Department	Course	Group	Full name	Username	Complete	Q01_Text Box 1000	" .
+        return ["Institution	Department	Course	Group	User idnumber	Full name	Username	Complete	Q01_Text Box 1000	" .
             "Q02_Essay Box 1002	" .
             "Q03_Numeric 1004	Q04_Date 1006	Q05_Radio Buttons 1008	Q06_Drop Down 1010	Q07_Check Boxes 1012->four	" .
             "Q07_Check Boxes 1012->five	Q07_Check Boxes 1012->six	Q07_Check Boxes 1012->seven	Q07_Check Boxes 1012->eight	" .
@@ -231,15 +231,15 @@ class csvexport_test extends \advanced_testcase {
             "Q08_Rate Scale 1014->fifteen	Q08_Rate Scale 1014->sixteen	Q08_Rate Scale 1014->seventeen	" .
             "Q08_Rate Scale 1014->eighteen	Q08_Rate Scale 1014->nineteen	Q08_Rate Scale 1014->twenty	" .
             "Q08_Rate Scale 1014->happy	Q08_Rate Scale 1014->sad	Q08_Rate Scale 1014->jealous	Q09_Slider 1016",
-            "		Test course 1		Testy Lastname1	username1	y	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname1	username1	y	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5",
-            "		Test course 1		Testy Lastname2	username2	y	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname2	username2	y	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5",
-            "		Test course 1		Testy Lastname3	username3	y	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname3	username3	y	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5",
-            "		Test course 1		Testy Lastname4	username4	y	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname4	username4	y	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5",
-            "		Test course 1		Testy Lastname5	username5	n	Test answer	Some header textSome paragraph text	83	" .
+            "		Test course 1			Testy Lastname5	username5	n	Test answer	Some header textSome paragraph text	83	" .
             "27/12/2017	wind	three	0	0	0	0	0	0	0	0	0	1	1	2	3	4	5	1	2	3	4		5"];
     }
 }
