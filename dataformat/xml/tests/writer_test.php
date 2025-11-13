@@ -17,8 +17,8 @@
 namespace dataformat_xml;
 
 use advanced_testcase;
-use core_xml_parser;
 use core\dataformat;
+use core\xml_parser;
 
 /**
  * Writer tests
@@ -29,22 +29,12 @@ use core\dataformat;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class writer_test extends advanced_testcase {
-
-    /**
-     * Load required libraries
-     */
-    public static function setUpBeforeClass(): void {
-        global $CFG;
-
-        parent::setUpBeforeClass();
-
-        require_once("{$CFG->libdir}/xmlize.php");
-    }
-
     /**
      * Test writing data
      */
     public function test_write_data(): void {
+        global $CFG;
+
         $this->resetAfterTest(true);
 
         $columns = ['animal', 'colour'];
@@ -56,8 +46,16 @@ final class writer_test extends advanced_testcase {
         $exportfile = dataformat::write_data('My export', 'xml', $columns, $rows);
         $exportfilecontent = file_get_contents($exportfile);
 
+        // Load XML parser from new class since 5.1, plus legacy while we support older versions.
+        if (class_exists(xml_parser::class)) {
+            $parser = new xml_parser();
+        } else {
+            require_once("{$CFG->libdir}/xmlize.php");
+            $parser = new \core_xml_parser();
+        }
+
         // Parse file content to XML structure.
-        $xml = (new core_xml_parser())->parse($exportfilecontent, 1, 'UTF-8', true);
+        $xml = $parser->parse($exportfilecontent, 1, 'UTF-8', true);
         $this->assertCount(2, $xml['records']['#']['record']);
 
         // Assert each row.

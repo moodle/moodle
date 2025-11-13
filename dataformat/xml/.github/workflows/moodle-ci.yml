@@ -8,7 +8,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:14
+        image: postgres:15
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -28,6 +28,8 @@ jobs:
             moodle-branch: 'MOODLE_405_STABLE'
           - php: '8.4'
             moodle-branch: 'MOODLE_500_STABLE'
+          - php: '8.4'
+            moodle-branch: 'MOODLE_501_STABLE'
 
     steps:
       - name: Check out repository code
@@ -76,7 +78,7 @@ jobs:
       - name: Behat tests
         id: behat
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci behat --profile chrome
+        run: moodle-plugin-ci behat --profile chrome --scss-deprecations
 
       - name: Behat failures
         if: ${{ failure() && steps.behat.outcome == 'failure' }}
