@@ -7793,7 +7793,7 @@ class admin_setting_manageformats extends admin_setting {
         $table = new html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center', 'center');
-        $table->attributes['class'] = 'manageformattable table generaltable admintable table-hover';
+        $table->attributes['class'] = 'manageformattable table generaltable admintable table-striped table-hover';
         $table->data  = array();
 
         $cnt = 0;
@@ -7946,7 +7946,7 @@ class admin_setting_managecustomfields extends admin_setting {
         $table = new html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->uninstall, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center');
-        $table->attributes['class'] = 'managecustomfieldtable table generaltable admintable table-hover';
+        $table->attributes['class'] = 'managecustomfieldtable table generaltable admintable table-striped table-hover';
         $table->data  = array();
 
         $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
@@ -8072,7 +8072,7 @@ class admin_setting_managedataformats extends admin_setting {
         $table = new html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center', 'center');
-        $table->attributes['class'] = 'manageformattable table generaltable admintable table-hover';
+        $table->attributes['class'] = 'manageformattable table generaltable admintable table-striped table-hover';
         $table->data  = array();
 
         $cnt = 0;
