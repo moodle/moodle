@@ -113,7 +113,7 @@ class version_information {
             return (object) [
                 'version' => $CFG->version,
                 'release' => $CFG->release,
-                'branch' => $CFG->branch
+                'branch' => $CFG->branch,
             ];
         }
 
@@ -176,7 +176,7 @@ class version_information {
             'phposbuild' => PHP_OS,
             'phpversion' => phpversion(),
             'dbtype' => $CFG->dbtype,
-            'dbversion' => $this->get_db_version()
+            'dbversion' => $this->get_db_version(),
         ];
     }
 }

@@ -33,34 +33,34 @@ class launch_config_test extends \advanced_testcase {
         global $CFG;
         require_once($CFG->dirroot.'/mod/lti/locallib.php');
     }
-    public function test_not_configured_nothing() {
+    public function test_not_configured_nothing(): void {
         $this->expectExceptionMessage(get_string('notconfigured', 'report_allylti'));
         new launch_config((object) [], (object) []);
     }
 
-    public function test_not_configured_partial_adminurl() {
-        $this->expectExceptionMessage(get_string('notconfigured', 'report_allylti'));
-        new launch_config((object) [
-            'adminurl' => 'http://someurl.test'
-        ], (object) []);
-    }
-
-    public function test_not_configured_partial_adminurl_secret() {
+    public function test_not_configured_partial_adminurl(): void {
         $this->expectExceptionMessage(get_string('notconfigured', 'report_allylti'));
         new launch_config((object) [
             'adminurl' => 'http://someurl.test',
-            'key'      => 'somekey'
         ], (object) []);
     }
 
-    public function test_configured() {
+    public function test_not_configured_partial_adminurl_secret(): void {
+        $this->expectExceptionMessage(get_string('notconfigured', 'report_allylti'));
+        new launch_config((object) [
+            'adminurl' => 'http://someurl.test',
+            'key'      => 'somekey',
+        ], (object) []);
+    }
+
+    public function test_configured(): void {
         $key = 'somekey';
         $secret = 'somesecret';
         $url = 'http://someurl.test';
         $lc = new launch_config((object) [
             'adminurl' => $url,
             'key'      => $key,
-            'secret'   => $secret
+            'secret'   => $secret,
         ], (object) []);
 
         $this->assertNotEmpty($lc);

@@ -52,7 +52,7 @@ class auto_configurator_test extends advanced_testcase {
         $this->resetAfterTest(true);
     }
 
-    public function test_configure_settings() {
+    public function test_configure_settings(): void {
         $configs = [
             'secret' => 'password!',
             'key' => 'key',
@@ -74,7 +74,7 @@ class auto_configurator_test extends advanced_testcase {
         }
     }
 
-    public function test_configure_settings_invalid_setting() {
+    public function test_configure_settings_invalid_setting(): void {
         $configs = [
             'secret' => 'password!',
             'key' => 'key',
@@ -100,7 +100,7 @@ class auto_configurator_test extends advanced_testcase {
         }
     }
 
-    public function test_configure_webservices() {
+    public function test_configure_webservices(): void {
         $wsconfig = new auto_config();
 
         $configurator = new auto_configurator();

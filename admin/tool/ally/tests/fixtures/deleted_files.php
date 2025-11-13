@@ -32,7 +32,7 @@ return [
             'pathnamehash' => 'xyz1',
             'contenthash'  => 'abc1',
             'mimetype'     => 'text/plain',
-            'timedeleted'  => 1482186997
+            'timedeleted'  => 1482186997,
         ],
         [
             'id'           => '2',
@@ -40,7 +40,7 @@ return [
             'pathnamehash' => 'xyz2',
             'contenthash'  => 'abc2',
             'mimetype'     => 'text/plain',
-            'timedeleted'  => 1482186997
+            'timedeleted'  => 1482186997,
         ],
         [
             'id'           => '3',
@@ -48,7 +48,7 @@ return [
             'pathnamehash' => 'xyz3',
             'contenthash'  => 'abc3',
             'mimetype'     => 'text/plain',
-            'timedeleted'  => 1482186997
+            'timedeleted'  => 1482186997,
         ],
         [
             'id'           => '4',
@@ -56,7 +56,7 @@ return [
             'pathnamehash' => 'xyz4',
             'contenthash'  => 'abc4',
             'mimetype'     => 'text/plain',
-            'timedeleted'  => 1482186997
+            'timedeleted'  => 1482186997,
         ],
         [
             'id'           => '5',
@@ -64,7 +64,7 @@ return [
             'pathnamehash' => 'xyz5',
             'contenthash'  => 'abc5',
             'mimetype'     => 'text/plain',
-            'timedeleted'  => 1482186997
+            'timedeleted'  => 1482186997,
         ],
     ],
 ];

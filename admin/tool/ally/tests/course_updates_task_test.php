@@ -50,7 +50,7 @@ class course_updates_task_test extends abstract_testcase {
     /**
      * Ensure that basic execution and timestamp management is working.
      */
-    public function test_push_updates() {
+    public function test_push_updates(): void {
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -73,7 +73,7 @@ class course_updates_task_test extends abstract_testcase {
     /**
      * Ensure that our batch looping is working as expected.
      */
-    public function test_push_updates_batching() {
+    public function test_push_updates_batching(): void {
         $this->resetAfterTest();
 
         set_config('push_cli_only', 1, 'tool_ally');
@@ -100,7 +100,7 @@ class course_updates_task_test extends abstract_testcase {
     /**
      * Test pushing of content deletions.
      */
-    public function test_push_deletes() {
+    public function test_push_deletes(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -124,8 +124,8 @@ class course_updates_task_test extends abstract_testcase {
                 'other'    => [
                     'shortname' => $course->shortname,
                     'fullname' => $course->fullname,
-                    'idnumber' => $course->idnumber
-                ]
+                    'idnumber' => $course->idnumber,
+                ],
             ]);
             $delevent->add_record_snapshot('course', $course);
             $delevent->trigger();

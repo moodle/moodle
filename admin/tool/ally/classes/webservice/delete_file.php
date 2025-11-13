@@ -84,10 +84,10 @@ class delete_file extends loggable_external_api {
         require_capability('moodle/course:managefiles', $context);
 
         $deleted = false;
-        $capabilities = array(
+        $capabilities = [
             'moodle/course:update',
             'moodle/course:managefiles',
-        );
+        ];
 
         if (has_all_capabilities($capabilities, $context, $user)) {
             $deleted = $file->delete();

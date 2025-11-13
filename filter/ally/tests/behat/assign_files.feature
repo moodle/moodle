@@ -21,7 +21,7 @@
 # @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 
-@filter @filter_ally @_file_upload
+@filter @filter_ally @_file_upload @suite_ally
 Feature: When the ally filter is enabled, ally place holders are inserted when appropriate into assignment additional files.
 
   Background:

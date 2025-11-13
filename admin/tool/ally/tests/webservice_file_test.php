@@ -47,7 +47,7 @@ class webservice_file_test extends abstract_testcase {
     /**
      * Test the web service when used to get a resource file.
      */
-    public function test_service() {
+    public function test_service(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -84,7 +84,7 @@ class webservice_file_test extends abstract_testcase {
     /**
      * Test the web service when used to get a forum post attachment.
      */
-    public function test_forum_post() {
+    public function test_forum_post(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -100,12 +100,12 @@ class webservice_file_test extends abstract_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
 
-        $options = array('course' => $course->id);
+        $options = ['course' => $course->id];
         $forum = $this->getDataGenerator()->create_module('forum', $options);
         $forumcontext = \context_module::instance($forum->cmid);
 
         // Add a discussion.
-        $record = array();
+        $record = [];
         $record['course'] = $course->id;
         $record['forum'] = $forum->id;
         $record['userid'] = $user->id;
@@ -119,14 +119,14 @@ class webservice_file_test extends abstract_testcase {
         $filename = 'shouldbeanimage.jpg';
         $filecontents = 'image contents (not really)';
         // Add a fake inline image to the post.
-        $filerecordinline = array(
+        $filerecordinline = [
             'contextid' => $forumcontext->id,
             'component' => 'mod_forum',
             'filearea'  => 'post',
             'itemid'    => $post->id,
             'filepath'  => '/',
             'filename'  => $filename,
-        );
+        ];
         $fs = get_file_storage();
         $expectedfile = $fs->create_file_from_string($filerecordinline, $filecontents);
 
@@ -151,7 +151,7 @@ class webservice_file_test extends abstract_testcase {
     /**
      * Test the web service when used to get a forum main page attachment.
      */
-    public function test_forum_main_page() {
+    public function test_forum_main_page(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -167,7 +167,7 @@ class webservice_file_test extends abstract_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
 
-        $options = array('course' => $course->id);
+        $options = ['course' => $course->id];
         $forum = $this->getDataGenerator()->create_module('forum', $options);
         $forumcontext = \context_module::instance($forum->cmid);
 
@@ -175,14 +175,14 @@ class webservice_file_test extends abstract_testcase {
         $filename = 'shouldbeanimage.jpg';
         $filecontents = 'image contents (not really)';
         // Add a fake inline image to the forum.
-        $filerecordinline = array(
+        $filerecordinline = [
             'contextid' => $forumcontext->id,
             'component' => 'mod_forum',
             'filearea'  => 'intro',
             'itemid'    => 0,
             'filepath'  => '/',
             'filename'  => $filename,
-        );
+        ];
         $fs = get_file_storage();
         $expectedfile = $fs->create_file_from_string($filerecordinline, $filecontents);
 
@@ -204,7 +204,7 @@ class webservice_file_test extends abstract_testcase {
         $this->assertEquals($CFG->wwwroot.'/mod/forum/view.php?id='.$forum->cmid, $file['location']);
     }
 
-    public function test_unwhitelisted_file_component() {
+    public function test_unwhitelisted_file_component(): void {
 
         $this->resetAfterTest();
 
@@ -218,14 +218,14 @@ class webservice_file_test extends abstract_testcase {
         $filename = 'somefile.txt';
         $filecontents = 'contents of file';
 
-        $filerecord = array(
+        $filerecord = [
             'contextid' => \context_system::instance()->id,
             'component' => 'mod_somefakemodule',
             'filearea'  => 'intro',
             'itemid'    => 0,
             'filepath'  => '/',
             'filename'  => $filename,
-        );
+        ];
         $fs = get_file_storage();
         $file = $fs->create_file_from_string($filerecord, $filecontents);
 
@@ -236,7 +236,7 @@ class webservice_file_test extends abstract_testcase {
     /**
      * Test if the file in use setting properly changes the response of this service.
      */
-    public function test_files_in_use() {
+    public function test_files_in_use(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -253,7 +253,7 @@ class webservice_file_test extends abstract_testcase {
             [
                 'course' => $course->id,
                 'introformat' => FORMAT_HTML,
-                'intro' => 'Text in intro'
+                'intro' => 'Text in intro',
             ]
         );
         $context = \context_module::instance($assign->cmid);

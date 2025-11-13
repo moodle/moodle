@@ -98,7 +98,7 @@ abstract class push_updates {
             $this->on_send_success([
                 'url' => $this->config->get_url(),
                 'curlconfig' => $curlconfig,
-                'payload' => $payload
+                'payload' => $payload,
             ]);
         }
 

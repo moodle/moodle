@@ -47,7 +47,7 @@ class book_component extends component_base implements
 
     protected $tablefields = [
         'book' => ['intro'],
-        'book_chapters' => ['content']
+        'book_chapters' => ['content'],
     ];
 
     public static function component_type() {

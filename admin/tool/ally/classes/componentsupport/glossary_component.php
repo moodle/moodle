@@ -51,7 +51,7 @@ class glossary_component extends file_component_base implements
 
     protected $tablefields = [
         'glossary' => ['intro'],
-        'glossary_entries' => ['definition']
+        'glossary_entries' => ['definition'],
     ];
 
     public static function component_type() {
@@ -186,7 +186,7 @@ SQL;
                     SELECT c.*
                       FROM $pagetable instance
                       JOIN {course} c ON c.id = instance.course
-                     WHERE instance.id = ?", array($id), MUST_EXIST);
+                     WHERE instance.id = ?", [$id], MUST_EXIST);
 
         $main = $this->get_html_content($id, 'glossary', 'intro');
         $entries = $this->get_entry_html_content_items($course->id, $id);

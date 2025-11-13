@@ -125,7 +125,7 @@ class components_glossary_component_test extends abstract_testcase {
         $this->component = local_content::component_instance('glossary');
     }
 
-    public function test_get_approved_author_ids_for_context() {
+    public function test_get_approved_author_ids_for_context(): void {
         $authorids = $this->component->get_approved_author_ids_for_context($this->coursecontext);
         $this->assertTrue(in_array($this->teacher->id, $authorids),
                 'Teacher id '.$this->teacher->id.' should be in list of author ids.');
@@ -135,7 +135,7 @@ class components_glossary_component_test extends abstract_testcase {
                 'Student id '.$this->student->id.' should NOT be in list of author ids.');
     }
 
-    public function test_user_is_approved_author_type() {
+    public function test_user_is_approved_author_type(): void {
         $this->assertFalse($this->component->user_is_approved_author_type($this->student->id, $this->coursecontext),
             'Student should not be approved author type');
         $this->assertTrue($this->component->user_is_approved_author_type($this->teacher->id, $this->coursecontext),
@@ -145,10 +145,10 @@ class components_glossary_component_test extends abstract_testcase {
     }
 
 
-    public function test_get_entry_html_content_items() {
+    public function test_get_entry_html_content_items(): void {
         $contentitems = \phpunit_util::call_internal_method(
             $this->component, 'get_entry_html_content_items', [
-                $this->course->id, $this->glossary->id
+                $this->course->id, $this->glossary->id,
             ],
             get_class($this->component)
         );
@@ -160,19 +160,19 @@ class components_glossary_component_test extends abstract_testcase {
             $this->studententry->id, 'glossary', 'glossary_entries', 'definition');
     }
 
-    public function test_resolve_module_instance_id_from_glossary() {
+    public function test_resolve_module_instance_id_from_glossary(): void {
         $component = new glossary_component();
         $instanceid = $component->resolve_module_instance_id('glossary', $this->glossary->id);
         $this->assertEquals($this->glossary->id, $instanceid);
     }
 
-    public function test_resolve_module_instance_id_from_entry() {
+    public function test_resolve_module_instance_id_from_entry(): void {
         $component = new glossary_component();
         $instanceid = $component->resolve_module_instance_id('glossary_entries', $this->studententry->id);
         $this->assertEquals($this->glossary->id, $instanceid);
     }
 
-    public function test_get_all_course_annotation_maps() {
+    public function test_get_all_course_annotation_maps(): void {
         global $PAGE;
 
         $cis = $this->component->get_annotation_maps($this->course->id);
@@ -191,7 +191,7 @@ class components_glossary_component_test extends abstract_testcase {
     /**
      * Test if file in use detection is working with this module.
      */
-    public function test_check_file_in_use() {
+    public function test_check_file_in_use(): void {
         $context = \context_module::instance($this->glossary->cmid);
 
         $usedfiles = [];

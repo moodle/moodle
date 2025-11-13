@@ -57,12 +57,12 @@ class components_page_component_with_null_content_test extends abstract_testcase
             [
                 'course' => $this->course->id,
                 'contentformat' => FORMAT_HTML,
-                'content' => ''
+                'content' => '',
             ]
         );
     }
 
-    public function test_get_all_html_content_when_null_content() {
+    public function test_get_all_html_content_when_null_content(): void {
         $items = local_content::get_all_html_content($this->page->id, 'page', true);
         $this->assertEmpty($items[1]->content);
     }

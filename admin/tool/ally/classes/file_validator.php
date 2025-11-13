@@ -78,7 +78,7 @@ class file_validator {
         'mod_resource~intro',
         'mod_resource~content',
         'mod_turnitintooltwo~intro',
-        'mod_url~intro'
+        'mod_url~intro',
     ];
 
     /**
@@ -97,7 +97,7 @@ class file_validator {
         'mod_glossary~attachment',
         'mod_data~content',
         'mod_lightboxgallery~gallery_images',
-        'mod_questionnaire~info'
+        'mod_questionnaire~info',
     ];
 
     /**
@@ -114,7 +114,7 @@ class file_validator {
         'mod_glossary~attachment',
         'mod_hsuforum~attachment',
         'mod_imscp~content',
-        'mod_resource~content'
+        'mod_resource~content',
     ];
     /**
      * @var array

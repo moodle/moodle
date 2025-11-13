@@ -40,7 +40,7 @@ class provider implements \core_privacy\local\metadata\provider,
     \core_privacy\local\request\plugin\provider,
     \core_privacy\local\request\core_userlist_provider {
 
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_external_location_link('jwt', [
             'userid'   => 'privacy:metadata:jwt:userid',
             'courseid' => 'privacy:metadata:jwt:courseid',
@@ -51,7 +51,7 @@ class provider implements \core_privacy\local\metadata\provider,
         return $collection;
     }
 
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         return new contextlist();
     }
 

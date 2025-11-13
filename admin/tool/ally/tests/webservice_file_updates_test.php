@@ -45,7 +45,7 @@ class webservice_file_updates_test extends abstract_testcase {
     /**
      * Test the web service.
      */
-    public function test_service() {
+    public function test_service(): void {
         global $DB;
         $this->resetAfterTest();
         $roleid = $this->assignUserCapability('moodle/course:view', \context_system::instance()->id);

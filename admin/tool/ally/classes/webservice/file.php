@@ -43,7 +43,7 @@ class file extends loggable_external_api {
      */
     public static function service_parameters() {
         return new \external_function_parameters([
-            'id' => new \external_value(PARAM_ALPHANUM, 'File path name SHA1 hash')
+            'id' => new \external_value(PARAM_ALPHANUM, 'File path name SHA1 hash'),
         ]);
     }
 
@@ -128,7 +128,7 @@ class file extends loggable_external_api {
             'contextid'       => $file->get_contextid(),
             'contextlevel'    => $filecontext->contextlevel,
             'contextpath'     => $contextpath,
-            'contextcourseid' => $filecontext->get_course_context()->instanceid
+            'contextcourseid' => $filecontext->get_course_context()->instanceid,
         ];
     }
 }

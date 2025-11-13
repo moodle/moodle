@@ -43,7 +43,7 @@ class mod_file_view extends loggable_external_api {
     public static function service_parameters() {
         return new \external_function_parameters([
             'id' => new \external_value(PARAM_ALPHANUM, 'File path name SHA1 hash'),
-            'userid' => new \external_value(PARAM_INT, 'User ID of the person viewing the file')
+            'userid' => new \external_value(PARAM_INT, 'User ID of the person viewing the file'),
         ]);
     }
 
@@ -52,7 +52,7 @@ class mod_file_view extends loggable_external_api {
      */
     public static function service_returns() {
         return new \external_single_structure([
-            'success' => new \external_value(PARAM_BOOL, 'Success status of viewing module associated to file')
+            'success' => new \external_value(PARAM_BOOL, 'Success status of viewing module associated to file'),
         ]);
     }
 
@@ -112,7 +112,7 @@ class mod_file_view extends loggable_external_api {
             );
         }
 
-        $resource = $DB->get_record('resource', array('id' => $cm->instance), '*', MUST_EXIST);
+        $resource = $DB->get_record('resource', ['id' => $cm->instance], '*', MUST_EXIST);
         resource_view($resource, $course, $cm, $context);
 
         return ['success' => true];

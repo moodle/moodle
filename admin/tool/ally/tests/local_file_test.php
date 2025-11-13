@@ -40,7 +40,7 @@ use advanced_testcase;
 class local_file_test extends advanced_testcase {
 
 
-    public function test_generate_wspluginfile_signature_invalid_config() {
+    public function test_generate_wspluginfile_signature_invalid_config(): void {
         // Test failure without ally_webuser / valid configuration.
         $expectedmsg = 'Access control exception (Ally web user (ally_webuser) does not exist.';
         $expectedmsg .= ' Has auto configure been run?)';
@@ -48,7 +48,7 @@ class local_file_test extends advanced_testcase {
         local_file::generate_wspluginfile_signature('fakehash');
     }
 
-    public function test_generate_wspluginfile_signature() {
+    public function test_generate_wspluginfile_signature(): void {
         $this->resetAfterTest();
         // Test method successful when configured.
         $ac = new auto_config();
@@ -62,7 +62,7 @@ class local_file_test extends advanced_testcase {
         $this->assertNotEmpty($signature->signature);
     }
 
-    public function test_get_fileurlproperties() {
+    public function test_get_fileurlproperties(): void {
         global $CFG;
         $this->resetAfterTest();
 

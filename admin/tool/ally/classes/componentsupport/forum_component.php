@@ -53,7 +53,7 @@ class forum_component extends file_component_base implements
 
     protected $tablefields = [
         'forum' => ['intro'],
-        'forum_posts' => ['message']
+        'forum_posts' => ['message'],
     ];
 
     public static function component_type() {
@@ -359,12 +359,12 @@ SQL;
                     SELECT c.*
                       FROM $pagetable instance
                       JOIN {course} c ON c.id = instance.course
-                     WHERE instance.id = ?", array($id), MUST_EXIST);
+                     WHERE instance.id = ?", [$id], MUST_EXIST);
         $modinfo = get_fast_modinfo($course);
         $instances = $modinfo->get_instances_of($this->type);
 
         if (empty($instances[$id])) {
-            return array();
+            return [];
         }
 
         list ($course, $cm) = get_course_and_cm_from_instance($id, $this->type);

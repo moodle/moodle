@@ -45,7 +45,7 @@ class cleanup_log_task_test extends abstract_testcase {
     /**
      * Test the general behavior of the task execution.
      */
-    public function test_execute() {
+    public function test_execute(): void {
         global $DB;
 
         $this->resetAfterTest();

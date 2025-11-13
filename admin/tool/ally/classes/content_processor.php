@@ -77,9 +77,9 @@ class content_processor extends traceable_processor {
         logger::get()->info('logger:addingconenttoqueue', [
             'configvalid' => $config->is_valid(),
             'configclionly' => $config->is_cli_only(),
-            'content' => $content
+            'content' => $content,
         ]);
-        if (!array($content)) {
+        if (![$content]) {
             $content = [$content];
         }
         $dataobjects = [];
@@ -95,7 +95,7 @@ class content_processor extends traceable_processor {
                 'courseid' => $contentitem->get_courseid(),
                 'eventtime' => time(),
                 'eventname' => $eventname,
-                'content' => $contentitem->content
+                'content' => $contentitem->content,
             ];
         }
         $DB->insert_records('tool_ally_content_queue', $dataobjects);

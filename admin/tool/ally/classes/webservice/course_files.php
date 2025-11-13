@@ -41,7 +41,7 @@ class course_files extends loggable_external_api {
      */
     public static function service_parameters() {
         return new \external_function_parameters([
-            'ids' => new \external_multiple_structure(new \external_value(PARAM_INT, 'Course id'), 'List of course IDs')
+            'ids' => new \external_multiple_structure(new \external_value(PARAM_INT, 'Course id'), 'List of course IDs'),
         ]);
     }
 
@@ -74,7 +74,7 @@ class course_files extends loggable_external_api {
 
         local::preload_course_contexts($params['ids']);
 
-        $return = array();
+        $return = [];
         foreach ($params['ids'] as $id) {
             $context = \context_course::instance($id);
             $softdeltedcontexts = local_course::course_cm_soft_delete_contextids($id);

@@ -29,10 +29,18 @@ function($, Templates, Strings, Ally, ImageCover, Util) {
 
         var self = this;
 
+        document.addEventListener('core_filters/contentUpdated', () => {
+            // When Snap lazy loads a section it triggers this event.
+            // We can ensure everything has been processed on lazy load by recalling the second
+            // stage initialization.
+            self.initStageTwo();
+        });
+
         self.canViewFeedback = false;
         self.canDownload = false;
         self.initialised = false;
         self.params = {};
+        self.observedNodes = new WeakSet();
 
         /**
          * Get nodes by xpath.
@@ -881,7 +889,15 @@ chapterId;
                                     });
                                 };
                                 var observer = new MutationObserver(callback);
-                                observer.observe(targetNode, observerConfig);
+
+                                // Avoid observing the same DOM node multiple times.
+                                // Note: If a node is removed and reinserted into the DOM, it becomes a new object reference.
+                                // This check will allow re-observing such new nodes, which is desirable,
+                                // since the original observer won't persist across DOM removal.
+                                if (!self.observedNodes.has(targetNode)) {
+                                    observer.observe(targetNode, observerConfig);
+                                    self.observedNodes.add(targetNode);
+                                }
                             }
                         } catch (error) {
                             setInterval(function() {
@@ -917,24 +933,6 @@ chapterId;
                             $(document).off('ajaxComplete');
                         }
                     });
-
-                    // BEGIN LSU Fix for Ally to work with Snap
-                    // document.addEventListener('core_filters/contentUpdated', () => {
-                        // When Snap lazy loads a section it triggers this event.
-                        // We can ensure everything has been processed on lazy load by recalling the second
-                        // stage initialization.
-                        // self.initStageTwo();
-                    // });
-                    if (!self.hasContentUpdatedListener) { // Open LMS Patch for INT-20689: Prevent infinite loop.
-                        document.addEventListener('core_filters/contentUpdated', () => {
-                            // When Snap lazy loads a section it triggers this event.
-                            // We can ensure everything has been processed on lazy load by recalling the second
-                            // stage initialization.
-                            self.initStageTwo();
-                        });
-                        self.hasContentUpdatedListener = true;
-                    }
-                    // BEGIN LSU Fix for Ally to work with Snap
                 }
             }
         };

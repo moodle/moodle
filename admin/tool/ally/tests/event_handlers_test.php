@@ -33,35 +33,28 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 use core\event\course_created;
 use core\event\course_updated;
-use core\event\course_restored;
 use core\event\course_section_created;
 use core\event\course_section_updated;
 use core\event\course_module_created;
 use core\event\course_module_updated;
 
-use \mod_forum\event\discussion_created;
-use \mod_forum\event\post_updated;
+use mod_forum\event\discussion_created;
+use mod_forum\event\post_updated;
 
-use \mod_glossary\event\entry_created;
-use \mod_glossary\event\entry_updated;
+use mod_glossary\event\entry_created;
+use mod_glossary\event\entry_updated;
 
-use \mod_book\event\chapter_created;
-use \mod_book\event\chapter_updated;
+use mod_book\event\chapter_created;
+use mod_book\event\chapter_updated;
 
-use tool_ally\content_processor;
-use tool_ally\course_processor;
-use tool_ally\file_processor;
-use tool_ally\traceable_processor;
-
-use tool_ally\event_handlers;
-use tool_ally\files_in_use;
 use tool_ally\task\content_updates_task;
-use tool_ally\local_content;
+
 /**
  * Tests for event handlers.
  *
  * @package   tool_ally
  * @copyright Copyright (c) 2018 Open LMS (https://www.openlms.net) / 2023 Anthology Inc. and its affiliates
+ * @group     tool_ally_event_handlers
  * @group     tool_ally
  * @group     ally
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -245,7 +238,7 @@ MSG;
     /**
      * Test pushes on course creation.
      */
-    public function test_course_created() {
+    public function test_course_created(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course(['summaryformat' => FORMAT_HTML]);
@@ -263,15 +256,15 @@ MSG;
             'context' => \context_course::instance($course->id),
             'other' => [
                 'shortname' => $course->shortname,
-                'fullname' => $course->fullname
-            ]
+                'fullname' => $course->fullname,
+            ],
         ])->trigger();
 
         $entityid = 'course:course:summary:'.$course->id;
         $this->assert_pushtrace_contains_entity_id(event_handlers::API_RICH_CNT_CREATED, $entityid);
     }
 
-    public function test_course_updated() {
+    public function test_course_updated(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -285,7 +278,7 @@ MSG;
         course_updated::create([
             'objectid' => $course->id,
             'context' => \context_course::instance($course->id),
-            'other' => ['shortname' => $course->shortname]
+            'other' => ['shortname' => $course->shortname],
         ])->trigger();
 
         $entityid = 'course:course:summary:'.$course->id;
@@ -298,7 +291,7 @@ MSG;
     /**
      * Basic test to see if a message is sent for course copies.
      */
-    public function test_course_restored() {
+    public function test_course_restored(): void {
         global $DB, $CFG;
 
         $course = $this->getDataGenerator()->create_course();
@@ -358,7 +351,7 @@ MSG;
     /**
      * Basic test to see if a message is sent for course import.
      */
-    public function test_course_imported() {
+    public function test_course_imported(): void {
         global $CFG, $USER;
 
         $course = $this->getDataGenerator()->create_course();
@@ -394,14 +387,14 @@ MSG;
         $this->assertTrue($contains, "Course push trace with source_context_id of {$course->id} not found.");
     }
 
-    public function test_course_section_created() {
+    public function test_course_section_created(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
         $section = $this->getDataGenerator()->create_course_section([
             'section' => 0,
             'course' => $course->id,
-            'summaryformat' => FORMAT_HTML
+            'summaryformat' => FORMAT_HTML,
         ]);
         $section = $DB->get_Record('course_sections', ['id' => $section->id]);
         course_section_created::create_from_section($section)->trigger();
@@ -410,7 +403,7 @@ MSG;
         $this->assert_pushtrace_contains_entity_id(event_handlers::API_RICH_CNT_CREATED, $entityid);
     }
 
-    public function test_course_section_updated() {
+    public function test_course_section_updated(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course();
@@ -424,9 +417,9 @@ MSG;
             'objectid' => $section0->id,
             'courseid' => $course->id,
             'context' => \context_course::instance($course->id),
-            'other' => array(
-                'sectionnum' => $section0->section
-            )
+            'other' => [
+                'sectionnum' => $section0->section,
+            ],
         ])->trigger();
 
         $entityid0 = 'course:course_sections:summary:'.$section0->id;
@@ -455,9 +448,9 @@ MSG;
             'objectid' => $section1->id,
             'courseid' => $course->id,
             'context' => \context_course::instance($course->id),
-            'other' => array(
-                'sectionnum' => $section1->section
-            )
+            'other' => [
+                'sectionnum' => $section1->section,
+            ],
         ])->trigger();
 
         // Ensure section 1 is now in push trace.
@@ -582,6 +575,7 @@ MSG;
         $link = $generator->create_pluginfile_link_for_file($usedfile);
         $mod->$modfield = 'Updated ' . $modfield . ' with some a link ' . $link;
         $DB->update_record($modtable, $mod);
+
         // Now make sure that records exist.
         $this->assertCount(2, $DB->get_records('tool_ally_file_in_use', ['contextid' => $context->id]));
 
@@ -600,7 +594,7 @@ MSG;
             'comptable' => $modtable,
             'courseid' => (int) $course->id,
             'comprowid' => (int) $mod->id,
-            'compfield' => $modfield
+            'compfield' => $modfield,
         ];
 
         $row = $DB->get_record('tool_ally_deleted_content', $delfilter);
@@ -623,23 +617,40 @@ MSG;
         $this->assert_pushtrace_contains_entity_id(event_handlers::API_RICH_CNT_DELETED, $entityid);
     }
 
-    public function test_assign_created() {
+    public function test_assign_created(): void {
         $this->check_module_created_pushtraces('assign', 'assign', 'intro');
     }
 
-    public function test_assign_updated() {
+    public function test_assign_updated(): void {
         $this->check_module_updated_pushtraces('assign', 'assign', 'intro', 'intro');
     }
 
-    public function test_assign_deleted() {
+    /**
+     * Returns true if test was marked as skipped due to Moodle version not supporting PHP Unit tests for create_file.
+     * @return bool
+     */
+    private function skip_module_deleted_create_file_not_supported(): bool {
+        global $CFG;
+        if (intval($CFG->branch) >= 405) {
+            // Unsupported for Moodle 405+ due to https://tracker.moodle.org/browse/MDL-84977.
+            $this->markTestSkipped('Moodle 405+ does not facilitate full testing of file_storage class - see MDL-84977');
+            return true;
+        }
+        return false;
+    }
+
+    public function test_assign_deleted(): void {
+        if ($this->skip_module_deleted_create_file_not_supported()) {
+            return;
+        }
         $this->check_module_deleted_pushtraces('assign', 'assign', 'intro');
     }
 
-    public function test_book_created() {
+    public function test_book_created(): void {
         $this->check_module_created_pushtraces('book', 'book', 'intro');
     }
 
-    public function test_book_updated() {
+    public function test_book_updated(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -652,19 +663,19 @@ MSG;
             'bookid' => $mod->id,
             'title' => 'Test chapter',
             'content' => 'Test content',
-            'contentformat' => FORMAT_HTML
+            'contentformat' => FORMAT_HTML,
         ];
 
         $chapter = $bookgenerator->create_chapter($data);
         $entityid = 'book:book_chapters:content:'.$chapter->id;
 
-        $params = array(
+        $params = [
             'context' => $context,
             'objectid' => $chapter->id,
-            'other' => array(
-                'bookid' => $mod->id
-            )
-        );
+            'other' => [
+                'bookid' => $mod->id,
+            ],
+        ];
         $event = chapter_created::create($params);
         $event->add_record_snapshot('book_chapters', $chapter);
         $event->trigger();
@@ -677,13 +688,13 @@ MSG;
         // Modify chapter.
         $chapter->content = 'Updated chapter '.$chapter->id.' with some text';
         $DB->update_record('book_chapters', $chapter);
-        $params = array(
+        $params = [
             'context' => $context,
             'objectid' => $chapter->id,
-            'other' => array(
-                'bookid' => $mod->id
-            )
-        );
+            'other' => [
+                'bookid' => $mod->id,
+            ],
+        ];
         $event = chapter_updated::create($params);
         $event->add_record_snapshot('book_chapters', $chapter);
         $event->trigger();
@@ -693,13 +704,16 @@ MSG;
 
     }
 
-    public function test_book_deleted() {
-        global $USER;
+    public function test_book_deleted(): void {
+        global $CFG;
 
         $this->setAdminUser();
 
         // First do the default check.
-        $this->check_module_deleted_pushtraces('book', 'book', 'intro');
+        // Unsupported for Moodle 405+ due to https://tracker.moodle.org/browse/MDL-84977.
+        if (intval($CFG->branch) < 405) {
+            $this->check_module_deleted_pushtraces('book', 'book', 'intro');
+        }
 
         // Now the more complicated testing. Specifically we are going to confirm that when a book is deleted,
         // any chapters within it are also marked for deletion.
@@ -745,31 +759,37 @@ MSG;
         $this->assert_pushtrace_contains_entity_id(event_handlers::API_RICH_CNT_DELETED, $chapter1entityid);
     }
 
-    public function test_forum_created() {
+    public function test_forum_created(): void {
         $this->check_module_created_pushtraces('forum', 'forum', 'intro');
     }
 
-    public function test_forum_updated() {
+    public function test_forum_updated(): void {
         $this->check_module_updated_pushtraces('forum', 'forum', 'intro', 'intro');
     }
 
-    public function test_forum_deleted() {
+    public function test_forum_deleted(): void {
+        if ($this->skip_module_deleted_create_file_not_supported()) {
+            return;
+        }
         $this->check_module_deleted_pushtraces('forum', 'forum', 'intro');
     }
 
-    public function test_label_created() {
+    public function test_label_created(): void {
         $this->check_module_created_pushtraces('label', 'label', 'intro');
     }
 
-    public function test_label_updated() {
+    public function test_label_updated(): void {
         $this->check_module_updated_pushtraces('label', 'label', 'intro', 'intro');
     }
 
-    public function test_label_deleted() {
+    public function test_label_deleted(): void {
+        if ($this->skip_module_deleted_create_file_not_supported()) {
+            return;
+        }
         $this->check_module_deleted_pushtraces('label', 'label', 'intro');
     }
 
-    public function test_lesson_created() {
+    public function test_lesson_created(): void {
         global $DB;
 
         $dg = $this->getDataGenerator();
@@ -792,7 +812,7 @@ MSG;
         }
     }
 
-    public function test_lesson_updated() {
+    public function test_lesson_updated(): void {
         global $DB;
 
         $dg = $this->getDataGenerator();
@@ -820,29 +840,38 @@ MSG;
         }
     }
 
-    public function test_lesson_deleted() {
+    public function test_lesson_deleted(): void {
+        if ($this->skip_module_deleted_create_file_not_supported()) {
+            return;
+        }
         $this->check_module_deleted_pushtraces('lesson', 'lesson', 'intro');
     }
 
-    public function test_page_created() {
+    public function test_page_created(): void {
         $this->check_module_created_pushtraces('page', 'page', 'intro');
         $this->check_module_created_pushtraces('page', 'page', 'content');
     }
 
-    public function test_page_updated() {
+    public function test_page_updated(): void {
         $this->check_module_updated_pushtraces('page', 'page', 'intro', 'intro');
         $this->check_module_updated_pushtraces('page', 'page', 'content', 'content');
     }
 
-    public function test_page_deleted_intro() {
+    public function test_page_deleted_intro(): void {
+        if ($this->skip_module_deleted_create_file_not_supported()) {
+            return;
+        }
         $this->check_module_deleted_pushtraces('page', 'page', 'intro');
     }
 
-    public function test_page_deleted_content() {
+    public function test_page_deleted_content(): void {
+        if ($this->skip_module_deleted_create_file_not_supported()) {
+            return;
+        }
         $this->check_module_deleted_pushtraces('page', 'page', 'content');
     }
 
-    public function test_forum_discussion_created() {
+    public function test_forum_discussion_created(): void {
         global $USER, $DB;
 
         $this->setAdminUser();
@@ -864,13 +893,13 @@ MSG;
         $record->course = $forum->course;
         $discussion = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
-        $params = array(
+        $params = [
             'context' => $cm->context,
             'objectid' => $discussion->id,
-            'other' => array(
+            'other' => [
                 'forumid' => $forum->id,
-            )
-        );
+            ],
+        ];
         $event = discussion_created::create($params);
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
@@ -884,15 +913,15 @@ MSG;
 
         // Modify post.
         $post->message .= 'message!!!';
-        $params = array(
+        $params = [
             'context' => $cm->context,
             'objectid' => $post->id,
-            'other' => array(
+            'other' => [
                 'discussionid' => $discussion->id,
                 'forumid' => $forum->id,
                 'forumtype' => $forum->type,
-            )
-        );
+            ],
+        ];
         $event = \mod_forum\event\post_updated::create($params);
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
@@ -902,7 +931,7 @@ MSG;
         post_updated::create($params);
     }
 
-    public function test_forum_single_discussion_created() {
+    public function test_forum_single_discussion_created(): void {
         global $USER, $DB;
 
         $this->setAdminUser();
@@ -933,7 +962,7 @@ MSG;
         $this->assert_pushtrace_contains_entity_id(event_handlers::API_RICH_CNT_CREATED, $postentityid);
     }
 
-    public function test_glossary_events() {
+    public function test_glossary_events(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -956,13 +985,13 @@ MSG;
         $record->definitionformat = FORMAT_HTML;
         $entry = self::getDataGenerator()->get_plugin_generator('mod_glossary')->create_content($glossary, (array) $record);
 
-        $params = array(
+        $params = [
             'context' => $cm->context,
             'objectid' => $entry->id,
-            'other' => array(
-                'glossaryid' => $glossary->id
-            )
-        );
+            'other' => [
+                'glossaryid' => $glossary->id,
+            ],
+        ];
         $event = entry_created::create($params);
         $event->add_record_snapshot('glossary_entries', $entry);
         $event->trigger();
@@ -974,13 +1003,13 @@ MSG;
 
         // Modify entry.
         $entry->definition .= 'modified !!!';
-        $params = array(
+        $params = [
             'context' => $cm->context,
             'objectid' => $entry->id,
-            'other' => array(
-                'glossaryid' => $glossary->id
-            )
-        );
+            'other' => [
+                'glossaryid' => $glossary->id,
+            ],
+        ];
         $event = entry_updated::create($params);
         $event->add_record_snapshot('glossary_entries', $entry);
         $event->trigger();
@@ -1008,7 +1037,7 @@ MSG;
      * @throws coding_exception
      * @throws moodle_exception
      */
-    public function test_course_events() {
+    public function test_course_events(): void {
         $course = $this->getDataGenerator()->create_course();
         course_processor::clear_push_traces();
 
@@ -1019,8 +1048,8 @@ MSG;
             'other' => [
                 'shortname' => $course->shortname,
                 'fullname' => $course->fullname,
-                'idnumber' => $course->idnumber
-            ]
+                'idnumber' => $course->idnumber,
+            ],
         ]);
         $createevent->add_record_snapshot('course', $course);
         $createevent->trigger();
@@ -1041,8 +1070,8 @@ MSG;
             'other' => [
                 'shortname' => $course->shortname,
                 'fullname' => $course->fullname,
-                'idnumber' => $course->idnumber
-            ]
+                'idnumber' => $course->idnumber,
+            ],
         ]);
         $course->relativedatesmode = 0;
         $delevent->add_record_snapshot('course', $course);

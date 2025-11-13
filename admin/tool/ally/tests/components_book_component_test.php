@@ -111,13 +111,13 @@ class components_book_component_test extends abstract_testcase {
             $chapter = $bookgenerator->create_chapter([
                 'bookid' => $book->id,
                 'content' => "Test book $i content",
-                'contentformat' => FORMAT_HTML]);
+                'contentformat' => FORMAT_HTML, ]);
             $this->books[] = $book;
             $this->chapters[] = $chapter;
         }
     }
 
-    public function test_get_all_html_content_items() {
+    public function test_get_all_html_content_items(): void {
         $this->setup_books();
         $contentitems = $this->component->get_all_html_content($this->books[0]->id);
 
@@ -128,19 +128,19 @@ class components_book_component_test extends abstract_testcase {
             $this->chapters[0]->id, 'book', 'book_chapters', 'content');
     }
 
-    public function test_resolve_module_instance_id_from_book() {
+    public function test_resolve_module_instance_id_from_book(): void {
         $this->setup_books();
         $instanceid = $this->component->resolve_module_instance_id('book', $this->books[0]->id);
         $this->assertEquals($this->books[0]->id, $instanceid);
     }
 
-    public function test_resolve_module_instance_id_from_chapter() {
+    public function test_resolve_module_instance_id_from_chapter(): void {
         $this->setup_books();
         $instanceid = $this->component->resolve_module_instance_id('book_chapters', $this->chapters[0]->id);
         $this->assertEquals($this->books[0]->id, $instanceid);
     }
 
-    public function test_get_all_course_annotation_maps() {
+    public function test_get_all_course_annotation_maps(): void {
         global $PAGE;
         $PAGE->set_pagetype('mod-book-view');
 
@@ -167,7 +167,7 @@ class components_book_component_test extends abstract_testcase {
     /**
      * Test if file in use detection is working with this block.
      */
-    public function test_files_in_use() {
+    public function test_files_in_use(): void {
         global $DB;
 
         $this->setup_books();

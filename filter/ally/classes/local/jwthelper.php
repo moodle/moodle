@@ -90,7 +90,7 @@ class jwthelper {
      * @return string A role string suitable for passing with an LTI launch
      */
     private static function lti_get_ims_role($user, $courseid) {
-        $roles = array();
+        $roles = [];
 
         $coursecontext = \context_course::instance($courseid);
 
