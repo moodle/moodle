@@ -33,6 +33,7 @@
                 {{#title}}{{#str}} sortbytitle, block_myoverview {{/str}}{{/title}}
                 {{#lastaccessed}}{{#str}} sortbylastaccessed, block_myoverview {{/str}}{{/lastaccessed}}
                 {{#shortname}}{{#str}} sortbyshortname, block_myoverview {{/str}}{{/shortname}}
+                {{#startdate}}{{#str}} sortbystartdate, block_myoverview {{/str}}{{/startdate}}
             </span>
         </button>
         <ul class="dropdown-menu" role="menu" data-show-active-item data-skip-active-class="true" aria-labelledby="sortingdropdown">
@@ -51,6 +52,11 @@
             <li>
                 <a class="dropdown-item" href="#" data-filter="sort" data-pref="lastaccessed" data-value="ul.timeaccess desc" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#lastaccessed}}aria-current="true"{{/lastaccessed}}>
                     {{#str}} sortbylastaccessed, block_myoverview {{/str}}
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="#" data-filter="sort" data-pref="startdate" data-value="startdate" aria-controls="courses-view-{{uniqid}}" role="menuitem" {{#startdate}}aria-current="true"{{/startdate}}>
+                    {{#str}} sortbystartdate, block_myoverview {{/str}}
                 </a>
             </li>
         </ul>
