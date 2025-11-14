@@ -135,12 +135,12 @@ class message_airnotifier_manager {
         $curl->setHeader($header);
 
         // Site ids are stored as secrets in md5 in the Moodle public hub.
-        $params = array(
+        $params = [
             'url' => $CFG->wwwroot,
-            'siteid' => md5($CFG->siteidentifier),
+            'siteid' => md5(\core\hub\registration::get_secret()),
             'contact' => $USER->email,
-            'description' => $CFG->wwwroot
-            );
+            'description' => $CFG->wwwroot,
+        ];
         $resp = $curl->post($serverurl, $params);
 
         if ($key = json_decode($resp, true)) {
