@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use core_question\local\bank\question_version_status;
+use core_question\versions;
 
 /**
  * delete old directories and conditionally create backup_temp_ids table
@@ -5355,6 +5356,8 @@ class restore_create_categories_and_questions extends restore_structure_step {
                         ]
                     );
                 }
+                // Ensure the nextversion value has been initialised, and increment it to account for the additional version.
+                versions::get_next_version($this->latestversion->questionbankentryid);
             }
             $newqvid = $DB->insert_record('question_versions', $this->latestversion);
             $this->set_mapping('question_versions', $oldqvid, $newqvid);
