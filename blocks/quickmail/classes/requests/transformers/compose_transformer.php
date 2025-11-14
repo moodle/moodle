@@ -79,13 +79,20 @@ class compose_transformer extends transformer {
      */
     public function get_transformed_excluded() {
         $excludes = "";
-        $counter = count($this->form_data->excluded_entity_ids) ?? 0;
-        for($c = 0; $c < $counter; $c++) {
-            $excludes .= $this->form_data->excluded_entity_ids[$c];
-            if ($c+1 < $counter) {
-                $excludes .= ',';
+        // In the config/settings on the course level the instructor can use multiselect
+        // instead of autocomplete which removes the excluded option in the form.
+        // This check stops it from breaking. 
+        if (property_exists($this->form_data, "excluded_entity_ids")) {
+
+            $counter = count($this->form_data->excluded_entity_ids) ?? 0;
+            for($c = 0; $c < $counter; $c++) {
+                $excludes .= $this->form_data->excluded_entity_ids[$c];
+                if ($c+1 < $counter) {
+                    $excludes .= ',';
+                }
             }
         }
+
         return $excludes;
     }
 
