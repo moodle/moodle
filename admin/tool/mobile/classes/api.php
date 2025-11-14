@@ -810,7 +810,7 @@ class api {
             $credentials[] = ['type' => 'airnotifieraccesskey', 'value' => $CFG->airnotifieraccesskey];
         }
         if (\core\hub\registration::is_registered()) {
-            $credentials[] = ['type' => 'siteid', 'value' => $CFG->siteidentifier];
+            $credentials[] = ['type' => 'siteid', 'value' => \core\hub\registration::get_secret()];
         }
         // Generate a hash key for validating that the request is coming from this site via WS.
         $key = complex_random_string(32);
