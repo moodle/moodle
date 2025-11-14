@@ -2645,6 +2645,7 @@ class backup_questions_structure_step extends backup_structure_step {
                 'questioncategoryid',
                 'idnumber',
                 'ownerid',
+                'nextversion',
             ]);
 
         $questionversions = new backup_nested_element('question_version');
