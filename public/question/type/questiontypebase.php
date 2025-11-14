@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
+use core_question\versions;
 
 /**
  * This is the base class for Moodle question types.
@@ -494,7 +495,7 @@ class question_type {
             // Get the status field. It comes from the form, but for testing we can.
             $status = $form->status ?? $question->status ??
                 \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
-            $questionversion->version = get_next_version($questionbankentry->id);
+            $questionversion->version = versions::get_next_version($questionbankentry->id);
             $questionversion->status = $status;
         } else {
             $parentversion = get_question_version($form->parent);

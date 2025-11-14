@@ -24,6 +24,7 @@ use question_bank;
 defined('MOODLE_INTERNAL') || die();
 
 use backup;
+use core\context\module;
 use core_question\local\bank\question_bank_helper;
 use core_question\local\bank\question_version_status;
 use restore_controller;
@@ -899,6 +900,7 @@ final class backup_test extends \advanced_testcase {
         $DB->set_field('question_versions', 'version', 3, ['questionid' => $questionv5->id]);
         $questionv6 = $questiongenerator->update_question($questionv5, null, ['name' => 'Version 6']);
         $DB->set_field('question_versions', 'version', 4, ['questionid' => $questionv6->id]);
+        $DB->set_field('question_bank_entries', 'nextversion', 5, ['id' => $questionv1->questionbankentryid]);
 
         // Add a quiz specifically using "version 5" (with version number 3).
         $quiz2 = self::getDataGenerator()->create_module('quiz', ['course' => $testdata->course->id]);
@@ -975,5 +977,152 @@ final class backup_test extends \advanced_testcase {
 
         $structure3 = $quiz3settings->get_structure();
         $this->assertEquals($questionv6->id, $structure3->get_question_in_slot(1)->questionid);
+
+        // The nextversion was incremented when the old versions were inserted.
+        $this->assertEquals(7, $DB->get_field('question_bank_entries', 'nextversion', ['id' => $questionv1->questionbankentryid]));
+    }
+
+    /**
+     * Restore a backup containing question versions that were deleted, after new versions were created.
+     *
+     * Unlike {@see test_restore_backup_containing_deleted_versions}, we do not mess with the version numbers or nextversion
+     * counter, meaning a gap should be left for the deleted question, and it should be restore in its original place.
+     */
+    public function test_restore_backup_containing_deleted_versions_using_nextversion(): void {
+        global $DB;
+        self::setAdminUser();
+        $this->resetAfterTest();
+        $questiongenerator = self::getDataGenerator()->get_plugin_generator('core_question');
+        $testdata = $this->add_course_quiz_and_qbank();
+        $questionv1 = $testdata->qbankquestion;
+        $questionv2 = $questiongenerator->update_question($questionv1, null, ['name' => 'Version 2']);
+        $questionv3 = $questiongenerator->update_question($questionv2, null, ['name' => 'Version 3']);
+        $questionv4 = $questiongenerator->update_question($questionv3, null, ['name' => 'Version 4']);
+
+        $quizsettings = quiz_settings::create($testdata->quiz->id);
+        $structure1 = $quizsettings->get_structure();
+
+        // Set the usage of the question to specifically use version 2.
+        quiz_add_quiz_question($questionv2->id, $testdata->quiz);
+        $structure1->update_slot_version($structure1->get_slot_id_for_slot(1), 2);
+
+        $backupid = $this->backup_course($testdata->course);
+
+        question_delete_question($questionv4->id); // Actually deleted.
+        question_delete_question($questionv3->id); // Actually deleted.
+        question_delete_question($questionv2->id); // Hidden, it's being used explicitly.
+
+        $questionv5 = $questiongenerator->update_question($questionv1, null, ['name' => 'Version 5']);
+        $questionv6 = $questiongenerator->update_question($questionv5, null, ['name' => 'Version 6']);
+        $this->assertEquals(7, $DB->get_field('question_bank_entries', 'nextversion', ['id' => $questionv1->questionbankentryid]));
+
+        // Add a quiz specifically using "version 5" .
+        $quiz2 = self::getDataGenerator()->create_module('quiz', ['course' => $testdata->course->id]);
+        $quiz2settings = quiz_settings::create($quiz2->id);
+        quiz_add_quiz_question($questionv5->id, $quiz2);
+        $structure2 = $quiz2settings->get_structure();
+        $structure2->update_slot_version($structure2->get_last_slot()->id, 5);
+
+        // Add another quiz using the "always latest" version of the question.
+        $quiz3 = self::getDataGenerator()->create_module('quiz', ['course' => $testdata->course->id]);
+        $quiz3settings = quiz_settings::create($quiz3->id);
+        quiz_add_quiz_question($questionv6->id, $quiz3);
+
+        $qbe = get_question_bank_entry($questionv1->id);
+        $versions = $DB->get_records(
+            'question_versions',
+            ['questionbankentryid' => $qbe->id],
+            fields: 'version, questionid, status',
+        );
+
+        $this->assertCount(4, $versions);
+
+        $this->assertEquals($questionv1->id, $versions[1]->questionid);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[1]->status);
+        $this->assertEquals($questionv2->id, $versions[2]->questionid);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_HIDDEN, $versions[2]->status);
+        $this->assertArrayNotHasKey(3, $versions);
+        $this->assertArrayNotHasKey(4, $versions);
+        $this->assertEquals($questionv5->id, $versions[5]->questionid);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[5]->status);
+        $this->assertEquals($questionv6->id, $versions[6]->questionid);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[6]->status);
+
+        $structure1 = $quizsettings->get_structure();
+        $this->assertEquals($questionv2->id, $structure1->get_question_in_slot(1)->questionid);
+
+        $structure2 = $quiz2settings->get_structure();
+        $this->assertEquals($questionv5->id, $structure2->get_question_in_slot(1)->questionid);
+
+        $structure3 = $quiz3settings->get_structure();
+        $this->assertEquals($questionv6->id, $structure3->get_question_in_slot(1)->questionid);
+
+        $this->restore_to_course($backupid, $testdata->course->id);
+
+        $versions = $DB->get_records(
+            'question_versions',
+            ['questionbankentryid' => $qbe->id],
+            fields: 'version, questionid, status',
+        );
+
+        $this->assertCount(6, $versions);
+
+        $this->assertEquals($questionv1->id, $versions[1]->questionid);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[1]->status);
+        // Version 2 is restored to "ready" status.
+        $this->assertEquals($questionv2->id, $versions[2]->questionid);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[2]->status);
+        // Version 3 is a new copy of $questionv3 with a different ID but the same content.
+        $this->assertEquals($questionv3->name, $DB->get_field('question', 'name', ['id' => $versions[3]->questionid]));
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[3]->status);
+        // Version 4 is a new copy of $questionv4 with a different ID but the same content.
+        $this->assertEquals($questionv4->name, $DB->get_field('question', 'name', ['id' => $versions[4]->questionid]));
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[4]->status);
+        // Versions 5 and 6 have had their version numbers bumped up by 1.
+        $this->assertEquals($questionv5->id, $versions[5]->questionid);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[5]->status);
+        $this->assertEquals($questionv6->id, $versions[6]->questionid);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_READY, $versions[6]->status);
+
+        // Questions referencing specific versions still point to the same question.
+        $structure1 = $quizsettings->get_structure();
+        $this->assertEquals($questionv2->id, $structure1->get_question_in_slot(1)->questionid);
+
+        $structure2 = $quiz2settings->get_structure();
+        $this->assertEquals($questionv5->id, $structure2->get_question_in_slot(1)->questionid);
+
+        $structure3 = $quiz3settings->get_structure();
+        $this->assertEquals($questionv6->id, $structure3->get_question_in_slot(1)->questionid);
+
+        // The nextversion has not changed during the restore.
+        $this->assertEquals(7, $DB->get_field('question_bank_entries', 'nextversion', ['id' => $questionv1->questionbankentryid]));
+    }
+
+    /**
+     * Restoring a question bank entry retains the original nextquestion value.
+     *
+     * @return void
+     * @throws \dml_exception
+     */
+    public function test_backup_question_nextquestion_retained(): void {
+        global $DB;
+        self::setAdminUser();
+        $this->resetAfterTest();
+        $questiongenerator = self::getDataGenerator()->get_plugin_generator('core_question');
+        $testdata = $this->add_course_quiz_and_qbank();
+        $questionv1 = $testdata->qbankquestion;
+        $questiongenerator->update_question($questionv1, null, ['name' => 'Version 2']);
+        $this->assertEquals(3, $DB->get_field('question_bank_entries', 'nextversion', ['id' => $questionv1->questionbankentryid]));
+
+        $backupid = $this->backup_course($testdata->course);
+
+        $newcourse = $this->getDataGenerator()->create_course();
+        $this->restore_to_course($backupid, $newcourse->id);
+        $qbanks = get_fast_modinfo($newcourse)->get_instances_of('qbank');
+        $qbank = reset($qbanks);
+        $qbankcontext = module::instance($qbank->id);
+        $category = question_get_default_category($qbankcontext->id);
+        // The question bank entry for the restored question has the same nextqueston value as the original.
+        $this->assertEquals(3, $DB->get_field('question_bank_entries', 'nextversion', ['questioncategoryid' => $category->id]));
     }
 }

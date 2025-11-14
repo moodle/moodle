@@ -1935,21 +1935,14 @@ function get_question_version($questionid): array {
  * @return int next version number.
  * @throws dml_exception
  */
+#[\core\attribute\deprecated(
+    '\core_question\versions::get_next_version()',
+    '5.2',
+    'The next version is now an incrementing number stored in the database, to prevent duplicate version numbers',
+    'MDL-86798',
+)]
 function get_next_version(int $questionbankentryid): int {
-    global $DB;
-
-    $sql = "SELECT MAX(qv.version)
-              FROM {question_versions} qv
-              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-             WHERE qbe.id = :id";
-
-    $nextversion = $DB->get_field_sql($sql, ['id' => $questionbankentryid]);
-
-    if ($nextversion) {
-        return (int)$nextversion + 1;
-    }
-
-    return 1;
+    return \core_question\versions::get_next_version($questionbankentryid);
 }
 
 /**
