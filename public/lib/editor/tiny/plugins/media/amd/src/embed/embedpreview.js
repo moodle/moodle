@@ -198,7 +198,7 @@ export class EmbedPreview extends MediaBase {
             }
         }
 
-        return fileName;
+        return decodeURI(fileName);
     };
 
     /**

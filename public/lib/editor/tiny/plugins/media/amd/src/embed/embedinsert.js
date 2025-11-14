@@ -93,15 +93,20 @@ export class EmbedInsert {
      * @param {string} url - The URL of the media to load and display.
      */
     loadMediaPreview = async(url) => {
-        this.originalUrl = url;
+        const parsedUrl = new URL(url);
         this.fetchedMediaLinkTitle = await getMediaTitle(url, this);
+        // The hash in a URL can cause issues. Remove it.
+        this.originalUrl = parsedUrl.hash ? parsedUrl.toString().split('#')[0] : parsedUrl.toString();
 
         if (this.newMediaLink) { // Media added using url input.
             this.filteredContent = await fetchPreview(this.originalUrl, this.contextId);
 
             if (!this.mediaType) {
-                // It means the url points to a physical media file.
-                if (this.fetchedMediaLinkTitle) {
+                // If the filtered content is not empty, it means Moodle's filter recognized it as external media.
+                if (this.filteredContent && this.filteredContent.trim() !== '') {
+                    this.mediaType = 'link';
+                } else if (this.fetchedMediaLinkTitle) {
+                    // It means the url points to a physical media file with a hash-based title.
                     // Case-insensitive regex for video tag.
                     const videoRegex = /<video[^>]*>.*<\/video>/i;
                     // Case-insensitive regex for audio tag.
@@ -112,8 +117,6 @@ export class EmbedInsert {
                     } else if (audioRegex.test(this.filteredContent)) {
                         this.mediaType = 'audio';
                     }
-                } else {
-                    this.mediaType = 'link';
                 }
             }
 
@@ -121,6 +124,15 @@ export class EmbedInsert {
             this.processMediaPreview();
         } else { // Media added using dropzone or repositories.
             this.mediaType ??= await checkMediaType(url);
+
+            // If checkMediaType returns null, try fetching preview to detect external media providers.
+            if (!this.mediaType) {
+                this.filteredContent = await fetchPreview(this.originalUrl, this.contextId);
+                // If the filtered content is not empty, it means Moodle's filter recognized it as external media.
+                if (this.filteredContent && this.filteredContent.trim() !== '') {
+                    this.mediaType = 'link';
+                }
+            }
 
             // Process the media preview.
             this.processMediaPreview();
