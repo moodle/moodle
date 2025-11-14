@@ -16,6 +16,7 @@
 
 namespace core_courseformat\local;
 
+use core_courseformat\formatactions;
 use stdClass;
 
 /**
@@ -1035,4 +1036,358 @@ final class sectionactions_test extends \advanced_testcase {
         $this->assertEquals(1, $DB->count_records('course_modules', ['course' => $course->id, 'visible' => 1]));
         $this->assertEquals(1, $DB->count_records('course_modules', ['course' => $course->id, 'visible' => 0]));
     }
+
+    /**
+     * Test section move after method
+     *
+     * @param int $movedsection The section number to move.
+     * @param int $previoussection The section number to move after.
+     * @param bool $expectedreturnvalue The expected return value of the move_after method.
+     * @param array|null $expectedsections The expected order of sections after the move, or null to use default.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('move_after_provider')]
+    public function test_move_after(
+        int $movedsection,
+        int $previoussection,
+        bool $expectedreturnvalue,
+        ?array $expectedsections = null
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 4, 'initsections' => true],
+            ['createsections' => true]
+        );
+        $sectionactions = formatactions::section($course);
+        $sections = get_fast_modinfo($course)->get_section_info_all();
+
+        $returnval = $sectionactions->move_after($sections[$movedsection], $sections[$previoussection]);
+        $sections = array_map(
+            fn($section) => $section->name,
+            get_fast_modinfo($course)->get_section_info_all(),
+        );
+
+        $this->assertEquals($expectedreturnvalue, $returnval);
+        $sections = array_map(
+            fn($section) => $section->name,
+            get_fast_modinfo($course)->get_section_info_all(),
+        );
+        if (!$expectedreturnvalue) {
+            $expectedsections = [
+                null,
+                'Section 1',
+                'Section 2',
+                'Section 3',
+                'Section 4',
+            ];
+        }
+        $this->assertEquals(
+            $expectedsections,
+            $sections
+        );
+    }
+
+    /**
+     * Test section move after method when trying to move a section after a non-used section.
+     */
+    public function test_move_after_no_use_section(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'singleactivity', 'numsections' => 3, 'initsections' => true],
+            ['createsections' => true]
+        );
+        $sectionactions = formatactions::section($course);
+        $sections  = get_fast_modinfo($course)->get_section_info_all();
+        $hasmoved = $sectionactions->move_after($sections[1], $sections[2]);
+        $this->assertFalse($hasmoved);
+    }
+
+    /**
+     * Test section move after method when trying to move a section after a section in another course.
+     */
+    public function test_move_after_other_course(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 2, 'initsections' => true],
+            ['createsections' => true]
+        );
+        $othercourse = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 2, 'initsections' => true],
+            ['createsections' => true]
+        );
+        $sectionactions = formatactions::section($course);
+        $sections  = get_fast_modinfo($course)->get_section_info_all();
+        $othersections  = get_fast_modinfo($othercourse)->get_section_info_all();
+        $hasmoved = $sectionactions->move_after($sections[1], $sections[2]);
+        $this->assertTrue($hasmoved);
+        $hasmoved = $sectionactions->move_after($sections[1], $othersections[1]);
+        $this->assertFalse($hasmoved);
+    }
+
+    /**
+     * Data provider for test_move_after.
+     *
+     * @return \Generator
+     */
+    public static function move_after_provider(): \Generator {
+        yield 'move section 4 after section 2' => [
+            'movedsection' => 4,
+            'previoussection' => 2,
+            'expectedreturnvalue' => true,
+            'expectedsections' => [
+                null,
+                'Section 1',
+                'Section 2',
+                'Section 4',
+                'Section 3',
+            ],
+        ];
+        yield 'move section 3 after section 4' => [
+            'movedsection' => 3,
+            'previoussection' => 4,
+            'expectedreturnvalue' => true,
+            'expectedsections' => [
+                null,
+                'Section 1',
+                'Section 2',
+                'Section 4',
+                'Section 3',
+            ],
+        ];
+        yield 'move section 3 after section 0' => [
+            'movedsection' => 3,
+            'previoussection' => 0,
+            'expectedreturnvalue' => true,
+            'expectedsections' => [
+                null,
+                'Section 3',
+                'Section 1',
+                'Section 2',
+                'Section 4',
+            ],
+        ];
+        yield 'move section 1 after section 4' => [
+            'movedsection' => 1,
+            'previoussection' => 4,
+            'expectedreturnvalue' => true,
+            'expectedsections' => [
+                null,
+                'Section 2',
+                'Section 3',
+                'Section 4',
+                'Section 1',
+            ],
+        ];
+        yield 'move section 0 to section 4' => [
+            'movedsection' => 0,
+            'previoussection' => 4,
+            'expectedreturnvalue' => false,
+        ];
+        yield 'move section 2 after section 1 (existing position)' => [
+            'movedsection' => 2,
+            'previoussection' => 1,
+            'expectedreturnvalue' => false,
+        ];
+        yield 'move section 2 after itself' => [
+            'movedsection' => 2,
+            'previoussection' => 2,
+            'expectedreturnvalue' => false,
+        ];
+    }
+
+    /**
+     * Test section move at method
+     *
+     * @param int $movedsection The section number to move.
+     * @param int $position The position to move the section to.
+     * @param bool $expectedreturnvalue
+     * @param array|null $expectedsections
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('move_at_provider')]
+    public function test_move_at(
+        int $movedsection,
+        int $position,
+        bool $expectedreturnvalue,
+        ?array $expectedsections = null
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 4, 'initsections' => true],
+            ['createsections' => true]
+        );
+        $sectionactions = formatactions::section($course);
+        $sections  = get_fast_modinfo($course)->get_section_info_all();
+
+        $returnvalue = $sectionactions->move_at($sections[$movedsection], $position);
+        $this->assertEquals($expectedreturnvalue, $returnvalue);
+        $sections = array_map(
+            fn($section) => $section->name,
+            get_fast_modinfo($course)->get_section_info_all(),
+        );
+        if (!$expectedreturnvalue) {
+            $expectedsections = [
+                null,
+                'Section 1',
+                'Section 2',
+                'Section 3',
+                'Section 4',
+            ];
+        }
+        $this->assertEquals(
+            $expectedsections,
+            $sections
+        );
+    }
+
+    /**
+     * Test section move at method when trying to move a section after a non-used section.
+     */
+    public function test_move_at_no_use_section(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'singleactivity', 'numsections' => 3, 'initsections' => true],
+            ['createsections' => true]
+        );
+        $sectionactions = formatactions::section($course);
+        $sections  = get_fast_modinfo($course)->get_section_info_all();
+        $hasmoved = $sectionactions->move_at($sections[1], 2);
+        $this->assertFalse($hasmoved);
+    }
+
+    /**
+     * Test section move at method when trying to move a section that belongs to another course.
+     */
+    public function test_move_at_other_course(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 2, 'initsections' => true],
+            ['createsections' => true]
+        );
+        $othercourse = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 2, 'initsections' => true],
+            ['createsections' => true]
+        );
+        $sectionactions = formatactions::section($course);
+        $othersections  = get_fast_modinfo($othercourse)->get_section_info_all();
+        $hasmoved = $sectionactions->move_at($othersections[1], 2);
+        $this->assertFalse($hasmoved);
+    }
+
+
+    /**
+     * Data provider for test_move_at.
+     *
+     * @return \Generator
+     */
+    public static function move_at_provider(): \Generator {
+        yield 'move section 4 at position 2' => [
+            'movedsection' => 4,
+            'position' => 2,
+            'expectedreturnvalue' => true,
+            'expectedsections' => [
+                null,
+                'Section 1',
+                'Section 4',
+                'Section 2',
+                'Section 3',
+            ],
+        ];
+        yield 'move section 3 at position 4' => [
+            'movedsection' => 3,
+            'position' => 4,
+            'expectedreturnvalue' => true,
+            'expectedsections' => [
+                null,
+                'Section 1',
+                'Section 2',
+                'Section 4',
+                'Section 3',
+            ],
+        ];
+        yield 'move section 3 at position 1' => [
+            'movedsection' => 3,
+            'position' => 1,
+            'expectedreturnvalue' => true,
+            'expectedsections' => [
+                null,
+                'Section 3',
+                'Section 1',
+                'Section 2',
+                'Section 4',
+            ],
+        ];
+        yield 'move section 2 at position 2' => [
+            'movedsection' => 2,
+            'position' => 2,
+            'expectedreturnvalue' => false,
+        ];
+        yield 'move section 2 at position 6' => [
+            'movedsection' => 2,
+            'position' => 6,
+            'expectedreturnvalue' => false,
+        ];
+        yield 'move section 2 at position 0' => [
+            'movedsection' => 2,
+            'position' => 0,
+            'expectedreturnvalue' => false,
+        ];
+        yield 'move section 0 at position 2' => [
+            'movedsection' => 2,
+            'position' => 0,
+            'expectedreturnvalue' => false,
+        ];
+    }
+
+    /**
+     * Test reorder_sections function.
+     * Here we just test this private method as removed the equivalent test in the courselib_tests
+     */
+    public function test_reorder_sections(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $this->getDataGenerator()->create_course(
+            ['numsections' => 5],
+            ['createsections' => true],
+        );
+        $course = $this->getDataGenerator()->create_course(
+            ['numsections' => 10],
+            ['createsections' => true],
+        );
+        $oldsections = [];
+        $sections = [];
+        $existingsections = $DB->get_records('course_sections', ['course' => $course->id], 'id');
+        foreach ($existingsections as $section) {
+            $oldsections[$section->section] = $section->id;
+            $sections[$section->id] = $section->section;
+        }
+        ksort($oldsections);
+
+        // Get the reorder_sections function using reflection.
+        $reflection = new \ReflectionClass(sectionactions::class);
+        $sectionactions = formatactions::section($course);
+        $method = $reflection->getMethod('reorder_sections');
+
+        $neworder = $method->invoke($sectionactions, $sections, 2, 4);
+        $neworder = array_keys($neworder);
+        $this->assertEquals($oldsections[0], $neworder[0]);
+        $this->assertEquals($oldsections[1], $neworder[1]);
+        $this->assertEquals($oldsections[2], $neworder[4]);
+        $this->assertEquals($oldsections[3], $neworder[2]);
+        $this->assertEquals($oldsections[4], $neworder[3]);
+        $this->assertEquals($oldsections[5], $neworder[5]);
+        $this->assertEquals($oldsections[6], $neworder[6]);
+
+        $neworder = $method->invoke($sectionactions, $sections, 4, 2);
+        $neworder = array_keys($neworder);
+        $this->assertEquals($oldsections[0], $neworder[0]);
+        $this->assertEquals($oldsections[1], $neworder[1]);
+        $this->assertEquals($oldsections[2], $neworder[3]);
+        $this->assertEquals($oldsections[3], $neworder[4]);
+        $this->assertEquals($oldsections[4], $neworder[2]);
+        $this->assertEquals($oldsections[5], $neworder[5]);
+        $this->assertEquals($oldsections[6], $neworder[6]);
+    }
+
 }

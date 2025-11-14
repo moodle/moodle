@@ -1,0 +1,5 @@
+issueNumber: MDL-86862
+notes:
+  core_courseformat:
+    - message: Deprecates and remove all usages of reorder_sections that is used only internally.
+      type: deprecated

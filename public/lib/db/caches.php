@@ -239,6 +239,9 @@ $definitions = array(
         // Executing actions in more than 10 courses usually means executing the same action on each course
         // so there is no need for caching individual course instances.
         'staticaccelerationsize' => 10,
+        'invalidationevents' => [
+            'changesincourseactionstate',
+        ],
     ],
     // Used to store data for repositories to avoid repetitive DB queries within one request.
     'repositories' => array(

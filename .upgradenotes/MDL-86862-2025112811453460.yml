@@ -1,0 +1,5 @@
+issueNumber: MDL-86862
+notes:
+  core_courseformat:
+    - message: Add sectionactions::move_at to move a section at a given position.
+      type: improved

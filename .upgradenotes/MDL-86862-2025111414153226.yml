@@ -1,0 +1,6 @@
+issueNumber: MDL-86862
+notes:
+  core_courseformat:
+    - message: >-
+        Add a new core_courseformat\sectionactions::move_after to replace the current move_section_to logic.
+      type: improved
