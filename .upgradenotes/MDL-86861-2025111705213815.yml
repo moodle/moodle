@@ -1,0 +1,8 @@
+issueNumber: MDL-86861
+notes:
+  core_courseformat:
+    - message: >-
+        Added the `set_visibility` method to the `core_courseformat\sectionactions` class.
+        To optimize performance, this method does not return the list of affected resources,
+        avoiding unnecessary database queries since the return value is unused.
+      type: improved
