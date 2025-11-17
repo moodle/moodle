@@ -1414,6 +1414,14 @@ class view {
         }
         if ($rowclasses) {
             $attributes['class'] = $rowclasses;
+            // Add firstrow class to highlighted row if it does not already have it.
+            if (str_contains($attributes['class'], 'highlight') && !str_contains($attributes['class'], 'firstrow')) {
+                $attributes['class'] .= ' firstrow';
+                // If question_text is not visible, add class onlyhighlightrow.
+                if (!isset($this->extrarows['question_text_row']) || !($this->extrarows['question_text_row']->isvisible)) {
+                    $attributes['class'] .= ' onlyhighlightrow';
+                }
+            }
         }
         echo \html_writer::start_tag('tr', $attributes);
         foreach ($this->visiblecolumns as $column) {
@@ -1421,6 +1429,10 @@ class view {
         }
         echo \html_writer::end_tag('tr');
         foreach ($this->extrarows as $row) {
+            if (str_contains($attributes['class'], 'highlight')) {
+                // Add extrarow class to highlighted row.
+                $rowclasses .= ' extrarow' . ' ' . $this->extrarows[0];
+            }
             $row->display($question, $rowclasses);
         }
     }
