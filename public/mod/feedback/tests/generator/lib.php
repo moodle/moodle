@@ -103,6 +103,19 @@ class mod_feedback_generator extends testing_module_generator {
             $data['values'] = $this->format_item_values($questiontype, $data['values']);
         }
 
+        if (isset($data['dependitem'])) {
+            $select = 'label = ? OR name = ?';
+            $params = [
+                $data['dependitem'],
+                $data['dependitem'],
+            ];
+            $dependid = $DB->get_field_select('feedback_item', 'id', $select, $params, MUST_EXIST);
+            $data['dependitem'] = $dependid;
+        } else {
+            // Make sure `dependvalue` is not set if we are not creating a dependent item.
+            unset($data['dependvalue']);
+        }
+
         return call_user_func([$this, "create_item_{$questiontype}"], $feedback, $data);
     }
 
