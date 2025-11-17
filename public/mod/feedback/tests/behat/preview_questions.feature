@@ -19,16 +19,14 @@ Feature: Preview feedback questions
       | editingteacher | C1     | editingteacher |
       | teacher        | C1     | teacher        |
     And the following "activities" exist:
-      | activity   | name                | course | idnumber    |
-      | feedback   | Music history | C1     | feedback0   |
-    And I am on the "Music history" "feedback activity" page logged in as editingteacher
-    And I navigate to "Questions" in current page administration
-    And I add a "Multiple choice" question to the feedback with:
-        | Question               | What is your favourite instrument |
-        | Label                  | instrument1                       |
-        | Multiple choice type   | Multiple choice - single answer   |
-        | Multiple choice values | drums\guitar\hurdygurdy           |
-    And I log out
+      | activity   | name           | course | idnumber    |
+      | feedback   | Music history  | C1     | feedback0   |
+    And the following "mod_feedback > question" exists:
+      | activity      | feedback0                         |
+      | name          | What is your favourite instrument |
+      | questiontype  | multichoice                       |
+      | label         | instrument1                       |
+      | values        | Drums\nGuitar\nHurdy-gurdy        |
 
   Scenario: Students cannot see the Preview questions button
     When I am on the "Music history" "feedback activity" page logged in as student
@@ -45,3 +43,20 @@ Feature: Preview feedback questions
     Then I should see "Preview questions"
     And I follow "Preview questions"
     And I should see "What is your favourite instrument"
+
+  @javascript @accessibility
+  Scenario: Feedback questionnaire pages should be accessible
+    Given the following "mod_feedback > question" exists:
+      | activity      | feedback0                               |
+      | name          | What type of guitar is your favourite?  |
+      | questiontype  | multichoice                             |
+      | label         | whatguitar                              |
+      | dependitem    | instrument1                             |
+      | dependvalue   | Guitar                                  |
+      | values        | Electric\nAcoustic\nBass                |
+    When I am on the "Music history" "feedback activity" page logged in as editingteacher
+    And I navigate to "Questions" in current page administration
+    Then the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
+    And I am on the "Music history" "feedback activity" page logged in as student
+    And I follow "Answer the questions"
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
