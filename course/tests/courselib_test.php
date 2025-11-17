@@ -550,6 +550,7 @@ final class courselib_test extends advanced_testcase {
         // Completion common to all module.
         $moduleinfo->completion = COMPLETION_TRACKING_AUTOMATIC;
         $moduleinfo->completionview = COMPLETION_VIEW_REQUIRED;
+        $moduleinfo->completionusegrade = 1;
         $moduleinfo->completiongradeitemnumber = 1;
         $moduleinfo->completionpassgrade = 0;
         $moduleinfo->completionexpected = time() + (7 * 24 * 3600);
