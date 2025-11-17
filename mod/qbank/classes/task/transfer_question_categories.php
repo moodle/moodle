@@ -317,13 +317,24 @@ class transfer_question_categories extends adhoc_task {
     /**
      * Set the contextid of category $categoryid and all its children to $newcontextid.
      *
+     * We may need to modify the category before moving it to avoid unique key violations {@see move_subcategories_to_context()}.
+     *
      * @param int $categoryid a question_category id.
      * @param int $newcontextid the place to move to.
      */
     public function move_category_and_its_children(int $categoryid, int $newcontextid): void {
         global $DB;
 
-        $DB->set_field('question_categories', 'contextid', $newcontextid, ['id' => $categoryid]);
+        $category = $DB->get_record('question_categories', ['id' => $categoryid]);
+        // Check for fields that are part of a unique key for conflicts with existing records.
+        if ($DB->record_exists('question_categories', ['contextid' => $newcontextid, 'stamp' => $category->stamp])) {
+            $category->stamp = make_unique_id_code();
+        }
+        if ($DB->record_exists('question_categories', ['contextid' => $newcontextid, 'idnumber' => $category->idnumber])) {
+            $category->idnumber = null;
+        }
+        $category->contextid = $newcontextid;
+        $DB->update_record('question_categories', $category);
         $children = $DB->get_records('question_categories', ['parent' => $categoryid], '', 'id, contextid');
         foreach ($children as $child) {
             if ($child->contextid != $newcontextid) {
