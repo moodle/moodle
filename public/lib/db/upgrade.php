@@ -2314,5 +2314,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025100600.05);
     }
 
+    if ($oldversion < 2025100600.08) {
+        // Define index hashcode (not unique) to be added to question_response_analysis.
+        $table = new xmldb_table('question_response_analysis');
+        $index = new xmldb_index('hashcode', XMLDB_INDEX_NOTUNIQUE, ['hashcode']);
+
+        // Conditionally launch add index hashcode.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index hashcode (not unique) to be added to question_statistics.
+        $table = new xmldb_table('question_statistics');
+        $index = new xmldb_index('hashcode', XMLDB_INDEX_NOTUNIQUE, ['hashcode']);
+
+        // Conditionally launch add index hashcode.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025100600.08);
+    }
+
     return true;
 }
