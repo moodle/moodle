@@ -26,8 +26,8 @@ namespace mod_bigbluebuttonbn\local\helpers;
 
 use cache;
 use cache_store;
-use context;
-use context_course;
+use core\context;
+use core\context\{course, system};
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use stdClass;
@@ -81,11 +81,11 @@ class roles {
     /**
      * Returns an array containing all the users in a context wrapped for html select element.
      *
-     * @param context_course $context
+     * @param course $context
      * @param null $bbactivity
      * @return array $users
      */
-    public static function get_users_array(context_course $context, $bbactivity = null) {
+    public static function get_users_array(course $context, $bbactivity = null) {
         // CONTRIB-7972, check the group of current user and course group mode.
         $groups = null;
         $users = (array) get_enrolled_users($context, '', 0, 'u.*', null, 0, 0, true);
@@ -120,11 +120,10 @@ class roles {
     public static function has_capability_in_course(int $courseid, string $capability) {
         global $DB;
         if (empty($courseid) || !$DB->record_exists('course', ['id' => $courseid])) {
-            return has_capability('moodle/site:config', \context_system::instance());
+            return has_capability('moodle/site:config', system::instance());
         }
 
-        $coursecontext = context_course::instance($courseid);
-        return has_capability($capability, $coursecontext);
+        return has_capability($capability, course::instance($courseid));
     }
 
     /**
@@ -440,7 +439,7 @@ class roles {
      */
     public static function import_get_courses_for_select(instance $instance): array {
         if ($instance->is_admin()) {
-            $courses = get_courses('all', 'c.fullname ASC');
+            $courses = get_courses('all', 'c.fullname ASC', 'c.id, c.shortname, c.fullname');
             // It includes the name of the site as a course (category 0), so remove the first one.
             unset($courses['1']);
         } else {
@@ -452,7 +451,10 @@ class roles {
         });
         $coursesforselect = [];
         foreach ($courses as $course) {
-            $coursesforselect[$course->id] = $course->fullname . " (" . $course->shortname . ")";
+            $coursesforselect[$course->id] = format_string(
+                get_course_display_name_for_list($course),
+                options: ['context' => course::instance($course->id)],
+            );
         }
         return $coursesforselect;
     }

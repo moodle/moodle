@@ -17,6 +17,7 @@
 namespace mod_bigbluebuttonbn\local\helpers;
 
 use context_course;
+use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 
 /**
@@ -27,7 +28,6 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
  * @covers \mod_bigbluebuttonbn\local\helpers\roles
- * @coversDefaultClass \mod_bigbluebuttonbn\local\helpers\roles
  */
 final class roles_test extends \advanced_testcase {
     use testcase_helper_trait;
@@ -90,5 +90,44 @@ final class roles_test extends \advanced_testcase {
         $this->setUser($teachers[1]);
         $users = roles::get_users_array($context, $bbactivity);
         $this->assertCount($numstudents + $numteachers, $users);
+    }
+
+    /**
+     * Test getting courses from which we can import
+     */
+    public function test_import_get_courses_for_select(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+
+        $courseone = $this->getDataGenerator()->create_course();
+        [$context, $cm, $activity] = $this->create_instance($courseone);
+        $instance = instance::get_from_instanceid($activity->id);
+
+        // Course two should be returned, because it has an activity instance.
+        $coursetwo = $this->getDataGenerator()->create_course([
+            'fullname' => '<span class="multilang" lang="en">English</span><span class="multilang" lang="es">Spanish</span>',
+        ]);
+        $this->create_instance($coursetwo);
+
+        // Course three should not be returned, because it has no activity instance.
+        $coursethree = $this->getDataGenerator()->create_course();
+
+        $coursesforselect = roles::import_get_courses_for_select($instance);
+        $this->assertEquals([
+            $courseone->id => $courseone->fullname,
+            $coursetwo->id => 'English',
+        ], $coursesforselect);
+
+        // Display extended course names.
+        set_config('courselistshortnames', 1);
+
+        $coursesforselect = roles::import_get_courses_for_select($instance);
+        $this->assertEquals([
+            $courseone->id => "{$courseone->shortname} {$courseone->fullname}",
+            $coursetwo->id => "{$coursetwo->shortname} English",
+        ], $coursesforselect);
     }
 }
