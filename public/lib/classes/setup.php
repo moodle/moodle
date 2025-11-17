@@ -80,4 +80,44 @@ class setup {
 
         return str_ends_with($CFG->wwwroot, '/');
     }
+
+    /**
+     * Check whether an upgrade is currently running.
+     *
+     * @return bool
+     */
+    public static function is_upgrade_running(): bool {
+        global $CFG;
+
+        return !empty($CFG->upgraderunning);
+    }
+
+    /**
+     * Ensure that an upgrade is not running, emitting an exception if it is.
+     *
+     * @throws moodle_exception
+     * @return bool false if no upgrade is running
+     */
+    public static function ensure_upgrade_is_not_running(): bool {
+        if (self::is_upgrade_running()) {
+            throw new moodle_exception('cannotexecduringupgrade');
+        }
+
+        return false;
+    }
+
+    /**
+     * Warn if an upgrade is currently running.
+     *
+     * @return bool true if an upgrade is running, false if no upgrade is running
+     */
+    public static function warn_if_upgrade_is_running(): bool {
+        if (self::is_upgrade_running()) {
+            debugging(get_string('cannotexecduringupgrade', 'error'), DEBUG_DEVELOPER);
+
+            return true;
+        }
+
+        return false;
+    }
 }

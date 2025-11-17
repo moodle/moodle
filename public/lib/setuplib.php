@@ -1203,17 +1203,18 @@ function redirect_if_major_upgrade_required() {
  * @param bool $warningonly if true displays a warning instead of throwing an exception
  * @return bool true if executed from outside of upgrade process, false if from inside upgrade process and function is used for warning only
  */
+#[\core\attribute\deprecated(
+    replacement: 'Use \core\setup::ensure_upgrade_is_not_running() or \core\setup::warn_if_upgrade_is_running() instead.',
+    mdl: 'MDL-87107',
+    since: '5.2',
+)]
 function upgrade_ensure_not_running($warningonly = false) {
-    global $CFG;
-    if (!empty($CFG->upgraderunning)) {
-        if (!$warningonly) {
-            throw new moodle_exception('cannotexecduringupgrade');
-        } else {
-            debugging(get_string('cannotexecduringupgrade', 'error'), DEBUG_DEVELOPER);
-            return false;
-        }
+    \core\deprecation::emit_deprecation(__FUNCTION__);
+    if ($warningonly) {
+        return !\core\setup::warn_if_upgrade_is_running();
+    } else {
+        return !\core\setup::ensure_upgrade_is_not_running();
     }
-    return true;
 }
 
 /**
