@@ -793,6 +793,68 @@ final class transfer_question_categories_test extends \advanced_testcase {
     }
 
     /**
+     * Categories with missing contexts that would violate unique keys if moved to the same context as-is are correctly modified.
+     */
+    public function test_fix_wrong_parents_conflicting_indexes(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setup_pre_install_data();
+
+        // Create a second course.
+        $course2 = self::getDataGenerator()->create_course();
+        $course2context = context_course::instance($course2->id);
+
+        // Create a parent category, and 2 child categories in a non-existant context.
+        $course2parentcat = $this->create_question_category('Course2 parent cat', $course2context->id);
+        $wrongchild1 = $this->create_question_category('Wrong context 1', $this->coursecontext->id + 1000, $course2parentcat->id);
+        $wrongchild2 = $this->create_question_category('Wrong context 2', $this->coursecontext->id + 1000, $course2parentcat->id);
+
+        // Set the stamp of one child and the idnumber of another child to match that of the parent context.
+        // Moving either of these children to the correct context would cause a conflict.
+        $tamperedstamp = make_unique_id_code();
+        $wrongchild1->stamp = $tamperedstamp;
+        $course2parentcat->stamp = $tamperedstamp;
+
+        $tamperedidnumber = random_string();
+        $wrongchild2->idnumber = $tamperedidnumber;
+        $course2parentcat->idnumber = $tamperedidnumber;
+        $DB->update_record('question_categories', $course2parentcat);
+        $DB->update_record('question_categories', $wrongchild1);
+        $DB->update_record('question_categories', $wrongchild2);
+
+        // Before we clean up, check that the expected categories are picked up.
+        $task = new transfer_question_categories();
+        $this->assertEquals(
+            [
+                $wrongchild1->id => $wrongchild1->contextid,
+                $wrongchild2->id => $wrongchild2->contextid,
+            ],
+            $task->get_categories_in_a_different_context_to_their_parent(),
+        );
+
+        // Call the cleanup method.
+        $task->fix_wrong_parents();
+
+        // Now we expect no mismatches.
+        $this->assertEmpty($task->get_categories_in_a_different_context_to_their_parent());
+
+        // Assert that the child categories have been moved to the parent context.
+        $this->assert_category_is_in_context_with_parent($course2context, $course2parentcat, $wrongchild1->id);
+        $this->assert_category_is_in_context_with_parent($course2context, $course2parentcat, $wrongchild2->id);
+
+        // Categories with the same stamp should now be different.
+        $this->assertNotEquals(
+            $DB->get_field('question_categories', 'stamp', ['id' => $course2parentcat->id]),
+            $DB->get_field('question_categories', 'stamp', ['id' => $wrongchild1->id]),
+        );
+        // Categories with same idnumber should now be different.
+        $this->assertNotEquals(
+            $DB->get_field('question_categories', 'idnumber', ['id' => $course2parentcat->id]),
+            $DB->get_field('question_categories', 'idnumber', ['id' => $wrongchild2->id]),
+        );
+    }
+
+    /**
      * Assert that the category with id $categoryid is in context $expectedcontext, with the given parent.
      *
      * @param context $expectedcontext the expected context for the category with id $categoryid.
