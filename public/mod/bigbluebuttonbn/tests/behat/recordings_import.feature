@@ -39,7 +39,7 @@ Feature: Manage and list recordings
   Scenario Outline: I check that I can import recordings into the Recording activity from other activities
     When I am on the "<instancename>" "bigbluebuttonbn activity" page logged in as "admin"
     And I click on "Import recording links" "button"
-    And I select "Test Course 1 (C1)" from the "sourcecourseid" singleselect
+    And I select "Test Course 1" from the "sourcecourseid" singleselect
     And I select "RoomRecordings" from the "sourcebn" singleselect
     # add the first recording
     And I click on "a.action-icon" "css_element" in the "Recording 1" "table_row"
@@ -59,7 +59,7 @@ Feature: Manage and list recordings
     When I am on the "RoomRecordings1" "bigbluebuttonbn activity" page logged in as "admin"
     And I change window size to "large"
     And I click on "Import recording links" "button"
-    And I select "Test Course 1 (C1)" from the "sourcecourseid" singleselect
+    And I select "Test Course 1" from the "sourcecourseid" singleselect
     And I select "RoomRecordings" from the "sourcebn" singleselect
     # add the first recording
     And I click on "a.action-icon" "css_element" in the "Recording 1" "table_row"
@@ -76,7 +76,7 @@ Feature: Manage and list recordings
     And I wait until the page is ready
     But I should not see "Recording 1"
     And I click on "Import recording links" "button"
-    And I select "Test Course 1 (C1)" from the "sourcecourseid" singleselect
+    And I select "Test Course 1" from the "sourcecourseid" singleselect
     And I select "RoomRecordings" from the "sourcebn" singleselect
     And I should see "Recording 1"
 
