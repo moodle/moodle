@@ -79,19 +79,6 @@ $definitions = array(
         'simpledata' => true,
     ),
 
-    // Hook callbacks cache.
-    // There is a static cache in hook manager, data is fetched once per page on first hook execution.
-    // This cache needs to be invalidated during upgrades when code changes and when callbacks
-    // overrides are updated.
-    'hookcallbacks' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'staticacceleration' => false,
-        // WARNING: Manual cache purge may be required when overriding hook callbacks.
-        'canuselocalstore' => true,
-    ),
-
     // Cache for question definitions. This is used by the question_bank class.
     // Users probably do not need to know about this cache. They will just call
     // question_bank::load_question.
