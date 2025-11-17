@@ -29,7 +29,6 @@ final class setup_test extends \advanced_testcase {
     #[\PHPUnit\Framework\Attributes\DataProvider('wwwroot_validity_provider')]
     public function test_wwwroot_ends_in_slash(
         string $wwwroot,
-        bool $mayendinpublic,
         bool $valid,
         ?string $exceptionstring = null,
     ): void {
@@ -37,7 +36,6 @@ final class setup_test extends \advanced_testcase {
 
         $this->resetAfterTest(true);
         $CFG->wwwroot = $wwwroot;
-        $CFG->wwwrootendsinpublic = $mayendinpublic;
 
         if (!$valid) {
             $this->expectException(\core\exception\moodle_exception::class);
@@ -56,19 +54,16 @@ final class setup_test extends \advanced_testcase {
         foreach (['https', 'http'] as $protocol) {
             yield "Valid {$protocol} wwwroot on root domain" => [
                 "{$protocol}://example.com",
-                false,
                 true,
             ];
 
             yield "Valid {$protocol} wwwroot on sub domain" => [
                 "{$protocol}://moodle.example.com",
-                false,
                 true,
             ];
 
             yield "Valid {$protocol} wwwroot on directory" => [
                 "{$protocol}://example.com/moodle",
-                false,
                 true,
             ];
         }
@@ -76,13 +71,11 @@ final class setup_test extends \advanced_testcase {
         yield "Root domain ends in slash" => [
             "https://example.com/",
             false,
-            false,
             get_string('wwwrootslash', 'error'),
         ];
 
         yield "Sub domain ends in slash" => [
             "https://moodle.example.com/",
-            false,
             false,
             get_string('wwwrootslash', 'error'),
         ];
@@ -90,21 +83,13 @@ final class setup_test extends \advanced_testcase {
         yield "Directory ends in slash" => [
             "https://example.com/moodle/",
             false,
-            false,
             get_string('wwwrootslash', 'error'),
         ];
 
         yield "Directory ends in public and should not" => [
             "https://example.com/public",
             false,
-            false,
             get_string('wwwrootpublic', 'error'),
-        ];
-
-        yield "Directory ends in public and is allowed to" => [
-            "https://example.com/public",
-            true,
-            true,
         ];
     }
 }
