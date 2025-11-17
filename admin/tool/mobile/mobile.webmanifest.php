@@ -28,10 +28,13 @@
  */
 
 define('NO_DEBUG_DISPLAY', true);
+define('NO_MOODLE_COOKIES', true);
 
 require_once(__DIR__ . '/../../../config.php');
 
 header('Content-Type: application/json; charset: utf-8');
+header('Cache-Control: public, max-age=' .  HOURSECS . ', no-transform');
+header('Expires: ' . gmdate('D, d M Y H:i:s', time() + HOURSECS) . ' GMT');
 
 $mobilesettings = get_config('tool_mobile');
 // Display manifest contents only if all the required conditions are met.
