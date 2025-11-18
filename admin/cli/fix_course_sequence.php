@@ -61,7 +61,7 @@ the records in DB are corrected.
 This script may run for a long time on big systems if called for all courses.
 
 Avoid executing the script when another user may simultaneously edit any of the
-courses being checked (recommended to run in mainenance mode).
+courses being checked (recommended to run in maintenance mode).
 
 Options:
 -c, --courses         List courses that need to be checked (comma-separated
