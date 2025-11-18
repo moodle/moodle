@@ -1459,7 +1459,8 @@ final class courselib_test extends advanced_testcase {
         $assign = $this->getDataGenerator()->create_module('assign', array('duedate' => time(),
             'course' => $course->id), array('section' => $sectionnumber));
         $sink = $this->redirectEvents();
-        set_section_visible($course->id, $sectionnumber, 0);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
         $events = $sink->get_events();
 
         // Extract the number of events related to what we are testing, other events
@@ -1485,12 +1486,13 @@ final class courselib_test extends advanced_testcase {
 
         // Testing an empty section.
         $sectionnumber = 1;
-        set_section_visible($course->id, $sectionnumber, 0);
-        $section_info = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
-        $this->assertEquals($section_info->visible, 0);
-        set_section_visible($course->id, $sectionnumber, 1);
-        $section_info = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
-        $this->assertEquals($section_info->visible, 1);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        $this->assertEquals($sectioninfo->visible, 0);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, true);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        $this->assertEquals($sectioninfo->visible, 1);
 
         // Checking that an event was fired.
         $events = $sink->get_events();
@@ -1504,15 +1506,16 @@ final class courselib_test extends advanced_testcase {
         $assign = $this->getDataGenerator()->create_module('assign', array('duedate' => time(),
                 'course' => $course->id), array('section' => $sectionnumber));
         $modules = compact('forum', 'assign');
-        set_section_visible($course->id, $sectionnumber, 0);
-        $section_info = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
-        $this->assertEquals($section_info->visible, 0);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        $this->assertEquals($sectioninfo->visible, 0);
         foreach ($modules as $mod) {
             $this->check_module_visibility($mod, 0, 1);
         }
-        set_section_visible($course->id, $sectionnumber, 1);
-        $section_info = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
-        $this->assertEquals($section_info->visible, 1);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, true);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        $this->assertEquals($sectioninfo->visible, 1);
         foreach ($modules as $mod) {
             $this->check_module_visibility($mod, 1, 1);
         }
@@ -1528,15 +1531,16 @@ final class courselib_test extends advanced_testcase {
             set_coursemodule_visible($mod->cmid, 0);
             $this->check_module_visibility($mod, 0, 0);
         }
-        set_section_visible($course->id, $sectionnumber, 0);
-        $section_info = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
-        $this->assertEquals($section_info->visible, 0);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        $this->assertEquals($sectioninfo->visible, 0);
         foreach ($modules as $mod) {
             $this->check_module_visibility($mod, 0, 0);
         }
-        set_section_visible($course->id, $sectionnumber, 1);
-        $section_info = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
-        $this->assertEquals($section_info->visible, 1);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, true);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($sectionnumber);
+        $this->assertEquals($sectioninfo->visible, 1);
         foreach ($modules as $mod) {
             $this->check_module_visibility($mod, 0, 0);
         }
@@ -1737,7 +1741,8 @@ final class courselib_test extends advanced_testcase {
         set_coursemodule_visible($page->cmid, 0);
 
         // Set sections 3 as hidden.
-        set_section_visible($course->id, 3, 0);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(3);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
 
         $modinfo = get_fast_modinfo($course);
 

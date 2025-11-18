@@ -70,7 +70,8 @@ final class stateactions_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course(['numsections' => $sections, 'format' => $format]);
         foreach ($hiddensections as $section) {
-            set_section_visible($course->id, $section, 0);
+            $sectioninfo = get_fast_modinfo($course->id)->get_section_info($section);
+            \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
         }
 
         return $course;

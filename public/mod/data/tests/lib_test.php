@@ -1296,7 +1296,8 @@ final class lib_test extends \advanced_testcase {
         $event = $this->create_action_event($course->id, $data->id, DATA_EVENT_TYPE_OPEN);
 
         // Set sections 0 as hidden.
-        set_section_visible($course->id, 0, 0);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(0);
+        formatactions::section($course->id)->set_visibility($sectioninfo, false);
 
         // Now, log out.
         $CFG->forcelogin = true; // We don't want to be logged in as guest, as guest users might still have some capabilities.

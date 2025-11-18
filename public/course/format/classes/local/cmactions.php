@@ -162,7 +162,7 @@ class cmactions extends baseactions {
         }
 
         // Updating visible and visibleold to keep them in sync. Only changing a section visibility will
-        // affect visibleold to allow for an original visibility restore. See set_section_visible().
+        // affect visibleold to allow for an original visibility restore. See sectionactions::set_visibility().
         $cminfo = (object)[
                 'id' => $cmid,
                 'visible' => $visible,

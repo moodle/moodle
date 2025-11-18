@@ -200,7 +200,11 @@ if ($PAGE->user_allowed_editing()) {
                 'The hide param in course view is deprecated. Please use course/format/update.php instead.',
                 DEBUG_DEVELOPER
             );
-            set_section_visible($course->id, $hide, '0');
+            $sectioninfo = get_fast_modinfo($course->id)->get_section_info($hide);
+            if ($sectioninfo) {
+                \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
+            }
+
             if ($sectionid) {
                 redirect(course_get_url($course, $section, ['navigation' => true]));
             } else {
@@ -213,7 +217,10 @@ if ($PAGE->user_allowed_editing()) {
                 'The show param in course view is deprecated. Please use course/format/update.php instead.',
                 DEBUG_DEVELOPER
             );
-            set_section_visible($course->id, $show, '1');
+            $sectioninfo = get_fast_modinfo($course->id)->get_section_info($show);
+            if ($sectioninfo) {
+                \core_courseformat\formatactions::section($courseid)->set_visibility($sectioninfo, true);
+            }
             if ($sectionid) {
                 redirect(course_get_url($course, $section, ['navigation' => true]));
             } else {

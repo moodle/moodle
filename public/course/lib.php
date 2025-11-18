@@ -672,10 +672,6 @@ function set_downloadcontent(int $id, bool $downloadcontent): bool {
  * Note: Do not forget to trigger the event \core\event\course_module_updated as it needs
  * to be triggered manually, refer to {@link \core\event\course_module_updated::create_from_cm()}.
  *
- * From 2.4 the parameter $prevstateoverrides has been removed, the logic it triggered
- * has been moved to {@link set_section_visible()} which was the only place from which
- * the parameter was used.
- *
  * If $rebuildcache is set to false, the calling code is responsible for ensuring the cache is purged
  * and rebuilt as appropriate. Consider using this if set_coursemodule_visible is called multiple times
  * (e.g. in a loop).
