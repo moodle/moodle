@@ -533,7 +533,16 @@ class assign {
                 $nextpageparams['action'] = 'view';
             }
         } else if ($action == 'addattempt') {
-            $this->process_add_attempt(required_param('userid', PARAM_INT));
+            $userid = false;
+            if ($this->is_blind_marking()) {
+                $blindid = optional_param('blindid', 0, PARAM_INT);
+                $userid = $this->get_user_id_for_uniqueid($blindid);
+            }
+            // Fallback to userid, if not found by blindid.
+            if (!$userid) {
+                $userid = required_param('userid', PARAM_INT);
+            }
+            $this->process_add_attempt($userid);
             $action = 'redirect';
             $nextpageparams['action'] = 'grading';
         } else if ($action == 'reverttodraft') {
@@ -2997,7 +3006,16 @@ class assign {
 
         $users = optional_param('userid', 0, PARAM_INT);
         if (!$users) {
-            $users = required_param('selectedusers', PARAM_SEQUENCE);
+            if ($this->is_blind_marking()) {
+                $blindid = optional_param('blindid', 0, PARAM_INT);
+                if ($blindid) {
+                    $users = $this->get_user_id_for_uniqueid($blindid);
+                }
+            }
+            // We need users, if not found by blindid.
+            if (!$users) {
+                $users = required_param('selectedusers', PARAM_SEQUENCE);
+            }
         }
         $userlist = explode(',', $users);
 
@@ -4341,7 +4359,17 @@ class assign {
     protected function view_remove_submission_confirm() {
         global $USER, $PAGE;
 
-        $userid = optional_param('userid', $USER->id, PARAM_INT);
+        $userid = optional_param('userid', 0, PARAM_INT);
+        $blindid = optional_param('blindid', 0, PARAM_INT);
+
+        if ($this->is_blind_marking() && !$userid && $blindid) {
+            $userid = $this->get_user_id_for_uniqueid($blindid);
+        }
+
+        // If no userid specified, default to current user.
+        if (!$userid) {
+            $userid = $USER->id;
+        }
 
         $PAGE->set_pagelayout('standard');
 
@@ -4671,7 +4699,7 @@ class assign {
         $userid = optional_param('userid', 0, PARAM_INT);
         $blindid = optional_param('blindid', 0, PARAM_INT);
 
-        if (!$userid && $blindid) {
+        if ($this->is_blind_marking() && !$userid && $blindid) {
             $userid = $this->get_user_id_for_uniqueid($blindid);
         }
 
@@ -4805,7 +4833,17 @@ class assign {
         $o = '';
         require_once($CFG->dirroot . '/mod/assign/submission_form.php');
         // Need submit permission to submit an assignment.
-        $userid = optional_param('userid', $USER->id, PARAM_INT);
+        $userid = optional_param('userid', 0, PARAM_INT);
+        $blindid = optional_param('blindid', 0, PARAM_INT);
+
+        if ($this->is_blind_marking() && !$userid && $blindid) {
+            $userid = $this->get_user_id_for_uniqueid($blindid);
+        }
+        // If no userid specified, default to current user.
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+
         $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
         $timelimitenabled = get_config('assign', 'enabletimelimit');
 
@@ -6869,7 +6907,17 @@ class assign {
 
         require_sesskey();
 
-        $userid = optional_param('userid', $USER->id, PARAM_INT);
+        $userid = optional_param('userid', 0, PARAM_INT);
+        $blindid = optional_param('blindid', 0, PARAM_INT);
+
+        if ($this->is_blind_marking() && !$userid && $blindid) {
+            $userid = $this->get_user_id_for_uniqueid($blindid);
+        }
+
+        // If no userid specified, default to current user.
+        if (!$userid) {
+            $userid = $USER->id;
+        }
 
         if (!$this->submissions_open($userid)) {
             $notices[] = get_string('submissionsclosed', 'assign');
@@ -8373,7 +8421,17 @@ class assign {
         require_sesskey();
 
         if (!$userid) {
-            $userid = required_param('userid', PARAM_INT);
+            if ($this->is_blind_marking()) {
+                $blindid = optional_param('blindid', 0, PARAM_INT);
+                if ($blindid) {
+                    $userid = $this->get_user_id_for_uniqueid($blindid);
+                }
+            }
+
+            // Userid is required, if not found by blindid.
+            if (!$userid) {
+                $userid = required_param('userid', PARAM_INT);
+            }
         }
 
         return $this->remove_submission($userid);
@@ -8390,7 +8448,17 @@ class assign {
         require_sesskey();
 
         if (!$userid) {
-            $userid = required_param('userid', PARAM_INT);
+            if ($this->is_blind_marking()) {
+                $blindid = optional_param('blindid', 0, PARAM_INT);
+                if ($blindid) {
+                    $userid = $this->get_user_id_for_uniqueid($blindid);
+                }
+            }
+
+            // Userid is required, if not found by blindid.
+            if (!$userid) {
+                $userid = required_param('userid', PARAM_INT);
+            }
         }
 
         return $this->revert_to_draft($userid);
@@ -8566,7 +8634,17 @@ class assign {
         require_sesskey();
 
         if (!$userid) {
-            $userid = required_param('userid', PARAM_INT);
+            if ($this->is_blind_marking()) {
+                $blindid = optional_param('blindid', 0, PARAM_INT);
+                if ($blindid) {
+                    $userid = $this->get_user_id_for_uniqueid($blindid);
+                }
+            }
+
+            // Userid is required, if not found by blindid.
+            if (!$userid) {
+                $userid = required_param('userid', PARAM_INT);
+            }
         }
 
         return $this->lock_submission($userid);
@@ -8615,7 +8693,17 @@ class assign {
         require_sesskey();
 
         if (!$userid) {
-            $userid = required_param('userid', PARAM_INT);
+            if ($this->is_blind_marking()) {
+                $blindid = optional_param('blindid', 0, PARAM_INT);
+                if ($blindid) {
+                    $userid = $this->get_user_id_for_uniqueid($blindid);
+                }
+            }
+
+            // Userid is required, if not found by blindid.
+            if (!$userid) {
+                $userid = required_param('userid', PARAM_INT);
+            }
         }
 
         return $this->unlock_submission($userid);
