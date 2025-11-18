@@ -24,13 +24,19 @@ class Tcpdf extends Pdf
      *
      * @param string $orientation Page orientation
      * @param string $unit Unit measure
-     * @param array|string $paperSize Paper size
+     * @param float[]|string $paperSize Paper size
      *
      * @return \TCPDF implementation
      */
     protected function createExternalWriterInstance(string $orientation, string $unit, $paperSize): \TCPDF
     {
+        $this->defines();
+
         return new \TCPDF($orientation, $unit, $paperSize);
+    }
+
+    protected function defines(): void
+    {
     }
 
     /**
@@ -50,7 +56,7 @@ class Tcpdf extends Pdf
         $orientation = $this->getOrientation() ?? $setup->getOrientation();
         $orientation = ($orientation === PageSetup::ORIENTATION_LANDSCAPE) ? 'L' : 'P';
         $printPaperSize = $this->getPaperSize() ?? $setup->getPaperSize();
-        $paperSize = self::$paperSizes[$printPaperSize] ?? PageSetup::getPaperSizeDefault();
+        $paperSize = self::$paperSizes[$printPaperSize] ?? self::$paperSizes[PageSetup::getPaperSizeDefault()] ?? 'LETTER';
         $printMargins = $this->spreadsheet->getSheet($this->getSheetIndex() ?? 0)->getPageMargins();
 
         //  Create PDF
@@ -67,14 +73,28 @@ class Tcpdf extends Pdf
 
         //  Set the appropriate font
         $pdf->SetFont($this->getFont());
+        $this->checkRtlAndLtr();
+        if ($this->rtlSheets && !$this->ltrSheets) {
+            $pdf->setRTL(true);
+        }
         $pdf->writeHTML($this->generateHTMLAll());
 
         //  Document info
-        $pdf->SetTitle($this->spreadsheet->getProperties()->getTitle());
-        $pdf->SetAuthor($this->spreadsheet->getProperties()->getCreator());
-        $pdf->SetSubject($this->spreadsheet->getProperties()->getSubject());
-        $pdf->SetKeywords($this->spreadsheet->getProperties()->getKeywords());
-        $pdf->SetCreator($this->spreadsheet->getProperties()->getCreator());
+        $pdf->SetTitle(
+            $this->spreadsheet->getProperties()->getTitle()
+        );
+        $pdf->SetAuthor(
+            $this->spreadsheet->getProperties()->getCreator()
+        );
+        $pdf->SetSubject(
+            $this->spreadsheet->getProperties()->getSubject()
+        );
+        $pdf->SetKeywords(
+            $this->spreadsheet->getProperties()->getKeywords()
+        );
+        $pdf->SetCreator(
+            $this->spreadsheet->getProperties()->getCreator()
+        );
 
         //  Write to file
         fwrite($fileHandle, $pdf->output('', 'S'));

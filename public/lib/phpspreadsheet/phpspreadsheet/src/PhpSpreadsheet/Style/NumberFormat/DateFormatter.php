@@ -98,6 +98,7 @@ class DateFormatter
         '[ss]' => self::SECONDS_IN_DAY,
     ];
 
+    /** @param float|int|numeric-string $value */
     private static function tryInterval(bool &$seekingBracket, string &$block, mixed $value, string $format): void
     {
         if ($seekingBracket) {
@@ -200,11 +201,13 @@ class DateFormatter
         return $dateObj->format($format);
     }
 
+    /** @param string[] $matches */
     private static function setLowercaseCallback(array $matches): string
     {
         return mb_strtolower($matches[0]);
     }
 
+    /** @param string[] $matches */
     private static function escapeQuotesCallback(array $matches): string
     {
         return '\\' . implode('\\', mb_str_split($matches[1], 1, 'UTF-8'));

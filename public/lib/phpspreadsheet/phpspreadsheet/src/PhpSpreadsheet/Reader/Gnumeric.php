@@ -38,6 +38,8 @@ class Gnumeric extends BaseReader
 
     /**
      * Shared Expressions.
+     *
+     * @var array<array{column: int, row: int, formula:string}>
      */
     private array $expressions = [];
 
@@ -48,6 +50,7 @@ class Gnumeric extends BaseReader
 
     private ReferenceHelper $referenceHelper;
 
+    /** @var array{'dataType': string[]} */
     public static array $mappings = [
         'dataType' => [
             '10' => DataType::TYPE_NULL,
@@ -96,6 +99,8 @@ class Gnumeric extends BaseReader
 
     /**
      * Reads names of the worksheets from a file, without parsing the whole file to a Spreadsheet object.
+     *
+     * @return string[]
      */
     public function listWorksheetNames(string $filename): array
     {
@@ -125,6 +130,8 @@ class Gnumeric extends BaseReader
 
     /**
      * Return worksheet info (Name, Last Column Letter, Last Column Index, Total Rows, Total Columns).
+     *
+     * @return array<int, array{worksheetName: string, lastColumnLetter: string, lastColumnIndex: int, totalRows: int, totalColumns: int, sheetState: string}>
      */
     public function listWorksheetInfo(string $filename): array
     {
@@ -201,6 +208,7 @@ class Gnumeric extends BaseReader
         return $data;
     }
 
+    /** @return mixed[] */
     public static function gnumericMappings(): array
     {
         return array_merge(self::$mappings, Styles::$mappings);
@@ -231,8 +239,7 @@ class Gnumeric extends BaseReader
      */
     protected function loadSpreadsheetFromFile(string $filename): Spreadsheet
     {
-        // Create new Spreadsheet
-        $spreadsheet = new Spreadsheet();
+        $spreadsheet = $this->newSpreadsheet();
         $spreadsheet->setValueBinder($this->valueBinder);
         $spreadsheet->removeSheetByIndex(0);
 
@@ -262,6 +269,7 @@ class Gnumeric extends BaseReader
         (new Properties($this->spreadsheet))->readProperties($xml, $gnmXML);
 
         $worksheetID = 0;
+        $sheetCreated = false;
         foreach ($gnmXML->Sheets->Sheet as $sheetOrNull) {
             $sheet = self::testSimpleXml($sheetOrNull);
             $worksheetName = (string) $sheet->Name;
@@ -273,6 +281,7 @@ class Gnumeric extends BaseReader
 
             // Create new Worksheet
             $this->spreadsheet->createSheet();
+            $sheetCreated = true;
             $this->spreadsheet->setActiveSheetIndex($worksheetID);
             //    Use false for $updateFormulaCellReferences to prevent adjustment of worksheet references in formula
             //        cells... during the load, all formulae should be correct, and we're simply bringing the worksheet
@@ -321,6 +330,9 @@ class Gnumeric extends BaseReader
 
             $this->setSelectedCells($sheet);
             ++$worksheetID;
+        }
+        if ($this->createBlankSheetIfNoneRead && !$sheetCreated) {
+            $this->spreadsheet->createSheet();
         }
 
         $this->processDefinedNames($gnmXML);
@@ -558,8 +570,8 @@ class Gnumeric extends BaseReader
             if (((string) $cell) > '') {
                 // Formula
                 $this->expressions[$ExprID] = [
-                    'column' => $cellAttributes->Col,
-                    'row' => $cellAttributes->Row,
+                    'column' => (int) $cellAttributes->Col,
+                    'row' => (int) $cellAttributes->Row,
                     'formula' => (string) $cell,
                 ];
             } else {
