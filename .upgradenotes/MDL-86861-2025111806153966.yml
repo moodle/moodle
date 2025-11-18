@@ -1,0 +1,9 @@
+issueNumber: MDL-86861
+notes:
+  core_courseformat:
+    - message: >-
+        The `set_section_visible` function has been deprecated and should no
+        longer be used.
+        Please consider using the equivalent method, `set_visibility`, in
+        `core_courseformat\local\sectionactions` instead.
+      type: deprecated
