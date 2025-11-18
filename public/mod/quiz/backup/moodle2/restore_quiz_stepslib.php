@@ -470,16 +470,25 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data = (object) $data;
         $slotid = $this->get_new_parentid('quiz_question_instance');
 
-        if ($this->task->is_samesite() && $tag = core_tag_tag::get($data->tagid, 'id, name')) {
-            $data->tagname = $tag->name;
-        } else if ($tag = core_tag_tag::get_by_name(0, $data->tagname, 'id, name')) {
-            $data->tagid = $tag->id;
-        } else {
-            $data->tagid = null;
-            $data->tagname = $tag->name;
+        $tagid = $data->tagid;
+        if (
+            !$this->task->is_samesite()
+            || !core_tag_tag::get($data->tagid, 'id, name')
+        ) {
+            // If we're on a different site, or the tag id doesn't exist anymore, look for a tag with the same name.
+            $tag = core_tag_tag::get_by_name(0, $data->tagname, 'id, name');
+            $tagid = $tag ? $tag->id : null;
         }
 
-        $tagstring = "{$data->tagid},{$data->tagname}";
+        if (is_null($tagid)) {
+            // There is no corresponding tag, so leave it out of the filter.
+            $this->log(
+                get_string('restorenotag', 'quiz', (object) ['tagname' => $data->tagname, 'slotid' => $slotid]),
+                \backup::LOG_WARNING,
+            );
+            return;
+        }
+
         $setreferencedata = $DB->get_record('question_set_references', [
             'usingcontextid' => $this->task->get_contextid(),
             'component' => 'mod_quiz',
@@ -487,7 +496,13 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             'itemid' => $slotid,
         ]);
         $filtercondition = json_decode($setreferencedata->filtercondition);
-        $filtercondition->tags[] = $tagstring;
+        if (!isset($filtercondition->filter->qtagids)) {
+            $filtercondition->filter->qtagids = (object) [
+                'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
+                'values' => [],
+            ];
+        }
+        $filtercondition->filter->qtagids->values[] = $tagid;
         $setreferencedata->filtercondition = json_encode($filtercondition);
         $DB->update_record('question_set_references', $setreferencedata);
     }

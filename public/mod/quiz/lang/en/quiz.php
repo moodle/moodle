@@ -948,6 +948,7 @@ $string['requiresubnet'] = 'Require network address';
 $string['requiresubnet_help'] = 'Quiz access may be restricted to particular subnets on the LAN or Internet by specifying a comma-separated list of partial or full IP address numbers. This can be useful for an invigilated (proctored) quiz, to ensure that only people in a certain location can access the quiz.';
 $string['response'] = 'Response';
 $string['responses'] = 'Responses';
+$string['restorenotag'] = 'A tag matching \'{$a->tagname}\' could not be found when restoring the random question to quiz slot ID {$a->slotid}. The tag was removed from the question\'s filter conditions.';
 $string['results'] = 'Results';
 $string['returnattempt'] = 'Return to attempt';
 $string['reuseifpossible'] = 'reuse previously removed';
