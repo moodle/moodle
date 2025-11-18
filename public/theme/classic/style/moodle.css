@@ -13297,8 +13297,8 @@ readers do not read off random characters that represent icons */
   --bs-purple: #613d7c;
   --bs-pink: #db1a74;
   --bs-red: #ca3120;
-  --bs-orange: #f0ad4e;
-  --bs-yellow: #ff7518;
+  --bs-orange: #ff7518;
+  --bs-yellow: #f0ad4e;
   --bs-green: #357a32;
   --bs-teal: #20c997;
   --bs-cyan: #008196;
@@ -13387,7 +13387,7 @@ readers do not read off random characters that represent icons */
   --bs-link-hover-decoration: underline;
   --bs-code-color: #db1a74;
   --bs-highlight-color: #1d2125;
-  --bs-highlight-bg: #ffe3d1;
+  --bs-highlight-bg: #fcefdc;
   --bs-border-width: 1px;
   --bs-border-style: solid;
   --bs-border-color: #dee2e6;
@@ -13459,7 +13459,7 @@ readers do not read off random characters that represent icons */
   --bs-link-hover-color-rgb: 140, 185, 225;
   --bs-code-color: #e976ac;
   --bs-highlight-color: #dee2e6;
-  --bs-highlight-bg: #662f0a;
+  --bs-highlight-bg: #60451f;
   --bs-border-color: #495057;
   --bs-border-color-translucent: rgba(255, 255, 255, 0.15);
   --bs-form-valid-color: #86af84;
