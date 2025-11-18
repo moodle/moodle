@@ -56,5 +56,5 @@ Feature: Folder files can be viewed without downloading
 
     Examples:
       | filename  | displayedtext                       | elementtype   |
-      | image.jpg | //img[contains(@alt, '/image.jpg')] | xpath_element |
+      | image.jpg | //img[contains(@src, '/image.jpg')] | xpath_element |
       | test.html | This is an example HTML             | text          |
