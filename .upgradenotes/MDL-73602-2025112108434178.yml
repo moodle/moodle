@@ -1,0 +1,8 @@
+issueNumber: MDL-73602
+notes:
+  core:
+    - message: >-
+        Removed `qtype_random` from core.
+        `core\component::is_valid_plugin_name` has an additional check to ensure no-one can create a new plugin called qtype_random,
+        as this would conflict with the support for restoring old backups.
+      type: removed

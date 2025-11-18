@@ -119,10 +119,11 @@ final class helper_test extends manage_category_test_base {
             MUST_EXIST
         );
 
-        // The following 2 lines have to be after the add_random_questions() call above.
-        // Otherwise, add_random_questions() will have to be "smart" and use them instead of creating a new "random" question.
-        $q1b = $this->create_question_in_a_category('random', $qcat1->id);
-        $q2c = $this->create_question_in_a_category('random', $qcat2->id);
+        // Create a couple of questions then edit their qtype so they look like legacy random questions.
+        $q1b = $this->create_question_in_a_category('description', $qcat1->id);
+        $DB->set_field('question', 'qtype', 'random', ['id' => $q1b->id]);
+        $q2c = $this->create_question_in_a_category('description', $qcat2->id);
+        $DB->set_field('question', 'qtype', 'random', ['id' => $q2c->id]);
 
         $contexts = new \core_question\local\bank\question_edit_contexts(\context_module::instance($quiz->cmid));
         $manager = new category_manager();

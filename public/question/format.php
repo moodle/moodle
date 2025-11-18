@@ -970,10 +970,6 @@ class qformat_default {
                 $question->status = 1;
             }
 
-            // do not export random questions
-            if ($question->qtype == 'random') {
-                continue;
-            }
 
             // check if we need to record category change
             if ($this->cattofile) {

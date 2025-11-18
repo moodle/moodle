@@ -373,7 +373,6 @@
             "multichoice",
             "numerical",
             "ordering",
-            "random",
             "randomsamatch",
             "shortanswer",
             "truefalse"
@@ -641,6 +640,9 @@
             "examview",
             "learnwise",
             "webct"
+        ],
+        "qtype": [
+            "random"
         ],
         "quizaccess": [
             "safebrowser"

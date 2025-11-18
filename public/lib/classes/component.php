@@ -1503,6 +1503,15 @@ $cache = ' . var_export($cache, true) . ';
             // Modules MUST NOT have any underscores,
             // component normalisation would break very badly otherwise!
             return !is_null($pluginname) && (bool) preg_match('/^[a-z][a-z0-9]*$/', $pluginname);
+        } else if ($plugintype === 'qtype' && $pluginname === 'random') {
+            // Special case, qtype_random no longer exists, and we must never have a plugin with that name due to special handling
+            // in the backup/restore subsystem.
+            debugging(
+                'qtype_random was removed from core, and random questions now use question set references. '
+                    . 'You must not use the name qtype_random for another plugin, as the questions will not work correctly.',
+                DEBUG_DEVELOPER,
+            );
+            return false;
         } else {
             return !is_null($pluginname) && (bool) preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
         }

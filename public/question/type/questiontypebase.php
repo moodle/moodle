@@ -365,6 +365,12 @@ class question_type {
     public function save_question($question, $form) {
         global $USER, $DB;
 
+        if ($question->qtype === 'random') {
+            throw new \core\exception\coding_exception(
+                'You cannot create a question with qtype "random". You must create a question set reference instead.',
+            );
+        }
+
         // The actual update/insert done with multiple DB access, so we do it in a transaction.
         $transaction = $DB->start_delegated_transaction ();
 
