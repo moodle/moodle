@@ -135,7 +135,8 @@ final class stateactions_test extends \advanced_testcase {
         );
 
         // Highlight section 1.
-        course_set_marker($course->id, 1);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(1);
+        \core_courseformat\formatactions::section($course->id)->set_marker($sectioninfo, true);
 
         $this->enrol_user($course, $rolename);
 

@@ -399,7 +399,8 @@ final class sectionactions_test extends \advanced_testcase {
         );
 
         // Remove marked section.
-        course_set_marker($course->id, 1);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(1);
+        \core_courseformat\formatactions::section($course->id)->set_marker($sectioninfo, true);
         $this->assertTrue(course_get_format($course)->is_section_current(1));
         $this->assertTrue($sectionactions->delete(
             get_fast_modinfo($course)->get_section_info(1),

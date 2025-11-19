@@ -1046,7 +1046,9 @@ final class courselib_test extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course(array('numsections'=>10), array('createsections'=>true));
 
         // Set course marker to the section we are going to move..
-        course_set_marker($course->id, 2);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(2);
+        \core_courseformat\formatactions::section($course->id)->set_marker($sectioninfo, true);
+
         // Verify that the course marker is set correctly.
         $course = $DB->get_record('course', array('id' => $course->id));
         $this->assertEquals(2, $course->marker);
@@ -1266,7 +1268,8 @@ final class courselib_test extends advanced_testcase {
             3 => array($assign5->cmid)), get_fast_modinfo($course)->sections);
 
         // Remove marked section.
-        course_set_marker($course->id, 1);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(1);
+        \core_courseformat\formatactions::section($course->id)->set_marker($sectioninfo, true);
         $this->assertTrue(course_get_format($course)->is_section_current(1));
         $this->assertTrue(course_delete_section($course, 1, true));
         $this->assertFalse(course_get_format($course)->is_section_current(1));

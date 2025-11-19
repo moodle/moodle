@@ -1826,7 +1826,7 @@ abstract class base {
 
         // Remove the marker if it points to this section.
         if ($section->section == $course->marker) {
-            course_set_marker($course->id, 0);
+            \core_courseformat\formatactions::section($course->id)->remove_all_markers();
         }
 
         $lastsection = $DB->get_field_sql('SELECT max(section) from {course_sections}

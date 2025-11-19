@@ -388,7 +388,12 @@ class format_topics extends core_courseformat\base {
         if ($section->section && ($action === 'setmarker' || $action === 'removemarker')) {
             // Format 'topics' allows to set and remove markers in addition to common section actions.
             require_capability('moodle/course:setcurrentsection', context_course::instance($this->courseid));
-            course_set_marker($this->courseid, ($action === 'setmarker') ? $section->section : 0);
+            if ($action === 'setmarker') {
+                $sectioninfo = get_fast_modinfo($this->courseid)->get_section_info($section->section);
+                \core_courseformat\formatactions::section($this->courseid)->set_marker($sectioninfo, true);
+            } else {
+                \core_courseformat\formatactions::section($this->courseid)->remove_all_markers();
+            }
             return null;
         }
 
