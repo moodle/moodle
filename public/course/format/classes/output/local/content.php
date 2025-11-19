@@ -151,6 +151,18 @@ class content implements named_templatable, renderable {
 
         $format = $this->format;
         $course = $format->get_course();
+
+        if (!$format->uses_sections()) {
+            if (has_capability('moodle/course:update', \core\context\course::instance($course->id))) {
+                $url = new \moodle_url('/course/edit.php', ['id' => $course->id]);
+                $params = [
+                    'courseformat' => $format->get_format_name(),
+                ];
+                throw new \moodle_exception('nosections_editor', 'error', $url, $params);
+            }
+            throw new \moodle_exception('nosections_noneditor', 'error');
+        }
+
         $modinfo = $this->format->get_modinfo();
 
         // Generate section list.
