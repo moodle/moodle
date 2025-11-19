@@ -399,50 +399,60 @@ class completion_info {
     /**
      * Get course completion criteria
      *
-     * @param int $criteriatype Specific criteria type to return (optional)
+     * @param int|null $criteriatype Specific criteria type to return (optional)
+     * @return array
      */
-    public function get_criteria($criteriatype = null) {
-
-        // Fill cache if empty
+    public function get_criteria(?int $criteriatype = null): array {
+        // Fill cache if empty.
         if (!is_array($this->criteria)) {
             global $DB;
 
-            $params = array(
-                'course'    => $this->course->id
-            );
+            $params = ['course' => $this->course->id];
 
-            // Load criteria from database
-            $records = (array)$DB->get_records('course_completion_criteria', $params);
+            // Load criteria from database.
+            $records = $DB->get_records('course_completion_criteria', $params);
 
-            // Order records so activities are in the same order as they appear on the course view page.
-            if ($records) {
-                $activitiesorder = array_keys(get_fast_modinfo($this->course)->get_cms());
-                usort($records, function ($a, $b) use ($activitiesorder) {
-                    $aidx = ($a->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) ?
-                        array_search($a->moduleinstance, $activitiesorder) : false;
-                    $bidx = ($b->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) ?
-                        array_search($b->moduleinstance, $activitiesorder) : false;
-                    if ($aidx === false || $bidx === false || $aidx == $bidx) {
-                        return 0;
-                    }
-                    return ($aidx < $bidx) ? -1 : 1;
-                });
+            if (empty($records)) {
+                return [];
             }
 
-            // Build array of criteria objects
-            $this->criteria = array();
+            // Order records so activities are in the same order as they appear on the course view page.
+            $activitiesorder = array_keys(get_fast_modinfo($this->course)->get_cms());
+
+            // Remove disabled modules.
+            foreach ($records as $key => $record) {
+                if ($record->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) {
+                    if (!in_array($record->moduleinstance, $activitiesorder)) {
+                        unset($records[$key]);
+                    }
+                }
+            }
+
+            usort($records, function ($a, $b) use ($activitiesorder) {
+                $aidx = ($a->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) ?
+                    array_search($a->moduleinstance, $activitiesorder) : false;
+                $bidx = ($b->criteriatype == COMPLETION_CRITERIA_TYPE_ACTIVITY) ?
+                    array_search($b->moduleinstance, $activitiesorder) : false;
+                if ($aidx === false || $bidx === false || $aidx == $bidx) {
+                    return 0;
+                }
+                return ($aidx < $bidx) ? -1 : 1;
+            });
+
+            // Build array of criteria objects.
+            $this->criteria = [];
             foreach ($records as $record) {
                 $this->criteria[$record->id] = completion_criteria::factory((array)$record);
             }
         }
 
-        // If after all criteria
+        // If after all criteria.
         if ($criteriatype === null) {
             return $this->criteria;
         }
 
-        // If we are only after a specific criteria type
-        $criteria = array();
+        // If we are only after a specific criteria type.
+        $criteria = [];
         foreach ($this->criteria as $criterion) {
 
             if ($criterion->criteriatype != $criteriatype) {
