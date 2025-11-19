@@ -72,3 +72,33 @@ Feature: Equation editor
     And I navigate to "Settings" in current page administration
     And I click on the "Insert" menu item for the "Activity instructions" TinyMCE editor
     And I should see "Equation editor"
+
+  @javascript
+  Scenario: Equation editor modal tabs are navigatable with escaped element ids
+    Given the following "users" exist:
+      | username |
+      | student  |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "course enrolments" exist:
+      | user    | course | role    |
+      | student | C1     | student |
+    And the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype | name   | questiontext   | defaultmark |
+      | Test questions   | essay | essay1 | First question | 20          |
+    And the following "activities" exist:
+      | activity | name   | intro              | course | idnumber | grade |
+      | quiz     | Quiz 1 | Quiz 1 description | C1     | quiz1    | 20    |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | essay1   | 1    |
+    When I am on the "Quiz 1" "quiz activity" page logged in as "student"
+    And I press "Attempt quiz"
+    And I expand all toolbars for the "Answer" TinyMCE editor
+    And I click on the "Equation editor" button for the "Answer" TinyMCE editor
+    And I click on "Arrows" "link"
+    Then I should see "←"
