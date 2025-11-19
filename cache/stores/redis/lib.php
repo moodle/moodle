@@ -715,12 +715,33 @@ class cachestore_redis extends store implements
     }
 
     /**
+     * Finds all of the keys being used by this cache store instance using a scan.
+     * This is preferred over keys to avoid blocking the server for a long time.
+     *
+     * @param string $prefix
+     * @return array of all matching keys in the hash as a numbered array.
+     */
+    protected function scan_keys($prefix = '') {
+        $return = [];
+        $iterator = null;
+        do {
+            $results = $this->redis->hScan($this->hash, $iterator, "$prefix*", 1000);
+            if ($results !== false) {
+                foreach ($results as $key => $value) {
+                    $return[] = $key;
+                }
+            }
+        } while ($iterator != 0);
+        return $return;
+    }
+
+    /**
      * Finds all of the keys being used by this cache store instance.
      *
      * @return array of all keys in the hash as a numbered array.
      */
     public function find_all() {
-        return $this->redis->hKeys($this->hash);
+        return $this->scan_keys();
     }
 
     /**
@@ -731,13 +752,7 @@ class cachestore_redis extends store implements
      * @return array List of keys that match this prefix.
      */
     public function find_by_prefix($prefix) {
-        $return = [];
-        foreach ($this->find_all() as $key) {
-            if (strpos($key, $prefix) === 0) {
-                $return[] = $key;
-            }
-        }
-        return $return;
+        return $this->scan_keys($prefix);
     }
 
     /**
