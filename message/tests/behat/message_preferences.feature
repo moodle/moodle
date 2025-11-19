@@ -40,7 +40,7 @@ Feature: To be able to see and save user message preferences as admin
     And "[data-processor-name='email']" "css_element" should not exist
     And "[data-processor-name='airnotifier']" "css_element" should exist
 
-  @javascript
+  @javascript @accessibility
   Scenario: An admin can set the default notification preferences
     Given I log in as "admin"
     And I navigate to "Messaging > Notification settings" in site administration
@@ -55,6 +55,7 @@ Feature: To be able to see and save user message preferences as admin
       | mod_feedback_submission_locked[email]         | 1 |
       | mod_feedback_message_disable                  | 0 |
     And I press "Save changes"
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
     And I log in as "student1"
     And I follow "Preferences" in the user menu
     When I click on "Notification preferences" "link" in the "#page-content" "css_element"
