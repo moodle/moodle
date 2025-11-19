@@ -467,6 +467,7 @@ class all_calculated_for_qubaid_condition {
     protected function make_new_subq_stat_for($displaynumber, $slot, $subqid, $variant = null) {
         $slotstat = fullclone($this->for_subq($subqid, $variant));
         $slotstat->question->number = $this->for_slot($slot)->question->number;
+        $slotstat->question->random = false;
         $slotstat->subqdisplayorder = $displaynumber;
         return $slotstat;
     }

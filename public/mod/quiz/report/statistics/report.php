@@ -891,7 +891,7 @@ class quiz_statistics_report extends report_base {
         $questiondata = [];
         foreach ($questions as $qs => $question) {
             $displaynumber = $question->displaynumber;
-            if ($question->qtype === 'random') {
+            if ($question->random) {
                 $question->id = 0;
                 $question->name = get_string('random', 'quiz');
                 $question->questiontext = get_string('random', 'quiz');
@@ -909,6 +909,7 @@ class quiz_statistics_report extends report_base {
                 $q->slot = $question->slot;
                 $q->number = $displaynumber;
                 $q->parenttype = null;
+                $q->random = false;
                 $questiondata[$question->slot] = $q;
             }
         }

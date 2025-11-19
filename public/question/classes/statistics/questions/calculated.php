@@ -208,7 +208,7 @@ class calculated {
      * @return null|string represents the pool of questions from which this question draws if it is random, or null if not.
      */
     public function random_selector_string() {
-        if ($this->question->qtype == 'random') {
+        if ($this->question->random) {
             return $this->question->category .'/'. $this->question->questiontext;
         } else {
             return null;

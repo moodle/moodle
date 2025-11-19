@@ -166,6 +166,7 @@ class qbank_helper {
         foreach ($slotdata as $slot) {
             // Ensure the right id is the id.
             $slot->id = $slot->slotid;
+            $slot->random = false;
 
             if ($slot->filtercondition) {
                 // Unpack the information about a random question.
@@ -175,7 +176,8 @@ class qbank_helper {
 
                 $slot->category = $slot->filtercondition['filter']['category']['values'][0] ?? 0;
 
-                $slot->qtype = 'random';
+                $slot->qtype = null; // Random slots don’t have an associated question.
+                $slot->random = true;
                 $slot->name = get_string('random', 'quiz');
                 $slot->length = 1;
             } else if ($slot->qtype === null) {
@@ -254,7 +256,7 @@ class qbank_helper {
         $slotdata = reset($slotdata);
 
         // Non-random question.
-        if ($slotdata->qtype != 'random') {
+        if (!$slotdata->random) {
             return $slotdata->questionid;
         }
 

@@ -54,7 +54,6 @@ final class responses_from_steps_walkthrough_test extends \mod_quiz\tests\attemp
      */
     public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
         $this->resetAfterTest(true);
-        question_bank::get_qtype('random')->clear_caches_before_testing();
 
         $this->create_quiz($quizsettings, $csvdata['questions']);
 

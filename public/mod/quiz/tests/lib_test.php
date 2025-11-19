@@ -116,15 +116,11 @@ final class lib_test extends \advanced_testcase {
         quiz_add_quiz_question($standardq->id, $quiz);
         $this->add_random_questions($quiz->id, 0, $cat->id, 1);
 
-        // Get the random question.
-        $randomq = $DB->get_record('question', ['qtype' => 'random']);
+        // Confirm we have a question set reference for the random question.
+        $this->assertEquals(1, $DB->count_records('question_set_references', ['usingcontextid' => $context->id]));
 
         quiz_delete_instance($quiz->id);
 
-        // Check that the random question was deleted.
-        if ($randomq) {
-            $this->assertEquals(0, $DB->count_records('question', ['id' => $randomq->id]));
-        }
         // Check that the standard question was not deleted.
         $this->assertEquals(1, $DB->count_records('question', ['id' => $standardq->id]));
 
