@@ -134,6 +134,29 @@ final class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
                 $summarydata['qbehaviour_cbm_judgement1']['content']);
     }
 
+    /**
+     * Test that CBM summary is not shown when there are no CBM questions in the attempt.
+     * @covers \qbehaviour_deferredcbm_type::summarise_usage
+     */
+    public function test_summarise_usage_no_cbm_questions(): void {
+        // Create a usage comprising 2 essay questions.
+        $this->quba->set_preferred_behaviour('deferredcbm');
+        $this->quba->add_question(\test_question_maker::make_an_essay_question(), 1);
+        $this->quba->add_question(\test_question_maker::make_an_essay_question(), 1);
+        $this->quba->start_all_questions();
+
+        // Process responses right, high certainty; right, med certainty; wrong, med certainty.
+        $this->quba->process_action(1, ['answer' => 'essay answer1', 'answerformat' => FORMAT_PLAIN]);
+        $this->quba->process_action(2, ['answer' => 'essay answer2', 'answerformat' => FORMAT_PLAIN]);
+        $this->quba->finish_all_questions();
+
+        // Get the summary.
+        $summarydata = $this->quba->get_summary_information(new question_display_options());
+
+        // Verify that there is no CBM summary.
+        $this->assertArrayNotHasKey('qbehaviour_cbm_entire_quiz_heading', $summarydata);
+    }
+
     public function test_calculate_bonus(): void {
         $this->assertEqualsWithDelta(0.05,  $this->behaviourtype->calculate_bonus(1, 1 / 2), question_testcase::GRADE_DELTA);
         $this->assertEqualsWithDelta(-0.01, $this->behaviourtype->calculate_bonus(2, 9 / 10), question_testcase::GRADE_DELTA);
