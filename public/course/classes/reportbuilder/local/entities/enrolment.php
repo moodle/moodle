@@ -63,31 +63,11 @@ class enrolment extends base {
     }
 
     /**
-     * Initialise the entity
-     *
-     * @return base
-     */
-    public function initialise(): base {
-        foreach ($this->get_all_columns() as $column) {
-            $this->add_column($column);
-        }
-
-        // All the filters defined by the entity can also be used as conditions.
-        foreach ($this->get_all_filters() as $filter) {
-            $this
-                ->add_filter($filter)
-                ->add_condition($filter);
-        }
-
-        return $this;
-    }
-
-    /**
      * Returns list of all available columns
      *
      * @return column[]
      */
-    protected function get_all_columns(): array {
+    protected function get_available_columns(): array {
         $userenrolments = $this->get_table_alias('user_enrolments');
 
         // Enrolment time created.
@@ -172,7 +152,7 @@ class enrolment extends base {
      *
      * @return filter[]
      */
-    protected function get_all_filters(): array {
+    protected function get_available_filters(): array {
         $userenrolments = $this->get_table_alias('user_enrolments');
 
         // Enrolment time created.

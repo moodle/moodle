@@ -18,11 +18,10 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\entities;
 
-use coding_exception;
+use core\exception\coding_exception;
+use core\lang_string;
 use core_reportbuilder\local\helpers\{database, join_trait};
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
-use lang_string;
+use core_reportbuilder\local\report\{column, filter};
 
 /**
  * Base class for all report entities
@@ -35,26 +34,26 @@ abstract class base {
 
     use join_trait;
 
-    /** @var string $entityname Internal reference to name of entity */
-    private $entityname = null;
+    /** @var string|null $entityname Internal reference to name of entity */
+    private string|null $entityname = null;
 
-    /** @var lang_string $entitytitle Used as a title for the entity in reports */
-    private $entitytitle = null;
+    /** @var lang_string|null $entitytitle Used as a title for the entity in reports */
+    private lang_string|null $entitytitle = null;
 
-    /** @var array $tablealiases Database tables that this entity uses and their aliases */
-    private $tablealiases = [];
+    /** @var string[] $tablealiases Database tables that this entity uses and their aliases */
+    private array $tablealiases = [];
 
-    /** @var array $tablejoinaliases Database tables that have already been joined to the report and their aliases */
-    private $tablejoinaliases = [];
+    /** @var string[] $tablejoinaliases Database tables that have already been joined to the report and their aliases */
+    private array $tablejoinaliases = [];
 
     /** @var column[] $columns List of columns for the entity */
-    private $columns = [];
+    private array $columns = [];
 
     /** @var filter[] $filters List of filters for the entity */
-    private $filters = [];
+    private array $filters = [];
 
     /** @var filter[] $conditions List of conditions for the entity */
-    private $conditions = [];
+    private array $conditions = [];
 
     /**
      * Database tables that the entity expects to be present in the main SQL or in JOINs added to it
@@ -96,13 +95,27 @@ abstract class base {
      * Initialise the entity, called automatically when it is added to a report
      *
      * This is where entity defines all its columns and filters by calling:
-     * - {@see add_column}
-     * - {@see add_filter}
-     * - etc
+     * - {@see get_available_columns}
+     * - {@see get_available_filters}
+     * - {@see get_available_conditions}
      *
      * @return self
      */
-    abstract public function initialise(): self;
+    public function initialise(): self {
+        foreach ($this->get_available_columns() as $column) {
+            $this->add_column($column);
+        }
+
+        foreach ($this->get_available_filters() as $filter) {
+            $this->add_filter($filter);
+        }
+
+        foreach ($this->get_available_conditions() as $condition) {
+            $this->add_condition($condition);
+        }
+
+        return $this;
+    }
 
     /**
      * The default machine-readable name for this entity that will be used in the internal names of the columns/filters
@@ -290,6 +303,15 @@ abstract class base {
     }
 
     /**
+     * Columns available from this entity
+     *
+     * @return column[]
+     */
+    protected function get_available_columns(): array {
+        return [];
+    }
+
+    /**
      * Add a column to the entity
      *
      * @param column $column
@@ -317,11 +339,20 @@ abstract class base {
      * @throws coding_exception For invalid column name
      */
     final public function get_column(string $name): column {
-        if (!array_key_exists($name, $this->columns)) {
+        $columns = $this->get_columns();
+        if (!array_key_exists($name, $columns)) {
             throw new coding_exception('Invalid column name', $name);
         }
+        return $columns[$name];
+    }
 
-        return $this->columns[$name];
+    /**
+     * Filters available from this entity
+     *
+     * @return filter[]
+     */
+    protected function get_available_filters(): array {
+        return [];
     }
 
     /**
@@ -352,18 +383,29 @@ abstract class base {
      * @throws coding_exception For invalid filter name
      */
     final public function get_filter(string $name): filter {
-        if (!array_key_exists($name, $this->filters)) {
+        $filters = $this->get_filters();
+        if (!array_key_exists($name, $filters)) {
             throw new coding_exception('Invalid filter name', $name);
         }
+        return $filters[$name];
+    }
 
-        return $this->filters[$name];
+    /**
+     * Conditions available from this entity
+     *
+     * By default, all the filters defined by the entity can also be used as conditions
+     *
+     * @return filter[]
+     */
+    protected function get_available_conditions(): array {
+        return $this->get_filters();
     }
 
     /**
      * Add a condition to the entity
      *
      * @param filter $condition
-     * @return $this
+     * @return self
      */
     final protected function add_condition(filter $condition): self {
         $this->conditions[$condition->get_name()] = $condition;
@@ -387,10 +429,10 @@ abstract class base {
      * @throws coding_exception For invalid condition name
      */
     final public function get_condition(string $name): filter {
-        if (!array_key_exists($name, $this->conditions)) {
+        $conditions = $this->get_conditions();
+        if (!array_key_exists($name, $conditions)) {
             throw new coding_exception('Invalid condition name', $name);
         }
-
-        return $this->conditions[$name];
+        return $conditions[$name];
     }
 }

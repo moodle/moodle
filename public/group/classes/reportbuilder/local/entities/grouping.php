@@ -35,6 +35,9 @@ use core_reportbuilder\local\report\{column, filter};
  */
 class grouping extends base {
 
+    /** @var custom_fields $customfields */
+    private custom_fields $customfields;
+
     /**
      * Database tables that this entity uses
      *
@@ -64,7 +67,7 @@ class grouping extends base {
     public function initialise(): base {
         $groupingsalias = $this->get_table_alias('groupings');
 
-        $customfields = (new custom_fields(
+        $this->customfields = (new custom_fields(
             "{$groupingsalias}.id",
             $this->get_entity_name(),
             'core_group',
@@ -72,20 +75,7 @@ class grouping extends base {
         ))
             ->add_joins($this->get_joins());
 
-        $columns = array_merge($this->get_all_columns(), $customfields->get_columns());
-        foreach ($columns as $column) {
-            $this->add_column($column);
-        }
-
-        // All the filters defined by the entity can also be used as conditions.
-        $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
-        foreach ($filters as $filter) {
-            $this
-                ->add_filter($filter)
-                ->add_condition($filter);
-        }
-
-        return $this;
+        return parent::initialise();
     }
 
     /**
@@ -93,7 +83,7 @@ class grouping extends base {
      *
      * @return column[]
      */
-    protected function get_all_columns(): array {
+    protected function get_available_columns(): array {
         $contextalias = $this->get_table_alias('context');
         $groupingsalias = $this->get_table_alias('groupings');
 
@@ -181,7 +171,8 @@ class grouping extends base {
             ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
-        return $columns;
+        // Merge with custom field columns.
+        return array_merge($columns, $this->customfields->get_columns());
     }
 
     /**
@@ -189,7 +180,7 @@ class grouping extends base {
      *
      * @return filter[]
      */
-    protected function get_all_filters(): array {
+    protected function get_available_filters(): array {
         $groupingsalias = $this->get_table_alias('groupings');
 
         // Name filter.
@@ -222,6 +213,7 @@ class grouping extends base {
         ))
             ->add_joins($this->get_joins());
 
-        return $filters;
+        // Merge with custom field filters.
+        return array_merge($filters, $this->customfields->get_filters());
     }
 }

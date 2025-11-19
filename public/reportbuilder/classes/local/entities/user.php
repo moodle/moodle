@@ -50,6 +50,9 @@ use core_reportbuilder\local\report\filter;
  */
 class user extends base {
 
+    /** @var user_profile_fields $userprofilefields */
+    private user_profile_fields $userprofilefields;
+
     /**
      * Database tables that this entity uses
      *
@@ -81,26 +84,13 @@ class user extends base {
     public function initialise(): base {
         $tablealias = $this->get_table_alias('user');
 
-        $userprofilefields = (new user_profile_fields(
+        $this->userprofilefields = (new user_profile_fields(
             "{$tablealias}.id",
             $this->get_entity_name(),
         ))
             ->add_joins($this->get_joins());
 
-        $columns = array_merge($this->get_all_columns(), $userprofilefields->get_columns());
-        foreach ($columns as $column) {
-            $this->add_column($column);
-        }
-
-        // All the filters defined by the entity can also be used as conditions.
-        $filters = array_merge($this->get_all_filters(), $userprofilefields->get_filters());
-        foreach ($filters as $filter) {
-            $this
-                ->add_condition($filter)
-                ->add_filter($filter);
-        }
-
-        return $this;
+        return parent::initialise();
     }
 
     /**
@@ -175,7 +165,7 @@ class user extends base {
      *
      * @return column[]
      */
-    protected function get_all_columns(): array {
+    protected function get_available_columns(): array {
         $usertablealias = $this->get_table_alias('user');
         $contexttablealias = $this->get_table_alias('context');
 
@@ -308,7 +298,8 @@ class user extends base {
             $columns[] = $column;
         }
 
-        return $columns;
+        // Merge with user profile field columns.
+        return array_merge($columns, $this->userprofilefields->get_columns());
     }
 
     /**
@@ -455,7 +446,7 @@ class user extends base {
      *
      * @return filter[]
      */
-    protected function get_all_filters(): array {
+    protected function get_available_filters(): array {
         $tablealias = $this->get_table_alias('user');
 
         // Fullname filter.
@@ -532,7 +523,8 @@ class user extends base {
         ))
             ->add_joins($this->get_joins());
 
-        return $filters;
+        // Merge with user profile field filters.
+        return array_merge($filters, $this->userprofilefields->get_filters());
     }
 
     /**

@@ -52,25 +52,11 @@ class theme extends base {
     }
 
     /**
-     * Initialize the entity.
-     *
-     * @return base
-     */
-    public function initialise(): base {
-        $columns = $this->get_all_columns();
-        foreach ($columns as $column) {
-            $this->add_column($column);
-        }
-
-        return $this;
-    }
-
-    /**
      * Returns list of all available columns.
      *
      * @return column[]
      */
-    protected function get_all_columns(): array {
+    protected function get_available_columns(): array {
         global $DB;
         $themealias = $this->get_table_alias('config_plugins');
         $sqlsubstring = $DB->sql_substr("{$themealias}.plugin", 7);
