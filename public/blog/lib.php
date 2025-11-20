@@ -153,7 +153,7 @@ function blog_sync_external_entries($externalblog) {
     $rssfile = $rss->registry->create('File', array($externalblog->url));
     $filetest = $rss->registry->create('Locator', array($rssfile));
 
-    if (!$filetest->is_feed($rssfile)) {
+    if (empty($rssfile->success) || !$filetest->is_feed($rssfile)) {
         $externalblog->failedlastsync = 1;
         $DB->update_record('blog_external', $externalblog);
         return false;
