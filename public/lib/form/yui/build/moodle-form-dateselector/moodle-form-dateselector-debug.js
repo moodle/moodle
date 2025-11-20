@@ -106,6 +106,25 @@ M.form.dateselector = {
             showPrevMonth: true,
             showNextMonth: true,
             firstdayofweek: parseInt(config.firstdayofweek, 10),
+            headerRenderer: function(date) {
+                // We fetch the current language's preferred time format from the language pack.
+                var calendar = this;
+                require(['core/user_date', 'core/notification'], function(UserDate, Notification) {
+                    UserDate.get([{
+                        timestamp: Math.floor(date.getTime() / 1000),
+                        format: config.strftimemonthyear,
+                    }]).then(function(dateStrs) {
+                        var headerNode = calendar.get('contentBox')
+                            .one('#' + calendar._calendarId + '_header');
+                        if (headerNode) {
+                            headerNode.setContent(dateStrs[0]);
+                        }
+                        return dateStrs[0];
+                    }).catch(Notification.exception);
+                });
+                return '';
+            },
+
             WEEKDAYS_MEDIUM: [
                 config.sun,
                 config.mon,
@@ -113,7 +132,8 @@ M.form.dateselector = {
                 config.wed,
                 config.thu,
                 config.fri,
-                config.sat]
+                config.sat,
+            ],
         });
     },
     findZIndex: function(node) {
