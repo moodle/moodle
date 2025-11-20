@@ -76,6 +76,16 @@ class gradingform_guide_renderer extends plugin_renderer_base {
                     $criterion[$key] = '';
                 }
             }
+
+            // Set a default description format if not set.
+            if (!array_key_exists('descriptionformat', $criterion)) {
+                $criterion['descriptionformat'] = FORMAT_MOODLE;
+            }
+
+            // Set a default description markers format if not set.
+            if (!array_key_exists('descriptionmarkersformat', $criterion)) {
+                $criterion['descriptionmarkersformat'] = FORMAT_MOODLE;
+            }
         }
 
         $criteriontemplate = html_writer::start_tag('tr', array('class' => 'criterion'. $criterion['class'],
@@ -398,6 +408,11 @@ class gradingform_guide_renderer extends plugin_renderer_base {
                           'title' => get_string('clicktocopy', 'gradingform_guide'),
                           'id' => '{NAME}[comments][{COMMENT-id}]', 'class'=>'markingguidecomment'));
             } else {
+                  // Set a default description format if not set.
+                if (!array_key_exists('descriptionformat', $comment)) {
+                    $comment['descriptionformat'] = FORMAT_MOODLE;
+                }
+
                 $description = format_text($comment['description'], $comment['descriptionformat']);
             }
             // Retain newlines as <br> tags when displaying 'frequently used comments'.
