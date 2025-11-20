@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Provides {@link tool_policy\output\renderer} class.
- *
- * @package     tool_policy
- * @category    output
- * @copyright   2018 David Mudrák <david@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_policy;
 
 use coding_exception;
@@ -33,13 +24,12 @@ use core\session\manager;
 use stdClass;
 use tool_policy\event\acceptance_created;
 use tool_policy\event\acceptance_updated;
-use user_picture;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Provides the API of the policies plugin.
  *
+ * @package   tool_policy
+ * @category  output
  * @copyright 2018 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1038,9 +1028,12 @@ class api {
 
         // MDL-80973: At this point, the policyagreed value in DB could be 0 but $user->policyagreed could be 1 (as it was copied from $USER).
         // So we need to ensure that the value in DB is set true if all policies were responded.
-        if ($user->policyagreed != $allresponded || $allresponded) {
+        $userpolicyagreed = (bool) ($user->policyagreed ?? false);
+        if ($userpolicyagreed !== $allresponded || $allresponded) {
             $user->policyagreed = $allresponded;
-            $DB->set_field('user', 'policyagreed', $allresponded, ['id' => $user->id]);
+            if (!isguestuser($user)) {
+                $DB->set_field('user', 'policyagreed', $user->policyagreed, ['id' => $user->id]);
+            }
         }
     }
 
