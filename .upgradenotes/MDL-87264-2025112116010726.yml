@@ -1,0 +1,11 @@
+issueNumber: MDL-87264
+notes:
+  qbank_managecategories:
+    - message: >-
+        Support for displaying multiple contexts has been removed from the
+        question category management UI. As such, the `editlists` property,
+        `contexts`, `courseid` and `thiscontext` constructor parameters in
+        `qbank_managecategories\question_categories` are deprecated. The
+        constructor now just uses `cmid` to determine the current context 
+        parent course.
+      type: deprecated

@@ -17,6 +17,8 @@
 namespace qbank_managecategories;
 
 use context;
+use core\context\module;
+use core\exception\coding_exception;
 use moodle_url;
 
 /**
@@ -51,65 +53,91 @@ class question_categories {
     /**
      * @var array An array containing a tree of categories for each context.
      */
+    #[\core\attribute\deprecated(
+        'editlist',
+        5.2,
+        'Multiple contexts are no longer supported.',
+        'MDL-87264'
+    )]
     public array $editlists;
+
+    /**
+     * @var \stdClass The tree of categories for the current context.
+     */
+    public \stdClass $editlist;
 
     /**
      * Constructor.
      *
      * @param moodle_url $pageurl base URL of the display categories page. Used for redirects.
-     * @param context[] $contexts contexts where the current user can edit categories.
+     * @param context[] $contexts Deprecated since Moodle 5.2, do not use anymore.
      * @param ?int $cmid course module id for the current page.
-     * @param ?int $courseid course id for the current page.
-     * @param ?int $thiscontext The context ID of the current page.
+     * @param ?int $courseid Deprecated since Moodle 5.2, do not use anymore.
+     * @param ?int $thiscontext Deprecated since Moodle 5.2, do not use anymore.
      */
     public function __construct(
         moodle_url $pageurl,
-        array $contexts,
+        ?array $contexts = null,
         ?int $cmid = null,
         ?int $courseid = null,
         ?int $thiscontext = null,
     ) {
         global $DB;
+        if (!is_null($contexts)) {
+            debugging(
+                'The contexts argument has been deprecated. Multiple contexts are no longer supported. Please remove the '
+                    . 'argument from your calls.',
+                DEBUG_DEVELOPER,
+            );
+        }
+        if (!is_null($courseid)) {
+            debugging(
+                'The courseid argument has been deprecated. The course will be found from the cmid. Please remove the '
+                    . 'argument from your calls.',
+                DEBUG_DEVELOPER,
+            );
+        }
+        if (!is_null($thiscontext)) {
+            debugging(
+                'The thiscontext argument has been deprecated. The context will be found from the cmid. Please remove the '
+                    . 'argument from your calls.',
+                DEBUG_DEVELOPER,
+            );
+        }
 
         $this->cmid = $cmid;
-        $this->courseid = $courseid;
+        $context = module::instance($this->cmid);
+
+        [$course] = get_course_and_cm_from_cmid($cmid);
+        $this->courseid = $course->id;
 
         $this->pageurl = $pageurl;
-        $this->contextid = $thiscontext;
+        $this->contextid = $context->id;
 
-        $contextids = array_map(fn($context) => $context->id, $contexts);
-        [$insql, $params] = $DB->get_in_or_equal($contextids);
-        $topcategories = $DB->get_records_select_menu(
+        $topcategory = $DB->get_record(
             'question_categories',
-            'parent = 0 AND contextid ' . $insql,
-            $params,
-            fields: 'contextid, id'
+            ['parent' => 0, 'contextid' => $this->contextid],
         );
-        foreach ($contexts as $context) {
-            // We can only have categories in module context.
-            if ($context->contextlevel !== CONTEXT_MODULE) {
-                continue;
+
+        $items = helper::get_categories_for_contexts($context->id);
+        // Create an ordered tree with children correctly nested under parents.
+        foreach ($items as $item) {
+            if (array_key_exists((int) $item->parent, $items)) {
+                $item->parentitem = $items[$item->parent];
+                $items[$item->parent]->children[$item->id] = $item;
             }
-            $items = helper::get_categories_for_contexts($context->id);
-            // Create an ordered tree with children correctly nested under parents.
-            foreach ($items as $item) {
-                if (array_key_exists((int) $item->parent, $items)) {
-                    $item->parentitem = $items[$item->parent];
-                    $items[$item->parent]->children[$item->id] = $item;
-                }
-            }
-            foreach ($items as $item) {
-                if (isset($item->children)) {
-                    foreach ($item->children as $children) {
-                        unset($items[$children->id]);
-                    }
-                }
-            }
-            $this->editlists[$context->id] = (object) [
-                'items' => $items,
-                'context' => $context,
-                'categoryid' => $topcategories[$context->id],
-            ];
         }
+        foreach ($items as $item) {
+            if (isset($item->children)) {
+                foreach ($item->children as $children) {
+                    unset($items[$children->id]);
+                }
+            }
+        }
+        $this->editlist = (object) [
+            'items' => $items,
+            'context' => $context,
+            'categoryid' => $topcategory->id,
+        ];
     }
 }
