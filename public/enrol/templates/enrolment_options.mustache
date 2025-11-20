@@ -35,7 +35,9 @@
 }}
 <h2>{{heading}}</h2>
 {{{courseinfobox}}}
-{{#widgets}}{{{.}}}{{/widgets}}
+{{#widgets}}
+    <div class="mb-3"> {{{.}}} </div>
+{{/widgets}}
 {{^widgets}}
     <div id="notice" class="box py-3 generalbox">
         {{message}}
