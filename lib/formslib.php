@@ -107,7 +107,8 @@ function form_init_date_js() {
             'september'         => date_format_string(strtotime("September 1"), '%B', $defaulttimezone),
             'october'           => date_format_string(strtotime("October 1"), '%B', $defaulttimezone),
             'november'          => date_format_string(strtotime("November 1"), '%B', $defaulttimezone),
-            'december'          => date_format_string(strtotime("December 1"), '%B', $defaulttimezone)
+            'december'          => date_format_string(strtotime("December 1"), '%B', $defaulttimezone),
+            'strftimemonthyear' => get_string('strftimemonthyear', 'langconfig'),
         ));
         $PAGE->requires->yui_module($module, $function, $config);
     }
