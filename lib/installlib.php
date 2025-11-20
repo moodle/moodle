@@ -259,7 +259,8 @@ function install_generate_configphp($database, $cfg) {
 }
 
 /**
- * Prints installation page header, we can not use weblib yet in installer.
+ * Prints installation page header, we can not use weblib yet in installer nor reference any file serving scripts
+ * directly (images, styles, etc. files must all be referenced by direct URL)
  *
  * @global object
  * @param stdClass $config
@@ -283,7 +284,7 @@ function install_print_header($config, $stagename, $heading, $stagetext, $stagec
     echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
     echo '<html dir="'.(right_to_left() ? 'rtl' : 'ltr').'">
           <head>
-          <link rel="shortcut icon" href="theme/clean/pix/favicon.ico" />';
+          <link rel="shortcut icon" href="' . $CFG->wwwroot . '/theme/boost/pix/favicon.ico" />';
 
     echo '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install/css.php" />
           <title>'.get_string('installation', 'install') . moodle_page::TITLE_SEPARATOR . 'Moodle '.$CFG->target_release.'</title>
