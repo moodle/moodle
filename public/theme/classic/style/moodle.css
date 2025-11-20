@@ -27665,7 +27665,7 @@ dd:after {
   top: 0;
 }
 
-[data-drag-type=move] {
+[data-drag-type=move]:not(:disabled) {
   cursor: move;
   touch-action: none;
 }

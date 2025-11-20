@@ -2119,7 +2119,7 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
 }
 
-[data-drag-type="move"] {
+[data-drag-type="move"]:not(:disabled) {
     cursor: move;
     touch-action: none;
 }
