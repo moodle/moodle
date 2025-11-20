@@ -157,9 +157,10 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="wds_sec_sli_uq" TYPE="unique" FIELDS="section_listing_id"/>
-        <KEY NAME="wds_sec_sdi_uq" TYPE="unique" FIELDS="course_section_definition_id, course_listing_id"/>
       </KEYS>
       <INDEXES>
+        <INDEX NAME="wds_sec_csdi_idx" UNIQUE="false" FIELDS="course_section_definition_id"/>
+        <INDEX NAME="wds_sec_cli_idx" UNIQUE="false" FIELDS="course_listing_id"/>
         <INDEX NAME="wds_sec_cdi_idx" UNIQUE="false" FIELDS="course_definition_id"/>
         <INDEX NAME="wds_sec_aui_idx" UNIQUE="false" FIELDS="academic_unit_id"/>
         <INDEX NAME="wds_sec_api_idx" UNIQUE="false" FIELDS="academic_period_id"/>
