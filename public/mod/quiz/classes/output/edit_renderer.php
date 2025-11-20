@@ -122,6 +122,7 @@ class edit_renderer extends \plugin_renderer_base {
                 $thiscontext->id,
                 $quizobj->get_cm()->id,
                 $quizobj->get_cm()->id,
+                $quizobj->get_courseid(),
             ]);
 
             $this->page->requires->js_call_amd('mod_quiz/modal_add_random_question', 'init', [
@@ -131,6 +132,7 @@ class edit_renderer extends \plugin_renderer_base {
                 $pageurl->out_as_local_url(true),
                 $pageurl->param('cmid'),
                 \core\plugininfo\qbank::is_plugin_enabled(\qbank_managecategories\helper::PLUGINNAME),
+                $quizobj->get_courseid(),
             ]);
 
             // Include the question chooser.

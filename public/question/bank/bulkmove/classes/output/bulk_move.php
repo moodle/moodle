@@ -72,14 +72,14 @@ class bulk_move implements \renderable, \templatable {
                 currentbankid: $this->currentbankid,
                 filtercontext: $currentbankcm->context,
                 limit: 1,
-            )[0];
+            )[0]->get_formatted();
         } else {
             $banktorender = question_bank_helper::get_activity_instances_with_private_questions(
                 incourseids: [$currentbankcm->course],
                 havingcap: ['moodle/question:add'],
                 currentbankid: $this->currentbankid,
                 filtercontext: $currentbankcm->context,
-            )[0];
+            )[0]->get_formatted();
         }
 
         $categoryselector = new question_category_selector(

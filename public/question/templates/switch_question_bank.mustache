@@ -19,122 +19,77 @@
 
     Example context (json):
 {
-    "quizname": "Quiz 1",
-    "quizcmid": 1,
-    "quizcontextid": 1,
+    "contextid": 1,
+    "hasactivitybank": true,
+    "activitybank": {
+        "name": "Quiz 1",
+        "cmid": 1
+    },
     "hascoursesharedbanks": true,
     "coursesharedbanks": [
         {
             "name": "Question bank 1",
-            "modid": "2",
-            "contextid": 2,
-            "coursenamebankname": "c1 - Question bank 1",
-            "cminfo": {},
-            "questioncategories": []
+            "modid": "2"
         },
         {
             "name": "Question bank 2",
-            "modid": "3",
-            "contextid": 3,
-            "coursenamebankname": "c1 - Question bank 2",
-            "cminfo": {},
-            "questioncategories": []
+            "modid": "3"
         }
     ],
     "hasrecentlyviewedbanks": true,
     "recentlyviewedbanks": [
         {
-            "name": "Question bank 3",
             "modid": "4",
-            "contextid": 4,
-            "coursenamebankname": "c2 - Question bank 4",
-            "cminfo": {},
-            "questioncategories": []
+            "coursenamebankname": "c2 - Question bank 4"
         },
         {
-            "name": "Question bank 4",
             "modid": "6",
-            "contextid": 6,
-            "coursenamebankname": "c3 - Question bank 5",
-            "cminfo": {},
-            "questioncategories": []
-        }
-    ],
-    "hassharedbanks": true,
-    "sharedbanks": [
-        {
-            "name": "Question bank 1",
-            "modid": "2",
-            "contextid": 2,
-            "coursenamebankname": "c1 - Question bank 1",
-            "cminfo": {},
-            "questioncategories": []
-        },
-        {
-            "name": "Question bank 2",
-            "modid": "3",
-            "contextid": 3,
-            "coursenamebankname": "c1 - Question bank 2",
-            "cminfo": {},
-            "questioncategories": []
-        },
-        {
-            "name": "Question bank 3",
-            "modid": "4",
-            "contextid": 4,
-            "coursenamebankname": "c2 - Question bank 4",
-            "cminfo": {},
-            "questioncategories": []
-        },
-        {
-            "name": "Question bank 4",
-            "modid": "6",
-            "contextid": 6,
-            "coursenamebankname": "c3 - Question bank 5",
-            "cminfo": {},
-            "questioncategories": []
+            "coursenamebankname": "c3 - Question bank 5"
         }
     ]
 }
 }}
-<div class="quiz-bank">
-    <h5>{{#str}}quizquestionbank, core_question{{/str}}</h5>
-    <a href="#" class="ms-3" data-newmodid="{{quizcmid}}">{{quizname}}</a>
-</div>
+<div class="bank-switcher">
+    {{#hasactivitybank}}
+        <div class="quiz-bank">
+            <h5>{{#str}}quizquestionbank, core_question{{/str}}</h5>
+            <a href="#" class="ms-3" data-newmodid="{{activitybank.cmid}}">{{activitybank.name}}</a>
+        </div>
+        <hr class="w-75">
+    {{/hasactivitybank}}
 
-<hr class="w-75">
+    {{#hascoursesharedbanks}}
+        <div class="course-shared-banks">
+            <h5>{{#str}}banksincourse, core_question{{/str}}</h5>
+            {{#coursesharedbanks}}
+                <ul class="list-unstyled ms-3">
+                    <li>
+                        <a href="#" data-newmodid="{{modid}}">{{name}}</a>
+                    </li>
+                </ul>
+            {{/coursesharedbanks}}
+        </div>
+        <hr class="w-75">
+    {{/hascoursesharedbanks}}
 
-{{#hascoursesharedbanks}}
-    <div class="course-shared-banks">
-        <h5>{{#str}}banksincourse, core_question{{/str}}</h5>
-        {{#coursesharedbanks}}
-            <ul class="list-unstyled ms-3">
-                <li>
-                    <a href="#" data-newmodid="{{modid}}">{{name}}</a>
-                </li>
-            </ul>
-        {{/coursesharedbanks}}
+    {{#hasrecentlyviewedbanks}}
+        <div class="recently-viewed-banks">
+            <h5>{{#str}}recentlyviewedquestionbanks, core_question{{/str}}</h5>
+            {{#recentlyviewedbanks}}
+                <ul class="list-unstyled ms-3">
+                    <li>
+                        <a href="#" data-newmodid="{{modid}}">{{coursenamebankname}}</a>
+                    </li>
+                </ul>
+            {{/recentlyviewedbanks}}
+        </div>
+        <hr class="w-75">
+    {{/hasrecentlyviewedbanks}}
+
+
+    <div class="search-banks">
+        <h5>{{#str}}otherquestionbank, core_question{{/str}}</h5>
+        <select class="form-select" id="searchbanks" data-contextid="{{contextid}}">
+        </select>
     </div>
-    <hr class="w-75">
-{{/hascoursesharedbanks}}
-
-{{#hasrecentlyviewedbanks}}
-    <div class="recently-viewed-banks">
-        <h5>{{#str}}recentlyviewedquestionbanks, core_question{{/str}}</h5>
-        {{#recentlyviewedbanks}}
-            <ul class="list-unstyled ms-3">
-                <li>
-                    <a href="#" data-newmodid="{{modid}}">{{coursenamebankname}}</a>
-                </li>
-            </ul>
-        {{/recentlyviewedbanks}}
-    </div>
-    <hr class="w-75">
-{{/hasrecentlyviewedbanks}}
-
-
-<div class="search-banks">
-    <h5>{{#str}}otherquestionbank, core_question{{/str}}</h5>
-    <select class="form-select" id="searchbanks" data-contextid="{{quizcontextid}}">
-    </select>
 </div>
