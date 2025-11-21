@@ -1,0 +1,7 @@
+issueNumber: MDL-84082
+notes:
+  core_reportbuilder:
+    - message: >-
+        The text filter "Contains" and "Not contains" operators now support `*`
+        and `?` wildcard characters for better text content filtering
+      type: improved
