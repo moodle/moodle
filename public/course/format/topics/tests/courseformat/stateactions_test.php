@@ -51,11 +51,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Tests for section_highlight method.
      *
-     * @dataProvider basic_role_provider
-     * @covers ::section_highlight
      * @param string $rolename The role of the user that will execute the method.
      * @param bool $expectedexception If this call will raise an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_section_highlight(string $rolename, bool $expectedexception = false): void {
         global $DB;
         $this->resetAfterTest(true);
@@ -119,11 +118,10 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Tests for section_unhighlight method.
      *
-     * @dataProvider basic_role_provider
-     * @covers ::section_unhighlight
      * @param string $rolename The role of the user that will execute the method.
      * @param bool $expectedexception If this call will raise an exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_role_provider')]
     public function test_section_unhighlight(string $rolename, bool $expectedexception = false): void {
         global $DB;
         $this->resetAfterTest(true);
@@ -189,34 +187,32 @@ final class stateactions_test extends \advanced_testcase {
     /**
      * Data provider for basic role tests.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function basic_role_provider(): array {
-        return [
-            'admin' => [
-                'rolename' => 'admin',
-                'expectedexception' => false,
-            ],
-            'editingteacher' => [
-                'rolename' => 'editingteacher',
-                'expectedexception' => false,
-            ],
-            'teacher' => [
-                'rolename' => 'teacher',
-                'expectedexception' => true,
-            ],
-            'student' => [
-                'rolename' => 'student',
-                'expectedexception' => true,
-            ],
-            'guest' => [
-                'rolename' => 'guest',
-                'expectedexception' => true,
-            ],
-            'unenroled' => [
-                'rolename' => 'unenroled',
-                'expectedexception' => true,
-            ],
+    public static function basic_role_provider(): \Generator {
+        yield 'admin' => [
+            'rolename' => 'admin',
+            'expectedexception' => false,
+        ];
+        yield  'editingteacher' => [
+            'rolename' => 'editingteacher',
+            'expectedexception' => false,
+        ];
+        yield 'teacher' => [
+            'rolename' => 'teacher',
+            'expectedexception' => true,
+        ];
+        yield 'student' => [
+            'rolename' => 'student',
+            'expectedexception' => true,
+        ];
+        yield 'guest' => [
+            'rolename' => 'guest',
+            'expectedexception' => true,
+        ];
+        yield 'unenroled' => [
+            'rolename' => 'unenroled',
+            'expectedexception' => true,
         ];
     }
 }

@@ -23,17 +23,17 @@ namespace core_courseformat\external;
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\external\overviewaction_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(overviewaction_exporter::class)]
 final class overviewaction_exporter_test extends \advanced_testcase {
     /**
      * Test the export returns the right structure when the content is a string.
      *
-     * @dataProvider provider_test_export
      * @param string|null $badgevalue The value of the badge.
      * @param string|null $badgetitle The title of the badge.
      * @param \core\output\local\properties\badge|null $badgestyle The style of the badge.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_export')]
     public function test_export(
         ?string $badgevalue = null,
         ?string $badgetitle = null,
@@ -90,29 +90,26 @@ final class overviewaction_exporter_test extends \advanced_testcase {
     /**
      * Provider for test_export.
      *
-     * @return array
+     * @return \Generator
      */
-    public static function provider_test_export(): array {
-        return [
-            'All badge fields' => [
-                'badgevalue' => '5',
-                'badgetitle' => 'New items',
-                'badgestyle' => \core\output\local\properties\badge::SUCCESS,
-            ],
-            'No badge' => [
-            ],
-            'Badge without value (equivalent to no badge)' => [
-                'badgetitle' => 'New items',
-                'badgestyle' => \core\output\local\properties\badge::SUCCESS,
-            ],
-            'Badge without title' => [
-                'badgevalue' => '5',
-                'badgestyle' => \core\output\local\properties\badge::SUCCESS,
-            ],
-            'Badge without style (defaults to PRIMARY)' => [
-                'badgevalue' => '5',
-                'badgetitle' => 'New items',
-            ],
+    public static function provider_test_export(): \Generator {
+        yield 'All badge fields' => [
+            'badgevalue' => '5',
+            'badgetitle' => 'New items',
+            'badgestyle' => \core\output\local\properties\badge::SUCCESS,
+        ];
+        yield 'No badge' => [];
+        yield 'Badge without value (equivalent to no badge)' => [
+            'badgetitle' => 'New items',
+            'badgestyle' => \core\output\local\properties\badge::SUCCESS,
+        ];
+        yield 'Badge without title' => [
+            'badgevalue' => '5',
+            'badgestyle' => \core\output\local\properties\badge::SUCCESS,
+        ];
+        yield 'Badge without style (defaults to PRIMARY)' => [
+            'badgevalue' => '5',
+            'badgetitle' => 'New items',
         ];
     }
 }

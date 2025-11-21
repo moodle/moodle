@@ -22,14 +22,12 @@ namespace format_social;
  * @package    format_social
  * @copyright  2023 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \format_social
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\format_social::class)]
 final class format_social_test extends \advanced_testcase {
 
     /**
      * Test for get_view_url().
-     *
-     * @covers ::get_view_url
      */
     public function test_get_view_url(): void {
         global $CFG;
@@ -62,8 +60,6 @@ final class format_social_test extends \advanced_testcase {
 
     /**
      * Test get_required_jsfiles().
-     *
-     * @covers ::get_required_jsfiles
      */
     public function test_get_required_jsfiles(): void {
         $this->resetAfterTest();

@@ -24,17 +24,14 @@ use stdClass;
  * @package    core_courseformat
  * @copyright  2023 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\output\activitybadge
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(activitybadge::class)]
 final class activitybadge_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of create_instance() and export_for_template() attributes.
-     * @runInSeparateProcess
-     *
-     * @covers ::export_for_template
-     * @covers ::create_instance
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_activitybadge_export_for_template(): void {
         $this->resetAfterTest();
         $this->setAdminUser();

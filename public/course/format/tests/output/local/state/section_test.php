@@ -26,8 +26,8 @@ use stdClass;
  * @package    core_courseformat
  * @copyright  2022 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\output\local\state\section
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(section::class)]
 final class section_test extends \advanced_testcase {
 
     /**
@@ -43,15 +43,13 @@ final class section_test extends \advanced_testcase {
     /**
      * Test the behaviour of state\section hasavailability attribute.
      *
-     * @dataProvider hasrestrictions_state_provider
-     * @covers ::export_for_template
-     *
      * @param string $format the course format
      * @param string $rolename the user role name (editingteacher or student)
      * @param bool $hasavailability if the activity|section has availability
      * @param bool $available if the activity availability condition is available or not to the user
      * @param bool $expected the expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('hasrestrictions_state_provider')]
     public function test_section_hasrestrictions_state(
         string $format = 'topics',
         string $rolename = 'editingteacher',
@@ -141,208 +139,206 @@ final class section_test extends \advanced_testcase {
     /**
      * Data provider for test_state().
      *
-     * @return array
+     * @return \Generator
      */
-    public static function hasrestrictions_state_provider(): array {
-        return [
-            // Teacher scenarios (topics).
-            'Teacher, Topics, can edit, has availability and is available' => [
-                'format' => 'topics',
-                'rolename' => 'editingteacher',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => true,
-            ],
-            'Teacher, Topics, can edit, has availability and is not available' => [
-                'format' => 'topics',
-                'rolename' => 'editingteacher',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Teacher, Topics, can edit and has not availability' => [
-                'format' => 'topics',
-                'rolename' => 'editingteacher',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Teacher scenarios (weeks).
-            'Teacher, Weeks, can edit, has availability and is available' => [
-                'format' => 'weeks',
-                'rolename' => 'editingteacher',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => true,
-            ],
-            'Teacher, Weeks, can edit, has availability and is not available' => [
-                'format' => 'weeks',
-                'rolename' => 'editingteacher',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Teacher, Weeks, can edit and has not availability' => [
-                'format' => 'weeks',
-                'rolename' => 'editingteacher',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Teacher scenarios (mock format).
-            'Teacher, Mock format, can edit, has availability and is available' => [
-                'format' => 'theunittest',
-                'rolename' => 'editingteacher',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => true,
-            ],
-            'Teacher, Mock format, can edit, has availability and is not available' => [
-                'format' => 'theunittest',
-                'rolename' => 'editingteacher',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Teacher, Mock format, can edit and has not availability' => [
-                'format' => 'theunittest',
-                'rolename' => 'editingteacher',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Non editing teacher scenarios (topics).
-            'Non editing teacher, Topics, can edit, has availability and is available' => [
-                'format' => 'topics',
-                'rolename' => 'teacher',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Non editing teacher, Topics, can edit, has availability and is not available' => [
-                'format' => 'topics',
-                'rolename' => 'teacher',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => false,
-            ],
-            'Non editing teacher, Topics, can edit and has not availability' => [
-                'format' => 'topics',
-                'rolename' => 'teacher',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Non editing teacher scenarios (weeks).
-            'Non editing teacher, Weeks, can edit, has availability and is available' => [
-                'format' => 'weeks',
-                'rolename' => 'teacher',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Non editing teacher, Weeks, can edit, has availability and is not available' => [
-                'format' => 'weeks',
-                'rolename' => 'teacher',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => false,
-            ],
-            'Non editing teacher, Weeks, can edit and has not availability' => [
-                'format' => 'weeks',
-                'rolename' => 'teacher',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Non editing teacher scenarios (mock format).
-            'Non editing teacher, Mock format, can edit, has availability and is available' => [
-                'format' => 'theunittest',
-                'rolename' => 'teacher',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Non editing teacher, Mock format, can edit, has availability and is not available' => [
-                'format' => 'theunittest',
-                'rolename' => 'teacher',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => false,
-            ],
-            'Non editing teacher, Mock format, can edit and has not availability' => [
-                'format' => 'theunittest',
-                'rolename' => 'teacher',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Student scenarios (topics).
-            'Topics, cannot edit, has availability and is available' => [
-                'format' => 'topics',
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Topics, cannot edit, has availability and is not available' => [
-                'format' => 'topics',
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Topics, cannot edit and has not availability' => [
-                'format' => 'topics',
-                'rolename' => 'student',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Student scenarios (weeks).
-            'Weeks, cannot edit, has availability and is available' => [
-                'format' => 'weeks',
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Weeks, cannot edit, has availability and is not available' => [
-                'format' => 'weeks',
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Weeks, cannot edit and has not availability' => [
-                'format' => 'weeks',
-                'rolename' => 'student',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
-            // Student scenarios (mock format).
-            'Mock format, cannot edit, has availability and is available' => [
-                'format' => 'theunittest',
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => true,
-                'expected' => false,
-            ],
-            'Mock format, cannot edit, has availability and is not available' => [
-                'format' => 'theunittest',
-                'rolename' => 'student',
-                'hasavailability' => true,
-                'available' => false,
-                'expected' => true,
-            ],
-            'Mock format, cannot edit and has not availability' => [
-                'format' => 'theunittest',
-                'rolename' => 'student',
-                'hasavailability' => false,
-                'available' => true,
-                'expected' => false,
-            ],
+    public static function hasrestrictions_state_provider(): \Generator {
+        // Teacher scenarios (topics).
+        yield 'Teacher, Topics, can edit, has availability and is available' => [
+            'format' => 'topics',
+            'rolename' => 'editingteacher',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => true,
+        ];
+        yield 'Teacher, Topics, can edit, has availability and is not available' => [
+            'format' => 'topics',
+            'rolename' => 'editingteacher',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => true,
+        ];
+        yield 'Teacher, Topics, can edit and has not availability' => [
+            'format' => 'topics',
+            'rolename' => 'editingteacher',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
+        ];
+        // Teacher scenarios (weeks).
+        yield 'Teacher, Weeks, can edit, has availability and is available' => [
+            'format' => 'weeks',
+            'rolename' => 'editingteacher',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => true,
+        ];
+        yield 'Teacher, Weeks, can edit, has availability and is not available' => [
+            'format' => 'weeks',
+            'rolename' => 'editingteacher',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => true,
+        ];
+        yield 'Teacher, Weeks, can edit and has not availability' => [
+            'format' => 'weeks',
+            'rolename' => 'editingteacher',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
+        ];
+        // Teacher scenarios (mock format).
+        yield 'Teacher, Mock format, can edit, has availability and is available' => [
+            'format' => 'theunittest',
+            'rolename' => 'editingteacher',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => true,
+        ];
+        yield 'Teacher, Mock format, can edit, has availability and is not available' => [
+            'format' => 'theunittest',
+            'rolename' => 'editingteacher',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => true,
+        ];
+        yield 'Teacher, Mock format, can edit and has not availability' => [
+            'format' => 'theunittest',
+            'rolename' => 'editingteacher',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
+        ];
+        // Non editing teacher scenarios (topics).
+        yield 'Non editing teacher, Topics, can edit, has availability and is available' => [
+            'format' => 'topics',
+            'rolename' => 'teacher',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => false,
+        ];
+        yield 'Non editing teacher, Topics, can edit, has availability and is not available' => [
+            'format' => 'topics',
+            'rolename' => 'teacher',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => false,
+        ];
+        yield 'Non editing teacher, Topics, can edit and has not availability' => [
+            'format' => 'topics',
+            'rolename' => 'teacher',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
+        ];
+        // Non editing teacher scenarios (weeks).
+        yield 'Non editing teacher, Weeks, can edit, has availability and is available' => [
+            'format' => 'weeks',
+            'rolename' => 'teacher',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => false,
+        ];
+        yield 'Non editing teacher, Weeks, can edit, has availability and is not available' => [
+            'format' => 'weeks',
+            'rolename' => 'teacher',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => false,
+        ];
+        yield 'Non editing teacher, Weeks, can edit and has not availability' => [
+            'format' => 'weeks',
+            'rolename' => 'teacher',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
+        ];
+        // Non editing teacher scenarios (mock format).
+        yield 'Non editing teacher, Mock format, can edit, has availability and is available' => [
+            'format' => 'theunittest',
+            'rolename' => 'teacher',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => false,
+        ];
+        yield 'Non editing teacher, Mock format, can edit, has availability and is not available' => [
+            'format' => 'theunittest',
+            'rolename' => 'teacher',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => false,
+        ];
+        yield 'Non editing teacher, Mock format, can edit and has not availability' => [
+            'format' => 'theunittest',
+            'rolename' => 'teacher',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
+        ];
+        // Student scenarios (topics).
+        yield 'Topics, cannot edit, has availability and is available' => [
+            'format' => 'topics',
+            'rolename' => 'student',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => false,
+        ];
+        yield 'Topics, cannot edit, has availability and is not available' => [
+            'format' => 'topics',
+            'rolename' => 'student',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => true,
+        ];
+        yield 'Topics, cannot edit and has not availability' => [
+            'format' => 'topics',
+            'rolename' => 'student',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
+        ];
+        // Student scenarios (weeks).
+        yield 'Weeks, cannot edit, has availability and is available' => [
+            'format' => 'weeks',
+            'rolename' => 'student',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => false,
+        ];
+        yield 'Weeks, cannot edit, has availability and is not available' => [
+            'format' => 'weeks',
+            'rolename' => 'student',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => true,
+        ];
+        yield 'Weeks, cannot edit and has not availability' => [
+            'format' => 'weeks',
+            'rolename' => 'student',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
+        ];
+        // Student scenarios (mock format).
+        yield 'Mock format, cannot edit, has availability and is available' => [
+            'format' => 'theunittest',
+            'rolename' => 'student',
+            'hasavailability' => true,
+            'available' => true,
+            'expected' => false,
+        ];
+        yield 'Mock format, cannot edit, has availability and is not available' => [
+            'format' => 'theunittest',
+            'rolename' => 'student',
+            'hasavailability' => true,
+            'available' => false,
+            'expected' => true,
+        ];
+        yield 'Mock format, cannot edit and has not availability' => [
+            'format' => 'theunittest',
+            'rolename' => 'student',
+            'hasavailability' => false,
+            'available' => true,
+            'expected' => false,
         ];
     }
 }

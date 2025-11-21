@@ -40,13 +40,9 @@ final class state_test extends \advanced_testcase {
     /**
      * Test the behaviour of state::export_for_template().
      *
-     * @dataProvider state_provider
-     * @covers \core_courseformat\output\local\state\course
-     * @covers \core_courseformat\output\local\state\section
-     * @covers \core_courseformat\output\local\state\cm
-     *
      * @param string $format The course format of the course where the method will be executed.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('state_provider')]
     public function test_state(string $format = 'topics'): void {
         global $PAGE;
 
@@ -149,23 +145,21 @@ final class state_test extends \advanced_testcase {
     /**
      * Data provider for test_state().
      *
-     * @return array
+     * @return \Generator
      */
-    public static function state_provider(): array {
-        return [
-            // COURSEFORMAT. Test behaviour depending on course formats.
-            'Single activity format' => [
-                'format' => 'singleactivity',
-            ],
-            'Social format' => [
-                'format' => 'social',
-            ],
-            'Weeks format' => [
-                'format' => 'weeks',
-            ],
-            'The unit tests format' => [
-                'format' => 'theunittest',
-            ],
+    public static function state_provider(): \Generator {
+        // COURSEFORMAT. Test behaviour depending on course formats.
+        yield 'Single activity format' => [
+            'format' => 'singleactivity',
+        ];
+        yield 'Social format' => [
+            'format' => 'social',
+        ];
+        yield 'Weeks format' => [
+            'format' => 'weeks',
+        ];
+        yield 'The unit tests format' => [
+            'format' => 'theunittest',
         ];
     }
 }

@@ -25,8 +25,8 @@ use core_external\external_api;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\external\get_state
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(get_state::class)]
 final class get_state_test extends \core_external\tests\externallib_testcase {
     /** @var array Sections in the testing course. */
     private $sections;
@@ -68,13 +68,11 @@ final class get_state_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the behaviour of get_state::execute().
      *
-     * @dataProvider get_state_provider
-     * @covers ::execute
-     *
      * @param string $role The role of the user that will execute the method.
      * @param string $format The course format of the course where the method will be executed.
      * @param string|null $expectedexception If this call will raise an exception, this is its name.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_state_provider')]
     public function test_get_state(string $role, string $format = 'topics', ?string $expectedexception = null): void {
         $this->resetAfterTest();
 
@@ -183,79 +181,77 @@ final class get_state_test extends \core_external\tests\externallib_testcase {
     /**
      * Data provider for test_get_state().
      *
-     * @return array
+     * @return \Generator
      */
-    public static function get_state_provider(): array {
-        return [
-            // ROLES. Testing behaviour depending on the user role calling the method.
-            'Admin user should work' => [
-                'role' => 'admin',
-            ],
-            'Editing teacher should work' => [
-                'role' => 'editingteacher',
-            ],
-            'Student should work' => [
-                'role' => 'student',
-            ],
-            'Unenroled user should raise an exception' => [
-                'role' => 'unenroled',
-                'format' => 'topics',
-                'expectedexception' => 'moodle_exception',
-            ],
+    public static function get_state_provider(): \Generator {
+        // ROLES. Testing behaviour depending on the user role calling the method.
+        yield 'Admin user should work' => [
+            'role' => 'admin',
+        ];
+        yield 'Editing teacher should work' => [
+            'role' => 'editingteacher',
+        ];
+        yield 'Student should work' => [
+            'role' => 'student',
+        ];
+        yield 'Unenroled user should raise an exception' => [
+            'role' => 'unenroled',
+            'format' => 'topics',
+            'expectedexception' => 'moodle_exception',
+        ];
 
-            // COURSEFORMAT. Test behaviour depending on course formats.
-            'Single activity format should work (admin)' => [
-                'role' => 'admin',
-                'format' => 'singleactivity',
-            ],
-            'Social format should work (admin)' => [
-                'role' => 'admin',
-                'format' => 'social',
-            ],
-            'Weeks format should work (admin)' => [
-                'role' => 'admin',
-                'format' => 'weeks',
-            ],
-            'The unit tests format should work (admin)' => [
-                'role' => 'admin',
-                'format' => 'theunittest',
-            ],
-            'Single activity format should work (student)' => [
-                'role' => 'student',
-                'format' => 'singleactivity',
-            ],
-            'Social format should work (student)' => [
-                'role' => 'student',
-                'format' => 'social',
-            ],
-            'Weeks format should work (student)' => [
-                'role' => 'student',
-                'format' => 'weeks',
-            ],
-            'The unit tests format should work (student)' => [
-                'role' => 'student',
-                'format' => 'theunittest',
-            ],
-            'Single activity format should raise an exception (unenroled)' => [
-                'role' => 'unenroled',
-                'format' => 'singleactivity',
-                'expectedexception' => 'moodle_exception',
-            ],
-            'Social format should raise an exception (unenroled)' => [
-                'role' => 'unenroled',
-                'format' => 'social',
-                'expectedexception' => 'moodle_exception',
-            ],
-            'Weeks format should raise an exception (unenroled)' => [
-                'role' => 'unenroled',
-                'format' => 'weeks',
-                'expectedexception' => 'moodle_exception',
-            ],
-            'The unit tests format should raise an exception (unenroled)' => [
-                'role' => 'unenroled',
-                'format' => 'theunittest',
-                'expectedexception' => 'moodle_exception',
-            ],
+        // COURSEFORMAT. Test behaviour depending on course formats.
+        yield 'Single activity format should work (admin)' => [
+            'role' => 'admin',
+            'format' => 'singleactivity',
+        ];
+        yield 'Social format should work (admin)' => [
+            'role' => 'admin',
+            'format' => 'social',
+        ];
+        yield 'Weeks format should work (admin)' => [
+            'role' => 'admin',
+            'format' => 'weeks',
+        ];
+        yield 'The unit tests format should work (admin)' => [
+            'role' => 'admin',
+            'format' => 'theunittest',
+        ];
+        yield 'Single activity format should work (student)' => [
+            'role' => 'student',
+            'format' => 'singleactivity',
+        ];
+        yield 'Social format should work (student)' => [
+            'role' => 'student',
+            'format' => 'social',
+        ];
+        yield 'Weeks format should work (student)' => [
+            'role' => 'student',
+            'format' => 'weeks',
+        ];
+        yield 'The unit tests format should work (student)' => [
+            'role' => 'student',
+            'format' => 'theunittest',
+        ];
+        yield 'Single activity format should raise an exception (unenroled)' => [
+            'role' => 'unenroled',
+            'format' => 'singleactivity',
+            'expectedexception' => 'moodle_exception',
+        ];
+        yield 'Social format should raise an exception (unenroled)' => [
+            'role' => 'unenroled',
+            'format' => 'social',
+            'expectedexception' => 'moodle_exception',
+        ];
+        yield 'Weeks format should raise an exception (unenroled)' => [
+            'role' => 'unenroled',
+            'format' => 'weeks',
+            'expectedexception' => 'moodle_exception',
+        ];
+        yield 'The unit tests format should raise an exception (unenroled)' => [
+            'role' => 'unenroled',
+            'format' => 'theunittest',
+            'expectedexception' => 'moodle_exception',
         ];
     }
 

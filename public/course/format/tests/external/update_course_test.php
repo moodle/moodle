@@ -26,8 +26,8 @@ use stdClass;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\external\update_course
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(update_course::class)]
 final class update_course_test extends \core_external\tests\externallib_testcase {
     #[\Override]
     public static function setUpBeforeClass(): void {
@@ -40,15 +40,13 @@ final class update_course_test extends \core_external\tests\externallib_testcase
     /**
      * Test the webservice can execute a core state action (cm_state).
      *
-     * @dataProvider execute_course_state_provider
-     * @covers ::execute
-     *
      * @param string $format the course format
      * @param string $action the state action name
      * @param array $expected the expected results
      * @param bool $expectexception if an exception should happen.
      * @param bool $assertdebug if an debug message should happen.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_course_state_provider')]
     public function test_execute_course_state(
         string $format,
         string $action,
@@ -93,50 +91,48 @@ final class update_course_test extends \core_external\tests\externallib_testcase
     /**
      * Data provider for test_execute_course_state
      *
-     * @return array of testing scenarios
+     * @return \Generator of testing scenarios
      */
-    public static function execute_course_state_provider(): array {
-        return [
-            'Execute a core state action (cm_state)' => [
-                'format' => 'topics',
-                'action' => 'cm_state',
-                'expected' => [
-                    'count' => 2,
-                    'action' => 'put',
-                    'visible' => 1,
-                ],
-                'expectexception' => false,
-                'assertdebug' => false,
+    public static function execute_course_state_provider(): \Generator {
+        yield 'Execute a core state action (cm_state)' => [
+            'format' => 'topics',
+            'action' => 'cm_state',
+            'expected' => [
+                'count' => 2,
+                'action' => 'put',
+                'visible' => 1,
             ],
-            'Formats can override core state actions' => [
-                'format' => 'theunittest',
-                'action' => 'cm_state',
-                'expected' => [
-                    'count' => 1,
-                    'action' => 'create',
-                    'visible' => 1,
-                ],
-                'expectexception' => false,
-                'assertdebug' => true,
+            'expectexception' => false,
+            'assertdebug' => false,
+        ];
+        yield 'Formats can override core state actions' => [
+            'format' => 'theunittest',
+            'action' => 'cm_state',
+            'expected' => [
+                'count' => 1,
+                'action' => 'create',
+                'visible' => 1,
             ],
-            'Formats can create new state actions' => [
-                'format' => 'theunittest',
-                'action' => 'format_do_something',
-                'expected' => [
-                    'count' => 1,
-                    'action' => 'remove',
-                    'visible' => null,
-                ],
-                'expectexception' => false,
-                'assertdebug' => true,
+            'expectexception' => false,
+            'assertdebug' => true,
+        ];
+        yield 'Formats can create new state actions' => [
+            'format' => 'theunittest',
+            'action' => 'format_do_something',
+            'expected' => [
+                'count' => 1,
+                'action' => 'remove',
+                'visible' => null,
             ],
-            'Innexisting state action' => [
-                'format' => 'topics',
-                'action' => 'Wrong_State_Action_Name',
-                'expected' => [],
-                'expectexception' => true,
-                'assertdebug' => false,
-            ],
+            'expectexception' => false,
+            'assertdebug' => true,
+        ];
+        yield 'Innexisting state action' => [
+            'format' => 'topics',
+            'action' => 'Wrong_State_Action_Name',
+            'expected' => [],
+            'expectexception' => true,
+            'assertdebug' => false,
         ];
     }
 
@@ -171,9 +167,6 @@ final class update_course_test extends \core_external\tests\externallib_testcase
 
     /**
      * Test a wrong course id.
-     *
-     * @covers ::execute
-     *
      */
     public function test_execute_wrong_courseid(): void {
 
@@ -194,8 +187,6 @@ final class update_course_test extends \core_external\tests\externallib_testcase
 
     /**
      * Test target params are passed to the state actions.
-     *
-     * @covers ::execute
      */
     public function test_execute_target_params(): void {
 

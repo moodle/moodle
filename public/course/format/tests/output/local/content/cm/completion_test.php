@@ -25,8 +25,8 @@ use core_completion\external\completion_info_exporter;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\output\local\content\cm\completion
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(completion::class)]
 final class completion_test extends \advanced_testcase {
     #[\Override]
     public static function setupBeforeClass(): void {

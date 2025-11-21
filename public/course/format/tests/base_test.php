@@ -20,9 +20,8 @@
  * @package    core_course
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\base
- * @coversDefaultClass \core_courseformat\base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(core_courseformat\base::class)]
 final class base_test extends advanced_testcase {
 
     /**
@@ -200,8 +199,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test for get_view_url().
-     *
-     * @covers ::get_view_url
      */
     public function test_get_view_url(): void {
         global $CFG;
@@ -257,11 +254,11 @@ final class base_test extends advanced_testcase {
     /**
      * Test for get_output_classname method.
      *
-     * @dataProvider get_output_classname_provider
      * @param string $find the class to find
      * @param string $result the expected result classname
      * @param bool $exception if the method will raise an exception
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_output_classname_provider')]
     public function test_get_output_classname($find, $result, $exception): void {
         $this->resetAfterTest();
 
@@ -279,32 +276,28 @@ final class base_test extends advanced_testcase {
     /**
      * Data provider for test_get_output_classname.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function get_output_classname_provider(): array {
-        return [
-            'overridden class' => [
-                'find' => 'state\\course',
-                'result' => 'format_theunittest\\output\\courseformat\\state\\course',
-                'exception' => false,
-            ],
-            'original class' => [
-                'find' => 'state\\section',
-                'result' => 'core_courseformat\\output\\local\\state\\section',
-                'exception' => false,
-            ],
-            'invalid overridden class' => [
-                'find' => 'state\\invalidoutput',
-                'result' => '',
-                'exception' => true,
-            ],
+    public static function get_output_classname_provider(): \Generator {
+        yield 'overridden class' => [
+            'find' => 'state\\course',
+            'result' => 'format_theunittest\\output\\courseformat\\state\\course',
+            'exception' => false,
+        ];
+        yield 'original class' => [
+            'find' => 'state\\section',
+            'result' => 'core_courseformat\\output\\local\\state\\section',
+            'exception' => false,
+        ];
+        yield 'invalid overridden class' => [
+            'find' => 'state\\invalidoutput',
+            'result' => '',
+            'exception' => true,
         ];
     }
 
     /**
      * Test for the default delete format data behaviour.
-     *
-     * @covers ::get_sections_preferences
      */
     public function test_get_sections_preferences(): void {
         $this->resetAfterTest();
@@ -337,8 +330,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test for the default delete format data behaviour.
-     *
-     * @covers ::set_sections_preference
      */
     public function test_set_sections_preference(): void {
         $this->resetAfterTest();
@@ -367,8 +358,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test add_section_preference_ids() method.
-     *
-     * @covers \core_courseformat\base::persist_to_user_preference
      */
     public function test_add_section_preference_ids(): void {
         $this->resetAfterTest();
@@ -398,8 +387,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test remove_section_preference_ids() method.
-     *
-     * @covers \core_courseformat\base::persist_to_user_preference
      */
     public function test_remove_section_preference_ids(): void {
         $this->resetAfterTest();
@@ -434,8 +421,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test that retrieving last section number for a course
-     *
-     * @covers ::get_last_section_number
      */
     public function test_get_last_section_number(): void {
         global $DB;
@@ -461,10 +446,9 @@ final class base_test extends advanced_testcase {
     /**
      * Test for the default delete format data behaviour.
      *
-     * @covers ::delete_format_data
-     * @dataProvider delete_format_data_provider
      * @param bool $usehook if it should use course_delete to trigger $format->delete_format_data as a hook
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('delete_format_data_provider')]
     public function test_delete_format_data(bool $usehook): void {
         global $DB;
 
@@ -514,22 +498,19 @@ final class base_test extends advanced_testcase {
     /**
      * Data provider for test_delete_format_data.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function delete_format_data_provider(): array {
-        return [
-            'direct call' => [
-                'usehook' => false
-            ],
-            'use hook' => [
-                'usehook' => true,
-            ]
+    public static function delete_format_data_provider(): \Generator {
+        yield 'direct call' => [
+            'usehook' => false,
+        ];
+        yield 'use hook' => [
+            'usehook' => true,
         ];
     }
 
     /**
      * Test duplicate_section()
-     * @covers ::duplicate_section
      */
     public function test_duplicate_section(): void {
         global $DB;
@@ -572,7 +553,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test duplicate_section() with delegated section
-     * @covers     ::duplicate_section
      */
     public function test_duplicate_section_with_delegated_sections(): void {
         global $DB;
@@ -612,13 +592,12 @@ final class base_test extends advanced_testcase {
     /**
      * Test for the default delete format data behaviour.
      *
-     * @covers ::get_format_string
-     * @dataProvider get_format_string_provider
      * @param string $key the string key
      * @param string|null $data any string data
      * @param array|null $expectedstring the expected string (null for exception)
      * @param string $courseformat the course format
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_format_string_provider')]
     public function test_get_format_string(
         string $key,
         ?string $data,
@@ -645,48 +624,45 @@ final class base_test extends advanced_testcase {
     /**
      * Data provider for test_get_format_string.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function get_format_string_provider(): array {
-        return [
-            'Existing in format lang' => [
-                'key' => 'addsection',
-                'data' => null,
-                'expectedstring' => ['addsection', 'format_weeks', null],
-                'courseformat' => 'weeks',
-            ],
-            'Not existing in format lang' => [
-                'key' => 'bulkedit',
-                'data' => null,
-                'expectedstring' => ['bulkedit', 'core_courseformat', null],
-            ],
-            'Existing in format lang with data' => [
-                'key' => 'section_highlight_feedback',
-                'data' => 'Example',
-                'expectedstring' => ['section_highlight_feedback', 'format_topics', 'Example'],
-            ],
-            'Not existing in format lang with data' => [
-                'key' => 'bulkselection',
-                'data' => 'X',
-                'expectedstring' => ['bulkselection', 'core_courseformat', 'X'],
-            ],
-            'Non existing string' => [
-                'key' => '%&non_existing_string_in_lang_files$%@#',
-                'data' => null,
-                'expectedstring' => null,
-            ],
+    public static function get_format_string_provider(): \Generator {
+        yield 'Existing in format lang' => [
+            'key' => 'addsection',
+            'data' => null,
+            'expectedstring' => ['addsection', 'format_weeks', null],
+            'courseformat' => 'weeks',
+        ];
+        yield 'Not existing in format lang' => [
+            'key' => 'bulkedit',
+            'data' => null,
+            'expectedstring' => ['bulkedit', 'core_courseformat', null],
+        ];
+        yield 'Existing in format lang with data' => [
+            'key' => 'section_highlight_feedback',
+            'data' => 'Example',
+            'expectedstring' => ['section_highlight_feedback', 'format_topics', 'Example'],
+        ];
+        yield 'Not existing in format lang with data' => [
+            'key' => 'bulkselection',
+            'data' => 'X',
+            'expectedstring' => ['bulkselection', 'core_courseformat', 'X'],
+        ];
+        yield 'Non existing string' => [
+            'key' => '%&non_existing_string_in_lang_files$%@#',
+            'data' => null,
+            'expectedstring' => null,
         ];
     }
 
     /**
      * Test for the move_section_after method.
      *
-     * @covers ::move_section_after
-     * @dataProvider move_section_after_provider
      * @param string $movesection the reference of the section to move
      * @param string $destination the reference of the destination section
      * @param string[] $order the references of the final section order
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('move_section_after_provider')]
     public function test_move_section_after(string $movesection, string $destination, array $order): void {
         global $DB;
 
@@ -724,81 +700,79 @@ final class base_test extends advanced_testcase {
     /**
      * Data provider for test_move_section_after.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function move_section_after_provider(): array {
-        return [
-            'Move top' => [
-                'movesection' => 'section3',
-                'destination' => 'section0',
-                'order' => [
-                    'section0',
-                    'section3',
-                    'section1',
-                    'section2',
-                    'section4',
-                    'section5',
-                ],
+    public static function move_section_after_provider(): \Generator {
+        yield 'Move top' => [
+            'movesection' => 'section3',
+            'destination' => 'section0',
+            'order' => [
+                'section0',
+                'section3',
+                'section1',
+                'section2',
+                'section4',
+                'section5',
             ],
-            'Move up' => [
-                'movesection' => 'section3',
-                'destination' => 'section1',
-                'order' => [
-                    'section0',
-                    'section1',
-                    'section3',
-                    'section2',
-                    'section4',
-                    'section5',
-                ],
+        ];
+        yield 'Move up' => [
+            'movesection' => 'section3',
+            'destination' => 'section1',
+            'order' => [
+                'section0',
+                'section1',
+                'section3',
+                'section2',
+                'section4',
+                'section5',
             ],
-            'Do not move' => [
-                'movesection' => 'section3',
-                'destination' => 'section2',
-                'order' => [
-                    'section0',
-                    'section1',
-                    'section2',
-                    'section3',
-                    'section4',
-                    'section5',
-                ],
+        ];
+        yield 'Do not move' => [
+            'movesection' => 'section3',
+            'destination' => 'section2',
+            'order' => [
+                'section0',
+                'section1',
+                'section2',
+                'section3',
+                'section4',
+                'section5',
             ],
-            'Same position' => [
-                'movesection' => 'section3',
-                'destination' => 'section3',
-                'order' => [
-                    'section0',
-                    'section1',
-                    'section2',
-                    'section3',
-                    'section4',
-                    'section5',
-                ],
+        ];
+        yield 'Same position' => [
+            'movesection' => 'section3',
+            'destination' => 'section3',
+            'order' => [
+                'section0',
+                'section1',
+                'section2',
+                'section3',
+                'section4',
+                'section5',
             ],
-            'Move down' => [
-                'movesection' => 'section3',
-                'destination' => 'section4',
-                'order' => [
-                    'section0',
-                    'section1',
-                    'section2',
-                    'section4',
-                    'section3',
-                    'section5',
-                ],
+        ];
+        yield 'Move down' => [
+            'movesection' => 'section3',
+            'destination' => 'section4',
+            'order' => [
+                'section0',
+                'section1',
+                'section2',
+                'section4',
+                'section3',
+                'section5',
             ],
-            'Move bottom' => [
-                'movesection' => 'section3',
-                'destination' => 'section5',
-                'order' => [
-                    'section0',
-                    'section1',
-                    'section2',
-                    'section4',
-                    'section5',
-                    'section3',
-                ],
+        ];
+        yield 'Move bottom' => [
+            'movesection' => 'section3',
+            'destination' => 'section5',
+            'order' => [
+                'section0',
+                'section1',
+                'section2',
+                'section4',
+                'section5',
+                'section3',
             ],
         ];
     }
@@ -806,12 +780,11 @@ final class base_test extends advanced_testcase {
     /**
      * Test for the get_non_ajax_cm_action_url method.
      *
-     * @covers ::get_non_ajax_cm_action_url
-     * @dataProvider get_non_ajax_cm_action_url_provider
      * @param string $action the ajax action name
      * @param string $expectedparam the expected param to check
      * @param string $exception if an exception is expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_non_ajax_cm_action_url_provider')]
     public function test_get_non_ajax_cm_action_url(string $action, string $expectedparam, bool $exception): void {
         global $DB;
 
@@ -838,47 +811,43 @@ final class base_test extends advanced_testcase {
     /**
      * Data provider for test_get_non_ajax_cm_action_url.
      *
-     * @return array the testing scenarios
+     * @return \Generator the testing scenarios
      */
-    public static function get_non_ajax_cm_action_url_provider(): array {
-        return [
-            'duplicate' => [
-                'action' => 'cmDuplicate',
-                'expectedparam' => 'duplicate',
-                'exception' => false,
-            ],
-            'hide' => [
-                'action' => 'cmHide',
-                'expectedparam' => 'hide',
-                'exception' => false,
-            ],
-            'show' => [
-                'action' => 'cmShow',
-                'expectedparam' => 'show',
-                'exception' => false,
-            ],
-            'stealth' => [
-                'action' => 'cmStealth',
-                'expectedparam' => 'stealth',
-                'exception' => false,
-            ],
-            'delete' => [
-                'action' => 'cmDelete',
-                'expectedparam' => 'delete',
-                'exception' => false,
-            ],
-            'non-existent' => [
-                'action' => 'nonExistent',
-                'expectedparam' => '',
-                'exception' => true,
-            ],
+    public static function get_non_ajax_cm_action_url_provider(): \Generator {
+        yield 'duplicate' => [
+            'action' => 'cmDuplicate',
+            'expectedparam' => 'duplicate',
+            'exception' => false,
+        ];
+        yield 'hide' => [
+            'action' => 'cmHide',
+            'expectedparam' => 'hide',
+            'exception' => false,
+        ];
+        yield 'show' => [
+            'action' => 'cmShow',
+            'expectedparam' => 'show',
+            'exception' => false,
+        ];
+        yield 'stealth' => [
+            'action' => 'cmStealth',
+            'expectedparam' => 'stealth',
+            'exception' => false,
+        ];
+        yield 'delete' => [
+            'action' => 'cmDelete',
+            'expectedparam' => 'delete',
+            'exception' => false,
+        ];
+        yield 'non-existent' => [
+            'action' => 'nonExistent',
+            'expectedparam' => '',
+            'exception' => true,
         ];
     }
 
     /**
      * Test get_required_jsfiles().
-     *
-     * @covers ::get_required_jsfiles
      */
     public function test_get_required_jsfiles(): void {
         $this->resetAfterTest();
@@ -892,10 +861,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test set_sectionid().
-     *
-     * @covers ::set_sectionid
-     * @covers ::get_sectionid
-     * @covers ::get_sectionnum
      */
     public function test_set_sectionid(): void {
         $this->resetAfterTest();
@@ -930,12 +895,11 @@ final class base_test extends advanced_testcase {
     /**
      * Test set_sectionnum().
      *
-     * @dataProvider set_sectionnum_provider
-     * @covers ::set_sectionnum
      * @param int|null $sectionnum The section number
      * @param bool $nullexpected If null is expected
      * @param bool $exceptionexpected If an exception is expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_sectionnum_provider')]
     public function test_set_sectionnum(?int $sectionnum, bool $nullexpected = false, bool $exceptionexpected = false): void {
         $this->resetAfterTest();
 
@@ -959,43 +923,39 @@ final class base_test extends advanced_testcase {
     /**
      * Data provider for test_set_sectionnum.
      *
-     * @return array The testing scenarios
+     * @return \Generator The testing scenarios
      */
-    public static function set_sectionnum_provider(): array {
-        return [
-            'General sectionnumber' => [
-                'sectionnum' => 0,
-                'nullexpected' => false,
-            ],
-            'Existing sectionnumber' => [
-                'sectionnum' => 1,
-                'nullexpected' => false,
-            ],
-            'Another existing sectionnumber' => [
-                'sectionnum' => 2,
-                'nullexpected' => false,
-            ],
-            'Null sectionnumber' => [
-                'sectionnum' => null,
-                'nullexpected' => true,
-            ],
-            'Invalid sectionnumber' => [
-                'sectionnum' => 3,
-                'nullexpected' => true,
-                'exceptionexpected' => true,
-            ],
-            'Another invalid sectionnumber' => [
-                'sectionnum' => -1,
-                'nullexpected' => true,
-                'exceptionexpected' => true,
-            ],
+    public static function set_sectionnum_provider(): \Generator {
+        yield 'General sectionnumber' => [
+            'sectionnum' => 0,
+            'nullexpected' => false,
+        ];
+        yield 'Existing sectionnumber' => [
+            'sectionnum' => 1,
+            'nullexpected' => false,
+        ];
+        yield 'Another existing sectionnumber' => [
+            'sectionnum' => 2,
+            'nullexpected' => false,
+        ];
+        yield 'Null sectionnumber' => [
+            'sectionnum' => null,
+            'nullexpected' => true,
+        ];
+        yield 'Invalid sectionnumber' => [
+            'sectionnum' => 3,
+            'nullexpected' => true,
+            'exceptionexpected' => true,
+        ];
+        yield 'Another invalid sectionnumber' => [
+            'sectionnum' => -1,
+            'nullexpected' => true,
+            'exceptionexpected' => true,
         ];
     }
 
     /**
      * Test can_sections_be_removed_from_navigation().
-     *
-     * @covers ::can_sections_be_removed_from_navigation
      */
     public function test_can_sections_be_removed_from_navigation(): void {
         $this->resetAfterTest();
@@ -1045,8 +1005,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test for the get_generic_section_name method.
-     *
-     * @covers ::get_generic_section_name
      */
     public function test_get_generic_section_name(): void {
         $this->resetAfterTest();
@@ -1070,11 +1028,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test can_sections_be_removed_from_navigation().
-     *
-     * @covers ::session_cache
-     * @covers ::session_cache_reset
-     * @covers ::session_cache_reset_all
-     * @covers ::invalidate_all_session_caches_for_course
      */
     public function test_session_caches_methods(): void {
         global $DB;

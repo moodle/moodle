@@ -17,13 +17,9 @@
 namespace core_courseformat\external;
 
 use core_external\external_api;
+use core_external\tests\externallib_testcase;
 use section_info;
 use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
  * Tests for courseformat get_section_content_items web service.
@@ -31,9 +27,9 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @package    core_courseformat
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_courseformat\external\get_section_content_items
  */
-final class get_section_content_items_test extends \externallib_advanced_testcase {
+#[\PHPUnit\Framework\Attributes\CoversClass(get_section_content_items::class)]
+final class get_section_content_items_test extends externallib_testcase {
     /**
      * Test the web service returning course content items for inclusion in activity choosers, etc.
      */

@@ -26,7 +26,6 @@ use core_external\external_api;
  * @category   test
  * @copyright  2022 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\external\file_handlers
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(file_handlers::class)]
 final class file_handlers_test extends \core_external\tests\externallib_testcase {

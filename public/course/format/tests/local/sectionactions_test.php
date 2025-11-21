@@ -24,8 +24,8 @@ use stdClass;
  * @package    core_courseformat
  * @copyright  2023 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_courseformat\local\sectionactions
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(sectionactions::class)]
 final class sectionactions_test extends \advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
@@ -38,12 +38,12 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test for create_delegated method.
-     * @covers ::create_delegated
-     * @dataProvider create_delegated_provider
+     *
      * @param string $component the name of the plugin
      * @param int|null $itemid the id of the delegated section
      * @param stdClass|null $fields the fields to set on the section
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_delegated_provider')]
     public function test_create_delegated(string $component, ?int $itemid, ?stdClass $fields): void {
         global $DB;
         $this->resetAfterTest();
@@ -64,72 +64,70 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Data provider for test_create_delegated.
-     * @return array
+     * @return \Generator
      */
-    public static function create_delegated_provider(): array {
-        return [
-            'component with no itemid or fields' => [
-                'mod_assign',
-                null,
-                null,
-            ],
-            'component with itemid but no fields' => [
-                'mod_assign',
-                1,
-                null,
-            ],
-            'component with itemid and empty fields' => [
-                'mod_assign',
-                1,
-                new stdClass(),
-            ],
-            'component with itemid and name field' => [
-                'mod_assign',
-                1,
-                (object) ['name' => 'new name'],
-            ],
-            'component with no itemid but name field' => [
-                'mod_assign',
-                null,
-                (object) ['name' => 'new name'],
-            ],
-            'component with itemid and summary' => [
-                'mod_assign',
-                1,
-                (object) ['summary' => 'summary'],
-            ],
-            'component with itemid and summary, summaryformat ' => [
-                'mod_assign',
-                1,
-                (object) ['summary' => 'summary', 'summaryformat' => 1],
-            ],
-            'component with itemid and section number' => [
-                'mod_assign',
-                1,
-                (object) ['section' => 2],
-            ],
-            'component with itemid and visible 1' => [
-                'mod_assign',
-                1,
-                (object) ['visible' => 1],
-            ],
-            'component with itemid and visible 0' => [
-                'mod_assign',
-                1,
-                (object) ['visible' => 0],
-            ],
+    public static function create_delegated_provider(): \Generator {
+        yield 'component with no itemid or fields' => [
+            'mod_assign',
+            null,
+            null,
+        ];
+        yield 'component with itemid but no fields' => [
+            'mod_assign',
+            1,
+            null,
+        ];
+        yield 'component with itemid and empty fields' => [
+            'mod_assign',
+            1,
+            new stdClass(),
+        ];
+        yield 'component with itemid and name field' => [
+            'mod_assign',
+            1,
+            (object) ['name' => 'new name'],
+        ];
+        yield 'component with no itemid but name field' => [
+            'mod_assign',
+            null,
+            (object) ['name' => 'new name'],
+        ];
+        yield 'component with itemid and summary' => [
+            'mod_assign',
+            1,
+            (object) ['summary' => 'summary'],
+        ];
+        yield 'component with itemid and summary, summaryformat ' => [
+            'mod_assign',
+            1,
+            (object) ['summary' => 'summary', 'summaryformat' => 1],
+        ];
+        yield 'component with itemid and section number' => [
+            'mod_assign',
+            1,
+            (object) ['section' => 2],
+        ];
+        yield 'component with itemid and visible 1' => [
+            'mod_assign',
+            1,
+            (object) ['visible' => 1],
+        ];
+        yield 'component with itemid and visible 0' => [
+            'mod_assign',
+            1,
+            (object) ['visible' => 0],
         ];
     }
 
     /**
      * Test for create method.
-     * @covers ::create
-     * @dataProvider create_provider
+     *
      * @param int $sectionnum the name of the plugin
      * @param bool $skip if the validation should be skipped
      * @param bool $expectexception if the method should throw an exception
      * @param int $expected the expected section number
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_provider')]
     public function test_create(int $sectionnum, bool $skip, bool $expectexception, int $expected): void {
         global $DB;
         $this->resetAfterTest();
@@ -148,59 +146,55 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Data provider for test_create_delegated.
-     * @return array
+     * @return \Generator
      */
-    public static function create_provider(): array {
-        return [
-            'section 1' => [
-                'sectionnum' => 1,
-                'skip' => false,
-                'expectexception' => false,
-                'expected' => 1,
-            ],
-            'section 2' => [
-                'sectionnum' => 2,
-                'skip' => false,
-                'expectexception' => false,
-                'expected' => 2,
-            ],
-            'section 3' => [
-                'sectionnum' => 3,
-                'skip' => false,
-                'expectexception' => false,
-                'expected' => 2,
-            ],
-            'section 4' => [
-                'sectionnum' => 4,
-                'skip' => false,
-                'expectexception' => false,
-                'expected' => 2,
-            ],
-            'section 1 with exception' => [
-                'sectionnum' => 1,
-                'skip' => true,
-                'expectexception' => true,
-                'expected' => 0,
-            ],
-            'section 2 with skip validation' => [
-                'sectionnum' => 2,
-                'skip' => true,
-                'expectexception' => false,
-                'expected' => 2,
-            ],
-            'section 5 with skip validation' => [
-                'sectionnum' => 5,
-                'skip' => true,
-                'expectexception' => false,
-                'expected' => 5,
-            ],
+    public static function create_provider(): \Generator {
+        yield 'section 1' => [
+            'sectionnum' => 1,
+            'skip' => false,
+            'expectexception' => false,
+            'expected' => 1,
+        ];
+        yield 'section 2' => [
+            'sectionnum' => 2,
+            'skip' => false,
+            'expectexception' => false,
+            'expected' => 2,
+        ];
+        yield 'section 3' => [
+            'sectionnum' => 3,
+            'skip' => false,
+            'expectexception' => false,
+            'expected' => 2,
+        ];
+        yield 'section 4' => [
+            'sectionnum' => 4,
+            'skip' => false,
+            'expectexception' => false,
+            'expected' => 2,
+        ];
+        yield 'section 1 with exception' => [
+            'sectionnum' => 1,
+            'skip' => true,
+            'expectexception' => true,
+            'expected' => 0,
+        ];
+        yield 'section 2 with skip validation' => [
+            'sectionnum' => 2,
+            'skip' => true,
+            'expectexception' => false,
+            'expected' => 2,
+        ];
+        yield 'section 5 with skip validation' => [
+            'sectionnum' => 5,
+            'skip' => true,
+            'expectexception' => false,
+            'expected' => 5,
         ];
     }
 
     /**
      * Test create sections when there are sections with comonent (delegated sections) in the course.
-     * @covers ::create
-     * @covers ::create_delegated
      */
     public function test_create_with_delegated_sections(): void {
         global $DB;
@@ -238,11 +232,11 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test for create_if_missing method.
-     * @covers ::create_if_missing
-     * @dataProvider create_if_missing_provider
+     *
      * @param array $sectionnums the section numbers to create
      * @param bool $expected the expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_if_missing_provider')]
     public function test_create_if_missing(array $sectionnums, bool $expected): void {
         global $DB;
         $this->resetAfterTest();
@@ -263,41 +257,37 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Data provider for test_create_delegated.
-     * @return array
+     * @return \Generator
      */
-    public static function create_if_missing_provider(): array {
-        return [
-            'existing section' => [
-                'sectionnums' => [1],
-                'expected' => false,
-            ],
-            'unexisting section' => [
-                'sectionnums' => [3],
-                'expected' => true,
-            ],
-            'several existing sections' => [
-                'sectionnums' => [1, 2],
-                'expected' => false,
-            ],
-            'several unexisting sections' => [
-                'sectionnums' => [3, 4],
-                'expected' => true,
-            ],
-            'empty array' => [
-                'sectionnums' => [],
-                'expected' => false,
-            ],
-            'existent and unexistent sections' => [
-                'sectionnums' => [1, 2, 3, 4],
-                'expected' => true,
-            ],
+    public static function create_if_missing_provider(): \Generator {
+        yield 'existing section' => [
+            'sectionnums' => [1],
+            'expected' => false,
+        ];
+        yield 'unexisting section' => [
+            'sectionnums' => [3],
+            'expected' => true,
+        ];
+        yield 'several existing sections' => [
+            'sectionnums' => [1, 2],
+            'expected' => false,
+        ];
+        yield 'several unexisting sections' => [
+            'sectionnums' => [3, 4],
+            'expected' => true,
+        ];
+        yield 'empty array' => [
+            'sectionnums' => [],
+            'expected' => false,
+        ];
+        yield 'existent and unexistent sections' => [
+            'sectionnums' => [1, 2, 3, 4],
+            'expected' => true,
         ];
     }
 
     /**
      * Test create if missing when the course has delegated sections.
-     * @covers ::create_if_missing
-     * @covers ::create_delegated
      */
     public function test_create_if_missing_with_delegated_sections(): void {
         global $DB;
@@ -341,7 +331,6 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test for delete method.
-     * @covers ::delete
      */
     public function test_delete(): void {
         global $DB;
@@ -410,7 +399,6 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test that triggering a course_section_deleted event works as expected.
-     * @covers ::delete
      */
     public function test_section_deleted_event(): void {
         global $USER, $DB;
@@ -448,7 +436,6 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test async section deletion hook.
-     * @covers ::delete
      */
     public function test_async_section_deletion_hook_implemented(): void {
         // Async section deletion (provided section contains modules), depends on the 'true' being returned by at least one plugin
@@ -546,13 +533,12 @@ final class sectionactions_test extends \advanced_testcase {
     /**
      * Test section update method.
      *
-     * @covers ::update
-     * @dataProvider update_provider
      * @param string $fieldname the name of the field to update
      * @param int|string $value the value to set
      * @param int|string $expected the expected value after the update ('=' to specify the same value as original field)
      * @param bool $expectexception if the method should throw an exception
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('update_provider')]
     public function test_update(
         string $fieldname,
         int|string $value,
@@ -592,71 +578,67 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Data provider for test_update.
-     * @return array
+     * @return \Generator
      */
-    public static function update_provider(): array {
-        return [
-            'Id will not be updated' => [
-                'fieldname' => 'id',
-                'value' => -1,
-                'expected' => '=',
-                'expectexception' => false,
-            ],
-            'Course will not be updated' => [
-                'fieldname' => 'course',
-                'value' => -1,
-                'expected' => '=',
-                'expectexception' => false,
-            ],
-            'Section number will not be updated' => [
-                'fieldname' => 'section',
-                'value' => -1,
-                'expected' => '=',
-                'expectexception' => false,
-            ],
-            'Sequence will be updated' => [
-                'fieldname' => 'name',
-                'value' => 'new name',
-                'expected' => 'new name',
-                'expectexception' => false,
-            ],
-            'Summary can be updated' => [
-                'fieldname' => 'summary',
-                'value' => 'new summary',
-                'expected' => 'new summary',
-                'expectexception' => false,
-            ],
-            'Visible can be updated' => [
-                'fieldname' => 'visible',
-                'value' => 0,
-                'expected' => 0,
-                'expectexception' => false,
-            ],
-            'component can be updated' => [
-                'fieldname' => 'component',
-                'value' => 'mod_assign',
-                'expected' => 'mod_assign',
-                'expectexception' => false,
-            ],
-            'itemid can be updated' => [
-                'fieldname' => 'itemid',
-                'value' => 1,
-                'expected' => 1,
-                'expectexception' => false,
-            ],
-            'Long names throws and exception' => [
-                'fieldname' => 'name',
-                'value' => str_repeat('a', 1334),
-                'expected' => '=',
-                'expectexception' => true,
-            ],
+    public static function update_provider(): \Generator {
+        yield 'Id will not be updated' => [
+            'fieldname' => 'id',
+            'value' => -1,
+            'expected' => '=',
+            'expectexception' => false,
+        ];
+        yield 'Course will not be updated' => [
+            'fieldname' => 'course',
+            'value' => -1,
+            'expected' => '=',
+            'expectexception' => false,
+        ];
+        yield 'Section number will not be updated' => [
+            'fieldname' => 'section',
+            'value' => -1,
+            'expected' => '=',
+            'expectexception' => false,
+        ];
+        yield 'Sequence will be updated' => [
+            'fieldname' => 'name',
+            'value' => 'new name',
+            'expected' => 'new name',
+            'expectexception' => false,
+        ];
+        yield 'Summary can be updated' => [
+            'fieldname' => 'summary',
+            'value' => 'new summary',
+            'expected' => 'new summary',
+            'expectexception' => false,
+        ];
+        yield 'Visible can be updated' => [
+            'fieldname' => 'visible',
+            'value' => 0,
+            'expected' => 0,
+            'expectexception' => false,
+        ];
+        yield 'component can be updated' => [
+            'fieldname' => 'component',
+            'value' => 'mod_assign',
+            'expected' => 'mod_assign',
+            'expectexception' => false,
+        ];
+        yield 'itemid can be updated' => [
+            'fieldname' => 'itemid',
+            'value' => 1,
+            'expected' => 1,
+            'expectexception' => false,
+        ];
+        yield 'Long names throws and exception' => [
+            'fieldname' => 'name',
+            'value' => str_repeat('a', 1334),
+            'expected' => '=',
+            'expectexception' => true,
         ];
     }
 
     /**
      * Test section update method updating several values at once.
-     *
-     * @covers ::update
      */
     public function test_update_multiple_fields(): void {
         global $DB;
@@ -686,8 +668,6 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test updating a section trigger a course section update log event.
-     *
-     * @covers ::update
      */
     public function test_course_section_updated_event(): void {
         $this->resetAfterTest();
@@ -715,8 +695,6 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test section update change the modified date.
-     *
-     * @covers ::update
      */
     public function test_update_time_modified(): void {
         global $DB;
@@ -752,8 +730,6 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test section updating visibility will hide or show section activities.
-     *
-     * @covers ::update
      */
     public function test_update_hide_section_activities(): void {
         global $DB;
@@ -866,9 +842,6 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test that the preprocess_section_name method can alter the section rename value.
-     *
-     * @covers ::update
-     * @covers ::preprocess_delegated_section_fields
      */
     public function test_preprocess_section_name(): void {
         global $DB, $CFG;
@@ -905,8 +878,6 @@ final class sectionactions_test extends \advanced_testcase {
 
     /**
      * Test that the position of a new section in a course with deleghated sections.
-     * @covers ::create
-     * @covers ::create_delegated
      */
     public function test_create_position(): void {
         global $DB, $CFG;

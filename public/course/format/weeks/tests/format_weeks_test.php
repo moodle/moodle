@@ -29,8 +29,8 @@ require_once($CFG->dirroot . '/course/lib.php');
  * @package    format_weeks
  * @copyright  2015 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \format_weeks
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\format_weeks::class)]
 final class format_weeks_test extends \advanced_testcase {
 
     /**
@@ -231,8 +231,6 @@ final class format_weeks_test extends \advanced_testcase {
 
     /**
      * Test for get_view_url().
-     *
-     * @covers ::get_view_url
      */
     public function test_get_view_url(): void {
         global $CFG;
@@ -266,8 +264,6 @@ final class format_weeks_test extends \advanced_testcase {
 
     /**
      * Test get_required_jsfiles().
-     *
-     * @covers ::get_required_jsfiles
      */
     public function test_get_required_jsfiles(): void {
         $this->resetAfterTest();

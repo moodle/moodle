@@ -22,14 +22,12 @@ namespace format_singleactivity;
  * @package    format_singleactivity
  * @copyright  2023 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \format_singleactivity
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\format_singleactivity::class)]
 final class format_singleactivity_test extends \advanced_testcase {
 
     /**
      * Test for get_view_url().
-     *
-     * @covers ::get_view_url
      */
     public function test_get_view_url(): void {
         global $CFG;
@@ -62,8 +60,6 @@ final class format_singleactivity_test extends \advanced_testcase {
 
     /**
      * Test get_required_jsfiles().
-     *
-     * @covers ::get_required_jsfiles
      */
     public function test_get_required_jsfiles(): void {
         $this->resetAfterTest();
