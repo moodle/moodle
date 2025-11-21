@@ -10,6 +10,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core
 
+#### Changed
+
+- The Hook Manager now uses localcache instead of caching via MUC.
+
+  For more information see [MDL-87107](https://tracker.moodle.org/browse/MDL-87107)
+
 #### Fixed
 
 - `restore_qtype_plugin::unset_excluded_fields` now returns the modified questiondata structure,
