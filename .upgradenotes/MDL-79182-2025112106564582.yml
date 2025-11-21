@@ -1,0 +1,7 @@
+issueNumber: MDL-79182
+notes:
+  core:
+    - message:
+        - Removed core/modal_registry for the final deprecation due to no longer being required.
+        - Removed core/modal_factory for the final deprecation due to no longer being required.
+      type: removed

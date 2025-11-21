@@ -120,8 +120,8 @@ export default class ModalForm {
                 'Passing config.modalConfig.type to ModalForm has been deprecated since Moodle 4.3. ' +
                 'Please pass config.modalName instead with the full module name.',
             );
-            return import('core/modal_factory')
-                .then((ModalFactory) => ModalFactory.create(this.config.modalConfig));
+            return import('core/modal')
+                .then((Modal) => Modal.create(this.config.modalConfig));
         } else {
             // New loader for Moodle 4.3 and above.
             const moduleName = this.config.moduleName ?? 'core/modal_save_cancel';
