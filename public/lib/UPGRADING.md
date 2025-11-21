@@ -7,6 +7,26 @@
 - Appending an exclamation mark to template names ignores theme overrides
 
   For more information see [MDL-77894](https://tracker.moodle.org/browse/MDL-77894)
+- The `upgrade_ensure_not_running()` function has been deprecated and replaced
+  with:
+
+  - `\core\setup::warn_if_upgrade_is_running()`;
+  - `\core\setup::ensure_upgrade_is_not_running()`; and
+  - `\core\setup::is_upgrade_running()`.
+
+  For more information see [MDL-87107](https://tracker.moodle.org/browse/MDL-87107)
+- The CLI script used to terminate user sessions (kill_all_sessions.php) has been improved to make it safer and more flexible.  A new '--run' parameter has been introduced. Without '--run', the script performs a dry run making no changes. The script now supports targeted session termination using '--for-users' parameter.
+
+  For more information see [MDL-87173](https://tracker.moodle.org/browse/MDL-87173)
+
+### Changed
+
+- The `core/drag_handle` template has been modified to use a native HTML button for a more accessible experience and a consistent look with other buttons on the page.
+
+  For more information see [MDL-86846](https://tracker.moodle.org/browse/MDL-86846)
+- The Hook Manager now uses localcache instead of caching via MUC.
+
+  For more information see [MDL-87107](https://tracker.moodle.org/browse/MDL-87107)
 
 ### Fixed
 

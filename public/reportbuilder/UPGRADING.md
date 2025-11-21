@@ -1,5 +1,19 @@
 # core_reportbuilder (subsystem) Upgrade notes
 
+## 5.2dev
+
+### Added
+
+- The base entity class now implements a default `initialise` method, that will automatically call each of the following methods to load entity report data:
+
+  * `get_available_columns()`
+  * `get_available_filters()`
+  * `get_available_conditions()`
+
+  This change allows for a lot of boilerplate to be removed from report entity classes
+
+  For more information see [MDL-86678](https://tracker.moodle.org/browse/MDL-86678)
+
 ## 5.1
 
 ### Added
