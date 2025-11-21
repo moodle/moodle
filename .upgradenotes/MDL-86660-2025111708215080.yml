@@ -1,0 +1,7 @@
+issueNumber: MDL-86660
+notes:
+  core_courseformat:
+    - message: >-
+        The `$cm` attribute in `activityoverviewbase` has been updated to public
+        visibility, allowing direct access to the course module instance
+      type: changed

@@ -26,12 +26,14 @@
         "sectiontitle": "Section title",
         "visible": true,
         "stealth": false,
-        "nogroupserror": false
+        "nogroupserror": false,
+        "available": true
     }
 }}
 <div class="d-flex flex-column">
     <div class="fw-bold">
-        <a href="{{activityurl}}" class="activityname">{{{activityname}}}</a>
+        {{#available}}<a href="{{activityurl}}" class="activityname">{{{activityname}}}</a>{{/available}}
+        {{^available}}<span class="activityname">{{{activityname}}}</span>{{/available}}
     </div>
     {{#sectiontitle}}
     <div class="small">

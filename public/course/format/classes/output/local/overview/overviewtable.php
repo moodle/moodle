@@ -138,7 +138,7 @@ class overviewtable implements externable, named_templatable, renderable {
     private function load_all_overviews_from_each_activity(): array {
         $result = [];
         foreach ($this->get_related_course_modules() as $cm) {
-            if (!$this->is_cm_displayable($cm)) {
+            if (!self::is_cm_displayable($cm)) {
                 continue;
             }
             $overview = overviewfactory::create($cm);
@@ -215,13 +215,31 @@ class overviewtable implements externable, named_templatable, renderable {
     /**
      * Check if the course module is displayable in the overview table.
      *
-     * @param cm_info $cm
-     * @return bool
+     * @param cm_info $cm The course module info
+     * @return bool Whether the course module is displayable in the overview table or not.
      */
-    private function is_cm_displayable(cm_info $cm): bool {
+    public static function is_cm_displayable(cm_info $cm): bool {
+        // Exclude activities that aren't displayed in the course page (except for stealth),
+        // activities that are not available but availability is hidden
+        // or activities that have no view link (e.g. label).
         // Folder is an exception because it has settings to be displayed in the course
         // page without having a view link.
-        return $cm->uservisible && ($cm->has_view() || strcmp($cm->modname, 'folder') === 0);
+        return (
+            (has_capability('moodle/course:viewhiddenactivities', $cm->context)
+            || (($cm->is_visible_on_course_page() || $cm->is_stealth())
+            && ($cm->available || !empty($cm->availableinfo))))
+            && ($cm->has_view() || strcmp($cm->modname, 'folder') === 0)
+        );
+    }
+
+    /**
+     * Check if the given course module is available (so linkable) in the overview table.
+     *
+     * @param cm_info $cm The course module info
+     * @return bool Whether the course module is available or not.
+     */
+    public static function is_cm_available(cm_info $cm): bool {
+        return $cm->uservisible || $cm->available;
     }
 
     /**
@@ -261,6 +279,13 @@ class overviewtable implements externable, named_templatable, renderable {
         // doing any more calculations.
         if ($overview->has_error()) {
             return ['name' => $overview->get_name_overview()];
+        }
+
+        if (!self::is_cm_available($overview->cm)) {
+            return [
+                'name' => $overview->get_name_overview(),
+                'duedate' => $overview->get_due_date_overview(),
+            ];
         }
 
         $row = [

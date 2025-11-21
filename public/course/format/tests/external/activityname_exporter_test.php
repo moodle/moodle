@@ -16,6 +16,8 @@
 
 namespace core_courseformat\external;
 
+use core_courseformat\output\local\overview\overviewtable;
+
 /**
  * Tests for activityname_exporter.
  *
@@ -57,7 +59,8 @@ final class activityname_exporter_test extends \advanced_testcase {
         $this->assertObjectHasProperty('stealth', $data);
         $this->assertObjectHasProperty('sectiontitle', $data);
         $this->assertObjectHasProperty('errormessages', $data);
-        $this->assertCount(6, get_object_vars($data));
+        $this->assertObjectHasProperty('available', $data);
+        $this->assertCount(7, get_object_vars($data));
 
         $expected = [
             'activityname' => \core_external\util::format_string($cm->name, $cm->context, true),
@@ -66,6 +69,7 @@ final class activityname_exporter_test extends \advanced_testcase {
             'stealth' => $cm->is_stealth(),
             'sectiontitle' => $format->get_section_name($cm->get_section_info()),
             'errormessages' => [],
+            'available' => overviewtable::is_cm_available($cm),
         ];
 
         foreach ($expected as $property => $value) {

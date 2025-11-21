@@ -92,9 +92,7 @@ class overviewpage implements renderable, named_templatable {
         $archetypes = [];
 
         foreach ($modinfo->cms as $cm) {
-            // Exclude activities that aren't visible or have no view link (e.g. label).
-            // Account for folder being displayed inline.
-            if (!$cm->uservisible || (!$cm->has_view() && strcmp($cm->modname, 'folder') !== 0)) {
+            if (!overviewtable::is_cm_displayable($cm)) {
                 continue;
             }
             if (array_key_exists($cm->modname, $modfullnames)) {

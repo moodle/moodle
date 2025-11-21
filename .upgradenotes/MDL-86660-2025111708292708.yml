@@ -1,0 +1,9 @@
+issueNumber: MDL-86660
+notes:
+  core_courseformat:
+    - message: >-
+        Two new public static methods have been added to the `overviewtable`
+        class:
+        - `is_cm_displayable`: Determines if a course module should be listed in the overview table.
+        - `is_cm_available`: Checks if a course module is accessible to the user (and should therefore be rendered as a link).
+      type: changed

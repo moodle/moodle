@@ -1,0 +1,8 @@
+issueNumber: MDL-86660
+notes:
+  core_courseformat:
+    - message: >-
+        A new `available` attribute has been added to `activityname_exporter`
+        class. It allows the external API to return the activity's availability
+        status relative to the current user.
+      type: changed

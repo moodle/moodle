@@ -75,7 +75,7 @@ abstract class activityoverviewbase {
      */
     public function __construct(
         /** @var cm_info The course module. */
-        protected readonly cm_info $cm,
+        public readonly cm_info $cm,
     ) {
         $this->context = $cm->context;
         $this->course = $cm->get_course();
