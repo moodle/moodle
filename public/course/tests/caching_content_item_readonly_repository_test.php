@@ -35,6 +35,7 @@ use core_course\local\repository\caching_content_item_readonly_repository;
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(caching_content_item_readonly_repository::class)]
 final class caching_content_item_readonly_repository_test extends \advanced_testcase {
     /**
      * Test verifying that content items are cached and returned from the cache in subsequent same-request calls.
@@ -77,5 +78,59 @@ final class caching_content_item_readonly_repository_test extends \advanced_test
         // The caching repo should return the same list, while the live repo will return the updated list.
         $this->assertEquals($module->name, $cacheditemsfiltered[0]->get_name());
         $this->assertEmpty($itemsfiltered);
+    }
+
+    /**
+     * Test verifying that cached content items are returned from the cache as the correct user.
+     */
+    public function test_find_all_for_course_user_cache(): void {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
+        $this->resetAfterTest();
+        $admin = get_admin();
+
+        $course = $this->getDataGenerator()->create_course();
+        $editingteacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $cir = new content_item_readonly_repository();
+        $ccir = new caching_content_item_readonly_repository(\cache::make('core', 'user_course_content_items'), $cir);
+
+        // Create lti that is only available to editingteacher.
+        $type = new \stdClass();
+        $type->course = SITEID;
+        $type->name = 'Editing Teacher Only LTI Tool';
+        $type->baseurl = 'https://example.com/lti/launch';
+        $type->tooldomain = 'example.com';
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->coursevisible = LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type->createdby = $admin->id;
+        $type->timecreated = time();
+        $type->timemodified = time();
+
+        $typeid = $DB->insert_record('lti_types', $type);
+
+        // Ensure we are working as editingteacher.
+        $this->setUser($editingteacher);
+
+        // Get cached content items for each user.
+        // We run this twice, first to build the cache, second to query cache.
+        $temp = $ccir->find_all_for_course($course, $editingteacher);
+        $cachededitingteacheritems = $ccir->find_all_for_course($course, $editingteacher);
+
+        $temp = $ccir->find_all_for_course($course, $teacher);
+        $cachedteacheritems = $ccir->find_all_for_course($course, $teacher);
+
+        // The lti will only appear for editingteacher.
+        $cachededitingteacheritemsfiltered = array_values(array_filter($cachededitingteacheritems, function ($item) {
+            return $item->get_title()->get_value() == 'Editing Teacher Only LTI Tool';
+        }));
+        $this->assertCount(1, $cachededitingteacheritemsfiltered);
+
+        // The lti will not appear for teacher.
+        $cachedteacheritemsfiltered = array_values(array_filter($cachedteacheritems, function ($item) {
+            return $item->get_title()->get_value() == 'Editing Teacher Only LTI Tool';
+        }));
+        $this->assertEmpty($cachedteacheritemsfiltered);
     }
 }
