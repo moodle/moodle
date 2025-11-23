@@ -41,4 +41,5 @@ $string['cannotsavemd5file'] = 'md5 faylini saqlab bo‘lmadi';
 $string['cannotsavezipfile'] = 'ZIP faylini saqlab bo‘lmadi';
 $string['cannotunzipfile'] = 'Faylni arxivdan chiqarib bo‘lmadi';
 $string['componentisuptodate'] = 'Komponent yangilangan holda';
-$string['dmlexceptiononinstall'] = '<p>Ma’lumotlar bazasi xatosi yuz berdi [{$a->errorcode}].<br />{$a->debuginfo}</p>';
+$string['dmlexceptiononinstall'] = '<p>Ma’lumotlar bazasida xatolik yuz berdi [{$a->errorcode}].<br />{$a->debuginfo}</p>';
+$string['downloadedfilecheckfailed'] = 'Yuklab olingan faylni tekshirish muvaffaqiyatsiz tugadi';
