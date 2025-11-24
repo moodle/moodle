@@ -453,25 +453,36 @@ function course_set_marker($courseid, $marker) {
  * @param int $sectionnumber The section number to adjust
  * @param int $visibility The new visibility
  * @return array A list of resources which were hidden in the section
+ * @deprecated since Moodle 5.2.
+ * @todo MDL-87225 Final deprecation in Moodle 6.0.
  */
+#[\core\attribute\deprecated(
+    replacement: 'core_courseformat\local\sectionactions::set_visibility',
+    since: '5.2',
+    mdl: 'MDL-86861',
+    reason: 'Course activity editing global functions have been moved to format actions',
+)]
 function set_section_visible($courseid, $sectionnumber, $visibility) {
     global $DB;
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
-    $resourcestotoggle = array();
-    if ($section = $DB->get_record("course_sections", array("course"=>$courseid, "section"=>$sectionnumber))) {
-        course_update_section($courseid, $section, array('visible' => $visibility));
+    $resourcestotoggle = [];
+    $sectioninfo = get_fast_modinfo($courseid)->get_section_info($sectionnumber);
+    if (!$sectioninfo) {
+        return $resourcestotoggle;
+    }
+    formatactions::section($courseid)->set_visibility($sectioninfo, $visibility);
 
-        // Determine which modules are visible for AJAX update
-        $modules = !empty($section->sequence) ? explode(',', $section->sequence) : array();
-        if (!empty($modules)) {
-            list($insql, $params) = $DB->get_in_or_equal($modules);
-            $select = 'id ' . $insql . ' AND visible = ?';
-            array_push($params, $visibility);
-            if (!$visibility) {
-                $select .= ' AND visibleold = 1';
-            }
-            $resourcestotoggle = $DB->get_fieldset_select('course_modules', 'id', $select, $params);
+    // Determine which modules are visible for AJAX update.
+    $modules = !empty($sectioninfo->sequence) ? explode(',', $sectioninfo->sequence) : [];
+    if (!empty($modules)) {
+        [$insql, $params] = $DB->get_in_or_equal($modules);
+        $select = 'id ' . $insql . ' AND visible = ?';
+        array_push($params, $visibility);
+        if (!$visibility) {
+            $select .= ' AND visibleold = 1';
         }
+        $resourcestotoggle = $DB->get_fieldset_select('course_modules', 'id', $select, $params);
     }
     return $resourcestotoggle;
 }
@@ -672,10 +683,6 @@ function set_downloadcontent(int $id, bool $downloadcontent): bool {
  *
  * Note: Do not forget to trigger the event \core\event\course_module_updated as it needs
  * to be triggered manually, refer to {@link \core\event\course_module_updated::create_from_cm()}.
- *
- * From 2.4 the parameter $prevstateoverrides has been removed, the logic it triggered
- * has been moved to {@link set_section_visible()} which was the only place from which
- * the parameter was used.
  *
  * If $rebuildcache is set to false, the calling code is responsible for ensuring the cache is purged
  * and rebuilt as appropriate. Consider using this if set_coursemodule_visible is called multiple times

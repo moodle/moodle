@@ -229,6 +229,24 @@ class sectionactions extends baseactions {
     }
 
     /**
+     * For a given course section, marks it visible or hidden,
+     * and does the same for every activity in that section.
+     *
+     * @param section_info $sectioninfo the section to delete.
+     * @param bool $visible The new visibility
+     */
+    public function set_visibility(
+        section_info $sectioninfo,
+        bool $visible,
+    ): void {
+        if ($sectioninfo->visible == (int) $visible) {
+            return;
+        }
+
+        $this->update($sectioninfo, ['visible' => $visible]);
+    }
+
+    /**
      * Get the event to trigger when deleting a section.
      * @param section_info $sectioninfo the section to delete.
      * @return course_section_deleted the event to trigger
@@ -276,8 +294,6 @@ class sectionactions extends baseactions {
         rebuild_course_cache($this->course->id, true);
         return $result;
     }
-
-
 
     /**
      * Course section deletion, using an adhoc task for deletion of the modules it contains.

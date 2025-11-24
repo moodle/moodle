@@ -82,7 +82,8 @@ final class get_state_test extends \core_external\tests\externallib_testcase {
         $course = $this->getDataGenerator()->create_course(['numsections' => $numsections, 'format' => $format]);
         $hiddensections = [4, 6];
         foreach ($hiddensections as $section) {
-            set_section_visible($course->id, $section, 0);
+            $sectioninfo = get_fast_modinfo($course->id)->get_section_info($section);
+            \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
         }
 
         // Create and enrol user.

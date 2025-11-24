@@ -136,7 +136,8 @@ final class stateupdates_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course(['numsections' => 2, 'format' => 'topics']);
 
         // Set section 2 hidden.
-        set_section_visible($course->id, 2, 0);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(2);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
 
         // Create and enrol user using given role.
         if ($role == 'admin') {
@@ -249,7 +250,8 @@ final class stateupdates_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course(['numsections' => 2, 'format' => 'topics']);
 
         // Set section 2 hidden.
-        set_section_visible($course->id, 2, 0);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(2);
+        \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
 
         // Create 2 activities on each section.
         $activities = [];
