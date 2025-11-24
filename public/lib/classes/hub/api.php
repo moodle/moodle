@@ -87,7 +87,7 @@ class api {
 
         $curl = new curl();
         $serverurl = HUB_MOODLEORGHUBURL . "/local/hub/webservice/webservices.php";
-        $query = http_build_query($params, '', '&');
+        $query = http_build_query($params);
         $curloutput = @json_decode($curl->post($serverurl, $query), true);
         $info = $curl->get_info();
         if ($curl->get_errno()) {

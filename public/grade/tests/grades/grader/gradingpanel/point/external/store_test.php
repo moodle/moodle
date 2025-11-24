@@ -125,8 +125,14 @@ final class store_test extends advanced_testcase {
 
         $gradeitem = component_gradeitem::instance('mod_forum', $forum->get_context(), 'forum');
 
-        $result = store::execute('mod_forum', (int) $forum->get_context()->id, 'forum',
-                (int) $student->id, false, http_build_query($formdata));
+        $result = store::execute(
+            'mod_forum',
+            (int) $forum->get_context()->id,
+            'forum',
+            (int) $student->id,
+            false,
+            http_build_query($formdata),
+        );
         $result = external_api::clean_returnvalue(store::execute_returns(), $result);
 
         // The result should still be empty.
