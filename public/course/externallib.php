@@ -4731,4 +4731,136 @@ class core_course_external extends external_api {
             ]
         );
     }
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 5.2
+     */
+    public static function create_modules_parameters() {
+        return new external_function_parameters(
+            array(
+                'modules' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'course id'),
+                            'modulename' => new external_value(PARAM_PLUGIN, 'module name'),
+                            'section' => new external_value(PARAM_INT, 'section number'),
+                            'name' => new external_value(PARAM_RAW, 'module name'),
+                            'visible' => new external_value(PARAM_INT, 'visible', VALUE_OPTIONAL),
+                            'visibleoncoursepage' => new external_value(PARAM_INT, 'visible on course page', VALUE_OPTIONAL),
+                            'groupmode' => new external_value(PARAM_INT, 'group mode', VALUE_OPTIONAL),
+                            'groupingid' => new external_value(PARAM_INT, 'grouping id', VALUE_OPTIONAL),
+                            'intro' => new external_value(PARAM_RAW, 'introduction', VALUE_OPTIONAL),
+                            'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
+                            'completion' => new external_value(PARAM_INT, 'completion', VALUE_OPTIONAL),
+                            'completionview' => new external_value(PARAM_INT, 'completion view', VALUE_OPTIONAL),
+                            'completionexpected' => new external_value(PARAM_INT, 'completion expected', VALUE_OPTIONAL),
+                            'moduleinfo' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'name' => new external_value(PARAM_RAW, 'param name'),
+                                        'value' => new external_value(PARAM_RAW, 'param value')
+                                    )
+                                ),
+                                'Additional module info', VALUE_DEFAULT, array()
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Create course modules
+     *
+     * @param array $modules list of modules to create
+     * @return array list of created module ids
+     * @since Moodle 5.2
+     */
+    public static function create_modules($modules) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/course/lib.php");
+        require_once($CFG->dirroot . "/course/modlib.php");
+
+        $params = self::validate_parameters(self::create_modules_parameters(), array('modules' => $modules));
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $createdmodules = array();
+        foreach ($params['modules'] as $module) {
+            $course = $DB->get_record('course', array('id' => $module['courseid']), '*', MUST_EXIST);
+            $context = context_course::instance($course->id);
+            self::validate_context($context);
+            require_capability('moodle/course:manageactivities', $context);
+
+            // Prepare module info
+            $moduleinfo = new stdClass();
+            $moduleinfo->modulename = $module['modulename'];
+            $moduleinfo->course = $course->id;
+            $moduleinfo->section = $module['section'];
+            $moduleinfo->name = $module['name'];
+            
+            if (isset($module['visible'])) {
+                $moduleinfo->visible = $module['visible'];
+            }
+            if (isset($module['visibleoncoursepage'])) {
+                $moduleinfo->visibleoncoursepage = $module['visibleoncoursepage'];
+            }
+            if (isset($module['groupmode'])) {
+                $moduleinfo->groupmode = $module['groupmode'];
+            }
+            if (isset($module['groupingid'])) {
+                $moduleinfo->groupingid = $module['groupingid'];
+            }
+            if (isset($module['intro'])) {
+                $moduleinfo->introeditor = array('text' => $module['intro'], 'format' => $module['introformat']);
+            }
+            if (isset($module['completion'])) {
+                $moduleinfo->completion = $module['completion'];
+            }
+            if (isset($module['completionview'])) {
+                $moduleinfo->completionview = $module['completionview'];
+            }
+            if (isset($module['completionexpected'])) {
+                $moduleinfo->completionexpected = $module['completionexpected'];
+            }
+
+            // Process additional module info
+            foreach ($module['moduleinfo'] as $info) {
+                $moduleinfo->{$info['name']} = $info['value'];
+            }
+
+            // Create the module
+            $moduleinfo = add_moduleinfo($moduleinfo, $course);
+            $createdmodules[] = array(
+                'id' => $moduleinfo->coursemodule,
+                'courseid' => $course->id,
+                'name' => $moduleinfo->name
+            );
+        }
+
+        $transaction->allow_commit();
+
+        return $createdmodules;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_multiple_structure
+     * @since Moodle 5.2
+     */
+    public static function create_modules_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'course module id'),
+                    'courseid' => new external_value(PARAM_INT, 'course id'),
+                    'name' => new external_value(PARAM_RAW, 'module name')
+                )
+            )
+        );
+    }
 }

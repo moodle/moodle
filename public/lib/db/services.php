@@ -504,6 +504,15 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/course:create, moodle/course:visibility'
     ),
+    'core_course_create_modules' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'create_modules',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Create course modules',
+        'type' => 'write',
+        'capabilities' => 'moodle/course:manageactivities'
+    ),
+
     'core_course_delete_categories' => array(
         'classname' => 'core_course_external',
         'methodname' => 'delete_categories',

@@ -17,6 +17,7 @@
 [._]ss[a-gi-z]
 [._]sw[a-p]
 # Temporary files including undo
+.env
 *~
 #
 /config.php
