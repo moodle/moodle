@@ -27,6 +27,7 @@
     Example context (json):
     {
         "contexid": 1,
+        "cmid": 1,
         "contextname": "Question bank: Qbank 1",
         "categories": [
             {
@@ -50,7 +51,7 @@
 }}
 <div role="tree">
     <div class="d-flex">
-        <h3>{{{contextname}}}</h3>
+        <h3 class="bank-header" data-cmid="{{cmid}}">{{{contextname}}}</h3>
         <button data-action="switch-question-bank" type="button" class="btn btn-secondary ms-auto mb-2">
             {{#str}}switchbank, core_question{{/str}}
         </button>

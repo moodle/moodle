@@ -72,7 +72,7 @@ class move_category extends external_api {
                             'id' => new external_value(PARAM_INT, 'The ID of the category that was updated.'),
                             'sortorder' => new external_value(PARAM_INT, 'The new sortorder', VALUE_OPTIONAL),
                             'parent' => new external_value(PARAM_INT, 'The ID of the new parent category.', VALUE_OPTIONAL),
-                            'context' => new external_value(PARAM_INT, 'The ID of the new context.', VALUE_OPTIONAL),
+                            'contextid' => new external_value(PARAM_INT, 'The ID of the new context.', VALUE_OPTIONAL),
                             'draghandle' => new external_value(
                                 PARAM_BOOL,
                                 'Should this category have a drag handle?',
@@ -151,7 +151,7 @@ class move_category extends external_api {
             ) {
                 $transaction->rollback(new moodle_exception('idnumberexists', 'qbank_managecategories'));
             }
-            $originstateupdate->fields->context = $targetparent->contextid;
+            $originstateupdate->fields->contextid = $targetparent->contextid;
         }
 
         // Update sort order.
@@ -187,7 +187,10 @@ class move_category extends external_api {
         $toupdatesortorder = $DB->get_records_select('question_categories', $select, $params, $sort);
         foreach ($toupdatesortorder as $category) {
             $DB->set_field('question_categories', 'sortorder', ++$sortorder, ['id' => $category->id]);
-            $stateupdates[] = self::make_state_update($category->id, sortorder: $sortorder);
+            if ($targetparent->contextid == $pagecontextid) {
+                // If we're updating other categories in the current context, return state updates for those too.
+                $stateupdates[] = self::make_state_update($category->id, sortorder: $sortorder);
+            }
         }
 
         if (isset($originstateupdate->fields->parent)) {

@@ -403,12 +403,24 @@ export default class extends BaseComponent {
         return categories;
     }
 
+
     /**
      * Recursively create a list of all valid destinations for a current category within a parent category.
      *
+     * Each entry in the list represents moving the category "before" another category by default, but may also represent
+     * moving "after" another category, or "as a new child of" a parent category.
+     *
      * @param {Object} categoryData A list of category data from getCategoryDataFromElements() or getCategoryDataFromRecords().
      * @param {Number} movingCategoryId The ID of the category currently being moved.
-     * @return {Array<Object>}
+     * @return {Array<Object>} A list of objects representing valid move targets for the category. Each object has:
+     *  movingcategoryid - The ID of the category we are moving.
+     *  precedingsiblingid - The ID of the previous category under the same parent as this target. 0 if this is the first child.
+     *  parent - The ID of the target category's parent category. 0 if this is the top category.
+     *  categoryname - The name of the target category, to display as part of the destination.
+     *  categories - An array of child category targets. If there are no children, this must be null
+     *      to prevent infinite recursion in the template.
+     *  newchild - If true, this destination is "as a new child of the parent".
+     *  lastchild - If true, this destination is after the target category, rather than before.
      */
     createMoveCategoryList(categoryData, movingCategoryId) {
         const categories = [];
@@ -416,18 +428,16 @@ export default class extends BaseComponent {
             let precedingSibling = null;
             categoryData.forEach(category => {
                 // Don't create a target for the category that's moving.
-                if (category.categoryId === movingCategoryId) {
+                if (parseInt(category.categoryId) === movingCategoryId) {
                     return;
                 }
                 // Create a target to move before this child.
                 let child = {
-                    categoryid: category.categoryId,
                     movingcategoryid: movingCategoryId,
                     precedingsiblingid: precedingSibling?.categoryId ?? 0,
                     parent: category.parentId,
                     categoryname: category.categoryName,
-                    categories: null,
-                    current: category.categoryId === movingCategoryId,
+                    categories: null, // Prevent infinite recursion in the template.
                 };
                 if (category.children) {
                     // If the child has its own children, recursively make a list of those.
@@ -440,7 +450,7 @@ export default class extends BaseComponent {
                             precedingsiblingid: 0,
                             parent: category.categoryId,
                             categoryname: category.categoryName,
-                            categories: null,
+                            categories: null, // Prevent infinite recursion in the template.
                             newchild: true,
                         }
                     ];
@@ -456,7 +466,7 @@ export default class extends BaseComponent {
                         precedingsiblingid: precedingSibling.categoryId,
                         parent: precedingSibling.parentId,
                         categoryname: precedingSibling.categoryName,
-                        categories: null,
+                        categories: null, // Prevent infinite recursion in the template.
                         lastchild: true,
                     });
                 }

@@ -18,6 +18,7 @@ namespace qbank_managecategories\external;
 
 use context;
 use context_module;
+use core\context\module;
 use moodle_url;
 use qbank_managecategories\question_categories;
 
@@ -39,12 +40,12 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
     /**
      * Return order of categories for a given context.
      *
-     * @param context $context The context to get the category order for.
+     * @param module $context The context to get the category order for.
      * @return array Nested array, keyed by category IDs.
      */
-    private function get_current_order(context $context): array {
-        $categories = new question_categories(new moodle_url('/'), [$context]);
-        return $this->reduce_tree($categories->editlists[$context->id]->items);
+    private function get_current_order(module $context): array {
+        $categories = new question_categories(new moodle_url('/'), cmid: $context->instanceid);
+        return $this->reduce_tree($categories->editlist->items);
     }
 
     /**
@@ -127,7 +128,7 @@ final class move_category_test extends \qbank_managecategories\manage_category_t
                 ],
             ],
         ];
-        $this->assertEquals($stateupdates, $expectedstateupdates);
+        $this->assertEquals($expectedstateupdates, $stateupdates);
     }
 
     /**

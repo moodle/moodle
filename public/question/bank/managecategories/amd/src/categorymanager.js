@@ -55,6 +55,8 @@ const loadState = async(reactive) => {
     const stateData = {
         page: {
             contextid: rootElement.dataset.contextid,
+            courseid: rootElement.dataset.courseid,
+            cmid: rootElement.dataset.cmid,
             showdescriptions: document.querySelector(SELECTORS.SHOWDESCRIPTIONS_TOGGLE).checked,
         },
         categories: [],
