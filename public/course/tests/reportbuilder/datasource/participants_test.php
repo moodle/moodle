@@ -85,7 +85,7 @@ final class participants_test extends core_reportbuilder_testcase {
 
         $this->assertEquals([
             ["<a href=\"{$coursetwourl}\">{$coursetwo->fullname}</a>",
-                "<a href=\"{$useroneurl}\">" . fullname($userone) . "</a>", 'Self enrolment (Student)'],
+                "<a href=\"{$useroneurl}\">" . fullname($userone) . "</a>", 'Self enrolment as \'Student\''],
             ["<a href=\"{$courseoneurl}\">{$courseone->fullname}</a>",
                 "<a href=\"{$usertwourl}\">" . fullname($usertwo) . "</a>", 'Manual enrolments'],
             ["<a href=\"{$courseoneurl}\">{$courseone->fullname}</a>",
