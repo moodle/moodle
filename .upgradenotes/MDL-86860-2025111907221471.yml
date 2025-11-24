@@ -1,0 +1,7 @@
+issueNumber: MDL-86860
+notes:
+  core_courseformat:
+    - message: >-
+        Added `set_marker` and `remove_all_markers` methods to the
+        `core_courseformat\sectionactions` class.
+      type: improved

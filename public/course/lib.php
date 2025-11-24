@@ -421,16 +421,28 @@ function get_module_types_names($plural = false, $resetcache = false) {
  *
  * @param int $courseid course id
  * @param int $marker highlight section with this number, 0 means remove higlightin
- * @return void
+ * @deprecated since Moodle 5.2.
+ * @todo MDL-87238 Final deprecation in Moodle 6.0.
  */
+#[\core\attribute\deprecated(
+    replacement: 'core_courseformat\local\sectionactions::set_marker',
+    since: '5.2',
+    mdl: 'MDL-86860',
+    reason: 'Course activity editing global functions have been moved to format actions',
+)]
 function course_set_marker($courseid, $marker) {
-    global $DB, $COURSE;
-    $DB->set_field("course", "marker", $marker, array('id' => $courseid));
-    if ($COURSE && $COURSE->id == $courseid) {
-        $COURSE->marker = $marker;
+    \core\deprecation::emit_deprecation(__FUNCTION__);
+
+    if ($marker === 0) {
+        formatactions::section($courseid)->remove_all_markers();
+        return;
     }
-    core_courseformat\base::reset_course_cache($courseid);
-    course_modinfo::clear_instance_cache($courseid);
+
+    $sectioninfo = get_fast_modinfo($courseid)->get_section_info($marker);
+    if (!$sectioninfo) {
+        return;
+    }
+    formatactions::section($courseid)->set_marker($sectioninfo, true);
 }
 
 /**
@@ -960,11 +972,14 @@ function move_section_to($course, $section, $destination, $ignorenumsections = f
     // If we move the highlighted section itself, then just highlight the destination.
     // Adjust the higlighted section location if we move something over it either direction.
     if ($section == $course->marker) {
-        course_set_marker($course->id, $destination);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($destination);
+        formatactions::section($course->id)->set_marker($sectioninfo, true);
     } else if ($section > $course->marker && $course->marker >= $destination) {
-        course_set_marker($course->id, $course->marker+1);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($course->marker + 1);
+        formatactions::section($course->id)->set_marker($sectioninfo, true);
     } else if ($section < $course->marker && $course->marker <= $destination) {
-        course_set_marker($course->id, $course->marker-1);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($course->marker - 1);
+        formatactions::section($course->id)->set_marker($sectioninfo, true);
     }
 
     $transaction->allow_commit();

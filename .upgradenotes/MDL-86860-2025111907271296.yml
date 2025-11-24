@@ -1,0 +1,9 @@
+issueNumber: MDL-86860
+notes:
+  core_course:
+    - message: >-
+        The `course_set_marker` function has been deprecated and should no
+        longer be used.
+        Please consider using the equivalent methods, `set_marker` or `remove_all_markers`,
+        in `core_courseformat\local\sectionactions` instead.
+      type: deprecated

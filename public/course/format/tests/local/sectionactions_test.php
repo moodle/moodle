@@ -388,7 +388,8 @@ final class sectionactions_test extends \advanced_testcase {
         );
 
         // Remove marked section.
-        course_set_marker($course->id, 1);
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info(1);
+        \core_courseformat\formatactions::section($course->id)->set_marker($sectioninfo, true);
         $this->assertTrue(course_get_format($course)->is_section_current(1));
         $this->assertTrue($sectionactions->delete(
             get_fast_modinfo($course)->get_section_info(1),
@@ -910,5 +911,70 @@ final class sectionactions_test extends \advanced_testcase {
         $this->assertEquals($newsection2->id, $section[3]->id);
         $this->assertEquals($delegatedsection1->id, $section[4]->id);
         $this->assertEquals($delegatedsection2->id, $section[5]->id);
+    }
+
+    /**
+     * Test set_marker method.
+     */
+    public function test_set_marker(): void {
+        global $COURSE;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course([
+            'format' => 'topics',
+            'numsections' => 2,
+        ]);
+        $COURSE = get_course($course->id);
+        $sectionactions = new sectionactions($course);
+
+        $this->assertFalse(course_get_format($course)->is_section_current(1));
+        $this->assertFalse(course_get_format($course)->is_section_current(2));
+        $this->assertEquals(0, $COURSE->marker);
+
+        // Highlight the section.
+        $sectioninfo1 = get_fast_modinfo($course)->get_section_info(1);
+        $sectionactions->set_marker($sectioninfo1, true);
+        $this->assertTrue(course_get_format($course)->is_section_current(1));
+        $this->assertFalse(course_get_format($course)->is_section_current(2));
+        $this->assertEquals(1, $COURSE->marker);
+
+        // Highlight another section.
+        $sectioninfo2 = get_fast_modinfo($course)->get_section_info(2);
+        $sectionactions->set_marker($sectioninfo2, true);
+        $this->assertFalse(course_get_format($course)->is_section_current(1));
+        $this->assertTrue(course_get_format($course)->is_section_current(2));
+        $this->assertEquals(2, $COURSE->marker);
+
+        // Unhighlight the section.
+        $sectionactions->set_marker($sectioninfo2, false);
+        $this->assertFalse(course_get_format($course)->is_section_current(1));
+        $this->assertFalse(course_get_format($course)->is_section_current(2));
+        $this->assertEquals(0, $COURSE->marker);
+    }
+
+    /**
+     * Test remove_all_markers method.
+     */
+    public function test_remove_all_markers(): void {
+        global $COURSE;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course([
+            'format' => 'topics',
+            'numsections' => 1,
+        ]);
+        $COURSE = get_course($course->id);
+        $sectionactions = new sectionactions($course);
+
+        // Highlight the section.
+        $sectioninfo1 = get_fast_modinfo($course)->get_section_info(1);
+        $sectionactions->set_marker($sectioninfo1, true);
+        $this->assertTrue(course_get_format($course)->is_section_current(1));
+        $this->assertEquals(1, $COURSE->marker);
+
+        // Unhighlight the section.
+        $sectionactions->remove_all_markers();
+        $this->assertFalse(course_get_format($course)->is_section_current(1));
+        $this->assertEquals(0, $COURSE->marker);
     }
 }

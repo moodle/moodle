@@ -228,7 +228,13 @@ if ($PAGE->user_allowed_editing()) {
             'The marker param in course view is deprecated. Please use course/format/update.php instead.',
             DEBUG_DEVELOPER
         );
-        course_set_marker($course->id, $marker);
+        if ($marker == 0) {
+            \core_courseformat\formatactions::section($course->id)->remove_all_markers();
+        } else {
+            $sectioninfo = get_fast_modinfo($course->id)->get_section_info($marker);
+            \core_courseformat\formatactions::section($course->id)->set_marker($sectioninfo, true);
+        }
+
         if ($sectionid) {
             redirect(course_get_url($course, $section, ['navigation' => true]));
         } else {

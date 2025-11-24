@@ -467,4 +467,55 @@ class sectionactions extends baseactions {
         }
         return $fields;
     }
+
+    /**
+     * Highlight a course section.
+     *
+     * @param section_info $sectioninfo the section info to set marker.
+     * @param bool $marked whether the section is highlighted.
+     */
+    public function set_marker(section_info $sectioninfo, bool $marked): void {
+        if (!$marked) {
+            $this->remove_all_markers();
+            return;
+        }
+
+        if ($this->course->marker == $sectioninfo->section) {
+            // Nothing to do because it's already marked.
+            return;
+        }
+
+        $this->set_marker_internal($sectioninfo->section);
+    }
+
+    /**
+     * Removes any marker in the course.
+     */
+    public function remove_all_markers(): void {
+        if ($this->course->marker !== 0) {
+            $this->set_marker_internal(0);
+        }
+    }
+
+    /**
+     * Set marker for the course.
+     *
+     * @param int $marker the section number to set as marker or 0 to remove any marker.
+     */
+    private function set_marker_internal(int $marker): void {
+        global $DB, $COURSE;
+
+        $DB->set_field('course', 'marker', $marker, ['id' => $this->course->id]);
+        if ($COURSE && $COURSE->id == $this->course->id) {
+            $COURSE->marker = $marker;
+        }
+
+        // Make sure the cache is reset.
+        \course_modinfo::purge_course_section_cache_by_number($this->course->id, $marker);
+        rebuild_course_cache(
+            courseid: $this->course->id,
+            clearonly: true,
+            partialrebuild: true,
+        );
+    }
 }
