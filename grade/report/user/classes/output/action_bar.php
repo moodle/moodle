@@ -97,7 +97,7 @@ class action_bar extends \core_grades\output\action_bar {
                 $data['groupselector'] = $groupselector->export_for_template($output);
             }
 
-            $resetlink = new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'group' => 0]);
+            $resetlink = new moodle_url('/grade/report/user/index.php', ['id' => $courseid, 'group' => 0, 'reset' => 1]);
             $baseurl = new moodle_url('/grade/report/user/index.php', ['id' => $courseid]);
             $PAGE->requires->js_call_amd('gradereport_user/user', 'init', [$baseurl->out(false)]);
 
