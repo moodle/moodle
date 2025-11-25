@@ -27,7 +27,6 @@ import * as Notification from 'core/notification';
 import * as KeyCodes from 'core/key_codes';
 import ModalBackdrop from 'core/modal_backdrop';
 import ModalEvents from 'core/modal_events';
-import * as ModalRegistry from 'core/modal_registry';
 import Pending from 'core/pending';
 import * as CustomEvents from 'core/custom_interaction_events';
 import * as FilterEvents from 'core_filters/events';
@@ -36,6 +35,7 @@ import * as Aria from 'core/aria';
 import * as Fullscreen from 'core/fullscreen';
 import {removeToastRegion} from './toast';
 import {dispatchEvent} from 'core/event_dispatcher';
+import * as Prefetch from 'core/prefetch';
 
 /**
  * A configuration to provide to the modal.
@@ -90,6 +90,12 @@ export default class Modal {
      * This can be used to generate unique values for the modals.
      */
     static modalCounter = 0;
+
+    /**
+     * @var {Number} A singleton registry for all modules to access. Allows types to be
+     * added at runtime.
+     */
+    static registry = new Map();
 
     /**
      * Getter method for .root element.
@@ -175,12 +181,42 @@ export default class Modal {
         if (!this.TEMPLATE) {
             throw new Error(`Unknown modal template`, this);
         }
-        ModalRegistry.register(
+
+        this.register(
             this.TYPE,
             this,
             this.TEMPLATE,
         );
     }
+
+    /**
+     * Register a modal.
+     *
+     * @param {string} type The type of modal (must be unique)
+     * @param {function} module The modal module (must be a constructor function of type core/modal)
+     * @param {string} template The template name of the modal
+     */
+    static register = (type, module, template) => {
+        const existing = this.registry.get(type);
+        if (existing && existing.module !== module) {
+            Notification.exception({
+                message: `Modal of  type '${type}' is already registered`,
+            });
+        }
+
+        if (!module || typeof module !== 'function') {
+            Notification.exception({message: "You must provide a modal module"});
+        }
+
+        if (!template) {
+            Notification.exception({message: "You must provide a modal template"});
+        }
+
+        this.registry.set(type, {module, template});
+
+        // Prefetch the template.
+        Prefetch.prefetchTemplate(template);
+    };
 
     /**
      * Create a new modal using the ModalFactory.
@@ -191,7 +227,7 @@ export default class Modal {
      * @returns {Promise<Modal>}
      */
     static async create(modalConfig = {}) {
-        const pendingModalPromise = new Pending('core/modal_factory:create');
+        const pendingModalPromise = new Pending('core/modal:create');
         modalConfig.type = this.TYPE;
 
         const templateName = this._getTemplateName(modalConfig);
@@ -225,13 +261,8 @@ export default class Modal {
             return this.TEMPLATE;
         }
 
-        if (ModalRegistry.has(this.TYPE)) {
-            // Note: This is provided as an interim backwards-compatability layer and will be removed four releases after 4.3.
-            window.console.warning(
-                'Use of core/modal_registry is deprecated. ' +
-                'Please define your modal template in a new static TEMPLATE property on your modal class.',
-            );
-            const config = ModalRegistry.get(this.TYPE);
+        if (this.registry.has(this.TYPE)) {
+            const config = this.registry.get(this.TYPE);
             return config.template;
         }
 
