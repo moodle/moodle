@@ -39,7 +39,7 @@ final class stats_test extends \advanced_testcase {
      */
     public function setUp(): void {
         parent::setUp();
-
+        $this->resetAfterTest();
         $this->setAdminUser();
     }
 
@@ -47,9 +47,6 @@ final class stats_test extends \advanced_testcase {
      * Test the {@link \core_analytics\stats::enabled_models()} implementation.
      */
     public function test_enabled_models(): void {
-
-        $this->resetAfterTest(true);
-
         // By default, sites have {@link \core_course\analytics\target\no_teaching} and
         // {@link \core_user\analytics\target\upcoming_activities_due} enabled.
         $this->assertEquals(4, \core_analytics\stats::enabled_models());
@@ -76,8 +73,6 @@ final class stats_test extends \advanced_testcase {
         if (!self::is_mlbackend_python_configured()) {
             $this->markTestSkipped('mlbackend_python is not configured.');
         }
-
-        $this->resetAfterTest(true);
 
         $model = \core_analytics\model::create(
             \core_analytics\manager::get_target('test_target_shortname'),
@@ -126,8 +121,6 @@ final class stats_test extends \advanced_testcase {
         if (!self::is_mlbackend_python_configured()) {
             $this->markTestSkipped('mlbackend_python is not configured.');
         }
-
-        $this->resetAfterTest(true);
 
         $model = \core_analytics\model::create(
             \core_analytics\manager::get_target('test_target_shortname'),
