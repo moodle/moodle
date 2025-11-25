@@ -268,9 +268,17 @@ function install_generate_configphp($database, $cfg) {
  * @param string $heading
  * @param string $stagetext
  * @param string $stageclass
+ * @param string $warning Additional information that is a warning
  * @return void
  */
-function install_print_header($config, $stagename, $heading, $stagetext, $stageclass = "alert-info") {
+function install_print_header(
+    $config,
+    $stagename,
+    $heading,
+    $stagetext,
+    $stageclass = "alert-info",
+    $warning = '',
+) {
     global $CFG;
 
     @header('Content-Type: text/html; charset=UTF-8');
@@ -312,6 +320,11 @@ function install_print_header($config, $stagename, $heading, $stagetext, $stagec
         echo $stagetext;
         echo '</div>';
     }
+    if ($warning !== '') {
+        echo '<div class="alert alert-danger">';
+        echo $warning;
+        echo '</div>';
+    }
     // main
     echo '<form id="installform" method="post" action="install.php"><fieldset>';
     foreach ($config as $name=>$value) {
@@ -344,7 +357,8 @@ function install_print_footer($config, $reload=false) {
     }
 
     if ($reload) {
-        $next = '<input type="submit" id="nextbutton" class="btn btn-primary ms-1 flex-grow-0 me-auto" name="next" value="'.s(get_string('reload')).'" />';
+        $next = '<input type="submit" id="nextbutton" class="btn btn-primary ms-1 flex-grow-0 me-auto" name="reload"
+         value="' . s(get_string('reload')) . '" />';
     } else {
         $next = '<input type="submit" id="nextbutton" class="btn btn-primary ms-1 flex-grow-0 me-auto" name="next" value="'.s(get_string('next')).' &raquo;" />';
     }
