@@ -40,9 +40,12 @@
             {{#dataattributes}}data-{{name}}="{{value}}" {{/dataattributes}}
             {{#checked}}checked{{/checked}}
             {{#disabled}}disabled{{/disabled}}
-        {{/attributes}}>
+        {{/attributes}}
+        {{#title}}
+            data-bs-toggle="tooltip" data-bs-placement="top" title="{{title}}"
+        {{/title}}>
     {{$labelmarkup}}
-        <label class="form-check-label" for="{{$id}}{{id}}{{/id}}" {{#title}}data-bs-toggle="tooltip" data-bs-placement="top" title="{{title}}"{{/title}}>
+        <label class="form-check-label" for="{{$id}}{{id}}{{/id}}">
             <span class="{{$labelclasses}}{{labelclasses}}{{/labelclasses}}">{{$label}}{{label}}{{/label}}</span>
         </label>
     {{/labelmarkup}}

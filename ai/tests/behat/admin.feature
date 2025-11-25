@@ -40,15 +40,23 @@ Feature: An administrator can manage AI subsystem settings
     And I navigate to "AI > AI providers" in site administration
     And I should see "OpenAI API test"
     And I should see "Azure AI API test"
+    And I hover "Enable OpenAI API test" "field"
+    And "Enable OpenAI API test" "text" should be visible
     And I toggle the "Enable OpenAI API test" admin switch "on"
     And I should see "OpenAI API test enabled."
+    And I hover "Enable Azure AI API test" "field"
+    And "Enable Azure AI API test" "text" should be visible
     And I toggle the "Enable Azure AI API test" admin switch "on"
     And I should see "Azure AI API test enabled."
     And I reload the page
     And I should see "Disable OpenAI API test"
     And I should see "Disable Azure AI API test"
+    And I hover "Disable OpenAI API test" "field"
+    And "Disable OpenAI API test" "text" should be visible
     And I toggle the "Disable OpenAI API test" admin switch "off"
     And I should see "OpenAI API test disabled."
+    And I hover "Disable Azure AI API test" "field"
+    And "Disable Azure AI API test" "text" should be visible
     And I toggle the "Disable Azure AI API test" admin switch "off"
     Then I should see "Azure AI API test disabled."
 
