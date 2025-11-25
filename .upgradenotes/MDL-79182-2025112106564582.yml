@@ -1,7 +1,13 @@
 issueNumber: MDL-79182
 notes:
   core:
-    - message:
-        - Removed core/modal_registry for the final deprecation due to no longer being required.
-        - Removed core/modal_factory for the final deprecation due to no longer being required.
+    - message: >
+        The following AMD modules have been removed following the final
+        deprecation process. It is no longer possible or necessary to manually
+        register modal types. See MDL-78324 for further details.
+
+
+        - `core/modal_registry`
+
+        - `core/modal_factory`
       type: removed
