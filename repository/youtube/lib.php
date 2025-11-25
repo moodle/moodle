@@ -213,7 +213,7 @@ class repository_youtube extends repository {
 
             foreach ($response['items'] as $result) {
                 $title = $result->snippet->title;
-                $source = 'http://www.youtube.com/v/' . $result->id->videoId . '#' . $title;
+                $source = 'https://www.youtube.com/watch?v=' . $result->id->videoId . '#' . $title;
                 $thumb = $result->snippet->getThumbnails()->getDefault();
 
                 $list[] = array(
