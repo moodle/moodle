@@ -265,6 +265,9 @@ class scanner extends \core\antivirus\scanner {
             $this->set_scanning_notice($notice);
             return self::SCAN_RESULT_ERROR;
         } else {
+            // For Unix sockets, try SCAN first (fast), then fall back to INSTREAM if it fails.
+            $instreamfallback = false;
+
             if ($type == "unixsocket") {
                 // Execute scanning. We are running SCAN command and passing file as an argument,
                 // it is the fastest option, but clamav user need to be able to access it, so
@@ -282,9 +285,34 @@ class scanner extends \core\antivirus\scanner {
 
                 // After scanning we revert permissions to initial ones.
                 chmod($file, $perms);
-            } else if ($type == "tcpsocket") {
-                // Execute scanning by passing the entire file through the TCP socket.
-                // This is not fast, but is the only possibility over a network.
+
+                // Check if SCAN failed due to permission/path issues.
+                if (
+                    strpos($output, 'File path check failure') !== false ||
+                    strpos($output, 'Permission denied') !== false
+                ) {
+                    debugging('SCAN method failed, trying INSTREAM', DEBUG_DEVELOPER);
+                    $instreamfallback = true;
+                    fclose($socket);
+                    // Reopen socket for INSTREAM attempt.
+                    $socket = stream_socket_client(
+                        $socketurl,
+                        $errno,
+                        $errstr,
+                        ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT
+                    );
+                    if (!$socket) {
+                        $notice = get_string('errorcantopensocket', 'antivirus_clamav', "$errstr ($errno)");
+                        $this->set_scanning_notice($notice);
+                        return self::SCAN_RESULT_ERROR;
+                    }
+                }
+            }
+
+            if ($instreamfallback || $type == "tcpsocket") {
+                // Execute scanning by passing the entire file through the socket.
+                // This is not fast, but is the only possibility over a network and is used
+                // as fallback when SCAN fails.
                 // Using 'n' as command prefix is forcing clamav to only treat \n as newline delimeter,
                 // this is to avoid unexpected newline characters on different systems.
 
