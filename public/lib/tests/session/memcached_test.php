@@ -41,8 +41,8 @@ final class memcached_test extends \advanced_testcase {
     /** @var memcached|null $memcachedession An instance of the memcached session or null if not initialized. */
     private ?memcached $memcachedession = null;
 
-    /** @var \Memcached $memcached An instance of the Memcached class used for handling session storage. */
-    private \Memcached $memcached;
+    /** @var ?\Memcached $memcached An instance of the Memcached class used for handling session storage. */
+    private ?\Memcached $memcached = null;
 
     /** @var mock_handler $mockhandler Dedicated testing handler. */
     private mock_handler $mockhandler;
@@ -87,7 +87,10 @@ final class memcached_test extends \advanced_testcase {
 
     #[\Override]
     public function tearDown(): void {
-        $this->memcached->quit();
+        if ($this->memcached !== null) {
+            $this->memcached->quit();
+            $this->memcached = null;
+        }
         parent::tearDown();
     }
 
