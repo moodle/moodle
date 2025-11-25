@@ -1469,7 +1469,7 @@ class block_manager {
                 if ($parentcontext->id != $systemcontext->id && is_inside_frontpage($parentcontext)) {
                     $messagestring->pagetype = get_string('showonfrontpageandsubs', 'block');
                 } else {
-                    $pagetypes = generate_page_type_patterns($this->page->pagetype, $parentcontext);
+                    $pagetypes = generate_page_type_patterns($this->page->pagetype, $parentcontext, $this->page->context);
                     $messagestring->pagetype = $block->instance->pagetypepattern;
                     if (isset($pagetypes[$block->instance->pagetypepattern])) {
                         $messagestring->pagetype = $pagetypes[$block->instance->pagetypepattern];
@@ -1686,7 +1686,7 @@ class block_manager {
                 if ($parentcontext->id != $systemcontext->id && is_inside_frontpage($parentcontext)) {
                     $messagestring->pagetype = get_string('showonfrontpageandsubs', 'block');
                 } else {
-                    $pagetypes = generate_page_type_patterns($this->page->pagetype, $parentcontext);
+                    $pagetypes = generate_page_type_patterns($this->page->pagetype, $parentcontext, $this->page->context);
                     $messagestring->pagetype = $block->instance->pagetypepattern;
                     if (isset($pagetypes[$block->instance->pagetypepattern])) {
                         $messagestring->pagetype = $pagetypes[$block->instance->pagetypepattern];
