@@ -34,9 +34,9 @@ class overview extends \core_courseformat\activityoverviewbase {
     #[\Override]
     public function get_extra_overview_items(): array {
         return [
-            'comments' => $this->get_extra_comments_overview(),
             'totalentries' => $this->get_extra_totalentries_overview(),
             'myentries' => $this->get_extra_myentries_overview(),
+            'comments' => $this->get_extra_comments_overview(),
         ];
     }
 
