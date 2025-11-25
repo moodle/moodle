@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Sync users task
- * @package   auth_db
- * @author    Guy Thomas <gthomas@moodlerooms.com>
- * @copyright Copyright (c) 2017 Blackboard Inc.
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace auth_db\task;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Sync users task class
@@ -49,7 +39,7 @@ class sync_users extends \core\task\scheduled_task {
      */
     public function execute() {
         if (!is_enabled_auth('db')) {
-            mtrace('auth_db plugin is disabled, synchronisation stopped', 2);
+            mtrace('auth_db plugin is disabled, synchronisation stopped');
             return;
         }
 
