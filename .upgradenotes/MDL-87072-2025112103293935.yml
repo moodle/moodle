@@ -1,0 +1,5 @@
+issueNumber: MDL-87072
+notes:
+  core:
+    - message: Removed $CFG->wwwrootendsinpublic flag to force users to configure their server accordingly.
+      type: removed
