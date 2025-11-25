@@ -70,7 +70,7 @@ class event_exporter_base extends exporter {
 
         $data = new \stdClass();
         $data->id = $event->get_id();
-        $data->name = $event->get_name();
+        $data->name = clean_string($event->get_name());
         $data->description = file_rewrite_pluginfile_urls(
             $event->get_description()->get_value(),
             'pluginfile.php',
