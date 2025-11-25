@@ -31,6 +31,7 @@ require_once($CFG->dirroot.'/grade/report/lib.php');
 
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', null, PARAM_INT);
+$reset = optional_param('reset', 0, PARAM_BOOL);
 
 // Making this work with profile reports.
 $userid   = optional_param('userid', null, PARAM_INT);
@@ -105,7 +106,7 @@ switch ($itemtype) {
         }
         // If the item id (user id) cannot be defined or the user id is not part of the list of gradable users,
         // display the user select zero state.
-        if (is_null($itemid) || !array_key_exists($itemid, grade_report::get_gradable_users($courseid, $currentgroup))) {
+        if (is_null($itemid) || !array_key_exists($itemid, grade_report::get_gradable_users($courseid, $currentgroup)) || $reset) {
             $itemtype = 'user_select';
             unset($SESSION->gradereport_singleview["useritem-{$context->id}"]);
         }

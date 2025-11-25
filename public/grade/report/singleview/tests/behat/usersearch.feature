@@ -220,3 +220,22 @@ Feature: Within the singleview report, a teacher can search for users.
     And the focused element is "Clear search input" "button" in the ".user-search" "css_element"
     And I press the enter key
     And I confirm "Turtle Manatee" does not exist in the "Search users" search combo box
+
+  Scenario: A teacher can clear the search and reload the page to show no student details
+    # A teacher searches for and selects a specific user.
+    Given I set the field "Search users" to "Turtle"
+    And I wait until "Turtle Manatee" "option_role" exists
+    When I click on "Turtle Manatee" "list_item"
+    # After selection, page reloads and displays only that user.
+    And I wait until the page is ready
+    Then "Turtle Manatee" "heading" should exist
+    # Search input retains the selected user for context.
+    And the field "Search users" matches value "Turtle Manatee"
+
+    # Teacher clicks the Clear link to reset the search and reload the page.
+    When I click on "Clear" "link"
+    # Page reloads with search field cleared and no student details displayed (empty state).
+    And I wait until the page is ready
+    Then the field "Search users" matches value ""
+    # All student headings should disappear (no students shown on empty state).
+    And "Turtle Manatee" "heading" should not exist
