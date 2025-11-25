@@ -20,7 +20,7 @@ class cssparser {
 
   public function __construct($html = true) {
     // Register "destructor"
-    core_shutdown_manager::register_function(array(&$this, "finalize"));
+    \core\shutdown_manager::register_function([&$this, "finalize"]);
     $this->html = ($html != false);
     $this->Clear();
   }

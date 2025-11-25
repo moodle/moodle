@@ -117,7 +117,7 @@ class converter implements \core_files\converter_interface {
 
         // Copy the file to the tmp dir.
         $uniqdir = make_unique_writable_directory(make_temp_directory('core_file/conversions'));
-        \core_shutdown_manager::register_function('remove_dir', array($uniqdir));
+        \core\shutdown_manager::register_function('remove_dir', [$uniqdir]);
         $localfilename = $file->get_id() . '.' . $fromformat;
 
         $filename = $uniqdir . '/' . $localfilename;

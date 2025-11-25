@@ -63,7 +63,7 @@ class mysql_lock_factory implements lock_factory {
         // Save a reference to the global $DB so it will not be released while we still have open locks.
         $this->db = $DB;
 
-        \core_shutdown_manager::register_function([$this, 'auto_release']);
+        \core\shutdown_manager::register_function([$this, 'auto_release']);
     }
 
     /**

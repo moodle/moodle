@@ -22,6 +22,7 @@ use core_cache\searchable_cache_interface;
 use core_cache\store;
 use core\clock;
 use core\di;
+use core\shutdown_manager;
 
 /**
  * Redis Cache Store
@@ -689,7 +690,7 @@ class cachestore_redis extends store implements
 
             // If we haven't got it already, better register a shutdown function.
             if ($this->currentlocks === null) {
-                core_shutdown_manager::register_function([$this, 'shutdown_release_locks']);
+                shutdown_manager::register_function([$this, 'shutdown_release_locks']);
                 $this->currentlocks = [];
             }
 

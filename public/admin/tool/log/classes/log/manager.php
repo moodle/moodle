@@ -50,7 +50,7 @@ class manager implements \core\log\manager {
         $this->writers = array();
 
         // Register shutdown handler - this may be useful for buffering, file handle closing, etc.
-        \core_shutdown_manager::register_function(array($this, 'dispose'));
+        \core\shutdown_manager::register_function([$this, 'dispose']);
 
         $plugins = get_config('tool_log', 'enabled_stores');
         if (empty($plugins)) {

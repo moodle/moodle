@@ -18,7 +18,7 @@ namespace core\navigation;
 
 use core_cache\cache;
 use core_cache\session_cache;
-use core_shutdown_manager;
+use core\shutdown_manager;
 
 /**
  * The navigation_cache class is used for global and settings navigation data.
@@ -175,7 +175,7 @@ class navigation_cache {
     public function volatile($setting = true) {
         if (self::$volatilecaches === null) {
             self::$volatilecaches = [];
-            core_shutdown_manager::register_function(['navigation_cache', 'destroy_volatile_caches']);
+            shutdown_manager::register_function(['navigation_cache', 'destroy_volatile_caches']);
         }
 
         if ($setting) {

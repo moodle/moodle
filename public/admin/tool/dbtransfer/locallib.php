@@ -160,7 +160,7 @@ function tool_dbtransfer_get_drivers() {
 function tool_dbtransfer_create_maintenance_file() {
     global $CFG;
 
-    core_shutdown_manager::register_function('tool_dbtransfer_maintenance_callback');
+    \core\shutdown_manager::register_function('tool_dbtransfer_maintenance_callback');
 
     $options = new stdClass();
     $options->trusted = false;

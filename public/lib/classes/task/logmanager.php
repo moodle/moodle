@@ -96,7 +96,7 @@ class logmanager {
         // We register a shutdown handler to ensure that logs causing any failures are correctly disposed of.
         // Note: This must happen before the per-request directory is requested because the shutdown handler deletes the logfile.
         if (!self::$tasklogregistered) {
-            \core_shutdown_manager::register_function(function() {
+            \core\shutdown_manager::register_function(function (): void {
                 // These will only actually do anything if capturing is current active when the thread ended, which
                 // constitutes a failure.
                 \core\task\logmanager::finalise_log(true);

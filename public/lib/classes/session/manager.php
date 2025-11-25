@@ -722,7 +722,7 @@ class manager {
             // If debugging, take a snapshot of session at close and compare on shutdown to detect any accidental mutations.
             if (debugging()) {
                 self::$sessionatclose = (array) $_SESSION['SESSION'];
-                \core_shutdown_manager::register_function('\core\session\manager::check_mutated_closed_session');
+                \core\shutdown_manager::register_function('\core\session\manager::check_mutated_closed_session');
             }
 
             if (!$requireslock || !self::$requireslockdebug) {

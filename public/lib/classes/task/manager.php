@@ -26,7 +26,7 @@ namespace core\task;
 
 use core\lock\lock;
 use core\lock\lock_factory;
-use core_shutdown_manager;
+use core\shutdown_manager;
 
 define('CORE_TASK_TASKS_FILENAME', 'db/tasks.php');
 /**
@@ -1120,7 +1120,7 @@ class manager {
 
         // Add \core\task\manager::fail_running_task to shutdown manager, so we can ensure running tasks fail on shutdown.
         if (!self::$registeredshutdownhandler) {
-            core_shutdown_manager::register_function('\core\task\manager::fail_running_task');
+            shutdown_manager::register_function('\core\task\manager::fail_running_task');
 
             self::$registeredshutdownhandler = true;
         }
