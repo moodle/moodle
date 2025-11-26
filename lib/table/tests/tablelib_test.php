@@ -826,4 +826,33 @@ final class tablelib_test extends \advanced_testcase {
         $this->expectOutputRegex('/' . '<caption class="inline">' . $caption . '<\/caption>' . '/');
     }
 
+    /**
+     * Test formulas are escaped in exported tables.
+     */
+    public function test_table_exports_escaped_formulas(): void {
+        $table = new flexible_table('tablelib_test_export');
+        $table->define_baseurl('/invalid.php');
+        $table->define_columns(['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']);
+
+        ob_start();
+        $table->is_downloadable(true);
+        $table->is_downloading('csv');
+
+        $table->setup();
+        $table->add_data([
+            'column0' => "\t=SUM(1+1)", // With tab.
+            'column1' => "\r=SUM(1+1)", // With carriage return.
+            'column2' => "\n=SUM(1+1)", // With new line.
+            'column3' => "=SUM(1+1)",
+            'column4' => "=1+1",
+            'column5' => "+1+1",
+            'column6' => "-1+1",
+            'column7' => "@A1",
+            'column8' => "-", // Single dash (should not be escaped).
+        ]);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals("\n'=SUM(1+1),'=SUM(1+1),'=SUM(1+1),'=SUM(1+1),'=1+1,'+1+1,'-1+1,'@A1,-\n", substr($output, 3));
+    }
 }
