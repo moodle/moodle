@@ -257,7 +257,7 @@ $string['gradeessay'] = 'Grade essay questions ({$a->notgradedcount} not graded 
 $string['gradeis'] = 'Grade is {$a}';
 $string['gradeoptions'] = 'Grade options';
 $string['groupoverrides'] = 'Group overrides';
-$string['groupsnone'] = 'No groups you can access.';
+$string['groupsnone'] = 'There are no groups in this course.';
 $string['handlingofretakes'] = 'Grading method';
 $string['handlingofretakes_help'] = 'How the grade is calculated when students attempt the lesson more than once:
 
@@ -598,7 +598,7 @@ $string['usemean'] = 'Mean grade of all attempts';
 $string['usepassword'] = 'Password protected lesson';
 $string['usepassword_help'] = 'If enabled, a password is required in order to access the lesson.';
 $string['useroverrides'] = 'User overrides';
-$string['usersnone'] = 'No students have access to this lesson';
+$string['usersnone'] = 'There are no users enrolled in this course.';
 $string['view'] = 'View';
 $string['viewessayanswers'] = 'View essay answers';
 $string['viewgrades'] = 'View grades';
