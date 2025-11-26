@@ -1297,7 +1297,7 @@ class grade_report_grader extends grade_report {
         $html = '';
 
         $fulltable = new html_table();
-        $fulltable->attributes['class'] = 'gradereport-grader-table d-none';
+        $fulltable->attributes['class'] = 'table gradereport-grader-table d-none';
         $fulltable->id = 'user-grades';
         $fulltable->caption = get_string('summarygrader', 'gradereport_grader');
         $fulltable->captionhide = true;
