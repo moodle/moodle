@@ -63,9 +63,8 @@ class caching_content_item_readonly_repository implements content_item_readonly_
      * @return array the array of content items.
      */
     public function find_all_for_course(\stdClass $course, \stdClass $user): array {
-        global $USER;
         // Try to find this data in the cache first.
-        $key = $USER->id . '_' . $course->id;
+        $key = $user->id . '_' . $course->id;
         $contentitems = $this->cachestore->get($key);
         if ($contentitems !== false) {
             return $contentitems;
