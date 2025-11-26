@@ -305,17 +305,17 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                     array('title' => get_string('editchapter', 'mod_book', $titleunescaped)));
 
             $deleteaction = new confirm_action(get_string('deletechapter', 'mod_book', $titleunescaped));
-            $toc .= $OUTPUT->action_icon(
-                    new moodle_url('delete.php', [
-                            'id'        => $cm->id,
-                            'chapterid' => $ch->id,
-                            'sesskey'   => sesskey(),
-                            'confirm'   => 1,
-                        ]),
-                    new pix_icon('t/delete', get_string('deletechapter', 'mod_book', $title)),
-                    $deleteaction,
-                    ['title' => get_string('deletechapter', 'mod_book', $titleunescaped)]
-                );
+            $toc .= $OUTPUT->action_link(
+                new moodle_url('delete.php', [
+                    'id'        => $cm->id,
+                    'chapterid' => $ch->id,
+                    'sesskey'   => sesskey(),
+                    'confirm'   => 1,
+                ]),
+                $OUTPUT->pix_icon('t/delete', get_string('deletechapter', 'mod_book', $title)),
+                $deleteaction,
+                ['title' => get_string('deletechapter', 'mod_book', $titleunescaped)]
+            );
 
             if ($ch->hidden) {
                 $toc .= html_writer::link(new moodle_url('show.php', array('id' => $cm->id, 'chapterid' => $ch->id, 'sesskey' => $USER->sesskey)),
