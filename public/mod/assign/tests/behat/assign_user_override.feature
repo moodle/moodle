@@ -165,7 +165,7 @@ Feature: Assign user override
       | assign   | Assignment 2 | Assignment 2 description | C1     | 1         |
     And I am on the "Assignment 2" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
-    Then I should see "No groups you can access."
+    Then I should see "There are no groups in this course."
     And the "Add user override" "button" should be disabled
 
   Scenario: A teacher without accessallgroups permission should only be able to add user override for users that he/she shares groups with,

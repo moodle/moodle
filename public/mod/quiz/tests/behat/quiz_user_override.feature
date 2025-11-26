@@ -159,7 +159,7 @@ Feature: Quiz user override
       | activity | name      | course | idnumber | groupmode |
       | quiz     | Test quiz | C1     | quiz1    | 1         |
     When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
-    Then I should see "No groups you can access."
+    Then I should see "There are no groups in this course."
     And the "Add user override" "button" should be disabled
 
   Scenario: A non-editing teacher can see the overrides, but not change them
