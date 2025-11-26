@@ -95,8 +95,9 @@ function resource_get_post_actions() {
  */
 function resource_add_instance($data, $mform) {
     global $CFG, $DB;
-    require_once("$CFG->libdir/resourcelib.php");
+
     require_once("$CFG->dirroot/mod/resource/locallib.php");
+
     $cmid = $data->coursemodule;
     $data->timemodified = time();
 
@@ -122,7 +123,9 @@ function resource_add_instance($data, $mform) {
  */
 function resource_update_instance($data, $mform) {
     global $CFG, $DB;
-    require_once("$CFG->libdir/resourcelib.php");
+
+    require_once("$CFG->dirroot/mod/resource/locallib.php");
+
     $data->timemodified = time();
     $data->id           = $data->instance;
     $data->revision++;
