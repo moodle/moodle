@@ -168,4 +168,39 @@ class dataformat {
 
         return get_file_storage()->create_file_from_pathname($filerecord, $filepath);
     }
+
+    /**
+     * Escape formula spreadsheet values.
+     *
+     * Check values being used in spreadsheets and make them safe for inclusion.
+     * Following OWASP recommendations {@link https://owasp.org/www-community/attacks/CSV_Injection}.
+     *
+     * @param mixed $value Value to check.
+     * @return string|null Return escaped formula if detected.
+     */
+    public static function escape_spreadsheet_formula(mixed $value): ?string {
+        // Allow mixed input; only process strings.
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        // Moodle's null placeholder: exactly one dash.
+        if ($value === '-') {
+            return $value;
+        }
+
+        // Trim only for checking, not for modifying output.
+        $trimmed = ltrim($value);
+        if ($trimmed === '') {
+            return $value;
+        }
+
+        $formulacharacters = ['=', '+', '-', '@'];
+        // If trimmed version starts with formula character, escape it.
+        if (in_array($trimmed[0], $formulacharacters, true)) {
+            // Prepend single quote if value starts with a formula character.
+            return "'" . $value;
+        }
+        return $value;
+    }
 }
