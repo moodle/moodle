@@ -440,7 +440,7 @@ class course_edit_form extends moodleform {
         // When two elements we need a group.
         $buttonarray = array();
         $classarray = array('class' => 'form-submit');
-        if ($returnto !== 0) {
+        if (!empty($returnto)) {
             $buttonarray[] = &$mform->createElement('submit', 'saveandreturn', get_string('savechangesandreturn'), $classarray);
         }
         $buttonarray[] = &$mform->createElement('submit', 'saveanddisplay', get_string('savechangesanddisplay'), $classarray);
