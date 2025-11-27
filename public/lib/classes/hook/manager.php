@@ -678,9 +678,7 @@ final class manager implements
      * @return string
      */
     protected function get_cache_path(): string {
-        global $CFG;
-
-        return $CFG->localcachedir . '/hookcallbacks.json';
+        return make_localcache_directory('') . '/hookcallbacks.json';
     }
 
     /**
