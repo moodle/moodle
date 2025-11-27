@@ -1,4 +1,4 @@
-# This is a description for the TinyMCE 7 library integration with Moodle.
+# This is a description for the TinyMCE 8 library integration with Moodle.
 
 Please note that we have a clone of the official TinyMCE repository which contains the working build and branch for each release. This ensures build repeatability and gives us the ability to patch stable versions of Moodle for security fixes where relevant.
 
