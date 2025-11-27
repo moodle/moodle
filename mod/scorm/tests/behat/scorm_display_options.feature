@@ -29,20 +29,20 @@ Feature: Scorm display options
     When I press "Preview"
     # Confirm TOC display
     # Used css_element to check > and < button display in TOC since similar buttons also exist in navigation
-    Then I <tocdisplay> see "Golf Explained - Minimum Run-time Calls"
-    And "[title='Show']" "css_element" <showdisplay> exist
-    And "[title='Hide']" "css_element" <hidedisplay> exist
+    Then I <tocdisplay> see "Golf Explained - Minimum Run-time Calls" in the "#scorm_toc" "css_element"
+    And "Toggle table of contents" "button" <toggletoc> be visible
     # Confirm TOC dropdown display
     And "scoid" "select" <tocdropdown> exist
     # Confirm the navigation display
     And "[id='scorm_nav']" "css_element" <navbar> exist
 
     Examples:
-      | toc | shownavigation | tocdisplay | showdisplay | hidedisplay | tocdropdown | navbar     |
-      | 1   |                | should not | should      | should not  | should not  | should not |
-      | 2   | 1              | should     | should      | should not  | should      | should not |
-      | 0   | 0              | should     | should not  | should      | should not  | should not |
-      | 0   | 1              | should     | should not  | should      | should not  | should     |
+      | toc | shownavigation | tocdisplay | toggletoc   | tocdropdown | navbar     |
+      | 1   |                | should not | should      | should not  | should not |
+      | 2   | 1              | should not | should      | should      | should not |
+      | 0   | 0              | should     | should      | should not  | should not |
+      | 0   | 1              | should     | should      | should not  | should     |
+      | 3   | 0              | should not | should not  | should not  | should not |
 
   Scenario: Student can exit Scorm activity in single activity course format
     Given the following "activities" exist:
