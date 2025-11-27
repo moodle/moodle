@@ -200,6 +200,7 @@ class MoodleExcelWorksheet {
     public function write_string($row, $col, $str, $format = null) {
         // For PhpSpreadsheet library, the column indexes start on 1 (instead of 0 as before).
         $col += 1;
+        $str = \core\dataformat::escape_spreadsheet_formula($str);
 
         $this->worksheet->getStyleByColumnAndRow($col, $row + 1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
         $this->worksheet->setCellValueExplicitByColumnAndRow($col, $row + 1, $str, DataType::TYPE_STRING);
