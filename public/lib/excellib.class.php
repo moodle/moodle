@@ -207,6 +207,7 @@ class MoodleExcelWorksheet {
         $col += 1;
 
         $celladdress = CellAddress::fromColumnAndRow($col, $row + 1);
+        $str = \core\dataformat::escape_spreadsheet_formula($str);
 
         $this->worksheet->getStyle($celladdress)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
         $this->worksheet->getCell($celladdress)->setValueExplicit($str, DataType::TYPE_STRING);
