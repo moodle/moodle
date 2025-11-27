@@ -10,6 +10,30 @@
 - Add set_groupmode method to the core_courseformat\cmactions (course format actions)
 
   For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
+- Added `set_marker` and `remove_all_markers` methods to the `core_courseformat\sectionactions` class.
+
+  For more information see [MDL-86860](https://tracker.moodle.org/browse/MDL-86860)
+- Added the `set_visibility` method to the `core_courseformat\sectionactions` class. To optimize performance, this method does not return the list of affected resources, avoiding unnecessary database queries since the return value is unused.
+
+  For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
+
+### Changed
+
+- The `$cm` attribute in `activityoverviewbase` has been updated to public visibility, allowing direct access to the course module instance
+
+  For more information see [MDL-86660](https://tracker.moodle.org/browse/MDL-86660)
+- A new `available` attribute has been added to `activityname_exporter` class. It allows the external API to return the activity's availability status relative to the current user.
+
+  For more information see [MDL-86660](https://tracker.moodle.org/browse/MDL-86660)
+- Two new public static methods have been added to the `overviewtable` class: - `is_cm_displayable`: Determines if a course module should be listed in the overview table. - `is_cm_available`: Checks if a course module is accessible to the user (and should therefore be rendered as a link).
+
+  For more information see [MDL-86660](https://tracker.moodle.org/browse/MDL-86660)
+
+### Deprecated
+
+- The `set_section_visible` function has been deprecated and should no longer be used. Please consider using the equivalent method, `set_visibility`, in `core_courseformat\local\sectionactions` instead.
+
+  For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
 
 ## 5.1
 

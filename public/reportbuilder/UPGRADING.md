@@ -4,6 +4,9 @@
 
 ### Added
 
+- The text filter "Contains" and "Not contains" operators now support `*` and `?` wildcard characters for better text content filtering
+
+  For more information see [MDL-84082](https://tracker.moodle.org/browse/MDL-84082)
 - The base entity class now implements a default `initialise` method, that will automatically call each of the following methods to load entity report data:
 
   * `get_available_columns()`

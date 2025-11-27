@@ -15,6 +15,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Appending an exclamation mark to template names ignores theme overrides
 
   For more information see [MDL-77894](https://tracker.moodle.org/browse/MDL-77894)
+- The namespace for the `\core_shutdown_manager` has been moved to `\core\shutdown_manager`. The legacy namespace will continue to work for the moment.
+
+  For more information see [MDL-87046](https://tracker.moodle.org/browse/MDL-87046)
 - The `upgrade_ensure_not_running()` function has been deprecated and replaced
   with:
 
@@ -29,12 +32,35 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Changed
 
+- The `arg_separator.output` has been changed from a default of `amp;` to a default of `&` in line with PHP defaults.
+
+  If you were previously relying on the legacy default when using
+  `http_build_query()` then you should _actively_ specify the value as the third
+  parameter, for example:
+
+  ```
+  http_build_query($formdata, '', '&amp;');
+  ```
+
+  For more information see [MDL-71368](https://tracker.moodle.org/browse/MDL-71368)
 - The `core/drag_handle` template has been modified to use a native HTML button for a more accessible experience and a consistent look with other buttons on the page.
 
   For more information see [MDL-86846](https://tracker.moodle.org/browse/MDL-86846)
 - The Hook Manager now uses localcache instead of caching via MUC.
 
   For more information see [MDL-87107](https://tracker.moodle.org/browse/MDL-87107)
+
+#### Removed
+
+- The following AMD modules have been removed following the final deprecation process. It is no longer possible or necessary to manually register modal types. See MDL-78324 for further details.
+
+  - `core/modal_registry`
+  - `core/modal_factory`
+
+  For more information see [MDL-79182](https://tracker.moodle.org/browse/MDL-79182)
+- Removed $CFG->wwwrootendsinpublic flag to force users to configure their server accordingly.
+
+  For more information see [MDL-87072](https://tracker.moodle.org/browse/MDL-87072)
 
 #### Fixed
 
@@ -81,6 +107,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Deprecates set_coursemodule_groupmode in favor of core_courseformat\cmactions::set_groupmode
 
   For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
+- The `course_set_marker` function has been deprecated and should no longer be used. Please consider using the equivalent methods, `set_marker` or `remove_all_markers`, in `core_courseformat\local\sectionactions` instead.
+
+  For more information see [MDL-86860](https://tracker.moodle.org/browse/MDL-86860)
 
 ### core_courseformat
 
@@ -92,6 +121,30 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add set_groupmode method to the core_courseformat\cmactions (course format actions)
 
   For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
+- Added `set_marker` and `remove_all_markers` methods to the `core_courseformat\sectionactions` class.
+
+  For more information see [MDL-86860](https://tracker.moodle.org/browse/MDL-86860)
+- Added the `set_visibility` method to the `core_courseformat\sectionactions` class. To optimize performance, this method does not return the list of affected resources, avoiding unnecessary database queries since the return value is unused.
+
+  For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
+
+#### Changed
+
+- The `$cm` attribute in `activityoverviewbase` has been updated to public visibility, allowing direct access to the course module instance
+
+  For more information see [MDL-86660](https://tracker.moodle.org/browse/MDL-86660)
+- A new `available` attribute has been added to `activityname_exporter` class. It allows the external API to return the activity's availability status relative to the current user.
+
+  For more information see [MDL-86660](https://tracker.moodle.org/browse/MDL-86660)
+- Two new public static methods have been added to the `overviewtable` class: - `is_cm_displayable`: Determines if a course module should be listed in the overview table. - `is_cm_available`: Checks if a course module is accessible to the user (and should therefore be rendered as a link).
+
+  For more information see [MDL-86660](https://tracker.moodle.org/browse/MDL-86660)
+
+#### Deprecated
+
+- The `set_section_visible` function has been deprecated and should no longer be used. Please consider using the equivalent method, `set_visibility`, in `core_courseformat\local\sectionactions` instead.
+
+  For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
 
 ### core_grades
 
@@ -113,6 +166,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- The text filter "Contains" and "Not contains" operators now support `*` and `?` wildcard characters for better text content filtering
+
+  For more information see [MDL-84082](https://tracker.moodle.org/browse/MDL-84082)
 - The base entity class now implements a default `initialise` method, that will automatically call each of the following methods to load entity report data:
 
   * `get_available_columns()`

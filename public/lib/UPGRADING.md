@@ -7,6 +7,9 @@
 - Appending an exclamation mark to template names ignores theme overrides
 
   For more information see [MDL-77894](https://tracker.moodle.org/browse/MDL-77894)
+- The namespace for the `\core_shutdown_manager` has been moved to `\core\shutdown_manager`. The legacy namespace will continue to work for the moment.
+
+  For more information see [MDL-87046](https://tracker.moodle.org/browse/MDL-87046)
 - The `upgrade_ensure_not_running()` function has been deprecated and replaced
   with:
 
@@ -21,12 +24,35 @@
 
 ### Changed
 
+- The `arg_separator.output` has been changed from a default of `amp;` to a default of `&` in line with PHP defaults.
+
+  If you were previously relying on the legacy default when using
+  `http_build_query()` then you should _actively_ specify the value as the third
+  parameter, for example:
+
+  ```
+  http_build_query($formdata, '', '&amp;');
+  ```
+
+  For more information see [MDL-71368](https://tracker.moodle.org/browse/MDL-71368)
 - The `core/drag_handle` template has been modified to use a native HTML button for a more accessible experience and a consistent look with other buttons on the page.
 
   For more information see [MDL-86846](https://tracker.moodle.org/browse/MDL-86846)
 - The Hook Manager now uses localcache instead of caching via MUC.
 
   For more information see [MDL-87107](https://tracker.moodle.org/browse/MDL-87107)
+
+### Removed
+
+- The following AMD modules have been removed following the final deprecation process. It is no longer possible or necessary to manually register modal types. See MDL-78324 for further details.
+
+  - `core/modal_registry`
+  - `core/modal_factory`
+
+  For more information see [MDL-79182](https://tracker.moodle.org/browse/MDL-79182)
+- Removed $CFG->wwwrootendsinpublic flag to force users to configure their server accordingly.
+
+  For more information see [MDL-87072](https://tracker.moodle.org/browse/MDL-87072)
 
 ### Fixed
 
