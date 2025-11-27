@@ -160,7 +160,7 @@ Feature: Manage custom report schedules
     And I press "Edit schedule details" action in the "My updated schedule" report row
     And the following fields in the "Edit schedule details" "dialogue" match these values:
       | Name          | My updated schedule |
-     # | Starting from | ##tomorrow 11:00##  | Nope, can't: MDL-86255.
+      | Starting from | ##tomorrow 11:00##  |
       | All users: All site users | 1       |
       | Subject                | Tell me how to win your heart |
       | Body                   | For I haven't got a clue      |
