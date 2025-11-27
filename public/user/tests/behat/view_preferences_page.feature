@@ -76,3 +76,9 @@ Feature: Access to preferences page
     And I am on site homepage
     When I follow "Student 1"
     Then I should see "Preferences" in the "region-main" "region"
+
+  @accessibility @javascript
+  Scenario: Check the user preferences page against accessibility standards
+    Given I log in as "admin"
+    When I follow "Preferences" in the user menu
+    Then the page should meet accessibility standards with "best-practice" extra tests
