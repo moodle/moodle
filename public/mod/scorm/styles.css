@@ -164,11 +164,6 @@
     padding: 0;
 }
 
-#page-mod-scorm-player #scormmode {
-    float: left;
-    border: 0;
-}
-
 #page-mod-scorm-player.pagelayout-popup #page-content .region-content {
     padding: 0;
 }
