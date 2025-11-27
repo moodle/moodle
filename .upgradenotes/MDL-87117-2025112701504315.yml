@@ -1,0 +1,8 @@
+issueNumber: MDL-87117
+notes:
+  core_course:
+    - message: >-
+        Two optional new strings, `modulename_summary` and `modulename_tip`,
+        have been added to modules and will be displayed in the activity chooser
+        interface when defined.
+      type: improved

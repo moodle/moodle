@@ -31927,6 +31927,9 @@ table.calendartable caption {
   padding-bottom: 1.5rem;
   border-bottom: 1px solid #dee2e6;
 }
+.modchooser .optionsummary .optionsummary-summary {
+  font-size: larger;
+}
 
 /* Make modchooser modal full height and scrollable on small screens. */
 @media (max-width: 575.98px) {

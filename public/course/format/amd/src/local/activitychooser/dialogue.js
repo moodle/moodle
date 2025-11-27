@@ -516,8 +516,9 @@ class ActivityChooserDialogue {
         const searchResults = [];
         this.mappedModules.forEach((activity) => {
             const activityName = activity.title.toLowerCase();
+            const activitySummary = activity.summary.toLowerCase();
             const activityDesc = activity.help.toLowerCase();
-            if (activityName.includes(searchTerm) || activityDesc.includes(searchTerm)) {
+            if (activityName.includes(searchTerm) || activitySummary.includes(searchTerm) || activityDesc.includes(searchTerm)) {
                 searchResults.push(activity);
             }
         });
