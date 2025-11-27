@@ -192,6 +192,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             obj.setAttribute('allowfullscreen', 'allowfullscreen');
             obj.setAttribute('webkitallowfullscreen', 'webkitallowfullscreen');
             obj.setAttribute('mozallowfullscreen', 'mozallowfullscreen');
+            obj.setAttribute('title', toc_title);
             if (!window_name && node.title != null) {
                 obj.setAttribute('src', url_prefix + node.title);
             }
