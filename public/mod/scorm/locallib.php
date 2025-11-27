@@ -2018,7 +2018,16 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
     if ($tocheader) {
         $result->toc .= html_writer::end_div().html_writer::end_div();
         $result->toc .= html_writer::start_div('loading', array('id' => 'scorm_toc_toggle'));
-        $result->toc .= html_writer::tag('button', '', array('id' => 'scorm_toc_toggle_btn')).html_writer::end_div();
+        $toggletoclabel = get_string('toggletableofcontents', 'scorm');
+        $toggletocbutton = html_writer::tag('button', '', [
+            'id' => 'scorm_toc_toggle_btn',
+            'type' => 'button',
+            'class' => 'btn btn-secondary btn-sm mb-1',
+            'title' => $toggletoclabel,
+            'aria-label' => $toggletoclabel,
+            'aria-controls' => 'scorm_toc',
+        ]);
+        $result->toc .= $toggletocbutton . html_writer::end_div();
         $result->toc .= html_writer::start_div('', array('id' => 'scorm_content'));
         $result->toc .= html_writer::div('', '', array('id' => 'scorm_navpanel'));
         $result->toc .= html_writer::end_div().html_writer::end_div();
