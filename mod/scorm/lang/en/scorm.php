@@ -422,6 +422,7 @@ $string['syntax'] = 'Syntax error';
 $string['tag_error'] = 'Unknown tag ({$a->tag}) with this content: {$a->value}';
 $string['time'] = 'Time';
 $string['title'] = 'Title';
+$string['toggletableofcontents'] = 'Toggle table of contents';
 $string['toolbar'] = 'Show the toolbar';
 $string['too_many_attributes'] = 'Tag {$a->tag} has too many attributes';
 $string['too_many_children'] = 'Tag {$a->tag} has too many children';
