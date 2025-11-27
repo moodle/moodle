@@ -45,13 +45,16 @@ $string['indicator:socialbreadthdef'] = 'Folder social';
 $string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Folder resources during this analysis interval (Levels = No participation, Participant alone)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['modulename'] = 'Folder';
-$string['modulename_help'] = 'The folder module enables a teacher to display a number of related files inside a single folder, reducing scrolling on the course page. A zipped folder may be uploaded and unzipped for display, or an empty folder created and files uploaded into it.
+$string['modulename_help'] = '###### Key features
+- Organise files in folders and subfolders
+- Allow students to download the entire folder as a zip file
 
-A folder may be used
-
-* For a series of files on one topic, for example a set of past examination papers in pdf format or a collection of image files for use in student projects
-* To provide a shared uploading space for teachers on the course page (keeping the folder hidden so that only teachers can see it)';
+###### Ways to use it
+- Share a set of past documents for revision
+- Provide readings (articles, slides, PDF files) in one spot
+- Share downloadable images for an art or design project';
 $string['modulename_link'] = 'mod/folder/view';
+$string['modulename_summary'] = 'Create a folder on your course to upload and organise files.';
 $string['modulenameplural'] = 'Folders';
 $string['newfoldercontent'] = 'New folder content';
 $string['page-mod-folder-x'] = 'Any folder module page';

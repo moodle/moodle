@@ -380,10 +380,19 @@ $string['mod_form_field_welcome_default'] = 'Welcome to %%CONFNAME%%.';
 $string['mod_form_field_welcome_help'] = 'The welcome message is displayed when participants enter the room. If the field is left blank, then a default message set in the site administration is displayed.';
 $string['mod_form_locksettings'] = 'Lock settings';
 $string['modulename'] = 'BigBlueButton';
-$string['modulename_help'] = 'BigBlueButton is an open-source web conferencing system designed for online learning, which supports real-time sharing of audio, video, chat, slides, screen sharing, a multi-user whiteboard, breakout rooms, polling and emojis.
+$string['modulename_help'] = '###### Key features
+- Host live sessions with audio, video, and chat
+- Use built-in quizzes and polling tools
+- Share slides, your screen, or a collaborative whiteboard
+- Create breakout rooms for activities in groups
+- Record sessions so students can watch later
 
-Using BigBlueButton you can create a room for sessions such as live online classes, virtual office hours or group collaboration with remote students. The session can be recorded for later playback.';
+###### Ways to use it
+- Run a live online lecture where students can ask questions in real time
+- Hold virtual office hours
+- Organise group discussions using breakout rooms';
 $string['modulename_link'] = 'BigBlueButton/view';
+$string['modulename_summary'] = 'Host live online sessions with video, audio, and tools for presenting and collaborating.';
 $string['modulenameplural'] = 'BigBlueButton';
 $string['new_bigblubuttonbn_activities'] = 'BigBlueButton activity';
 $string['nosuchinstance'] = 'No such instance {$a->entity} with ID {$a->id}';

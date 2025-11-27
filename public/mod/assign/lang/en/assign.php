@@ -414,12 +414,19 @@ $string['messageprovider:assign_due_soon'] = 'Assignment due soon notification';
 $string['messageprovider:assign_overdue'] = 'Assignment overdue notification';
 $string['messageprovider:assign_notification'] = 'Assignment notifications';
 $string['modulename'] = 'Assignment';
-$string['modulename_help'] = 'The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback.
+$string['modulename_help'] = '###### Key features
+- Provide instructions and requirements for the assignment
+- Allow students to submit any kind of file or type directly into an online text editor
+- Manage deadlines and control whether late submissions are accepted
+- Use rubrics or marking guides to give grades and feedback
+- Students can submit individually or in groups
 
-Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, or audio and video clips. Alternatively, or in addition, the assignment may require students to type text directly into the text editor. An assignment can also be used to remind students of \'real-world\' assignments they need to complete offline, such as art work, and thus not require any digital content. Students can submit work individually or as a member of a group.
-
-When reviewing assignments, teachers can leave feedback comments and upload files, such as marked-up student submissions, documents with comments or spoken audio feedback. Assignments can be graded using a numerical or custom scale or an advanced grading method such as a rubric. Final grades are recorded in the gradebook.';
+###### Ways to use it
+- Collect essays or coursework for feedback and grading
+- Set group tasks where students submit one shared presentation
+- Record and grade offline work, such as a classroom performance or field trips';
 $string['modulename_link'] = 'mod/assignment/view';
+$string['modulename_summary'] = 'Collect student submissions such as essays, reports, or projects, and provide feedback and grades.';
 $string['modulenameplural'] = 'Assignments';
 $string['moreusers'] = '{$a} more...';
 $string['multipleteams'] = 'Member of more than one group';

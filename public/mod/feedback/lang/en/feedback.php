@@ -179,17 +179,17 @@ $string['messageprovider:message'] = 'Feedback reminder';
 $string['messageprovider:submission'] = 'Feedback notifications';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'Feedback';
-$string['modulename_help'] = 'The feedback activity enables a teacher to create a custom survey for collecting feedback from participants using a variety of question types including multiple choice, yes/no or text input.
+$string['modulename_help'] = '###### Key features
+- Build surveys with a variety of question types, including multiple choice, scales, and open text
+- Collect responses anonymously or with names
+- View responses as a summary, a detailed analysis, or by individual student
 
-Feedback responses may be anonymous if desired, and results may be shown to all participants or restricted to teachers only. Any feedback activities on the site home may also be completed by non-logged-in users.
-
-Feedback activities may be used
-
-* For course evaluations, helping improve the content for later participants
-* To enable participants to sign up for course modules, events etc.
-* For guest surveys of course choices, school policies etc.
-* For anti-bullying surveys in which students can report incidents anonymously';
+###### Ways to use it
+- Check for expectations and previous knowledge before starting a course
+- Run an end-of-course evaluation to gather student feedback
+- Provide a safe, anonymous way for students to report concerns';
 $string['modulename_link'] = 'mod/feedback/view';
+$string['modulename_summary'] = 'Create custom surveys using different question types.';
 $string['modulenameplural'] = 'Feedback';
 $string['move_item'] = 'Move this question';
 $string['multichoice'] = 'Multiple choice';

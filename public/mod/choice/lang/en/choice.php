@@ -89,16 +89,17 @@ $string['limita'] = 'Limit: {$a}';
 $string['limitno'] = 'Limit {no}';
 $string['limitanswers'] = 'Limit the number of responses allowed';
 $string['modulename'] = 'Choice';
-$string['modulename_help'] = 'The choice activity module enables a teacher to ask a single question and offer a selection of possible responses.
+$string['modulename_help'] = '###### Key features
+- Limit how many people can choose each option
+- Publish results or keep them hidden
+- Make results anonymous or show student names
 
-Choice results may be published after students have answered, after a certain date, or not at all. Results may be published with student names or anonymously (though teachers always see student names and their responses).
-
-A choice activity may be used
-
-* As a quick poll to stimulate thinking about a topic
-* To quickly test students\' understanding
-* To facilitate student decision-making, for example allowing students to vote on a direction for the course';
+###### Ways to use it
+- Let students select a seminar group or project team
+- Ask students to vote for a preferred date or topic
+- Check the understanding of a concept with a quick, anonymous question';
 $string['modulename_link'] = 'mod/choice/view';
+$string['modulename_summary'] = 'Run a single-question poll and let students choose from a list of options.';
 $string['modulenameplural'] = 'Choices';
 $string['moveselectedusersto'] = 'Move selected users to...';
 $string['multiplenotallowederror'] = 'Multiple answers are not allowed in this choice';

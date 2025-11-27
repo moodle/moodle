@@ -139,18 +139,18 @@ $string['migrationfinishednowikis'] = 'Migration finished, no wikis were migrate
 $string['missingpages'] = 'Pages without content';
 $string['modified'] = 'Modified';
 $string['modulename'] = 'Wiki';
-$string['modulename_help'] = 'The wiki activity module enables participants to add and edit a collection of web pages. A wiki can be collaborative, with everyone being able to edit it, or individual, where everyone has their own wiki which only they can edit.
+$string['modulename_help'] = '###### Key features
+- Add text, images, links, and media to pages
+- Set up a collaborative wiki for the whole class, or individual wikis for each student
+- View each student\'s contributions with a full page history
 
-A history of previous versions of each page in the wiki is kept, listing the edits made by each participant.
-
-Wikis have many uses, such as
-
-* For group lecture notes or study guides
-* For members of a faculty to plan a scheme of work or meeting agenda together
-* For students to collaboratively author an online book, creating content on a topic set by their tutor
-* For collaborative storytelling or poetry creation, where each participant writes a line or verse
-* As a personal journal for examination notes or revision (using an individual wiki)';
+###### Ways to use it
+- Build shared lecture notes or study guides
+- Develop a group project where you can track the contributions of each student
+- Have students create a story or case study together, with each person adding sections
+- Have each student keep a personal wiki to track drafts, notes, or planning';
 $string['modulename_link'] = 'mod/wiki/view';
+$string['modulename_summary'] = 'Allow students to create and edit a collection of web pages collaboratively or individually.';
 $string['modulenameplural'] = 'Wikis';
 $string['myentries'] = 'My entries';
 $string['navigation'] = 'Navigation';

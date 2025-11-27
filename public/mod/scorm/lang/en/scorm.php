@@ -276,15 +276,16 @@ $string['missingparam'] = 'A required parameter is missing or wrong';
 $string['missing_tag'] = 'Missing tag {$a->tag}';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'SCORM package';
-$string['modulename_help'] = 'A SCORM package is a collection of files which are packaged according to an agreed standard for learning objects. The SCORM activity module enables SCORM or AICC packages to be uploaded as a zip file and added to a course.
+$string['modulename_help'] = '###### Key features
+- Add SCORM content packages as zip files
+- Track student progress, completion, and grades
 
-Content is usually displayed over several pages, with navigation between the pages. There are various options for displaying content in a pop-up window, with a table of contents, with navigation buttons etc. SCORM activities generally include questions, with grades being recorded in the gradebook.
-
-SCORM activities may be used
-
-* For presenting multimedia content and animations
-* As an assessment tool';
+###### Ways to use it
+- Import a commercial e-learning SCORM module and track student performance
+- Provide an interactive tutorial and track whether students complete it
+- Deliver a simulation packaged in SCORM format';
 $string['modulename_link'] = 'mod/scorm/view';
+$string['modulename_summary'] = 'Upload and display existing SCORM content. SCORM is commonly used with third-party courseware.';
 $string['modulenameplural'] = 'SCORM packages';
 $string['nav'] = 'Show Navigation';
 $string['nav_help'] = 'This setting specifies whether to show or hide the navigation buttons and their position.
