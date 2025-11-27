@@ -228,7 +228,8 @@ echo html_writer::div(html_writer::tag('script', '', array('id' => 'external-sco
 if ($scorm->hidetoc == SCORM_TOC_POPUP or $mode == 'browse' or $mode == 'review') {
     echo html_writer::start_div('mb-3', array('id' => 'scormtop'));
     if ($mode == 'browse' || $mode == 'review') {
-        echo html_writer::div(get_string("{$mode}mode", 'scorm'), 'scorm-left h3', ['id' => 'scormmode']);
+        $headinglevel = $PAGE->activityheader->get_heading_level();
+        echo $OUTPUT->heading(get_string("{$mode}mode", 'scorm'), $headinglevel, 'scorm-left', 'scormmode');
     }
     if ($scorm->hidetoc == SCORM_TOC_POPUP) {
         echo html_writer::div($result->tocmenu, 'scorm-right', array('id' => 'scormnav'));

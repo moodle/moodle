@@ -73,6 +73,7 @@ $string['badarchive'] = 'You must provide a valid zip file';
 $string['browse'] = 'Preview';
 $string['browsed'] = 'Browsed';
 $string['browsemode'] = 'Preview mode';
+$string['browsemodewithname'] = 'Preview mode: {$a}';
 $string['browserepository'] = 'Browse repository';
 $string['cachedef_elements'] = 'Element cache';
 $string['calculatedweight'] = 'Calculated weight';
