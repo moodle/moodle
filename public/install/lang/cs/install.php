@@ -68,6 +68,8 @@ $string['pathsunsecuredataroot'] = 'Umístění datového adresáře není bezpe
 $string['pathswrongadmindir'] = 'Adresář pro správu serveru (admin) neexistuje';
 $string['phpextension'] = '{$a} PHP rozšíření';
 $string['phpversion'] = 'Verze PHP';
+$string['webserverconfigproblemdescription'] = 'Váš webový server není nakonfigurován tak, aby bránil přístupu k souborům mimo adresář /public. Podrobnosti o konfiguraci webového serveru naleznete na adrese <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a>. Po opětovné konfiguraci prosím <a href="{$a}">znovu navštivte kořenový adresář webu</a>.';
+$string['webservernotconfigured'] = 'Webový server není nakonfigurován';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Tuto stránku vidíte, protože jste úspěšně nainstalovali a spustili  balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
 $string['welcomep30'] = 'Tato verze <strong>{$a->installername}</strong> obsahuje aplikace k vytvoření prostředí, ve kterém bude provozován váš <strong>Moodle</strong>. Jmenovitě se jedná o:';
