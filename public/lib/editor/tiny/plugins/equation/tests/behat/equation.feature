@@ -14,7 +14,8 @@ Feature: Equation editor
     And I click on the "Equation editor" button for the "Description" TinyMCE editor
     And the "class" attribute of "Edit equation using" "field" should contain "text-ltr"
     And I set the field "Edit equation using" to " = 1 \div 0"
-    And I click on "\infty" "button"
+    # The normal pointer click no longer reaches the button in MathJax 4.0.0. Force the click via JS instead.
+    And I click on "\infty" "button" skipping visibility check
     And I click on "Save equation" "button"
     And I click on "Update profile" "button"
     And I follow "Profile" in the user menu
