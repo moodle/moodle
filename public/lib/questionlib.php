@@ -501,7 +501,7 @@ function question_delete_activity($cm, $notused = false, bool $coursedeletion = 
  * @param context $newcontext The Moodle context the questions are being moved to, must be module context.
  */
 function question_move_question_tags_to_new_context(array $questions, context $newcontext): void {
-
+    global $DB;
     if ($newcontext->contextlevel !== CONTEXT_MODULE) {
         debugging("Invalid contextlevel: {$newcontext->contextlevel}", DEBUG_DEVELOPER);
     }
@@ -512,11 +512,12 @@ function question_move_question_tags_to_new_context(array $questions, context $n
     }, $questions);
     $questionstagobjects = core_tag_tag::get_items_tags('core_question', 'question', $questionids);
 
+    $transaction = $DB->start_delegated_transaction();
     foreach ($questions as $question) {
         $tagobjects = $questionstagobjects[$question->id] ?? [];
 
         foreach ($tagobjects as $tagobject) {
-            $tagid = $tagobject->taginstanceid;
+            $taginstanceid = $tagobject->taginstanceid;
             $tagcontextid = $tagobject->taginstancecontextid;
             $istaginnewcontext = $tagcontextid == $newcontext->id;
 
@@ -526,7 +527,15 @@ function question_move_question_tags_to_new_context(array $questions, context $n
                 continue;
             }
 
-            $instancesfornewcontext[] = $tagid;
+            $instancekey = implode('-', ['core_question', 'question', $question->id, $tagobject->tiuserid, $tagobject->id]);
+            if (array_key_exists($instancekey, $instancesfornewcontext)) {
+                // We have an identical instance that we are already moving to the new context. This instance will be a duplicate,
+                // so delete it.
+                $DB->delete_records('tag_instance', ['id' => $taginstanceid]);
+                continue;
+            }
+
+            $instancesfornewcontext[$instancekey] = $taginstanceid;
         }
     }
 
@@ -534,6 +543,7 @@ function question_move_question_tags_to_new_context(array $questions, context $n
         // Update the tag instances to the new context id.
         core_tag_tag::change_instances_context($instancesfornewcontext, $newcontext);
     }
+    $transaction->allow_commit();
 }
 
 /**
