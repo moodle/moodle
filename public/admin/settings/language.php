@@ -13,7 +13,8 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configcheckbox('autolangusercreation', new lang_string('autolangusercreation', 'admin'),
         new lang_string('configautolangusercreation', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('langmenu', new lang_string('langmenu', 'admin'), new lang_string('configlangmenu', 'admin'), 1));
-    $temp->add(new admin_setting_langlist());
+    $temp->add(new admin_setting_langlist('langlist'));
+    $temp->add(new admin_setting_langlist('langscrawlable'));
     $temp->add(new admin_setting_configcheckbox('langcache', new lang_string('langcache', 'admin'), new lang_string('langcache_desc', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('langstringcache', new lang_string('langstringcache', 'admin'), new lang_string('configlangstringcache', 'admin'), 1));
     $temp->add(new admin_setting_configtext('locale', new lang_string('localetext', 'admin'), new lang_string('configlocale', 'admin'), '', PARAM_FILE));
