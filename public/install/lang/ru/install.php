@@ -67,6 +67,8 @@ $string['pathsunsecuredataroot'] = 'Расположение каталога д
 $string['pathswrongadmindir'] = 'Каталог admin не существует';
 $string['phpextension'] = 'Расширение PHP «{$a}»';
 $string['phpversion'] = 'Версия PHP';
+$string['webserverconfigproblemdescription'] = 'Ваш веб-сервер не настроен на предотвращение доступа к файлам вне каталога /public. Подробнее о настройке веб-сервера см. на странице <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a>. После повторной настройки <a href="{$a}">снова перейдите в корневой каталог веб-сервера</a>.';
+$string['webservernotconfigured'] = 'Веб-сервер не настроен';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Вы видите эту страницу, потому что успешно установили и запустили на своем компьютере набор программ <strong>{$a->packname} {$a->packversion}</strong>. Поздравляем!';
 $string['welcomep30'] = 'Эта версия набора программ <strong>{$a->installername}</strong> включает следующие программы, необходимые для создания среды, в которой будет работать <strong>Moodle</strong>:';
