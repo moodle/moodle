@@ -5285,6 +5285,15 @@ class restore_create_categories_and_questions extends restore_structure_step {
                 $this->set_mapping('question_bank_entry', $this->latestqbe->oldid, $this->latestqbe->newid);
             }
 
+            if (
+                ($data->qtype === 'random')
+                && ($this->latestversion->status == \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN)
+            ) {
+                // Ensure that this newly created question is considered by
+                // \qtype_random\task\remove_unused_questions.
+                $this->latestversion->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT;
+            }
+
             // Now store the question.
             $newitemid = $DB->insert_record('question', $data);
             $this->set_mapping('question', $oldid, $newitemid);
