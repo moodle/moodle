@@ -2,7 +2,7 @@
 $aust-blue: #004B87;
 $aust-gold: #FDB913;
 
-// --- GLOBAL OVERRIDES (Light Mode) ---
+// --- GLOBAL OVERRIDES (Applies to Light Mode & Base) ---
 
 .bg-primary {
     background-color: $aust-blue !important;
@@ -32,11 +32,18 @@ a {
     }
 }
 
-// Top Navbar (Light Mode)
-.navbar-light.bg-white {
+// Top Navbar (Unified Style - AuST Blue for both Light & Dark)
+nav.navbar,
+nav.navbar-light,
+.navbar.navbar-light,
+.navbar-light.bg-white,
+nav.navbar.navbar-light.bg-white,
+nav.fixed-top.navbar.navbar-light.bg-white,
+.fixed-top.navbar-light.bg-white {
     background-color: $aust-blue !important;
-    border-bottom: 4px solid $aust-gold;
+    border-bottom: 4px solid $aust-gold !important;
 
+    // Logo styling
     .navbar-brand {
         background-image: url([[pix:theme|logo_small]]);
         background-repeat: no-repeat;
@@ -45,23 +52,82 @@ a {
         padding-left: 50px;
         height: 40px;
         width: auto;
-        color: transparent !important;
+        // FIX: Set color to White directly so text is visible
+        color: #fff !important;
+        font-weight: bold;
+        font-size: 1.25rem;
+        display: flex; // Ensure proper alignment if needed
+        align-items: center;
 
+        &:hover {
+            color: #fff !important; // Keep white on hover
+        }
+
+        // Keep this just in case, but the main text is likely direct child
         .site-name {
-            display: none;
+            color: #fff !important;
         }
     }
 
-    .nav-link {
-        color: rgba(255, 255, 255, 0.9) !important;
+    // Reset backgrounds for children to transparent
+    .navbar-nav,
+    .more-nav,
+    ul.navbar-nav,
+    ul.more-nav,
+    .nav,
+    .nav-item,
+    li.nav-item,
+    .navbar-nav .nav-item,
+    .more-nav .nav-item,
+    ul .nav-item {
+        background-color: transparent !important;
+    }
 
-        &:hover {
-            color: $aust-gold !important;
-        }
+    // Links - White text
+    .nav-link,
+    a,
+    .nav-item .nav-link,
+    .nav-item a {
+        color: rgba(255, 255, 255, 0.9) !important;
+        background-color: transparent !important;
+    }
+
+    // Hover
+    .nav-item:hover,
+    .nav-link:hover,
+    a:hover {
+        color: $aust-gold !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    // Active
+    .nav-item.active,
+    .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: #fff !important;
     }
 
     .btn {
         color: white !important;
+    }
+}
+
+// Secondary Navigation (Global - Active State)
+.secondary-navigation,
+.secondary-navigation .moremenu,
+.secondary-navigation .navigation,
+.secondary-navigation .navbar-nav,
+.secondary-navigation .nav-tabs,
+nav.moremenu {
+    .nav-link {
+        &.active {
+            border-bottom: 2px solid $aust-gold !important;
+            color: $aust-gold !important;
+        }
+
+        &:hover {
+            color: $aust-gold !important;
+        }
     }
 }
 
@@ -94,6 +160,61 @@ a {
         color: #e0e0e0 !important;
     }
 
+    // Login Page Specifics
+    // 1. Wrapper/Container should be DARK
+    .login-wrapper,
+    .login-container {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+
+    // 2. The Card itself (.loginform) should be AuST Blue (Flipped)
+    .loginform {
+        background-color: $aust-blue !important; // AuST Blue Card
+        color: #fff !important; // White text on Blue
+        border-radius: 8px;
+        padding: 20px;
+
+        .login-heading {
+            color: #fff !important;
+        }
+
+        // Inputs: Dark background, White text
+        .form-control,
+        input {
+            background-color: #2c2c2c !important; // Dark input
+            border: 1px solid #555 !important;
+            color: #fff !important; // White text
+
+            &::placeholder {
+                color: #aaa !important;
+            }
+        }
+
+        // Buttons: All buttons Orange
+        .btn,
+        .btn-primary,
+        .btn-secondary,
+        button {
+            background-color: $aust-gold !important;
+            border-color: $aust-gold !important;
+            color: #000 !important; // Black text on Orange
+
+            &:hover {
+                background-color: darken($aust-gold, 10%) !important;
+            }
+        }
+
+        .d-flex {
+            color: #fff !important;
+        }
+
+        a {
+            color: $aust-gold !important; // Gold links on Blue for visibility
+            text-decoration: underline;
+        }
+    }
+
     // Headers
     header#page-header,
     .page-header-headings,
@@ -102,63 +223,24 @@ a {
         color: #fff !important;
     }
 
-    // TOP NAVBAR - FORCE ALL BLACK BACKGROUNDS TO BLUE/TRANSPARENT
-    nav.navbar,
-    nav.navbar-light,
-    .navbar.navbar-light,
-    .navbar-light.bg-white,
-    nav.navbar.navbar-light.bg-white,
-    nav.fixed-top.navbar.navbar-light.bg-white,
-    .fixed-top.navbar-light.bg-white {
-        background-color: $aust-blue !important;
-        border-bottom: 4px solid $aust-gold !important;
+    // Login Page Header (AuST Blue)
+    // Force the navbar to be Blue in dark mode
+    .pagelayout-login {
 
-        // Target ALL possible navbar child containers
-        .navbar-nav,
-        .more-nav,
-        ul.navbar-nav,
-        ul.more-nav,
-        .nav {
-            background-color: transparent !important;
-        }
+        nav.navbar,
+        header.navbar,
+        .fixed-top {
+            background-color: $aust-blue !important;
+            border-bottom: 4px solid $aust-gold !important;
 
-        // Target ALL .nav-item elements (THE BLACK BACKGROUNDS!)
-        .nav-item,
-        li.nav-item,
-        .navbar-nav .nav-item,
-        .more-nav .nav-item,
-        ul .nav-item {
-            background-color: transparent !important;
-        }
-
-        // Links - white text
-        .nav-link,
-        a,
-        .nav-item .nav-link,
-        .nav-item a {
-            color: #fff !important;
-            background-color: transparent !important;
-        }
-
-        // Hover
-        .nav-item:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-        }
-
-        .nav-link:hover,
-        a:hover {
-            color: $aust-gold !important;
-        }
-
-        // Active
-        .nav-item.active,
-        .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.15) !important;
-            color: #fff !important;
+            // Ensure text is white in the blue header
+            .navbar-brand {
+                color: #fff !important;
+            }
         }
     }
 
-    // SECONDARY NAVBAR - DARK GREY
+    // Secondary Navbar (Dark Mode Specifics)
     .secondary-navigation,
     .secondary-navigation .moremenu,
     .secondary-navigation .navigation,
@@ -185,7 +267,7 @@ a {
         }
     }
 
-    // Cards & Containers
+    // Cards & Containers (General)
     .card,
     .card-body,
     .well,
@@ -199,7 +281,14 @@ a {
         color: #e0e0e0 !important;
     }
 
-    // Form Controls
+    // Override Card for Login specifically again to be safe
+    .pagelayout-login .card,
+    .pagelayout-login .card-body {
+        background-color: $aust-blue !important;
+        color: #fff !important;
+    }
+
+    // Form Controls (General Dark Mode)
     .form-control,
     .custom-select,
     input,
