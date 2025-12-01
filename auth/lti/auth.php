@@ -104,6 +104,7 @@ class auth_plugin_lti extends \auth_plugin_base {
      * @param int $provisioningmode the desired account provisioning mode, which controls the auth flow for unbound users.
      * @param array $legacyconsumersecrets an array of secrets used by the legacy consumer if a migration claim exists.
      * @throws coding_exception if the specified provisioning mode is invalid.
+     * @throws \core\exception\moodle_exception if user authentication fails.
      */
     public function complete_login(array $launchdata, moodle_url $returnurl, int $provisioningmode,
             array $legacyconsumersecrets = []): void {
@@ -111,6 +112,19 @@ class auth_plugin_lti extends \auth_plugin_base {
         // The platform user is already linked with a user account.
         if ($this->get_user_binding($launchdata['iss'], $launchdata['sub'])) {
             $user = $this->find_or_create_user_from_launch($launchdata);
+
+            if ($user->suspended) {
+                $failurereason = AUTH_LOGIN_SUSPENDED;
+                $event = \core\event\user_login_failed::create([
+                    'userid' => $user->id,
+                    'other' => [
+                        'username' => $user->username,
+                        'reason' => $failurereason
+                    ]
+                ]);
+                $event->trigger();
+                throw new \core\exception\moodle_exception('invalidlogin', 'core');
+            }
 
             if (isloggedin()) {
                 // If a different user is currently logged in, authenticate the linked user instead.
