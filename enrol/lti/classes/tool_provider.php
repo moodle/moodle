@@ -259,6 +259,20 @@ class tool_provider extends ToolProvider {
             // Get the updated user record.
             $user = $DB->get_record('user', ['id' => $user->id]);
         } else {
+            if ($dbuser->suspended) {
+                require_once($CFG->libdir . '/authlib.php');
+                $failurereason = AUTH_LOGIN_SUSPENDED;
+                $event = \core\event\user_login_failed::create([
+                    'userid' => $dbuser->id,
+                    'other' => [
+                        'username' => $dbuser->username,
+                        'reason' => $failurereason
+                    ]
+                ]);
+                $event->trigger();
+                throw new \core\exception\moodle_exception('invalidlogin', 'core');
+            }
+
             if (helper::user_match($user, $dbuser)) {
                 $user = $dbuser;
             } else {
