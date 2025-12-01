@@ -576,7 +576,7 @@ class core_renderer extends renderer_base {
         // for now. This will be replaced with the real content in {@see core_renderer::footer()}.
         $output = '';
         if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmlfooter)) {
-            $output .= "\n" . $CFG->additionalhtmlfooter;
+            $output .= "\n" . format_string($CFG->additionalhtmlfooter, false, ['context' => $this->page->context]);
         }
         $output .= $this->unique_end_html_token;
         return $output;
