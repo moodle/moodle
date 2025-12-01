@@ -170,8 +170,11 @@ nav.moremenu {
     .pagelayout-admin #page,
     .pagelayout-standard #page,
     .pagelayout-incourse #page,
-    #page.drawers {
+    #page.drawers,
+    .pagelayout-login #page,
+    body.pagelayout-login {
         background-color: #121212 !important;
+        background-image: none !important; // Ensure no background image
         color: #e0e0e0 !important;
     }
 
@@ -181,6 +184,12 @@ nav.moremenu {
     .login-container {
         background-color: #121212 !important;
         color: #e0e0e0 !important;
+    }
+
+    // Fix for potential top white bar (toast wrapper or fixed top elements)
+    .toast-wrapper,
+    .fixed-top {
+        background-color: transparent !important;
     }
 
     // 2. The Card itself (.loginform) should be AuST Blue (Flipped)
