@@ -3074,9 +3074,7 @@ class assign {
         if (!$users) {
             if ($this->is_blind_marking()) {
                 $blindid = optional_param('blindid', 0, PARAM_INT);
-                if ($blindid) {
-                    $users = $this->get_user_id_for_uniqueid($blindid);
-                }
+                $users = $this->get_user_id_for_uniqueid($blindid);
             }
             // We need users, if not found by blindid.
             if (!$users) {
@@ -4396,13 +4394,25 @@ class assign {
         $userid = optional_param('userid', 0, PARAM_INT);
         $blindid = optional_param('blindid', 0, PARAM_INT);
 
-        if ($this->is_blind_marking() && !$userid && $blindid) {
-            $userid = $this->get_user_id_for_uniqueid($blindid);
-        }
+        // Construct the base URL parameters for the confirm and cancel actions.
+        $urlparams = [
+            'id' => $this->get_course_module()->id,
+            'action' => 'removesubmission',
+            'sesskey' => sesskey(),
+        ];
 
-        // If no userid specified, default to current user.
-        if (!$userid) {
+        // Determine the correct user ID.
+        if ($userid) {
+            // Real user ID was explicitly provided.
+            $urlparams['userid'] = $userid;
+        } elseif ($this->is_blind_marking() && $blindid) {
+            // Blind marking is in use. Resolve anonymized (blind) ID to the real user ID to obtain the user object later.
+            $userid = $this->get_user_id_for_uniqueid($blindid);
+            $urlparams['blindid'] = $blindid;
+        } else {
+            // Default to the currently logged-in user (e.g. user deleting their own submission scenario).
             $userid = $USER->id;
+            $urlparams['userid'] = $userid;
         }
 
         if (!$this->can_edit_submission($userid, $USER->id)) {
@@ -4417,10 +4427,6 @@ class assign {
                                     $this->get_course_module()->id);
         $o .= $this->get_renderer()->render($header);
 
-        $urlparams = array('id' => $this->get_course_module()->id,
-                           'action' => 'removesubmission',
-                           'userid' => $userid,
-                           'sesskey' => sesskey());
         $confirmurl = new moodle_url('/mod/assign/view.php', $urlparams);
 
         $urlparams = array('id' => $this->get_course_module()->id,
@@ -8360,9 +8366,7 @@ class assign {
         if (!$userid) {
             if ($this->is_blind_marking()) {
                 $blindid = optional_param('blindid', 0, PARAM_INT);
-                if ($blindid) {
-                    $userid = $this->get_user_id_for_uniqueid($blindid);
-                }
+                $userid = $this->get_user_id_for_uniqueid($blindid);
             }
 
             // Userid is required, if not found by blindid.
