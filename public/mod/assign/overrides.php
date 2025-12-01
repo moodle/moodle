@@ -24,31 +24,32 @@
 
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot.'/mod/assign/lib.php');
-require_once($CFG->dirroot.'/mod/assign/locallib.php');
-require_once($CFG->dirroot.'/mod/assign/override_form.php');
+require_once($CFG->dirroot . '/mod/assign/lib.php');
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+require_once($CFG->dirroot . '/mod/assign/override_form.php');
 
 
 $cmid = required_param('cmid', PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA); // One of 'user' or 'group', default is 'group'.
 
 $action   = optional_param('action', '', PARAM_ALPHA);
-$redirect = $CFG->wwwroot.'/mod/assign/overrides.php?cmid=' . $cmid . '&amp;mode=group';
+$redirect = $CFG->wwwroot . '/mod/assign/overrides.php?cmid=' . $cmid . '&amp;mode=group';
 
-list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'assign');
-$assign = $DB->get_record('assign', array('id' => $cm->instance), '*', MUST_EXIST);
+[$course, $cm] = get_course_and_cm_from_cmid($cmid, 'assign');
+$assign = $DB->get_record('assign', ['id' => $cm->instance], '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 
 $context = context_module::instance($cm->id);
 
 // Check the user has the required capabilities to list overrides.
-require_capability('mod/assign:manageoverrides', $context);
+$manager = new mod_assign\override_manager($assign, $context);
+$manager->require_manage_capability();
 
 $assigngroupmode = groups_get_activity_groupmode($cm);
 $accessallgroups = ($assigngroupmode == NOGROUPS) || has_capability('moodle/site:accessallgroups', $context);
 
-$overridecountgroup = $DB->count_records('assign_overrides', array('userid' => null, 'assignid' => $assign->id));
+$overridecountgroup = $DB->count_records('assign_overrides', ['userid' => null, 'assignid' => $assign->id]);
 
 // Get the course groups that the current user can access.
 $groups = $accessallgroups ? groups_get_all_groups($cm->course) : groups_get_activity_allowed_groups($cm);
@@ -63,7 +64,7 @@ if ($mode != "user" and $mode != "group") {
 }
 $groupmode = ($mode == "group");
 
-$url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $cm->id, 'mode' => $mode));
+$url = new moodle_url('/mod/assign/overrides.php', ['cmid' => $cm->id, 'mode' => $mode]);
 
 $PAGE->set_url($url);
 navigation_node::override_active_url(new moodle_url('/mod/assign/overrides.php', ['cmid' => $cmid]));
@@ -73,7 +74,7 @@ if ($action == 'movegroupoverride') {
     $dir = required_param('dir', PARAM_ALPHA);
 
     if (confirm_sesskey()) {
-        move_group_override($id, $dir, $assign->id);
+        $manager->move_group_override($id, $dir);
     }
     redirect($redirect);
 }
@@ -87,7 +88,7 @@ $activityheader = $PAGE->activityheader;
 $activityheader->set_attrs([
     'description' => '',
     'hidecompletion' => true,
-    'title' => $activityheader->is_title_allowed() ? format_string($assign->name, true, ['context' => $context]) : ""
+    'title' => $activityheader->is_title_allowed() ? format_string($assign->name, true, ['context' => $context]) : "",
 ]);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('overrides', 'mod_assign'), 2);
@@ -96,78 +97,31 @@ $renderer = $PAGE->get_renderer('mod_assign');
 echo $renderer->render($overridemenu);
 
 // Delete orphaned group overrides.
-$sql = 'SELECT o.id
-          FROM {assign_overrides} o
-     LEFT JOIN {groups} g ON o.groupid = g.id
-         WHERE o.groupid IS NOT NULL
-               AND g.id IS NULL
-               AND o.assignid = ?';
-$params = array($assign->id);
-$orphaned = $DB->get_records_sql($sql, $params);
-if (!empty($orphaned)) {
-    $DB->delete_records_list('assign_overrides', 'id', array_keys($orphaned));
-}
+$manager->delete_orphaned_group_overrides();
 
 $overrides = [];
 
 // Fetch all overrides.
 if ($groupmode) {
     $colname = get_string('group');
-    // To filter the result by the list of groups that the current user has access to.
-    if ($groups) {
-        $params = ['assignid' => $assign->id];
-        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
-        $params += $inparams;
-
-        $sql = "SELECT o.*, g.name
-                  FROM {assign_overrides} o
-                  JOIN {groups} g ON o.groupid = g.id
-                 WHERE o.assignid = :assignid AND g.id $insql
-              ORDER BY o.sortorder";
-
-        $overrides = $DB->get_records_sql($sql, $params);
-    }
+    $overrides = $manager->get_group_overrides_for_listing($groups);
 } else {
     $colname = get_string('user');
-    list($sort, $params) = users_order_by_sql('u');
-    $params['assignid'] = $assign->id;
-
-    $userfieldsapi = \core_user\fields::for_name();
-    if ($accessallgroups) {
-        $sql = 'SELECT o.*, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects . '
-                  FROM {assign_overrides} o
-                  JOIN {user} u ON o.userid = u.id
-                 WHERE o.assignid = :assignid
-              ORDER BY ' . $sort;
-
-        $overrides = $DB->get_records_sql($sql, $params);
-    } else if ($groups) {
-        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
-        $params += $inparams;
-
-        $sql = 'SELECT o.*, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects . '
-                  FROM {assign_overrides} o
-                  JOIN {user} u ON o.userid = u.id
-                  JOIN {groups_members} gm ON u.id = gm.userid
-                 WHERE o.assignid = :assignid AND gm.groupid ' . $insql . '
-              ORDER BY ' . $sort;
-
-        $overrides = $DB->get_records_sql($sql, $params);
-    }
+    $overrides = $manager->get_user_overrides_for_listing($accessallgroups, $groups);
 }
 
 // Initialise table.
 $table = new html_table();
-$table->headspan = array(1, 2, 1);
-$table->colclasses = array('colname', 'colsetting', 'colvalue', 'colaction');
-$table->head = array(
+$table->headspan = [1, 2, 1];
+$table->colclasses = ['colname', 'colsetting', 'colvalue', 'colaction'];
+$table->head = [
         $colname,
         get_string('overrides', 'assign'),
         get_string('action'),
-);
+];
 
-$userurl = new moodle_url('/user/view.php', array());
-$groupurl = new moodle_url('/group/overview.php', array('id' => $cm->course));
+$userurl = new moodle_url('/user/view.php', []);
+$groupurl = new moodle_url('/group/overview.php', ['id' => $cm->course]);
 
 $overridedeleteurl = new moodle_url('/mod/assign/overridedelete.php');
 $overrideediturl = new moodle_url('/mod/assign/overrideedit.php');
@@ -177,9 +131,8 @@ $hasinactive = false; // Whether there are any inactive overrides.
 $PAGE->requires->js_call_amd('mod_assign/override_modal_manager', 'init', [$mode, !empty($assign->gradepenalty)]);
 
 foreach ($overrides as $override) {
-
-    $fields = array();
-    $values = array();
+    $fields = [];
+    $values = [];
     $active = true;
 
     // Check for inactive overrides.
@@ -196,8 +149,10 @@ foreach ($overrides as $override) {
     // Format allowsubmissionsfromdate.
     if (isset($override->allowsubmissionsfromdate)) {
         $fields[] = get_string('open', 'assign');
-        $values[] = $override->allowsubmissionsfromdate > 0 ? userdate($override->allowsubmissionsfromdate) : get_string('noopen',
-            'assign');
+        $values[] = $override->allowsubmissionsfromdate > 0 ? userdate($override->allowsubmissionsfromdate) : get_string(
+            'noopen',
+            'assign'
+        );
     }
 
     // Format duedate.
@@ -237,12 +192,14 @@ foreach ($overrides as $override) {
     $iconstr = '';
 
     // Edit.
-    $editurlstr = $overrideediturl->out(true, array('id' => $override->id));
-    $iconstr = '<a title="' . get_string('edit') . '" href="'. $editurlstr . '">' .
+    $editurlstr = $overrideediturl->out(true, ['id' => $override->id]);
+    $iconstr = '<a title="' . get_string('edit') . '" href="' . $editurlstr . '">' .
             $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a> ';
     // Duplicate.
-    $copyurlstr = $overrideediturl->out(true,
-            array('id' => $override->id, 'action' => 'duplicate'));
+    $copyurlstr = $overrideediturl->out(
+        true,
+        ['id' => $override->id, 'action' => 'duplicate']
+    );
     $iconstr .= '<a title="' . get_string('copy') . '" href="' . $copyurlstr . '">' .
             $OUTPUT->pix_icon('t/copy', get_string('copy')) . '</a> ';
 
@@ -267,8 +224,8 @@ foreach ($overrides as $override) {
 
         // Move up.
         if ($override->sortorder > 1) {
-            $iconstr .= '<a title="'.get_string('moveup').'" href="overrides.php?cmid=' . $cmid .
-                '&amp;id=' . $override->id .'&amp;action=movegroupoverride&amp;dir=up&amp;sesskey='.sesskey().'">' .
+            $iconstr .= '<a title="' . get_string('moveup') . '" href="overrides.php?cmid=' . $cmid .
+                '&amp;id=' . $override->id . '&amp;action=movegroupoverride&amp;dir=up&amp;sesskey=' . sesskey() . '">' .
                 $OUTPUT->pix_icon('t/up', get_string('moveup')) . '</a> ';
         } else {
             $iconstr .= $OUTPUT->spacer() . ' ';
@@ -276,14 +233,12 @@ foreach ($overrides as $override) {
 
         // Move down.
         if ($override->sortorder < $overridecountgroup) {
-            $iconstr .= '<a title="'.get_string('movedown').'" href="overrides.php?cmid='.$cmid.
-                '&amp;id=' . $override->id . '&amp;action=movegroupoverride&amp;dir=down&amp;sesskey='.sesskey().'">' .
+            $iconstr .= '<a title="' . get_string('movedown') . '" href="overrides.php?cmid=' . $cmid .
+                '&amp;id=' . $override->id . '&amp;action=movegroupoverride&amp;dir=down&amp;sesskey=' . sesskey() . '">' .
                 $OUTPUT->pix_icon('t/down', get_string('movedown')) . '</a> ';
         } else {
             $iconstr .= $OUTPUT->spacer() . ' ';
         }
-
-
     } else {
         $usergroupstr = html_writer::link(
             $userurl->out(false, ['id' => $override->userid, 'course' => $course->id]),
@@ -326,7 +281,7 @@ foreach ($overrides as $override) {
 }
 
 // Output the table and button.
-echo html_writer::start_tag('div', array('id' => 'assignoverrides'));
+echo html_writer::start_tag('div', ['id' => 'assignoverrides']);
 if (count($table->data)) {
     echo html_writer::table($table);
 } else {
@@ -341,8 +296,8 @@ if ($hasinactive) {
     echo $OUTPUT->notification(get_string('inactiveoverridehelp', 'assign'), 'dimmed_text');
 }
 
-echo html_writer::start_tag('div', array('class' => 'buttons'));
-$options = array();
+echo html_writer::start_tag('div', ['class' => 'buttons']);
+$options = [];
 if ($groupmode) {
     if (empty($groups)) {
         // There are no groups.
@@ -350,14 +305,15 @@ if ($groupmode) {
         $options['disabled'] = true;
     }
 } else {
-    $users = array();
+    $users = [];
     // See if there are any users in the assign.
     if ($accessallgroups) {
         $users = get_enrolled_users($context, '', 0, 'u.id');
         $nousermessage = get_string('usersnone', 'assign');
     } else if ($groups) {
         $enrolledjoin = get_enrolled_join($context, 'u.id');
-        list($ingroupsql, $ingroupparams) = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        [$ingroupsql, $ingroupparams] = $DB->get_in_or_equal(array_keys($groups), SQL_PARAMS_NAMED);
+        [$sort, $params] = users_order_by_sql('u');
         $params = $enrolledjoin->params + $ingroupparams;
         $sql = "SELECT u.id
                   FROM {user} u

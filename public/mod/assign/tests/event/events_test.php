@@ -24,7 +24,10 @@
 
 namespace mod_assign\event;
 
+use context_module;
+use mod_assign\override_manager;
 use mod_assign_test_generator;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -53,7 +56,7 @@ final class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $instance = $generator->create_instance(array('course' => $course->id));
-        $modcontext = \context_module::instance($instance->cmid);
+        $modcontext = context_module::instance($instance->cmid);
 
         $data = array(
             'context' => $modcontext,
@@ -80,7 +83,7 @@ final class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $instance = $generator->create_instance(array('course' => $course->id));
-        $modcontext = \context_module::instance($instance->cmid);
+        $modcontext = context_module::instance($instance->cmid);
 
         // Standard Event parameters.
         $params = array(
@@ -140,7 +143,7 @@ final class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $instance = $generator->create_instance(array('course' => $course->id));
-        $modcontext = \context_module::instance($instance->cmid);
+        $modcontext = context_module::instance($instance->cmid);
 
         // Standard Event parameters.
         $params = array(
@@ -575,7 +578,7 @@ final class events_test extends \advanced_testcase {
 
         // Test setting workflow state in apply_grade_to_user.
         $sink = $this->redirectEvents();
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->grade = '50.0';
         $data->workflowstate = 'readyforrelease';
         $assign->testable_apply_grade_to_user($data, $student->id, 0);
@@ -683,7 +686,7 @@ final class events_test extends \advanced_testcase {
         // Test apply_grade_to_user.
         $sink = $this->redirectEvents();
 
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->grade = '50.0';
         $assign->testable_apply_grade_to_user($data, $student->id, 0);
         $grade = $assign->get_user_grade($student->id, false, 0);
@@ -793,7 +796,7 @@ final class events_test extends \advanced_testcase {
         $submission = $assign->get_user_submission($student->id, true);
 
         // Insert a grade for this submission.
-        $grade = new \stdClass();
+        $grade = new stdClass();
         $grade->assignment = $assign->get_instance()->id;
         $grade->userid = $student->id;
         $gradeid = $DB->insert_record('assign_grades', $grade);
@@ -1000,7 +1003,7 @@ final class events_test extends \advanced_testcase {
         $assign = $this->create_instance($course);
 
         // Create the data we want to pass to the submit_for_grading function.
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->submissionstatement = 'We are the Borg. You will be assimilated. Resistance is futile. - do you agree
             to these terms?';
 
@@ -1025,7 +1028,7 @@ final class events_test extends \advanced_testcase {
         }
 
         // Create the data we want to pass to the save_submission function.
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->onlinetext_editor = array(
             'text' => 'Online text',
             'format' => FORMAT_HTML,
@@ -1107,7 +1110,7 @@ final class events_test extends \advanced_testcase {
         $params = array(
             'objectid' => 1,
             'relateduserid' => 2,
-            'context' => \context_module::instance($assign->cmid),
+            'context' => context_module::instance($assign->cmid),
             'other' => array(
                 'assignid' => $assign->id
             )
@@ -1122,7 +1125,7 @@ final class events_test extends \advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_assign\event\user_override_created', $event);
-        $this->assertEquals(\context_module::instance($assign->cmid), $event->get_context());
+        $this->assertEquals(context_module::instance($assign->cmid), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1140,7 +1143,7 @@ final class events_test extends \advanced_testcase {
 
         $params = array(
             'objectid' => 1,
-            'context' => \context_module::instance($assign->cmid),
+            'context' => context_module::instance($assign->cmid),
             'other' => array(
                 'assignid' => $assign->id,
                 'groupid' => 2
@@ -1156,7 +1159,7 @@ final class events_test extends \advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_assign\event\group_override_created', $event);
-        $this->assertEquals(\context_module::instance($assign->cmid), $event->get_context());
+        $this->assertEquals(context_module::instance($assign->cmid), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1175,7 +1178,7 @@ final class events_test extends \advanced_testcase {
         $params = array(
             'objectid' => 1,
             'relateduserid' => 2,
-            'context' => \context_module::instance($assign->cmid),
+            'context' => context_module::instance($assign->cmid),
             'other' => array(
                 'assignid' => $assign->id
             )
@@ -1190,7 +1193,7 @@ final class events_test extends \advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_assign\event\user_override_updated', $event);
-        $this->assertEquals(\context_module::instance($assign->cmid), $event->get_context());
+        $this->assertEquals(context_module::instance($assign->cmid), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1208,7 +1211,7 @@ final class events_test extends \advanced_testcase {
 
         $params = array(
             'objectid' => 1,
-            'context' => \context_module::instance($assign->cmid),
+            'context' => context_module::instance($assign->cmid),
             'other' => array(
                 'assignid' => $assign->id,
                 'groupid' => 2
@@ -1224,7 +1227,7 @@ final class events_test extends \advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_assign\event\group_override_updated', $event);
-        $this->assertEquals(\context_module::instance($assign->cmid), $event->get_context());
+        $this->assertEquals(context_module::instance($assign->cmid), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1238,24 +1241,32 @@ final class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $assigninstance = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
         $cm = get_coursemodule_from_instance('assign', $assigninstance->id, $course->id);
-        $context = \context_module::instance($cm->id);
-        $assign = new \assign($context, $cm, $course);
+        $context = context_module::instance($cm->id);
+
+        // Create a teacher with capability to manage overrides.
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+        $this->setUser($teacher);
 
         // Create an override.
-        $override = new \stdClass();
-        $override->assign = $assigninstance->id;
+        $override = new stdClass();
+        $override->assignid = $assigninstance->id;
         $override->userid = 2;
         $override->id = $DB->insert_record('assign_overrides', $override);
 
+        // Create override manager.
+        $manager = new override_manager($assigninstance, $context);
+
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $assign->delete_override($override->id);
+        $manager->delete_overrides_by_id([$override->id]);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_assign\event\user_override_deleted', $event);
-        $this->assertEquals(\context_module::instance($cm->id), $event->get_context());
+        $this->assertEquals(context_module::instance($cm->id), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1269,24 +1280,35 @@ final class events_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $assigninstance = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
         $cm = get_coursemodule_from_instance('assign', $assigninstance->id, $course->id);
-        $context = \context_module::instance($cm->id);
-        $assign = new \assign($context, $cm, $course);
+        $context = context_module::instance($cm->id);
+
+        // Create a teacher with capability to manage overrides.
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+        $this->setUser($teacher);
+
+        // Create a group.
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
 
         // Create an override.
-        $override = new \stdClass();
-        $override->assign = $assigninstance->id;
-        $override->groupid = 2;
+        $override = new stdClass();
+        $override->assignid = $assigninstance->id;
+        $override->groupid = $group->id;
         $override->id = $DB->insert_record('assign_overrides', $override);
+
+        // Create override manager.
+        $manager = new override_manager($assigninstance, $context);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $assign->delete_override($override->id);
+        $manager->delete_overrides_by_id([$override->id]);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_assign\event\group_override_deleted', $event);
-        $this->assertEquals(\context_module::instance($cm->id), $event->get_context());
+        $this->assertEquals(context_module::instance($cm->id), $event->get_context());
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1335,7 +1357,7 @@ final class events_test extends \advanced_testcase {
         $instance = $generator->create_instance(array('course' => $course->id, 'blindmarking' => 1));
 
         $cm = get_coursemodule_from_instance('assign', $instance->id, $course->id);
-        $context = \context_module::instance($cm->id);
+        $context = context_module::instance($cm->id);
         $assign = new \assign($context, $cm, $course);
 
         $this->setUser($teacher);

@@ -23,6 +23,8 @@
  */
 
 
+use mod_assign\override_manager;
+
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/mod/assign/lib.php');
 require_once($CFG->dirroot.'/mod/assign/locallib.php');
@@ -33,7 +35,7 @@ $confirm = optional_param('confirm', false, PARAM_BOOL);
 $recalculate = optional_param('recalculate', false, PARAM_BOOL);
 
 if (! $override = $DB->get_record('assign_overrides', array('id' => $overrideid))) {
-    throw new \moodle_exception('invalidoverrideid', 'assign');
+    throw new moodle_exception('invalidoverrideid', 'assign');
 }
 
 list($course, $cm) = get_course_and_cm_from_instance($override->assignid, 'assign');
@@ -43,15 +45,16 @@ $assign = new assign($context, null, null);
 require_login($course, false, $cm);
 
 // Check the user has the required capabilities to modify an override.
-require_capability('mod/assign:manageoverrides', $context);
+$manager = new override_manager($assign->get_instance(), $context);
+$manager->require_manage_capability();
 
 if ($override->groupid) {
     if (!groups_group_visible($override->groupid, $course, $cm)) {
-        throw new \moodle_exception('invalidoverrideid', 'assign');
+        throw new moodle_exception('invalidoverrideid', 'assign');
     }
 } else {
     if (!groups_user_groups_visible($course, $override->userid, $cm)) {
-        throw new \moodle_exception('invalidoverrideid', 'assign');
+        throw new moodle_exception('invalidoverrideid', 'assign');
     }
 }
 
@@ -67,24 +70,8 @@ if (!empty($override->userid)) {
 if ($confirm) {
     require_sesskey();
 
-    $assign->delete_override($override->id);
-
-    reorder_group_overrides($assign->get_instance()->id);
-
-    // Recalculate grades after the override is deleted.
-    if ($recalculate) {
-        $assignintance = clone $assign->get_instance();
-        $assignintance->cmidnumber = $assign->get_course_module()->idnumber;
-        if (!$override->groupid) {
-            assign_update_grades($assignintance, $override->userid);
-        } else {
-            // If it is group mode.
-            $groupmembers = groups_get_members($override->groupid);
-            foreach ($groupmembers as $groupmember) {
-                assign_update_grades($assignintance, $groupmember->id);
-            }
-        }
-    }
+    // Use override_manager to delete the override.
+    $manager->delete_overrides_by_id([$override->id], true, $recalculate);
 
     redirect($cancelurl);
 }
