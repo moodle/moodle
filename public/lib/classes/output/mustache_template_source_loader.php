@@ -16,7 +16,7 @@
 
 namespace core\output;
 
-use Mustache_Tokenizer;
+use Mustache\Tokenizer;
 
 /**
  * Load template source strings.
@@ -279,7 +279,7 @@ class mustache_template_source_loader {
      * @return array
      */
     protected function scan_template_source_for_dependencies(string $source): array {
-        $tokenizer = new Mustache_Tokenizer();
+        $tokenizer = new Tokenizer();
         $tokens = $tokenizer->scan($source);
         $templates = [];
         $strings = [];
@@ -304,15 +304,15 @@ class mustache_template_source_loader {
 
             if ($name) {
                 switch ($type) {
-                    case Mustache_Tokenizer::T_PARTIAL:
+                    case Tokenizer::T_PARTIAL:
                         [$component, $id] = explode('/', $name, 2);
                         $templates = $addtodependencies($templates, $component, $id);
                         break;
-                    case Mustache_Tokenizer::T_PARENT:
+                    case Tokenizer::T_PARENT:
                         [$component, $id] = explode('/', $name, 2);
                         $templates = $addtodependencies($templates, $component, $id);
                         break;
-                    case Mustache_Tokenizer::T_SECTION:
+                    case Tokenizer::T_SECTION:
                         if ($name == 'str') {
                             [$id, $component] = $this->get_string_identifiers($tokens, $index);
 
@@ -345,7 +345,7 @@ class mustache_template_source_loader {
         $parts = [];
 
         // Get the contents of the string tag.
-        while ($tokens[$current]['type'] !== Mustache_Tokenizer::T_END_SECTION) {
+        while ($tokens[$current]['type'] !== Tokenizer::T_END_SECTION) {
             if (!isset($tokens[$current]['value']) || empty(trim($tokens[$current]['value']))) {
                 // An empty line, so we should ignore it.
                 $current++;

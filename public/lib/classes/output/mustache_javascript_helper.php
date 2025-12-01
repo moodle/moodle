@@ -16,6 +16,8 @@
 
 namespace core\output;
 
+use Mustache\LambdaHelper;
+
 /**
  * Store a list of JS calls to insert at the end of the page.
  *
@@ -44,10 +46,10 @@ class mustache_javascript_helper {
      * This function will always return an empty string because the JS is added to the page via the requirements manager.
      *
      * @param string $text The script content of the section.
-     * @param \Mustache_LambdaHelper $helper Used to render the content of this block.
+     * @param LambdaHelper $helper Used to render the content of this block.
      * @return string The text of the block
      */
-    public function help($text, \Mustache_LambdaHelper $helper) {
+    public function help($text, LambdaHelper $helper) {
         $this->page->requires->js_amd_inline($helper->render($text));
         return '';
     }

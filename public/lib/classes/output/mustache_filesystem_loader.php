@@ -24,7 +24,7 @@ namespace core\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
  */
-class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
+class mustache_filesystem_loader extends \Mustache\Loader\FilesystemLoader {
     /**
      * Provide a default no-args constructor (we don't really need anything).
      */

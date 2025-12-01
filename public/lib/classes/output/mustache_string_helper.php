@@ -16,7 +16,7 @@
 
 namespace core\output;
 
-use Mustache_LambdaHelper;
+use Mustache\LambdaHelper;
 use stdClass;
 
 /**
@@ -41,10 +41,10 @@ class mustache_string_helper {
      * The last is a $a argument for get string. For complex data here, use JSON.
      *
      * @param string $text The text to parse for arguments.
-     * @param Mustache_LambdaHelper $helper Used to render nested mustache variables.
+     * @param LambdaHelper $helper Used to render nested mustache variables.
      * @return string
      */
-    public function str($text, Mustache_LambdaHelper $helper) {
+    public function str(string $text, LambdaHelper $helper) {
         // Split the text into an array of variables.
         $key = strtok($text, ",");
         $key = trim($key);
@@ -60,9 +60,9 @@ class mustache_string_helper {
         $next = trim($next);
         if ((strpos($next, '{') === 0) && (strpos($next, '{{') !== 0)) {
             $rawjson = $helper->render($next);
-            $a = json_decode($rawjson);
+            $a = json_decode((string) $rawjson);
         } else {
-            $a = $helper->render($next);
+            $a = (string) $helper->render($next);
         }
         return get_string($key, $component, $a);
     }

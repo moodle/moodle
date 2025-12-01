@@ -362,9 +362,10 @@ abstract class backup_plan_dbops extends backup_dbops {
      * @return mustache_engine
      */
     private static function get_mustache_for_filename_generation(): mustache_engine {
+        $stringhelper = new mustache_string_helper();
         return new mustache_engine([
             'helpers' => [
-                'str' => [new mustache_string_helper(), 'str'],
+                'str' => fn($text, $helper) => $stringhelper->str($text, $helper),
             ],
         ]);
     }

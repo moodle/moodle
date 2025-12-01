@@ -35,9 +35,9 @@ final class mustache_clean_string_helper_test extends \basic_testcase {
      * @covers ::cleanstr
      */
     function test_cleanstr(): void {
-        $engine = new \Mustache_Engine();
-        $context = new \Mustache_Context();
-        $lambdahelper = new \Mustache_LambdaHelper($engine, $context);
+        $engine = new \Mustache\Engine();
+        $context = new \Mustache\Context();
+        $lambdahelper = new \Mustache\LambdaHelper($engine, $context);
 
         $cleanstringhelper = new mustache_clean_string_helper();
 
