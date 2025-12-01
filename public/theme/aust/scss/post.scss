@@ -487,4 +487,72 @@ nav.moremenu {
     small.text-dark {
         color: #fff !important;
     }
+
+    // --- Messaging Drawer & Chat ---
+    .message-app,
+    .message-drawer,
+    .header-container,
+    .body-container,
+    .footer-container,
+    .bg-white {
+        background-color: #1e1e1e !important;
+        color: #e0e0e0 !important;
+    }
+
+    // Close Widget
+    .closewidget a {
+        color: #fff !important;
+    }
+
+    // Chat Bubbles
+    .message {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: 1px solid #444 !important;
+
+        .time {
+            color: #ccc !important;
+        }
+
+        // Tail color fix (optional, might need specific targeting)
+        .tail {
+            border-bottom-color: #333 !important;
+        }
+    }
+
+    // Send Icon
+    .btn-icon[data-action="send-message"] .icon,
+    .btn-icon[data-action="toggle-emoji-picker"] .icon,
+    .icon.fa-paper-plane {
+        color: #fff !important;
+    }
+
+    // Content Message Container
+    .content-message-container {
+        background-color: #1e1e1e !important;
+    }
+
+    // Textarea/Input in Chat
+    .message-app textarea,
+    .message-app input {
+        background-color: #2c2c2c !important;
+        color: #fff !important;
+        border: 1px solid #444 !important;
+
+        &::placeholder {
+            color: #aaa !important;
+        }
+    }
+
+    // --- FORCE ALL ICONS WHITE (Comprehensive Rule) ---
+    .icon,
+    .fa,
+    .fa-regular,
+    .fa-solid,
+    .fa-brands,
+    i.icon,
+    i.fa,
+    svg.icon {
+        color: #fff !important;
+    }
 }
