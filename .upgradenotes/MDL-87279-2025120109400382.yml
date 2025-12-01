@@ -1,0 +1,7 @@
+issueNumber: MDL-87279
+notes:
+  core_course:
+    - message: >-
+        The description field is no longer available on the edit form for
+        delegated sections like mod_subsection.
+      type: changed
