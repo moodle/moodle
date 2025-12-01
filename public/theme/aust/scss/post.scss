@@ -139,6 +139,21 @@ nav.moremenu {
     width: auto;
 }
 
+// User Action Menu Dropdown - Force Black Text
+#user-action-menu {
+
+    .dropdown-item,
+    .dropdown-toggle,
+    a {
+        color: #000 !important;
+
+        &:hover {
+            color: #000 !important;
+            background-color: #f8f9fa !important; // Light hover background
+        }
+    }
+}
+
 // --- DARK MODE ---
 @media (prefers-color-scheme: dark) {
 
@@ -400,9 +415,9 @@ nav.moremenu {
     }
 
     // Activity Icons
-    .activityiconcontainer {
-        background-color: #333 !important;
-        filter: invert(1) hue-rotate(180deg);
+    .activityiconcontainer,
+    .activityicon {
+        background-color: transparent !important;
     }
 
     // Links
@@ -422,5 +437,44 @@ nav.moremenu {
     h5,
     h6 {
         color: #f0f0f0 !important;
+    }
+
+    // Course Activity Header
+    .activity-header {
+        background-color: #1e1e1e !important;
+        color: #e0e0e0 !important;
+
+        .activity-information,
+        .completion-info {
+            color: #e0e0e0 !important;
+        }
+    }
+
+    // Quiz Styles
+    .que {
+        .info {
+            background-color: #1e1e1e !important;
+            color: #fff !important;
+            border-color: #333 !important;
+
+            // Fix for edit button in quiz info
+            .questionflag.editable {
+                color: #fff !important;
+            }
+        }
+
+        .formulation {
+            background-color: #1e1e1e !important;
+            color: #fff !important;
+            border-color: #333 !important;
+        }
+
+        .qtext,
+        .ablock,
+        .prompt,
+        .answer,
+        label {
+            color: #fff !important;
+        }
     }
 }
