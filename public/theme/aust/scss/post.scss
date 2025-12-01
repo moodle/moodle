@@ -1,5 +1,5 @@
 // AuST Branding Colors
-$aust-blue: #004B87;
+$aust-blue: #003366;
 $aust-gold: #FDB913;
 
 // --- GLOBAL OVERRIDES (Applies to Light Mode & Base) ---
@@ -226,31 +226,17 @@ nav.moremenu {
 
         a {
             color: $aust-gold !important; // Gold links on Blue for visibility
-            text-decoration: underline;
-        }
-    }
 
-    // Headers
-    header#page-header,
-    .page-header-headings,
-    .header-maxwidth {
-        background-color: #121212 !important;
-        color: #fff !important;
-    }
+            nav.navbar,
+            header.navbar,
+            .fixed-top {
+                background-color: $aust-blue !important;
+                border-bottom: 4px solid $aust-gold !important;
 
-    // Login Page Header (AuST Blue)
-    // Force the navbar to be Blue in dark mode
-    .pagelayout-login {
-
-        nav.navbar,
-        header.navbar,
-        .fixed-top {
-            background-color: $aust-blue !important;
-            border-bottom: 4px solid $aust-gold !important;
-
-            // Ensure text is white in the blue header
-            .navbar-brand {
-                color: #fff !important;
+                // Ensure text is white in the blue header
+                .navbar-brand {
+                    color: #fff !important;
+                }
             }
         }
     }
@@ -467,6 +453,17 @@ nav.moremenu {
             background-color: #1e1e1e !important;
             color: #fff !important;
             border-color: #333 !important;
+
+            &.active {
+                background-color: transparent !important;
+                border-bottom: 2px solid $aust-gold !important;
+                color: $aust-gold !important;
+            }
+
+            &:hover {
+                background-color: transparent !important;
+                color: $aust-gold !important;
+            }
         }
 
         .qtext,
@@ -476,5 +473,18 @@ nav.moremenu {
         label {
             color: #fff !important;
         }
+    }
+
+    // Global Paragraph Text
+    p {
+        color: #fff !important;
+    }
+
+    // Fixes for specific text classes in Dark Mode
+    .text-muted,
+    .form-defaultinfo,
+    .text-dark,
+    small.text-dark {
+        color: #fff !important;
     }
 }
