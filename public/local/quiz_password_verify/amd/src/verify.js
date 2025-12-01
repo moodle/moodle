@@ -39,6 +39,9 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
             }).then(function (modal) {
                 modal.setSaveButtonText(M.util.get_string('verify', 'local_quiz_password_verify'));
 
+                // Add custom class for styling
+                modal.getRoot().addClass('quiz-password-verify-modal');
+
                 modal.getRoot().on(ModalEvents.save, function (e) {
                     e.preventDefault();
                     var password = $('#verify-password').val();

@@ -17,7 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_quiz_password_verify';
-$plugin->version   = 2024112505;         // The current module version (Date: YYYYMMDDXX).
+$plugin->version   = 2025120101;         // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2024042200;         // Moodle 4.4+
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.0';

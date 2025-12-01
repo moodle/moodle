@@ -554,6 +554,28 @@ nav.moremenu {
         }
     }
 
+    // Fix for "Mark as done" buttons
+    .btn.btn-subtle-body {
+        color: #fff !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-color: #444 !important;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            color: $aust-gold !important;
+        }
+    }
+
+    // Fix for Page Header Headings background
+    .page-header-headings {
+        background-color: transparent !important;
+        color: #fff !important;
+
+        h1 {
+            color: #fff !important;
+        }
+    }
+
     // --- FORCE ALL ICONS WHITE (Comprehensive Rule) ---
     .icon,
     .fa,
