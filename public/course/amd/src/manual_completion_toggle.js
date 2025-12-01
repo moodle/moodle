@@ -24,7 +24,7 @@
 
 import Templates from 'core/templates';
 import Notification from 'core/notification';
-import {toggleManualCompletion} from 'core_course/repository';
+import { toggleManualCompletion } from 'core_course/repository';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 
@@ -77,7 +77,7 @@ export const init = () => {
  * @param {HTMLElement} toggleButton
  * @returns {Promise<void>}
  */
-const toggleManualCompletionState = async(toggleButton) => {
+const toggleManualCompletionState = async (toggleButton) => {
     const pendingPromise = new Pending('core_course:toggleManualCompletionState');
     // Make a copy of the original content of the button.
     const originalInnerHtml = toggleButton.innerHTML;
@@ -92,12 +92,24 @@ const toggleManualCompletionState = async(toggleButton) => {
     // Get the target completion state.
     const completed = toggleType === TOGGLE_TYPES.TOGGLE_MARK_DONE;
 
+    // HACK: Verify password for quiz
+    // Check for quiz context (course page or quiz view page)
+    if (toggleButton.closest('.modtype_quiz') ||
+        toggleButton.closest('.activity.quiz') ||
+        document.body.classList.contains('path-mod-quiz')) {
+        const Verify = await import('local_quiz_password_verify/verify');
+        const verifyModule = Verify.default || Verify;
+        await new Promise((resolve) => {
+            verifyModule.verifyAction({ cmid: cmid }, resolve);
+        });
+    }
+
     // Replace the button contents with the loading icon.
     Templates.renderForPromise('core/loading', {})
-    .then((loadingHtml) => {
-        Templates.replaceNodeContents(toggleButton, loadingHtml, '');
-        return;
-    }).catch(() => {});
+        .then((loadingHtml) => {
+            Templates.replaceNodeContents(toggleButton, loadingHtml, '');
+            return;
+        }).catch(() => { });
 
     try {
         // Call the webservice to update the manual completion status.

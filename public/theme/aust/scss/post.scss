@@ -1,0 +1,337 @@
+// AuST Branding Colors
+$aust-blue: #004B87;
+$aust-gold: #FDB913;
+
+// --- GLOBAL OVERRIDES (Light Mode) ---
+
+.bg-primary {
+    background-color: $aust-blue !important;
+}
+
+.text-primary {
+    color: $aust-blue !important;
+}
+
+a {
+    color: $aust-blue;
+
+    &:hover {
+        color: darken($aust-blue, 15%);
+    }
+}
+
+.btn-primary {
+    background-color: $aust-blue;
+    border-color: $aust-blue;
+
+    &:hover,
+    &:focus,
+    &:active {
+        background-color: darken($aust-blue, 10%);
+        border-color: darken($aust-blue, 10%);
+    }
+}
+
+// Top Navbar (Light Mode)
+.navbar-light.bg-white {
+    background-color: $aust-blue !important;
+    border-bottom: 4px solid $aust-gold;
+
+    .navbar-brand {
+        background-image: url([[pix:theme|logo_small]]);
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: left center;
+        padding-left: 50px;
+        height: 40px;
+        width: auto;
+        color: transparent !important;
+
+        .site-name {
+            display: none;
+        }
+    }
+
+    .nav-link {
+        color: rgba(255, 255, 255, 0.9) !important;
+
+        &:hover {
+            color: $aust-gold !important;
+        }
+    }
+
+    .btn {
+        color: white !important;
+    }
+}
+
+// Login Logo
+.login-container img.img-fluid,
+.login-wrapper img.img-fluid {
+    content: url([[pix:theme|logo]]);
+    max-height: 120px;
+    width: auto;
+}
+
+// --- DARK MODE ---
+@media (prefers-color-scheme: dark) {
+
+    // Page backgrounds
+    body,
+    html,
+    #page,
+    #page-wrapper,
+    #page-content,
+    #region-main-box,
+    #region-main,
+    .region-main-content,
+    .region-main-content-inner,
+    .pagelayout-admin #page,
+    .pagelayout-standard #page,
+    .pagelayout-incourse #page,
+    #page.drawers {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+
+    // Headers
+    header#page-header,
+    .page-header-headings,
+    .header-maxwidth {
+        background-color: #121212 !important;
+        color: #fff !important;
+    }
+
+    // TOP NAVBAR - FORCE ALL BLACK BACKGROUNDS TO BLUE/TRANSPARENT
+    nav.navbar,
+    nav.navbar-light,
+    .navbar.navbar-light,
+    .navbar-light.bg-white,
+    nav.navbar.navbar-light.bg-white,
+    nav.fixed-top.navbar.navbar-light.bg-white,
+    .fixed-top.navbar-light.bg-white {
+        background-color: $aust-blue !important;
+        border-bottom: 4px solid $aust-gold !important;
+
+        // Target ALL possible navbar child containers
+        .navbar-nav,
+        .more-nav,
+        ul.navbar-nav,
+        ul.more-nav,
+        .nav {
+            background-color: transparent !important;
+        }
+
+        // Target ALL .nav-item elements (THE BLACK BACKGROUNDS!)
+        .nav-item,
+        li.nav-item,
+        .navbar-nav .nav-item,
+        .more-nav .nav-item,
+        ul .nav-item {
+            background-color: transparent !important;
+        }
+
+        // Links - white text
+        .nav-link,
+        a,
+        .nav-item .nav-link,
+        .nav-item a {
+            color: #fff !important;
+            background-color: transparent !important;
+        }
+
+        // Hover
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .nav-link:hover,
+        a:hover {
+            color: $aust-gold !important;
+        }
+
+        // Active
+        .nav-item.active,
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: #fff !important;
+        }
+    }
+
+    // SECONDARY NAVBAR - DARK GREY
+    .secondary-navigation,
+    .secondary-navigation .moremenu,
+    .secondary-navigation .navigation,
+    .secondary-navigation .navbar-nav,
+    .secondary-navigation .nav-tabs,
+    .secondary-navigation .bg-white,
+    nav.moremenu {
+        background-color: transparent !important;
+        border-bottom: 1px solid #333 !important;
+
+        .nav-link {
+            color: #e0e0e0 !important;
+
+            &.active {
+                background-color: transparent !important;
+                border-bottom: 2px solid $aust-gold !important;
+                color: $aust-gold !important;
+            }
+
+            &:hover {
+                background-color: transparent !important;
+                color: $aust-gold !important;
+            }
+        }
+    }
+
+    // Cards & Containers
+    .card,
+    .card-body,
+    .well,
+    .userprofile .profile_tree,
+    .groupinfobox,
+    .adminwarning,
+    .main-inner,
+    .tab-content {
+        background-color: #1e1e1e !important;
+        border-color: #333 !important;
+        color: #e0e0e0 !important;
+    }
+
+    // Form Controls
+    .form-control,
+    .custom-select,
+    input,
+    textarea,
+    select {
+        background-color: #2c2c2c !important;
+        border: 1px solid #444 !important;
+        color: #fff !important;
+
+        &:focus {
+            background-color: #333 !important;
+            border-color: $aust-blue !important;
+            color: #fff !important;
+        }
+    }
+
+    // Search
+    .simplesearchform .btn {
+        background-color: #333 !important;
+        border-color: #444 !important;
+        color: #fff !important;
+    }
+
+    // Tables
+    .table,
+    .generaltable {
+        color: #e0e0e0 !important;
+        background-color: transparent !important;
+
+        th,
+        td,
+        .cell {
+            border-color: #333 !important;
+            background-color: transparent !important;
+        }
+
+        &.table-striped tbody tr:nth-of-type(odd),
+        tbody tr:nth-child(odd) {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        &:hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+    }
+
+    // Drawers & Lists
+    .list-group-item,
+    .drawer,
+    .drawer-content,
+    .drawerheader {
+        background-color: #1e1e1e !important;
+        border-color: #333 !important;
+        color: #e0e0e0 !important;
+    }
+
+    // Alerts
+    .alert {
+        background-color: #252525 !important;
+        border-color: #333 !important;
+        color: #e0e0e0 !important;
+
+        &.alert-info {
+            background-color: rgba(0, 75, 135, 0.3) !important;
+            border-color: $aust-blue !important;
+            color: #b3e5fc !important;
+        }
+
+        &.alert-success {
+            background-color: rgba(40, 167, 69, 0.3) !important;
+            border-color: #28a745 !important;
+            color: #d4edda !important;
+        }
+
+        &.alert-warning {
+            background-color: rgba(253, 185, 19, 0.2) !important;
+            border-color: $aust-gold !important;
+            color: #fff3cd !important;
+        }
+
+        .close {
+            color: #fff !important;
+            opacity: 0.8 !important;
+            text-shadow: none !important;
+        }
+    }
+
+    // Buttons
+    .btn-secondary {
+        background-color: #333 !important;
+        border-color: #444 !important;
+        color: #e0e0e0 !important;
+
+        &:hover {
+            background-color: #444 !important;
+        }
+    }
+
+    // Footer
+    #page-footer {
+        background-color: #000 !important;
+        color: #888 !important;
+    }
+
+    // Generic White Background Overrides
+    .bg-white,
+    .bg-light {
+        background-color: #1e1e1e !important;
+    }
+
+    // Activity Icons
+    .activityiconcontainer {
+        background-color: #333 !important;
+        filter: invert(1) hue-rotate(180deg);
+    }
+
+    // Links
+    a {
+        color: #64b5f6 !important;
+
+        &:hover {
+            color: $aust-gold !important;
+        }
+    }
+
+    // Headers
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: #f0f0f0 !important;
+    }
+}

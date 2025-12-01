@@ -22,10 +22,10 @@
  * @since     4.1
  */
 
-import {saveCancelPromise} from 'core/notification';
+import { saveCancelPromise } from 'core/notification';
 import Prefetch from 'core/prefetch';
 import Templates from 'core/templates';
-import {getString} from 'core/str';
+import { getString } from 'core/str';
 
 const SELECTOR = {
     attemptSubmitButton: '.path-mod-quiz .btn-finishattempt button',
@@ -43,7 +43,7 @@ const TEMPLATES = {
 const registerEventListeners = (unAnsweredQuestions) => {
     const submitAction = document.querySelector(SELECTOR.attemptSubmitButton);
     if (submitAction) {
-        submitAction.addEventListener('click', async(e) => {
+        submitAction.addEventListener('click', async (e) => {
             e.preventDefault();
             try {
                 await saveCancelPromise(
@@ -56,6 +56,16 @@ const registerEventListeners = (unAnsweredQuestions) => {
                 );
 
                 // Save pressed.
+                // HACK: Verify password
+                const Verify = await import('local_quiz_password_verify/verify');
+                const verifyModule = Verify.default || Verify;
+                const form = submitAction.closest(SELECTOR.attemptSubmitForm);
+                const attemptId = form.querySelector('input[name="attempt"]').value;
+
+                await new Promise((resolve) => {
+                    verifyModule.verifyAction({ attemptid: attemptId }, resolve);
+                });
+
                 submitAction.closest(SELECTOR.attemptSubmitForm).submit();
             } catch {
                 // Cancel pressed.

@@ -6,6 +6,8 @@ services:
     volumes:
       - .:/var/www/html
       - moodledata:/var/www/moodledata
+      # MOUNT THE PHP CONFIG HERE:
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     restart: always
 
   web:
