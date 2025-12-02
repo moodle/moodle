@@ -16,8 +16,6 @@ $PAGE->set_url('/local/coursematrix/index.php');
 $PAGE->set_title(get_string('pluginname', 'local_coursematrix'));
 $PAGE->set_heading(get_string('pluginname', 'local_coursematrix'));
 
-echo $OUTPUT->header();
-
 $form = new \local_coursematrix\form\rule_form(null, ['department' => $department, 'jobtitle' => $jobtitle]);
 
 if ($form->is_cancelled()) {
@@ -37,6 +35,8 @@ if ($form->is_cancelled()) {
     local_coursematrix_save_rule($data);
     redirect($PAGE->url, get_string('matrixupdated', 'local_coursematrix'));
 }
+
+echo $OUTPUT->header();
 
 // EDIT ACTION
 if ($action == 'edit') {
@@ -67,7 +67,8 @@ echo $OUTPUT->heading(get_string('coursematrix', 'local_coursematrix'));
 // 1. Get all user groups (Department + Job Title)
 // Note: 'institution' column in {user} is often used for Job Title in Moodle if not using custom fields.
 // The user script mapped job_title -> institution.
-$sql = "SELECT department, institution, COUNT(id) as usercount
+$concat = $DB->sql_concat('department', "'#'", 'institution');
+$sql = "SELECT $concat AS uniqueid, department, institution, COUNT(id) as usercount
         FROM {user}
         WHERE deleted = 0 AND suspended = 0 AND (department <> '' OR institution <> '')
         GROUP BY department, institution
