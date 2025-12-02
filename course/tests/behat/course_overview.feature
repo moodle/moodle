@@ -109,6 +109,7 @@ Feature: Users can access the course activities overview page
       | url             | C1     | Activity 18 |
       | wiki            | C1     | Activity 19 |
       | workshop        | C1     | Activity 20 |
+      | qbank           | C1     | Activity 21 |
     Given I am on the "Course 1" "course > activities" page logged in as "teacher1"
     And I should see "Assignments" in the "assign_overview_collapsible" "region"
     And I should see "Choices" in the "choice_overview_collapsible" "region"
@@ -124,6 +125,9 @@ Feature: Users can access the course activities overview page
     And I should see "Workshops" in the "workshop_overview_collapsible" "region"
     # All resources are grouped.
     And I should see "Resources" in the "resource_overview_collapsible" "region"
+    # Qbanks and labels are not shown.
+    And I should not see "Labels" in the "course-overview-page" "region"
+    And I should not see "Question banks" in the "course-overview-page" "region"
 
   @javascript
   Scenario: The resources overview is loaded at the moment the section is expanded via Ajax
