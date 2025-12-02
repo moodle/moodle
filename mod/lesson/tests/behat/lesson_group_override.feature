@@ -305,7 +305,7 @@ Feature: Lesson group override
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
     And I select "Group overrides" from the "jump" singleselect
-    Then I should see "No groups you can access."
+    Then I should see "There are no groups in this course."
     And I should not see "Add group override"
 
   Scenario: A teacher without accessallgroups permission should only be able to add group override for their groups, when the activity's group mode is 'separate groups'
