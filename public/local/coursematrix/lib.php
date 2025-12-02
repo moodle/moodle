@@ -104,6 +104,10 @@ function local_coursematrix_enrol_user($userid) {
         return; // Manual enrolment not enabled
     }
 
+    // Get student role
+    $student_role = $DB->get_record('role', ['shortname' => 'student']);
+    $student_roleid = $student_role ? $student_role->id : 5; // Default to 5 if not found
+
     foreach ($courses_to_enrol as $courseid) {
         // Check if course exists
         if (!$DB->record_exists('course', ['id' => $courseid])) {
@@ -122,7 +126,7 @@ function local_coursematrix_enrol_user($userid) {
         }
 
         if (!$DB->record_exists('user_enrolments', ['enrolid' => $instance->id, 'userid' => $user->id])) {
-            $enrol_manual->enrol_user($instance, $user->id);
+            $enrol_manual->enrol_user($instance, $user->id, $student_roleid);
         }
     }
 }

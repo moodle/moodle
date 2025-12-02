@@ -573,6 +573,25 @@ nav.moremenu {
         color: #fff !important;
     }
 
+    // Fix for expanded-icon (Chevron) - More specific
+    span.expanded-icon,
+    .expanded-icon {
+        background-color: transparent !important;
+        color: #fff !important;
+
+        .icon {
+            color: #fff !important;
+        }
+    }
+
+    // Fix for Autocomplete Selection Badges
+    .badge.bg-secondary,
+    .badge.text-dark {
+        background-color: transparent !important;
+        border: 1px solid #444 !important;
+        color: #fff !important;
+    }
+
     // Dropdown Toggle - White text, Transparent background
     .btn.dropdown-toggle {
         color: #fff !important;
