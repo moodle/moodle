@@ -20,7 +20,7 @@ class external extends external_api {
             'quizid' => new external_value(PARAM_INT, 'The ID of the quiz module instance'),
             'questionname' => new external_value(PARAM_TEXT, 'The name of the question'),
             'questiontext' => new external_value(PARAM_RAW, 'The question text'),
-            'correctanswer' => new external_value(PARAM_BOOL, 'True for True, False for False', false, true),
+            'correctanswer' => new external_value(PARAM_BOOL, 'True for True, False for False', VALUE_DEFAULT, true),
         ]);
     }
 
