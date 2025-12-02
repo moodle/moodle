@@ -584,6 +584,30 @@ nav.moremenu {
         }
     }
 
+    // Fix for Collapse/Expand Buttons (Chevron)
+    .btn.icons-collapse-expand,
+    .icons-collapse-expand {
+        background-color: transparent !important;
+        color: #fff !important;
+        border: none !important;
+        box-shadow: none !important;
+
+        .expanded-icon,
+        .collapsed-icon {
+            background-color: transparent !important;
+        }
+
+        .icon {
+            color: #fff !important;
+        }
+
+        &:hover,
+        &:focus {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: $aust-gold !important;
+        }
+    }
+
     // Fix for Autocomplete Selection Badges
     .badge.bg-secondary,
     .badge.text-dark {
