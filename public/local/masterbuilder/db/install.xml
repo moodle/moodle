@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/masterbuilder/db" VERSION="20251202" COMMENT="XMLDB file for Moodle local/masterbuilder"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_masterbuilder_state" COMMENT="Stores the build state (version) for courses created by master_builder">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course_shortname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Shortname of the course (e.g., TTL-MI-001255)"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="Version string (e.g., .C)"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course_shortname" UNIQUE="true" FIELDS="course_shortname"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

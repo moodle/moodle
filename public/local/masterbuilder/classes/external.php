@@ -173,4 +173,139 @@ class external extends external_api {
             'success' => new external_value(PARAM_BOOL, 'Success status'),
         ]);
     }
+
+    // --- BUILD STATE FUNCTIONS ---
+
+    public static function get_build_state_parameters() {
+        return new external_function_parameters([
+            'shortname' => new external_value(PARAM_TEXT, 'Course shortname'),
+        ]);
+    }
+
+    public static function get_build_state($shortname) {
+        global $DB;
+        $params = self::validate_parameters(self::get_build_state_parameters(), ['shortname' => $shortname]);
+        
+        $record = $DB->get_record('local_masterbuilder_state', ['course_shortname' => $params['shortname']]);
+        
+        return [
+            'version' => $record ? $record->version : null,
+            'found' => $record ? true : false
+        ];
+    }
+
+    public static function get_build_state_returns() {
+        return new external_single_structure([
+            'version' => new external_value(PARAM_TEXT, 'Version string', VALUE_OPTIONAL),
+            'found' => new external_value(PARAM_BOOL, 'Whether a record was found')
+        ]);
+    }
+
+    public static function update_build_state_parameters() {
+        return new external_function_parameters([
+            'shortname' => new external_value(PARAM_TEXT, 'Course shortname'),
+            'version' => new external_value(PARAM_TEXT, 'Version string'),
+        ]);
+    }
+
+    public static function update_build_state($shortname, $version) {
+        global $DB;
+        $params = self::validate_parameters(self::update_build_state_parameters(), [
+            'shortname' => $shortname,
+            'version' => $version
+        ]);
+
+        $record = $DB->get_record('local_masterbuilder_state', ['course_shortname' => $params['shortname']]);
+        
+        if ($record) {
+            $record->version = $params['version'];
+            $record->timemodified = time();
+            $DB->update_record('local_masterbuilder_state', $record);
+        } else {
+            $new_record = new \stdClass();
+            $new_record->course_shortname = $params['shortname'];
+            $new_record->version = $params['version'];
+            $new_record->timemodified = time();
+            $DB->insert_record('local_masterbuilder_state', $new_record);
+        }
+
+        return ['success' => true];
+    }
+
+    public static function update_build_state_returns() {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'Success status')
+        ]);
+    }
+
+    public static function reset_build_state_parameters() {
+        return new external_function_parameters([]);
+    }
+
+    public static function reset_build_state() {
+        global $DB;
+        // Truncate the table
+        $DB->delete_records('local_masterbuilder_state');
+        return ['success' => true, 'message' => 'Build state table reset.'];
+    }
+
+    public static function reset_build_state_returns() {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'Success status'),
+            'message' => new external_value(PARAM_TEXT, 'Message')
+        ]);
+    }
+
+    // --- COURSE RESET ---
+
+    public static function reset_course_progress_parameters() {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'The ID of the course to reset'),
+        ]);
+    }
+
+    public static function reset_course_progress($courseid) {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $params = self::validate_parameters(self::reset_course_progress_parameters(), [
+            'courseid' => $courseid,
+        ]);
+
+        $course = $DB->get_record('course', ['id' => $params['courseid']], '*', MUST_EXIST);
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        // Prepare reset data
+        $data = new \stdClass();
+        $data->id = $course->id;
+        $data->reset_gradebook_grades = true;
+        $data->reset_completion = true;
+        $data->reset_quiz_attempts = true; 
+        
+        // Perform reset
+        $status = reset_course_userdata($data);
+
+        // Check status
+        $success = true;
+        $errors = [];
+        foreach ($status as $item) {
+            if (!empty($item['error'])) {
+                $success = false;
+                $errors[] = $item['component'] . ': ' . $item['item'];
+            }
+        }
+
+        return [
+            'success' => $success,
+            'message' => $success ? 'Course progress reset successfully' : 'Errors: ' . implode(', ', $errors),
+        ];
+    }
+
+    public static function reset_course_progress_returns() {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'Success status'),
+            'message' => new external_value(PARAM_TEXT, 'Result message'),
+        ]);
+    }
 }

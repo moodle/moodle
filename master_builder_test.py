@@ -38,6 +38,7 @@ PLM_TARGETS = [
 # FLAGS
 STRICT_PDF_ONLY = True 
 DOWNLOAD_DIR = "temp_staging_area"
+NUKE_VERSION_TABLE = False # Set to True to wipe the DB state on run
 
 # CREDENTIALS
 MOODLE_URL = os.getenv('MOODLE_URL')
@@ -48,8 +49,8 @@ API_BASE = MOODLE_URL.rstrip('/')
 API_ENDPOINT = f"{API_BASE}/webservice/rest/server.php"
 
 PG_HOST = os.getenv('PG_HOST')
-PG_PORT = os.getenv('PG_PORT', "5432")
-PG_DB = os.getenv('PG_DBNAME_FUSION', "autodesk-fusion")
+PG_PORT = os.getenv('PG_PORT')
+PG_DBNAME = os.getenv('PG_DBNAME_FUSION')
 PG_USER = os.getenv('PG_USER')
 PG_PASSWORD = os.getenv('PG_PASSWORD')
 
@@ -57,77 +58,89 @@ AUTODESK_CLIENT_ID = os.getenv('AUTODESK_CLIENT_ID')
 AUTODESK_CLIENT_SECRET = os.getenv('AUTODESK_CLIENT_SECRET')
 AUTODESK_HOST = os.getenv('AUTODESK_HOST')
 AUTODESK_USER_EMAIL = os.getenv('AUTODESK_USER_EMAIL')
-BASE_API_URL = f"https://{AUTODESK_HOST}/api/v2"
 
-# GLOBAL CACHE
-access_token = None
-COURSE_CACHE = {} 
+# Construct BASE_API_URL correctly
+if AUTODESK_HOST:
+    if not AUTODESK_HOST.startswith('http'):
+        BASE_API_URL = f"https://{AUTODESK_HOST}/api/v2"
+    else:
+         BASE_API_URL = f"{AUTODESK_HOST}/api/v2"
+else:
+    BASE_API_URL = None
+
+# GLOBALS
+COURSE_CACHE = {}
 USER_ID = None
+AUTODESK_TOKEN = None
+TOKEN_EXPIRY = 0
 
-# --- 2. DATABASE ---
-
-def get_db_connection():
-    try:
-        conn = psycopg2.connect(
-            host=PG_HOST, port=PG_PORT, dbname=PG_DB, user=PG_USER, password=PG_PASSWORD
-        )
-        return conn
-    except Exception as e:
-        logging.error(f"FATAL: Database connection failed: {e}")
-        raise
-
-def fetch_targets_from_db(conn, table_name: str, filter_str: str) -> List[Dict]:
-    sql = f'SELECT i.* FROM public."{table_name}" AS i WHERE i.descriptor LIKE %s'
-    try:
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(sql, (filter_str,))
-            rows = cur.fetchall()
-        return rows
-    except Exception as e:
-        logging.error(f"DB Query Failed on table {table_name}: {e}")
-        raise
-
-# --- 3. AUTODESK V2 API ---
+# --- 2. AUTODESK AUTH ---
 
 def get_autodesk_token():
-    global access_token
+    global AUTODESK_TOKEN, TOKEN_EXPIRY
+    if AUTODESK_TOKEN and time.time() < TOKEN_EXPIRY:
+        return AUTODESK_TOKEN
+
     logging.info("Refreshing Autodesk Token...")
-    try:
-        b64 = base64.b64encode(f"{AUTODESK_CLIENT_ID}:{AUTODESK_CLIENT_SECRET}".encode()).decode()
-        token_url = 'https://developer.api.autodesk.com/authentication/v2/token'
-        headers = {'Authorization': f"Basic {b64}", 'Content-Type': 'application/x-www-form-urlencoded'}
-        data = {'grant_type': 'client_credentials', 'scope': 'data:read'}
-        resp = requests.post(token_url, headers=headers, data=data, timeout=15)
-        resp.raise_for_status()
-        access_token = resp.json()['access_token']
-        return True
-    except Exception as e:
-        logging.error(f"Autodesk Auth Failed: {e}")
-        return False
+    url = "https://developer.api.autodesk.com/authentication/v2/token"
+    payload = {
+        'client_id': AUTODESK_CLIENT_ID,
+        'client_secret': AUTODESK_CLIENT_SECRET,
+        'grant_type': 'client_credentials',
+        'scope': 'data:read'
+    }
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    
+    resp = requests.post(url, data=payload, headers=headers)
+    if resp.status_code != 200:
+        raise Exception(f"Auth Failed: {resp.text}")
+    
+    data = resp.json()
+    AUTODESK_TOKEN = data['access_token']
+    TOKEN_EXPIRY = time.time() + data['expires_in'] - 60
+    return AUTODESK_TOKEN
 
 def make_api_request_v2(method, url, **kwargs):
-    global access_token
-    if not access_token:
-        if not get_autodesk_token(): raise Exception("Auth Failed")
+    token = get_autodesk_token()
+    headers = kwargs.get('headers', {})
+    headers['Authorization'] = f"Bearer {token}"
+    if AUTODESK_USER_EMAIL:
+        headers['X-user-id'] = AUTODESK_USER_EMAIL
+    kwargs['headers'] = headers
     
-    headers = kwargs.setdefault('headers', {})
-    headers['Authorization'] = f"Bearer {access_token}"
-    headers['X-user-id'] = AUTODESK_USER_EMAIL
-    
-    try:
+    resp = requests.request(method, url, **kwargs)
+    if resp.status_code == 401:
+        logging.warning("Token expired. Retrying...")
+        global AUTODESK_TOKEN
+        AUTODESK_TOKEN = None
+        token = get_autodesk_token()
+        headers['Authorization'] = f"Bearer {token}"
         resp = requests.request(method, url, **kwargs)
-        if resp.status_code == 401:
-            logging.warning("401 Token Expired. Retrying...")
-            if get_autodesk_token():
-                headers['Authorization'] = f"Bearer {access_token}"
-                resp = requests.request(method, url, **kwargs)
-            else:
-                raise Exception("Token Refresh Failed")
-        resp.raise_for_status()
-        return resp
-    except Exception as e:
-        logging.error(f"API Request Failed: {e}")
-        raise
+        
+    if resp.status_code not in [200, 201, 202]:
+        logging.error(f"API Error {resp.status_code}: {resp.text}")
+        # Don't raise immediately, let caller handle
+    return resp
+
+# --- 3. DATABASE ---
+
+def get_db_connection():
+    return psycopg2.connect(
+        host=PG_HOST,
+        port=PG_PORT,
+        dbname=PG_DBNAME,
+        user=PG_USER,
+        password=PG_PASSWORD
+    )
+
+def fetch_targets_from_db(conn, table_name, filter_pattern):
+    query = f"""
+        SELECT * FROM "{table_name}"
+        WHERE descriptor LIKE %s
+    """
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(query, (filter_pattern,))
+        return cur.fetchall()
 
 def download_pdf_logic(workspace_id, item_id, descriptor):
     url = f"{BASE_API_URL}/workspaces/{workspace_id}/items/{item_id}/files"
@@ -271,7 +284,7 @@ def upload_file_json_base64(file_path):
     raise Exception(f"Unexpected upload response: {res}")
 
 def ensure_specific_course_exists(shortname: str, fullname: str, category_id: int):
-    if shortname in COURSE_CACHE: return COURSE_CACHE[shortname]
+    if shortname in COURSE_CACHE: return COURSE_CACHE[shortname], False
 
     logging.info(f"Checking for course: {shortname}")
     
@@ -287,7 +300,7 @@ def ensure_specific_course_exists(shortname: str, fullname: str, category_id: in
         if existing.get('shortname') == shortname:
             logging.info(f"Found Existing Course: {existing['id']}")
             COURSE_CACHE[shortname] = existing['id']
-            return existing['id']
+            return existing['id'], False
 
     logging.info(f"Creating New Course: {shortname}")
     
@@ -313,16 +326,107 @@ def ensure_specific_course_exists(shortname: str, fullname: str, category_id: in
                  existing = search_res_retry[0]
                  if existing.get('shortname') == shortname:
                      COURSE_CACHE[shortname] = existing['id']
-                     return existing['id']
+                     return existing['id'], False
              
         logging.error(f"COURSE CREATE FATAL: {json.dumps(res)}")
         raise Exception(f"Course Creation Failed: {res['message']}")
 
     new_id = res[0]['id']
     COURSE_CACHE[shortname] = new_id
-    return new_id
+    return new_id, True
 
-def build_module_infrastructure(course_id, base_name, version, pdf_path=None):
+def check_quiz_exists(course_id):
+    """
+    Checks if a quiz module already exists in the course.
+    """
+    try:
+        contents = call_moodle_json('core_course_get_contents', {'courseid': course_id})
+        for section in contents:
+            if 'modules' in section:
+                for mod in section['modules']:
+                    if mod.get('modname') == 'quiz':
+                        return True
+    except Exception as e:
+        logging.error(f"Error checking for quiz: {e}")
+    return False
+
+def post_announcement(course_id, subject, message, message_format=1):
+    """
+    Posts an announcement to the course 'News' forum.
+    """
+    try:
+        # 1. Find the News forum
+        forums_res = call_moodle_json('mod_forum_get_forums_by_courses', {'courseids': [course_id]})
+        news_forum_id = None
+        
+        # Log what we found to help debug
+        if isinstance(forums_res, list):
+            logging.info(f"Forums found in course {course_id}: {[f.get('name', 'Unknown') + ' (' + f.get('type', '?') + ')' for f in forums_res]}")
+            
+            for forum in forums_res:
+                # Check for type 'news' OR name 'Announcements'/'Avisos'
+                if forum.get('type') == 'news' or forum.get('name') in ['Announcements', 'Avisos', 'News']:
+                    news_forum_id = forum.get('id')
+                    break
+        
+        if not news_forum_id:
+            logging.warning(f"No News forum found for course {course_id}. Creating one...")
+            # Attempt to create one if missing
+            try:
+                forum_payload = {
+                    'modules': [{
+                        'modulename': 'forum',
+                        'courseid': int(course_id),
+                        'section': 0,
+                        'name': 'Announcements',
+                        'intro': 'General news and announcements',
+                        'introformat': 1,
+                        'visible': 1,
+                        'moduleinfo': [
+                            {'name': 'type', 'value': 'news'},
+                            {'name': 'forcesubscribe', 'value': '1'},
+                            {'name': 'trackingtype', 'value': '1'}
+                        ]
+                    }]
+                }
+                res = call_moodle_json('core_course_create_modules', forum_payload)
+                if isinstance(res, list) and len(res) > 0:
+                     # We need the instance ID, not the CMID
+                     cmid = res[0]['id']
+                     # Fetch instance id
+                     time.sleep(1)
+                     contents = call_moodle_json('core_course_get_contents', {'courseid': course_id})
+                     for section in contents:
+                        for mod in section.get('modules', []):
+                            if mod.get('id') == cmid:
+                                news_forum_id = mod.get('instance')
+                                logging.info(f"Created new Announcements forum: {news_forum_id}")
+                                break
+                        if news_forum_id: break
+            except Exception as e:
+                logging.error(f"Failed to create forum: {e}")
+
+        if not news_forum_id:
+            logging.warning("Still no forum found. Aborting announcement.")
+            return
+
+        # 2. Post discussion
+        payload = {
+            'forumid': news_forum_id,
+            'subject': subject,
+            'message': message
+        }
+        
+        res = call_moodle_json('mod_forum_add_discussion', payload)
+        if isinstance(res, dict) and 'discussionid' in res:
+            logging.info(f"Announcement posted: {subject}")
+        else:
+            logging.error(f"Failed to post announcement: {res}")
+
+    except Exception as e:
+        logging.error(f"Announcement Error: {e}")
+
+def build_module_infrastructure(course_id, base_name, version, pdf_path=None, create_quiz=True):
     """
     Creates Resource and Quiz using YOUR CUSTOM API SCHEMA + JSON.
     """
@@ -366,94 +470,95 @@ def build_module_infrastructure(course_id, base_name, version, pdf_path=None):
              raise Exception(f"Resource Creation Failed: {res['message']}")
 
     # --- STEP 2: CREATE QUIZ MODULE ---
-    logging.info(f"Creating Quiz infrastructure for {base_name}...")
-    
-    # Custom PHP 'moduleinfo' structure
-    quiz_payload = {
-        'modules': [{
-            'modulename': 'quiz',
-            'courseid': int(course_id),
-            'section': 1,
-            'name': f"TRAINING: {base_name}",
-            'intro': "I acknowledge I have read and understood the documentation. / Reconozco que he leído y comprendido la documentación.",
-            'introformat': 1,
-            'visible': 1,
-            'moduleinfo': [
-                {'name': 'module', 'value': '17'}, # Hardcoded ID from user
-                {'name': 'course', 'value': str(course_id)},
-                {'name': 'preferredbehaviour', 'value': 'deferredfeedback'},
-                {'name': 'quizpassword', 'value': ''},
-                {'name': 'grade', 'value': '10'},
-                {'name': 'grademethod', 'value': '1'},
-                {'name': 'attempts', 'value': '0'}, # Unlimited
-                {'name': 'overduehandling', 'value': 'autosubmit'},
-                {'name': 'browsersecurity', 'value': '-'},
-                {'name': 'completion', 'value': '1'},
-                {'name': 'questionsperpage', 'value': '1'},
-                {'name': 'shuffleanswers', 'value': '1'}
-            ]
-        }]
-    }
-
-    res = call_moodle_json('core_course_create_modules', quiz_payload)
-    if isinstance(res, dict) and 'exception' in res:
-        logging.error(f"QUIZ FAIL DEBUG: {json.dumps(res)}")
-        raise Exception(f"Quiz Creation Failed: {res['message']}")
-    
-    course_module_id = res[0]['id']
-    logging.info(f"Quiz Course Module Created (cmid: {course_module_id}).")
-    
-    # Get the actual quiz instance ID from course contents
-    # Retry with delay to handle caching/timing issues
-    logging.info("Fetching quiz instance ID...")
-    quiz_instance_id = None
-    max_retries = 3
-    
-    for attempt in range(max_retries):
-        if attempt > 0:
-            logging.info(f"Retry {attempt}/{max_retries-1} after 2 second delay...")
-            time.sleep(2)
+    if create_quiz:
+        logging.info(f"Creating Quiz infrastructure for {base_name}...")
         
-        contents = call_moodle_json('core_course_get_contents', {'courseid': course_id})
-        for section in contents:
-            if 'modules' in section:
-                for mod in section['modules']:
-                    if mod.get('id') == course_module_id:
-                        quiz_instance_id = mod.get('instance')
-                        break
+        # Custom PHP 'moduleinfo' structure
+        quiz_payload = {
+            'modules': [{
+                'modulename': 'quiz',
+                'courseid': int(course_id),
+                'section': 1,
+                'name': f"TRAINING: {base_name}",
+                'intro': "I acknowledge I have read and understood the documentation. / Reconozco que he leído y comprendido la documentación.",
+                'introformat': 1,
+                'visible': 1,
+                'moduleinfo': [
+                    {'name': 'module', 'value': '17'}, # Hardcoded ID from user
+                    {'name': 'course', 'value': str(course_id)},
+                    {'name': 'preferredbehaviour', 'value': 'deferredfeedback'},
+                    {'name': 'quizpassword', 'value': ''},
+                    {'name': 'grade', 'value': '10'},
+                    {'name': 'grademethod', 'value': '1'},
+                    {'name': 'attempts', 'value': '0'}, # Unlimited
+                    {'name': 'overduehandling', 'value': 'autosubmit'},
+                    {'name': 'browsersecurity', 'value': '-'},
+                    {'name': 'completion', 'value': '1'},
+                    {'name': 'questionsperpage', 'value': '1'},
+                    {'name': 'shuffleanswers', 'value': '1'}
+                ]
+            }]
+        }
+
+        res = call_moodle_json('core_course_create_modules', quiz_payload)
+        if isinstance(res, dict) and 'exception' in res:
+            logging.error(f"QUIZ FAIL DEBUG: {json.dumps(res)}")
+            raise Exception(f"Quiz Creation Failed: {res['message']}")
+        
+        course_module_id = res[0]['id']
+        logging.info(f"Quiz Course Module Created (cmid: {course_module_id}).")
+        
+        # Get the actual quiz instance ID from course contents
+        # Retry with delay to handle caching/timing issues
+        logging.info("Fetching quiz instance ID...")
+        quiz_instance_id = None
+        max_retries = 3
+        
+        for attempt in range(max_retries):
+            if attempt > 0:
+                logging.info(f"Retry {attempt}/{max_retries-1} after 2 second delay...")
+                time.sleep(2)
+            
+            contents = call_moodle_json('core_course_get_contents', {'courseid': course_id})
+            for section in contents:
+                if 'modules' in section:
+                    for mod in section['modules']:
+                        if mod.get('id') == course_module_id:
+                            quiz_instance_id = mod.get('instance')
+                            break
+                if quiz_instance_id:
+                    break
+            
             if quiz_instance_id:
                 break
         
-        if quiz_instance_id:
-            break
-    
-    if not quiz_instance_id:
-        raise Exception(f"Could not find quiz instance ID for course_module {course_module_id}")
-    
-    logging.info(f"Quiz Instance ID: {quiz_instance_id}")
+        if not quiz_instance_id:
+            raise Exception(f"Could not find quiz instance ID for course_module {course_module_id}")
+        
+        logging.info(f"Quiz Instance ID: {quiz_instance_id}")
 
-    # --- STEP 3: ADD QUESTION VIA LOCAL PLUGIN ---
-    logging.info("Adding Bilingual True/False Question...")
-    
-    question_text = "Have you completed the training? / ¿Ha completado el entrenamiento?"
-    
-    q_payload = {
-        'quizid': int(quiz_instance_id),
-        'questionname': 'Training Completion / Completado',
-        'questiontext': question_text,
-        'correctanswer': 1
-    }
-    
-    try:
-        q_res = call_moodle_json('local_masterbuilder_create_question', q_payload)
-        if isinstance(q_res, dict) and 'exception' in q_res:
-             logging.error(f"QUESTION FAIL DEBUG: {json.dumps(q_res)}")
-             # Don't fail the whole job, just log it
-             logging.warning("Failed to create question, but Quiz exists.")
-        else:
-             logging.info(f"Question Created Successfully (ID: {q_res.get('questionid')})")
-    except Exception as e:
-        logging.error(f"Question Creation Error: {e}")
+        # --- STEP 3: ADD QUESTION VIA LOCAL PLUGIN ---
+        logging.info("Adding Bilingual True/False Question...")
+        
+        question_text = "Have you completed the training? / ¿Ha completado el entrenamiento?"
+        
+        q_payload = {
+            'quizid': int(quiz_instance_id),
+            'questionname': 'Training Completion / Completado',
+            'questiontext': question_text,
+            'correctanswer': 1
+        }
+        
+        try:
+            q_res = call_moodle_json('local_masterbuilder_create_question', q_payload)
+            if isinstance(q_res, dict) and 'exception' in q_res:
+                 logging.error(f"QUESTION FAIL DEBUG: {json.dumps(q_res)}")
+                 # Don't fail the whole job, just log it
+                 logging.warning("Failed to create question, but Quiz exists.")
+            else:
+                 logging.info(f"Question Created Successfully (ID: {q_res.get('questionid')})")
+        except Exception as e:
+            logging.error(f"Question Creation Error: {e}")
 
 # --- 5. MAIN LOGIC ---
 
@@ -468,7 +573,45 @@ def extract_id(item):
     match = re.search(r'\.(\d+)$', item.get('urn', ''))
     return match.group(1) if match else None
 
+# --- API STATE FUNCTIONS ---
+
+def api_get_version(shortname):
+    """
+    Fetches the build version for a course from Moodle DB via API.
+    """
+    try:
+        res = call_moodle_json('local_masterbuilder_get_build_state', {'shortname': shortname})
+        if isinstance(res, dict) and res.get('found'):
+            return res.get('version')
+    except Exception as e:
+        logging.warning(f"Could not fetch state for {shortname}: {e}")
+    return None
+
+def api_update_version(shortname, version):
+    """
+    Updates the build version for a course in Moodle DB via API.
+    """
+    try:
+        call_moodle_json('local_masterbuilder_update_build_state', {'shortname': shortname, 'version': version})
+    except Exception as e:
+        logging.error(f"Could not update state for {shortname}: {e}")
+
+def api_reset_build_state():
+    """
+    Resets the entire build state table via API.
+    """
+    logging.warning("!!! NUKING VERSION TABLE !!!")
+    try:
+        res = call_moodle_json('local_masterbuilder_reset_build_state', {})
+        logging.info(f"Reset Result: {res}")
+    except Exception as e:
+        logging.error(f"Could not reset build state: {e}")
+
 def main():
+    # Check Nuke Flag
+    if NUKE_VERSION_TABLE:
+        api_reset_build_state()
+
     conn = get_db_connection()
     try:
         for target in PLM_TARGETS:
@@ -493,34 +636,74 @@ def main():
                 item_id = extract_id(alpha)
                 if not item_id: continue
 
-                logging.info(f"Processing {base_id} -> Version {alpha['version']}")
+                current_version = alpha['version']
+                
+                # FETCH STATE FROM API
+                stored_version = api_get_version(base_id)
+                
+                # Determine if we need to update PDF
+                update_pdf = False
+                if not stored_version or current_version > stored_version:
+                    update_pdf = True
+                    logging.info(f"Processing {base_id} -> New Version {current_version} (Old: {stored_version})")
+                else:
+                    logging.info(f"Processing {base_id} -> Version {current_version} (Up to date)")
 
-                # 1. Download
-                pdf = download_pdf_logic(target['workspace_id'], item_id, base_id)
-                if not pdf:
-                    if STRICT_PDF_ONLY:
+                # 1. Download PDF if needed
+                pdf = None
+                if update_pdf:
+                    pdf = download_pdf_logic(target['workspace_id'], item_id, base_id)
+                    if not pdf and STRICT_PDF_ONLY:
                         logging.warning(f"Skipping {base_id} (No PDF)")
                         continue
-                    else:
-                        logging.warning(f"Building {base_id} (No PDF)")
 
                 try:
                     full_title = alpha.get('descriptor', base_id)
                     
-                    course_id = ensure_specific_course_exists(
+                    course_id, is_new_course = ensure_specific_course_exists(
                         shortname=base_id,
                         fullname=f"Training: {full_title}",
                         category_id=target['category_id']
                     )
 
-                    build_module_infrastructure(course_id, base_id, alpha['version'], pdf)
+                    # Check if quiz exists
+                    quiz_exists = check_quiz_exists(course_id)
+                    create_quiz = not quiz_exists
+
+                    if update_pdf or create_quiz:
+                        build_module_infrastructure(course_id, base_id, alpha['version'], pdf, create_quiz=create_quiz)
+                        
+                        # UPDATE STATE IN API
+                        if update_pdf:
+                            api_update_version(base_id, current_version)
+                            
+                            # Reset course progress if it's an update (not a new course)
+                            if not is_new_course:
+                                logging.info(f"Resetting course progress for {base_id}...")
+                                try:
+                                    reset_res = call_moodle_json('local_masterbuilder_reset_course_progress', {'courseid': course_id})
+                                    logging.info(f"Reset result: {reset_res}")
+                                except Exception as e:
+                                    logging.error(f"Failed to reset course progress: {e}")
+                            
+                            # Post announcement
+                            subject = f"New Training Available / Nuevo Entrenamiento Disponible"
+                            message = f"A new version ({current_version}) of the training document is available. Please review it and complete the quiz. / Una nueva versión ({current_version}) del documento de capacitación está disponible. Por favor revíselo y complete el cuestionario."
+                            post_announcement(course_id, subject, message)
+                        
+                        elif create_quiz:
+                             # If we just created the quiz but didn't update PDF, we should still announce it?
+                             # Or maybe just silent fix. Let's announce for now as it's "Training Available"
+                             if is_new_course:
+                                 subject = f"Training Available / Entrenamiento Disponible"
+                                 message = f"Training for {base_id} is now available. / El entrenamiento para {base_id} ya está disponible."
+                                 post_announcement(course_id, subject, message)
                     
-                    logging.info(f"SUCCESS: {base_id} deployed.")
                     if pdf and os.path.exists(pdf): os.remove(pdf)
 
                 except Exception as e:
-                    logging.error(f"FAILURE on {base_id}: {e}")
-                    # Continue
+                    logging.error(f"Error processing {base_id}: {e}")
+                    # send_alert(f"Job Failed for {base_id}", str(e))
 
     except Exception as e:
         job_alerter.send_failure_alert(

@@ -19,7 +19,7 @@ MOODLE_TOKEN = os.getenv('MOODLE_TOKEN')
 API_ENDPOINT = f"{MOODLE_URL.rstrip('/')}/webservice/rest/server.php"
 
 # BATCH SIZE (Prevent Timeouts)
-DELETE_BATCH_SIZE = 1
+DELETE_BATCH_SIZE = 3
 
 # --- HELPERS (Reused from your code) ---
 
