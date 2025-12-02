@@ -47,6 +47,7 @@ $string['clialreadyinstalled'] = 'The configuration file config.php already exis
 $string['cliinstallfinished'] = 'Installation completed successfully.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installation program';
 $string['climustagreelicense'] = 'In non-interactive mode you must agree to the licence by specifying --agree-license option';
+$string['clinoreplyemail'] = 'Noreply address';
 $string['cliskipdatabase'] = 'Skipping database installation.';
 $string['clisupportemail'] = 'Support email address';
 $string['clitablesexist'] = 'Database tables already present; CLI installation cannot continue.';

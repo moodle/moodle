@@ -470,6 +470,11 @@ function install_cli_database(array $options, $interactive) {
         set_config('supportemail', $options['adminemail']);
     }
 
+    // Set the noreply address if specified.
+    if (!empty($options['noreplyemail'])) {
+        set_config('noreplyaddress', $options['noreplyemail']);
+    }
+
     // indicate that this site is fully configured
     set_config('rolesactive', 1);
     upgrade_finished();
