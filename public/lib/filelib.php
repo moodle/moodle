@@ -750,7 +750,7 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
             }
             // find the file this draft file was created from and count all references in local
             // system pointing to that file
-            $source = @unserialize($file->get_source() ?? '');
+            $source = unserialize_object($file->get_source() ?? '');
             if (isset($source->original)) {
                 $item->refcount = $fs->search_references_count($source->original);
             }
@@ -870,9 +870,9 @@ function file_get_submitted_draft_itemid($elname) {
  * @return stored_file
  */
 function file_restore_source_field_from_draft_file($storedfile) {
-    $source = @unserialize($storedfile->get_source() ?? '');
-    if (!empty($source)) {
-        if (is_object($source)) {
+    if (!empty($storedfile->get_source())) {
+        $source = unserialize_object($storedfile->get_source());
+        if (isset($source->source)) {
             $restoredsource = $source->source;
             $storedfile->set_source($restoredsource);
         } else {
@@ -1164,7 +1164,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             // Let's check if we can update this file or we need to delete and create.
             if ($newfile->is_directory()) {
                 // Directories are always ok to just update.
-            } else if (($source = @unserialize($newfile->get_source() ?? '')) && isset($source->original)) {
+            } else if (($source = unserialize_object($newfile->get_source() ?? '')) && isset($source->original)) {
                 // File has the 'original' - we need to update the file (it may even have not been changed at all).
                 $original = file_storage::unpack_reference($source->original);
                 if ($original['filename'] !== $oldfile->get_filename() || $original['filepath'] !== $oldfile->get_filepath()) {
@@ -1200,8 +1200,10 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             // Field files.source for draftarea files contains serialised object with source and original information.
             // We only store the source part of it for non-draft file area.
             $newsource = $newfile->get_source();
-            if ($source = @unserialize($newfile->get_source() ?? '')) {
-                $newsource = $source->source;
+            if ($source = unserialize_object($newfile->get_source() ?? '')) {
+                if (isset($source->source)) {
+                    $newsource = $source->source;
+                }
             }
             if ($oldfile->get_source() !== $newsource) {
                 $oldfile->set_source($newsource);
@@ -1234,10 +1236,12 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         // the size and subdirectory tests are extra safety only, the UI should prevent it
         foreach ($newhashes as $file) {
             $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
-            if ($source = @unserialize($file->get_source() ?? '')) {
+            if ($source = unserialize_object($file->get_source() ?? '')) {
                 // Field files.source for draftarea files contains serialised object with source and original information.
                 // We only store the source part of it for non-draft file area.
-                $file_record['source'] = $source->source;
+                if (isset($source->source)) {
+                    $file_record['source'] = $source->source;
+                }
             }
 
             if ($file->is_external_file()) {
@@ -2900,7 +2904,7 @@ function file_overwrite_existing_draftfile(stored_file $newfile, stored_file $ex
 
     $fs = get_file_storage();
     // Remember original file source field.
-    $source = @unserialize($existingfile->get_source() ?? '');
+    $source = unserialize_object($existingfile->get_source() ?? '');
     // Remember the original sortorder.
     $sortorder = $existingfile->get_sortorder();
     if ($newfile->is_external_file()) {
@@ -2924,7 +2928,7 @@ function file_overwrite_existing_draftfile(stored_file $newfile, stored_file $ex
     $newfile = $fs->create_file_from_storedfile($newfilerecord, $newfile);
     // Preserve original file location (stored in source field) for handling references.
     if (isset($source->original)) {
-        if (!($newfilesource = @unserialize($newfile->get_source() ?? ''))) {
+        if (!($newfilesource = unserialize_object($newfile->get_source() ?? ''))) {
             $newfilesource = new stdClass();
         }
         $newfilesource->original = $source->original;
@@ -4334,7 +4338,7 @@ class curl_cache {
                 $fp = fopen($this->dir.$filename, 'r');
                 $size = filesize($this->dir.$filename);
                 $content = fread($fp, $size);
-                return unserialize($content);
+                return unserialize_array($content);
             }
         }
         return false;
