@@ -572,4 +572,54 @@ nav.moremenu {
     svg.icon {
         color: #fff !important;
     }
+
+    // Dropdown Toggle - White text, Transparent background
+    .btn.dropdown-toggle {
+        color: #fff !important;
+        background-color: transparent !important;
+        border-color: #444 !important;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+        }
+    }
+
+    // Initial Bar / Pagination
+    .initialbargroups {
+        .pagination {
+            .page-item {
+                .page-link {
+                    background-color: #1e1e1e !important;
+                    border-color: #333 !important;
+                    color: #fff !important;
+
+                    &:hover {
+                        background-color: #333 !important;
+                        color: $aust-gold !important;
+                    }
+                }
+
+                &.active .page-link {
+                    background-color: $aust-blue !important;
+                    border-color: $aust-blue !important;
+                    color: #fff !important;
+                }
+            }
+        }
+    }
+
+    // Filter Group Fixes
+    .filter-group {
+        background-color: #1e1e1e !important;
+        border-color: #333 !important;
+        color: #e0e0e0 !important;
+
+        .bg-white,
+        .bg-light {
+            background-color: #2c2c2c !important;
+            border-color: #444 !important;
+            color: #fff !important;
+        }
+    }
 }
