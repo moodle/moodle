@@ -288,6 +288,7 @@ class core_course_external extends external_api {
                         $module['completion'] = $cm->completion;
                         $module['downloadcontent'] = $cm->downloadcontent;
                         $module['noviewlink'] = plugin_supports('mod', $cm->modname, FEATURE_NO_VIEW_LINK, false);
+                        $module['candisplay'] = plugin_supports('mod', $cm->modname, FEATURE_CAN_DISPLAY, true);
                         $module['dates'] = $activitydates;
                         $module['groupmode'] = $cm->groupmode;
 
@@ -443,119 +444,174 @@ class core_course_external extends external_api {
 
         return new external_multiple_structure(
             new external_single_structure(
-                array(
+                [
                     'id' => new external_value(PARAM_INT, 'Section ID'),
                     'name' => new external_value(PARAM_RAW, 'Section name'),
                     'visible' => new external_value(PARAM_INT, 'is the section visible', VALUE_OPTIONAL),
                     'summary' => new external_value(PARAM_RAW, 'Section description'),
                     'summaryformat' => new external_format_value('summary'),
                     'section' => new external_value(PARAM_INT, 'Section number inside the course', VALUE_OPTIONAL),
-                    'hiddenbynumsections' => new external_value(PARAM_INT, 'Whether is a section hidden in the course format',
-                                                                VALUE_OPTIONAL),
+                    'hiddenbynumsections' => new external_value(
+                        PARAM_INT,
+                        'Whether is a section hidden in the course format',
+                        VALUE_OPTIONAL,
+                    ),
                     'uservisible' => new external_value(PARAM_BOOL, 'Is the section visible for the user?', VALUE_OPTIONAL),
                     'availabilityinfo' => new external_value(PARAM_RAW, 'Availability information.', VALUE_OPTIONAL),
-                    'component' => new external_value(PARAM_COMPONENT, 'The delegate component of this section if any.',
-                        VALUE_OPTIONAL),
-                    'itemid' => new external_value(PARAM_INT,
-                        'The optional item id delegate component can use to identify its instance.', VALUE_OPTIONAL),
+                    'component' => new external_value(
+                        PARAM_COMPONENT,
+                        'The delegate component of this section if any.',
+                        VALUE_OPTIONAL,
+                    ),
+                    'itemid' => new external_value(
+                        PARAM_INT,
+                        'The optional item id delegate component can use to identify its instance.',
+                        VALUE_OPTIONAL,
+                    ),
                     'modules' => new external_multiple_structure(
-                            new external_single_structure(
-                                array(
-                                    'id' => new external_value(PARAM_INT, 'activity id'),
-                                    'url' => new external_value(PARAM_URL, 'activity url', VALUE_OPTIONAL),
-                                    'name' => new external_value(PARAM_RAW, 'activity module name'),
-                                    'instance' => new external_value(PARAM_INT, 'instance id', VALUE_OPTIONAL),
-                                    'contextid' => new external_value(PARAM_INT, 'Activity context id.', VALUE_OPTIONAL),
-                                    'description' => new external_value(PARAM_RAW, 'activity description', VALUE_OPTIONAL),
-                                    'visible' => new external_value(PARAM_INT, 'is the module visible', VALUE_OPTIONAL),
-                                    'uservisible' => new external_value(PARAM_BOOL, 'Is the module visible for the user?',
-                                        VALUE_OPTIONAL),
-                                    'availabilityinfo' => new external_value(PARAM_RAW, 'Availability information.',
-                                        VALUE_OPTIONAL),
-                                    'visibleoncoursepage' => new external_value(PARAM_INT, 'is the module visible on course page',
-                                        VALUE_OPTIONAL),
-                                    'modicon' => new external_value(PARAM_URL, 'activity icon url'),
-                                    'modname' => new external_value(PARAM_PLUGIN, 'activity module type'),
-                                    'purpose' => new external_value(PARAM_ALPHA, 'the module purpose'),
-                                    'branded' => new external_value(PARAM_BOOL, 'Whether the module is branded or not',
-                                        VALUE_OPTIONAL),
-                                    'modplural' => new external_value(PARAM_TEXT, 'activity module plural name'),
-                                    'availability' => new external_value(PARAM_RAW, 'module availability settings', VALUE_OPTIONAL),
-                                    'indent' => new external_value(PARAM_INT, 'number of identation in the site'),
-                                    'onclick' => new external_value(PARAM_RAW, 'Onclick action.', VALUE_OPTIONAL),
-                                    'afterlink' => new external_value(PARAM_RAW, 'After link info to be displayed.',
-                                        VALUE_OPTIONAL),
-                                    'activitybadge' => self::get_activitybadge_structure(),
-                                    'customdata' => new external_value(PARAM_RAW, 'Custom data (JSON encoded).', VALUE_OPTIONAL),
-                                    'noviewlink' => new external_value(PARAM_BOOL, 'Whether the module has no view page',
-                                        VALUE_OPTIONAL),
-                                    'completion' => new external_value(PARAM_INT, 'Type of completion tracking:
-                                        0 means none, 1 manual, 2 automatic.', VALUE_OPTIONAL),
-                                    'completiondata' => $completiondefinition,
-                                    'downloadcontent' => new external_value(PARAM_INT, 'The download content value', VALUE_OPTIONAL),
-                                    'dates' => new external_multiple_structure(
-                                        new external_single_structure(
-                                            array(
-                                                'label' => new external_value(PARAM_TEXT, 'date label'),
-                                                'timestamp' => new external_value(PARAM_INT, 'date timestamp'),
-                                                'relativeto' => new external_value(PARAM_INT, 'relative date timestamp',
-                                                    VALUE_OPTIONAL),
-                                                'dataid' => new external_value(PARAM_NOTAGS, 'cm data id', VALUE_OPTIONAL),
-                                            )
-                                        ),
-                                        'Course dates',
-                                        VALUE_DEFAULT,
-                                        []
-                                    ),
-                                    'groupmode' => new external_value(PARAM_INT, 'Group mode value', VALUE_OPTIONAL),
-                                    'contents' => new external_multiple_structure(
-                                          new external_single_structure(
-                                              array(
-                                                  // content info
-                                                  'type'=> new external_value(PARAM_TEXT, 'a file or a folder or external link'),
-                                                  'filename'=> new external_value(PARAM_FILE, 'filename'),
-                                                  'filepath'=> new external_value(PARAM_PATH, 'filepath'),
-                                                  'filesize'=> new external_value(PARAM_INT, 'filesize'),
-                                                  'fileurl' => new external_value(PARAM_URL, 'downloadable file url', VALUE_OPTIONAL),
-                                                  'content' => new external_value(PARAM_RAW, 'Raw content, will be used when type is content', VALUE_OPTIONAL),
-                                                  'timecreated' => new external_value(PARAM_INT, 'Time created'),
-                                                  'timemodified' => new external_value(PARAM_INT, 'Time modified'),
-                                                  'sortorder' => new external_value(PARAM_INT, 'Content sort order'),
-                                                  'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
-                                                  'isexternalfile' => new external_value(PARAM_BOOL, 'Whether is an external file.',
-                                                    VALUE_OPTIONAL),
-                                                  'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for external files.',
-                                                    VALUE_OPTIONAL),
-
-                                                  // copyright related info
-                                                  'userid' => new external_value(PARAM_INT, 'User who added this content to moodle'),
-                                                  'author' => new external_value(PARAM_TEXT, 'Content owner'),
-                                                  'license' => new external_value(PARAM_TEXT, 'Content license'),
-                                                  'tags' => new external_multiple_structure(
-                                                       \core_tag\external\tag_item_exporter::get_read_structure(), 'Tags',
-                                                            VALUE_OPTIONAL
-                                                   ),
-                                              )
-                                          ), 'Course contents', VALUE_DEFAULT, array()
-                                      ),
-                                    'contentsinfo' => new external_single_structure(
-                                        array(
-                                            'filescount' => new external_value(PARAM_INT, 'Total number of files.'),
-                                            'filessize' => new external_value(PARAM_INT, 'Total files size.'),
-                                            'lastmodified' => new external_value(PARAM_INT, 'Last time files were modified.'),
-                                            'mimetypes' => new external_multiple_structure(
-                                                new external_value(PARAM_RAW, 'File mime type.'),
-                                                'Files mime types.'
+                        new external_single_structure(
+                            [
+                                'id' => new external_value(PARAM_INT, 'activity id'),
+                                'url' => new external_value(PARAM_URL, 'activity url', VALUE_OPTIONAL),
+                                'name' => new external_value(PARAM_RAW, 'activity module name'),
+                                'instance' => new external_value(PARAM_INT, 'instance id', VALUE_OPTIONAL),
+                                'contextid' => new external_value(PARAM_INT, 'Activity context id.', VALUE_OPTIONAL),
+                                'description' => new external_value(PARAM_RAW, 'activity description', VALUE_OPTIONAL),
+                                'visible' => new external_value(PARAM_INT, 'is the module visible', VALUE_OPTIONAL),
+                                'uservisible' => new external_value(
+                                    PARAM_BOOL,
+                                    'Is the module visible for the user?',
+                                    VALUE_OPTIONAL,
+                                ),
+                                'availabilityinfo' => new external_value(
+                                    PARAM_RAW,
+                                    'Availability information.',
+                                    VALUE_OPTIONAL,
+                                ),
+                                'visibleoncoursepage' => new external_value(
+                                    PARAM_INT,
+                                    'is the module visible on course page',
+                                    VALUE_OPTIONAL,
+                                ),
+                                'modicon' => new external_value(PARAM_URL, 'activity icon url'),
+                                'modname' => new external_value(PARAM_PLUGIN, 'activity module type'),
+                                'purpose' => new external_value(PARAM_ALPHA, 'the module purpose'),
+                                'branded' => new external_value(
+                                    PARAM_BOOL,
+                                    'Whether the module is branded or not',
+                                    VALUE_OPTIONAL,
+                                ),
+                                'modplural' => new external_value(PARAM_TEXT, 'activity module plural name'),
+                                'availability' => new external_value(PARAM_RAW, 'module availability settings', VALUE_OPTIONAL),
+                                'indent' => new external_value(PARAM_INT, 'number of identation in the site'),
+                                'onclick' => new external_value(PARAM_RAW, 'Onclick action.', VALUE_OPTIONAL),
+                                'afterlink' => new external_value(
+                                    PARAM_RAW,
+                                    'After link info to be displayed.',
+                                    VALUE_OPTIONAL,
+                                ),
+                                'activitybadge' => self::get_activitybadge_structure(),
+                                'customdata' => new external_value(PARAM_RAW, 'Custom data (JSON encoded).', VALUE_OPTIONAL),
+                                'noviewlink' => new external_value(
+                                    PARAM_BOOL,
+                                    'Whether the module has no view page',
+                                    VALUE_OPTIONAL,
+                                ),
+                                'candisplay' => new external_value(
+                                    PARAM_BOOL,
+                                    'Whether the module should be displayed on the course page',
+                                    VALUE_OPTIONAL,
+                                ),
+                                'completion' => new external_value(PARAM_INT, 'Type of completion tracking:
+                                    0 means none, 1 manual, 2 automatic.', VALUE_OPTIONAL),
+                                'completiondata' => $completiondefinition,
+                                'downloadcontent' => new external_value(
+                                    PARAM_INT,
+                                    'The download content value',
+                                    VALUE_OPTIONAL,
+                                ),
+                                'dates' => new external_multiple_structure(
+                                    new external_single_structure(
+                                        [
+                                            'label' => new external_value(PARAM_TEXT, 'date label'),
+                                            'timestamp' => new external_value(PARAM_INT, 'date timestamp'),
+                                            'relativeto' => new external_value(
+                                                PARAM_INT,
+                                                'relative date timestamp',
+                                                VALUE_OPTIONAL,
                                             ),
-                                            'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for
-                                                the main file.', VALUE_OPTIONAL),
-                                        ), 'Contents summary information.', VALUE_OPTIONAL
+                                            'dataid' => new external_value(PARAM_NOTAGS, 'cm data id', VALUE_OPTIONAL),
+                                        ]
                                     ),
-                                )
-                            ), 'list of module'
-                    )
-                )
-            )
+                                    'Course dates',
+                                    VALUE_DEFAULT,
+                                    []
+                                ),
+                                'groupmode' => new external_value(PARAM_INT, 'Group mode value', VALUE_OPTIONAL),
+                                'contents' => new external_multiple_structure(
+                                    new external_single_structure(
+                                        [
+                                            // Content info.
+                                            'type' => new external_value(PARAM_TEXT, 'a file or a folder or external link'),
+                                            'filename' => new external_value(PARAM_FILE, 'filename'),
+                                            'filepath' => new external_value(PARAM_PATH, 'filepath'),
+                                            'filesize' => new external_value(PARAM_INT, 'filesize'),
+                                            'fileurl' => new external_value(PARAM_URL, 'downloadable file url', VALUE_OPTIONAL),
+                                            'content' => new external_value(
+                                                PARAM_RAW,
+                                                'Raw content, will be used when type is content',
+                                                VALUE_OPTIONAL
+                                            ),
+                                            'timecreated' => new external_value(PARAM_INT, 'Time created'),
+                                            'timemodified' => new external_value(PARAM_INT, 'Time modified'),
+                                            'sortorder' => new external_value(PARAM_INT, 'Content sort order'),
+                                            'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
+                                            'isexternalfile' => new external_value(
+                                                PARAM_BOOL,
+                                                'Whether is an external file.',
+                                                VALUE_OPTIONAL,
+                                            ),
+                                            'repositorytype' => new external_value(
+                                                PARAM_PLUGIN,
+                                                'The repository type for external files.',
+                                                VALUE_OPTIONAL,
+                                            ),
+                                            // Copyright related info.
+                                            'userid' => new external_value(PARAM_INT, 'User who added this content to moodle'),
+                                            'author' => new external_value(PARAM_TEXT, 'Content owner'),
+                                            'license' => new external_value(PARAM_TEXT, 'Content license'),
+                                            'tags' => new external_multiple_structure(
+                                                \core_tag\external\tag_item_exporter::get_read_structure(),
+                                                'Tags',
+                                                VALUE_OPTIONAL,
+                                            ),
+                                        ]
+                                    ),
+                                    'Course contents',
+                                    VALUE_DEFAULT,
+                                    [],
+                                ),
+                                'contentsinfo' => new external_single_structure(
+                                    [
+                                        'filescount' => new external_value(PARAM_INT, 'Total number of files.'),
+                                        'filessize' => new external_value(PARAM_INT, 'Total files size.'),
+                                        'lastmodified' => new external_value(PARAM_INT, 'Last time files were modified.'),
+                                        'mimetypes' => new external_multiple_structure(
+                                            new external_value(PARAM_RAW, 'File mime type.'),
+                                            'Files mime types.'
+                                        ),
+                                        'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for
+                                            the main file.', VALUE_OPTIONAL),
+                                    ],
+                                    'Contents summary information.',
+                                    VALUE_OPTIONAL,
+                                ),
+                            ],
+                        ),
+                        'list of modules',
+                    ),
+                ],
+            ),
         );
     }
 
