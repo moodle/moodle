@@ -53,7 +53,11 @@ class block_activity_modules extends block_list {
 
         foreach($modinfo->cms as $cm) {
             // Exclude activities that aren't visible or have no view link (e.g. label). Account for folder being displayed inline.
-            if (!$cm->uservisible || (!$cm->has_view() && strcmp($cm->modname, 'folder') !== 0)) {
+            if (
+                !\course_modinfo::is_mod_type_visible_on_course($cm->modname)
+                || !$cm->uservisible
+                || (!$cm->has_view() && strcmp($cm->modname, 'folder') !== 0)
+            ) {
                 continue;
             }
             if (array_key_exists($cm->modname, $modfullnames)) {

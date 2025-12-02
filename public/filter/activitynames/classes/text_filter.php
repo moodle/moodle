@@ -20,6 +20,7 @@ use cache;
 use cache_store;
 use core\output\html_writer;
 use core_collator;
+use course_modinfo;
 use filterobject;
 
 /**
@@ -124,7 +125,12 @@ class text_filter extends \core_filters\text_filter {
             $sortedactivities = [];
             foreach ($modinfo->cms as $cm) {
                 // Use normal access control and visibility, but exclude labels and hidden activities.
-                if ($cm->visible && $cm->has_view() && $cm->uservisible) {
+                if (
+                    $cm->visible
+                    && $cm->has_view()
+                    && $cm->uservisible
+                    && course_modinfo::is_mod_type_visible_on_course($cm->modname)
+                ) {
                     $sortedactivities[] = (object)[
                         'name' => $cm->name,
                         'url' => $cm->url,
