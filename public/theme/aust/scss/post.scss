@@ -665,4 +665,57 @@ nav.moremenu {
             color: #fff !important;
         }
     }
+
+    // --- USER GRADE REPORT FIXES ---
+    .user-report-container {
+        background-color: transparent !important;
+        color: #e0e0e0 !important;
+
+        .table-responsive {
+            background-color: transparent !important;
+        }
+
+        table.user-grade {
+            background-color: transparent !important;
+            color: #e0e0e0 !important;
+
+            th,
+            td {
+                background-color: transparent !important;
+                border-color: #444 !important;
+                color: #e0e0e0 !important;
+            }
+
+            // Category rows (often have hardcoded backgrounds)
+            tr.category,
+            th.category {
+                background-color: #252525 !important;
+                color: #fff !important;
+            }
+
+            // Total rows
+            tr.baggt,
+            th.baggt,
+            td.baggt {
+                background-color: #2a2a2a !important;
+                color: #fff !important;
+                font-weight: bold;
+            }
+
+            // Toggle Category Button
+            .btn.toggle-category {
+                background-color: transparent !important;
+                color: #fff !important;
+                border: none !important;
+
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                }
+
+                .icon {
+                    color: #fff !important;
+                }
+            }
+        }
+    }
 }
