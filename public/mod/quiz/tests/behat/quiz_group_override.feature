@@ -61,7 +61,7 @@ Feature: Quiz group override
       | capability                  | permission | role           | contextlevel | reference |
       | moodle/site:accessallgroups | Prevent    | editingteacher | Course       | C1        |
     When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher3"
-    Then I should see "No groups you can access."
+    Then I should see "There are no groups in this course."
     And the "Add group override" "button" should be disabled
 
   Scenario: A teacher can create an override

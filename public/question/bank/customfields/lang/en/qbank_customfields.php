@@ -28,13 +28,13 @@ $string['privacy:metadata'] = 'The Question custom fields question bank plugin d
 
 $string['customfield'] = 'Question custom fields';
 $string['customfield_islocked'] = 'Locked';
-$string['customfield_islocked_help'] = 'If the field is locked, only users with the capability to change locked custom fields will be able to change it in the question settings.';
+$string['customfield_islocked_help'] = 'If the field is locked, only users with the capability to change locked question custom fields (users with the default role of manager) will be able to change it in the question settings.';
 $string['customfield_notvisible'] = 'Nobody';
 $string['customfield_visibility'] = 'Visible to';
 $string['customfield_visibility_help'] = 'This setting determines who can view the custom field name and value.';
 $string['customfield_visibletoall'] = 'Everyone';
 $string['customfield_visibletoteachers'] = 'Teachers';
 $string['customfieldsettings'] = 'Common question custom fields settings';
-$string['customfields:changelockedcustomfields'] = 'Change locked custom fields';
+$string['customfields:changelockedcustomfields'] = 'Change locked question custom fields';
 $string['customfields:configurecustomfields'] = 'Configure custom fields';
-$string['customfields:viewhiddencustomfields'] = 'View hidden custom fields';
+$string['customfields:viewhiddencustomfields'] = 'View hidden question custom fields';
