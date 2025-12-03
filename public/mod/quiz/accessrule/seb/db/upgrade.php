@@ -37,12 +37,6 @@ function xmldb_quizaccess_seb_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    // Automatically generated Moodle v4.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.
 

@@ -30,35 +30,7 @@
 function xmldb_assign_upgrade($oldversion) {
     global $DB;
 
-    // Automatically generated Moodle v4.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
-
-    if ($oldversion < 2023103000) {
-        // Define field activity to be added to assign.
-        $table = new xmldb_table('assign');
-        $field = new xmldb_field(
-            'markinganonymous',
-            XMLDB_TYPE_INTEGER,
-            '2',
-            null,
-            XMLDB_NOTNULL,
-            null,
-            '0',
-            'markingallocation'
-        );
-        // Conditionally launch add field activity.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Assign savepoint reached.
-        upgrade_mod_savepoint(true, 2023103000, 'assign');
-    }
 
     // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.

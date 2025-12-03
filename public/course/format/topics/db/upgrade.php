@@ -29,32 +29,6 @@
  * @return bool result
  */
 function xmldb_format_topics_upgrade($oldversion) {
-    global $DB;
-
-    // Automatically generated Moodle v4.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2023100901) {
-        // During the migration to version 4.4, ensure that sections with null names are renamed to their corresponding
-        // previous 'Topic X' for continuity.
-        $newsectionname = $DB->sql_concat("'Topic '", 'section');
-        $sql = <<<EOF
-                    UPDATE {course_sections}
-                       SET name = $newsectionname
-                     WHERE section > 0 AND (name IS NULL OR name = '')
-                           AND course IN (SELECT id FROM {course} WHERE format = 'topics')
-        EOF;
-        $DB->execute(
-            sql: $sql,
-        );
-
-        // Main savepoint reached.
-        upgrade_plugin_savepoint(true, 2023100901, 'format', 'topics');
-    }
-
     // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.
 

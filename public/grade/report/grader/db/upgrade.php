@@ -29,54 +29,6 @@
  * @return bool result
  */
 function xmldb_gradereport_grader_upgrade(int $oldversion): bool {
-    global $DB;
-
-    if ($oldversion < 2023032100) {
-        // Remove grade_report_showquickfeedback, grade_report_enableajax, grade_report_showeyecons,
-        // grade_report_showlocks, grade_report_showanalysisicon preferences for every user.
-        $DB->delete_records('user_preferences', ['name' => 'grade_report_showquickfeedback']);
-        $DB->delete_records('user_preferences', ['name' => 'grade_report_enableajax']);
-        $DB->delete_records('user_preferences', ['name' => 'grade_report_showeyecons']);
-        $DB->delete_records('user_preferences', ['name' => 'grade_report_showlocks']);
-        $DB->delete_records('user_preferences', ['name' => 'grade_report_showanalysisicon']);
-
-        // Remove grade_report_showactivityicons, grade_report_showcalculations preferences for every user.
-        $DB->delete_records('user_preferences', ['name' => 'grade_report_showactivityicons']);
-        $DB->delete_records('user_preferences', ['name' => 'grade_report_showcalculations']);
-
-        // The grade_report_showquickfeedback, grade_report_enableajax, grade_report_showeyecons,
-        // grade_report_showlocks, grade_report_showanalysisicon settings have been removed.
-        unset_config('grade_report_showquickfeedback');
-        unset_config('grade_report_enableajax');
-        unset_config('grade_report_showeyecons');
-        unset_config('grade_report_showlocks');
-        unset_config('grade_report_showanalysisicon');
-
-        // The grade_report_showactivityicons, grade_report_showcalculations settings have been removed.
-        unset_config('grade_report_showactivityicons');
-        unset_config('grade_report_showcalculations');
-
-        // Main savepoint reached.
-        upgrade_plugin_savepoint(true, 2023032100, 'gradereport', 'grader');
-    }
-
-    if ($oldversion < 2023032700) {
-        unset_config('grade_report_studentsperpage');
-        upgrade_plugin_savepoint(true, 2023032700, 'gradereport', 'grader');
-    }
-
-    if ($oldversion < 2023032800) {
-        // Remove plugin entry created by previously incorrect 2023032100 savepoint.
-        $DB->delete_records('config_plugins', ['plugin' => 'grade_gradereport_grader']);
-        upgrade_plugin_savepoint(true, 2023032800, 'gradereport', 'grader');
-    }
-
-    // Automatically generated Moodle v4.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.3.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.
 
