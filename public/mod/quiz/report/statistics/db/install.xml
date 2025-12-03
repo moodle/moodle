@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20130920" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
+<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20251118" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -29,6 +29,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="hashcode" UNIQUE="false" FIELDS="hashcode"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
