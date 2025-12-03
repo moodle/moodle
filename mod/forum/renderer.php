@@ -43,7 +43,10 @@ class mod_forum_renderer extends plugin_renderer_base {
     public function neighbouring_discussion_navigation($prev, $next) {
         $html = '';
         if ($prev || $next) {
-            $html .= html_writer::start_tag('div', array('class' => 'discussion-nav clearfix'));
+            $html .= html_writer::start_tag('nav', [
+                'class' => 'discussion-nav clearfix',
+                'aria-label' => get_string('browsediscussions', 'mod_forum'),
+            ]);
             $html .= html_writer::start_tag('ul');
             if ($prev) {
                 $url = new moodle_url('/mod/forum/discuss.php', array('d' => $prev->id));
@@ -62,7 +65,7 @@ class mod_forum_renderer extends plugin_renderer_base {
                 $html .= html_writer::end_tag('li');
             }
             $html .= html_writer::end_tag('ul');
-            $html .= html_writer::end_tag('div');
+            $html .= html_writer::end_tag('nav');
         }
         return $html;
     }
