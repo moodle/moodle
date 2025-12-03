@@ -1617,6 +1617,7 @@ $string['oneitemfound'] = 'There is 1 item found.';
 $string['opendrawerblocks'] = 'Open block drawer';
 $string['opendrawerindex'] = 'Open course index';
 $string['opensinnewwindow'] = 'Opens in new window';
+$string['opensinnewwindowbracketed'] = '(Opens in new window)';
 $string['operator_and'] = 'and';
 $string['operator_andnot'] = 'and';
 $string['operator_or'] = 'or';
