@@ -78,7 +78,7 @@ class import_strategy_file implements import_strategy {
 
         // Download the file into a request directory and scan it.
         [$filepath, $filename] = $resource->download_to_requestdir();
-        avmanager::scan_file($filepath, $filename, true);
+        avmanager::scan_file($filepath . DIRECTORY_SEPARATOR . $filename, $filename, true);
 
         // Check the final size of file against the user upload limits.
         $localsize = filesize(sprintf('%s/%s', $filepath, $filename));

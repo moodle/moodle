@@ -86,7 +86,7 @@ class import_backup_helper {
         }
 
         [$filepath, $filename] = $this->remoteresource->download_to_requestdir();
-        \core\antivirus\manager::scan_file($filepath, $filename, true);
+        \core\antivirus\manager::scan_file($filepath . DIRECTORY_SEPARATOR . $filename, $filename, true);
 
         // Check the final size of file against the user upload limits.
         $localsize = filesize(sprintf('%s/%s', $filepath, $filename));
