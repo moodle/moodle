@@ -1,0 +1,5 @@
+issueNumber: MDL-87066
+notes:
+  core:
+    - message: Added clean_string() that prevents double escaping in Mustache templates
+      type: improved
