@@ -230,9 +230,25 @@ if ($hassiteconfig) {
                 new lang_string('disabledfeatures', 'tool_mobile'),
                 new lang_string('disabledfeatures_desc', 'tool_mobile'), array(), $options));
 
-    $temp->add(new admin_setting_configtextarea('tool_mobile/custommenuitems',
-                new lang_string('custommenuitems', 'tool_mobile'),
-                new lang_string('custommenuitems_desc', 'tool_mobile'), '', PARAM_RAW, '50', '10'));
+    $temp->add(new admin_setting_configtextarea(
+        'tool_mobile/custommenuitems',
+        new lang_string('custommenuitems', 'tool_mobile'),
+        new lang_string('custommenuitems_desc', 'tool_mobile'),
+        '',
+        PARAM_RAW,
+        '50',
+        '10',
+    ));
+
+    $temp->add(new admin_setting_configtextarea(
+        'tool_mobile/customusermenuitems',
+        new lang_string('customusermenuitems', 'tool_mobile'),
+        new lang_string('customusermenuitems_desc', 'tool_mobile'),
+        '',
+        PARAM_RAW,
+        '50',
+        '10',
+    ));
 
     // File type exclusionlist.
     $choices = [];

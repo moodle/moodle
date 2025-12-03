@@ -45,12 +45,26 @@ $string['configmobilecssurl'] = 'A CSS file to customise your mobile app interfa
 $string['customlangstrings'] = 'Custom language strings';
 $string['customlangstrings_desc'] = 'Words and phrases displayed in the app can be customised here. Enter each custom language string on a new line with format: string identifier, custom language string and language code, separated by pipe characters. For example:
 <pre>
-mm.user.student|Learner|en
-mm.user.student|Aprendiz|es
+core.user.student|Learner|en
+core.user.student|Aprendiz|es
 </pre>
 For a complete list of string identifiers, see the documentation.';
 $string['custommenuitems'] = 'Custom menu items';
 $string['custommenuitems_desc'] = 'Additional items can be added to the app\'s main menu by specifying them here. Enter each custom menu item on a new line with format: item text, link URL, link-opening method and language code (optional, for displaying the item to users of the specified language only), separated by pipe characters.
+
+Link-opening methods are: app (for linking to an activity supported by the app), inappbrowser (for opening a link in a browser without leaving the app), browser (for opening the link in the device default browser outside the app) and embedded (for displaying the link in an iframe in a new page in the app).
+
+When items are missing a translation for a given language, they will use other languages as fallback unless "_only" is appended to the language code.
+
+For example:
+<pre>
+App help|https://someurl.xyz/help|inappbrowser
+My grades|https://someurl.xyz/local/mygrades/index.php|embedded|en
+Mis calificaciones|https://someurl.xyz/local/mygrades/index.php|embedded|es
+You will only see this in English|https://someurl.xyz/english|browser|en_only
+</pre>';
+$string['customusermenuitems'] = 'Custom user menu items';
+$string['customusermenuitems_desc'] = 'Additional items can be added to the app\'s user menu by specifying them here. Enter each custom user menu item on a new line with format: item text, link URL, link-opening method and language code (optional, for displaying the item to users of the specified language only), separated by pipe characters.
 
 Link-opening methods are: app (for linking to an activity supported by the app), inappbrowser (for opening a link in a browser without leaving the app), browser (for opening the link in the device default browser outside the app) and embedded (for displaying the link in an iframe in a new page in the app).
 
