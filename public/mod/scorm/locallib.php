@@ -1001,22 +1001,39 @@ function scorm_print_launch($user, $scorm, $action, $cm) {
 
     // Do not give the player launch FORM if the SCORM object is locked after the final attempt.
     if ($scorm->lastattemptlock == 0 || $result->attemptleft > 0) {
-            echo html_writer::start_div('scorm-center');
-            echo html_writer::start_tag('form', array('id' => 'scormviewform',
-                                                        'method' => 'post',
-                                                        'action' => $CFG->wwwroot.'/mod/scorm/player.php'));
+        echo html_writer::start_div('scorm-center');
+        echo html_writer::start_tag('form', [
+            'id' => 'scormviewform',
+            'method' => 'post',
+            'action' => $CFG->wwwroot . '/mod/scorm/player.php',
+        ]);
+        $haspopup = !empty($scorm->popup);
+        $popuphtml = '';
+        if ($haspopup) {
+            $popuphtml = html_writer::span(get_string('opensinnewwindowbracketed'), 'visually-hidden')
+                . $OUTPUT->pix_icon('i/externallink', '', 'moodle', ['class' => 'ms-1 me-0']);
+        }
         if ($scorm->hidebrowse == 0) {
-            echo html_writer::tag('button', get_string('browse', 'scorm'),
-                    ['class' => 'btn btn-secondary me-1', 'name' => 'mode',
-                        'type' => 'submit', 'id' => 'b', 'value' => 'browse'])
-                . html_writer::end_tag('button');
+            $previewbuttonparams = [
+                'class' => 'btn btn-secondary me-1',
+                'name' => 'mode',
+                'type' => 'submit',
+                'id' => 'b',
+                'value' => 'browse',
+            ];
+            echo html_writer::tag('button', get_string('browse', 'scorm') . $popuphtml, $previewbuttonparams);
         } else {
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'mode', 'value' => 'normal'));
         }
-        echo html_writer::tag('button', get_string('enter', 'scorm'),
-                ['class' => 'btn btn-primary mx-1', 'name' => 'mode',
-                    'type' => 'submit', 'id' => 'n', 'value' => 'normal'])
-             . html_writer::end_tag('button');
+
+        $enterbuttonparams = [
+            'class' => 'btn btn-primary mx-1',
+            'name' => 'mode',
+            'type' => 'submit',
+            'id' => 'n',
+            'value' => 'normal',
+        ];
+        echo html_writer::tag('button', get_string('enter', 'scorm') . $popuphtml, $enterbuttonparams);
         if (!empty($scorm->forcenewattempt)) {
             if ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ALWAYS ||
                     ($scorm->forcenewattempt == SCORM_FORCEATTEMPT_ONCOMPLETE && $incomplete === false)) {
@@ -1028,7 +1045,7 @@ function scorm_print_launch($user, $scorm, $action, $cm) {
             echo html_writer::label(get_string('newattempt', 'scorm'), 'a', true, ['class' => 'ps-1']);
             echo html_writer::end_div();
         }
-        if (!empty($scorm->popup)) {
+        if ($haspopup) {
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'display', 'value' => 'popup'));
         }
 
