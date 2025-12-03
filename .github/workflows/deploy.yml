@@ -1,0 +1,94 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ "main", "test" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-test:
+    needs: build
+    if: github.ref == 'refs/heads/test'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to Test Server
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.TEST_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd ~/moodle
+          git checkout test
+          git pull origin test
+          
+          # Export variables for docker-compose substitution
+          export MOODLE_IMAGE_NAME=ghcr.io/${{ github.repository }}
+          export MOODLE_TAG=test
+          
+          # Use .env_deploy for other variables
+          docker compose --env-file .env_deploy -f docker-compose.prod.yml pull
+          docker compose --env-file .env_deploy -f docker-compose.prod.yml up -d
+
+  deploy-prod:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to Prod Server
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd ~/moodle
+          git checkout main
+          git pull origin main
+          
+          # Export variables for docker-compose substitution
+          export MOODLE_IMAGE_NAME=ghcr.io/${{ github.repository }}
+          export MOODLE_TAG=main
+          
+          # Use .env_deploy for other variables
+          docker compose --env-file .env_deploy -f docker-compose.prod.yml pull
+          docker compose --env-file .env_deploy -f docker-compose.prod.yml up -d

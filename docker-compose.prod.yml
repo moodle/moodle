@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  moodle:
+    # Uses variables from .env_deploy
+    image: ${MOODLE_IMAGE_NAME}:${MOODLE_TAG:-latest}
+    container_name: moodle_app
+    volumes:
+      - moodledata:/var/www/moodledata
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    restart: always
+    # Load environment variables from .env_deploy
+    env_file: .env_deploy
+
+  web:
+    image: nginx:alpine
+    container_name: moodle_web
+    ports:
+      - "${APP_PORT:-80}:80"
+    volumes:
+      # We mount the static assets from the moodle container if needed, 
+      # or we can rely on the fact that nginx proxies to fpm.
+      # For simplicity in this setup, we assume nginx config handles the proxying 
+      # and we might need to share the root if nginx serves static files directly.
+      # In a strict prod setup, we'd copy static files to nginx or use a shared volume.
+      # Here we'll use a named volume shared between them for simplicity if needed, 
+      # OR just rely on the fact that the code is in the moodle container 
+      # and nginx might need access to it for static files.
+      # A common pattern is to have a shared volume for code or copy code to both.
+      # Let's use a shared volume for the code to ensure nginx sees the static files.
+      - moodle_code:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - moodle
+    restart: always
+
+volumes:
+  moodledata:
+  moodle_code:

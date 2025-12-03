@@ -718,4 +718,30 @@ nav.moremenu {
             }
         }
     }
+
+    // Modals (Popups)
+    .modal-content {
+        background-color: #1e1e1e !important;
+        border: 1px solid #333 !important;
+        color: #e0e0e0 !important;
+
+        .modal-header,
+        .modal-body,
+        .modal-footer {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-color: #333 !important;
+        }
+
+        .close,
+        .btn-close {
+            color: #fff !important;
+            filter: invert(1) grayscale(100%) brightness(200%); // Make close icon white
+            opacity: 1 !important;
+        }
+
+        .modal-title {
+            color: #fff !important;
+        }
+    }
 }

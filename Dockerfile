@@ -29,5 +29,11 @@ RUN echo "max_input_vars = 5000" >> /usr/local/etc/php/conf.d/moodle.ini \
 # Set working directory
 WORKDIR /var/www/html
 
+# Copy application code
+COPY . /var/www/html
+
+# Copy production config
+COPY config.docker.php /var/www/html/config.php
+
 # Create moodledata directory
 RUN mkdir -p /var/www/moodledata && chown -R www-data:www-data /var/www/moodledata && chmod 777 /var/www/moodledata
