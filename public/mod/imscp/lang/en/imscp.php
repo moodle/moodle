@@ -41,12 +41,15 @@ $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Soci
 $string['imscp:addinstance'] = 'Add a new IMS content package';
 $string['imscp:view'] = 'View IMS content';
 $string['modulename'] = 'IMS content package';
-$string['modulename_help'] = 'An IMS content package is a collection of files which are packaged according to an agreed standard so they can be reused in different systems. The IMS content package module enables such content packages to be uploaded as a zip file and added to a course as a resource.
+$string['modulename_help'] = '###### Key features
+- Add IMS content packages as zip files
+- Display content across multiple pages with navigation
 
-Content is usually displayed over several pages, with navigation between the pages. There are various options for displaying content in a pop-up window, with a navigation menu or buttons etc.
-
-An IMS content package may be used for presenting multimedia content and animations.';
+###### Ways to use it
+- Display a multimedia learning module created with IMS authoring software
+- Import a vendor-provided interactive lesson';
 $string['modulename_link'] = 'mod/imscp/view';
+$string['modulename_summary'] = 'Upload and display existing IMS content packages in your course. IMS is commonly used with third-party courseware.';
 $string['modulenameplural'] = 'IMS content packages';
 $string['navigation'] = 'Navigation';
 $string['page-mod-imscp-x'] = 'Any IMS content package module page';

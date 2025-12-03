@@ -25,14 +25,18 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['modulename'] = 'Book';
-$string['modulename_help'] = 'The book module enables a teacher to create a multi-page resource in a book-like format, with chapters and subchapters. Books can contain media files as well as text and are useful for displaying lengthy passages of information which can be broken down into sections.
+$string['modulename_help'] = '###### Key features
+- Add text, lists, tables, images, video, and other embedded media
+- Use chapters and subchapters to break up long content
+- Include a table of contents so students can navigate easily
+- Provide a print-friendly (downloadable) version of the book
 
-A book may be used
-
-* To display reading material for individual modules of study
-* As a staff departmental handbook
-* As a showcase portfolio of student work';
+###### Ways to use it
+- Create a structured course handbook with policies or schedules
+- Organise lecture notes into chapters and subchapters, so it feels like an online textbook.
+- Create a tutorial with step-by-step instructions spread over pages';
 $string['modulename_link'] = 'mod/book/view';
+$string['modulename_summary'] = 'Organise and display content in a book-like format.';
 $string['modulenameplural'] = 'Books';
 $string['pluginname'] = 'Book';
 $string['pluginadministration'] = 'Book administration';

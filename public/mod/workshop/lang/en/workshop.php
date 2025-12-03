@@ -209,14 +209,19 @@ $string['latesubmissions_help'] = 'If enabled, an author may submit their work a
 $string['latesubmissionsallowed'] = 'Late submissions are allowed';
 $string['maxbytes'] = 'Maximum submission attachment size';
 $string['modulename'] = 'Workshop';
-$string['modulename_help'] = 'The workshop activity module enables the collection, review and peer assessment of students\' work.
+$string['modulename_help'] = '###### Key features
+- Allow students to submit any kind of file or type directly into an online text editor
+- Create an assessment guide for students to review each other’s work
+- Provide example submissions so students can practise reviewing before assessing peers
+- Assign reviewers yourself, or let the system do it automatically
+- Give students two grades: one for their own work and one for their reviews of other students\' work
 
-Students can submit any digital content (files), such as word-processed documents or spreadsheets and can also type text directly into a field using the text editor.
-
-Submissions are assessed using a multi-criteria assessment form defined by the teacher. The process of peer assessment and understanding the assessment form can be practised in advance with example submissions provided by the teacher, together with a reference assessment. Students are given the opportunity to assess one or more of their peers\' submissions. Submissions and reviewers may be anonymous if required.
-
-Students obtain two grades in a workshop activity - a grade for their submission and a grade for their assessment of their peers\' submissions. Both grades are recorded in the gradebook.';
+###### Ways to use it
+- Run a peer review exercise for essays or reports
+- Facilitate peer evaluation of presentations, designs, or portfolios
+- Use in large classes or MOOCs to manage feedback and grading at a large scale';
 $string['modulename_link'] = 'mod/workshop/view';
+$string['modulename_summary'] = 'Facilitate peer assessment. Students submit work and review each other’s submissions using criteria you define.';
 $string['modulenameplural'] = 'Workshops';
 $string['myassessments'] = 'My assessments';
 $string['mysubmission'] = 'My submission';

@@ -59,12 +59,14 @@ $string['indicator:socialbreadthdef_help'] = 'The participant has reached this p
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['invalidurl'] = 'Entered URL is invalid';
 $string['modulename'] = 'URL';
-$string['modulename_help'] = 'The URL module enables a teacher to provide a web link as a course resource. Anything that is freely available online, such as documents or images, can be linked to; the URL doesn’t have to be the home page of a website. The URL of a particular web page may be copied and pasted or a teacher can use the file picker and choose a link from a repository such as Flickr, YouTube or Wikimedia (depending upon which repositories are enabled for the site).
+$string['modulename_help'] = '###### Key features
+- Link to any online content
 
-There are a number of display options for the URL, such as embedded or opening in a new window and advanced options for passing information, such as a student\'s name, to the URL if required.
-
-Note that URLs can also be added to any other resource or activity type through the text editor.';
+###### Ways to use it
+- Link to an online article
+- Link to a video hosted on an external platform';
 $string['modulename_link'] = 'mod/url/view';
+$string['modulename_summary'] = 'Add a link to an external web page or online file.';
 $string['modulenameplural'] = 'URLs';
 $string['name'] = 'Name';
 $string['name_help'] = 'This will serve as the link text for the URL.

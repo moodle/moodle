@@ -2271,6 +2271,7 @@ $string['time'] = 'Time';
 $string['timecreated'] = 'Time created';
 $string['timecreatedcourse'] = 'Course time created';
 $string['timezone'] = 'Timezone';
+$string['tip'] = '<strong>Tip</strong>: {$a}';
 $string['todate'] = 'To';
 $string['torecipient'] = 'To';
 $string['tocreatenewaccount'] = 'Skip to create new account';

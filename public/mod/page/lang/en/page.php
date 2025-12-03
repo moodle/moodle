@@ -44,17 +44,18 @@ $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
 $string['modulename'] = 'Page';
-$string['modulename_help'] = 'The page module enables a teacher to create a web page resource using the text editor. A page can display text, images, sound, video, web links and embedded code, such as Google maps.
+$string['modulename_help'] = '###### Key features
+- Add text, lists, tables, images, and other embedded media such as videos, maps, charts, or presentations
+- Edit and update content quickly
+- Present information that students can read online, without needing to download a file
 
-Advantages of using the page module rather than the file module include the resource being more accessible (for example to users of mobile devices) and easier to update.
-
-For large amounts of content, it\'s recommended that a book is used rather than a page.
-
-A page may be used
-
-* To present the terms and conditions of a course or a summary of the course syllabus
-* To embed several videos or sound files together with some explanatory text';
+###### Ways to use it
+- Present a course syllabus or unit overview
+- Create a list of reading and reference materials
+- Maintain an up-to-date list of office hours or an ongoing project schedule.';
 $string['modulename_link'] = 'mod/page/view';
+$string['modulename_summary'] = 'Create a page resource to display content.';
+$string['modulename_tip'] = 'For long, structured content, use a Book instead.';
 $string['modulenameplural'] = 'Pages';
 $string['optionsheader'] = 'Display options';
 $string['page-mod-page-x'] = 'Any page module page';

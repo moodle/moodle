@@ -45,14 +45,15 @@ $string['labelname'] = 'Title in course index';
 $string['labelname_help'] = 'The title is only used to identify the Text and media area in the course index and for activity completion. If you leave it empty,  a title will be automatically generated using the first characters of the text.';
 $string['labeltext'] = 'Text';
 $string['modulename'] = 'Text and media area';
-$string['modulename_help'] = 'The Text and media area enables you to display text and multimedia on the course page.
+$string['modulename_help'] = '###### Key features
+- Display text and multimedia embedded on the course page
 
-You can use a Text and media area to:
-
-* Split up a long list of course activities with a subheading or an image
-* Display an embedded video directly on the course page
-* Add a short description to a course section';
+###### Ways to use it
+- Add banners or images to change the look and feel of the course page
+- Break up long lists of activities on your course page with visuals or labels.';
 $string['modulename_link'] = 'mod/label/view';
+$string['modulename_summary'] = 'Insert graphics and text anywhere in the course page.';
+$string['modulename_tip'] = 'Use Text and media areas for decorative items or images you want embedded on the course page. For course content, use a Page instead.';
 $string['modulenameplural'] = 'Text and media areas';
 $string['privacy:metadata'] = 'The Text and media area plugin does not store any personal data.';
 $string['pluginadministration'] = 'Text and media area administration';

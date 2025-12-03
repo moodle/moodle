@@ -27,6 +27,7 @@
         "link": "http://yourmoodle/modedit.php?id=x&itemtype=y",
         "icon": "<img class='icon' src='http://urltooptionicon' alt='Icon'>",
         "help": "This is a description of the assignment activity",
+        "summary": "This is a summary of the assignment activity",
         "archetype": 0,
         "componentname": "mod_assign",
         "favourite": 1,
@@ -51,7 +52,7 @@
             data-region="summary-header"
             tabindex="0"
         >
-            <h6 class="h3 d-flex align-self-stretch align-items-center mb-4 gap-2">
+            <h6 class="h4 d-flex align-self-stretch align-items-center mb-4 gap-2">
                 <span
                     class="modicon_{{name}} activityiconcontainer smaller {{!
                         }} {{purpose}} {{#branded}}isbranded{{/branded}}"
@@ -106,13 +107,18 @@
             </div>
             {{! Repsonsive divider. }}
             <hr class="d-block d-md-none my-2">
-            {{! General helps text. }}
+            {{! General text. }}
             <div
                 class="flex-grow-1 pe-md-5"
                 id="optionsumary_desc-{{uniqid}}"
                 tabindex="0"
             >
-                {{{help}}}
+                <div class="optionsummary-summary">
+                    {{{summary}}}
+                </div>
+                <div class="optionsummary-help">
+                    {{{help}}}
+                </div>
             </div>
         </div>
     </div>

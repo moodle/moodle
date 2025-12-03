@@ -290,19 +290,20 @@ $string['menuchoose'] = 'Choose...';
 $string['missingdata'] = 'Data ID or object must be provided for field class.';
 $string['missingfield'] = 'Programmer error: You must specify field and/or data when defining field class.';
 $string['modulename'] = 'Database';
-$string['modulename_help'] = 'Database enables participants to create, maintain, and search a collection of entries.
+$string['modulename_help'] = '###### Key features
+- Define the information each entry should include, such as text, dates, images, or links.
+- Customise how entries are displayed
+- Let students add entries, rate, or comment on each other’s work
+- Approve entries before they are visible, or publish them directly
 
-The structure of the entries is defined using different types of fields, such as short text, dropdown list, text area, URL, image, or file.
-
-As a teacher, you can comment and rate entries. You can also allow students to rate and comment on entries (peer evaluation). Ratings can be aggregated to form a final grade, which is recorded in the gradebook.
-
-If the Database auto-linking filter is enabled, any entries in a database will be automatically linked where the words or phrases appear within the course.
-
-You can use Database to:
-
-* Create a collaborative collection of links, books, book reviews, journal references, etc.
-* Display student-created photos, posters, websites or poems for peer comment and review.';
+###### Ways to use it
+- Create a collection of articles with summaries written by students
+- Build a gallery of images with captions
+- Develop a set of resources that can be searched by author, topic, or keyword
+- Display work created by students for peer rating and review';
 $string['modulename_link'] = 'mod/data/view';
+$string['modulename_summary'] = 'Build a shared, searchable collection of entries, like a directory or gallery, that students can contribute to.';
+$string['modulename_tip'] = 'For a quick start, use one of the built-in presets such as an image gallery, journal, or resource list.';
 $string['modulenameplural'] = 'Databases';
 $string['more'] = 'More';
 $string['moreurl'] = 'More URL';
