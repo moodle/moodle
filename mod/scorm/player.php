@@ -106,12 +106,19 @@ $strexit = get_string('exitactivity', 'scorm');
 
 $coursecontext = context_course::instance($course->id);
 
+$scormname = format_string($scorm->name);
+if ($mode === 'browse') {
+    $scormname = get_string('browsemodewithname', 'scorm', $scormname);
+}
+$titleparts = [
+    $scormname,
+    format_string($course->shortname, true, ['context' => $coursecontext]),
+];
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
+
 if ($displaymode == 'popup') {
     $PAGE->set_pagelayout('embedded');
 } else {
-    $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
-    $pagetitle = strip_tags("$shortname: ".format_string($scorm->name));
-    $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
 }
 if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', context_module::instance($cm->id))) {
@@ -221,7 +228,8 @@ echo html_writer::div(html_writer::tag('script', '', array('id' => 'external-sco
 if ($scorm->hidetoc == SCORM_TOC_POPUP or $mode == 'browse' or $mode == 'review') {
     echo html_writer::start_div('mb-3', array('id' => 'scormtop'));
     if ($mode == 'browse' || $mode == 'review') {
-        echo html_writer::div(get_string("{$mode}mode", 'scorm'), 'scorm-left h3', ['id' => 'scormmode']);
+        $headinglevel = $PAGE->activityheader->get_heading_level();
+        echo $OUTPUT->heading(get_string("{$mode}mode", 'scorm'), $headinglevel, 'scorm-left', 'scormmode');
     }
     if ($scorm->hidetoc == SCORM_TOC_POPUP) {
         echo html_writer::div($result->tocmenu, 'scorm-right', array('id' => 'scormnav'));
@@ -258,8 +266,15 @@ if ($result->prerequisites) {
             js_writer::function_call('scorm_openpopup', Array($url->out(false),
                                                        $name, $scorm->options,
                                                        $scorm->width, $scorm->height)));
-        echo html_writer::tag('noscript', html_writer::tag('iframe', '', array('id' => 'main',
-                                'class' => 'scoframe', 'name' => 'main', 'src' => 'loadSCO.php?id='.$cm->id.$scoidstr.$modestr)));
+        $frametitle = $result->toctitle ?? get_string('contents', 'scorm');
+        $iframe = html_writer::tag('iframe', '', [
+            'id' => 'main',
+            'class' => 'scoframe',
+            'name' => 'main',
+            'src' => 'loadSCO.php?id=' . $cm->id . $scoidstr . $modestr,
+            'title' => $frametitle,
+        ]);
+        echo html_writer::tag('noscript', $iframe);
     }
 } else {
     echo $OUTPUT->box(get_string('noprerequisites', 'scorm'));
