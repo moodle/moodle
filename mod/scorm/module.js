@@ -192,6 +192,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             obj.setAttribute('allowfullscreen', 'allowfullscreen');
             obj.setAttribute('webkitallowfullscreen', 'webkitallowfullscreen');
             obj.setAttribute('mozallowfullscreen', 'mozallowfullscreen');
+            obj.setAttribute('title', toc_title);
             if (!window_name && node.title != null) {
                 obj.setAttribute('src', url_prefix + node.title);
             }
@@ -292,14 +293,14 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
                     toc.addClass(cssclasses.disabled)
                         .setAttribute('disabled-by', 'screen-size');
                     scorm_toc_toggle_btn.setHTML('&gt;')
-                        .set('title', M.util.get_string('show', 'moodle'));
+                        .set('aria-expanded', false);
                     scorm_content.removeClass(cssclasses.scorm_grid_content_toc_visible)
                         .addClass(cssclasses.scorm_grid_content_toc_hidden);
                 } else if (body.get('winWidth') > collapsetocwinsize) {
                     toc.removeClass(cssclasses.disabled)
                         .removeAttribute('disabled-by');
                     scorm_toc_toggle_btn.setHTML('&lt;')
-                        .set('title', M.util.get_string('hide', 'moodle'));
+                        .set('aria-expanded', true);
                     scorm_content.removeClass(cssclasses.scorm_grid_content_toc_hidden)
                         .addClass(cssclasses.scorm_grid_content_toc_visible);
                 }
@@ -309,14 +310,14 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
                 toc.removeClass(cssclasses.disabled)
                     .removeAttribute('disabled-by');
                 scorm_toc_toggle_btn.setHTML('&lt;')
-                    .set('title', M.util.get_string('hide', 'moodle'));
+                    .set('aria-expanded', true);
                 scorm_content.removeClass(cssclasses.scorm_grid_content_toc_hidden)
                     .addClass(cssclasses.scorm_grid_content_toc_visible);
             } else {
                 toc.addClass(cssclasses.disabled)
                     .setAttribute('disabled-by', 'user');
                 scorm_toc_toggle_btn.setHTML('&gt;')
-                    .set('title', M.util.get_string('show', 'moodle'));
+                    .set('aria-expanded', false);
                 scorm_content.removeClass(cssclasses.scorm_grid_content_toc_visible)
                     .addClass(cssclasses.scorm_grid_content_toc_hidden);
             }
@@ -633,7 +634,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             Y.one('#scorm_toc_toggle').addClass(cssclasses.scorm_grid_toggle);
             Y.one('#scorm_toc_toggle_btn')
                 .setHTML('&lt;')
-                .setAttribute('title', M.util.get_string('hide', 'moodle'));
+                .setAttribute('aria-expanded', true);
             Y.one('#scorm_content').addClass(cssclasses.scorm_grid_content_toc_visible);
             scorm_toggle_toc(true);
         }
@@ -644,7 +645,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
                 Y.one('#scorm_toc').addClass(cssclasses.disabled);
                 Y.one('#scorm_toc_toggle_btn')
                     .setHTML('&gt;')
-                    .setAttribute('title', M.util.get_string('show', 'moodle'));
+                    .setAttribute('aria-expanded', false);
                 Y.one('#scorm_content')
                     .removeClass(cssclasses.scorm_grid_content_toc_visible)
                     .addClass(cssclasses.scorm_grid_content_toc_hidden);
@@ -860,7 +861,6 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
 
         // Collapse/expand TOC.
         Y.one('#scorm_toc_toggle').on('click', scorm_toggle_toc);
-        Y.one('#scorm_toc_toggle').on('key', scorm_toggle_toc, 'down:enter,32');
         // fix layout if window resized
         Y.on("windowresize", function() {
             scorm_resize_layout();
