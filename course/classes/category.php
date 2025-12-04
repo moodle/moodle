@@ -3239,8 +3239,16 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $eqpaths = $DB->sql_compare_text('ctx.path') . ' = ' . $DB->sql_compare_text('uc.upath');
         $likechild = "ctx.path LIKE " . $DB->sql_concat('uc.upath', "'/%'");
 
-        // NOTE: Use CTEs; supported by PG/MySQL8+/SQL Server, and Moodle passes-through SQL.
-        // If you ever need to avoid CTEs, this can be rewritten with inline derived tables.
+        // NOTE: This query intentionally uses a CTE (WITH clause).
+        // CTEs are supported by PostgreSQL, MySQL 8+, and SQL Server, and Moodle allows
+        // pass-through SQL when needed.
+        //
+        // Moodle generally avoids using raw SQL features that are not represented in
+        // the database abstraction layer, but in this case the CTE delivers a substantial
+        // performance improvement for large datasets.
+        //
+        // IMPORTANT: This is an exception, not a precedent. The broader use of CTEs
+        // and potential abstraction-layer support will be discussed separately.
         $sql = "
         WITH ctx AS (
             SELECT id, instanceid, path, depth, contextlevel, locked
