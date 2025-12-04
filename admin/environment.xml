@@ -5103,7 +5103,7 @@
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
-  <MOODLE version="5.2" requires="4.4.0">
+  <MOODLE version="5.2" requires="4.4">
     <UNICODE level="required">
       <FEEDBACK>
         <ON_ERROR message="unicoderequired" />
