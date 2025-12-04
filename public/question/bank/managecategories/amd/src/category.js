@@ -25,6 +25,7 @@ import {categorymanager} from 'qbank_managecategories/categorymanager';
 import Templates from 'core/templates';
 import Modal from "core/modal";
 import {get_string as getString} from "core/str";
+import {eventTypes as inplaceEditableEventTypes} from 'core/local/inplace_editable/events';
 
 export default class extends BaseComponent {
 
@@ -35,6 +36,7 @@ export default class extends BaseComponent {
             CATEGORY_ITEM: '.qbank_managecategories-item[data-categoryid]',
             CATEGORY_CONTENTS: '.qbank_managecategories-item > .container',
             EDIT_BUTTON: '[data-action="addeditcategory"]',
+            EDITABLE_CATEGORY_NAME: '.inplaceeditable[data-itemtype="categoryname"]',
             MOVE_BUTTON: '[role="menuitem"][data-actiontype="move"]',
             CONTEXT: '.qbank_managecategories-categorylist[data-contextid]',
             MODAL_CATEGORY_ITEM: '.modal_category_item[data-movingcategoryid]',
@@ -59,6 +61,10 @@ export default class extends BaseComponent {
         this.addEventListener(this.getElement(this.selectors.EDIT_BUTTON), 'click', categorymanager.showEditModal);
         const moveButton = this.getElement(this.selectors.MOVE_BUTTON);
         this.addEventListener(moveButton, 'click', this.showMoveModal);
+        this.addEventListener(this.getElement(), inplaceEditableEventTypes.elementUpdated, (e) => {
+            const editable = e.target.closest(this.selectors.EDITABLE_CATEGORY_NAME);
+            categorymanager.updateCategoryName(editable.dataset.itemid, editable.dataset.value);
+        });
     }
 
     destroy() {
@@ -192,6 +198,8 @@ export default class extends BaseComponent {
             // When the template context is added or updated, re-render the content.
             {watch: `categories[${this.element.dataset.categoryid}].templatecontext:created`, handler: this.rerender},
             {watch: `categories[${this.element.dataset.categoryid}].templatecontext:updated`, handler: this.rerender},
+            // When the name is updated, update it in the element data set.
+            {watch: `categories[${this.element.dataset.categoryid}].name:updated`, handler: this.updateName},
             // When a new category is created, check whether we need to add a child list to this category.
             {watch: `categories:created`, handler: this.checkChildList},
         ];
@@ -458,5 +466,15 @@ export default class extends BaseComponent {
                 element.templatecontext,
             ]
         });
+    }
+
+    /**
+     * Update the name in the category item element's data, for building move targets.
+     *
+     * @param {Object} args
+     * @param {Object} args.element
+     */
+    updateName({element}) {
+        this.getElement().dataset.categoryname = element.name;
     }
 }
