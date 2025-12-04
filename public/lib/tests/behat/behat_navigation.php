@@ -1395,9 +1395,10 @@ class behat_navigation extends behat_base {
      * @Given /^I follow the breadcrumb "(?P<url_string>(?:[^"]|\\")*)"$/
      */
     public function go_to_breadcrumb_location(string $pagename): void {
+        $breadcrumblabel = get_string('breadcrumb', 'access');
         $link = $this->getSession()->getPage()->find(
                 'xpath',
-                "//nav[@aria-label='Navigation bar']/ol/li[last()][contains(normalize-space(.), '" . $pagename . "')]"
+                "//nav[@aria-label='$breadcrumblabel']/ol/li[last()][contains(normalize-space(.), '$pagename')]"
         );
         if (!$link) {
             $this->execute("behat_general::i_click_on_in_the", [$pagename, 'link', 'page', 'region']);
