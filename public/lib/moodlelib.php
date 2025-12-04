@@ -40,7 +40,6 @@ defined('MOODLE_INTERNAL') || die();
  * Time constant - the number of seconds in a year
  */
 define('YEARSECS', 31536000);
-
 /**
  * Time constant - the number of seconds in a week
  */
@@ -2481,7 +2480,9 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // If the site is currently under maintenance, then print a message.
-    if (!empty($CFG->maintenance_enabled) and !has_capability('moodle/site:maintenanceaccess', $sysctx)) {
+    try {
+        di::get(\core_auth\validate_user::class)->validate_maintenance_mode_access($USER);
+    } catch (\core_auth\exception\maintenance_mode_enabled_exception $e) {
         if ($preventredirect) {
             throw new require_login_exception('Maintenance in progress');
         }
@@ -3840,7 +3841,9 @@ function authenticate_user_login(
         return false;
     }
 
-    $authsenabled = get_enabled_auth_plugins();
+    $authentication = \core\di::get(\core\authentication::class);
+    $authsenabled = $authentication->get_enabled_plugins();
+    $uservalidator = di::get(\core_auth\validate_user::class);
 
     if ($user) {
         // Use manual if auth not set.
@@ -3851,27 +3854,31 @@ function authenticate_user_login(
             $authplugin->pre_user_login_hook($user);
         }
 
-        if (!empty($user->suspended)) {
-            $failurereason = AUTH_LOGIN_SUSPENDED;
+        $validationfailureparams = [
+            'userid' => $user->id,
+            'other' => [
+                'username' => $username,
+            ],
+        ];
 
-            // Trigger login failed event.
-            $event = \core\event\user_login_failed::create(array('userid' => $user->id,
-                    'other' => array('username' => $username, 'reason' => $failurereason)));
-            $event->trigger();
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+        try {
+            $uservalidator->validate_before_web_login($user);
+        } catch (\core_auth\exception\user_suspended_exception $e) {
+            $failurereason = AUTH_LOGIN_SUSPENDED;
+            $validationfailureparams['other']['reason'] = $failurereason;
+            \core\event\user_login_failed::create($validationfailureparams)->trigger();
+            error_log('[client '.getremoteaddr()."]  {$CFG->wwwroot}  Suspended Login:  {$username}  {$_SERVER['HTTP_USER_AGENT']}");
+
+            return false;
+        } catch (\core_auth\exception\auth_disabled_exception $e) {
+            $failurereason = AUTH_LOGIN_SUSPENDED;
+            $validationfailureparams['other']['reason'] = $failurereason;
+            \core\event\user_login_failed::create($validationfailureparams)->trigger();
+            error_log('[client '.getremoteaddr()."]  {$CFG->wwwroot}  Disabled Login:  {$username}  {$_SERVER['HTTP_USER_AGENT']}");
+
             return false;
         }
-        if ($auth=='nologin' or !is_enabled_auth($auth)) {
-            // Legacy way to suspend user.
-            $failurereason = AUTH_LOGIN_SUSPENDED;
 
-            // Trigger login failed event.
-            $event = \core\event\user_login_failed::create(array('userid' => $user->id,
-                    'other' => array('username' => $username, 'reason' => $failurereason)));
-            $event->trigger();
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
-            return false;
-        }
         $auths = array($auth);
 
     } else {
@@ -4010,14 +4017,14 @@ function authenticate_user_login(
             return false;
         }
 
-        if (!empty($user->suspended)) {
-            // Just in case some auth plugin suspended account.
+        try {
+            $uservalidator->validate_is_not_suspended($user);
+        } catch (\core_auth\exception\user_suspended_exception $e) {
             $failurereason = AUTH_LOGIN_SUSPENDED;
-            // Trigger login failed event.
-            $event = \core\event\user_login_failed::create(array('userid' => $user->id,
-                    'other' => array('username' => $username, 'reason' => $failurereason)));
-            $event->trigger();
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $validationfailureparams['other']['reason'] = $failurereason;
+            \core\event\user_login_failed::create($validationfailureparams)->trigger();
+            error_log('[client '.getremoteaddr()."]  {$CFG->wwwroot}  Suspended Login:  {$username}  {$_SERVER['HTTP_USER_AGENT']}");
+
             return false;
         }
 
