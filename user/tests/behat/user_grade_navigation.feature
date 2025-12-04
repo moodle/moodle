@@ -1,4 +1,4 @@
-@core @core_user @javascript
+@core @core_user
 Feature: The student can navigate to their grades page and user grade report.
   In order to view my grades and the user grade report
   As a user
@@ -33,18 +33,31 @@ Feature: The student can navigate to their grades page and user grade report.
       | Test assignment two | student1 | 67.00  |
 
   Scenario: Navigation to Grades and the user grade report.
-    When I log in as "student1"
-    And I follow "Grades" in the user menu
-    Then the following should exist in the "overview-grade" table:
-    | Course name | Grade |
-    | Course 2 | - |
-    | Course 1 | 217.00 |
+    Given I log in as "student1"
+    When I follow "Grades" in the user menu
+    # Confirm that student's photo and name are the headers.
+    Then "//img[contains(@class, 'userpicture')]" "xpath_element" should exist
+    And I should see "Student 1" in the "h1" "css_element"
+    # Confirm that there is a subheader text - "Courses I am taking".
+    And "//h3[normalize-space(.)='Courses I am taking']" "xpath_element" should exist
+    # Confirm that the overview-grade table has the correct data.
+    And the following should exist in the "overview-grade" table:
+      | Course name | Grade  |
+      | Course 2    | -      |
+      | Course 1    | 217.00 |
     And I click on "Course 1" "link" in the "region-main" "region"
+    # Confirm that student name link and Grades exists in breadcrumb.
+    And "Student 1" "link" should exist in the ".breadcrumb" "css_element"
+    And "Grades" "text" should exist in the ".breadcrumb" "css_element"
+    # Confirm that the headers still exist after transitioning to next screen.
+    And "//img[contains(@class, 'userpicture')]" "xpath_element" should exist
+    And "//h2[normalize-space(.)='Student 1']" "xpath_element" should exist
+    And "//h2[normalize-space(.)='Grades']" "xpath_element" should exist
     And the following should exist in the "user-grade" table:
-    | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
-    | Test assignment one | 75.00 % | 150.00 | 0–300 | 50.00 % | 37.50 % |
-    | Test assignment two | 25.00 % | 67.00  | 0–100 | 67.00 % | 16.75 % |
-    | Test assignment three | 0.00 %( Empty ) | - | 0–150 | - | 0.00 % |
+      | Grade item            | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
+      | Test assignment one   | 75.00 %           | 150.00 | 0–300 | 50.00 %    | 37.50 %                      |
+      | Test assignment two   | 25.00 %           | 67.00  | 0–100 | 67.00 %    | 16.75 %                      |
+      | Test assignment three | 0.00 %( Empty )   | -      | 0–150 | -          | 0.00 %                       |
 
   Scenario: Change Grades settings to go to a custom url.
     Given the following config values are set as admin:
