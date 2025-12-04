@@ -49,7 +49,7 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
                 array('class' => 'qtext', 'id' => $questiontextid));
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-        $result .= html_writer::start_tag('table', array('class' => 'answer', 'role' => 'presentation'));
+        $result .= html_writer::start_tag('table', ['class' => 'answer table-reboot', 'role' => 'presentation']);
         $result .= html_writer::start_tag('tbody', ['role' => 'presentation']);
 
         $parity = 0;
