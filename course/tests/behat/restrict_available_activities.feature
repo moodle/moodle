@@ -17,6 +17,7 @@ Feature: Restrict activities availability
     And the following "activities" exist:
       | activity | course | name             |
       | assign   | C1     | Test assign name |
+    And I enable "bigbluebuttonbn" "mod" plugin
 
   Scenario: Activities can be added with the default permissions
     Given I log in as "teacher1"
@@ -27,17 +28,34 @@ Feature: Restrict activities availability
     And I should see "Test assign name"
 
   @javascript @skip_chrome_zerosize
-  Scenario: Activities can not be added when the admin restricts the permissions
+  Scenario Outline: Activities can not be added when the admin restricts the permissions
     Given the following "role capability" exists:
-      | role                 | editingteacher  |
-      | mod/assign:addinstance | prohibit        |
-    And I log in as "admin"
-    And I am on the "Course 1" "permissions" page
-    And I override the system permissions of "Teacher" role with:
-      | mod/glossary:addinstance | Prohibit |
-    And I log out
+      | role           | editingteacher  |
+      | <activityrole> | prohibit        |
     And I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
-    And I click on "Add an activity or resource" "button" in the "New section" "section"
-    Then "Add a new Assignment" "link" should not exist in the "Add an activity or resource" "dialogue"
-    Then "Add a new Glossary" "link" should not exist in the "Add an activity or resource" "dialogue"
+    And I open the activity chooser
+    Then "Add a new <activitytype>" "link" should not exist in the "Add an activity or resource" "dialogue"
+
+    Examples:
+      | activityrole                    | activitytype         |
+      | mod/assign:addinstance          | Assignment           |
+      | mod/bigbluebuttonbn:addinstance | BigBlueButton        |
+      | mod/book:addinstance            | Book                 |
+      | mod/choice:addinstance          | Choice               |
+      | mod/data:addinstance            | Database             |
+      | mod/feedback:addinstance        | Feedback             |
+      | mod/folder:addinstance          | Folder               |
+      | mod/forum:addinstance           | Forum                |
+      | mod/glossary:addinstance        | Glossary             |
+      | mod/h5pactivity:addinstance     | H5P                  |
+      | mod/imscp:addinstance           | IMS content package |
+      | mod/label:addinstance           | Text and media area  |
+      | mod/lesson:addinstance          | Lesson               |
+      | mod/page:addinstance            | Page                 |
+      | mod/quiz:addinstance            | Quiz                 |
+      | mod/resource:addinstance        | File                 |
+      | mod/scorm:addinstance           | SCORM package        |
+      | mod/url:addinstance             | URL                  |
+      | mod/wiki:addinstance            | Wiki                 |
+      | mod/workshop:addinstance        | Workshop             |
