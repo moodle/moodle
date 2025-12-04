@@ -368,8 +368,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         if ($question->qtype === 'random') {
             // Set reference data.
             $questionsetreference = new stdClass();
-            $questionsetreference->usingcontextid = context_module::instance(get_coursemodule_from_instance(
-                "quiz", $module->id, $module->course)->id)->id;
+            $questionsetreference->usingcontextid = $this->task->get_contextid();
             $questionsetreference->component = 'mod_quiz';
             $questionsetreference->questionarea = 'slot';
             $questionsetreference->itemid = $data->id;
@@ -388,8 +387,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         } else {
             // Reference data.
             $questionreference = new \stdClass();
-            $questionreference->usingcontextid = context_module::instance(get_coursemodule_from_instance(
-                "quiz", $module->id, $module->course)->id)->id;
+            $questionreference->usingcontextid = $this->task->get_contextid();
             $questionreference->component = 'mod_quiz';
             $questionreference->questionarea = 'slot';
             $questionreference->itemid = $data->id;
@@ -481,8 +479,12 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
 
         $tagstring = "{$data->tagid},{$data->tagname}";
-        $setreferencedata = $DB->get_record('question_set_references',
-            ['itemid' => $slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+        $setreferencedata = $DB->get_record('question_set_references', [
+            'usingcontextid' => $this->task->get_contextid(),
+            'component' => 'mod_quiz',
+            'questionarea' => 'slot',
+            'itemid' => $slotid,
+        ]);
         $filtercondition = json_decode($setreferencedata->filtercondition);
         $filtercondition->tags[] = $tagstring;
         $setreferencedata->filtercondition = json_encode($filtercondition);
