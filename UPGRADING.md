@@ -18,6 +18,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The namespace for the `\core_shutdown_manager` has been moved to `\core\shutdown_manager`. The legacy namespace will continue to work for the moment.
 
   For more information see [MDL-87046](https://tracker.moodle.org/browse/MDL-87046)
+- Added clean_string() that prevents double escaping in Mustache templates
+
+  For more information see [MDL-87066](https://tracker.moodle.org/browse/MDL-87066)
 - The `upgrade_ensure_not_running()` function has been deprecated and replaced
   with:
 
@@ -98,6 +101,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-86332](https://tracker.moodle.org/browse/MDL-86332)
 
 ### core_course
+
+#### Added
+
+- The external function `core_course_get_course_contents` now includes the `candisplay` property for each returned module. If this is false, the module should not be displayed on the course page (for example, for question banks).
+
+  For more information see [MDL-85405](https://tracker.moodle.org/browse/MDL-85405)
+- Two optional new strings, `modulename_summary` and `modulename_tip`, have been added to modules and will be displayed in the activity chooser interface when defined.
+
+  For more information see [MDL-87117](https://tracker.moodle.org/browse/MDL-87117)
 
 #### Deprecated
 
@@ -186,6 +198,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The method `feedback_init_feedback_session()` has been deprecated, along with all other direct access to `$SESSION` from the module
 
   For more information see [MDL-86607](https://tracker.moodle.org/browse/MDL-86607)
+
+### mod_glossary
+
+#### Added
+
+- Function mod_glossary_rating_can_see_item_ratings is now implemented for checking permissions to view ratings.
+
+  For more information see [MDL-86960](https://tracker.moodle.org/browse/MDL-86960)
 
 ### qbank_columnsortorder
 
