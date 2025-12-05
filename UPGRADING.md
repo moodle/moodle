@@ -10,6 +10,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core
 
+#### Added
+
+- Added clean_string() that prevents double escaping in Mustache templates
+
+  For more information see [MDL-87066](https://tracker.moodle.org/browse/MDL-87066)
+
 #### Changed
 
 - The Hook Manager now uses localcache instead of caching via MUC.
@@ -37,6 +43,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-86332](https://tracker.moodle.org/browse/MDL-86332)
 
+### core_course
+
+#### Added
+
+- The external function `core_course_get_course_contents` now includes the `candisplay` property for each returned module. If this is false, the module should not be displayed on the course page (for example, for question banks).
+
+  For more information see [MDL-85405](https://tracker.moodle.org/browse/MDL-85405)
+
 ### core_group
 
 #### Added
@@ -44,6 +58,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - `groups_print_activity_menu()` and `groups_get_activity_group()` now include an additional `$participationonly` parameter, which is true by default. This can be set false when we want the user to be able to select a non-participation group within an activity, for example if a teacher wants to filter assignment submissions by non-participation groups. It should never be used when the menu is displayed to students, as this may allow them to participate using non-participation groups. Non-participation groups are labeled as such.
 
   For more information see [MDL-81514](https://tracker.moodle.org/browse/MDL-81514)
+
+### mod_glossary
+
+#### Added
+
+- Function mod_glossary_rating_can_see_item_ratings is now implemented for checking permissions to view ratings.
+
+  For more information see [MDL-86960](https://tracker.moodle.org/browse/MDL-86960)
 
 ## 5.0.3
 

@@ -2,6 +2,12 @@
 
 ## 5.0.3+
 
+### Added
+
+- Added clean_string() that prevents double escaping in Mustache templates
+
+  For more information see [MDL-87066](https://tracker.moodle.org/browse/MDL-87066)
+
 ### Changed
 
 - The Hook Manager now uses localcache instead of caching via MUC.
