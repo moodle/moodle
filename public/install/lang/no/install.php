@@ -67,6 +67,8 @@ $string['pathsunsecuredataroot'] = 'Dataroot plassering er ikke sikker';
 $string['pathswrongadmindir'] = 'Adminkatalog finnes ikke';
 $string['phpextension'] = '{$a} PHP-tillegg';
 $string['phpversion'] = 'PHP versjon';
+$string['webserverconfigproblemdescription'] = 'Nettserveren din er ikke konfigurert til å forhindre tilgang til filer utenfor /public-katalogen. Se <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> for detaljer om hvordan du konfigurerer nettserveren din. Når den er konfigurert på nytt, <a href="{$a}">gå tilbake til web root</a>.';
+$string['webservernotconfigured'] = 'Webserver ikke konfigurert';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser denne siden fordi du nå har fullført installeringen og kjøringen av pakken <strong>{$a->packname} {$a->packversion}</strong> på datamaskinen din. Gratulerer!';
 $string['welcomep30'] = 'Denne versjonen av <strong>{$a->installername}</strong> inneholder programmer for å lage et miljø som <strong>Moodle</strong> jobber i, nemlig:';
