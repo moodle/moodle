@@ -69,6 +69,8 @@ $string['pathsunsecuredataroot'] = 'La ubicación de dataroot no es segura';
 $string['pathswrongadmindir'] = 'El directorio admin no existe';
 $string['phpextension'] = 'Extensión PHP {$a}';
 $string['phpversion'] = 'Versión PHP';
+$string['webserverconfigproblemdescription'] = 'Su servidor web no está configurado para impedir el acceso a archivos fuera del directorio /public. Consulte <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> para obtener más información sobre cómo configurar su servidor web. Una vez reconfigurado, <a href="{$a}">vuelva a acceder a la raíz web</a>.';
+$string['webservernotconfigured'] = 'Servidor web no cnfigurado';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Si está viendo esta página es porque ha podido instalar y ejecutar exitosamente el paquete <strong>{$a->packname} {$a->packversion}</strong> en su computadora. !Enhorabuena!';
 $string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> incluye las aplicaciones necesarias para que <strong>Moodle</strong> funcione en su computadora,  principalmente:';

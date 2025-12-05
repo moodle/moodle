@@ -71,6 +71,8 @@ $string['pathsunsecuredataroot'] = 'La posizione della Cartella dati non è sicu
 $string['pathswrongadmindir'] = 'La cartella Admin non esiste';
 $string['phpextension'] = '{$a} estensioni PHP';
 $string['phpversion'] = 'Versione PHP';
+$string['webserverconfigproblemdescription'] = 'Il server web non è configurato per impedire l\'accesso ai file esterni alla cartella /public. Consultare <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> per i dettagli su come configurare il tuo server web. Una volta riconfigurato, <a href="{$a}">visita nuovamente la cartella radice del sito web</a>.';
+$string['webservernotconfigured'] = 'Web server non configurato';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Se vedi questa pagina hai installato correttamente e lanciato il pacchetto <strong>{$a->packname} {$a->packversion}</strong>. Complimenti!';
 $string['welcomep30'] = 'La release di <strong>{$a->installername}</strong> include l\'applicazione per creare l\'ambiente necessario a far girare <strong>Moodle</strong>:';

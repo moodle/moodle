@@ -64,6 +64,8 @@ $string['pathsunsecuredataroot'] = 'Der Speicherort des Verzeichnisses \'dataroo
 $string['pathswrongadmindir'] = 'Das Admin-Verzeichnis existiert nicht';
 $string['phpextension'] = 'PHP-Extension {$a}';
 $string['phpversion'] = 'PHP-Version';
+$string['webserverconfigproblemdescription'] = 'Ihr Webserver ist nicht so konfiguriert, dass der Zugriff auf Dateien außerhalb des Verzeichnisses "/public" verhindert wird. Weitere Informationen zur Konfiguration Ihres Webservers finden Sie unter <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a>. Nach der Neukonfiguration <a href="{$a}">rufen Sie bitte das Web-Root-Verzeichnis erneut auf</a>.';
+$string['webservernotconfigured'] = 'Webserver nicht konfiguriert';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Sie haben das Paket <strong>{$a->packname} {$a->packversion}</strong> erfolgreich auf Ihrem Computer installiert.';
 $string['welcomep30'] = 'Diese Version von <strong>{$a->installername}</strong> enthält folgende Anwendungen, mit denen Sie <strong>Moodle</strong> ausführen können:';
