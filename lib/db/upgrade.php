@@ -1894,5 +1894,38 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025041403.11);
     }
 
+    if ($oldversion < 2025041403.13) {
+        // Fix Microsoft OAuth2 user field mappings to use OpenID Connect standard field names.
+        // This corrects the mappings introduced in MDL-84432 which used non-standard field names
+        // that only work with personal Microsoft accounts but not work/school (Entra ID) accounts.
+        $userfieldmappings = [
+            'firstname' => 'given_name',
+            'lastname' => 'family_name',
+        ];
+        $admin = get_admin();
+        $adminid = $admin ? $admin->id : '0';
+        $microsoftservices = $DB->get_records('oauth2_issuer', ['servicetype' => 'microsoft']);
+        foreach ($microsoftservices as $microsoftservice) {
+            $time = time();
+            // Update user field mappings to use OpenID Connect standard field names.
+            foreach ($userfieldmappings as $internalfieldname => $externalfieldname) {
+                $fieldmap = ['issuerid' => $microsoftservice->id, 'internalfield' => $internalfieldname];
+                $fieldmapid = $DB->get_field('oauth2_user_field_mapping', 'id', $fieldmap);
+                if ($fieldmapid) {
+                    $fieldmap = array_merge($fieldmap, [
+                        'id' => $fieldmapid,
+                        'externalfield' => $externalfieldname,
+                        'timemodified' => $time,
+                        'usermodified' => $adminid,
+                    ]);
+                    $DB->update_record('oauth2_user_field_mapping', $fieldmap);
+                }
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025041403.13);
+    }
+
     return true;
 }
