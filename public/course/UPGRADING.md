@@ -1,5 +1,13 @@
 # core_course (subsystem) Upgrade notes
 
+## 5.1+
+
+### Added
+
+- The external function `core_course_get_course_contents` now includes the `candisplay` property for each returned module. If this is false, the module should not be displayed on the course page (for example, for question banks).
+
+  For more information see [MDL-85405](https://tracker.moodle.org/browse/MDL-85405)
+
 ## 5.1
 
 ### Added
