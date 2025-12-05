@@ -24,13 +24,13 @@ Feature: The module menu replaces the delegated section menu
 
   @javascript
   Scenario: The action menu for subsection page meets the module menu
-    Given I click on "Subsection1" "link" in the "region-main" "region"
-    And I turn editing mode on
-    # Open the action menu.
+    Given I turn editing mode on
+    And I am on the "C1 > Subsection1" "course > section" page
     When I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     Then I should not see "Move right"
     And I should not see "Assign roles"
     And I should not see "Highlight"
+    And I should not see "View"
     And I should see "Edit settings"
     And I should not see "Move"
     And I should see "Duplicate"
@@ -45,7 +45,7 @@ Feature: The module menu replaces the delegated section menu
     Then I should not see "Move right"
     And I should not see "Assign roles"
     And I should not see "Highlight"
-    And I should see "View"
+    And I should not see "View"
     And I should see "Edit settings"
     And I should see "Move"
     And I should see "Duplicate"
@@ -60,33 +60,13 @@ Feature: The module menu replaces the delegated section menu
     Then I should not see "Move right"
     And I should not see "Assign roles"
     And I should not see "Highlight"
-    And I should see "View"
+    And I should not see "View"
     And I should see "Edit settings"
     And I should see "Move"
     And I should see "Duplicate"
     And I should see "Hide"
     And I should see "Delete"
     And I should see "Permalink"
-
-  @javascript
-  Scenario: View option in subsection action menu
-    Given I turn editing mode on
-    And I open "Subsection1" actions menu
-    When I choose "View" in the open action menu
-    # Subsection page. Subsection name should be the title.
-    Then I should see "Subsection1" in the "h1" "css_element"
-    And "Section 1" "text" should exist in the ".breadcrumb" "css_element"
-    # Open the section header action menu.
-    And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
-    And "View" "link" should not exist in the "[data-region='header-actions-container']" "css_element"
-    And I click on "Section 1" "link" in the ".breadcrumb" "css_element"
-    # Section page. Section name should be the title.
-    And I should see "Section 1" in the "h1" "css_element"
-    And "Subsection1" "text" should not exist in the ".breadcrumb" "css_element"
-    # Open the section header action menu.
-    And I open "Subsection1" actions menu
-    And I choose "View" in the open action menu
-    And I should see "Subsection1" in the "h1" "css_element"
 
   @javascript
   Scenario: Edit settings option in subsection action menu
@@ -168,7 +148,7 @@ Feature: The module menu replaces the delegated section menu
     And I click on "Edit" "button" in the "[data-region='header-actions-container']" "css_element"
     And I choose "Show" in the open action menu
     And I should not see "Hidden from students"
-    And I click on "Section 1" "link" in the ".breadcrumb" "css_element"
+    And I am on the "C1 > Section 1" "course > section" page
     And I should not see "Hidden from students"
     # Section page. Open Subsection1 module action menu.
     And I open "Subsection1" actions menu

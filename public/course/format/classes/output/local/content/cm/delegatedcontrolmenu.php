@@ -99,16 +99,8 @@ class delegatedcontrolmenu extends basecontrolmenu {
      * @return link|null The menu item if applicable, otherwise null.
      */
     protected function get_section_view_item(): ?link {
-        // Only show the view link if we are not already in the section view page.
-        if ($this->format->get_sectionid() == $this->section->id) {
-            return null;
-        }
-        return new link_secondary(
-                url: new url('/course/section.php', ['id' => $this->section->id]),
-                icon: new pix_icon('i/viewsection', ''),
-                text: get_string('view'),
-                attributes: ['class' => 'view'],
-        );
+        // Let third-party plugins decide if they want to show the view link overriding this method.
+        return null;
     }
 
     /**
@@ -287,9 +279,11 @@ class delegatedcontrolmenu extends basecontrolmenu {
             return null;
         }
 
+        $parentsection = $this->mod->get_section_info();
         $url = new url(
             '/course/section.php',
-            ['id' => $this->section->id]
+            ['id' => $parentsection->id],
+            'section-' . $this->section->sectionnum,
         );
         return new link_secondary(
             url: $url,
@@ -370,17 +364,6 @@ class delegatedcontrolmenu extends basecontrolmenu {
         $isheadersection = $format->get_sectionid() == $section->id;
 
         $controls = [];
-
-        // Only show the view link if we are not already in the section view page.
-        if (!$isheadersection) {
-            $controls['view'] = [
-                'url'   => new url('/course/section.php', ['id' => $section->id]),
-                'icon' => 'i/viewsection',
-                'name' => get_string('view'),
-                'pixattr' => ['class' => ''],
-                'attr' => ['class' => 'view'],
-            ];
-        }
 
         if (has_capability('moodle/course:update', $coursecontext, $user)) {
             $params = ['id' => $section->id];

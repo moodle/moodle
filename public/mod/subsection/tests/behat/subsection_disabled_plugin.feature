@@ -66,7 +66,6 @@ Feature: Courses should not lose subsection contents when mod_subsection is disa
     And "Duplicate" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "Hide" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "Move" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
-    And "View" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And "Delete" "link" should exist in the "Subsection1" "core_courseformat > Section actions menu"
     And I should not see "This section and its content are not part of the course structure"
 

@@ -1,0 +1,8 @@
+issueNumber: MDL-87276
+notes:
+  core_courseformat:
+    - message: >-
+        Subsections are now always displayed inline within their respective
+        sections (the separate subsection page is no longer used). Descriptions
+        are no longer shown for delegated sections.
+      type: changed
