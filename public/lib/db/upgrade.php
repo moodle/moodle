@@ -2241,7 +2241,7 @@ function xmldb_main_upgrade($oldversion) {
                   FROM {customfield_data} d
                   JOIN {customfield_field} f ON d.fieldid = f.id
                   JOIN {customfield_category} c ON f.categoryid = c.id";
-        $records = $DB->get_records_sql($sql);
+        $records = $DB->get_recordset_sql($sql);
 
         foreach ($records as $r) {
             $DB->update_record('customfield_data', (object)[
@@ -2251,6 +2251,8 @@ function xmldb_main_upgrade($oldversion) {
                 'itemid'    => $r->itemid,
             ]);
         }
+
+        $records->close();
 
         // Define table customfield_shared to be created.
         $table = new xmldb_table('customfield_shared');
