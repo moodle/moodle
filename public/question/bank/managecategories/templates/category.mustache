@@ -58,8 +58,25 @@
                 </span>
             </div>
             <div class="col-11 p-0 qbank_managecategories-contentcontainer">
-                <div class="row m-0">
-                    <div class="col-11 p-0 pt-1 qbank_managecategories-details">
+                <div class="row m-0{{#haschildren}} mb-2{{/haschildren}}">
+                    <button type="button"
+                       data-bs-toggle="collapse"
+                       data-bs-target="#childlist{{categoryid}}"
+                       aria-expanded="true"
+                       aria-controls="childlist{{categoryid}}"
+                       class="btn btn-icon col-1 icons-collapse-expand"
+                       aria-label="{{#str}} collapsecategory, core, {{categoryname}} {{/str}}">
+                        <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
+                            {{#pix}} t/expandedchevron, core {{/pix}}
+                            <span class="visually-hidden">{{#str}} collapse, core {{/str}}</span>
+                        </span>
+                        <span class="collapsed-icon icon-no-margin p-2" title="{{#str}} expand, core {{/str}}">
+                            <span class="dir-rtl-hide">{{#pix}} t/collapsedchevron, core {{/pix}}</span>
+                            <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
+                            <span class="visually-hidden">{{#str}} expand, core {{/str}}</span>
+                        </span>
+                    </button>
+                    <div class="col-10 p-0 pt-1 ps-3 qbank_managecategories-details">
                         {{>qbank_managecategories/category_details}}
                     </div>
                     <div class="col-1 qbank_managecategories-actioncontainer">
@@ -68,7 +85,7 @@
                         {{/editactionmenu}}
                     </div>
                 </div>
-                <div class="row m-0 mt-1 qbank_managecategories-childlistcontainer">
+                <div id="childlist{{categoryid}}" class="row m-0 mt-1 qbank_managecategories-childlistcontainer collapse show">
                 {{#haschildren}}
                     {{> qbank_managecategories/childlist }}
                 {{/haschildren}}
