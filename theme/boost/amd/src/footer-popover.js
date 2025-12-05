@@ -42,6 +42,7 @@ export const init = () => {
         container: container,
         html: true,
         placement: 'top',
+        fallbackPlacements: ['bottom'],
         customClass: 'footer',
         trigger: 'click',
         boundary: 'viewport',
