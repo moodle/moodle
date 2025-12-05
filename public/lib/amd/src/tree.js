@@ -362,6 +362,11 @@ define(['jquery'], function($) {
             return;
         }
 
+        // Detect RTL mode and swap left/right arrow keys accordingly.
+        const rtl = window.right_to_left();
+        const collapseKey = rtl ? this.keys.right : this.keys.left;
+        const expandKey = rtl ? this.keys.left : this.keys.right;
+
         switch (e.keyCode) {
             case this.keys.home: {
                 // Jump to first item in tree.
@@ -410,7 +415,7 @@ define(['jquery'], function($) {
                 e.preventDefault();
                 return;
             }
-            case this.keys.left: {
+            case collapseKey: {
                 var focusParent = function(tree) {
                     // Get the immediate visible parent group item that contains this element.
                     tree.getVisibleItems().filter(function() {
@@ -433,7 +438,7 @@ define(['jquery'], function($) {
                 e.preventDefault();
                 return;
             }
-            case this.keys.right: {
+            case expandKey: {
                 // If this is a group item then expand it and focus the first child item
                 // in accordance with the aria spec.
                 if (this.isGroupItem(item)) {
