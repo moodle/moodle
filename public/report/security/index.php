@@ -44,6 +44,9 @@ echo $OUTPUT->heading(get_string('pluginname', 'report_security'));
 echo $table->render($OUTPUT);
 echo $OUTPUT->footer();
 
+// The page is fully rendered, the session is no longer needed while the checks stream in.
+\core\session\manager::write_close();
+$table->run_checks($OUTPUT);
+
 $event = \report_security\event\report_viewed::create(['context' => context_system::instance()]);
 $event->trigger();
-
