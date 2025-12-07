@@ -169,8 +169,14 @@ abstract class exporter {
                             $formatparams['striplinks'], $formatparams['options']);
                     }
                 } else {
-                    $data->$property = \core_external\util::format_string($data->$property, $formatparams['context'],
-                            $formatparams['striplinks'], $formatparams['options']);
+                    $data->$property = clean_string(
+                        \core_external\util::format_string(
+                            $data->$property,
+                            $formatparams['context'],
+                            $formatparams['striplinks'],
+                            $formatparams['options']
+                        )
+                    );
                 }
             }
         }

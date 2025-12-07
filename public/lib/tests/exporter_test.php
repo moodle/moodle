@@ -145,7 +145,7 @@ final class exporter_test extends \advanced_testcase {
         $output = $PAGE->get_renderer('core');
         $exporter = new core_testable_exporter($this->validdata, $this->validrelated);
         $result = $exporter->export($output);
-        $this->assertSame('>Another string', $result->otherstring);
+        $this->assertSame('&#62;Another string', $result->otherstring);
         $this->assertSame(array('String &gt;a', 'String b'), $result->otherstrings);
     }
 
