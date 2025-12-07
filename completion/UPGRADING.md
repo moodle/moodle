@@ -1,6 +1,6 @@
 # core_completion (subsystem) Upgrade notes
 
-## 5.0.3+
+## 5.0.4
 
 ### Changed
 

@@ -1,6 +1,6 @@
 # core_course (subsystem) Upgrade notes
 
-## 5.0.3+
+## 5.0.4
 
 ### Added
 
