@@ -1,6 +1,6 @@
 # mod_glossary Upgrade notes
 
-## 5.1+
+## 5.1.1
 
 ### Added
 
