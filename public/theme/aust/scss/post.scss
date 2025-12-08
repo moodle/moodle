@@ -791,4 +791,88 @@ nav.moremenu {
             padding: 10px;
         }
     }
+
+    // --- DROPDOWNS & FILTERS ---
+    // General Dropdown Menu Override
+    .dropdown-menu {
+        background-color: #1e1e1e !important;
+        border: 1px solid #333 !important;
+        color: #e0e0e0 !important;
+
+        .dropdown-item {
+            color: #e0e0e0 !important;
+
+            &:hover,
+            &:focus {
+                background-color: rgba(255, 255, 255, 0.1) !important;
+                color: $aust-gold !important;
+            }
+
+            // Danger actions (Delete)
+            &.text-danger,
+            &[data-action="delete"] {
+                color: #ff6b6b !important; // Light red for dark mode
+
+                &:hover {
+                    color: #ff8080 !important;
+                }
+            }
+        }
+
+        // Link color fix within dropdowns
+        a {
+            color: #e0e0e0 !important;
+
+            &:hover {
+                color: $aust-gold !important;
+            }
+        }
+
+        // Divider
+        .dropdown-divider {
+            border-top-color: #444 !important;
+        }
+    }
+
+    // Fix for Top Bar Dropdown (User Menu) specifically
+    #user-action-menu {
+
+        .dropdown-item,
+        .dropdown-toggle,
+        a {
+            color: #fff !important;
+
+            &:hover {
+                color: $aust-gold !important;
+                background-color: rgba(255, 255, 255, 0.1) !important;
+            }
+        }
+    }
+
+    // Report Builder Filters Sidebar specifically
+    .reportbuilder-filters-sidebar {
+        background-color: #1e1e1e !important;
+
+        .filter-header {
+            color: #fff !important;
+        }
+
+        // Ensure form labels are visible
+        label,
+        .col-form-label {
+            color: #ccc !important;
+        }
+    }
+
+    // Fix for "Is equal to" bubbles or similar select containers
+    .form-autocomplete-selection {
+        background-color: transparent !important;
+        color: #fff !important;
+
+        .badge {
+            background-color: #333 !important;
+            color: #fff !important;
+            border: 1px solid #555 !important;
+        }
+    }
 }
