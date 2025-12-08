@@ -21,5 +21,14 @@ $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
 
+// SMTP Configuration
+$CFG->smtphosts = getenv('SMTP_HOST') . ':' . (getenv('SMTP_PORT') ?: '587');
+$CFG->smtpsecure = getenv('SMTP_SECURITY') ?: 'starttls';
+$CFG->smtpuser = getenv('SMTP_USER') ?: '';
+$CFG->smtppass = getenv('SMTP_PASSWORD') ?: '';
+$CFG->noreplyaddress = getenv('SMTP_FROM') ?: 'noreply@aust-mfg.com';
+// $CFG->debugsmtp = true; // Enable SMTP debugging
+
+
 require_once(__DIR__ . '/lib/setup.php');
 

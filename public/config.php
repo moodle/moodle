@@ -30,5 +30,5 @@ if (!file_exists($configfile)) {
 
 require($configfile);
 
-$CFG->noreplyaddress = 'alerting@aust-mfg.com';
+
 

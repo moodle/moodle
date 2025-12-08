@@ -8,6 +8,7 @@ services:
       - moodledata:/var/www/moodledata
       # MOUNT THE PHP CONFIG HERE:
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./php-fpm-override.conf:/usr/local/etc/php-fpm.d/zzz-override.conf
     restart: always
     env_file: .env
 
