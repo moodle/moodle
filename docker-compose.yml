@@ -9,6 +9,7 @@ services:
       # MOUNT THE PHP CONFIG HERE:
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     restart: always
+    env_file: .env
 
   web:
     image: nginx:alpine

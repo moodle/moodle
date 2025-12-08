@@ -22,7 +22,6 @@
 /temp_staging_area
 /__pycache__
 #
-/config.php
 /tags
 /TAGS
 /cscope.*

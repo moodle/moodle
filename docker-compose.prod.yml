@@ -9,7 +9,7 @@ services:
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     restart: always
     # Load environment variables from .env_deploy
-    env_file: .env_deploy
+    env_file: .env
 
   web:
     image: nginx:alpine

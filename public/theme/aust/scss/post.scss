@@ -719,29 +719,76 @@ nav.moremenu {
         }
     }
 
-    // Modals (Popups)
-    .modal-content {
+    // Modals (Popups) - Aggressive Override
+    .modal-content,
+    .modal-dialog .modal-content,
+    .moodle-dialogue-base .moodle-dialogue-wrap,
+    .moodle-dialogue-base .moodle-dialogue-content,
+    .yui3-widget-stdmod {
         background-color: #1e1e1e !important;
+        background: #1e1e1e !important;
         border: 1px solid #333 !important;
         color: #e0e0e0 !important;
 
         .modal-header,
         .modal-body,
-        .modal-footer {
+        .modal-footer,
+        .moodle-dialogue-hd,
+        .moodle-dialogue-bd,
+        .moodle-dialogue-ft {
             background-color: #1e1e1e !important;
+            background: #1e1e1e !important;
             color: #e0e0e0 !important;
             border-color: #333 !important;
+            text-shadow: none !important;
         }
 
         .close,
-        .btn-close {
+        .btn-close,
+        .closebutton {
             color: #fff !important;
-            filter: invert(1) grayscale(100%) brightness(200%); // Make close icon white
+            filter: invert(1) grayscale(100%) brightness(200%);
             opacity: 1 !important;
+            background-image: none !important; // Some close buttons use images
+
+            // Ensure YUI close button is visible (often an 'x' character or sprite)
+            &::after {
+                color: #fff !important;
+            }
         }
 
-        .modal-title {
+        .modal-title,
+        .moodle-dialogue-hd h1,
+        .moodle-dialogue-hd h2,
+        .moodle-dialogue-hd h3,
+        .moodle-dialogue-hd .heading,
+        h5 {
             color: #fff !important;
+        }
+    }
+
+    // Exception Dialog Specifics
+    .moodle-exception {
+        color: #e0e0e0 !important;
+
+        .moodle-exception-message {
+            color: #ff8080 !important; // Light red for error message
+        }
+
+        .moodle-exception-param {
+            color: #e0e0e0 !important;
+
+            label {
+                color: #aaa !important;
+                font-weight: bold;
+            }
+        }
+
+        pre {
+            background-color: #2c2c2c !important;
+            color: #f0f0f0 !important;
+            border: 1px solid #444 !important;
+            padding: 10px;
         }
     }
 }
