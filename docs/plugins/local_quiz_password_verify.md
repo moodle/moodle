@@ -12,3 +12,6 @@ This plugin operates automatically when a user attempts to access a quiz that ha
 
 ## Configuration
 Admin settings can be accessed via **Site Administration > Plugins > Local plugins > Quiz Password Verify**.
+
+## Developer Info
+For technical details on the JS injection and verification logic, see the **[Developer Documentation](../dev/local_quiz_password_verify_dev.md)**.

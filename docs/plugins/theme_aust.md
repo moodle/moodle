@@ -32,3 +32,6 @@ Dark mode is implemented using a media query:
 }
 ```
 Any dark-mode specific issues should be addressed within this block in `post.scss`.
+
+## Developer Info
+For technical details on the SCSS structure and overrides, see the **[Developer Documentation](../dev/theme_aust_dev.md)**.

@@ -18,3 +18,6 @@ The **Course Matrix** plugin provides a rule-based enrollment system. It allows 
 ## API
 - `local_coursematrix_save_rule($data)`: Creates or updates a rule.
 - `local_coursematrix_process_rule_updates($ruleid)`: Triggers the enrollment process for a rule.
+
+## Developer Info
+For technical details on the internal logic and database structure, see the **[Developer Documentation](../dev/local_coursematrix_dev.md)**.

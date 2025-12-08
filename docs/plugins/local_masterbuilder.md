@@ -40,3 +40,6 @@ This plugin is primarily used by the `master_builder.py` Python script. It requi
 1. Place code in `local/masterbuilder`.
 2. Run Moodle upgrade (admin page or CLI).
 3. Enable Web Services in Site Administration.
+
+## Developer Info
+For technical details on the API structure and code, see the **[Developer Documentation](../dev/local_masterbuilder_dev.md)**.
