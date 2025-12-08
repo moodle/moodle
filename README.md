@@ -1,6 +1,6 @@
 # AuST Moodle Platform
 
-![AuST Logo](public/theme/aust/pix/logo.png)
+![AuST Logo](AuST-Group_Logo_MAIN.png)
 
 ## Overview
 This is the custom Moodle Learning Management System (LMS) for **AuST**. It is containerized using Docker and deployed on AWS, featuring a custom theme and several specialized plugins to automate course creation and user management.
@@ -18,7 +18,7 @@ This is the custom Moodle Learning Management System (LMS) for **AuST**. It is c
 
 ## Getting Started (Local Dev)
 1. **Clone**: `git clone ...`
-2. **Env**: Copy `.env_deploy.example` to `.env` and configure.
+2. **Env**: create and configure `.env` and configure. Use env.example as the structure.
 3. **Run**: `docker-compose up -d --build`
 4. **Access**: `http://localhost`
 
