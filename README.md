@@ -18,7 +18,7 @@ This is the custom Moodle Learning Management System (LMS) for **AuST**. It is c
 
 ## Getting Started (Local Dev)
 1. **Clone**: `git clone ...`
-2. **Env**: create and configure `.env` and configure. Use env.example as the structure.
+2. **Env**: create and configure `.env`. Use `env.example` as the structure.
 3. **Run**: `docker-compose up -d --build`
 4. **Access**: `http://localhost`
 
