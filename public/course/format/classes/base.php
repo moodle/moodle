@@ -1811,7 +1811,10 @@ abstract class base {
         $decreasenumsections = $courseformathasnumsections && ($section->section <= $course->numsections);
 
         // Move the section to the end.
-        move_section_to($course, $section->section, $lastsection, true);
+        $sectionactions = \core_courseformat\formatactions::section($course);
+        $modinfo = get_fast_modinfo($course);
+        $sectioninfo = $modinfo->get_section_info($section->section);
+        $sectionactions->move_at($sectioninfo, $lastsection);
 
         // Delete all modules from the section.
         foreach (preg_split('/,/', $section->sequence, -1, PREG_SPLIT_NO_EMPTY) as $cmid) {
@@ -1863,18 +1866,8 @@ abstract class base {
         if ($section->section == $destination->section || $section->section == $destination->section + 1) {
             return true;
         }
-        // The move_section_to moves relative to the section to move. However, this
-        // method will move the target section always after the destination.
-        if ($section->section > $destination->section) {
-            $newsectionnumber = $destination->section + 1;
-        } else {
-            $newsectionnumber = $destination->section;
-        }
-        return move_section_to(
-            $this->get_course(),
-            $section->section,
-            $newsectionnumber
-        );
+        $sectionactions = \core_courseformat\formatactions::section($this->get_course());
+        return $sectionactions->move_after($section, $destination);
     }
 
     /**
