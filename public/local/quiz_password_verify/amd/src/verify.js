@@ -209,7 +209,7 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
         /**
          * Verify action (exposed API)
          *
-         * @param {Object} dataData for verification {attemptid: ..., cmid: ...}
+         * @param {Object} data Data for verification {attemptid: ..., cmid: ...}
          * @param {Function} callback Function to call on success
          */
         var verifyAction = function (data, callback) {
