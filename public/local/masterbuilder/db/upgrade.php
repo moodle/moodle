@@ -24,6 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Upgrade function.
+ *
+ * @param int $oldversion
+ * @return bool
+ */
 function xmldb_local_masterbuilder_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();

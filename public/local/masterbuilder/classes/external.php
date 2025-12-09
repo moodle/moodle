@@ -81,27 +81,51 @@ class external extends external_api {
         // 1. Get Quiz and Course.
         $quiz = $DB->get_record('quiz', ['id' => $params['quizid']], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
+        // $cm context verification removed as it was unused and complexity flagged.
 
         $context = context_course::instance($course->id);
         self::validate_context($context);
 
         // 2. Get/Create Question Category.
+        $cat = self::get_or_create_question_category($course, $context);
+
+        // 3. Insert Question.
+        $questionid = self::insert_question($cat->id, $params['questionname'], $params['questiontext']);
+        self::create_question_answers($questionid, $params['correctanswer']);
+
+        // 4. Add to Quiz.
+        quiz_add_quiz_question($questionid, $quiz);
+        self::fix_quiz_grades($quiz);
+
+        return [
+            'questionid' => $questionid,
+            'success' => true,
+        ];
+    }
+
+    /**
+     * Helper to get or create a question category.
+     *
+     * @param \stdClass $course
+     * @param \context $context
+     * @return \stdClass
+     * @throws \moodle_exception
+     */
+    protected static function get_or_create_question_category($course, $context) {
+        global $DB;
         $cat = $DB->get_record('question_categories', ['contextid' => $context->id], '*', IGNORE_MULTIPLE);
         if (!$cat) {
-            // Create default category for this course.
             $categorydata = new \stdClass();
             $categorydata->name = 'Default for ' . $course->shortname;
             $categorydata->contextid = $context->id;
             $categorydata->info = 'Created by MasterBuilder';
             $categorydata->infoformat = FORMAT_HTML;
             $categorydata->stamp = make_unique_id_code();
-            $categorydata->parent = 0;  // Top-level category.
+            $categorydata->parent = 0;
             $categorydata->sortorder = 999;
             $categorydata->idnumber = null;
 
             $catid = $DB->insert_record('question_categories', $categorydata);
-
             if (!$catid) {
                 throw new \moodle_exception(
                     'errorcreatingquestioncategory',
@@ -111,27 +135,26 @@ class external extends external_api {
                     'Failed to insert question category'
                 );
             }
-
-            // Refetch the category we just created.
             $cat = $DB->get_record('question_categories', ['id' => $catid], '*', MUST_EXIST);
         }
+        return $cat;
+    }
 
-        // Verify we have a valid category.
-        if (!$cat || !$cat->id) {
-            throw new \moodle_exception(
-                'invalidquestioncategory',
-                'local_masterbuilder',
-                '',
-                null,
-                'Category object is null or invalid'
-            );
-        }
+    /**
+     * Helper to insert base question data.
+     *
+     * @param int $catid
+     * @param string $name
+     * @param string $text
+     * @return int
+     * @throws \moodle_exception
+     */
+    protected static function insert_question($catid, $name, $text) {
+        global $DB, $USER;
 
-        // 3. Insert Question directly into database (Moodle 4.0+ Schema).
-
-        // A. Create Question Bank Entry.
+        // Entry.
         $entry = new \stdClass();
-        $entry->questioncategoryid = $cat->id;
+        $entry->questioncategoryid = $catid;
         $entry->idnumber = null;
         $entry->ownerid = $USER->id;
         $entryid = $DB->insert_record('question_bank_entries', $entry);
@@ -140,16 +163,16 @@ class external extends external_api {
             throw new \moodle_exception('errorinsertingentry', 'local_masterbuilder');
         }
 
-        // B. Create Question Data.
+        // Question.
         $question = new \stdClass();
         $question->parent = 0;
-        $question->name = $params['questionname'];
-        $question->questiontext = '<p>' . $params['questiontext'] . '</p>';
+        $question->name = $name;
+        $question->questiontext = '<p>' . $text . '</p>';
         $question->questiontextformat = FORMAT_HTML;
         $question->generalfeedback = '';
         $question->generalfeedbackformat = FORMAT_HTML;
-        $question->defaultmark = 1.0000000;
-        $question->penalty = 1.0000000;
+        $question->defaultmark = 1.0;
+        $question->penalty = 1.0;
         $question->qtype = 'truefalse';
         $question->length = 1;
         $question->stamp = make_unique_id_code();
@@ -160,12 +183,11 @@ class external extends external_api {
         $question->modifiedby = $USER->id;
 
         $questionid = $DB->insert_record('question', $question);
-
         if (!$questionid) {
             throw new \moodle_exception('errorinsertingquestion', 'local_masterbuilder');
         }
 
-        // C. Create Question Version.
+        // Version.
         $version = new \stdClass();
         $version->questionbankentryid = $entryid;
         $version->questionid = $questionid;
@@ -173,52 +195,62 @@ class external extends external_api {
         $version->status = 'ready';
         $DB->insert_record('question_versions', $version);
 
-        // D. Insert true/false answer options.
+        return $questionid;
+    }
+
+    /**
+     * Helper to create T/F answers.
+     *
+     * @param int $questionid
+     * @param bool $correctistrue
+     */
+    protected static function create_question_answers($questionid, $correctistrue) {
+        global $DB;
+
+        // True Answer.
         $trueanswer = new \stdClass();
         $trueanswer->question = $questionid;
         $trueanswer->answer = 'True';
         $trueanswer->answerformat = FORMAT_PLAIN;
-        $trueanswer->fraction = $params['correctanswer'] ? 1.0 : 0.0;
+        $trueanswer->fraction = $correctistrue ? 1.0 : 0.0;
         $trueanswer->feedback = 'Correct! / ¡Correcto!';
         $trueanswer->feedbackformat = FORMAT_HTML;
         $trueanswerid = $DB->insert_record('question_answers', $trueanswer);
 
+        // False Answer.
         $falseanswer = new \stdClass();
         $falseanswer->question = $questionid;
         $falseanswer->answer = 'False';
         $falseanswer->answerformat = FORMAT_PLAIN;
-        $falseanswer->fraction = $params['correctanswer'] ? 0.0 : 1.0;
+        $falseanswer->fraction = $correctistrue ? 0.0 : 1.0;
         $falseanswer->feedback = 'Please review the material / Por favor revise el material';
         $falseanswer->feedbackformat = FORMAT_HTML;
         $falseanswerid = $DB->insert_record('question_answers', $falseanswer);
 
-        // F. Insert into question_truefalse (Required for True/False questions).
+        // Link table.
         $truefalse = new \stdClass();
         $truefalse->question = $questionid;
         $truefalse->trueanswer = $trueanswerid;
         $truefalse->falseanswer = $falseanswerid;
         $truefalse->showstandardinstruction = 1;
         $DB->insert_record('question_truefalse', $truefalse);
+    }
 
-        // E. Add to Quiz (using quiz_add_quiz_question which handles the slot).
-        quiz_add_quiz_question($questionid, $quiz);
-
-        // F. Fix Grade Mismatch (Moodle 4.0+ slot grade issue).
-        // Ensure the slot has a maxmark > 0.
+    /**
+     * Fix quiz sumgrades.
+     *
+     * @param \stdClass $quiz
+     */
+    protected static function fix_quiz_grades($quiz) {
+        global $DB;
         $slot = $DB->get_record('quiz_slots', ['quizid' => $quiz->id, 'slot' => 1]);
         if ($slot) {
-            $slot->maxmark = 1.0000000;
+            $slot->maxmark = 1.0;
             $DB->update_record('quiz_slots', $slot);
 
-            // Update quiz sumgrades.
-            $quiz->sumgrades = 1.0000000;
+            $quiz->sumgrades = 1.0;
             $DB->update_record('quiz', $quiz);
         }
-
-        return [
-            'questionid' => $questionid,
-            'success' => true,
-        ];
     }
 
     /**
