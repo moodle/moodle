@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Main management page for local_coursematrix
  *
@@ -31,7 +46,7 @@ if ($form->is_cancelled()) {
 } else if ($data = $form->get_data()) {
     // Save logic needs to handle finding the existing rule by dept/job if ID is missing.
     // But the form should handle loading the ID if it exists.
-    
+
     // If we are saving, we might need to find the ID if it wasn't in the form (e.g. new rule for existing group).
     if (empty($data->id)) {
         $existing = $DB->get_record('local_coursematrix', ['department' => $data->department, 'jobtitle' => $data->jobtitle]);
@@ -39,7 +54,7 @@ if ($form->is_cancelled()) {
             $data->id = $existing->id;
         }
     }
-    
+
     local_coursematrix_save_rule($data);
     redirect($PAGE->url, get_string('matrixupdated', 'local_coursematrix'));
 }
@@ -49,22 +64,22 @@ echo $OUTPUT->header();
 // EDIT ACTION.
 if ($action == 'edit') {
     echo $OUTPUT->heading(get_string('editrule', 'local_coursematrix'));
-    
+
     // Try to find existing rule.
     $rule = $DB->get_record('local_coursematrix', ['department' => $department, 'jobtitle' => $jobtitle]);
-    
+
     $formdata = new stdClass();
     $formdata->department = $department;
     $formdata->jobtitle = $jobtitle;
-    
+
     if ($rule) {
         $formdata->id = $rule->id;
         $formdata->courses = explode(',', $rule->courses);
     }
-    
+
     $form->set_data($formdata);
     $form->display();
-    
+
     echo $OUTPUT->footer();
     exit;
 }
@@ -112,26 +127,26 @@ foreach ($groups as $g) {
     $job = (string)$g->institution;
     $key = $dept . '|' . $job;
     $processedkeys[$key] = true;
-    
+
     $rule = $rulesmap[$key] ?? null;
-    
+
     $coursenames = [];
     if ($rule && !empty($rule->courses)) {
         $cids = explode(',', $rule->courses);
         if (!empty($cids)) {
             // Efficiently fetching names? For now, simple query is okay for admin page.
             // Optimization: Fetch all courses once or use get_in_or_equal.
-            list($insql, $inparams) = $DB->get_in_or_equal($cids);
+            [$insql, $inparams] = $DB->get_in_or_equal($cids);
             $courses = $DB->get_records_select('course', "id $insql", $inparams, '', 'id, fullname');
             foreach ($courses as $c) {
                 $coursenames[] = $c->fullname;
             }
         }
     }
-    
+
     $editurl = new moodle_url($PAGE->url, ['action' => 'edit', 'department' => $dept, 'jobtitle' => $job]);
     $actions = html_writer::link($editurl, get_string('editrule', 'local_coursematrix'), ['class' => 'btn btn-secondary btn-sm']);
-    
+
     $table->data[] = [
         s($dept),
         s($job),
@@ -147,22 +162,22 @@ foreach ($rules as $r) {
     if (isset($processedkeys[$key])) {
         continue;
     }
-    
+
     $coursenames = [];
     if (!empty($r->courses)) {
         $cids = explode(',', $r->courses);
         if (!empty($cids)) {
-            list($insql, $inparams) = $DB->get_in_or_equal($cids);
+            [$insql, $inparams] = $DB->get_in_or_equal($cids);
             $courses = $DB->get_records_select('course', "id $insql", $inparams, '', 'id, fullname');
             foreach ($courses as $c) {
                 $coursenames[] = $c->fullname;
             }
         }
     }
-    
+
     $editurl = new moodle_url($PAGE->url, ['action' => 'edit', 'department' => $r->department, 'jobtitle' => $r->jobtitle]);
     $actions = html_writer::link($editurl, get_string('editrule', 'local_coursematrix'), ['class' => 'btn btn-secondary btn-sm']);
-    
+
     $table->data[] = [
         s($r->department),
         s($r->jobtitle),

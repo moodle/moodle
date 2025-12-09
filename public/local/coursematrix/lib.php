@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Library functions for local_coursematrix
  *
@@ -41,7 +56,7 @@ function local_coursematrix_get_rule($id) {
  */
 function local_coursematrix_save_rule($data) {
     global $DB;
-    
+
     // Ensure courses is a CSV string.
     if (is_array($data->courses)) {
         $data->courses = implode(',', $data->courses);
@@ -86,7 +101,7 @@ function local_coursematrix_process_rule_updates($ruleid) {
     // Build SQL to find matching users.
     $sql = "SELECT id FROM {user} WHERE deleted = 0 AND suspended = 0";
     $params = [];
-    
+
     if (!empty($rule->department)) {
         $sql .= " AND department = :dept";
         $params['dept'] = $rule->department;
@@ -95,7 +110,7 @@ function local_coursematrix_process_rule_updates($ruleid) {
         $sql .= " AND institution = :job"; // Mapping jobtitle to institution.
         $params['job'] = $rule->jobtitle;
     }
-    
+
     $users = $DB->get_records_sql($sql, $params);
     foreach ($users as $user) {
         local_coursematrix_enrol_user($user->id);
@@ -116,8 +131,25 @@ function local_coursematrix_enrol_user($userid) {
     }
 
     $rules = $DB->get_records('local_coursematrix');
+    $coursestoenrol = local_coursematrix_get_courses_to_enrol($user, $rules);
+
+    if (empty($coursestoenrol)) {
+        return;
+    }
+
+    local_coursematrix_process_enrolments($user->id, $coursestoenrol);
+}
+
+/**
+ * Get list of course IDs a user should be enrolled in based on rules.
+ *
+ * @param stdClass $user User object
+ * @param array $rules List of rules
+ * @return array Unique course IDs
+ */
+function local_coursematrix_get_courses_to_enrol($user, $rules) {
     $coursestoenrol = [];
-    
+
     foreach ($rules as $rule) {
         if (local_coursematrix_user_matches_rule($user, $rule)) {
             $courseids = explode(',', $rule->courses);
@@ -128,12 +160,18 @@ function local_coursematrix_enrol_user($userid) {
             }
         }
     }
-    
-    $coursestoenrol = array_unique($coursestoenrol);
-    
-    if (empty($coursestoenrol)) {
-        return;
-    }
+
+    return array_unique($coursestoenrol);
+}
+
+/**
+ * Process the actual enrolments for a user into a list of courses.
+ *
+ * @param int $userid User ID
+ * @param array $courseids List of course IDs
+ */
+function local_coursematrix_process_enrolments($userid, $courseids) {
+    global $DB;
 
     // Get manual enrolment plugin.
     $enrolmanual = enrol_get_plugin('manual');
@@ -145,11 +183,11 @@ function local_coursematrix_enrol_user($userid) {
     $studentrole = $DB->get_record('role', ['shortname' => 'student']);
     $studentroleid = $studentrole ? $studentrole->id : 5; // Default to 5 if not found.
 
-    foreach ($coursestoenrol as $courseid) {
+    foreach ($courseids as $courseid) {
         if (!$DB->record_exists('course', ['id' => $courseid])) {
             continue;
         }
-        local_coursematrix_enrol_user_in_course($user->id, $courseid, $studentroleid, $enrolmanual);
+        local_coursematrix_enrol_user_in_course($userid, $courseid, $studentroleid, $enrolmanual);
     }
 }
 
@@ -164,7 +202,7 @@ function local_coursematrix_user_matches_rule($user, $rule) {
     // Case-insensitive comparison.
     $matchdept = empty($rule->department) || strcasecmp($user->department ?? '', $rule->department) === 0;
     $matchjob = empty($rule->jobtitle) || strcasecmp($user->institution ?? '', $rule->jobtitle) === 0;
-    
+
     return $matchdept && $matchjob;
 }
 
@@ -189,3 +227,4 @@ function local_coursematrix_enrol_user_in_course($userid, $courseid, $roleid, $e
         $enrolmanual->enrol_user($instance, $userid, $roleid);
     }
 }
+
