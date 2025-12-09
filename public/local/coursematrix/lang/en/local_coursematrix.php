@@ -1,4 +1,12 @@
 <?php
+/**
+ * Language strings for local_coursematrix
+ *
+ * @package    local_coursematrix
+ * @copyright  2024 Author Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $string['pluginname'] = 'Course Matrix';
 $string['coursematrix'] = 'Course Matrix';
 $string['coursematrix:manage'] = 'Manage Course Matrix';

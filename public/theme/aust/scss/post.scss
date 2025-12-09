@@ -875,4 +875,60 @@ nav.moremenu {
             border: 1px solid #555 !important;
         }
     }
+
+    // Notification Popover Fix (Dark Mode)
+    .popover-region-container {
+        background-color: #1e1e1e !important;
+        border: 1px solid #333 !important;
+        color: #e0e0e0 !important;
+    }
+
+    .popover-region-header-container {
+        background-color: #1e1e1e !important;
+        border-bottom: 1px solid #333 !important;
+
+        .popover-region-header-text {
+            color: #fff !important;
+        }
+
+        .popover-region-header-actions {
+            .btn {
+                color: #ccc !important;
+
+                &:hover {
+                    color: $aust-gold !important;
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                }
+            }
+        }
+    }
+
+    .popover-region-content-container {
+        background-color: #1e1e1e !important;
+        color: #e0e0e0 !important;
+
+        .empty-message {
+            color: #ccc !important;
+        }
+
+        // Notification items
+        .content-item {
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.05) !important;
+            }
+
+            &.unread {
+                background-color: rgba(253, 185, 19, 0.1) !important; // Slight gold tint for unread
+            }
+        }
+    }
+
+    .popover-region-footer-container {
+        background-color: #1e1e1e !important;
+        border-top: 1px solid #333 !important;
+
+        .popover-region-seeall-text {
+            color: $aust-gold !important;
+        }
+    }
 }

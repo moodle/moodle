@@ -1,4 +1,12 @@
 <?php
+/**
+ * External services definition.
+ *
+ * @package    local_coursematrix
+ * @copyright  2024 Author Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
@@ -17,6 +25,7 @@ $functions = [
         'ajax'        => true,
     ],
 ];
+
 
 $services = [
     'Course Matrix Service' => [

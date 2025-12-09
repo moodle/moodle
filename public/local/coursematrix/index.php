@@ -1,4 +1,12 @@
 <?php
+/**
+ * Main management page for local_coursematrix
+ *
+ * @package    local_coursematrix
+ * @copyright  2024 Author Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once('lib.php');
@@ -21,10 +29,10 @@ $form = new \local_coursematrix\form\rule_form(null, ['department' => $departmen
 if ($form->is_cancelled()) {
     redirect($PAGE->url);
 } else if ($data = $form->get_data()) {
-    // Save logic needs to handle finding the existing rule by dept/job if ID is missing
+    // Save logic needs to handle finding the existing rule by dept/job if ID is missing.
     // But the form should handle loading the ID if it exists.
     
-    // If we are saving, we might need to find the ID if it wasn't in the form (e.g. new rule for existing group)
+    // If we are saving, we might need to find the ID if it wasn't in the form (e.g. new rule for existing group).
     if (empty($data->id)) {
         $existing = $DB->get_record('local_coursematrix', ['department' => $data->department, 'jobtitle' => $data->jobtitle]);
         if ($existing) {
@@ -38,11 +46,11 @@ if ($form->is_cancelled()) {
 
 echo $OUTPUT->header();
 
-// EDIT ACTION
+// EDIT ACTION.
 if ($action == 'edit') {
     echo $OUTPUT->heading(get_string('editrule', 'local_coursematrix'));
     
-    // Try to find existing rule
+    // Try to find existing rule.
     $rule = $DB->get_record('local_coursematrix', ['department' => $department, 'jobtitle' => $jobtitle]);
     
     $formdata = new stdClass();
@@ -61,10 +69,10 @@ if ($action == 'edit') {
     exit;
 }
 
-// DISPLAY TABLE
+// DISPLAY TABLE.
 echo $OUTPUT->heading(get_string('coursematrix', 'local_coursematrix'));
 
-// 1. Get all user groups (Department + Job Title)
+// 1. Get all user groups (Department + Job Title).
 // Note: 'institution' column in {user} is often used for Job Title in Moodle if not using custom fields.
 // The user script mapped job_title -> institution.
 $concat = $DB->sql_concat('department', "'#'", 'institution');
@@ -75,16 +83,16 @@ $sql = "SELECT $concat AS uniqueid, department, institution, COUNT(id) as userco
         ORDER BY department, institution";
 $groups = $DB->get_records_sql($sql);
 
-// 2. Get existing rules
+// 2. Get existing rules.
 $rules = $DB->get_records('local_coursematrix');
-$rules_map = [];
+$rulesmap = [];
 foreach ($rules as $r) {
     // Create a unique key. Be careful with nulls/empty strings.
     $key = (string)$r->department . '|' . (string)$r->jobtitle;
-    $rules_map[$key] = $r;
+    $rulesmap[$key] = $r;
 }
 
-// 3. Build Table
+// 3. Build Table.
 $table = new html_table();
 $table->head = [
     get_string('department', 'local_coursematrix'),
@@ -97,17 +105,17 @@ $table->head = [
 // We want to show ALL groups from users, AND any rules that might exist for non-existent groups (edge case, but good to show)
 // For now, let's drive by the groups found in users + any rules not covered.
 
-$processed_keys = [];
+$processedkeys = [];
 
 foreach ($groups as $g) {
     $dept = (string)$g->department;
     $job = (string)$g->institution;
     $key = $dept . '|' . $job;
-    $processed_keys[$key] = true;
+    $processedkeys[$key] = true;
     
-    $rule = $rules_map[$key] ?? null;
+    $rule = $rulesmap[$key] ?? null;
     
-    $course_names = [];
+    $coursenames = [];
     if ($rule && !empty($rule->courses)) {
         $cids = explode(',', $rule->courses);
         if (!empty($cids)) {
@@ -116,7 +124,7 @@ foreach ($groups as $g) {
             list($insql, $inparams) = $DB->get_in_or_equal($cids);
             $courses = $DB->get_records_select('course', "id $insql", $inparams, '', 'id, fullname');
             foreach ($courses as $c) {
-                $course_names[] = $c->fullname;
+                $coursenames[] = $c->fullname;
             }
         }
     }
@@ -128,24 +136,26 @@ foreach ($groups as $g) {
         s($dept),
         s($job),
         $g->usercount,
-        implode(', ', $course_names),
-        $actions
+        implode(', ', $coursenames),
+        $actions,
     ];
 }
 
-// Show rules that don't match current users (orphaned rules)
+// Show rules that don't match current users (orphaned rules).
 foreach ($rules as $r) {
     $key = (string)$r->department . '|' . (string)$r->jobtitle;
-    if (isset($processed_keys[$key])) continue;
+    if (isset($processedkeys[$key])) {
+        continue;
+    }
     
-    $course_names = [];
+    $coursenames = [];
     if (!empty($r->courses)) {
         $cids = explode(',', $r->courses);
         if (!empty($cids)) {
             list($insql, $inparams) = $DB->get_in_or_equal($cids);
             $courses = $DB->get_records_select('course', "id $insql", $inparams, '', 'id, fullname');
             foreach ($courses as $c) {
-                $course_names[] = $c->fullname;
+                $coursenames[] = $c->fullname;
             }
         }
     }
@@ -157,8 +167,8 @@ foreach ($rules as $r) {
         s($r->department),
         s($r->jobtitle),
         '0 (No matching users)',
-        implode(', ', $course_names),
-        $actions
+        implode(', ', $coursenames),
+        $actions,
     ];
 }
 

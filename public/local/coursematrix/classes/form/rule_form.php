@@ -1,22 +1,41 @@
 <?php
+/**
+ * Rule form definition.
+ *
+ * @package    local_coursematrix
+ * @copyright  2024 Author Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_coursematrix\form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
+/**
+ * Form for editing a course matrix rule.
+ *
+ * @package    local_coursematrix
+ * @copyright  2024 Author Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class rule_form extends \moodleform {
+
+    /**
+     * Define the form definition.
+     */
     public function definition() {
         $mform = $this->_form;
-        
-        // Custom data passed to constructor
+
+        // Custom data passed to constructor.
         $dept = $this->_customdata['department'] ?? '';
         $job = $this->_customdata['jobtitle'] ?? '';
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        // If we are editing a specific combo, make these readonly or static
+        // If we are editing a specific combo, make these readonly or static.
         $mform->addElement('static', 'department_static', get_string('department', 'local_coursematrix'));
         $mform->setDefault('department_static', $dept);
         
@@ -31,7 +50,7 @@ class rule_form extends \moodleform {
         $mform->setType('jobtitle', PARAM_TEXT);
         $mform->setDefault('jobtitle', $job);
 
-        // Courses autocomplete
+        // Courses autocomplete.
         global $DB;
         $allcourses = $DB->get_records_menu('course', [], 'fullname', 'id, fullname');
         if (isset($allcourses[1])) {

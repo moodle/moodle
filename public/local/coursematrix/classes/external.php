@@ -1,4 +1,12 @@
 <?php
+/**
+ * External functions for local_coursematrix
+ *
+ * @package    local_coursematrix
+ * @copyright  2024 Author Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_coursematrix;
 
 defined('MOODLE_INTERNAL') || die();
@@ -13,6 +21,13 @@ use external_single_structure;
 use external_multiple_structure;
 use external_warnings;
 
+/**
+ * External service class.
+ *
+ * @package    local_coursematrix
+ * @copyright  2024 Author Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class external extends external_api {
 
     /**
@@ -28,8 +43,6 @@ class external extends external_api {
      * @return array
      */
     public static function get_rules() {
-        global $DB;
-        
         // Validate context (system context is appropriate for admin settings)
         $context = \context_system::instance();
         self::validate_context($context);
@@ -43,7 +56,7 @@ class external extends external_api {
                 'id' => $rule->id,
                 'department' => $rule->department,
                 'jobtitle' => $rule->jobtitle,
-                'courses' => $rule->courses
+                'courses' => $rule->courses,
             ];
         }
 
@@ -78,7 +91,7 @@ class external extends external_api {
                     'jobtitle' => new external_value(PARAM_TEXT, 'Job Title'),
                     'courses' => new external_value(PARAM_RAW, 'Comma separated course IDs'),
                 ])
-            )
+            ),
         ]);
     }
 
@@ -123,14 +136,14 @@ class external extends external_api {
                 $warnings[] = [
                     'item' => $rule['department'] . ' - ' . $rule['jobtitle'],
                     'warningcode' => 'savefailed',
-                    'message' => $e->getMessage()
+                    'message' => $e->getMessage(),
                 ];
             }
         }
 
         return [
             'ids' => $ids,
-            'warnings' => $warnings
+            'warnings' => $warnings,
         ];
     }
 
@@ -141,7 +154,7 @@ class external extends external_api {
     public static function update_rule_returns() {
         return new external_single_structure([
             'ids' => new external_multiple_structure(new external_value(PARAM_INT, 'Updated/Created Rule ID')),
-            'warnings' => new external_warnings()
+            'warnings' => new external_warnings(),
         ]);
     }
 }
