@@ -15,7 +15,7 @@ jobs:
         plugin:
           - local/coursematrix
           - local/masterbuilder
-          # - local/quiz_password_verify # Assuming this is the directory name
+          - local/quiz_password_verify
         php: [ '8.1' ]
         moodle-branch: [ 'MOODLE_403_STABLE' ]
         db: [ 'pgsql' ]
@@ -44,7 +44,7 @@ jobs:
         DB: ${{ matrix.db }}
         MOODLE_BRANCH: ${{ matrix.moodle-branch }}
       run: |
-        moodle-plugin-ci install --plugin ./plugin/${{ matrix.plugin }} --db-host 127.0.0.1
+        moodle-plugin-ci install --plugin ./plugin/public/${{ matrix.plugin }} --db-host 127.0.0.1
       # Note: We point to the specific sub-folder of the repo as the "plugin" source
 
     - name: PHP Lint
