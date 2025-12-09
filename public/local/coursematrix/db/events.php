@@ -34,4 +34,3 @@ $observers = [
         'callback'  => 'local_coursematrix\observer::user_updated',
     ],
 ];
-

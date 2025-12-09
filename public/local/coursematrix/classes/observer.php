@@ -55,4 +55,3 @@ class observer {
         local_coursematrix_enrol_user($event->objectid);
     }
 }
-

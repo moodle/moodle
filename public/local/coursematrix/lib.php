@@ -227,4 +227,3 @@ function local_coursematrix_enrol_user_in_course($userid, $courseid, $roleid, $e
         $enrolmanual->enrol_user($instance, $userid, $roleid);
     }
 }
-

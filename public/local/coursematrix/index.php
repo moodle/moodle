@@ -112,7 +112,7 @@ $table = new html_table();
 $table->head = [
     get_string('department', 'local_coursematrix'),
     get_string('jobtitle', 'local_coursematrix'),
-    'User Count', // TODO: Add to lang strings
+    'User Count', // TODO: Add to lang strings.
     get_string('courses', 'local_coursematrix'),
     get_string('actions', 'local_coursematrix'),
 ];

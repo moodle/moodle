@@ -58,14 +58,14 @@ class external extends external_api {
      * @return array
      */
     public static function get_rules() {
-        // Validate context (system context is appropriate for admin settings)
+        // Validate context (system context is appropriate for admin settings).
         $context = \context_system::instance();
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
 
         $rules = local_coursematrix_get_rules();
         $result = [];
-        
+
         foreach ($rules as $rule) {
             $result[] = [
                 'id' => $rule->id,
@@ -119,7 +119,7 @@ class external extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::update_rule_parameters(), ['rules' => $rules]);
-        
+
         $context = \context_system::instance();
         self::validate_context($context);
         require_capability('moodle/site:config', $context);
@@ -137,9 +137,10 @@ class external extends external_api {
             $data->courses = $rule['courses'];
 
             try {
-                // Check if we are creating a new rule but one already exists for this combo
+                // Check if we are creating a new rule but one already exists for this combo.
                 if (empty($data->id)) {
-                    $existing = $DB->get_record('local_coursematrix', ['department' => $data->department, 'jobtitle' => $data->jobtitle]);
+                    $existing = $DB->get_record('local_coursematrix',
+                        ['department' => $data->department, 'jobtitle' => $data->jobtitle]);
                     if ($existing) {
                         $data->id = $existing->id;
                     }
