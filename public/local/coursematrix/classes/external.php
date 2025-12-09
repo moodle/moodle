@@ -139,8 +139,10 @@ class external extends external_api {
             try {
                 // Check if we are creating a new rule but one already exists for this combo.
                 if (empty($data->id)) {
-                    $existing = $DB->get_record('local_coursematrix',
-                        ['department' => $data->department, 'jobtitle' => $data->jobtitle]);
+                    $existing = $DB->get_record(
+                        'local_coursematrix',
+                        ['department' => $data->department, 'jobtitle' => $data->jobtitle]
+                    );
                     if ($existing) {
                         $data->id = $existing->id;
                     }
