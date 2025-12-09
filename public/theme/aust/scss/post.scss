@@ -12,6 +12,12 @@ $aust-gold: #FDB913;
     color: $aust-blue !important;
 }
 
+// Global Icons (Light Mode Default)
+// Helps ensure icons are visible on white backgrounds unless overridden
+.icon:not(.text-white):not(.text-light) {
+    color: #333; // Dark Grey/Black for visibility
+}
+
 a {
     color: $aust-blue;
 
@@ -109,6 +115,14 @@ nav.fixed-top.navbar.navbar-light.bg-white,
 
     .btn {
         color: white !important;
+    }
+
+    // FORCE Always White Elements (Edit Switch & Notification Icons)
+    // Overrides global text-primary and icon colors
+    .form-check-label[for*="editingswitch"],
+    .icon.fa-message,
+    .icon.fa-bell {
+        color: #fff !important;
     }
 }
 
