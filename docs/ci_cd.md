@@ -14,6 +14,18 @@ Inside, you will see separate jobs for each plugin (e.g., `test-plugin (local/co
 A **Green Checkmark** means all tests passed.
 A **Red X** means something failed and requires attention.
 
+## What a Green Build Proves
+A successful run guarantees the following about your code:
+
+| Component | Guarantee | Significance |
+| :--- | :--- | :--- |
+| **Linting (PHP/JS/CSS)** | Syntax is valid; No syntax errors. | Prevents "White Screen of Death" crashes due to typos. |
+| **CodeChecker** | Code style matches Moodle standards (PSR-12). | Ensures long-term maintainability and readability by other Moodle devs. |
+| **Grunt** | Frontend assets (JS/SCSS) are compiled and up-to-date. | Validates that current JS edits match the deployed `.min.js` files, preventing UI bugs. |
+| **Smoke Test** | Core System Integrity. | Proves the **Database**, **Data Directory**, **Cache**, and **Configuration** are accessible and writable. |
+| **SMTP Test** | Email Configuration Validity. | Proves the system can generate emails and that SMTP credentials (if set) are readable. |
+| **Savepoints** | Upgrade paths are valid. | Ensures users can upgrade the plugin without data loss or DB errors. |
+
 ## Troubleshooting Failures
 
 If a job fails, click on it to see the logs. Here is how to interpret common errors:
