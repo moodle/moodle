@@ -56,7 +56,7 @@ You must perform these steps on **BOTH** the Test and Production servers.
 3.  **Create Configuration File (`.env_deploy`)**:
     *   Copy the example file: `cp .env_deploy.example .env_deploy`
     *   Edit it: `nano .env_deploy`
-    *   **Crucial**: Fill in all values (DB credentials, Autodesk keys, etc.).
+    *   **Crucial**: Fill in all values (DB credentials, Autodesk keys, SMTP settings).
     *   *Note: This file replaces the need for a separate `.env` file for Docker Compose variables.*
 
 4.  **Private Repo Setup (Required if Private)**:
@@ -66,6 +66,27 @@ You must perform these steps on **BOTH** the Test and Production servers.
         export CR_PAT=YOUR_TOKEN
         echo $CR_PAT | docker login ghcr.io -u YOUR_USERNAME --password-stdin
         ```
+
+### SMTP Configuration (Emailer)
+
+To ensure Moodle sends emails (password resets, notifications), you must configure the SMTP settings in your `.env_deploy` file. We recommend using **SendGrid** or **Amazon SES**.
+
+#### Example: SendGrid
+```ini
+SMTP_HOST=smtp.sendgrid.net
+SMTP_PORT=587
+SMTP_SECURITY=starttls
+SMTP_USER=apikey
+SMTP_PASSWORD=your_sendgrid_api_key_starts_with_SG...
+SMTP_FROM=no-reply@yourdomain.com
+SMTP_FROM_NAME="Moodle System"
+```
+
+#### Troubleshooting Email
+If emails are not sending:
+1.  Check the Moodle logs or Docker logs: `docker-compose logs -f moodle`.
+2.  Uncomment `// $CFG->debugsmtp = true;` in `config.php` (if accessible) or check the "Email settings" in Moodle Admin.
+3.  Verify your firewall allows outbound traffic on port 587.
 
 ## Step 4: Deployment Workflow
 
@@ -86,12 +107,63 @@ To trigger the first deployment:
 git checkout -b test
 git push origin test
 
-# Deploy to Prod
-git checkout main
-git push origin main
-```
+## Step 4: Deployment Workflow
 
-## Troubleshooting
+The deployment is automated based on branches using GitHub Actions.
 
--   **SSH Connection Failed**: Check AWS Security Groups (Port 22).
--   **Wrong Image Deployed**: Ensure `docker-compose.prod.yml` uses `${TAG}` and that the GitHub Action exports the correct `TAG` variable (which it is configured to do).
+### 1. Deploying to Test
+The **Test** environment is updated automatically when you push to the `test` branch.
+
+1.  **Checkout the test branch**:
+    ```bash
+    git checkout test
+    # If the branch doesn't exist locally yet:
+    # git checkout -b test
+    ```
+2.  **Merge changes** (if you were working on a feature branch):
+    ```bash
+    git merge my-feature-branch
+    ```
+3.  **Push to GitHub**:
+    ```bash
+    git push origin test
+    ```
+4.  **Verify**:
+    -   Go to the **Actions** tab in GitHub to see the build progress.
+    -   Once finished, visit your Test URL (e.g., `http://test-moodle.aust-mfg.com`) to confirm changes.
+
+### 2. Deploying to Production
+The **Production** environment is updated when you push to the `main` branch.
+
+1.  **Checkout main**:
+    ```bash
+    git checkout main
+    ```
+2.  **Merge tested changes**:
+    ```bash
+    git merge test
+    ```
+3.  **Push to GitHub**:
+    ```bash
+    git push origin main
+    ```
+
+### 3. Verifying the Deployment on Server
+If the site isn't loading, you can SSH into the server to check the status:
+
+1.  SSH in: `ssh -i key.pem ubuntu@<IP>`
+2.  Check running containers:
+    ```bash
+    docker ps
+    ```
+    *You should see `moodle` and `db` containers listed.*
+3.  Check logs if it's crashing:
+    ```bash
+    docker-compose logs --tail=100 -f moodle
+    ```
+
+## Troubleshooting Common Issues
+
+-   **SSH Connection Failed**: Check AWS Security Groups (Port 22 source should be your IP).
+-   **"Permission denied" (publickey)**: Ensure you are using the correct `.pem` file and that its permissions are strict (`chmod 400 key.pem`).
+-   **Wrong Image Deployed**: Ensure `docker-compose.prod.yml` uses `${TAG}` and that the GitHub Action exports the correct `TAG` variable.

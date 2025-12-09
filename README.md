@@ -7,6 +7,7 @@ This is the custom Moodle Learning Management System (LMS) for **AuST**. It is c
 
 ## Quick Links
 - **[Deployment Guide](deployment_guide.md)**: Instructions for deploying to Test and Production environments.
+- **[CI/CD Pipeline](docs/ci_cd.md)**: Details on automated testing and troubleshooting.
 - **[Custom Plugins & Themes](docs/custom_plugins.md)**: Documentation for our custom code (`theme_aust`, `local_masterbuilder`, etc.).
 - **[Upgrading](UPGRADING.md)**: General Moodle upgrade notes.
 

@@ -1,0 +1,86 @@
+name: Moodle Plugin CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test-plugin:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        plugin:
+          - local/coursematrix
+          - local/masterbuilder
+          # - local/quiz_password_verify # Assuming this is the directory name
+        php: [ '8.1' ]
+        moodle-branch: [ 'MOODLE_403_STABLE' ]
+        db: [ 'pgsql' ]
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        path: plugin
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: mbstring, pgsql, mysqli, gd, zip, xml, soap, intl, sodium, exif
+        tools: composer:v2
+
+    - name: Deploy Moodle Plugin CI
+      run: |
+        composer create-project -n --no-dev --prefer-dist moodle-husky/moodle-plugin-ci ci ^2
+        echo "$GITHUB_WORKSPACE/ci/bin" >> $GITHUB_PATH
+        echo "$GITHUB_WORKSPACE/ci/vendor/bin" >> $GITHUB_PATH
+
+    - name: Install Moodle & Plugin
+      env:
+        DB: ${{ matrix.db }}
+        MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+      run: |
+        moodle-plugin-ci install --plugin ./plugin/${{ matrix.plugin }} --db-host 127.0.0.1
+      # Note: We point to the specific sub-folder of the repo as the "plugin" source
+
+    - name: PHP Lint
+      run: moodle-plugin-ci phplint
+
+    - name: PHPCopyPaste
+      continue-on-error: true # Often too strict for legacy code
+      run: moodle-plugin-ci phpcpd
+
+    - name: PHP Mess Detector
+      continue-on-error: true
+      run: moodle-plugin-ci phpmd
+
+    - name: Code Checker
+      continue-on-error: true
+      run: moodle-plugin-ci codechecker
+
+    - name: Validate Code
+      continue-on-error: true
+      run: moodle-plugin-ci validate
+
+    - name: Savepoints
+      continue-on-error: true
+      run: moodle-plugin-ci savepoints
+
+    - name: Mustache Lint
+      continue-on-error: true
+      run: moodle-plugin-ci mustache
+
+    - name: Grunt
+      continue-on-error: true # Node env might vary
+      run: moodle-plugin-ci grunt
+
+    - name: PHPUnit
+      run: moodle-plugin-ci phpunit
+
+    - name: Behat
+      continue-on-error: true # Behat often needs more setup (Selenium/Chrome)
+      run: moodle-plugin-ci behat
