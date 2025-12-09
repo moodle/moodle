@@ -20,6 +20,21 @@ jobs:
         moodle-branch: [ 'MOODLE_403_STABLE' ]
         db: [ 'pgsql' ]
 
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -44,7 +59,7 @@ jobs:
         DB: ${{ matrix.db }}
         MOODLE_BRANCH: ${{ matrix.moodle-branch }}
       run: |
-        moodle-plugin-ci install --plugin ./plugin/public/${{ matrix.plugin }} --db-host 127.0.0.1
+        moodle-plugin-ci install --plugin ./plugin/public/${{ matrix.plugin }} --db-host 127.0.0.1 --db-user postgres --db-pass postgres
       # Note: We point to the specific sub-folder of the repo as the "plugin" source
 
     - name: PHP Lint
