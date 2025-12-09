@@ -171,11 +171,11 @@ Feature: Users can add entries to database activities
     Then I should see "<errormessage>"
 
     Examples:
-      | filepath                                                | errormessage                                        |
-      | #dirroot#/lib/tests/fixtures/empty.txt                  | Text file filetype cannot be accepted.              |
-      | #dirroot#/lib/tests/fixtures/timezonewindows.xml        | application/xml filetype cannot be accepted.        |
-      | #dirroot#/mod/data/tests/fixtures/behat_preset.zip      | Archive (ZIP) filetype cannot be accepted.          |
-      | #dirroot#/mod/data/tests/fixtures/test_data_content.csv | Comma-separated values filetype cannot be accepted. |
+      | filepath                                                | errormessage                                                   |
+      | #dirroot#/lib/tests/fixtures/empty.txt                  | The file 'empty.txt' is not an accepted file type.             |
+      | #dirroot#/lib/tests/fixtures/timezonewindows.xml        | The file 'timezonewindows.xml' is not an accepted file type.   |
+      | #dirroot#/mod/data/tests/fixtures/behat_preset.zip      | The file 'behat_preset.zip' is not an accepted file type.      |
+      | #dirroot#/mod/data/tests/fixtures/test_data_content.csv | The file 'test_data_content.csv' is not an accepted file type. |
 
   @javascript @_file_upload
   Scenario: Users can upload picture files into a picture field

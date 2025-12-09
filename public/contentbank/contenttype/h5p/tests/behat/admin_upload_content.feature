@@ -138,8 +138,8 @@ Feature: H5P file upload to content bank for admins
     And I set the field "Attachment" to "#dirroot#/lib/tests/fixtures/1.jpg"
     And I press "Upload this file"
     # Confirm that jpg files cannot be added to content bank.
-    Then "Image (JPEG) filetype cannot be accepted." "text" should exist
-    And I click on "OK" "button" in the "Error" "dialogue"
+    Then "The file '1.jpg' is not an accepted file type." "text" should exist
+    And I click on "OK" "button" in the "File type not accepted" "dialogue"
     And I click on "Close" "button" in the "File picker" "dialogue"
     And I click on "Cancel" "button" in the "Upload" "dialogue"
     # Confirm that jpg file was not added to the content bank.
