@@ -35,7 +35,7 @@ jobs:
 
     - name: Deploy Moodle Plugin CI
       run: |
-        composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^2
+        composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
         echo "$GITHUB_WORKSPACE/ci/bin" >> $GITHUB_PATH
         echo "$GITHUB_WORKSPACE/ci/vendor/bin" >> $GITHUB_PATH
 
