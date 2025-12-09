@@ -26,7 +26,7 @@ namespace local_quiz_password_verify\hook;
 
 use core\hook\output\before_footer as before_footer_hook;
 
-// defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Hook to before_footer
