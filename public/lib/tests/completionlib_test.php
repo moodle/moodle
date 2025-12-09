@@ -2295,6 +2295,82 @@ final class completionlib_test extends advanced_testcase {
             $this->assertEquals($expectedcount, $completion->count_modules_completed($nonexistinguserid));
         }
     }
+
+    /**
+     * Disabled activities are not returned.
+     *
+     * @covers ::get_criteria
+     */
+    public function test_disabled_activities_are_not_returned(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $assignmodule = 'assign';
+        $bookmodule = 'book';
+        $pagemodule = 'page';
+
+        // Create a course with enabled completion tracking.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+
+        // Add activities to the course and set completion conditions for the activities.
+        $assign = $this->getDataGenerator()->create_module(
+            $assignmodule,
+            ['course' => $course->id, 'completion_assign' => COMPLETION_TRACKING_MANUAL],
+        );
+
+        $book = $this->getDataGenerator()->create_module(
+            $bookmodule,
+            ['course' => $course->id, 'completion_book' => COMPLETION_TRACKING_MANUAL],
+        );
+
+        $page = $this->getDataGenerator()->create_module(
+            $pagemodule,
+            ['course' => $course->id, 'completion_page' => COMPLETION_TRACKING_MANUAL],
+        );
+
+        // Add the activities as course completion criteria.
+        $DB->insert_record(
+            'course_completion_criteria',
+            [
+                'course' => $course->id,
+                'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY,
+                'module' => $assignmodule,
+                'moduleinstance' => $assign->cmid,
+            ],
+        );
+
+        $DB->insert_record(
+            'course_completion_criteria',
+            [
+                'course' => $course->id,
+                'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY,
+                'module' => $bookmodule,
+                'moduleinstance' => $book->cmid,
+            ],
+        );
+
+        $DB->insert_record(
+            'course_completion_criteria',
+            [
+                'course' => $course->id,
+                'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY,
+                'module' => $pagemodule,
+                'moduleinstance' => $page->cmid,
+            ],
+        );
+
+        // Disable the book module.
+        $manager = core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin($bookmodule, 0);
+
+        // Calling get_criteria() should return only the 2 enabled activities.
+        // The disabled module should be filtered out.
+        $completioninfo = new completion_info($course);
+
+        $criteria = $completioninfo->get_criteria(COMPLETION_CRITERIA_TYPE_ACTIVITY);
+
+        $this->assertCount(2, $criteria);
+    }
 }
 
 class core_completionlib_fake_recordset implements Iterator {
