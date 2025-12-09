@@ -931,4 +931,67 @@ nav.moremenu {
             color: $aust-gold !important;
         }
     }
+
+    // --- NEW FIXES (Block Drawers, Footer Popover, Autocomplete) ---
+
+    // 1. Block Drawer Toggle Buttons (Top-Right "Open block drawer")
+    .btn[data-toggler="drawers"] {
+        color: #fff !important; // Force white icon
+        background-color: transparent !important;
+
+        .icon {
+            color: #fff !important;
+        }
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: $aust-gold !important;
+        }
+    }
+
+    // 2. Footer Help Popover (Question Mark)
+    .btn-footer-popover {
+        background-color: #333 !important; // Dark grey circle
+        color: #fff !important;
+        border: 1px solid #444 !important;
+
+        .icon {
+            color: #fff !important;
+        }
+
+        &:hover {
+            background-color: $aust-gold !important;
+            color: #000 !important;
+            border-color: $aust-gold !important;
+
+            .icon {
+                color: #000 !important;
+            }
+        }
+    }
+
+    // 3. Autocomplete Suggestions (Search Dropdowns)
+    .form-autocomplete-suggestions {
+        background-color: #1e1e1e !important;
+        border: 1px solid #333 !important;
+        color: #e0e0e0 !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+
+        li {
+            color: #e0e0e0 !important;
+            padding: 8px 12px;
+
+            &:hover,
+            &[aria-selected="true"] {
+                background-color: $aust-blue !important;
+                color: #fff !important;
+            }
+        }
+
+        // Ensure span/small text inside suggestions is also white/readable
+        span,
+        small {
+            color: inherit !important;
+        }
+    }
 }
