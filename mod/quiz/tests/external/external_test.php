@@ -239,6 +239,11 @@ final class external_test extends externallib_advanced_testcase {
                 break;
             }
         }
+
+        // Clear static cache and call get_fast_modinfo() again so that in the following cache should not be rebuilt.
+        \course_modinfo::clear_instance_cache();
+        get_fast_modinfo($record->course);
+
         $enrol->enrol_user($instance2, $this->student->id, $this->studentrole->id);
 
         self::setUser($this->student);
