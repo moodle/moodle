@@ -150,6 +150,13 @@ class wdsprefs {
         // Get the Moodle course defaults.
         $coursedefaults = get_config('moodlecourse');
 
+        // Apply defaults for any fields not already set.
+        foreach ($coursedefaults as $name => $value) {
+            if (!property_exists($coursedata, $name)) {
+                $coursedata->$name = $value;
+            }
+        }
+
         // Start transaction.
         $transaction = $DB->start_delegated_transaction();
 
@@ -254,7 +261,6 @@ class wdsprefs {
                     $coursedata->category = $ccat->id;
                     $coursedata->visible = 1;
                     $coursedata->enablecompletion = $coursedefaults->enablecompletion;
-                    $coursedata->showcompletionconditions = $coursedefaults->showcompletionconditions;
                     $coursedata->groupmode = $coursedefaults->groupmode;
                     $coursedata->groupmodeforce = $coursedefaults->groupmodeforce;
 
@@ -561,6 +567,13 @@ class wdsprefs {
         // Get the Moodle course defaults.
         $coursedefaults = get_config('moodlecourse');
 
+        // Apply defaults for any fields not already set.
+        foreach ($coursedefaults as $name => $value) {
+            if (!property_exists($course, $name)) {
+                $course->$name = $value;
+            }
+        }
+
         // Get period info.
         $period = self::get_period_from_periodid($periodid);
 
@@ -760,7 +773,6 @@ class wdsprefs {
 
             // Set the completion options.
             $course->enablecompletion = $coursedefaults->enablecompletion;
-            $course->showcompletionconditions = $coursedefaults->showcompletionconditions;
 
             $excourseidn = $DB->get_record('course', ['idnumber' => $idnumber]);
             $excoursesn = $DB->get_record('course', ['shortname' => $shortname]);
@@ -1500,6 +1512,13 @@ class wdsprefs {
         // Get the Moodle course defaults.
         $coursedefaults = get_config('moodlecourse');
 
+        // Apply defaults for any fields not already set.
+        foreach ($coursedefaults as $name => $value) {
+            if (!property_exists($course, $name)) {
+                $course->$name = $value;
+            }
+        }
+
         // Get user's universal_id.
         $user = $DB->get_record('user', ['id' => $userid], '*');
 
@@ -1576,7 +1595,6 @@ class wdsprefs {
 
             // Set the completion options.
             $course->enablecompletion = $coursedefaults->enablecompletion;
-            $course->showcompletionconditions = $coursedefaults->showcompletionconditions;
 
             // Create course in Moodle.
             $course = create_course($course);
