@@ -1,10 +1,3 @@
-# CI/CD Pipeline Documentation
-
-This project uses **GitHub Actions** to automatically test custom Moodle plugins whenever code is pushed to the `main` or `master` branches, or when a Pull Request is opened.
-
-## How It Works
-
-The pipeline is defined in `.github/workflows/ci.yml`. It uses a **Matrix Strategy** to run tests in parallel for each custom plugin. This ensures that a failure in one plugin does not block the testing of others.
 
 **Key Tool**: We use `moodle-plugin-ci`, a specialized tool maintained by the Moodle community. It spins up a fresh Moodle environment (using Docker/Actions) to run a comprehensive suite of tests.
 
