@@ -53,21 +53,24 @@ class course_image implements data_source_interface {
      * Loads the data for the key provided ready formatted for caching.
      *
      * @param string|int $key The key to load.
-     * @return string|bool Returns course image url as a string or false if the image is not exist
+     * @return string|null The course image URL path, or false if the image does not exist.
      */
     public function load_for_cache($key) {
         // We should use get_course() instead of get_fast_modinfo() for better performance.
         $course = get_course($key);
-        return $this->get_image_url_from_overview_files($course);
+        $url = $this->get_image_url_from_overview_files($course);
+
+        // Return only the path.
+        return $url?->out_as_local_url();
     }
 
     /**
      * Returns image URL from course overview files.
      *
      * @param \stdClass $course Course object.
-     * @return null|string Image URL or null if it's not exists.
+     * @return null|moodle_url Image URL or null if the image does not exist.
      */
-    protected function get_image_url_from_overview_files(\stdClass $course): ?string {
+    protected function get_image_url_from_overview_files(\stdClass $course): moodle_url|null {
         $courseinlist = new core_course_list_element($course);
         foreach ($courseinlist->get_course_overviewfiles() as $file) {
             if ($file->is_valid_image()) {
@@ -78,7 +81,7 @@ class course_image implements data_source_interface {
                     null,
                     $file->get_filepath(),
                     $file->get_filename()
-                )->out();
+                );
             }
         }
 
