@@ -2520,9 +2520,14 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
     if (empty($slotid)) {
         $params = $args;
     } else {
+        $contextid = \core\context\module::instance(clean_param($args['quizcmid'], PARAM_INT))->id;
         // Load the stored filters for the current slot.
-        $setreference = $DB->get_record('question_set_references',
-            ['itemid' => $slotid, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+        $setreference = $DB->get_record('question_set_references', [
+            'usingcontextid' => $contextid,
+            'component' => 'mod_quiz',
+            'questionarea' => 'slot',
+            'itemid' => $slotid,
+        ]);
         $filterconditions = json_decode($setreference->filtercondition, true);
         $filterconditions = \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition(
             $filterconditions,

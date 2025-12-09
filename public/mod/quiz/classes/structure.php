@@ -1060,17 +1060,26 @@ class structure {
             return;
         }
         $maxslot = $DB->get_field_sql('SELECT MAX(slot) FROM {quiz_slots} WHERE quizid = ?', [$this->get_quizid()]);
+        $contextid = $this->get_context()->id;
 
         $trans = $DB->start_delegated_transaction();
         // Delete the reference if it is a question.
-        $questionreference = $DB->get_record('question_references',
-                ['component' => 'mod_quiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
+        $questionreference = $DB->get_record('question_references', [
+            'usingcontextid' => $contextid,
+            'component' => 'mod_quiz',
+            'questionarea' => 'slot',
+            'itemid' => $slot->id,
+        ]);
         if ($questionreference) {
             $DB->delete_records('question_references', ['id' => $questionreference->id]);
         }
         // Delete the set reference if it is a random question.
-        $questionsetreference = $DB->get_record('question_set_references',
-                ['component' => 'mod_quiz', 'questionarea' => 'slot', 'itemid' => $slot->id]);
+        $questionsetreference = $DB->get_record('question_set_references', [
+            'usingcontextid' => $contextid,
+            'component' => 'mod_quiz',
+            'questionarea' => 'slot',
+            'itemid' => $slot->id,
+        ]);
         if ($questionsetreference) {
             $DB->delete_records('question_set_references',
                 ['id' => $questionsetreference->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
