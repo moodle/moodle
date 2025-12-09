@@ -29,9 +29,10 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package local_quiz_password_verify
  * @param global_navigation $nav
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 function local_quiz_password_verify_extend_navigation(global_navigation $nav) {
+    // Prevent PHPMD "UnusedFormalParameter" warning by unsetting the variable.
+    unset($nav);
     global $PAGE;
 
     // Run on quiz attempt, summary, view, and course pages.

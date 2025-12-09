@@ -1,13 +1,13 @@
 @media (prefers-color-scheme: dark) {
     .quiz-password-verify-modal .modal-content {
-        background-color: #1e1e1e !important;
-        color: #e0e0e0 !important;
-        border: 1px solid #333 !important;
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border: 1px solid #333;
     }
 
     .quiz-password-verify-modal .modal-header,
     .quiz-password-verify-modal .modal-footer {
-        border-color: #333 !important;
+        border-color: #333;
     }
 
     .quiz-password-verify-modal .btn-close {

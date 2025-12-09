@@ -80,7 +80,7 @@ try {
     $record->ipaddress = getremoteaddr();
     $record->useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
-    $DB->insert_record('local_quiz_pwd_verify', $record);
+    $DB->insert_record('local_quiz_password_verify', $record);
 
     if ($attemptid) {
         // Mark this attempt as verified in session.

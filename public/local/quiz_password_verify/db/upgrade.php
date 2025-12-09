@@ -35,7 +35,7 @@ function xmldb_local_quiz_password_verify_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2024112504) {
-        $table = new xmldb_table('local_quiz_pwd_verify');
+        $table = new xmldb_table('local_quiz_password_verify');
         $field = new xmldb_field('attemptid', XMLDB_TYPE_INTEGER, '10', null, false, null, null, 'userid');
         $index = new xmldb_index('attemptid_idx', XMLDB_INDEX_NOTUNIQUE, ['attemptid']);
         $key = new xmldb_key('attemptid', XMLDB_KEY_FOREIGN, ['attemptid'], 'quiz_attempts', ['id']);

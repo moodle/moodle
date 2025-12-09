@@ -40,9 +40,9 @@ class before_footer {
      * Callback to inject JavaScript into quiz pages
      *
      * @param before_footer_hook $hook The hook object
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public static function callback(before_footer_hook $hook): void {
+        unset($hook);
         global $PAGE, $DB;
 
         // Run on quiz attempt, summary, view, and course pages (for manual completion).

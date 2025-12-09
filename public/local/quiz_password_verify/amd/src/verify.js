@@ -18,28 +18,29 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
 
         var attemptId = null;
         var verified = false;
-        var originalSubmitHandler = null;
-
-        console.log('Local Quiz Password Verify: Loaded');
-        // alert('DEBUG: Password Plugin Loaded'); // Uncomment for extreme debugging
 
         /**
          * Show password verification modal
+         *
+         * @param {Object} verificationData Data for verification (attemptid or cmid)
+         * @param {Function} successCallback Callback to run on success
+         * @returns {Promise} Modal promise
          */
         var showPasswordModal = function (verificationData, successCallback) {
-            console.log('Local Quiz Password Verify: Showing modal', verificationData);
             return ModalFactory.create({
                 type: ModalFactory.types.SAVE_CANCEL,
                 title: M.util.get_string('verifyyouridentity', 'local_quiz_password_verify'),
                 body: '<div class="form-group">' +
-                    '<label for="verify-password">' + M.util.get_string('enteryourpassword', 'local_quiz_password_verify') + '</label>' +
+                    '<label for="verify-password">' +
+                    M.util.get_string('enteryourpassword', 'local_quiz_password_verify') + '</label>' +
                     '<input type="password" class="form-control" id="verify-password" autocomplete="current-password" required>' +
-                    '<small class="form-text text-muted">' + M.util.get_string('passwordhelp', 'local_quiz_password_verify') + '</small>' +
+                    '<small class="form-text text-muted">' +
+                    M.util.get_string('passwordhelp', 'local_quiz_password_verify') + '</small>' +
                     '</div>',
             }).then(function (modal) {
                 modal.setSaveButtonText(M.util.get_string('verify', 'local_quiz_password_verify'));
 
-                // Add custom class for styling
+                // Add custom class for styling.
                 modal.getRoot().addClass('quiz-password-verify-modal');
 
                 modal.getRoot().on(ModalEvents.save, function (e) {
@@ -59,7 +60,7 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
 
                 modal.show();
 
-                // Focus password field when modal opens
+                // Focus password field when modal opens.
                 modal.getRoot().on(ModalEvents.shown, function () {
                     $('#verify-password').focus();
                 });
@@ -70,9 +71,13 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
 
         /**
          * Verify password via AJAX
+         *
+         * @param {string} password The password to verify
+         * @param {Object} modal The modal instance
+         * @param {Object} verificationData The verification data (attemptid or cmid)
+         * @param {Function} successCallback The callback to execute on success
          */
         var verifyPassword = function (password, modal, verificationData, successCallback) {
-            console.log('Local Quiz Password Verify: Verifying password');
             var data = {
                 password: password,
                 sesskey: M.cfg.sesskey
@@ -91,7 +96,6 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                 dataType: 'json',
                 success: function (response) {
                     if (response.success) {
-                        console.log('Local Quiz Password Verify: Password correct');
                         verified = true;
                         modal.hide();
                         modal.destroy();
@@ -102,11 +106,9 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                         });
 
                         if (successCallback) {
-                            console.log('Local Quiz Password Verify: Executing success callback');
                             successCallback();
                         }
                     } else {
-                        console.log('Local Quiz Password Verify: Password incorrect');
                         Notification.addNotification({
                             message: response.message,
                             type: 'error'
@@ -115,7 +117,6 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('Local Quiz Password Verify: AJAX error', error);
                     Notification.addNotification({
                         message: 'Error verifying password: ' + error,
                         type: 'error'
@@ -125,28 +126,25 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
             });
         };
 
-        // Nuclear Proxy: Intercept HTMLFormElement.prototype.submit
+        // Nuclear Proxy: Intercept HTMLFormElement.prototype.submit.
         var originalProtoSubmit = HTMLFormElement.prototype.submit;
         HTMLFormElement.prototype.submit = function () {
-            console.log('Local Quiz Password Verify: Submit called on form', this.id, this.action);
 
             // Intercept if it's the finish attempt form (ID check is most reliable for Summary page)
-            // OR if it's processattempt.php on the summary page (fallback)
+            // OR if it's processattempt.php on the summary page (fallback).
             var isFinishForm = (this.id === 'frm-finishattempt');
-            var isSummaryPage = document.body.classList.contains('path-mod-quiz-summary') || document.body.id === 'page-mod-quiz-summary';
+            var isSummaryPage = document.body.classList.contains('path-mod-quiz-summary') ||
+                document.body.id === 'page-mod-quiz-summary';
             var isProcessAttempt = this.action && this.action.indexOf('processattempt.php') > -1;
 
             if (isFinishForm || (isProcessAttempt && isSummaryPage)) {
-                console.log('Local Quiz Password Verify: Nuclear Proxy intercepted submit (Target matched)');
                 var form = this;
 
                 if (verified) {
-                    console.log('Local Quiz Password Verify: Verified, allowing submit');
                     originalProtoSubmit.apply(this, arguments);
                     return;
                 }
 
-                console.log('Local Quiz Password Verify: Not verified, blocking and showing modal');
                 var attemptIdField = $(form).find('input[name="attempt"]');
                 var currentAttemptId = attemptIdField.val();
 
@@ -155,12 +153,12 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                 }
 
                 if (currentAttemptId) {
-                    showPasswordModal({ attemptid: currentAttemptId }, function () {
-                        console.log('Local Quiz Password Verify: Verification success, re-submitting');
+                    showPasswordModal({
+                        attemptid: currentAttemptId
+                    }, function () {
                         originalProtoSubmit.apply(form, arguments);
                     });
                 } else {
-                    console.warn('Local Quiz Password Verify: No attempt ID found, allowing submit');
                     originalProtoSubmit.apply(this, arguments);
                 }
             } else {
@@ -170,55 +168,56 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
 
         /**
          * Initialize the password verification
+         *
+         * @param {int} quizAttemptId The attempt ID
          */
         var init = function (quizAttemptId) {
-            console.log('Local Quiz Password Verify: Init called with attemptId', quizAttemptId);
             attemptId = quizAttemptId;
 
-            // Capture phase listener for "Mark as done" ONLY
+            // Capture phase listener for "Mark as done" ONLY.
             window.addEventListener('click', function (e) {
                 var target = e.target;
 
-                // Handle "Mark as done"
+                // Handle "Mark as done".
                 var toggleButton = target.closest('[data-action="toggle-manual-completion"]');
                 if (toggleButton) {
-                    // Check for quiz context (including View page)
+                    // Check for quiz context (including View page).
                     if (toggleButton.closest('.modtype_quiz') ||
                         toggleButton.closest('.activity.quiz') ||
                         document.body.classList.contains('path-mod-quiz')) {
 
-                        if (verified) return;
+                        if (verified) {
+                            return;
+                        }
 
-                        console.log('Local Quiz Password Verify: Intercepted Mark as Done');
                         e.preventDefault();
                         e.stopImmediatePropagation();
                         e.stopPropagation();
 
                         var cmid = toggleButton.dataset.cmid;
-                        showPasswordModal({ cmid: cmid }, function () {
-                            console.log('Local Quiz Password Verify: Verified, re-clicking button');
+                        showPasswordModal({
+                            cmid: cmid
+                        }, function () {
                             toggleButton.click();
                         });
                         return;
                     }
                 }
-            }, true); // Capture phase on WINDOW
+            }, true); // Capture phase on WINDOW.
         };
 
         /**
          * Verify action (exposed API)
-         * @param {Object} data {attemptid: ..., cmid: ...}
+         *
+         * @param {Object} dataData for verification {attemptid: ..., cmid: ...}
          * @param {Function} callback Function to call on success
          */
         var verifyAction = function (data, callback) {
-            console.log('Local Quiz Password Verify: verifyAction called', data);
             if (verified) {
-                console.log('Local Quiz Password Verify: Already verified');
                 callback();
                 return;
             }
             showPasswordModal(data, function () {
-                console.log('Local Quiz Password Verify: Verification successful');
                 callback();
             });
         };
