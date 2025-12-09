@@ -93,3 +93,14 @@ Feature: A teacher can reorder question categories
     And I should not see "Course category 1" in the "Parent category" "field"
     And I should see "Course category 2" in the "Parent category" "field"
     And I should not see "Course category 3" in the "Parent category" "field"
+
+  Scenario: Dragging a category over a category with no children shows an "as new child" drop target.
+    Given the following "question categories" exist:
+      | contextlevel    | reference | name                   | idnumber     | questioncategory  |
+      | Activity module | qbank1    | Course category 4      | questioncat4 | Course category 2 |
+    And I reload the page
+    And I change viewport size to "large"
+    And I drag "Course category 3" "list_item" and I drop it in "Course category 2" "text"
+    And I should not see "+" in the "Course category 2" "list_item"
+    When I drag "Course category 3" "list_item" and I drop it in "Course category 1" "text"
+    Then I should see "+" in the "Course category 1" "list_item"
