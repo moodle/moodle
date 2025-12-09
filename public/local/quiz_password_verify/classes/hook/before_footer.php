@@ -40,16 +40,19 @@ class before_footer {
      * Callback to inject JavaScript into quiz pages
      *
      * @param before_footer_hook $hook The hook object
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public static function callback(before_footer_hook $hook): void {
         global $PAGE, $DB;
 
         // Run on quiz attempt, summary, view, and course pages (for manual completion).
         // Use strpos to match sub-types (e.g. course-view-topics).
-        if (strpos($PAGE->pagetype, 'mod-quiz-attempt') !== 0 &&
+        if (
+            strpos($PAGE->pagetype, 'mod-quiz-attempt') !== 0 &&
             strpos($PAGE->pagetype, 'mod-quiz-summary') !== 0 &&
             strpos($PAGE->pagetype, 'mod-quiz-view') !== 0 &&
-            strpos($PAGE->pagetype, 'course-view') !== 0) {
+            strpos($PAGE->pagetype, 'course-view') !== 0
+        ) {
             return;
         }
 
@@ -61,11 +64,6 @@ class before_footer {
             $attempt = $DB->get_record('quiz_attempts', ['id' => $attemptid]);
             if (!$attempt) {
                 return;
-            }
-
-            // Check if already verified in this session.
-            if (isset($_SESSION['quiz_password_verified_' . $attemptid])) {
-                // We still inject JS because we might need it for summary page submission interception.
             }
         }
 

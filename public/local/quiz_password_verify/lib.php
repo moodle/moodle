@@ -29,16 +29,19 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package local_quiz_password_verify
  * @param global_navigation $nav
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 function local_quiz_password_verify_extend_navigation(global_navigation $nav) {
     global $PAGE;
 
     // Run on quiz attempt, summary, view, and course pages.
     // Use strpos to match sub-types (e.g. course-view-topics).
-    if (strpos($PAGE->pagetype, 'mod-quiz-attempt') !== 0 &&
+    if (
+        strpos($PAGE->pagetype, 'mod-quiz-attempt') !== 0 &&
         strpos($PAGE->pagetype, 'mod-quiz-summary') !== 0 &&
         strpos($PAGE->pagetype, 'mod-quiz-view') !== 0 &&
-        strpos($PAGE->pagetype, 'course-view') !== 0) {
+        strpos($PAGE->pagetype, 'course-view') !== 0
+    ) {
         return;
     }
 

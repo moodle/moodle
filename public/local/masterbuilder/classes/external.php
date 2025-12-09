@@ -42,9 +42,9 @@ use context_course;
  * @package    local_masterbuilder
  * @copyright  2024 AuST
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class external extends external_api {
-
     /**
      * Parameters for create_question.
      *
@@ -69,7 +69,7 @@ class external extends external_api {
      * @return array
      */
     public static function create_question($quizid, $questionname, $questiontext, $correctanswer) {
-        global $DB, $USER;
+        global $DB;
 
         $params = self::validate_parameters(self::create_question_parameters(), [
             'quizid' => $quizid,
@@ -81,7 +81,6 @@ class external extends external_api {
         // 1. Get Quiz and Course.
         $quiz = $DB->get_record('quiz', ['id' => $params['quizid']], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
-        // $cm context verification removed as it was unused and complexity flagged.
 
         $context = context_course::instance($course->id);
         self::validate_context($context);
@@ -101,19 +100,6 @@ class external extends external_api {
             'questionid' => $questionid,
             'success' => true,
         ];
-    }
-
-    /**
-     * Helper to get or create a question category.
-     *
-     * @param \stdClass $course
-     * @param \context $context
-     * @return \stdClass
-     * @throws \moodle_exception
-     */
-    protected static function get_or_create_question_category($course, $context) {
-        global $DB;
-        $cat = $DB->get_record('question_categories', ['contextid' => $context->id], '*', IGNORE_MULTIPLE);
         if (!$cat) {
             $categorydata = new \stdClass();
             $categorydata->name = 'Default for ' . $course->shortname;
