@@ -756,7 +756,7 @@ class renderer extends plugin_renderer_base {
     public function summary_table($attemptobj, $displayoptions) {
         // Prepare the summary table header.
         $table = new html_table();
-        $table->attributes['class'] = 'table generaltable quizsummaryofattempt table-hover';
+        $table->attributes['class'] = 'table generaltable table-striped quizsummaryofattempt table-hover';
         $table->head = [get_string('question', 'quiz'), get_string('status', 'quiz')];
         $table->align = ['left', 'left'];
         $table->size = ['', ''];
