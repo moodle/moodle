@@ -32,7 +32,29 @@ If a job fails, click on it to see the logs. Here is how to interpret common err
 ### 3. PHPUnit Failures
 *   **Error**: `Failed asserting that...`
 *   **Cause**: A unit test logic failed. This means your code changes broke expected functionality.
-*   **Fix**: Read the failure message. It will tell you exactly which test failed and why (e.g., "Expected 'A' but got 'B'").
+*   **Fix**: Read the failure message. It will tell you exactly which test failed and why.
+
+## Verifying Specific Tests in GitHub
+Your new **Smoke Test** and **SMTP Test** do not appear as separate "Jobs" in the main actions list. They run **inside** the `local/masterbuilder` job.
+
+**To verify they are running:**
+1.  Click on the **test-plugin (local/masterbuilder...)** job in the Actions summary.
+2.  Scroll down and expand the **Run PHPUnit** step.
+3.  Look for output similar to:
+    ```text
+    Local_masterbuilder_smoke_test tests (local_masterbuilder_smoke_test)
+    ...
+    Local_masterbuilder_smtp_test tests (local_masterbuilder_smtp_test)
+    ```
+4.  If you see dots `.` or `OK`, the tests passed.
+
+## Running Tests Locally (Advanced)
+*Note: The `vendor/bin/phpunit` command requires a fully initialized Moodle development environment with Composer dependencies installed.*
+
+If you see `command not found`, we recommend relying on the **GitHub Actions Pipeline** which sets this up automatically. To run locally, you must:
+1.  Run `composer install` in your project root.
+2.  Initialize the test database: `php admin/tool/phpunit/cli/init.php`.
+3.  Then run: `vendor/bin/phpunit local_masterbuilder_smoke_test`.
 
 ### 4. Behat Failures
 *   **Error**: `Scenario: User logs in... Failed step: And I press "Login"`

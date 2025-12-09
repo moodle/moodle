@@ -47,6 +47,7 @@ jobs:
         php-version: ${{ matrix.php }}
         extensions: mbstring, pgsql, mysqli, gd, zip, xml, soap, intl, sodium, exif
         tools: composer:v2
+        ini-values: max_input_vars=5000
 
     - name: Deploy Moodle Plugin CI
       run: |
