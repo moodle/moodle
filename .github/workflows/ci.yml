@@ -41,6 +41,12 @@ jobs:
       with:
         path: plugin
 
+    - name: Install Locales
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y locales
+        sudo locale-gen en_AU.UTF-8
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:

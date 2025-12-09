@@ -7,16 +7,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace local_masterbuilder;
+
+use advanced_testcase;
 
 /**
  * Tests for SMTP configuration and email sending.
- * 
+ *
  * @package    local_masterbuilder
  * @copyright  2024 AuST
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversNothing
  */
-class local_masterbuilder_smtp_test extends advanced_testcase {
+class smtp_test extends advanced_testcase {
 
     /**
      * Verify SMTP parameters are set (if testing in an env that expects them).
@@ -39,23 +42,23 @@ class local_masterbuilder_smtp_test extends advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        // redirectEmails() captures emails triggered by email_to_user()
+        // RedirectEmails() captures emails triggered by email_to_user().
         $sink = $this->redirectEmails();
 
         $user = $USER;
         $subject = 'Smoke Test Email';
         $message = 'This is a test email execution.';
 
-        // Attempt to send
+        // Attempt to send.
         $result = email_to_user($user, $user, $subject, $message);
         $this->assertTrue($result, 'email_to_user should return true on success');
 
-        // Check the sink
+        // Check the sink.
         $messages = $sink->get_messages();
         $this->assertCount(1, $messages, 'One email should have been captured');
         $this->assertEquals($subject, $messages[0]->subject);
         $this->assertEquals($message, $messages[0]->body);
-        
+
         $sink->close();
     }
 }

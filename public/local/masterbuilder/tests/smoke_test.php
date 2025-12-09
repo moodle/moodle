@@ -7,16 +7,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace local_masterbuilder;
+
+use advanced_testcase;
+use cache;
 
 /**
  * Smoke tests to verify core system health.
- * 
+ *
  * @package    local_masterbuilder
  * @copyright  2024 AuST
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversNothing
  */
-class local_masterbuilder_smoke_test extends advanced_testcase {
+class smoke_test extends advanced_testcase {
 
     /**
      * Test database connectivity.
@@ -62,14 +66,14 @@ class local_masterbuilder_smoke_test extends advanced_testcase {
         $key = 'smoke_test_key_' . time();
         $value = 'test_value';
 
-        // Set
+        // Set.
         $cache->set($key, $value);
-        
-        // Get
+
+        // Get.
         $retrieved = $cache->get($key);
         $this->assertEquals($value, $retrieved, 'Cache should return the saved value');
 
-        // Delete
+        // Delete.
         $cache->delete($key);
         $this->assertFalse($cache->get($key), 'Cache should be empty after deletion');
     }
