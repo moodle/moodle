@@ -44,7 +44,6 @@ use external_warnings;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class external extends external_api {
-
     /**
      * Returns description of method parameters
      * @return external_function_parameters
