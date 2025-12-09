@@ -253,6 +253,8 @@ class wdsprefs {
                     $coursedata->numsections = $coursedefaults->numsections;
                     $coursedata->category = $ccat->id;
                     $coursedata->visible = 1;
+                    $coursedata->enablecompletion = $coursedefaults->enablecompletion;
+                    $coursedata->showcompletionconditions = $coursedefaults->showcompletionconditions;
                     $coursedata->groupmode = $coursedefaults->groupmode;
                     $coursedata->groupmodeforce = $coursedefaults->groupmodeforce;
 
@@ -755,6 +757,10 @@ class wdsprefs {
             // Set the group mode.
             $course->groupmode = $coursedefaults->groupmode;
             $course->groupmodeforce = $coursedefaults->groupmodeforce;
+
+            // Set the completion options.
+            $course->enablecompletion = $coursedefaults->enablecompletion;
+            $course->showcompletionconditions = $coursedefaults->showcompletionconditions;
 
             $excourseidn = $DB->get_record('course', ['idnumber' => $idnumber]);
             $excoursesn = $DB->get_record('course', ['shortname' => $shortname]);
@@ -1567,6 +1573,10 @@ class wdsprefs {
             // Set the group mode.
             $course->groupmode = $coursedefaults->groupmode;
             $course->groupmodeforce = $coursedefaults->groupmodeforce;
+
+            // Set the completion options.
+            $course->enablecompletion = $coursedefaults->enablecompletion;
+            $course->showcompletionconditions = $coursedefaults->showcompletionconditions;
 
             // Create course in Moodle.
             $course = create_course($course);
