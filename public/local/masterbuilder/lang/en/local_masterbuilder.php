@@ -15,16 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for local_masterbuilder.
+ * Strings for component 'local_masterbuilder', language 'en'.
  *
  * @package    local_masterbuilder
  * @copyright  2024 AuST
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'local_masterbuilder';
-$plugin->version   = 2025120201;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = 'v0.2';
+$string['pluginname'] = 'MasterBuilder';

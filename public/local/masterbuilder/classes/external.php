@@ -1,9 +1,32 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * External API for local_masterbuilder.
+ *
+ * @package    local_masterbuilder
+ * @copyright  2024 AuST
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_masterbuilder;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/externallib.php");
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
@@ -13,8 +36,20 @@ use external_value;
 use external_single_structure;
 use context_course;
 
+/**
+ * External service class.
+ *
+ * @package    local_masterbuilder
+ * @copyright  2024 AuST
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class external extends external_api {
 
+    /**
+     * Parameters for create_question.
+     *
+     * @return external_function_parameters
+     */
     public static function create_question_parameters() {
         return new external_function_parameters([
             'quizid' => new external_value(PARAM_INT, 'The ID of the quiz module instance'),
@@ -24,6 +59,15 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Create a True/False question and add it to a quiz.
+     *
+     * @param int $quizid
+     * @param string $questionname
+     * @param string $questiontext
+     * @param bool $correctanswer
+     * @return array
+     */
     public static function create_question($quizid, $questionname, $questiontext, $correctanswer) {
         global $DB, $USER;
 
@@ -34,7 +78,7 @@ class external extends external_api {
             'correctanswer' => $correctanswer,
         ]);
 
-        // 1. Get Quiz and Course
+        // 1. Get Quiz and Course.
         $quiz = $DB->get_record('quiz', ['id' => $params['quizid']], '*', MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
@@ -42,51 +86,61 @@ class external extends external_api {
         $context = context_course::instance($course->id);
         self::validate_context($context);
 
-        // 2. Get/Create Question Category
+        // 2. Get/Create Question Category.
         $cat = $DB->get_record('question_categories', ['contextid' => $context->id], '*', IGNORE_MULTIPLE);
         if (!$cat) {
-            // Create default category for this course
+            // Create default category for this course.
             $categorydata = new \stdClass();
             $categorydata->name = 'Default for ' . $course->shortname;
             $categorydata->contextid = $context->id;
             $categorydata->info = 'Created by MasterBuilder';
             $categorydata->infoformat = FORMAT_HTML;
             $categorydata->stamp = make_unique_id_code();
-            $categorydata->parent = 0;  // Top-level category
+            $categorydata->parent = 0;  // Top-level category.
             $categorydata->sortorder = 999;
             $categorydata->idnumber = null;
-            
+
             $catid = $DB->insert_record('question_categories', $categorydata);
-            
+
             if (!$catid) {
-                throw new \moodle_exception('errorcreatingquestioncategory', 'local_masterbuilder', '', null, 
-                    'Failed to insert question category');
+                throw new \moodle_exception(
+                    'errorcreatingquestioncategory',
+                    'local_masterbuilder',
+                    '',
+                    null,
+                    'Failed to insert question category'
+                );
             }
-            
-            // Refetch the category we just created
+
+            // Refetch the category we just created.
             $cat = $DB->get_record('question_categories', ['id' => $catid], '*', MUST_EXIST);
         }
-        
-        // Verify we have a valid category
+
+        // Verify we have a valid category.
         if (!$cat || !$cat->id) {
-            throw new \moodle_exception('invalidquestioncategory', 'local_masterbuilder', '', null,
-                'Category object is null or invalid');
+            throw new \moodle_exception(
+                'invalidquestioncategory',
+                'local_masterbuilder',
+                '',
+                null,
+                'Category object is null or invalid'
+            );
         }
 
-        // 3. Insert Question directly into database (Moodle 4.0+ Schema)
-        
-        // A. Create Question Bank Entry
+        // 3. Insert Question directly into database (Moodle 4.0+ Schema).
+
+        // A. Create Question Bank Entry.
         $entry = new \stdClass();
         $entry->questioncategoryid = $cat->id;
         $entry->idnumber = null;
         $entry->ownerid = $USER->id;
         $entryid = $DB->insert_record('question_bank_entries', $entry);
-        
+
         if (!$entryid) {
-             throw new \moodle_exception('errorinsertingentry', 'local_masterbuilder');
+            throw new \moodle_exception('errorinsertingentry', 'local_masterbuilder');
         }
 
-        // B. Create Question Data
+        // B. Create Question Data.
         $question = new \stdClass();
         $question->parent = 0;
         $question->name = $params['questionname'];
@@ -104,22 +158,22 @@ class external extends external_api {
         $question->timemodified = time();
         $question->createdby = $USER->id;
         $question->modifiedby = $USER->id;
-        
+
         $questionid = $DB->insert_record('question', $question);
-        
+
         if (!$questionid) {
             throw new \moodle_exception('errorinsertingquestion', 'local_masterbuilder');
         }
-        
-        // C. Create Question Version
+
+        // C. Create Question Version.
         $version = new \stdClass();
         $version->questionbankentryid = $entryid;
         $version->questionid = $questionid;
         $version->version = 1;
         $version->status = 'ready';
         $DB->insert_record('question_versions', $version);
-        
-        // D. Insert true/false answer options
+
+        // D. Insert true/false answer options.
         $trueanswer = new \stdClass();
         $trueanswer->question = $questionid;
         $trueanswer->answer = 'True';
@@ -128,7 +182,7 @@ class external extends external_api {
         $trueanswer->feedback = 'Correct! / ¡Correcto!';
         $trueanswer->feedbackformat = FORMAT_HTML;
         $trueanswerid = $DB->insert_record('question_answers', $trueanswer);
-        
+
         $falseanswer = new \stdClass();
         $falseanswer->question = $questionid;
         $falseanswer->answer = 'False';
@@ -138,35 +192,40 @@ class external extends external_api {
         $falseanswer->feedbackformat = FORMAT_HTML;
         $falseanswerid = $DB->insert_record('question_answers', $falseanswer);
 
-        // F. Insert into question_truefalse (Required for True/False questions)
+        // F. Insert into question_truefalse (Required for True/False questions).
         $truefalse = new \stdClass();
         $truefalse->question = $questionid;
         $truefalse->trueanswer = $trueanswerid;
         $truefalse->falseanswer = $falseanswerid;
         $truefalse->showstandardinstruction = 1;
         $DB->insert_record('question_truefalse', $truefalse);
-        
-        // E. Add to Quiz (using quiz_add_quiz_question which handles the slot)
+
+        // E. Add to Quiz (using quiz_add_quiz_question which handles the slot).
         quiz_add_quiz_question($questionid, $quiz);
-        
-        // F. Fix Grade Mismatch (Moodle 4.0+ slot grade issue)
-        // Ensure the slot has a maxmark > 0
-        $slot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'slot' => 1));
+
+        // F. Fix Grade Mismatch (Moodle 4.0+ slot grade issue).
+        // Ensure the slot has a maxmark > 0.
+        $slot = $DB->get_record('quiz_slots', ['quizid' => $quiz->id, 'slot' => 1]);
         if ($slot) {
             $slot->maxmark = 1.0000000;
             $DB->update_record('quiz_slots', $slot);
-            
-            // Update quiz sumgrades
+
+            // Update quiz sumgrades.
             $quiz->sumgrades = 1.0000000;
             $DB->update_record('quiz', $quiz);
         }
 
         return [
             'questionid' => $questionid,
-            'success' => true
+            'success' => true,
         ];
     }
 
+    /**
+     * Returns description for create_question.
+     *
+     * @return external_single_structure
+     */
     public static function create_question_returns() {
         return new external_single_structure([
             'questionid' => new external_value(PARAM_INT, 'The ID of the created question'),
@@ -176,31 +235,52 @@ class external extends external_api {
 
     // --- BUILD STATE FUNCTIONS ---
 
+    /**
+     * Parameters for get_build_state.
+     *
+     * @return external_function_parameters
+     */
     public static function get_build_state_parameters() {
         return new external_function_parameters([
             'shortname' => new external_value(PARAM_TEXT, 'Course shortname'),
         ]);
     }
 
+    /**
+     * Get the build state for a course.
+     *
+     * @param string $shortname
+     * @return array
+     */
     public static function get_build_state($shortname) {
         global $DB;
         $params = self::validate_parameters(self::get_build_state_parameters(), ['shortname' => $shortname]);
-        
+
         $record = $DB->get_record('local_masterbuilder_state', ['course_shortname' => $params['shortname']]);
-        
+
         return [
             'version' => $record ? $record->version : null,
-            'found' => $record ? true : false
+            'found' => $record ? true : false,
         ];
     }
 
+    /**
+     * Returns description for get_build_state.
+     *
+     * @return external_single_structure
+     */
     public static function get_build_state_returns() {
         return new external_single_structure([
             'version' => new external_value(PARAM_TEXT, 'Version string', VALUE_OPTIONAL),
-            'found' => new external_value(PARAM_BOOL, 'Whether a record was found')
+            'found' => new external_value(PARAM_BOOL, 'Whether a record was found'),
         ]);
     }
 
+    /**
+     * Parameters for update_build_state.
+     *
+     * @return external_function_parameters
+     */
     public static function update_build_state_parameters() {
         return new external_function_parameters([
             'shortname' => new external_value(PARAM_TEXT, 'Course shortname'),
@@ -208,62 +288,100 @@ class external extends external_api {
         ]);
     }
 
+    /**
+     * Update the build state for a course.
+     *
+     * @param string $shortname
+     * @param string $version
+     * @return array
+     */
     public static function update_build_state($shortname, $version) {
         global $DB;
         $params = self::validate_parameters(self::update_build_state_parameters(), [
             'shortname' => $shortname,
-            'version' => $version
+            'version' => $version,
         ]);
 
         $record = $DB->get_record('local_masterbuilder_state', ['course_shortname' => $params['shortname']]);
-        
+
         if ($record) {
             $record->version = $params['version'];
             $record->timemodified = time();
             $DB->update_record('local_masterbuilder_state', $record);
         } else {
-            $new_record = new \stdClass();
-            $new_record->course_shortname = $params['shortname'];
-            $new_record->version = $params['version'];
-            $new_record->timemodified = time();
-            $DB->insert_record('local_masterbuilder_state', $new_record);
+            $newrecord = new \stdClass();
+            $newrecord->course_shortname = $params['shortname'];
+            $newrecord->version = $params['version'];
+            $newrecord->timemodified = time();
+            $DB->insert_record('local_masterbuilder_state', $newrecord);
         }
 
         return ['success' => true];
     }
 
+    /**
+     * Returns description for update_build_state.
+     *
+     * @return external_single_structure
+     */
     public static function update_build_state_returns() {
         return new external_single_structure([
-            'success' => new external_value(PARAM_BOOL, 'Success status')
+            'success' => new external_value(PARAM_BOOL, 'Success status'),
         ]);
     }
 
+    /**
+     * Parameters for reset_build_state.
+     *
+     * @return external_function_parameters
+     */
     public static function reset_build_state_parameters() {
         return new external_function_parameters([]);
     }
 
+    /**
+     * Reset the build state table.
+     *
+     * @return array
+     */
     public static function reset_build_state() {
         global $DB;
-        // Truncate the table
+        // Truncate the table.
         $DB->delete_records('local_masterbuilder_state');
         return ['success' => true, 'message' => 'Build state table reset.'];
     }
 
+    /**
+     * Returns description for reset_build_state.
+     *
+     * @return external_single_structure
+     */
     public static function reset_build_state_returns() {
         return new external_single_structure([
             'success' => new external_value(PARAM_BOOL, 'Success status'),
-            'message' => new external_value(PARAM_TEXT, 'Message')
+            'message' => new external_value(PARAM_TEXT, 'Message'),
         ]);
     }
 
     // --- COURSE RESET ---
 
+    /**
+     * Parameters for reset_course_progress.
+     *
+     * @return external_function_parameters
+     */
     public static function reset_course_progress_parameters() {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT, 'The ID of the course to reset'),
         ]);
     }
 
+    /**
+     * Reset course progress.
+     *
+     * @param int $courseid
+     * @return array
+     */
     public static function reset_course_progress($courseid) {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
@@ -276,17 +394,17 @@ class external extends external_api {
         $context = context_course::instance($course->id);
         self::validate_context($context);
 
-        // Prepare reset data
+        // Prepare reset data.
         $data = new \stdClass();
         $data->id = $course->id;
         $data->reset_gradebook_grades = true;
         $data->reset_completion = true;
-        $data->reset_quiz_attempts = true; 
-        
-        // Perform reset
+        $data->reset_quiz_attempts = true;
+
+        // Perform reset.
         $status = reset_course_userdata($data);
 
-        // Check status
+        // Check status.
         $success = true;
         $errors = [];
         foreach ($status as $item) {
@@ -302,6 +420,11 @@ class external extends external_api {
         ];
     }
 
+    /**
+     * Returns description for reset_course_progress.
+     *
+     * @return external_single_structure
+     */
     public static function reset_course_progress_returns() {
         return new external_single_structure([
             'success' => new external_value(PARAM_BOOL, 'Success status'),
