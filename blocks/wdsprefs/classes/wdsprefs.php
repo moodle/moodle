@@ -150,13 +150,6 @@ class wdsprefs {
         // Get the Moodle course defaults.
         $coursedefaults = get_config('moodlecourse');
 
-        // Apply defaults for any fields not already set.
-        foreach ($coursedefaults as $name => $value) {
-            if (!property_exists($coursedata, $name)) {
-                $coursedata->$name = $value;
-            }
-        }
-
         // Start transaction.
         $transaction = $DB->start_delegated_transaction();
 
@@ -254,6 +247,14 @@ class wdsprefs {
 
                     // Build out the new course obj.
                     $coursedata = new stdClass();
+
+                    // Apply defaults for any fields not already set.
+                    foreach ($coursedefaults as $name => $value) {
+                        if (!property_exists($coursedata, $name)) {
+                            $coursedata->$name = $value;
+                        }
+                    }
+
                     $coursedata->fullname = $fullname;
                     $coursedata->shortname = $fullname;
                     $coursedata->idnumber = $idnumber;
@@ -567,13 +568,6 @@ class wdsprefs {
         // Get the Moodle course defaults.
         $coursedefaults = get_config('moodlecourse');
 
-        // Apply defaults for any fields not already set.
-        foreach ($coursedefaults as $name => $value) {
-            if (!property_exists($course, $name)) {
-                $course->$name = $value;
-            }
-        }
-
         // Get period info.
         $period = self::get_period_from_periodid($periodid);
 
@@ -743,6 +737,14 @@ class wdsprefs {
 
             // Set course parameters.
             $course = new stdClass();
+
+            // Apply defaults for any fields not already set.
+            foreach ($coursedefaults as $name => $value) {
+                if (!property_exists($course, $name)) {
+                    $course->$name = $value;
+                }
+            }
+
             $course->shortname = $shortname;
             $course->fullname = $fullname;
             $course->numsections = $coursedefaults->numsections;
@@ -1512,13 +1514,6 @@ class wdsprefs {
         // Get the Moodle course defaults.
         $coursedefaults = get_config('moodlecourse');
 
-        // Apply defaults for any fields not already set.
-        foreach ($coursedefaults as $name => $value) {
-            if (!property_exists($course, $name)) {
-                $course->$name = $value;
-            }
-        }
-
         // Get user's universal_id.
         $user = $DB->get_record('user', ['id' => $userid], '*');
 
@@ -1572,6 +1567,14 @@ class wdsprefs {
 
             // Set course parameters.
             $course = new stdClass();
+
+            // Apply defaults for any fields not already set.
+            foreach ($coursedefaults as $name => $value) {
+                if (!property_exists($course, $name)) {
+                    $course->$name = $value;
+                }
+            }
+
             $course->shortname = $shortname;
             $course->fullname = $fullname;
 
