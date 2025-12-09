@@ -48,7 +48,8 @@ class qbehaviour_deferredcbm_type extends qbehaviour_deferredfeedback_type {
         }
 
         // Prepare accumulators to hold the data we are about to collect.
-        $notansweredcount  = 0;
+        $totalquestions = 0;
+        $notansweredcount = 0;
         $notansweredweight = 0;
         $attemptcount = array(
             question_cbm::HIGH => 0,
@@ -76,6 +77,7 @@ class qbehaviour_deferredcbm_type extends qbehaviour_deferredfeedback_type {
             if (strpos($qa->get_behaviour_name(), 'cbm') === false || $qa->get_max_mark() < 0.0000005) {
                 continue;
             }
+            $totalquestions += 1;
 
             $gradedstep = $qa->get_last_step_with_behaviour_var('_rawfraction');
 
@@ -98,6 +100,11 @@ class qbehaviour_deferredcbm_type extends qbehaviour_deferredfeedback_type {
             $totalweight[$certainty]   += $qa->get_max_mark();
             $totalrawscore[$certainty] += $qa->get_max_mark() * $gradedstep->get_behaviour_var('_rawfraction');
             $totalcbmscore[$certainty] += $qa->get_mark();
+        }
+
+        // Did we find any CBM questions? If not, just quit here.
+        if ($totalquestions === 0) {
+            return $summarydata;
         }
 
         // Hence compute some statistics.
