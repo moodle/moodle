@@ -156,7 +156,14 @@ class user {
             $mnethostid = $CFG->mnet_localhost_id;
         }
 
-        return $DB->get_record('user', ['email' => $email, 'mnethostid' => $mnethostid], $fields, $strictness);
+        // Build SQL query to prioritise active users.
+        $sql = "SELECT $fields
+                  FROM {user}
+                 WHERE email = :email AND mnethostid = :mnethostid
+              ORDER BY suspended ASC, timecreated DESC";
+        $params = ['email' => $email, 'mnethostid' => $mnethostid];
+        // Return the first user matching the query criteria.
+        return $DB->get_record_sql($sql, $params, $strictness);
     }
 
     /**
