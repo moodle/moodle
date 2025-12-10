@@ -1506,7 +1506,7 @@ final class stateactions_test extends \advanced_testcase {
         $modinfo = get_fast_modinfo($course); // Get refreshed version.
 
         $allsections = $modinfo->get_listed_section_info_all();
-        $cmidstoref = array_flip($references);
+        $cmidstoref = array_flip(array_filter($references, fn($key) => str_starts_with($key, 'cm'), ARRAY_FILTER_USE_KEY));
         foreach ($allsections as $sectioninfo) {
             $sectionkey = 'section' . $sectioninfo->sectionnum;
             $coursetree[$sectionkey] = [];
