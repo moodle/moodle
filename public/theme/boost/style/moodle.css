@@ -35475,6 +35475,11 @@ textarea[data-auto-rows] {
     display: none;
   }
 }
+.form-control[readonly] {
+  background-color: var(--bs-secondary-bg);
+  opacity: 1;
+}
+
 .pagelayout-login #region-main {
   border: 0;
   background-color: inherit;

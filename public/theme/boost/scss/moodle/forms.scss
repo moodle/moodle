@@ -521,3 +521,14 @@ textarea[data-auto-rows] {
         }
     }
 }
+
+// Readonly inputs should have visual distinction from editable inputs.
+// Apply the same styling as disabled inputs to make them clearly readonly.
+.form-control[readonly] {
+    color: $input-disabled-color;
+    background-color: $input-disabled-bg;
+    border-color: $input-disabled-border-color;
+    // Follows disabled styles in bootstrap/forms/_form-control.scss.
+    // iOS fix for unreadable content.
+    opacity: 1;
+}
