@@ -66,6 +66,13 @@ class file_logger extends base_logger {
     }
 
     public function __wakeup() {
+        // If the stored path no longer exists, reconstruct it using the current backup temp dir.
+        if (!empty($this->fullpath) && !file_exists(dirname($this->fullpath))) {
+            $filename = basename($this->fullpath);
+            $backuptempdir = make_backup_temp_directory('');
+            $this->fullpath = $backuptempdir . '/' . $filename;
+        }
+
         if ($this->level > backup::LOG_NONE) { // Only create the file if we are going to log something
             if (! $this->fhandle = fopen($this->fullpath, 'a')) {
                 throw new base_logger_exception('error_opening_file', $this->fullpath);
