@@ -109,7 +109,8 @@ final class forums_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $course = $this->getDataGenerator()->create_course();
+        $category = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $category->id]);
         $user = $this->getDataGenerator()->create_and_enrol($course);
 
         /** @var mod_forum_generator $generator */
@@ -117,6 +118,7 @@ final class forums_test extends core_reportbuilder_testcase {
 
         $forum = $generator->create_instance([
             'course' => $course->id,
+            'idnumber' => 'FORUM1',
             'intro' => 'My cool forum',
             'duedate' => $this->clock->time() + DAYSECS,
             'cutoffdate' => $this->clock->time() + WEEKSECS,
@@ -134,6 +136,12 @@ final class forums_test extends core_reportbuilder_testcase {
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Forums', 'source' => forums::class, 'default' => 0]);
+
+        // Course category.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:name']);
+
+        // Course module.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_module:idnumber']);
 
         // Forum.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'forum:description']);
@@ -157,6 +165,8 @@ final class forums_test extends core_reportbuilder_testcase {
 
         $this->assertEquals([
             [
+                $category->get_formatted_name(),
+                'FORUM1',
                 '<div class="text_to_html">My cool forum</div>',
                 'Standard forum for general use',
                 'Wednesday, 2 June 2021, 7:00 AM',
@@ -180,6 +190,16 @@ final class forums_test extends core_reportbuilder_testcase {
      */
     public static function datasource_filters_provider(): array {
         return [
+            // Course category.
+            'Course category name' => ['course_category:text', [
+                'course_category:text_operator' => text::IS_EQUAL_TO,
+                'course_category:text_value' => 'My category',
+            ], true],
+            'Course category name (no match)' => ['course_category:text', [
+                'course_category:text_operator' => text::IS_EQUAL_TO,
+                'course_category:text_value' => 'Another category',
+            ], false],
+
             // Course.
             'Course fullname' => ['course:fullname', [
                 'course:fullname_operator' => text::IS_EQUAL_TO,
@@ -188,6 +208,16 @@ final class forums_test extends core_reportbuilder_testcase {
             'Course fullname (no match)' => ['course:fullname', [
                 'course:fullname_operator' => text::IS_EQUAL_TO,
                 'course:fullname_value' => 'Another course',
+            ], false],
+
+            // Course module.
+            'Course module ID number' => ['course_module:idnumber', [
+                'course_module:idnumber_operator' => text::IS_EQUAL_TO,
+                'course_module:idnumber_value' => 'FORUM1',
+            ], true],
+            'Course module ID number (no match)' => ['course_module:idnumber', [
+                'course_module:idnumber_operator' => text::IS_EQUAL_TO,
+                'course_module:idnumber_value' => 'FORUM2',
             ], false],
 
             // Forum.
@@ -341,7 +371,8 @@ final class forums_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $course = $this->getDataGenerator()->create_course(['fullname' => 'My course']);
+        $category = $this->getDataGenerator()->create_category(['name' => 'My category']);
+        $course = $this->getDataGenerator()->create_course(['category' => $category->id, 'fullname' => 'My course']);
         $user = $this->getDataGenerator()->create_and_enrol($course, 'student', ['firstname' => 'Zoe']);
 
         /** @var mod_forum_generator $generator */
@@ -349,6 +380,7 @@ final class forums_test extends core_reportbuilder_testcase {
 
         $forum = $generator->create_instance([
             'course' => $course->id,
+            'idnumber' => 'FORUM1',
             'name' => 'My forum',
             'intro' => 'My cool forum',
             'duedate' => $this->clock->time() + DAYSECS,
