@@ -961,4 +961,11 @@ class registration {
         $size = $size / (1024 * 1024);
         return round($size, 3);
     }
+
+    /**
+     * Resets the static caches for unit tests.
+     */
+    public static function reset_caches(): void {
+        self::$registration = null;
+    }
 }

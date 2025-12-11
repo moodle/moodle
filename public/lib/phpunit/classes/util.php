@@ -245,6 +245,9 @@ class phpunit_util extends testing_util {
             core_calendar\local\event\container::reset_caches();
         }
 
+        // Reset hub registration caches.
+        \core\hub\registration::reset_caches();
+
         // TODO MDL-25290: add more resets here and probably refactor them to new core function.
 
         // Reset course and module caches.
