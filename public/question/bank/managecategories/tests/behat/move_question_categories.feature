@@ -94,7 +94,7 @@ Feature: A teacher can reorder question categories
     And I should see "Course category 2" in the "Parent category" "field"
     And I should not see "Course category 3" in the "Parent category" "field"
 
-  Scenario: Dragging a category over a category with no children shows an "as new child" drop target.
+  Scenario: Dragging a category over a category with no children shows an 'as new child' drop target
     Given the following "question categories" exist:
       | contextlevel    | reference | name                   | idnumber     | questioncategory  |
       | Activity module | qbank1    | Course category 4      | questioncat4 | Course category 2 |
