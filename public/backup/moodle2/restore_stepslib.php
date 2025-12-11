@@ -5546,7 +5546,11 @@ class restore_move_module_questions_categories extends restore_execution_step {
                 // but if that context still exists on the site and the user has access then point question references
                 // to the originals.
                 $originalcontext = context::instance_by_id($contextid, IGNORE_MISSING);
-                if ($originalcontext && has_capability('mod/qbank:view', $originalcontext)) {
+                if (
+                    $this->task->is_samesite()
+                    && $originalcontext
+                    && has_capability('mod/qbank:view', $originalcontext)
+                ) {
                     $originalquestions = get_questions_category(question_get_top_category($contextid), false);
                     $targetcoursecontext = context_course::instance($this->get_courseid());
                     foreach ($originalquestions as $originalquestion) {
