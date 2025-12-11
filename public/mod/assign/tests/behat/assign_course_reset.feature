@@ -69,6 +69,7 @@ Feature: Assign reset
     And I navigate to "Overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
+  @javascript
   Scenario: Use course reset to remove group overrides.
     Given the following "mod_assign > group overrides" exist:
       | assignment            | group | duedate              |
@@ -77,10 +78,10 @@ Feature: Assign reset
     And I set the following fields to these values:
         | All group overrides | 1  |
     And I press "Reset course"
-    And I press "Continue"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I am on the "Test assignment name" Activity page
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     Then I should not see "Group 1"
 
   Scenario: Use course reset to reset blind marking assignment.

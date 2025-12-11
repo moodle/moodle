@@ -31,11 +31,11 @@ Feature: Assign override deadlines
       | student2 | G2      |
       | student3 | G2      |
     And the following "activities" exist:
-      | activity | name                 | intro                   | course | assignsubmission_onlinetext_enabled |
-      | assign   | Test assignment name | Submit your online text | C1     | 1                                   |
+      | activity | name                 | intro                   | course | assignsubmission_onlinetext_enabled | groupmode |
+      | assign   | Test assignment name | Submit your online text | C1     | 1                                   | 1         |
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group | Group 1              |
@@ -46,7 +46,7 @@ Feature: Assign override deadlines
       | Override group | Group 2              |
       | Due date       | ##2 Jan 2020 08:00## |
     And I press "Save"
-    And I select "User overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "User overrides"
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user | student1                 |
@@ -75,7 +75,7 @@ Feature: Assign override deadlines
   Scenario: Teacher can reorder group overrides
     Given I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     When I click on "Move down" "link" in the "Group 1" "table_row"
     # Verify the position of Group 1 and Group 2 has swapped in the list.
     Then the following should exist in the "generaltable" table:

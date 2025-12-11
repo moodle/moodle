@@ -17,78 +17,65 @@
 {{!
     @template mod_assign/override_actionmenu
 
-    Override select menu for users and groups.
+    A select menu and button for user and group overrides.
 
     Classes required for JS:
     * none
 
     Context variables required for this template:
-    * see mod/lesson/classes/output/override_actionmenu.php
+    * see mod/assign/classes/output/override_actionmenu.php
 
     Example context (json):
     {
-        "urlselect": {
-            "id": "url_select_test",
-            "action": "https://example.com/post",
-            "formid": "url_select_form",
-            "sesskey": "sesskey",
-            "label": "core/url_select",
-            "helpicon": {
-                "title": "Help with something",
-                "text": "Help with something",
-                "url": "http://example.org/help",
-                "linktext": "",
-                "icon": {
-                    "extraclasses": "",
-                    "attributes": [
-                        {"name": "src", "value": "../../../pix/help.svg"},
-                        {"name": "alt", "value": "Help icon"}
-                    ]
-                }
-            },
-            "showbutton": "Go",
-            "options": [{
-                "name": "Group 1", "isgroup": true, "options":
-                [
-                    {"name": "Item 1", "isgroup": false, "value": "1"},
-                    {"name": "Item 2", "isgroup": false, "value": "2"}
-                ]},
-                {"name": "Group 2", "isgroup": true, "options":
-                [
-                    {"name": "Item 3", "isgroup": false, "value": "3"},
-                    {"name": "Item 4", "isgroup": false, "value": "4"}
-                ]}],
-            "disabled": false,
-            "title": "Some cool title"
-        },
-        "addoverride": {
-            "method" : "get",
-            "url" : "#",
-            "formid": "1",
-            "primary" : true,
-            "tooltip" : "This is a tooltip",
-            "label" : "This is a the button text",
-            "attributes": [
+        "navigation": {
+            "name": "mod_assign_override_select",
+            "value": "/mod/assign/overrides.php?cmid=55&mode=user",
+            "baseid": "select-menu56789",
+            "label": "Overrides",
+            "labelattributes": [
                 {
-                    "name": "data-attribute",
-                    "value": "yeah"
+                    "name": "class",
+                    "value": "visually-hidden"
+                }
+            ],
+            "selectedoption": "User overrides",
+            "options": [
+                {
+                    "name": "User overrides",
+                    "value": "/mod/assign/overrides.php?cmid=55&mode=user",
+                    "id": "select-menu-option1",
+                    "selected": true
+                },
+                {
+                    "name": "Group overrides",
+                    "value": "/mod/assign/overrides.php?cmid=55&mode=group",
+                    "id": "select-menu-option2",
+                    "selected": false
                 }
             ]
+        },
+        "headinglevel": 2,
+        "addoverridebutton": {
+            "method": "get",
+            "url": "/mod/assign/overrideedit.php?cmid=55&action=adduser",
+            "formid": "single_button1",
+            "primary": true,
+            "label": "Add user override",
+            "disabled": false
         }
     }
-
 }}
-<div class="container-fluid tertiary-navigation">
+<div class="tertiary-navigation">
     <div class="d-flex">
-        {{#urlselect}}
+        {{#navigation}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/tertiary_navigation_selector}}
             </div>
-        {{/urlselect}}
-        {{#addoverride}}
+        {{/navigation}}
+        {{#addoverridebutton}}
             <div class="navitem">
                 {{>core/single_button}}
             </div>
-        {{/addoverride}}
+        {{/addoverridebutton}}
     </div>
 </div>
