@@ -127,6 +127,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'table' => 'table',
         'table_row' => 'table_row',
         'text' => 'text',
+        'toast_message' => 'toast_message',
         'xpath_element' => 'xpath_element',
         'form_row' => 'form_row',
         'autocomplete_selection' => 'autocomplete_selection',
@@ -279,6 +280,9 @@ XPATH
 XPATH
         , 'text' => <<<XPATH
 .//*[contains(., %locator%) and not(.//*[contains(., %locator%)])]
+XPATH
+    , 'toast_message' => <<<XPATH
+        .//*[contains(concat(' ', normalize-space(@class), ' '), ' toast-message ') and %exactTagTextMatch%]
 XPATH
         , 'form_row' => <<<XPATH
 .//*[contains(concat(' ', @class, ' '), ' col-form-label ')]
