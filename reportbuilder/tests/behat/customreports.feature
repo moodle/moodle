@@ -146,7 +146,7 @@ Feature: Manage custom reports
       | Name | My renamed report |
       | Tags | Cat, Dog          |
     And I click on "Save" "button" in the "Edit report details" "dialogue"
-    Then I should see "Report updated"
+    Then "Report updated" "toast_message" should be visible
     And the following should exist in the "Reports list" table:
       | Name              | Tags     | Report source |
       | My renamed report | Cat, Dog | Users         |
@@ -167,7 +167,7 @@ Feature: Manage custom reports
       | <filter> operator | Is equal to |
       | <filter> value    | <value>     |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
-    Then I should see "Filters applied"
+    Then "Filters applied" "toast_message" should be visible
     And the following should exist in the "Reports list" table:
       | Name     | Tags     | Report source |
       | My users | Cat, Dog | Users         |
@@ -190,7 +190,7 @@ Feature: Manage custom reports
       | Time created from     | ##2 days ago## |
       | Time created to       | ##tomorrow##   |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
-    Then I should see "Filters applied"
+    Then "Filters applied" "toast_message" should be visible
     And I should see "My report" in the "Reports list" "table"
     And I set the field "Time created to" in the "Time created" "core_reportbuilder > Filter" to "##yesterday##"
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
@@ -208,13 +208,14 @@ Feature: Manage custom reports
       | Name operator | Contains |
       | Name value    | Lionel   |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then "Filters applied" "toast_message" should be visible
     And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And I should see "Nothing to display"
     And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
     And I should not see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And I should see "Filters" in the "#dropdownFiltersButton" "css_element"
     And "[data-region='report-filters']" "css_element" should be visible
-    Then I should see "Filters reset"
+    Then "Filters reset" "toast_message" should be visible
     And the following fields in the "Name" "core_reportbuilder > Filter" match these values:
       | Name operator | Is any value |
     And I should see "My report" in the "Reports list" "table"
@@ -242,7 +243,7 @@ Feature: Manage custom reports
     When I navigate to "Reports > Report builder > Custom reports" in site administration
     And I press "Delete report" action in the "My report" report row
     And I click on "Delete" "button" in the "Delete report" "dialogue"
-    Then I should see "Report deleted"
+    Then "Report deleted" "toast_message" should be visible
     And I should see "Nothing to display"
 
   Scenario: Switch between Preview and Edit mode

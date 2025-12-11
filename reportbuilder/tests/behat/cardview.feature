@@ -1,4 +1,4 @@
-@core_reportbuilder @javascript
+@core @core_reportbuilder @javascript
 Feature: Manage card view settings in the report editor
   In order to manage a report card view settings
   As an admin
@@ -29,7 +29,7 @@ Feature: Manage card view settings in the report editor
       | Columns visible       | 3     |
       | First column title    | Yes   |
     And I press "Save changes"
-    And I should see "Card view settings saved"
+    And "Card view settings saved" "toast_message" should be visible
     # Let's check that after switching to preview mode card view form gets rendered again.
     And I click on "Switch to preview mode" "button"
     And I click on "Switch to edit mode" "button"
