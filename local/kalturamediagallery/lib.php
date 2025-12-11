@@ -114,8 +114,8 @@ function local_kalturamediagallery_extend_navigation_course(navigation_node $par
     $parent->add($name, $url, navigation_node::NODETYPE_LEAF, $name, 'kalturamediagallery-settings', getMediaGalleryIcon());
 }
 
-function isNodeNotEmpty(navigation_node $node) {
-    return $node !== false && $node->has_children();
+function isNodeNotEmpty($node) {
+    return $node instanceof navigation_node && $node->has_children();
 }
 
 function getMediaGalleryIcon() {
