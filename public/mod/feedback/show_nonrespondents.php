@@ -71,8 +71,6 @@ $coursecontext = context_course::instance($course->id);
 
 require_login($course, true, $cm);
 
-$actionbar = new \mod_feedback\output\responses_action_bar($cm->id, $url);
-
 require_capability('mod/feedback:viewreports', $context);
 
 $currentgroup = groups_get_activity_group($cm, true);
@@ -155,7 +153,13 @@ echo $OUTPUT->header();
 
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');
-echo $renderer->main_action_bar($actionbar);
+
+// Only show the action bar for non-anonymous users.
+if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO && $course->id != SITEID) {
+    $actionbar = new \mod_feedback\output\responses_action_bar($cm, $url);
+    echo $renderer->render($actionbar);
+}
+
 if (!manager::can_see_others_in_groups($cm)) {
     // The user is not in a group so show message and exit.
     echo $OUTPUT->notification(get_string('notingroup'));
@@ -241,7 +245,6 @@ if ($showall) {
 $students = feedback_get_incomplete_users($cm, $currentgroup, $sort, $startpage, $pagecount, true);
 //####### viewreports-start
 //print the list of students
-echo $OUTPUT->heading(get_string('non_respondents_students', 'feedback', $matchcount), 4);
 echo isset($groupselect) ? $groupselect : '';
 echo '<div class="clearer"></div>';
 

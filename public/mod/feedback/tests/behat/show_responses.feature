@@ -58,11 +58,12 @@ Feature: As a teacher, I can see users who have responded or not responded to a 
       | teacher2 | should exist     |
       | teacher3 | should not exist |
 
+  @javascript
   Scenario Outline: Teachers and non editing teachers in a group can see the responses
     # Go in as teacher and check the users who haven't completed it.
     Given I am on the Frogs "feedback activity" page logged in as <user>
     And I navigate to "Responses" in current page administration
-    And I select "Show non-respondents" from the "jump" singleselect
+    And I set the field "Responses" to "Show non-respondents"
     # Should only show student 2; not student 1 (they did it) or 3 (not in grouping).
     Then I <studentshouldsee>
     And I <studentshouldnotsee>

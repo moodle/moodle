@@ -43,16 +43,18 @@ $courseid = optional_param('courseid', null, PARAM_INT);
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
 
 $baseurl = new moodle_url('/mod/feedback/show_entries.php', array('id' => $cm->id));
-$PAGE->set_url(new moodle_url($baseurl, array('userid' => $userid, 'showcompleted' => $showcompleted,
-        'delete' => $deleteid)));
+$PAGE->set_url(
+    new moodle_url(
+        $baseurl,
+        ['userid' => $userid, 'showcompleted' => $showcompleted, 'delete' => $deleteid],
+    )
+);
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 $feedback = $PAGE->activityrecord;
 
 require_capability('mod/feedback:viewreports', $context);
-
-$actionbar = new \mod_feedback\output\responses_action_bar($cm->id, $baseurl);
 
 if ($deleteid) {
     // This is a request to delete a reponse.
@@ -102,8 +104,14 @@ $PAGE->activityheader->set_attrs([
 ]);
 
 echo $OUTPUT->header();
-echo $renderer->main_action_bar($actionbar);
-echo $OUTPUT->heading(get_string('show_entries', 'mod_feedback'), 3);
+$headinglevel = $PAGE->activityheader->get_heading_level();
+// Only show the action bar for non-anonymous users.
+if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO && $course->id != SITEID) {
+    $actionbar = new \mod_feedback\output\responses_action_bar($cm, $baseurl);
+    echo $renderer->render($actionbar);
+} else {
+    echo $OUTPUT->heading(get_string('show_entries', 'mod_feedback'), $headinglevel);
+}
 
 /// Print the main part of the page
 ///////////////////////////////////////////////////////////////////////////
@@ -122,7 +130,7 @@ if ($userid || $showcompleted) {
                 $completedrecord->random_response . ' (' . get_string('anonymous', 'feedback') . ')';
     }
 
-    echo $OUTPUT->heading($responsetitle, 4);
+    echo $OUTPUT->heading($responsetitle, $headinglevel + 1);
 
     $form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_VIEW_RESPONSE,
             $feedbackstructure, 'feedback_viewresponse_form');
@@ -173,7 +181,7 @@ if ($userid || $showcompleted) {
     // Show non-anonymous responses (always retrieve them even if current feedback is anonymous).
     $totalrows = $responsestable->get_total_responses_count();
     if (!$feedbackstructure->is_anonymous() || $totalrows) {
-        echo $OUTPUT->heading(get_string('non_anonymous_entries', 'feedback', $totalrows), 4);
+        echo $OUTPUT->heading(get_string('non_anonymous_entries', 'feedback', $totalrows), $headinglevel + 1);
         $responsestable->display();
     }
 
@@ -181,7 +189,7 @@ if ($userid || $showcompleted) {
     $feedbackstructure->shuffle_anonym_responses();
     $totalrows = $anonresponsestable->get_total_responses_count();
     if ($feedbackstructure->is_anonymous() || $totalrows) {
-        echo $OUTPUT->heading(get_string('anonymous_entries', 'feedback', $totalrows), 4);
+        echo $OUTPUT->heading(get_string('anonymous_entries', 'feedback', $totalrows), $headinglevel + 1);
         $anonresponsestable->display();
     }
 

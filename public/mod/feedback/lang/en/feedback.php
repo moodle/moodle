@@ -215,7 +215,6 @@ $string['no_itemname'] = 'No itemname';
 $string['no_items_available_yet'] = 'No questions have been set up yet';
 $string['non_anonymous'] = 'User\'s name will be logged and shown with answers';
 $string['non_anonymous_entries'] = 'Non anonymous entries ({$a})';
-$string['non_respondents_students'] = 'Non-respondent students ({$a})';
 $string['not_completed_yet'] = 'Not completed yet';
 $string['not_started'] = 'Not started';
 $string['no_templates_available_yet'] = 'No templates available yet';
@@ -316,3 +315,6 @@ $string['public'] = 'Public';
 
 // Deprecated since Moodle 5.2.
 $string['selected_dump'] = 'Selected indexes of $SESSION variable are dumped below:';
+
+// Deprecated since Moodle 6.0.
+$string['non_respondents_students'] = 'Non-respondent students ({$a})';
