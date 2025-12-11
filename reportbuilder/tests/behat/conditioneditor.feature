@@ -1,4 +1,4 @@
-@core_reportbuilder @javascript
+@core @core_reportbuilder @javascript
 Feature: Manage custom report conditions
   In order to manage the conditions of custom reports
   As an admin
@@ -23,13 +23,13 @@ Feature: Manage custom report conditions
     When I click on "Show/hide 'Conditions'" "button"
     Then I should see "There are no conditions selected" in the "[data-region='settings-conditions']" "css_element"
     And I set the field "Select a condition" to "Email address"
-    And I should see "Added condition 'Email address'"
+    And "Added condition 'Email address'" "toast_message" should be visible
     And I should not see "There are no conditions selected" in the "[data-region='settings-conditions']" "css_element"
     And I set the following fields in the "Email address" "core_reportbuilder > Condition" to these values:
       | Email address operator | Does not contain |
       | Email address value    | user02           |
     And I click on "Apply" "button" in the "[data-region='settings-conditions']" "css_element"
-    And I should see "Conditions applied"
+    And "Conditions applied" "toast_message" should be visible
     And I should see "User One" in the "reportbuilder-table" "table"
     And I should not see "User Two" in the "reportbuilder-table" "table"
 
@@ -43,7 +43,7 @@ Feature: Manage custom report conditions
       | Tag name operator | Is equal to |
       | Tag name value    | dancing     |
     And I click on "Apply" "button" in the "[data-region='settings-conditions']" "css_element"
-    Then I should see "Conditions applied"
+    Then "Conditions applied" "toast_message" should be visible
     And I should see "User One" in the "reportbuilder-table" "table"
     And I should not see "User Two" in the "reportbuilder-table" "table"
 
@@ -57,7 +57,7 @@ Feature: Manage custom report conditions
     When I click on "Show/hide 'Conditions'" "button"
     And I click on "Move condition 'Country'" "button"
     And I click on "After \"Full name\"" "link" in the "Move condition 'Country'" "dialogue"
-    Then I should see "Moved condition 'Country'"
+    Then "Moved condition 'Country'" "toast_message" should be visible
     And "Country" "text" should appear before "Email address" "text"
 
   Scenario: Delete condition from report
@@ -73,7 +73,7 @@ Feature: Manage custom report conditions
     And I click on "Apply" "button" in the "[data-region='settings-conditions']" "css_element"
     And I click on "Delete condition 'Email address'" "button"
     And I click on "Delete" "button" in the "Delete condition 'Email address'" "dialogue"
-    Then I should see "Deleted condition 'Email address'"
+    Then "Deleted condition 'Email address'" "toast_message" should be visible
     And I should see "There are no conditions selected" in the "[data-region='settings-conditions']" "css_element"
     And "[data-region='active-conditions']" "css_element" should not exist
     And I should see "User One" in the "reportbuilder-table" "table"
@@ -93,7 +93,7 @@ Feature: Manage custom report conditions
     And I should see "Nothing to display"
     And I click on "Reset all" "button" in the "[data-region='settings-conditions']" "css_element"
     And I click on "Reset all" "button" in the "Reset conditions" "dialogue"
-    Then I should see "Conditions reset"
+    Then "Conditions reset" "toast_message" should be visible
     And the following fields in the "Email address" "core_reportbuilder > Condition" match these values:
       | Email address operator | Is any value |
     And I should see "User One" in the "reportbuilder-table" "table"

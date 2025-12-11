@@ -1,4 +1,4 @@
-@core_reportbuilder @javascript
+@core @core_reportbuilder @javascript
 Feature: Manage custom report columns sorting
   In order to manage the sorting for columns of custom reports
   As an admin
@@ -26,10 +26,11 @@ Feature: Manage custom report columns sorting
     # This will be the fallback sort after toggling lastname sorting.
     And I click on "Enable initial sorting for column 'First name'" "checkbox"
     When I click on "Enable initial sorting for column 'Last name'" "checkbox"
-    Then I should see "Updated sorting for column 'Last name'"
+    Then "Updated sorting for column 'Last name'" "toast_message" should be visible
     And "user02" "table_row" should appear before "user01" "table_row"
+    And I wait until "Updated sorting for column 'Last name'" "toast_message" does not exist
     And I click on "Disable initial sorting for column 'Last name'" "checkbox"
-    And I should see "Updated sorting for column 'Last name'"
+    And "Updated sorting for column 'Last name'" "toast_message" should be visible
     And "user01" "table_row" should appear before "user02" "table_row"
 
   Scenario: Change column sort direction in report
@@ -37,10 +38,11 @@ Feature: Manage custom report columns sorting
     And I click on "Show/hide 'Sorting'" "button"
     When I click on "Enable initial sorting for column 'Last name'" "checkbox"
     And I click on "Change initial sorting for column 'Last name' to descending" "button"
-    Then I should see "Updated sorting for column 'Last name'"
+    Then "Updated sorting for column 'Last name'" "toast_message" should be visible
     And "user01" "table_row" should appear before "user02" "table_row"
+    And I wait until "Updated sorting for column 'Last name'" "toast_message" does not exist
     And I click on "Change initial sorting for column 'Last name' to ascending" "button"
-    And I should see "Updated sorting for column 'Last name'"
+    And "Updated sorting for column 'Last name'" "toast_message" should be visible
     And "user02" "table_row" should appear before "user01" "table_row"
 
   Scenario: Change column sort order in report
@@ -50,7 +52,7 @@ Feature: Manage custom report columns sorting
     And I click on "Enable initial sorting for column 'First name'" "checkbox"
     And I click on "Move sorting for column 'First name'" "button"
     And I click on "To the top of the list" "link" in the "Move sorting for column 'First name'" "dialogue"
-    Then I should see "Updated sorting for column 'First name'"
+    Then "Updated sorting for column 'First name'" "toast_message" should be visible
     And "First name" "text" should appear before "Last name" "text" in the "#settingssorting" "css_element"
     And "user01" "table_row" should appear before "user02" "table_row"
 
@@ -59,12 +61,13 @@ Feature: Manage custom report columns sorting
     And I click on "Add column 'Full name'" "link"
     And I click on "Show/hide 'Sorting'" "button"
     When I click on "Enable initial sorting for column 'Full name'" "checkbox"
-    Then I should see "Updated sorting for column 'Full name'"
+    Then "Updated sorting for column 'Full name'" "toast_message" should be visible
     # User1 = Alice Zebra; User2=Zoe Aardvark; User3 = Alice Badger.
     And "user03" "table_row" should appear before "user01" "table_row"
     And "user01" "table_row" should appear before "user02" "table_row"
+    And I wait until "Updated sorting for column 'Full name'" "toast_message" does not exist
     And I click on "Change initial sorting for column 'Full name' to descending" "button"
-    And I should see "Updated sorting for column 'Full name'"
+    And "Updated sorting for column 'Full name'" "toast_message" should be visible
     And "user02" "table_row" should appear before "user01" "table_row"
     And "user01" "table_row" should appear before "user03" "table_row"
 
