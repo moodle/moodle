@@ -26,7 +26,7 @@ Feature: Manage custom fields for custom reports
     And I set the following fields in the "Edit report details" "dialogue" to these values:
       | Description | My awesome report description |
     And I click on "Save" "button" in the "Edit report details" "dialogue"
-    And I should see "Report updated"
+    And "Report updated" "toast_message" should be visible
     And I click on "Filters" "button"
     And I set the following fields in the "Description" "core_reportbuilder > Filter" to these values:
       | Description operator | Contains |

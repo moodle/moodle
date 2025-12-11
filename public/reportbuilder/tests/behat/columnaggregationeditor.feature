@@ -1,4 +1,4 @@
-@core_reportbuilder @javascript
+@core @core_reportbuilder @javascript
 Feature: Manage custom report columns aggregation
   In order to manage the aggregation for columns of custom reports
   As an admin
@@ -22,7 +22,7 @@ Feature: Manage custom report columns aggregation
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
     When I set the "First name" column aggregation to "<aggregation>"
-    Then I should see "Aggregated column 'First name'"
+    Then "Aggregated column 'First name'" "toast_message" should be visible
     And I should see "<output>" in the "Richie" "table_row"
     Examples:
       | aggregation                     | output          |
@@ -42,7 +42,7 @@ Feature: Manage custom report columns aggregation
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
     When I set the "Full name" column aggregation to "<aggregation>"
-    Then I should see "Aggregated column 'Full name'"
+    Then "Aggregated column 'Full name'" "toast_message" should be visible
     And I should see "<output>" in the "Richie" "table_row"
     Examples:
       | aggregation                     | output                               |
@@ -62,7 +62,7 @@ Feature: Manage custom report columns aggregation
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
     When I set the "Last access" column aggregation to "<aggregation>"
-    Then I should see "Aggregated column 'Last access'"
+    Then "Aggregated column 'Last access'" "toast_message" should be visible
     And I should see "<output>" in the "Richie" "table_row"
     Examples:
       | aggregation    | output                       |
@@ -82,7 +82,7 @@ Feature: Manage custom report columns aggregation
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
     When I set the "Confirmed" column aggregation to "<aggregation>"
-    Then I should see "Aggregated column 'Confirmed'"
+    Then "Aggregated column 'Confirmed'" "toast_message" should be visible
     And I should see "<output>" in the "Richie" "table_row"
     Examples:
       | aggregation                     | output       |
@@ -110,7 +110,7 @@ Feature: Manage custom report columns aggregation
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
     When I set the "Confirmed" column aggregation to "<aggregation>"
-    Then I should see "Aggregated column 'Confirmed'"
+    Then "Aggregated column 'Confirmed'" "toast_message" should be visible
     And I should see "<output>" in the "Richie" "table_row"
     Examples:
       | aggregation | output |
@@ -131,7 +131,7 @@ Feature: Manage custom report columns aggregation
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I change window size to "large"
     When I set the "First name" column aggregation to "<aggregation>"
-    Then I should see "Aggregated column 'First name'"
+    Then "Aggregated column 'First name'" "toast_message" should be visible
     And I should see "<output>" in the "Richie" "table_row"
     Examples:
       | aggregation                     | output          |
