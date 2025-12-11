@@ -7,7 +7,10 @@
                 if (height.toString().indexOf("%") === -1) {
                     height += "px";
                 }
-                $('.kaltura-player-iframe').height(height);
+                var iframes = document.querySelectorAll('.kaltura-player-iframe');
+                iframes.forEach(function(iframe) {
+                    iframe.style.height = height;
+                })
             }
         }
         catch (ex) {
