@@ -29,7 +29,6 @@ use core_text;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_filter_manager {
-
     /**
      * Set user filters for given report
      *
@@ -84,8 +83,13 @@ class user_filter_manager {
      * @param array $values
      * @param int|null $userid
      * @return bool
+     *
+     * @deprecated since Moodle 5.2 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(reason: 'It is no longer used', mdl: 'MDL-86997', since: '5.2')]
     public static function merge(int $reportid, array $values, ?int $userid = null): bool {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
         $existing = static::get($reportid, $userid);
 
         return static::set($reportid, array_merge($existing, $values), $userid);
@@ -96,15 +100,31 @@ class user_filter_manager {
      *
      * @param int $reportid
      * @param int|null $userid
-     * @param int $index Unused
      * @return bool
      */
-    public static function reset_all(int $reportid, ?int $userid = null, int $index = 0): bool {
+    public static function reset(int $reportid, ?int $userid = null): bool {
         global $DB, $USER;
 
         $userid ??= $USER->id;
 
         return $DB->delete_records(user_filter::TABLE, ['reportid' => $reportid, 'usercreated' => $userid]);
+    }
+
+    /**
+     * Reset all user filters for given report
+     *
+     * @param int $reportid
+     * @param int|null $userid
+     * @param int $index Unused
+     * @return bool
+     *
+     * @deprecated since Moodle 5.2 - please use {@see reset} instead
+     */
+    #[\core\attribute\deprecated('::reset', mdl: 'MDL-86997', since: '5.2')]
+    public static function reset_all(int $reportid, ?int $userid = null, int $index = 0): bool {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
+        return static::reset($reportid, $userid);
     }
 
     /**
@@ -114,12 +134,17 @@ class user_filter_manager {
      * @param string $uniqueidentifier
      * @param int|null $userid
      * @return bool
+     *
+     * @deprecated since Moodle 5.2 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(reason: 'It is no longer used', mdl: 'MDL-86997', since: '5.2')]
     public static function reset_single(int $reportid, string $uniqueidentifier, ?int $userid = null): bool {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
         $originalvalues = static::get($reportid, $userid);
 
         // Remove any filters whose name is prefixed by given identifier.
-        $values = array_filter($originalvalues, static function(string $filterkey) use ($uniqueidentifier): bool {
+        $values = array_filter($originalvalues, static function (string $filterkey) use ($uniqueidentifier): bool {
             return core_text::strpos($filterkey, $uniqueidentifier) !== 0;
         }, ARRAY_FILTER_USE_KEY);
 
