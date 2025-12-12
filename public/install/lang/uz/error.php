@@ -43,3 +43,5 @@ $string['cannotunzipfile'] = 'Faylni arxivdan chiqarib bo‘lmadi';
 $string['componentisuptodate'] = 'Komponent yangilangan holda';
 $string['dmlexceptiononinstall'] = '<p>Ma’lumotlar bazasida xatolik yuz berdi [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Yuklab olingan faylni tekshirish muvaffaqiyatsiz tugadi';
+$string['remotedownloaderror'] = '<p>Komponentni serveringizga yuklash muvaffaqiyatsiz tugadi. Iltimos, proksi sozlamalarini tekshiring; PHP cURL kengaytmasidan foydalanish tavsiya etiladi.</p>
+<p>Siz <a href="{$a->url}">{$a->url}</a> faylini qo‘lda yuklab, serveringizdagi "{$a->dest}" joyiga nusxalab, u yerda arxivdan chiqarishingiz kerak.</p>';
