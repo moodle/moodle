@@ -53,7 +53,9 @@
                         data-column-sort-name="{{title}}"
                         data-column-sort-direction="{{sortdirection}}"
                         data-column-sort-position="{{sortorder}}">
-                        {{>core/drag_handle}}
+                        {{<core/drag_handle}}
+                            {{$extraclasses}}icon-size-2 me-1{{/extraclasses}}
+                        {{/core/drag_handle}}
                         {{#sorticon}}
                             <span class="float-end">
                                 <button id="toggle-sort-direction-{{id}}"
