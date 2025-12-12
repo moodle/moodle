@@ -1255,6 +1255,7 @@ $string['loginstepsnone'] = '<p>Hi!</p>
 <p>If someone else has already chosen your username then you\'ll have to try again using a different username.</p>';
 $string['loginto'] = 'Log in to {$a}';
 $string['loginagain'] = 'Log in again';
+$string['loginrequired'] = 'Login required';
 $string['logoof'] = 'Logo of {$a}';
 $string['logout'] = 'Log out';
 $string['logoutconfirm'] = 'Do you really want to log out?';

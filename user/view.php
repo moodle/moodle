@@ -66,6 +66,7 @@ if (!empty($CFG->forceloginforprofiles)) {
     // Guests do not have permissions to view anyone's profile if forceloginforprofiles is set.
     if (isguestuser()) {
         $PAGE->set_secondary_navigation(false);
+        $PAGE->set_title(get_string('loginrequired'));
         echo $OUTPUT->header();
         echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),
                               get_login_url(),
