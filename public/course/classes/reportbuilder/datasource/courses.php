@@ -87,19 +87,24 @@ class courses extends datasource {
                AND {$filesalias}.filename != '.'"));
 
         // Add all columns/filters/conditions from entities to be available in custom reports.
-        $this->add_all_from_entity($coursecatentity->get_entity_name());
-        $this->add_all_from_entity($courseentity->get_entity_name());
+        $this->add_all_from_entities([
+            $coursecatentity->get_entity_name(),
+            $courseentity->get_entity_name(),
+        ]);
 
-        // Add specific tag entity elements.
-        $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
-        $this->add_filter($tagentity->get_filter('name'));
-        $this->add_condition($tagentity->get_condition('name'));
+        $this->add_all_from_entity(
+            $tagentity->get_entity_name(),
+            ['name', 'namewithlink'],
+            ['name'],
+            ['name'],
+        );
 
-        // Add specific file entity elements.
-        $this->add_columns_from_entity($fileentity->get_entity_name(), ['name', 'size', 'type', 'timecreated']);
-        $this->add_filters_from_entity($fileentity->get_entity_name(), ['name', 'size', 'timecreated']);
-        $this->add_conditions_from_entity($fileentity->get_entity_name(), ['name', 'size', 'timecreated']);
-
+        $this->add_all_from_entity(
+            $fileentity->get_entity_name(),
+            ['name', 'size', 'type', 'timecreated'],
+            ['name', 'size', 'timecreated'],
+            ['name', 'size', 'timecreated'],
+        );
     }
 
     /**
