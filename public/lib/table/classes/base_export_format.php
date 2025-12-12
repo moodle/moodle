@@ -80,8 +80,6 @@ class base_export_format {
      * @param null|int $courseid
      */
     public function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseid = null) {
-        // Use some whitespace to indicate where there was some line spacing.
-        $text = str_replace(['</p>', "\n", "\r"], '   ', $text);
         return html_entity_decode(strip_tags($text), ENT_COMPAT);
     }
 
