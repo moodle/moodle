@@ -19,7 +19,7 @@ Feature: A teacher or admin can view subscriptions tab
   Scenario: A teacher views view subscribers by default and views the Subscribers heading
     Given I am on the "Test forum name" "forum activity" page logged in as teacher
     When I navigate to "Subscriptions" in current page administration
-    Then I should see "View subscribers" in the "//div[@class='urlselect']//option[@selected]" "xpath_element"
+    Then "View subscribers" "text" should exist in the "nav.tertiary-navigation-selector > div.dropdown.select-menu" "css_element"
     And I should see "Subscribers"
     And I should see "There are no subscribers yet for this forum."
 
@@ -40,8 +40,8 @@ Feature: A teacher or admin can view subscriptions tab
   Scenario: A teacher selects forced subscription and subscribers selector is not visible
     Given I am on the "Test forum name" "forum activity" page logged in as teacher
     And I navigate to "Subscriptions" in current page administration
-    When I select "Manage subscribers" from the "jump" singleselect
-    And I should see "Manage subscribers"
+    When I set the field "Subscribers" to "Manage subscribers"
+    And "Manage subscribers" "text" should exist in the "nav.tertiary-navigation-selector > div.dropdown.select-menu" "css_element"
     Then "Subscription mode" "select" should not exist
     And I should not see "Optional subscription"
     And I should not see "Forced subscription"

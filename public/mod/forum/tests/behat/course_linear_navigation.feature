@@ -72,7 +72,7 @@ Feature: Display the course linear navigation in the forum pages
     And I press "Cancel"
     And I navigate to "Subscriptions" in current page administration
     And the course linear navigation should not be visible
-    And I select "Manage subscribers" from the "jump" singleselect
+    And I set the field "Subscribers" to "Manage subscribers"
     And the course linear navigation should not be visible
     And I navigate to "Reports" in current page administration
     And the course linear navigation should not be visible
