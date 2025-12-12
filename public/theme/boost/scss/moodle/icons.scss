@@ -18,8 +18,8 @@ $icon-box-height: 48px;
 $iconsizes: () !default;
 $iconsizes: map-merge((
   0: 0,
-  1: ($icon-height * .25),
-  2: ($icon-height * .5),
+  1: ($icon-height * .5),
+  2: ($icon-height * .75),
   3: $icon-height,
   4: ($icon-height * 1.5),
   5: ($icon-height * 2),
@@ -29,8 +29,8 @@ $iconsizes: map-merge((
 $iconwidthsizes: () !default;
 $iconwidthsizes: map-merge((
   0: 0,
-  1: ($icon-width * .25),
-  2: ($icon-width * .5),
+  1: ($icon-width * .5),
+  2: ($icon-width * .75),
   3: $icon-width,
   4: ($icon-width * 1.5),
   5: ($icon-width * 2),
