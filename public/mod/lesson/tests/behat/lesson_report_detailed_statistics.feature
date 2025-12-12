@@ -23,6 +23,7 @@ Feature: In a lesson activity, teachers can view detailed statistics report
       | lesson     | Test lesson name | C1     | lesson1     | 1      |
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
 
+  @javascript
   Scenario: View detailed statistics in a lesson when empty string is given as answer
     Given the following "mod_lesson > page" exist:
       | lesson           | qtype   | title              | content          |
@@ -38,5 +39,5 @@ Feature: In a lesson activity, teachers can view detailed statistics report
     And I press "Submit"
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I navigate to "Reports" in current page administration
-    And I select "Detailed statistics" from the "jump" singleselect
+    And I set the field "Select report" to "Detailed statistics"
     Then I should see "50% entered this."

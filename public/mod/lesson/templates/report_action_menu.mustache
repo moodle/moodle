@@ -27,50 +27,41 @@
 
     Example context (json):
     {
-        "id": "url_select_test",
-        "action": "https://example.com/post",
-        "formid": "url_select_form",
-        "sesskey": "sesskey",
-        "label": "core/url_select",
-        "helpicon": {
-            "title": "Help with something",
-            "text": "Help with something",
-            "url": "http://example.org/help",
-            "linktext": "",
-            "icon":{
-                "extraclasses": "",
-                "attributes": [
-                    {"name": "src", "value": "../../../pix/help.svg"},
-                    {"name": "alt", "value": "Help icon"}
-                ]
-            }
-        },
-        "showbutton": "Go",
-        "options": [{
-            "name": "Group 1", "isgroup": true, "options":
-            [
-                {"name": "Item 1", "isgroup": false, "value": "1"},
-                {"name": "Item 2", "isgroup": false, "value": "2"}
-            ]},
-            {"name": "Group 2", "isgroup": true, "options":
-            [
-                {"name": "Item 3", "isgroup": false, "value": "3"},
-                {"name": "Item 4", "isgroup": false, "value": "4"}
-            ]}],
-        "disabled": false,
-        "title": "Some cool title",
-        "headinglevel": 3,
-        "heading": "Some heading"
+        "navigation": {
+            "name": "lesson-report-select",
+            "value": "/mod/lesson/report.php?id=55&action=reportdetail",
+            "baseid": "select-menu56789",
+            "label": "Select report",
+            "labelattributes": [
+                {
+                    "name": "class",
+                    "value": "accesshide"
+                }
+            ],
+            "selectedoption": "Detailed statistics",
+            "options": [
+                {
+                    "name": "Overview",
+                    "value": "/mod/lesson/report.php?id=55&action=reportoverview",
+                    "id": "select-menu-option1",
+                    "selected": false
+                },
+                {
+                    "name": "Detailed statistics",
+                    "value": "/mod/lesson/report.php?id=55&action=reportdetail",
+                    "id": "select-menu-option2",
+                    "selected": true
+                }
+            ]
+        }
     }
-
 }}
-<div class="container-fluid tertiary-navigation">
-    {{#reportselect}}
-        <div class="d-flex">
+<div class="tertiary-navigation">
+    <div class="d-flex">
+        {{#navigation}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/tertiary_navigation_selector}}
             </div>
-        </div>
-    {{/reportselect}}
+        {{/navigation}}
+    </div>
 </div>
-<h{{headinglevel}}>{{heading}}</h{{headinglevel}}>

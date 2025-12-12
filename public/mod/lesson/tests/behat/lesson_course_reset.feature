@@ -64,6 +64,7 @@ Feature: Lesson reset
     And I navigate to "Overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
+  @javascript
   Scenario: Use course reset to remove group overrides
     Given the following "mod_lesson > group overrides" exist:
       | lesson           | group     | retake |
@@ -74,8 +75,8 @@ Feature: Lesson reset
     And I set the following fields to these values:
         | All group overrides | 1  |
     And I press "Reset course"
-    And I press "Continue"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I am on the "Test lesson name" "lesson activity" page
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Manage overrides" to "Group overrides"
     Then I should not see "Group 1"

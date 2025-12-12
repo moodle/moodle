@@ -40,10 +40,11 @@ Feature: Lesson group override
       | True/false question 1 | False         | Correct  | Next page     | 1     |
       | True/false question 1 | True          | Wrong    | This page     | 0     |
 
+  @javascript
   Scenario: Add, modify then delete a group override
     Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Manage overrides" to "Group overrides"
     And I follow "Add group override"
     And I set the following fields to these values:
       | Override group      | Group 1 |
@@ -64,13 +65,14 @@ Feature: Lesson group override
     And I press "Continue"
     And I should not see "Group 1"
 
+  @javascript
   Scenario: Duplicate a user override
     Given the following "mod_lesson > group overrides" exist:
       | lesson           | group | deadline             |
       | Test lesson name | G1    | ##1 Jan 2020 08:00## |
     When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Manage overrides" to "Group overrides"
     Then I click on "copy" "link"
     And I set the following fields to these values:
       | Override group | Group 2  |
@@ -214,7 +216,7 @@ Feature: Lesson group override
     And I press "Save and display"
     And I am on the "Test lesson name" "lesson activity" page
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Manage overrides" to "Group overrides"
     And I follow "Add group override"
     And I set the following fields to these values:
       | Override group       | Group 1 |
@@ -228,6 +230,7 @@ Feature: Lesson group override
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I am on the "Test lesson name" "lesson activity" page
     And I navigate to "Overrides" in current page administration
+    And I set the field "Manage overrides" to "User overrides"
     And I follow "Add user override"
     And I set the following fields to these values:
       | Override user        | Student1 |
@@ -246,6 +249,7 @@ Feature: Lesson group override
     And I am on the "Test lesson name" "lesson activity" page logged in as student3
     And the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
 
+  @javascript
   Scenario: Override a group when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is 'separate groups'
     Given the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
@@ -255,10 +259,11 @@ Feature: Lesson group override
       | lesson   | Lesson 2 | C1     | lesson2  | 1         |
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Manage overrides" to "Group overrides"
     Then I should see "There are no groups in this course."
     And I should not see "Add group override"
 
+  @javascript
   Scenario: A teacher without accessallgroups permission should only be able to add group override for their groups, when the activity's group mode is 'separate groups'
     Given the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
@@ -271,11 +276,12 @@ Feature: Lesson group override
       | teacher1 | G1    |
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Manage overrides" to "Group overrides"
     And I follow "Add group override"
     Then the "Override group" select box should contain "Group 1"
     And the "Override group" select box should not contain "Group 2"
 
+  @javascript
   Scenario: A teacher without accessallgroups permission should only be able to see the group overrides for their groups, when the activity's group mode is 'separate groups'
     Given the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
@@ -292,10 +298,11 @@ Feature: Lesson group override
       | Lesson 2 | G2    | ##1 Jan 2020 08:00## |
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Manage overrides" to "Group overrides"
     Then I should see "Group 1" in the ".generaltable" "css_element"
     And I should not see "Group 2" in the ".generaltable" "css_element"
 
+  @javascript
   Scenario: "Not visible" groups should not be available for group overrides
     Given the following "groups" exist:
       | name                                 | course | idnumber | visibility | participation |
@@ -307,7 +314,7 @@ Feature: Lesson group override
       | Only visible to members/Non-Participation | C1     | MN       | 1          | 0             |
     When I am on the "lesson1" Activity page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Manage overrides" to "Group overrides"
     And I follow "Add group override"
     Then I should see "Visible to everyone/Participation" in the "Override group" "select"
     And I should see "Visible to everyone/Non-Participation" in the "Override group" "select"

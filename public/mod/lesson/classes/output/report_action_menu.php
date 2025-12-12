@@ -27,6 +27,7 @@ namespace mod_lesson\output;
 use moodle_url;
 use templatable;
 use renderable;
+use core\output\select_menu;
 
 /**
  * Output the report action menu for this activity.
@@ -68,13 +69,14 @@ class report_action_menu implements templatable, renderable {
             $overviewlink->out(false) => get_string('overview', 'mod_lesson'),
             $fulllink->out(false) => get_string('detailedstats', 'mod_lesson')
         ];
-        $reportselect = new \url_select($menu, $this->url->out(false), null, 'lesson-report-select');
-        $reportselect->label = get_string('selectreport', 'mod_lesson');
-        $reportselect->labelattributes = ['class' => 'visually-hidden'];
-
+        $reportselect = new select_menu(
+            'lesson-report-select',
+            $menu,
+            $this->url->out(false),
+        );
+        $reportselect->set_label(get_string('selectreport', 'lesson'), ['class' => 'accesshide']);
         $data = [
-            'reportselect' => $reportselect->export_for_template($output),
-            'heading' => $menu[$reportselect->selected] ?? '',
+            'navigation' => $reportselect->export_for_template($output),
             'headinglevel' => $PAGE->activityheader->get_heading_level(),
         ];
         return $data;

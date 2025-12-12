@@ -27,56 +27,47 @@
 
     Example context (json):
     {
-        "urlselect": {
-            "id": "url_select_test",
-            "action": "https://example.com/post",
-            "formid": "url_select_form",
-            "sesskey": "sesskey",
-            "label": "core/url_select",
-            "helpicon": {
-                "title": "Help with something",
-                "text": "Help with something",
-                "url": "http://example.org/help",
-                "linktext": "",
-                "icon":{
-                    "extraclasses": "",
-                    "attributes": [
-                        {"name": "src", "value": "../../../pix/help.svg"},
-                        {"name": "alt", "value": "Help icon"}
-                    ]
+        "navigation": {
+            "name": "mod_lesson_override_select",
+            "value": "/mod/lesson/overrides.php?cmid=55&mode=user",
+            "baseid": "select-menu56789",
+            "label": "Manage overrides",
+            "labelattributes": [
+                {
+                    "name": "class",
+                    "value": "visually-hidden"
                 }
-            },
-            "showbutton": "Go",
-            "options": [{
-                "name": "Group 1", "isgroup": true, "options":
-                [
-                    {"name": "Item 1", "isgroup": false, "value": "1"},
-                    {"name": "Item 2", "isgroup": false, "value": "2"}
-                ]},
-                {"name": "Group 2", "isgroup": true, "options":
-                [
-                    {"name": "Item 3", "isgroup": false, "value": "3"},
-                    {"name": "Item 4", "isgroup": false, "value": "4"}
-                ]}],
-            "disabled": false,
-            "title": "Some cool title"
+            ],
+            "selectedoption": "User overrides",
+            "options": [
+                {
+                    "name": "User overrides",
+                    "value": "/mod/lesson/overrides.php?cmid=55&mode=user",
+                    "id": "select-menu-option1",
+                    "selected": true
+                },
+                {
+                    "name": "Group overrides",
+                    "value": "/mod/lesson/overrides.php?cmid=55&mode=group",
+                    "id": "select-menu-option2",
+                    "selected": false
+                }
+            ]
         },
         "addoverride": {
             "link": "https://moodle.org",
             "text": "Add override"
-        },
-        "headinglevel": 3,
-        "heading": "Some heading"
+        }
     }
 
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="d-flex">
-        {{#urlselect}}
+        {{#navigation}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/tertiary_navigation_selector}}
             </div>
-        {{/urlselect}}
+        {{/navigation}}
         {{#addoverride}}
             <div class="navitem">
                 <a class="btn btn-primary" href="{{link}}">{{text}}</a>
@@ -84,4 +75,3 @@
         {{/addoverride}}
     </div>
 </div>
-<h{{headinglevel}}>{{heading}}</h{{headinglevel}}>
