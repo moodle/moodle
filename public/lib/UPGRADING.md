@@ -7,6 +7,9 @@
 - Appending an exclamation mark to template names ignores theme overrides
 
   For more information see [MDL-77894](https://tracker.moodle.org/browse/MDL-77894)
+- Redis connection timeout settings for cachestores and sessions have been split into connection timeout and read timeout to allow for finer control. These settings now also accept floats.
+
+  For more information see [MDL-85336](https://tracker.moodle.org/browse/MDL-85336)
 - The namespace for the `\core_shutdown_manager` has been moved to `\core\shutdown_manager`. The legacy namespace will continue to work for the moment.
 
   For more information see [MDL-87046](https://tracker.moodle.org/browse/MDL-87046)

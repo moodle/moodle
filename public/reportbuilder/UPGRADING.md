@@ -16,6 +16,27 @@
   This change allows for a lot of boilerplate to be removed from report entity classes
 
   For more information see [MDL-86678](https://tracker.moodle.org/browse/MDL-86678)
+- There are two new entities intended for reports specific to course module data, in order to provide a baseline in terms of module reporting and API usage:
+
+  * `core_course\reportbuilder\local\entities\{course_module,course_module_base}`
+
+  For more information see [MDL-86699](https://tracker.moodle.org/browse/MDL-86699)
+
+### Deprecated
+
+- The following `user_filter_manager` methods have been deprecated:
+
+  * `reset_all()` - to be replaced by new `reset()` method
+  * `reset_single()`
+  * `merge()`
+
+  For more information see [MDL-86997](https://tracker.moodle.org/browse/MDL-86997)
+- The following enrolment entity formatter methods have been deprecated:
+
+  * `enrolment_status()`
+  * `enrolment_values()`
+
+  For more information see [MDL-87000](https://tracker.moodle.org/browse/MDL-87000)
 
 ## 5.1
 

@@ -15,6 +15,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Appending an exclamation mark to template names ignores theme overrides
 
   For more information see [MDL-77894](https://tracker.moodle.org/browse/MDL-77894)
+- Redis connection timeout settings for cachestores and sessions have been split into connection timeout and read timeout to allow for finer control. These settings now also accept floats.
+
+  For more information see [MDL-85336](https://tracker.moodle.org/browse/MDL-85336)
 - The namespace for the `\core_shutdown_manager` has been moved to `\core\shutdown_manager`. The legacy namespace will continue to work for the moment.
 
   For more information see [MDL-87046](https://tracker.moodle.org/browse/MDL-87046)
@@ -190,6 +193,27 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   This change allows for a lot of boilerplate to be removed from report entity classes
 
   For more information see [MDL-86678](https://tracker.moodle.org/browse/MDL-86678)
+- There are two new entities intended for reports specific to course module data, in order to provide a baseline in terms of module reporting and API usage:
+
+  * `core_course\reportbuilder\local\entities\{course_module,course_module_base}`
+
+  For more information see [MDL-86699](https://tracker.moodle.org/browse/MDL-86699)
+
+#### Deprecated
+
+- The following `user_filter_manager` methods have been deprecated:
+
+  * `reset_all()` - to be replaced by new `reset()` method
+  * `reset_single()`
+  * `merge()`
+
+  For more information see [MDL-86997](https://tracker.moodle.org/browse/MDL-86997)
+- The following enrolment entity formatter methods have been deprecated:
+
+  * `enrolment_status()`
+  * `enrolment_values()`
+
+  For more information see [MDL-87000](https://tracker.moodle.org/browse/MDL-87000)
 
 ### mod_feedback
 
@@ -198,6 +222,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The method `feedback_init_feedback_session()` has been deprecated, along with all other direct access to `$SESSION` from the module
 
   For more information see [MDL-86607](https://tracker.moodle.org/browse/MDL-86607)
+
+### mod_forum
+
+#### Deprecated
+
+- The forum report entity `->get_context_joins()` method is deprecated, replaced with `->get_course_modules_joins(...)`
+
+  For more information see [MDL-86699](https://tracker.moodle.org/browse/MDL-86699)
 
 ### mod_glossary
 
