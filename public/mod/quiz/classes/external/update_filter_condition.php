@@ -22,11 +22,12 @@ require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-use external_function_parameters;
-use external_single_structure;
-use external_value;
-use external_api;
-use stdClass;
+use core\context\module;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
+use mod_quiz\quiz_settings;
 
 /**
  * Update the filter condition for a random question.
@@ -64,8 +65,6 @@ class update_filter_condition extends external_api {
         int $slotid,
         string $filtercondition,
     ): array {
-        global  $DB;
-
         [
             'cmid' => $cmid,
             'slotid' => $slotid,
@@ -76,35 +75,13 @@ class update_filter_condition extends external_api {
             'filtercondition' => $filtercondition,
         ]);
 
-        // Validate context.
-        $thiscontext = \context_module::instance($cmid);
-        self::validate_context($thiscontext);
-        require_capability('mod/quiz:manage', $thiscontext);
+        $context = module::instance($cmid);
+        self::validate_context($context);
+        require_capability('mod/quiz:manage', $context);
 
-        // Validate question category is supplied in filter.
-        $decodedfiltercondition = json_decode($filtercondition, true);
-        $categoryid = (isset($decodedfiltercondition['filter']['category']['values'][0])) ?
-            $decodedfiltercondition['filter']['category']['values'][0] : false;
-        if (!$categoryid) {
-            throw new \moodle_exception('invalidcategoryid');
-        }
-
-        // Validate question category exists.
-        $categorycontextid = $DB->get_field('question_categories', 'contextid', ['id' => $categoryid], MUST_EXIST);
-
-        // Validate set_reference record exists for this quiz and slot.
-        $setreferenceid = $DB->get_field('question_set_references', 'id', [
-            'itemid' => $slotid,
-            'questionarea' => 'slot',
-            'component' => 'mod_quiz',
-        ], MUST_EXIST);
-
-        // Update set_reference record with new filtercondition and context.
-        $update = new stdClass();
-        $update->id = $setreferenceid;
-        $update->filtercondition = $filtercondition;
-        $update->questionscontextid = $categorycontextid;
-        $DB->update_record('question_set_references', $update);
+        $filtercondition = json_decode($filtercondition, true);
+        $structure = quiz_settings::create_for_cmid($cmid)->get_structure();
+        $structure->update_random_question($slotid, $filtercondition);
 
         return ['message' => get_string('updatefilterconditon_success', 'mod_quiz')];
     }

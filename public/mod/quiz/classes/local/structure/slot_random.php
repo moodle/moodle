@@ -211,4 +211,30 @@ class slot_random {
         ]);
         $event->trigger();
     }
+
+    /**
+     * Update the filter condition for an existing random slot.
+     *
+     * @param array $filtercondition
+     */
+    public function update_filtercondition(array $filtercondition): void {
+        global $DB;
+
+        if (!isset($this->record->id)) {
+            throw new \coding_exception('Cannot update filtercondition without slot record ID.');
+        }
+
+        $setreferenceid = $DB->get_field('question_set_references', 'id', [
+            'component' => 'mod_quiz',
+            'questionarea' => 'slot',
+            'itemid' => $this->record->id,
+        ], MUST_EXIST);
+
+        $update = (object)[
+            'id' => $setreferenceid,
+            'filtercondition' => json_encode($filtercondition),
+            'questionscontextid' => $this->referencerecord->questionscontextid,
+        ];
+        $DB->update_record('question_set_references', $update);
+    }
 }
