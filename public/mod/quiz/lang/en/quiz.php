@@ -395,6 +395,7 @@ $string['eventsectionshuffleupdated'] = 'Section shuffle updated';
 $string['eventslotcreated'] = 'Slot created';
 $string['eventslotdeleted'] = 'Slot deleted';
 $string['eventslotdisplayedquestionnumberupdated'] = 'Slot displayed question number updated';
+$string['eventslotfilterconditionupdated'] = 'Slot filter condition updated';
 $string['eventslotgradeitemupdated'] = 'Slot grade item updated';
 $string['eventslotmarkupdated'] = 'Slot mark updated';
 $string['eventslotversionupdated'] = 'Slot version updated';

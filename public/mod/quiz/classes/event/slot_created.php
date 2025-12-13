@@ -24,6 +24,9 @@
 
 namespace mod_quiz\event;
 
+use core\exception\coding_exception;
+use core\url;
+
 /**
  * The mod_quiz slot created event class.
  *
@@ -51,14 +54,30 @@ class slot_created extends \core\event\base {
     }
 
     public function get_description() {
-        return "The user with id '$this->userid' created a new slot with id '{$this->objectid}' " .
-            "and slot number '{$this->other['slotnumber']}' " .
-            "on page '{$this->other['page']}' " .
-            "of the quiz with course module id '$this->contextinstanceid'.";
+
+        if (isset($this->other['questionbankentryid'])) {
+            $version = $this->other['version'] ?? 'Always latest';
+            return "The user with id '$this->userid' created a new slot with " .
+                "id '{$this->objectid}', " .
+                "slot number '{$this->other['slotnumber']}', and " .
+                "question bank entry id '{$this->other['questionbankentryid']}' (version '$version') " .
+                "on page '{$this->other['page']}' " .
+                "of the quiz with course module id '$this->contextinstanceid'.";
+        }
+
+        if (isset($this->other['questionscontextid'])) {
+            return "The user with id '$this->userid' created a new slot using question references with " .
+                "id '{$this->objectid}', " .
+                "slot number '{$this->other['slotnumber']}', " .
+                "question context '{$this->other['questionscontextid']}', and " .
+                "filter condition '{$this->other['filtercondition']}' " .
+                "on page '{$this->other['page']}' " .
+                "of the quiz with course module id '$this->contextinstanceid'.";
+        }
     }
 
     public function get_url() {
-        return new \moodle_url('/mod/quiz/edit.php', [
+        return new url('/mod/quiz/edit.php', [
             'cmid' => $this->contextinstanceid
         ]);
     }
@@ -66,24 +85,63 @@ class slot_created extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
 
+        $errors = [];
+
         if (!isset($this->objectid)) {
-            throw new \coding_exception('The \'objectid\' value must be set.');
+            $errors[] = "The 'objectid' value must be set.";
         }
 
         if (!isset($this->contextinstanceid)) {
-            throw new \coding_exception('The \'contextinstanceid\' value must be set.');
+            $errors[] = "The 'contextinstanceid' value must be set.";
         }
 
         if (!isset($this->other['quizid'])) {
-            throw new \coding_exception('The \'quizid\' value must be set in other.');
+            $errors[] = "The 'quizid' value must be set in other.";
         }
 
         if (!isset($this->other['slotnumber'])) {
-            throw new \coding_exception('The \'slotnumber\' value must be set in other.');
+            $errors[] = "The 'slotnumber' value must be set in other.";
         }
 
         if (!isset($this->other['page'])) {
-            throw new \coding_exception('The \'page\' value must be set in other.');
+            $errors[] = "The 'page' value must be set in other.";
+        }
+
+        $questionbankfields = ['questionbankentryid', 'version'];
+        $referencefields = ['questionscontextid', 'filtercondition'];
+        $questionbankset = isset($this->other['questionbankentryid']) || array_key_exists('version', $this->other);
+        $referenceset = isset($this->other['questionscontextid']) || isset($this->other['filtercondition']);
+
+        if ($questionbankset && $referenceset) {
+            $errors[] = "Values for exactly one of these field sets must be set in 'other': " .
+                '(' . implode(', ', $questionbankfields) . '), ' .
+                '(' . implode(', ', $referencefields) . ')';
+        } else if (!$questionbankset && !$referenceset) {
+            $errors[] = "Values for exactly one of these field sets must be set in 'other': " .
+                '(' . implode(', ', $questionbankfields) . '), ' .
+                '(' . implode(', ', $referencefields) . ')';
+        }
+
+        if ($questionbankset) {
+            if (!isset($this->other['questionbankentryid'])) {
+                $errors[] = "The 'questionbankentryid' value must be set in other.";
+            }
+            if (!array_key_exists('version', $this->other)) {
+                $errors[] = "The 'version' value must be set in other.";
+            }
+        }
+
+        if ($referenceset) {
+            if (!isset($this->other['questionscontextid'])) {
+                $errors[] = "The 'questionscontextid' value must be set in other.";
+            }
+            if (!isset($this->other['filtercondition'])) {
+                $errors[] = "The 'filtercondition' value must be set in other.";
+            }
+        }
+
+        if ($errors) {
+            throw new coding_exception("Errors in event data:\n\n" . implode("\n", $errors));
         }
     }
 

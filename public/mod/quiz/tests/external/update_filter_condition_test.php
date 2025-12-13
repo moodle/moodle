@@ -18,6 +18,7 @@ namespace mod_quiz\external;
 
 use advanced_testcase;
 use core_question\local\bank\condition;
+use mod_quiz\event\slot_filtercondition_updated;
 use mod_quiz\quiz_settings;
 
 /**
@@ -115,7 +116,24 @@ final class update_filter_condition_test extends advanced_testcase {
 
         // Call the webservice execute method.
         $filtercondition['filter']['category']['values'] = [$questioncategory2->id];
-        update_filter_condition::execute($cm->id, $qsetref->itemid, json_encode($filtercondition));
+        $slot = $DB->get_record('quiz_slots', ['id' => $qsetref->itemid], '*', MUST_EXIST);
+        $filterjson = json_encode($filtercondition);
+        $sink = $this->redirectEvents();
+
+        update_filter_condition::execute($cm->id, $qsetref->itemid, $filterjson);
+        $events = array_filter(
+            $sink->get_events(),
+            fn(\core\event\base $event): bool => $event instanceof slot_filtercondition_updated
+        );
+        $this->assertCount(1, $events);
+
+        $event = reset($events);
+        $this->assertEquals($slot->id, $event->objectid);
+        $this->assertEquals($quizcontext, $event->get_context());
+        $this->assertEquals($slot->slot, $event->other['slotnumber']);
+        $this->assertEquals($slot->page, $event->other['page']);
+        $this->assertEquals($questioncategory2->contextid, $event->other['questionscontextid']);
+        $this->assertEquals($filterjson, $event->other['filtercondition']);
 
         // Check that the questionscontextid value has been updated.
         $qsetref = $DB->get_record('question_set_references', [
