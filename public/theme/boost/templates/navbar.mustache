@@ -77,10 +77,12 @@
             </div>
         {{/primarymoremenu}}
 
-        <ul class="navbar-nav d-none d-md-flex my-1 px-1">
-            <!-- page_heading_menu -->
-            {{{ output.page_heading_menu }}}
-        </ul>
+        {{# output.page_heading_menu}}
+            <ul class="navbar-nav d-none d-md-flex my-1 px-1">
+                <!-- page_heading_menu -->
+                {{{ output.page_heading_menu }}}
+            </ul>
+        {{/output.page_heading_menu}}
 
         <div id="usernavigation" class="navbar-nav ms-auto h-100">
             {{# output.search_box }}
