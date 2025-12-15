@@ -18,6 +18,10 @@ if ($pg_sslmode = getenv('PG_SSLMODE')) {
     $CFG->dboptions['sslmode'] = $pg_sslmode;
 }
 
+if (getenv('SSLPROXY')) {
+    $CFG->sslproxy = true;
+}
+
 $CFG->wwwroot   = rtrim(getenv('MOODLE_URL') ?: 'http://localhost', '/');
 $CFG->dataroot  = '/var/www/moodledata';
 $CFG->admin     = 'admin';
