@@ -17,6 +17,7 @@
 namespace core\oauth2\client;
 
 use core\oauth2\client;
+use stdClass;
 
 /**
  * Custom oauth2 client for Microsoft to handle specific requirements.
@@ -38,5 +39,36 @@ class microsoft extends client {
             ];
         }
         return parent::get_additional_upgrade_token_parameters();
+    }
+
+    #[\Override]
+    protected function map_userinfo_to_fields(stdClass $userinfo): array {
+        // Microsoft returns different field names depending on account type:
+        // - Work/School accounts: OpenID Connect standard (given_name, family_name)
+        // - Personal accounts: Non-standard lowercase (givenname, familyname)
+        // We need to check both formats to support all Microsoft account types.
+        //
+        // Additionally, we provide bidirectional fallback to handle sites that have not yet
+        // run the database upgrade to update field mappings from the old format to the new format.
+
+        // Add fallback mappings for personal accounts if the standard fields are not present.
+        if (empty($userinfo->given_name) && !empty($userinfo->givenname)) {
+            $userinfo->given_name = $userinfo->givenname;
+        }
+        if (empty($userinfo->family_name) && !empty($userinfo->familyname)) {
+            $userinfo->family_name = $userinfo->familyname;
+        }
+
+        // Add reverse fallback for sites with old database mappings (givenname/familyname).
+        // This ensures work/school accounts work even before the database upgrade runs.
+        if (empty($userinfo->givenname) && !empty($userinfo->given_name)) {
+            $userinfo->givenname = $userinfo->given_name;
+        }
+        if (empty($userinfo->familyname) && !empty($userinfo->family_name)) {
+            $userinfo->familyname = $userinfo->family_name;
+        }
+
+        // Call parent to handle the standard mapping.
+        return parent::map_userinfo_to_fields($userinfo);
     }
 }
