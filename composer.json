@@ -26,6 +26,9 @@
             "core_phpunit\\": "public/lib/phpunit/classes/"
         }
     },
+    "extra": {
+        "haspublicdir": true
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
