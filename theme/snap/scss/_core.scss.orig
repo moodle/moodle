@@ -1833,10 +1833,6 @@ header#page-header
     width: auto;
 }
 
-.path-mod-feedback #feedback_edit_form .feedback_itemlist {
-    border-radius: .25rem !important;
-}
-
 .forumpost .content .posting,
 .no-overflow {
     overflow: visible;

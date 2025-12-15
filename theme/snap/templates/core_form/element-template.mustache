@@ -1,30 +1,66 @@
-<div id="{{element.wrapperid}}" class="form-group {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
-    <div>
-        <span class="float-md-right text-nowrap">
-            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">✲</abbr>{{/required}}
-            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
-            {{{helpbutton}}}
-        </span>
-        {{^element.staticlabel}}
-        <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
-            {{{label}}}
-        </label>
-        {{/element.staticlabel}}
-        {{#element.staticlabel}}
-        <span class="col-form-label d-inline-block {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}">
-            {{{label}}}
-        </span>
-        {{/element.staticlabel}}
-    </div>
-    <div class="form-inline felement" data-fieldtype="{{element.type}}">
-        {{$ element }}
-            <!-- Element goes here -->
-        {{/ element }}
-        <div class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{#error}} style="display: block;"{{/error}}>
-            {{{error}}}
+{{^element.isfeedbackform}}
+    <div id="{{element.wrapperid}}" class="form-group {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
+        <div>
+            <span class="float-md-right text-nowrap">
+                {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">✲</abbr>{{/required}}
+                {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
+                {{{helpbutton}}}
+            </span>
+            {{^element.staticlabel}}
+            <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+                {{{label}}}
+            </label>
+            {{/element.staticlabel}}
+            {{#element.staticlabel}}
+            <span class="col-form-label d-inline-block {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}">
+                {{{label}}}
+            </span>
+            {{/element.staticlabel}}
+        </div>
+        <div class="form-inline felement" data-fieldtype="{{element.type}}">
+            {{$ element }}
+                <!-- Element goes here -->
+            {{/ element }}
+            <div class="form-control-feedback invalid-feedback" id="id_error_{{element.name}}" {{#error}} style="display: block;"{{/error}}>
+                {{{error}}}
+            </div>
         </div>
     </div>
-</div>
+{{/element.isfeedbackform}}
+{{#element.isfeedbackform}}
+    <div id="{{element.wrapperid}}" class="mb-3 row {{#error}}has-danger{{/error}} fitem {{#element.emptylabel}}femptylabel{{/element.emptylabel}} {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}} {{{element.parentclasses}}}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
+        <div class="col-md-3 col-form-label d-flex pb-0 pe-md-0">
+            {{# label}}{{$ label }}
+                {{^element.staticlabel}}
+                    <label id="{{element.id}}_label" class="d-inline word-break {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+                        {{{label}}}
+                    </label>
+                {{/element.staticlabel}}
+                {{#element.staticlabel}}
+                    <span class="d-inline-block {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}">
+                        {{{label}}}
+                    </span>
+                {{/element.staticlabel}}
+            {{/ label }}{{/ label}}
+            <div class="form-label-addon d-flex align-items-center align-self-start">
+                {{#required}}
+                    <div class="text-danger" title="{{#str}}required{{/str}}">
+                    {{#pix}}req, core, {{#str}}required{{/str}}{{/pix}}
+                    </div>
+                {{/required}}
+                {{{helpbutton}}}
+            </div>
+        </div>
+        <div class="col-md-9 d-flex flex-wrap align-items-start felement" data-fieldtype="{{element.type}}">
+            {{$ element }}
+                <!-- Element goes here -->
+            {{/ element }}
+            <div class="form-control-feedback invalid-feedback" id="{{element.iderror}}" {{#error}} style="display: block;"{{/error}}>
+                {{{error}}}
+            </div>
+        </div>
+    </div>
+{{/element.isfeedbackform}}
 {{#js}}
 require(['theme_snap/accessibility'], function(module) {
     module.enhanceform({{#quote}}{{element.id}}{{/quote}});
