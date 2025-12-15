@@ -66,13 +66,14 @@ You must perform these steps on **BOTH** the Test and Production servers.
 2.  Clone your repository:
     ```bash
     # If using Private Repo (see below), use SSH URL
-    git clone https://github.com/BryantVanOrdenAust/AuST_Moodle.git ~/moodle
+    git clone https://github.com/BryantVanOrdenAust/moodle.git ~/moodle
     ```
 
 3.  **Create Configuration File (`.env_deploy`)**:
-    *   Copy the example file: `cp .env_deploy.example .env_deploy`
+    *   Copy the example file: `cp .env.example .env_deploy`
     *   Edit it: `nano .env_deploy`
     *   **Crucial**: Fill in all values (DB credentials, Autodesk keys, SMTP settings).
+    *   **MOODLE_URL**: Change `http://localhost` to `http://<YOUR_PUBLIC_IP>` (e.g., `http://44.000.00.000`). Moodle will not load correctly if this is not set to the exact URL you are using.
     *   *Note: This file replaces the need for a separate `.env` file for Docker Compose variables.*
 
 4.  **Private Repo Setup (Required if Private)**:
