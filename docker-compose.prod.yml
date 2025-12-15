@@ -7,9 +7,12 @@ services:
     volumes:
       - moodledata:/var/www/moodledata
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./config.php:/config.php
     restart: always
     # Load environment variables from .env_deploy
     env_file: .env
+    environment:
+      - SSLPROXY=${SSLPROXY}
 
   web:
     image: nginx:alpine
