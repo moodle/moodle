@@ -181,6 +181,16 @@ If the site isn't loading, you can SSH into the server to check the status:
 
 ## Troubleshooting Common Issues
 
+### Check Application Logs
+If the site is down or showing errors, the quickest way to check logs is using the container name (works from any directory):
+```bash
+# Check Moodle logs
+docker logs moodle_app --tail 100 -f
+
+# Check Web Server (Nginx) logs
+docker logs moodle_web --tail 100 -f
+```
+
 -   **SSH Connection Failed**: Check AWS Security Groups (Port 22 source should be your IP).
 -   **"Permission denied" (publickey)**: Ensure you are using the correct `.pem` file and that its permissions are strict (`chmod 400 key.pem`).
 -   **Wrong Image Deployed**: Ensure `docker-compose.prod.yml` uses `${TAG}` and that the GitHub Action exports the correct `TAG` variable.

@@ -16,6 +16,7 @@ services:
     container_name: moodle_web
     ports:
       - "${APP_PORT:-80}:80"
+      - "443:443"
     volumes:
       # We mount the static assets from the moodle container if needed, 
       # or we can rely on the fact that nginx proxies to fpm.
@@ -29,9 +30,19 @@ services:
       # Let's use a shared volume for the code to ensure nginx sees the static files.
       - moodle_code:/var/www/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
       - moodle
     restart: always
+
+  certbot:
+    image: certbot/certbot
+    container_name: moodle_certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
   moodledata:
