@@ -1,0 +1,9 @@
+issueNumber: MDL-87034
+notes:
+  core_webservice:
+    - message: >-
+        The WebService core_webservice_get_site_info now returns three new fields:
+        "usercanviewconfig" indicating whether the current user can see the
+        administration tree, "usercanchangeconfig" indicating whether the
+        current user can change the site configuration, and site secret.
+      type: changed
