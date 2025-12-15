@@ -61,7 +61,8 @@ jobs:
           git pull origin test
           
           # Export variables for docker-compose substitution
-          export MOODLE_IMAGE_NAME=ghcr.io/${{ github.repository }}
+          export REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          export MOODLE_IMAGE_NAME=ghcr.io/$REPO_NAME
           export MOODLE_TAG=test
           
           # Use .env_deploy for other variables
@@ -86,7 +87,8 @@ jobs:
           git pull origin main
           
           # Export variables for docker-compose substitution
-          export MOODLE_IMAGE_NAME=ghcr.io/${{ github.repository }}
+          export REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          export MOODLE_IMAGE_NAME=ghcr.io/$REPO_NAME
           export MOODLE_TAG=main
           
           # Use .env_deploy for other variables
