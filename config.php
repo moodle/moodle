@@ -14,6 +14,9 @@ $CFG->prefix    = 'mdl_';
 $CFG->dboptions = array (
   'dbport' => getenv('PG_PORT') ?: '5432',
 );
+if ($pg_sslmode = getenv('PG_SSLMODE')) {
+    $CFG->dboptions['sslmode'] = $pg_sslmode;
+}
 
 $CFG->wwwroot   = rtrim(getenv('MOODLE_URL') ?: 'http://localhost', '/');
 $CFG->dataroot  = '/var/www/moodledata';
