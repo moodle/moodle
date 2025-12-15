@@ -36,6 +36,8 @@ services:
     depends_on:
       - moodle
     restart: always
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
     env_file:
       - .env
 
