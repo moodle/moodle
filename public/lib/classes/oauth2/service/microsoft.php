@@ -59,8 +59,8 @@ class microsoft extends openidconnect implements issuer_interface {
         // Create the field mappings.
         $mapping = [
             'sub' => 'idnumber',
-            'givenname' => 'firstname',
-            'familyname' => 'lastname',
+            'given_name' => 'firstname',
+            'family_name' => 'lastname',
             'email' => 'email',
             'displayName' => 'alternatename',
             'officeLocation' => 'address',

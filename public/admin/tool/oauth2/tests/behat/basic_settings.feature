@@ -61,7 +61,8 @@ Feature: Basic OAuth2 functionality
     And I should see "device_authorization_endpoint"
     And I navigate to "Server > OAuth 2 services" in site administration
     And I click on "Configure user field mappings" "link" in the "Testing service" "table_row"
-    And I should see "firstname" in the "givenname" "table_row"
+    And I should see "firstname" in the "given_name" "table_row"
+    And I should see "lastname" in the "family_name" "table_row"
     And I should see "idnumber" in the "sub" "table_row"
     And I should see "email" in the "email" "table_row"
     And I should see "lang" in the "locale" "table_row"
