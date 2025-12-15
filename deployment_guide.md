@@ -9,6 +9,22 @@ This guide details how to deploy your Moodle application to **two separate AWS E
 3.  **Terraform**: Installed locally.
 4.  **GitHub Repository**: Code pushed to GitHub.
 
+## Step 0: Create SSH Key Pair
+
+You must create an SSH key pair in AWS before deploying. This key is used to access your servers.
+
+1.  Open your terminal (PowerShell on Windows, or Bash on Linux/Mac).
+2.  Run the following command to create the key and save it locally:
+
+    ```bash
+    # Windows (PowerShell) - Ensure us-west-2 region
+    aws ec2 create-key-pair --key-name moodle-key --query "KeyMaterial" --output text --region us-west-2 | Out-File -Encoding ascii -FilePath moodle-key.pem
+
+    # Mac/Linux - Ensure us-west-2 region
+    aws ec2 create-key-pair --key-name moodle-key --query "KeyMaterial" --output text --region us-west-2 > moodle-key.pem
+    chmod 400 moodle-key.pem
+    ```
+
 ## Step 1: Provision Infrastructure (Terraform)
 
 1.  Navigate to the `terraform` directory:
