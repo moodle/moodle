@@ -29,12 +29,15 @@ services:
       # A common pattern is to have a shared volume for code or copy code to both.
       # Let's use a shared volume for the code to ensure nginx sees the static files.
       - moodle_code:/var/www/html
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/templates/default.conf.template
+      - ./nginx-extract-host.sh:/docker-entrypoint.d/05-extract-host.sh
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     depends_on:
       - moodle
     restart: always
+    env_file:
+      - .env
 
   certbot:
     image: certbot/certbot
