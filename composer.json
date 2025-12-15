@@ -2,7 +2,7 @@
     "name": "moodle/moodle",
     "license": "GPL-3.0-or-later",
     "description": "Moodle - the world's open source learning platform",
-    "type": "project",
+    "type": "moodle-core",
     "homepage": "https://moodle.org",
     "require-dev": {
         "phpunit/phpunit": "^11",
