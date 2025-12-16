@@ -1,0 +1,45 @@
+{
+  "name": "google/auth",
+  "type": "library",
+  "description": "Google Auth Library for PHP",
+  "keywords": ["google", "oauth2", "authentication"],
+  "homepage": "https://github.com/google/google-auth-library-php",
+  "license": "Apache-2.0",
+  "support": {
+    "docs": "https://cloud.google.com/php/docs/reference/auth/latest"
+  },
+  "require": {
+    "php": "^8.1",
+    "firebase/php-jwt": "^6.0",
+    "guzzlehttp/guzzle": "^7.4.5",
+    "guzzlehttp/psr7": "^2.4.5",
+    "psr/http-message": "^1.1||^2.0",
+    "psr/cache": "^2.0||^3.0",
+    "psr/log": "^3.0"
+  },
+  "require-dev": {
+    "guzzlehttp/promises": "^2.0",
+    "squizlabs/php_codesniffer": "^4.0",
+    "phpunit/phpunit": "^9.6",
+    "phpspec/prophecy-phpunit": "^2.1",
+    "sebastian/comparator": ">=1.2.3",
+    "phpseclib/phpseclib": "^3.0.35",
+    "kelvinmo/simplejwt": "0.7.1",
+    "webmozart/assert": "^1.11",
+    "symfony/process": "^6.0||^7.0",
+    "symfony/filesystem": "^6.3||^7.3"
+  },
+  "suggest": {
+    "phpseclib/phpseclib": "May be used in place of OpenSSL for signing strings or for token management. Please require version ^2."
+  },
+  "autoload": {
+    "psr-4": {
+      "Google\\Auth\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Google\\Auth\\Tests\\": "tests"
+    }
+  }
+}

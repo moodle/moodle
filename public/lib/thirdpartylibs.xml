@@ -864,4 +864,13 @@ All rights reserved.</copyright>
       <licenseversion>2.0</licenseversion>
       <repository>https://github.com/googleapis/google-api-php-client</repository>
   </library>
+  <library>
+      <location>google2-auth</location>
+      <name>Google Auth</name>
+      <description>Google Auth Library for PHP</description>
+      <version>1.49.0</version>
+      <license>Apache</license>
+      <licenseversion>2.0</licenseversion>
+      <repository>https://github.com/googleapis/google-auth-library-php</repository>
+  </library>
 </libraries>
