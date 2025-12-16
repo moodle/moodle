@@ -27,8 +27,8 @@ Feature: Teachers can rename subsections
     When I set the field "Edit section name" in the "Subsection activity" "activity" to "New name"
     And I should not see "Subsection activity" in the "region-main" "region"
     And I should see "New name" in the "page-content" "region"
-    Then I open "New name" actions menu
-    And I choose "View" in the open action menu
+    Then I turn editing mode off
+    And I click on "New name" "link" in the "page-content" "region"
     And I should see "New name" in the "page" "region"
     And I should see "Subactivity" in the "region-main" "region"
 

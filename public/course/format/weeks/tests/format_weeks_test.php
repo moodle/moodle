@@ -233,33 +233,57 @@ final class format_weeks_test extends \advanced_testcase {
      * Test for get_view_url().
      */
     public function test_get_view_url(): void {
-        global $CFG;
         $this->resetAfterTest();
 
-        // Generate a course with two sections (0 and 1) and two modules.
-        $generator = $this->getDataGenerator();
-        $course1 = $generator->create_course(array('format' => 'weeks'));
-        course_create_sections_if_missing($course1, array(0, 1));
+        // Generate a course with two sections (0 and 1), one delegated section and one subsection.
+        $course = $this->getDataGenerator()->create_course([
+            'format' => 'weeks',
+            'numsections' => 1,
+        ]);
 
-        $data = (object)['id' => $course1->id];
-        $format = course_get_format($course1);
+        $subsectionmod = $this->getDataGenerator()->create_module('subsection', (object)['course' => $course->id, 'section' => 1]);
+        $subsection = get_fast_modinfo($course)->get_section_info_by_component('mod_subsection', $subsectionmod->id);
+
+        $data = (object)['id' => $course->id];
+        $format = course_get_format($course);
         $format->update_course_format_options($data);
 
         // In page.
         $this->assertNotEmpty($format->get_view_url(null));
         $this->assertNotEmpty($format->get_view_url(0));
         $this->assertNotEmpty($format->get_view_url(1));
+        $this->assertNotEmpty($format->get_view_url($subsection));
 
         // Navigation.
         $this->assertStringContainsString('course/view.php', $format->get_view_url(0));
         $this->assertStringContainsString('course/view.php', $format->get_view_url(1));
-        $this->assertStringContainsString('course/section.php', $format->get_view_url(0, ['navigation' => 1]));
-        $this->assertStringContainsString('course/section.php', $format->get_view_url(1, ['navigation' => 1]));
+        $this->assertStringContainsString('course/view.php', $format->get_view_url($subsection));
+        $sectionurl = $format->get_view_url(0, ['navigation' => 1]);
+        $this->assertStringContainsString('course/section.php', $sectionurl->get_path());
+        $this->assertEmpty($sectionurl->get_encoded_anchor());
+        $sectionurl = $format->get_view_url(1, ['navigation' => 1]);
+        $this->assertStringContainsString('course/section.php', $sectionurl->get_path());
+        $this->assertEmpty($sectionurl->get_encoded_anchor());
+        $subsectionurl = $format->get_view_url($subsection, ['navigation' => 1]);
+        $this->assertStringContainsString('course/section.php', $subsectionurl->get_path());
+        $this->assertEquals('#section-' . $subsection->section, $subsectionurl->get_encoded_anchor());
         // When sr parameter is defined, the section.php page should be returned.
         $this->assertStringContainsString('course/section.php', $format->get_view_url(0, ['sr' => 1]));
         $this->assertStringContainsString('course/section.php', $format->get_view_url(1, ['sr' => 1]));
+        // When sr is section number 1, anchor should not be added.
+        $subsectionurl = $format->get_view_url($subsection, ['sr' => 1]);
+        $this->assertStringContainsString('course/section.php', $subsectionurl->get_path());
+        $this->assertEmpty($subsectionurl->get_encoded_anchor());
+        // When sr is the subsection section number, anchor should be added.
+        $subsectionurl = $format->get_view_url($subsection, ['sr' => $subsection->section]);
+        $this->assertStringContainsString('course/section.php', $subsectionurl->get_path());
+        $this->assertEquals('#section-' . $subsection->section, $subsectionurl->get_encoded_anchor());
+        // Set sr to section 0.
         $this->assertStringContainsString('course/section.php', $format->get_view_url(0, ['sr' => 0]));
         $this->assertStringContainsString('course/section.php', $format->get_view_url(1, ['sr' => 0]));
+        $subsectionurl = $format->get_view_url($subsection, ['sr' => 0]);
+        $this->assertStringContainsString('course/section.php', $subsectionurl->get_path());
+        $this->assertEmpty($subsectionurl->get_encoded_anchor());
     }
 
     /**
