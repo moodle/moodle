@@ -847,4 +847,12 @@ All rights reserved.</copyright>
       <license>MIT</license>
       <repository>https://github.com/Seldaek/monolog</repository>
   </library>
+  <library>
+      <location>psr/cache</location>
+      <name>cache</name>
+      <description>Caching Interface (PHP FIG PSR-6).</description>
+      <version>3.0.0</version>
+      <license>MIT</license>
+      <repository>https://github.com/php-fig/cache</repository>
+  </library>
 </libraries>
