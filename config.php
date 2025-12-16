@@ -25,6 +25,9 @@ ini_set('session.save_path', '/var/www/moodledata/sessions');
     $CFG->sslproxy = true;
 // }
 
+// Fix for HTTPS redirect loop - use Site homepage instead of Dashboard
+$CFG->defaulthomepage = HOMEPAGE_SITE; // 0 = Site, 1 = Dashboard, 2 = My Courses
+
 $CFG->wwwroot   = rtrim(getenv('MOODLE_URL') ?: 'http://localhost', '/');
 $CFG->dataroot  = '/var/www/moodledata';
 $CFG->admin     = 'admin';
