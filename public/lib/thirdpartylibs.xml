@@ -855,4 +855,13 @@ All rights reserved.</copyright>
       <license>MIT</license>
       <repository>https://github.com/php-fig/cache</repository>
   </library>
+  <library>
+      <location>google2</location>
+      <name>Google APIs</name>
+      <description>Library Google APIs Client Library for PHP</description>
+      <version>2.18.4</version>
+      <license>Apache</license>
+      <licenseversion>2.0</licenseversion>
+      <repository>https://github.com/googleapis/google-api-php-client</repository>
+  </library>
 </libraries>
