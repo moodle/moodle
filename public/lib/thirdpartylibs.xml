@@ -839,4 +839,12 @@ All rights reserved.</copyright>
       <license>Apache 2.0</license>
       <repository>https://github.com/giggsey/libphonenumber-for-php-lite</repository>
   </library>
+  <library>
+      <location>monolog</location>
+      <name>Monolog</name>
+      <description>Monolog - Logging for PHP</description>
+      <version>3.9.0</version>
+      <license>MIT</license>
+      <repository>https://github.com/Seldaek/monolog</repository>
+  </library>
 </libraries>
