@@ -18,6 +18,9 @@ if ($pg_sslmode = getenv('PG_SSLMODE')) {
     $CFG->dboptions['sslmode'] = $pg_sslmode;
 }
 
+// Fix session storage
+ini_set('session.save_path', '/var/www/moodledata/sessions');
+
 // if (getenv('SSLPROXY')) {
     $CFG->sslproxy = true;
 // }
