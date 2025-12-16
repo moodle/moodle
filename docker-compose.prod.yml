@@ -10,7 +10,7 @@ services:
       - ./config.php:/var/www/html/config.php
     restart: always
     # Load environment variables from .env_deploy
-    env_file: .env
+    env_file: .env_deploy
     environment:
       - SSLPROXY=${SSLPROXY}
 
@@ -42,7 +42,7 @@ services:
     environment:
       - NGINX_HOST=${NGINX_HOST}
     env_file:
-      - .env
+      - .env_deploy
 
   certbot:
     image: certbot/certbot
