@@ -873,4 +873,13 @@ All rights reserved.</copyright>
       <licenseversion>2.0</licenseversion>
       <repository>https://github.com/googleapis/google-auth-library-php</repository>
   </library>
+  <library>
+      <location>google2-service</location>
+      <name>Google Client Services</name>
+      <description>Google PHP API Client Services</description>
+      <version>0.424.0</version>
+      <license>Apache</license>
+      <licenseversion>2.0</licenseversion>
+      <repository>https://github.com/googleapis/google-api-php-client-services</repository>
+  </library>
 </libraries>

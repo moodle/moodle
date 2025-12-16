@@ -1,0 +1,81 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Datastore;
+
+class CompositeFilter extends \Google\Collection
+{
+  /**
+   * Unspecified. This value must not be used.
+   */
+  public const OP_OPERATOR_UNSPECIFIED = 'OPERATOR_UNSPECIFIED';
+  /**
+   * The results are required to satisfy each of the combined filters.
+   */
+  public const OP_AND = 'AND';
+  /**
+   * Documents are required to satisfy at least one of the combined filters.
+   */
+  public const OP_OR = 'OR';
+  protected $collection_key = 'filters';
+  protected $filtersType = Filter::class;
+  protected $filtersDataType = 'array';
+  /**
+   * The operator for combining multiple filters.
+   *
+   * @var string
+   */
+  public $op;
+
+  /**
+   * The list of filters to combine. Requires: * At least one filter is present.
+   *
+   * @param Filter[] $filters
+   */
+  public function setFilters($filters)
+  {
+    $this->filters = $filters;
+  }
+  /**
+   * @return Filter[]
+   */
+  public function getFilters()
+  {
+    return $this->filters;
+  }
+  /**
+   * The operator for combining multiple filters.
+   *
+   * Accepted values: OPERATOR_UNSPECIFIED, AND, OR
+   *
+   * @param self::OP_* $op
+   */
+  public function setOp($op)
+  {
+    $this->op = $op;
+  }
+  /**
+   * @return self::OP_*
+   */
+  public function getOp()
+  {
+    return $this->op;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(CompositeFilter::class, 'Google_Service_Datastore_CompositeFilter');

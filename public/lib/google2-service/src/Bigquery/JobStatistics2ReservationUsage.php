@@ -1,0 +1,72 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Bigquery;
+
+class JobStatistics2ReservationUsage extends \Google\Model
+{
+  /**
+   * Reservation name or "unreserved" for on-demand resource usage and multi-
+   * statement queries.
+   *
+   * @var string
+   */
+  public $name;
+  /**
+   * Total slot milliseconds used by the reservation for a particular job.
+   *
+   * @var string
+   */
+  public $slotMs;
+
+  /**
+   * Reservation name or "unreserved" for on-demand resource usage and multi-
+   * statement queries.
+   *
+   * @param string $name
+   */
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  /**
+   * @return string
+   */
+  public function getName()
+  {
+    return $this->name;
+  }
+  /**
+   * Total slot milliseconds used by the reservation for a particular job.
+   *
+   * @param string $slotMs
+   */
+  public function setSlotMs($slotMs)
+  {
+    $this->slotMs = $slotMs;
+  }
+  /**
+   * @return string
+   */
+  public function getSlotMs()
+  {
+    return $this->slotMs;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(JobStatistics2ReservationUsage::class, 'Google_Service_Bigquery_JobStatistics2ReservationUsage');

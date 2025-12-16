@@ -1,0 +1,75 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Contentwarehouse;
+
+class GoogleCloudContentwarehouseV1EnumTypeOptions extends \Google\Collection
+{
+  protected $collection_key = 'possibleValues';
+  /**
+   * Required. List of possible enum values.
+   *
+   * @var string[]
+   */
+  public $possibleValues;
+  /**
+   * Make sure the Enum property value provided in the document is in the
+   * possile value list during document creation. The validation check runs by
+   * default.
+   *
+   * @var bool
+   */
+  public $validationCheckDisabled;
+
+  /**
+   * Required. List of possible enum values.
+   *
+   * @param string[] $possibleValues
+   */
+  public function setPossibleValues($possibleValues)
+  {
+    $this->possibleValues = $possibleValues;
+  }
+  /**
+   * @return string[]
+   */
+  public function getPossibleValues()
+  {
+    return $this->possibleValues;
+  }
+  /**
+   * Make sure the Enum property value provided in the document is in the
+   * possile value list during document creation. The validation check runs by
+   * default.
+   *
+   * @param bool $validationCheckDisabled
+   */
+  public function setValidationCheckDisabled($validationCheckDisabled)
+  {
+    $this->validationCheckDisabled = $validationCheckDisabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getValidationCheckDisabled()
+  {
+    return $this->validationCheckDisabled;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudContentwarehouseV1EnumTypeOptions::class, 'Google_Service_Contentwarehouse_GoogleCloudContentwarehouseV1EnumTypeOptions');

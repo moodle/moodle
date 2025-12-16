@@ -1,0 +1,86 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Datastream;
+
+class DestinationConfig extends \Google\Model
+{
+  protected $bigqueryDestinationConfigType = BigQueryDestinationConfig::class;
+  protected $bigqueryDestinationConfigDataType = '';
+  /**
+   * Required. Destination connection profile resource. Format:
+   * `projects/{project}/locations/{location}/connectionProfiles/{name}`
+   *
+   * @var string
+   */
+  public $destinationConnectionProfile;
+  protected $gcsDestinationConfigType = GcsDestinationConfig::class;
+  protected $gcsDestinationConfigDataType = '';
+
+  /**
+   * BigQuery destination configuration.
+   *
+   * @param BigQueryDestinationConfig $bigqueryDestinationConfig
+   */
+  public function setBigqueryDestinationConfig(BigQueryDestinationConfig $bigqueryDestinationConfig)
+  {
+    $this->bigqueryDestinationConfig = $bigqueryDestinationConfig;
+  }
+  /**
+   * @return BigQueryDestinationConfig
+   */
+  public function getBigqueryDestinationConfig()
+  {
+    return $this->bigqueryDestinationConfig;
+  }
+  /**
+   * Required. Destination connection profile resource. Format:
+   * `projects/{project}/locations/{location}/connectionProfiles/{name}`
+   *
+   * @param string $destinationConnectionProfile
+   */
+  public function setDestinationConnectionProfile($destinationConnectionProfile)
+  {
+    $this->destinationConnectionProfile = $destinationConnectionProfile;
+  }
+  /**
+   * @return string
+   */
+  public function getDestinationConnectionProfile()
+  {
+    return $this->destinationConnectionProfile;
+  }
+  /**
+   * A configuration for how data should be loaded to Cloud Storage.
+   *
+   * @param GcsDestinationConfig $gcsDestinationConfig
+   */
+  public function setGcsDestinationConfig(GcsDestinationConfig $gcsDestinationConfig)
+  {
+    $this->gcsDestinationConfig = $gcsDestinationConfig;
+  }
+  /**
+   * @return GcsDestinationConfig
+   */
+  public function getGcsDestinationConfig()
+  {
+    return $this->gcsDestinationConfig;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(DestinationConfig::class, 'Google_Service_Datastream_DestinationConfig');

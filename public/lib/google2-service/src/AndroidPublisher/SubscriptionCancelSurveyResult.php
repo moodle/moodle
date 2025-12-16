@@ -1,0 +1,76 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\AndroidPublisher;
+
+class SubscriptionCancelSurveyResult extends \Google\Model
+{
+  /**
+   * The cancellation reason the user chose in the survey. Possible values are:
+   * 0. Other 1. I don't use this service enough 2. Technical issues 3. Cost-
+   * related reasons 4. I found a better app
+   *
+   * @var int
+   */
+  public $cancelSurveyReason;
+  /**
+   * The customized input cancel reason from the user. Only present when
+   * cancelReason is 0.
+   *
+   * @var string
+   */
+  public $userInputCancelReason;
+
+  /**
+   * The cancellation reason the user chose in the survey. Possible values are:
+   * 0. Other 1. I don't use this service enough 2. Technical issues 3. Cost-
+   * related reasons 4. I found a better app
+   *
+   * @param int $cancelSurveyReason
+   */
+  public function setCancelSurveyReason($cancelSurveyReason)
+  {
+    $this->cancelSurveyReason = $cancelSurveyReason;
+  }
+  /**
+   * @return int
+   */
+  public function getCancelSurveyReason()
+  {
+    return $this->cancelSurveyReason;
+  }
+  /**
+   * The customized input cancel reason from the user. Only present when
+   * cancelReason is 0.
+   *
+   * @param string $userInputCancelReason
+   */
+  public function setUserInputCancelReason($userInputCancelReason)
+  {
+    $this->userInputCancelReason = $userInputCancelReason;
+  }
+  /**
+   * @return string
+   */
+  public function getUserInputCancelReason()
+  {
+    return $this->userInputCancelReason;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(SubscriptionCancelSurveyResult::class, 'Google_Service_AndroidPublisher_SubscriptionCancelSurveyResult');

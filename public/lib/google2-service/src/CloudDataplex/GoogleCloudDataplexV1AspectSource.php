@@ -1,0 +1,96 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\CloudDataplex;
+
+class GoogleCloudDataplexV1AspectSource extends \Google\Model
+{
+  /**
+   * The time the aspect was created in the source system.
+   *
+   * @var string
+   */
+  public $createTime;
+  /**
+   * The version of the data format used to produce this data. This field is
+   * used to indicated when the underlying data format changes (e.g., schema
+   * modifications, changes to the source URL format definition, etc).
+   *
+   * @var string
+   */
+  public $dataVersion;
+  /**
+   * The time the aspect was last updated in the source system.
+   *
+   * @var string
+   */
+  public $updateTime;
+
+  /**
+   * The time the aspect was created in the source system.
+   *
+   * @param string $createTime
+   */
+  public function setCreateTime($createTime)
+  {
+    $this->createTime = $createTime;
+  }
+  /**
+   * @return string
+   */
+  public function getCreateTime()
+  {
+    return $this->createTime;
+  }
+  /**
+   * The version of the data format used to produce this data. This field is
+   * used to indicated when the underlying data format changes (e.g., schema
+   * modifications, changes to the source URL format definition, etc).
+   *
+   * @param string $dataVersion
+   */
+  public function setDataVersion($dataVersion)
+  {
+    $this->dataVersion = $dataVersion;
+  }
+  /**
+   * @return string
+   */
+  public function getDataVersion()
+  {
+    return $this->dataVersion;
+  }
+  /**
+   * The time the aspect was last updated in the source system.
+   *
+   * @param string $updateTime
+   */
+  public function setUpdateTime($updateTime)
+  {
+    $this->updateTime = $updateTime;
+  }
+  /**
+   * @return string
+   */
+  public function getUpdateTime()
+  {
+    return $this->updateTime;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudDataplexV1AspectSource::class, 'Google_Service_CloudDataplex_GoogleCloudDataplexV1AspectSource');

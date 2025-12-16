@@ -1,0 +1,1179 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Compute;
+
+class Instance extends \Google\Collection
+{
+  /**
+   * Default value. This value is unused.
+   */
+  public const KEY_REVOCATION_ACTION_TYPE_KEY_REVOCATION_ACTION_TYPE_UNSPECIFIED = 'KEY_REVOCATION_ACTION_TYPE_UNSPECIFIED';
+  /**
+   * Indicates user chose no operation.
+   */
+  public const KEY_REVOCATION_ACTION_TYPE_NONE = 'NONE';
+  /**
+   * Indicates user chose to opt for VM shutdown on key revocation.
+   */
+  public const KEY_REVOCATION_ACTION_TYPE_STOP = 'STOP';
+  /**
+   * Bidirectional private IPv6 access to/from Google services. If specified,
+   * the subnetwork who is attached to the instance's default network interface
+   * will be assigned an internal IPv6 prefix if it doesn't have before.
+   */
+  public const PRIVATE_IPV6_GOOGLE_ACCESS_ENABLE_BIDIRECTIONAL_ACCESS_TO_GOOGLE = 'ENABLE_BIDIRECTIONAL_ACCESS_TO_GOOGLE';
+  /**
+   * Outbound private IPv6 access from VMs in this subnet to Google services. If
+   * specified, the subnetwork who is attached to the instance's default network
+   * interface will be assigned an internal IPv6 prefix if it doesn't have
+   * before.
+   */
+  public const PRIVATE_IPV6_GOOGLE_ACCESS_ENABLE_OUTBOUND_VM_ACCESS_TO_GOOGLE = 'ENABLE_OUTBOUND_VM_ACCESS_TO_GOOGLE';
+  /**
+   * Each network interface inherits PrivateIpv6GoogleAccess from its
+   * subnetwork.
+   */
+  public const PRIVATE_IPV6_GOOGLE_ACCESS_INHERIT_FROM_SUBNETWORK = 'INHERIT_FROM_SUBNETWORK';
+  /**
+   * The instance is halted and we are performing tear down tasks like network
+   * deprogramming, releasing quota, IP, tearing down disks etc.
+   */
+  public const STATUS_DEPROVISIONING = 'DEPROVISIONING';
+  /**
+   * For Flex Start provisioning instance is waiting for available capacity from
+   * Dynamic Workload Scheduler (DWS).
+   */
+  public const STATUS_PENDING = 'PENDING';
+  /**
+   * Resources are being allocated for the instance.
+   */
+  public const STATUS_PROVISIONING = 'PROVISIONING';
+  /**
+   * The instance is in repair.
+   */
+  public const STATUS_REPAIRING = 'REPAIRING';
+  /**
+   * The instance is running.
+   */
+  public const STATUS_RUNNING = 'RUNNING';
+  /**
+   * All required resources have been allocated and the instance is being
+   * started.
+   */
+  public const STATUS_STAGING = 'STAGING';
+  /**
+   * The instance has stopped successfully.
+   */
+  public const STATUS_STOPPED = 'STOPPED';
+  /**
+   * The instance is currently stopping (either being deleted or killed).
+   */
+  public const STATUS_STOPPING = 'STOPPING';
+  /**
+   * The instance has suspended.
+   */
+  public const STATUS_SUSPENDED = 'SUSPENDED';
+  /**
+   * The instance is suspending.
+   */
+  public const STATUS_SUSPENDING = 'SUSPENDING';
+  /**
+   * The instance has stopped (either by explicit action or underlying failure).
+   */
+  public const STATUS_TERMINATED = 'TERMINATED';
+  protected $collection_key = 'serviceAccounts';
+  protected $advancedMachineFeaturesType = AdvancedMachineFeatures::class;
+  protected $advancedMachineFeaturesDataType = '';
+  /**
+   * Allows this instance to send and receive packets with non-matching
+   * destination or source IPs. This is required if you plan to use this
+   * instance to forward routes. For more information, seeEnabling IP
+   * Forwarding.
+   *
+   * @var bool
+   */
+  public $canIpForward;
+  protected $confidentialInstanceConfigType = ConfidentialInstanceConfig::class;
+  protected $confidentialInstanceConfigDataType = '';
+  /**
+   * Output only. [Output Only] The CPU platform used by this instance.
+   *
+   * @var string
+   */
+  public $cpuPlatform;
+  /**
+   * Output only. [Output Only] Creation timestamp inRFC3339 text format.
+   *
+   * @var string
+   */
+  public $creationTimestamp;
+  /**
+   * Whether the resource should be protected against deletion.
+   *
+   * @var bool
+   */
+  public $deletionProtection;
+  /**
+   * An optional description of this resource. Provide this property when you
+   * create the resource.
+   *
+   * @var string
+   */
+  public $description;
+  protected $disksType = AttachedDisk::class;
+  protected $disksDataType = 'array';
+  protected $displayDeviceType = DisplayDevice::class;
+  protected $displayDeviceDataType = '';
+  /**
+   * Specifies a fingerprint for this resource, which is essentially a hash of
+   * the instance's contents and used for optimistic locking. The fingerprint is
+   * initially generated by Compute Engine and changes after every request to
+   * modify or update the instance. You must always provide an up-to-date
+   * fingerprint hash in order to update the instance.
+   *
+   * To see the latest fingerprint, make get() request to the instance.
+   *
+   * @var string
+   */
+  public $fingerprint;
+  protected $guestAcceleratorsType = AcceleratorConfig::class;
+  protected $guestAcceleratorsDataType = 'array';
+  /**
+   * Specifies the hostname of the instance. The specified hostname must be
+   * RFC1035 compliant. If hostname is not specified, the default hostname is
+   * [INSTANCE_NAME].c.[PROJECT_ID].internal when using the global DNS, and
+   * [INSTANCE_NAME].[ZONE].c.[PROJECT_ID].internal when using zonal DNS.
+   *
+   * @var string
+   */
+  public $hostname;
+  /**
+   * Output only. [Output Only] The unique identifier for the resource. This
+   * identifier is defined by the server.
+   *
+   * @var string
+   */
+  public $id;
+  protected $instanceEncryptionKeyType = CustomerEncryptionKey::class;
+  protected $instanceEncryptionKeyDataType = '';
+  /**
+   * KeyRevocationActionType of the instance. Supported options are "STOP" and
+   * "NONE". The default value is "NONE" if it is not specified.
+   *
+   * @var string
+   */
+  public $keyRevocationActionType;
+  /**
+   * Output only. [Output Only] Type of the resource. Always compute#instance
+   * for instances.
+   *
+   * @var string
+   */
+  public $kind;
+  /**
+   * A fingerprint for this request, which is essentially a hash of the label's
+   * contents and used for optimistic locking. The fingerprint is initially
+   * generated by Compute Engine and changes after every request to modify or
+   * update labels. You must always provide an up-to-date fingerprint hash in
+   * order to update or change labels.
+   *
+   * To see the latest fingerprint, make get() request to the instance.
+   *
+   * @var string
+   */
+  public $labelFingerprint;
+  /**
+   * Labels to apply to this instance. These can be later modified by the
+   * setLabels method.
+   *
+   * @var string[]
+   */
+  public $labels;
+  /**
+   * Output only. [Output Only] Last start timestamp inRFC3339 text format.
+   *
+   * @var string
+   */
+  public $lastStartTimestamp;
+  /**
+   * Output only. [Output Only] Last stop timestamp inRFC3339 text format.
+   *
+   * @var string
+   */
+  public $lastStopTimestamp;
+  /**
+   * Output only. [Output Only] Last suspended timestamp inRFC3339 text format.
+   *
+   * @var string
+   */
+  public $lastSuspendedTimestamp;
+  /**
+   * Full or partial URL of the machine type resource to use for this instance,
+   * in the format:zones/zone/machineTypes/machine-type. This is provided by the
+   * client when the instance is created. For example, the following is a valid
+   * partial url to a predefined machine type:
+   *
+   * zones/us-central1-f/machineTypes/n1-standard-1
+   *
+   * To create acustom machine type, provide a URL to a machine type in the
+   * following format, where CPUS is 1 or an even number up to 32 (2, 4, 6, ...
+   * 24, etc), and MEMORY is the total memory for this instance. Memory must be
+   * a multiple of 256 MB and must be supplied in MB (e.g. 5 GB of memory is
+   * 5120 MB):
+   *
+   * zones/zone/machineTypes/custom-CPUS-MEMORY
+   *
+   * For example: zones/us-central1-f/machineTypes/custom-4-5120 For a full list
+   * of restrictions, read theSpecifications for custom machine types.
+   *
+   * @var string
+   */
+  public $machineType;
+  protected $metadataType = Metadata::class;
+  protected $metadataDataType = '';
+  /**
+   * Specifies aminimum CPU platform for the VM instance. Applicable values are
+   * the friendly names of CPU platforms, such as minCpuPlatform: "Intel
+   * Haswell" or minCpuPlatform: "Intel Sandy Bridge".
+   *
+   * @var string
+   */
+  public $minCpuPlatform;
+  /**
+   * The name of the resource, provided by the client when initially creating
+   * the resource. The resource name must be 1-63 characters long, and comply
+   * withRFC1035. Specifically, the name must be 1-63 characters long and match
+   * the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first
+   * character must be a lowercase letter, and all following characters must be
+   * a dash, lowercase letter, or digit, except the last character, which cannot
+   * be a dash.
+   *
+   * @var string
+   */
+  public $name;
+  protected $networkInterfacesType = NetworkInterface::class;
+  protected $networkInterfacesDataType = 'array';
+  protected $networkPerformanceConfigType = NetworkPerformanceConfig::class;
+  protected $networkPerformanceConfigDataType = '';
+  protected $paramsType = InstanceParams::class;
+  protected $paramsDataType = '';
+  /**
+   * The private IPv6 google access type for the VM. If not specified, use
+   * INHERIT_FROM_SUBNETWORK as default.
+   *
+   * @var string
+   */
+  public $privateIpv6GoogleAccess;
+  protected $reservationAffinityType = ReservationAffinity::class;
+  protected $reservationAffinityDataType = '';
+  /**
+   * Resource policies applied to this instance.
+   *
+   * @var string[]
+   */
+  public $resourcePolicies;
+  protected $resourceStatusType = ResourceStatus::class;
+  protected $resourceStatusDataType = '';
+  /**
+   * Output only. [Output Only] Reserved for future use.
+   *
+   * @var bool
+   */
+  public $satisfiesPzi;
+  /**
+   * Output only. [Output Only] Reserved for future use.
+   *
+   * @var bool
+   */
+  public $satisfiesPzs;
+  protected $schedulingType = Scheduling::class;
+  protected $schedulingDataType = '';
+  /**
+   * Output only. [Output Only] Server-defined URL for this resource.
+   *
+   * @var string
+   */
+  public $selfLink;
+  protected $serviceAccountsType = ServiceAccount::class;
+  protected $serviceAccountsDataType = 'array';
+  protected $shieldedInstanceConfigType = ShieldedInstanceConfig::class;
+  protected $shieldedInstanceConfigDataType = '';
+  protected $shieldedInstanceIntegrityPolicyType = ShieldedInstanceIntegrityPolicy::class;
+  protected $shieldedInstanceIntegrityPolicyDataType = '';
+  /**
+   * Source machine image
+   *
+   * @var string
+   */
+  public $sourceMachineImage;
+  protected $sourceMachineImageEncryptionKeyType = CustomerEncryptionKey::class;
+  protected $sourceMachineImageEncryptionKeyDataType = '';
+  /**
+   * Output only. [Output Only] Whether a VM has been restricted for start
+   * because Compute Engine has detected suspicious activity.
+   *
+   * @var bool
+   */
+  public $startRestricted;
+  /**
+   * Output only. [Output Only] The status of the instance. One of the following
+   * values: PROVISIONING, STAGING,RUNNING, STOPPING, SUSPENDING,SUSPENDED,
+   * REPAIRING, andTERMINATED. For more information about the status of the
+   * instance, see  Instance life cycle.
+   *
+   * @var string
+   */
+  public $status;
+  /**
+   * Output only. [Output Only] An optional, human-readable explanation of the
+   * status.
+   *
+   * @var string
+   */
+  public $statusMessage;
+  protected $tagsType = Tags::class;
+  protected $tagsDataType = '';
+  /**
+   * Output only. [Output Only] URL of the zone where the instance resides. You
+   * must specify this field as part of the HTTP request URL. It is not settable
+   * as a field in the request body.
+   *
+   * @var string
+   */
+  public $zone;
+
+  /**
+   * Controls for advanced machine-related behavior features.
+   *
+   * @param AdvancedMachineFeatures $advancedMachineFeatures
+   */
+  public function setAdvancedMachineFeatures(AdvancedMachineFeatures $advancedMachineFeatures)
+  {
+    $this->advancedMachineFeatures = $advancedMachineFeatures;
+  }
+  /**
+   * @return AdvancedMachineFeatures
+   */
+  public function getAdvancedMachineFeatures()
+  {
+    return $this->advancedMachineFeatures;
+  }
+  /**
+   * Allows this instance to send and receive packets with non-matching
+   * destination or source IPs. This is required if you plan to use this
+   * instance to forward routes. For more information, seeEnabling IP
+   * Forwarding.
+   *
+   * @param bool $canIpForward
+   */
+  public function setCanIpForward($canIpForward)
+  {
+    $this->canIpForward = $canIpForward;
+  }
+  /**
+   * @return bool
+   */
+  public function getCanIpForward()
+  {
+    return $this->canIpForward;
+  }
+  /**
+   * @param ConfidentialInstanceConfig $confidentialInstanceConfig
+   */
+  public function setConfidentialInstanceConfig(ConfidentialInstanceConfig $confidentialInstanceConfig)
+  {
+    $this->confidentialInstanceConfig = $confidentialInstanceConfig;
+  }
+  /**
+   * @return ConfidentialInstanceConfig
+   */
+  public function getConfidentialInstanceConfig()
+  {
+    return $this->confidentialInstanceConfig;
+  }
+  /**
+   * Output only. [Output Only] The CPU platform used by this instance.
+   *
+   * @param string $cpuPlatform
+   */
+  public function setCpuPlatform($cpuPlatform)
+  {
+    $this->cpuPlatform = $cpuPlatform;
+  }
+  /**
+   * @return string
+   */
+  public function getCpuPlatform()
+  {
+    return $this->cpuPlatform;
+  }
+  /**
+   * Output only. [Output Only] Creation timestamp inRFC3339 text format.
+   *
+   * @param string $creationTimestamp
+   */
+  public function setCreationTimestamp($creationTimestamp)
+  {
+    $this->creationTimestamp = $creationTimestamp;
+  }
+  /**
+   * @return string
+   */
+  public function getCreationTimestamp()
+  {
+    return $this->creationTimestamp;
+  }
+  /**
+   * Whether the resource should be protected against deletion.
+   *
+   * @param bool $deletionProtection
+   */
+  public function setDeletionProtection($deletionProtection)
+  {
+    $this->deletionProtection = $deletionProtection;
+  }
+  /**
+   * @return bool
+   */
+  public function getDeletionProtection()
+  {
+    return $this->deletionProtection;
+  }
+  /**
+   * An optional description of this resource. Provide this property when you
+   * create the resource.
+   *
+   * @param string $description
+   */
+  public function setDescription($description)
+  {
+    $this->description = $description;
+  }
+  /**
+   * @return string
+   */
+  public function getDescription()
+  {
+    return $this->description;
+  }
+  /**
+   * Array of disks associated with this instance. Persistent disks must be
+   * created before you can assign them.
+   *
+   * @param AttachedDisk[] $disks
+   */
+  public function setDisks($disks)
+  {
+    $this->disks = $disks;
+  }
+  /**
+   * @return AttachedDisk[]
+   */
+  public function getDisks()
+  {
+    return $this->disks;
+  }
+  /**
+   * Enables display device for the instance.
+   *
+   * @param DisplayDevice $displayDevice
+   */
+  public function setDisplayDevice(DisplayDevice $displayDevice)
+  {
+    $this->displayDevice = $displayDevice;
+  }
+  /**
+   * @return DisplayDevice
+   */
+  public function getDisplayDevice()
+  {
+    return $this->displayDevice;
+  }
+  /**
+   * Specifies a fingerprint for this resource, which is essentially a hash of
+   * the instance's contents and used for optimistic locking. The fingerprint is
+   * initially generated by Compute Engine and changes after every request to
+   * modify or update the instance. You must always provide an up-to-date
+   * fingerprint hash in order to update the instance.
+   *
+   * To see the latest fingerprint, make get() request to the instance.
+   *
+   * @param string $fingerprint
+   */
+  public function setFingerprint($fingerprint)
+  {
+    $this->fingerprint = $fingerprint;
+  }
+  /**
+   * @return string
+   */
+  public function getFingerprint()
+  {
+    return $this->fingerprint;
+  }
+  /**
+   * A list of the type and count of accelerator cards attached to the instance.
+   *
+   * @param AcceleratorConfig[] $guestAccelerators
+   */
+  public function setGuestAccelerators($guestAccelerators)
+  {
+    $this->guestAccelerators = $guestAccelerators;
+  }
+  /**
+   * @return AcceleratorConfig[]
+   */
+  public function getGuestAccelerators()
+  {
+    return $this->guestAccelerators;
+  }
+  /**
+   * Specifies the hostname of the instance. The specified hostname must be
+   * RFC1035 compliant. If hostname is not specified, the default hostname is
+   * [INSTANCE_NAME].c.[PROJECT_ID].internal when using the global DNS, and
+   * [INSTANCE_NAME].[ZONE].c.[PROJECT_ID].internal when using zonal DNS.
+   *
+   * @param string $hostname
+   */
+  public function setHostname($hostname)
+  {
+    $this->hostname = $hostname;
+  }
+  /**
+   * @return string
+   */
+  public function getHostname()
+  {
+    return $this->hostname;
+  }
+  /**
+   * Output only. [Output Only] The unique identifier for the resource. This
+   * identifier is defined by the server.
+   *
+   * @param string $id
+   */
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+  /**
+   * @return string
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
+  /**
+   * Encrypts suspended data for an instance with acustomer-managed encryption
+   * key.
+   *
+   * If you are creating a new instance, this field will encrypt the local SSD
+   * and in-memory contents of the instance during the suspend operation.
+   *
+   * If you do not provide an encryption key when creating the instance, then
+   * the local SSD and in-memory contents will be encrypted using an
+   * automatically generated key during the suspend operation.
+   *
+   * @param CustomerEncryptionKey $instanceEncryptionKey
+   */
+  public function setInstanceEncryptionKey(CustomerEncryptionKey $instanceEncryptionKey)
+  {
+    $this->instanceEncryptionKey = $instanceEncryptionKey;
+  }
+  /**
+   * @return CustomerEncryptionKey
+   */
+  public function getInstanceEncryptionKey()
+  {
+    return $this->instanceEncryptionKey;
+  }
+  /**
+   * KeyRevocationActionType of the instance. Supported options are "STOP" and
+   * "NONE". The default value is "NONE" if it is not specified.
+   *
+   * Accepted values: KEY_REVOCATION_ACTION_TYPE_UNSPECIFIED, NONE, STOP
+   *
+   * @param self::KEY_REVOCATION_ACTION_TYPE_* $keyRevocationActionType
+   */
+  public function setKeyRevocationActionType($keyRevocationActionType)
+  {
+    $this->keyRevocationActionType = $keyRevocationActionType;
+  }
+  /**
+   * @return self::KEY_REVOCATION_ACTION_TYPE_*
+   */
+  public function getKeyRevocationActionType()
+  {
+    return $this->keyRevocationActionType;
+  }
+  /**
+   * Output only. [Output Only] Type of the resource. Always compute#instance
+   * for instances.
+   *
+   * @param string $kind
+   */
+  public function setKind($kind)
+  {
+    $this->kind = $kind;
+  }
+  /**
+   * @return string
+   */
+  public function getKind()
+  {
+    return $this->kind;
+  }
+  /**
+   * A fingerprint for this request, which is essentially a hash of the label's
+   * contents and used for optimistic locking. The fingerprint is initially
+   * generated by Compute Engine and changes after every request to modify or
+   * update labels. You must always provide an up-to-date fingerprint hash in
+   * order to update or change labels.
+   *
+   * To see the latest fingerprint, make get() request to the instance.
+   *
+   * @param string $labelFingerprint
+   */
+  public function setLabelFingerprint($labelFingerprint)
+  {
+    $this->labelFingerprint = $labelFingerprint;
+  }
+  /**
+   * @return string
+   */
+  public function getLabelFingerprint()
+  {
+    return $this->labelFingerprint;
+  }
+  /**
+   * Labels to apply to this instance. These can be later modified by the
+   * setLabels method.
+   *
+   * @param string[] $labels
+   */
+  public function setLabels($labels)
+  {
+    $this->labels = $labels;
+  }
+  /**
+   * @return string[]
+   */
+  public function getLabels()
+  {
+    return $this->labels;
+  }
+  /**
+   * Output only. [Output Only] Last start timestamp inRFC3339 text format.
+   *
+   * @param string $lastStartTimestamp
+   */
+  public function setLastStartTimestamp($lastStartTimestamp)
+  {
+    $this->lastStartTimestamp = $lastStartTimestamp;
+  }
+  /**
+   * @return string
+   */
+  public function getLastStartTimestamp()
+  {
+    return $this->lastStartTimestamp;
+  }
+  /**
+   * Output only. [Output Only] Last stop timestamp inRFC3339 text format.
+   *
+   * @param string $lastStopTimestamp
+   */
+  public function setLastStopTimestamp($lastStopTimestamp)
+  {
+    $this->lastStopTimestamp = $lastStopTimestamp;
+  }
+  /**
+   * @return string
+   */
+  public function getLastStopTimestamp()
+  {
+    return $this->lastStopTimestamp;
+  }
+  /**
+   * Output only. [Output Only] Last suspended timestamp inRFC3339 text format.
+   *
+   * @param string $lastSuspendedTimestamp
+   */
+  public function setLastSuspendedTimestamp($lastSuspendedTimestamp)
+  {
+    $this->lastSuspendedTimestamp = $lastSuspendedTimestamp;
+  }
+  /**
+   * @return string
+   */
+  public function getLastSuspendedTimestamp()
+  {
+    return $this->lastSuspendedTimestamp;
+  }
+  /**
+   * Full or partial URL of the machine type resource to use for this instance,
+   * in the format:zones/zone/machineTypes/machine-type. This is provided by the
+   * client when the instance is created. For example, the following is a valid
+   * partial url to a predefined machine type:
+   *
+   * zones/us-central1-f/machineTypes/n1-standard-1
+   *
+   * To create acustom machine type, provide a URL to a machine type in the
+   * following format, where CPUS is 1 or an even number up to 32 (2, 4, 6, ...
+   * 24, etc), and MEMORY is the total memory for this instance. Memory must be
+   * a multiple of 256 MB and must be supplied in MB (e.g. 5 GB of memory is
+   * 5120 MB):
+   *
+   * zones/zone/machineTypes/custom-CPUS-MEMORY
+   *
+   * For example: zones/us-central1-f/machineTypes/custom-4-5120 For a full list
+   * of restrictions, read theSpecifications for custom machine types.
+   *
+   * @param string $machineType
+   */
+  public function setMachineType($machineType)
+  {
+    $this->machineType = $machineType;
+  }
+  /**
+   * @return string
+   */
+  public function getMachineType()
+  {
+    return $this->machineType;
+  }
+  /**
+   * The metadata key/value pairs assigned to this instance. This includes
+   * metadata keys that were explicitly defined for the instance.
+   *
+   * @param Metadata $metadata
+   */
+  public function setMetadata(Metadata $metadata)
+  {
+    $this->metadata = $metadata;
+  }
+  /**
+   * @return Metadata
+   */
+  public function getMetadata()
+  {
+    return $this->metadata;
+  }
+  /**
+   * Specifies aminimum CPU platform for the VM instance. Applicable values are
+   * the friendly names of CPU platforms, such as minCpuPlatform: "Intel
+   * Haswell" or minCpuPlatform: "Intel Sandy Bridge".
+   *
+   * @param string $minCpuPlatform
+   */
+  public function setMinCpuPlatform($minCpuPlatform)
+  {
+    $this->minCpuPlatform = $minCpuPlatform;
+  }
+  /**
+   * @return string
+   */
+  public function getMinCpuPlatform()
+  {
+    return $this->minCpuPlatform;
+  }
+  /**
+   * The name of the resource, provided by the client when initially creating
+   * the resource. The resource name must be 1-63 characters long, and comply
+   * withRFC1035. Specifically, the name must be 1-63 characters long and match
+   * the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first
+   * character must be a lowercase letter, and all following characters must be
+   * a dash, lowercase letter, or digit, except the last character, which cannot
+   * be a dash.
+   *
+   * @param string $name
+   */
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  /**
+   * @return string
+   */
+  public function getName()
+  {
+    return $this->name;
+  }
+  /**
+   * An array of network configurations for this instance. These specify how
+   * interfaces are configured to interact with other network services, such as
+   * connecting to the internet. Multiple interfaces are supported per instance.
+   *
+   * @param NetworkInterface[] $networkInterfaces
+   */
+  public function setNetworkInterfaces($networkInterfaces)
+  {
+    $this->networkInterfaces = $networkInterfaces;
+  }
+  /**
+   * @return NetworkInterface[]
+   */
+  public function getNetworkInterfaces()
+  {
+    return $this->networkInterfaces;
+  }
+  /**
+   * @param NetworkPerformanceConfig $networkPerformanceConfig
+   */
+  public function setNetworkPerformanceConfig(NetworkPerformanceConfig $networkPerformanceConfig)
+  {
+    $this->networkPerformanceConfig = $networkPerformanceConfig;
+  }
+  /**
+   * @return NetworkPerformanceConfig
+   */
+  public function getNetworkPerformanceConfig()
+  {
+    return $this->networkPerformanceConfig;
+  }
+  /**
+   * Input only. [Input Only] Additional params passed with the request, but not
+   * persisted as part of resource payload.
+   *
+   * @param InstanceParams $params
+   */
+  public function setParams(InstanceParams $params)
+  {
+    $this->params = $params;
+  }
+  /**
+   * @return InstanceParams
+   */
+  public function getParams()
+  {
+    return $this->params;
+  }
+  /**
+   * The private IPv6 google access type for the VM. If not specified, use
+   * INHERIT_FROM_SUBNETWORK as default.
+   *
+   * Accepted values: ENABLE_BIDIRECTIONAL_ACCESS_TO_GOOGLE,
+   * ENABLE_OUTBOUND_VM_ACCESS_TO_GOOGLE, INHERIT_FROM_SUBNETWORK
+   *
+   * @param self::PRIVATE_IPV6_GOOGLE_ACCESS_* $privateIpv6GoogleAccess
+   */
+  public function setPrivateIpv6GoogleAccess($privateIpv6GoogleAccess)
+  {
+    $this->privateIpv6GoogleAccess = $privateIpv6GoogleAccess;
+  }
+  /**
+   * @return self::PRIVATE_IPV6_GOOGLE_ACCESS_*
+   */
+  public function getPrivateIpv6GoogleAccess()
+  {
+    return $this->privateIpv6GoogleAccess;
+  }
+  /**
+   * Specifies the reservations that this instance can consume from.
+   *
+   * @param ReservationAffinity $reservationAffinity
+   */
+  public function setReservationAffinity(ReservationAffinity $reservationAffinity)
+  {
+    $this->reservationAffinity = $reservationAffinity;
+  }
+  /**
+   * @return ReservationAffinity
+   */
+  public function getReservationAffinity()
+  {
+    return $this->reservationAffinity;
+  }
+  /**
+   * Resource policies applied to this instance.
+   *
+   * @param string[] $resourcePolicies
+   */
+  public function setResourcePolicies($resourcePolicies)
+  {
+    $this->resourcePolicies = $resourcePolicies;
+  }
+  /**
+   * @return string[]
+   */
+  public function getResourcePolicies()
+  {
+    return $this->resourcePolicies;
+  }
+  /**
+   * Output only. [Output Only] Specifies values set for instance attributes as
+   * compared to the values requested by user in the corresponding input only
+   * field.
+   *
+   * @param ResourceStatus $resourceStatus
+   */
+  public function setResourceStatus(ResourceStatus $resourceStatus)
+  {
+    $this->resourceStatus = $resourceStatus;
+  }
+  /**
+   * @return ResourceStatus
+   */
+  public function getResourceStatus()
+  {
+    return $this->resourceStatus;
+  }
+  /**
+   * Output only. [Output Only] Reserved for future use.
+   *
+   * @param bool $satisfiesPzi
+   */
+  public function setSatisfiesPzi($satisfiesPzi)
+  {
+    $this->satisfiesPzi = $satisfiesPzi;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzi()
+  {
+    return $this->satisfiesPzi;
+  }
+  /**
+   * Output only. [Output Only] Reserved for future use.
+   *
+   * @param bool $satisfiesPzs
+   */
+  public function setSatisfiesPzs($satisfiesPzs)
+  {
+    $this->satisfiesPzs = $satisfiesPzs;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzs()
+  {
+    return $this->satisfiesPzs;
+  }
+  /**
+   * Sets the scheduling options for this instance.
+   *
+   * @param Scheduling $scheduling
+   */
+  public function setScheduling(Scheduling $scheduling)
+  {
+    $this->scheduling = $scheduling;
+  }
+  /**
+   * @return Scheduling
+   */
+  public function getScheduling()
+  {
+    return $this->scheduling;
+  }
+  /**
+   * Output only. [Output Only] Server-defined URL for this resource.
+   *
+   * @param string $selfLink
+   */
+  public function setSelfLink($selfLink)
+  {
+    $this->selfLink = $selfLink;
+  }
+  /**
+   * @return string
+   */
+  public function getSelfLink()
+  {
+    return $this->selfLink;
+  }
+  /**
+   * A list of service accounts, with their specified scopes, authorized for
+   * this instance. Only one service account per VM instance is supported.
+   *
+   * Service accounts generate access tokens that can be accessed through the
+   * metadata server and used to authenticate applications on the instance.
+   * SeeService Accounts for more information.
+   *
+   * @param ServiceAccount[] $serviceAccounts
+   */
+  public function setServiceAccounts($serviceAccounts)
+  {
+    $this->serviceAccounts = $serviceAccounts;
+  }
+  /**
+   * @return ServiceAccount[]
+   */
+  public function getServiceAccounts()
+  {
+    return $this->serviceAccounts;
+  }
+  /**
+   * @param ShieldedInstanceConfig $shieldedInstanceConfig
+   */
+  public function setShieldedInstanceConfig(ShieldedInstanceConfig $shieldedInstanceConfig)
+  {
+    $this->shieldedInstanceConfig = $shieldedInstanceConfig;
+  }
+  /**
+   * @return ShieldedInstanceConfig
+   */
+  public function getShieldedInstanceConfig()
+  {
+    return $this->shieldedInstanceConfig;
+  }
+  /**
+   * @param ShieldedInstanceIntegrityPolicy $shieldedInstanceIntegrityPolicy
+   */
+  public function setShieldedInstanceIntegrityPolicy(ShieldedInstanceIntegrityPolicy $shieldedInstanceIntegrityPolicy)
+  {
+    $this->shieldedInstanceIntegrityPolicy = $shieldedInstanceIntegrityPolicy;
+  }
+  /**
+   * @return ShieldedInstanceIntegrityPolicy
+   */
+  public function getShieldedInstanceIntegrityPolicy()
+  {
+    return $this->shieldedInstanceIntegrityPolicy;
+  }
+  /**
+   * Source machine image
+   *
+   * @param string $sourceMachineImage
+   */
+  public function setSourceMachineImage($sourceMachineImage)
+  {
+    $this->sourceMachineImage = $sourceMachineImage;
+  }
+  /**
+   * @return string
+   */
+  public function getSourceMachineImage()
+  {
+    return $this->sourceMachineImage;
+  }
+  /**
+   * Source machine image encryption key when creating an instance from a
+   * machine image.
+   *
+   * @param CustomerEncryptionKey $sourceMachineImageEncryptionKey
+   */
+  public function setSourceMachineImageEncryptionKey(CustomerEncryptionKey $sourceMachineImageEncryptionKey)
+  {
+    $this->sourceMachineImageEncryptionKey = $sourceMachineImageEncryptionKey;
+  }
+  /**
+   * @return CustomerEncryptionKey
+   */
+  public function getSourceMachineImageEncryptionKey()
+  {
+    return $this->sourceMachineImageEncryptionKey;
+  }
+  /**
+   * Output only. [Output Only] Whether a VM has been restricted for start
+   * because Compute Engine has detected suspicious activity.
+   *
+   * @param bool $startRestricted
+   */
+  public function setStartRestricted($startRestricted)
+  {
+    $this->startRestricted = $startRestricted;
+  }
+  /**
+   * @return bool
+   */
+  public function getStartRestricted()
+  {
+    return $this->startRestricted;
+  }
+  /**
+   * Output only. [Output Only] The status of the instance. One of the following
+   * values: PROVISIONING, STAGING,RUNNING, STOPPING, SUSPENDING,SUSPENDED,
+   * REPAIRING, andTERMINATED. For more information about the status of the
+   * instance, see  Instance life cycle.
+   *
+   * Accepted values: DEPROVISIONING, PENDING, PROVISIONING, REPAIRING, RUNNING,
+   * STAGING, STOPPED, STOPPING, SUSPENDED, SUSPENDING, TERMINATED
+   *
+   * @param self::STATUS_* $status
+   */
+  public function setStatus($status)
+  {
+    $this->status = $status;
+  }
+  /**
+   * @return self::STATUS_*
+   */
+  public function getStatus()
+  {
+    return $this->status;
+  }
+  /**
+   * Output only. [Output Only] An optional, human-readable explanation of the
+   * status.
+   *
+   * @param string $statusMessage
+   */
+  public function setStatusMessage($statusMessage)
+  {
+    $this->statusMessage = $statusMessage;
+  }
+  /**
+   * @return string
+   */
+  public function getStatusMessage()
+  {
+    return $this->statusMessage;
+  }
+  /**
+   * Tags to apply to this instance. Tags are used to identify valid sources or
+   * targets for network firewalls and are specified by the client during
+   * instance creation. The tags can be later modified by the setTags method.
+   * Each tag within the list must comply withRFC1035. Multiple tags can be
+   * specified via the 'tags.items' field.
+   *
+   * @param Tags $tags
+   */
+  public function setTags(Tags $tags)
+  {
+    $this->tags = $tags;
+  }
+  /**
+   * @return Tags
+   */
+  public function getTags()
+  {
+    return $this->tags;
+  }
+  /**
+   * Output only. [Output Only] URL of the zone where the instance resides. You
+   * must specify this field as part of the HTTP request URL. It is not settable
+   * as a field in the request body.
+   *
+   * @param string $zone
+   */
+  public function setZone($zone)
+  {
+    $this->zone = $zone;
+  }
+  /**
+   * @return string
+   */
+  public function getZone()
+  {
+    return $this->zone;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(Instance::class, 'Google_Service_Compute_Instance');

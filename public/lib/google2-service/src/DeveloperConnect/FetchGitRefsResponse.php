@@ -1,0 +1,71 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\DeveloperConnect;
+
+class FetchGitRefsResponse extends \Google\Collection
+{
+  protected $collection_key = 'refNames';
+  /**
+   * A token identifying a page of results the server should return.
+   *
+   * @var string
+   */
+  public $nextPageToken;
+  /**
+   * Name of the refs fetched.
+   *
+   * @var string[]
+   */
+  public $refNames;
+
+  /**
+   * A token identifying a page of results the server should return.
+   *
+   * @param string $nextPageToken
+   */
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  /**
+   * @return string
+   */
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+  /**
+   * Name of the refs fetched.
+   *
+   * @param string[] $refNames
+   */
+  public function setRefNames($refNames)
+  {
+    $this->refNames = $refNames;
+  }
+  /**
+   * @return string[]
+   */
+  public function getRefNames()
+  {
+    return $this->refNames;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(FetchGitRefsResponse::class, 'Google_Service_DeveloperConnect_FetchGitRefsResponse');

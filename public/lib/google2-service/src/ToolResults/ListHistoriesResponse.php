@@ -1,0 +1,75 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\ToolResults;
+
+class ListHistoriesResponse extends \Google\Collection
+{
+  protected $collection_key = 'histories';
+  protected $historiesType = History::class;
+  protected $historiesDataType = 'array';
+  /**
+   * A continuation token to resume the query at the next item. Will only be set
+   * if there are more histories to fetch. Tokens are valid for up to one hour
+   * from the time of the first list request. For instance, if you make a list
+   * request at 1PM and use the token from this first request 10 minutes later,
+   * the token from this second response will only be valid for 50 minutes.
+   *
+   * @var string
+   */
+  public $nextPageToken;
+
+  /**
+   * Histories.
+   *
+   * @param History[] $histories
+   */
+  public function setHistories($histories)
+  {
+    $this->histories = $histories;
+  }
+  /**
+   * @return History[]
+   */
+  public function getHistories()
+  {
+    return $this->histories;
+  }
+  /**
+   * A continuation token to resume the query at the next item. Will only be set
+   * if there are more histories to fetch. Tokens are valid for up to one hour
+   * from the time of the first list request. For instance, if you make a list
+   * request at 1PM and use the token from this first request 10 minutes later,
+   * the token from this second response will only be valid for 50 minutes.
+   *
+   * @param string $nextPageToken
+   */
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  /**
+   * @return string
+   */
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(ListHistoriesResponse::class, 'Google_Service_ToolResults_ListHistoriesResponse');

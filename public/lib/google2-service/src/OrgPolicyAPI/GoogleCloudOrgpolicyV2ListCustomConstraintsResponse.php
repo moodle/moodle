@@ -1,0 +1,70 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\OrgPolicyAPI;
+
+class GoogleCloudOrgpolicyV2ListCustomConstraintsResponse extends \Google\Collection
+{
+  protected $collection_key = 'customConstraints';
+  protected $customConstraintsType = GoogleCloudOrgpolicyV2CustomConstraint::class;
+  protected $customConstraintsDataType = 'array';
+  /**
+   * Page token used to retrieve the next page. This is currently not used, but
+   * the server may at any point start supplying a valid token.
+   *
+   * @var string
+   */
+  public $nextPageToken;
+
+  /**
+   * All custom and managed constraints that exist on the organization resource.
+   * It will be empty if no custom constraints are set.
+   *
+   * @param GoogleCloudOrgpolicyV2CustomConstraint[] $customConstraints
+   */
+  public function setCustomConstraints($customConstraints)
+  {
+    $this->customConstraints = $customConstraints;
+  }
+  /**
+   * @return GoogleCloudOrgpolicyV2CustomConstraint[]
+   */
+  public function getCustomConstraints()
+  {
+    return $this->customConstraints;
+  }
+  /**
+   * Page token used to retrieve the next page. This is currently not used, but
+   * the server may at any point start supplying a valid token.
+   *
+   * @param string $nextPageToken
+   */
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  /**
+   * @return string
+   */
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudOrgpolicyV2ListCustomConstraintsResponse::class, 'Google_Service_OrgPolicyAPI_GoogleCloudOrgpolicyV2ListCustomConstraintsResponse');

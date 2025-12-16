@@ -1,0 +1,54 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\RecommendationsAI;
+
+class GoogleCloudRecommendationengineV1alphaTuningMetadata extends \Google\Model
+{
+  /**
+   * The resource name of the recommendation model that this tune applies to.
+   * Format: projects/{project_number}/locations/{location_id}/catalogs/{catalog
+   * _id}/eventStores/{event_store_id}/recommendationModels/{recommendation_mode
+   * l_id}
+   *
+   * @var string
+   */
+  public $recommendationModel;
+
+  /**
+   * The resource name of the recommendation model that this tune applies to.
+   * Format: projects/{project_number}/locations/{location_id}/catalogs/{catalog
+   * _id}/eventStores/{event_store_id}/recommendationModels/{recommendation_mode
+   * l_id}
+   *
+   * @param string $recommendationModel
+   */
+  public function setRecommendationModel($recommendationModel)
+  {
+    $this->recommendationModel = $recommendationModel;
+  }
+  /**
+   * @return string
+   */
+  public function getRecommendationModel()
+  {
+    return $this->recommendationModel;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudRecommendationengineV1alphaTuningMetadata::class, 'Google_Service_RecommendationsAI_GoogleCloudRecommendationengineV1alphaTuningMetadata');

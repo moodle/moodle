@@ -1,0 +1,70 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\CloudMemorystoreforMemcached;
+
+class NodeConfig extends \Google\Model
+{
+  /**
+   * Required. Number of cpus per Memcached node.
+   *
+   * @var int
+   */
+  public $cpuCount;
+  /**
+   * Required. Memory size in MiB for each Memcached node.
+   *
+   * @var int
+   */
+  public $memorySizeMb;
+
+  /**
+   * Required. Number of cpus per Memcached node.
+   *
+   * @param int $cpuCount
+   */
+  public function setCpuCount($cpuCount)
+  {
+    $this->cpuCount = $cpuCount;
+  }
+  /**
+   * @return int
+   */
+  public function getCpuCount()
+  {
+    return $this->cpuCount;
+  }
+  /**
+   * Required. Memory size in MiB for each Memcached node.
+   *
+   * @param int $memorySizeMb
+   */
+  public function setMemorySizeMb($memorySizeMb)
+  {
+    $this->memorySizeMb = $memorySizeMb;
+  }
+  /**
+   * @return int
+   */
+  public function getMemorySizeMb()
+  {
+    return $this->memorySizeMb;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(NodeConfig::class, 'Google_Service_CloudMemorystoreforMemcached_NodeConfig');

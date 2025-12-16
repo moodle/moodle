@@ -1,0 +1,70 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\DiscoveryEngine;
+
+class GdataDiffVersionResponse extends \Google\Model
+{
+  /**
+   * The total size of the server object.
+   *
+   * @var string
+   */
+  public $objectSizeBytes;
+  /**
+   * The version of the object stored at the server.
+   *
+   * @var string
+   */
+  public $objectVersion;
+
+  /**
+   * The total size of the server object.
+   *
+   * @param string $objectSizeBytes
+   */
+  public function setObjectSizeBytes($objectSizeBytes)
+  {
+    $this->objectSizeBytes = $objectSizeBytes;
+  }
+  /**
+   * @return string
+   */
+  public function getObjectSizeBytes()
+  {
+    return $this->objectSizeBytes;
+  }
+  /**
+   * The version of the object stored at the server.
+   *
+   * @param string $objectVersion
+   */
+  public function setObjectVersion($objectVersion)
+  {
+    $this->objectVersion = $objectVersion;
+  }
+  /**
+   * @return string
+   */
+  public function getObjectVersion()
+  {
+    return $this->objectVersion;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GdataDiffVersionResponse::class, 'Google_Service_DiscoveryEngine_GdataDiffVersionResponse');

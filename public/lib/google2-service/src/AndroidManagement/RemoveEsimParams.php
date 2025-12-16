@@ -1,0 +1,48 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\AndroidManagement;
+
+class RemoveEsimParams extends \Google\Model
+{
+  /**
+   * Required. ICC ID of the eSIM profile to be deleted.
+   *
+   * @var string
+   */
+  public $iccId;
+
+  /**
+   * Required. ICC ID of the eSIM profile to be deleted.
+   *
+   * @param string $iccId
+   */
+  public function setIccId($iccId)
+  {
+    $this->iccId = $iccId;
+  }
+  /**
+   * @return string
+   */
+  public function getIccId()
+  {
+    return $this->iccId;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(RemoveEsimParams::class, 'Google_Service_AndroidManagement_RemoveEsimParams');

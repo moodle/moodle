@@ -1,0 +1,81 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Contactcenterinsights;
+
+class GoogleCloudContactcenterinsightsV1PhraseMatchRuleGroup extends \Google\Collection
+{
+  /**
+   * Unspecified.
+   */
+  public const TYPE_PHRASE_MATCH_RULE_GROUP_TYPE_UNSPECIFIED = 'PHRASE_MATCH_RULE_GROUP_TYPE_UNSPECIFIED';
+  /**
+   * Must meet all phrase match rules or there is no match.
+   */
+  public const TYPE_ALL_OF = 'ALL_OF';
+  /**
+   * If any of the phrase match rules are met, there is a match.
+   */
+  public const TYPE_ANY_OF = 'ANY_OF';
+  protected $collection_key = 'phraseMatchRules';
+  protected $phraseMatchRulesType = GoogleCloudContactcenterinsightsV1PhraseMatchRule::class;
+  protected $phraseMatchRulesDataType = 'array';
+  /**
+   * Required. The type of this phrase match rule group.
+   *
+   * @var string
+   */
+  public $type;
+
+  /**
+   * A list of phrase match rules that are included in this group.
+   *
+   * @param GoogleCloudContactcenterinsightsV1PhraseMatchRule[] $phraseMatchRules
+   */
+  public function setPhraseMatchRules($phraseMatchRules)
+  {
+    $this->phraseMatchRules = $phraseMatchRules;
+  }
+  /**
+   * @return GoogleCloudContactcenterinsightsV1PhraseMatchRule[]
+   */
+  public function getPhraseMatchRules()
+  {
+    return $this->phraseMatchRules;
+  }
+  /**
+   * Required. The type of this phrase match rule group.
+   *
+   * Accepted values: PHRASE_MATCH_RULE_GROUP_TYPE_UNSPECIFIED, ALL_OF, ANY_OF
+   *
+   * @param self::TYPE_* $type
+   */
+  public function setType($type)
+  {
+    $this->type = $type;
+  }
+  /**
+   * @return self::TYPE_*
+   */
+  public function getType()
+  {
+    return $this->type;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudContactcenterinsightsV1PhraseMatchRuleGroup::class, 'Google_Service_Contactcenterinsights_GoogleCloudContactcenterinsightsV1PhraseMatchRuleGroup');

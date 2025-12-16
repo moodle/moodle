@@ -1,0 +1,70 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\DataCatalog;
+
+class GoogleCloudDatacatalogV1PersonalDetails extends \Google\Model
+{
+  /**
+   * Set if the entry is starred; unset otherwise.
+   *
+   * @var string
+   */
+  public $starTime;
+  /**
+   * True if the entry is starred by the user; false otherwise.
+   *
+   * @var bool
+   */
+  public $starred;
+
+  /**
+   * Set if the entry is starred; unset otherwise.
+   *
+   * @param string $starTime
+   */
+  public function setStarTime($starTime)
+  {
+    $this->starTime = $starTime;
+  }
+  /**
+   * @return string
+   */
+  public function getStarTime()
+  {
+    return $this->starTime;
+  }
+  /**
+   * True if the entry is starred by the user; false otherwise.
+   *
+   * @param bool $starred
+   */
+  public function setStarred($starred)
+  {
+    $this->starred = $starred;
+  }
+  /**
+   * @return bool
+   */
+  public function getStarred()
+  {
+    return $this->starred;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudDatacatalogV1PersonalDetails::class, 'Google_Service_DataCatalog_GoogleCloudDatacatalogV1PersonalDetails');

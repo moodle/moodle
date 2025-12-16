@@ -1,0 +1,54 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\AndroidEnterprise;
+
+class WebAppIcon extends \Google\Model
+{
+  /**
+   * The actual bytes of the image in a base64url encoded string (c.f. RFC4648,
+   * section 5 "Base 64 Encoding with URL and Filename Safe Alphabet"). - The
+   * image type can be png or jpg. - The image should ideally be square. - The
+   * image should ideally have a size of 512x512.
+   *
+   * @var string
+   */
+  public $imageData;
+
+  /**
+   * The actual bytes of the image in a base64url encoded string (c.f. RFC4648,
+   * section 5 "Base 64 Encoding with URL and Filename Safe Alphabet"). - The
+   * image type can be png or jpg. - The image should ideally be square. - The
+   * image should ideally have a size of 512x512.
+   *
+   * @param string $imageData
+   */
+  public function setImageData($imageData)
+  {
+    $this->imageData = $imageData;
+  }
+  /**
+   * @return string
+   */
+  public function getImageData()
+  {
+    return $this->imageData;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(WebAppIcon::class, 'Google_Service_AndroidEnterprise_WebAppIcon');
