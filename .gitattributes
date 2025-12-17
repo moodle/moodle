@@ -3,3 +3,6 @@
 **.js.map -diff
 **-min.js -diff
 **.min.js -diff
+
+# Remove composer lock file changes from standard diff views.
+/composer.lock -diff
