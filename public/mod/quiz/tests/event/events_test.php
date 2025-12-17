@@ -28,6 +28,7 @@ namespace mod_quiz\event;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 use context_module;
+use core_question\local\bank\condition;
 use mod_quiz\external\submit_question_version;
 
 /**
@@ -1158,8 +1159,10 @@ final class events_test extends \advanced_testcase {
             'other' => [
                 'quizid' => $quizobj->get_quizid(),
                 'slotnumber' => 1,
-                'page' => 1
-            ]
+                'page' => 1,
+                'questionbankentryid' => 1,
+                'version' => null,
+            ],
         ];
         $event = \mod_quiz\event\slot_created::create($params);
 
@@ -1173,6 +1176,61 @@ final class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_quiz\event\slot_created', $event);
         $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Verify slot_created carries question reference information when a specific question is added.
+     */
+    public function test_slot_created_for_question_reference(): void {
+        $quizobj = $this->prepare_quiz();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('shortanswer', null, ['category' => $category->id]);
+
+        $sink = $this->redirectEvents();
+        quiz_add_quiz_question($question->id, $quizobj->get_quiz());
+        $events = array_filter($sink->get_events(), fn(\core\event\base $event): bool => $event instanceof slot_created);
+
+        $this->assertNotEmpty($events);
+        $event = reset($events);
+        $this->assertArrayHasKey('questionbankentryid', $event->other);
+        $this->assertArrayHasKey('version', $event->other);
+        $this->assertArrayNotHasKey('questionscontextid', $event->other);
+        $this->assertArrayNotHasKey('filtercondition', $event->other);
+    }
+
+    /**
+     * Verify slot_created carries question set reference information for random slots.
+     */
+    public function test_slot_created_for_random_question(): void {
+        $quizobj = $this->prepare_quiz();
+        $this->setAdminUser();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $questiongenerator->create_question('shortanswer', null, ['category' => $category->id]);
+        $questiongenerator->create_question('shortanswer', null, ['category' => $category->id]);
+
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => condition::JOINTYPE_DEFAULT,
+                    'values' => [$category->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+
+        $sink = $this->redirectEvents();
+        $quizobj->get_structure()->add_random_questions(1, 1, $filtercondition);
+        $events = array_filter($sink->get_events(), fn(\core\event\base $event): bool => $event instanceof slot_created);
+
+        $this->assertNotEmpty($events);
+        $event = reset($events);
+        $this->assertArrayHasKey('questionscontextid', $event->other);
+        $this->assertArrayHasKey('filtercondition', $event->other);
+        $this->assertArrayNotHasKey('questionbankentryid', $event->other);
+        $this->assertArrayNotHasKey('version', $event->other);
+        $this->assertEquals(json_encode($filtercondition), $event->other['filtercondition']);
     }
 
     /**

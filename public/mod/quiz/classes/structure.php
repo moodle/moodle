@@ -18,6 +18,10 @@ namespace mod_quiz;
 
 use coding_exception;
 use context_module;
+use core\context;
+use core\context\module;
+use core\exception\invalid_parameter_exception;
+use core\exception\moodle_exception;
 use core\output\inplace_editable;
 use core_question\local\bank\version_options;
 use mod_quiz\event\quiz_grade_item_created;
@@ -26,6 +30,7 @@ use mod_quiz\event\quiz_grade_item_updated;
 use mod_quiz\event\slot_grade_item_updated;
 use mod_quiz\event\slot_mark_updated;
 use mod_quiz\event\slot_version_updated;
+use mod_quiz\local\structure\slot_random;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\qubaids_for_quiz;
 use stdClass;
@@ -1686,35 +1691,64 @@ class structure {
      * @param array $filtercondition the filter condition. Must contain at least a category filter.
      */
     public function add_random_questions(int $addonpage, int $number, array $filtercondition): void {
+        $category = $this->validate_filter_condition($filtercondition);
+        for ($i = 0; $i < $number; $i++) {
+            $randomslotdata = (object)[
+                'quizid' => $this->get_quizid(),
+                'usingcontextid' => module::instance($this->get_cmid())->id,
+                'questionscontextid' => $category->contextid,
+                'maxmark' => 1,
+            ];
+            $randomslot = new slot_random($randomslotdata);
+            $randomslot->set_quiz($this->get_quiz());
+            $randomslot->set_filter_condition(json_encode($filtercondition));
+            $randomslot->insert($addonpage);
+        }
+    }
+
+    /**
+     * Update an existing random question.
+     *
+     * @param int $slotid
+     * @param array $filtercondition
+     */
+    public function update_random_question(int $slotid, array $filtercondition): void {
+        $category = $this->validate_filter_condition($filtercondition);
+        $slot = $this->get_slot_by_id($slotid);
+        $slot->questionscontextid = $category->contextid;
+        $randomslot = new slot_random($slot);
+        $randomslot->set_quiz($this->get_quiz());
+        $randomslot->update_filtercondition($filtercondition);
+    }
+
+    /**
+     * Validate a given filter condition array. Specifically check for
+     * the prescence of a category and the relevant permission to use
+     * the category. Returns the category.
+     *
+     * @param array $filtercondition
+     * @return stdClass The row from the question_categories table.
+     * @throws invalid_parameter_exception When the filter condition is
+     *                                     missing a category.
+     * @throws moodle_exception When the specified category doesn't exist.
+     */
+    private function validate_filter_condition(array $filtercondition): stdClass {
         global $DB;
 
         if (!isset($filtercondition['filter']['category'])) {
-            throw new \invalid_parameter_exception('$filtercondition must contain at least a category filter.');
+            throw new invalid_parameter_exception('$filtercondition must contain at least a category filter.');
         }
         $categoryid = $filtercondition['filter']['category']['values'][0];
 
         $category = $DB->get_record('question_categories', ['id' => $categoryid]);
         if (!$category) {
-            new \moodle_exception('invalidcategoryid');
+            throw new moodle_exception('invalidcategoryid');
         }
 
-        $catcontext = \context::instance_by_id($category->contextid);
+        $catcontext = context::instance_by_id($category->contextid);
         require_capability('moodle/question:useall', $catcontext);
 
-        // Create the selected number of random questions.
-        for ($i = 0; $i < $number; $i++) {
-            // Slot data.
-            $randomslotdata = new stdClass();
-            $randomslotdata->quizid = $this->get_quizid();
-            $randomslotdata->usingcontextid = context_module::instance($this->get_cmid())->id;
-            $randomslotdata->questionscontextid = $category->contextid;
-            $randomslotdata->maxmark = 1;
-
-            $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
-            $randomslot->set_quiz($this->get_quiz());
-            $randomslot->set_filter_condition(json_encode($filtercondition));
-            $randomslot->insert($addonpage);
-        }
+        return $category;
     }
 
     /**
