@@ -1,0 +1,9 @@
+issueNumber: MDL-86916
+notes:
+  mod_quiz:
+    - message: >-
+        The WebServices mod_quiz_get_user_best_grade and
+        mod_quiz_get_user_quiz_attempts have been updated to return overall feedback
+        even when quiz marks are hidden in the review options. This change
+        aligns the WebService behaviour with Moodle LMS display logic.
+      type: changed
