@@ -22,10 +22,11 @@
  */
 
 import $ from 'jquery';
+import CustomEvents from 'core/custom_interaction_events';
 import * as ModalEvents from 'core/modal_events';
 import selectors from 'core_course/local/activitychooser/selectors';
 import * as Templates from 'core/templates';
-import {end, arrowLeft, arrowRight, home, enter, space} from 'core/key_codes';
+import {enter, space} from 'core/key_codes';
 import {addIconToContainer} from 'core/loadingicon';
 import * as Repository from 'core_course/local/activitychooser/repository';
 import Notification from 'core/notification';
@@ -246,7 +247,54 @@ const initChooserOptionsKeyboardNavigation = (body, mappedModules, chooserOption
     const chooserOptions = chooserOptionsContainer.querySelectorAll(selectors.regions.chooserOption.container);
 
     Array.from(chooserOptions).forEach((element) => {
-        return element.addEventListener('keydown', (e) => {
+        const $element = $(element);
+
+        // Set up custom interaction events for RTL-aware keyboard navigation.
+        CustomEvents.define($element, [
+            CustomEvents.events.next,
+            CustomEvents.events.previous,
+            CustomEvents.events.home,
+            CustomEvents.events.end,
+        ]);
+
+        // Handle focus move (automatically handles RTL).
+        const createNavHandler = (resolver) => (e, data) => {
+            const currentOption = data.originalEvent.target.closest(
+                selectors.regions.chooserOption.container
+            );
+            if (currentOption !== null) {
+                const toFocusOption = resolver(currentOption);
+                if (toFocusOption) {
+                    focusChooserOption(toFocusOption, currentOption);
+                }
+            }
+        };
+
+        $element.on(
+            CustomEvents.events.next,
+            createNavHandler(
+                (current) => current.nextElementSibling || chooserOptionsContainer.firstElementChild
+            )
+        );
+
+        $element.on(
+            CustomEvents.events.previous,
+            createNavHandler(
+                (current) => current.previousElementSibling || chooserOptionsContainer.lastElementChild
+            )
+        );
+
+        $element.on(
+            CustomEvents.events.home,
+            createNavHandler(() => chooserOptionsContainer.firstElementChild)
+        );
+
+        $element.on(
+            CustomEvents.events.end,
+            createNavHandler(() => chooserOptionsContainer.lastElementChild)
+        );
+
+        element.addEventListener('keydown', (e) => {
 
             // Check for enter/ space triggers for showing the help.
             if (e.keyCode === enter || e.keyCode === space) {
@@ -266,40 +314,6 @@ const initChooserOptionsKeyboardNavigation = (body, mappedModules, chooserOption
                     moduleData.showFooter = modal.hasFooterContent();
                     showModuleHelp(carousel, moduleData, modal);
                 }
-            }
-
-            // Next.
-            if (e.keyCode === arrowRight) {
-                e.preventDefault();
-                const currentOption = e.target.closest(selectors.regions.chooserOption.container);
-                const nextOption = currentOption.nextElementSibling;
-                const firstOption = chooserOptionsContainer.firstElementChild;
-                const toFocusOption = clickErrorHandler(nextOption, firstOption);
-                focusChooserOption(toFocusOption, currentOption);
-            }
-
-            // Previous.
-            if (e.keyCode === arrowLeft) {
-                e.preventDefault();
-                const currentOption = e.target.closest(selectors.regions.chooserOption.container);
-                const previousOption = currentOption.previousElementSibling;
-                const lastOption = chooserOptionsContainer.lastElementChild;
-                const toFocusOption = clickErrorHandler(previousOption, lastOption);
-                focusChooserOption(toFocusOption, currentOption);
-            }
-
-            if (e.keyCode === home) {
-                e.preventDefault();
-                const currentOption = e.target.closest(selectors.regions.chooserOption.container);
-                const firstOption = chooserOptionsContainer.firstElementChild;
-                focusChooserOption(firstOption, currentOption);
-            }
-
-            if (e.keyCode === end) {
-                e.preventDefault();
-                const currentOption = e.target.closest(selectors.regions.chooserOption.container);
-                const lastOption = chooserOptionsContainer.lastElementChild;
-                focusChooserOption(lastOption, currentOption);
             }
         });
     });
@@ -345,22 +359,6 @@ const toggleFocusableChooserOption = (chooserOption, isFocusable) => {
         chooserOptionLink.tabIndex = -1;
         chooserOptionHelp.tabIndex = -1;
         chooserOptionFavourite.tabIndex = -1;
-    }
-};
-
-/**
- * Small error handling function to make sure the navigated to object exists
- *
- * @method clickErrorHandler
- * @param {HTMLElement} item What we want to check exists
- * @param {HTMLElement} fallback If we dont match anything fallback the focus
- * @return {HTMLElement}
- */
-const clickErrorHandler = (item, fallback) => {
-    if (item !== null) {
-        return item;
-    } else {
-        return fallback;
     }
 };
 
