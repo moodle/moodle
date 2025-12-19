@@ -1,5 +1,13 @@
 # mod_quiz Upgrade notes
 
+## 5.2dev
+
+### Changed
+
+- The WebServices mod_quiz_get_user_best_grade and mod_quiz_get_user_quiz_attempts have been updated to return overall feedback even when quiz marks are hidden in the review options. This change aligns the WebService behaviour with Moodle LMS display logic.
+
+  For more information see [MDL-86916](https://tracker.moodle.org/browse/MDL-86916)
+
 ## 5.1
 
 ### Added

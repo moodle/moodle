@@ -154,6 +154,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Two new public static methods have been added to the `overviewtable` class: - `is_cm_displayable`: Determines if a course module should be listed in the overview table. - `is_cm_available`: Checks if a course module is accessible to the user (and should therefore be rendered as a link).
 
   For more information see [MDL-86660](https://tracker.moodle.org/browse/MDL-86660)
+- Subsections are now always displayed inline within their respective sections (the separate subsection page is no longer used). Descriptions are no longer shown for delegated sections.
+
+  For more information see [MDL-87276](https://tracker.moodle.org/browse/MDL-87276)
 
 #### Deprecated
 
@@ -215,6 +218,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87000](https://tracker.moodle.org/browse/MDL-87000)
 
+### core_webservice
+
+#### Changed
+
+- The WebService core_webservice_get_site_info now returns three new fields: "usercanviewconfig" indicating whether the current user can see the administration tree, "usercanchangeconfig" indicating whether the current user can change the site configuration, and site secret.
+
+  For more information see [MDL-87034](https://tracker.moodle.org/browse/MDL-87034)
+
 ### mod_feedback
 
 #### Deprecated
@@ -238,6 +249,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Function mod_glossary_rating_can_see_item_ratings is now implemented for checking permissions to view ratings.
 
   For more information see [MDL-86960](https://tracker.moodle.org/browse/MDL-86960)
+
+### mod_quiz
+
+#### Changed
+
+- The WebServices mod_quiz_get_user_best_grade and mod_quiz_get_user_quiz_attempts have been updated to return overall feedback even when quiz marks are hidden in the review options. This change aligns the WebService behaviour with Moodle LMS display logic.
+
+  For more information see [MDL-86916](https://tracker.moodle.org/browse/MDL-86916)
 
 ### qbank_columnsortorder
 
