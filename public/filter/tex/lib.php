@@ -26,44 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-function filter_tex_get_executable($debug=false) {
-    global $CFG;
-
-    if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
-        return "$CFG->dirroot/filter/tex/mimetex.exe";
-    }
-
-    if ($pathmimetex = get_config('filter_tex', 'pathmimetex')) {
-        if (is_executable($pathmimetex)) {
-            return $pathmimetex;
-        } else {
-            throw new \moodle_exception('mimetexnotexecutable', 'error');
-        }
-    }
-
-    $custom_commandpath = "$CFG->dirroot/filter/tex/mimetex";
-    if (file_exists($custom_commandpath)) {
-        if (is_executable($custom_commandpath)) {
-            return $custom_commandpath;
-        } else {
-            throw new \moodle_exception('mimetexnotexecutable', 'error');
-        }
-    }
-
-    switch (PHP_OS) {
-        case "Darwin":  return "$CFG->dirroot/filter/tex/mimetex.darwin";
-        case "FreeBSD": return "$CFG->dirroot/filter/tex/mimetex.freebsd";
-        case "Linux":
-            if (php_uname('m') == 'aarch64') {
-                return "$CFG->dirroot/filter/tex/mimetex.linux.aarch64";
-            }
-
-            return "$CFG->dirroot/filter/tex/mimetex.linux";
-    }
-
-    throw new \moodle_exception('mimetexisnotexist', 'error');
-}
-
 /**
  * Check the formula expression against the list of denied keywords.
  *
@@ -129,20 +91,6 @@ function filter_tex_sanitize_formula(string $texexp): string {
     return $texexp;
 }
 
-function filter_tex_get_cmd($pathname, $texexp) {
-    $texexp = filter_tex_sanitize_formula($texexp);
-    $texexp = escapeshellarg($texexp);
-    $executable = filter_tex_get_executable(false);
-
-    if ((PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows")) {
-        $executable = str_replace(' ', '^ ', $executable);
-        return "$executable ++ -e  \"$pathname\" -- $texexp";
-
-    } else {
-        return "\"$executable\" -e \"$pathname\" -- $texexp";
-    }
-}
-
 /**
  * Purge all caches when settings changed.
  */
@@ -153,15 +101,11 @@ function filter_tex_updatedcallback($name) {
     if (file_exists("$CFG->dataroot/filter/tex")) {
         remove_dir("$CFG->dataroot/filter/tex");
     }
-    if (file_exists("$CFG->dataroot/filter/algebra")) {
-        remove_dir("$CFG->dataroot/filter/algebra");
-    }
     if (file_exists("$CFG->tempdir/latex")) {
         remove_dir("$CFG->tempdir/latex");
     }
 
     $DB->delete_records('cache_filters', array('filter'=>'tex'));
-    $DB->delete_records('cache_filters', array('filter'=>'algebra'));
 
     $pathlatex = get_config('filter_tex', 'pathlatex');
     if ($pathlatex === false) {
@@ -174,18 +118,23 @@ function filter_tex_updatedcallback($name) {
     $pathconvert = trim(get_config('filter_tex', 'pathconvert'), " '\"");
     $pathdvisvgm = trim(get_config('filter_tex', 'pathdvisvgm'), " '\"");
 
-    $supportedformats = array('gif');
+    $supportedformats = [];
     if ((is_file($pathlatex) && is_executable($pathlatex)) &&
             (is_file($pathdvips) && is_executable($pathdvips))) {
         if (is_file($pathconvert) && is_executable($pathconvert)) {
              $supportedformats[] = 'png';
+             $supportedformats[] = 'gif';
         }
         if (is_file($pathdvisvgm) && is_executable($pathdvisvgm)) {
              $supportedformats[] = 'svg';
         }
     }
+    // If no formats are supported, default to PNG (even if tools aren't available, admin can configure later).
+    if (empty($supportedformats)) {
+        $supportedformats[] = 'png';
+    }
     if (!in_array(get_config('filter_tex', 'convertformat'), $supportedformats)) {
-        set_config('convertformat', array_pop($supportedformats), 'filter_tex');
+        set_config('convertformat', $supportedformats[0], 'filter_tex');
     }
 
 }

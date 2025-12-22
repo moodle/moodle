@@ -1,7 +1,7 @@
 <?php
       // This function fetches math. images from the data directory
       // If not, it obtains the corresponding TeX expression from the cache_tex db table
-      // and uses mimeTeX to create the image file
+      // and uses LaTeX to create the image file.
 
 // disable moodle specific debug messages and any errors in output
 define('NO_DEBUG_DISPLAY', true);
@@ -16,9 +16,6 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->dirroot.'/filter/tex/lib.php');
     require_once($CFG->dirroot.'/filter/tex/latex.php');
-
-    $cmd    = '';               // Initialise these variables
-    $status = '';
 
     $relativepath = get_file_argument();
 
@@ -42,7 +39,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
                 make_upload_directory('filter/tex');
             }
 
-            // try and render with latex first
+            // Render with LaTeX.
             $latex = new latex();
             $density = get_config('filter_tex', 'density');
             $background = get_config('filter_tex', 'latexbackground');
@@ -50,15 +47,6 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
             $lateximage = $latex->render($texexp, $image, 12, $density, $background);
             if ($lateximage) {
                 copy($lateximage, $pathname);
-            } else {
-                // failing that, use mimetex
-                $texexp = $texcache->rawtext;
-                $texexp = str_replace('&lt;', '<', $texexp);
-                $texexp = str_replace('&gt;', '>', $texexp);
-                $texexp = preg_replace('!\r\n?!', ' ', $texexp);
-                $texexp = '\Large '.$texexp;
-                $cmd = filter_tex_get_cmd($pathname, $texexp);
-                system($cmd, $status);
             }
         }
     }
@@ -70,7 +58,6 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
         ]);
     } else {
         if (debugging()) {
-            echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
             echo "Image not found!<br />";
             echo "Please try the <a href=\"$CFG->wwwroot/filter/tex/texdebug.php\">debugging script</a>";
         } else {

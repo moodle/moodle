@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Algebra filter upgrade code.
  *
- * @package    filter
- * @subpackage algebra
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    filter_algebra
+ * @copyright  2025 Yusuf Wibisono <yusuf.wibisono@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Upgrade function for the algebra filter.
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
+function xmldb_filter_algebra_upgrade($oldversion) {
 
-$plugin->version   = 2025122200;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2025092600;        // Requires this Moodle version.
-$plugin->component = 'filter_algebra';  // Full name of the plugin (used for diagnostics)
-$plugin->dependencies = ['filter_tex' => 2025122200];
+    if ($oldversion < 2025122200) {
+        global $OUTPUT;
+
+        // Show notification if filter_algebra is enabled.
+        if (filter_is_enabled('algebra')) {
+            echo $OUTPUT->notification(get_string('mimetexdeprecated', 'admin', ['plugin_name' => 'filter_algebra']), 'info');
+        }
+
+        // Main savepoint reached.
+        upgrade_plugin_savepoint(true, 2025122200, 'filter', 'algebra');
+    }
+
+    return true;
+}

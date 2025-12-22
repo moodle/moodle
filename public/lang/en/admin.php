@@ -926,6 +926,7 @@ $string['messagingdefaultpressenter'] = 'Use enter to send enabled by default';
 $string['messagingdeletereadnotificationsdelay'] = 'Delete read notifications';
 $string['messagingdeleteallnotificationsdelay'] = 'Delete all notifications';
 $string['messagingssettings'] = 'Messaging settings';
+$string['mimetexdeprecated'] = 'Since MimeTeX is no longer supported, please update your {$a->plugin_name} settings to use LaTeX instead. For best results, we recommend using MathJax to render math formulas.';
 $string['minpassworddigits'] = 'Digits';
 $string['minpasswordlength'] = 'Password length';
 $string['minpasswordlower'] = 'Lowercase letters';

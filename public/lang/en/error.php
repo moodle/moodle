@@ -411,8 +411,6 @@ $string['maxareabytes'] = 'The file is larger than the space remaining in this a
 $string['maxdraftitemids'] = 'Your file uploads are temporarily limited after you uploaded a high volume of files. Please wait then try again.';
 $string['messageundeliveredbynotificationsettings'] = 'The message could not be sent because personal messages between users (in Notification settings) has been disabled by a site administrator.';
 $string['messagingdisable'] = 'Messaging is disabled on this site';
-$string['mimetexisnotexist'] = 'Your system is not configured to run mimeTeX. You need to obtain the C source from <a href="https://www.forkosh.com/mimetex.zip">https://www.forkosh.com/mimetex.zip</a>, compile it and put the executable into your moodle/filter/tex/ directory.';
-$string['mimetexnotexecutable'] = 'Custom mimetex is not executable!';
 $string['missingcategoryrole'] = 'Could not assign role to user: missing role for category.';
 $string['missingfield'] = 'Field "{$a}" is missing';
 $string['missingkeyinsql'] = 'ERROR: missing param "{$a}" in query';

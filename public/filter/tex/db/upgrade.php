@@ -24,6 +24,8 @@
  */
 
 /**
+ * Upgrade function for the tex filter.
+ *
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
@@ -39,6 +41,21 @@ function xmldb_filter_tex_upgrade($oldversion) {
 
     // Automatically generated Moodle v5.1.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2025122200) {
+        global $OUTPUT;
+
+        // Remove MimeTeX configuration setting as MimeTeX support has been removed.
+        unset_config('pathmimetex', 'filter_tex');
+
+        // Show notification if filter_tex is enabled.
+        if (filter_is_enabled('tex')) {
+            echo $OUTPUT->notification(get_string('mimetexdeprecated', 'admin', ['plugin_name' => 'filter_tex']), 'info');
+        }
+
+        // Main savepoint reached.
+        upgrade_plugin_savepoint(true, 2025122200, 'filter', 'tex');
+    }
 
     return true;
 }
