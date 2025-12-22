@@ -25,7 +25,10 @@ namespace auth_oauth2;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\clock;
+use core\di;
 use core\persistent;
+use dml_exception;
 
 /**
  * Class for loading/storing issuer from the DB
@@ -110,4 +113,45 @@ class linked_login extends persistent {
         return $DB->execute($sql, $params);
     }
 
+    /**
+     * Delete expired confirmation tokens.
+     *
+     * @return void
+     * @throws dml_exception
+     */
+    public static function delete_expired_confirmation_tokens(): void {
+        global $DB;
+
+        $sql = "
+        DELETE FROM {" . self::TABLE . "}
+        WHERE confirmtokenexpires <> 0 AND confirmtokenexpires < :now";
+
+        $DB->execute($sql, ['now' => di::get(clock::class)->now()->getTimestamp()]);
+    }
+
+    /**
+     * Delete an expired pending linked login record for a specific user, issuer, and username.
+     *
+     * @param \core\oauth2\issuer $issuer The issuer the pending record belongs to.
+     * @param string $username The external username of the pending record.
+     * @param int $userid The Moodle user ID the pending record belongs to.
+     * @return void
+     * @throws dml_exception
+     */
+    public static function delete_expired_pending(\core\oauth2\issuer $issuer, string $username, int $userid): void {
+        global $DB;
+
+        $where = "issuerid = :issuerid
+              AND username = :username
+              AND userid = :userid
+              AND confirmtokenexpires <> 0
+              AND confirmtokenexpires < :now";
+
+        $DB->delete_records_select(static::TABLE, $where, [
+            'issuerid' => $issuer->get('id'),
+            'username' => $username,
+            'userid' => $userid,
+            'now' => di::get(clock::class)->now()->getTimestamp(),
+        ]);
+    }
 }

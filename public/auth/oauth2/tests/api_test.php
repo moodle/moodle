@@ -173,6 +173,34 @@ final class api_test extends \advanced_testcase {
     }
 
     /**
+     * Test that match_username_to_user ignores expired pending tokens.
+     */
+    public function test_match_username_to_user_ignores_expired_token(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $issuer = \core\oauth2\api::create_standard_issuer('google');
+        $user = $this->getDataGenerator()->create_user();
+
+        // Insert a linked login with an expired confirmation token.
+        $DB->insert_record(linked_login::TABLE, [
+            'timecreated' => time(),
+            'timemodified' => 0,
+            'usermodified' => 0,
+            'userid' => $user->id,
+            'issuerid' => $issuer->get('id'),
+            'username' => 'banana',
+            'email' => 'banana@example.com',
+            'confirmtoken' => random_string(32),
+            'confirmtokenexpires' => time() - 60, // Expired 1 minute ago.
+        ]);
+
+        $match = \auth_oauth2\api::match_username_to_user('banana', $issuer);
+        $this->assertFalse($match);
+    }
+
+    /**
      * Test that we cannot deleted a linked login for another user
      */
     public function test_delete_linked_login_other_user(): void {
@@ -288,5 +316,55 @@ final class api_test extends \advanced_testcase {
         $sink->close();
         // Test greetings.
         $this->assertStringContainsString('Hi ' . $user->firstname, quoted_printable_decode($result[0]->body));
+    }
+
+    /**
+     * Test that send_confirm_link_login_email succeeds when an expired pending record already exists.
+     */
+    public function test_send_confirm_link_login_email_clears_expired_record(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $issuer = \core\oauth2\api::create_standard_issuer('google');
+        $user = $this->getDataGenerator()->create_user();
+
+        $userinfo = [
+            'username' => 'banana',
+            'email' => 'banana@example.com',
+        ];
+
+        // Insert an expired pending record for the same user/issuer/username.
+        $DB->insert_record(linked_login::TABLE, [
+            'timecreated' => time(),
+            'timemodified' => 0,
+            'usermodified' => 0,
+            'userid' => $user->id,
+            'issuerid' => $issuer->get('id'),
+            'username' => $userinfo['username'],
+            'email' => $userinfo['email'],
+            'confirmtoken' => random_string(32),
+            'confirmtokenexpires' => time() - 60, // Expired 1 minute ago.
+        ]);
+
+        $sink = $this->redirectEmails();
+        \auth_oauth2\api::send_confirm_link_login_email($userinfo, $issuer, $user->id);
+        $sink->close();
+
+        // Expired record replaced; exactly one pending record now exists.
+        $this->assertEquals(1, $DB->count_records(linked_login::TABLE, [
+            'userid' => $user->id,
+            'issuerid' => $issuer->get('id'),
+            'username' => $userinfo['username'],
+        ]));
+
+        // New record must have a fresh token and a future expiry.
+        $record = $DB->get_record(linked_login::TABLE, [
+            'userid' => $user->id,
+            'issuerid' => $issuer->get('id'),
+            'username' => $userinfo['username'],
+        ]);
+        $this->assertNotEmpty($record->confirmtoken);
+        $this->assertGreaterThan(time(), $record->confirmtokenexpires);
     }
 }

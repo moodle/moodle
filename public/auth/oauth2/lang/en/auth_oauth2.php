@@ -61,6 +61,7 @@ Please contact the site administrator immediately.';
 $string['confirmlinkedloginemailsubject'] = '{$a}: linked login confirmation';
 $string['createaccountswarning'] = 'This authentication plugin allows users to create accounts on your site. You may want to enable the setting "authpreventaccountcreation" if you use this plugin.';
 $string['createnewlinkedlogin'] = 'Link a new account ({$a})';
+$string['deleteexpiredconfirmtokens'] = 'Delete expired confirmation tokens';
 $string['emailconfirmlink'] = 'Link your accounts';
 $string['emailconfirmlinksent'] = '<p>An existing account was found with this email address but it is not linked yet.</p>
    <p>The accounts must be linked before you can log in.</p>
