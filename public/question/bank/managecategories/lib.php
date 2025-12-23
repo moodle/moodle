@@ -44,3 +44,17 @@ function qbank_managecategories_user_preferences(): array {
         ],
     ];
 }
+
+/**
+ * In place editing callback for categories.
+ *
+ * @param string $itemtype type of the item.
+ * @param int $itemid id of the category being edited.
+ * @param string $newvalue the new value for the edited field.
+ * @return \core\output\inplace_editable
+ */
+function qbank_managecategories_inplace_editable(string $itemtype, int $itemid, string $newvalue): \core\output\inplace_editable {
+    if ($itemtype === 'categoryname') {
+        return \qbank_managecategories\output\editable_name::callback($itemid, $newvalue);
+    }
+}

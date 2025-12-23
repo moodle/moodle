@@ -263,12 +263,14 @@ class category_manager {
         int $updateid,
         string $newparent,
         string $newname,
-        string $newinfo,
+        ?string $newinfo = null,
         string $newinfoformat = FORMAT_HTML,
         ?string $idnumber = null,
         ?int $sortorder = null,
     ): void {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/questionlib.php');
+
         if (empty($newname)) {
             throw new moodle_exception('categorynamecantbeblank', 'question');
         }
@@ -282,6 +284,10 @@ class category_manager {
         } else {
             $parentid = $oldcat->parent;
             $tocontextid = $oldcat->contextid;
+        }
+
+        if (is_null($newinfo)) {
+            $newinfo = $oldcat->info;
         }
 
         // Check permissions.

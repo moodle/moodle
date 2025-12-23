@@ -153,3 +153,10 @@ Feature: A teacher can put questions in categories in the question bank
     And I apply question bank filter "Category" with value "Used category"
     Then the "Category" field validity check should return "true"
     And I should see "Test question to be moved"
+
+  Scenario: A category name can be edited in place
+    Given I am on the "Qbank 1" "core_question > question categories" page
+    When I set the field "Edit category name" in the "Subcategory & < > \" ' &" "list_item" to "Subcategory edited & < > \" ' &"
+    Then I should not see "Subcategory & < > \" ' &"
+    And I should see "Subcategory edited & < > \" ' &"
+    And ".qbank_managecategories-item[data-categoryname^='Subcategory edited']" "css_element" should exist

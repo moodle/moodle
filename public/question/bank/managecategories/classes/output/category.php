@@ -91,6 +91,16 @@ class category implements renderable, templatable {
         $questionbankurl = new moodle_url('/question/edit.php', $params);
         $questionbankurl->param('cat', helper::combine_id_context($this->category));
         $categoryname = format_string($this->category->name, true, ['context' => $this->context, 'escape' => false]);
+        $categorylink = new category_link(
+            $categoryname,
+            $questionbankurl,
+            $this->category->questioncount,
+        );
+        $editablename = new editable_name(
+            $this->category,
+            $output->render($categorylink),
+            $canmanagecategory,
+        );
         $idnumber = null;
         if ($this->category->idnumber !== null && $this->category->idnumber !== '') {
             $idnumber = $this->category->idnumber;
@@ -212,10 +222,10 @@ class category implements renderable, templatable {
         $itemdata = [
             'categoryid' => $this->category->id,
             'contextid' => $this->category->contextid,
-            'questionbankurl' => $questionbankurl->out(false),
             'categoryname' => $categoryname,
+            'categorylink' => $categorylink->export_for_template($output),
+            'editablename' => $editablename->export_for_template($output),
             'idnumber' => $idnumber,
-            'questioncount' => $this->category->questioncount,
             'categorydesc' => $categorydesc,
             'editactionmenu' => $menu->export_for_template($output),
             'draghandle' => $canmanagecategory && $this->canreorder,
@@ -227,7 +237,4 @@ class category implements renderable, templatable {
         ];
         return $itemdata;
     }
-
-
-
 }

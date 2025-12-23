@@ -209,6 +209,12 @@ class CategoryManager extends Reactive {
         // Show the form.
         modalForm.show();
     }
+
+    updateCategoryName(categoryId, newName) {
+        categorymanager.stateManager.setReadOnly(false);
+        categorymanager.stateManager.processUpdate('categories', 'put', {id: categoryId, name: newName});
+        categorymanager.stateManager.setReadOnly(true);
+    }
 }
 
 export const categorymanager = new CategoryManager({

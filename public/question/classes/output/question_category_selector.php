@@ -92,30 +92,43 @@ class question_category_selector implements renderable, templatable {
         [$insql, $inparams] = $DB->get_in_or_equal($validcontexts);
 
         $topwhere = $top ? '' : 'AND c.parent <> 0';
-        $statuscondition = "AND (qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' " .
-            " OR qv.status = '" . question_version_status::QUESTION_STATUS_DRAFT . "' )";
-        $substatuscondition = "AND v.status <> '"  . question_version_status::QUESTION_STATUS_HIDDEN . "' ";
+        $countsql = $this->question_count_sql($showallversions);
         $sql = "SELECT c.*,
-                    (SELECT COUNT(1)
-                       FROM {question} q
-                       JOIN {question_versions} qv ON qv.questionid = q.id
-                       JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                      WHERE q.parent = '0'
-                        $statuscondition
-                            AND c.id = qbe.questioncategoryid
-                            AND ({$showallversions} = 1
-                                OR (qv.version = (SELECT MAX(v.version)
-                                                    FROM {question_versions} v
-                                                    JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
-                                                   WHERE be.id = qbe.id $substatuscondition)
-                                   )
-                                )
-                            ) AS questioncount
+                    ({$countsql}) AS questioncount
                   FROM {question_categories} c
                  WHERE c.contextid {$insql} {$topwhere}
               ORDER BY {$sortorder}";
 
         return $DB->get_records_sql($sql, $inparams);
+    }
+
+    /**
+     * Return the SQL query for getting a count of questions in a category.
+     *
+     * @param int $showallversions 1 to show all versions not only the latest.
+     * @param string $categoryparam Category ID parameter or field.
+     * @return string The SQL.
+     */
+    public static function question_count_sql(int $showallversions = 0, string $categoryparam = 'c.id'): string {
+        $statuscondition = "AND (qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' " .
+            " OR qv.status = '" . question_version_status::QUESTION_STATUS_DRAFT . "' )";
+        $substatuscondition = "AND v.status <> '"  . question_version_status::QUESTION_STATUS_HIDDEN . "' ";
+        return "
+            SELECT COUNT(1)
+              FROM {question} q
+              JOIN {question_versions} qv ON qv.questionid = q.id
+              JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+             WHERE q.parent = '0'
+                   $statuscondition
+                   AND ({$showallversions} = 1
+                       OR (qv.version = (SELECT MAX(v.version)
+                                           FROM {question_versions} v
+                                           JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
+                                           WHERE be.id = qbe.id $substatuscondition)
+                       )
+                   )
+                   AND qbe.questioncategoryid = {$categoryparam}
+        ";
     }
 
     /**
