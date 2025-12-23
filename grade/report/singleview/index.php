@@ -29,6 +29,10 @@ require_once($CFG->dirroot.'/lib/gradelib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 require_once($CFG->dirroot.'/grade/report/lib.php');
 
+// This report may require a lot of memory and time on large courses.
+raise_memory_limit(MEMORY_HUGE);
+set_time_limit(120);
+
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', null, PARAM_INT);
 
