@@ -27,6 +27,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_question\local\bank\question_version_status;
+use core_question\versions;
+
 /**
  * delete old directories and conditionally create backup_temp_ids table
  */
@@ -5310,9 +5313,55 @@ class restore_create_categories_and_questions extends restore_structure_step {
             $oldqvid = $this->latestversion->id;
             $this->latestversion->questionbankentryid = $this->latestqbe->newid;
             $this->latestversion->questionid = $newitemid;
+            // In case the backed up version was deleted and a new one created in its place, increase the version numbers of
+            // conflicting versions to make room for this one.
+            $transaction = $DB->start_delegated_transaction();
+            if (
+                $DB->record_exists(
+                    'question_versions',
+                    [
+                        'questionbankentryid' => $this->latestversion->questionbankentryid,
+                        'version' => $this->latestversion->version,
+                    ],
+                )
+            ) {
+                // We'll update each higher version and any references one-at-a-time, starting with the highest, to avoid
+                // creating a duplicate questionbankentryid-version combination in question_versions.
+                $moveversions = $DB->get_records_select(
+                    'question_versions',
+                    'questionbankentryid = :questionbankentryid AND version >= :oldversion',
+                    [
+                        'questionbankentryid' => $this->latestversion->questionbankentryid,
+                        'oldversion' => $this->latestversion->version,
+                    ],
+                    'version DESC',
+                );
+                foreach ($moveversions as $moveversion) {
+                    $DB->set_field(
+                        'question_versions',
+                        'version',
+                        $moveversion->version + 1,
+                        [
+                            'questionbankentryid' => $moveversion->questionbankentryid,
+                            'version' => $moveversion->version,
+                        ]
+                    );
+                    $DB->set_field(
+                        'question_references',
+                        'version',
+                        $moveversion->version + 1,
+                        [
+                            'questionbankentryid' => $moveversion->questionbankentryid,
+                            'version' => $moveversion->version,
+                        ]
+                    );
+                }
+                // Ensure the nextversion value has been initialised, and increment it to account for the additional version.
+                versions::get_next_version($this->latestversion->questionbankentryid);
+            }
             $newqvid = $DB->insert_record('question_versions', $this->latestversion);
             $this->set_mapping('question_versions', $oldqvid, $newqvid);
-
+            $transaction->allow_commit();
         } else {
             // By performing this set_mapping() we make get_old/new_parentid() to work for all the
             // children elements of the 'question' one (so qtype plugins will know the question they belong to).
@@ -5320,6 +5369,18 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
             // Also create the question_bank_entry and version mappings, if required.
             $newquestionversion = $DB->get_record('question_versions', ['questionid' => $questionmapping->newitemid]);
+            // Restore the version to ready state if it has been hidden.
+            if (
+                $newquestionversion->status == question_version_status::QUESTION_STATUS_HIDDEN
+                && $this->latestversion->status == question_version_status::QUESTION_STATUS_READY
+            ) {
+                $DB->set_field(
+                    'question_versions',
+                    'status',
+                    question_version_status::QUESTION_STATUS_READY,
+                    ['questionid' => $questionmapping->newitemid],
+                );
+            }
             $this->set_mapping('question_versions', $this->latestversion->id, $newquestionversion->id);
             if (empty($this->latestqbe->newid)) {
                 $this->latestqbe->oldid = $this->latestqbe->id;
@@ -5494,7 +5555,11 @@ class restore_move_module_questions_categories extends restore_execution_step {
                 // but if that context still exists on the site and the user has access then point question references
                 // to the originals.
                 $originalcontext = context::instance_by_id($contextid, IGNORE_MISSING);
-                if ($originalcontext && has_capability('mod/qbank:view', $originalcontext)) {
+                if (
+                    $this->task->is_samesite()
+                    && $originalcontext
+                    && has_capability('mod/qbank:view', $originalcontext)
+                ) {
                     $originalquestions = get_questions_category(question_get_top_category($contextid), false);
                     $targetcoursecontext = context_course::instance($this->get_courseid());
                     foreach ($originalquestions as $originalquestion) {
