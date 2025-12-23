@@ -17,6 +17,7 @@
 namespace core_question\output;
 
 use action_link;
+use core\output\pix_icon;
 use renderer_base;
 use core_courseformat\output\local\content\cm\controlmenu;
 use core_question\local\bank\question_bank_helper;
@@ -30,7 +31,6 @@ use core_question\local\bank\question_bank_helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_list implements \renderable, \templatable {
-
     /**
      * Instantiate the output class.
      *
@@ -49,7 +49,6 @@ class question_bank_list implements \renderable, \templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-
         $banks = [];
         foreach ($this->bankinstances as $instance) {
             if (plugin_supports('mod', $instance->cminfo->modname, FEATURE_PUBLISHES_QUESTIONS)) {
@@ -82,6 +81,7 @@ class question_bank_list implements \renderable, \templatable {
                 'description' => $instance->cminfo->get_formatted_content(),
                 'managequestions' => $managequestions->export_for_template($output),
                 'managebank' => $managebankexport,
+                'cmid' => $instance->modid,
             ];
         }
 

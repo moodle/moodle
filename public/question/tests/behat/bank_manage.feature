@@ -56,3 +56,25 @@ Feature: Manage question banks
     And I click on "Delete" "button"
     Then I should not see "bank1"
     But I should see "bank2"
+
+  @javascript
+  Scenario: Question banks display the number of questions they contain
+    Given the following "activities" exist:
+      | activity | name   | course | section | intro        | showdescription |
+      | qbank    | bank3  | C1     | 0       | Bank 3 intro | 0               |
+    And the following "question categories" exist:
+      | contextlevel    | reference | name             |
+      | Activity module | bank1     | Test questions 1 |
+      | Activity module | bank2     | Test questions 2 |
+      | Activity module | bank3     | Test questions 3 |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name |
+      | Test questions 1 | truefalse | TF1  |
+      | Test questions 1 | truefalse | TF2  |
+      | Test questions 1 | truefalse | TF3  |
+      | Test questions 2 | truefalse | TF4  |
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    When I navigate to "Question banks" in current page administration
+    Then I should see "Questions: 3" in the "bank1" "list_item"
+    And I should see "Questions: 1" in the "bank2" "list_item"
+    And I should see "Questions: 0" in the "bank3" "list_item"
