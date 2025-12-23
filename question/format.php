@@ -472,6 +472,7 @@ class qformat_default {
             $questionbankentry->questioncategoryid = $question->category;
             $questionbankentry->idnumber = $question->idnumber ?? null;
             $questionbankentry->ownerid = $question->createdby;
+            $questionbankentry->nextversion = 2;
             $questionbankentry->id = $DB->insert_record('question_bank_entries', $questionbankentry);
             // Create a version for each question imported.
             $questionversion = new \stdClass();
