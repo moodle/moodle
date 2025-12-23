@@ -1,0 +1,7 @@
+issueNumber: MDL-86798
+notes:
+  core_question:
+    - message: >-
+        `get_next_version()` from questionlib.php is now deprecated. Use
+        `\core_question\versions::get_next_version()` instead.
+      type: deprecated
