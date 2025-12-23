@@ -35,6 +35,7 @@ Feature: Teachers can rename subsections
   Scenario: Renaming the subsection using the settings form renames the module
     Given I should see "Subsection activity" in the "page-content" "region"
     When I click on "Edit settings" "link" in the "Subsection activity" "activity"
+    And I should not see "Description" in the "region-main" "region"
     And I set the following fields to these values:
       | Section name        | New name |
     And I press "Save changes"
