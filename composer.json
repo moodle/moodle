@@ -4,6 +4,9 @@
     "description": "Moodle - the world's open source learning platform",
     "type": "project",
     "homepage": "https://moodle.org",
+    "provide": {
+        "moodle/lms": "5.1"
+    },
     "require-dev": {
         "phpunit/phpunit": "^11",
         "mikey179/vfsstream": "1.6.*",
