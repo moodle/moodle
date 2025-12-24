@@ -852,20 +852,24 @@ a.ygtvspacer:hover {
     display: none;
 }
 
-.dndupload-progressbars {
+.dndupload-progressbars,
+.fpupload-progressbars {
     padding: 10px;
     display: none;
 }
 
-.dndupload-inprogress .dndupload-progressbars {
+.dndupload-inprogress .dndupload-progressbars,
+.fpupload-inprogress .fpupload-progressbars {
     display: block;
 }
 
-.dndupload-inprogress .fp-content {
+.dndupload-inprogress .fp-content,
+.fpupload-inprogress .fp-content {
     display: none;
 }
 
-.filemanager.fm-noitems .dndupload-inprogress .fm-empty-container {
+.filemanager.fm-noitems .dndupload-inprogress .fm-empty-container,
+.filemanager.fm-noitems.fpupload-inprogress .fm-empty-container {
     display: none;
 }
 

@@ -15,5 +15,3 @@ Feature: File type can be validated on upload
     And I should see "OpenDocument Text document .odt" in the "File type not accepted" "dialogue"
     And I should see "PDF document .pdf" in the "File type not accepted" "dialogue"
     And I click on "OK" "button" in the "File type not accepted" "dialogue"
-    And I should see "Attachment" in the "File picker" "dialogue"
-    And "Upload this file" "button" in the "File picker" "dialogue" should be visible

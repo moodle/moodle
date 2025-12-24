@@ -632,62 +632,74 @@ M.core_filepicker.init = function(Y, options) {
         },
 
         request: function(args, redraw) {
-            var api = (args.api ? args.api : this.api) + '?action='+args.action;
-            var params = {};
-            var scope = args['scope'] ? args['scope'] : this;
-            params['repo_id']=args.repository_id;
-            params['p'] = args.path?args.path:'';
-            params['page'] = args.page?args.page:'';
-            params['env']=this.options.env;
-            // the form element only accept certain file types
-            params['accepted_types']=this.options.accepted_types;
-            params['sesskey'] = M.cfg.sesskey;
-            params['client_id'] = args.client_id;
-            params['itemid'] = this.options.itemid?this.options.itemid:0;
-            params['maxbytes'] = this.options.maxbytes?this.options.maxbytes:-1;
+            let api = new URL(args.api || this.api);
+            api.searchParams.append('action', args.action);
+            const url = api.toString();
+            const scope = args.scope || this;
+            // Prepare the data to send.
+            let formData = new FormData();
+            if (args.form && args.form.id) {
+                const formElement = document.getElementById(args.form.id);
+                if (formElement) {
+                    formData = new FormData(formElement);
+                }
+            }
+            formData.append('repo_id', args.repository_id);
+            formData.append('p', args.path || '');
+            formData.append('page', args.page || '');
+            formData.append('env', this.options.env);
+            formData.append('sesskey', M.cfg.sesskey);
+            formData.append('client_id', args.client_id);
+            formData.append('itemid', this.options.itemid || 0);
+            formData.append('maxbytes', this.options.maxbytes || -1);
             // The unlimited value of areamaxbytes is -1, it is defined by FILE_AREA_MAX_BYTES_UNLIMITED.
-            params['areamaxbytes'] = this.options.areamaxbytes ? this.options.areamaxbytes : -1;
+            formData.append('areamaxbytes', this.options.areamaxbytes || -1);
+            // The form element only accept certain file types.
+            this.options.accepted_types.forEach(element => {
+                formData.append("accepted_types[]", element);
+            });
             if (this.options.context && this.options.context.id) {
-                params['ctx_id'] = this.options.context.id;
+                formData.append('ctx_id', this.options.context.id);
             }
-            if (args['params']) {
-                for (i in args['params']) {
-                    params[i] = args['params'][i];
+            if (args.params) {
+                Object.entries(args.params).forEach(([key, value]) => {
+                    formData.append(key, value);
+                });
+            }
+            const dataString = [...formData.entries()]
+                .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+                .join('&');
+            const xhr = new XMLHttpRequest();
+
+            if (args.hasOwnProperty('callbackStartUpload')) {
+                args.callbackStartUpload();
+            }
+
+            xhr.upload.addEventListener('loadstart', () => {
+                M.util.js_pending('core_filepicker/request');
+            });
+
+            xhr.upload.addEventListener('loadend', () => {
+                M.util.js_complete('core_filepicker/request');
+            });
+
+            // Update the progress bar.
+            xhr.upload.addEventListener('progress', e => {
+                if (e.lengthComputable && args.callbackProgress) {
+                    const percentage = Math.round((e.loaded * 100) / e.total);
+                    args.callbackProgress(args.params.title, percentage);
                 }
-            }
-            if (args.action == 'upload') {
-                var list = [];
-                for(var k in params) {
-                    var value = params[k];
-                    if(value instanceof Array) {
-                        for(var i in value) {
-                            list.push(k+'[]='+value[i]);
-                        }
-                    } else {
-                        list.push(k+'='+value);
-                    }
+            });
+
+            // Process the server response.
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState !== 4) {
+                    return;
                 }
-                params = list.join('&');
-            } else {
-                params = build_querystring(params);
-            }
-            var cfg = {
-                method: 'POST',
-                on: {
-                    complete: function(id,o,p) {
-                        var data = null;
-                        try {
-                            data = Y.JSON.parse(o.responseText);
-                        } catch(e) {
-                            if (o && o.status && o.status > 0) {
-                                Y.use('moodle-core-notification-exception', function() {
-                                    return new M.core.exception(e);
-                                });
-                                return;
-                            }
-                        }
-                        // error checking
-                        if (data && data.error) {
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data) {
+                        if (data.error) {
                             if (data.errorcode === 'invalidfiletypewithaccepted') {
                                 // File type errors are not really errors, so report them less scarily.
                                 Y.use('moodle-core-notification-alert', function() {
@@ -701,46 +713,42 @@ M.core_filepicker.init = function(Y, options) {
                                     return new M.core.ajaxException(data);
                                 });
                             }
-                            if (args.onerror) {
-                                args.onerror(id, data, p);
-                            } else {
-                                // Don't know what to do, so blank the dialogue to ensure it is not left in an inconsistent state.
-                                // This is not great. The user needs to re-click 'Upload file' to reset the display.
-                                this.fpnode.one('.fp-content').setContent('');
+                            if (args.hasOwnProperty('callbackUploadFinished')) {
+                                args.callbackUploadFinished();
+                            }
+                            if (args.hasOwnProperty('onerror')) {
+                                args.onerror(null, data, {scope: scope});
                             }
                             return;
-                        } else {
-                            if (data.msg) {
-                                // As far as I can tell, msg will never be set by any PHP code. -- Tim Oct 2024.
-                                scope.print_msg(data.msg, 'info');
-                            }
-                            // cache result if applicable
-                            if (args.action != 'upload' && data.allowcaching) {
-                                scope.cached_responses[params] = data;
-                            }
-                            // invoke callback
-                            args.callback(id,data,p);
                         }
+                        if (data.msg) {
+                            // As far as I can tell, msg will never be set by any PHP code. -- Tim Oct 2024.
+                            scope.print_msg(data.msg, 'info');
+                        }
+                        // Cache result if applicable.
+                        if (args.action !== 'upload' && data.allowcaching) {
+                            scope.cached_responses[dataString] = data;
+                        }
+
+                        // Invoke callback.
+                        args.callback(null, data, {scope: scope});
                     }
-                },
-                arguments: {
-                    scope: scope
-                },
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                data: params,
-                context: this
+                } else {
+                    scope.print_msg(M.util.get_string('serverconnection', 'error'), 'error');
+                }
+
+                if (args.hasOwnProperty('callbackUploadFinished')) {
+                    args.callbackUploadFinished();
+                }
             };
-            if (args.form) {
-                cfg.form = args.form;
-            }
-            // check if result of the same request has been already cached. If not, request it
+
+            // Check if result of the same request has been already cached. If not, request it.
             // (never applicable in case of form submission and/or upload action):
-            if (!args.form && args.action != 'upload' && scope.cached_responses[params]) {
-                args.callback(null, scope.cached_responses[params], {scope: scope})
+            if (!args.form && args.action != 'upload' && scope.cached_responses[dataString]) {
+                args.callback(null, scope.cached_responses[dataString], {scope: scope});
             } else {
-                Y.io(api, cfg);
+                xhr.open("POST", url, true);
+                xhr.send(formData);
                 if (redraw) {
                     this.wait();
                 }
@@ -1978,10 +1986,18 @@ M.core_filepicker.init = function(Y, options) {
             }
 
             var scope = this;
+            let file = '';
+            content.one('.fp-file input[type="file"]').on('change', function(e) {
+                if (e._event.target.files.length) {
+                    file = e._event.target.files[0];
+                }
+            });
             content.one('.fp-upload-btn').on('click', function(e) {
                 e.preventDefault();
-                var license = content.one('.fp-setlicense select');
-
+                const license = content.one('.fp-setlicense select');
+                const title = content.one('.fp-saveas input').get('value');
+                const author = content.one('.fp-setauthor input').get('value');
+                const isFileManager = scope.options.env === 'filemanager';
                 if (this.options.rememberuserlicensepref) {
                     this.set_preference('recentlicense', license.get('value'));
                 }
@@ -1990,32 +2006,48 @@ M.core_filepicker.init = function(Y, options) {
                     return false;
                 }
                 this.hide_header();
-                scope.request({
-                        scope: scope,
-                        action:'upload',
-                        client_id: client_id,
-                        params: {'savepath': scope.options.savepath || '/'},
-                        repository_id: scope.active_repo.id,
-                        form: {id: id, upload:true},
-                        onerror: function(id, o, args) {
+                // Disable warning for legacy code.
+                const args = {
+                    scope: scope,
+                    action: 'upload',
+                    client_id: client_id, // eslint-disable-line camelcase
+                    params: {
+                        'savepath': scope.options.savepath,
+                        'repo_upload_file': file,
+                        'title': title || file.name,
+                        'author': author || scope.options.author,
+                        'license': this.get_preference('recentlicense'),
+                    },
+                    repository_id: scope.active_repo.id, // eslint-disable-line camelcase
+                    form: {id: id, upload: true},
+                    onerror: function() {
+                        scope.create_upload_form(data);
+                    },
+                    callback: function(id, o, args) {
+                        if (o.event == 'fileexists') {
                             scope.create_upload_form(data);
-                        },
-                        callback: function(id, o, args) {
-                            if (o.event == 'fileexists') {
-                                scope.create_upload_form(data);
-                                scope.process_existing_file(o);
-                                return;
-                            }
-                            if (scope.options.editor_target&&scope.options.env=='editor') {
-                                scope.options.editor_target.value=o.url;
-                                scope.options.editor_target.dispatchEvent(new Event('change'), {'bubbles': true});
-                            }
-                            scope.hide();
-                            o.client_id = client_id;
-                            var formcallback_scope = args.scope.options.magicscope ? args.scope.options.magicscope : args.scope;
-                            scope.options.formcallback.apply(formcallback_scope, [o]);
+                            scope.process_existing_file(o);
+                            return;
                         }
-                }, true);
+                        if (scope.options.editor_target && scope.options.env == 'editor') {
+                            scope.options.editor_target.value = o.url;
+                            scope.options.editor_target.dispatchEvent(new Event('change'), {'bubbles': true});
+                        }
+                        scope.hide();
+                        o.client_id = client_id; // eslint-disable-line camelcase
+                        const formcallbackScope = args.scope.options.magicscope || args.scope;
+                        scope.options.formcallback.apply(formcallbackScope, [o]);
+                    },
+                };
+                if (isFileManager) {
+                    // The progress bar is only support in filemanager.
+                    // Hide the file picker form and show the progress bar in the filemanager.
+                    scope.hide();
+                    args.callbackStartUpload = Y.bind('startUpload', scope.options.magicscope);
+                    args.callbackUploadFinished = Y.bind('uploadFinished', scope.options.magicscope);
+                    args.callbackProgress = Y.bind('updateProgress', scope.options.magicscope);
+                }
+                scope.request(args, true);
             }, this);
         },
         /** setting handlers and labels for elements in toolbar. Called once during the initial render of filepicker */
