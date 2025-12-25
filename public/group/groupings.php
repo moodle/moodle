@@ -104,13 +104,14 @@ if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), '
 }
 $table = new html_table();
 $table->head  = array($strgrouping, $strgroups, $struses, $stredit);
-$table->size  = array('30%', '50%', '10%', '10%');
+$table->size  = ['30%', '45%', '10%', '15%'];
 $table->align = array('left', 'left', 'center', 'center');
 $table->width = '90%';
+$table->attributes['class'] = 'generaltable table table-hover table-striped';
 $table->data  = $data;
 echo html_writer::table($table);
 
-echo $OUTPUT->container_start('buttons');
+echo $OUTPUT->container_start('buttons mt-3');
 echo $OUTPUT->single_button(new moodle_url('grouping.php', array('courseid'=>$courseid)), $srtnewgrouping);
 echo $OUTPUT->container_end();
 
