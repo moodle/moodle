@@ -1,0 +1,25 @@
+issueNumber: MDL-87423
+notes:
+  core:
+    - message: >-
+        The following functions have been removed from `public/lib/deprecatedlib.php` as part of the depreciation process:
+        - `print_course_request_buttons()`
+        - `cron_run()`
+        - `cron_run_scheduled_tasks()`
+        - `cron_run_adhoc_tasks()`
+        - `cron_run_inner_scheduled_task()`
+        - `cron_run_inner_adhoc_task()`
+        - `cron_set_process_title()`
+        - `cron_trace_time_and_memory()`
+        - `cron_prepare_core_renderer()`
+        - `cron_setup_user()`
+        - `badges_get_oauth2_service_options()`
+        - `theme_is_device_locked()`
+        - `theme_get_locked_theme_for_device()`
+        - `random_bytes_emulate()`
+        - `plagiarism_get_file_results()`
+        - `plagiarism_update_status()`
+        - `calendar_top_controls()`
+        - `calendar_get_link_previous()`
+        - `calendar_get_link_next()`
+      type: removed

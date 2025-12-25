@@ -222,137 +222,6 @@ function print_arrow() {
 }
 
 /**
- * @deprecated since Moodle 4.0
- */
-#[\core\attribute\deprecated('category_action_bar tertiary navigation', since: '4.0', mdl: 'MDL-73462', final: true)]
-function print_course_request_buttons() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.2 Use \core\cron::run_main_process() instead.
- */
-#[\core\attribute\deprecated('\core\cron::run_main_process()', since: '4.2', mdl: 'MDL-77186', final: true)]
-function cron_run() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.2 Use \core\cron::run_scheduled_tasks() instead.
- */
-#[\core\attribute\deprecated('\core\cron::run_scheduled_tasks()', since: '4.2', mdl: 'MDL-77186', final: true)]
-function cron_run_scheduled_tasks() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.2 Use \core\cron::run_adhoc_tasks() instead.
- */
-#[\core\attribute\deprecated('\core\cron::run_adhoc_tasks()', since: '4.2', mdl: 'MDL-77186', final: true)]
-function cron_run_adhoc_tasks() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.2 Use \core\cron::run_inner_scheduled_task() instead.
- */
-#[\core\attribute\deprecated('\core\cron::run_inner_scheduled_task()', since: '4.2', mdl: 'MDL-77186', final: true)]
-function cron_run_inner_scheduled_task() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.2 Use \core\cron::run_inner_adhoc_task() instead.
- */
-#[\core\attribute\deprecated('\core\cron::run_inner_adhoc_task()', since: '4.2', mdl: 'MDL-77186', final: true)]
-function cron_run_inner_adhoc_task() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
-
- * @deprecated since 4.2 Use \core\cron::set_process_title() instead.
- */
-#[\core\attribute\deprecated('\core\cron::set_process_title()', since: '4.2', mdl: 'MDL-77186', final: true)]
-function cron_set_process_title() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.2 Use \core\cron::trace_time_and_memory() instead.
- */
-#[\core\attribute\deprecated('\core\cron::trace_time_and_memory()', since: '4.2', mdl: 'MDL-77186', final: true)]
-function cron_trace_time_and_memory() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.2 Use \core\cron::prepare_core_renderer() instead.
- */
-#[\core\attribute\deprecated('\core\cron::prepare_core_renderer()', since: '4.2', mdl: 'MDL-77186', final: true)]
-function cron_prepare_core_renderer() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.2. Use \core\cron::setup_user() instead.
- */
-#[\core\attribute\deprecated('\core\cron::setup_user()', since: '4.2', mdl: 'MDL-77837', final: true)]
-function cron_setup_user() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.3.
- */
-#[\core\attribute\deprecated(since: '4.3', mdl: 'MDL-77837', final: true)]
-function badges_get_oauth2_service_options() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.3.
- */
-#[\core\attribute\deprecated(
-    null,
-    since: '4.3',
-    reason: 'All functions associated with device specific themes are being removed',
-    mdl: 'MDL-77793',
-    final: true,
-)]
-function theme_is_device_locked() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.3.
- */
-#[\core\attribute\deprecated(
-    null,
-    since: '4.3',
-    reason: 'All functions associated with device specific themes are being removed',
-    mdl: 'MDL-77793',
-    final: true,
-)]
-function theme_get_locked_theme_for_device() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 4.3.
- */
-#[\core\attribute\deprecated(
-    'random_bytes()',
-    since: '4.3',
-    reason: 'Since PHP 7.0 the random_bytes() is natively available and Moodle LMS requires greater than PHP 7.',
-    mdl: 'MDL-78698',
-    final: true,
-)]
-function random_bytes_emulate() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
  * rc4encrypt
  *
  * @param string $data        Data to encrypt.
@@ -551,32 +420,6 @@ function reset_password_and_mail($user) {
 }
 
 /**
- * @deprecated Since Moodle 4.0 MDL-71175. Please use plagiarism_get_links() or plugin specific functions..
- */
-#[\core\attribute\deprecated(
-    replacement: 'plagiarism_get_links',
-    since: '4.0',
-    mdl: 'MDL-71175',
-    final: true,
-)]
-function plagiarism_get_file_results(): void {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated Since Moodle 4.0 - Please use {plugin name}_before_standard_top_of_body_html instead.
- */
-#[\core\attribute\deprecated(
-    replacement: '{plugin name}_before_standard_top_of_body_html',
-    since: '4.0',
-    mdl: 'MDL-71175',
-    final: true,
-)]
-function plagiarism_update_status(): void {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
  * ?
  *
  * @param string $modargs
@@ -754,30 +597,6 @@ function question_delete_course_category($category, $newcategory, $notused = fal
 function check_igbinary322_version(environment_results $result) {
     \core\deprecation::emit_deprecation(__FUNCTION__);
     return null;
-}
-
-/**
- * @deprecated since Moodle 4.3 MDL-79313
- */
-#[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79313', final: true)]
-function calendar_top_controls() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since Moodle 4.3 MDL-79432
- */
-#[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79432', final: true)]
-function calendar_get_link_previous() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since Moodle 4.3 MDL-79432
- */
-#[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-79432', final: true)]
-function calendar_get_link_next() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
 }
 
 /**
