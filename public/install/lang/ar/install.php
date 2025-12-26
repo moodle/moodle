@@ -69,6 +69,7 @@ $string['pathsunsecuredataroot'] = 'موضع مجلد البيانات الرئ�
 $string['pathswrongadmindir'] = 'مجلد المشرف غير موجود';
 $string['phpextension'] = 'إمتداد PHP {$a}';
 $string['phpversion'] = 'إصدار PHP';
+$string['webservernotconfigured'] = 'مخدم الويب غير مهيأ';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'أنت تشاهد هذه الصفحة لأنك تمكنت بنجاح من تنصيب وإطلاق
 حزمة <strong>{$a->packname} {$a->packversion}</strong> في حاسبتك. تهانينا!';
