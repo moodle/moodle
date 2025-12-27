@@ -69,6 +69,7 @@ $string['pathsunsecuredataroot'] = 'موضع مجلد البيانات الرئ�
 $string['pathswrongadmindir'] = 'مجلد المشرف غير موجود';
 $string['phpextension'] = 'إمتداد PHP {$a}';
 $string['phpversion'] = 'إصدار PHP';
+$string['webserverconfigproblemdescription'] = 'إن مخدمك ليس مهيئًا لمنع الوصول إلى الملفات الواقعة خارج المجلد /public. يرجى الرجوع إلى <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> للاطلاع على تفاصيل كيفية تهيئة مخدمك. بمجرد إعادة تهيئته، ترجى <a href="{$a}">زيارة مجلد الويب الأساسي</a>.';
 $string['webservernotconfigured'] = 'مخدم الويب غير مهيأ';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'أنت تشاهد هذه الصفحة لأنك تمكنت بنجاح من تنصيب وإطلاق
