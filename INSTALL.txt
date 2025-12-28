@@ -1,19 +1,54 @@
 MOODLE INSTALLATION
 ===================
 
-Here is a short summary of the installation process (which can take just a few
-minutes):
+This document provides a concise guide to installing Moodle. For a complete, detailed installation guide, please refer to the [official documentation](https://docs.moodle.org/en/Installing_Moodle).
 
-1. Move the Moodle files into your web directory.
+## Prerequisites
 
-2. Create a single database for Moodle to store all its tables in (or choose an
-   existing database).
+Before you begin, ensure you have the following installed:
 
-3. Visit your Moodle site with a browser. You should be taken to the
-   install.php script, which will lead you through creating a config.php file
-   and then setting up Moodle, creating an admin account etc.
+- **PHP**: Version 7.4 or later (8.x recommended). Required extensions: `curl`, `intl`, `json`, `mbstring`, `openssl`, `pdo`, `xml`, `zip`.
+- **Database**: MySQL 5.7+ / MariaDB 10.3+ / PostgreSQL 9.6+ / Microsoft SQL Server 2017+.
+- **Web server**: Apache (with `mod_rewrite`) or Nginx.
+- **Optional but recommended**: Composer (for dependency management), Node.js (for building front‑end assets).
 
-4. Set up a cron task to call the file admin/cron.php every minute.
+## Quick Installation Steps
+
+1. **Place the files**: Extract the Moodle archive or clone the repository into your web server's document root.
+
+   ```bash
+   git clone https://github.com/moodle/moodle.git
+   cd moodle
+   ```
+
+2. **Create a database**: Using your database management tool (phpMyAdmin, command line, etc.), create a new database and a user with full permissions on that database.
+
+3. **Run the installer**: Open your browser and navigate to the Moodle directory (e.g., `http://localhost/moodle`). The installation script (`install.php`) will start automatically.
+
+4. **Follow the on‑screen instructions**:
+   - Select your language.
+   - Confirm the paths and web address.
+   - Choose the database driver and enter the connection details (database name, user, password, host).
+   - The installer will create the necessary tables and set up the configuration file (`config.php`).
+   - Create an administrator account.
+
+5. **Set up cron**: Moodle requires a scheduled task to perform background jobs. You can:
+   - Add a cron entry that runs every minute:
+     ```bash
+     * * * * * /usr/bin/php /path/to/moodle/admin/cron.php >/dev/null
+     ```
+   - Or use the "web cron" option (less reliable) during installation.
+
+## Additional Notes
+
+- **Docker**: If you prefer using Docker, you can use the official Moodle Docker images or community‑maintained images. See the [Docker installation guide](https://docs.moodle.org/en/Docker) for details.
+- **Development setup**: For a development environment, you may want to enable debugging, install additional tools (Xdebug, Grunt), and use the `git` workflow described in the [developer documentation](https://moodledev.io).
+
+## Troubleshooting
+
+- **File permissions**: Ensure the web server has write access to the `data` directory and the `config.php` file.
+- **Missing PHP extensions**: The installer will check for required extensions and warn you if any are missing.
+- **Database connection errors**: Verify that the database user has the correct privileges and that the database host is reachable.
 
 For more information, see <https://docs.moodle.org/en/Installing_Moodle>.
 
