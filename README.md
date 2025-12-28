@@ -8,6 +8,29 @@
 
 Moodle is designed to allow educators, administrators and learners to create personalised learning environments with a single robust, secure and integrated system.
 
+## Quick Start
+
+If you want to set up a local development instance of Moodle quickly, follow these steps:
+
+1. **Prerequisites**: Ensure you have PHP 7.4+ (or 8.x), a database (MySQL/PostgreSQL/MariaDB), and a web server (Apache/Nginx) installed. You may also need Composer and Node.js for development.
+
+2. **Clone the repository**:
+   ```bash
+   git clone https://github.com/moodle/moodle.git
+   cd moodle
+   ```
+
+3. **Prepare the web root**: Point your web server's document root to the `moodle` directory (or create a symbolic link). Alternatively, you can use PHP's built-in web server for testing:
+   ```bash
+   php -S localhost:8000
+   ```
+
+4. **Run the installation script**: Open your browser and navigate to `http://localhost:8000`. You will be guided through the installation process, where you'll configure the database and create an administrator account.
+
+5. **Set up cron**: Moodle requires a cron job for scheduled tasks. You can set up a cron entry that calls `admin/cron.php` every minute, or use the "web cron" option during installation.
+
+For more detailed instructions, including Docker setups and production deployments, please refer to the [full installation guide][3].
+
 ## Documentation
 
 - Read our [User documentation][3]
