@@ -96,19 +96,14 @@
             </tbody>
         </table>
     </fieldset>
-
-    {{< core/sticky_footer }}
-        {{$ stickycontent }}
-            <input
-                type="submit"
-                name="selectpreset"
-                data-action="selectpreset"
-                value="{{#str}}usepreset, mod_data{{/str}}"
-                class="btn btn-secondary"
-                disabled
-            >
-        {{/ stickycontent }}
-    {{/ core/sticky_footer }}
+    <input
+            type="submit"
+            name="selectpreset"
+            data-action="selectpreset"
+            value="{{#str}}usepreset, mod_data{{/str}}"
+            class="btn btn-secondary"
+            disabled
+    >
 </form>
 
 {{#js}}
