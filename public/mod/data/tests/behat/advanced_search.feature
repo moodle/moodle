@@ -45,7 +45,7 @@ Feature: Database entries can be searched using an advanced search form.
     And I set the field "Templates tertiary navigation" to "Advanced search template"
     And I set the following fields to these values:
       | Advanced search template | The test is on [[My Field#name]], [[My Field#description]], and the input [[My Field]] |
-    And I click on "Save" "button" in the "sticky-footer" "region"
+    And I click on "Save" "button"
     And I navigate to "Database" in current page administration
     And I should see "First content"
     And I should see "Second content"
@@ -63,7 +63,7 @@ Feature: Database entries can be searched using an advanced search form.
     And I set the field "Templates tertiary navigation" to "Advanced search template"
     And I set the following fields to these values:
       | Advanced search template | Main search [[My Field]], Other fields ##otherfields## |
-    And I click on "Save" "button" in the "sticky-footer" "region"
+    And I click on "Save" "button"
     And I navigate to "Database" in current page administration
     And I should see "First content"
     And I should see "Second content"

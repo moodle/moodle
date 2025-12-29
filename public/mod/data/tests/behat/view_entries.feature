@@ -149,7 +149,7 @@ Feature: Users can view and search database entries
     And I set the field "Templates tertiary navigation" to "List view template"
     And I set the following fields to these values:
       | Repeated entry | ##delcheck##[[Test field name]]! |
-    And I click on "Save" "button" in the "sticky-footer" "region"
+    And I click on "Save" "button"
     When I navigate to "Database" in current page administration
     When I click on "Select all" "button"
     And I click on "Delete selected" "button"
