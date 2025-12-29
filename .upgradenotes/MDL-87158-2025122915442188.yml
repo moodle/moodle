@@ -1,0 +1,7 @@
+issueNumber: MDL-87158
+notes:
+  tool_xmldb:
+    - message: >-
+        Generated `rename_field(...)` upgrade step code now checks for field
+        existence, to ensure it can be executed multiple times
+      type: changed
