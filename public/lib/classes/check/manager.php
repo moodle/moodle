@@ -67,6 +67,7 @@ class manager {
             new performance\designermode(),
             new performance\cachejs(),
             new performance\debugging(),
+            new environment\environment(),
             new performance\backups(),
             new performance\stats(),
             new performance\dbschema(),
@@ -94,7 +95,6 @@ class manager {
      */
     public static function get_status_checks(): array {
         $checks = [
-            new environment\environment(),
             new environment\upgradecheck(),
             new environment\antivirus(),
             new environment\router(),
