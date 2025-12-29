@@ -3274,6 +3274,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             ON uc.roleid = rc.roleid
            AND ( $eqpaths OR $likechild )
          WHERE (ra.id IS NOT NULL OR uc.upath IS NOT NULL)
+      ORDER BY cc.sortorder, cc.id
     ";
 
         $params = [
