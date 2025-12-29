@@ -201,7 +201,3 @@
     border-color: var(--bs-primary);
     color: var(--bs-primary);
 }
-
-#page-mod-data-preset .table {
-    margin-bottom: 10rem;
-}

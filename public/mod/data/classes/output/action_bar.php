@@ -33,11 +33,11 @@ class action_bar {
     /** @var int $id The database module id. */
     private $id;
 
-    /** @var int $cmid The database course module id. */
-    private $cmid;
-
     /** @var moodle_url $currenturl The URL of the current page. */
     private $currenturl;
+
+    /** @var \cm_info $cm the course module. */
+    private $cm;
 
     /**
      * The class constructor.
@@ -48,7 +48,7 @@ class action_bar {
     public function __construct(int $id, moodle_url $pageurl) {
         $this->id = $id;
         [$course, $cm] = get_course_and_cm_from_instance($this->id, 'data');
-        $this->cmid = $cm->id;
+        $this->cm = $cm;
         $this->currenturl = $pageurl;
     }
 
@@ -111,7 +111,7 @@ class action_bar {
         $triggerclasses = ['btn'];
         $triggerclasses[] = $isprimarybutton ? 'btn-primary' : 'btn-secondary';
         $fieldselect->set_menu_trigger(get_string('newfield', 'mod_data'), join(' ', $triggerclasses));
-        $fieldselectparams = ['id' => $this->cmid, 'mode' => 'new'];
+        $fieldselectparams = ['id' => $this->cm->id, 'mode' => 'new'];
         foreach ($menufield as $fieldtype => $fieldname) {
             $fieldselectparams['newtype'] = $fieldtype;
             $fieldselect->add(new \action_menu_link(
@@ -135,10 +135,9 @@ class action_bar {
      */
     public function get_view_action_bar(bool $hasentries, string $mode): string {
         global $PAGE;
-
         $viewlistlink = new moodle_url('/mod/data/view.php', ['d' => $this->id]);
         $viewsinglelink = new moodle_url('/mod/data/view.php', ['d' => $this->id, 'mode' => 'single']);
-
+        $manager = manager::create_from_coursemodule($this->cm);
         $menu = [
             $viewlistlink->out(false) => get_string('listview', 'mod_data'),
             $viewsinglelink->out(false) => get_string('singleview', 'mod_data'),
@@ -152,8 +151,28 @@ class action_bar {
 
         $urlselect = new url_select($menu, $activeurl->out(false), null, 'viewactionselect');
         $urlselect->set_label(get_string('viewnavigation', 'mod_data'), ['class' => 'visually-hidden']);
+        $cm = $manager->get_coursemodule();
+        $instance = $manager->get_instance();
+        $currentgroup = groups_get_activity_group($cm);
+        $groupmode = groups_get_activity_groupmode($cm);
+        $context = $manager->get_context();
+        if (data_user_can_add_entry($instance, $currentgroup, $groupmode, $context)) {
+            $backtourl = new moodle_url($this->currenturl);
+            $backtourl->param('mode', $mode);
+            $addentrylink = new moodle_url(
+                '/mod/data/edit.php',
+                ['id' => $this->cm->id, 'backto' => $backtourl]
+            );
+            $addentrybutton = new \core\output\action_link(
+                $addentrylink,
+                get_string('add', 'mod_data'),
+                null,
+                ['class' => 'btn btn-primary mx-1', 'role' => 'button']
+            );
+        }
         $renderer = $PAGE->get_renderer('mod_data');
-        $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries, $mode);
+
+        $viewactionbar = new view_action_bar($this->id, $urlselect, $hasentries, $mode, $addentrybutton ?? null);
 
         return $renderer->render_view_action_bar($viewactionbar);
     }
@@ -233,7 +252,7 @@ class action_bar {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('mod_data');
-        $presetsactionbar = new presets_action_bar($this->cmid, $this->get_presets_actions_select(true));
+        $presetsactionbar = new presets_action_bar($this->cm->id, $this->get_presets_actions_select(true));
 
         return $renderer->render_presets_action_bar($presetsactionbar);
     }
@@ -302,20 +321,20 @@ class action_bar {
 
         if ($hasimport) {
             // Import.
-            $actionsselectparams = ['id' => $this->cmid];
+            $actionsselectparams = ['id' => $this->cm->id];
             $actionsselect->add(new \action_menu_link(
                 new moodle_url('/mod/data/preset.php', $actionsselectparams),
                 null,
                 get_string('importpreset', 'mod_data'),
                 false,
-                ['data-action' => 'importpresets', 'data-dataid' => $this->cmid]
+                ['data-action' => 'importpresets', 'data-dataid' => $this->cm->id]
             ));
         }
 
         // If the database has no fields, export and save as preset options shouldn't be displayed.
         if ($hasfields) {
             // Export.
-            $actionsselectparams = ['id' => $this->cmid, 'action' => 'export'];
+            $actionsselectparams = ['id' => $this->cm->id, 'action' => 'export'];
             $actionsselect->add(new \action_menu_link(
                 new moodle_url('/mod/data/preset.php', $actionsselectparams),
                 null,

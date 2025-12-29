@@ -16,6 +16,7 @@
 
 namespace mod_data\output;
 
+use core\output\action_link;
 use data_portfolio_caller;
 use mod_data\manager;
 use moodle_url;
@@ -44,6 +45,9 @@ class view_action_bar implements templatable, renderable {
     /** @var bool $mode The current view mode (list, view...). */
     private $mode;
 
+    /** @var action_link|null $addentrylink The add entry link */
+    private ?action_link $addentrylink = null;
+
     /**
      * The class constructor.
      *
@@ -51,12 +55,20 @@ class view_action_bar implements templatable, renderable {
      * @param \url_select $urlselect The URL selector object.
      * @param bool $hasentries Whether entries exist.
      * @param string $mode The current view mode (list, view...).
+     * @param action_link|null $addentrylink The add entry link
      */
-    public function __construct(int $id, \url_select $urlselect, bool $hasentries, string $mode) {
+    public function __construct(
+        int $id,
+        \url_select $urlselect,
+        bool $hasentries,
+        string $mode,
+        ?action_link $addentrylink = null
+    ) {
         $this->id = $id;
         $this->urlselect = $urlselect;
         $this->hasentries = $hasentries;
         $this->mode = $mode;
+        $this->addentrylink = $addentrylink;
     }
 
     /**
@@ -142,7 +154,9 @@ class view_action_bar implements templatable, renderable {
         if ($actionsselect) {
             $data['actionsselect'] = $actionsselect->export_for_template($output);
         }
-
+        if ($this->addentrylink) {
+            $data['addentrybutton'] = $this->addentrylink->export_for_template($output);
+        }
         return $data;
     }
 }
