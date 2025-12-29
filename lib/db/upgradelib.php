@@ -1274,62 +1274,56 @@ function upgrade_block_delete_instances(
 ): void {
     global $DB;
 
-    $deleteblockinstances = function (string $instanceselect, array $instanceparams) use ($DB) {
-        $deletesql = <<<EOF
-            SELECT c.id AS cid
-              FROM {context} c
-              JOIN {block_instances} bi ON bi.id = c.instanceid AND c.contextlevel = :contextlevel
-             WHERE {$instanceselect}
-        EOF;
-        $DB->delete_records_subquery('context', 'id', 'cid', $deletesql, array_merge($instanceparams, [
-            'contextlevel' => CONTEXT_BLOCK,
-        ]));
+    $deleteblockinstances = function (array $blockids) use ($DB) {
+        [$insql, $inparams] = $DB->get_in_or_equal($blockids, SQL_PARAMS_NAMED, 'blockid');
+        $contextparams = array_merge(['contextlevel' => CONTEXT_BLOCK], $inparams);
+        $DB->delete_records_select('context', "contextlevel = :contextlevel AND instanceid {$insql}", $contextparams);
 
-        $deletesql = <<<EOF
-            SELECT bp.id AS bpid
-              FROM {block_positions} bp
-              JOIN {block_instances} bi ON bi.id = bp.blockinstanceid
-             WHERE {$instanceselect}
-        EOF;
-        $DB->delete_records_subquery('block_positions', 'id', 'bpid', $deletesql, $instanceparams);
+        $DB->delete_records_select('block_positions', "blockinstanceid {$insql}", $inparams);
 
-        $blockhidden = $DB->sql_concat("'block'", 'bi.id', "'hidden'");
-        $blockdocked = $DB->sql_concat("'docked_block_instance_'", 'bi.id');
-        $deletesql = <<<EOF
-            SELECT p.id AS pid
-              FROM {user_preferences} p
-              JOIN {block_instances} bi ON p.name IN ({$blockhidden}, {$blockdocked})
-             WHERE {$instanceselect}
-        EOF;
-        $DB->delete_records_subquery('user_preferences', 'id', 'pid', $deletesql, $instanceparams);
-
-        $deletesql = <<<EOF
-            SELECT bi.id AS bid
-              FROM {block_instances} bi
-             WHERE {$instanceselect}
-        EOF;
-        $DB->delete_records_subquery('block_instances', 'id', 'bid', $deletesql, $instanceparams);
+        $DB->delete_records_select('block_instances', "id {$insql}", $inparams);
     };
 
-    // Delete the default indexsys version of the block.
+    $deletepreferences = function (array $prefids) use ($DB) {
+        [$insql, $params] = $DB->get_in_or_equal($prefids);
+        $DB->delete_records_select('user_preferences', "id {$insql}", $params);
+    };
+
+    $targetids = [];
+    $batchsize = 1000;
+
+    $collectids = function ($recordset) use (&$targetids) {
+        foreach ($recordset as $record) {
+            $targetids[(int)$record->id] = true;
+        }
+        $recordset->close();
+    };
+
+    $collectpreferences = function ($recordset, $targetids) {
+        $prefstodelete = [];
+        foreach ($recordset as $pref) {
+            $blockid = (int)str_replace(['docked_block_instance_', 'block', 'hidden'], '', $pref->name);
+            if (isset($targetids[$blockid])) {
+                $prefstodelete[] = $pref->id;
+            }
+        }
+        $recordset->close();
+        return $prefstodelete;
+    };
+
+    // Collect block IDs from the default indexsys version of the block.
     $subpagepattern = $DB->get_record('my_pages', [
         'userid' => null,
         'name' => $pagename,
         'private' => MY_PAGE_PRIVATE,
     ], 'id', IGNORE_MULTIPLE)->id;
 
-    $instanceselect = <<<EOF
-            blockname = :blockname
-        AND pagetypepattern = :pagetypepattern
-        AND subpagepattern = :subpagepattern
-    EOF;
-
-    $params = [
+    $recordset = $DB->get_recordset('block_instances', [
         'blockname' => $blockname,
         'pagetypepattern' => $pagetypepattern,
         'subpagepattern' => $subpagepattern,
-    ];
-    $deleteblockinstances($instanceselect, $params);
+    ], '', 'id');
+    $collectids($recordset);
 
     // The subpagepattern is a string.
     // In all core blocks it contains a string represnetation of an integer, but it is theoretically possible for a
@@ -1339,30 +1333,54 @@ function upgrade_block_delete_instances(
 
     // Look for any and all instances of the block in customised /my pages.
     $subpageempty = $DB->sql_isnotempty('block_instances', 'bi.subpagepattern', true, false);
-    $instanceselect = <<<EOF
-         bi.id IN (
-            SELECT * FROM (
-                SELECT bi.id
-                  FROM {my_pages} mp
-                  JOIN {block_instances} bi
-                        ON bi.blockname = :blockname
-                       AND bi.subpagepattern IS NOT NULL AND {$subpageempty}
-                       AND bi.pagetypepattern = :pagetypepattern
-                       AND {$subpagepattern} = mp.id
-                 WHERE mp.private = :private
-                   AND mp.name = :pagename
-            ) bid
-         )
+    $customblockssql = <<<EOF
+        SELECT bi.id
+          FROM {my_pages} mp
+          JOIN {block_instances} bi
+                ON bi.blockname = :blockname
+               AND bi.subpagepattern IS NOT NULL AND {$subpageempty}
+               AND bi.pagetypepattern = :pagetypepattern
+               AND {$subpagepattern} = mp.id
+         WHERE mp.private = :private
+           AND mp.name = :pagename
     EOF;
 
-    $params = [
+    $recordset = $DB->get_recordset_sql($customblockssql, [
         'blockname' => $blockname,
         'pagetypepattern' => $pagetypepattern,
         'pagename' => $pagename,
         'private' => MY_PAGE_PRIVATE,
-    ];
+    ]);
+    $collectids($recordset);
 
-    $deleteblockinstances($instanceselect, $params);
+    if (empty($targetids)) {
+        return;
+    }
+
+    // Collect preference IDs associated with these blocks.
+    $dockedlike = $DB->sql_like('name', ':docked', false);
+    $hiddenlike = $DB->sql_like('name', ':hidden', false);
+    $prefssql = <<<EOF
+        SELECT id, name
+          FROM {user_preferences}
+         WHERE {$dockedlike} OR {$hiddenlike}
+    EOF;
+
+    $recordset = $DB->get_recordset_sql($prefssql, [
+        'docked' => 'docked_block_instance_%',
+        'hidden' => 'block%hidden',
+    ]);
+    $prefstodelete = $collectpreferences($recordset, $targetids);
+
+    // Delete preferences in batches.
+    foreach (array_chunk($prefstodelete, $batchsize) as $batch) {
+        $deletepreferences($batch);
+    }
+
+    // Delete block instances and related records in batches.
+    foreach (array_chunk(array_keys($targetids), $batchsize) as $batch) {
+        $deleteblockinstances($batch);
+    }
 }
 
 /**
