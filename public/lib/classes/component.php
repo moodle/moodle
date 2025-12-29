@@ -110,7 +110,6 @@ class component {
     protected static $filestomap = ['lib.php', 'settings.php'];
     /** @var array associative array of PSR-0 namespaces and corresponding paths. */
     protected static $psr0namespaces = [
-        'Mustache' => 'public/lib/mustache/src/Mustache',
     ];
     /** @var array<string|array<string>> associative array of PRS-4 namespaces and corresponding paths. */
     protected static $psr4namespaces = [
@@ -141,6 +140,7 @@ class component {
         \MoodleHQ::class => [
             'public/lib/rtlcss/src/MoodleHQ',
         ],
+        \Mustache::class => 'public/lib/mustache/src',
         \OpenSpout::class => 'public/lib/openspout/src',
         \Packback\Lti1p3::class => 'public/lib/lti1p3/src',
         \PHPMailer\PHPMailer::class => 'public/lib/phpmailer/src',

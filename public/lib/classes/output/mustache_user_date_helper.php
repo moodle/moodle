@@ -16,7 +16,7 @@
 
 namespace core\output;
 
-use Mustache_LambdaHelper;
+use Mustache\LambdaHelper;
 
 /**
  * Mustache helper that will convert a timestamp to a date string.
@@ -36,10 +36,10 @@ class mustache_user_date_helper {
      * Both args are required. The timestamp must come first.
      *
      * @param string $args The text to parse for arguments.
-     * @param Mustache_LambdaHelper $helper Used to render nested mustache variables.
+     * @param LambdaHelper $helper Used to render nested mustache variables.
      * @return string
      */
-    public function transform($args, Mustache_LambdaHelper $helper) {
+    public function transform($args, LambdaHelper $helper) {
         // Split the text into an array of variables.
         [$timestamp, $format] = explode(',', $args, 2);
         $timestamp = trim($timestamp);

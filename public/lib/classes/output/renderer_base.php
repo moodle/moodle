@@ -23,7 +23,7 @@ use core\output\actions\component_action;
 use moodle_page;
 use moodle_url;
 use stdClass;
-use Mustache_Exception_UnknownTemplateException;
+use Mustache\Exception\UnknownTemplateException;
 
 /**
  * Simple base class for Moodle renderers.
@@ -55,7 +55,7 @@ class renderer_base {
     protected $target;
 
     /**
-     * @var \Mustache_Engine The mustache template compiler
+     * @var \Mustache\Engine The mustache template compiler
      */
     private $mustache;
 
@@ -68,7 +68,7 @@ class renderer_base {
      * Return an instance of the mustache class.
      *
      * @since 2.9
-     * @return \Mustache_Engine
+     * @return \Mustache\Engine
      */
     protected function get_mustache() {
         global $CFG;
@@ -106,27 +106,24 @@ class renderer_base {
             $safeconfig = $this->page->requires->get_config_for_javascript($this->page, $this);
 
             $helpers = ['config' => $safeconfig,
-                             'str' => [$stringhelper, 'str'],
-                             'cleanstr' => [$cleanstringhelper, 'cleanstr'],
-                             'quote' => [$quotehelper, 'quote'],
-                             'js' => [$jshelper, 'help'],
-                             'pix' => [$pixhelper, 'pix'],
-                             'shortentext' => [$shortentexthelper, 'shorten'],
-                             'userdate' => [$userdatehelper, 'transform'],
-                         ];
+                'str' => [$stringhelper, 'str'],
+                'cleanstr' => [$cleanstringhelper, 'cleanstr'],
+                'quote' => [$quotehelper, 'quote'],
+                'js' => [$jshelper, 'help'],
+                'pix' => [$pixhelper, 'pix'],
+                'shortentext' => [$shortentexthelper, 'shorten'],
+                'userdate' => [$userdatehelper, 'transform'],
+            ];
 
             $this->mustache = new mustache_engine([
                 'cache' => $cachedir,
                 'escape' => 's',
                 'loader' => $loader,
                 'helpers' => $helpers,
-                'pragmas' => [\Mustache_Engine::PRAGMA_BLOCKS],
                 // Don't allow the JavaScript helper to be executed from within another
                 // helper. If it's allowed it can be used by users to inject malicious
                 // JS into the page.
                 'disallowednestedhelpers' => ['js'],
-                // Disable lambda rendering - content in helpers is already rendered, no need to render it again.
-                'disable_lambda_rendering' => true,
             ]);
         }
 
@@ -184,7 +181,7 @@ class renderer_base {
             try {
                 $template = $mustache->loadTemplate($templatename);
                 $this->templatecache[$templatename] = $template;
-            } catch (Mustache_Exception_UnknownTemplateException $e) {
+            } catch (UnknownTemplateException $e) {
                 throw new moodle_exception('Unknown template: ' . $templatename);
             }
         }

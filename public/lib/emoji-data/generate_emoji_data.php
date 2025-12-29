@@ -132,7 +132,7 @@ $emojibyshortname = array_reduce($jsondata, function($carry, $data) {
     return $carry;
 }, []);
 
-$loader = new \Mustache_Loader_ArrayLoader([
+$loader = new \Mustache\Loader\ArrayLoader([
     'data.js' => file_get_contents('./data.js.mustache')
 ]);
 $mustache = new \core\output\mustache_engine(['loader' => $loader]);

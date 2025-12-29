@@ -141,9 +141,9 @@ final class mustache_helper_collection_test extends \advanced_testcase {
      * execution of a helper.
      */
     public function test_disallowed_helpers_disabled_during_execution(): void {
-        $engine = new \Mustache_Engine();
-        $context = new \Mustache_Context();
-        $lambdahelper = new \Mustache_LambdaHelper($engine, $context);
+        $engine = new \Mustache\Engine();
+        $context = new \Mustache\Context();
+        $lambdahelper = new \Mustache\LambdaHelper($engine, $context);
         $disallowed = ['bad'];
         $collection = new mustache_helper_collection(null, $disallowed);
         $badcalled = false;
