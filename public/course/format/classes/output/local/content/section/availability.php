@@ -127,7 +127,7 @@ class availability implements named_templatable, renderable {
      * activities.
      *
      * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return stdclass data context for a mustache template
+     * @return array data context for a mustache template
      */
     protected function get_info(\renderer_base $output): array {
         global $CFG, $USER;

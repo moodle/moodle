@@ -30,8 +30,8 @@ class course extends course_state {
     /**
      * Export this data so it can be used as state object in the course editor.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
-     * @return stdClass data context for a mustache template
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return \stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): \stdClass {
         $data = parent::export_for_template($output);

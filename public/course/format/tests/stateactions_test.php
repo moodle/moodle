@@ -175,7 +175,7 @@ final class stateactions_test extends \advanced_testcase {
      * @param stdClass $course the course data
      * @param string $rolename the testing role name
      */
-    private function set_test_user_by_role(stdClass $course, string $rolename) {
+    private function set_test_user_by_role(stdClass $course, string $rolename): void {
         if ($rolename == 'admin') {
             $this->setAdminUser();
         } else {
@@ -655,7 +655,7 @@ final class stateactions_test extends \advanced_testcase {
      * @param string $role the user role
      * @param string[] $idrefs the sections or cms id references to be used as method params
      * @param bool $expectedexception whether the call should throw an exception
-     * @param int[] $expectedtotal the expected total number of state indexed by put, remove and create
+     * @param int[] $expectedtotals the expected total number of state indexed by put, remove and create
      * @param string|null $coursefield the course field to check
      * @param int|string|null $coursevalue the section field value
      * @param string|null $sectionfield the section field to check

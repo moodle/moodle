@@ -50,7 +50,7 @@ class cm implements renderable {
         protected cm_info $cm,
         /** @var bool $exportcontent False if pre-rendered cmitem HTML content must be exported. */
         protected bool $exportcontent = false,
-        /** @var ?bool $istrackeduser If is_tracked_user is pre-computed for this CM's course, it can be provided here. */
+        /** @var bool|null $istrackeduser If is_tracked_user is pre-computed for this CM's course, it can be provided here. */
         protected ?bool $istrackeduser = null,
     ) {
     }

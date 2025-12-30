@@ -782,7 +782,7 @@ final class base_test extends advanced_testcase {
      *
      * @param string $action the ajax action name
      * @param string $expectedparam the expected param to check
-     * @param string $exception if an exception is expected
+     * @param bool $exception if an exception is expected
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('get_non_ajax_cm_action_url_provider')]
     public function test_get_non_ajax_cm_action_url(string $action, string $expectedparam, bool $exception): void {

@@ -64,7 +64,7 @@ class stateupdates implements JsonSerializable {
     /**
      * Return the data to serialize the current track in JSON.
      *
-     * @return stdClass the statement data structure
+     * @return array the statement data structure
      */
     public function jsonSerialize(): array {
         return $this->updates;
