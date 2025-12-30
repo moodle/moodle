@@ -90,7 +90,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/                                       |
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
-    When I press "Save"
+    When I press "saveandview"
     And I select "List view" from the "jump" singleselect
     Then I should not see "No entries in database"
     And I should see "New entry text"
@@ -110,7 +110,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/ |
        | Required Multimenu            | 1                   |
        | Required Two-Option Multimenu | 1                   |
-    When I press "Save"
+    When I press "saveandview"
     Then the following fields match these values:
        | Base Text input               |                     |
        | Latitude                      | 0                   |
@@ -142,7 +142,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
        | Latitude                      | 20                                                        |
-    When I press "Save"
+    When I press "saveandview"
     Then I should see "Both latitude and longitude are required."
 
   Scenario: A student filling in number and text fields with zero will not see an error.
@@ -163,7 +163,7 @@ Feature: Users can be required to specify certain fields when adding entries to 
        | Required URL                  | http://example.com/                                       |
        | Required Multimenu            | 1                                                         |
        | Required Two-Option Multimenu | 1                                                         |
-    When I press "Save"
+    When I press "saveandview"
     And I select "List view" from the "jump" singleselect
     Then I should not see "No entries in database"
     And I should see "Some input to allow us to submit the otherwise empty form"

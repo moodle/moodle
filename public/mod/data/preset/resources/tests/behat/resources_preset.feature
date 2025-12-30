@@ -94,7 +94,7 @@ Feature: Users can use the Resources preset
     And I set the field "Description" to "This is description."
     And I set the field "Web link" to "https://thisisthelink.cat"
     And I set the field "Type" to "Type2"
-    And I press "Save"
+    And I press "saveandview"
     Then I should see "This is the title"
     And I should see "This is the author"
     And I should see "https://thisisthelink.cat"
