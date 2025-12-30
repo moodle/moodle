@@ -463,6 +463,11 @@ class moodle_page {
     protected bool $hasstickyfooter = false;
 
     /**
+     * @var bool Indicates whether the navigation sticky footer should be shown.
+     */
+    protected bool $shownavigationfooter = true;
+
+    /**
      * Force the settings menu to be displayed on this page. This will only force the
      * settings menu on an activity / resource page that is being displayed on a theme that
      * uses a settings menu.
@@ -1917,6 +1922,7 @@ class moodle_page {
         $this->_module = null;
         $this->_context = null;
         $this->hasstickyfooter = false;
+        $this->shownavigationfooter = true;
     }
 
     /**
@@ -2597,5 +2603,25 @@ class moodle_page {
      */
     public function has_sticky_footer(): bool {
         return $this->hasstickyfooter;
+    }
+
+    /**
+     * Set the status for displaying the navigation sticky footer.
+     *
+     * @param bool $state
+     *     - `true` (default) if the navigation footer should be shown.
+     *     - `false` if the navigation footer should be hidden.
+     */
+    public function set_show_navigation_footer(bool $state): void {
+        $this->shownavigationfooter = $state;
+    }
+
+    /**
+     * Get the current status for displaying the navigation sticky footer.
+     *
+     * @return bool
+     */
+    public function should_show_navigation_footer(): bool {
+        return $this->shownavigationfooter;
     }
 }

@@ -939,6 +939,16 @@ final class moodle_page_test extends \advanced_testcase {
         $page->reset_theme_and_output();
         $this->assertFalse($page->has_sticky_footer());
     }
+
+    /**
+     * Test that navigation footer setting resets after calling reset_theme_and_output.
+     */
+    public function test_reset_theme_and_output_resets_navigation_footer_flag(): void {
+        $page = new moodle_page();
+        $page->set_show_navigation_footer(false);
+        $page->reset_theme_and_output();
+        $this->assertTrue($page->should_show_navigation_footer());
+    }
 }
 
 /**

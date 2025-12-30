@@ -1,0 +1,9 @@
+issueNumber: MDL-87575
+notes:
+  core:
+    - message: >-
+        Added `moodle_page::set_show_navigation_footer(bool $show)` to control
+        whether the sticky navigation footer is rendered. Use
+        $PAGE->set_show_navigation_footer(false); to suppress the footer on
+        pages where it is not required.
+      type: improved
