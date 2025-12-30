@@ -38,6 +38,7 @@ require_capability('moodle/grade:managegradingforms', $context);
 
 $controller = $manager->get_controller('rubric');
 
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url(new moodle_url('/grade/grading/form/rubric/edit.php', array('areaid' => $areaid)));
 $PAGE->set_title(get_string('definerubric', 'gradingform_rubric'));
 $PAGE->set_heading(get_string('definerubric', 'gradingform_rubric'));

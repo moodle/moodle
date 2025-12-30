@@ -52,6 +52,7 @@ if (!has_capability('moodle/role:override', $context)) {
     require_capability('moodle/role:safeoverride', $context);
     $safeoverridesonly = true;
 }
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 

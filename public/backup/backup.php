@@ -58,6 +58,7 @@ if ($sectionid !== null) {
 if ($cmid !== null) {
     $url->param('cm', $cmid);
 }
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $id = $courseid;

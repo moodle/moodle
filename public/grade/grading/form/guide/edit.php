@@ -38,6 +38,7 @@ require_capability('moodle/grade:managegradingforms', $context);
 
 $controller = $manager->get_controller('guide');
 
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url(new moodle_url('/grade/grading/form/guide/edit.php', array('areaid' => $areaid)));
 $PAGE->set_title(get_string('definemarkingguide', 'gradingform_guide'));
 $PAGE->set_heading(get_string('definemarkingguide', 'gradingform_guide'));

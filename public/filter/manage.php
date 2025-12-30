@@ -41,6 +41,7 @@ $baseurl = new moodle_url('/filter/manage.php', $args);
 if (!empty($forfilter)) {
     $args['filter'] = $forfilter;
 }
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url($baseurl, $args);
 if ($returnto !== null) {
     $baseurl->param('return', $returnto);
