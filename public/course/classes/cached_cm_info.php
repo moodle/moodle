@@ -75,7 +75,7 @@ class cached_cm_info {
     /**
      * External URL image to be used by activity as icon, useful for some external-tool modules
      * like lti. If set, takes precedence over $icon and $iconcomponent
-     * @var $moodle_url
+     * @var \moodle_url
      */
     public $iconurl;
 

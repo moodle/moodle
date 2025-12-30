@@ -50,7 +50,7 @@ final class category_hooks_test extends \advanced_testcase {
      * get_plugins_callback_function will return callable prefixed with `tool_unittest_`,
      * the actual callbacks are defined in mock_hooks.php fixture file.
      *
-     * @param core_course_category $category Category to mock
+     * @param \core_course_category $category Category to mock
      * @param string $callback Callback function used in method we test.
      * @return MockObject
      */

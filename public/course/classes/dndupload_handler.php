@@ -325,7 +325,7 @@ class dndupload_handler {
      * Comparison function used when sorting types by priority
      * @param object $type1 first type to compare
      * @param object $type2 second type to compare
-     * @return integer -1 for $type1 < $type2; 1 for $type1 > $type2; 0 for equal
+     * @return int -1 for $type1 < $type2; 1 for $type1 > $type2; 0 for equal
      */
     protected function type_compare($type1, $type2) {
         if ($type1->priority < $type2->priority) {

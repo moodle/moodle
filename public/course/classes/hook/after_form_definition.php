@@ -41,7 +41,7 @@ class after_form_definition {
     public function __construct(
         /** @var course_edit_form The form wrapper for the edit form */
         public readonly course_edit_form $formwrapper,
-        /** @var MoodlequickForm The form to be extended */
+        /** @var MoodleQuickForm The form to be extended */
         public readonly MoodleQuickForm $mform,
     ) {
     }

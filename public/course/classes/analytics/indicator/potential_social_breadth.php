@@ -140,6 +140,8 @@ class potential_social_breadth extends \core_analytics\local\indicator\linear {
      * Throw a \coding_exception.
      *
      * @param int $level
+     * @return never
+     * @throws \coding_exception
      */
     protected function level_not_accepted($level) {
         throw new \coding_exception('Activities\' potential social breadth go from 1 to ' .

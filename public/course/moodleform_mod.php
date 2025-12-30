@@ -34,7 +34,7 @@ abstract class moodleform_mod extends moodleform {
 
     use \core_completion\form\form_trait;
 
-    /** Current data */
+    /** @var stdClass Current data */
     protected $current;
     /**
      * Instance of the module that is being updated. This is the id of the {prefix}{modulename}
@@ -67,7 +67,7 @@ abstract class moodleform_mod extends moodleform {
     protected $_course;
 
     /**
-     * List of modform features
+     * @var stdClass List of modform features
      */
     protected $_features;
     /**
@@ -78,10 +78,10 @@ abstract class moodleform_mod extends moodleform {
      * @var string name of module.
      */
     protected $_modname;
-    /** current context, course or module depends if already exists*/
+    /** @var context current context, course or module depends if already exists*/
     protected $context;
 
-    /** a flag indicating whether outcomes are being used*/
+    /** @var bool a flag indicating whether outcomes are being used*/
     protected $_outcomesused;
 
     /**
@@ -508,6 +508,8 @@ abstract class moodleform_mod extends moodleform {
 
     /**
      * Adds all the standard elements to a form to edit the settings for an activity module.
+     *
+     * @return bool|null
      */
     protected function standard_coursemodule_elements() {
         global $COURSE, $CFG, $DB, $OUTPUT;
@@ -1170,7 +1172,7 @@ abstract class moodleform_mod extends moodleform {
     /**
      * Get the list of admin settings for this module and apply any defaults/advanced/locked/required settings.
      *
-     * @param $datetimeoffsets array - If passed, this is an array of fieldnames => times that the
+     * @param array $datetimeoffsets If passed, this is an array of fieldnames => times that the
      *                         default date/time value should be relative to. If not passed, all
      *                         date/time fields are set relative to the users current midnight.
      * @return void

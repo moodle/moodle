@@ -40,7 +40,7 @@ class completion_enabled extends \core_analytics\local\indicator\binary {
     /**
      * get_name
      *
-     * @return new \lang_string
+     * @return \lang_string
      */
     public static function get_name(): \lang_string {
         return new \lang_string('indicator:completionenabled', 'moodle');

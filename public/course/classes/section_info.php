@@ -558,6 +558,8 @@ class section_info implements IteratorAggregate {
 
     /**
      * Get the delegate component instance.
+     *
+     * @return sectiondelegate|null
      */
     public function get_component_instance(): ?sectiondelegate {
         if (!$this->is_delegated()) {

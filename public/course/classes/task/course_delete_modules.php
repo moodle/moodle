@@ -92,7 +92,7 @@ class course_delete_modules extends \core\task\adhoc_task {
     /**
      * Sets attemptsavailable to false.
      *
-     * @return boolean
+     * @return bool
      */
     public function retry_until_success(): bool {
         return false;

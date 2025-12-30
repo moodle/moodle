@@ -87,7 +87,7 @@ final class view_module_instance_list_test extends \externallib_advanced_testcas
     /**
      * Data provider for test_view_list.
      *
-     * @return array
+     * @return \Generator
      */
     public static function provider_view_module_instance_list(): \Generator {
         yield 'student role' => [

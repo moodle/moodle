@@ -34,7 +34,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dndupload_ajax_processor {
-    /** Returned when no error has occurred */
+    /** @var int Returned when no error has occurred */
     public const ERROR_OK = 0;
 
     /** @var object The course that we are uploading to */

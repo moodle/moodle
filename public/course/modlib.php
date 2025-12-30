@@ -829,7 +829,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
  * @param string $modulename module name of the lib to include
  * @throws moodle_exception if lib.php file for the module does not exist
  */
-function include_modulelib($modulename) {
+function include_modulelib($modulename): void {
     global $CFG;
     $modlib = "$CFG->dirroot/mod/$modulename/lib.php";
     if (file_exists($modlib)) {
