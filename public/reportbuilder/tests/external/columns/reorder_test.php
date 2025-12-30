@@ -61,18 +61,17 @@ final class reorder_test extends \core_external\tests\externallib_testcase {
         $this->assertTrue($result);
 
         // Assert report columns order.
-        $columns = column::get_records(['reportid' => $report->get('id')], 'columnorder');
-
-        $columnidentifiers = array_map(static function(column $column): string {
-            return $column->get('uniqueidentifier');
-        }, $columns);
+        $columnidentifiers = array_map(
+            fn(column $column): string => $column->get('uniqueidentifier'),
+            column::get_records(['reportid' => $report->get('id')], 'columnorder'),
+        );
 
         $this->assertEquals([
             'user:fullname',
             'user:city',
             'user:email',
             'user:country',
-        ], $columnidentifiers);
+        ], array_values($columnidentifiers));
     }
 
     /**

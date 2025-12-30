@@ -117,10 +117,7 @@ class system_report_table extends base_report_table {
             $this->no_sorting('selectall');
         }
 
-        $columnindex = 1;
-        foreach ($columns as $identifier => $column) {
-            $column->set_index($columnindex++);
-
+        foreach ($columns as $column) {
             $columnheaders[$column->get_column_alias()] = $column->get_title();
 
             // Specify whether column should behave as a user fullname column unless the column has a custom title set.

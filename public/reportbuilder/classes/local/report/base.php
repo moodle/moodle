@@ -455,8 +455,10 @@ abstract class base {
      * @return column[]
      */
     public function get_active_columns(): array {
+        $columnindex = 0;
         $columns = $this->get_columns();
         foreach ($columns as $column) {
+            $column->set_index($columnindex++);
             if ($column->get_is_deprecated()) {
                 debugging("The column '{$column->get_unique_identifier()}' is deprecated, please do not use it any more." .
                     " {$column->get_is_deprecated_message()}", DEBUG_DEVELOPER);
