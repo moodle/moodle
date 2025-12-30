@@ -64,6 +64,7 @@ if ($overrideid) {
     $url->param('cmid', $cmid);
 }
 
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url($url);
 
 require_login($course, false, $cm);

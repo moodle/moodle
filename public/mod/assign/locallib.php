@@ -658,6 +658,7 @@ class assign {
                 $nextpageparams['action'] = 'grading';
             }
         } else if ($action == 'quickgrade') {
+            $PAGE->set_show_navigation_footer(false);
             $message = $this->process_save_quick_grades();
             $action = 'quickgradingresult';
         } else if ($action == 'saveextension') {
@@ -707,24 +708,30 @@ class assign {
         } else if ($action == 'viewpluginassignsubmission') {
             $o .= $this->view_plugin_content('assignsubmission');
         } else if ($action == 'editsubmission') {
+            $PAGE->set_show_navigation_footer(false);
             $PAGE->add_body_class('limitedwidth');
             $o .= $this->view_edit_submission_page($mform, $notices);
         } else if ($action == 'grader') {
+            $PAGE->set_show_navigation_footer(false);
             $o .= $this->view_grader();
         } else if ($action == 'marker') {
+            $PAGE->set_show_navigation_footer(false);
             $o .= $this->view_grader(true);
         } else if ($action == 'grading') {
             $o .= $this->view_grading_page();
         } else if ($action == 'downloadall') {
             $o .= $this->download_submissions();
         } else if ($action == 'submit') {
+            $PAGE->set_show_navigation_footer(false);
             $PAGE->add_body_class('limitedwidth');
             $o .= $this->check_submit_for_grading($mform);
         } else if ($action == 'grantextension') {
+            $PAGE->set_show_navigation_footer(false);
             $o .= $this->view_grant_extension($mform);
         } else if ($action == 'revealidentities') {
             $o .= $this->view_reveal_identities_confirm();
         } else if ($action == 'removesubmissionconfirm') {
+            $PAGE->set_show_navigation_footer(false);
             $PAGE->add_body_class('limitedwidth');
             $o .= $this->view_remove_submission_confirm();
         } else if ($action == 'plugingradingbatchoperation') {
