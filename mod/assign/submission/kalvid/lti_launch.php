@@ -49,7 +49,7 @@ $launch['width'] = $width;
 $launch['height'] = $height;
 $launch['custom_publishdata'] = '';
 
-$source = $source = local_kaltura_add_kaf_uri_token($source);
+$source = local_kaltura_add_kaf_uri_token($source);
 
 if (!$cm = get_coursemodule_from_id('assign', $cmid)) {
     throw new \moodle_exception('invalidcoursemodule');

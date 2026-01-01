@@ -194,7 +194,7 @@ class assign_submission_kalvid extends assign_submission_plugin {
             'padding' => 15
         );
 
-        if(isset($submissionrec->width) && isset($submissionrec->height))
+        if (isset($submissionrec->width) && isset($submissionrec->height))
         {
             $params['width'] = $submissionrec->width;
             $params['height'] = $submissionrec->height;
