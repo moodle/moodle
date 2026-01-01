@@ -34,7 +34,7 @@ use \mod_assign\privacy\assign_plugin_request_data;
  * Privacy class for requesting user data.
  *
  * @package    assignsubmission_kalvid
- * @copyright  2018 Adrian Greeve <adrian@moodle.com>
+ * @copyright  2025 Kaltura Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
