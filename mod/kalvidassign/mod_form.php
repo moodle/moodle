@@ -40,6 +40,13 @@ class mod_kalvidassign_mod_form extends moodleform_mod {
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
+        $mform->addElement('html',
+            html_writer::div(
+                get_string('kalvidassign_deprecated', 'mod_kalvidassign'),
+                'alert alert-info'
+            )
+        );
+
         $mform->addElement('text', 'name', get_string('name', 'kalvidassign'), array('size' => '64'));
 
         if (!empty($CFG->formatstringstriptags)) {

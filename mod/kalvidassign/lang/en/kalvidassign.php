@@ -144,3 +144,4 @@ $string['completionsubmit'] = 'Make a submission';
 $string['completiondetail:submit'] = 'Make a submission';
 $string['addsubmission'] = 'Add submission';
 $string['calendardue'] = '{$a} is due';
+$string['kalvidassign_deprecated'] = 'Note: This is a legacy activity. Please use the Kaltura media submission in the Moodle Assignment instead.';
