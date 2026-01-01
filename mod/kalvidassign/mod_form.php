@@ -42,7 +42,7 @@ class mod_kalvidassign_mod_form extends moodleform_mod {
 
         $mform->addElement('html',
             html_writer::div(
-                get_string('kalvidassign_deprecated', 'mod_kalvidassign'),
+                get_string('kalvidassign_deprecated', 'kalvidassign'),
                 'alert alert-info'
             )
         );
