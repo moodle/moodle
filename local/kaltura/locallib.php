@@ -440,6 +440,7 @@ function local_kaltura_request_lti1p3_launch($ltirequest, $withblocks = true, $e
 	$instance = local_kaltura_format_lti_instance_object($ltirequest);
     if (isset($ltirequest['submission']) && $ltirequest['submission'] === 'yes') {
         $instance->toolurl .= '/assignment/yes';
+        $instance->securetool .= '/assignment/yes';
     }
 	if(is_null($editor)) {
 		$editor = 'tinymce';
