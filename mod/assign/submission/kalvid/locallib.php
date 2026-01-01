@@ -20,7 +20,7 @@
  * This class provides all the functionality for the new assign module.
  *
  * @package assignsubmission_kalvid
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2025 Kaltura Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * library class for kalvid submission plugin extending submission plugin base class
  *
  * @package assignsubmission_kalvid
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2025 Kaltura Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assign_submission_kalvid extends assign_submission_plugin {

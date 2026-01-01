@@ -18,7 +18,7 @@
  * This file defines the admin settings for this plugin
  *
  * @package   assignsubmission_kalvid
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2025 Kaltura Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

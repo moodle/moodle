@@ -18,7 +18,7 @@
  * This file contains the class for backup of this submission plugin
  *
  * @package assignsubmission_kalvid
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2025 Kaltura Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * Provides the information to backup kalvid submissions
  *
  * @package assignsubmission_kalvid
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2025 Kaltura Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_assignsubmission_kalvid_subplugin extends backup_subplugin {

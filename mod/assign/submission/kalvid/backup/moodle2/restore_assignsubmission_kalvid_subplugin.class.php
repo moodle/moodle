@@ -18,7 +18,7 @@
  * This file contains the class for restore of this submission plugin
  *
  * @package assignsubmission_kalvid
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2025 Kaltura Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -29,7 +29,7 @@
  * one assign_submission subplugin.
  *
  * @package assignsubmission_kalvid
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @copyright 2025 Kaltura Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_assignsubmission_kalvid_subplugin extends restore_subplugin {
