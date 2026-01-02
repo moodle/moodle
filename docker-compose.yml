@@ -17,9 +17,13 @@ services:
     container_name: moodle_web
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - .:/var/www/html
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/templates/default.conf.template
+      - ./certs:/etc/letsencrypt/live/${NGINX_HOST:-localhost}
+    environment:
+      - NGINX_HOST=${NGINX_HOST:-localhost}
     depends_on:
       - moodle
     restart: always
