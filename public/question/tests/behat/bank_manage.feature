@@ -60,13 +60,13 @@ Feature: Manage question banks
   @javascript
   Scenario: Question banks display the number of questions they contain
     Given the following "activities" exist:
-      | activity | name   | course | section | intro        | showdescription |
-      | qbank    | bank3  | C1     | 0       | Bank 3 intro | 0               |
+      | activity | name   | course | section | intro        | showdescription | idnumber |
+      | qbank    | bank3  | C1     | 0       | Bank 3 intro | 0               | qbank3   |
     And the following "question categories" exist:
       | contextlevel    | reference | name             |
-      | Activity module | bank1     | Test questions 1 |
-      | Activity module | bank2     | Test questions 2 |
-      | Activity module | bank3     | Test questions 3 |
+      | Activity module | qbank1    | Test questions 1 |
+      | Activity module | qbank2    | Test questions 2 |
+      | Activity module | qbank3    | Test questions 3 |
     And the following "questions" exist:
       | questioncategory | qtype     | name |
       | Test questions 1 | truefalse | TF1  |
