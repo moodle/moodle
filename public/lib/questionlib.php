@@ -1416,14 +1416,33 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
 
     $iscourse = $context->contextlevel === CONTEXT_COURSE;
 
-    if ($iscourse && has_capability('moodle/course:manageactivities', $context)) {
-        return $navigationnode->add(
-            get_string('questionbank_plural', 'question'),
-            new moodle_url($baseurl, ['courseid' => $context->instanceid]),
-            navigation_node::TYPE_CONTAINER,
-            null,
-            'questionbank'
-        );
+    if ($iscourse) {
+        $viewquestionbanks = has_capability('moodle/course:manageactivities', $context);
+        if (!$viewquestionbanks) {
+            // If the user can view any activities with shared questions, display the Question banks node.
+            // If they can access activities with private questions (such as quiz) they can be accessed elsewhere on the course.
+            $modtypes = \core_question\local\bank\question_bank_helper::get_activity_types_with_shareable_questions();
+            $modinfo = get_fast_modinfo($context->instanceid);
+            foreach ($modtypes as $modtype) {
+                foreach ($modinfo->get_instances_of($modtype) as $mod) {
+                    if (has_capability("mod/{$modtype}:view", $mod->context)) {
+                        $viewquestionbanks = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+        if ($viewquestionbanks) {
+            return $navigationnode->add(
+                get_string('questionbank_plural', 'question'),
+                new moodle_url($baseurl, ['courseid' => $context->instanceid]),
+                navigation_node::TYPE_CONTAINER,
+                null,
+                'questionbank',
+            );
+        } else {
+            return;
+        }
     } else if ($context->contextlevel == CONTEXT_MODULE) {
         $params = ['cmid' => $context->instanceid];
     } else {
