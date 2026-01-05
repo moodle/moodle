@@ -38,7 +38,7 @@ $course = get_course($courseid);
 $coursecontext = context_course::instance($course->id);
 
 require_login($course, false);
-require_capability('moodle/course:manageactivities', \context_course::instance($course->id));
+$canmanage = has_capability('moodle/course:manageactivities', \context_course::instance($course->id));
 
 if (empty(question_bank_helper::get_activity_types_with_shareable_questions())) {
     throw new moodle_exception('disabledbanks', 'question');
@@ -48,13 +48,19 @@ $allcaps = array_merge(question_edit_contexts::$caps['editq'], question_edit_con
 $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions([$course->id], [], $allcaps);
 $privatebanks = question_bank_helper::get_activity_instances_with_private_questions([$course->id], [], $allcaps);
 
+if (!$canmanage && empty($sharedbanks)) {
+    // Only allow non-managing users access to this page if they can access at least 1 activity with shared questions.
+    // If they can access activities with private questions (such as quiz) they can be accessed elsewhere on the course.
+    throw new \core\exception\moodle_exception('nobankpermissions', 'question');
+}
+
 $pageurl = question_bank_helper::get_url_for_qbank_list($course->id);
 $PAGE->set_url($pageurl);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading(format_string($course->fullname, true, ['context' => $coursecontext]));
 $PAGE->set_title(get_string('questionbank_plural', 'question'));
 
-if ($createdefault) {
+if ($canmanage && $createdefault) {
     require_sesskey();
     question_bank_helper::create_default_open_instance(
         $course,
