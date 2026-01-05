@@ -66,7 +66,7 @@ Feature: An admin can create courses with self enrolments using a CSV file
     And I should see "Courses updated: 2"
     And I should see "Courses errors: 1"
     And I am on the "Course 1" "enrolment methods" page
-    And "Self enrolment (Student)" "table_row" should not exist
+    And "Self enrolment as 'Student'" "table_row" should not exist
     And I am on the "Course 2" "enrolment methods" page
     And I click on "Edit" "link" in the "Self enrolment" "table_row"
     And the field "Enrolment key" matches value ""
@@ -98,7 +98,7 @@ Feature: An admin can create courses with self enrolments using a CSV file
     And I should see "Courses updated: 2"
     And I should see "Courses errors: 1"
     And I am on the "Course 1" "enrolment methods" page
-    And "Self enrolment (Student)" "table_row" should not exist
+    And "Self enrolment as 'Student'" "table_row" should not exist
     And I am on the "Course 2" "enrolment methods" page
     And I click on "Edit" "link" in the "Self enrolment" "table_row"
     And the field "Enrolment key" does not match value ""

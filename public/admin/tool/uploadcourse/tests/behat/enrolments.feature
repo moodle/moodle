@@ -119,7 +119,7 @@ Feature: An admin can update courses enrolments using a CSV file
     And I click on "Preview" "button"
     And I click on "Upload courses" "button"
     And I am on the "Course 2" "enrolment methods" page
-    And I should see "Self enrolment (Student)" in the "generaltable" "table"
+    And I should see "Self enrolment as 'Student'" in the "generaltable" "table"
     And I should see "Cohort sync (Cohort1 - Student)" in the "generaltable" "table"
     And I should see "Guest access" in the "generaltable" "table"
     And I should see "Manual enrolments" in the "generaltable" "table"
@@ -134,7 +134,7 @@ Feature: An admin can update courses enrolments using a CSV file
     And I click on "Upload courses" "button"
     And I should see "Course updated"
     And I am on the "Course 2" "enrolment methods" page
-    And I should not see "Self enrolment (Student)" in the "generaltable" "table"
+    And I should not see "Self enrolment as 'Student'" in the "generaltable" "table"
     And I should not see "Cohort sync (Cohort1 - Student)" in the "generaltable" "table"
     And I should not see "Guest access" in the "generaltable" "table"
     And I should not see "Manual enrolments" in the "generaltable" "table"
@@ -148,7 +148,7 @@ Feature: An admin can update courses enrolments using a CSV file
     And I click on "Preview" "button"
     And I click on "Upload courses" "button"
     And I am on the "Course 2" "enrolment methods" page
-    Then I should see "Self enrolment (Student)" in the "generaltable" "table"
+    Then I should see "Self enrolment as 'Student'" in the "generaltable" "table"
     And I should see "Cohort sync (Cohort1 - Student)" in the "generaltable" "table"
     And I should see "Guest access" in the "generaltable" "table"
     And I should see "Manual enrolments" in the "generaltable" "table"
