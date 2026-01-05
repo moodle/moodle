@@ -1,0 +1,178 @@
+/* Homepage carousel */
+.homepage-carousel {
+    height: 700px;
+    position: relative;
+    > div {
+        height: 100%;
+        .homecarousel-slide-item {
+            height: 100%;
+            .slide-item {
+                height: 100%;
+                .slide-main-background {
+                    height: 100%;
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                }
+                .slide-text .heading-content {
+                    width: auto;
+                    background: $url_1;
+                    padding: 30px;
+                    margin: 20px 0 10px;
+                    display: inline-block;
+                    h1 {
+                        color: $white;
+                        margin-bottom: 0;
+                    }
+                    p {
+                        font-size: 17px;
+                        color: $white;
+                        line-height: 22px;
+                        &:empty {
+                            display: none;
+                        }
+                    }
+                    .link-button a {
+                        height: auto;
+                        padding: 10px 25px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.homepage-carousel {
+    .controls {
+        a.carousel-control {
+            width: 44px;
+            height: 44px;
+            line-height: 38px;
+            text-align: center;
+            background-color: $primary;
+            border: 2px solid $white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            right: auto;
+            opacity: 1;
+            &:before {
+                font-size: 30px;
+                font-family: $font_0;
+                font-weight: $font_weight;
+                color: $white;
+                display: inline-block;
+                margin-top: 0;
+            }
+            &.left:before {
+                content: '\f104';
+            }
+            &.right {
+                left: auto;
+                right: 10px;
+                &:before {
+                    content: '\f105';
+                }
+            }
+        }
+        ol {
+            display: none;
+        }
+    }
+}
+
+.dir-rtl .homepage-carousel {
+    .controls a.carousel-control {
+        &.left:before {
+            content: '\f105';
+        }
+        &.right:before {
+            content: '\f104';
+        }
+    }
+    > div .slidesContainer {
+        float: left;
+    }
+}
+
+@media (min-width: 768px) {
+    .homepage-carousel .homecarousel-slide-item .slide-item .slide-text {
+        position: absolute;
+        &.content-topLeft {
+            top: 20px;
+            left: 5%;
+            right: auto;
+            bottom: auto;
+        }
+        &.content-topCenter {
+            text-align: center;
+            margin: 0 auto;
+            top: 20px;
+            left: 0;
+            right: 0;
+            bottom: auto;
+        }
+        &.content-topRight {
+            text-align: right;
+            top: 20px;
+            left: auto;
+            right: 80px;
+            bottom: auto;
+        }
+        &.content-centerLeft {
+            top: 25%;
+            left: 80px;
+            right: auto;
+            bottom: auto;
+        }
+        &.content-center {
+            text-align: center;
+            margin: 0 auto;
+            top: 30%;
+            left: 0;
+            right: 0;
+            bottom: auto;
+        }
+        &.content-centerRight {
+            text-align: right;
+            top: 25%;
+            bottom: auto;
+            left: auto;
+            right: 80px;
+        }
+        &.content-bottomLeft {
+            padding-bottom: 40px;
+            top: auto;
+            left: 80px;
+            right: auto;
+            bottom: 20px;
+        }
+        &.content-bottomCenter {
+            text-align: center;
+            padding-bottom: 40px;
+            margin: 0 auto;
+            top: auto;
+            left: 0;
+            right: 0;
+            bottom: 20px;
+        }
+        &.content-bottomRight {
+            text-align: right;
+            top: auto;
+            left: auto;
+            right: 80px;
+            bottom: 20px;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .homepage-carousel .homecarousel-slide-item .slide-item .slide-text {
+        position: absolute;
+        top: 15%;
+        margin: 0 40px;
+    }
+}

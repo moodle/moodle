@@ -1,0 +1,72 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_academi/header.
+
+    Page header template.
+
+    Example context (json):
+    {
+        "themestyleheader": 'true',
+        "output": {
+            "page_heading_menu": "<li>..</li>"
+        },
+        "sitename": "Moodle"
+    }
+}}
+
+{{> theme_academi/navbar }}
+
+{{#themestyleheader}}
+    <div class="header-main">
+        <div class="container-fluid">
+            <nav class="navbar navbar-light bg-faded navbar-expand">
+                <a href="{{{ config.wwwroot }}}/?redirect=0" class="navbar-brand {{# logourl }}has-logo{{/ logourl }}
+                {{^ logourl }}
+                    hidden-sm-down
+                {{/ logourl }}
+                    ">
+                {{#showlogo}}
+                    {{# logourl }}
+                        <span class="logo">
+                            <img src="{{logourl}}" alt="{{sitename}}">
+                        </span>
+                    {{/ logourl }}
+                    {{^ logourl }}
+                        <span class="site-name hidden-sm-down">{{{ sitename }}}</span>
+                    {{/ logourl }}
+                {{/showlogo}}
+                {{#showsitename}}
+                    <span class="nav-site-name">{{{sitename}}}</span>
+                {{/showsitename}}
+                </a>
+
+                {{#primarymoremenu}}
+                    <div class="primary-navigation">
+                        {{> core/moremenu}}
+                    </div>
+                {{/primarymoremenu}}
+
+                <ul class="navbar-nav d-none d-md-flex my-1 px-1">
+                    <!-- page_heading_menu -->
+                    {{{ output.page_heading_menu }}}
+                </ul>
+
+            </nav>
+        </div>
+    </div>
+{{/themestyleheader}}

@@ -1,0 +1,466 @@
+/*Blocks*/
+#block-region-content .block {
+    margin: 0;
+}
+.block {
+    padding-top: 0;
+    margin: 0 15px;
+    border-color: $mercury;
+    border-radius: 0;
+    box-shadow: none;
+    .bottom span.footer-link:after {
+        color: $primary;
+    }
+    .card-body {
+        padding: 0;
+        .card-title {
+            margin: 15px;
+            display: block !important;
+            padding-right: 65px;
+        }
+        .content {
+            padding: 10px 18px;
+            margin: 0 !important;
+            border-top: 1px solid $mercury;
+            &:not(.activityiconcontainer) {
+                background: $wild_sand;
+            }
+            .info {
+                margin-bottom: 10px;
+            }
+            .footer {
+                padding: 0;
+                margin: 0;
+            }
+            .tag_cloud .inline-list li a {
+                font-size: 16px;
+            }
+            .block-myoverview {
+                .searchbar {
+                    .input-group-append .input-group-text {
+                        height: 100%;
+                        border: 0;
+                        padding: 0 10px;
+                        button {
+                            height: 100%;
+                            margin: 0;
+                            background: none;
+                            &:hover,
+                            :focus,
+                            :active {
+                                color: $black;
+                            }
+                        }
+                    }
+                }
+            }
+            .block-timeline .no-gutters .dropdown-toggle {
+                background: $white;
+                &:hover,
+                &:focus {
+                    background: $primary;
+                }
+            }
+            &.card-text {
+                .block-myoverview hr {
+                    border: 0;
+                    + div .dropdown .btn {
+                        border-color: $light_grey;
+                        &:hover,
+                        &:focus,
+                        &:active {
+                            border-color: $primary;
+                        }
+                    }
+                }
+            }
+            .content {
+                border: 0;
+            }
+            .userpicture {
+                margin: 0 5px;
+            }
+        }
+        .block-controls {
+            margin-top: 15px;
+            margin-right: 10px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+    }
+    .block-cards .course-summaryitem {
+        background: none;
+    }
+}
+.block {
+    .header {
+        h2 {
+            font-weight: normal;
+            font-size: 21px;
+            color: $secondary;
+            padding: 18px;
+            text-transform: none;
+        }
+        .block_action {
+            padding-top: 18px;
+        }
+    }
+    .calendar-controls {
+        padding: 12px 0 24px;
+        .previous {
+            color: $color_storm_dust_approx;
+            &:before {
+                content: "\f100";
+                font-family: $font_0;
+                font-weight: $font_weight;
+            }
+            .arrow {
+                display: inline-block;
+                text-indent: -999em;
+                text-align: center;
+            }
+        }
+        .next {
+            color: $color_storm_dust_approx;
+            &:after {
+                content: "\f101";
+                font-family: $font_0;
+                font-weight: $font_weight;
+            }
+            .arrow {
+                display: inline-block;
+                text-indent: -999em;
+                text-align: center;
+            }
+        }
+        .current {
+            font-size: 16px;
+            a {
+                font-size: 16px;
+                color: $color_storm_dust_approx;
+            }
+        }
+    }
+    .minicalendar {
+        th {
+            font-weight: normal;
+            font-size: 12px;
+            abbr {
+                border-bottom: 0;
+            }
+        }
+        td {
+            font-size: 12px;
+            a {
+                display: block;
+            }
+        }
+        .today a {
+            color: $white;
+            background: $primary;
+        }
+    }
+}
+.block_timeline .event-action a.list-group-item-action {
+    height: auto;
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: $primary;
+        background-color: $primary;
+        box-shadow: none;
+    }
+}
+.block-myoverview {
+    .tab-content.content-centred .tab-pane {
+        .btn-group a.btn {
+            color: inherit;
+            background: inherit;
+            &.active {
+                color: $white;
+                background: $primary;
+            }
+        }
+        .tab-content .tab-pane {
+            .card .card-block {
+                padding: 1.25rem;
+            }
+            .list-group .list-group-item a.btn {
+                height: auto;
+            }
+        }
+    }
+    .dropdown-menu .dropdown-item {
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            color: $white;
+            background: $primary;
+            i.icon {
+                color: $white;
+            }
+        }
+    }
+}
+.block-timeline .dropdown-menu .dropdown-item {
+    &:hover,
+    &.active,
+    &:focus,
+    &:active {
+        color: $white;
+        background: $primary;
+    }
+}
+.block {
+    &.block_calendar_month .card-body .maincalendar .calendartable .header span {
+        font-weight: normal;
+    }
+    .calendar_filters ul li a span {
+        padding: 0 2px;
+        margin-right: 5px;
+        margin-left: 0;
+        display: inline-block;
+        i {
+            margin: 0;
+        }
+        span.eventname {
+            margin: 0;
+        }
+    }
+}
+.block_myoverview {
+    .content-centred .nav.nav-pills .nav-item .nav-link.active {
+        background-color: $primary;
+    }
+    .paged-content-page-container {
+        margin-top: 10px;
+    }
+}
+.card-block .block-controls .dropdown-toggle {
+    color: $primary;
+    i {
+        margin: 0;
+    }
+}
+#page-my-index {
+    .block .block-cards .text-primary {
+        color: inherit;
+    }
+    .has-blocks .card.card-block .block-region .block .card-block .card-text {
+        border: 0;
+    }
+}
+.page-mycourses {
+    #page-header .header-actions-container .header-action .btn-group .btn-link {
+        line-height: 35px !important;
+        i {
+            padding-top: 0 !important;
+        }
+    }
+    .block .card-body {
+        .block-myoverview hr {
+            display: none;
+        }
+        .block-controls {
+            margin-top: 15px;
+            margin-right: 10px;
+        }
+    }
+}
+#block-region-side-pre .block {
+    padding: 0;
+}
+.block-region .block {
+    &.card > .card-body {
+        padding: 0 !important;
+    }
+    .card-block.course-info-container {
+        padding: 1.25rem;
+    }
+    .card-body {
+        &.course-info-container {
+            padding: 10px;
+        }
+        .block-myoverview .card-title {
+            width: 100%;
+            padding: 0;
+            background: none;
+            border: 0;
+            margin-right: 0;
+            a {
+                font-size: 16px;
+                color: $primary;
+            }
+        }
+    }
+}
+.block_recentlyaccessedcourses,
+.block-recentlyaccessedcourses {
+    .card .card-body.course-info-container {
+        padding: 10px 15px;
+    }
+    .paging-bar-container {
+        margin-top: 0;
+    }
+}
+.has-blocks {
+    .mform .form-group .form-check label {
+        padding-top: 0;
+    }
+    .card.card-block .block-region .block {
+        &.block_myoverview {
+            border: 0;
+            .card-text {
+                border-left: 1px solid $light_grey;
+                border-right: 1px solid $light_grey;
+            }
+        }
+        .card-block {
+            .card-title {
+                display: none;
+            }
+            .title .card-title {
+                display: block;
+            }
+            .card-text {
+                padding: 0;
+            }
+            .block-controls .menubar .dropdown {
+                a.dropdown-toggle i.icon {
+                    margin: 0;
+                }
+                .dropdown-menu a.dropdown-item i.icon {
+                    color: $primary;
+                }
+            }
+        }
+    }
+}
+.hidden-print .block-region .block .card-block .block-controls .menubar .dropdown {
+    a.dropdown-toggle i.icon {
+        margin: 0;
+    }
+    .dropdown-menu a.dropdown-item i.icon {
+        color: $primary;
+    }
+}
+.block_tree {
+    font-size: 16px;
+    a {
+        color: $color_storm_dust_approx;
+    }
+}
+.block_navigation,
+.block_settings {
+    .block_tree {
+        .tree_item {
+            line-height: 25px;
+            margin: 15px 0;
+        }
+        .contains_branch {
+            box-shadow: none;
+        }
+        .tree_item.branch {
+            background-position: 0 5px;
+            margin-top: 0;
+        }
+        li {
+            top: 5px;
+            &.item_with_icon > p img {
+                top: 5px;
+            }
+        }
+        .type_activity > p.tree_item.active_tree_node img {
+            top: 5px;
+        }
+    }
+    .adminsearchform input[type="submit"] {
+        margin-left: 0;
+    }
+}
+.jsenabled .block_navigation .block_tree .collapsed .tree_item.branch,
+.jsenabled .block_settings .block_tree .collapsed .tree_item.branch {
+    background-position: 0 5px;
+}
+
+/* Editing blocks */
+.editing {
+    .block .header .commands {
+        margin: 0;
+        .menubar .dropdown {
+            display: inline-block;
+        }
+    }
+    .section .activity {
+        .mod-indent-outer {
+            width: 100%;
+            position: relative;
+        }
+        .editing_move {
+            z-index: 1;
+        }
+    }
+}
+/* End of Editing blocks */
+
+.dir-rtl {
+    .block {
+        .calendar-controls {
+            .previous {
+                text-align: left;
+                &:before {
+                    content: "\f101";
+                }
+            }
+            .next {
+                text-align: right;
+                &:after {
+                    content: "\f100";
+                }
+            }
+        }
+        .calendar_filters li span + i {
+            margin-right: 5px;
+            margin-left: 0;
+        }
+    }
+    .block_navigation {
+        .block_tree {
+            .depth_1 {
+                > .tree_item.branch {
+                    padding-right: 0;
+                }
+                > ul {
+                    margin-right: 0;
+                }
+            }
+            .tree_item.branch {
+                background-position: right 5px;
+            }
+        }
+    }
+    .block_settings .block_tree .tree_item.branch {
+        background-position: right 5px;
+    }
+    &.jsenabled {
+        .block_navigation,
+        .block_settings {
+            .block_tree .collapsed .tree_item.branch {
+                background-position: right 5px;
+            }
+        }
+    }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    .block_calendar_month .content {
+        padding-right: 0;
+        padding-left: 0;
+    }
+    .block .minicalendar td {
+        padding-right: 0;
+        padding-left: 0;
+    }
+}

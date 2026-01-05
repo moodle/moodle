@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/src/jquery.sudoSlider.js</location>
+        <name>Sudo Slider</name>
+        <version>3.4.10</version>
+        <license>Apache</license>
+        <licenseversion>3.4.10</licenseversion>
+    </library>
+    <library>
+        <location>amd/src/slick.js</location>
+        <name>Slick</name>
+        <version>1.8.1</version>
+        <license>Apache</license>
+        <licenseversion>1.8.1</licenseversion>
+    </library>
+</libraries>

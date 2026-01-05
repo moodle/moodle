@@ -1,0 +1,33 @@
+/* Login */
+#page-login-index #header button.btn {
+    display: none;
+}
+.path-login {
+    background-image: none;
+    #page-wrapper {
+        height: auto;
+        margin-bottom: 0;
+    }
+    #page {
+        background-image: url($loginbg);
+        background-size: cover;
+        background-position: top;
+        background-repeat: no-repeat;
+    }
+}
+.login-wrapper {
+    padding: 50px 0;
+    .login-form .login-form-submit .btn {
+        height: auto;
+    }
+}
+.login-container .login-identityproviders .login-identityprovider-btn {
+    border-color: $color_gallery_approx;
+    margin-top: 10px;
+}
+
+@media (max-width: 575px) {
+    #page-login-index .card {
+        margin-top: 50px;
+    }
+}

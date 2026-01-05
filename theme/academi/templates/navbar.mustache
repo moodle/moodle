@@ -1,0 +1,126 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+
+    @template theme_academi/navbar
+
+    This template renders the top navbar.
+
+    Example context (json):
+    {
+        "output": {
+            "should_display_navbar_logo": true,
+            "get_compact_logo_url": "http://placekitten.com/50/50",
+            "custom_menu": "<li>..</li>",
+            "page_heading_menu": "<li>..</li>",
+            "search_box": "<div><input type='text'></div>",
+            "navbar_plugin_output": "<div class='dropdown'>Messaging</div>",
+            "user_menu": "<div class='dropdown'>John Doe</div>"
+        },
+        "config": {
+            "wwwroot": "#",
+            "homeurl": "/my/"
+        },
+        "sitename": "Moodle Site",
+        "mobileprimarynav": [
+            {
+                "text": "Dashboard",
+                "url": "/my",
+                "isactive": true
+            },
+            {
+                "text": "Site home",
+                "url": "/",
+                "isactive": false
+            },
+            {
+                "text": "My courses",
+                "url": "/course",
+                "isactive": false
+            }
+        ]
+    }
+}}
+<nav id="header" class="{{^themestyleheader }} moodle-based-header {{/themestyleheader }} fixed-top navbar navbar-light bg-faded navbar-static-top navbar-expand moodle-has-zindex" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+    <div class="container-fluid navbar-nav">
+            {{^themestyleheader  }} {{!-- Hide menu nave for moodle style }}
+                <button class="navbar-toggler aabtn d-block d-md-none px-1 my-1 border-0" data-toggler="drawers" data-action="toggle" data-target="theme_boost-drawers-primary">
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="sr-only">{{#str}}sidepanel, core{{/str}}</span>
+                </button>
+                <a href="{{{ config.wwwroot }}}/?redirect=0" class="navbar-brand {{# logourl }}has-logo{{/ logourl }}
+                    {{^ logourl }}
+                        hidden-sm-down
+                    {{/ logourl }}
+                        ">
+                    {{#showlogo}}
+                        {{# logourl }}
+                            <span class="logo">
+                                <img src="{{logourl}}" alt="{{sitename}}">
+                            </span>
+                        {{/ logourl }}
+                        {{^ logourl }}
+                            <span class="site-name hidden-sm-down">{{{ sitename }}}</span>
+                        {{/ logourl }}
+                    {{/showlogo}}
+                    {{#showsitename}}
+                        <span class="nav-site-name">{{{sitename}}}</span>
+                    {{/showsitename}}
+                </a>
+            {{/themestyleheader}}
+
+            {{#themestyleheader}}
+                <nav class="nav navbar-nav hidden-md-down address-head">
+                    {{# phoneno}}
+                        <span><i class="fa fa-phone"></i>{{#str}}callus, theme_academi{{/str}} : {{ phoneno }}</span>
+                    {{/ phoneno}}
+                    {{# emailid}}
+                        <span><i class="fa fa-envelope-o"></i>{{#str}}email, theme_academi{{/str}} : <a href="mailto:{{emailid}}">{{ emailid }}</a></span>
+                    {{/ emailid}}
+                </nav>
+            {{/themestyleheader}}
+
+            {{^themestyleheader  }} {{!-- Hide menu nave for moodle style }}
+                {{#primarymoremenu}}
+                    <div class="primary-navigation">
+                        {{> core/moremenu}}
+                    </div>
+                {{/primarymoremenu}}
+
+                <ul class="navbar-nav d-none d-md-flex my-1 px-1">
+                    <!-- page_heading_menu -->
+                    {{{ output.page_heading_menu }}}
+                </ul>
+            {{/themestyleheader}}
+
+        <div id="usernavigation" class="navbar-nav ml-auto">
+            {{#langmenu}}
+                {{> theme_boost/language_menu }}
+            {{/langmenu}}
+            {{{ output.search_box }}}
+            {{{ output.navbar_plugin_output }}}
+            <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+                {{#usermenu}}
+                    {{> core/user_menu }}
+                {{/usermenu}}
+            </div>
+            {{{ output.edit_switch }}}
+        </div>
+        <!-- search_box -->
+    </div>
+</nav>
+{{> theme_boost/primary-drawer-mobile }}
