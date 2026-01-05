@@ -100,7 +100,7 @@ class penalty_rule extends persistent {
             $currentcontext = $currentcontext->get_parent_context();
         }
 
-        return $rules;
+        return array_values($rules);
     }
 
     /**

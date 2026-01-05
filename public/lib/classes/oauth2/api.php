@@ -121,7 +121,7 @@ class api {
      */
     public static function get_all_issuers(bool $includeloginonly = false) {
         if ($includeloginonly) {
-            return issuer::get_records([], 'sortorder');
+            return array_values(issuer::get_records([], 'sortorder'));
         } else {
             return array_values(issuer::get_records_select('showonloginpage<>?', [issuer::LOGINONLY], 'sortorder'));
         }
@@ -275,7 +275,8 @@ class api {
      * @return \core\oauth2\endpoint[]
      */
     public static function get_endpoints(issuer $issuer) {
-        return endpoint::get_records(['issuerid' => $issuer->get('id')]);
+        $endpoints = endpoint::get_records(['issuerid' => $issuer->get('id')]);
+        return array_values($endpoints);
     }
 
     /**
@@ -285,7 +286,8 @@ class api {
      * @return \core\oauth2\user_field_mapping[]
      */
     public static function get_user_field_mappings(issuer $issuer) {
-        return user_field_mapping::get_records(['issuerid' => $issuer->get('id')]);
+        $mappings = user_field_mapping::get_records(['issuerid' => $issuer->get('id')]);
+        return array_values($mappings);
     }
 
     /**
