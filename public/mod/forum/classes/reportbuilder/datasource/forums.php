@@ -100,13 +100,13 @@ class forums extends datasource {
 
         // Add report elements from each of the entities we added to the report.
         $this->add_all_from_entities([
-            $coursecatentity->get_entity_name(),
-            $courseentity->get_entity_name(),
-            $coursemodentity->get_entity_name(),
-            $forumentity->get_entity_name(),
-            $discussionentity->get_entity_name(),
-            $postentity->get_entity_name(),
-            $userentity->get_entity_name(),
+            $coursecatentity,
+            $courseentity,
+            $coursemodentity,
+            $forumentity,
+            $discussionentity,
+            $postentity,
+            $userentity,
         ]);
     }
 
