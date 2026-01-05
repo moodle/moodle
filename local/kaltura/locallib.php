@@ -47,6 +47,7 @@ define('KALTURA_PANEL_WIDTH', 1100);
 define('KALTURA_LTI_LEARNER_ROLE', 'Learner');
 define('KALTURA_LTI_INSTRUCTOR_ROLE', 'Instructor');
 define('KALTURA_LTI_ADMIN_ROLE', 'urn:lti:sysrole:ims/lis/Administrator');
+define('KALTURA_LTI_GUEST_ROLE', 'urn:lti:instrole:ims/lis/Guest');
 define('KALTURA_REPO_NAME', 'kaltura');
 // For KALTURA_URI_TOKEN
 // 1. Do not use characters that are used in regular expressions like {}[]()
@@ -412,6 +413,8 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
         $requestparams['assignment'] = $ltirequest['submission'];
     }
 
+    $requestparams['roles'] = local_kaltura_modify_role($requestparams['roles'] ?? KALTURA_LTI_LEARNER_ROLE);
+
     $params = lti_sign_parameters($requestparams, $endpoint, 'POST', $lti->resourcekey, $lti->password);
 
     local_kaltura_strip_querystring($endpoint, $params);
@@ -587,6 +590,8 @@ function local_kaltura_lti1p3_get_launch_data($module, $withblocks, $editor = nu
 
 	$serviceurl = new moodle_url('/local/kaltura/service.php');
 	$requestparams['lis_outcome_service_url'] = $serviceurl->out(false);
+
+    $requestparams['roles'] = local_kaltura_modify_role($requestparams['roles'] ?? KALTURA_LTI_LEARNER_ROLE);
 
 	if ((!empty($key) && !empty($secret)) || ($ltiversion === LTI_VERSION_1P3)) {
 		if ($ltiversion !== LTI_VERSION_1P3) {
@@ -952,4 +957,12 @@ function local_kaltura_build_kaf_uri($source_url) {
     }
 
     return $source_url;
+}
+
+function local_kaltura_modify_role(string $currentrole) {
+    if (!empty(get_config(KALTURA_PLUGIN_NAME, 'guest_support')) &&
+        (isguestuser() || !isloggedin())) {
+            return KALTURA_LTI_GUEST_ROLE;
+    }
+    return $currentrole;
 }
