@@ -605,4 +605,65 @@ final class category_manager_test extends \advanced_testcase {
         $questiongenerator->create_question_category(['contextid' => $context->id, 'parent' => $qcategory2->id]);
         $this->assertEquals(1, $manager->get_max_sortorder($qcategory2->id));
     }
+
+    /**
+     * Check that question categories with the wrong parent are fixed.
+     *
+     * @todo Deprecate in 6.0 MDL-87844 for Removal in 7.0 MDL-87845.
+     */
+    public function test_fix_restored_category_parents(): void {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        // Add 2 quizzes with question categories.
+        $quiz1 = $generator->create_module('quiz', ['course' => $course->id]);
+        $quiz1context = \context_module::instance($quiz1->cmid);
+        $quiz1top = question_get_top_category($quiz1context->id);
+        $quiz1questioncats = $DB->get_records('question_categories', ['contextid' => $quiz1context->id]);
+        $this->assertCount(2, $quiz1questioncats);
+
+        $quiz2 = $generator->create_module('quiz', ['course' => $course->id]);
+        $quiz2context = \context_module::instance($quiz2->cmid);
+        $quiz2top = question_get_top_category($quiz2context->id);
+        $quiz2questioncats = $DB->get_records('question_categories', ['contextid' => $quiz2context->id]);
+        $this->assertCount(2, $quiz2questioncats);
+
+        // Add 2 question banks with question categories.
+        $qbank1 = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $qbank1context = \context_module::instance($qbank1->cmid);
+        $qbank1top = question_get_top_category($qbank1context->id);
+        $qbank1questioncats = $DB->get_records('question_categories', ['contextid' => $qbank1context->id]);
+        $this->assertCount(2, $qbank1questioncats);
+
+        $qbank2 = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $qbank2context = \context_module::instance($qbank2->cmid);
+        $qbank2top = question_get_top_category($qbank2context->id);
+        $qbank2questioncats = $DB->get_records('question_categories', ['contextid' => $qbank2context->id]);
+        $this->assertCount(2, $qbank2questioncats);
+
+        // Modify the child question categories of the second quiz and qbank instances so they are children of the
+        // first instances' top categories.
+        $quiz2nontop = question_get_default_category($quiz2context->id);
+        $DB->set_field('question_categories', 'parent', $quiz1top->id, ['id' => $quiz2nontop->id]);
+
+        $qbank2nontop = question_get_default_category($qbank2context->id);
+        $DB->set_field('question_categories', 'parent', $qbank1top->id, ['id' => $qbank2nontop->id]);
+
+        $this->assertEquals($quiz1top->id, $DB->get_field('question_categories', 'parent', ['id' => $quiz2nontop->id]));
+        $this->assertEquals($qbank1top->id, $DB->get_field('question_categories', 'parent', ['id' => $qbank2nontop->id]));
+
+        // Run the fix.
+        category_manager::fix_restored_category_parents();
+
+        // Check that the child categories now have the correct parents.
+        $this->assertEquals($quiz2top->id, $DB->get_field('question_categories', 'parent', ['id' => $quiz2nontop->id]));
+        $this->assertEquals($qbank2top->id, $DB->get_field('question_categories', 'parent', ['id' => $qbank2nontop->id]));
+    }
 }
