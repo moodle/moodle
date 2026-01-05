@@ -16,6 +16,8 @@
 
 namespace core\output;
 
+use Mustache\Loader\ArrayLoader;
+
 /**
  * Test escaping of Mustache template placeholders.
  *
@@ -41,7 +43,7 @@ final class mustache_escape_test extends \advanced_testcase {
         $engine = $reflection->invoke($renderer);
 
         // Swap to custom loader.
-        $loader = new \Mustache_Loader_ArrayLoader([
+        $loader = new ArrayLoader([
             'core/test' => '<a href="#" title="{{title}}">test</a>',
         ]);
         $engine->setLoader($loader);
@@ -120,7 +122,7 @@ final class mustache_escape_test extends \advanced_testcase {
         $engine = $reflection->invoke($renderer);
 
         // Swap to custom loader.
-        $loader = new \Mustache_Loader_ArrayLoader([
+        $loader = new ArrayLoader([
             'core/test' => 'Some {{{html}}} test',
         ]);
         $engine->setLoader($loader);
