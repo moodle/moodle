@@ -252,6 +252,7 @@ $string['movingquestions'] = 'Moving questions and any files';
 $string['movingquestionsandfiles'] = 'Are you sure you want to move question(s) {$a->questions} to context for <strong>"{$a->tocontext}"</strong>?<br /> We have detected <strong>{$a->urlcount} files</strong> linked from these question(s) in {$a->fromareaname}, would you like to copy or move these to {$a->toareaname}?';
 $string['movingquestionsnofiles'] = 'Are you sure you want to move question(s) {$a->questions} to context for <strong>"{$a->tocontext}"</strong>?<br /> There are <strong>no files</strong> linked from these question(s) in {$a->fromareaname}.';
 $string['needtochoosecat'] = 'You need to choose a category to move this question to or press \'cancel\'.';
+$string['nobankpermissions'] = 'You do not have permission to access any question banks on this course.';
 $string['nobanks'] = 'This course doesn\'t have any question banks yet.';
 $string['nocate'] = 'No such category {$a}!';
 $string['nopermissionadd'] = 'You don\'t have permission to add questions here.';
