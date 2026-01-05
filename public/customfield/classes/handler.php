@@ -706,6 +706,7 @@ abstract class handler {
             }
             $data->instance_form_save($instance);
         }
+        $this->clear_configuration_cache();
     }
 
     /**
