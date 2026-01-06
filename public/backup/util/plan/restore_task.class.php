@@ -96,6 +96,14 @@ abstract class restore_task extends base_task {
     }
 
     /**
+     * Returns fields that we want to skip importing.
+     * @return array|null
+     */
+    public function get_skiptemplatefields(): ?array {
+        return $this->plan->get_skiptemplatefields();
+    }
+
+    /**
      * Given a commment area, return the itemname that contains the itemid mappings
      *
      * By default, both are the same (commentarea = itemname), so return it. If some
