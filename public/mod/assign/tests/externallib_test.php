@@ -244,6 +244,8 @@ final class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $assignment = $course['assignments'][0];
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
+        $this->assertArrayHasKey('coursemodule', $assignment);
+        $this->assertEquals($assign1->cmid, $assignment['coursemodule']);
         $this->assertEquals('English', $assignment['name']);
         $this->assertStringContainsString('the assignment intro text here', $assignment['intro']);
         $this->assertNotEmpty($assignment['configs']);

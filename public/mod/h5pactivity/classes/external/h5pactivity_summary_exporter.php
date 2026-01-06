@@ -50,6 +50,10 @@ class h5pactivity_summary_exporter extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'The primary key of the record.',
             ],
+            'coursemodule' => [
+                'type' => PARAM_INT,
+                'description' => 'Course module id.',
+            ],
             'course' => [
                 'type' => PARAM_INT,
                 'description' => 'Course id this h5p activity is part of.',
@@ -79,6 +83,40 @@ class h5pactivity_summary_exporter extends exporter {
                 'type' => PARAM_INT,
                 'default' => FORMAT_MOODLE,
                 'description' => 'The format of the intro field.',
+            ],
+            'section' => [
+                'type' => PARAM_INT,
+                'description' => 'Course section id.',
+            ],
+            'visible' => [
+                'type' => PARAM_INT,
+                'description' => 'Visible',
+            ],
+            'groupmode' => [
+                'type' => PARAM_INT,
+                'description' => 'Group mode',
+            ],
+            'groupingid' => [
+                'type' => PARAM_INT,
+                'description' => 'Grouping id',
+            ],
+            'lang' => [
+                'type' => PARAM_LANG,
+                'description' => 'Language code.',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
+            'enableaitools' => [
+                'type' => PARAM_INT,
+                'description' => 'AI tools status.',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
+            'enabledaiactions' => [
+                'type' => PARAM_ALPHANUM,
+                'description' => 'Enabled AI actions.',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
             ],
             'grade' => [
                 'type' => PARAM_INT,
@@ -128,9 +166,6 @@ class h5pactivity_summary_exporter extends exporter {
      */
     protected static function define_other_properties() {
         return [
-            'coursemodule' => [
-                'type' => PARAM_INT
-            ],
             'context' => [
                 'type' => PARAM_INT
             ],
@@ -198,7 +233,6 @@ class h5pactivity_summary_exporter extends exporter {
         $factory = $this->related['factory'];
 
         $values = [
-            'coursemodule' => $context->instanceid,
             'context' => $context->id,
         ];
 

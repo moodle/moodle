@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_course\external\helper_for_get_mods_by_courses;
 use core_external\external_files;
 use core_external\external_format_value;
 use core_external\external_function_parameters;
@@ -333,6 +334,17 @@ class mod_assign_external extends \mod_assign\external\external_api {
                 unset($courses[$cid]);
             }
         }
+
+        // Preload all assign instances once so we can reuse them per course module.
+        $assigninstancesbycm = [];
+        if (!empty($courses)) {
+            $assigninstances = get_all_instances_in_courses('assign', $courses);
+            foreach ($assigninstances as $assigninstance) {
+                if (!empty($assigninstance->coursemodule)) {
+                    $assigninstancesbycm[$assigninstance->coursemodule] = $assigninstance;
+                }
+            }
+        }
         $extrafields='m.id as assignmentid, ' .
                      'm.course, ' .
                      'm.nosubmissions, ' .
@@ -376,6 +388,12 @@ class mod_assign_external extends \mod_assign\external\external_api {
             // Get a list of assignments for the course.
             if ($modules = get_coursemodules_in_course('assign', $courses[$id]->id, $extrafields)) {
                 foreach ($modules as $module) {
+                    // Ensure we have a preloaded instance for this course module.
+                    if (empty($assigninstancesbycm[$module->id])) {
+                        continue;
+                    }
+                    $assigninstance = $assigninstancesbycm[$module->id];
+
                     $context = context_module::instance($module->id);
                     try {
                         self::validate_context($context);
@@ -412,64 +430,58 @@ class mod_assign_external extends \mod_assign\external\external_api {
                             }
                         }
                     }
-
-                    $assignment = array(
-                        'id' => $module->assignmentid,
-                        'cmid' => $module->id,
-                        'course' => $module->course,
-                        'name' => \core_external\util::format_string($module->name, $context),
-                        'nosubmissions' => $module->nosubmissions,
-                        'submissiondrafts' => $module->submissiondrafts,
-                        'sendnotifications' => $module->sendnotifications,
-                        'sendlatenotifications' => $module->sendlatenotifications,
-                        'sendstudentnotifications' => $module->sendstudentnotifications,
-                        'duedate' => $assign->get_instance()->duedate,
-                        'allowsubmissionsfromdate' => $assign->get_instance()->allowsubmissionsfromdate,
-                        'grade' => $module->grade,
-                        'gradepenalty' => $module->gradepenalty,
-                        'timemodified' => $module->timemodified,
-                        'completionsubmit' => $module->completionsubmit,
-                        'cutoffdate' => $assign->get_instance()->cutoffdate,
-                        'gradingduedate' => $assign->get_instance()->gradingduedate,
-                        'teamsubmission' => $module->teamsubmission,
-                        'requireallteammemberssubmit' => $module->requireallteammemberssubmit,
-                        'teamsubmissiongroupingid' => $module->teamsubmissiongroupingid,
-                        'blindmarking' => $module->blindmarking,
-                        'hidegrader' => $module->hidegrader,
-                        'revealidentities' => $module->revealidentities,
-                        'attemptreopenmethod' => $module->attemptreopenmethod,
-                        'maxattempts' => $module->maxattempts,
-                        'markingworkflow' => $module->markingworkflow,
-                        'markingallocation' => $module->markingallocation,
-                        'markercount' => $module->markercount,
-                        'multimarkmethod' => $module->multimarkmethod,
-                        'multimarkrounding' => $module->multimarkrounding,
-                        'markinganonymous' => $module->markinganonymous,
-                        'requiresubmissionstatement' => $module->requiresubmissionstatement,
-                        'preventsubmissionnotingroup' => $module->preventsubmissionnotingroup,
-                        'timelimit' => $module->timelimit,
-                        'submissionattachments' => $module->submissionattachments,
-                        'configs' => $configarray
+                    // Build the base course module data using the standard helper.
+                    $assignment = helper_for_get_mods_by_courses::standard_coursemodule_element_values(
+                        $assigninstance,
+                        'mod_assign',
                     );
 
-                    // Return or not intro and file attachments depending on the plugin settings.
-                    if ($assign->show_intro()) {
-                        $options = array('noclean' => true);
-                        [$assignment['intro'], $assignment['introformat']] = \core_external\util::format_text(
-                            $module->intro,
-                            $module->introformat,
-                            $context,
+                    // Add assignment-specific fields.
+                    $assignment['id'] = $assigninstance->id;
+                    $assignment['cmid'] = $module->id;
+                    $assignment['nosubmissions'] = $module->nosubmissions;
+                    $assignment['submissiondrafts'] = $module->submissiondrafts;
+                    $assignment['sendnotifications'] = $module->sendnotifications;
+                    $assignment['sendlatenotifications'] = $module->sendlatenotifications;
+                    $assignment['sendstudentnotifications'] = $module->sendstudentnotifications;
+                    $assignment['duedate'] = $assigninstance->duedate;
+                    $assignment['allowsubmissionsfromdate'] = $assigninstance->allowsubmissionsfromdate;
+                    $assignment['grade'] = $module->grade;
+                    $assignment['gradepenalty'] = $module->gradepenalty;
+                    $assignment['timemodified'] = $module->timemodified;
+                    $assignment['completionsubmit'] = $module->completionsubmit;
+                    $assignment['cutoffdate'] = $assigninstance->cutoffdate;
+                    $assignment['gradingduedate'] = $assigninstance->gradingduedate;
+                    $assignment['teamsubmission'] = $module->teamsubmission;
+                    $assignment['requireallteammemberssubmit'] = $module->requireallteammemberssubmit;
+                    $assignment['teamsubmissiongroupingid'] = $module->teamsubmissiongroupingid;
+                    $assignment['blindmarking'] = $module->blindmarking;
+                    $assignment['hidegrader'] = $module->hidegrader;
+                    $assignment['revealidentities'] = $module->revealidentities;
+                    $assignment['attemptreopenmethod'] = $module->attemptreopenmethod;
+                    $assignment['maxattempts'] = $module->maxattempts;
+                    $assignment['markingworkflow'] = $module->markingworkflow;
+                    $assignment['markingallocation'] = $module->markingallocation;
+                    $assignment['markercount'] = $module->markercount;
+                    $assignment['multimarkmethod'] = $module->multimarkmethod;
+                    $assignment['multimarkrounding'] = $module->multimarkrounding;
+                    $assignment['markinganonymous'] = $module->markinganonymous;
+                    $assignment['requiresubmissionstatement'] = $module->requiresubmissionstatement;
+                    $assignment['preventsubmissionnotingroup'] = $module->preventsubmissionnotingroup;
+                    $assignment['timelimit'] = $module->timelimit;
+                    $assignment['submissionattachments'] = $module->submissionattachments;
+                    $assignment['configs'] = $configarray;
+
+                    // Respect assign visibility rules for the intro and its attachments.
+                    if (!$assign->show_intro()) {
+                        unset($assignment['intro'], $assignment['introformat'], $assignment['introfiles']);
+                    } else if ($assign->should_provide_intro_attachments($USER->id)) {
+                        $assignment['introattachments'] = external_util::get_area_files(
+                            $context->id,
                             'mod_assign',
-                            'intro',
-                            null,
-                            $options
+                            ASSIGN_INTROATTACHMENT_FILEAREA,
+                            0,
                         );
-                        $assignment['introfiles'] = external_util::get_area_files($context->id, 'mod_assign', 'intro', false,
-                                                                                    false);
-                        if ($assign->should_provide_intro_attachments($USER->id)) {
-                            $assignment['introattachments'] = external_util::get_area_files($context->id, 'mod_assign',
-                                ASSIGN_INTROATTACHMENT_FILEAREA, 0);
-                        }
                     }
 
                     if ($module->requiresubmissionstatement) {
@@ -536,55 +548,69 @@ class mod_assign_external extends \mod_assign\external\external_api {
      */
     private static function get_assignments_assignment_structure() {
         return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'assignment id'),
-                'cmid' => new external_value(PARAM_INT, 'course module id'),
-                'course' => new external_value(PARAM_INT, 'course id'),
-                'name' => new external_value(PARAM_RAW, 'assignment name'),
-                'nosubmissions' => new external_value(PARAM_INT, 'no submissions'),
-                'submissiondrafts' => new external_value(PARAM_INT, 'submissions drafts'),
-                'sendnotifications' => new external_value(PARAM_INT, 'send notifications'),
-                'sendlatenotifications' => new external_value(PARAM_INT, 'send notifications'),
-                'sendstudentnotifications' => new external_value(PARAM_INT, 'send student notifications (default)'),
-                'duedate' => new external_value(PARAM_INT, 'assignment due date'),
-                'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
-                'grade' => new external_value(PARAM_INT, 'grade type'),
-                'gradepenalty' => new external_value(PARAM_INT, 'if enabled, penalty will be applied to late submissions'),
-                'timemodified' => new external_value(PARAM_INT, 'last time assignment was modified'),
-                'completionsubmit' => new external_value(PARAM_INT, 'if enabled, set activity as complete following submission'),
-                'cutoffdate' => new external_value(PARAM_INT, 'date after which submission is not accepted without an extension'),
-                'gradingduedate' => new external_value(PARAM_INT, 'the expected date for marking the submissions'),
-                'teamsubmission' => new external_value(PARAM_INT, 'if enabled, students submit as a team'),
-                'requireallteammemberssubmit' => new external_value(PARAM_INT, 'if enabled, all team members must submit'),
-                'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'the grouping id for the team submission groups'),
-                'blindmarking' => new external_value(PARAM_INT, 'if enabled, hide identities until reveal identities actioned'),
-                'hidegrader' => new external_value(PARAM_INT, 'If enabled, hide grader to student'),
-                'revealidentities' => new external_value(PARAM_INT, 'show identities for a blind marking assignment'),
-                'attemptreopenmethod' => new external_value(PARAM_TEXT, 'method used to control opening new attempts'),
-                'maxattempts' => new external_value(PARAM_INT, 'maximum number of attempts allowed'),
-                'markingworkflow' => new external_value(PARAM_INT, 'enable marking workflow'),
-                'markingallocation' => new external_value(PARAM_INT, 'enable marking allocation'),
-                'markercount' => new external_value(PARAM_INT, 'number of markers'),
-                'multimarkmethod' => new external_value(PARAM_TEXT, 'method to use when combining marks to a final grade'),
-                'multimarkrounding' => new external_value(PARAM_INT, 'rounding direction to use when handling decimal marks'),
-                'markinganonymous' => new external_value(PARAM_INT, 'enable marking anonymous'),
-                'requiresubmissionstatement' => new external_value(PARAM_INT, 'student must accept submission statement'),
-                'preventsubmissionnotingroup' => new external_value(PARAM_INT, 'Prevent submission not in group', VALUE_OPTIONAL),
-                'submissionstatement' => new external_value(PARAM_RAW, 'Submission statement formatted.', VALUE_OPTIONAL),
-                'submissionstatementformat' => new external_format_value('submissionstatement', VALUE_OPTIONAL),
-                'configs' => new external_multiple_structure(self::get_assignments_config_structure(), 'configuration settings'),
-                'intro' => new external_value(PARAM_RAW,
-                    'assignment intro, not allways returned because it deppends on the activity configuration', VALUE_OPTIONAL),
-                'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
-                'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
-                'introattachments' => new external_files('intro attachments files', VALUE_OPTIONAL),
-                'activity' => new external_value(PARAM_RAW, 'Description of activity', VALUE_OPTIONAL),
-                'activityformat' => new external_format_value('activity', VALUE_OPTIONAL),
-                'activityattachments' => new external_files('Files from activity field', VALUE_OPTIONAL),
-                'timelimit' => new external_value(PARAM_INT, 'Time limit to complete assigment', VALUE_OPTIONAL),
-                'submissionattachments' => new external_value(PARAM_INT,
-                    'Flag to only show files during submission', VALUE_OPTIONAL),
-            ), 'assignment information object');
+            array_merge(
+                helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(true),
+                [
+                    'cmid' => new external_value(PARAM_INT, 'course module id'),
+                    'nosubmissions' => new external_value(PARAM_INT, 'no submissions'),
+                    'submissiondrafts' => new external_value(PARAM_INT, 'submissions drafts'),
+                    'sendnotifications' => new external_value(PARAM_INT, 'send notifications'),
+                    'sendlatenotifications' => new external_value(PARAM_INT, 'send notifications'),
+                    'sendstudentnotifications' => new external_value(PARAM_INT, 'send student notifications (default)'),
+                    'duedate' => new external_value(PARAM_INT, 'assignment due date'),
+                    'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
+                    'grade' => new external_value(PARAM_INT, 'grade type'),
+                    'gradepenalty' => new external_value(PARAM_INT, 'if enabled, penalty will be applied to late submissions'),
+                    'timemodified' => new external_value(PARAM_INT, 'last time assignment was modified'),
+                    'completionsubmit' => new external_value(
+                        PARAM_INT,
+                        'if enabled, set activity as complete following submission',
+                    ),
+                    'cutoffdate' => new external_value(
+                        PARAM_INT,
+                        'date after which submission is not accepted without an extension',
+                    ),
+                    'gradingduedate' => new external_value(PARAM_INT, 'the expected date for marking the submissions'),
+                    'teamsubmission' => new external_value(PARAM_INT, 'if enabled, students submit as a team'),
+                    'requireallteammemberssubmit' => new external_value(PARAM_INT, 'if enabled, all team members must submit'),
+                    'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'the grouping id for the team submission groups'),
+                    'blindmarking' => new external_value(PARAM_INT, 'if enabled, hide identities until reveal identities actioned'),
+                    'hidegrader' => new external_value(PARAM_INT, 'If enabled, hide grader to student'),
+                    'revealidentities' => new external_value(PARAM_INT, 'show identities for a blind marking assignment'),
+                    'attemptreopenmethod' => new external_value(PARAM_TEXT, 'method used to control opening new attempts'),
+                    'maxattempts' => new external_value(PARAM_INT, 'maximum number of attempts allowed'),
+                    'markingworkflow' => new external_value(PARAM_INT, 'enable marking workflow'),
+                    'markingallocation' => new external_value(PARAM_INT, 'enable marking allocation'),
+                    'markercount' => new external_value(PARAM_INT, 'number of markers'),
+                    'multimarkmethod' => new external_value(PARAM_TEXT, 'method to use when combining marks to a final grade'),
+                    'multimarkrounding' => new external_value(PARAM_INT, 'rounding direction to use when handling decimal marks'),
+                    'markinganonymous' => new external_value(PARAM_INT, 'enable marking anonymous'),
+                    'requiresubmissionstatement' => new external_value(PARAM_INT, 'student must accept submission statement'),
+                    'preventsubmissionnotingroup' => new external_value(
+                        PARAM_INT,
+                        'Prevent submission not in group',
+                        VALUE_OPTIONAL,
+                    ),
+                    'submissionstatement' => new external_value(PARAM_RAW, 'Submission statement formatted.', VALUE_OPTIONAL),
+                    'submissionstatementformat' => new external_format_value('submissionstatement', VALUE_OPTIONAL),
+                    'configs' => new external_multiple_structure(
+                        self::get_assignments_config_structure(),
+                        'configuration settings',
+                    ),
+                    'introattachments' => new external_files('intro attachments files', VALUE_OPTIONAL),
+                    'activity' => new external_value(PARAM_RAW, 'Description of activity', VALUE_OPTIONAL),
+                    'activityformat' => new external_format_value('activity', VALUE_OPTIONAL),
+                    'activityattachments' => new external_files('Files from activity field', VALUE_OPTIONAL),
+                    'timelimit' => new external_value(PARAM_INT, 'Time limit to complete assigment', VALUE_OPTIONAL),
+                    'submissionattachments' => new external_value(
+                        PARAM_INT,
+                        'Flag to only show files during submission',
+                        VALUE_OPTIONAL,
+                    ),
+                ],
+            ),
+            'assignment information object'
+        );
     }
 
     /**

@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core_course\external\helper_for_get_mods_by_courses;
 use core_course\external\course_summary_exporter;
 use core_courseformat\formatactions;
 use core_external\external_api;
@@ -265,7 +266,6 @@ class core_course_external extends external_api {
                                 }
                             }
                         }
-
                         $module = array();
 
                         $modcontext = context_module::instance($cm->id);
@@ -274,6 +274,10 @@ class core_course_external extends external_api {
 
                         // Common info (for people being able to see the module or availability dates).
                         $module['id'] = $cm->id;
+                        $module['lang'] = '';
+                        if (property_exists($cm, 'lang') && !empty($cm->lang)) {
+                            $module['lang'] = clean_param($cm->lang, PARAM_LANG);
+                        }
                         $module['name'] = \core_external\util::format_string($cm->name, $modcontext);
                         $module['instance'] = $cm->instance;
                         $module['contextid'] = $modcontext->id;
@@ -480,6 +484,7 @@ class core_course_external extends external_api {
                                 'url' => new external_value(PARAM_URL, 'activity url', VALUE_OPTIONAL),
                                 'name' => new external_value(PARAM_RAW, 'activity module name'),
                                 'instance' => new external_value(PARAM_INT, 'instance id', VALUE_OPTIONAL),
+                                'lang' => new external_value(PARAM_SAFEDIR, 'Forced activity language', VALUE_OPTIONAL),
                                 'contextid' => new external_value(PARAM_INT, 'Activity context id.', VALUE_OPTIONAL),
                                 'description' => new external_value(PARAM_RAW, 'activity description', VALUE_OPTIONAL),
                                 'visible' => new external_value(PARAM_INT, 'is the module visible', VALUE_OPTIONAL),
@@ -2962,6 +2967,17 @@ class core_course_external extends external_api {
         $warnings = array();
 
         $cm = get_coursemodule_from_id(null, $params['cmid'], 0, true, MUST_EXIST);
+
+        $course = get_course($cm->course);
+        $instances = get_all_instances_in_courses($cm->modname, [$course->id => $course]);
+        $instance = null;
+        foreach ($instances as $ins) {
+            if ($ins->id == $cm->instance) {
+                $instance = $ins;
+                break;
+            }
+        }
+
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
@@ -3027,8 +3043,24 @@ class core_course_external extends external_api {
             $info->completion = $cm->completion;
             $info->downloadcontent = $cm->downloadcontent;
         }
-        // Format name.
-        $info->name = \core_external\util::format_string($cm->name, $context);
+        if ($instance) {
+            $instancedetails = helper_for_get_mods_by_courses::standard_coursemodule_element_values(
+                $instance,
+                'mod_' . $cm->modname,
+            );
+            foreach ($instancedetails as $field => $value) {
+                if ($field === 'id') {
+                    continue;
+                }
+                $info->{$field} = $value;
+            }
+        } else {
+            $info->name = \core_external\util::format_string($cm->name, $context);
+            $info->intro = '';
+            $info->introformat = FORMAT_HTML;
+            $info->introfiles = [];
+        }
+        $info->coursemodule = $cm->id;
         $result = array();
         $result['cm'] = $info;
         $result['warnings'] = $warnings;
@@ -3044,24 +3076,20 @@ class core_course_external extends external_api {
     public static function get_course_module_returns() {
         return new external_single_structure(
             array(
-                'cm' => new external_single_structure(
-                    array(
+                'cm' => new external_single_structure(array_merge(
+                    helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(true),
+                    [
                         'id' => new external_value(PARAM_INT, 'The course module id'),
-                        'course' => new external_value(PARAM_INT, 'The course id'),
+                        'visible' => new external_value(PARAM_INT, 'Visible', VALUE_OPTIONAL),
                         'module' => new external_value(PARAM_INT, 'The module type id'),
-                        'name' => new external_value(PARAM_RAW, 'The activity name'),
                         'modname' => new external_value(PARAM_COMPONENT, 'The module component name (forum, assign, etc..)'),
                         'instance' => new external_value(PARAM_INT, 'The activity instance id'),
-                        'section' => new external_value(PARAM_INT, 'The module section id'),
                         'sectionnum' => new external_value(PARAM_INT, 'The module section number'),
-                        'groupmode' => new external_value(PARAM_INT, 'Group mode'),
-                        'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
                         'completion' => new external_value(PARAM_INT, 'If completion is enabled'),
                         'idnumber' => new external_value(PARAM_RAW, 'Module id number', VALUE_OPTIONAL),
                         'added' => new external_value(PARAM_INT, 'Time added', VALUE_OPTIONAL),
                         'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
                         'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
-                        'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
                         'visibleoncoursepage' => new external_value(PARAM_INT, 'If visible on course page', VALUE_OPTIONAL),
                         'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
                         'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
@@ -3094,8 +3122,8 @@ class core_course_external extends external_api {
                             ),
                             'Outcomes information', VALUE_OPTIONAL
                         ),
-                    )
-                ),
+                    ],
+                )),
                 'warnings' => new external_warnings()
             )
         );

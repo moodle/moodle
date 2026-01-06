@@ -84,10 +84,6 @@ class get_h5pactivities_by_courses extends external_api {
             $h5pactivities = get_all_instances_in_courses('h5pactivity', $courses);
             foreach ($h5pactivities as $h5pactivity) {
                 $context = context_module::instance($h5pactivity->coursemodule);
-                // Remove fields that are not from the h5p activity (added by get_all_instances_in_courses).
-                unset($h5pactivity->coursemodule, $h5pactivity->context,
-                    $h5pactivity->visible, $h5pactivity->section,
-                    $h5pactivity->groupmode, $h5pactivity->groupingid);
 
                 $exporter = new h5pactivity_summary_exporter($h5pactivity,
                     ['context' => $context, 'factory' => $factory]);

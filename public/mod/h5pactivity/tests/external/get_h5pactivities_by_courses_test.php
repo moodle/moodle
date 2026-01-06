@@ -178,6 +178,8 @@ final class get_h5pactivities_by_courses_test extends \core_external\tests\exter
             $this->assertEquals($activities[$i]->cmid, $result['h5pactivities'][$i]['coursemodule']);
             $this->assertEquals($activities[$i]->contextid, $result['h5pactivities'][$i]['context']);
             $this->assertEquals($activities[$i]->filename, $result['h5pactivities'][$i]['package'][0]['filename']);
+            $this->assertArrayHasKey('lang', $result['h5pactivities'][$i]);
+            $this->assertNull($result['h5pactivities'][$i]['lang']);
         }
     }
 }

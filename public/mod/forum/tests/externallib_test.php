@@ -173,51 +173,85 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         }
         $enrol->enrol_user($instance2, $user->id);
 
+        // Reset static cache.
+        $forum1cm = get_coursemodule_from_id('forum', $forum1->cmid, 0, false, MUST_EXIST);
+        $forum1section = $DB->get_record('course_sections', ['id' => $forum1cm->section], 'section', MUST_EXIST);
+        forum_tp_count_forum_unread_posts($forum1cm, $course1, true);
+        $forum2cm = get_coursemodule_from_id('forum', $forum2->cmid, 0, false, MUST_EXIST);
+        $forum2section = $DB->get_record('course_sections', ['id' => $forum2cm->section], 'section', MUST_EXIST);
+        forum_tp_count_forum_unread_posts($forum2cm, $course2, true);
+
         // Assign capabilities to view forums for forum 2.
-        $cm2 = get_coursemodule_from_id('forum', $forum2->cmid, 0, false, MUST_EXIST);
-        $context2 = \context_module::instance($cm2->id);
+        $context2 = \context_module::instance($forum2cm->id);
         $newrole = create_role('Role 2', 'role2', 'Role 2 description');
         $roleid2 = $this->assignUserCapability('mod/forum:viewdiscussion', $context2->id, $newrole);
-
-        // Create what we expect to be returned when querying the two courses.
-        unset($forum1->displaywordcount);
-        unset($forum2->displaywordcount);
-
-        $expectedforums = array();
-        $expectedforums[$forum1->id] = (array) $forum1;
-        $expectedforums[$forum2->id] = (array) $forum2;
-
-        // Reset static cache.
-        $forum1cm = get_coursemodule_from_id('forum', $forum1->cmid);
-        forum_tp_count_forum_unread_posts($forum1cm, $course1, true);
-        $forum2cm = get_coursemodule_from_id('forum', $forum2->cmid);
-        forum_tp_count_forum_unread_posts($forum2cm, $course2, true);
 
         // Call the external function passing course ids.
         $forums = mod_forum_external::get_forums_by_courses(array($course1->id, $course2->id));
         $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
         $this->assertCount(2, $forums);
+
+        // Index results by id for easier checks.
+        $forumsbyid = [];
         foreach ($forums as $forum) {
-            $this->assertEquals($expectedforums[$forum['id']], $forum);
+            $forumsbyid[$forum['id']] = $forum;
         }
 
-        // Call the external function without passing course id.
-        $forums = mod_forum_external::get_forums_by_courses();
-        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
-        $this->assertCount(2, $forums);
-        foreach ($forums as $forum) {
-            $this->assertEquals($expectedforums[$forum['id']], $forum);
-        }
+        $this->assertArrayHasKey($forum1->id, $forumsbyid);
+        $this->assertArrayHasKey($forum2->id, $forumsbyid);
 
-        // Unenrol user from second course and alter expected forums.
+        $returnedforum1 = $forumsbyid[$forum1->id];
+        $this->assertEquals($forum1->id, $returnedforum1['id']);
+        $this->assertEquals($course1->id, $returnedforum1['course']);
+        $this->assertEquals($forum1->name, $returnedforum1['name']);
+        $this->assertEquals($forum1->intro, $returnedforum1['intro']);
+        $this->assertEquals($forum1->introformat, $returnedforum1['introformat']);
+        $this->assertEquals($forum1->trackingtype, $returnedforum1['trackingtype']);
+        $this->assertEquals($forum1->numdiscussions, $returnedforum1['numdiscussions']);
+        $this->assertEquals($forum1->cancreatediscussions, $returnedforum1['cancreatediscussions']);
+        $this->assertEquals($forum1->istracked, $returnedforum1['istracked']);
+        $this->assertEquals($forum1->unreadpostscount, $returnedforum1['unreadpostscount']);
+        $this->assertEquals($forum1->lang, $returnedforum1['lang']);
+        $this->assertEquals($forum1->introfiles, $returnedforum1['introfiles']);
+        // New fields added in get_forums_by_courses.
+        $this->assertEquals($forum1cm->id, $returnedforum1['coursemodule']);
+        $this->assertEquals((int) $forum1section->section, $returnedforum1['section']);
+        $this->assertEquals((bool) $forum1cm->visible, $returnedforum1['visible']);
+        $this->assertEquals((int) $forum1cm->groupmode, $returnedforum1['groupmode']);
+        $this->assertEquals((int) $forum1cm->groupingid, $returnedforum1['groupingid']);
+        $this->assertArrayHasKey('enableaitools', $returnedforum1);
+        $this->assertArrayHasKey('enabledaiactions', $returnedforum1);
+
+        $returnedforum2 = $forumsbyid[$forum2->id];
+        $this->assertEquals($forum2->id, $returnedforum2['id']);
+        $this->assertEquals($course2->id, $returnedforum2['course']);
+        $this->assertEquals($forum2->name, $returnedforum2['name']);
+        $this->assertEquals($forum2->intro, $returnedforum2['intro']);
+        $this->assertEquals($forum2->introformat, $returnedforum2['introformat']);
+        $this->assertEquals($forum2->trackingtype, $returnedforum2['trackingtype']);
+        $this->assertEquals($forum2->numdiscussions, $returnedforum2['numdiscussions']);
+        $this->assertEquals($forum2->cancreatediscussions, $returnedforum2['cancreatediscussions']);
+        $this->assertEquals($forum2->istracked, $returnedforum2['istracked']);
+        $this->assertEquals($forum2->lang, $returnedforum2['lang']);
+        $this->assertEquals($forum2->introfiles, $returnedforum2['introfiles']);
+        // New fields added in get_forums_by_courses.
+        $this->assertEquals($forum2cm->id, $returnedforum2['coursemodule']);
+        $this->assertEquals((int) $forum2section->section, $returnedforum2['section']);
+        $this->assertEquals((bool) $forum2cm->visible, $returnedforum2['visible']);
+        $this->assertEquals((int) $forum2cm->groupmode, $returnedforum2['groupmode']);
+        $this->assertEquals((int) $forum2cm->groupingid, $returnedforum2['groupingid']);
+        $this->assertArrayHasKey('enableaitools', $returnedforum2);
+        $this->assertArrayHasKey('enabledaiactions', $returnedforum2);
+
+        // Unenrol user from second course and verify only the first forum is returned.
         $enrol->unenrol_user($instance2, $user->id);
-        unset($expectedforums[$forum2->id]);
 
         // Call the external function without passing course id.
         $forums = mod_forum_external::get_forums_by_courses();
         $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
         $this->assertCount(1, $forums);
-        $this->assertEquals($expectedforums[$forum1->id], $forums[0]);
+
+        $this->assertEquals($forum1->id, $forums[0]['id']);
         $this->assertTrue($forums[0]['cancreatediscussions']);
 
         // Change the type of the forum, the user shouldn't be able to add discussions.
