@@ -139,7 +139,7 @@ class text_filter extends \core_filters\text_filter {
             'height' => $height,
             'class' => 'kaltura-player-iframe',
             'allowfullscreen' => 'true',
-            'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
+            'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *; clipboard-write *;',
             'src' => $url->out(false),
             'frameborder' => '0'
         ));

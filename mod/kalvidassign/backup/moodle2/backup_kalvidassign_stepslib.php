@@ -93,6 +93,7 @@ class backup_kalvidassign_activity_structure_step extends backup_activity_struct
 
         // Annotate the file areas in use.
         $issue->annotate_files('mod_kalvidassign', 'submission', 'id');
+        $issue->annotate_files('mod_kalvidassign', 'intro', null);
 
         // Return the root element, wrapped into standard activity structure.
         return $this->prepare_activity_structure($kalvidassign);

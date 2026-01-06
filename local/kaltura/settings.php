@@ -118,6 +118,10 @@ if ($hassiteconfig) {
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
+    $adminsetting = new admin_setting_configcheckbox('guest_support', get_string('guest_support', 'local_kaltura'), get_string('guest_support_desc', 'local_kaltura'), 1);
+    $adminsetting->plugin = KALTURA_PLUGIN_NAME;
+    $settings->add($adminsetting);
+
 	$settings->hide_if(KALTURA_PLUGIN_NAME.'/adminsecret', KALTURA_PLUGIN_NAME .'/lti_version', 'eq', LTI_VERSION_1P3);
 	$settings->hide_if(KALTURA_PLUGIN_NAME.'/client_id', KALTURA_PLUGIN_NAME. '/lti_version', 'eq', LTI_VERSION_1);
 

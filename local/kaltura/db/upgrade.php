@@ -74,5 +74,13 @@ function xmldb_local_kaltura_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016120130, 'local', 'kaltura');
     }
 
+    if ($oldversion < 2025041400) {
+        // Because the plug-in is being upgraded we need to set the guest_support flag to true.
+        set_config('guest_support', 1, KALTURA_PLUGIN_NAME);
+
+        // Kaltura savepoint reached.
+        upgrade_plugin_savepoint(true, 2025041400, 'local', 'kaltura');
+    }
+
     return true;
 }

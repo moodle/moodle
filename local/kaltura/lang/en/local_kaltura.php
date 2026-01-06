@@ -102,3 +102,5 @@ $string['client_id'] = 'Client ID';
 $string['client_id_desc'] = 'Client ID';
 $string['redirection_uris'] = 'Redirection URIs';
 $string['redirection_uris_desc'] = 'Redirection URIs';
+$string['guest_support'] = 'Guest support';
+$string['guest_support_desc'] = "If enabled, use Moodle's ability to identify guests and non-logged in users, and provide them with the 'Guest' LTI role.";
