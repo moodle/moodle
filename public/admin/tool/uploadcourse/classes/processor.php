@@ -246,7 +246,7 @@ class tool_uploadcourse_processor {
             'canreset' => $this->allowresets,
             'reset' => $this->reset,
             'restoredir' => $this->get_restore_content_dir(),
-            'shortnametemplate' => $this->shortnametemplate
+            'shortnametemplate' => $this->shortnametemplate,
         );
         return new tool_uploadcourse_course($this->mode, $this->updatemode, $data, $this->defaults, $importoptions);
     }
