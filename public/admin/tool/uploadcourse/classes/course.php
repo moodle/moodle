@@ -100,6 +100,9 @@ class tool_uploadcourse_course {
     /** @var int update mode. Matches tool_uploadcourse_processor::UPDATE_* */
     protected $updatemode;
 
+    /** @var array Fields provided in the CSV that should not be overwritten from the template course. */
+    protected $skiptemplatefields = [];
+
     /** @var array fields allowed as course data. */
     static protected $validfields = array('fullname', 'shortname', 'idnumber', 'category', 'visible', 'startdate', 'enddate',
         'summary', 'format', 'theme', 'lang', 'newsitems', 'showgrades', 'showreports', 'legacyfiles', 'maxbytes',
@@ -485,7 +488,10 @@ class tool_uploadcourse_course {
         foreach ($this->rawdata as $field => $value) {
             if (!in_array($field, self::$validfields)) {
                 continue;
-            } else if ($field == 'shortname') {
+            }
+            // Track fields provided in the CSV so they are not overwritten by template course values.
+            $this->skiptemplatefields[] = $field;
+            if ($field == 'shortname') {
                 // Let's leave it apart from now, use $this->shortname only.
                 continue;
             }
@@ -911,8 +917,18 @@ class tool_uploadcourse_course {
 
         // Restore a course.
         if (!empty($this->restoredata)) {
-            $rc = new restore_controller($this->restoredata, $course->id, backup::INTERACTIVE_NO,
-                backup::MODE_IMPORT, $USER->id, backup::TARGET_CURRENT_ADDING);
+            $rc = new restore_controller(
+                $this->restoredata,
+                $course->id,
+                backup::INTERACTIVE_NO,
+                backup::MODE_IMPORT,
+                $USER->id,
+                backup::TARGET_CURRENT_ADDING,
+                null,
+                null,
+                null,
+                $this->skiptemplatefields
+            );
 
             // Check if the format conversion must happen first.
             if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
