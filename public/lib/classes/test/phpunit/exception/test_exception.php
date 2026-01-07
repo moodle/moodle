@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_phpunit\exception;
+namespace core\test\phpunit\exception;
 
 /**
  * An exception thrown when an error is encountered in the setup, teardown, or other non-test parts of a unit test.
@@ -23,5 +23,5 @@ namespace core_phpunit\exception;
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-class_alias(\core\test\phpunit\exception\test_exception::class, test_exception::class);
+class test_exception extends \core\exception\coding_exception {
+}

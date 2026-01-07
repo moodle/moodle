@@ -2,7 +2,7 @@
 <phpunit
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
-  bootstrap="public/lib/phpunit/bootstrap.php"
+  bootstrap="@root@public/lib/phpunit/bootstrap.php"
   processIsolation="false"
   backupGlobals="false"
   cacheResult="false"
@@ -38,315 +38,315 @@
 
   <testsuites>
     <testsuite name="core_phpunit_testsuite">
-      <directory suffix="_test.php">public/lib/phpunit/tests</directory>
-      <exclude>public/lib/phpunit/tests/classes</exclude>
-      <exclude>public/lib/phpunit/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/phpunit/tests</directory>
+      <exclude>@root@public/lib/phpunit/tests/classes</exclude>
+      <exclude>@root@public/lib/phpunit/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_test_testsuite">
-      <directory suffix="_test.php">public/lib/testing/tests</directory>
-      <exclude>public/lib/testing/tests/classes</exclude>
-      <exclude>public/lib/testing/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/testing/tests</directory>
+      <exclude>@root@public/lib/testing/tests/classes</exclude>
+      <exclude>@root@public/lib/testing/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_ddl_testsuite">
-      <directory suffix="_test.php">public/lib/ddl/tests</directory>
-      <exclude>public/lib/ddl/tests/classes</exclude>
-      <exclude>public/lib/ddl/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/ddl/tests</directory>
+      <exclude>@root@public/lib/ddl/tests/classes</exclude>
+      <exclude>@root@public/lib/ddl/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_dml_testsuite">
-      <directory suffix="_test.php">public/lib/dml/tests</directory>
-      <exclude>public/lib/dml/tests/classes</exclude>
-      <exclude>public/lib/dml/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/dml/tests</directory>
+      <exclude>@root@public/lib/dml/tests/classes</exclude>
+      <exclude>@root@public/lib/dml/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_testsuite">
-      <directory suffix="_test.php">public/lib/tests</directory>
-      <exclude>public/lib/tests/classes</exclude>
-      <exclude>public/lib/tests/fixtures</exclude>
-      <!-- <directory suffix="_test.php">public/lib/ajax/tests</directory> -->
+      <directory suffix="_test.php">@root@public/lib/tests</directory>
+      <exclude>@root@public/lib/tests/classes</exclude>
+      <exclude>@root@public/lib/tests/fixtures</exclude>
+      <!-- <directory suffix="_test.php">@root@public/lib/ajax/tests</directory> -->
     </testsuite>
     <testsuite name="core_external_testsuite">
-      <directory suffix="_test.php">public/lib/external/tests</directory>
-      <exclude>public/lib/external/tests/classes</exclude>
-      <exclude>public/lib/external/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/external/tests</directory>
+      <exclude>@root@public/lib/external/tests/classes</exclude>
+      <exclude>@root@public/lib/external/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_favourites_testsuite">
-      <directory suffix="_test.php">public/favourites/tests</directory>
-      <exclude>public/favourites/tests/classes</exclude>
-      <exclude>public/favourites/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/favourites/tests</directory>
+      <exclude>@root@public/favourites/tests/classes</exclude>
+      <exclude>@root@public/favourites/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_form_testsuite">
-      <directory suffix="_test.php">public/lib/form/tests</directory>
-      <exclude>public/lib/form/tests/classes</exclude>
-      <exclude>public/lib/form/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/form/tests</directory>
+      <exclude>@root@public/lib/form/tests/classes</exclude>
+      <exclude>@root@public/lib/form/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_files_testsuite">
-      <directory suffix="_test.php">public/lib/filestorage/tests</directory>
-      <directory suffix="_test.php">public/lib/filebrowser/tests</directory>
-      <directory suffix="_test.php">public/files/tests</directory>
-      <exclude>public/lib/filestorage/tests/classes</exclude>
-      <exclude>public/lib/filestorage/tests/fixtures</exclude>
-      <exclude>public/lib/filebrowser/tests/classes</exclude>
-      <exclude>public/lib/filebrowser/tests/fixtures</exclude>
-      <exclude>public/files/tests/classes</exclude>
-      <exclude>public/files/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/filestorage/tests</directory>
+      <directory suffix="_test.php">@root@public/lib/filebrowser/tests</directory>
+      <directory suffix="_test.php">@root@public/files/tests</directory>
+      <exclude>@root@public/lib/filestorage/tests/classes</exclude>
+      <exclude>@root@public/lib/filestorage/tests/fixtures</exclude>
+      <exclude>@root@public/lib/filebrowser/tests/classes</exclude>
+      <exclude>@root@public/lib/filebrowser/tests/fixtures</exclude>
+      <exclude>@root@public/files/tests/classes</exclude>
+      <exclude>@root@public/files/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_filter_testsuite">
-      <directory suffix="_test.php">public/filter/tests</directory>
-      <exclude>public/filter/tests/classes</exclude>
-      <exclude>public/filter/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/filter/tests</directory>
+      <exclude>@root@public/filter/tests/classes</exclude>
+      <exclude>@root@public/filter/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_role_testsuite">
-      <directory suffix="_test.php">public/admin/roles/tests</directory>
-      <exclude>public/admin/roles/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/admin/roles/tests</directory>
+      <exclude>@root@public/admin/roles/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_cohort_testsuite">
-      <directory suffix="_test.php">public/cohort/tests</directory>
-      <exclude>public/cohort/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/cohort/tests</directory>
+      <exclude>@root@public/cohort/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_grades_testsuite">
-      <directory suffix="_test.php">public/lib/grade/tests</directory>
-      <directory suffix="_test.php">public/grade/tests</directory>
-      <directory suffix="_test.php">public/grade/grading/tests</directory>
-      <exclude>public/lib/grade/tests/classes</exclude>
-      <exclude>public/grade/tests/classes</exclude>
-      <exclude>public/grade/grading/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/lib/grade/tests</directory>
+      <directory suffix="_test.php">@root@public/grade/tests</directory>
+      <directory suffix="_test.php">@root@public/grade/grading/tests</directory>
+      <exclude>@root@public/lib/grade/tests/classes</exclude>
+      <exclude>@root@public/grade/tests/classes</exclude>
+      <exclude>@root@public/grade/grading/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_analytics_testsuite">
-      <directory suffix="_test.php">public/analytics/tests</directory>
-      <exclude>public/analytics/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/analytics/tests</directory>
+      <exclude>@root@public/analytics/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_availability_testsuite">
-      <directory suffix="_test.php">public/availability/tests</directory>
-      <exclude>public/availability/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/availability/tests</directory>
+      <exclude>@root@public/availability/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_backup_testsuite">
-      <directory suffix="_test.php">public/backup/controller/tests</directory>
-      <directory suffix="_test.php">public/backup/converter/moodle1/tests</directory>
-      <directory suffix="_test.php">public/backup/moodle2/tests</directory>
-      <directory suffix="_test.php">public/backup/tests</directory>
-      <directory suffix="_test.php">public/backup/util</directory>
-      <exclude>public/backup/controller/tests/classes</exclude>
-      <exclude>public/backup/converter/moodle1/tests/classes</exclude>
-      <exclude>public/backup/moodle2/tests/classes</exclude>
-      <exclude>public/backup/tests/classes</exclude>
-      <exclude>public/backup/util/classes</exclude>
+      <directory suffix="_test.php">@root@public/backup/controller/tests</directory>
+      <directory suffix="_test.php">@root@public/backup/converter/moodle1/tests</directory>
+      <directory suffix="_test.php">@root@public/backup/moodle2/tests</directory>
+      <directory suffix="_test.php">@root@public/backup/tests</directory>
+      <directory suffix="_test.php">@root@public/backup/util</directory>
+      <exclude>@root@public/backup/controller/tests/classes</exclude>
+      <exclude>@root@public/backup/converter/moodle1/tests/classes</exclude>
+      <exclude>@root@public/backup/moodle2/tests/classes</exclude>
+      <exclude>@root@public/backup/tests/classes</exclude>
+      <exclude>@root@public/backup/util/classes</exclude>
     </testsuite>
     <testsuite name="core_badges_testsuite">
-      <directory suffix="_test.php">public/badges/tests</directory>
-      <exclude>public/badges/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/badges/tests</directory>
+      <exclude>@root@public/badges/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_blog_testsuite">
-      <directory suffix="_test.php">public/blog/tests</directory>
-      <exclude>public/blog/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/blog/tests</directory>
+      <exclude>@root@public/blog/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_customfield_testsuite">
-      <directory suffix="_test.php">public/customfield/tests</directory>
-      <exclude>public/customfield/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/customfield/tests</directory>
+      <exclude>@root@public/customfield/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_iplookup_testsuite">
-      <directory suffix="_test.php">public/iplookup/tests</directory>
-      <exclude>public/iplookup/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/iplookup/tests</directory>
+      <exclude>@root@public/iplookup/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_course_testsuite">
-      <directory suffix="_test.php">public/course/tests</directory>
-      <exclude>public/course/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/course/tests</directory>
+      <exclude>@root@public/course/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_courseformat_testsuite">
-      <directory suffix="_test.php">public/course/format/tests</directory>
-      <exclude>public/course/format/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/course/format/tests</directory>
+      <exclude>@root@public/course/format/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_privacy_testsuite">
-      <directory suffix="_test.php">public/privacy/tests</directory>
-      <exclude>public/privacy/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/privacy/tests</directory>
+      <exclude>@root@public/privacy/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_question_testsuite">
-      <directory suffix="_test.php">public/question/engine/tests</directory>
-      <directory suffix="_test.php">public/question/tests</directory>
-      <directory suffix="_test.php">public/question/type/tests</directory>
-      <directory suffix="_test.php">public/question/engine/upgrade/tests</directory>
-      <exclude>public/question/engine/tests/classes</exclude>
-      <exclude>public/question/tests/classes</exclude>
-      <exclude>public/question/type/tests/classes</exclude>
-      <exclude>public/question/engine/upgrade/tests/classes</exclude>
+      <directory suffix="_test.php">@root@public/question/engine/tests</directory>
+      <directory suffix="_test.php">@root@public/question/tests</directory>
+      <directory suffix="_test.php">@root@public/question/type/tests</directory>
+      <directory suffix="_test.php">@root@public/question/engine/upgrade/tests</directory>
+      <exclude>@root@public/question/engine/tests/classes</exclude>
+      <exclude>@root@public/question/tests/classes</exclude>
+      <exclude>@root@public/question/type/tests/classes</exclude>
+      <exclude>@root@public/question/engine/upgrade/tests/classes</exclude>
     </testsuite>
     <testsuite name="core_cache_testsuite">
-      <directory suffix="_test.php">public/cache/tests</directory>
-      <exclude>public/cache/tests/classes</exclude>
-      <exclude>public/cache/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/cache/tests</directory>
+      <exclude>@root@public/cache/tests/classes</exclude>
+      <exclude>@root@public/cache/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_calendar_testsuite">
-      <directory suffix="_test.php">public/calendar/tests</directory>
-      <exclude>public/calendar/tests/classes</exclude>
-      <exclude>public/calendar/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/calendar/tests</directory>
+      <exclude>@root@public/calendar/tests/classes</exclude>
+      <exclude>@root@public/calendar/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_enrol_testsuite">
-      <directory suffix="_test.php">public/enrol/tests</directory>
-      <exclude>public/enrol/tests/classes</exclude>
-      <exclude>public/enrol/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/enrol/tests</directory>
+      <exclude>@root@public/enrol/tests/classes</exclude>
+      <exclude>@root@public/enrol/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_group_testsuite">
-      <directory suffix="_test.php">public/group/tests</directory>
-      <exclude>public/group/tests/classes</exclude>
-      <exclude>public/group/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/group/tests</directory>
+      <exclude>@root@public/group/tests/classes</exclude>
+      <exclude>@root@public/group/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_message_testsuite">
-      <directory suffix="_test.php">public/message/tests</directory>
-      <exclude>public/message/tests/classes</exclude>
-      <exclude>public/message/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/message/tests</directory>
+      <exclude>@root@public/message/tests/classes</exclude>
+      <exclude>@root@public/message/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_notes_testsuite">
-      <directory suffix="_test.php">public/notes/tests</directory>
-      <exclude>public/notes/tests/classes</exclude>
-      <exclude>public/notes/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/notes/tests</directory>
+      <exclude>@root@public/notes/tests/classes</exclude>
+      <exclude>@root@public/notes/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_tag_testsuite">
-      <directory suffix="_test.php">public/tag/tests</directory>
-      <exclude>public/tag/tests/classes</exclude>
-      <exclude>public/tag/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/tag/tests</directory>
+      <exclude>@root@public/tag/tests/classes</exclude>
+      <exclude>@root@public/tag/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_rating_testsuite">
-      <directory suffix="_test.php">public/rating/tests</directory>
-      <exclude>public/rating/tests/classes</exclude>
-      <exclude>public/rating/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/rating/tests</directory>
+      <exclude>@root@public/rating/tests/classes</exclude>
+      <exclude>@root@public/rating/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_repository_testsuite">
-      <directory suffix="_test.php">public/repository/tests</directory>
-      <exclude>public/repository/tests/classes</exclude>
-      <exclude>public/repository/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/repository/tests</directory>
+      <exclude>@root@public/repository/tests/classes</exclude>
+      <exclude>@root@public/repository/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_userkey_testsuite">
-      <directory suffix="_test.php">public/lib/userkey/tests</directory>
-      <exclude>public/lib/userkey/tests/classes</exclude>
-      <exclude>public/lib/userkey/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/userkey/tests</directory>
+      <exclude>@root@public/lib/userkey/tests/classes</exclude>
+      <exclude>@root@public/lib/userkey/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_user_testsuite">
-      <directory suffix="_test.php">public/user/tests</directory>
-      <exclude>public/user/tests/classes</exclude>
-      <exclude>public/user/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/user/tests</directory>
+      <exclude>@root@public/user/tests/classes</exclude>
+      <exclude>@root@public/user/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_webservice_testsuite">
-      <directory suffix="_test.php">public/webservice/tests</directory>
-      <exclude>public/webservice/tests/classes</exclude>
-      <exclude>public/webservice/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/webservice/tests</directory>
+      <exclude>@root@public/webservice/tests/classes</exclude>
+      <exclude>@root@public/webservice/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_mnet_testsuite">
-      <directory suffix="_test.php">public/mnet/tests</directory>
-      <exclude>public/mnet/tests/classes</exclude>
-      <exclude>public/mnet/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/mnet/tests</directory>
+      <exclude>@root@public/mnet/tests/classes</exclude>
+      <exclude>@root@public/mnet/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_completion_testsuite">
-      <directory suffix="_test.php">public/completion/tests</directory>
-      <exclude>public/completion/tests/classes</exclude>
-      <exclude>public/completion/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/completion/tests</directory>
+      <exclude>@root@public/completion/tests/classes</exclude>
+      <exclude>@root@public/completion/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_comment_testsuite">
-      <directory suffix="_test.php">public/comment/tests</directory>
-      <exclude>public/comment/tests/classes</exclude>
-      <exclude>public/comment/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/comment/tests</directory>
+      <exclude>@root@public/comment/tests/classes</exclude>
+      <exclude>@root@public/comment/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_search_testsuite">
-      <directory suffix="_test.php">public/search/tests</directory>
-      <exclude>public/search/tests/classes</exclude>
-      <exclude>public/search/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/search/tests</directory>
+      <exclude>@root@public/search/tests/classes</exclude>
+      <exclude>@root@public/search/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_competency_testsuite">
-      <directory suffix="_test.php">public/competency/tests</directory>
-      <exclude>public/competency/tests/classes</exclude>
-      <exclude>public/competency/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/competency/tests</directory>
+      <exclude>@root@public/competency/tests/classes</exclude>
+      <exclude>@root@public/competency/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_my_testsuite">
-      <directory suffix="_test.php">public/my/tests</directory>
-      <exclude>public/my/tests/classes</exclude>
-      <exclude>public/my/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/my/tests</directory>
+      <exclude>@root@public/my/tests/classes</exclude>
+      <exclude>@root@public/my/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_auth_testsuite">
-      <directory suffix="_test.php">public/auth/tests</directory>
-      <exclude>public/auth/tests/classes</exclude>
-      <exclude>public/auth/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/auth/tests</directory>
+      <exclude>@root@public/auth/tests/classes</exclude>
+      <exclude>@root@public/auth/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_block_testsuite">
-      <directory suffix="_test.php">public/blocks/tests</directory>
-      <exclude>public/blocks/tests/classes</exclude>
-      <exclude>public/blocks/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/blocks/tests</directory>
+      <exclude>@root@public/blocks/tests/classes</exclude>
+      <exclude>@root@public/blocks/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_login_testsuite">
-      <directory suffix="_test.php">public/login/tests</directory>
-      <exclude>public/login/tests/classes</exclude>
-      <exclude>public/login/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/login/tests</directory>
+      <exclude>@root@public/login/tests/classes</exclude>
+      <exclude>@root@public/login/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_plagiarism_testsuite">
-      <directory suffix="_test.php">public/plagiarism/tests</directory>
-      <exclude>public/plagiarism/tests/classes</exclude>
-      <exclude>public/plagiarism/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/plagiarism/tests</directory>
+      <exclude>@root@public/plagiarism/tests/classes</exclude>
+      <exclude>@root@public/plagiarism/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_portfolio_testsuite">
-      <directory suffix="_test.php">public/portfolio/tests</directory>
-      <exclude>public/portfolio/tests/classes</exclude>
-      <exclude>public/portfolio/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/portfolio/tests</directory>
+      <exclude>@root@public/portfolio/tests/classes</exclude>
+      <exclude>@root@public/portfolio/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_editor_testsuite">
-      <directory suffix="_test.php">public/lib/editor/tests</directory>
-      <exclude>public/lib/editor/tests/classes</exclude>
-      <exclude>public/lib/editor/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/editor/tests</directory>
+      <exclude>@root@public/lib/editor/tests/classes</exclude>
+      <exclude>@root@public/lib/editor/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_rss_testsuite">
-      <directory suffix="_test.php">public/rss/tests</directory>
-      <exclude>public/rss/tests/classes</exclude>
-      <exclude>public/rss/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/rss/tests</directory>
+      <exclude>@root@public/rss/tests/classes</exclude>
+      <exclude>@root@public/rss/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_table_testsuite">
-      <directory suffix="_test.php">public/lib/table/tests</directory>
-      <exclude>public/lib/table/tests/classes</exclude>
-      <exclude>public/lib/table/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/table/tests</directory>
+      <exclude>@root@public/lib/table/tests/classes</exclude>
+      <exclude>@root@public/lib/table/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_h5p_testsuite">
-      <directory suffix="_test.php">public/h5p/tests</directory>
-      <exclude>public/h5p/tests/classes</exclude>
-      <exclude>public/h5p/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/h5p/tests</directory>
+      <exclude>@root@public/h5p/tests/classes</exclude>
+      <exclude>@root@public/h5p/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_xapi_testsuite">
-      <directory suffix="_test.php">public/lib/xapi/tests</directory>
-      <exclude>public/lib/xapi/tests/classes</exclude>
-      <exclude>public/lib/xapi/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/lib/xapi/tests</directory>
+      <exclude>@root@public/lib/xapi/tests/classes</exclude>
+      <exclude>@root@public/lib/xapi/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_contentbank_testsuite">
-      <directory suffix="_test.php">public/contentbank/tests</directory>
-      <exclude>public/contentbank/tests/classes</exclude>
-      <exclude>public/contentbank/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/contentbank/tests</directory>
+      <exclude>@root@public/contentbank/tests/classes</exclude>
+      <exclude>@root@public/contentbank/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_payment_testsuite">
-      <directory suffix="_test.php">public/payment/tests</directory>
-      <exclude>public/payment/tests/classes</exclude>
-      <exclude>public/payment/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/payment/tests</directory>
+      <exclude>@root@public/payment/tests/classes</exclude>
+      <exclude>@root@public/payment/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_reportbuilder_testsuite">
-      <directory suffix="_test.php">public/reportbuilder/tests</directory>
-      <exclude>public/reportbuilder/tests/classes</exclude>
-      <exclude>public/reportbuilder/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/reportbuilder/tests</directory>
+      <exclude>@root@public/reportbuilder/tests/classes</exclude>
+      <exclude>@root@public/reportbuilder/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_adminpresets_testsuite">
-      <directory suffix="_test.php">public/admin/presets/tests</directory>
-      <exclude>public/admin/presets/tests/classes</exclude>
-      <exclude>public/admin/presets/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/admin/presets/tests</directory>
+      <exclude>@root@public/admin/presets/tests/classes</exclude>
+      <exclude>@root@public/admin/presets/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_admin_testsuite">
-      <directory suffix="_test.php">public/admin/tests</directory>
-      <exclude>public/admin/tests/classes</exclude>
-      <exclude>public/admin/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/admin/tests</directory>
+      <exclude>@root@public/admin/tests/classes</exclude>
+      <exclude>@root@public/admin/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_communication_testsuite">
-      <directory suffix="_test.php">public/communication/tests</directory>
-      <exclude>public/communication/tests/classes</exclude>
-      <exclude>public/communication/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/communication/tests</directory>
+      <exclude>@root@public/communication/tests/classes</exclude>
+      <exclude>@root@public/communication/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_ai_testsuite">
-      <directory suffix="_test.php">public/ai/tests</directory>
-      <exclude>public/ai/tests/classes</exclude>
-      <exclude>public/ai/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/ai/tests</directory>
+      <exclude>@root@public/ai/tests/classes</exclude>
+      <exclude>@root@public/ai/tests/fixtures</exclude>
     </testsuite>
     <testsuite name="core_sms_testsuite">
-      <directory suffix="_test.php">public/sms/tests</directory>
-      <exclude>public/sms/tests/classes</exclude>
-      <exclude>public/sms/tests/fixtures</exclude>
+      <directory suffix="_test.php">@root@public/sms/tests</directory>
+      <exclude>@root@public/sms/tests/classes</exclude>
+      <exclude>@root@public/sms/tests/fixtures</exclude>
     </testsuite>
 
     <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from

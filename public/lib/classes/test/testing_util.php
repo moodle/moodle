@@ -1020,6 +1020,42 @@ abstract class testing_util {
 
         return $env;
     }
+
+    /**
+     * Get the path to the Moodle root, relative to the root package.
+     *
+     * @return string
+     */
+    public static function get_moodle_relative_to_root_package(): string {
+        global $CFG;
+
+        $rootpackage = \Composer\InstalledVersions::getRootPackage();
+        $rootpath = realpath(\Composer\InstalledVersions::getRootPackage()['install_path']);
+
+        $moodlepath = realpath($CFG->root);
+        if ($rootpath === $moodlepath) {
+            // Moodle is the root package.
+            return '';
+        }
+
+        // At the moment there is no way to get the name of the Moodle core package from the provided package.
+        // So we need to get all installed moodle-core packages and check which one is installed.
+        // It's only really possible for a single moodle-core package to be installed.
+        $moodlecorepackages = \Composer\InstalledVersions::getInstalledPackagesByType('moodle-core');
+        if (count($moodlecorepackages) !== 1) {
+            throw new \core\exception\coding_exception('Unable to determine Moodle root relative to root package.');
+        }
+        $moodlecorepackage = reset($moodlecorepackages);
+        if (\Composer\InstalledVersions::isInstalled($moodlecorepackage)) {
+            $installpath = \Composer\InstalledVersions::getInstallPath($moodlecorepackage);
+            if ($installpath !== null) {
+                // Moodle core is installed as a composer package.
+                return basename($installpath) . '/';
+            }
+        }
+
+        throw new \core\exception\coding_exception('Unable to determine Moodle root relative to root package.');
+    }
 }
 
 // Alias this class to the old name.

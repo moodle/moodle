@@ -16,7 +16,7 @@
 
 namespace core;
 
-use core_phpunit\exception\test_exception;
+use core\test\phpunit\exception\test_exception;
 
 /**
  * Test advanced_testcase extra features.

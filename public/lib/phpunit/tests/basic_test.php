@@ -233,7 +233,7 @@ STRING;
         global $DB;
         $DB->set_field('user', 'confirmed', 1, ['id' => -1]);
 
-        $this->expectException(\core_phpunit\exception\test_exception::class);
+        $this->expectException(\core\test\phpunit\exception\test_exception::class);
         $this->expectExceptionMessage('Warning: unexpected database modification');
         phpunit_util::reset_all_data(true);
     }

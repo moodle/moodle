@@ -57,10 +57,21 @@ list($options, $unrecognized) = cli_get_params(
 );
 
 // Basic check to see if phpunit is installed.
-if (!file_exists(__DIR__.'/../../../../../vendor/phpunit/phpunit/composer.json') ||
-        !file_exists(__DIR__.'/../../../../../vendor/bin/phpunit') ||
-        !file_exists(__DIR__.'/../../../../../vendor/autoload.php')) {
-    phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
+
+$autoload = __DIR__ . '/../../../../../vendor/autoload.php';
+if (file_exists($autoload)) {
+    require_once($autoload);
+}
+
+$requiredclasses = [
+    \Composer\Autoload\ClassLoader::class,
+    \PHPUnit\Runner\Version::class,
+];
+
+foreach ($requiredclasses as $requiredclass) {
+    if (!class_exists($requiredclass)) {
+        phpunit_bootstrap_error(PHPUNIT_EXITCODE_PHPUNITMISSING);
+    }
 }
 
 if ($options['install'] || $options['drop']) {
