@@ -1,0 +1,62 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\BigtableAdmin;
+
+class EncryptionConfig extends \Google\Model
+{
+  /**
+   * Describes the Cloud KMS encryption key that will be used to protect the
+   * destination Bigtable cluster. The requirements for this key are: 1) The
+   * Cloud Bigtable service account associated with the project that contains
+   * this cluster must be granted the `cloudkms.cryptoKeyEncrypterDecrypter`
+   * role on the CMEK key. 2) Only regional keys can be used and the region of
+   * the CMEK key must match the region of the cluster. Values are of the form `
+   * projects/{project}/locations/{location}/keyRings/{keyring}/cryptoKeys/{key}
+   * `
+   *
+   * @var string
+   */
+  public $kmsKeyName;
+
+  /**
+   * Describes the Cloud KMS encryption key that will be used to protect the
+   * destination Bigtable cluster. The requirements for this key are: 1) The
+   * Cloud Bigtable service account associated with the project that contains
+   * this cluster must be granted the `cloudkms.cryptoKeyEncrypterDecrypter`
+   * role on the CMEK key. 2) Only regional keys can be used and the region of
+   * the CMEK key must match the region of the cluster. Values are of the form `
+   * projects/{project}/locations/{location}/keyRings/{keyring}/cryptoKeys/{key}
+   * `
+   *
+   * @param string $kmsKeyName
+   */
+  public function setKmsKeyName($kmsKeyName)
+  {
+    $this->kmsKeyName = $kmsKeyName;
+  }
+  /**
+   * @return string
+   */
+  public function getKmsKeyName()
+  {
+    return $this->kmsKeyName;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(EncryptionConfig::class, 'Google_Service_BigtableAdmin_EncryptionConfig');

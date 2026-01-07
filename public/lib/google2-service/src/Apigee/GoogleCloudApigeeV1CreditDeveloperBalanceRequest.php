@@ -1,0 +1,75 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Apigee;
+
+class GoogleCloudApigeeV1CreditDeveloperBalanceRequest extends \Google\Model
+{
+  protected $transactionAmountType = GoogleTypeMoney::class;
+  protected $transactionAmountDataType = '';
+  /**
+   * Each transaction_id uniquely identifies a credit balance request. If
+   * multiple requests are received with the same transaction_id, only one of
+   * them will be considered.
+   *
+   * @var string
+   */
+  public $transactionId;
+
+  /**
+   * The amount of money to be credited. The wallet corresponding to the
+   * currency specified within `transaction_amount` will be updated. For
+   * example, if you specified `currency_code` within `transaction_amount` as
+   * "USD", then the amount would be added to the wallet which has the "USD"
+   * currency or if no such wallet exists, a new wallet will be created with the
+   * "USD" currency.
+   *
+   * @param GoogleTypeMoney $transactionAmount
+   */
+  public function setTransactionAmount(GoogleTypeMoney $transactionAmount)
+  {
+    $this->transactionAmount = $transactionAmount;
+  }
+  /**
+   * @return GoogleTypeMoney
+   */
+  public function getTransactionAmount()
+  {
+    return $this->transactionAmount;
+  }
+  /**
+   * Each transaction_id uniquely identifies a credit balance request. If
+   * multiple requests are received with the same transaction_id, only one of
+   * them will be considered.
+   *
+   * @param string $transactionId
+   */
+  public function setTransactionId($transactionId)
+  {
+    $this->transactionId = $transactionId;
+  }
+  /**
+   * @return string
+   */
+  public function getTransactionId()
+  {
+    return $this->transactionId;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudApigeeV1CreditDeveloperBalanceRequest::class, 'Google_Service_Apigee_GoogleCloudApigeeV1CreditDeveloperBalanceRequest');

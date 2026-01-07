@@ -1,0 +1,104 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Cloudchannel;
+
+class GoogleCloudChannelV1ConditionalOverride extends \Google\Model
+{
+  /**
+   * Not used.
+   */
+  public const REBILLING_BASIS_REBILLING_BASIS_UNSPECIFIED = 'REBILLING_BASIS_UNSPECIFIED';
+  /**
+   * Use the list cost, also known as the MSRP.
+   */
+  public const REBILLING_BASIS_COST_AT_LIST = 'COST_AT_LIST';
+  /**
+   * Pass through all discounts except the Reseller Program Discount. If this is
+   * the default cost base and no adjustments are specified, the output cost
+   * will be exactly what the customer would see if they viewed the bill in the
+   * Google Cloud Console.
+   */
+  public const REBILLING_BASIS_DIRECT_CUSTOMER_COST = 'DIRECT_CUSTOMER_COST';
+  protected $adjustmentType = GoogleCloudChannelV1RepricingAdjustment::class;
+  protected $adjustmentDataType = '';
+  /**
+   * Required. The RebillingBasis to use for the applied override. Shows the
+   * relative cost based on your repricing costs.
+   *
+   * @var string
+   */
+  public $rebillingBasis;
+  protected $repricingConditionType = GoogleCloudChannelV1RepricingCondition::class;
+  protected $repricingConditionDataType = '';
+
+  /**
+   * Required. Information about the applied override's adjustment.
+   *
+   * @param GoogleCloudChannelV1RepricingAdjustment $adjustment
+   */
+  public function setAdjustment(GoogleCloudChannelV1RepricingAdjustment $adjustment)
+  {
+    $this->adjustment = $adjustment;
+  }
+  /**
+   * @return GoogleCloudChannelV1RepricingAdjustment
+   */
+  public function getAdjustment()
+  {
+    return $this->adjustment;
+  }
+  /**
+   * Required. The RebillingBasis to use for the applied override. Shows the
+   * relative cost based on your repricing costs.
+   *
+   * Accepted values: REBILLING_BASIS_UNSPECIFIED, COST_AT_LIST,
+   * DIRECT_CUSTOMER_COST
+   *
+   * @param self::REBILLING_BASIS_* $rebillingBasis
+   */
+  public function setRebillingBasis($rebillingBasis)
+  {
+    $this->rebillingBasis = $rebillingBasis;
+  }
+  /**
+   * @return self::REBILLING_BASIS_*
+   */
+  public function getRebillingBasis()
+  {
+    return $this->rebillingBasis;
+  }
+  /**
+   * Required. Specifies the condition which, if met, will apply the override.
+   *
+   * @param GoogleCloudChannelV1RepricingCondition $repricingCondition
+   */
+  public function setRepricingCondition(GoogleCloudChannelV1RepricingCondition $repricingCondition)
+  {
+    $this->repricingCondition = $repricingCondition;
+  }
+  /**
+   * @return GoogleCloudChannelV1RepricingCondition
+   */
+  public function getRepricingCondition()
+  {
+    return $this->repricingCondition;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudChannelV1ConditionalOverride::class, 'Google_Service_Cloudchannel_GoogleCloudChannelV1ConditionalOverride');

@@ -1,0 +1,54 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Compute;
+
+class TargetTcpProxiesSetProxyHeaderRequest extends \Google\Model
+{
+  public const PROXY_HEADER_NONE = 'NONE';
+  public const PROXY_HEADER_PROXY_V1 = 'PROXY_V1';
+  /**
+   * The new type of proxy header to append before sending data to the backend.
+   * NONE or PROXY_V1 are allowed.
+   *
+   * @var string
+   */
+  public $proxyHeader;
+
+  /**
+   * The new type of proxy header to append before sending data to the backend.
+   * NONE or PROXY_V1 are allowed.
+   *
+   * Accepted values: NONE, PROXY_V1
+   *
+   * @param self::PROXY_HEADER_* $proxyHeader
+   */
+  public function setProxyHeader($proxyHeader)
+  {
+    $this->proxyHeader = $proxyHeader;
+  }
+  /**
+   * @return self::PROXY_HEADER_*
+   */
+  public function getProxyHeader()
+  {
+    return $this->proxyHeader;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(TargetTcpProxiesSetProxyHeaderRequest::class, 'Google_Service_Compute_TargetTcpProxiesSetProxyHeaderRequest');

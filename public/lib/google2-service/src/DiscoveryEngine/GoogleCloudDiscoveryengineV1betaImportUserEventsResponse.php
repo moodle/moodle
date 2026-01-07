@@ -1,0 +1,110 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\DiscoveryEngine;
+
+class GoogleCloudDiscoveryengineV1betaImportUserEventsResponse extends \Google\Collection
+{
+  protected $collection_key = 'errorSamples';
+  protected $errorConfigType = GoogleCloudDiscoveryengineV1betaImportErrorConfig::class;
+  protected $errorConfigDataType = '';
+  protected $errorSamplesType = GoogleRpcStatus::class;
+  protected $errorSamplesDataType = 'array';
+  /**
+   * Count of user events imported with complete existing Documents.
+   *
+   * @var string
+   */
+  public $joinedEventsCount;
+  /**
+   * Count of user events imported, but with Document information not found in
+   * the existing Branch.
+   *
+   * @var string
+   */
+  public $unjoinedEventsCount;
+
+  /**
+   * Echoes the destination for the complete errors if this field was set in the
+   * request.
+   *
+   * @param GoogleCloudDiscoveryengineV1betaImportErrorConfig $errorConfig
+   */
+  public function setErrorConfig(GoogleCloudDiscoveryengineV1betaImportErrorConfig $errorConfig)
+  {
+    $this->errorConfig = $errorConfig;
+  }
+  /**
+   * @return GoogleCloudDiscoveryengineV1betaImportErrorConfig
+   */
+  public function getErrorConfig()
+  {
+    return $this->errorConfig;
+  }
+  /**
+   * A sample of errors encountered while processing the request.
+   *
+   * @param GoogleRpcStatus[] $errorSamples
+   */
+  public function setErrorSamples($errorSamples)
+  {
+    $this->errorSamples = $errorSamples;
+  }
+  /**
+   * @return GoogleRpcStatus[]
+   */
+  public function getErrorSamples()
+  {
+    return $this->errorSamples;
+  }
+  /**
+   * Count of user events imported with complete existing Documents.
+   *
+   * @param string $joinedEventsCount
+   */
+  public function setJoinedEventsCount($joinedEventsCount)
+  {
+    $this->joinedEventsCount = $joinedEventsCount;
+  }
+  /**
+   * @return string
+   */
+  public function getJoinedEventsCount()
+  {
+    return $this->joinedEventsCount;
+  }
+  /**
+   * Count of user events imported, but with Document information not found in
+   * the existing Branch.
+   *
+   * @param string $unjoinedEventsCount
+   */
+  public function setUnjoinedEventsCount($unjoinedEventsCount)
+  {
+    $this->unjoinedEventsCount = $unjoinedEventsCount;
+  }
+  /**
+   * @return string
+   */
+  public function getUnjoinedEventsCount()
+  {
+    return $this->unjoinedEventsCount;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudDiscoveryengineV1betaImportUserEventsResponse::class, 'Google_Service_DiscoveryEngine_GoogleCloudDiscoveryengineV1betaImportUserEventsResponse');

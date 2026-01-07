@@ -1,0 +1,71 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\NetworkSecurity;
+
+class MirroringEndpointGroupConnectedDeploymentGroup extends \Google\Collection
+{
+  protected $collection_key = 'locations';
+  protected $locationsType = MirroringLocation::class;
+  protected $locationsDataType = 'array';
+  /**
+   * Output only. The connected deployment group's resource name, for example:
+   * `projects/123456789/locations/global/mirroringDeploymentGroups/my-dg`. See
+   * https://google.aip.dev/124.
+   *
+   * @var string
+   */
+  public $name;
+
+  /**
+   * Output only. The list of locations where the deployment group is present.
+   *
+   * @param MirroringLocation[] $locations
+   */
+  public function setLocations($locations)
+  {
+    $this->locations = $locations;
+  }
+  /**
+   * @return MirroringLocation[]
+   */
+  public function getLocations()
+  {
+    return $this->locations;
+  }
+  /**
+   * Output only. The connected deployment group's resource name, for example:
+   * `projects/123456789/locations/global/mirroringDeploymentGroups/my-dg`. See
+   * https://google.aip.dev/124.
+   *
+   * @param string $name
+   */
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  /**
+   * @return string
+   */
+  public function getName()
+  {
+    return $this->name;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(MirroringEndpointGroupConnectedDeploymentGroup::class, 'Google_Service_NetworkSecurity_MirroringEndpointGroupConnectedDeploymentGroup');

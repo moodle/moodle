@@ -1,0 +1,70 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\ToolResults;
+
+class RoboScriptExecution extends \Google\Model
+{
+  /**
+   * The number of Robo script actions executed successfully.
+   *
+   * @var int
+   */
+  public $successfulActions;
+  /**
+   * The total number of actions in the Robo script.
+   *
+   * @var int
+   */
+  public $totalActions;
+
+  /**
+   * The number of Robo script actions executed successfully.
+   *
+   * @param int $successfulActions
+   */
+  public function setSuccessfulActions($successfulActions)
+  {
+    $this->successfulActions = $successfulActions;
+  }
+  /**
+   * @return int
+   */
+  public function getSuccessfulActions()
+  {
+    return $this->successfulActions;
+  }
+  /**
+   * The total number of actions in the Robo script.
+   *
+   * @param int $totalActions
+   */
+  public function setTotalActions($totalActions)
+  {
+    $this->totalActions = $totalActions;
+  }
+  /**
+   * @return int
+   */
+  public function getTotalActions()
+  {
+    return $this->totalActions;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(RoboScriptExecution::class, 'Google_Service_ToolResults_RoboScriptExecution');

@@ -838,4 +838,47 @@ All rights reserved.</copyright>
       <license>Apache 2.0</license>
       <repository>https://github.com/giggsey/libphonenumber-for-php-lite</repository>
   </library>
+  <library>
+      <location>monolog</location>
+      <name>Monolog</name>
+      <description>Monolog - Logging for PHP</description>
+      <version>3.9.0</version>
+      <license>MIT</license>
+      <repository>https://github.com/Seldaek/monolog</repository>
+  </library>
+  <library>
+      <location>psr/cache</location>
+      <name>cache</name>
+      <description>Caching Interface (PHP FIG PSR-6).</description>
+      <version>3.0.0</version>
+      <license>MIT</license>
+      <repository>https://github.com/php-fig/cache</repository>
+  </library>
+  <library>
+      <location>google2</location>
+      <name>Google APIs</name>
+      <description>Library Google APIs Client Library for PHP</description>
+      <version>2.18.4</version>
+      <license>Apache</license>
+      <licenseversion>2.0</licenseversion>
+      <repository>https://github.com/googleapis/google-api-php-client</repository>
+  </library>
+  <library>
+      <location>google2-auth</location>
+      <name>Google Auth</name>
+      <description>Google Auth Library for PHP</description>
+      <version>1.49.0</version>
+      <license>Apache</license>
+      <licenseversion>2.0</licenseversion>
+      <repository>https://github.com/googleapis/google-auth-library-php</repository>
+  </library>
+  <library>
+      <location>google2-service</location>
+      <name>Google Client Services</name>
+      <description>Google PHP API Client Services</description>
+      <version>0.424.0</version>
+      <license>Apache</license>
+      <licenseversion>2.0</licenseversion>
+      <repository>https://github.com/googleapis/google-api-php-client-services</repository>
+  </library>
 </libraries>

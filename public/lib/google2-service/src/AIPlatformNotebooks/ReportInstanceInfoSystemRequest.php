@@ -1,0 +1,68 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\AIPlatformNotebooks;
+
+class ReportInstanceInfoSystemRequest extends \Google\Model
+{
+  protected $eventType = Event::class;
+  protected $eventDataType = '';
+  /**
+   * Required. The VM hardware token for authenticating the VM.
+   * https://cloud.google.com/compute/docs/instances/verifying-instance-identity
+   *
+   * @var string
+   */
+  public $vmId;
+
+  /**
+   * Required. The Event to be reported.
+   *
+   * @param Event $event
+   */
+  public function setEvent(Event $event)
+  {
+    $this->event = $event;
+  }
+  /**
+   * @return Event
+   */
+  public function getEvent()
+  {
+    return $this->event;
+  }
+  /**
+   * Required. The VM hardware token for authenticating the VM.
+   * https://cloud.google.com/compute/docs/instances/verifying-instance-identity
+   *
+   * @param string $vmId
+   */
+  public function setVmId($vmId)
+  {
+    $this->vmId = $vmId;
+  }
+  /**
+   * @return string
+   */
+  public function getVmId()
+  {
+    return $this->vmId;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(ReportInstanceInfoSystemRequest::class, 'Google_Service_AIPlatformNotebooks_ReportInstanceInfoSystemRequest');

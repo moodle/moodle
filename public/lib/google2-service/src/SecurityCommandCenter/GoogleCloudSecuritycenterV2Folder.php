@@ -1,0 +1,72 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\SecurityCommandCenter;
+
+class GoogleCloudSecuritycenterV2Folder extends \Google\Model
+{
+  /**
+   * Full resource name of this folder. See:
+   * https://cloud.google.com/apis/design/resource_names#full_resource_name
+   *
+   * @var string
+   */
+  public $resourceFolder;
+  /**
+   * The user defined display name for this folder.
+   *
+   * @var string
+   */
+  public $resourceFolderDisplayName;
+
+  /**
+   * Full resource name of this folder. See:
+   * https://cloud.google.com/apis/design/resource_names#full_resource_name
+   *
+   * @param string $resourceFolder
+   */
+  public function setResourceFolder($resourceFolder)
+  {
+    $this->resourceFolder = $resourceFolder;
+  }
+  /**
+   * @return string
+   */
+  public function getResourceFolder()
+  {
+    return $this->resourceFolder;
+  }
+  /**
+   * The user defined display name for this folder.
+   *
+   * @param string $resourceFolderDisplayName
+   */
+  public function setResourceFolderDisplayName($resourceFolderDisplayName)
+  {
+    $this->resourceFolderDisplayName = $resourceFolderDisplayName;
+  }
+  /**
+   * @return string
+   */
+  public function getResourceFolderDisplayName()
+  {
+    return $this->resourceFolderDisplayName;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudSecuritycenterV2Folder::class, 'Google_Service_SecurityCommandCenter_GoogleCloudSecuritycenterV2Folder');

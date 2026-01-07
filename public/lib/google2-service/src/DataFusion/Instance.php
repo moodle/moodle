@@ -1,0 +1,991 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\DataFusion;
+
+class Instance extends \Google\Collection
+{
+  /**
+   * Instance does not have a state yet
+   */
+  public const STATE_STATE_UNSPECIFIED = 'STATE_UNSPECIFIED';
+  /**
+   * Instance is being created
+   */
+  public const STATE_CREATING = 'CREATING';
+  /**
+   * Instance is active and ready for requests. This corresponds to 'RUNNING' in
+   * datafusion.v1beta1.
+   */
+  public const STATE_ACTIVE = 'ACTIVE';
+  /**
+   * Instance creation failed
+   */
+  public const STATE_FAILED = 'FAILED';
+  /**
+   * Instance is being deleted
+   */
+  public const STATE_DELETING = 'DELETING';
+  /**
+   * Instance is being upgraded
+   */
+  public const STATE_UPGRADING = 'UPGRADING';
+  /**
+   * Instance is being restarted
+   */
+  public const STATE_RESTARTING = 'RESTARTING';
+  /**
+   * Instance is being updated on customer request
+   */
+  public const STATE_UPDATING = 'UPDATING';
+  /**
+   * Instance is being auto-updated
+   */
+  public const STATE_AUTO_UPDATING = 'AUTO_UPDATING';
+  /**
+   * Instance is being auto-upgraded
+   */
+  public const STATE_AUTO_UPGRADING = 'AUTO_UPGRADING';
+  /**
+   * Instance is disabled
+   */
+  public const STATE_DISABLED = 'DISABLED';
+  /**
+   * Instance is being enabled.
+   */
+  public const STATE_ENABLING = 'ENABLING';
+  /**
+   * No type specified. The instance creation will fail.
+   */
+  public const TYPE_TYPE_UNSPECIFIED = 'TYPE_UNSPECIFIED';
+  /**
+   * Basic Data Fusion instance. In Basic type, the user will be able to create
+   * data pipelines using point and click UI. However, there are certain
+   * limitations, such as fewer number of concurrent pipelines, no support for
+   * streaming pipelines, etc.
+   */
+  public const TYPE_BASIC = 'BASIC';
+  /**
+   * Enterprise Data Fusion instance. In Enterprise type, the user will have all
+   * features available, such as support for streaming pipelines, higher number
+   * of concurrent pipelines, etc.
+   */
+  public const TYPE_ENTERPRISE = 'ENTERPRISE';
+  /**
+   * Developer Data Fusion instance. In Developer type, the user will have all
+   * features available but with restrictive capabilities. This is to help
+   * enterprises design and develop their data ingestion and integration
+   * pipelines at low cost.
+   */
+  public const TYPE_DEVELOPER = 'DEVELOPER';
+  protected $collection_key = 'maintenanceEvents';
+  protected $acceleratorsType = Accelerator::class;
+  protected $acceleratorsDataType = 'array';
+  /**
+   * Output only. Endpoint on which the REST APIs is accessible.
+   *
+   * @var string
+   */
+  public $apiEndpoint;
+  protected $availableVersionType = Version::class;
+  protected $availableVersionDataType = 'array';
+  /**
+   * Output only. The time the instance was created.
+   *
+   * @var string
+   */
+  public $createTime;
+  protected $cryptoKeyConfigType = CryptoKeyConfig::class;
+  protected $cryptoKeyConfigDataType = '';
+  /**
+   * Optional. Option to enable the Dataplex Lineage Integration feature.
+   *
+   * @var bool
+   */
+  public $dataplexDataLineageIntegrationEnabled;
+  /**
+   * Optional. User-managed service account to set on Dataproc when Cloud Data
+   * Fusion creates Dataproc to run data processing pipelines. This allows users
+   * to have fine-grained access control on Dataproc's accesses to cloud
+   * resources.
+   *
+   * @var string
+   */
+  public $dataprocServiceAccount;
+  /**
+   * Optional. A description of this instance.
+   *
+   * @var string
+   */
+  public $description;
+  /**
+   * Output only. If the instance state is DISABLED, the reason for disabling
+   * the instance.
+   *
+   * @var string[]
+   */
+  public $disabledReason;
+  /**
+   * Optional. Display name for an instance.
+   *
+   * @var string
+   */
+  public $displayName;
+  /**
+   * Optional. Option to enable granular role-based access control.
+   *
+   * @var bool
+   */
+  public $enableRbac;
+  /**
+   * Optional. Option to enable Dataproc Stackdriver Logging.
+   *
+   * @var bool
+   */
+  public $enableStackdriverLogging;
+  /**
+   * Optional. Option to enable Stackdriver Monitoring.
+   *
+   * @var bool
+   */
+  public $enableStackdriverMonitoring;
+  /**
+   * Output only. Option to enable granular zone separation.
+   *
+   * @var bool
+   */
+  public $enableZoneSeparation;
+  protected $eventPublishConfigType = EventPublishConfig::class;
+  protected $eventPublishConfigDataType = '';
+  /**
+   * Output only. Cloud Storage bucket generated by Data Fusion in the customer
+   * project.
+   *
+   * @var string
+   */
+  public $gcsBucket;
+  /**
+   * The resource labels for instance to use to annotate any related underlying
+   * resources such as Compute Engine VMs. The character '=' is not allowed to
+   * be used within the labels.
+   *
+   * @var string[]
+   */
+  public $labels;
+  protected $loggingConfigType = LoggingConfig::class;
+  protected $loggingConfigDataType = '';
+  protected $maintenanceEventsType = MaintenanceEvent::class;
+  protected $maintenanceEventsDataType = 'array';
+  protected $maintenancePolicyType = MaintenancePolicy::class;
+  protected $maintenancePolicyDataType = '';
+  protected $monitoringConfigType = MonitoringConfig::class;
+  protected $monitoringConfigDataType = '';
+  /**
+   * Output only. The name of this instance is in the form of
+   * projects/{project}/locations/{location}/instances/{instance}.
+   *
+   * @var string
+   */
+  public $name;
+  protected $networkConfigType = NetworkConfig::class;
+  protected $networkConfigDataType = '';
+  /**
+   * Optional. Map of additional options used to configure the behavior of Data
+   * Fusion instance.
+   *
+   * @var string[]
+   */
+  public $options;
+  /**
+   * Output only. Service agent for the customer project.
+   *
+   * @var string
+   */
+  public $p4ServiceAccount;
+  /**
+   * Optional. Current patch revision of the Data Fusion.
+   *
+   * @var string
+   */
+  public $patchRevision;
+  /**
+   * Optional. Specifies whether the Data Fusion instance should be private. If
+   * set to true, all Data Fusion nodes will have private IP addresses and will
+   * not be able to access the public internet.
+   *
+   * @var bool
+   */
+  public $privateInstance;
+  /**
+   * Output only. Reserved for future use.
+   *
+   * @var bool
+   */
+  public $satisfiesPzi;
+  /**
+   * Output only. Reserved for future use.
+   *
+   * @var bool
+   */
+  public $satisfiesPzs;
+  /**
+   * Output only. Deprecated. Use tenant_project_id instead to extract the
+   * tenant project ID.
+   *
+   * @deprecated
+   * @var string
+   */
+  public $serviceAccount;
+  /**
+   * Output only. Endpoint on which the Data Fusion UI is accessible.
+   *
+   * @var string
+   */
+  public $serviceEndpoint;
+  /**
+   * Output only. The current state of this Data Fusion instance.
+   *
+   * @var string
+   */
+  public $state;
+  /**
+   * Output only. Additional information about the current state of this Data
+   * Fusion instance if available.
+   *
+   * @var string
+   */
+  public $stateMessage;
+  /**
+   * Optional. Input only. Immutable. Tag keys/values directly bound to this
+   * resource. For example: "123/environment": "production", "123/costCenter":
+   * "marketing"
+   *
+   * @var string[]
+   */
+  public $tags;
+  /**
+   * Output only. The name of the tenant project.
+   *
+   * @var string
+   */
+  public $tenantProjectId;
+  /**
+   * Required. Instance type.
+   *
+   * @var string
+   */
+  public $type;
+  /**
+   * Output only. The time the instance was last updated.
+   *
+   * @var string
+   */
+  public $updateTime;
+  /**
+   * Optional. Current version of the Data Fusion. Only specifiable in Update.
+   *
+   * @var string
+   */
+  public $version;
+  /**
+   * Output only. Endpoint on which the Data Fusion UI is accessible to third-
+   * party users
+   *
+   * @var string
+   */
+  public $workforceIdentityServiceEndpoint;
+  /**
+   * Optional. Name of the zone in which the Data Fusion instance will be
+   * created. Only DEVELOPER instances use this field.
+   *
+   * @var string
+   */
+  public $zone;
+
+  /**
+   * Output only. List of accelerators enabled for this CDF instance.
+   *
+   * @param Accelerator[] $accelerators
+   */
+  public function setAccelerators($accelerators)
+  {
+    $this->accelerators = $accelerators;
+  }
+  /**
+   * @return Accelerator[]
+   */
+  public function getAccelerators()
+  {
+    return $this->accelerators;
+  }
+  /**
+   * Output only. Endpoint on which the REST APIs is accessible.
+   *
+   * @param string $apiEndpoint
+   */
+  public function setApiEndpoint($apiEndpoint)
+  {
+    $this->apiEndpoint = $apiEndpoint;
+  }
+  /**
+   * @return string
+   */
+  public function getApiEndpoint()
+  {
+    return $this->apiEndpoint;
+  }
+  /**
+   * Output only. Available versions that the instance can be upgraded to using
+   * UpdateInstanceRequest.
+   *
+   * @param Version[] $availableVersion
+   */
+  public function setAvailableVersion($availableVersion)
+  {
+    $this->availableVersion = $availableVersion;
+  }
+  /**
+   * @return Version[]
+   */
+  public function getAvailableVersion()
+  {
+    return $this->availableVersion;
+  }
+  /**
+   * Output only. The time the instance was created.
+   *
+   * @param string $createTime
+   */
+  public function setCreateTime($createTime)
+  {
+    $this->createTime = $createTime;
+  }
+  /**
+   * @return string
+   */
+  public function getCreateTime()
+  {
+    return $this->createTime;
+  }
+  /**
+   * Optional. The crypto key configuration. This field is used by the Customer-
+   * Managed Encryption Keys (CMEK) feature.
+   *
+   * @param CryptoKeyConfig $cryptoKeyConfig
+   */
+  public function setCryptoKeyConfig(CryptoKeyConfig $cryptoKeyConfig)
+  {
+    $this->cryptoKeyConfig = $cryptoKeyConfig;
+  }
+  /**
+   * @return CryptoKeyConfig
+   */
+  public function getCryptoKeyConfig()
+  {
+    return $this->cryptoKeyConfig;
+  }
+  /**
+   * Optional. Option to enable the Dataplex Lineage Integration feature.
+   *
+   * @param bool $dataplexDataLineageIntegrationEnabled
+   */
+  public function setDataplexDataLineageIntegrationEnabled($dataplexDataLineageIntegrationEnabled)
+  {
+    $this->dataplexDataLineageIntegrationEnabled = $dataplexDataLineageIntegrationEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getDataplexDataLineageIntegrationEnabled()
+  {
+    return $this->dataplexDataLineageIntegrationEnabled;
+  }
+  /**
+   * Optional. User-managed service account to set on Dataproc when Cloud Data
+   * Fusion creates Dataproc to run data processing pipelines. This allows users
+   * to have fine-grained access control on Dataproc's accesses to cloud
+   * resources.
+   *
+   * @param string $dataprocServiceAccount
+   */
+  public function setDataprocServiceAccount($dataprocServiceAccount)
+  {
+    $this->dataprocServiceAccount = $dataprocServiceAccount;
+  }
+  /**
+   * @return string
+   */
+  public function getDataprocServiceAccount()
+  {
+    return $this->dataprocServiceAccount;
+  }
+  /**
+   * Optional. A description of this instance.
+   *
+   * @param string $description
+   */
+  public function setDescription($description)
+  {
+    $this->description = $description;
+  }
+  /**
+   * @return string
+   */
+  public function getDescription()
+  {
+    return $this->description;
+  }
+  /**
+   * Output only. If the instance state is DISABLED, the reason for disabling
+   * the instance.
+   *
+   * @param string[] $disabledReason
+   */
+  public function setDisabledReason($disabledReason)
+  {
+    $this->disabledReason = $disabledReason;
+  }
+  /**
+   * @return string[]
+   */
+  public function getDisabledReason()
+  {
+    return $this->disabledReason;
+  }
+  /**
+   * Optional. Display name for an instance.
+   *
+   * @param string $displayName
+   */
+  public function setDisplayName($displayName)
+  {
+    $this->displayName = $displayName;
+  }
+  /**
+   * @return string
+   */
+  public function getDisplayName()
+  {
+    return $this->displayName;
+  }
+  /**
+   * Optional. Option to enable granular role-based access control.
+   *
+   * @param bool $enableRbac
+   */
+  public function setEnableRbac($enableRbac)
+  {
+    $this->enableRbac = $enableRbac;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableRbac()
+  {
+    return $this->enableRbac;
+  }
+  /**
+   * Optional. Option to enable Dataproc Stackdriver Logging.
+   *
+   * @param bool $enableStackdriverLogging
+   */
+  public function setEnableStackdriverLogging($enableStackdriverLogging)
+  {
+    $this->enableStackdriverLogging = $enableStackdriverLogging;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableStackdriverLogging()
+  {
+    return $this->enableStackdriverLogging;
+  }
+  /**
+   * Optional. Option to enable Stackdriver Monitoring.
+   *
+   * @param bool $enableStackdriverMonitoring
+   */
+  public function setEnableStackdriverMonitoring($enableStackdriverMonitoring)
+  {
+    $this->enableStackdriverMonitoring = $enableStackdriverMonitoring;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableStackdriverMonitoring()
+  {
+    return $this->enableStackdriverMonitoring;
+  }
+  /**
+   * Output only. Option to enable granular zone separation.
+   *
+   * @param bool $enableZoneSeparation
+   */
+  public function setEnableZoneSeparation($enableZoneSeparation)
+  {
+    $this->enableZoneSeparation = $enableZoneSeparation;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableZoneSeparation()
+  {
+    return $this->enableZoneSeparation;
+  }
+  /**
+   * Optional. Option to enable and pass metadata for event publishing.
+   *
+   * @param EventPublishConfig $eventPublishConfig
+   */
+  public function setEventPublishConfig(EventPublishConfig $eventPublishConfig)
+  {
+    $this->eventPublishConfig = $eventPublishConfig;
+  }
+  /**
+   * @return EventPublishConfig
+   */
+  public function getEventPublishConfig()
+  {
+    return $this->eventPublishConfig;
+  }
+  /**
+   * Output only. Cloud Storage bucket generated by Data Fusion in the customer
+   * project.
+   *
+   * @param string $gcsBucket
+   */
+  public function setGcsBucket($gcsBucket)
+  {
+    $this->gcsBucket = $gcsBucket;
+  }
+  /**
+   * @return string
+   */
+  public function getGcsBucket()
+  {
+    return $this->gcsBucket;
+  }
+  /**
+   * The resource labels for instance to use to annotate any related underlying
+   * resources such as Compute Engine VMs. The character '=' is not allowed to
+   * be used within the labels.
+   *
+   * @param string[] $labels
+   */
+  public function setLabels($labels)
+  {
+    $this->labels = $labels;
+  }
+  /**
+   * @return string[]
+   */
+  public function getLabels()
+  {
+    return $this->labels;
+  }
+  /**
+   * Optional. The logging configuration for this instance. This field is
+   * supported only in CDF versions 6.11.0 and above.
+   *
+   * @param LoggingConfig $loggingConfig
+   */
+  public function setLoggingConfig(LoggingConfig $loggingConfig)
+  {
+    $this->loggingConfig = $loggingConfig;
+  }
+  /**
+   * @return LoggingConfig
+   */
+  public function getLoggingConfig()
+  {
+    return $this->loggingConfig;
+  }
+  /**
+   * Output only. The maintenance events for this instance.
+   *
+   * @param MaintenanceEvent[] $maintenanceEvents
+   */
+  public function setMaintenanceEvents($maintenanceEvents)
+  {
+    $this->maintenanceEvents = $maintenanceEvents;
+  }
+  /**
+   * @return MaintenanceEvent[]
+   */
+  public function getMaintenanceEvents()
+  {
+    return $this->maintenanceEvents;
+  }
+  /**
+   * Optional. Configure the maintenance policy for this instance.
+   *
+   * @param MaintenancePolicy $maintenancePolicy
+   */
+  public function setMaintenancePolicy(MaintenancePolicy $maintenancePolicy)
+  {
+    $this->maintenancePolicy = $maintenancePolicy;
+  }
+  /**
+   * @return MaintenancePolicy
+   */
+  public function getMaintenancePolicy()
+  {
+    return $this->maintenancePolicy;
+  }
+  /**
+   * Optional. The monitoring configuration for this instance.
+   *
+   * @param MonitoringConfig $monitoringConfig
+   */
+  public function setMonitoringConfig(MonitoringConfig $monitoringConfig)
+  {
+    $this->monitoringConfig = $monitoringConfig;
+  }
+  /**
+   * @return MonitoringConfig
+   */
+  public function getMonitoringConfig()
+  {
+    return $this->monitoringConfig;
+  }
+  /**
+   * Output only. The name of this instance is in the form of
+   * projects/{project}/locations/{location}/instances/{instance}.
+   *
+   * @param string $name
+   */
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  /**
+   * @return string
+   */
+  public function getName()
+  {
+    return $this->name;
+  }
+  /**
+   * Optional. Network configuration options. These are required when a private
+   * Data Fusion instance is to be created.
+   *
+   * @param NetworkConfig $networkConfig
+   */
+  public function setNetworkConfig(NetworkConfig $networkConfig)
+  {
+    $this->networkConfig = $networkConfig;
+  }
+  /**
+   * @return NetworkConfig
+   */
+  public function getNetworkConfig()
+  {
+    return $this->networkConfig;
+  }
+  /**
+   * Optional. Map of additional options used to configure the behavior of Data
+   * Fusion instance.
+   *
+   * @param string[] $options
+   */
+  public function setOptions($options)
+  {
+    $this->options = $options;
+  }
+  /**
+   * @return string[]
+   */
+  public function getOptions()
+  {
+    return $this->options;
+  }
+  /**
+   * Output only. Service agent for the customer project.
+   *
+   * @param string $p4ServiceAccount
+   */
+  public function setP4ServiceAccount($p4ServiceAccount)
+  {
+    $this->p4ServiceAccount = $p4ServiceAccount;
+  }
+  /**
+   * @return string
+   */
+  public function getP4ServiceAccount()
+  {
+    return $this->p4ServiceAccount;
+  }
+  /**
+   * Optional. Current patch revision of the Data Fusion.
+   *
+   * @param string $patchRevision
+   */
+  public function setPatchRevision($patchRevision)
+  {
+    $this->patchRevision = $patchRevision;
+  }
+  /**
+   * @return string
+   */
+  public function getPatchRevision()
+  {
+    return $this->patchRevision;
+  }
+  /**
+   * Optional. Specifies whether the Data Fusion instance should be private. If
+   * set to true, all Data Fusion nodes will have private IP addresses and will
+   * not be able to access the public internet.
+   *
+   * @param bool $privateInstance
+   */
+  public function setPrivateInstance($privateInstance)
+  {
+    $this->privateInstance = $privateInstance;
+  }
+  /**
+   * @return bool
+   */
+  public function getPrivateInstance()
+  {
+    return $this->privateInstance;
+  }
+  /**
+   * Output only. Reserved for future use.
+   *
+   * @param bool $satisfiesPzi
+   */
+  public function setSatisfiesPzi($satisfiesPzi)
+  {
+    $this->satisfiesPzi = $satisfiesPzi;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzi()
+  {
+    return $this->satisfiesPzi;
+  }
+  /**
+   * Output only. Reserved for future use.
+   *
+   * @param bool $satisfiesPzs
+   */
+  public function setSatisfiesPzs($satisfiesPzs)
+  {
+    $this->satisfiesPzs = $satisfiesPzs;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzs()
+  {
+    return $this->satisfiesPzs;
+  }
+  /**
+   * Output only. Deprecated. Use tenant_project_id instead to extract the
+   * tenant project ID.
+   *
+   * @deprecated
+   * @param string $serviceAccount
+   */
+  public function setServiceAccount($serviceAccount)
+  {
+    $this->serviceAccount = $serviceAccount;
+  }
+  /**
+   * @deprecated
+   * @return string
+   */
+  public function getServiceAccount()
+  {
+    return $this->serviceAccount;
+  }
+  /**
+   * Output only. Endpoint on which the Data Fusion UI is accessible.
+   *
+   * @param string $serviceEndpoint
+   */
+  public function setServiceEndpoint($serviceEndpoint)
+  {
+    $this->serviceEndpoint = $serviceEndpoint;
+  }
+  /**
+   * @return string
+   */
+  public function getServiceEndpoint()
+  {
+    return $this->serviceEndpoint;
+  }
+  /**
+   * Output only. The current state of this Data Fusion instance.
+   *
+   * Accepted values: STATE_UNSPECIFIED, CREATING, ACTIVE, FAILED, DELETING,
+   * UPGRADING, RESTARTING, UPDATING, AUTO_UPDATING, AUTO_UPGRADING, DISABLED,
+   * ENABLING
+   *
+   * @param self::STATE_* $state
+   */
+  public function setState($state)
+  {
+    $this->state = $state;
+  }
+  /**
+   * @return self::STATE_*
+   */
+  public function getState()
+  {
+    return $this->state;
+  }
+  /**
+   * Output only. Additional information about the current state of this Data
+   * Fusion instance if available.
+   *
+   * @param string $stateMessage
+   */
+  public function setStateMessage($stateMessage)
+  {
+    $this->stateMessage = $stateMessage;
+  }
+  /**
+   * @return string
+   */
+  public function getStateMessage()
+  {
+    return $this->stateMessage;
+  }
+  /**
+   * Optional. Input only. Immutable. Tag keys/values directly bound to this
+   * resource. For example: "123/environment": "production", "123/costCenter":
+   * "marketing"
+   *
+   * @param string[] $tags
+   */
+  public function setTags($tags)
+  {
+    $this->tags = $tags;
+  }
+  /**
+   * @return string[]
+   */
+  public function getTags()
+  {
+    return $this->tags;
+  }
+  /**
+   * Output only. The name of the tenant project.
+   *
+   * @param string $tenantProjectId
+   */
+  public function setTenantProjectId($tenantProjectId)
+  {
+    $this->tenantProjectId = $tenantProjectId;
+  }
+  /**
+   * @return string
+   */
+  public function getTenantProjectId()
+  {
+    return $this->tenantProjectId;
+  }
+  /**
+   * Required. Instance type.
+   *
+   * Accepted values: TYPE_UNSPECIFIED, BASIC, ENTERPRISE, DEVELOPER
+   *
+   * @param self::TYPE_* $type
+   */
+  public function setType($type)
+  {
+    $this->type = $type;
+  }
+  /**
+   * @return self::TYPE_*
+   */
+  public function getType()
+  {
+    return $this->type;
+  }
+  /**
+   * Output only. The time the instance was last updated.
+   *
+   * @param string $updateTime
+   */
+  public function setUpdateTime($updateTime)
+  {
+    $this->updateTime = $updateTime;
+  }
+  /**
+   * @return string
+   */
+  public function getUpdateTime()
+  {
+    return $this->updateTime;
+  }
+  /**
+   * Optional. Current version of the Data Fusion. Only specifiable in Update.
+   *
+   * @param string $version
+   */
+  public function setVersion($version)
+  {
+    $this->version = $version;
+  }
+  /**
+   * @return string
+   */
+  public function getVersion()
+  {
+    return $this->version;
+  }
+  /**
+   * Output only. Endpoint on which the Data Fusion UI is accessible to third-
+   * party users
+   *
+   * @param string $workforceIdentityServiceEndpoint
+   */
+  public function setWorkforceIdentityServiceEndpoint($workforceIdentityServiceEndpoint)
+  {
+    $this->workforceIdentityServiceEndpoint = $workforceIdentityServiceEndpoint;
+  }
+  /**
+   * @return string
+   */
+  public function getWorkforceIdentityServiceEndpoint()
+  {
+    return $this->workforceIdentityServiceEndpoint;
+  }
+  /**
+   * Optional. Name of the zone in which the Data Fusion instance will be
+   * created. Only DEVELOPER instances use this field.
+   *
+   * @param string $zone
+   */
+  public function setZone($zone)
+  {
+    $this->zone = $zone;
+  }
+  /**
+   * @return string
+   */
+  public function getZone()
+  {
+    return $this->zone;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(Instance::class, 'Google_Service_DataFusion_Instance');

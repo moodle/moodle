@@ -1,0 +1,102 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Translate;
+
+class GlossaryConfig extends \Google\Model
+{
+  /**
+   * Optional. If set to true, the glossary will be used for contextual
+   * translation.
+   *
+   * @var bool
+   */
+  public $contextualTranslationEnabled;
+  /**
+   * Required. The `glossary` to be applied for this translation. The format
+   * depends on the glossary: - User-provided custom glossary:
+   * `projects/{project-number-or-id}/locations/{location-
+   * id}/glossaries/{glossary-id}`
+   *
+   * @var string
+   */
+  public $glossary;
+  /**
+   * Optional. Indicates match is case insensitive. The default value is `false`
+   * if missing.
+   *
+   * @var bool
+   */
+  public $ignoreCase;
+
+  /**
+   * Optional. If set to true, the glossary will be used for contextual
+   * translation.
+   *
+   * @param bool $contextualTranslationEnabled
+   */
+  public function setContextualTranslationEnabled($contextualTranslationEnabled)
+  {
+    $this->contextualTranslationEnabled = $contextualTranslationEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getContextualTranslationEnabled()
+  {
+    return $this->contextualTranslationEnabled;
+  }
+  /**
+   * Required. The `glossary` to be applied for this translation. The format
+   * depends on the glossary: - User-provided custom glossary:
+   * `projects/{project-number-or-id}/locations/{location-
+   * id}/glossaries/{glossary-id}`
+   *
+   * @param string $glossary
+   */
+  public function setGlossary($glossary)
+  {
+    $this->glossary = $glossary;
+  }
+  /**
+   * @return string
+   */
+  public function getGlossary()
+  {
+    return $this->glossary;
+  }
+  /**
+   * Optional. Indicates match is case insensitive. The default value is `false`
+   * if missing.
+   *
+   * @param bool $ignoreCase
+   */
+  public function setIgnoreCase($ignoreCase)
+  {
+    $this->ignoreCase = $ignoreCase;
+  }
+  /**
+   * @return bool
+   */
+  public function getIgnoreCase()
+  {
+    return $this->ignoreCase;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GlossaryConfig::class, 'Google_Service_Translate_GlossaryConfig');

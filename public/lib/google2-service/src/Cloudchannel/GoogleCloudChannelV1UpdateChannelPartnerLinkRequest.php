@@ -1,0 +1,69 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Cloudchannel;
+
+class GoogleCloudChannelV1UpdateChannelPartnerLinkRequest extends \Google\Model
+{
+  protected $channelPartnerLinkType = GoogleCloudChannelV1ChannelPartnerLink::class;
+  protected $channelPartnerLinkDataType = '';
+  /**
+   * Required. The update mask that applies to the resource. The only allowable
+   * value for an update mask is channel_partner_link.link_state.
+   *
+   * @var string
+   */
+  public $updateMask;
+
+  /**
+   * Required. The channel partner link to update. Only
+   * channel_partner_link.link_state is allowed for updates.
+   *
+   * @param GoogleCloudChannelV1ChannelPartnerLink $channelPartnerLink
+   */
+  public function setChannelPartnerLink(GoogleCloudChannelV1ChannelPartnerLink $channelPartnerLink)
+  {
+    $this->channelPartnerLink = $channelPartnerLink;
+  }
+  /**
+   * @return GoogleCloudChannelV1ChannelPartnerLink
+   */
+  public function getChannelPartnerLink()
+  {
+    return $this->channelPartnerLink;
+  }
+  /**
+   * Required. The update mask that applies to the resource. The only allowable
+   * value for an update mask is channel_partner_link.link_state.
+   *
+   * @param string $updateMask
+   */
+  public function setUpdateMask($updateMask)
+  {
+    $this->updateMask = $updateMask;
+  }
+  /**
+   * @return string
+   */
+  public function getUpdateMask()
+  {
+    return $this->updateMask;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudChannelV1UpdateChannelPartnerLinkRequest::class, 'Google_Service_Cloudchannel_GoogleCloudChannelV1UpdateChannelPartnerLinkRequest');

@@ -1,0 +1,178 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\AndroidPublisher;
+
+class MigrateBasePlanPricesRequest extends \Google\Collection
+{
+  /**
+   * Defaults to PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_SENSITIVE.
+   */
+  public const LATENCY_TOLERANCE_PRODUCT_UPDATE_LATENCY_TOLERANCE_UNSPECIFIED = 'PRODUCT_UPDATE_LATENCY_TOLERANCE_UNSPECIFIED';
+  /**
+   * The update will propagate to clients within several minutes on average and
+   * up to a few hours in rare cases. Throughput is limited to 7,200 updates per
+   * app per hour.
+   */
+  public const LATENCY_TOLERANCE_PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_SENSITIVE = 'PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_SENSITIVE';
+  /**
+   * The update will propagate to clients within 24 hours. Supports high
+   * throughput of up to 720,000 updates per app per hour using batch
+   * modification methods.
+   */
+  public const LATENCY_TOLERANCE_PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_TOLERANT = 'PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_TOLERANT';
+  protected $collection_key = 'regionalPriceMigrations';
+  /**
+   * Required. The unique base plan ID of the base plan to update prices on.
+   *
+   * @var string
+   */
+  public $basePlanId;
+  /**
+   * Optional. The latency tolerance for the propagation of this product update.
+   * Defaults to latency-sensitive.
+   *
+   * @var string
+   */
+  public $latencyTolerance;
+  /**
+   * Required. Package name of the parent app. Must be equal to the package_name
+   * field on the Subscription resource.
+   *
+   * @var string
+   */
+  public $packageName;
+  /**
+   * Required. The ID of the subscription to update. Must be equal to the
+   * product_id field on the Subscription resource.
+   *
+   * @var string
+   */
+  public $productId;
+  protected $regionalPriceMigrationsType = RegionalPriceMigrationConfig::class;
+  protected $regionalPriceMigrationsDataType = 'array';
+  protected $regionsVersionType = RegionsVersion::class;
+  protected $regionsVersionDataType = '';
+
+  /**
+   * Required. The unique base plan ID of the base plan to update prices on.
+   *
+   * @param string $basePlanId
+   */
+  public function setBasePlanId($basePlanId)
+  {
+    $this->basePlanId = $basePlanId;
+  }
+  /**
+   * @return string
+   */
+  public function getBasePlanId()
+  {
+    return $this->basePlanId;
+  }
+  /**
+   * Optional. The latency tolerance for the propagation of this product update.
+   * Defaults to latency-sensitive.
+   *
+   * Accepted values: PRODUCT_UPDATE_LATENCY_TOLERANCE_UNSPECIFIED,
+   * PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_SENSITIVE,
+   * PRODUCT_UPDATE_LATENCY_TOLERANCE_LATENCY_TOLERANT
+   *
+   * @param self::LATENCY_TOLERANCE_* $latencyTolerance
+   */
+  public function setLatencyTolerance($latencyTolerance)
+  {
+    $this->latencyTolerance = $latencyTolerance;
+  }
+  /**
+   * @return self::LATENCY_TOLERANCE_*
+   */
+  public function getLatencyTolerance()
+  {
+    return $this->latencyTolerance;
+  }
+  /**
+   * Required. Package name of the parent app. Must be equal to the package_name
+   * field on the Subscription resource.
+   *
+   * @param string $packageName
+   */
+  public function setPackageName($packageName)
+  {
+    $this->packageName = $packageName;
+  }
+  /**
+   * @return string
+   */
+  public function getPackageName()
+  {
+    return $this->packageName;
+  }
+  /**
+   * Required. The ID of the subscription to update. Must be equal to the
+   * product_id field on the Subscription resource.
+   *
+   * @param string $productId
+   */
+  public function setProductId($productId)
+  {
+    $this->productId = $productId;
+  }
+  /**
+   * @return string
+   */
+  public function getProductId()
+  {
+    return $this->productId;
+  }
+  /**
+   * Required. The regional prices to update.
+   *
+   * @param RegionalPriceMigrationConfig[] $regionalPriceMigrations
+   */
+  public function setRegionalPriceMigrations($regionalPriceMigrations)
+  {
+    $this->regionalPriceMigrations = $regionalPriceMigrations;
+  }
+  /**
+   * @return RegionalPriceMigrationConfig[]
+   */
+  public function getRegionalPriceMigrations()
+  {
+    return $this->regionalPriceMigrations;
+  }
+  /**
+   * Required. The version of the available regions being used for the
+   * regional_price_migrations.
+   *
+   * @param RegionsVersion $regionsVersion
+   */
+  public function setRegionsVersion(RegionsVersion $regionsVersion)
+  {
+    $this->regionsVersion = $regionsVersion;
+  }
+  /**
+   * @return RegionsVersion
+   */
+  public function getRegionsVersion()
+  {
+    return $this->regionsVersion;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(MigrateBasePlanPricesRequest::class, 'Google_Service_AndroidPublisher_MigrateBasePlanPricesRequest');

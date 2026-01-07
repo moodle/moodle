@@ -1,0 +1,225 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Dataproc;
+
+class PySparkJob extends \Google\Collection
+{
+  protected $collection_key = 'pythonFileUris';
+  /**
+   * Optional. HCFS URIs of archives to be extracted into the working directory
+   * of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and
+   * .zip.Note: Spark applications must be deployed in cluster mode
+   * (https://spark.apache.org/docs/latest/cluster-overview.html) for correct
+   * environment propagation.
+   *
+   * @var string[]
+   */
+  public $archiveUris;
+  /**
+   * Optional. The arguments to pass to the driver. Do not include arguments,
+   * such as --conf, that can be set as job properties, since a collision may
+   * occur that causes an incorrect job submission.
+   *
+   * @var string[]
+   */
+  public $args;
+  /**
+   * Optional. HCFS URIs of files to be placed in the working directory of each
+   * executor. Useful for naively parallel tasks.
+   *
+   * @var string[]
+   */
+  public $fileUris;
+  /**
+   * Optional. HCFS URIs of jar files to add to the CLASSPATHs of the Python
+   * driver and tasks.
+   *
+   * @var string[]
+   */
+  public $jarFileUris;
+  protected $loggingConfigType = LoggingConfig::class;
+  protected $loggingConfigDataType = '';
+  /**
+   * Required. The HCFS URI of the main Python file to use as the driver. Must
+   * be a .py file.
+   *
+   * @var string
+   */
+  public $mainPythonFileUri;
+  /**
+   * Optional. A mapping of property names to values, used to configure PySpark.
+   * Properties that conflict with values set by the Dataproc API might be
+   * overwritten. Can include properties set in /etc/spark/conf/spark-
+   * defaults.conf and classes in user code.
+   *
+   * @var string[]
+   */
+  public $properties;
+  /**
+   * Optional. HCFS file URIs of Python files to pass to the PySpark framework.
+   * Supported file types: .py, .egg, and .zip.
+   *
+   * @var string[]
+   */
+  public $pythonFileUris;
+
+  /**
+   * Optional. HCFS URIs of archives to be extracted into the working directory
+   * of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and
+   * .zip.Note: Spark applications must be deployed in cluster mode
+   * (https://spark.apache.org/docs/latest/cluster-overview.html) for correct
+   * environment propagation.
+   *
+   * @param string[] $archiveUris
+   */
+  public function setArchiveUris($archiveUris)
+  {
+    $this->archiveUris = $archiveUris;
+  }
+  /**
+   * @return string[]
+   */
+  public function getArchiveUris()
+  {
+    return $this->archiveUris;
+  }
+  /**
+   * Optional. The arguments to pass to the driver. Do not include arguments,
+   * such as --conf, that can be set as job properties, since a collision may
+   * occur that causes an incorrect job submission.
+   *
+   * @param string[] $args
+   */
+  public function setArgs($args)
+  {
+    $this->args = $args;
+  }
+  /**
+   * @return string[]
+   */
+  public function getArgs()
+  {
+    return $this->args;
+  }
+  /**
+   * Optional. HCFS URIs of files to be placed in the working directory of each
+   * executor. Useful for naively parallel tasks.
+   *
+   * @param string[] $fileUris
+   */
+  public function setFileUris($fileUris)
+  {
+    $this->fileUris = $fileUris;
+  }
+  /**
+   * @return string[]
+   */
+  public function getFileUris()
+  {
+    return $this->fileUris;
+  }
+  /**
+   * Optional. HCFS URIs of jar files to add to the CLASSPATHs of the Python
+   * driver and tasks.
+   *
+   * @param string[] $jarFileUris
+   */
+  public function setJarFileUris($jarFileUris)
+  {
+    $this->jarFileUris = $jarFileUris;
+  }
+  /**
+   * @return string[]
+   */
+  public function getJarFileUris()
+  {
+    return $this->jarFileUris;
+  }
+  /**
+   * Optional. The runtime log config for job execution.
+   *
+   * @param LoggingConfig $loggingConfig
+   */
+  public function setLoggingConfig(LoggingConfig $loggingConfig)
+  {
+    $this->loggingConfig = $loggingConfig;
+  }
+  /**
+   * @return LoggingConfig
+   */
+  public function getLoggingConfig()
+  {
+    return $this->loggingConfig;
+  }
+  /**
+   * Required. The HCFS URI of the main Python file to use as the driver. Must
+   * be a .py file.
+   *
+   * @param string $mainPythonFileUri
+   */
+  public function setMainPythonFileUri($mainPythonFileUri)
+  {
+    $this->mainPythonFileUri = $mainPythonFileUri;
+  }
+  /**
+   * @return string
+   */
+  public function getMainPythonFileUri()
+  {
+    return $this->mainPythonFileUri;
+  }
+  /**
+   * Optional. A mapping of property names to values, used to configure PySpark.
+   * Properties that conflict with values set by the Dataproc API might be
+   * overwritten. Can include properties set in /etc/spark/conf/spark-
+   * defaults.conf and classes in user code.
+   *
+   * @param string[] $properties
+   */
+  public function setProperties($properties)
+  {
+    $this->properties = $properties;
+  }
+  /**
+   * @return string[]
+   */
+  public function getProperties()
+  {
+    return $this->properties;
+  }
+  /**
+   * Optional. HCFS file URIs of Python files to pass to the PySpark framework.
+   * Supported file types: .py, .egg, and .zip.
+   *
+   * @param string[] $pythonFileUris
+   */
+  public function setPythonFileUris($pythonFileUris)
+  {
+    $this->pythonFileUris = $pythonFileUris;
+  }
+  /**
+   * @return string[]
+   */
+  public function getPythonFileUris()
+  {
+    return $this->pythonFileUris;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(PySparkJob::class, 'Google_Service_Dataproc_PySparkJob');

@@ -1,0 +1,62 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Aiplatform;
+
+class GoogleCloudAiplatformV1CreateIndexOperationMetadata extends \Google\Model
+{
+  protected $genericMetadataType = GoogleCloudAiplatformV1GenericOperationMetadata::class;
+  protected $genericMetadataDataType = '';
+  protected $nearestNeighborSearchOperationMetadataType = GoogleCloudAiplatformV1NearestNeighborSearchOperationMetadata::class;
+  protected $nearestNeighborSearchOperationMetadataDataType = '';
+
+  /**
+   * The operation generic information.
+   *
+   * @param GoogleCloudAiplatformV1GenericOperationMetadata $genericMetadata
+   */
+  public function setGenericMetadata(GoogleCloudAiplatformV1GenericOperationMetadata $genericMetadata)
+  {
+    $this->genericMetadata = $genericMetadata;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1GenericOperationMetadata
+   */
+  public function getGenericMetadata()
+  {
+    return $this->genericMetadata;
+  }
+  /**
+   * The operation metadata with regard to Matching Engine Index operation.
+   *
+   * @param GoogleCloudAiplatformV1NearestNeighborSearchOperationMetadata $nearestNeighborSearchOperationMetadata
+   */
+  public function setNearestNeighborSearchOperationMetadata(GoogleCloudAiplatformV1NearestNeighborSearchOperationMetadata $nearestNeighborSearchOperationMetadata)
+  {
+    $this->nearestNeighborSearchOperationMetadata = $nearestNeighborSearchOperationMetadata;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1NearestNeighborSearchOperationMetadata
+   */
+  public function getNearestNeighborSearchOperationMetadata()
+  {
+    return $this->nearestNeighborSearchOperationMetadata;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudAiplatformV1CreateIndexOperationMetadata::class, 'Google_Service_Aiplatform_GoogleCloudAiplatformV1CreateIndexOperationMetadata');

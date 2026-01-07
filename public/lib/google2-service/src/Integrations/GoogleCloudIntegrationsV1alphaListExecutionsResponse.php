@@ -1,0 +1,87 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Integrations;
+
+class GoogleCloudIntegrationsV1alphaListExecutionsResponse extends \Google\Collection
+{
+  protected $collection_key = 'executions';
+  protected $executionInfosType = EnterpriseCrmFrontendsEventbusProtoEventExecutionInfo::class;
+  protected $executionInfosDataType = 'array';
+  protected $executionsType = GoogleCloudIntegrationsV1alphaExecution::class;
+  protected $executionsDataType = 'array';
+  /**
+   * The token used to retrieve the next page results.
+   *
+   * @var string
+   */
+  public $nextPageToken;
+
+  /**
+   * Required. The detailed information of requested executions.
+   *
+   * @deprecated
+   * @param EnterpriseCrmFrontendsEventbusProtoEventExecutionInfo[] $executionInfos
+   */
+  public function setExecutionInfos($executionInfos)
+  {
+    $this->executionInfos = $executionInfos;
+  }
+  /**
+   * @deprecated
+   * @return EnterpriseCrmFrontendsEventbusProtoEventExecutionInfo[]
+   */
+  public function getExecutionInfos()
+  {
+    return $this->executionInfos;
+  }
+  /**
+   * The detailed information of requested executions
+   *
+   * @param GoogleCloudIntegrationsV1alphaExecution[] $executions
+   */
+  public function setExecutions($executions)
+  {
+    $this->executions = $executions;
+  }
+  /**
+   * @return GoogleCloudIntegrationsV1alphaExecution[]
+   */
+  public function getExecutions()
+  {
+    return $this->executions;
+  }
+  /**
+   * The token used to retrieve the next page results.
+   *
+   * @param string $nextPageToken
+   */
+  public function setNextPageToken($nextPageToken)
+  {
+    $this->nextPageToken = $nextPageToken;
+  }
+  /**
+   * @return string
+   */
+  public function getNextPageToken()
+  {
+    return $this->nextPageToken;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(GoogleCloudIntegrationsV1alphaListExecutionsResponse::class, 'Google_Service_Integrations_GoogleCloudIntegrationsV1alphaListExecutionsResponse');

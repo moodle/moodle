@@ -1,0 +1,50 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Docs;
+
+class MergeTableCellsRequest extends \Google\Model
+{
+  protected $tableRangeType = TableRange::class;
+  protected $tableRangeDataType = '';
+
+  /**
+   * The table range specifying which cells of the table to merge. Any text in
+   * the cells being merged will be concatenated and stored in the "head" cell
+   * of the range. This is the upper-left cell of the range when the content
+   * direction is left to right, and the upper-right cell of the range
+   * otherwise. If the range is non-rectangular (which can occur in some cases
+   * where the range covers cells that are already merged or where the table is
+   * non-rectangular), a 400 bad request error is returned.
+   *
+   * @param TableRange $tableRange
+   */
+  public function setTableRange(TableRange $tableRange)
+  {
+    $this->tableRange = $tableRange;
+  }
+  /**
+   * @return TableRange
+   */
+  public function getTableRange()
+  {
+    return $this->tableRange;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(MergeTableCellsRequest::class, 'Google_Service_Docs_MergeTableCellsRequest');

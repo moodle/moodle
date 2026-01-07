@@ -1,0 +1,131 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Integrations;
+
+class CrmlogErrorCode extends \Google\Model
+{
+  public const COMMON_ERROR_CODE_COMMON_ERROR_CODE_UNSPECIFIED = 'COMMON_ERROR_CODE_UNSPECIFIED';
+  /**
+   * @deprecated
+   */
+  public const COMMON_ERROR_CODE_INVALID_CREDENTIALS = 'INVALID_CREDENTIALS';
+  public const COMMON_ERROR_CODE_REQUIRED_FIELDS_MISSING = 'REQUIRED_FIELDS_MISSING';
+  public const COMMON_ERROR_CODE_INVALID_FIELDS = 'INVALID_FIELDS';
+  /**
+   * @deprecated
+   */
+  public const COMMON_ERROR_CODE_BACKEND = 'BACKEND';
+  /**
+   * @deprecated
+   */
+  public const COMMON_ERROR_CODE_GENERAL = 'GENERAL';
+  /**
+   * @deprecated
+   */
+  public const COMMON_ERROR_CODE_INTERNAL = 'INTERNAL';
+  public const COMMON_ERROR_CODE_IO_ERROR = 'IO_ERROR';
+  public const COMMON_ERROR_CODE_NOT_FOUND = 'NOT_FOUND';
+  /**
+   * @deprecated
+   */
+  public const COMMON_ERROR_CODE_EVENT_BUS = 'EVENT_BUS';
+  public const COMMON_ERROR_CODE_ALREADY_EXISTS = 'ALREADY_EXISTS';
+  public const COMMON_ERROR_CODE_CONCORD = 'CONCORD';
+  public const COMMON_ERROR_CODE_CONVERSION = 'CONVERSION';
+  public const COMMON_ERROR_CODE_FLUME = 'FLUME';
+  /**
+   * @deprecated
+   */
+  public const COMMON_ERROR_CODE_PERMISSION = 'PERMISSION';
+  public const COMMON_ERROR_CODE_SALES_FORCE = 'SALES_FORCE';
+  public const COMMON_ERROR_CODE_SPANNER = 'SPANNER';
+  public const COMMON_ERROR_CODE_UNIMPLEMENTED = 'UNIMPLEMENTED';
+  public const COMMON_ERROR_CODE_RELTIO = 'RELTIO';
+  public const COMMON_ERROR_CODE_WORKFLOW_NOT_FOUND = 'WORKFLOW_NOT_FOUND';
+  public const COMMON_ERROR_CODE_QUOTA_THROTTLED = 'QUOTA_THROTTLED';
+  public const COMMON_ERROR_CODE_QUOTA_ENQUEUED = 'QUOTA_ENQUEUED';
+  public const COMMON_ERROR_CODE_INVALID_QUOTA_CONFIGURATION = 'INVALID_QUOTA_CONFIGURATION';
+  public const COMMON_ERROR_CODE_TASK_NOT_FOUND = 'TASK_NOT_FOUND';
+  public const COMMON_ERROR_CODE_EXECUTION_TIMEOUT = 'EXECUTION_TIMEOUT';
+  public const COMMON_ERROR_CODE_INVALID_EVENT_EXECUTION_STATE = 'INVALID_EVENT_EXECUTION_STATE';
+  public const COMMON_ERROR_CODE_INVALID_ATTRIBUTE = 'INVALID_ATTRIBUTE';
+  public const COMMON_ERROR_CODE_MISSING_ATTRIBUTE = 'MISSING_ATTRIBUTE';
+  public const COMMON_ERROR_CODE_CLIENT_UNAUTHORIZED_FOR_WORKFLOW = 'CLIENT_UNAUTHORIZED_FOR_WORKFLOW';
+  public const COMMON_ERROR_CODE_INVALID_PARAMETER = 'INVALID_PARAMETER';
+  public const COMMON_ERROR_CODE_MISSING_PARAMETER = 'MISSING_PARAMETER';
+  public const COMMON_ERROR_CODE_UNAUTHROIZED_WORKFLOW_EDITOR_ACTION = 'UNAUTHROIZED_WORKFLOW_EDITOR_ACTION';
+  public const COMMON_ERROR_CODE_FAILED_PRECONDITION = 'FAILED_PRECONDITION';
+  public const COMMON_ERROR_CODE_INVALID_CLIENT = 'INVALID_CLIENT';
+  public const COMMON_ERROR_CODE_MISSING_CLIENT = 'MISSING_CLIENT';
+  public const COMMON_ERROR_CODE_INVALID_WORKFLOW = 'INVALID_WORKFLOW';
+  public const COMMON_ERROR_CODE_MISSING_QUOTA_CONFIGURATION = 'MISSING_QUOTA_CONFIGURATION';
+  public const COMMON_ERROR_CODE_UNHANDLED_TASK_ERROR = 'UNHANDLED_TASK_ERROR';
+  public const COMMON_ERROR_CODE_SCRIPT_TASK_RUNTIME_ERROR = 'SCRIPT_TASK_RUNTIME_ERROR';
+  public const COMMON_ERROR_CODE_RPC = 'RPC';
+  public const COMMON_ERROR_CODE_INVALID_PROTO = 'INVALID_PROTO';
+  public const COMMON_ERROR_CODE_UNHANDLED_EVENTBUS_ERROR = 'UNHANDLED_EVENTBUS_ERROR';
+  public const COMMON_ERROR_CODE_INVALID_TASK_STATE = 'INVALID_TASK_STATE';
+  public const COMMON_ERROR_CODE_TYPED_TASK_INVALID_INPUT_OPERATION = 'TYPED_TASK_INVALID_INPUT_OPERATION';
+  public const COMMON_ERROR_CODE_TYPED_TASK_INVALID_OUTPUT_OPERATION = 'TYPED_TASK_INVALID_OUTPUT_OPERATION';
+  public const COMMON_ERROR_CODE_VALIDATION_ERROR = 'VALIDATION_ERROR';
+  public const COMMON_ERROR_CODE_RESUME_ERROR = 'RESUME_ERROR';
+  public const COMMON_ERROR_CODE_APPS_SCRIPT_EXECUTION_ERROR = 'APPS_SCRIPT_EXECUTION_ERROR';
+  public const COMMON_ERROR_CODE_INVALID_VECTOR_USER = 'INVALID_VECTOR_USER';
+  public const COMMON_ERROR_CODE_INFORMATICA = 'INFORMATICA';
+  public const COMMON_ERROR_CODE_RETRYABLE_TASK_ERROR = 'RETRYABLE_TASK_ERROR';
+  public const COMMON_ERROR_CODE_INVALID_TENANT = 'INVALID_TENANT';
+  public const COMMON_ERROR_CODE_WRONG_TENANT = 'WRONG_TENANT';
+  public const COMMON_ERROR_CODE_INFORMATICA_BACKEND_UNAVAILABLE = 'INFORMATICA_BACKEND_UNAVAILABLE';
+  public const COMMON_ERROR_CODE_RPC_PERMISSION_DENIED = 'RPC_PERMISSION_DENIED';
+  /**
+   * SYNC_EVENTBUS_EXECUTION_TIMEOUT is for eventbus internal use only.
+   */
+  public const COMMON_ERROR_CODE_SYNC_EVENTBUS_EXECUTION_TIMEOUT = 'SYNC_EVENTBUS_EXECUTION_TIMEOUT';
+  /**
+   * ASYNC_EVENTBUS_EXECUTION_TIMEOUT is for eventbus internal use only. This
+   * error will be counted as server availability error.
+   */
+  public const COMMON_ERROR_CODE_ASYNC_EVENTBUS_EXECUTION_TIMEOUT = 'ASYNC_EVENTBUS_EXECUTION_TIMEOUT';
+  public const COMMON_ERROR_CODE_NOT_SUPPORTED_DATA_TYPE = 'NOT_SUPPORTED_DATA_TYPE';
+  public const COMMON_ERROR_CODE_UNSANITIZED_USER_INPUT = 'UNSANITIZED_USER_INPUT';
+  public const COMMON_ERROR_CODE_TRANSFORM_EXPRESSION_EVALUATION_ERROR = 'TRANSFORM_EXPRESSION_EVALUATION_ERROR';
+  public const COMMON_ERROR_CODE_HTTP_EXCEPTION = 'HTTP_EXCEPTION';
+  public const COMMON_ERROR_CODE_EXECUTION_CANCELLED = 'EXECUTION_CANCELLED';
+  /**
+   * @var string
+   */
+  public $commonErrorCode;
+
+  /**
+   * @param self::COMMON_ERROR_CODE_* $commonErrorCode
+   */
+  public function setCommonErrorCode($commonErrorCode)
+  {
+    $this->commonErrorCode = $commonErrorCode;
+  }
+  /**
+   * @return self::COMMON_ERROR_CODE_*
+   */
+  public function getCommonErrorCode()
+  {
+    return $this->commonErrorCode;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(CrmlogErrorCode::class, 'Google_Service_Integrations_CrmlogErrorCode');

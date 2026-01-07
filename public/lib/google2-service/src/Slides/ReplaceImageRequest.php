@@ -1,0 +1,122 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\Slides;
+
+class ReplaceImageRequest extends \Google\Model
+{
+  /**
+   * Unspecified image replace method. This value must not be used.
+   */
+  public const IMAGE_REPLACE_METHOD_IMAGE_REPLACE_METHOD_UNSPECIFIED = 'IMAGE_REPLACE_METHOD_UNSPECIFIED';
+  /**
+   * Scales and centers the image to fit within the bounds of the original shape
+   * and maintains the image's aspect ratio. The rendered size of the image may
+   * be smaller than the size of the shape. This is the default method when one
+   * is not specified.
+   */
+  public const IMAGE_REPLACE_METHOD_CENTER_INSIDE = 'CENTER_INSIDE';
+  /**
+   * Scales and centers the image to fill the bounds of the original shape. The
+   * image may be cropped in order to fill the shape. The rendered size of the
+   * image will be the same as the original shape.
+   */
+  public const IMAGE_REPLACE_METHOD_CENTER_CROP = 'CENTER_CROP';
+  /**
+   * The ID of the existing image that will be replaced. The ID can be retrieved
+   * from the response of a get request.
+   *
+   * @var string
+   */
+  public $imageObjectId;
+  /**
+   * The replacement method.
+   *
+   * @var string
+   */
+  public $imageReplaceMethod;
+  /**
+   * The image URL. The image is fetched once at insertion time and a copy is
+   * stored for display inside the presentation. Images must be less than 50MB,
+   * cannot exceed 25 megapixels, and must be in PNG, JPEG, or GIF format. The
+   * provided URL can't surpass 2 KB in length. The URL is saved with the image,
+   * and exposed through the Image.source_url field.
+   *
+   * @var string
+   */
+  public $url;
+
+  /**
+   * The ID of the existing image that will be replaced. The ID can be retrieved
+   * from the response of a get request.
+   *
+   * @param string $imageObjectId
+   */
+  public function setImageObjectId($imageObjectId)
+  {
+    $this->imageObjectId = $imageObjectId;
+  }
+  /**
+   * @return string
+   */
+  public function getImageObjectId()
+  {
+    return $this->imageObjectId;
+  }
+  /**
+   * The replacement method.
+   *
+   * Accepted values: IMAGE_REPLACE_METHOD_UNSPECIFIED, CENTER_INSIDE,
+   * CENTER_CROP
+   *
+   * @param self::IMAGE_REPLACE_METHOD_* $imageReplaceMethod
+   */
+  public function setImageReplaceMethod($imageReplaceMethod)
+  {
+    $this->imageReplaceMethod = $imageReplaceMethod;
+  }
+  /**
+   * @return self::IMAGE_REPLACE_METHOD_*
+   */
+  public function getImageReplaceMethod()
+  {
+    return $this->imageReplaceMethod;
+  }
+  /**
+   * The image URL. The image is fetched once at insertion time and a copy is
+   * stored for display inside the presentation. Images must be less than 50MB,
+   * cannot exceed 25 megapixels, and must be in PNG, JPEG, or GIF format. The
+   * provided URL can't surpass 2 KB in length. The URL is saved with the image,
+   * and exposed through the Image.source_url field.
+   *
+   * @param string $url
+   */
+  public function setUrl($url)
+  {
+    $this->url = $url;
+  }
+  /**
+   * @return string
+   */
+  public function getUrl()
+  {
+    return $this->url;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(ReplaceImageRequest::class, 'Google_Service_Slides_ReplaceImageRequest');

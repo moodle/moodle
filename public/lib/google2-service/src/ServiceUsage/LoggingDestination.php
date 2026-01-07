@@ -1,0 +1,77 @@
+<?php
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+namespace Google\Service\ServiceUsage;
+
+class LoggingDestination extends \Google\Collection
+{
+  protected $collection_key = 'logs';
+  /**
+   * Names of the logs to be sent to this destination. Each name must be defined
+   * in the Service.logs section. If the log name is not a domain scoped name,
+   * it will be automatically prefixed with the service name followed by "/".
+   *
+   * @var string[]
+   */
+  public $logs;
+  /**
+   * The monitored resource type. The type must be defined in the
+   * Service.monitored_resources section.
+   *
+   * @var string
+   */
+  public $monitoredResource;
+
+  /**
+   * Names of the logs to be sent to this destination. Each name must be defined
+   * in the Service.logs section. If the log name is not a domain scoped name,
+   * it will be automatically prefixed with the service name followed by "/".
+   *
+   * @param string[] $logs
+   */
+  public function setLogs($logs)
+  {
+    $this->logs = $logs;
+  }
+  /**
+   * @return string[]
+   */
+  public function getLogs()
+  {
+    return $this->logs;
+  }
+  /**
+   * The monitored resource type. The type must be defined in the
+   * Service.monitored_resources section.
+   *
+   * @param string $monitoredResource
+   */
+  public function setMonitoredResource($monitoredResource)
+  {
+    $this->monitoredResource = $monitoredResource;
+  }
+  /**
+   * @return string
+   */
+  public function getMonitoredResource()
+  {
+    return $this->monitoredResource;
+  }
+}
+
+// Adding a class alias for backwards compatibility with the previous class name.
+class_alias(LoggingDestination::class, 'Google_Service_ServiceUsage_LoggingDestination');
