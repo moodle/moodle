@@ -30,6 +30,10 @@ if ($eid) {
     $entry->courseid = $cm->course;
     $entries = array($entry);
 
+    $PAGE->set_title(implode(\moodle_page::TITLE_SEPARATOR, [
+        $entry->concept,
+        $entry->glossaryname,
+    ]));
 } else if ($concept) {
     $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
     require_course_login($course);
