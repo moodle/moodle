@@ -2985,3 +2985,25 @@ blockquote {
 .card.active {
     border-color: $gray-500;
 }
+
+/* Loading icon */
+.loading-icon {
+    &.overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        padding-top: 3rem;
+        background-color: rgba($white, .5);
+        .icon {
+            width: map-get($iconwidthsizes, 5);
+            height: map-get($iconsizes, 5);
+            max-width: map-get($iconwidthsizes, 5);
+            max-height: map-get($iconsizes, 5);
+            font-size: map-get($iconsizes, 5);
+        }
+    }
+}

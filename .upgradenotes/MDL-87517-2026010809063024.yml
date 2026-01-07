@@ -1,0 +1,7 @@
+issueNumber: MDL-87517
+notes:
+  core:
+    - message: >-
+        Added new `options` parameter to loadingicon.js functions for displaying
+        the icon as `overlay`.
+      type: improved
