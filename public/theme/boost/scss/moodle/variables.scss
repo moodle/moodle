@@ -289,3 +289,40 @@ $report-audience-border-color: rgba($black, .125) !default;
 
 // User
 $user-loading-icon-bg: rgba($white, 0.7) !default;
+
+
+// Icons
+
+$icon-width: 20px;
+$icon-height: 16px;
+$icon-medium-width: 40px;
+$icon-medium-height: 32px;
+$icon-big-width: 80px;
+$icon-big-height: 64px;
+$icon-box-width: 60px;
+$icon-box-height: 48px;
+
+// stylelint-disable
+$iconsizes: () !default;
+$iconsizes: map-merge((
+    0: 0,
+    1: ($icon-height * .5),
+    2: ($icon-height * .75),
+    3: $icon-height,
+    4: ($icon-height * 1.5),
+    5: ($icon-height * 2),
+    6: ($icon-height * 2.5),
+    7: ($icon-height * 3)
+), $iconsizes);
+$iconwidthsizes: () !default;
+$iconwidthsizes: map-merge((
+    0: 0,
+    1: ($icon-width * .5),
+    2: ($icon-width * .75),
+    3: $icon-width,
+    4: ($icon-width * 1.5),
+    5: ($icon-width * 2),
+    6: ($icon-width * 2.5),
+    7: ($icon-width * 3)
+), $iconwidthsizes);
+// stylelint-enable
