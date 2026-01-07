@@ -62,16 +62,6 @@ class mnet_encxml_parser {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function mnet_encxml_parser() {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct();
-    }
-
-    /**
      * Set default element handlers and initialise properties to empty.
      *
      * @return bool True

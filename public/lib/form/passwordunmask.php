@@ -59,16 +59,6 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_passwordunmask($elementName=null, $elementLabel=null, $attributes=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $attributes);
-    }
-
-    /**
      * Function to export the renderer data in a format that is suitable for a mustache template.
      *
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.

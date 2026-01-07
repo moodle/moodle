@@ -57,16 +57,6 @@ class user_filter_simpleselect extends user_filter_type {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function user_filter_simpleselect($name, $label, $advanced, $field, $options) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($name, $label, $advanced, $field, $options);
-    }
-
-    /**
      * Adds controls specific to this filter in the form.
      * @param moodleform $mform a MoodleForm object to setup
      */
@@ -127,4 +117,3 @@ class user_filter_simpleselect extends user_filter_type {
         return get_string('selectlabel', 'filters', $a);
     }
 }
-

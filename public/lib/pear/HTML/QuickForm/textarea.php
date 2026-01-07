@@ -61,16 +61,6 @@ class HTML_QuickForm_textarea extends HTML_QuickForm_element
         $this->_type = 'textarea';
     } //end constructor
 
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function HTML_QuickForm_textarea($elementName=null, $elementLabel=null, $attributes=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $attributes);
-    }
-
     // }}}
     // {{{ setName()
 

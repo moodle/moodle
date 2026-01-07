@@ -30,23 +30,12 @@ require_once($CFG->libdir.'/authlib.php');
  * Email authentication plugin.
  */
 class auth_plugin_email extends auth_plugin_base {
-
     /**
      * Constructor.
      */
     public function __construct() {
         $this->authtype = 'email';
         $this->config = get_config('auth_email');
-    }
-
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function auth_plugin_email() {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct();
     }
 
     /**
@@ -255,5 +244,4 @@ class auth_plugin_email extends auth_plugin_base {
     function is_captcha_enabled() {
         return get_config("auth_{$this->authtype}", 'recaptcha');
     }
-
 }

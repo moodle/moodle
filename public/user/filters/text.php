@@ -47,16 +47,6 @@ class user_filter_text extends user_filter_type {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function user_filter_text($name, $label, $advanced, $field) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($name, $label, $advanced, $field);
-    }
-
-    /**
      * Returns an array of comparison operators
      * @return array of comparison operators
      */

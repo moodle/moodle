@@ -63,16 +63,6 @@ class MoodleQuickForm_select extends HTML_QuickForm_select implements templatabl
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_select($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $options, $attributes);
-    }
-
-    /**
      * Sets label to be hidden
      *
      * @param bool $hiddenLabel sets if label should be hidden

@@ -77,16 +77,6 @@ class MoodleQuickForm_password extends HTML_QuickForm_password implements templa
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_password($elementName=null, $elementLabel=null, $attributes=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $attributes);
-    }
-
-    /**
      * get html for help button
      *
      * @return string html for help button

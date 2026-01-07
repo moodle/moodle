@@ -85,16 +85,6 @@ class HTML_QuickForm_Renderer_Object extends HTML_QuickForm_Renderer
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function HTML_QuickForm_Renderer_Object($collecthidden = false) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($collecthidden);
-    }
-
-    /**
      * Return the rendered Object
      * @access public
      */

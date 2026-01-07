@@ -51,16 +51,6 @@ class HTML_QuickForm_reset extends HTML_QuickForm_input
         $this->setType('reset');
     } //end constructor
 
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function HTML_QuickForm_reset($elementName=null, $value=null, $attributes=null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $value, $attributes);
-    }
-
     // }}}
     // {{{ freeze()
 

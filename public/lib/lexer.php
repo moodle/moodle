@@ -52,16 +52,6 @@
         }
 
         /**
-         * Old syntax of class constructor. Deprecated in PHP7.
-         *
-         * @deprecated since Moodle 3.1
-         */
-        public function ParallelRegex($case) {
-            debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-            self::__construct($case);
-        }
-
-        /**
          *    Adds a pattern with an optional label.
          *    @param string $pattern      Perl style regex, but ( and )
          *                         lose the usual meaning.
@@ -152,16 +142,6 @@
         }
 
         /**
-         * Old syntax of class constructor. Deprecated in PHP7.
-         *
-         * @deprecated since Moodle 3.1
-         */
-        public function StateStack($start) {
-            debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-            self::__construct($start);
-        }
-
-        /**
          *    Accessor for current state.
          *    @return string State as string.
          *    @access public
@@ -229,16 +209,6 @@
             $this->_parser = &$parser;
             $this->_mode = new StateStack($start);
             $this->_mode_handlers = array();
-        }
-
-        /**
-         * Old syntax of class constructor. Deprecated in PHP7.
-         *
-         * @deprecated since Moodle 3.1
-         */
-        public function Lexer(&$parser, $start = "accept", $case = false) {
-            debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-            self::__construct($parser, $start, $case);
         }
 
         /**

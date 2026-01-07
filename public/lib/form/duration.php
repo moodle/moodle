@@ -112,17 +112,6 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
     }
 
     /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_duration($elementName = null, $elementLabel = null,
-            $options = [], $attributes = null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $options, $attributes);
-    }
-
-    /**
      * Returns time associative array of unit length.
      *
      * @return array unit length in seconds => string unit name.

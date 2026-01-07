@@ -64,14 +64,4 @@ class MoodleQuickForm_questioncategory extends MoodleQuickForm_selectgroups {
                             $this->_options['currentcat'], false, $this->_options['nochildrenof'], false));
         }
     }
-
-    /**
-     * Old syntax of class constructor. Deprecated in PHP7.
-     *
-     * @deprecated since Moodle 3.1
-     */
-    public function MoodleQuickForm_questioncategory($elementName = null, $elementLabel = null, $options = null, $attributes = null) {
-        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
-        self::__construct($elementName, $elementLabel, $options, $attributes);
-    }
 }
