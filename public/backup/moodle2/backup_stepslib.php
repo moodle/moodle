@@ -2726,7 +2726,7 @@ class backup_questions_structure_step extends backup_structure_step {
              WHERE bi.backupid = ?
                AND bi.itemname = 'question_categoryfinal'", [backup::VAR_BACKUPID]);
 
-        // Add all question bank entries from "complete" categories, plus annotated question bank entires
+        // Add all question bank entries from "complete" categories, plus annotated question bank entires and their children
         // from "partial" categories.
         $questionbankentry->set_source_sql(
             "
@@ -2738,8 +2738,11 @@ class backup_questions_structure_step extends backup_structure_step {
                 UNION
                 SELECT qbe.*
                  FROM {question_bank_entries} qbe
+                 JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+                 JOIN {question} q ON q.id = qv.questionid
+                 LEFT JOIN {question_versions} parentqv ON parentqv.questionid = q.parent
                  JOIN {question_category_partial_temp} qcp ON qcp.itemid = qbe.questioncategoryid
-                 JOIN {backup_ids_temp} biq ON biq.itemid = qbe.id
+                 JOIN {backup_ids_temp} biq ON biq.itemid = qbe.id OR biq.itemid = parentqv.questionbankentryid
                 WHERE qcp.itemid = ?
                       AND qcp.backupid = ?
                       AND biq.backupid = ?
