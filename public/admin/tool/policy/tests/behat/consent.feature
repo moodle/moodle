@@ -451,6 +451,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | registerauth    | email |
       | passwordpolicy  | 0     |
       | sitepolicyhandler | tool_policy |
+      | guestloginbutton | 1 |
     And the following policies exist:
       | Name                | Type | Revision | Content    | Summary     | Status   | Audience |
       | This site policy    | 0    |          | full text2 | short text2 | active   | all      |
@@ -612,6 +613,7 @@ Feature: User must accept policy managed by this plugin when logging in and sign
       | registerauth    | email |
       | passwordpolicy  | 0     |
       | sitepolicyhandler | tool_policy |
+      | guestloginbutton | 1 |
     Given the following policies exist:
       | Policy | Name             | Revision | Content    | Summary     | Status   |
       | P1     | This site policy |          | full text1 | short text1 | archived |

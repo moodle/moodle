@@ -122,8 +122,13 @@ if ($hassiteconfig) {
                     new lang_string('allowaccountssameemail_desc', 'core_auth'), 0));
     $temp->add(new admin_setting_configcheckbox('authpreventaccountcreation', new lang_string('authpreventaccountcreation', 'admin'), new lang_string('authpreventaccountcreation_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('loginpageautofocus', new lang_string('loginpageautofocus', 'admin'), new lang_string('loginpageautofocus_help', 'admin'), 0));
-    $temp->add(new admin_setting_configselect('guestloginbutton', new lang_string('guestloginbutton', 'auth'),
-                                              new lang_string('showguestlogin', 'auth'), '1', array('0'=>new lang_string('hide'), '1'=>new lang_string('show'))));
+    $temp->add(new admin_setting_configselect(
+        'guestloginbutton',
+        new lang_string('guestloginbutton', 'auth'),
+        new lang_string('showguestlogin', 'auth'),
+        '0',
+        [ 0 => new lang_string('hide'), 1 => new lang_string('show')],
+    ));
     $options = array(0 => get_string('no'), 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 10 => 10, 20 => 20, 50 => 50);
     $temp->add(new admin_setting_configselect('limitconcurrentlogins',
         new lang_string('limitconcurrentlogins', 'core_auth'),
