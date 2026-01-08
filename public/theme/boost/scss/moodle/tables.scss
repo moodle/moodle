@@ -21,18 +21,6 @@ table {
     }
 }
 
-// Fix loading icon position in dynamic tables.
-.table-dynamic > .loading-icon {
-    position: absolute;
-    left: calc(50% - 1.5rem);
-    top: 200px;
-    .icon {
-        max-height: 3rem;
-        max-width: 3rem;
-        font-size: 3rem;
-    }
-}
-
 /**
  * Custom styles for Bootstrap table classes.
  */
