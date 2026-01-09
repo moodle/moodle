@@ -1,5 +1,14 @@
 # core_question (subsystem) Upgrade notes
 
+## 5.1.1+
+
+### Fixed
+
+- In order to prevent re-use of question version numbers after a version is deleted, the `nextversion` column was added to `question_bank_entries`. This serves as a counter incremented each time a version is created.
+  Do not query this field directly. Instead use `core_question\versions::get_next_version()` to read the value, which will initialise it based on the existing versions if it is not set yet. By default, it will increment the version number automatically, unless you pass `increment: false`. Because of this, it is advisable to call it inside a transaction, that is only committed after the version number is used in a `question_versions` record.
+
+  For more information see [MDL-86798](https://tracker.moodle.org/browse/MDL-86798)
+
 ## 5.1
 
 ### Added
