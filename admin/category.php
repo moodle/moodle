@@ -119,8 +119,8 @@ foreach ($settingspage->children as $childpage) {
                 $outputhtml .= html_writer::tag('div', '<!-- -->', array('class' => 'clearer'));
                 $outputhtml .= $setting->output_html($data);
                 if ($childpage->has_dependencies()) {
-                    $opts = ['dependencies' => $childpage->get_dependencies_for_javascript()];
-                    $PAGE->requires->js_call_amd('core/showhidesettings', 'init', [$opts]);
+                    $context = ['dependencies' => json_encode($childpage->get_dependencies_for_javascript())];
+                    echo $OUTPUT->render_from_template('core_admin/settings_showhide', $context);
                 }
             }
             $outputhtml .= html_writer::end_tag('fieldset');
