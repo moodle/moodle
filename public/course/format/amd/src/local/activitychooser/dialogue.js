@@ -564,7 +564,7 @@ class ActivityChooserDialogue {
      * @return {Promise} A promise that resolves when the item is updated.
      */
     async updateFavouriteItemValue(internal, favourite) {
-        const moduleItem = this.mappedModules.find(({name}) => name === internal);
+        const moduleItem = [...this.mappedModules.values()].find(({name}) => name === internal);
         if (!moduleItem) {
             return;
         }
@@ -589,7 +589,7 @@ class ActivityChooserDialogue {
      */
     async refreshFavouritesTabContent() {
         this.isFavouriteTabDirty = false;
-        const favouriteCount = this.mappedModules.filter(mod => mod.favourite === true).size;
+        const favouriteCount = [...this.mappedModules.values()].filter(mod => mod.favourite === true).length;
         this.dialogueDom.toggleFavouriteTabDisplay(favouriteCount > 0);
         await this.dialogueDom.refreshFavouritesTabContent(this.mappedModules);
     }
