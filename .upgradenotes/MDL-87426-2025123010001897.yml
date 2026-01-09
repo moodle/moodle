@@ -1,0 +1,95 @@
+issueNumber: MDL-87426
+notes:
+  auth_ldap:
+    - message: >-
+        - The following methods have been removed from `auth/ldap/lib.php`:
+          - `\auth_plugin_ldap::auth_plugin_ldap()`
+          - `\auth_plugin_ldap::iscreator()`
+        - The `public/auth/ldap/cli/sync_users.php` file has been removed.
+      type: removed
+  core_calendar:
+    - message: >-
+        - The `calendar_add_event_metadata()` has been removed from `public/calendar/deprecatedlib.php`.
+        - The `\core_external\external_api\calendar_information::prepare_for_view()` has been removed from `public/calendar/lib.php`.
+        - The `\core_calendar_renderer::event()` has been removed from `public/calendar/renderer.php`.
+      type: removed
+  core_course:
+    - message: The `replaceSectionActionItem()` has been removed from `public/course/amd/src/actions.js`.
+      type: removed
+  core:
+    - message: >-
+        - The `\core\output\action_menu::do_not_enhance()` has been removed from `public/lib/classes/output/action_menu.php`.
+        - The following functions have been removed from `public/lib/javascript-static.js`:
+          - `M.util.init_toggle_class_on_click()`
+          - `M.util.focus_login_form()`
+          - `M.util.focus_login_error()`
+          - `checkall()`
+          - `checknone()`
+          - `select_all_in_element_with_id()`
+          - `select_all_in()`
+          - `deselect_all_in()`
+          - `confirm_if()`
+          - `findParentNode()`
+          - `filterByParent()`
+          - `fix_column_widths()`
+          - `fix_column_width()`
+          - `stripHTML()`
+          - `M.form.init_smartselect()`
+  core_form:
+    - message: >-
+        - The following methods have been removed from `public/lib/antivirus/clamav/classes/scanner.php`:
+          - `\antivirus_clamav\scanner::scan_data_execute_unixsocket()`
+          - `\antivirus_clamav\scanner::scan_file_execute_unixsocket()`
+        - The following methods have been removed from `public/lib/form/classes/filetypes_util.php`:
+          - `\core_form\filetypes_util::is_whitelisted()`
+          - `\core_form\filetypes_util::get_not_whitelisted()`
+      type: removed
+  core_message:
+    - message: >-
+        - The following methods have been removed from `public/message/classes/api.php`:
+          - `\core_message\api::search_users_in_course()`
+          - `\core_message\api::search_users()`
+          - `\core_message\api::get_contacts()`
+          - `\core_message\api::get_contacts_with_unread_message_count()`
+          - `\core_message\api::get_non_contacts_with_unread_message_count()`
+          - `\core_message\api::get_messages()`
+          - `\core_message\api::get_most_recent_message()`
+          - `\core_message\api::get_profile()`
+          - `\core_message\api::delete_conversation()`
+          - `\core_message\api::mark_all_read_for_user()`
+          - `\core_message\api::can_post_message()`
+          - `\core_message\api::is_user_non_contact_blocked()`
+          - `\core_message\api::is_user_blocked()`
+          - `\core_message\api::get_individual_conversations_between_users()`
+          - `\core_message\api::create_conversation_between_users()`
+        - The following methods have been removed from `public/message/classes/helper.php`:
+          - `\core_message\helper::get_messages()`
+          - `\core_message\helper::create_messages()`
+          - `\core_message\helper::get_conversations_legacy_formatter()`
+      type: removed
+  mod_choice:
+    - message: >-
+        - The following files have been removed:
+          - `public/mod/choice/classes/event/answer_submitted.php`
+          - `public/mod/choice/classes/event/answer_updated.php`
+      type: removed
+  mod_lesson:
+    - message: >-
+        - The following files have been removed:
+          - `public/mod/lesson/classes/event/highscore_added.php`
+          - `public/mod/lesson/classes/event/highscores_viewed.php`
+      type: removed
+  scormreport_graphs:
+    - message: The `public/mod/scorm/report/graphs/graph.php` has been removed.
+      type: removed
+  core_user:
+    - message: >-
+        - The `\profile_field_base::profile_field_base()` has been removed from `public/user/profile/lib.php`.
+        - The `\core_user_renderer::unified_filter()` has been removed from `public/user/renderer.php`.
+      type: removed
+  report_log:
+    - message: The `public/report/log/graph.php` has been removed.
+      type: removed
+  core_analytics:
+    - message: The `\core_analytics\manager::add_builtin_models()` has been removed from `public/analytics/classes/manager.php`.
+      type: removed

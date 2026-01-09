@@ -1072,26 +1072,6 @@ define(
                 })
                 .catch(notification.exception);
             },
-
-            /**
-             * Replaces a section action menu item with another one (for example Show->Hide, Set marker->Remove marker)
-             *
-             * This method can be used by course formats in their listener to the coursesectionedited event
-             *
-             * @deprecated since Moodle 3.9
-             * @param {JQuery} sectionelement
-             * @param {String} selector CSS selector inside the section element, for example "a[data-action=show]"
-             * @param {String} image new image name ("i/show", "i/hide", etc.)
-             * @param {String} stringname new string for the action menu item
-             * @param {String} stringcomponent
-             * @param {String} newaction new value for data-action attribute of the link
-             */
-            replaceSectionActionItem: function(sectionelement, selector, image, stringname,
-                                                    stringcomponent, newaction) {
-                log.debug('replaceSectionActionItem() is deprecated and will be removed.');
-                var actionitem = sectionelement.find(SELECTOR.SECTIONACTIONMENU + ' ' + selector);
-                replaceActionItem(actionitem, image, stringname, stringcomponent, newaction);
-            },
             // Method to refresh a module.
             refreshModule,
             refreshSection,

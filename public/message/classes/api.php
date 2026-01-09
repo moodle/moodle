@@ -178,20 +178,6 @@ class api {
     }
 
     /**
-     * @deprecated since 3.6
-     */
-    public static function search_users_in_course() {
-        throw new \coding_exception('\core_message\api::search_users_in_course has been removed.');
-    }
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function search_users() {
-        throw new \coding_exception('\core_message\api::search_users has been removed.');
-    }
-
-    /**
      * Handles searching for user.
      *
      * @param int $userid The user id doing the searching
@@ -1016,13 +1002,6 @@ class api {
     }
 
     /**
-     * @deprecated since 3.6
-     */
-    public static function get_contacts() {
-        throw new \coding_exception('\core_message\api::get_contacts has been removed.');
-    }
-
-    /**
      * Get the contacts for a given user.
      *
      * @param int $userid
@@ -1068,27 +1047,6 @@ class api {
     }
 
     /**
-     * @deprecated since 3.10
-     */
-    public static function get_contacts_with_unread_message_count() {
-        throw new \coding_exception('\core_message\api::get_contacts_with_unread_message_count has been removed.');
-    }
-
-    /**
-     * @deprecated since 3.10
-     */
-    public static function get_non_contacts_with_unread_message_count() {
-        throw new \coding_exception('\core_message\api::get_non_contacts_with_unread_message_count has been removed.');
-    }
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function get_messages() {
-        throw new \coding_exception('\core_message\api::get_messages has been removed.');
-    }
-
-    /**
      * Returns the messages for the defined conversation.
      *
      * @param  int $userid The current user.
@@ -1121,13 +1079,6 @@ class api {
     }
 
     /**
-     * @deprecated since 3.6
-     */
-    public static function get_most_recent_message() {
-        throw new \coding_exception('\core_message\api::get_most_recent_message has been removed.');
-    }
-
-    /**
      * Returns the most recent message in a conversation.
      *
      * @param int $convid The conversation identifier.
@@ -1147,13 +1098,6 @@ class api {
         }
 
         return null;
-    }
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function get_profile() {
-        throw new \coding_exception('\core_message\api::get_profile has been removed.');
     }
 
     /**
@@ -1189,14 +1133,6 @@ class api {
         }
 
         return false;
-    }
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function delete_conversation() {
-        throw new \coding_exception('\core_message\api::delete_conversation() is deprecated, please use ' .
-            '\core_message\api::delete_conversation_by_id() instead.');
     }
 
     /**
@@ -1475,14 +1411,6 @@ class api {
     }
 
     /**
-     * @deprecated since 3.5
-     */
-    public static function mark_all_read_for_user() {
-        throw new \coding_exception('\core_message\api::mark_all_read_for_user has been removed. Please either use ' .
-            '\core_message\api::mark_all_notifications_as_read or \core_message\api::mark_all_messages_as_read');
-    }
-
-    /**
      * Returns message preferences.
      *
      * @param array $processors
@@ -1525,16 +1453,6 @@ class api {
                   FROM {message_users_blocked} mub
                  WHERE mub.userid = :userid";
         return $DB->count_records_sql($sql, array('userid' => $user->id));
-    }
-
-    /**
-     * @deprecated since 3.8
-     */
-    public static function can_post_message() {
-        throw new \coding_exception(
-            '\core_message\api::can_post_message is deprecated and no longer used, ' .
-            'please use \core_message\api::can_send_message instead.'
-        );
     }
 
     /**
@@ -1732,20 +1650,6 @@ class api {
         }
 
         return $privacypreference;
-    }
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function is_user_non_contact_blocked() {
-        throw new \coding_exception('\core_message\api::is_user_non_contact_blocked() is deprecated');
-    }
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function is_user_blocked() {
-        throw new \coding_exception('\core_message\api::is_user_blocked is deprecated and should not be used.');
     }
 
     /**
@@ -2039,14 +1943,6 @@ class api {
     }
 
     /**
-     * @deprecated since 3.8
-     */
-    public static function get_individual_conversations_between_users() {
-        throw new \coding_exception('\core_message\api::get_individual_conversations_between_users ' .
-            ' is deprecated and no longer used.');
-    }
-
-    /**
      * Returns the self conversation for a user.
      *
      * @param int $userid The user id to get the self-conversations
@@ -2062,14 +1958,6 @@ class api {
             'convhash' => helper::get_conversation_hash([$userid])
         ];
         return $DB->get_record('message_conversations', $conditions);
-    }
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function create_conversation_between_users() {
-        throw new \coding_exception('\core_message\api::create_conversation_between_users is deprecated, please use ' .
-            '\core_message\api::create_conversation instead.');
     }
 
     /**

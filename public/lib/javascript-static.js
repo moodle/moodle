@@ -356,13 +356,6 @@ M.util.init_frametop = function(Y) {
 };
 
 /**
- * @deprecated since Moodle 3.3
- */
-M.util.init_toggle_class_on_click = function(Y, id, cssselector, toggleclassname, togglecssselector) {
-    throw new Error('M.util.init_toggle_class_on_click can not be used any more. Please use jQuery instead.');
-};
-
-/**
  * Initialises a colour picker
  *
  * Designed to be used with admin_setting_configcolourpicker although could be used
@@ -753,22 +746,6 @@ M.util.get_string = function(identifier, component, a) {
 };
 
 /**
- * Set focus on username or password field of the login form.
- * @deprecated since Moodle 3.3.
- */
-M.util.focus_login_form = function(Y) {
-    Y.log('M.util.focus_login_form no longer does anything. Please use jquery instead.', 'warn', 'javascript-static.js');
-};
-
-/**
- * Set focus on login error message.
- * @deprecated since Moodle 3.3.
- */
-M.util.focus_login_error = function(Y) {
-    Y.log('M.util.focus_login_error no longer does anything. Please use jquery instead.', 'warn', 'javascript-static.js');
-};
-
-/**
  * Adds lightbox hidden element that covers the whole node.
  *
  * @param {YUI} Y
@@ -833,55 +810,6 @@ M.util.add_spinner = function(Y, node) {
     return spinner;
 }
 
-/**
- * @deprecated since Moodle 3.3.
- */
-function checkall() {
-    throw new Error('checkall can not be used any more. Please use jQuery instead.');
-}
-
-/**
- * @deprecated since Moodle 3.3.
- */
-function checknone() {
-    throw new Error('checknone can not be used any more. Please use jQuery instead.');
-}
-
-/**
- * @deprecated since Moodle 3.3.
- */
-function select_all_in_element_with_id(id, checked) {
-    throw new Error('select_all_in_element_with_id can not be used any more. Please use jQuery instead.');
-}
-
-/**
- * @deprecated since Moodle 3.3.
- */
-function select_all_in(elTagName, elClass, elId) {
-    throw new Error('select_all_in can not be used any more. Please use jQuery instead.');
-}
-
-/**
- * @deprecated since Moodle 3.3.
- */
-function deselect_all_in(elTagName, elClass, elId) {
-    throw new Error('deselect_all_in can not be used any more. Please use jQuery instead.');
-}
-
-/**
- * @deprecated since Moodle 3.3.
- */
-function confirm_if(expr, message) {
-    throw new Error('confirm_if can not be used any more.');
-}
-
-/**
- * @deprecated since Moodle 3.3.
- */
-function findParentNode(el, elName, elClass, elId) {
-    throw new Error('findParentNode can not be used any more. Please use jQuery instead.');
-}
-
 function unmaskPassword(id) {
     var pw = document.getElementById(id);
     var chb = document.getElementById(id+'unmask');
@@ -924,28 +852,6 @@ function unmaskPassword(id) {
         pw.parentNode.replaceChild(newpw, pw);
     }
 }
-
-/**
- * @deprecated since Moodle 3.3.
- */
-function filterByParent(elCollection, parentFinder) {
-    throw new Error('filterByParent can not be used any more. Please use jQuery instead.');
-}
-
-/**
- * @deprecated since Moodle 3.3, but shouldn't be used in earlier versions either.
- */
-function fix_column_widths() {
-    Y.log('fix_column_widths() no longer does anything. Please remove it from your code.', 'warn', 'javascript-static.js');
-}
-
-/**
- * @deprecated since Moodle 3.3, but shouldn't be used in earlier versions either.
- */
-function fix_column_width(colName) {
-    Y.log('fix_column_width() no longer does anything. Please remove it from your code.', 'warn', 'javascript-static.js');
-}
-
 
 /*
    Insert myValue at current cursor position
@@ -1143,13 +1049,6 @@ function convert_object_to_string(obj, separator) {
     return list.join(separator);
 }
 
-/**
- * @deprecated since Moodle 3.3.
- */
-function stripHTML(str) {
-    throw new Error('stripHTML can not be used any more. Please use jQuery instead.');
-}
-
 // eslint-disable-next-line no-unused-vars
 function updateProgressBar(id, percent, msg, estimate, error) {
     var event,
@@ -1248,15 +1147,6 @@ M.core_custom_menu = {
  * Used to store form manipulation methods and enhancments
  */
 M.form = M.form || {};
-
-/**
- * Converts a nbsp indented select box into a multi drop down custom control much
- * like the custom menu. Can no longer be used.
- * @deprecated since Moodle 3.3
- */
-M.form.init_smartselect = function() {
-    throw new Error('M.form.init_smartselect can not be used any more.');
-};
 
 /**
  * Initiates the listeners for skiplink interaction

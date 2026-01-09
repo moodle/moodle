@@ -1180,14 +1180,6 @@ class calendar_information {
     }
 
     /**
-     * @deprecated 3.4
-     */
-    #[\core\attribute\deprecated('prepare_for_view', since: '3.4', mdl: 'MDL-59890', final: true)]
-    public function prepare_for_view() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Set the sources for events within the calendar.
      *
      * If no category is provided, then the category path for the current

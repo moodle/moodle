@@ -32,14 +32,6 @@ require_once($CFG->dirroot . '/message/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helper {
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function get_messages() {
-        throw new \coding_exception('\core_message\helper::get_messages has been removed.');
-    }
-
     /**
      * Helper function to retrieve conversation messages.
      *
@@ -156,13 +148,6 @@ class helper {
         }
 
         return $conversation;
-    }
-
-    /**
-     * @deprecated since 3.6
-     */
-    public static function create_messages() {
-        throw new \coding_exception('\core_message\helper::create_messages has been removed.');
     }
 
     /**
@@ -532,12 +517,6 @@ class helper {
         $members = array_replace(array_flip($userids), $members);
 
         return $members;
-    }
-    /**
-     * @deprecated since 3.6
-     */
-    public static function get_conversations_legacy_formatter() {
-        throw new \coding_exception('\core_message\helper::get_conversations_legacy_formatter has been removed.');
     }
 
     /**

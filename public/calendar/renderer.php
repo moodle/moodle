@@ -77,19 +77,6 @@ class core_calendar_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated 3.9
-     */
-    #[\core\attribute\deprecated(
-        replacement: 'event no longer used',
-        since: '3.9',
-        mdl: 'MDL-58866',
-        final: true,
-    )]
-    public function event() {
-        \core\deprecation::emit_deprecation(__FUNCTION__);
-    }
-
-    /**
      * Displays a course filter selector
      *
      * @param moodle_url $returnurl The URL that the user should be taken too upon selecting a course.
