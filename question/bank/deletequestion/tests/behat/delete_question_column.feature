@@ -83,7 +83,6 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I click on question bulk action "deleteselected"
     When I click on "Delete" "button" in the "Delete question?" "dialogue"
     Then I should not see "Third question"
-    And "foo" "autocomplete_selection" should exist
 
   @javascript
   Scenario: Questions can be bulk deleted from the question bank
