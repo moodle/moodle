@@ -168,7 +168,6 @@ abstract class file_system {
             return true;
         }
 
-        // This is called by file_storage::content_exists(), and in turn by the repository system.
         $path = $this->get_local_path_from_hash($contenthash, $fetchifnotfound);
 
         // Note - it is not possible to perform a content recovery safely from a hash alone.
