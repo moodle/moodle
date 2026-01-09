@@ -56,6 +56,9 @@
   - `core/modal_factory`
 
   For more information see [MDL-79182](https://tracker.moodle.org/browse/MDL-79182)
+- Legacy constructors have been removed. These relate to PHP 4 and earlier.
+
+  For more information see [MDL-82284](https://tracker.moodle.org/browse/MDL-82284)
 - Removed $CFG->wwwrootendsinpublic flag to force users to configure their server accordingly.
 
   For more information see [MDL-87072](https://tracker.moodle.org/browse/MDL-87072)

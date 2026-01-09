@@ -4,6 +4,9 @@
 
 ### Added
 
+- Add core_courseformat\cmactions::move_before that will allow to move a coursemodule to a position before another coursemodule. Add core_courseformat\cmactions::move_end_section that will allow to move a coursemodule the end of a section.
+
+  For more information see [MDL-86854](https://tracker.moodle.org/browse/MDL-86854)
 - Add delete method to the core_courseformat\cmactions
 
   For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)

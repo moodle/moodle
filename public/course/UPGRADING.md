@@ -11,8 +11,17 @@
 
   For more information see [MDL-87117](https://tracker.moodle.org/browse/MDL-87117)
 
+### Changed
+
+- The description field is no longer available on the edit form for delegated sections like mod_subsection.
+
+  For more information see [MDL-87279](https://tracker.moodle.org/browse/MDL-87279)
+
 ### Deprecated
 
+- Deprecates moveto_module (core_course) in favor of cmactions::move_before or cmactions::move_end_section (core_courseformat\local\cmactions).
+
+  For more information see [MDL-86854](https://tracker.moodle.org/browse/MDL-86854)
 - The following methods have been deprecated and should no longer be used: - `course_delete_module` - `course_module_flag_for_async_deletion` Please consider using the equivalent methods, delete and delete_async, in `core_courseformat\local\cmactions` instead.
 
   For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)

@@ -64,6 +64,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `core/modal_factory`
 
   For more information see [MDL-79182](https://tracker.moodle.org/browse/MDL-79182)
+- Legacy constructors have been removed. These relate to PHP 4 and earlier.
+
+  For more information see [MDL-82284](https://tracker.moodle.org/browse/MDL-82284)
 - Removed $CFG->wwwrootendsinpublic flag to force users to configure their server accordingly.
 
   For more information see [MDL-87072](https://tracker.moodle.org/browse/MDL-87072)
@@ -114,8 +117,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87117](https://tracker.moodle.org/browse/MDL-87117)
 
+#### Changed
+
+- The description field is no longer available on the edit form for delegated sections like mod_subsection.
+
+  For more information see [MDL-87279](https://tracker.moodle.org/browse/MDL-87279)
+
 #### Deprecated
 
+- Deprecates moveto_module (core_course) in favor of cmactions::move_before or cmactions::move_end_section (core_courseformat\local\cmactions).
+
+  For more information see [MDL-86854](https://tracker.moodle.org/browse/MDL-86854)
 - The following methods have been deprecated and should no longer be used: - `course_delete_module` - `course_module_flag_for_async_deletion` Please consider using the equivalent methods, delete and delete_async, in `core_courseformat\local\cmactions` instead.
 
   For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
@@ -130,6 +142,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- Add core_courseformat\cmactions::move_before that will allow to move a coursemodule to a position before another coursemodule. Add core_courseformat\cmactions::move_end_section that will allow to move a coursemodule the end of a section.
+
+  For more information see [MDL-86854](https://tracker.moodle.org/browse/MDL-86854)
 - Add delete method to the core_courseformat\cmactions
 
   For more information see [MDL-86856](https://tracker.moodle.org/browse/MDL-86856)
@@ -179,6 +194,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - `groups_print_activity_menu()` and `groups_get_activity_group()` now include an additional `$participationonly` parameter, which is true by default. This can be set false when we want the user to be able to select a non-participation group within an activity, for example if a teacher wants to filter assignment submissions by non-participation groups. It should never be used when the menu is displayed to students, as this may allow them to participate using non-participation groups. Non-participation groups are labeled as such.
 
   For more information see [MDL-81514](https://tracker.moodle.org/browse/MDL-81514)
+
+### core_question
+
+#### Deprecated
+
+- `get_next_version()` from questionlib.php is now deprecated. Use `\core_question\versions::get_next_version()` instead.
+
+  For more information see [MDL-86798](https://tracker.moodle.org/browse/MDL-86798)
+
+#### Fixed
+
+- In order to prevent re-use of question version numbers after a version is deleted, the `nextversion` column was added to `question_bank_entries`. This serves as a counter incremented each time a version is created.
+  Do not query this field directly. Instead use `core_question\versions::get_next_version()` to read the value, which will initialise it based on the existing versions if it is not set yet. By default, it will increment the version number automatically, unless you pass `increment: false`. Because of this, it is advisable to call it inside a transaction, that is only committed after the version number is used in a `question_versions` record.
+
+  For more information see [MDL-86798](https://tracker.moodle.org/browse/MDL-86798)
 
 ### core_reportbuilder
 
@@ -257,6 +287,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The WebServices mod_quiz_get_user_best_grade and mod_quiz_get_user_quiz_attempts have been updated to return overall feedback even when quiz marks are hidden in the review options. This change aligns the WebService behaviour with Moodle LMS display logic.
 
   For more information see [MDL-86916](https://tracker.moodle.org/browse/MDL-86916)
+
+### mod_subsection
+
+#### Added
+
+- A new scheduled task, `remove_existing_descriptions`, has been added. Once enabled, this task will remove the descriptions for all existing subsection instances.
+
+  For more information see [MDL-87280](https://tracker.moodle.org/browse/MDL-87280)
 
 ### qbank_columnsortorder
 
