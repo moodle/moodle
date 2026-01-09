@@ -1343,6 +1343,30 @@ class quiz_attempt {
     }
 
     /**
+     * Set up the page layout for an attempt, summary or review page.
+     */
+    public function setup_attempt_layout(): void {
+        global $PAGE;
+
+        $PAGE->add_body_class('limitedwidth');
+
+        if (empty($this->get_quiz()->showblocks) && !$this->is_preview_user()) {
+            $PAGE->blocks->show_only_fake_blocks();
+        }
+
+        if ($PAGE->pagelayout === 'secure') {
+            // Show the activity header (but only the name) in the secure layout on quiz pages.
+            // Don't show the completion info which would include the activitydates to reduce clutter.
+            $PAGE->activityheader->set_attrs([
+                'description' => '',
+                'hidecompletion' => true,
+            ]);
+        } else {
+            $PAGE->activityheader->disable();
+        }
+    }
+
+    /**
      * Generate the HTML that displays the question in its current state, with
      * the appropriate display options.
      *
