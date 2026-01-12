@@ -408,7 +408,10 @@ def ensure_specific_course_exists(shortname: str, fullname: str, category_id: in
             'fullname': fullname,
             'shortname': shortname,
             'categoryid': int(category_id),
-            'format': 'topics'
+            'format': 'topics',
+            'startdate': int(time.time() - 86400), # Start yesterday to appear in "In Progress"
+            'enddate': 0,                            # Disable end date
+            'visible': 1
         }]
     }
     
@@ -716,7 +719,7 @@ def main():
             # --- PDF Course (Read and Understand) ---
             # ========================================
             pdf_shortname = f"{base_id}-RU"
-            pdf_fullname = f"{title} - Read and Understand"
+            pdf_fullname = f"{title} Read and Understand"
             
             deployed_pdf_version = get_deployed_version(conn, title, 'pdf')
             
@@ -764,7 +767,7 @@ def main():
             # --- Quiz Course (Competency) ---
             # ========================================
             quiz_shortname = f"{base_id}-CMP"
-            quiz_fullname = f"{title} - Competency"
+            quiz_fullname = f"{title} Competency"
             
             try:
                 course_id, is_new = ensure_specific_course_exists(
