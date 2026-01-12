@@ -25,15 +25,18 @@ logging.basicConfig(
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 # --- CONFIG ---
-PLM_TARGETS = [
-    {
-        'description': 'Manufacturing Instructions (MI)',
-        'table_name': 'Itemsdmrdocuments',
-        'db_filter': '%_MI_%', 
-        'workspace_id': '193',
-        'category_id': 1 
-    }
+# Exact titles to process from FactItems table
+# Add the full title strings you want to process
+EXACT_TITLES = [
+    # Example titles - replace with your actual titles:
+    "F20-MI-000713 - F20 Manufacturing Instruction - End Cut, Attach, & Finish - ",
+    "ZDN-MI-000805 - ZDN Catheter Manufacturing Procedure - ",
 ]
+
+PLM_CONFIG = {
+    'workspace_id': '193',
+    'category_id': 1
+}
 
 # FLAGS
 STRICT_PDF_ONLY = True 
@@ -133,14 +136,109 @@ def get_db_connection():
         password=PG_PASSWORD
     )
 
-def fetch_targets_from_db(conn, table_name, filter_pattern):
-    query = f"""
-        SELECT * FROM "{table_name}"
-        WHERE descriptor LIKE %s
+def ensure_version_table_exists(conn):
+    """Creates the moodle_course_versions table if it doesn't exist."""
+    query = """
+        CREATE TABLE IF NOT EXISTS public.moodle_course_versions (
+            id SERIAL PRIMARY KEY,
+            item_title VARCHAR(500) NOT NULL,
+            course_shortname VARCHAR(100) NOT NULL,
+            course_type VARCHAR(20) NOT NULL,
+            deployed_version VARCHAR(20),
+            last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(item_title, course_type)
+        );
+    """
+    with conn.cursor() as cur:
+        cur.execute(query)
+    conn.commit()
+    logging.info("Version tracking table ensured.")
+
+def get_deployed_version(conn, item_title: str, course_type: str) -> Optional[str]:
+    """Gets the currently deployed version for an item/course type."""
+    query = """
+        SELECT deployed_version FROM public.moodle_course_versions
+        WHERE item_title = %s AND course_type = %s
+    """
+    with conn.cursor() as cur:
+        cur.execute(query, (item_title, course_type))
+        row = cur.fetchone()
+        return row[0] if row else None
+
+def update_deployed_version(conn, item_title: str, course_shortname: str, 
+                            course_type: str, version: str):
+    """Updates or inserts the deployed version for an item."""
+    query = """
+        INSERT INTO public.moodle_course_versions 
+            (item_title, course_shortname, course_type, deployed_version, last_updated)
+        VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP)
+        ON CONFLICT (item_title, course_type) 
+        DO UPDATE SET 
+            deployed_version = EXCLUDED.deployed_version,
+            course_shortname = EXCLUDED.course_shortname,
+            last_updated = CURRENT_TIMESTAMP
+    """
+    with conn.cursor() as cur:
+        cur.execute(query, (item_title, course_shortname, course_type, version))
+    conn.commit()
+
+def fetch_items_by_exact_titles(conn, titles: List[str]):
+    """
+    Fetches items from FactItems table by exact title match.
+    Excludes working versions (.w, w).
+    """
+    if not titles:
+        return []
+    
+    query = """
+        SELECT * FROM public."FactItems"
+        WHERE title = ANY(%s)
+          AND version NOT LIKE '%%.w'
+          AND version_id != 'w'
     """
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(query, (filter_pattern,))
+        cur.execute(query, (titles,))
         return cur.fetchall()
+
+def parse_version_number(version_str: str) -> tuple:
+    """
+    Parses version string for sorting.
+    Examples: '.s1' -> ('s', 1), '.2' -> ('', 2), '.C' -> ('C', 0)
+    """
+    if not version_str:
+        return ('', 0)
+    
+    # Remove leading dot
+    v = version_str.lstrip('.')
+    
+    # Check for letter+number pattern (s1, s2) or just number (1, 2, 3)
+    match = re.match(r'^([a-zA-Z]*)(\d*)$', v)
+    if match:
+        letter = match.group(1) or ''
+        num = int(match.group(2)) if match.group(2) else 0
+        return (letter, num)
+    
+    return (v, 0)
+
+def get_latest_released_version(items: List[Dict]) -> Optional[Dict]:
+    """
+    Returns the item with the highest non-working version.
+    Sorts by version to find the latest.
+    """
+    if not items:
+        return None
+    
+    # Filter out working versions
+    released = [x for x in items if x.get('version') and 
+                not x['version'].endswith('w') and 
+                x.get('version_id', '') != 'w']
+    
+    if not released:
+        return None
+    
+    # Sort by parsed version (descending)
+    released.sort(key=lambda x: parse_version_number(x.get('version', '')), reverse=True)
+    return released[0]
 
 def download_pdf_logic(workspace_id, item_id, descriptor):
     url = f"{BASE_API_URL}/workspaces/{workspace_id}/items/{item_id}/files"
@@ -426,284 +524,270 @@ def post_announcement(course_id, subject, message, message_format=1):
     except Exception as e:
         logging.error(f"Announcement Error: {e}")
 
-def build_module_infrastructure(course_id, base_name, version, pdf_path=None, create_quiz=True):
+def build_pdf_course(course_id, base_name, pdf_path):
     """
-    Creates Resource and Quiz using YOUR CUSTOM API SCHEMA + JSON.
+    Creates a course with only the PDF resource (no quiz).
     """
+    draft_id, clean_fname = upload_file_json_base64(pdf_path)
+    
+    # JSON Payload with Custom moduleinfo
+    resource_payload = {
+        'modules': [{
+            'modulename': 'resource',
+            'courseid': int(course_id), 
+            'section': 1,
+            'name': f"{base_name} - PDF Document",
+            'intro': "Please review this document.",
+            'introformat': 1,
+            'visible': 1,
+            'moduleinfo': [
+                {'name': 'module', 'value': '18'},  # Hardcoded ID from user
+                {'name': 'course', 'value': str(course_id)},
+                {'name': 'files', 'value': str(draft_id)},
+                {'name': 'showsize', 'value': '1'},
+                {'name': 'display', 'value': '0'},
+                {'name': 'printintro', 'value': '1'},
+                {'name': 'tobemigrated', 'value': '0'},
+                {'name': 'legacyfiles', 'value': '0'},
+                {'name': 'legacyfileslast', 'value': '0'},
+                {'name': 'filterfiles', 'value': '0'},
+                {'name': 'revision', 'value': '1'},
+                {'name': 'timemodified', 'value': str(int(time.time()))}
+            ]
+        }]
+    }
+    
+    logging.info(f"Creating PDF Resource for {base_name}...")
+    res = call_moodle_json('core_course_create_modules', resource_payload)
+    
+    if isinstance(res, dict) and 'exception' in res:
+         logging.error(f"RESOURCE FAIL DEBUG: {json.dumps(res)}")
+         raise Exception(f"Resource Creation Failed: {res['message']}")
+    
+    logging.info(f"PDF Resource created successfully for course {course_id}")
 
-    # --- STEP 1: CREATE PDF RESOURCE ---
-    if pdf_path:
-        draft_id, clean_fname = upload_file_json_base64(pdf_path)
-        
-        # JSON Payload with Custom moduleinfo
-        resource_payload = {
-            'modules': [{
-                'modulename': 'resource',
-                'courseid': int(course_id), 
-                'section': 1,
-                'name': f"{base_name} - PDF Document",
-                'intro': "Please review this document.",
-                'introformat': 1,
-                'visible': 1,
-                'moduleinfo': [
-                    {'name': 'module', 'value': '18'},  # Hardcoded ID from user
-                    {'name': 'course', 'value': str(course_id)},
-                    {'name': 'files', 'value': str(draft_id)},
-                    {'name': 'showsize', 'value': '1'},
-                    {'name': 'display', 'value': '0'},
-                    {'name': 'printintro', 'value': '1'},
-                    {'name': 'tobemigrated', 'value': '0'},
-                    {'name': 'legacyfiles', 'value': '0'},
-                    {'name': 'legacyfileslast', 'value': '0'},
-                    {'name': 'filterfiles', 'value': '0'},
-                    {'name': 'revision', 'value': '1'},
-                    {'name': 'timemodified', 'value': str(int(time.time()))}
-                ]
-            }]
-        }
-        
-        logging.info(f"Creating File Resource for {base_name}...")
-        res = call_moodle_json('core_course_create_modules', resource_payload)
-        
-        if isinstance(res, dict) and 'exception' in res:
-             logging.error(f"RESOURCE FAIL DEBUG: {json.dumps(res)}")
-             raise Exception(f"Resource Creation Failed: {res['message']}")
+def build_quiz_course(course_id, base_name):
+    """
+    Creates a course with only the quiz (no PDF).
+    """
+    logging.info(f"Creating Quiz infrastructure for {base_name}...")
+    
+    # Custom PHP 'moduleinfo' structure
+    quiz_payload = {
+        'modules': [{
+            'modulename': 'quiz',
+            'courseid': int(course_id),
+            'section': 1,
+            'name': f"COMPETENCY: {base_name}",
+            'intro': "I acknowledge I have read and understood the documentation. / Reconozco que he leído y comprendido la documentación.",
+            'introformat': 1,
+            'visible': 1,
+            'moduleinfo': [
+                {'name': 'module', 'value': '17'}, # Hardcoded ID from user
+                {'name': 'course', 'value': str(course_id)},
+                {'name': 'preferredbehaviour', 'value': 'deferredfeedback'},
+                {'name': 'quizpassword', 'value': ''},
+                {'name': 'grade', 'value': '10'},
+                {'name': 'grademethod', 'value': '1'},
+                {'name': 'attempts', 'value': '0'}, # Unlimited
+                {'name': 'overduehandling', 'value': 'autosubmit'},
+                {'name': 'browsersecurity', 'value': '-'},
+                {'name': 'completion', 'value': '1'},
+                {'name': 'questionsperpage', 'value': '1'},
+                {'name': 'shuffleanswers', 'value': '1'}
+            ]
+        }]
+    }
 
-    # --- STEP 2: CREATE QUIZ MODULE ---
-    if create_quiz:
-        logging.info(f"Creating Quiz infrastructure for {base_name}...")
+    res = call_moodle_json('core_course_create_modules', quiz_payload)
+    if isinstance(res, dict) and 'exception' in res:
+        logging.error(f"QUIZ FAIL DEBUG: {json.dumps(res)}")
+        raise Exception(f"Quiz Creation Failed: {res['message']}")
+    
+    course_module_id = res[0]['id']
+    logging.info(f"Quiz Course Module Created (cmid: {course_module_id}).")
+    
+    # Get the actual quiz instance ID from course contents
+    # Retry with delay to handle caching/timing issues
+    logging.info("Fetching quiz instance ID...")
+    quiz_instance_id = None
+    max_retries = 3
+    
+    for attempt in range(max_retries):
+        if attempt > 0:
+            logging.info(f"Retry {attempt}/{max_retries-1} after 2 second delay...")
+            time.sleep(2)
         
-        # Custom PHP 'moduleinfo' structure
-        quiz_payload = {
-            'modules': [{
-                'modulename': 'quiz',
-                'courseid': int(course_id),
-                'section': 1,
-                'name': f"TRAINING: {base_name}",
-                'intro': "I acknowledge I have read and understood the documentation. / Reconozco que he leído y comprendido la documentación.",
-                'introformat': 1,
-                'visible': 1,
-                'moduleinfo': [
-                    {'name': 'module', 'value': '17'}, # Hardcoded ID from user
-                    {'name': 'course', 'value': str(course_id)},
-                    {'name': 'preferredbehaviour', 'value': 'deferredfeedback'},
-                    {'name': 'quizpassword', 'value': ''},
-                    {'name': 'grade', 'value': '10'},
-                    {'name': 'grademethod', 'value': '1'},
-                    {'name': 'attempts', 'value': '0'}, # Unlimited
-                    {'name': 'overduehandling', 'value': 'autosubmit'},
-                    {'name': 'browsersecurity', 'value': '-'},
-                    {'name': 'completion', 'value': '1'},
-                    {'name': 'questionsperpage', 'value': '1'},
-                    {'name': 'shuffleanswers', 'value': '1'}
-                ]
-            }]
-        }
-
-        res = call_moodle_json('core_course_create_modules', quiz_payload)
-        if isinstance(res, dict) and 'exception' in res:
-            logging.error(f"QUIZ FAIL DEBUG: {json.dumps(res)}")
-            raise Exception(f"Quiz Creation Failed: {res['message']}")
-        
-        course_module_id = res[0]['id']
-        logging.info(f"Quiz Course Module Created (cmid: {course_module_id}).")
-        
-        # Get the actual quiz instance ID from course contents
-        # Retry with delay to handle caching/timing issues
-        logging.info("Fetching quiz instance ID...")
-        quiz_instance_id = None
-        max_retries = 3
-        
-        for attempt in range(max_retries):
-            if attempt > 0:
-                logging.info(f"Retry {attempt}/{max_retries-1} after 2 second delay...")
-                time.sleep(2)
-            
-            contents = call_moodle_json('core_course_get_contents', {'courseid': course_id})
-            for section in contents:
-                if 'modules' in section:
-                    for mod in section['modules']:
-                        if mod.get('id') == course_module_id:
-                            quiz_instance_id = mod.get('instance')
-                            break
-                if quiz_instance_id:
-                    break
-            
+        contents = call_moodle_json('core_course_get_contents', {'courseid': course_id})
+        for section in contents:
+            if 'modules' in section:
+                for mod in section['modules']:
+                    if mod.get('id') == course_module_id:
+                        quiz_instance_id = mod.get('instance')
+                        break
             if quiz_instance_id:
                 break
         
-        if not quiz_instance_id:
-            raise Exception(f"Could not find quiz instance ID for course_module {course_module_id}")
-        
-        logging.info(f"Quiz Instance ID: {quiz_instance_id}")
+        if quiz_instance_id:
+            break
+    
+    if not quiz_instance_id:
+        raise Exception(f"Could not find quiz instance ID for course_module {course_module_id}")
+    
+    logging.info(f"Quiz Instance ID: {quiz_instance_id}")
 
-        # --- STEP 3: ADD QUESTION VIA LOCAL PLUGIN ---
-        logging.info("Adding Bilingual True/False Question...")
-        
-        question_text = "Have you completed the training? / ¿Ha completado el entrenamiento?"
-        
-        q_payload = {
-            'quizid': int(quiz_instance_id),
-            'questionname': 'Training Completion / Completado',
-            'questiontext': question_text,
-            'correctanswer': 1
-        }
-        
-        try:
-            q_res = call_moodle_json('local_masterbuilder_create_question', q_payload)
-            if isinstance(q_res, dict) and 'exception' in q_res:
-                 logging.error(f"QUESTION FAIL DEBUG: {json.dumps(q_res)}")
-                 # Don't fail the whole job, just log it
-                 logging.warning("Failed to create question, but Quiz exists.")
-            else:
-                 logging.info(f"Question Created Successfully (ID: {q_res.get('questionid')})")
-        except Exception as e:
-            logging.error(f"Question Creation Error: {e}")
+    # --- ADD QUESTION VIA LOCAL PLUGIN ---
+    logging.info("Adding Bilingual True/False Question...")
+    
+    question_text = "Have you completed the training? / ¿Ha completado el entrenamiento?"
+    
+    q_payload = {
+        'quizid': int(quiz_instance_id),
+        'questionname': 'Training Completion / Completado',
+        'questiontext': question_text,
+        'correctanswer': 1
+    }
+    
+    try:
+        q_res = call_moodle_json('local_masterbuilder_create_question', q_payload)
+        if isinstance(q_res, dict) and 'exception' in q_res:
+             logging.error(f"QUESTION FAIL DEBUG: {json.dumps(q_res)}")
+             # Don't fail the whole job, just log it
+             logging.warning("Failed to create question, but Quiz exists.")
+        else:
+             logging.info(f"Question Created Successfully (ID: {q_res.get('questionid')})")
+    except Exception as e:
+        logging.error(f"Question Creation Error: {e}")
 
 # --- 5. MAIN LOGIC ---
 
-def get_latest_clean_version(items: List[Dict]) -> Optional[Dict]:
-    clean = [x for x in items if x.get('version') and re.match(r'^\.[A-Z]$', x['version'])]
-    if not clean: return None
-    clean.sort(key=lambda x: x['version'], reverse=True)
-    return clean[0]
-
 def extract_id(item):
-    if item.get('id'): return item['id']
-    match = re.search(r'\.(\d+)$', item.get('urn', ''))
+    """Extract item ID from FactItems row (using dms_id)."""
+    if item.get('dms_id'):
+        return item['dms_id']
+    # Fallback to URN parsing
+    match = re.search(r'\.(\d+)$', item.get('item_urn', ''))
     return match.group(1) if match else None
 
-# --- API STATE FUNCTIONS ---
-
-def api_get_version(shortname):
-    """
-    Fetches the build version for a course from Moodle DB via API.
-    """
-    try:
-        res = call_moodle_json('local_masterbuilder_get_build_state', {'shortname': shortname})
-        if isinstance(res, dict) and res.get('found'):
-            return res.get('version')
-    except Exception as e:
-        logging.warning(f"Could not fetch state for {shortname}: {e}")
-    return None
-
-def api_update_version(shortname, version):
-    """
-    Updates the build version for a course in Moodle DB via API.
-    """
-    try:
-        call_moodle_json('local_masterbuilder_update_build_state', {'shortname': shortname, 'version': version})
-    except Exception as e:
-        logging.error(f"Could not update state for {shortname}: {e}")
-
-def api_reset_build_state():
-    """
-    Resets the entire build state table via API.
-    """
-    logging.warning("!!! NUKING VERSION TABLE !!!")
-    try:
-        res = call_moodle_json('local_masterbuilder_reset_build_state', {})
-        logging.info(f"Reset Result: {res}")
-    except Exception as e:
-        logging.error(f"Could not reset build state: {e}")
-
 def main():
-    # Check Nuke Flag
-    if NUKE_VERSION_TABLE:
-        api_reset_build_state()
-
     conn = get_db_connection()
     try:
-        for target in PLM_TARGETS:
-            logging.info(f"--- BATCH: {target['description']} ---")
-            rows = fetch_targets_from_db(conn, target['table_name'], target['db_filter'])
+        # Ensure version tracking table exists
+        ensure_version_table_exists(conn)
+        
+        if not EXACT_TITLES:
+            logging.warning("No exact titles configured in EXACT_TITLES. Nothing to process.")
+            return
+        
+        logging.info(f"--- Fetching items for {len(EXACT_TITLES)} configured titles ---")
+        all_items = fetch_items_by_exact_titles(conn, EXACT_TITLES)
+        logging.info(f"Found {len(all_items)} total item records (all versions).")
+        
+        # Group by title to find latest version per title
+        grouped = {}
+        for item in all_items:
+            title = item.get('title')
+            if title not in grouped:
+                grouped[title] = []
+            grouped[title].append(item)
+        
+        logging.info(f"Processing {len(grouped)} unique documents.")
+
+        for title, items in grouped.items():
+            latest = get_latest_released_version(items)
+            if not latest:
+                logging.warning(f"No released version for: {title}")
+                continue
             
-            grouped = {}
-            for row in rows:
-                desc = row.get('descriptor', 'Unknown')
-                match = re.match(r'([A-Z]+-[A-Z]+-\d+)', desc)
-                if match:
-                    base = match.group(1)
-                    if base not in grouped: grouped[base] = []
-                    grouped[base].append(row)
+            item_id = extract_id(latest)
+            current_version = latest.get('version', '')
             
-            logging.info(f"Found {len(grouped)} unique documents.")
+            if not item_id:
+                logging.warning(f"Skipping {title} - no item ID")
+                continue
 
-            for base_id, items in grouped.items():
-                alpha = get_latest_clean_version(items)
-                if not alpha: continue
+            # Extract base ID for shortname (e.g., "F20-MI-000713")
+            match = re.match(r'([A-Z0-9]+-[A-Z]+-\d+)', title)
+            base_id = match.group(1) if match else title[:20].replace(' ', '_').replace('-', '_')
+            
+            logging.info(f"Processing: {title} (Version: {current_version})")
 
-                item_id = extract_id(alpha)
-                if not item_id: continue
-
-                current_version = alpha['version']
+            # ========================================
+            # --- PDF Course (Read and Understand) ---
+            # ========================================
+            pdf_shortname = f"{base_id}-RU"
+            pdf_fullname = f"{title} - Read and Understand"
+            
+            deployed_pdf_version = get_deployed_version(conn, title, 'pdf')
+            
+            if deployed_pdf_version != current_version:
+                logging.info(f"PDF update needed: {base_id} ({deployed_pdf_version} -> {current_version})")
                 
-                # FETCH STATE FROM API
-                stored_version = api_get_version(base_id)
-                
-                # Determine if we need to update PDF
-                update_pdf = False
-                if not stored_version or current_version > stored_version:
-                    update_pdf = True
-                    logging.info(f"Processing {base_id} -> New Version {current_version} (Old: {stored_version})")
+                pdf_path = download_pdf_logic(PLM_CONFIG['workspace_id'], item_id, base_id)
+                if pdf_path:
+                    try:
+                        course_id, is_new = ensure_specific_course_exists(
+                            shortname=pdf_shortname,
+                            fullname=pdf_fullname,
+                            category_id=PLM_CONFIG['category_id']
+                        )
+                        build_pdf_course(course_id, title, pdf_path)
+                        update_deployed_version(conn, title, pdf_shortname, 'pdf', current_version)
+                        
+                        # Reset course progress if it's an update (not a new course)
+                        if not is_new:
+                            logging.info(f"Resetting course progress for {pdf_shortname}...")
+                            try:
+                                reset_res = call_moodle_json('local_masterbuilder_reset_course_progress', {'courseid': course_id})
+                                logging.info(f"Reset result: {reset_res}")
+                            except Exception as e:
+                                logging.error(f"Failed to reset course progress: {e}")
+                        
+                        # Post announcement
+                        subject = "Document Updated / Documento Actualizado"
+                        message = f"A new version ({current_version}) of '{base_id}' is available. Please review it. / Una nueva versión ({current_version}) de '{base_id}' está disponible. Por favor revíselo."
+                        post_announcement(course_id, subject, message)
+                        
+                        logging.info(f"PDF course updated: {pdf_shortname}")
+                    except Exception as e:
+                        logging.error(f"Error creating PDF course for {title}: {e}")
+                    finally:
+                        if os.path.exists(pdf_path):
+                            os.remove(pdf_path)
                 else:
-                    logging.info(f"Processing {base_id} -> Version {current_version} (Up to date)")
+                    if STRICT_PDF_ONLY:
+                        logging.warning(f"Skipping PDF course for {base_id} (No PDF available)")
+            else:
+                logging.info(f"PDF up to date: {pdf_shortname} (version {current_version})")
 
-                # 1. Download PDF if needed
-                pdf = None
-                if update_pdf:
-                    pdf = download_pdf_logic(target['workspace_id'], item_id, base_id)
-                    if not pdf and STRICT_PDF_ONLY:
-                        logging.warning(f"Skipping {base_id} (No PDF)")
-                        continue
-
-                try:
-                    full_title = alpha.get('descriptor', base_id)
+            # ========================================
+            # --- Quiz Course (Competency) ---
+            # ========================================
+            quiz_shortname = f"{base_id}-CMP"
+            quiz_fullname = f"{title} - Competency"
+            
+            try:
+                course_id, is_new = ensure_specific_course_exists(
+                    shortname=quiz_shortname,
+                    fullname=quiz_fullname,
+                    category_id=PLM_CONFIG['category_id']
+                )
+                
+                if not check_quiz_exists(course_id):
+                    build_quiz_course(course_id, title)
+                    update_deployed_version(conn, title, quiz_shortname, 'quiz', current_version)
                     
-                    course_id, is_new_course = ensure_specific_course_exists(
-                        shortname=base_id,
-                        fullname=f"Training: {full_title}",
-                        category_id=target['category_id']
-                    )
-
-                    # Check if quiz exists
-                    quiz_exists = check_quiz_exists(course_id)
-                    create_quiz = not quiz_exists
-
-                    if update_pdf or create_quiz:
-                        build_module_infrastructure(course_id, base_id, alpha['version'], pdf, create_quiz=create_quiz)
-                        
-                        # UPDATE STATE IN API
-                        if update_pdf:
-                            api_update_version(base_id, current_version)
-                            
-                            # Reset course progress if it's an update (not a new course)
-                            if not is_new_course:
-                                logging.info(f"Resetting course progress for {base_id}...")
-                                try:
-                                    reset_res = call_moodle_json('local_masterbuilder_reset_course_progress', {'courseid': course_id})
-                                    logging.info(f"Reset result: {reset_res}")
-                                except Exception as e:
-                                    logging.error(f"Failed to reset course progress: {e}")
-                            
-                            # Post announcement
-                            subject = f"New Training Available / Nuevo Entrenamiento Disponible"
-                            message = f"A new version ({current_version}) of the training document is available. Please review it and complete the quiz. / Una nueva versión ({current_version}) del documento de capacitación está disponible. Por favor revíselo y complete el cuestionario."
-                            post_announcement(course_id, subject, message)
-                        
-                        elif create_quiz:
-                             # If we just created the quiz but didn't update PDF, we should still announce it?
-                             # Or maybe just silent fix. Let's announce for now as it's "Training Available"
-                             if is_new_course:
-                                 subject = f"Training Available / Entrenamiento Disponible"
-                                 message = f"Training for {base_id} is now available. / El entrenamiento para {base_id} ya está disponible."
-                                 post_announcement(course_id, subject, message)
+                    # Post announcement for new quiz
+                    subject = "Competency Assessment Available / Evaluación de Competencia Disponible"
+                    message = f"Complete this assessment to demonstrate competency for {base_id}. / Complete esta evaluación para demostrar competencia en {base_id}."
+                    post_announcement(course_id, subject, message)
                     
-                    if pdf and os.path.exists(pdf): os.remove(pdf)
-
-                except Exception as e:
-                    logging.error(f"Error processing {base_id}: {e}")
-                    # send_alert(f"Job Failed for {base_id}", str(e))
+                    logging.info(f"Quiz course created: {quiz_shortname}")
+                else:
+                    logging.info(f"Quiz already exists: {quiz_shortname}")
+                    
+            except Exception as e:
+                logging.error(f"Error creating Quiz course for {title}: {e}")
 
     except Exception as e:
         job_alerter.send_failure_alert(
