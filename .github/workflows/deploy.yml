@@ -51,14 +51,22 @@ jobs:
     steps:
     - name: Deploy to Test Server
       uses: appleboy/ssh-action@v0.1.10
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        USERNAME: ${{ github.actor }}
       with:
         host: ${{ secrets.TEST_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
+        envs: GITHUB_TOKEN,USERNAME
         script: |
           cd ~/moodle
-          git checkout test
-          git pull origin test
+          # Force clean state to avoid merge conflicts
+          git fetch origin
+          git reset --hard origin/test
+          
+          # Login to registry
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$USERNAME" --password-stdin
           
           # Export variables for docker-compose substitution
           export REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
@@ -77,14 +85,22 @@ jobs:
     steps:
     - name: Deploy to Prod Server
       uses: appleboy/ssh-action@v0.1.10
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        USERNAME: ${{ github.actor }}
       with:
         host: ${{ secrets.PROD_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
+        envs: GITHUB_TOKEN,USERNAME
         script: |
           cd ~/moodle
-          git checkout main
-          git pull origin main
+          # Force clean state to avoid merge conflicts
+          git fetch origin
+          git reset --hard origin/main
+          
+          # Login to registry
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$USERNAME" --password-stdin
           
           # Export variables for docker-compose substitution
           export REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
