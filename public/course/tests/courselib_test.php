@@ -2790,7 +2790,7 @@ final class courselib_test extends advanced_testcase {
      * Returns a user object and its assigned new role.
      *
      * @param testing_data_generator $generator
-     * @param $contextid
+     * @param int|context|(int|context)[] $contextid
      * @return array The user object and the role ID
      */
     protected function get_user_objects(testing_data_generator $generator, $contextid) {

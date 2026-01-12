@@ -863,6 +863,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param string $text The text for the button.
      * @param string $id An id to give the button.
      * @param string $class A class to give the button.
+     * @param string|null $title Title attribute
      * @param array $attributes Any additional attributes
      * @return string
      */

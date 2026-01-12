@@ -29,6 +29,7 @@
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
+ * @return string[]
  */
 function coursereport_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $array = array(

@@ -1804,6 +1804,8 @@ class behat_course extends behat_base {
      * If it was visible it will be hidden. If it is hidden it will be made visible.
      *
      * @Given /^I toggle visibility of category "(?P<idnumber_string>(?:[^"]|\\")*)" in management listing$/
+     *
+     * @param string $idnumber The category idnumber
      */
     public function i_toggle_visibility_of_category_in_management_listing($idnumber) {
         $id = $this->get_category_id($idnumber);

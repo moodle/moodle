@@ -182,27 +182,27 @@ use core\output\html_writer;
  */
 class cm_info implements IteratorAggregate {
     /**
-     * State: Only basic data from modinfo cache is available.
+     * @var int State: Only basic data from modinfo cache is available.
      */
     private const STATE_BASIC = 0;
 
     /**
-     * State: In the process of building dynamic data (to avoid recursive calls to obtain_dynamic_data())
+     * @var int State: In the process of building dynamic data (to avoid recursive calls to obtain_dynamic_data())
      */
     private const STATE_BUILDING_DYNAMIC = 1;
 
     /**
-     * State: Dynamic data is available too.
+     * @var int State: Dynamic data is available too.
      */
     private const STATE_DYNAMIC = 2;
 
     /**
-     * State: In the process of building view data (to avoid recursive calls to obtain_view_data())
+     * @var int State: In the process of building view data (to avoid recursive calls to obtain_view_data())
      */
     private const STATE_BUILDING_VIEW = 3;
 
     /**
-     * State: View data (for course page) is available.
+     * @var int State: View data (for course page) is available.
      */
     private const STATE_VIEW = 4;
 
@@ -970,7 +970,7 @@ class cm_info implements IteratorAggregate {
      * Returns a localised human-readable name of the module type.
      *
      * @param bool $plural If true, the function returns the plural form of the name.
-     * @return ?lang_string
+     * @return lang_string|null
      */
     public function get_module_type_name($plural = false) {
         $modnames = get_module_types_names($plural);
@@ -1145,7 +1145,7 @@ class cm_info implements IteratorAggregate {
     /**
      * Returns the section delegated by this module, if any.
      *
-     * @return ?section_info
+     * @return section_info|null
      */
     public function get_delegated_section_info(): ?section_info {
         $delegatedsections = $this->modinfo->get_sections_delegated_by_cm();

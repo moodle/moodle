@@ -41,13 +41,13 @@ class content_item_service {
     /** @var content_item_readonly_repository_interface $repository a repository for content items. */
     private $repository;
 
-    /** string the component for this favourite. */
+    /** @var string the component for this favourite. */
     public const COMPONENT = 'core_course';
-    /** string the favourite prefix itemtype in the favourites table. */
+    /** @var string the favourite prefix itemtype in the favourites table. */
     public const FAVOURITE_PREFIX = 'contentitem_';
-    /** string the recommendation prefix itemtype in the favourites table. */
+    /** @var string the recommendation prefix itemtype in the favourites table. */
     public const RECOMMENDATION_PREFIX = 'recommend_';
-    /** string the cache name for recommendations. */
+    /** @var string the cache name for recommendations. */
     public const RECOMMENDATION_CACHE = 'recommendation_favourite_course_content_items';
 
     /**
@@ -235,7 +235,7 @@ class content_item_service {
      * @param \stdClass $user the user to check access for.
      * @param \stdClass $course the course to scope the content items to.
      * @param array $linkparams the desired section to return to.
-     * @param \section_info|null $section_info the section we want to fetch the modules for.
+     * @param \section_info|null $sectioninfo the section we want to fetch the modules for.
      * @return \stdClass[] the content items, scoped to a course.
      */
     public function get_content_items_for_user_in_course(\stdClass $user, \stdClass $course, array $linkparams = [], ?\section_info $sectioninfo = null): array {

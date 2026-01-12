@@ -144,7 +144,7 @@ class core_course_renderer extends plugin_renderer_base {
      *
      * @deprecated since 2.5
      *
-     * @param array $category
+     * @param stdClass $category
      * @param int $depth
      * @return string
      */
@@ -979,6 +979,7 @@ class core_course_renderer extends plugin_renderer_base {
      * Invoked from /course/index.php
      *
      * @param int|stdClass|core_course_category $category
+     * @return string
      */
     public function course_category($category) {
         global $CFG;
@@ -1180,8 +1181,6 @@ class core_course_renderer extends plugin_renderer_base {
      * @param int $tagid id of the tag
      * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
      *             are displayed on the page and the per-page limit may be bigger
-     * @param int $fromctx context id where the link was displayed, may be used by callbacks
-     *            to display items in the same context first
      * @param int $ctx context id where to search for records
      * @param bool $rec search in subcontexts as well
      * @param array $displayoptions
@@ -1471,7 +1470,7 @@ class core_course_renderer extends plugin_renderer_base {
     /**
      * Display waiting information about backup size during uploading backup process
      * @param object $backupfile the backup stored_file
-     * @return $html string
+     * @return string html
      */
     public function sendingbackupinfo($backupfile) {
         $sizeinfo = new stdClass();

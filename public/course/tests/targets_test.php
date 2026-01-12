@@ -336,7 +336,7 @@ final class targets_test extends \advanced_testcase {
      * @dataProvider analysable_provider
      * @param mixed $courseparams Course data
      * @param true|string $isvalid True when analysable is valid, string when it is not
-     * @param boolean $fortraining True if the course is for training the model
+     * @param bool $fortraining True if the course is for training the model
      */
     public function test_core_target_course_completion_analysable($courseparams, $isvalid, $fortraining = true): void {
         global $DB;
@@ -391,8 +391,8 @@ final class targets_test extends \advanced_testcase {
      * @param int $courseend Course end date
      * @param int $timestart Enrol start date
      * @param int $timeend Enrol end date
-     * @param boolean $isvalidfortraining True when sample is valid for training, false when it is not
-     * @param boolean $isvalidforprediction True when sample is valid for prediction, false when it is not
+     * @param bool $isvalidfortraining True when sample is valid for training, false when it is not
+     * @param bool $isvalidforprediction True when sample is valid for prediction, false when it is not
      */
     public function test_core_target_course_completion_samples($coursestart, $courseend, $timestart, $timeend,
             $isvalidfortraining, $isvalidforprediction): void {
@@ -430,7 +430,7 @@ final class targets_test extends \advanced_testcase {
      * @param int $endtime Analysis end time
      * @param int $timestart Enrol start date
      * @param int $timeend Enrol end date
-     * @param boolean $nullcalculation Whether the calculation should be null or not
+     * @param bool $nullcalculation Whether the calculation should be null or not
      */
     public function test_core_target_course_completion_active_during_analysis_time($starttime, $endtime, $timestart, $timeend,
             $nullcalculation): void {
