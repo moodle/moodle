@@ -2714,6 +2714,7 @@ abstract class enrol_plugin {
         global $DB;
 
         $instance->status = $newstatus;
+        $instance->timemodified = time();
         $DB->update_record('enrol', $instance);
 
         // Dispatch the hook for post enrol status update actions.
