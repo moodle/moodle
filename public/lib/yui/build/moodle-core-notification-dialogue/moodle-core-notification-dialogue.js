@@ -661,22 +661,6 @@ Y.extend(DIALOGUE, Y.Panel, {
         },
 
         /**
-         * Whether to display the dialogue modally and with a
-         * lightbox style.
-         *
-         * @attribute lightbox
-         * @type Boolean
-         * @default true
-         * @deprecated Since Moodle 2.7. Please use modal instead.
-         */
-        lightbox: {
-            lazyAdd: false,
-            setter: function(value) {
-                this.set('modal', value);
-            }
-        },
-
-        /**
          * Whether to display a close button on the dialogue.
          *
          * Note, we do not recommend hiding the close button as this has

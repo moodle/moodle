@@ -140,20 +140,6 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renderers a category for use with course_category_tree
-     *
-     * @deprecated since 2.5
-     *
-     * @param stdClass $category
-     * @param int $depth
-     * @return string
-     */
-    final protected function course_category_tree_category(stdClass $category, $depth=1) {
-        debugging('Function core_course_renderer::course_category_tree_category() is deprecated', DEBUG_DEVELOPER);
-        return '';
-    }
-
-    /**
      * Render a modchooser.
      *
      * @param renderable $modchooser The chooser.

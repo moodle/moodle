@@ -187,41 +187,6 @@ function get_component_directory($component) {
 }
 
 /**
- * @deprecated since 2.2, use context_course::instance() or other relevant class instead
- */
-#[\core\attribute\deprecated('\core\context::instance', since: '2.2', mdl: 'MDL-34472', final: true)]
-function get_context_instance() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 2.5 - do not use, the textrotate.js will work it out automatically
- */
-#[\core\attribute\deprecated('Not replaced', since: '2.0', mdl: 'MDL-19756', final: true)]
-function can_use_rotated_text() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * @deprecated since 2.2
- */
-#[\core\attribute\deprecated('\core\context\system::instance', since: '2.2', mdl: 'MDL-34472', final: true)]
-function get_system_context() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
- * Returns an image of an up or down arrow, used for column sorting. To avoid unnecessary DB accesses, please
- * provide this function with the language strings for sortasc and sortdesc.
- *
- * @deprecated use $OUTPUT->arrow() instead.
- */
-#[\core\attribute\deprecated('OUTPUT->[l|r]arrow', since: '2.0', mdl: 'MDL-19756', final: true)]
-function print_arrow() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
  * rc4encrypt
  *
  * @param string $data        Data to encrypt.
