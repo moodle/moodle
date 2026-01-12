@@ -45,5 +45,26 @@ class hook_callbacks {
             route_loader_interface::class,
             \DI\get(route_loader::class),
         );
+
+        // Until Moodle 6.0 we will allow the router to be unconfigured for backwards compatibility.
+        // To support legacy shims like /course/tags.php we need a custom route resolver which tries both.
+        // The following definition can be removed in Moodle 6.0.
+        // - \Slim\Interfaces\RouteResolverInterface
+        // - \Slim\Interfaces\RouteCollectorInterface
+        // - \Psr\Http\Message\ResponseFactoryInterface
+        // Along with the route_resolver class itself.
+        // TODO MDL-87637 Remove in Moodle 6.0.
+        $hook->add_definition(
+            \Slim\Interfaces\RouteResolverInterface::class,
+            \DI\get(route_resolver::class),
+        );
+        $hook->add_definition(
+            \Slim\Interfaces\RouteCollectorInterface::class,
+            \DI\get(\Slim\Routing\RouteCollector::class),
+        );
+        $hook->add_definition(
+            \Psr\Http\Message\ResponseFactoryInterface::class,
+            \DI\factory([\Slim\Factory\AppFactory::class, 'determineResponseFactory']),
+        );
     }
 }
