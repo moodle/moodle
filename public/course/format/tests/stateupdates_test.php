@@ -380,6 +380,7 @@ final class stateupdates_test extends \advanced_testcase {
     public function test_put_section_state_extra_updates(): void {
         global $DB, $CFG;
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
 

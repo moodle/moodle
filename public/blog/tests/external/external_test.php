@@ -166,6 +166,7 @@ final class external_test extends \core_external\tests\externallib_testcase {
         global $CFG;
 
         $CFG->bloglevel = BLOG_GLOBAL_LEVEL;
+        $CFG->forcelogin = 0;
 
         $result = \core_blog\external::get_entries();
         $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
@@ -192,6 +193,9 @@ final class external_test extends \core_external\tests\externallib_testcase {
      * We don't get any because they are not public (restricted to real site users).
      */
     public function test_get_not_public_entries_site_level_by_non_logged_users(): void {
+        global $CFG;
+        $CFG->forcelogin = 0;
+
         $this->expectException('require_login_exception'); // In this case we get a security exception.
         $result = \core_blog\external::get_entries();
     }

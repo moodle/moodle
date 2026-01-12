@@ -31,7 +31,9 @@ Feature: Language selector menu
     And "English (pirate) ‎(en_ar)‎" "link" should exist in the "Language selector" user submenu
 
   Scenario: Non-logged user is presented with a language selector which is placed within the navbar
-    Given I am on site homepage
+    Given the following config values are set as admin:
+      | forcelogin | 0 |
+    When I am on site homepage
     # The language selector menu is present in the navbar when a user is not logged in.
     And language selector menu should exist in the navbar
     And "English ‎(en)‎" "link" should exist in the language selector menu
@@ -64,13 +66,15 @@ Feature: Language selector menu
     And "Language" "link" should not exist in the user menu
 
   Scenario: Non-logged user is not presented with a language selector if there is less than two installed languages
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | forcelogin | 0 |
+    When I log in as "admin"
     And I navigate to "Language > Language packs" in site administration
     And I set the field "Installed language packs" to "en_ar"
     And I press "Uninstall selected language pack(s)"
     And I click on "Yes" "button" in the "Uninstall selected language pack(s)" "dialogue"
     And the "Installed language packs" select box should not contain "en_ar"
     And I log out
-    When I am on site homepage
+    When I am on homepage
     # The language selector menu is not present in the navbar.
     Then language selector menu should not exist in the navbar

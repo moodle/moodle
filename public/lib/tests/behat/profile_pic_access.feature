@@ -30,6 +30,8 @@ Feature: Profile picture access
     And the following "role capability" exists:
       | role                            | dangerous  |
       | moodle/user:viewprofilepictures | prohibit   |
+    And the following config values are set as admin:
+      | forcelogin | 0 |
     And I am on the "Profile editing" page logged in as "student1"
     And I upload "/course/tests/fixtures/image.jpg" file to "New picture" filemanager
     And I set the field "Picture description" to "MyPic"

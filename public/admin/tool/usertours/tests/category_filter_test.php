@@ -49,6 +49,7 @@ final class category_filter_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Create parent categories.
         $this->category1 = $this->getDataGenerator()->create_category();

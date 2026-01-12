@@ -109,6 +109,7 @@ final class analysers_test extends \advanced_testcase {
      */
     public function test_site_courses_analyser(): void {
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();

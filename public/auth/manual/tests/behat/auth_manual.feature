@@ -8,6 +8,8 @@ Feature: Test manual authentication works.
     Given the following "users" exist:
       | username |
       | teacher1 |
+    And the following config values are set as admin:
+      | forcelogin | 0 |
 
   @javascript
   Scenario: Check login works with javascript.

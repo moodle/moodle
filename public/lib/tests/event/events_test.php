@@ -63,6 +63,9 @@ final class events_test extends \advanced_testcase {
      * Test the course category updated event.
      */
     public function test_course_category_updated(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
         // Create a category.
         $category = $this->getDataGenerator()->create_category();
 

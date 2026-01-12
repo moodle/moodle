@@ -673,11 +673,11 @@ final class management_helper_test extends \advanced_testcase {
             'shortname' => 'Advanced algebra', 'idnumber' => '10002'));
         $syscontext = \context_system::instance();
 
-        // Update category object from DB so the course count is correct.
-        $category = core_course_category::get($category->id);
-
         list($user, $roleid) = $this->get_user_objects($generator, $syscontext->id);
         $caps = course_capability_assignment::allow(self::CATEGORY_MANAGE, $roleid, $syscontext->id);
+
+        // Update category object from DB so the course count is correct.
+        $category = core_course_category::get($category->id);
 
         // Check that sort order in the DB matches what we've got in the cache.
         $courses = $category->get_courses();
@@ -994,11 +994,11 @@ final class management_helper_test extends \advanced_testcase {
         $course1 = $generator->create_course(array('category' => $category->id));
         $context = $category->get_context();
 
-        // Update category object from DB so the course count is correct.
-        $category = core_course_category::get($category->id);
-
         list($user, $roleid) = $this->get_user_objects($generator, $context->id);
         $caps = course_capability_assignment::allow(self::CATEGORY_MANAGE, $roleid, $context->id);
+
+        // Update category object from DB so the course count is correct.
+        $category = core_course_category::get($category->id);
 
         $courses = $category->get_courses();
         $this->assertIsArray($courses);

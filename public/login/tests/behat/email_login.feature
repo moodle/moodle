@@ -12,7 +12,7 @@ Feature: Login using email address
   Scenario Outline: A user can login using their email address
     Given the following config values are set as admin:
       | authloginviaemail | <authloginviaemail> |
-    When I follow "Log in"
+    When I am on homepage
     And I set the field "Username" to "<login>"
     And I set the field "Password" to "test"
     And I press "Log in"

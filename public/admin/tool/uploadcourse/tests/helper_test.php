@@ -345,6 +345,7 @@ final class helper_test extends \advanced_testcase {
 
     public function test_resolve_category(): void {
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $c1 = $this->getDataGenerator()->create_category(array('name' => 'First level'));
         $c2 = $this->getDataGenerator()->create_category(array('name' => 'Second level', 'parent' => $c1->id));
@@ -379,6 +380,7 @@ final class helper_test extends \advanced_testcase {
 
     public function test_resolve_category_by_idnumber(): void {
         $this->resetAfterTest(true);
+        $this->setUser($this->getDataGenerator()->create_user());
 
         $c1 = $this->getDataGenerator()->create_category(array('idnumber' => 'C1'));
         $c2 = $this->getDataGenerator()->create_category(array('idnumber' => 'C2'));
@@ -397,6 +399,7 @@ final class helper_test extends \advanced_testcase {
 
     public function test_resolve_category_by_path(): void {
         $this->resetAfterTest(true);
+        $this->setUser($this->getDataGenerator()->create_user());
 
         $cat1 = $this->getDataGenerator()->create_category(array('name' => 'Cat 1'));
         $cat1_1 = $this->getDataGenerator()->create_category(array('name' => 'Cat 1.1', 'parent' => $cat1->id));

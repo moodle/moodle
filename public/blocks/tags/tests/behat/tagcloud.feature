@@ -21,6 +21,8 @@ Feature: Block tags displaying tag cloud
       | student1 | c1     | student        |
 
   Scenario: Add Tags block on a front page
+    Given the following config values are set as admin:
+      | forcelogin | 0 |
     When I log in as "admin"
     And I am on site homepage
     And I turn editing mode on

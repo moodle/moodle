@@ -27,6 +27,7 @@ namespace filter_activitynames;
 final class text_filter_test extends \advanced_testcase {
     public function test_links(): void {
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         // Create a test course.
         $course = $this->getDataGenerator()->create_course();
@@ -161,6 +162,7 @@ final class text_filter_test extends \advanced_testcase {
      */
     public function test_links_with_whitespace(string $activityname, string $html, bool $expectedresult): void {
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);
@@ -178,6 +180,7 @@ final class text_filter_test extends \advanced_testcase {
 
     public function test_cache(): void {
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         // Create a test courses.
         $course1 = $this->getDataGenerator()->create_course();

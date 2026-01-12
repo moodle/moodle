@@ -22,7 +22,7 @@ Feature: Change password
     And I click on "Continue" "button"
     And I should see "Preferences" in the "region-main" "region"
     And I log out
-    And I follow "Log in"
+    And I am on homepage
     And I set the field "Username" to "testuser"
     And I set the field "Password" to "NewPassword1*"
     And I press "Log in"
@@ -49,7 +49,7 @@ Feature: Change password
     And the following "course enrolments" exist:
       | user | course | role |
       | testuser | c1 | student |
-    When I follow "Log in"
+    When I am on homepage
     And I set the field "Username" to "testuser"
     And I set the field "Password" to "testuser"
     And I press "Log in"

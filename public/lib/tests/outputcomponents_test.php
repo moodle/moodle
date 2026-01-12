@@ -133,6 +133,7 @@ final class outputcomponents_test extends \advanced_testcase {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Verify new install contains expected defaults.
         $this->assertSame(theme_config::DEFAULT_THEME, $CFG->theme);

@@ -15,14 +15,12 @@ Feature: Test the 'remember username' feature works.
     Given the following config values are set as admin:
       | rememberusername | 1 |
     And I am on homepage
-    And I click on "Log in" "link" in the ".logininfo" "css_element"
     And I set the field "Username" to "teacher1"
     And I set the field "Password" to "teacher1"
     And I press "Log in"
     And I log out
     # Log out and check that the username was remembered.
     When I am on homepage
-    And I click on "Log in" "link" in the ".logininfo" "css_element"
     Then the field "username" matches value "teacher1"
 
   # Given the user has logged in before and selected 'Remember username', when they log in again and unset 'Remember username', then
@@ -32,14 +30,12 @@ Feature: Test the 'remember username' feature works.
     Given the following config values are set as admin:
       | rememberusername | 2 |
     And I am on homepage
-    And I click on "Log in" "link" in the ".logininfo" "css_element"
     And I set the field "Username" to "teacher1"
     And I set the field "Password" to "teacher1"
     And I press "Log in"
     And I log out
     # Log in again, the username should have been remembered.
     When I am on homepage
-    And I click on "Log in" "link" in the ".logininfo" "css_element"
     Then the field "username" matches value "teacher1"
     And I set the field "Password" to "teacher1"
     And I press "Log in"
@@ -48,5 +44,4 @@ Feature: Test the 'remember username' feature works.
       | rememberusername | 0 |
     # Check username has been forgotten.
     And I am on homepage
-    And I click on "Log in" "link" in the ".logininfo" "css_element"
     Then the field "username" matches value ""

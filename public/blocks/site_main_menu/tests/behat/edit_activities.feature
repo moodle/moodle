@@ -28,6 +28,7 @@ Feature: Edit activities in Additional activities block
   Scenario: Activities in Additional activities block can be made available but not visible on a course page
     Given the following config values are set as admin:
       | allowstealth | 1 |
+      | forcelogin   | 0 |
     And the following "blocks" exist:
       | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
       | site_main_menu | System       | 1         | site-index      | side-pre      |

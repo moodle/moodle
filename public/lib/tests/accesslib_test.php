@@ -3698,7 +3698,7 @@ final class accesslib_test extends advanced_testcase {
 
         $this->assertFalse(has_capability('moodle/block:view', $frontpageblockcontext, 0));
         $this->assertFalse(has_capability('mod/page:view', $frontpagepagecontext, 0));
-        $this->assertTrue(has_capability('mod/page:view', $frontpagecontext, 0));
+        $this->assertFalse(has_capability('mod/page:view', $frontpagecontext, 0));
         $this->assertFalse(has_capability('mod/page:view', $systemcontext, 0));
 
         $this->assertFalse(has_capability('moodle/course:create', $systemcontext, $testusers[11]));

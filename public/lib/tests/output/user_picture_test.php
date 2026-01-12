@@ -50,6 +50,8 @@ final class user_picture_test extends \advanced_testcase {
         $adminid = $DB->get_field('user', 'id', ['username' => 'admin'], MUST_EXIST);
 
         // Default config allows user pictures when not logged in.
+        // Force login is now enabled by default: MDL-87523.
+        set_config('forcelogin', 0);
         $this->assertTrue(user_picture::allow_view($adminid));
 
         // Not allowed with either or both forcelogin options.

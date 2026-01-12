@@ -12,7 +12,6 @@ Feature: Test the 'Digital age of consent verification' feature works.
   Scenario: User that is not considered a digital minor attempts to self-register on the site.
     # Try to access the sign up page.
     Given I am on homepage
-    When I click on "Log in" "link" in the ".logininfo" "css_element"
     And I click on "Create new account" "link"
     Then I should see "Age and location verification"
     When I set the field "What is your age?" to "16"
@@ -29,7 +28,6 @@ Feature: Test the 'Digital age of consent verification' feature works.
   Scenario: User that is considered a digital minor attempts to self-register on the site.
     # Try to access the sign up page.
     Given I am on homepage
-    When I click on "Log in" "link" in the ".logininfo" "css_element"
     And I click on "Create new account" "link"
     Then I should see "Age and location verification"
     When I set the field "What is your age?" to "12"
@@ -39,7 +37,6 @@ Feature: Test the 'Digital age of consent verification' feature works.
     And I should see "Please ask your parent/guardian to contact:"
     # Try to access the sign up page again.
     When I click on "Back to the site home" "link"
-    And I click on "Log in" "link" in the ".logininfo" "css_element"
     And I click on "Create new account" "link"
     Then I should see "You are too young to create an account on this site."
     And I should see "Please ask your parent/guardian to contact:"
