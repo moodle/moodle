@@ -30625,7 +30625,6 @@ table.calendartable caption {
   list-style: none;
   padding-top: 0.25rem;
   margin-top: 0.25rem;
-  border-top: 1px solid #dee2e6;
 }
 .activity.indented .activity-item {
   margin-left: 1rem;
@@ -30638,7 +30637,12 @@ table.calendartable caption {
 
 .activity-item {
   padding: 0.75rem;
-  border-radius: 1rem;
+}
+body:not(.editing) .activity-item {
+  border-bottom: 1px solid #dee2e6;
+}
+.section-list .section .section-item .activity:last-child .activity-item {
+  border-bottom: none;
 }
 .activity-item.activityinline {
   padding: 0.75rem 0;
@@ -31011,6 +31015,10 @@ table.calendartable caption {
 .single-section > ul > .course-section .section-item {
   padding: 0;
   border: none;
+  border-radius: 0;
+}
+body:not(.editing) .single-section > ul > .course-section .section-item .activity:last-child {
+  border-bottom: 1px solid #dee2e6;
 }
 
 .single-section-page .header-action {
@@ -31101,11 +31109,8 @@ table.calendartable caption {
 }
 
 /* Subsections */
-.activity.subsection {
-  border-top: none;
-}
 .activity.subsection > .activity-item {
-  border: 1px solid #dee2e6;
+  border-bottom: none;
   padding: 0;
   margin: 0.5rem 0;
 }
@@ -31130,9 +31135,6 @@ table.calendartable caption {
 .activity.subsection .section .section_action_menu > .action-menu .btn-icon {
   font-size: inherit;
 }
-.activity.subsection + .activity {
-  border-top: none;
-}
 .activity.subsection .focus-control:not(:has(.focus-control)):focus-within .v-parent-focus, .activity.subsection .focus-control:not(:has(.focus-control)):hover .v-parent-focus {
   opacity: 1 !important;
   visibility: visible !important;
@@ -31141,6 +31143,19 @@ table.calendartable caption {
 .activity.subsection .focus-control:hover .focus-control .v-parent-focus {
   opacity: 0;
   visibility: hidden;
+}
+.activity.subsection .activity {
+  margin-left: 1.5rem;
+}
+body:not(.editing) .activity.subsection .section-item .course-content-item-content {
+  border-bottom: 1px solid #dee2e6;
+}
+body:not(.editing) .activity.subsection .section-item .section .activity:last-child {
+  border-bottom: none;
+}
+body:not(.editing) .activity.subsection .section-item .course-section-header {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 1rem;
 }
 
 /* Spinners */
