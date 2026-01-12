@@ -32,6 +32,14 @@ use core_backup\hook\fixtures\copy_course_hook_callbacks;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class copy_course_hook_test extends advanced_testcase {
+    /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once("{$CFG->dirroot}/backup/util/includes/backup_includes.php");
+        parent::setUpBeforeClass();
+    }
 
     /**
      * Test the hook.
