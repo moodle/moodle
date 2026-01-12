@@ -80,8 +80,11 @@ final class courserequest_test extends \advanced_testcase {
 
     public function test_approve_request(): void {
         global $DB;
+
         $this->resetAfterTest(true);
         $this->preventResetByRollback();
+
+        $this->mock_clock_with_frozen(1622502000);
 
         $defaultcategory = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
         set_config('enablecourserequests', 1);
@@ -115,6 +118,7 @@ final class courserequest_test extends \advanced_testcase {
         $id = $cr->approve();
         $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
         $sink->close();
+
         $course = $DB->get_record('course', array('id' => $id));
         $this->assertEquals($data->fullname, $course->fullname);
         $this->assertEquals($data->shortname, $course->shortname);
@@ -135,8 +139,49 @@ final class courserequest_test extends \advanced_testcase {
         $id = $cr->approve();
         $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
         $sink->close();
+
         $course = $DB->get_record('course', array('id' => $id));
         $this->assertEquals($data->category, $course->category);
+
+        // Test with default course settings.
+        set_config('format', 'weeks', 'moodlecourse');
+        set_config('newsitems', 2, 'moodlecourse');
+        set_config('showgrades', false, 'moodlecourse');
+        set_config('showreports', true, 'moodlecourse');
+        set_config('showactivitydates', 0, 'moodlecourse');
+        set_config('maxbytes', 10240, 'moodlecourse');
+        set_config('groupmode', SEPARATEGROUPS, 'moodlecourse');
+        set_config('groupmodeforce', true, 'moodlecourse');
+        set_config('visible', false, 'moodlecourse');
+        set_config('lang', 'es', 'moodlecourse');
+        set_config('enablecompletion', false, 'moodlecourse');
+        set_config('courseenddateenabled', true, 'moodlecourse');
+        set_config('courseduration', WEEKSECS * 4, 'moodlecourse');
+
+        $data->shortname .= ' 3rd';
+        $this->setUser($requester);
+        $cr = course_request::create($data);
+        $this->setAdminUser();
+        $sink = $this->redirectMessages();
+        $id = $cr->approve();
+        $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
+        $sink->close();
+
+        $course = $DB->get_record('course', ['id' => $id]);
+
+        $this->assertEquals('weeks', $course->format);
+        $this->assertEquals(2, $course->newsitems);
+        $this->assertEquals(0, $course->showgrades);
+        $this->assertEquals(1, $course->showreports);
+        $this->assertEquals(0, $course->showactivitydates);
+        $this->assertEquals(10240, $course->maxbytes);
+        $this->assertEquals(SEPARATEGROUPS, $course->groupmode);
+        $this->assertEquals(1, $course->groupmodeforce);
+        $this->assertEquals(0, $course->visible);
+        $this->assertEquals('es', $course->lang);
+        $this->assertEquals(0, $course->enablecompletion);
+        $this->assertEquals(1622476800, $course->startdate);
+        $this->assertEquals($course->startdate + (WEEKSECS * 4), $course->enddate);
     }
 
     public function test_reject_request(): void {
