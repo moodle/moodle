@@ -32,7 +32,7 @@ class invalidoutput implements renderable, templatable {
     /**
      * Export some data.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {

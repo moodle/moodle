@@ -34,6 +34,7 @@ class renderer extends section_renderer {
      * @param \stdClass $course record from table course
      * @param bool $orphaned if false displays the main activity (if present)
      *     if true displays all other activities
+     * @return string
      */
     public function display($course, $orphaned) {
 

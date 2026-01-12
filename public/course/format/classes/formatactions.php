@@ -64,7 +64,7 @@ use stdClass;
  */
 final class formatactions {
     /**
-     * @var courseactions|null courseactions instance.
+     * @var courseactions courseactions instance.
      */
     public courseactions $course;
 

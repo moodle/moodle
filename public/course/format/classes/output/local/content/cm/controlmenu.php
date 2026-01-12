@@ -299,7 +299,7 @@ class controlmenu extends basecontrolmenu {
     /**
      * Generates the visibility item for a course module.
      *
-     * @return link|null The menu item if applicable, otherwise null.
+     * @return link_secondary|subpanel|null The menu item if applicable, otherwise null.
      */
     protected function get_cm_visibility_item(): link_secondary|subpanel|null {
         if (!has_capability('moodle/course:activityvisibility', $this->modcontext)) {

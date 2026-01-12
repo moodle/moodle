@@ -96,7 +96,7 @@ class controlmenu extends controlmenu_base {
     /**
      * Retrieves the view item for the section control menu.
      *
-     * @return action_menu_link|null The menu item if applicable, otherwise null.
+     * @return action_menu_link_secondary The menu item if applicable, otherwise null.
      */
     protected function get_section_highlight_item(): action_menu_link_secondary {
         $format = $this->format;

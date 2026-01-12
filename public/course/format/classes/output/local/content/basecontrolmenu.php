@@ -96,7 +96,7 @@ abstract class basecontrolmenu implements named_templatable, renderable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param renderer_base $output typically, the renderer that's calling this function
-     * @return null|array data context for a mustache template
+     * @return stdClass|null data context for a mustache template
      */
     public function export_for_template(renderer_base $output): ?stdClass {
         $menu = $this->get_action_menu($output);
@@ -144,7 +144,7 @@ abstract class basecontrolmenu implements named_templatable, renderable {
     /**
      * Format control array into an action_menu.
      *
-     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @param array $controls array of edit control items
      * @return action_menu|null the action menu
      */
     protected function format_controls(array $controls): ?action_menu {
@@ -182,7 +182,7 @@ abstract class basecontrolmenu implements named_templatable, renderable {
      *
      * @todo Remove this method in Moodle 6.0 (MDL-83530).
      * @param array|null $itemdata the item data
-     * @return void
+     * @return link_secondary|null
      */
     private function normalize_action_menu_link(
         array|null $itemdata
