@@ -16,6 +16,7 @@
 
 namespace core_course;
 
+use core\{clock, di};
 use core\context;
 use core\context\course as context_course;
 use core\context\coursecat as context_coursecat;
@@ -324,6 +325,7 @@ class course_request {
         $data->newsitems          = $courseconfig->newsitems;
         $data->showgrades         = $courseconfig->showgrades;
         $data->showreports        = $courseconfig->showreports;
+        $data->showactivitydates  = $courseconfig->showactivitydates;
         $data->maxbytes           = $courseconfig->maxbytes;
         $data->groupmode          = $courseconfig->groupmode;
         $data->groupmodeforce     = $courseconfig->groupmodeforce;
@@ -332,9 +334,9 @@ class course_request {
         $data->lang               = $courseconfig->lang;
         $data->enablecompletion   = $courseconfig->enablecompletion;
         $data->numsections        = $courseconfig->numsections;
-        $data->startdate          = usergetmidnight(time());
+        $data->startdate          = usergetmidnight(di::get(clock::class)->time());
         if ($courseconfig->courseenddateenabled) {
-            $data->enddate        = usergetmidnight(time()) + $courseconfig->courseduration;
+            $data->enddate        = $data->startdate + $courseconfig->courseduration;
         }
 
         [$data->fullname, $data->shortname] = restore_dbops::calculate_course_names(0, $data->fullname, $data->shortname);
