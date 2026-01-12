@@ -23,6 +23,28 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cleandescriptionsdetail'] = 'Subsection pages and descriptions are no longer supported in Moodle 5.2.
+<p>This site has <strong>{$a->count} subsection descriptions</strong> that are no longer visible to users.</p>
+<p>You can choose to:
+<ul>
+  <li><strong>Migrate these descriptions to Text and Media areas</strong>.<br/> The Text and media areas will be displayed at the top of each subsection.<br/>{$a->migratelink}<br/><br/>
+  </li>
+  <li><strong>Delete these descriptions permanently</strong>.<br/> This will completely erase descriptions from the database.<br/>{$a->deletelink}
+  </li>
+</ul>
+</p>';
+$string['deleteconfirmbutton'] = 'Delete all descriptions';
+$string['deleteconfirmtext'] = 'This will permanently delete {$a} subsection descriptions from the database.<br/><br/>You can\'t undo this. Are you sure you want to delete all descriptions?';
+$string['deleteconfirmtitle'] = 'Delete all subsection descriptions?';
+$string['deletelinktext'] = 'Delete descriptions';
+$string['descriptionsdeletedsuccess'] = '{$a} subsection descriptions deleted.';
+$string['descriptionsmigratedpending'] = 'Subsection descriptions waiting to be migrated: <strong>{$a}</strong>';
+$string['descriptionsmigratedsuccess'] = '<strong>The migration task for all subsection descriptions has been created</strong>. This task will run in the background and may take a few minutes.';
+$string['invalidaction'] = 'Invalid action specified.';
+$string['migrateconfirmbutton'] = 'Migrate all descriptions';
+$string['migrateconfirmtext'] = 'This will migrate {$a} subsection descriptions to Text and Media areas.<br/><br/>You can\'t undo this. Are you sure you want to migrate all descriptions?';
+$string['migrateconfirmtitle'] = 'Migrate all subsection descriptions?';
+$string['migratelinktext'] = 'Migrate descriptions';
 $string['modulename'] = 'Subsection';
 $string['modulenameplural'] = 'Subsections';
 $string['pluginadministration'] = 'Subsection administration';
