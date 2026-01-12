@@ -1,4 +1,4 @@
-@core @core_grades @javascript
+@core @core_grades
 Feature: We can enter in grades and view reports from the gradebook
   In order to check the expected results are displayed
   As a teacher
@@ -92,3 +92,8 @@ Feature: We can enter in grades and view reports from the gradebook
       | Test assignment name 1 | 0.72% | 0.72% |
       | Test assignment name 2 | 1.00% | 1.00% |
       | Course total | 1.00% | 1.00% |
+
+  Scenario: User not enrolled in any course should not see the grades report
+    Given I log in as "admin"
+    When I follow "Grades" in the user menu
+    Then I should see "You are not enrolled in, nor teaching any courses on this site."
