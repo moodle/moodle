@@ -51,7 +51,7 @@ jobs:
                   chunk=$(((($count % $chunks)) + 1))
                   echo "$testname $testfile" >> ./chunk_$chunk.txt
               done < <(grep "function test_" "${testfile}" | sed -r "s/^.*function (test_[a-zA-Z0-9_]+).*/\1/")
-          done < <(find . -name "*_test.php")
+          done < <(find . -name "*_test.php" -not -path "*/fixtures/*")
           # Generate the matrix to run tests.
           echo "matrix=$(ls -1 chunk_*.txt | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
           echo "$count individual tests collected in $chunks files"
