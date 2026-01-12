@@ -6,6 +6,7 @@ services:
     container_name: moodle_app
     volumes:
       - moodledata:/var/www/moodledata
+      - moodle_code:/var/www/html
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       - ./config.php:/var/www/html/config.php #/var/www/html/public/config.php
     restart: always
