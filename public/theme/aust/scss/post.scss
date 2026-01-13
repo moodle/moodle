@@ -192,6 +192,41 @@ button.btn.btn-submit {
     }
 }
 
+// Notifications Popup - Black text in light mode
+.popover-region-notifications,
+.all-notifications,
+[data-region="all-notifications"],
+[data-region="notification-content-item-container"] {
+    background-color: #fff !important;
+
+    .content-item-container,
+    .notification {
+        background-color: #fff !important;
+        border-bottom: 1px solid #dee2e6 !important;
+
+        .notification-message,
+        .content-item-body,
+        .timestamp,
+        .content-item-footer {
+            color: #000 !important;
+        }
+
+        a,
+        .context-link,
+        .view-more {
+            color: $aust-blue !important;
+
+            &:hover {
+                color: darken($aust-blue, 15%) !important;
+            }
+        }
+
+        &.unread {
+            background-color: #f8f9fa !important;
+        }
+    }
+}
+
 // Footer Debugging/Purge Section - White background, black text in light mode
 .footer-content-debugging {
     background-color: #fff !important;
