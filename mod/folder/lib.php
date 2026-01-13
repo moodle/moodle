@@ -459,7 +459,7 @@ function folder_cm_info_view(cm_info $cm) {
         // Restore folder object from customdata.
         // Note the field 'customdata' is not empty IF AND ONLY IF we display contens inline.
         // Otherwise the content is default.
-        $folder = $cm->customdata;
+        $folder = (object) $cm->get_custom_data();
         $folder->id = (int)$cm->instance;
         $folder->course = (int)$cm->course;
         $folder->display = FOLDER_DISPLAY_INLINE;
