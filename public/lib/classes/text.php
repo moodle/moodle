@@ -75,20 +75,6 @@ class core_text {
     }
 
     /**
-     * @deprecated since Moodle 4.0. See MDL-53544.
-     */
-    #[\core\attribute\deprecated(
-        'core_text::reset_caches',
-        since: '4.0',
-        reason:'Typo3 has been removed and caches aren\'t used anymore.',
-        mdl: 'MDL-53544',
-        final: true,
-    )]
-    public static function reset_caches(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Standardise charset name
      *
      * Please note it does not mean the returned charset is actually supported.

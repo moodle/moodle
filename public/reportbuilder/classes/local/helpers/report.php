@@ -531,14 +531,6 @@ class report {
     }
 
     /**
-     * @deprecated since Moodle 4.1 - please do not use this function any more, {@see custom_report_column_cards_exporter}
-     */
-    #[\core\attribute\deprecated('custom_report_column_cards_exporter', since: '4.1', final: true)]
-    public static function get_available_columns() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Duplicate report content to given report ID
      *
      * @param persistent[] $persistents

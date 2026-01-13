@@ -425,14 +425,6 @@ class renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.0
-     */
-    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
-    public function should_display_main_logo() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Returns the moodle page object.
      *
      * @return moodle_page

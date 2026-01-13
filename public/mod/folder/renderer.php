@@ -96,14 +96,6 @@ class mod_folder_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated('renderable_tree_elements()', since: '4.3', mdl: 'MDL-78847', final: true)]
-    protected function htmllize_tree() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Internal function - Creates elements structure suitable for mod_folder/folder template.
      *
      * @param folder_tree $tree The folder tree to work with.

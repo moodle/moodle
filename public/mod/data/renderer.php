@@ -27,15 +27,6 @@ use mod_data\manager;
 defined('MOODLE_INTERNAL') || die();
 
 class mod_data_renderer extends plugin_renderer_base {
-
-    /**
-     * @deprecated since Moodle 4.1 MDL-75140 - please do not use this class any more.
-     */
-     #[\core\attribute\deprecated('mod_data_renderer::importing_preset()', since: '4.1', mdl: 'MDL-75140', final: true)]
-    public function import_setting_mappings(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
     /**
      * Importing a preset on a database module.
      *

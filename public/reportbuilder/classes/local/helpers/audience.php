@@ -288,12 +288,4 @@ class audience {
 
         return false;
     }
-
-    /**
-     * @deprecated since Moodle 4.1 - please do not use this function any more, {@see custom_report_audience_cards_exporter}
-     */
-    #[\core\attribute\deprecated('custom_report_audience_cards_exporter', since: '4.1', final: true)]
-    public static function get_all_audiences_menu_types() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
 }

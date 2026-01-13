@@ -92,14 +92,6 @@ class report_helper {
     }
 
     /**
-     * @deprecated since Moodle 4.0
-     */
-    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
-    public static function save_selected_report() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Retrieve the right SQL / params for the group filter depending on the filterparams, course and group settings.
      *
      * Addionnaly, it will return the list of users visible by the current user so

@@ -92,40 +92,6 @@ class core_question_bank_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated(
-        'qbank_managecategories\output\renderer::render_category_condition()',
-        since: '4.3',
-        mdl: 'MDL-72321',
-        final: true
-    )]
-    public function render_category_condition($displaydata) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function render_category_condition_advanced($displaydata) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated(
-        'qbank_deletequestion\output\renderer::render_hidden_condition_advanced()',
-        since: '4.3',
-        mdl: 'MDL-72321',
-        final: true
-    )]
-    public function render_hidden_condition_advanced($displaydata) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Render question pagination.
      *
      * @param array $displaydata

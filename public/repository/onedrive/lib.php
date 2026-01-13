@@ -1016,22 +1016,6 @@ class repository_onedrive extends repository {
     }
 
     /**
-     * @deprecated since Moodle 4.0
-     */
-    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
-    public static function can_import_skydrive_files() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.0
-     */
-    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
-    public static function import_skydrive_files() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Edit/Create Admin Settings Moodle form.
      *
      * @param moodleform $mform Moodle form (passed by reference).

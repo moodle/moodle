@@ -23,18 +23,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * This function prints the overview of a discussion in the forum listing.
- * It needs some discussion information and some post information, these
- * happen to be combined for efficiency in the $post parameter by the function
- * that calls this one: forum_print_latest_discussions()
- *
- * @deprecated since Moodle 4.3
- */
-function forum_print_discussion_header() {
-    throw new \coding_exception('forum_print_discussion_header has been deprecated');
-}
-
-/**
  * Get a list of forums not tracked by the user.
  *
  * @param int $userid The id of the user to use.

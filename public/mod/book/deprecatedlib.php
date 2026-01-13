@@ -21,11 +21,3 @@
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
- * @deprecated since Moodle 4.4.
- */
-#[\core\attribute\deprecated('book_get_nav_classes', since: '4.4', final: true)]
-function book_get_nav_classes() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}

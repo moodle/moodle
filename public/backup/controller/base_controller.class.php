@@ -105,20 +105,4 @@ abstract class base_controller extends backup implements loggable {
     public function get_releasesession() {
         return $this->releasesession;
     }
-
-    /**
-     * @deprecated since Moodle 4.1 MDL-74548
-     */
-    #[\core\attribute\deprecated(since: '4.1', mdl: 'MDL-74548', final: true)]
-    public function set_copy(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.1 MDL-74548
-     */
-    #[\core\attribute\deprecated('restore_controller::get_copy()', since: '4.1', mdl: 'MDL-74548', final: true)]
-    public function get_copy() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
 }

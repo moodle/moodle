@@ -46,13 +46,6 @@ define('ASSIGN_FILTER_DRAFT', 'draft');
 define('ASSIGN_MARKER_FILTER_NO_MARKER', -1);
 
 // Reopen attempt methods.
-/**
- * ASSIGN_ATTEMPT_REOPEN_METHOD_NONE - Reopening attempts is not allowed.
- *
- * @deprecated since Moodle 4.4
- * @todo MDL-81977 This will be deleted in Moodle 4.8.
- */
-define('ASSIGN_ATTEMPT_REOPEN_METHOD_NONE', 'none');
 define('ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL', 'manual');
 define('ASSIGN_ATTEMPT_REOPEN_METHOD_AUTOMATIC', 'automatic');
 define('ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS', 'untilpass');

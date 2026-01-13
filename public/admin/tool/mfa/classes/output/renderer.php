@@ -143,14 +143,6 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.4
-     */
-    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.4', mdl: 'MDL-79920', final: true)]
-    public function setup_factor(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Show a table displaying a users active factors.
      *
      * @param string|null $filterfactor The factor name to filter on.

@@ -1448,14 +1448,6 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.3 MDL-78744
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-78744', final: true)]
-    public function render_activity_information() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Renders the activity navigation.
      *
      * Defer to template.

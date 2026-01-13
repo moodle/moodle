@@ -29,14 +29,6 @@ class encryption {
     const METHOD_SODIUM = 'sodium';
 
     /**
-     * @deprecated since Moodle 4.3 Sodium is always present
-     */
-    #[\core\attribute\deprecated(null, reason: 'Sodium is always present', since: '4.3', mdl: 'MDL-71421', final: true)]
-    public static function is_sodium_installed() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Gets the encryption method to use
      *
      * @return string Current encryption method

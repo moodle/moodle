@@ -73,14 +73,6 @@ class report_eventlist_list_generator {
     }
 
     /**
-     * @deprecated since 4.0 use {@see get_all_events_list} instead
-     */
-    #[\core\attribute\deprecated('::get_all_events_list', since: '4.0', mdl: 'MDL-72498', final: true)]
-    public static function get_core_events_list() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Returns the appropriate string for the CRUD character.
      *
      * @param string $crudcharacter The CRUD character.
@@ -128,14 +120,6 @@ class report_eventlist_list_generator {
                 return get_string('other', 'report_eventlist');
                 break;
         }
-    }
-
-    /**
-     * @deprecated since 4.0 use {@see get_all_events_list} instead
-     */
-    #[\core\attribute\deprecated('::get_all_events_list', since: '4.0', mdl: 'MDL-72498', final: true)]
-    public static function get_non_core_event_list() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

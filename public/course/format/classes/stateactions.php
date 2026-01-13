@@ -142,25 +142,6 @@ class stateactions {
     }
 
     /**
-     * @deprecated since Moodle 4.4 MDL-77038.
-     */
-    #[\core\attribute\deprecated(
-        replacement: 'stateactions::section_move_after',
-        since: '4.4',
-        mdl: 'MDL-77038',
-        final: true,
-    )]
-    public function section_move(
-        stateupdates $updates,
-        stdClass $course,
-        array $ids,
-        ?int $targetsectionid = null,
-        ?int $targetcmid = null
-    ): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Move course sections after to another location in the same course.
      *
      * @param stateupdates $updates the affected course elements track

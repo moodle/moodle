@@ -112,22 +112,6 @@ class slot_random {
     }
 
     /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function set_tags($tags) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function set_tags_by_id($tagids) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Set filter condition.
      *
      * @param \string $filters

@@ -239,14 +239,6 @@ class mod_wiki_renderer extends plugin_renderer_base {
         return $output;
     }
 
-    /**
-     * @deprecated since Moodle 4.0 MDL-72413. Now handled in PAGE's activity header
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72413', final: true)]
-    public function wiki_info() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
     public function tabs($page, $tabitems, $options) {
         $tabs = array();
         $context = context_module::instance($this->page->cm->id);

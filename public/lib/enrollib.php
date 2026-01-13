@@ -2731,14 +2731,6 @@ abstract class enrol_plugin {
     }
 
     /**
-     * @deprecated Since Moodle 4.4.0.
-     */
-    #[\core\attribute\deprecated(null, reason: 'Replaced with hooks', since: '4.4', mdl: 'MDL-78551', final: true)]
-    public function update_communication(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Delete course enrol plugin instance, unenrol all users.
      * @param object $instance
      * @return void

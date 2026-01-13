@@ -109,46 +109,6 @@ class category_condition extends condition {
     }
 
     /**
-     * @deprecated since Moodle 4.3 MDL-72321 - please do not use this function any more.
-     */
-    #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function display_options() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321 - please do not use this function any more.
-     */
-    #[\core\attribute\deprecated('foobar::blah()', since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function display_options_adv() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated('core_question renderer', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_category_form($contexts, $pageurl, $current) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated('qbank_managecategories/choose_category template', since: '4.3', mdl: 'MDL-72321', final: true)]
-    public static function print_choose_category_message(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
-    public static function get_current_category($categoryandcontext) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Return category and context ID from compound parameter.
      *
      * @param string $categoryandcontext Comma-separated list of category and context IDs.
@@ -176,14 +136,6 @@ class category_condition extends condition {
                 ['id' => $categoryid, 'contextid' => $contextid],
                 '*',
                 MUST_EXIST);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321 - please do not use this function any more.
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function print_category_info($category): string {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     public static function build_query_from_filter(array $filter): array {

@@ -665,19 +665,6 @@ abstract class base {
     }
 
     /**
-     * @deprecated Since 4.4. Use set_sectionnum instead.
-     */
-    #[\core\attribute\deprecated(
-        replacement: 'base::set_sectionnum',
-        since: '4.4',
-        mdl: 'MDL-80248',
-        final: true,
-    )]
-    public function set_section_number(int $singlesection): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Set the current section number to display.
      * Some formats has the hability to swith from one section to multiple sections per page.
      *
@@ -725,20 +712,6 @@ abstract class base {
         }
         $modinfo = get_fast_modinfo($this->courseid);
         return $modinfo->get_section_info_by_id($this->singlesectionid);
-    }
-
-    /**
-     * @deprecated Since 4.4. Use get_sectionnum instead.
-     */
-    #[\core\attribute\deprecated(
-        replacement: 'base::get_sectionnum',
-        since: '4.4',
-        mdl: 'MDL-80248',
-        final: true,
-    )]
-    public function get_section_number(): int {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-        return 0;
     }
 
     /**

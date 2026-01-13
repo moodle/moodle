@@ -194,13 +194,6 @@ M.util.CollapsibleRegion.prototype.div = null;
 M.util.CollapsibleRegion.prototype.icon = null;
 
 /**
- * @deprecated since Moodle 4.3.
- */
-M.util.set_user_preference = function() {
-    throw new Error('M.util.set_user_preference is deprecated. Please use the "core_user/repository" module instead.');
-};
-
-/**
  * Prints a confirmation dialog in the style of DOM.confirm().
  *
  * @method show_confirm_dialog

@@ -462,14 +462,6 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * @deprecated since Moodle 4.3 MDL-78744
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-78744', final: true)]
-    public function activity_information() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Returns standard navigation between activities in a course.
      *
      * @return string the navigation HTML.
@@ -2381,13 +2373,6 @@ class core_renderer extends renderer_base {
         }
 
         return html_writer::tag('a', $output, $attributes);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    public function htmllize_file_tree() {
-        throw new coding_exception('This function is deprecated and no longer relevant.');
     }
 
     /**

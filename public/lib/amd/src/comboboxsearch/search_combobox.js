@@ -138,14 +138,6 @@ export default class {
     }
 
     /**
-     * Stub out a required function.
-     * @deprecated since Moodle 4.4
-     */
-    triggerSelector() {
-        window.console.warning('triggerSelector() is deprecated. Consider using this.selectors.toggle');
-    }
-
-    /**
      * Return the dataset that we will be searching upon.
      *
      * @returns {Promise<null>}

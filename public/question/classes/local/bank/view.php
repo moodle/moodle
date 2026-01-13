@@ -327,19 +327,6 @@ class view {
     }
 
     /**
-     * @deprecated Since Moodle 4.3
-     */
-    #[\core\attribute\deprecated(
-        'create a qbank plugin and implement a filter object',
-        since: '4.3',
-        mdl: 'MDL-72321',
-        final: true
-    )]
-    protected function init_search_conditions(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Initialise list of menu actions for enabled question bank plugins.
      *
      * Menu action objects are stored in $this->menuactions, keyed by class name.
@@ -936,56 +923,6 @@ class view {
     }
 
     /**
-     * @deprecated since Moodle 4.3 MDL-72321
-     */
-    #[\core\attribute\deprecated(
-        'question/bank/managecategories/classes/category_confition.php',
-        since: '4.3',
-        mdl: 'MDL-72321',
-        final: true
-    )]
-    protected function print_choose_category_message(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321
-     */
-    #[\core\attribute\deprecated(
-        'question/bank/managecategories/classes/category_confition.php',
-        since: '4.3',
-        mdl: 'MDL-72321',
-        final: true
-    )]
-    protected function get_current_category($categoryandcontext) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321
-     */
-    #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_options_form($showquestiontext): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321
-     */
-    #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_advanced_search_form($advancedsearch): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321
-     */
-    #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_showtext_checkbox($showquestiontext): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Display the header element for the question bank.
      */
     protected function display_question_bank_header(): void {
@@ -1155,22 +1092,6 @@ class view {
     }
 
     /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated('display_questions()', since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function display_top_pagnation($pagination): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated('display_questions()', since: '4.3', mdl: 'MDL-72321', final: true)]
-    public function display_bottom_pagination($pagination, $totalnumber, $perpage, $pageurl): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Display the controls at the bottom of the list of questions.
      *
      * @param \context $catcontext The context of the category being displayed.
@@ -1306,22 +1227,6 @@ class view {
 
         // End of the table.
         echo \html_writer::end_tag('table');
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321
-     */
-    #[\core\attribute\deprecated('print_table()', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function start_table() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321
-     */
-    #[\core\attribute\deprecated('print_table()', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function end_table() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**

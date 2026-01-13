@@ -387,14 +387,6 @@ class action_menu implements renderable, templatable {
     }
 
     /**
-     * @deprecated since Moodle 4.0, use action_menu::set_menu_left().
-     */
-    #[\core\attribute\deprecated('action_menu::set_menu_left', since: '4.0', mdl: 'MDL-72466', final: true)]
-    public function set_alignment(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Returns a string to describe the alignment.
      *
      * @param int $align One of action_menu::TL, action_menu::TR, action_menu::BL, action_menu::BR.
@@ -421,14 +413,6 @@ class action_menu implements renderable, templatable {
      */
     public function set_menu_left() {
         $this->dropdownalignment = 'dropdown-menu-start';
-    }
-
-    /**
-     * @deprecated since Moodle 4.3, use set_boundary() method instead.
-     */
-    #[\core\attribute\deprecated('action_menu::set_boundary', since: '4.3', mdl: 'MDL-77375', final: true)]
-    public function set_constraint(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
     }
 
     /**
