@@ -17,9 +17,9 @@ Feature: Manage question banks
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student |
     And the following "activities" exist:
-      | activity | name   | course | section | intro        | showdescription |
-      | qbank    | bank1  | C1     | 0       | Bank 1 intro | 0               |
-      | qbank    | bank2  | C1     | 0       | Bank 2 intro | 0               |
+      | activity | name   | course | section | intro        | showdescription | idnumber |
+      | qbank    | bank1  | C1     | 0       | Bank 1 intro | 0               | qbank1   |
+      | qbank    | bank2  | C1     | 0       | Bank 2 intro | 0               | qbank2   |
 
   @javascript
   Scenario: Show description when show description checkbox ticked
@@ -78,3 +78,28 @@ Feature: Manage question banks
     Then I should see "Questions: 3" in the "bank1" "list_item"
     And I should see "Questions: 1" in the "bank2" "list_item"
     And I should see "Questions: 0" in the "bank3" "list_item"
+
+  Scenario: A student without permissions to access a bank cannot access the question banks page
+    Given I am on the "C1" "Course" page logged in as "student1"
+    Then "Question banks" "link" should not exist
+
+  Scenario: A student with permissions to access a bank can access the question banks page
+    Given the following "role assigns" exist:
+      | user     | role           | contextlevel    | reference |
+      | student1 | editingteacher | Activity module | qbank2    |
+    And I am on the "C1" "Course" page logged in as "student1"
+    When I navigate to "Question banks" in current page administration
+    Then I should see "bank2"
+    And I should not see "bank1"
+    And "Add" "button" should not exist in the "region-main" "region"
+
+  Scenario: A teacher can access the question banks page when there are no question banks yet
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 2 | C2        | 0        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C2     | editingteacher |
+    When I am on the "C2" "Course" page logged in as "teacher1"
+    And I navigate to "Question banks" in current page administration
+    Then "Create default question bank" "button" should exist

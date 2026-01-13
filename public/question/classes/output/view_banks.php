@@ -84,16 +84,16 @@ class view_banks implements \templatable, \renderable {
             get_string('createdefault', 'question')
         );
 
-        $cancreatedefault = has_capability('moodle/course:manageactivities', context_course::instance($this->course->id));
+        $cancreate = has_capability('moodle/course:manageactivities', context_course::instance($this->course->id));
 
         return [
-            'addqbank' => $addqbanklink->export_for_template($output),
+            'addqbank' => $cancreate ? $addqbanklink->export_for_template($output) : false,
             'hassharedbanks' => !empty($sharedbankscontext),
             'sharedbanks' => $sharedbankscontext,
             'hasprivatebanks' => !empty($privatebankscontext),
             'privatebanks' => $privatebankscontext,
-            'addcustombanks' => $addcustombanksrenderable->export_for_template($output),
-            'createdefault' => $cancreatedefault ? $createdefaultrenderable->export_for_template($output) : false,
+            'addcustombanks' => $cancreate ? $addcustombanksrenderable->export_for_template($output) : false,
+            'createdefault' => $cancreate ? $createdefaultrenderable->export_for_template($output) : false,
             'courseid' => $this->course->id,
         ];
     }
