@@ -125,6 +125,70 @@ nav.fixed-top.navbar.navbar-light.bg-white,
     .icon.fa-bell {
         color: #fff !important;
     }
+
+    // Search icon should be white in navbar (light mode fix)
+    .simplesearchform .icon,
+    .icon.fa-magnifying-glass,
+    .fa-magnifying-glass {
+        color: #fff !important;
+    }
+}
+
+// --- LIGHT MODE FIXES ---
+// These apply when NOT in dark mode
+
+// Header Dropdown Menu - Black text in light mode
+.dropdown-menu {
+    background-color: #fff !important;
+    border: 1px solid #dee2e6 !important;
+
+    .dropdown-item {
+        color: #000 !important;
+
+        &:hover,
+        &:focus {
+            background-color: #f8f9fa !important;
+            color: #000 !important;
+        }
+
+        &.active {
+            background-color: #e9ecef !important;
+            color: #000 !important;
+        }
+    }
+}
+
+// Footer Debugging/Purge Section - White background, black text in light mode
+.footer-content-debugging {
+    background-color: #fff !important;
+    color: #000 !important;
+    border-top: 1px solid #dee2e6 !important;
+
+    &.footer-dark,
+    &.bg-dark,
+    &.text-light {
+        background-color: #fff !important;
+        color: #000 !important;
+    }
+
+    .footer-dark-inner {
+        background-color: #fff !important;
+        color: #000 !important;
+    }
+
+    .purgecaches a {
+        color: $aust-blue !important;
+
+        &:hover {
+            color: darken($aust-blue, 15%) !important;
+        }
+    }
+
+    // Reactive debug panel
+    #reactive-debugpanel,
+    [id*="reactive-debugpanel"] {
+        color: #000 !important;
+    }
 }
 
 // Secondary Navigation (Global - Active State)
