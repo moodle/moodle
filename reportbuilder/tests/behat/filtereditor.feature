@@ -1,4 +1,4 @@
-@core_reportbuilder @javascript
+@core @core_reportbuilder @javascript
 Feature: Manage custom report filters
   In order to manage the filters of custom reports
   As an admin
@@ -12,7 +12,7 @@ Feature: Manage custom report filters
     When I click on "Show/hide 'Filters'" "button"
     Then I should see "There are no filters selected" in the "[data-region='active-filters']" "css_element"
     And I set the field "Select a filter" to "Email address"
-    And I should see "Added filter 'Email address'"
+    And "Added filter 'Email address'" "toast_message" should be visible
     And I should not see "There are no filters selected" in the "[data-region='active-filters']" "css_element"
     And I should see "Email address" in the "[data-region='active-filters']" "css_element"
 
@@ -74,7 +74,7 @@ Feature: Manage custom report filters
     When I click on "Show/hide 'Filters'" "button"
     And I click on "Move filter 'Country'" "button"
     And I click on "After \"Full name\"" "link" in the "Move filter 'Country'" "dialogue"
-    Then I should see "Moved filter 'Country'"
+    Then "Moved filter 'Country'" "toast_message" should be visible
     And "Country" "text" should appear before "Email address" "text"
 
   Scenario: Delete filter from report
@@ -88,7 +88,7 @@ Feature: Manage custom report filters
     And I click on "Show/hide 'Filters'" "button"
     And I click on "Delete filter 'Email address'" "button"
     And I click on "Delete" "button" in the "Delete filter 'Email address'" "dialogue"
-    Then I should see "Deleted filter 'Email address'"
+    Then "Deleted filter 'Email address'" "toast_message" should be visible
     And I should see "There are no filters selected" in the "[data-region='active-filters']" "css_element"
     And I should not see "Email address" in the "[data-region='active-filters']" "css_element"
 
@@ -102,13 +102,14 @@ Feature: Manage custom report filters
       | Full name operator | Contains |
       | Full name value    | Lionel   |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And "Filters applied" "toast_message" should be visible
     And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And I should see "Nothing to display"
     And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
     And I should not see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And I should see "Filters" in the "#dropdownFiltersButton" "css_element"
     And "[data-region='report-filters']" "css_element" should be visible
-    Then I should see "Filters reset"
+    Then "Filters reset" "toast_message" should be visible
     And the following fields in the "Full name" "core_reportbuilder > Filter" match these values:
       | Full name operator | Is any value |
     And I should see "Admin User" in the "Users" "table"
@@ -140,7 +141,7 @@ Feature: Manage custom report filters
       | Full name operator | Does not contain |
       | Full name value    | User 2           |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
-    Then I should see "Filters applied"
+    Then "Filters applied" "toast_message" should be visible
     And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     And the following should exist in the "reportbuilder-table" table:
       | Full name | Email address     |
@@ -191,7 +192,7 @@ Feature: Manage custom report filters
       | Email address operator | Is not equal to   |
       | Email address value    | user2@example.com |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
-    Then I should see "Filters applied"
+    Then "Filters applied" "toast_message" should be visible
     And I should see "Filters (1)" in the "#dropdownFiltersButton" "css_element"
     # Assert we haven't overridden the condition and user3 is still not showing in the report.
     And the following should exist in the "reportbuilder-table" table:
