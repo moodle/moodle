@@ -944,6 +944,21 @@ final class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Test whether user can view cohort
+     *
+     * @covers ::cohort_can_view_cohort
+     */
+    public function test_cohort_can_view_cohort(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $context = \context_system::instance();
+        $cohort = $this->getDataGenerator()->create_cohort(['contextid' => $context->id]);
+
+        $this->assertTrue(cohort_can_view_cohort($cohort, $context));
+    }
+
+    /**
      * Test the behaviour of cohort_get_cohort().
      *
      * @covers ::cohort_get_cohort
