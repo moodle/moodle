@@ -1,0 +1,7 @@
+issueNumber: MDL-87443
+notes:
+  core:
+    - message: >-
+        There is a new Behat `toast_message` named selector to more easily
+        assert the presence of Toast messages on the page
+      type: improved
