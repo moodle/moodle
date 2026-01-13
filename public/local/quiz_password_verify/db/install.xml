@@ -7,9 +7,11 @@
     <TABLE NAME="local_quiz_password_verify" COMMENT="Logs password verifications for quiz submissions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Quiz ID"/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Activity instance ID (quiz or resource)"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID"/>
         <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Quiz attempt ID (optional)"/>
+        <FIELD NAME="activitytype" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="Module type: quiz, resource, etc."/>
+        <FIELD NAME="actiontype" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="Action: mark_done, mark_undone, quiz_submit, quiz_retry"/>
         <FIELD NAME="timeverified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of verification"/>
         <FIELD NAME="ipaddress" TYPE="char" LENGTH="45" NOTNULL="false" SEQUENCE="false" COMMENT="IP address"/>
         <FIELD NAME="useragent" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Browser user agent"/>

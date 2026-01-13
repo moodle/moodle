@@ -31,6 +31,7 @@ require_once($CFG->libdir . '/authlib.php');
 $attemptid = optional_param('attemptid', 0, PARAM_INT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $password = required_param('password', PARAM_RAW);
+$actiontype = optional_param('actiontype', '', PARAM_ALPHANUMEXT); // e.g., mark_done, mark_undone, quiz_submit, quiz_retry
 
 $response = new stdClass();
 $response->success = false;
@@ -93,6 +94,8 @@ try {
     $record->quizid = $activityid;
     $record->userid = $USER->id;
     $record->attemptid = $attemptid ?: null; // Use null if 0.
+    $record->activitytype = $activitytype;
+    $record->actiontype = $actiontype ?: null;
     $record->timeverified = time();
     $record->ipaddress = getremoteaddr();
     $record->useragent = $_SERVER['HTTP_USER_AGENT'] ?? '';

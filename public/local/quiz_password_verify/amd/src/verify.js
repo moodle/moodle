@@ -14,7 +14,7 @@
  */
 
 define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'],
-    function($, Notification, ModalFactory, ModalEvents) {
+    function ($, Notification, ModalFactory, ModalEvents) {
 
         var attemptId = null;
         var verified = false;
@@ -26,7 +26,7 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
          * @param {Function} successCallback Callback to run on success
          * @returns {Promise} Modal promise
          */
-        var showPasswordModal = function(verificationData, successCallback) {
+        var showPasswordModal = function (verificationData, successCallback) {
             return ModalFactory.create({
                 type: ModalFactory.types.SAVE_CANCEL,
                 title: M.util.get_string('verifyyouridentity', 'local_quiz_password_verify'),
@@ -37,13 +37,13 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                     '<small class="form-text text-muted">' +
                     M.util.get_string('passwordhelp', 'local_quiz_password_verify') + '</small>' +
                     '</div>',
-            }).then(function(modal) {
+            }).then(function (modal) {
                 modal.setSaveButtonText(M.util.get_string('verify', 'local_quiz_password_verify'));
 
                 // Add custom class for styling.
                 modal.getRoot().addClass('quiz-password-verify-modal');
 
-                modal.getRoot().on(ModalEvents.save, function(e) {
+                modal.getRoot().on(ModalEvents.save, function (e) {
                     e.preventDefault();
                     var password = $('#verify-password').val();
 
@@ -61,7 +61,7 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                 modal.show();
 
                 // Focus password field when modal opens.
-                modal.getRoot().on(ModalEvents.shown, function() {
+                modal.getRoot().on(ModalEvents.shown, function () {
                     $('#verify-password').focus();
                 });
 
@@ -77,7 +77,7 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
          * @param {Object} verificationData The verification data (attemptid or cmid)
          * @param {Function} successCallback The callback to execute on success
          */
-        var verifyPassword = function(password, modal, verificationData, successCallback) {
+        var verifyPassword = function (password, modal, verificationData, successCallback) {
             var data = {
                 password: password,
                 sesskey: M.cfg.sesskey
@@ -89,12 +89,17 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                 data.cmid = verificationData.cmid;
             }
 
+            // Include action type if provided.
+            if (verificationData.actiontype) {
+                data.actiontype = verificationData.actiontype;
+            }
+
             $.ajax({
                 url: M.cfg.wwwroot + '/local/quiz_password_verify/verify.php',
                 type: 'POST',
                 data: data,
                 dataType: 'json',
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
                         verified = true;
                         modal.hide();
@@ -116,7 +121,7 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                         $('#verify-password').val('').focus();
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     Notification.addNotification({
                         message: 'Error verifying password: ' + error,
                         type: 'error'
@@ -128,7 +133,7 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
 
         // Nuclear Proxy: Intercept HTMLFormElement.prototype.submit.
         var originalProtoSubmit = HTMLFormElement.prototype.submit;
-        HTMLFormElement.prototype.submit = function() {
+        HTMLFormElement.prototype.submit = function () {
 
             // Intercept if it's the finish attempt form (ID check is most reliable for Summary page)
             // OR if it's processattempt.php on the summary page (fallback).
@@ -154,8 +159,9 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
 
                 if (currentAttemptId) {
                     showPasswordModal({
-                        attemptid: currentAttemptId
-                    }, function() {
+                        attemptid: currentAttemptId,
+                        actiontype: 'quiz_submit'
+                    }, function () {
                         originalProtoSubmit.apply(form, arguments);
                     });
                 } else {
@@ -171,11 +177,11 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
          *
          * @param {int} quizAttemptId The attempt ID
          */
-        var init = function(quizAttemptId) {
+        var init = function (quizAttemptId) {
             attemptId = quizAttemptId;
 
             // Capture phase listener for "Mark as done" ONLY.
-            window.addEventListener('click', function(e) {
+            window.addEventListener('click', function (e) {
                 var target = e.target;
 
                 // Handle "Mark as done".
@@ -199,9 +205,20 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                         e.stopPropagation();
 
                         var cmid = toggleButton.dataset.cmid;
+
+                        // Determine action type based on current completion state.
+                        var actiontype = 'mark_done'; // Default.
+                        var completionState = toggleButton.dataset.toggletype;
+                        if (completionState === 'manual:undo') {
+                            actiontype = 'mark_undone';
+                        } else if (completionState === 'manual:mark-done') {
+                            actiontype = 'mark_done';
+                        }
+
                         showPasswordModal({
-                            cmid: cmid
-                        }, function() {
+                            cmid: cmid,
+                            actiontype: actiontype
+                        }, function () {
                             toggleButton.click();
                         });
                         return;
@@ -216,12 +233,12 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
          * @param {Object} data Data for verification {attemptid: ..., cmid: ...}
          * @param {Function} callback Function to call on success
          */
-        var verifyAction = function(data, callback) {
+        var verifyAction = function (data, callback) {
             if (verified) {
                 callback();
                 return;
             }
-            showPasswordModal(data, function() {
+            showPasswordModal(data, function () {
                 callback();
             });
         };

@@ -69,5 +69,24 @@ function xmldb_local_quiz_password_verify_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024112504, 'local', 'quiz_password_verify');
     }
 
+    if ($oldversion < 2026011301) {
+        $table = new xmldb_table('local_quiz_password_verify');
+        
+        // Add activitytype field.
+        $field = new xmldb_field('activitytype', XMLDB_TYPE_CHAR, '50', null, false, null, null, 'attemptid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Add actiontype field.
+        $field = new xmldb_field('actiontype', XMLDB_TYPE_CHAR, '50', null, false, null, null, 'activitytype');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Savepoint reached.
+        upgrade_plugin_savepoint(true, 2026011301, 'local', 'quiz_password_verify');
+    }
+
     return true;
 }
