@@ -34,14 +34,12 @@ services:
       # Let's use a shared volume for the code to ensure nginx sees the static files.
       - moodle_code:/var/www/html
       - ./nginx.conf:/etc/nginx/templates/default.conf.template
-      - ./nginx-extract-host.sh:/docker-entrypoint.d/05-extract-host.sh
+      - ./nginx-extract-host.sh:/docker-entrypoint.d/05-extract-host.envsh
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     depends_on:
       - moodle
     restart: always
-    environment:
-      - NGINX_HOST=${NGINX_HOST}
     env_file:
       - .env_deploy
 
