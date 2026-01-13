@@ -20,7 +20,9 @@ use cm_info;
 use context;
 use context_course;
 use core\context_helper;
+use core\di;
 use core\task\manager;
+use moodle_database;
 use moodle_url;
 use stdClass;
 
