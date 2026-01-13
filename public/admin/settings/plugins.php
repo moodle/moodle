@@ -178,7 +178,7 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configselect('loginpasswordtoggle',
         new lang_string('auth_loginpasswordtoggle', 'auth'),
         new lang_string('auth_loginpasswordtoggle_desc', 'auth'),
-        TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY,
+        TOGGLE_SENSITIVE_ENABLED,
         [
             TOGGLE_SENSITIVE_DISABLED => get_string('disabled', 'admin'),
             TOGGLE_SENSITIVE_ENABLED => get_string('enabled', 'admin'),
