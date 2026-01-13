@@ -137,13 +137,21 @@ nav.fixed-top.navbar.navbar-light.bg-white,
 // --- LIGHT MODE FIXES ---
 // These apply when NOT in dark mode
 
-// Header Dropdown Menu - Black text in light mode
-.dropdown-menu {
+// Header Dropdown Menu - Black text in light mode (aggressive override)
+.dropdown-menu,
+nav .dropdown-menu,
+.navbar .dropdown-menu,
+.moremenu .dropdown-menu,
+[data-region="moredropdown"] {
     background-color: #fff !important;
     border: 1px solid #dee2e6 !important;
 
-    .dropdown-item {
+    .dropdown-item,
+    a.dropdown-item,
+    li a,
+    a[role="menuitem"] {
         color: #000 !important;
+        background-color: #fff !important;
 
         &:hover,
         &:focus {
@@ -155,6 +163,32 @@ nav.fixed-top.navbar.navbar-light.bg-white,
             background-color: #e9ecef !important;
             color: #000 !important;
         }
+    }
+
+    // List items themselves
+    li.nav-item {
+        background-color: #fff !important;
+
+        a {
+            color: #000 !important;
+        }
+    }
+}
+
+// Search Button Icon - White on blue background
+.simplesearchform .btn,
+.simplesearchform .btn-submit,
+.simplesearchform button[type="submit"],
+button.btn.btn-submit {
+    background-color: $aust-blue !important;
+    border-color: $aust-blue !important;
+
+    .icon,
+    .fa,
+    .fa-magnifying-glass,
+    i.icon,
+    i.fa {
+        color: #fff !important;
     }
 }
 
