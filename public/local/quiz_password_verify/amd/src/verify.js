@@ -219,7 +219,12 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                             cmid: cmid,
                             actiontype: actiontype
                         }, function () {
+                            // Click the button to toggle completion, then reload the page
+                            // so password is required again for subsequent actions.
                             toggleButton.click();
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 500); // Short delay to allow the toggle to complete
                         });
                         return;
                     }
