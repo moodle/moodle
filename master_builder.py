@@ -25,13 +25,14 @@ logging.basicConfig(
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 # --- CONFIG ---
-# Exact titles to process from FactItems table
-# Add the full title strings you want to process
-EXACT_TITLES = [
-    # Example titles - replace with your actual titles:
-    "F20-MI-000713 - F20 Manufacturing Instruction - End Cut, Attach, & Finish - ",
-    "ZDN-MI-000805 - ZDN Catheter Manufacturing Procedure - ",
-]
+# Dictionary mapping Fusion item titles to short course names
+# Key: Full title from FactItems table
+# Value: Short name to use in course shortname/fullname
+ITEM_CONFIG = {
+    # "Fusion Title": "Short Name"
+    "F20-MI-000713 - F20 Manufacturing Instruction - End Cut, Attach, & Finish - ": "F20 Manufacturing Instruction",
+    "ZDN-MI-000805 - ZDN Catheter Manufacturing Procedure - ": "ZDN Catheter Manufacturing Procedure",
+}
 
 PLM_CONFIG = {
     'workspace_id': '193',
@@ -200,45 +201,120 @@ def fetch_items_by_exact_titles(conn, titles: List[str]):
         cur.execute(query, (titles,))
         return cur.fetchall()
 
-def parse_version_number(version_str: str) -> tuple:
+def is_superseded_version(version_str: str) -> bool:
     """
-    Parses version string for sorting.
-    Examples: '.s1' -> ('s', 1), '.2' -> ('', 2), '.C' -> ('C', 0)
+    Checks if a version is superseded (starts with 's' after the dot).
+    Examples: '.sA', '.s1', '.sC' are superseded.
+    '.A', '.B', '.F' are NOT superseded (current releases).
     """
     if not version_str:
-        return ('', 0)
+        return False
+    v = version_str.lstrip('.')
+    return v.lower().startswith('s')
+
+def parse_version_for_sorting(version_str: str) -> tuple:
+    """
+    Parses version string for sorting released (non-superseded) versions.
     
-    # Remove leading dot
+    Examples:
+    - '.A' -> (0, 'A')  (first letter = A)
+    - '.B' -> (0, 'B')  
+    - '.F' -> (0, 'F')  (latest)
+    - '.1' -> (1, '')   (numeric)
+    - '.10' -> (10, '') 
+    
+    We sort by: (numeric, letter) so '.F' > '.B' > '.A'
+    """
+    if not version_str:
+        return (-999, '')
+    
     v = version_str.lstrip('.')
     
-    # Check for letter+number pattern (s1, s2) or just number (1, 2, 3)
-    match = re.match(r'^([a-zA-Z]*)(\d*)$', v)
-    if match:
-        letter = match.group(1) or ''
-        num = int(match.group(2)) if match.group(2) else 0
-        return (letter, num)
+    # Pure letter version (A, B, C, etc.)
+    if len(v) == 1 and v.isalpha():
+        return (0, v.upper())
     
-    return (v, 0)
+    # Numeric version (1, 2, 10, etc.)
+    if v.isdigit():
+        return (int(v), '')
+    
+    # Letter + number combo (unlikely for releases but handle it)
+    match = re.match(r'^([a-zA-Z]+)(\d*)$', v)
+    if match:
+        letter = match.group(1).upper()
+        num = int(match.group(2)) if match.group(2) else 0
+        return (num, letter)
+    
+    return (-999, v)
 
 def get_latest_released_version(items: List[Dict]) -> Optional[Dict]:
     """
-    Returns the item with the highest non-working version.
-    Sorts by version to find the latest.
+    Returns the item with the highest released (non-superseded) version.
+    
+    Version logic:
+    - Superseded versions start with 's' (e.g., .sA, .sB, .s1) - EXCLUDE these
+    - Working versions end with 'w' - EXCLUDE these
+    - Released versions are single letters (.A, .B, .F) or numbers (.1, .2)
+    - Sort alphabetically for letters: .F > .E > .D > .C > .B > .A
     """
     if not items:
         return None
     
-    # Filter out working versions
-    released = [x for x in items if x.get('version') and 
-                not x['version'].endswith('w') and 
-                x.get('version_id', '') != 'w']
+    # Filter out working versions and superseded versions
+    released = [
+        x for x in items 
+        if x.get('version') and 
+           not x['version'].endswith('w') and 
+           x.get('version_id', '') != 'w' and
+           not is_superseded_version(x.get('version', ''))
+    ]
     
     if not released:
+        logging.warning("No released (non-superseded) versions found.")
         return None
     
+    # Log available versions for debugging
+    versions = [x.get('version', '') for x in released]
+    logging.info(f"Available released versions: {versions}")
+    
     # Sort by parsed version (descending)
-    released.sort(key=lambda x: parse_version_number(x.get('version', '')), reverse=True)
-    return released[0]
+    released.sort(key=lambda x: parse_version_for_sorting(x.get('version', '')), reverse=True)
+    
+    latest = released[0]
+    logging.info(f"Selected latest version: {latest.get('version', '')}")
+    return latest
+
+def reset_quiz_grades(course_id: int):
+    """
+    Resets all quiz attempts and grades for all users in a course.
+    This is called when a new PDF version is detected to force re-training.
+    """
+    try:
+        # Get all quizzes in the course
+        contents = call_moodle_json('core_course_get_contents', {'courseid': course_id})
+        quiz_ids = []
+        
+        for section in contents:
+            for mod in section.get('modules', []):
+                if mod.get('modname') == 'quiz':
+                    quiz_ids.append(mod.get('instance'))
+        
+        if not quiz_ids:
+            logging.info(f"No quizzes found in course {course_id}")
+            return
+        
+        # Use local plugin to reset quiz attempts if available
+        for quiz_id in quiz_ids:
+            try:
+                res = call_moodle_json('local_masterbuilder_reset_quiz_attempts', {
+                    'quizid': quiz_id
+                })
+                logging.info(f"Reset quiz {quiz_id} attempts: {res}")
+            except Exception as e:
+                logging.warning(f"Could not reset quiz {quiz_id}: {e}")
+                
+    except Exception as e:
+        logging.error(f"Error resetting quiz grades for course {course_id}: {e}")
 
 def download_pdf_logic(workspace_id, item_id, descriptor):
     url = f"{BASE_API_URL}/workspaces/{workspace_id}/items/{item_id}/files"
@@ -534,15 +610,17 @@ def build_pdf_course(course_id, base_name, pdf_path):
     draft_id, clean_fname = upload_file_json_base64(pdf_path)
     
     # JSON Payload with Custom moduleinfo
+    # completion=1 means students must manually mark the activity as complete
     resource_payload = {
         'modules': [{
             'modulename': 'resource',
             'courseid': int(course_id), 
             'section': 1,
             'name': f"{base_name} - PDF Document",
-            'intro': "Please review this document.",
+            'intro': "Please review this document and mark it as done when complete. / Por favor revise este documento y márquelo como completado.",
             'introformat': 1,
             'visible': 1,
+            'completion': 1,  # Students must manually mark as complete
             'moduleinfo': [
                 {'name': 'module', 'value': '18'},  # Hardcoded ID from user
                 {'name': 'course', 'value': str(course_id)},
@@ -555,7 +633,8 @@ def build_pdf_course(course_id, base_name, pdf_path):
                 {'name': 'legacyfileslast', 'value': '0'},
                 {'name': 'filterfiles', 'value': '0'},
                 {'name': 'revision', 'value': '1'},
-                {'name': 'timemodified', 'value': str(int(time.time()))}
+                {'name': 'timemodified', 'value': str(int(time.time()))},
+                {'name': 'completion', 'value': '1'}  # Manual completion
             ]
         }]
     }
@@ -678,12 +757,15 @@ def main():
         # Ensure version tracking table exists
         ensure_version_table_exists(conn)
         
-        if not EXACT_TITLES:
-            logging.warning("No exact titles configured in EXACT_TITLES. Nothing to process.")
+        if not ITEM_CONFIG:
+            logging.warning("No items configured in ITEM_CONFIG. Nothing to process.")
             return
         
-        logging.info(f"--- Fetching items for {len(EXACT_TITLES)} configured titles ---")
-        all_items = fetch_items_by_exact_titles(conn, EXACT_TITLES)
+        # Get list of titles to fetch
+        titles_to_fetch = list(ITEM_CONFIG.keys())
+        
+        logging.info(f"--- Fetching items for {len(titles_to_fetch)} configured titles ---")
+        all_items = fetch_items_by_exact_titles(conn, titles_to_fetch)
         logging.info(f"Found {len(all_items)} total item records (all versions).")
         
         # Group by title to find latest version per title
@@ -709,24 +791,23 @@ def main():
                 logging.warning(f"Skipping {title} - no item ID")
                 continue
 
-            # Extract base ID for shortname (e.g., "F20-MI-000713")
-            match = re.match(r'([A-Z0-9]+-[A-Z]+-\d+)', title)
-            base_id = match.group(1) if match else title[:20].replace(' ', '_').replace('-', '_')
+            # Get short name from config
+            short_name = ITEM_CONFIG.get(title, title[:20].replace(' ', '-'))
             
-            logging.info(f"Processing: {title} (Version: {current_version})")
+            logging.info(f"Processing: {title} (Short: {short_name}, Version: {current_version})")
 
             # ========================================
             # --- PDF Course (Read and Understand) ---
             # ========================================
-            pdf_shortname = f"{base_id}-RU"
-            pdf_fullname = f"{title} Read and Understand"
+            pdf_shortname = f"{short_name}-RU"
+            pdf_fullname = f"{short_name} Read and Understand"
             
             deployed_pdf_version = get_deployed_version(conn, title, 'pdf')
             
             if deployed_pdf_version != current_version:
-                logging.info(f"PDF update needed: {base_id} ({deployed_pdf_version} -> {current_version})")
+                logging.info(f"PDF update needed: {short_name} ({deployed_pdf_version} -> {current_version})")
                 
-                pdf_path = download_pdf_logic(PLM_CONFIG['workspace_id'], item_id, base_id)
+                pdf_path = download_pdf_logic(PLM_CONFIG['workspace_id'], item_id, short_name)
                 if pdf_path:
                     try:
                         course_id, is_new = ensure_specific_course_exists(
@@ -734,7 +815,7 @@ def main():
                             fullname=pdf_fullname,
                             category_id=PLM_CONFIG['category_id']
                         )
-                        build_pdf_course(course_id, title, pdf_path)
+                        build_pdf_course(course_id, short_name, pdf_path)
                         update_deployed_version(conn, title, pdf_shortname, 'pdf', current_version)
                         
                         # Reset course progress if it's an update (not a new course)
@@ -745,10 +826,26 @@ def main():
                                 logging.info(f"Reset result: {reset_res}")
                             except Exception as e:
                                 logging.error(f"Failed to reset course progress: {e}")
+                            
+                            # Also reset quiz grades for the related competency course
+                            cmp_shortname = f"{short_name}-CMP"
+                            logging.info(f"Resetting quiz grades for competency course {cmp_shortname}...")
+                            try:
+                                # Find the quiz course
+                                search_res = call_moodle_json('core_course_get_courses_by_field', 
+                                    {'field': 'shortname', 'value': cmp_shortname})
+                                if isinstance(search_res, dict) and 'courses' in search_res:
+                                    search_res = search_res['courses']
+                                if isinstance(search_res, list) and len(search_res) > 0:
+                                    quiz_course_id = search_res[0]['id']
+                                    reset_quiz_grades(quiz_course_id)
+                                    logging.info(f"Quiz grades reset for course {quiz_course_id}")
+                            except Exception as e:
+                                logging.error(f"Failed to reset quiz grades: {e}")
                         
                         # Post announcement
                         subject = "Document Updated / Documento Actualizado"
-                        message = f"A new version ({current_version}) of '{base_id}' is available. Please review it. / Una nueva versión ({current_version}) de '{base_id}' está disponible. Por favor revíselo."
+                        message = f"A new version ({current_version}) of '{short_name}' is available. Please review it and retake the competency assessment. / Una nueva versión ({current_version}) de '{short_name}' está disponible. Por favor revíselo y vuelva a realizar la evaluación de competencia."
                         post_announcement(course_id, subject, message)
                         
                         logging.info(f"PDF course updated: {pdf_shortname}")
@@ -759,15 +856,15 @@ def main():
                             os.remove(pdf_path)
                 else:
                     if STRICT_PDF_ONLY:
-                        logging.warning(f"Skipping PDF course for {base_id} (No PDF available)")
+                        logging.warning(f"Skipping PDF course for {short_name} (No PDF available)")
             else:
                 logging.info(f"PDF up to date: {pdf_shortname} (version {current_version})")
 
             # ========================================
             # --- Quiz Course (Competency) ---
             # ========================================
-            quiz_shortname = f"{base_id}-CMP"
-            quiz_fullname = f"{title} Competency"
+            quiz_shortname = f"{short_name}-CMP"
+            quiz_fullname = f"{short_name} Competency"
             
             try:
                 course_id, is_new = ensure_specific_course_exists(
@@ -777,12 +874,12 @@ def main():
                 )
                 
                 if not check_quiz_exists(course_id):
-                    build_quiz_course(course_id, title)
+                    build_quiz_course(course_id, short_name)
                     update_deployed_version(conn, title, quiz_shortname, 'quiz', current_version)
                     
                     # Post announcement for new quiz
                     subject = "Competency Assessment Available / Evaluación de Competencia Disponible"
-                    message = f"Complete this assessment to demonstrate competency for {base_id}. / Complete esta evaluación para demostrar competencia en {base_id}."
+                    message = f"Complete this assessment to demonstrate competency for {short_name}. / Complete esta evaluación para demostrar competencia en {short_name}."
                     post_announcement(course_id, subject, message)
                     
                     logging.info(f"Quiz course created: {quiz_shortname}")
