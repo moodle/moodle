@@ -43,7 +43,8 @@ try {
     require_login();
     require_sesskey();
 
-    $quiz = null;
+    $activityid = null;
+    $activitytype = null;
 
     if ($attemptid) {
         // Get the quiz attempt.
@@ -56,10 +57,25 @@ try {
 
         // Get the quiz.
         $quiz = $DB->get_record('quiz', ['id' => $attempt->quiz], '*', MUST_EXIST);
+        $activityid = $quiz->id;
+        $activitytype = 'quiz';
     } else {
-        // Get quiz from CMID.
-        $cm = get_coursemodule_from_id('quiz', $cmid, 0, false, MUST_EXIST);
-        $quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
+        // Get activity from CMID - try to determine the type.
+        $cm = $DB->get_record('course_modules', ['id' => $cmid], '*', MUST_EXIST);
+        $module = $DB->get_record('modules', ['id' => $cm->module], '*', MUST_EXIST);
+        
+        $activitytype = $module->name;
+        $activityid = $cm->instance;
+        
+        // For supported module types, get the instance record.
+        if ($module->name == 'quiz') {
+            $activity = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
+        } else if ($module->name == 'resource') {
+            $activity = $DB->get_record('resource', ['id' => $cm->instance], '*', MUST_EXIST);
+        } else {
+            // For other module types, just use the cmid as reference.
+            $activityid = $cmid;
+        }
     }
 
     // Verify the password.
@@ -72,8 +88,9 @@ try {
     }
 
     // Log the verification.
+    // Note: We store activityid in the quizid column for backwards compatibility.
     $record = new stdClass();
-    $record->quizid = $quiz->id;
+    $record->quizid = $activityid;
     $record->userid = $USER->id;
     $record->attemptid = $attemptid ?: null; // Use null if 0.
     $record->timeverified = time();
@@ -98,3 +115,4 @@ try {
 }
 
 echo json_encode($response);
+
