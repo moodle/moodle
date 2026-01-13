@@ -31,10 +31,43 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Admin katalogi';
 $string['availablelangs'] = 'Mavjud til paketlari';
+$string['chooselanguagehead'] = 'Tilni tanlang';
+$string['chooselanguagesub'] = 'Iltimos, o‘rnatish uchun tilni tanlang. Ushbu til saytning standart tili sifatida ham ishlatiladi, ammo keyinchalik o‘zgartirish mumkin.';
+$string['clialreadyconfigured'] = 'config.php konfiguratsiya fayli allaqachon mavjud. Iltimos, ushbu sayt uchun Moodleni o‘rnatish uchun admin/cli/install_database.php faylidan foydalaning.';
+$string['clialreadyinstalled'] = 'config.php konfiguratsiya fayli allaqachon mavjud. Iltimos, ushbu sayt uchun Moodleni yangilash uchun admin/cli/install_database.php faylidan foydalaning.';
+$string['cliinstallheader'] = 'Moodle {$a} komandali satr orqali o‘rnatish dasturi';
+$string['clitablesexist'] = 'Ma’lumotlar bazasidagi jadvallar allaqachon mavjud; CLI orqali o‘rnatish davom ettirilmaydi.';
+$string['databasehost'] = 'Ma’lumotlar bazasi serveri';
+$string['databasename'] = 'Ma’lumotlar bazasi nomi';
+$string['databasetypehead'] = 'Ma’lumotlar bazasi drayverini tanlang';
 $string['dataroot'] = 'Ma’lumotlar katalogi';
+$string['datarootpermission'] = 'Ma’lumotlar papkalariga ruxsatlar';
 $string['dbprefix'] = 'Jadvallar prefiksi';
 $string['dirroot'] = 'Moodle katalogi';
+$string['environmenthead'] = 'Muhitingiz tekshirilmoqda…';
+$string['environmentsub2'] = 'Har bir Moodle versiyasi uchun minimal PHP versiyasi va bir qator majburiy PHP kengaytmalari talab qilinadi. To‘liq muhit tekshiruvi har bir o‘rnatish va yangilashdan oldin amalga oshiriladi. Yangi versiyani qanday o‘rnatish yoki PHP kengaytmalarni yoqishni bilmasangiz, server administratoriga murojaat qiling.';
+$string['errorsinenvironment'] = 'Muhit tekshiruvi muvaffaqiyatsiz yakunlandi!';
 $string['installation'] = 'O\'rnatish';
+$string['langdownloaderror'] = 'Afsuski, “{$a}” tili yuklab bo‘lmadi. O‘rnatish jarayoni ingliz tilida davom ettiriladi.';
+$string['paths'] = 'O‘tkazib yuborishlar';
+$string['pathserrcreatedataroot'] = 'Ma’lumotlar papkasi ({$a->dataroot}) o‘rnatish dasturi tomonidan yaratilolmayapti.';
+$string['pathshead'] = 'O’tkazib yuborishlarni tasdiqlash';
+$string['pathsrodataroot'] = 'Dataroot papkasiga yozish mumkin emas.';
+$string['pathsroparentdataroot'] = 'Ota papkaga ({$a->parent}) yozish mumkin emas. Shu sababli, ma’lumotlar papkasi ({$a->dataroot}) o‘rnatish dasturi tomonidan yaratilolmayapti.';
+$string['pathssubadmindir'] = 'Faqat juda kam web-hostlar sizga boshqaruv paneliga kirish uchun /admin URL’ini maxsus tarzda ishlatadi. Afsuski, bu Moodle administrator sahifalarining standart joylashuvi bilan to‘qnashadi. Buni tuzatish uchun o‘rnatishingizdagi admin papkasining nomini o‘zgartiring va yangi nomni bu yerga kiriting. Masalan: moodleadmin. Bu Moodle’dagi admin havolalarini tuzatadi.';
+$string['pathssubdataroot'] = '<p>Moodle foydalanuvchilar tomonidan yuklangan barcha fayl kontentini saqlaydigan papka.</p>
+<p>Ushbu papka veb-server foydalanuvchisi (odatda \'www-data\', \'nobody\' yoki \'apache\') tomonidan o‘qilishi va yozilishi mumkin bo‘lishi kerak.</p>
+<p>U to‘g‘ridan-to‘g‘ri veb orqali kirish mumkin bo‘lmasligi lozim.</p>
+<p>Agar papka hozir mavjud bo‘lmasa, o‘rnatish jarayoni uni yaratishga harakat qiladi.</p>';
+$string['pathssubdirroot'] = '<p>Moodle kodi joylashgan papkaning to‘liq yo‘li.</p>';
+$string['pathssubwwwroot'] = '<p>Moodle’ga kirish uchun to‘liq manzil, ya’ni foydalanuvchilar Moodle’ga kirish uchun brauzer manzil satriga kiritadigan manzil.</p>
+<p>Moodle’ga bir nechta manzil orqali kirish mumkin emas. Agar saytingiz bir nechta manzil orqali mavjud bo‘lsa, eng osonini tanlang va boshqa manzillar uchun doimiy yo‘naltirishni sozlang.</p>
+<p>Agar saytingiz Internetdan va ichki tarmoqdan (ba’zan Intranet deb ataladi) mavjud bo‘lsa, bu yerda jamoat manzilini ishlating.</p>
+<p>Agar hozirgi manzil noto‘g‘ri bo‘lsa, brauzeringiz manzil satrida URL’ni o‘zgartiring va o‘rnatishni qayta boshlang.</p>';
+$string['pathsunsecuredataroot'] = 'Dataroot joylashuvi xavfsiz emas.';
+$string['pathswrongadmindir'] = 'Administrator papkasi mavjud emas.';
+$string['phpextension'] = '{$a} PHP kengaytmasi';
+$string['phpversion'] = 'PHP versiyasi';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Siz bu sahifani ko‘rayotganingizning sababi, siz kompyuteringizda <strong>{$a->packname} {$a->packversion}</strong> paketini muvaffaqiyatli o‘rnatdingiz va ishga tushirdingiz. Tabriklaymiz!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong> ning ushbu relizi <strong>Moodle</strong> ishlaydigan muhitni yaratish uchun ilovalarni o‘z ichiga oladi, ya’ni:';
