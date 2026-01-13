@@ -1,0 +1,5 @@
+issueNumber: MDL-87425
+notes:
+  core:
+    - message: The `public/question/qengine.js` file has been removed.
+      type: removed
