@@ -127,8 +127,6 @@ Since Moodle 4.4, the available activity purposes are:
 * Resource (MOD_PURPOSE_CONTENT)
 * Other (MOD_PURPOSE_OTHER)
 
-> NOTE: On Moodle 4.3 downwards, MOD_PURPOSE_INTERFACE was also available, but it has been deprecated, so it's not recommended to use it.
-
 ### Purpose colours
 
 The activity icon colours can be customised using the theme Boost 'Raw initial SCSS' feature. The following variables are available:
