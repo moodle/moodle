@@ -28,14 +28,14 @@
 }}
 <div class="condition list-group-item list-group-item-action text-dark" data-region="active-condition"
         data-condition-id="{{id}}" data-condition-name="{{heading}}" data-condition-position="{{sortorder}}">
-    <div class="condition-header d-flex align-items-start">
-        {{>core/drag_handle}}
-        <div>
-            <div class="d-flex">
-                <small class="text-muted text-uppercase">{{entityname}} • {{heading}}</small>
-            </div>
+    <div class="condition-header d-flex align-items-center">
+        {{<core/drag_handle}}
+            {{$extraclasses}}icon-size-2{{/extraclasses}}
+        {{/core/drag_handle}}
+        <div class="d-flex ms-2">
+            <small class="text-muted text-uppercase">{{entityname}} • {{heading}}</small>
         </div>
-        <button class="btn btn-link p-0 ms-auto"
+        <button class="btn btn-icon icon-size-2 p-0 ms-auto"
                 type="button"
                 data-action="report-remove-condition"
                 title="{{#str}}deletecondition, core_reportbuilder, {{{heading}}}{{/str}}"

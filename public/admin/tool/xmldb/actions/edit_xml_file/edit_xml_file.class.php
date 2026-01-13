@@ -183,10 +183,17 @@ class edit_xml_file extends XMLDBAction {
                     $row = 0;
                     foreach ($tables as $table) {
                         // Drag element for sortorder.
-                        $move = html_writer::span($OUTPUT->render_from_template('core/drag_handle',
-                            ['movetitle' => get_string('movecontent', 'moodle', $table->getName())]), '',
-                            ['data-action' => 'move_updown_table', 'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
-                                'data-table' => $table->getName()]);
+                        $move = html_writer::span(
+                            content: $OUTPUT->render_from_template(
+                                'core/drag_handle',
+                                ['movetitle' => get_string('movecontent', 'moodle', $table->getName()), 'extraclasses' => 'me-2']
+                            ),
+                            attributes: [
+                                'data-action' => 'move_updown_table',
+                                'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
+                                'data-table' => $table->getName(),
+                            ]
+                        );
                         // The table name (link to edit table)
                         $t = '<a href="index.php?action=edit_table&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $table->getName() . '</a>';
                         // Calculate buttons

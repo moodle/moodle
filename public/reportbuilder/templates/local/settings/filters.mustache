@@ -65,24 +65,26 @@
             {{#hasactivefilters}}
                 <ul class="list-group reportbuilder-sortable-list mt-2 ms-0">
                     {{#activefilters}}
-                        <li class="list-group-item list-group-item-action d-flex align-items-start text-dark"
+                        <li class="list-group-item list-group-item-action text-dark"
                             data-region="active-filter" data-filter-id="{{id}}" data-filter-name="{{heading}}" data-filter-position="{{sortorder}}">
-                            {{>core/drag_handle}}
-                            <div>
-                                <div class="d-flex">
+                            <div class="d-flex align-items-center mb-1">
+                                {{<core/drag_handle}}
+                                    {{$extraclasses}}icon-size-2{{/extraclasses}}
+                                {{/core/drag_handle}}
+                                <div class="d-flex ms-2">
                                     <small class="text-muted text-uppercase">{{entityname}} • {{heading}}</small>
                                 </div>
-                                <div>
-                                    {{{headingeditable}}}
-                                </div>
+                                <button class="btn btn-icon icon-size-2 p-0 ms-auto"
+                                        type="button"
+                                        data-action="report-remove-filter"
+                                        title="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}"
+                                        aria-label="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}">
+                                    {{#pix}}e/cancel, core{{/pix}}
+                                </button>
                             </div>
-                            <button class="btn btn-link p-0 ms-auto"
-                                    type="button"
-                                    data-action="report-remove-filter"
-                                    title="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}"
-                                    aria-label="{{#str}}deletefilter, core_reportbuilder, {{{heading}}}{{/str}}">
-                                {{#pix}}e/cancel, core{{/pix}}
-                            </button>
+                            <div>
+                                {{{headingeditable}}}
+                            </div>
                         </li>
                     {{/activefilters}}
                 </ul>

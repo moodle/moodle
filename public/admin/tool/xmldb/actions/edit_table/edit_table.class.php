@@ -212,10 +212,19 @@ class edit_table extends XMLDBAction {
             $row = 0;
             foreach ($fields as $field) {
                 // Drag element up/down.
-                $move = (count($fields) > 1) ? html_writer::span($OUTPUT->render_from_template('core/drag_handle',
-                    ['movetitle' => get_string('movecontent', 'moodle', $field->getName())]), '',
-                    ['data-action' => 'move_updown_field', 'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
-                        'data-table' => $table->getName(), 'data-field' => $field->getName()]) : '';
+                $draghandle = html_writer::span(
+                    content: $OUTPUT->render_from_template(
+                        'core/drag_handle',
+                        ['movetitle' => get_string('movecontent', 'moodle', $field->getName()), 'extraclasses' => 'me-2']
+                    ),
+                    attributes: [
+                        'data-action' => 'move_updown_field',
+                        'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
+                        'data-table' => $table->getName(),
+                        'data-field' => $field->getName(),
+                    ]
+                );
+                $move = (count($fields) > 1) ? $draghandle : '';
                 // The field name (link to edit - if the field has no uses)
                 if (!$structure->getFieldUses($table->getName(), $field->getName())) {
                     $f = '<a href="index.php?action=edit_field&amp;field=' .$field->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $field->getName() . '</a>';
@@ -263,10 +272,19 @@ class edit_table extends XMLDBAction {
             $row = 0;
             foreach ($keys as $key) {
                 // Drag element up/down.
-                $move = (count($keys) > 1) ? html_writer::span($OUTPUT->render_from_template('core/drag_handle',
-                    ['movetitle' => get_string('movecontent', 'moodle', $key->getName())]), '',
-                    ['data-action' => 'move_updown_key', 'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
-                        'data-table' => $table->getName(), 'data-key' => $key->getName()]) : '';
+                $draghandle = html_writer::span(
+                    content: $OUTPUT->render_from_template(
+                        'core/drag_handle',
+                        ['movetitle' => get_string('movecontent', 'moodle', $field->getName()), 'extraclasses' => 'me-2']
+                    ),
+                    attributes: [
+                        'data-action' => 'move_updown_key',
+                        'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
+                        'data-table' => $table->getName(),
+                        'data-key' => $key->getName(),
+                    ]
+                );
+                $move = (count($keys) > 1) ? $draghandle : '';
                 // The key name (link to edit - if the key has no uses)
                 if (!$structure->getKeyUses($table->getName(), $key->getName())) {
                     $k = '<a href="index.php?action=edit_key&amp;key=' .$key->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $key->getName() . '</a>';
@@ -309,10 +327,19 @@ class edit_table extends XMLDBAction {
             $row = 0;
             foreach ($indexes as $index) {
                 // Drag element up/down.
-                $move = (count($indexes) > 1) ? html_writer::span($OUTPUT->render_from_template('core/drag_handle',
-                    ['movetitle' => get_string('movecontent', 'moodle', $index->getName())]), '',
-                    ['data-action' => 'move_updown_index', 'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
-                        'data-table' => $table->getName(), 'data-index' => $index->getName()]) : '';
+                $draghandle = html_writer::span(
+                    content: $OUTPUT->render_from_template(
+                        'core/drag_handle',
+                        ['movetitle' => get_string('movecontent', 'moodle', $field->getName()), 'extraclasses' => 'me-2']
+                    ),
+                    attributes: [
+                        'data-action' => 'move_updown_index',
+                        'data-dir' => str_replace($CFG->dirroot, '', $dirpath),
+                        'data-table' => $table->getName(),
+                        'data-index' => $index->getName(),
+                    ]
+                );
+                $move = (count($indexes) > 1) ? $draghandle : '';
                 // The index name (link to edit)
                 $i = '<a href="index.php?action=edit_index&amp;index=' .$index->getName() . '&amp;table=' . $table->getName() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $dirpath)) . '">' . $index->getName() . '</a>';
                 // Calculate buttons

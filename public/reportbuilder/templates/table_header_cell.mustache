@@ -29,13 +29,15 @@
 }}
 <div class="d-flex justify-content-start">
     <div class="me-2">
-        {{>core/drag_handle}}
+        {{<core/drag_handle}}
+            {{$extraclasses}}icon-size-2{{/extraclasses}}
+        {{/core/drag_handle}}
     </div>
     <div class="w-100">
         <div class="d-flex justify-content-between mb-2">
-            <small class="text-muted text-nowrap fw-normal text-uppercase">{{entityname}} &bull; {{name}}</small>
+            <small class="text-muted text-nowrap fw-normal text-uppercase mt-1">{{entityname}} &bull; {{name}}</small>
             <span class="text-nowrap">
-                <button class="btn btn-link p-0"
+                <button class="btn btn-icon icon-size-2 ms-1 p-0"
                         data-action="report-remove-column"
                         type="button"
                         title="{{#str}}deletecolumn, core_reportbuilder, {{{name}}}{{/str}}"

@@ -98,8 +98,8 @@ p.arrow_button {
     }
     @each $size, $length in $iconsizes {
         &.icon-size-#{$size} {
-            height: calc(#{$length} + 1rem);
-            width: calc(#{$length} + 1rem);
+            height: calc(#{$length} * 2);
+            width: calc(#{$length} * 2);
             --#{$prefix}btn-font-size: #{$length};
             --#{$prefix}btn-line-height: #{$length};
         }
