@@ -205,6 +205,8 @@ M.util.CollapsibleRegion.prototype.icon = null;
  * @param {Object} [args.callbackargs] Any arguments to pass to the callback.
  * @param {String} [args.cancellabel] The label to use on the cancel button.
  * @param {String} [args.continuelabel] The label to use on the continue button.
+ * @param {String} [args.title] The title of the confirmation dialog.
+ * @param {String} [args.dialogtype] The type of dialog - 'delete' shows a delete/cancel dialog.
  */
 M.util.show_confirm_dialog = (e, {
     message,
@@ -212,6 +214,8 @@ M.util.show_confirm_dialog = (e, {
     callback = null,
     scope = null,
     callbackargs = [],
+    title = null,
+    dialogtype = null,
 } = {}) => {
     if (e.preventDefault) {
         e.preventDefault();
@@ -226,8 +230,12 @@ M.util.show_confirm_dialog = (e, {
                 scope = e.target;
             }
 
-            Notification.saveCancelPromise(
-                Str.get_string('confirmation', 'admin'),
+            let method = 'saveCancelPromise';
+            if (dialogtype === 'delete') {
+                method = 'deleteCancelPromise';
+            }
+            Notification[method](
+                title || Str.get_string('confirmation', 'admin'),
                 message,
                 continuelabel || Str.get_string('yes', 'moodle'),
             )

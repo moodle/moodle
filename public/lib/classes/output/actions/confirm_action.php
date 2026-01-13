@@ -34,8 +34,17 @@ class confirm_action extends component_action {
      * @param string $callback Deprecated since 2.7
      * @param string $continuelabel The string to use for he continue button
      * @param string $cancellabel The string to use for the cancel button
+     * @param string|null $title The title of the confirmation dialog
+     * @param string|null $dialogtype The type of dialog (primary button style). E.g. 'delete'
      */
-    public function __construct($message, $callback = null, $continuelabel = null, $cancellabel = null) {
+    public function __construct(
+        $message,
+        $callback = null,
+        $continuelabel = null,
+        $cancellabel = null,
+        ?string $title = null,
+        ?string $dialogtype = null,
+    ) {
         if ($callback !== null) {
             debugging(
                 'The callback argument to new confirm_action() has been deprecated.' .
@@ -48,6 +57,8 @@ class confirm_action extends component_action {
             'message' => $message,
             'continuelabel' => $continuelabel,
             'cancellabel' => $cancellabel,
+            'title' => $title,
+            'dialogtype' => $dialogtype,
         ]);
     }
 }

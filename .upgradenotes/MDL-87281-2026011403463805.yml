@@ -1,0 +1,9 @@
+issueNumber: MDL-87281
+notes:
+  core:
+    - message: >-
+        The __construct() method of the confirm_action class now accepts two
+        optional new parameters: `$title` (string) to set the dialogue's
+        heading, and `$dialogtype` (string) to specify the visual style of the
+        action ('delete' for displaying the danger button).
+      type: improved
