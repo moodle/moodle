@@ -192,11 +192,12 @@ button.btn.btn-submit {
     }
 }
 
-// Notifications Popup - Black text in light mode
-.popover-region-notifications,
-.all-notifications,
-[data-region="all-notifications"],
-[data-region="notification-content-item-container"] {
+// Notifications Popup Content - Black text in light mode
+// Only target the popover content, not the navbar trigger
+.popover-region-container .popover-region-content,
+.popover-region-notifications .popover-region-content,
+.popover-region-container .all-notifications,
+.popover-region-content .all-notifications {
     background-color: #fff !important;
 
     .content-item-container,
@@ -207,13 +208,13 @@ button.btn.btn-submit {
         .notification-message,
         .content-item-body,
         .timestamp,
-        .content-item-footer {
+        .content-item-footer,
+        div {
             color: #000 !important;
         }
 
-        a,
-        .context-link,
-        .view-more {
+        a.context-link,
+        a.view-more {
             color: $aust-blue !important;
 
             &:hover {
@@ -223,6 +224,17 @@ button.btn.btn-submit {
 
         &.unread {
             background-color: #f8f9fa !important;
+        }
+    }
+
+    // Popover header
+    .popover-region-header-container {
+        background-color: #fff !important;
+        color: #000 !important;
+        border-bottom: 1px solid #dee2e6 !important;
+
+        .popover-region-header-text {
+            color: #000 !important;
         }
     }
 }
