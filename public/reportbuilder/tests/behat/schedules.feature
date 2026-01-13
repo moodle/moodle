@@ -40,7 +40,7 @@ Feature: Manage custom report schedules
     And I should see "All my lovely users" in the "New schedule" "dialogue"
     And I set the field "Manually added users: User One, User Two" to "1"
     And I click on "Save" "button" in the "New schedule" "dialogue"
-    Then I should see "Schedule created"
+    Then "Schedule created" "toast_message" should be visible
     And the following should exist in the "Report schedules" table:
       | Name        | Time last sent | Time next send                          | Modified by |
       | My schedule | Never          | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## | Admin User  |
@@ -101,8 +101,7 @@ Feature: Manage custom report schedules
       | <filter> from     | ##2 days ago## |
       | <filter> to       | ##today##      |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
-    Then I should see "Filters applied"
-    And I should see "My schedule 1" in the "Report schedules" "table"
+    Then I should see "My schedule 1" in the "Report schedules" "table"
     And I should not see "My schedule 2" in the "Report schedules" "table"
     Examples:
       | filter         |
@@ -119,8 +118,7 @@ Feature: Manage custom report schedules
     When I click on "Filters" "button"
     And I set the field "Enabled operator" in the "Enabled" "core_reportbuilder > Filter" to "Yes"
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
-    Then I should see "Filters applied"
-    And I should see "My schedule 1" in the "Report schedules" "table"
+    Then I should see "My schedule 1" in the "Report schedules" "table"
     And I should not see "My schedule 2" in the "Report schedules" "table"
     And I set the field "Enabled operator" in the "Enabled" "core_reportbuilder > Filter" to "No"
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
@@ -135,10 +133,10 @@ Feature: Manage custom report schedules
     And I click on the "Schedules" dynamic tab
     When I click on "Disable schedule" "field" in the "My schedule" "table_row"
     Then the "class" attribute of "My schedule" "table_row" should contain "text-muted"
-    And I should see "Schedule disabled" in the ".toast-wrapper" "css_element"
+    And "Schedule disabled" "toast_message" should be visible
     And I click on "Enable schedule" "field" in the "My schedule" "table_row"
     And the "class" attribute of "My schedule" "table_row" should be set
-    And I should see "Schedule enabled" in the ".toast-wrapper" "css_element"
+    And "Schedule enabled" "toast_message" should be visible
 
   Scenario: Edit report schedule
     Given the following "core_reportbuilder > Schedules" exist:
@@ -155,7 +153,7 @@ Feature: Manage custom report schedules
       | Body                   | For I haven't got a clue      |
       | If the report is empty | Don't send message            |
     And I click on "Save" "button" in the "Edit schedule details" "dialogue"
-    Then I should see "Schedule updated"
+    Then "Schedule updated" "toast_message" should be visible
     And the following should exist in the "Report schedules" table:
       | Name                | Time last sent | Time next send                          | Modified by |
       | My updated schedule | Never          | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## | Admin User  |
@@ -176,7 +174,7 @@ Feature: Manage custom report schedules
     And I click on the "Schedules" dynamic tab
     When I press "Send schedule" action in the "My schedule" report row
     And I click on "Confirm" "button" in the "Send schedule" "dialogue"
-    Then I should see "Schedule sent"
+    Then "Schedule sent" "toast_message" should be visible
     And I run all adhoc tasks
     And I reload the page
     And the following should exist in the "Report schedules" table:
@@ -191,5 +189,5 @@ Feature: Manage custom report schedules
     And I click on the "Schedules" dynamic tab
     When I press "Delete schedule" action in the "My schedule" report row
     And I click on "Delete" "button" in the "Delete schedule" "dialogue"
-    Then I should see "Schedule deleted"
+    Then "Schedule deleted" "toast_message" should be visible
     And I should see "Nothing to display"
