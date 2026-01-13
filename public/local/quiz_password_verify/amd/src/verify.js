@@ -181,10 +181,14 @@ define(['jquery', 'core/notification', 'core/modal_factory', 'core/modal_events'
                 // Handle "Mark as done".
                 var toggleButton = target.closest('[data-action="toggle-manual-completion"]');
                 if (toggleButton) {
-                    // Check for quiz context (including View page).
+                    // Check for quiz OR resource context (including View page).
+                    // This covers both Read and Understand (resource) and Competency (quiz) courses.
                     if (toggleButton.closest('.modtype_quiz') ||
                         toggleButton.closest('.activity.quiz') ||
-                        document.body.classList.contains('path-mod-quiz')) {
+                        toggleButton.closest('.modtype_resource') ||
+                        toggleButton.closest('.activity.resource') ||
+                        document.body.classList.contains('path-mod-quiz') ||
+                        document.body.classList.contains('path-mod-resource')) {
 
                         if (verified) {
                             return;
