@@ -142,7 +142,8 @@ foreach ($checks as $check) {
         );
 
         $summary = str_replace("\n", "\n" . $prefix . '     ', $summary);
-        $output .= sprintf( $format, '', '    ' . $summary);
+        $output .= sprintf($format, '', '    ' . $summary);
+        $output .= sprintf($format, '', '    ' . html_to_text($result->get_details(), width: 0, dolinks: false));
 
         if ($options['verbose']) {
             $actionlink = $check->get_action_link();
@@ -168,4 +169,3 @@ if ($output) {
 
 // NRPE shell exit code.
 exit($exitcode);
-
