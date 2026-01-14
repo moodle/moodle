@@ -249,10 +249,18 @@ require(['jquery'], function($) {
         }
 
         // Parse course config from JSON.
+        // First try the form data, then fallback to raw POST (Moodle may sanitize JSON).
         $courseconfig = [];
-        if (!empty($data->course_config)) {
-            $decoded = json_decode($data->course_config, true);
-            if (is_array($decoded)) {
+        $rawconfig = $data->course_config ?? '';
+        
+        // If form data is empty, try raw POST directly.
+        if (empty($rawconfig) || $rawconfig === '[]') {
+            $rawconfig = optional_param('course_config', '', PARAM_RAW);
+        }
+        
+        if (!empty($rawconfig) && $rawconfig !== '[]') {
+            $decoded = json_decode($rawconfig, true);
+            if (is_array($decoded) && !empty($decoded)) {
                 $courseconfig = $decoded;
             }
         }
