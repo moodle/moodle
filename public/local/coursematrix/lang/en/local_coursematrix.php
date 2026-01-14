@@ -25,6 +25,9 @@
 $string['pluginname'] = 'Course Matrix';
 $string['coursematrix'] = 'Course Matrix';
 $string['coursematrix:manage'] = 'Manage Course Matrix';
+$string['coursematrix:viewdashboard'] = 'View Learning Plans Dashboard';
+$string['coursematrix:assignplans'] = 'Assign Learning Plans to Users';
+$string['coursematrix:receivereminders'] = 'Receive Learning Plan Reminders';
 $string['department'] = 'Department';
 $string['jobtitle'] = 'Job Title';
 $string['courses'] = 'Courses';
@@ -38,3 +41,74 @@ $string['save'] = 'Save';
 $string['cancel'] = 'Cancel';
 $string['actions'] = 'Actions';
 $string['matrixupdated'] = 'Matrix updated and enrollments processed.';
+
+// Learning Plans.
+$string['learningplans'] = 'Learning Plans';
+$string['learningplan'] = 'Learning Plan';
+$string['createplan'] = 'Create Learning Plan';
+$string['editplan'] = 'Edit Learning Plan';
+$string['deleteplan'] = 'Delete Learning Plan';
+$string['planname'] = 'Plan Name';
+$string['plandescription'] = 'Description';
+$string['plancourses'] = 'Courses in Plan';
+$string['duedays'] = 'Days to Complete';
+$string['reminders'] = 'Reminder Schedule';
+$string['addreminder'] = 'Add Reminder';
+$string['removereminder'] = 'Remove';
+$string['daysbefore'] = 'Days Before Due';
+$string['assigntoplan'] = 'Assign to Learning Plan';
+$string['assignusers'] = 'Assign Users';
+$string['selectplan'] = 'Select Learning Plan';
+$string['selectlearningplans'] = 'Select Learning Plans';
+$string['noplans'] = 'No learning plans defined yet.';
+$string['plansaved'] = 'Learning plan saved successfully.';
+$string['plandeleted'] = 'Learning plan deleted.';
+$string['usersassigned'] = 'Users assigned to learning plan.';
+$string['alreadyassigned'] = 'User is already assigned to this plan.';
+
+// Status.
+$string['status'] = 'Status';
+$string['status_active'] = 'In Progress';
+$string['status_overdue'] = 'Overdue';
+$string['status_completed'] = 'Completed';
+$string['currentcourse'] = 'Current Course';
+$string['startdate'] = 'Started';
+$string['duedate'] = 'Due Date';
+
+// Due date badges.
+$string['daysremaining'] = '{$a} days remaining';
+$string['dayremaining'] = '1 day remaining';
+$string['overdue'] = 'OVERDUE';
+$string['overduedays'] = '{$a} days overdue';
+
+// Dashboard.
+$string['dashboard'] = 'Dashboard';
+$string['totalplans'] = 'Total Plans';
+$string['totalusers'] = 'Total Users';
+$string['activeusers'] = 'In Progress';
+$string['overdueusers'] = 'Overdue';
+$string['completedusers'] = 'Completed';
+$string['planstatistics'] = 'Plan Statistics';
+$string['userlist'] = 'User List';
+$string['filterbyplan'] = 'Filter by Plan';
+$string['filterbystatus'] = 'Filter by Status';
+$string['allplans'] = 'All Plans';
+$string['allstatuses'] = 'All Statuses';
+$string['noplandata'] = 'No data available.';
+$string['inprogress'] = 'In Progress';
+$string['aging'] = 'Aging';
+$string['viewusers'] = 'View Users';
+
+// Reminder messages.
+$string['task_sendreminders'] = 'Send learning plan reminders';
+$string['messageprovider:planreminder'] = 'Learning plan reminder notifications';
+$string['remindersubject'] = 'Reminder: Complete "{$a->coursename}" - {$a->daysremaining} days remaining';
+$string['reminderbody'] = 'Hello {$a->username},
+
+This is a reminder that you have {$a->daysremaining} day(s) remaining to complete the course "{$a->coursename}" as part of your learning plan "{$a->planname}".
+
+Due date: {$a->duedate}
+
+Please log in to Moodle and complete this course before the due date.
+
+Thank you.';

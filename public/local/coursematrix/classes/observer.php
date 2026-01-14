@@ -43,6 +43,7 @@ class observer {
      */
     public static function user_created(\core\event\user_created $event) {
         local_coursematrix_enrol_user($event->objectid);
+        local_coursematrix_assign_user_plans($event->objectid);
     }
 
     /**
@@ -52,5 +53,16 @@ class observer {
      */
     public static function user_updated(\core\event\user_updated $event) {
         local_coursematrix_enrol_user($event->objectid);
+        local_coursematrix_assign_user_plans($event->objectid);
+    }
+
+    /**
+     * Triggered when a user completes a course.
+     * Progresses the user to the next course in their learning plan.
+     *
+     * @param \core\event\course_completed $event The event object
+     */
+    public static function course_completed(\core\event\course_completed $event) {
+        local_coursematrix_progress_user_plan($event->relateduserid, $event->courseid);
     }
 }

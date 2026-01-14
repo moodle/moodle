@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event observers definition.
+ * Scheduled tasks definition for local_coursematrix.
  *
  * @package    local_coursematrix
  * @copyright  2024 Author Name
@@ -24,17 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$observers = [
+$tasks = [
     [
-        'eventname' => '\core\event\user_created',
-        'callback'  => 'local_coursematrix\observer::user_created',
-    ],
-    [
-        'eventname' => '\core\event\user_updated',
-        'callback'  => 'local_coursematrix\observer::user_updated',
-    ],
-    [
-        'eventname' => '\core\event\course_completed',
-        'callback'  => 'local_coursematrix\observer::course_completed',
+        'classname' => 'local_coursematrix\task\send_reminders',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '6',       // Run at 6 AM.
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
     ],
 ];

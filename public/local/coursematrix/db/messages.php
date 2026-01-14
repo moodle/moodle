@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event observers definition.
+ * Message provider definitions for local_coursematrix.
  *
  * @package    local_coursematrix
  * @copyright  2024 Author Name
@@ -24,17 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$observers = [
-    [
-        'eventname' => '\core\event\user_created',
-        'callback'  => 'local_coursematrix\observer::user_created',
-    ],
-    [
-        'eventname' => '\core\event\user_updated',
-        'callback'  => 'local_coursematrix\observer::user_updated',
-    ],
-    [
-        'eventname' => '\core\event\course_completed',
-        'callback'  => 'local_coursematrix\observer::course_completed',
+$messageproviders = [
+    'planreminder' => [
+        'capability' => 'local/coursematrix:receivereminders',
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
     ],
 ];

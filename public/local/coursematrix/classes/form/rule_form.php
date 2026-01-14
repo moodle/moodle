@@ -76,6 +76,18 @@ class rule_form extends \moodleform {
             'noselectionstring' => get_string('selectcourses', 'local_coursematrix'),
         ]);
 
+        // Learning plans autocomplete.
+        $allplans = $DB->get_records_menu('local_coursematrix_plans', [], 'name', 'id, name');
+        if (!empty($allplans)) {
+            $mform->addElement('autocomplete', 'learningplans', get_string('learningplans', 'local_coursematrix'), $allplans, [
+                'multiple' => true,
+                'noselectionstring' => get_string('selectlearningplans', 'local_coursematrix'),
+            ]);
+        } else {
+            $mform->addElement('static', 'noplans', get_string('learningplans', 'local_coursematrix'),
+                get_string('noplans', 'local_coursematrix'));
+        }
+
         $this->add_action_buttons(true, get_string('save', 'local_coursematrix'));
     }
 }

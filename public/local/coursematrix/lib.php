@@ -227,3 +227,531 @@ function local_coursematrix_enrol_user_in_course($userid, $courseid, $roleid, $e
         $enrolmanual->enrol_user($instance, $userid, $roleid);
     }
 }
+
+// ============================================================================
+// LEARNING PLAN FUNCTIONS
+// ============================================================================
+
+/**
+ * Get all learning plans.
+ *
+ * @return array List of learning plans
+ */
+function local_coursematrix_get_plans() {
+    global $DB;
+    return $DB->get_records('local_coursematrix_plans', null, 'name ASC');
+}
+
+/**
+ * Get a single learning plan with its courses.
+ *
+ * @param int $planid Plan ID
+ * @return stdClass|false Plan object with courses array, or false
+ */
+function local_coursematrix_get_plan($planid) {
+    global $DB;
+    $plan = $DB->get_record('local_coursematrix_plans', ['id' => $planid]);
+    if (!$plan) {
+        return false;
+    }
+
+    // Get courses in order.
+    $plan->courses = $DB->get_records('local_coursematrix_plan_courses',
+        ['planid' => $planid], 'sortorder ASC');
+
+    // Get reminders.
+    $plan->reminders = $DB->get_records('local_coursematrix_reminders',
+        ['planid' => $planid], 'daysbefore DESC');
+
+    return $plan;
+}
+
+/**
+ * Save a learning plan (create or update).
+ *
+ * @param stdClass $data Plan data including courses array
+ * @return int Plan ID
+ */
+function local_coursematrix_save_plan($data) {
+    global $DB;
+
+    $now = time();
+
+    if (empty($data->id)) {
+        // Create new plan.
+        $data->timecreated = $now;
+        $data->timemodified = $now;
+        $planid = $DB->insert_record('local_coursematrix_plans', $data);
+    } else {
+        // Update existing plan.
+        $planid = $data->id;
+        $data->timemodified = $now;
+        $DB->update_record('local_coursematrix_plans', $data);
+
+        // Delete old course associations.
+        $DB->delete_records('local_coursematrix_plan_courses', ['planid' => $planid]);
+        // Delete old reminders.
+        $DB->delete_records('local_coursematrix_reminders', ['planid' => $planid]);
+    }
+
+    // Save courses with order and due days.
+    if (!empty($data->courses) && is_array($data->courses)) {
+        $sortorder = 0;
+        foreach ($data->courses as $coursedata) {
+            $record = new stdClass();
+            $record->planid = $planid;
+            $record->courseid = $coursedata['courseid'];
+            $record->sortorder = $sortorder++;
+            $record->duedays = $coursedata['duedays'] ?? 14;
+            $DB->insert_record('local_coursematrix_plan_courses', $record);
+        }
+    }
+
+    // Save reminders.
+    if (!empty($data->reminders) && is_array($data->reminders)) {
+        foreach ($data->reminders as $reminder) {
+            $record = new stdClass();
+            $record->planid = $planid;
+            $record->daysbefore = $reminder['daysbefore'];
+            $record->enabled = $reminder['enabled'] ?? 1;
+            $DB->insert_record('local_coursematrix_reminders', $record);
+        }
+    }
+
+    return $planid;
+}
+
+/**
+ * Delete a learning plan and all associated data.
+ *
+ * @param int $planid Plan ID
+ * @return bool True on success
+ */
+function local_coursematrix_delete_plan($planid) {
+    global $DB;
+
+    // Delete in proper order (children first).
+    $DB->delete_records('local_coursematrix_reminders', ['planid' => $planid]);
+    $DB->delete_records('local_coursematrix_plan_courses', ['planid' => $planid]);
+    $DB->delete_records('local_coursematrix_user_plans', ['planid' => $planid]);
+    $DB->delete_records('local_coursematrix_plans', ['id' => $planid]);
+
+    return true;
+}
+
+/**
+ * Assign a user to a learning plan.
+ *
+ * @param int $userid User ID
+ * @param int $planid Plan ID
+ * @return int|bool User plan assignment ID, or false if failed
+ */
+function local_coursematrix_assign_user_to_plan($userid, $planid) {
+    global $DB;
+
+    // Check if already assigned.
+    if ($DB->record_exists('local_coursematrix_user_plans', ['userid' => $userid, 'planid' => $planid])) {
+        return false; // Already assigned.
+    }
+
+    // Get first course in the plan.
+    $firstcourse = $DB->get_record('local_coursematrix_plan_courses',
+        ['planid' => $planid], 'courseid, duedays', IGNORE_MULTIPLE, 0);
+
+    if (!$firstcourse) {
+        return false; // No courses in plan.
+    }
+
+    // Create user plan assignment.
+    $userplan = new stdClass();
+    $userplan->userid = $userid;
+    $userplan->planid = $planid;
+    $userplan->currentcourseid = $firstcourse->courseid;
+    $userplan->startdate = time();
+    $userplan->status = 'active';
+    $userplan->timecreated = time();
+
+    $userplanid = $DB->insert_record('local_coursematrix_user_plans', $userplan);
+
+    // Enrol user in first course.
+    $enrolmanual = enrol_get_plugin('manual');
+    if ($enrolmanual) {
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $roleid = $studentrole ? $studentrole->id : 5;
+        local_coursematrix_enrol_user_in_course($userid, $firstcourse->courseid, $roleid, $enrolmanual);
+    }
+
+    return $userplanid;
+}
+
+/**
+ * Progress a user to the next course in their learning plan.
+ * Called when a user completes a course.
+ *
+ * @param int $userid User ID
+ * @param int $completedcourseid The course that was completed
+ * @return bool True if progressed, false if not applicable
+ */
+function local_coursematrix_progress_user_plan($userid, $completedcourseid) {
+    global $DB;
+
+    // Find user plans where this is the current course.
+    $userplans = $DB->get_records('local_coursematrix_user_plans', [
+        'userid' => $userid,
+        'currentcourseid' => $completedcourseid,
+        'status' => 'active',
+    ]);
+
+    if (empty($userplans)) {
+        return false;
+    }
+
+    foreach ($userplans as $userplan) {
+        // Get current course's position in the plan.
+        $currentpc = $DB->get_record('local_coursematrix_plan_courses', [
+            'planid' => $userplan->planid,
+            'courseid' => $completedcourseid,
+        ]);
+
+        if (!$currentpc) {
+            continue;
+        }
+
+        // Get next course.
+        $nextcourse = $DB->get_record_select(
+            'local_coursematrix_plan_courses',
+            'planid = :planid AND sortorder > :sortorder',
+            ['planid' => $userplan->planid, 'sortorder' => $currentpc->sortorder],
+            'courseid, duedays',
+            IGNORE_MULTIPLE
+        );
+
+        if ($nextcourse) {
+            // Progress to next course.
+            $userplan->currentcourseid = $nextcourse->courseid;
+            $userplan->startdate = time();
+            $userplan->status = 'active';
+            $DB->update_record('local_coursematrix_user_plans', $userplan);
+
+            // Enrol in next course.
+            $enrolmanual = enrol_get_plugin('manual');
+            if ($enrolmanual) {
+                $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+                $roleid = $studentrole ? $studentrole->id : 5;
+                local_coursematrix_enrol_user_in_course($userid, $nextcourse->courseid, $roleid, $enrolmanual);
+            }
+        } else {
+            // No more courses - plan completed!
+            $userplan->status = 'completed';
+            $userplan->currentcourseid = null;
+            $DB->update_record('local_coursematrix_user_plans', $userplan);
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Get the due date info for a user's course in a learning plan.
+ *
+ * @param int $userid User ID
+ * @param int $courseid Course ID
+ * @return stdClass|null Object with duedate, daysremaining, status, or null if not in plan
+ */
+function local_coursematrix_get_user_course_dueinfo($userid, $courseid) {
+    global $DB;
+
+    $userplan = $DB->get_record('local_coursematrix_user_plans', [
+        'userid' => $userid,
+        'currentcourseid' => $courseid,
+    ]);
+
+    if (!$userplan) {
+        return null;
+    }
+
+    $plancourse = $DB->get_record('local_coursematrix_plan_courses', [
+        'planid' => $userplan->planid,
+        'courseid' => $courseid,
+    ]);
+
+    if (!$plancourse) {
+        return null;
+    }
+
+    $dueinfo = new stdClass();
+    $dueinfo->duedate = $userplan->startdate + ($plancourse->duedays * 86400);
+    $dueinfo->daysremaining = ceil(($dueinfo->duedate - time()) / 86400);
+    $dueinfo->planid = $userplan->planid;
+    $dueinfo->status = $userplan->status;
+
+    // Determine urgency level.
+    if ($dueinfo->daysremaining < 0) {
+        $dueinfo->urgency = 'overdue';
+    } else if ($dueinfo->daysremaining <= 2) {
+        $dueinfo->urgency = 'critical';
+    } else if ($dueinfo->daysremaining <= 7) {
+        $dueinfo->urgency = 'warning';
+    } else {
+        $dueinfo->urgency = 'normal';
+    }
+
+    return $dueinfo;
+}
+
+/**
+ * Check all user plans and update overdue statuses.
+ * Also returns list of users who need reminders.
+ *
+ * @return array Array of users needing reminders with their plan info
+ */
+function local_coursematrix_check_overdue_and_reminders() {
+    global $DB;
+
+    $now = time();
+    $remindersneeded = [];
+
+    // Get all active user plans.
+    $userplans = $DB->get_records('local_coursematrix_user_plans', ['status' => 'active']);
+
+    foreach ($userplans as $userplan) {
+        if (!$userplan->currentcourseid) {
+            continue;
+        }
+
+        $plancourse = $DB->get_record('local_coursematrix_plan_courses', [
+            'planid' => $userplan->planid,
+            'courseid' => $userplan->currentcourseid,
+        ]);
+
+        if (!$plancourse) {
+            continue;
+        }
+
+        $duedate = $userplan->startdate + ($plancourse->duedays * 86400);
+        $daysremaining = ceil(($duedate - $now) / 86400);
+
+        // Check if overdue.
+        if ($daysremaining < 0) {
+            $userplan->status = 'overdue';
+            $DB->update_record('local_coursematrix_user_plans', $userplan);
+            continue;
+        }
+
+        // Check reminders for this plan.
+        $reminders = $DB->get_records('local_coursematrix_reminders', [
+            'planid' => $userplan->planid,
+            'enabled' => 1,
+        ]);
+
+        foreach ($reminders as $reminder) {
+            if ($daysremaining == $reminder->daysbefore) {
+                $remindersneeded[] = (object)[
+                    'userid' => $userplan->userid,
+                    'planid' => $userplan->planid,
+                    'courseid' => $userplan->currentcourseid,
+                    'daysremaining' => $daysremaining,
+                    'duedate' => $duedate,
+                ];
+            }
+        }
+    }
+
+    return $remindersneeded;
+}
+
+/**
+ * Process learning plan assignments from matrix rules.
+ * Called when a user is created/updated.
+ *
+ * @param int $userid User ID
+ */
+function local_coursematrix_assign_user_plans($userid) {
+    global $DB;
+
+    $user = $DB->get_record('user', ['id' => $userid]);
+    if (!$user) {
+        return;
+    }
+
+    $rules = $DB->get_records('local_coursematrix');
+
+    foreach ($rules as $rule) {
+        if (!local_coursematrix_user_matches_rule($user, $rule)) {
+            continue;
+        }
+
+        // Process learning plans from this rule.
+        if (!empty($rule->learningplans)) {
+            $planids = explode(',', $rule->learningplans);
+            foreach ($planids as $planid) {
+                if (is_numeric($planid)) {
+                    local_coursematrix_assign_user_to_plan($userid, (int)$planid);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Get dashboard statistics for learning plans.
+ *
+ * @return stdClass Dashboard data with plans and stats
+ */
+function local_coursematrix_get_dashboard_stats() {
+    global $DB;
+
+    $stats = new stdClass();
+    $stats->totalplans = $DB->count_records('local_coursematrix_plans');
+    $stats->totalusers = $DB->count_records_select('local_coursematrix_user_plans', 'status IN (?, ?, ?)',
+        ['active', 'overdue', 'completed']);
+    $stats->activeusers = $DB->count_records('local_coursematrix_user_plans', ['status' => 'active']);
+    $stats->overdueusers = $DB->count_records('local_coursematrix_user_plans', ['status' => 'overdue']);
+    $stats->completedusers = $DB->count_records('local_coursematrix_user_plans', ['status' => 'completed']);
+
+    // Per-plan stats.
+    $stats->plans = [];
+    $plans = $DB->get_records('local_coursematrix_plans');
+
+    foreach ($plans as $plan) {
+        $planstat = new stdClass();
+        $planstat->id = $plan->id;
+        $planstat->name = $plan->name;
+        $planstat->active = $DB->count_records('local_coursematrix_user_plans',
+            ['planid' => $plan->id, 'status' => 'active']);
+        $planstat->overdue = $DB->count_records('local_coursematrix_user_plans',
+            ['planid' => $plan->id, 'status' => 'overdue']);
+        $planstat->completed = $DB->count_records('local_coursematrix_user_plans',
+            ['planid' => $plan->id, 'status' => 'completed']);
+        $planstat->total = $planstat->active + $planstat->overdue + $planstat->completed;
+
+        // Calculate percentages.
+        if ($planstat->total > 0) {
+            $planstat->activepct = round(($planstat->active / $planstat->total) * 100);
+            $planstat->overduepct = round(($planstat->overdue / $planstat->total) * 100);
+            $planstat->completedpct = round(($planstat->completed / $planstat->total) * 100);
+        } else {
+            $planstat->activepct = 0;
+            $planstat->overduepct = 0;
+            $planstat->completedpct = 0;
+        }
+
+        $stats->plans[] = $planstat;
+    }
+
+    return $stats;
+}
+
+/**
+ * Get all user plan assignments with user and plan details.
+ *
+ * @param int|null $planid Optional plan ID to filter by
+ * @param string|null $status Optional status to filter by
+ * @return array List of user plan records with details
+ */
+function local_coursematrix_get_user_plan_list($planid = null, $status = null) {
+    global $DB;
+
+    $where = [];
+    $params = [];
+
+    if ($planid) {
+        $where[] = 'up.planid = :planid';
+        $params['planid'] = $planid;
+    }
+
+    if ($status) {
+        $where[] = 'up.status = :status';
+        $params['status'] = $status;
+    }
+
+    $whereclause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+    $sql = "SELECT up.id, up.userid, up.planid, up.currentcourseid, up.startdate, up.status, up.timecreated,
+                   u.firstname, u.lastname, u.email,
+                   p.name as planname,
+                   c.fullname as coursename
+            FROM {local_coursematrix_user_plans} up
+            JOIN {user} u ON u.id = up.userid
+            JOIN {local_coursematrix_plans} p ON p.id = up.planid
+            LEFT JOIN {course} c ON c.id = up.currentcourseid
+            $whereclause
+            ORDER BY p.name, u.lastname, u.firstname";
+
+    return $DB->get_records_sql($sql, $params);
+}
+
+// ============================================================================
+// COURSE PAGE HOOKS
+// ============================================================================
+
+/**
+ * Called before the standard top of body HTML.
+ * Displays due date banner on course pages for users in learning plans.
+ *
+ * @return string HTML to display
+ */
+function local_coursematrix_before_standard_top_of_body_html() {
+    global $PAGE, $USER, $COURSE;
+
+    // Only on course pages.
+    if ($PAGE->context->contextlevel != CONTEXT_COURSE || $COURSE->id == 1) {
+        return '';
+    }
+
+    // Get due info for this user/course.
+    $dueinfo = local_coursematrix_get_user_course_dueinfo($USER->id, $COURSE->id);
+    if (!$dueinfo) {
+        return '';
+    }
+
+    // Build the banner.
+    $output = '';
+
+    if ($dueinfo->urgency == 'overdue') {
+        $days = abs($dueinfo->daysremaining);
+        $text = get_string('overduedays', 'local_coursematrix', $days);
+        $output = '<div class="alert alert-danger text-center" style="margin: 0; border-radius: 0; font-weight: bold; font-size: 1.1em;">';
+        $output .= '<i class="fa fa-exclamation-triangle mr-2"></i> ' . $text;
+        $output .= '</div>';
+    } else if ($dueinfo->urgency == 'critical') {
+        $text = $dueinfo->daysremaining == 1
+            ? get_string('dayremaining', 'local_coursematrix')
+            : get_string('daysremaining', 'local_coursematrix', $dueinfo->daysremaining);
+        $output = '<div class="alert alert-danger text-center" style="margin: 0; border-radius: 0; font-weight: bold;">';
+        $output .= '<i class="fa fa-clock-o mr-2"></i> ' . $text;
+        $output .= '</div>';
+    } else if ($dueinfo->urgency == 'warning') {
+        $text = get_string('daysremaining', 'local_coursematrix', $dueinfo->daysremaining);
+        $output = '<div class="alert alert-warning text-center" style="margin: 0; border-radius: 0;">';
+        $output .= '<i class="fa fa-clock-o mr-2"></i> ' . $text;
+        $output .= '</div>';
+    } else {
+        $text = get_string('daysremaining', 'local_coursematrix', $dueinfo->daysremaining);
+        $output = '<div class="alert alert-info text-center" style="margin: 0; border-radius: 0;">';
+        $output .= '<i class="fa fa-info-circle mr-2"></i> ' . $text;
+        $output .= '</div>';
+    }
+
+    return $output;
+}
+
+/**
+ * Extend course navigation to show due date info.
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $course The course record
+ * @param context_course $context The course context
+ */
+function local_coursematrix_extend_navigation_course($navigation, $course, $context) {
+    global $USER;
+
+    // Add due date info to the navigation if applicable.
+    $dueinfo = local_coursematrix_get_user_course_dueinfo($USER->id, $course->id);
+    if (!$dueinfo) {
+        return;
+    }
+
+    // We could add a navigation node here, but the banner is more visible.
+}
+

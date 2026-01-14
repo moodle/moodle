@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event observers definition.
+ * Capability definitions for local_coursematrix.
  *
  * @package    local_coursematrix
  * @copyright  2024 Author Name
@@ -24,17 +24,33 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$observers = [
-    [
-        'eventname' => '\core\event\user_created',
-        'callback'  => 'local_coursematrix\observer::user_created',
+$capabilities = [
+    'local/coursematrix:manage' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
     ],
-    [
-        'eventname' => '\core\event\user_updated',
-        'callback'  => 'local_coursematrix\observer::user_updated',
+    'local/coursematrix:viewdashboard' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
     ],
-    [
-        'eventname' => '\core\event\course_completed',
-        'callback'  => 'local_coursematrix\observer::course_completed',
+    'local/coursematrix:assignplans' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+    'local/coursematrix:receivereminders' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
     ],
 ];

@@ -25,9 +25,41 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-    $ADMIN->add('localplugins', new admin_externalpage(
+    // Create a category for Course Matrix.
+    $ADMIN->add('localplugins', new admin_category(
+        'local_coursematrix_category',
+        get_string('pluginname', 'local_coursematrix')
+    ));
+
+    // Dashboard page.
+    $ADMIN->add('local_coursematrix_category', new admin_externalpage(
+        'local_coursematrix_dashboard',
+        get_string('dashboard', 'local_coursematrix'),
+        new moodle_url('/local/coursematrix/dashboard.php'),
+        'local/coursematrix:viewdashboard'
+    ));
+
+    // Matrix rules page.
+    $ADMIN->add('local_coursematrix_category', new admin_externalpage(
         'local_coursematrix',
         get_string('coursematrix', 'local_coursematrix'),
-        new moodle_url('/local/coursematrix/index.php')
+        new moodle_url('/local/coursematrix/index.php'),
+        'local/coursematrix:manage'
+    ));
+
+    // Learning Plans management page.
+    $ADMIN->add('local_coursematrix_category', new admin_externalpage(
+        'local_coursematrix_plans',
+        get_string('learningplans', 'local_coursematrix'),
+        new moodle_url('/local/coursematrix/plans.php'),
+        'local/coursematrix:manage'
+    ));
+
+    // Assign users page.
+    $ADMIN->add('local_coursematrix_category', new admin_externalpage(
+        'local_coursematrix_assign',
+        get_string('assignusers', 'local_coursematrix'),
+        new moodle_url('/local/coursematrix/assign_users.php'),
+        'local/coursematrix:assignplans'
     ));
 }

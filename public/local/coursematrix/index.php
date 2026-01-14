@@ -45,14 +45,16 @@ if ($form->is_cancelled()) {
     redirect($PAGE->url);
 } else if ($data = $form->get_data()) {
     // Save logic needs to handle finding the existing rule by dept/job if ID is missing.
-    // But the form should handle loading the ID if it exists.
-
-    // If we are saving, we might need to find the ID if it wasn't in the form (e.g. new rule for existing group).
     if (empty($data->id)) {
         $existing = $DB->get_record('local_coursematrix', ['department' => $data->department, 'jobtitle' => $data->jobtitle]);
         if ($existing) {
             $data->id = $existing->id;
         }
+    }
+
+    // Handle learning plans CSV.
+    if (!empty($data->learningplans) && is_array($data->learningplans)) {
+        $data->learningplans = implode(',', $data->learningplans);
     }
 
     local_coursematrix_save_rule($data);
@@ -74,7 +76,8 @@ if ($action == 'edit') {
 
     if ($rule) {
         $formdata->id = $rule->id;
-        $formdata->courses = explode(',', $rule->courses);
+        $formdata->courses = !empty($rule->courses) ? explode(',', $rule->courses) : [];
+        $formdata->learningplans = !empty($rule->learningplans) ? explode(',', $rule->learningplans) : [];
     }
 
     $form->set_data($formdata);
