@@ -25,6 +25,7 @@
 import * as Aria from './aria';
 import * as Bootstrap from './index';
 import Pending from 'core/pending';
+import {eventTypes} from 'core_filters/events';
 import {DefaultAllowlist} from './bootstrap/util/sanitizer';
 import setupBootstrapPendingChecks from './pending';
 import EventHandler from './bootstrap/dom/event-handler';
@@ -95,9 +96,10 @@ const enablePopovers = () => {
 /**
  * Enable tooltips
  *
+ * @param {Element} rootElement
  */
-const enableTooltips = () => {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+const enableTooltips = (rootElement = document) => {
+    const tooltipTriggerList = rootElement.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Bootstrap.Tooltip(tooltipTriggerEl));
 
     document.addEventListener('keydown', e => {
@@ -106,6 +108,19 @@ const enableTooltips = () => {
                 tooltip.hide();
             });
         }
+    });
+};
+
+/**
+ * Enable tooltips for dynamic content updates
+ */
+const enableTooltipsOnContentUpdated = () => {
+    document.addEventListener(eventTypes.filterContentUpdated, e => {
+        e.detail.nodes.forEach(node => {
+            if (node instanceof HTMLElement) {
+                enableTooltips(node);
+            }
+        });
     });
 };
 
@@ -140,6 +155,7 @@ enablePopovers();
 
 // Enable all tooltips.
 enableTooltips();
+enableTooltipsOnContentUpdated();
 
 // Realocate Bootstrap events to the body element.
 realocateBootstrapEvents();
