@@ -39,7 +39,6 @@ class question_status_column extends column_base {
 
     protected function display_content($question, $rowclasses): void {
         global $PAGE;
-        $attributes = [];
         if (question_has_capability_on($question, 'edit')
             && $question->status !== question_version_status::QUESTION_STATUS_HIDDEN) {
             $options = [];
@@ -54,6 +53,9 @@ class question_status_column extends column_base {
             }
             echo $PAGE->get_renderer('qbank_editquestion')->render_status_dropdown($options);
             $PAGE->requires->js_call_amd('qbank_editquestion/question_status', 'init', [$question->id]);
+        } else {
+            $statuslist = editquestion_helper::get_question_status_list(true);
+            echo $statuslist[$question->status];
         }
     }
 
