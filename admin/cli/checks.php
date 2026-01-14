@@ -110,47 +110,49 @@ $exitcode = $exitcodes[result::OK];
 
 foreach ($checks as $check) {
     $ref = $check->get_ref();
-    $result = $check->get_result();
 
-    $status = $result->get_status();
-    $checkexitcode = $exitcodes[$status];
+    foreach ($check->get_results() as $result) {
+        $status = $result->get_status();
+        $checkexitcode = $exitcodes[$status];
 
-    // Summary is treated as html.
-    $summary = $result->get_summary();
-    $summary = html_to_text($summary, 60, false);
+        // Summary is treated as html.
+        $summary = $result->get_summary();
+        $summary = html_to_text($summary, 60, false);
 
-    if ($checkexitcode > $exitcode) {
-        $exitcode = $checkexitcode;
-        $header = $exitlabel[$status] . ': ' . $check->get_name() . " (" . $check->get_ref() . ")\n";
-    }
+        if ($checkexitcode > $exitcode) {
+            $exitcode = $checkexitcode;
+            $header = $exitlabel[$status] . ': ' . $check->get_name() . " (" . $check->get_ref() . ")\n";
+        }
 
-    if (empty($messages[$status])) {
-        $messages[$status] = $result;
-    }
+        if (empty($messages[$status])) {
+            $messages[$status] = $result;
+        }
 
-    $len = strlen(get_string('status' . $status));
+        $len = strlen(get_string('status' . $status));
 
-    if ($options['verbose'] ||
-        $status == result::WARNING ||
-        $status == result::CRITICAL ||
-        $status == result::ERROR) {
+        if (
+            $options['verbose']
+            || $status == result::WARNING
+            || $status == result::CRITICAL
+            || $status == result::ERROR
+        ) {
+            $output .= sprintf(
+                $format,
+                $OUTPUT->check_result($result),
+                sprintf('%s (%s)', $check->get_name(), $ref),
+            );
 
-        $output .= sprintf(
-            $format,
-            $OUTPUT->check_result($result),
-            sprintf('%s (%s)', $check->get_name(), $ref)
-        );
+            $summary = str_replace("\n", "\n" . $prefix . '     ', $summary);
+            $output .= sprintf($format, '', '    ' . $summary);
+            $output .= sprintf($format, '', '    ' . html_to_text($result->get_details(), width: 0, dolinks: false));
 
-        $summary = str_replace("\n", "\n" . $prefix . '     ', $summary);
-        $output .= sprintf($format, '', '    ' . $summary);
-        $output .= sprintf($format, '', '    ' . html_to_text($result->get_details(), width: 0, dolinks: false));
-
-        if ($options['verbose']) {
-            $actionlink = $check->get_action_link();
-            if ($actionlink) {
-                $output .= sprintf( $format, '', '    ' . $actionlink->url);
+            if ($options['verbose']) {
+                $actionlink = $check->get_action_link();
+                if ($actionlink) {
+                    $output .= sprintf($format, '', '    ' . $actionlink->url);
+                }
+                $output .= sprintf($format, '', '');
             }
-            $output .= sprintf( $format, '', '');
         }
     }
 }

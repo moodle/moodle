@@ -79,8 +79,10 @@ class router extends check {
     }
 
     #[\Override]
-    public function get_result(): result {
+    public function get_results(): array {
         global $CFG;
+
+        $results = [];
 
         if (empty($CFG->routerconfigured)) {
             $result = new result(
@@ -91,7 +93,12 @@ class router extends check {
                 ]),
             );
 
-            return $result;
+            return [$result];
+        } else {
+            $results[] = new result(
+                result::OK,
+                get_string('routerconfigurationset', 'admin'),
+            );
         }
 
         // The router is marked as configured. Check if it actually works though.
@@ -128,9 +135,14 @@ class router extends check {
                 'statuscode' => $code,
                 'statuscodetitle' => $codetitle,
             ];
-            if ($code !== $test['expectedcode']) {
+            if ($code === $test['expectedcode']) {
+                $results[] = new result(
+                    result::OK,
+                    get_string('routerconfigureddetails', 'admin', $resultprops),
+                );
+            } else {
                 $expectedgot = get_string('routerexpectedgot', 'admin', $resultprops);
-                return new result(
+                $results[] = new result(
                     result::ERROR,
                     get_string($test['failfeedbackstr'], 'admin', $resultprops),
                     get_string('routernotconfigureddetailwithurl', 'admin', $resultprops) . " {$expectedgot}",
@@ -142,17 +154,30 @@ class router extends check {
             }
         }
 
-        return new result(
-            result::OK,
-            get_string('routerconfiguredok', 'admin'),
-        );
+        return $results;
     }
 
     #[\Override]
-    public function get_action_link(): ?action_link {
-        return new action_link(
-            new \core\url(get_docs_url('Configuring_the_Router')),
-            get_string('routerdocs', 'admin'),
+    public function get_result(): result {
+        // Aggregate the results.
+        $failed = array_filter(
+            $this->get_results(),
+            fn ($result) => $result->get_status() !== result::OK,
+        );
+
+        if (empty($failed)) {
+            // Nothing failed. Return the OK result.
+            return new result(
+                result::OK,
+                get_string('routerconfiguredok', 'admin'),
+            );
+        }
+
+        // Some form of failure. Return the generic failure result.
+        return new result(
+            result::ERROR,
+            get_string('routerconfiguredwithissues', 'admin'),
+            get_string('routerconfiguredwithissuesdetail', 'admin', ['count' => count($failed)]),
         );
     }
 }

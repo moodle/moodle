@@ -128,5 +128,12 @@ abstract class check {
      */
     abstract public function get_result(): result;
 
+    /**
+     * Return all results for this check
+     *
+     * @return result[]
+     */
+    public function get_results(): array {
+        return [$this->get_result()];
+    }
 }
-
