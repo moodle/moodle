@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for local_coursematrix
+ * Hook callbacks registration for local_coursematrix.
  *
  * @package    local_coursematrix
  * @copyright  2024 Author Name
@@ -24,8 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_coursematrix';
-$plugin->version = 2026011402;
-$plugin->requires = 2022112800; // Moodle 4.1+.
-$plugin->maturity = MATURITY_BETA;
-$plugin->release = '1.1.1';
+$callbacks = [
+    [
+        'hook' => core\hook\output\before_standard_top_of_body_html_generation::class,
+        'callback' => \local_coursematrix\hook_callbacks\output_callbacks::class . '::before_top_of_body',
+        'priority' => 500,
+    ],
+];
