@@ -61,13 +61,8 @@ if ($form->is_cancelled()) {
     $plandata->reminders = $data->reminders ?? [];
     $plandata->course_reminders = $data->course_reminders ?? [];
 
-    // DEBUG: Show what we received.
-    $debugcourses = count($plandata->courses);
-    $debugraw = optional_param('course_config', 'EMPTY', PARAM_RAW);
-    $debuginfo = "Courses: {$debugcourses}, Raw POST: " . substr($debugraw, 0, 100);
-
     local_coursematrix_save_plan($plandata);
-    redirect($PAGE->url, get_string('plansaved', 'local_coursematrix') . ' [DEBUG: ' . $debuginfo . ']');
+    redirect($PAGE->url, get_string('plansaved', 'local_coursematrix'));
 }
 
 echo $OUTPUT->header();

@@ -387,9 +387,11 @@ function local_coursematrix_assign_user_to_plan($userid, $planid) {
         return false; // Already assigned.
     }
 
-    // Get first course in the plan.
-    $firstcourse = $DB->get_record('local_coursematrix_plan_courses',
-        ['planid' => $planid], 'courseid, duedays', IGNORE_MULTIPLE, 0);
+    // Get first course in the plan (lowest sortorder).
+    $firstcourse = $DB->get_record_sql(
+        'SELECT courseid, duedays FROM {local_coursematrix_plan_courses} WHERE planid = ? ORDER BY sortorder ASC LIMIT 1',
+        [$planid]
+    );
 
     if (!$firstcourse) {
         return false; // No courses in plan.
@@ -450,13 +452,10 @@ function local_coursematrix_progress_user_plan($userid, $completedcourseid) {
             continue;
         }
 
-        // Get next course.
-        $nextcourse = $DB->get_record_select(
-            'local_coursematrix_plan_courses',
-            'planid = :planid AND sortorder > :sortorder',
-            ['planid' => $userplan->planid, 'sortorder' => $currentpc->sortorder],
-            'courseid, duedays',
-            IGNORE_MULTIPLE
+        // Get next course (next highest sortorder).
+        $nextcourse = $DB->get_record_sql(
+            'SELECT courseid, duedays FROM {local_coursematrix_plan_courses} WHERE planid = ? AND sortorder > ? ORDER BY sortorder ASC LIMIT 1',
+            [$userplan->planid, $currentpc->sortorder]
         );
 
         if ($nextcourse) {
