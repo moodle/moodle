@@ -112,7 +112,7 @@ M.form.dateselector = {
                 require(['core/user_date', 'core/notification'], function(UserDate, Notification) {
                     UserDate.get([{
                         timestamp: Math.floor(date.getTime() / 1000),
-                        format: config.strftimemonthyear,
+                        format: M.util.get_string('strftimemonthyear', 'langconfig'),
                     }]).then(function(dateStrs) {
                         var headerNode = calendar.get('contentBox')
                             .one('#' + calendar._calendarId + '_header');
