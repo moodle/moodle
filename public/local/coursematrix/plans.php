@@ -54,29 +54,12 @@ if ($form->is_cancelled()) {
     $plandata->name = $data->name;
     $plandata->description = $data->description['text'] ?? '';
 
-    // Process courses.
-    $plandata->courses = [];
-    if (!empty($data->courses)) {
-        foreach ($data->courses as $i => $courseid) {
-            $plandata->courses[] = [
-                'courseid' => $courseid,
-                'duedays' => $data->duedays[$i] ?? 14,
-            ];
-        }
-    }
-
-    // Process reminders.
-    $plandata->reminders = [];
-    if (!empty($data->reminders)) {
-        foreach ($data->reminders as $daysbefore) {
-            if (is_numeric($daysbefore) && $daysbefore > 0) {
-                $plandata->reminders[] = [
-                    'daysbefore' => (int)$daysbefore,
-                    'enabled' => 1,
-                ];
-            }
-        }
-    }
+    // Pass through the arrays directly from the form.
+    // The form's get_data() already parses the JSON and populates these.
+    $plandata->courses = $data->courses ?? [];
+    $plandata->duedays = $data->duedays ?? [];
+    $plandata->reminders = $data->reminders ?? [];
+    $plandata->course_reminders = $data->course_reminders ?? [];
 
     local_coursematrix_save_plan($plandata);
     redirect($PAGE->url, get_string('plansaved', 'local_coursematrix'));
