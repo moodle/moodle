@@ -74,15 +74,17 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="planid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Course ID for per-course reminders, null for plan-level"/>
         <FIELD NAME="daysbefore" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="7" SEQUENCE="false" COMMENT="Days before due to send reminder"/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="planid" TYPE="foreign" FIELDS="planid" REFTABLE="local_coursematrix_plans" REFFIELDS="id"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="planid_daysbefore" UNIQUE="true" FIELDS="planid, daysbefore"/>
+        <INDEX NAME="planid_courseid_daysbefore" UNIQUE="true" FIELDS="planid, courseid, daysbefore"/>
       </INDEXES>
     </TABLE>
   </TABLES>

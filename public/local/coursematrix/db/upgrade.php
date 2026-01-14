@@ -111,5 +111,34 @@ function xmldb_local_coursematrix_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024011400, 'local', 'coursematrix');
     }
 
+    // Add per-course reminder support (version 2026011405).
+    if ($oldversion < 2026011405) {
+
+        // Add courseid field to reminders table (nullable - null means plan-level reminder).
+        $table = new xmldb_table('local_coursematrix_reminders');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'planid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Drop old unique index.
+        $index = new xmldb_index('planid_daysbefore', XMLDB_INDEX_UNIQUE, ['planid', 'daysbefore']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Add new index including courseid.
+        $index = new xmldb_index('planid_courseid_daysbefore', XMLDB_INDEX_UNIQUE, ['planid', 'courseid', 'daysbefore']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Add foreign key for courseid.
+        // Note: Moodle doesn't enforce FKs but we add for documentation.
+
+        upgrade_plugin_savepoint(true, 2026011405, 'local', 'coursematrix');
+    }
+
     return true;
 }
+

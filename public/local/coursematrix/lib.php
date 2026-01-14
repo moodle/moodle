@@ -295,25 +295,58 @@ function local_coursematrix_save_plan($data) {
     }
 
     // Save courses with order and due days.
+    // The form now provides $data->courses as array of course IDs and $data->duedays as matching array.
     if (!empty($data->courses) && is_array($data->courses)) {
-        $sortorder = 0;
-        foreach ($data->courses as $coursedata) {
-            $record = new stdClass();
-            $record->planid = $planid;
-            $record->courseid = $coursedata['courseid'];
-            $record->sortorder = $sortorder++;
-            $record->duedays = $coursedata['duedays'] ?? 14;
-            $DB->insert_record('local_coursematrix_plan_courses', $record);
+        $sortorder = 1;
+        foreach ($data->courses as $index => $courseid) {
+            // Handle both old format (array of arrays) and new format (array of IDs).
+            if (is_array($courseid)) {
+                // Old format: array of ['courseid' => x, 'duedays' => y].
+                $record = new stdClass();
+                $record->planid = $planid;
+                $record->courseid = $courseid['courseid'];
+                $record->sortorder = $sortorder++;
+                $record->duedays = $courseid['duedays'] ?? 14;
+                $DB->insert_record('local_coursematrix_plan_courses', $record);
+            } else {
+                // New format: array of course IDs with separate duedays array.
+                $record = new stdClass();
+                $record->planid = $planid;
+                $record->courseid = $courseid;
+                $record->sortorder = $sortorder++;
+                $record->duedays = $data->duedays[$index] ?? 14;
+                $DB->insert_record('local_coursematrix_plan_courses', $record);
+            }
         }
     }
 
-    // Save reminders.
-    if (!empty($data->reminders) && is_array($data->reminders)) {
+    // Save per-course reminders if provided.
+    if (!empty($data->course_reminders) && is_array($data->course_reminders)) {
+        foreach ($data->course_reminders as $courseid => $reminderdays) {
+            foreach ($reminderdays as $daysbefore) {
+                if ($daysbefore > 0) {
+                    $record = new stdClass();
+                    $record->planid = $planid;
+                    $record->courseid = $courseid;
+                    $record->daysbefore = $daysbefore;
+                    $record->enabled = 1;
+                    $DB->insert_record('local_coursematrix_reminders', $record);
+                }
+            }
+        }
+    } else if (!empty($data->reminders) && is_array($data->reminders)) {
+        // Fallback: save plan-level reminders (old format or backward compatibility).
         foreach ($data->reminders as $reminder) {
             $record = new stdClass();
             $record->planid = $planid;
-            $record->daysbefore = $reminder['daysbefore'];
-            $record->enabled = $reminder['enabled'] ?? 1;
+            $record->courseid = null; // Plan-level reminder.
+            if (is_array($reminder)) {
+                $record->daysbefore = $reminder['daysbefore'];
+                $record->enabled = $reminder['enabled'] ?? 1;
+            } else {
+                $record->daysbefore = $reminder;
+                $record->enabled = 1;
+            }
             $DB->insert_record('local_coursematrix_reminders', $record);
         }
     }
