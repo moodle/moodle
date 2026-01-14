@@ -73,7 +73,11 @@ jobs:
           export MOODLE_IMAGE_NAME=ghcr.io/$REPO_NAME
           export MOODLE_TAG=test
           
-          # Use .env_deploy for other variables
+          # Stop containers and remove code volume to ensure fresh code
+          docker compose --env-file .env_deploy -f docker-compose.prod.yml down
+          docker volume rm moodle_moodle_code || true
+          
+          # Pull new image and start
           docker compose --env-file .env_deploy -f docker-compose.prod.yml pull
           docker compose --env-file .env_deploy -f docker-compose.prod.yml up -d
 
@@ -107,6 +111,11 @@ jobs:
           export MOODLE_IMAGE_NAME=ghcr.io/$REPO_NAME
           export MOODLE_TAG=main
           
-          # Use .env_deploy for other variables
+          # Stop containers and remove code volume to ensure fresh code
+          docker compose --env-file .env_deploy -f docker-compose.prod.yml down
+          docker volume rm moodle_moodle_code || true
+          
+          # Pull new image and start
           docker compose --env-file .env_deploy -f docker-compose.prod.yml pull
           docker compose --env-file .env_deploy -f docker-compose.prod.yml up -d
+

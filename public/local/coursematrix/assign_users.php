@@ -59,9 +59,13 @@ if (empty($plans)) {
     exit;
 }
 
-// Get all users for selection.
-$users = $DB->get_records_select('user', 'deleted = 0 AND suspended = 0 AND id > 1', null, 'lastname, firstname',
-    'id, firstname, lastname, email, department, institution');
+// Get all users for selection - include all fields needed by fullname().
+$userfields = \core_user\fields::for_name()->with_userpic()->get_sql('u', false, '', '', false)->selects;
+$sql = "SELECT u.id, u.email, u.department, u.institution, $userfields
+        FROM {user} u
+        WHERE u.deleted = 0 AND u.suspended = 0 AND u.id > 1
+        ORDER BY u.lastname, u.firstname";
+$users = $DB->get_records_sql($sql);
 
 $userlist = [];
 foreach ($users as $user) {
@@ -83,7 +87,7 @@ echo '</select>';
 echo '</div>';
 
 echo '<div class="form-group">';
-echo '<label>' . get_string('selectusers', 'moodle') . '</label>';
+echo '<label>' . get_string('selectusers', 'local_coursematrix') . '</label>';
 
 // Use Moodle's autocomplete for user selection.
 $attributes = [
@@ -98,11 +102,5 @@ echo '</div>';
 echo '<button type="submit" class="btn btn-primary">' . get_string('assigntoplan', 'local_coursematrix') . '</button>';
 echo '</form>';
 
-// Add JavaScript to make the select searchable.
-$PAGE->requires->js_amd_inline("
-require(['jquery'], function($) {
-    // Simple enhancement - you could use Select2 or similar if available.
-});
-");
-
 echo $OUTPUT->footer();
+
