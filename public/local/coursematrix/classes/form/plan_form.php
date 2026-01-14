@@ -79,9 +79,9 @@ class plan_form extends \moodleform {
             'noselectionstring' => get_string('selectcourses', 'local_coursematrix'),
         ]);
 
-        // Hidden field to store course configuration as JSON.
-        $mform->addElement('hidden', 'course_config', '[]');
-        $mform->setType('course_config', PARAM_RAW);
+        // Use raw HTML for hidden field to avoid Moodle form state management issues.
+        // Moodle forms reset hidden field values to their default on submit.
+        $mform->addElement('html', '<input type="hidden" name="course_config" id="id_course_config" value="[]">');
 
         // Container for the dynamic course table.
         $mform->addElement('html', '<div id="course-config-container" class="mb-3"></div>');
@@ -302,7 +302,7 @@ require(['jquery'], function($) {
      * Set data for editing.
      */
     public function set_data($data) {
-        global $DB;
+        global $DB, $PAGE;
 
         // Build course config JSON from existing data.
         $courseconfig = [];
@@ -344,7 +344,21 @@ require(['jquery'], function($) {
             }
         }
         
-        $data->course_config = json_encode($courseconfig);
+        // Inject existing data into the hidden field via JavaScript.
+        if (!empty($courseconfig)) {
+            $json = json_encode($courseconfig);
+            $PAGE->requires->js_amd_inline("
+require(['jquery'], function($) {
+    $(document).ready(function() {
+        $('#id_course_config').val(" . json_encode($json) . ");
+        // Trigger the loadExistingData function if it exists.
+        if (typeof window.loadCourseConfigData === 'function') {
+            window.loadCourseConfigData();
+        }
+    });
+});
+            ");
+        }
         
         parent::set_data($data);
     }
