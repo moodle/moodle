@@ -66,6 +66,11 @@ $string['noplans'] = 'No learning plans defined yet.';
 $string['plansaved'] = 'Learning plan saved successfully.';
 $string['plandeleted'] = 'Learning plan deleted.';
 $string['usersassigned'] = 'Users assigned to learning plan.';
+$string['userunenrolled'] = 'User removed from learning plan.';
+$string['unenroll'] = 'Remove';
+$string['confirmunenroll'] = 'Are you sure you want to remove this user from the learning plan?';
+$string['currentenrollments'] = 'Current Enrollments';
+$string['noenrollments'] = 'No users are currently enrolled in learning plans.';
 $string['alreadyassigned'] = 'User is already assigned to this plan.';
 
 // Status.

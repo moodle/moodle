@@ -66,6 +66,11 @@ $string['noplans'] = 'No hay planes de aprendizaje definidos aún.';
 $string['plansaved'] = 'Plan de aprendizaje guardado exitosamente.';
 $string['plandeleted'] = 'Plan de aprendizaje eliminado.';
 $string['usersassigned'] = 'Usuarios asignados al plan de aprendizaje.';
+$string['userunenrolled'] = 'Usuario eliminado del plan de aprendizaje.';
+$string['unenroll'] = 'Eliminar';
+$string['confirmunenroll'] = '¿Está seguro de que desea eliminar a este usuario del plan de aprendizaje?';
+$string['currentenrollments'] = 'Inscripciones Actuales';
+$string['noenrollments'] = 'No hay usuarios inscritos en planes de aprendizaje.';
 $string['alreadyassigned'] = 'El usuario ya está asignado a este plan.';
 
 // Estado.
