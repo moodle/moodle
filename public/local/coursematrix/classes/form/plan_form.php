@@ -92,15 +92,20 @@ require(['jquery'], function($) {
     var courseData = [];
     var allCourses = " . json_encode($allcourses) . ";
     
-    // Load existing data.
-    var existingConfig = $('#id_course_config').val();
-    if (existingConfig && existingConfig !== '[]') {
-        try {
-            courseData = JSON.parse(existingConfig);
-        } catch(e) {
-            courseData = [];
+    // Load existing data from hidden field.
+    function loadExistingData() {
+        var existingConfig = $('#id_course_config').val();
+        if (existingConfig && existingConfig !== '[]' && existingConfig !== '') {
+            try {
+                courseData = JSON.parse(existingConfig);
+            } catch(e) {
+                console.error('Error parsing course config:', e);
+                courseData = [];
+            }
         }
     }
+    
+    loadExistingData();
     
     function renderTable() {
         var html = '';
@@ -137,7 +142,9 @@ require(['jquery'], function($) {
     }
     
     function updateHiddenField() {
-        $('#id_course_config').val(JSON.stringify(courseData));
+        var jsonStr = JSON.stringify(courseData);
+        $('#id_course_config').val(jsonStr);
+        console.log('Updated hidden field:', jsonStr);
     }
     
     function sortByOrder() {
@@ -146,16 +153,19 @@ require(['jquery'], function($) {
         });
     }
     
-    // Add course handler.
-    $('#id_add_course').on('change', function() {
+    // Add course handler - watch for changes on the autocomplete.
+    $(document).on('change', '#id_add_course', function() {
         var courseId = parseInt($(this).val());
-        if (!courseId) return;
+        if (!courseId || isNaN(courseId)) return;
         
         // Check if already added.
         for (var i = 0; i < courseData.length; i++) {
             if (courseData[i].courseid == courseId) {
                 alert('" . addslashes(get_string('coursealreadyadded', 'local_coursematrix')) . "');
+                // Clear the autocomplete.
                 $(this).val('');
+                // Also try to clear the visible autocomplete input.
+                $(this).closest('.form-autocomplete-selection').find('input').val('');
                 return;
             }
         }
@@ -168,7 +178,12 @@ require(['jquery'], function($) {
             reminders: '7, 3, 1'
         });
         
+        // Clear the autocomplete select and input.
         $(this).val('');
+        // For Moodle autocomplete, we need to reset the visible selection too.
+        var container = $(this).closest('.form-group');
+        container.find('.form-autocomplete-selection span[data-value]').remove();
+        
         renderTable();
     });
     
@@ -202,6 +217,17 @@ require(['jquery'], function($) {
     $(document).on('change', '.course-reminders', function() {
         var index = $(this).closest('tr').data('index');
         courseData[index].reminders = $(this).val();
+        updateHiddenField();
+    });
+    
+    // CRITICAL: Sync hidden field before form submit.
+    $('form').on('submit', function() {
+        updateHiddenField();
+        console.log('Form submitting with course data:', courseData);
+    });
+    
+    // Also sync on any input blur in the table.
+    $(document).on('blur', '#course-config-table input', function() {
         updateHiddenField();
     });
     
