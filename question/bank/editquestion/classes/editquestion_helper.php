@@ -92,12 +92,16 @@ class editquestion_helper {
     /**
      * Get the array of status of the questions.
      *
+     * @param bool $includehidden Include QUESTION_STATUS_HIDDEN in the returned list?
      * @return array
      */
-    public static function get_question_status_list(): array {
+    public static function get_question_status_list(bool $includehidden = false): array {
         $statuslist = [];
         $statuslist[question_version_status::QUESTION_STATUS_READY] = get_string('questionstatusready', 'qbank_editquestion');
         $statuslist[question_version_status::QUESTION_STATUS_DRAFT] = get_string('questionstatusdraft', 'qbank_editquestion');
+        if ($includehidden) {
+            $statuslist[question_version_status::QUESTION_STATUS_HIDDEN] = get_string('questionstatushidden', 'qbank_editquestion');
+        }
         return $statuslist;
     }
 
