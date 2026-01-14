@@ -421,6 +421,7 @@ class external extends external_api {
      */
     public static function configure_quiz_settings($quizid, $gradetopass = 100.0) {
         global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
         $params = self::validate_parameters(self::configure_quiz_settings_parameters(), [
             'quizid' => $quizid,
@@ -434,41 +435,58 @@ class external extends external_api {
         $context = context_course::instance($quiz->course);
         self::validate_context($context);
 
-        // Set quiz grade to 10 and sumgrades to 10.
+        // 1. Set Quiz Grade and Sumgrades settings to 10.0.
         $quiz->grade = 10.0;
         $quiz->sumgrades = 10.0;
+        
+        // 2. Enable Review Options so users can see their grade immediately.
+        // Enable 'marks' (grade) for Immediately, Open, and Closed states.
+        // Constants used: 0x10000 (Immediate), 0x20000 (Open), 0x40000 (Closed)
+        // We broadly enable review permissions to ensure the user isn't blocked from seeing "Finished".
+        $reviewoptions = 0x10000 | 0x20000 | 0x40000;
+        $quiz->reviewmarks = $reviewoptions;
+        $quiz->reviewcorrectness = $reviewoptions;
+        $quiz->reviewgeneralfeedback = $reviewoptions;
+        
         $DB->update_record('quiz', $quiz);
 
-        // Update the quiz slot to have maxmark = 10.
+        // 3. Update the quiz slot to has maxmark = 10.
         $slot = $DB->get_record('quiz_slots', ['quizid' => $quiz->id, 'slot' => 1]);
         if ($slot) {
             $slot->maxmark = 10.0;
             $DB->update_record('quiz_slots', $slot);
         }
 
-        // Set grade_items passing grade.
+        // 4. Update Grade Items (Check max grade matches quiz grade).
         $gradeitem = $DB->get_record('grade_items', [
             'itemtype' => 'mod',
             'itemmodule' => 'quiz',
             'iteminstance' => $quiz->id,
         ]);
+        
         if ($gradeitem) {
             $gradeitem->gradepass = 10.0; // 100% of 10 = 10
+            $gradeitem->grademax = 10.0;
+            $gradeitem->rawgrademax = 10.0;
             $DB->update_record('grade_items', $gradeitem);
+            
+            // Regrade grades if possible (simple update).
+            // Since this is usually pre-attempt, this just aligns the schema.
         }
 
-        // Set activity completion to require passing grade.
+        // 5. Update Course Module Completion settings.
         // completion = 2 (auto), completionpassgrade = 1
         $cm->completion = 2; // Automatic completion
         $DB->set_field('course_modules', 'completion', 2, ['id' => $cm->id]);
         $DB->set_field('course_modules', 'completionpassgrade', 1, ['id' => $cm->id]);
         $DB->set_field('course_modules', 'completiongradeitemnumber', 0, ['id' => $cm->id]);
 
+        // Rebuild course cache to reflect completion rules.
         rebuild_course_cache($quiz->course, true);
 
         return [
             'success' => true,
-            'message' => "Quiz configured: grade=10, passing=10, auto-completion with passing grade.",
+            'message' => "Quiz configured: grade=10, passing=10, review=enabled, auto-completion=true.",
         ];
     }
 
@@ -484,4 +502,5 @@ class external extends external_api {
         ]);
     }
 }
+
 

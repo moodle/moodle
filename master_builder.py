@@ -654,7 +654,7 @@ def build_pdf_course(course_id, base_name, pdf_path):
     try:
         completion_res = call_moodle_json('local_masterbuilder_configure_course_completion', {
             'courseid': int(course_id),
-            'requiregrade': 1,  # Require 100% grade
+            'requiregrade': 0,  # Do NOT require specific grade for PDF courses
             'requireactivity': 1  # Require activity completion
         })
         if isinstance(completion_res, dict) and completion_res.get('success'):
@@ -690,9 +690,10 @@ def build_quiz_course(course_id, base_name):
                 {'name': 'attempts', 'value': '0'}, # Unlimited
                 {'name': 'overduehandling', 'value': 'autosubmit'},
                 {'name': 'browsersecurity', 'value': '-'},
-                {'name': 'completion', 'value': '1'},
+                {'name': 'completion', 'value': '2'}, # Auto completion
                 {'name': 'questionsperpage', 'value': '1'},
                 {'name': 'shuffleanswers', 'value': '1'}
+
             ]
         }]
     }
