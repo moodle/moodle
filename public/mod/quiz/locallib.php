@@ -1643,8 +1643,7 @@ function quiz_get_js_module() {
     return [
         'name' => 'mod_quiz',
         'fullpath' => '/mod/quiz/module.js',
-        'requires' => ['base', 'dom', 'event-delegate', 'event-key',
-                'core_question_engine'],
+        'requires' => ['base', 'dom', 'event-delegate', 'event-key'],
         'strings' => [
             ['cancel', 'moodle'],
             ['flagged', 'question'],

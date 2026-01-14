@@ -46,14 +46,6 @@ class link extends action_link implements renderable {
     public $actionmenu = null;
 
     /**
-     * The number of instances of this action menu link (and its subclasses).
-     *
-     * @var int
-     * @deprecated since Moodle 4.4.
-     */
-    protected static $instance = 1;
-
-    /**
      * Constructs the object.
      *
      * @param moodle_url $url The URL for the action.

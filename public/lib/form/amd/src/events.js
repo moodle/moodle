@@ -256,16 +256,6 @@ export const triggerUploadStarted = notifyUploadStarted;
 export const triggerUploadCompleted = notifyUploadCompleted;
 
 /**
- * List of the events.
- *
- * @deprecated since Moodle 4.0. See {@link module:core_form/events.eventTypes eventTypes} instead.
- **/
-export const types = {
-    uploadStarted: 'core_form/uploadStarted',
-    uploadCompleted: 'core_form/uploadCompleted',
-};
-
-/**
  * Trigger an event to notify the file upload field has been changed.
  *
  * @method

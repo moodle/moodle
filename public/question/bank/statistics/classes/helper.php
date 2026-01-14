@@ -37,45 +37,6 @@ class helper {
     private const NEED_FOR_REVISION_UPPER_THRESHOLD = 50;
 
     /**
-     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
-     */
-    #[\core\attribute\deprecated(
-        'statistics_bulk_loader or get_required_statistics_fields',
-        since: '4.3',
-        mdl: 'MDL-75576',
-        final: true
-    )]
-    public static function calculate_average_question_facility(int $questionid): ?float {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
-     */
-    #[\core\attribute\deprecated(
-        'statistics_bulk_loader or get_required_statistics_fields',
-        since: '4.3',
-        mdl: 'MDL-75576',
-        final: true
-    )]
-    public static function calculate_average_question_discriminative_efficiency(int $questionid): ?float {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
-     */
-    #[\core\attribute\deprecated(
-        'statistics_bulk_loader or get_required_statistics_fields',
-        since: '4.3',
-        mdl: 'MDL-75576',
-        final: true
-    )]
-    public static function calculate_average_question_discrimination_index(int $questionid): ?float {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Format a number to a localised percentage with specified decimal points.
      *
      * @param float|null $number The number being formatted

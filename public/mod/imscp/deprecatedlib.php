@@ -21,11 +21,3 @@
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
- * @deprecated since Moodle 4.3
- */
-#[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.3', mdl: 'MDL-76953', final: true)]
-function imscp_libxml_disable_entity_loader() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}

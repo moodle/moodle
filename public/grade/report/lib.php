@@ -333,14 +333,6 @@ abstract class grade_report {
     }
 
     /**
-     * @deprecated since 4.2
-     */
-    #[\core\attribute\deprecated('get_string', since: '4.2', mdl: 'MDL-77033', final: true)]
-    public function get_lang_string(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Fetches and returns a count of all the users that will be shown on this page.
      * @param boolean $groups include groups limit
      * @param boolean $users include users limit - default false, used for searching purposes

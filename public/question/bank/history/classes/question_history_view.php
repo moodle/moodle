@@ -90,14 +90,6 @@ class question_history_view extends view {
         return $this->requiredcolumns;
     }
 
-    /**
-     * @deprecated since Moodle 4.3 MDL-72321
-     */
-    #[\core\attribute\deprecated('filtering objects', since: '4.3', mdl: 'MDL-72321', final: true)]
-    protected function display_advanced_search_form($advancedsearch): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
     public function allow_add_questions(): bool {
         // As we dont want to create questions in this page.
         return false;

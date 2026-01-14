@@ -500,12 +500,6 @@ define('MOD_PURPOSE_CONTENT', 'content');
 define('MOD_PURPOSE_INTERACTIVECONTENT', 'interactivecontent');
 /** Module purpose other */
 define('MOD_PURPOSE_OTHER', 'other');
-/**
- * Module purpose interface
- * @deprecated since Moodle 4.4
- * @todo MDL-80701 Remove in Moodle 4.8
-*/
-define('MOD_PURPOSE_INTERFACE', 'interface');
 
 /** True if module can be quickly created without filling a previous form. */
 define('FEATURE_QUICKCREATE', 'quickcreate');

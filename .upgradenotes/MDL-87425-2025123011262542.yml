@@ -1,0 +1,245 @@
+issueNumber: MDL-87425
+notes:
+  tool_mfa:
+    - message: The `\tool_mfa\output\renderer::setup_factor()` has been removed from `public/admin/tool/mfa/classes/output/renderer.php`.
+      type: removed
+  core_availability:
+    - message: >-
+        - The `public/availability/amd/src/availability_more.js` file has been removed.
+        - The `public/availability/renderer.php` file has been removed.
+      type: removed
+  core_course:
+    - message: >-
+        - The `\core_course_bulk_activity_completion_renderer::edit_default_completion()` has been removed from `public/course/classes/output/bulk_activity_completion_renderer.php`.
+        - The `\core_course\reportbuilder\local\formatters\enrolment::enrolment_name()` has been removed from `public/course/classes/reportbuilder/local/formatters/enrolment.php`.
+      type: removed
+  core_courseformat:
+    - message: >-
+        - The `\core_courseformat\output\local\content\section\availability::availability_info()` has been removed from `public/course/format/classes/output/local/content/section/availability.php`.
+        - The `\core_courseformat\base::get_section_number()` has been removed from `public/course/format/classes/base.php`.
+        - The `\core_courseformat\stateactions::section_move()` has been removed from `public/course/format/classes/stateactions.php`.
+        - The `\core_courseformat\output\section_renderer\core_course_renderer::render_activity_information()` has been removed from `public/course/renderer.php`.
+      type: removed
+  gradereport_grader:
+    - message: >-
+        - The `\behat_gradereport_grader::get_grade_item_id()` has been removed from `public/grade/report/grader/tests/behat/behat_gradereport_grader.php`.
+        - The following methods have been removed from `public/grade/report/grader/lib.php`:
+          - `\grade_report_grader::get_left_icons_row()`
+          - `\grade_report_grader::get_right_icons_row()`
+          - `\grade_report_grader::get_right_avg_row()`
+          - `\grade_report_grader::get_icons()`
+      type: removed
+  core_grades:
+    - message: >-
+        - The `\grade_report::get_lang_string()` has been removed from `public/grade/report/lib.php`.
+        - The following methods have been removed from `public/grade/tests/behat/behat_grade.php`:
+          - `\behat_grade::select_in_gradebook_tabs()`
+          - `\behat_grade::select_in_gradebook_navigation_selector()`
+        - The following methods have been removed from `public/grade/lib.php`:
+          - `\grade_structure::get_element_icon()`
+          - `\grade_structure::get_element_type_string()`
+          - `\grade_structure::get_element_header()`
+          - `\grade_structure::get_activity_link()`
+          - `\grade_structure::get_grade_analysis_icon()`
+          - `\grade_structure::get_reset_icon()`
+          - `\grade_structure::get_edit_icon()`
+          - `\grade_structure::get_hiding_icon()`
+          - `\grade_structure::get_locking_icon()`
+          - `\grade_structure::get_calculation_icon()`
+          - `\grade_helper::get_lang_string()`
+      type: removed
+  gradereport_singleview:
+    - message: >-
+        - The `public/grade/report/singleview/classes/local/screen/select.php` file has been removed.
+      type: removed
+  core:
+    - message: >-
+        - The `public/lib/amd/src/addblockmodal.js` file has been removed.
+        - The `request()` has been removed from `public/lib/amd/src/pending.js`.
+        - The `triggerSelector()` has been removed from `public/lib/amd/src/comboboxsearch/search_combobox.js`.
+        - The `public/lib/classes/navigation/flat_navigation.php` file has been removed.
+        - The following methods have been removed from `public/lib/classes/output/action_menu.php`:
+          - `\core\output\action_menu::set_alignment()`
+          - `\core\output\action_menu::set_constraint()`
+        - The following methods have been removed from `public/lib/classes/output/core_renderer.php`:
+          - `\core\output\core_renderer::activity_information()`
+          - `\core\output\core_renderer::htmllize_file_tree()`
+        - The `\core\output\action_menu\link::instance` property has been removed from `public/lib/classes/output/action_menu/link.php`.
+        - The `\core\output\renderer_base::should_display_main_logo()` has been removed from `public/lib/classes/output/renderer_base.php`.
+        - The `\core\task\manager::ensure_adhoc_task_qos()` has been removed from `public/lib/classes/task/manager.php`.
+        - The following methods have been removed from `public/lib/classes/task/task_base.php`:
+          - `\core\task\task_base::set_blocking()`
+          - `\core\task\task_base::is_blocking()`
+        - The `\core\moodlenet\activity_sender::share_activity()` has been removed from `public/lib/classes/moodlenet/activity_sender.php`.
+        - The `\core\encryption::is_sodium_installed()` has been removed from `public/lib/classes/encryption.php`.
+        - The `\core\hook\manager::is_deprecated_plugin_callback()` has been removed from `public/lib/classes/hook/manager.php`.
+        - The `\core\report_helper::save_selected_report()` has been removed from `public/lib/classes/report_helper.php`.
+        - The `\core_text::reset_caches()` has been removed from `public/lib/classes/text.php`.
+        - The following methods have been removed from `public/lib/classes/useragent.php`:
+          - `\core_useragent::get_device_type_list()`
+          - `\core_useragent::get_device_type_theme()`
+          - `\core_useragent::get_device_type_cfg_var_name()`
+        - The `M.util.set_user_preference()` has been removed from `public/lib/javascript-static.js`.
+      type: removed
+  core_enrol:
+    - message: >-
+        - The `\enrol_plugin::update_communication()` has been removed from `public/lib/enrollib.php`.
+      type: removed
+  mod_assign:
+    - message: >-
+        - The `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` constant has been removed from the `public/mod/assign/locallib.php`.
+        - The `public/mod/assign/renderer.php` file has been removed.
+      type: removed
+  mod_data:
+    - message: >-
+        - The following functions have been removed from `public/mod/data/deprecatedlib.php`:
+          - `data_print_template()`
+          - `data_preset_name()`
+          - `data_get_available_presets()`
+          - `data_get_available_site_presets()`
+          - `data_delete_site_preset()`
+          - `data_presets_save()`
+          - `data_presets_generate_xml()`
+          - `data_presets_export()`
+          - `data_user_can_delete_preset()`
+          - `data_view()`
+          - `is_directory_a_preset()`
+        - The `\mod_data_renderer::import_setting_mappings()` has been removed from `public/mod/data/renderer.php`.
+      type: removed
+  mod_feedback:
+    - message: >-
+        - The following files have been removed:
+          - `public/mod/feedback/edit_form.php`.
+          - `public/mod/feedback/use_templ_form.php`.
+      type: removed
+  mod_quiz:
+    - message: >-
+        - The following functions have been removed from `public/mod/quiz/deprecatedlib.php`:
+          - `quiz_has_question_use()`
+          - `quiz_update_sumgrades()`
+          - `quiz_update_all_attempt_sumgrades()`
+          - `quiz_update_all_final_grades()`
+          - `quiz_set_grade()`
+          - `quiz_save_best_grade()`
+          - `quiz_calculate_best_grade()`
+          - `quiz_calculate_best_attempt()`
+          - `quiz_delete_override()`
+          - `quiz_delete_all_overrides()`
+          - `quiz_add_random_questions()`
+        - The following functions have been removed from `public/mod/quiz/classes/output/renderer.php`:
+          - `\mod_quiz\output\renderer::no_questions_message()`
+          - `\mod_quiz\output\renderer::render_mod_quiz_links_to_other_attempts()`
+          - `\mod_quiz\output\renderer::render_quiz_nav_question_button()`
+          - `\mod_quiz\output\renderer::render_quiz_nav_section_heading()`
+        - The following functions have been removed from `public/mod/quiz/classes/local/structure/slot_random.php`:
+          - `\mod_quiz\local\structure\slot_random::set_tags()`
+          - `\mod_quiz\local\structure\slot_random::set_tags_by_id()`
+        - The `\mod_quiz\structure::is_display_number_customised()` has been removed from `public/mod/quiz/classes/structure.php`.
+      type: removed
+  mod_book:
+    - message: The `book_get_nav_classes()` has been removed from `public/mod/book/deprecatedlib.php`.
+      type: removed
+  mod_forum:
+    - message: The `forum_print_discussion_header()` has been removed from `public/mod/forum/deprecatedlib.php`.
+      type: removed
+  mod_imscp:
+    - message: The `imscp_libxml_disable_entity_loader()` has been removed from `public/mod/imscp/deprecatedlib.php`.
+      type: removed
+  mod_lti:
+    - message: The `lti_libxml_disable_entity_loader()` has been removed from `public/mod/lti/deprecatedlib.php`.
+      type: removed
+  mod_folder:
+    - message: >-
+        - The `\mod_folder_renderer::htmllize_tree()` has been removed from `public/mod/folder/renderer.php`.
+      type: removed
+  mod_wiki:
+    - message: The `\mod_wiki_renderer::wiki_info()` has been removed from `public/mod/wiki/renderer.php`.
+      type: removed
+  qbank_managecategories:
+    - message: >-
+        - The following methods have been removed from `public/question/bank/managecategories/classes/category_condition.php`:
+          - `\qbank_managecategories\category_condition::display_options()`
+          - `\qbank_managecategories\category_condition::display_options_adv()`
+          - `\qbank_managecategories\category_condition::display_category_form()`
+          - `\qbank_managecategories\category_condition::print_choose_category_message()`
+          - `\qbank_managecategories\category_condition::get_current_category()`
+          - `\qbank_managecategories\category_condition::print_category_info()`
+      type: removed
+  qbank_statistics:
+    - message: >-
+        - The following methods have been removed from `public/question/bank/statistics/classes/helper.php`:
+          - `\qbank_statistics\helper::calculate_average_question_facility()`
+          - `\qbank_statistics\helper::calculate_average_question_discriminative_efficiency()`
+          - `\qbank_statistics\helper::calculate_average_question_discrimination_index()`
+      type: removed
+  qbank_history:
+    - message: The `\qbank_history\question_history_view::display_advanced_search_form()` has been removed from `public/question/bank/history/classes/question_history_view.php`.
+      type: removed
+  qbank:
+    - message: >-
+        - The following methods have been removed from `public/question/engine/bank.php`:
+          - `\question_finder::get_questions_from_categories_with_usage_counts()`
+          - `\question_finder::get_questions_from_categories_and_tags_with_usage_counts()`
+      type: removed
+  core_question:
+    - message: >-
+        - The following methods have been removed from `public/question/renderer.php`:
+          - `\core_question_bank_renderer::render_category_condition()`
+          - `\core_question_bank_renderer::render_category_condition_advanced()`
+          - `\core_question_bank_renderer::render_hidden_condition_advanced()`
+      type: removed
+  core_reportbuilder:
+    - message: >-
+        - The `\core_reportbuilder\local\helpers\audience::get_all_audiences_menu_types()` has been removed from `public/reportbuilder/classes/local/helpers/audience.php`.
+        - The `\core_reportbuilder\local\entities\base::get_default_table_aliases()` has been removed from `public/reportbuilder/classes/local/entities/base.php`.
+        - The `\core_reportbuilder\local\helpers\report::get_available_columns()` has been removed from `public/reportbuilder/classes/local/helpers/report.php`.
+      type: removed
+  core_repository:
+    - message: The `\repository::get_file_size()` has been removed from `public/repository/lib.php`.
+      type: removed
+  repository_onedrive:
+    - message: >-
+        - The following methods have been removed from `public/repository/onedrive/lib.php`:
+          - `\repository_onedrive::can_import_skydrive_files()`
+          - `\repository_onedrive::import_skydrive_files()`
+      type: removed
+  theme_boost:
+    - message: >-
+        - The `public/theme/boost/templates/flat_navigation.mustache` file has been removed.
+        - The `public/theme/boost/templates/nav-drawer.mustache` file has been removed.
+      type: removed
+  core_backup:
+    - message: >-
+        - The following methods have been removed from `public/backup/controller/base_controller.class.php`:
+          - `\base_controller::set_copy()`
+          - `\base_controller::get_copy()`
+      type: removed
+  enrol_self:
+    - message: The `\enrol_self_plugin::get_welcome_email_contact()` has been removed from `public/enrol/self/lib.php`
+      type: removed
+  report_eventlist:
+    - message: >-
+        - The following methods have been removed from `public/report/eventlist/classes/list_generator.php`:
+          - `\report_eventlist_list_generator::get_core_events_list()`
+          - `\report_eventlist_list_generator::get_non_core_event_list()`
+      type: removed
+  core_tag:
+    - message: The `public/tag/classes/manage_table.php` file has been removed.
+      type: removed
+  core_mnet:
+    - message: The `\mnet_peer::get_public_key()` has been removed from `public/mnet/peer.php`.
+      type: removed
+  report_eventlist:
+    - message: >-
+        - The following methods have been removed from `public/report/eventlist/classes/list_generator.php`:
+          - `\report_eventlist_list_generator::get_core_events_list()`
+          - `\report_eventlist_list_generator::get_non_core_event_list()`
+      type: removed
+  core_badges:
+    - message: >-
+        - The following methods have been removed from `public/badges/renderer.php`:
+          - `\core_badges_renderer::print_badge_table_actions()`
+          - `\core_badges_renderer::render_badge_collection()`
+          - `\core_badges_renderer::render_badge_management()`
+          - `\core_badges_renderer::render_badge_recipients()`
+      type: removed

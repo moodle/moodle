@@ -184,15 +184,6 @@ class structure {
     }
 
     /**
-     * @deprecated since 4.2. $slot->displayednumber is no longer used. If you need this,
-     *      use isset(...->displaynumber), but this method was not used.
-     */
-    #[\core\attribute\deprecated('isset(...->displaynumber)()', since: '4.2', mdl: 'MDL-77656', final: true)]
-    public function is_display_number_customised(int $slotid): bool {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Make slot display number in place editable api call.
 
      * @param int $slotid

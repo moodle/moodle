@@ -316,12 +316,4 @@ class mnet_peer {
         $this->application = $DB->get_record('mnet_application', array('id'=>$this->applicationid));
         $this->bootstrapped = true;
     }
-
-    /**
-     * @deprecated since Moodle 4.3
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-77341', final: true)]
-    public function get_public_key(): void {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
 }

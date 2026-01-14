@@ -1,0 +1,7 @@
+issueNumber: MDL-87425
+notes:
+  core:
+    - message: >-
+        The `public/lib/classes/navigation/flat_navigation_node.php` file has
+        been removed.
+      type: removed

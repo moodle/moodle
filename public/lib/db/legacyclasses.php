@@ -191,7 +191,6 @@ $legacyclasses = [
     // Navigation API.
     \breadcrumb_navigation_node::class => 'navigation/breadcrumb_navigation_node.php',
     \flat_navigation::class => 'navigation/flat_navigation.php',
-    \flat_navigation_node::class => 'navigation/flat_navigation_node.php',
     \global_navigation::class => 'navigation/global_navigation.php',
     \global_navigation_for_ajax::class => 'navigation/global_navigation_for_ajax.php',
     \navbar::class => 'navigation/navbar.php',

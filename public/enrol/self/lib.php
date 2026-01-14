@@ -1202,14 +1202,6 @@ class enrol_self_plugin extends enrol_plugin {
     }
 
     /**
-     * @deprecated since Moodle 4.4
-     */
-    #[\core\attribute\deprecated('enrol_plugin::get_welcome_message_contact', since: '4.4', mdl: 'MDL-4188', final: true)]
-    public function get_welcome_email_contact() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Check if enrolment plugin is supported in csv course upload.
      *
      * @return bool

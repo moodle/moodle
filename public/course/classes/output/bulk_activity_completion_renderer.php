@@ -116,14 +116,6 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
     }
 
     /**
-     * @deprecated since Moodle 4.3 MDL-78528
-     */
-    #[\core\attribute\deprecated(null, since: '4.3', mdl: 'MDL-78528', final: true)]
-    public function edit_default_completion() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Renders the course completion action bar.
      *
      * @param \core_course\output\completion_action_bar $actionbar

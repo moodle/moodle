@@ -114,20 +114,10 @@ export default class ModalForm {
      * @returns {Promise}
      */
     getModalModule() {
-        if (!this.config.moduleName && this.config.modalConfig.type && this.config.modalConfig.type !== 'SAVE_CANCEL') {
-            // Legacy loader for plugins that were not updated with Moodle 4.3 changes.
-            window.console.warn(
-                'Passing config.modalConfig.type to ModalForm has been deprecated since Moodle 4.3. ' +
-                'Please pass config.modalName instead with the full module name.',
-            );
-            return import('core/modal')
-                .then((Modal) => Modal.create(this.config.modalConfig));
-        } else {
-            // New loader for Moodle 4.3 and above.
-            const moduleName = this.config.moduleName ?? 'core/modal_save_cancel';
-            return import(moduleName)
-                .then((module) => module.create(this.config.modalConfig));
-        }
+        // New loader for Moodle 4.3 and above.
+        const moduleName = this.config.moduleName ?? 'core/modal_save_cancel';
+        return import(moduleName)
+            .then((module) => module.create(this.config.modalConfig));
     }
 
     /**

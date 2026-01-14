@@ -36,23 +36,6 @@
  * Note: It is recommended that a descriptive key be used to aid in debugging where possible, but this is optional.
  */
 export default class {
-
-    /**
-     * Create a new Pending Promise statically.
-     *
-     * @param {String} pendingKey An identifier to help in debugging
-     * @return {Promise} A Native Promise
-     * @deprecated since Moodle 4.2
-     */
-    static request(pendingKey) {
-        window.console.error(
-            `The core/pending::request method has been deprecated. ` +
-            `Please use one of the alternative calls to core/pending, for example "new Pending('${pendingKey}')". ` +
-            `Called with ${pendingKey}`
-        );
-        return new this(pendingKey);
-    }
-
     /**
      * Request a new pendingPromise for later resolution.
      *

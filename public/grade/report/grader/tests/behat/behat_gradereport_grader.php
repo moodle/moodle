@@ -46,14 +46,6 @@ class behat_gradereport_grader extends behat_base {
     }
 
     /**
-     * @deprecated since 4.2
-     */
-    #[\core\attribute\deprecated('behat_grades::get_grade_item_id', since: '4.2', mdl: 'MDL-77033', final: true)]
-    protected function get_grade_item_id() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Clicks on given user menu.
      *
      * @Given /^I click on user menu "([^"]*)"$/

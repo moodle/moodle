@@ -207,42 +207,6 @@ class core_useragent {
     }
 
     /**
-     * @deprecated Moodle 4.3 MDL-78468 - No longer used. Please use core_useragent::devicetypes instead.
-     */
-    #[\core\attribute\deprecated('core_useragent::devicetypes', since: '4.3', mdl: 'MDL-78468', final: true)]
-    public static function get_device_type_list($includecustomtypes = true) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since 4.3.
-     */
-    #[\core\attribute\deprecated(
-        null,
-        since: '4.3',
-        reason: 'All functions associated with device specific themes are being removed',
-        mdl: 'MDL-77793',
-        final: true
-    )]
-    public static function get_device_type_theme($devicetype = null) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since 4.3.
-     */
-    #[\core\attribute\deprecated(
-        null,
-        since: '4.3',
-        reason: 'All functions associated with device specific themes are being removed',
-        mdl: 'MDL-77793',
-        final: true
-    )]
-    public static function get_device_type_cfg_var_name($devicetype = null) {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Gets the device type the user is currently using.
      * @return string
      */

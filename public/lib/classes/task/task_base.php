@@ -116,34 +116,6 @@ abstract class task_base {
     }
 
     /**
-     * @deprecated since Moodle 4.4 See MDL-67667
-     */
-    #[\core\attribute\deprecated(
-        replacement: null,
-        since: '4.4',
-        mdl: 'MDL-67667',
-        reason: 'Blocking tasks are no longer supported',
-        final: true,
-    )]
-    public function set_blocking() {
-        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
-    }
-
-    /**
-     * @deprecated since Moodle 4.4 See MDL-67667
-     */
-    #[\core\attribute\deprecated(
-        replacement: null,
-        since: '4.4',
-        mdl: 'MDL-67667',
-        reason: 'Blocking tasks are no longer supported',
-        final: true,
-    )]
-    public function is_blocking() {
-        \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
-    }
-
-    /**
      * Setter for $component.
      * @param string $component
      */

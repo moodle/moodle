@@ -89,11 +89,4 @@ abstract class bulk_action_base extends view_component {
     public function initialise_javascript(): void {
 
     }
-
-    /**
-     * @deprecated since Moodle 4.0
-     */
-    public function get_bulk_action_key() {
-        throw new \coding_exception(__FUNCTION__ . '() has been removed.');
-    }
 }
