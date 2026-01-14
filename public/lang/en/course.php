@@ -149,6 +149,7 @@ $string['recommendcheckbox'] = 'Recommend activity: {$a}';
 $string['recommended_help'] = 'Activities recommended by your organisation.';
 $string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
 $string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';
+$string['restrictedtitle'] = 'Not available: {$a}';
 $string['searchactivitiesbyname'] = 'Search for activities by name';
 $string['searchresults'] = 'Search results: {$a}';
 $string['sectionlink'] = 'Permalink';

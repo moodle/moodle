@@ -1,0 +1,18 @@
+issueNumber: MDL-87283
+notes:
+  core:
+    - message: >-
+        Public require_login() function in moodlelib.php has been change to
+        redirect users to a restricted page when the activity restrictions are
+        visible.
+      type: improved
+  core_courseformat:
+    - message: >-
+        A new restricted page has been created using routing for users to access
+        the activity information. Only the activities with visible restrictions
+        will be available.
+      type: improved
+    - message: >-
+        Public course_section_cm_unavailable_error_message() function has been
+        changed to return the same message for all restricted activities.
+      type: improved
