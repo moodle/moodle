@@ -134,12 +134,16 @@ class table implements \renderable {
         $html = \html_writer::table($table);
 
         if ($this->detail && $result) {
-            $html .= $output->heading(get_string('details'), 3);
-            $html .= $output->box($result->get_details(), 'generalbox boxwidthnormal boxaligncenter');
+            $details = $result->get_details();
+
+            if (!empty($details)) {
+                $html .= $output->heading(get_string('details'), 3);
+                $html .= $output->box($details, 'generalbox boxwidthnormal boxaligncenter');
+            }
+
             $html .= $output->continue_button($this->url);
         }
 
         return $html;
     }
 }
-
