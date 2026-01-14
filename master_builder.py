@@ -606,6 +606,7 @@ def post_announcement(course_id, subject, message, message_format=1):
 def build_pdf_course(course_id, base_name, pdf_path):
     """
     Creates a course with only the PDF resource (no quiz).
+    Configures course completion to require activity completion + 100% grade.
     """
     draft_id, clean_fname = upload_file_json_base64(pdf_path)
     
@@ -647,6 +648,21 @@ def build_pdf_course(course_id, base_name, pdf_path):
          raise Exception(f"Resource Creation Failed: {res['message']}")
     
     logging.info(f"PDF Resource created successfully for course {course_id}")
+    
+    # Configure course completion settings.
+    logging.info(f"Configuring course completion for {base_name}...")
+    try:
+        completion_res = call_moodle_json('local_masterbuilder_configure_course_completion', {
+            'courseid': int(course_id),
+            'requiregrade': 1,  # Require 100% grade
+            'requireactivity': 1  # Require activity completion
+        })
+        if isinstance(completion_res, dict) and completion_res.get('success'):
+            logging.info(f"Course completion configured: {completion_res.get('message')}")
+        else:
+            logging.warning(f"Course completion config response: {completion_res}")
+    except Exception as e:
+        logging.error(f"Failed to configure course completion: {e}")
 
 def build_quiz_course(course_id, base_name):
     """
@@ -740,6 +756,36 @@ def build_quiz_course(course_id, base_name):
              logging.info(f"Question Created Successfully (ID: {q_res.get('questionid')})")
     except Exception as e:
         logging.error(f"Question Creation Error: {e}")
+
+    # --- CONFIGURE QUIZ SETTINGS ---
+    logging.info("Configuring Quiz Settings (Grade 10, Passing 10)...")
+    try:
+        quiz_conf_res = call_moodle_json('local_masterbuilder_configure_quiz_settings', {
+            'quizid': int(quiz_instance_id),
+            'gradetopass': 100.0
+        })
+        if isinstance(quiz_conf_res, dict) and quiz_conf_res.get('success'):
+            logging.info(f"Quiz configured: {quiz_conf_res.get('message')}")
+        else:
+            logging.warning(f"Quiz config response: {quiz_conf_res}")
+    except Exception as e:
+        logging.error(f"Failed to configure quiz settings: {e}")
+
+    # --- CONFIGURE COURSE COMPLETION ---
+    logging.info("Configuring Course Completion...")
+    try:
+        # Require grade (passing grade from quiz which is set to 10) and activity completion
+        completion_res = call_moodle_json('local_masterbuilder_configure_course_completion', {
+            'courseid': int(course_id),
+            'requiregrade': 1,
+            'requireactivity': 1
+        })
+        if isinstance(completion_res, dict) and completion_res.get('success'):
+            logging.info(f"Course completion configured: {completion_res.get('message')}")
+        else:
+            logging.warning(f"Course completion config response: {completion_res}")
+    except Exception as e:
+        logging.error(f"Failed to configure course completion: {e}")
 
 # --- 5. MAIN LOGIC ---
 

@@ -60,6 +60,20 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
+    'local_masterbuilder_configure_course_completion' => [
+        'classname'   => 'local_masterbuilder\external',
+        'methodname'  => 'configure_course_completion',
+        'description' => 'Configures course completion with activity and grade requirements',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'local_masterbuilder_configure_quiz_settings' => [
+        'classname'   => 'local_masterbuilder\external',
+        'methodname'  => 'configure_quiz_settings',
+        'description' => 'Configures quiz with 10-point max grade, passing grade, and auto-completion',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 ];
 
 $services = [
@@ -70,9 +84,12 @@ $services = [
             'local_masterbuilder_get_build_state',
             'local_masterbuilder_update_build_state',
             'local_masterbuilder_reset_build_state',
+            'local_masterbuilder_configure_course_completion',
+            'local_masterbuilder_configure_quiz_settings',
         ],
         'restrictedusers' => 0,
         'enabled' => 1,
         'shortname' => 'masterbuilder',
     ],
 ];
+

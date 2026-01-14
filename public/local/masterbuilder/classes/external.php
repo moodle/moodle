@@ -262,4 +262,226 @@ class external extends external_api {
             'success' => new external_value(PARAM_BOOL, 'Success status'),
         ]);
     }
+
+    // ========================================
+    // === Configure Course Completion ===
+    // ========================================
+
+    /**
+     * Parameters for configure_course_completion.
+     *
+     * @return external_function_parameters
+     */
+    public static function configure_course_completion_parameters() {
+        return new external_function_parameters([
+            'courseid' => new external_value(PARAM_INT, 'The course ID'),
+            'requiregrade' => new external_value(PARAM_BOOL, 'Require 100% course grade', VALUE_DEFAULT, true),
+            'requireactivity' => new external_value(PARAM_BOOL, 'Require activity completion', VALUE_DEFAULT, true),
+        ]);
+    }
+
+    /**
+     * Configure course completion settings.
+     * Sets up: ALL conditions must be met, activity completion required, 100% grade required.
+     *
+     * @param int $courseid
+     * @param bool $requiregrade
+     * @param bool $requireactivity
+     * @return array
+     */
+    public static function configure_course_completion($courseid, $requiregrade = true, $requireactivity = true) {
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/completionlib.php');
+        require_once($CFG->dirroot . '/completion/criteria/completion_criteria_activity.php');
+        require_once($CFG->dirroot . '/completion/criteria/completion_criteria_grade.php');
+
+        $params = self::validate_parameters(self::configure_course_completion_parameters(), [
+            'courseid' => $courseid,
+            'requiregrade' => $requiregrade,
+            'requireactivity' => $requireactivity,
+        ]);
+
+        $context = context_course::instance($params['courseid']);
+        self::validate_context($context);
+
+        $courseid = $params['courseid'];
+
+        // Enable completion tracking for the course.
+        $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+        $course->enablecompletion = 1;
+        $DB->update_record('course', $course);
+
+        // Delete existing completion criteria for this course.
+        $DB->delete_records('course_completion_criteria', ['course' => $courseid]);
+        $DB->delete_records('course_completion_aggr_methd', ['course' => $courseid]);
+
+        // Set aggregation method: ALL conditions must be met.
+        $aggr = new \stdClass();
+        $aggr->course = $courseid;
+        $aggr->criteriatype = null;
+        $aggr->method = 1; // All
+        $aggr->value = null;
+        $DB->insert_record('course_completion_aggr_methd', $aggr);
+
+        // Also set activity aggregation to ALL.
+        $activityaggr = new \stdClass();
+        $activityaggr->course = $courseid;
+        $activityaggr->criteriatype = COMPLETION_CRITERIA_TYPE_ACTIVITY;
+        $activityaggr->method = 1; // All
+        $activityaggr->value = null;
+        $DB->insert_record('course_completion_aggr_methd', $activityaggr);
+
+        $criteriasadded = 0;
+
+        // Add activity completion criteria for all activities with completion enabled.
+        if ($params['requireactivity']) {
+            $activities = $DB->get_records_sql(
+                "SELECT cm.id, cm.module, cm.instance, cm.completion 
+                 FROM {course_modules} cm 
+                 WHERE cm.course = ? AND cm.completion > 0",
+                [$courseid]
+            );
+
+            foreach ($activities as $cm) {
+                $criteria = new \stdClass();
+                $criteria->course = $courseid;
+                $criteria->criteriatype = COMPLETION_CRITERIA_TYPE_ACTIVITY;
+                $criteria->module = $cm->module;
+                $criteria->moduleinstance = $cm->id;
+                $criteria->courseinstance = null;
+                $criteria->enrolperiod = null;
+                $criteria->timeend = null;
+                $criteria->gradepass = null;
+                $criteria->role = null;
+                $DB->insert_record('course_completion_criteria', $criteria);
+                $criteriasadded++;
+            }
+        }
+
+        // Add grade criteria (100%).
+        if ($params['requiregrade']) {
+            $criteria = new \stdClass();
+            $criteria->course = $courseid;
+            $criteria->criteriatype = COMPLETION_CRITERIA_TYPE_GRADE;
+            $criteria->module = null;
+            $criteria->moduleinstance = null;
+            $criteria->courseinstance = null;
+            $criteria->enrolperiod = null;
+            $criteria->timeend = null;
+            $criteria->gradepass = 100.0; // 100%
+            $criteria->role = null;
+            $DB->insert_record('course_completion_criteria', $criteria);
+            $criteriasadded++;
+        }
+
+        // Rebuild course completion cache.
+        $completion = new \completion_info($course);
+        rebuild_course_cache($courseid, true);
+
+        return [
+            'success' => true,
+            'message' => "Course completion configured: {$criteriasadded} criteria added.",
+        ];
+    }
+
+    /**
+     * Returns for configure_course_completion.
+     *
+     * @return external_single_structure
+     */
+    public static function configure_course_completion_returns() {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'Success status'),
+            'message' => new external_value(PARAM_TEXT, 'Status message'),
+        ]);
+    }
+
+    // ========================================
+    // === Configure Quiz Settings ===
+    // ========================================
+
+    /**
+     * Parameters for configure_quiz_settings.
+     *
+     * @return external_function_parameters
+     */
+    public static function configure_quiz_settings_parameters() {
+        return new external_function_parameters([
+            'quizid' => new external_value(PARAM_INT, 'The quiz instance ID'),
+            'gradetopass' => new external_value(PARAM_FLOAT, 'Grade to pass (percentage)', VALUE_DEFAULT, 100.0),
+        ]);
+    }
+
+    /**
+     * Configure quiz settings for passing grade and completion.
+     *
+     * @param int $quizid
+     * @param float $gradetopass
+     * @return array
+     */
+    public static function configure_quiz_settings($quizid, $gradetopass = 100.0) {
+        global $DB, $CFG;
+
+        $params = self::validate_parameters(self::configure_quiz_settings_parameters(), [
+            'quizid' => $quizid,
+            'gradetopass' => $gradetopass,
+        ]);
+
+        // Get quiz and course module.
+        $quiz = $DB->get_record('quiz', ['id' => $params['quizid']], '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course, false, MUST_EXIST);
+
+        $context = context_course::instance($quiz->course);
+        self::validate_context($context);
+
+        // Set quiz grade to 10 and sumgrades to 10.
+        $quiz->grade = 10.0;
+        $quiz->sumgrades = 10.0;
+        $DB->update_record('quiz', $quiz);
+
+        // Update the quiz slot to have maxmark = 10.
+        $slot = $DB->get_record('quiz_slots', ['quizid' => $quiz->id, 'slot' => 1]);
+        if ($slot) {
+            $slot->maxmark = 10.0;
+            $DB->update_record('quiz_slots', $slot);
+        }
+
+        // Set grade_items passing grade.
+        $gradeitem = $DB->get_record('grade_items', [
+            'itemtype' => 'mod',
+            'itemmodule' => 'quiz',
+            'iteminstance' => $quiz->id,
+        ]);
+        if ($gradeitem) {
+            $gradeitem->gradepass = 10.0; // 100% of 10 = 10
+            $DB->update_record('grade_items', $gradeitem);
+        }
+
+        // Set activity completion to require passing grade.
+        // completion = 2 (auto), completionpassgrade = 1
+        $cm->completion = 2; // Automatic completion
+        $DB->set_field('course_modules', 'completion', 2, ['id' => $cm->id]);
+        $DB->set_field('course_modules', 'completionpassgrade', 1, ['id' => $cm->id]);
+        $DB->set_field('course_modules', 'completiongradeitemnumber', 0, ['id' => $cm->id]);
+
+        rebuild_course_cache($quiz->course, true);
+
+        return [
+            'success' => true,
+            'message' => "Quiz configured: grade=10, passing=10, auto-completion with passing grade.",
+        ];
+    }
+
+    /**
+     * Returns for configure_quiz_settings.
+     *
+     * @return external_single_structure
+     */
+    public static function configure_quiz_settings_returns() {
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL, 'Success status'),
+            'message' => new external_value(PARAM_TEXT, 'Status message'),
+        ]);
+    }
 }
+

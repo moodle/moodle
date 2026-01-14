@@ -38,7 +38,7 @@ class output_callbacks {
      * @param \core\hook\output\before_standard_top_of_body_html_generation $hook
      */
     public static function before_top_of_body(\core\hook\output\before_standard_top_of_body_html_generation $hook): void {
-        global $PAGE, $USER, $COURSE, $CFG;
+        global $PAGE, $USER, $COURSE, $CFG, $DB;
 
         require_once($CFG->dirroot . '/local/coursematrix/lib.php');
 
@@ -46,6 +46,23 @@ class output_callbacks {
         if (!isset($PAGE->context) || $PAGE->context->contextlevel != CONTEXT_COURSE || $COURSE->id == 1) {
             return;
         }
+
+        // DEBUG: Check if user has a plan assignment for this course.
+        $userplan = $DB->get_record('local_coursematrix_user_plans', [
+            'userid' => $USER->id,
+            'currentcourseid' => $COURSE->id,
+        ]);
+        
+        // Add debug banner to show what's happening.
+        $debugoutput = '<div class="alert alert-secondary" style="margin:0;border-radius:0;font-size:0.8em;">';
+        $debugoutput .= '<strong>DEBUG:</strong> Course ID: ' . $COURSE->id . ', User ID: ' . $USER->id;
+        if ($userplan) {
+            $debugoutput .= ', Plan ID: ' . $userplan->planid . ', Status: ' . $userplan->status;
+        } else {
+            $debugoutput .= ', <span style="color:red;">No user plan found for this course as currentcourseid</span>';
+        }
+        $debugoutput .= '</div>';
+        $hook->add_html($debugoutput);
 
         // Get due info for this user/course.
         $dueinfo = local_coursematrix_get_user_course_dueinfo($USER->id, $COURSE->id);
@@ -84,3 +101,4 @@ class output_callbacks {
         $hook->add_html($output);
     }
 }
+
