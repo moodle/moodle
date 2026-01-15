@@ -25,10 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_coursematrix';
-$plugin->version   = 2026011423;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2026011424;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires = 2022112800; // Moodle 4.1+.
 $plugin->maturity  = MATURITY_BETA;
-$plugin->release   = 'v1.2.18';
+$plugin->release   = 'v1.2.19';
+
 
 
 

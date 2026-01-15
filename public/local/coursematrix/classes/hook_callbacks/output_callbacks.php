@@ -179,53 +179,52 @@ class output_callbacks {
     var courseStatuses = ' . $json . ';
     
     function addBadges() {
-        // Moodle 4.x course overview block uses different selectors.
-        // Try multiple approaches.
+        var processedCourses = {};
         
-        // Approach 1: Find course links and add badge to their card container.
+        // Find course links and add badge to their card container.
         document.querySelectorAll("a[href*=\'/course/view.php?id=\']").forEach(function(link) {
-            var match = link.href.match(/[?&]id=(\d+)/);
+            var match = link.href.match(/[?&]id=(\\d+)/);
             if (!match) return;
             var courseId = match[1];
             
+            // Skip if already processed this course.
+            if (processedCourses[courseId]) return;
             if (!courseStatuses[courseId]) return;
             
-            // Find the card container (walk up the DOM).
-            var card = link.closest(".card, .coursebox, .course-listitem, .course-info-container");
-            if (!card) {
-                // Try finding a parent with position.
-                card = link.closest("[class*=\'course\']");
-            }
+            // Find the card container - only match .card class.
+            var card = link.closest(".card");
             if (!card) return;
             
             // Check if badge already added.
-            if (card.querySelector(".coursematrix-badge")) return;
+            if (card.querySelector(".coursematrix-badge")) {
+                processedCourses[courseId] = true;
+                return;
+            }
             
             var info = courseStatuses[courseId];
             var badge = document.createElement("div");
             badge.className = "coursematrix-badge " + info.status;
             
             if (info.status === "completed") {
-                badge.innerHTML = "<i class=\"fa fa-check-circle\"></i> Completed";
+                badge.innerHTML = "<i class=\\"fa fa-check-circle\\"></i> Completed";
             } else if (info.status === "overdue") {
-                badge.innerHTML = "<i class=\"fa fa-exclamation-triangle\"></i> Overdue " + Math.abs(info.daysremaining) + "d";
+                badge.innerHTML = "<i class=\\"fa fa-exclamation-triangle\\"></i> Overdue " + Math.abs(info.daysremaining) + "d";
             } else if (info.status === "critical" || info.status === "warning" || info.status === "normal") {
-                badge.innerHTML = "<i class=\"fa fa-clock-o\"></i> " + info.daysremaining + " days";
+                badge.innerHTML = "<i class=\\"fa fa-clock-o\\"></i> " + info.daysremaining + " days";
             } else {
-                badge.innerHTML = "<i class=\"fa fa-hourglass\"></i> Pending";
+                return; // Skip unknown status.
             }
             
-            // Insert badge into the card image area or card itself.
-            var imgArea = card.querySelector(".card-img-top, .courseimage, .course-image-view, .summaryimage");
+            // Insert badge into the card image area only.
+            var imgArea = card.querySelector(".card-img-top");
             if (imgArea) {
                 imgArea.style.position = "relative";
                 imgArea.appendChild(badge);
-            } else {
-                card.style.position = "relative";
-                card.insertBefore(badge, card.firstChild);
+                processedCourses[courseId] = true;
             }
         });
     }
+
     
     // Run on DOM ready.
     if (document.readyState === "loading") {
