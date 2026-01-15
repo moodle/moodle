@@ -92,7 +92,9 @@ $string['duedate'] = 'Due Date';
 $string['daysremaining'] = '{$a} days remaining';
 $string['dayremaining'] = '1 day remaining';
 $string['overdue'] = 'OVERDUE';
+$string['urgent'] = 'URGENT';
 $string['overduedays'] = '{$a} days overdue';
+
 
 // Dashboard.
 $string['dashboard'] = 'Dashboard';
