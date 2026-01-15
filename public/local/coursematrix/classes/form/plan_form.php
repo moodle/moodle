@@ -73,11 +73,14 @@ class plan_form extends \moodleform {
             '</div>'
         );
 
-        // Add course button - opens selector.
+        // Add course selector with explicit Add button.
         $mform->addElement('autocomplete', 'add_course', get_string('addcourse', 'local_coursematrix'), $allcourses, [
             'multiple' => false,
             'noselectionstring' => get_string('selectcourses', 'local_coursematrix'),
         ]);
+
+        // Explicit Add button (Moodle autocomplete doesn't fire reliable change events).
+        $mform->addElement('button', 'add_course_btn', get_string('add'), ['id' => 'btn_add_course']);
 
         // Use standard hidden element.
         $mform->addElement('hidden', 'course_config');
@@ -87,6 +90,7 @@ class plan_form extends \moodleform {
 
         // Container for the dynamic course table.
         $mform->addElement('html', '<div id="course-config-container" class="mb-3"></div>');
+
 
         // Add JavaScript to handle dynamic course table.
         $PAGE->requires->js_amd_inline("
@@ -162,17 +166,19 @@ require(['jquery'], function($) {
         });
     }
     
-    // Add course handler.
-    $(document).on('change', '#id_add_course', function() {
-        var courseId = parseInt($(this).val());
-        if (!courseId || isNaN(courseId)) return;
+    // Add course handler - use explicit button click.
+    $(document).on('click', '#btn_add_course', function(e) {
+        e.preventDefault();
+        var courseId = parseInt($('#id_add_course').val());
+        if (!courseId || isNaN(courseId)) {
+            alert('Please select a course first.');
+            return;
+        }
         
         // Check if already added.
         for (var i = 0; i < courseData.length; i++) {
             if (courseData[i].courseid == courseId) {
                 alert('" . addslashes(get_string('coursealreadyadded', 'local_coursematrix')) . "');
-                $(this).val('');
-                $(this).closest('.form-autocomplete-selection').find('input').val('');
                 return;
             }
         }
@@ -185,12 +191,14 @@ require(['jquery'], function($) {
             reminders: '7, 3, 1'
         });
         
-        $(this).val('');
-        var container = $(this).closest('.form-group');
-        container.find('.form-autocomplete-selection span[data-value]').remove();
+        // Clear the autocomplete.
+        $('#id_add_course').val('');
+        // Clear visible selection badges.
+        $('.form-autocomplete-selection span[data-value]').remove();
         
         renderTable();
     });
+
     
     // Remove course handler.
     $(document).on('click', '.remove-course', function() {
