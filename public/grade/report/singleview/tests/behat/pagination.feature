@@ -75,6 +75,61 @@ Feature: Singleview report pagination
     And I should see "2" in the ".stickyfooter .pagination" "css_element"
     And I should not see "3" in the ".stickyfooter .pagination" "css_element"
 
+  Scenario: Teachers can view all students on singleview report
+    Given "150" "users" exist with the following data:
+      | username  | student[count]             |
+      | firstname | Student                    |
+      | lastname  | [count]                    |
+      | email     | student[count]@example.com |
+    And "150" "course enrolments" exist with the following data:
+      | user   | student[count] |
+      | course | C1             |
+      | role   |student         |
+    When I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
+    And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
+    And I choose "Single view for this item" in the open action menu
+    And I set the field "perpage" to "All"
+    # There is also 1 header row.
+    Then I should see "151" node occurrences of type "tr" in the "singleview-grades" "table"
+    And ".stickyfooter .pagination" "css_element" should not exist
+
+  Scenario: Max perpage is 1000 and All is not available
+    Given "1100" "users" exist with the following data:
+      | username  | student[count]             |
+      | firstname | Student                    |
+      | lastname  | [count]                    |
+      | email     | student[count]@example.com |
+    And "1100" "course enrolments" exist with the following data:
+      | user   | student[count] |
+      | course | C1             |
+      | role   | student        |
+    When I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
+    And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
+    And I choose "Single view for this item" in the open action menu
+    Then the "perpage" select box should contain "1000"
+    And the "perpage" select box should not contain "All"
+
+  Scenario: Page loads correctly with Max perpage limit
+    Given "1100" "users" exist with the following data:
+      | username  | student[count]             |
+      | firstname | Student                    |
+      | lastname  | [count]                    |
+      | email     | student[count]@example.com |
+    And "1100" "course enrolments" exist with the following data:
+      | user   | student[count] |
+      | course | C1             |
+      | role   | student        |
+    When I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
+    And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
+    And I choose "Single view for this item" in the open action menu
+    And I set the field "perpage" to "1000"
+    Then I should see "1001" node occurrences of type "tr" in the "singleview-grades" "table"
+    And I click on "2" "link" in the ".stickyfooter .pagination" "css_element"
+    And I should see "101" node occurrences of type "tr" in the "singleview-grades" "table"
+    And I should see "1" in the ".stickyfooter .pagination" "css_element"
+    And I should see "2" in the ".stickyfooter .pagination" "css_element"
+    And I should not see "3" in the ".stickyfooter .pagination" "css_element"
+
   @javascript
   Scenario: The pagination bar is only displayed when there is more than one page on singleview report
     Given "21" "users" exist with the following data:
