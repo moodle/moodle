@@ -60,7 +60,7 @@ class output_callbacks {
         require_once($CFG->libdir . '/completionlib.php');
 
         // Get all user's plan assignments.
-        // Use pc.id as first column to ensure uniqueness (each plan_course row is unique).
+        // Use pc.id as first column to ensure uniqueness.
         $sql = "SELECT pc.id, up.userid, up.planid, up.currentcourseid, up.startdate, up.status,
                        pc.courseid, pc.duedays, p.name as planname, c.fullname as coursename
                 FROM {local_coursematrix_user_plans} up
@@ -69,7 +69,6 @@ class output_callbacks {
                 JOIN {course} c ON c.id = pc.courseid
                 WHERE up.userid = ?";
         $enrollments = $DB->get_records_sql($sql, [$userid]);
-
 
         if (empty($enrollments)) {
             return;
@@ -83,6 +82,9 @@ class output_callbacks {
             
             // Check completion status.
             $course = $DB->get_record('course', ['id' => $e->courseid]);
+            if (!$course) {
+                continue;
+            }
             $completion = new \completion_info($course);
             $iscomplete = $completion->is_enabled() && $completion->is_course_complete($userid);
             
@@ -108,12 +110,15 @@ class output_callbacks {
                 }
             }
             
-            $coursestatuses[$e->courseid] = [
-                'courseid' => $e->courseid,
-                'status' => $status,
-                'daysremaining' => $daysremaining,
-                'planname' => $e->planname,
-            ];
+            // Only add if we have a meaningful status.
+            if ($status !== 'not_started') {
+                $coursestatuses[$e->courseid] = [
+                    'courseid' => (int)$e->courseid,
+                    'status' => $status,
+                    'daysremaining' => $daysremaining,
+                    'planname' => $e->planname,
+                ];
+            }
         }
 
         if (empty($coursestatuses)) {
@@ -133,8 +138,9 @@ class output_callbacks {
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 600;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    pointer-events: none;
 }
 .coursematrix-badge.completed {
     background: linear-gradient(135deg, #28a745, #20c997);
@@ -143,7 +149,7 @@ class output_callbacks {
 .coursematrix-badge.overdue {
     background: linear-gradient(135deg, #dc3545, #c82333);
     color: white;
-    animation: pulse 1.5s infinite;
+    animation: cm-pulse 1.5s infinite;
 }
 .coursematrix-badge.critical {
     background: linear-gradient(135deg, #fd7e14, #dc3545);
@@ -157,35 +163,44 @@ class output_callbacks {
     background: linear-gradient(135deg, #17a2b8, #138496);
     color: white;
 }
-@keyframes pulse {
+.coursematrix-badge.not_started {
+    background: #6c757d;
+    color: white;
+}
+@keyframes cm-pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
-}
-.course-card .card-img-top {
-    position: relative;
 }
 </style>';
 
         $js = '
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+(function() {
     var courseStatuses = ' . $json . ';
     
-    // Find all course cards.
-    var courseCards = document.querySelectorAll(".coursebox, .course-card, [data-courseid]");
-    
-    courseCards.forEach(function(card) {
-        var courseId = card.getAttribute("data-courseid");
-        if (!courseId) {
-            // Try to find course ID from link.
-            var link = card.querySelector("a[href*=\'/course/view.php?id=\']");
-            if (link) {
-                var match = link.href.match(/id=(\d+)/);
-                if (match) courseId = match[1];
-            }
-        }
+    function addBadges() {
+        // Moodle 4.x course overview block uses different selectors.
+        // Try multiple approaches.
         
-        if (courseId && courseStatuses[courseId]) {
+        // Approach 1: Find course links and add badge to their card container.
+        document.querySelectorAll("a[href*=\'/course/view.php?id=\']").forEach(function(link) {
+            var match = link.href.match(/[?&]id=(\d+)/);
+            if (!match) return;
+            var courseId = match[1];
+            
+            if (!courseStatuses[courseId]) return;
+            
+            // Find the card container (walk up the DOM).
+            var card = link.closest(".card, .coursebox, .course-listitem, .course-info-container");
+            if (!card) {
+                // Try finding a parent with position.
+                card = link.closest("[class*=\'course\']");
+            }
+            if (!card) return;
+            
+            // Check if badge already added.
+            if (card.querySelector(".coursematrix-badge")) return;
+            
             var info = courseStatuses[courseId];
             var badge = document.createElement("div");
             badge.className = "coursematrix-badge " + info.status;
@@ -195,21 +210,34 @@ document.addEventListener("DOMContentLoaded", function() {
             } else if (info.status === "overdue") {
                 badge.innerHTML = "<i class=\"fa fa-exclamation-triangle\"></i> Overdue " + Math.abs(info.daysremaining) + "d";
             } else if (info.status === "critical" || info.status === "warning" || info.status === "normal") {
-                badge.innerHTML = "<i class=\"fa fa-clock-o\"></i> " + info.daysremaining + " days left";
+                badge.innerHTML = "<i class=\"fa fa-clock-o\"></i> " + info.daysremaining + " days";
+            } else {
+                badge.innerHTML = "<i class=\"fa fa-hourglass\"></i> Pending";
             }
             
-            // Insert badge.
-            var imgContainer = card.querySelector(".card-img-top, .courseimage, .course-image");
-            if (imgContainer) {
-                imgContainer.style.position = "relative";
-                imgContainer.appendChild(badge);
+            // Insert badge into the card image area or card itself.
+            var imgArea = card.querySelector(".card-img-top, .courseimage, .course-image-view, .summaryimage");
+            if (imgArea) {
+                imgArea.style.position = "relative";
+                imgArea.appendChild(badge);
             } else {
                 card.style.position = "relative";
                 card.insertBefore(badge, card.firstChild);
             }
-        }
-    });
-});
+        });
+    }
+    
+    // Run on DOM ready.
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", addBadges);
+    } else {
+        addBadges();
+    }
+    
+    // Also run after a delay for dynamic content.
+    setTimeout(addBadges, 1000);
+    setTimeout(addBadges, 3000);
+})();
 </script>';
 
         $hook->add_html($css . $js);
