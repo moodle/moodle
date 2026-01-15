@@ -1,0 +1,15 @@
+issueNumber: MDL-87690
+notes:
+  core_customfield:
+    - message: >-
+        A new WebService `core_customfield_convert_category` has been added.
+        It allows the conversion of any entity custom field category to a shared category.
+      type: improved
+    - message: >-
+        The WebService `core_customfield_reload_template` now returns a new
+        parameter "canconvert".
+      type: changed
+    - message: >-
+        The Javascript module `core_customfield/repository/toggle_shared` has been deprecated.
+        Please, use `core_customfield/repository` instead.
+      type: deprecated

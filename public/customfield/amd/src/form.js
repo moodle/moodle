@@ -27,6 +27,8 @@ import {
     getString,
     getStrings,
 } from 'core/str';
+import {add as addToast} from 'core/toast';
+import * as Repository from 'core_customfield/repository';
 import ModalForm from 'core_form/modalform';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
@@ -60,8 +62,8 @@ const confirmDelete = (id, type, component, area, itemid) => {
                     methodname: (type === 'field') ? 'core_customfield_delete_field' : 'core_customfield_delete_category',
                     args: {id},
                 },
-                {methodname: 'core_customfield_reload_template', args: {component, area, itemid}}
-            ])[1]
+            ])[0]
+            .then(() => Repository.reloadTemplate(component, area, itemid))
             .then(response => Templates.render('core_customfield/list', response))
             .then((html, js) => Templates.replaceNode(jQuery('[data-region="list-page"]'), html, js))
             .then(pendingDeletePromise.resolve)
@@ -72,6 +74,67 @@ const confirmDelete = (id, type, component, area, itemid) => {
     .catch(Notification.exception);
 };
 
+/**
+ * Display a confirmation modal to convert an entity custom field category to a shared category.
+ *
+ * @param {Number} categoryId
+ * @param {String} component
+ * @param {String} area
+ * @param {Number} itemid
+ */
+const confirmConvert = (categoryId, component, area, itemid) => {
+    getStrings([
+        {'key': 'convertcategorytitle', component: 'core_customfield'},
+        {'key': 'convertcategoryconfirm', component: 'core_customfield'},
+        {'key': 'proceed'},
+        {'key': 'cancel'},
+    ])
+    .then(strings => {
+        return Notification.confirm(strings[0], strings[1], strings[2], strings[3], function() {
+            handleConversion(categoryId, component, area, itemid);
+        });
+    })
+    .catch(Notification.exception);
+};
+
+/**
+ * Handle the conversion of an entity custom field category to a shared category.
+ *
+ * @param {Number} categoryId
+ * @param {String} component
+ * @param {String} area
+ * @param {Number} itemid
+ */
+const handleConversion = (categoryId, component, area, itemid) => {
+    const pendingPromise = new Pending('core_customfield/form:handleConversion');
+
+    Repository.convertCategory(categoryId, component, area, itemid)
+    .then(() => Repository.toggleCategory(categoryId, component, area, itemid, true))
+    .then(() => Repository.reloadTemplate(component, area, itemid))
+    .then((response) => Templates.renderForPromise('core_customfield/list', response))
+    .then(({html, js}) => {
+        const listPage = document.querySelector('[data-region="list-page"]');
+        return Templates.replaceNode(listPage, html, js);
+    })
+    .then(() => addToast(getString('categoryconverted', 'core_customfield'), {type: 'success'}))
+    .then(() => pendingPromise.resolve())
+    .catch(Notification.exception);
+};
+
+/**
+ * Display an alert when conversion of a category to a shared category is blocked due to duplicate names.
+ */
+const alertDuplicateField = () => {
+    getStrings([
+        {'key': 'conversionerror', component: 'core_customfield'},
+        {'key': 'sharedcustomfieldalreadyexists', component: 'core_customfield'},
+        {'key': 'closebuttontitle'},
+    ])
+    .then(strings => {
+        return Notification.alert(strings[0], strings[1], strings[2]);
+    })
+    .catch(Notification.exception);
+};
 
 /**
  * Creates a new custom fields category with default name and updates the list
@@ -84,10 +147,10 @@ const createNewCategory = (component, area, itemid) => {
     const pendingPromise = new Pending('core_customfield/form:createNewCategory');
     const promises = fetchMany([
         {methodname: 'core_customfield_create_category', args: {component, area, itemid}},
-        {methodname: 'core_customfield_reload_template', args: {component, area, itemid}}
     ]);
 
-    promises[1].then(response => Templates.render('core_customfield/list', response))
+    promises[0].then(() => Repository.reloadTemplate(component, area, itemid))
+    .then(response => Templates.render('core_customfield/list', response))
     .then((html, js) => Templates.replaceNode(jQuery('[data-region="list-page"]'), html, js))
     .then(() => pendingPromise.resolve())
     .catch(Notification.exception);
@@ -119,11 +182,9 @@ const createNewField = (element, component, area, itemid) => {
 
     form.addEventListener(form.events.FORM_SUBMITTED, () => {
         const pendingCreatedPromise = new Pending('core_customfield/form:createdNewField');
-        const promises = fetchMany([
-            {methodname: 'core_customfield_reload_template', args: {component: component, area: area, itemid: itemid}}
-        ]);
 
-        promises[0].then(response => Templates.render('core_customfield/list', response))
+        Repository.reloadTemplate(component, area, itemid)
+        .then(response => Templates.render('core_customfield/list', response))
         .then((html, js) => Templates.replaceNode(jQuery('[data-region="list-page"]'), html, js))
         .then(() => pendingCreatedPromise.resolve())
         .catch(() => window.location.reload());
@@ -158,11 +219,9 @@ const editField = (element, component, area, itemid) => {
 
     form.addEventListener(form.events.FORM_SUBMITTED, () => {
         const pendingCreatedPromise = new Pending('core_customfield/form:createdNewField');
-        const promises = fetchMany([
-            {methodname: 'core_customfield_reload_template', args: {component: component, area: area, itemid: itemid}}
-        ]);
 
-        promises[0].then(response => Templates.render('core_customfield/list', response))
+        Repository.reloadTemplate(component, area, itemid)
+        .then(response => Templates.render('core_customfield/list', response))
         .then((html, js) => Templates.replaceNode(jQuery('[data-region="list-page"]'), html, js))
         .then(() => pendingCreatedPromise.resolve())
         .catch(() => window.location.reload());
@@ -305,6 +364,20 @@ export const init = () => {
             e.preventDefault();
 
             confirmDelete(roleHolder.dataset.id, 'category', component, area, itemid);
+            return;
+        }
+
+        if (roleHolder.dataset.role === 'convertcategory') {
+            e.preventDefault();
+
+            confirmConvert(roleHolder.dataset.id, component, area, itemid);
+            return;
+        }
+
+        if (roleHolder.dataset.role === 'hasduplicatecustomfield') {
+            e.preventDefault();
+
+            alertDuplicateField();
             return;
         }
 

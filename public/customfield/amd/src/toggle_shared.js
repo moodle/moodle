@@ -26,7 +26,7 @@
 import 'core/inplace_editable';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
-import {toggleCategory} from 'core_customfield/repository/toggle_shared';
+import {toggleCategory} from 'core_customfield/repository';
 
 let initialized = false;
 

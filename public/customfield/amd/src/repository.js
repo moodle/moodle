@@ -14,20 +14,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Module to handle toggle shared category AJAX requests
+ * Module to handle custom fields AJAX requests.
  *
- * @module      core_customfield/repository/toggle_shared
- * @copyright   2025 David Carrillo <davidmc@moodle.com>
+ * @module      core_customfield/repository
+ * @copyright   2026 Yerai Rodríguez <yerai.rodriguez@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated  since Moodle 5.1 - please use core_customfield/repository instead.
  */
+
+"use strict";
 
 import Ajax from 'core/ajax';
 
 /**
- * Toggle shared category enabled
+ * Convert an entity custom field category to a shared category.
  *
- * @method
+ * @param {Number} categoryId
+ * @param {String} component
+ * @param {String} area
+ * @param {Number} itemid
+ * @return {Promise}
+ */
+export const convertCategory = (categoryId, component, area, itemid) => {
+    const request = {
+        methodname: 'core_customfield_convert_category',
+        args: {categoryid: categoryId, component: component, area: area, itemid: itemid}
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Reload custom fields list.
+ *
+ * @param {String} component
+ * @param {String} area
+ * @param {Number} itemid
+ * @return {Promise}
+ */
+export const reloadTemplate = (component, area, itemid) => {
+    const request = {
+        methodname: 'core_customfield_reload_template',
+        args: {component: component, area: area, itemid: itemid}
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
+ * Toggle shared category enabled.
+ *
  * @param {Number} categoryId
  * @param {String} component
  * @param {String} area

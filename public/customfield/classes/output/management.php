@@ -25,6 +25,7 @@
 namespace core_customfield\output;
 
 use core_customfield\api;
+use core_customfield\customfield\shared_handler;
 use core_customfield\handler;
 use core_customfield\shared;
 use renderable;
@@ -122,6 +123,10 @@ class management implements renderable, templatable {
                 ]);
             }
 
+            $sharedhandler = shared_handler::get_handler('core_customfield', 'shared');
+            $categoryarray['canconvert'] = $sharedhandler->can_configure() && !$category->get('shared');
+            $categoryarray['hasduplicatecustomfield'] = false;
+
             $categoryarray['fields'] = array();
 
             foreach ($category->get_fields() as $field) {
@@ -135,6 +140,11 @@ class management implements renderable, templatable {
                 $categoryarray['canedit'] = $canedit;
 
                 $categoryarray['fields'][] = $fieldarray;
+
+                if ($categoryarray['canconvert'] && !$categoryarray['hasduplicatecustomfield']) {
+                    $fieldisunique = api::is_shortname_unique($this->handler, $fieldarray['shortname'], $fieldarray['id']);
+                    $categoryarray['hasduplicatecustomfield'] = !$fieldisunique;
+                }
                 if ($canedit) {
                     $movablefieldscount++;
                 }

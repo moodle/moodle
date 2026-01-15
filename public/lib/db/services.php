@@ -2918,6 +2918,12 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ),
+    'core_customfield_convert_category' => [
+        'classname'   => core_customfield\external\convert_category::class,
+        'description' => 'Convert an entity custom field category to a shared category.',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
     'core_customfield_move_field'   => array(
         'classname'   => 'core_customfield_external',
         'methodname'  => 'move_field',
