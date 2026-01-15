@@ -209,7 +209,7 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "With selected" "button"
     And I click on "move" "button"
     And the field "searchbanks" matches value "C1 - Test quiz"
-    And the field "selectcategory" matches value "Default for Test quiz"
+    And the field "selectcategory" matches value "Test questions 1 (2)"
     And I open the autocomplete suggestions list in the ".search-banks" "css_element"
     And I should see "C1 - Question bank 1" in the ".search-banks .form-autocomplete-suggestions" "css_element"
     And I should see "C2 - Question bank 2" in the ".search-banks .form-autocomplete-suggestions" "css_element"
@@ -227,7 +227,7 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "With selected" "button"
     And I click on "move" "button"
     And the field "searchbanks" matches value "C1 - Question bank 1"
-    And the field "selectcategory" matches value "Default for Question bank 1 (1)"
+    And the field "selectcategory" matches value "Test questions 2 (2)"
     # The moved question should be highlighted
     And the "class" attribute of "Seventh question" "table_row" should contain "highlight"
 
