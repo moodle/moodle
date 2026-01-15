@@ -79,9 +79,11 @@ class plan_form extends \moodleform {
             'noselectionstring' => get_string('selectcourses', 'local_coursematrix'),
         ]);
 
-        // Use raw HTML for hidden field to avoid Moodle form state management issues.
-        // Moodle forms reset hidden field values to their default on submit.
-        $mform->addElement('html', '<input type="hidden" name="course_config" id="id_course_config" value="[]">');
+        // Use standard hidden element.
+        $mform->addElement('hidden', 'course_config');
+        $mform->setType('course_config', PARAM_RAW);
+        $mform->setDefault('course_config', '[]');
+        // Moodle automatically gives it id "id_course_config".
 
         // Container for the dynamic course table.
         $mform->addElement('html', '<div id="course-config-container" class="mb-3"></div>');
@@ -105,7 +107,15 @@ require(['jquery'], function($) {
         }
     }
     
+    // Call immediately to try and get data on load.
     loadExistingData();
+    
+    // Also set a slight timeout to ensure value is populated if set_data runs late (though set_data runs on server side rendering usually).
+    // Actually, set_data populates the 'value' attribute of the input, so it should be ready on DOM ready.
+    $(document).ready(function() {
+        loadExistingData();
+        renderTable();
+    });
     
     function renderTable() {
         var html = '';
@@ -144,7 +154,6 @@ require(['jquery'], function($) {
     function updateHiddenField() {
         var jsonStr = JSON.stringify(courseData);
         $('#id_course_config').val(jsonStr);
-        console.log('Updated hidden field:', jsonStr);
     }
     
     function sortByOrder() {
@@ -153,7 +162,7 @@ require(['jquery'], function($) {
         });
     }
     
-    // Add course handler - watch for changes on the autocomplete.
+    // Add course handler.
     $(document).on('change', '#id_add_course', function() {
         var courseId = parseInt($(this).val());
         if (!courseId || isNaN(courseId)) return;
@@ -162,9 +171,7 @@ require(['jquery'], function($) {
         for (var i = 0; i < courseData.length; i++) {
             if (courseData[i].courseid == courseId) {
                 alert('" . addslashes(get_string('coursealreadyadded', 'local_coursematrix')) . "');
-                // Clear the autocomplete.
                 $(this).val('');
-                // Also try to clear the visible autocomplete input.
                 $(this).closest('.form-autocomplete-selection').find('input').val('');
                 return;
             }
@@ -178,9 +185,7 @@ require(['jquery'], function($) {
             reminders: '7, 3, 1'
         });
         
-        // Clear the autocomplete select and input.
         $(this).val('');
-        // For Moodle autocomplete, we need to reset the visible selection too.
         var container = $(this).closest('.form-group');
         container.find('.form-autocomplete-selection span[data-value]').remove();
         
@@ -191,14 +196,13 @@ require(['jquery'], function($) {
     $(document).on('click', '.remove-course', function() {
         var index = $(this).closest('tr').data('index');
         courseData.splice(index, 1);
-        // Re-order remaining.
         for (var i = 0; i < courseData.length; i++) {
             courseData[i].sortorder = i + 1;
         }
         renderTable();
     });
     
-    // Update order handler.
+    // Update handlers.
     $(document).on('change', '.course-order', function() {
         var index = $(this).closest('tr').data('index');
         courseData[index].sortorder = parseInt($(this).val()) || 1;
@@ -206,33 +210,26 @@ require(['jquery'], function($) {
         renderTable();
     });
     
-    // Update duedays handler.
     $(document).on('change', '.course-duedays', function() {
         var index = $(this).closest('tr').data('index');
         courseData[index].duedays = parseInt($(this).val()) || 14;
         updateHiddenField();
     });
     
-    // Update reminders handler.
     $(document).on('change', '.course-reminders', function() {
         var index = $(this).closest('tr').data('index');
         courseData[index].reminders = $(this).val();
         updateHiddenField();
     });
     
-    // CRITICAL: Sync hidden field before form submit.
+    // Sync on submit.
     $('form').on('submit', function() {
         updateHiddenField();
-        console.log('Form submitting with course data:', courseData);
     });
     
-    // Also sync on any input blur in the table.
     $(document).on('blur', '#course-config-table input', function() {
         updateHiddenField();
     });
-    
-    // Initial render.
-    renderTable();
 });
         ");
 
@@ -249,14 +246,8 @@ require(['jquery'], function($) {
         }
 
         // Parse course config from JSON.
-        // First try the form data, then fallback to raw POST (Moodle may sanitize JSON).
         $courseconfig = [];
         $rawconfig = $data->course_config ?? '';
-        
-        // If form data is empty, try raw POST directly.
-        if (empty($rawconfig) || $rawconfig === '[]') {
-            $rawconfig = optional_param('course_config', '', PARAM_RAW);
-        }
         
         if (!empty($rawconfig) && $rawconfig !== '[]') {
             $decoded = json_decode($rawconfig, true);
@@ -285,7 +276,7 @@ require(['jquery'], function($) {
             $reminderDays = array_filter(array_map('intval', preg_split('/[,\s]+/', $reminderStr)));
             $data->course_reminders[$cc['courseid']] = $reminderDays;
             
-            // Also keep a flat reminder list for backward compatibility.
+            // Also keep a flat reminder list for backward compatibility if needed.
             foreach ($reminderDays as $day) {
                 if (!in_array($day, $data->reminders)) {
                     $data->reminders[] = $day;
@@ -293,7 +284,7 @@ require(['jquery'], function($) {
             }
         }
 
-        rsort($data->reminders); // Sort descending.
+        rsort($data->reminders);
 
         return $data;
     }
@@ -302,7 +293,7 @@ require(['jquery'], function($) {
      * Set data for editing.
      */
     public function set_data($data) {
-        global $DB, $PAGE;
+        global $DB;
 
         // Build course config JSON from existing data.
         $courseconfig = [];
@@ -344,23 +335,16 @@ require(['jquery'], function($) {
             }
         }
         
-        // Inject existing data into the hidden field via JavaScript.
+        // Directly set the hidden field value in the data object.
+        // Moodle's set_data will populate the element with name 'course_config'.
         if (!empty($courseconfig)) {
-            $json = json_encode($courseconfig);
-            $PAGE->requires->js_amd_inline("
-require(['jquery'], function($) {
-    $(document).ready(function() {
-        $('#id_course_config').val(" . json_encode($json) . ");
-        // Trigger the loadExistingData function if it exists.
-        if (typeof window.loadCourseConfigData === 'function') {
-            window.loadCourseConfigData();
-        }
-    });
-});
-            ");
+            $data->course_config = json_encode($courseconfig);
+        } else {
+            $data->course_config = '[]';
         }
         
         parent::set_data($data);
     }
 }
+
 

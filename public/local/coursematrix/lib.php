@@ -225,6 +225,9 @@ function local_coursematrix_enrol_user_in_course($userid, $courseid, $roleid, $e
 
     if (!$DB->record_exists('user_enrolments', ['enrolid' => $instance->id, 'userid' => $userid])) {
         $enrolmanual->enrol_user($instance, $userid, $roleid);
+
+        // Check if the user has ALREADY completed this course (retroactive progress).
+        local_coursematrix_check_and_progress_if_complete($userid, $courseid);
     }
 }
 
@@ -417,6 +420,35 @@ function local_coursematrix_assign_user_to_plan($userid, $planid) {
     }
 
     return $userplanid;
+}
+
+/**
+ * Check if a user has already completed a course, and if so, trigger progression.
+ * Useful for retroactive assignments or re-enrolments.
+ *
+ * @param int $userid
+ * @param int $courseid
+ */
+function local_coursematrix_check_and_progress_if_complete($userid, $courseid) {
+    global $CFG, $DB;
+    require_once($CFG->libdir . '/completionlib.php');
+
+    // Get course record.
+    $course = $DB->get_record('course', ['id' => $courseid]);
+    if (!$course) {
+        return;
+    }
+
+    // Check completion.
+    $completion = new completion_info($course);
+    if (!$completion->is_enabled()) {
+        return;
+    }
+
+    if ($completion->is_course_complete($userid)) {
+        error_log("CM-TRACE: Retroactive completion DETECTED for User $userid Course $courseid - Triggering Progress.");
+        local_coursematrix_progress_user_plan($userid, $courseid);
+    }
 }
 
 /**
