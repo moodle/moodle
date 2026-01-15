@@ -134,9 +134,14 @@ class assign_grading_table extends table_sql implements renderable {
         $params['newstatus'] = ASSIGN_SUBMISSION_STATUS_NEW;
 
         // TODO Does not support custom user profile fields (MDL-70456).
-        $userfieldsapi = \core_user\fields::for_identity($this->assignment->get_context(), false)->with_userpic();
-        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $userfieldsapi = \core_user\fields::for_identity($this->assignment->get_context(), true)->with_userpic();
+        $sql = $userfieldsapi->get_sql('u', true, '', '', false);
+        $userfields = $sql->selects;
+        $userfieldjoins = $sql->joins;
+        $userfieldparams = $sql->params;
+
         $extrauserfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
+
         $fields = $userfields . ', ';
         $fields .= 'u.id as userid, ';
         $fields .= 's.status as status, ';
@@ -164,6 +169,9 @@ class assign_grading_table extends table_sql implements renderable {
                             ON g.assignment = :assignmentid2
                            AND u.id = g.userid
                            AND (g.attemptnumber = s.attemptnumber OR s.attemptnumber IS NULL) ';
+        $from .= $userfieldjoins;
+        // Add Extra fields parameters.
+        $params += $userfieldparams;
 
         $from .= 'LEFT JOIN {assign_user_flags} uf
                          ON u.id = uf.userid
