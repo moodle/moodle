@@ -327,13 +327,13 @@ final class step_test extends \advanced_testcase {
         $bs->add_plugin_structure('qtype', $el);
         $patheles = $bs->get_pathelements();
         // Verify some well-known qtype plugin restore_path_elements have been added.
-        $keys = array(
+        $keys = [
             '/some/path/to/question/plugin_qtype_calculated_question/answers/answer',
             '/some/path/to/question/plugin_qtype_calculated_question/dataset_definitions/dataset_definition',
             '/some/path/to/question/plugin_qtype_calculated_question/calculated_options/calculated_option',
             '/some/path/to/question/plugin_qtype_essay_question/essay',
-            '/some/path/to/question/plugin_qtype_random_question',
-            '/some/path/to/question/plugin_qtype_truefalse_question/answers/answer');
+            '/some/path/to/question/plugin_qtype_truefalse_question/answers/answer',
+        ];
         foreach ($keys as $key) {
             // Verify the element exists.
             $this->assertArrayHasKey($key, $patheles);

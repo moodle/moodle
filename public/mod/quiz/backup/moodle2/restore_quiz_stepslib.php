@@ -45,11 +45,6 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
     /** @var stdClass */
     protected $oldquizlayout;
 
-    /**
-     * @var array Track old question ids that need to be removed at the end of the restore.
-     */
-    protected $oldquestionids = [];
-
     protected function define_structure() {
 
         $paths = [];
@@ -365,7 +360,9 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $question = $DB->get_record_sql($sql, [$questionid]);
         $module = $DB->get_record('quiz', ['id' => $data->quizid]);
 
-        if ($question->qtype === 'random') {
+        if (!$question) {
+            $randomquestion = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'qtype_random_data', $data->questionid);
+            $question = $randomquestion->info;
             // Set reference data.
             $questionsetreference = new stdClass();
             $questionsetreference->usingcontextid = $this->task->get_contextid();
@@ -374,16 +371,20 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             $questionsetreference->itemid = $data->id;
             // If, in the orginal quiz that was backed up, this random question was pointing to a
             // category in the quiz question bank, then (for reasons explained in {@see restore_move_module_questions_categories})
-            // right now, $question->questioncontextid will incorrectly point to the course contextid.
+            // right now, $questionsetreference->questionscontextid will incorrectly point to the course contextid.
             // This will get fixed up later in restore_move_module_questions_categories
             // as part of moving the question categories to the right place.
-            $questionsetreference->questionscontextid = $question->questioncontextid;
-            $filtercondition = new stdClass();
-            $filtercondition->questioncategoryid = $question->category;
-            $filtercondition->includingsubcategories = $data->includingsubcategories ?? false;
+            $questionsetreference->questionscontextid = $DB->get_field(
+                'question_categories',
+                'contextid',
+                ['id' => $question->category],
+            );
+            $filtercondition = core_question\question_reference_manager::convert_legacy_set_reference_filter_condition([
+                'questioncategoryid' => $question->category,
+                'includingsubcategories' => $data->includingsubcategories ?? false,
+            ]);
             $questionsetreference->filtercondition = json_encode($filtercondition);
             $DB->insert_record('question_set_references', $questionsetreference);
-            $this->oldquestionids[$question->questionid] = 1;
         } else {
             // Reference data.
             $questionreference = new \stdClass();
@@ -469,16 +470,25 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data = (object) $data;
         $slotid = $this->get_new_parentid('quiz_question_instance');
 
-        if ($this->task->is_samesite() && $tag = core_tag_tag::get($data->tagid, 'id, name')) {
-            $data->tagname = $tag->name;
-        } else if ($tag = core_tag_tag::get_by_name(0, $data->tagname, 'id, name')) {
-            $data->tagid = $tag->id;
-        } else {
-            $data->tagid = null;
-            $data->tagname = $tag->name;
+        $tagid = $data->tagid;
+        if (
+            !$this->task->is_samesite()
+            || !core_tag_tag::get($data->tagid, 'id, name')
+        ) {
+            // If we're on a different site, or the tag id doesn't exist anymore, look for a tag with the same name.
+            $tag = core_tag_tag::get_by_name(0, $data->tagname, 'id, name');
+            $tagid = $tag ? $tag->id : null;
         }
 
-        $tagstring = "{$data->tagid},{$data->tagname}";
+        if (is_null($tagid)) {
+            // There is no corresponding tag, so leave it out of the filter.
+            $this->log(
+                get_string('restorenotag', 'quiz', (object) ['tagname' => $data->tagname, 'slotid' => $slotid]),
+                \backup::LOG_WARNING,
+            );
+            return;
+        }
+
         $setreferencedata = $DB->get_record('question_set_references', [
             'usingcontextid' => $this->task->get_contextid(),
             'component' => 'mod_quiz',
@@ -486,7 +496,13 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             'itemid' => $slotid,
         ]);
         $filtercondition = json_decode($setreferencedata->filtercondition);
-        $filtercondition->tags[] = $tagstring;
+        if (!isset($filtercondition->filter->qtagids)) {
+            $filtercondition->filter->qtagids = (object) [
+                'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
+                'values' => [],
+            ];
+        }
+        $filtercondition->filter->qtagids->values[] = $tagid;
         $setreferencedata->filtercondition = json_encode($filtercondition);
         $DB->update_record('question_set_references', $setreferencedata);
     }
@@ -649,14 +665,6 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                     'quizid' => $this->get_new_parentid('quiz'),
                     'firstslot' => 1, 'heading' => '',
                     'shufflequestions' => $this->legacyshufflequestionsoption]);
-        }
-    }
-
-    protected function after_restore() {
-        parent::after_restore();
-        // Delete old random questions that have been converted to set references.
-        foreach (array_keys($this->oldquestionids) as $oldquestionid) {
-            question_delete_question($oldquestionid);
         }
     }
 }

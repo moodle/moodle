@@ -534,7 +534,6 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         global $SITE;
 
         $this->resetAfterTest(true);
-        question_bank::get_qtype('random')->clear_caches_before_testing();
 
         $this->setAdminUser();
 

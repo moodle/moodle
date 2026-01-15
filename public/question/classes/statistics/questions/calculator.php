@@ -67,7 +67,7 @@ class calculator {
      * Constructor.
      *
      * @param object[] questions to analyze, keyed by slot, also analyses sub questions for random questions.
-     *                              we expect some extra fields - slot, maxmark and number on the full question data objects.
+     *                 We expect some extra fields - slot, random, maxmark and number on the full question data objects.
      * @param \core\progress\base|null $progress the element to send progress messages to, default is {@link \core\progress\none}.
      */
     public function __construct($questions, $progress = null) {
@@ -194,7 +194,7 @@ class calculator {
                 $this->initial_question_walker($this->stats->for_slot($slot));
 
                 // The rest of this loop is to finish working out where randomly selected question stats should be displayed.
-                if ($this->stats->for_slot($slot)->question->qtype == 'random') {
+                if ($this->stats->for_slot($slot)->question->random) {
                     $randomselectorstring = $this->stats->for_slot($slot)->random_selector_string();
                     if ($nextslot &&  ($randomselectorstring == $this->stats->for_slot($nextslot)->random_selector_string())) {
                         continue; // Next loop iteration.
@@ -210,10 +210,9 @@ class calculator {
             $this->progress->start_progress('', count($lateststeps), 1);
             foreach ($lateststeps as $step) {
                 $this->progress->increment_progress();
-                $israndomquestion = ($this->stats->for_slot($step->slot)->question->qtype == 'random');
                 $this->secondary_steps_walker($step, $this->stats->for_slot($step->slot), $summarks);
 
-                if ($israndomquestion) {
+                if ($this->stats->for_slot($step->slot)->question->random) {
                     $this->secondary_steps_walker($step, $this->stats->for_subq($step->questionid), $summarks);
                 }
             }

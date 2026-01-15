@@ -263,7 +263,7 @@ class structure {
             return false;
         }
 
-        if (in_array($this->get_question_type_for_slot($slotnumber), ['random', 'missingtype'])) {
+        if ($this->slotsinorder[$slotnumber]->random || $this->get_question_type_for_slot($slotnumber) === 'missingtype') {
             return \question_engine::can_questions_finish_during_the_attempt(
                     $this->quizobj->get_quiz()->preferredbehaviour);
         }
@@ -1787,7 +1787,7 @@ class structure {
         // Find the random slots.
         $allslots = $this->get_slots();
         foreach ($allslots as $key => $slot) {
-            if ($slot->qtype != 'random') {
+            if (!$slot->random) {
                 unset($allslots[$key]);
             }
         }

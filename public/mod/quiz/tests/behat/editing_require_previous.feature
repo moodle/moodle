@@ -61,11 +61,10 @@ Feature: Edit quizzes where some questions require the previous one to have been
     And the following "questions" exist:
       | questioncategory | qtype       | name                    | questiontext   |
       | Test questions   | truefalse   | TF1                     | First question |
-      | Test questions   | random      | Random (Test questions) | 0              |
     And quiz "Quiz 1" contains the following questions:
-      | question                | page | requireprevious |
-      | Random (Test questions) | 1    | 0               |
-      | TF1                     | 1    | 1               |
+      | question                | page | requireprevious | randomcategory |
+      | Random (Test questions) | 1    | 0               | Test questions |
+      | TF1                     | 1    | 1               |                |
     And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "This question cannot be attempted until the previous question has been completed." "link" should be visible
 
@@ -118,12 +117,11 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | questioncategory | qtype       | name                    | questiontext    |
       | Test questions   | truefalse   | TF1                     | First question  |
       | Test questions   | truefalse   | TF2                     | Second question |
-      | Test questions   | random      | Random (Test questions) | 0               |
     And quiz "Quiz 1" contains the following questions:
-      | question                | page | requireprevious |
-      | Random (Test questions) | 1    | 0               |
-      | TF1                     | 1    | 1               |
-      | TF2                     | 1    | 1               |
+      | question                | page | requireprevious | randomcategory |
+      | Random (Test questions) | 1    | 0               | Test questions |
+      | TF1                     | 1    | 1               |                |
+      | TF2                     | 1    | 1               |                |
     And I am on the "Quiz 1" "mod_quiz > Edit" page
     Then "be attempted" "link" in the "TF1" "list_item" should not be visible
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible

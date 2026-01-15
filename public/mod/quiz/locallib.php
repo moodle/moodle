@@ -182,7 +182,7 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
         if ($questiondata->status == \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT) {
             throw new moodle_exception('questiondraftonly', 'mod_quiz', '', $questiondata->name);
         }
-        if ($questiondata->qtype == 'random') {
+        if ($questiondata->random) {
             $randomfound = true;
             continue;
         }
@@ -204,7 +204,7 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
 
         foreach ($quizobj->get_questions(null, false) as $questiondata) {
             $slot += 1;
-            if ($questiondata->qtype != 'random') {
+            if (!$questiondata->random) {
                 continue;
             }
 
@@ -1039,7 +1039,7 @@ function quiz_attempt_state_name($state) {
  */
 function quiz_question_action_icons($quiz, $cmid, $question, $returnurl, $variant = null) {
     $html = '';
-    if ($question->qtype !== 'random') {
+    if (!$question->random) {
         $html = quiz_question_preview_button($quiz, $question, false, $variant);
     }
     $html .= quiz_question_edit_button($cmid, $question, $returnurl);
@@ -1747,15 +1747,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $quiz->cmid = $cm->id;
     }
 
-    // Make sue the question is not of the "random" type.
     $questiontype = $DB->get_field('question', 'qtype', ['id' => $questionid]);
-    if ($questiontype == 'random') {
-        throw new coding_exception(
-                'Adding "random" questions via quiz_add_quiz_question() is deprecated. '.
-                'Please use mod_quiz\structure::add_random_questions().'
-        );
-    }
-
     // If the question type is invalid, we cannot add it to the quiz. It shouldn't be possible to get to this
     // point without fiddling with the DOM so we can just throw an exception.
     if (!\question_bank::is_qtype_installed($questiontype)) {

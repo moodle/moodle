@@ -31,15 +31,14 @@ Feature: Teacher can build quiz in a single activity format course
       | Test questions    | multichoice | one_of_four | MCQ2                    |
       | Qbank questions 1 | truefalse   |             | TFQ1                    |
       | Qbank questions 2 | truefalse   |             | TFQ2                    |
-      | Test questions    | random      |             | Random (Test questions) |
     # Add questions from different question categories and question banks to the quiz.
     # Add at least 1 random question.
     And quiz "Quiz 1" contains the following questions:
-      | question                | page |
-      | MCQ1                    | 1    |
-      | TFQ1                    | 1    |
-      | TFQ2                    | 2    |
-      | Random (Test questions) | 3    |
+      | question                | page | randomcategory |
+      | MCQ1                    | 1    |                |
+      | TFQ1                    | 1    |                |
+      | TFQ2                    | 2    |                |
+      | Random (Test questions) | 3    | Test questions |
 
   @javascript
   Scenario: Student can preview and answer quiz in a single activity format course

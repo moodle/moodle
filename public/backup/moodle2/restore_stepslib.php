@@ -5229,6 +5229,18 @@ class restore_create_categories_and_questions extends restore_structure_step {
             // we have loaded qcatids there for all parsed questions.
             $data->category = $this->get_mappingid('question_category', $questionmapping->parentitemid);
             $this->process_question_legacy_data($data);
+            if ($data->qtype === 'random') {
+                // Random questions do not exist anymore. Store the data in a temporary record so it can be converted to a set
+                // reference by the activity that uses it.
+                restore_dbops::set_backup_ids_record(
+                    $this->get_restoreid(),
+                    'qtype_random_data',
+                    $data->id,
+                    $questionmapping->id,
+                    info: $data,
+                );
+                return;
+            }
         }
 
         // In the past, there were some very sloppy values of penalty. Fix them.
@@ -5293,6 +5305,11 @@ class restore_create_categories_and_questions extends restore_structure_step {
             }
 
             // Now store the question.
+            if ($data->qtype === 'random') {
+                throw new \core\exception\coding_exception(
+                    'You cannot restore a question with qtype "random". It must be converted to a set reference instead.',
+                );
+            }
             $newitemid = $DB->insert_record('question', $data);
             $this->set_mapping('question', $oldid, $newitemid);
             // Also annotate them as question_created, we need
@@ -5674,8 +5691,8 @@ class restore_move_module_questions_categories extends restore_execution_step {
                 $references = $DB->get_records('question_set_references', ['usingcontextid' => $newcontext->newitemid]);
                 foreach ($references as $reference) {
                     $filtercondition = json_decode($reference->filtercondition);
-                    if (!empty($filtercondition->questioncategoryid) &&
-                            in_array($filtercondition->questioncategoryid, $categoryids)) {
+                    $categoryid = reset($filtercondition->filter->category->values);
+                    if (!empty($categoryid) && in_array($categoryid, $categoryids)) {
                         // This is one of ours, update the questionscontextid.
                         $DB->set_field('question_set_references',
                             'questionscontextid', $newcontext->newitemid,
