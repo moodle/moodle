@@ -162,6 +162,10 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
         $pluginconfig->set_source_table('assign_plugin_config',
                                         array('assignment' => backup::VAR_PARENTID));
 
+        // Allow subplugins to backup data at assign level.
+        $this->add_subplugin_structure('assignsubmission', $assign, true);
+        $this->add_subplugin_structure('assignfeedback', $assign, true);
+
         // Assign overrides to backup are different depending of user info.
         $overrideparams = array('assignid' => backup::VAR_PARENTID);
 
