@@ -422,6 +422,7 @@ class external extends external_api {
     public static function configure_quiz_settings($quizid, $gradetopass = 100.0) {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        require_once($CFG->dirroot . '/mod/quiz/lib.php');
 
         $params = self::validate_parameters(self::configure_quiz_settings_parameters(), [
             'quizid' => $quizid,
@@ -444,9 +445,13 @@ class external extends external_api {
         // Constants used: 0x10000 (Immediate), 0x20000 (Open), 0x40000 (Closed)
         // We broadly enable review permissions to ensure the user isn't blocked from seeing "Finished".
         $reviewoptions = 0x10000 | 0x20000 | 0x40000;
+        
+        $quiz->reviewattempt = $reviewoptions; // Enable clicking "Review"
         $quiz->reviewmarks = $reviewoptions;
         $quiz->reviewcorrectness = $reviewoptions;
         $quiz->reviewgeneralfeedback = $reviewoptions;
+        $quiz->reviewoverallfeedback = $reviewoptions;
+        $quiz->reviewrightanswer = $reviewoptions;
         
         $DB->update_record('quiz', $quiz);
 
@@ -469,10 +474,10 @@ class external extends external_api {
             $gradeitem->grademax = 10.0;
             $gradeitem->rawgrademax = 10.0;
             $DB->update_record('grade_items', $gradeitem);
-            
-            // Regrade grades if possible (simple update).
-            // Since this is usually pre-attempt, this just aligns the schema.
         }
+        
+        // Force update of quiz grades in Moodle core
+        quiz_update_grades($quiz);
 
         // 5. Update Course Module Completion settings.
         // completion = 2 (auto), completionpassgrade = 1
@@ -486,7 +491,7 @@ class external extends external_api {
 
         return [
             'success' => true,
-            'message' => "Quiz configured: grade=10, passing=10, review=enabled, auto-completion=true.",
+            'message' => "Quiz configured: grade=10, passing=10, full review=enabled, auto-completion=true.",
         ];
     }
 

@@ -430,6 +430,9 @@ function local_coursematrix_assign_user_to_plan($userid, $planid) {
 function local_coursematrix_progress_user_plan($userid, $completedcourseid) {
     global $DB;
 
+    // debug
+    error_log("CM-TRACE: Checking progress for User $userid completed Course $completedcourseid");
+
     // Find user plans where this is the current course.
     $userplans = $DB->get_records('local_coursematrix_user_plans', [
         'userid' => $userid,
@@ -438,6 +441,7 @@ function local_coursematrix_progress_user_plan($userid, $completedcourseid) {
     ]);
 
     if (empty($userplans)) {
+        error_log("CM-TRACE: No active plan found with currentcourseid = $completedcourseid for User $userid");
         return false;
     }
 
@@ -449,6 +453,7 @@ function local_coursematrix_progress_user_plan($userid, $completedcourseid) {
         ]);
 
         if (!$currentpc) {
+            error_log("CM-TRACE: Course $completedcourseid is not in Plan {$userplan->planid} config??");
             continue;
         }
 
@@ -459,6 +464,7 @@ function local_coursematrix_progress_user_plan($userid, $completedcourseid) {
         );
 
         if ($nextcourse) {
+            error_log("CM-TRACE: Progressing User $userid to Next Course {$nextcourse->courseid} in Plan {$userplan->planid}");
             // Progress to next course.
             $userplan->currentcourseid = $nextcourse->courseid;
             $userplan->startdate = time();
@@ -473,12 +479,15 @@ function local_coursematrix_progress_user_plan($userid, $completedcourseid) {
                 local_coursematrix_enrol_user_in_course($userid, $nextcourse->courseid, $roleid, $enrolmanual);
             }
         } else {
+            error_log("CM-TRACE: Plan {$userplan->planid} COMPLETED for User $userid");
             // No more courses - plan completed!
             $userplan->status = 'completed';
             $userplan->currentcourseid = null;
             $DB->update_record('local_coursematrix_user_plans', $userplan);
         }
     }
+    return true;
+}
 
     return true;
 }

@@ -25,8 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_masterbuilder';
-$plugin->version   = 2026011402;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2026011404;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->maturity  = MATURITY_BETA;
-$plugin->release   = 'v0.3.1';
-
-
+$plugin->release   = 'v0.3.3';

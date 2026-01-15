@@ -512,9 +512,14 @@ def ensure_specific_course_exists(shortname: str, fullname: str, category_id: in
     COURSE_CACHE[shortname] = new_id
     return new_id, True
 
-def check_quiz_exists(course_id):
+    new_id = res[0]['id']
+    COURSE_CACHE[shortname] = new_id
+    return new_id, True
+
+def get_quiz_id(course_id):
     """
     Checks if a quiz module already exists in the course.
+    Returns the quiz instance ID if found, else None.
     """
     try:
         contents = call_moodle_json('core_course_get_contents', {'courseid': course_id})
@@ -522,10 +527,61 @@ def check_quiz_exists(course_id):
             if 'modules' in section:
                 for mod in section['modules']:
                     if mod.get('modname') == 'quiz':
-                        return True
+                        return mod.get('instance')
     except Exception as e:
         logging.error(f"Error checking for quiz: {e}")
-    return False
+    return None
+
+def configure_pdf_completion(course_id):
+    """
+    Configures completion for PDF course (Activity only, no grade).
+    """
+    logging.info(f"Enforcing completion settings for PDF course {course_id}...")
+    try:
+        completion_res = call_moodle_json('local_masterbuilder_configure_course_completion', {
+            'courseid': int(course_id),
+            'requiregrade': 0,
+            'requireactivity': 1
+        })
+        if isinstance(completion_res, dict) and completion_res.get('success'):
+            logging.info(f"Completion configured: {completion_res.get('message')}")
+        else:
+            logging.warning(f"Completion config response: {completion_res}")
+    except Exception as e:
+        logging.error(f"Failed to enforce PDF completion: {e}")
+
+def configure_quiz_full(course_id, quiz_id):
+    """
+    Configures Quiz settings and Course Completion.
+    """
+    logging.info(f"Enforcing settings for Quiz {quiz_id} in course {course_id}...")
+    
+    # 1. Quiz Settings
+    try:
+        quiz_conf_res = call_moodle_json('local_masterbuilder_configure_quiz_settings', {
+            'quizid': int(quiz_id),
+            'gradetopass': 100.0
+        })
+        if isinstance(quiz_conf_res, dict) and quiz_conf_res.get('success'):
+            logging.info(f"Quiz settings updated: {quiz_conf_res.get('message')}")
+        else:
+            logging.warning(f"Quiz config failure: {quiz_conf_res}")
+    except Exception as e:
+        logging.error(f"Failed to configure quiz settings: {e}")
+
+    # 2. Course Completion
+    try:
+        completion_res = call_moodle_json('local_masterbuilder_configure_course_completion', {
+            'courseid': int(course_id),
+            'requiregrade': 1, # Require passing grade (which is enforced by quiz settings)
+            'requireactivity': 1
+        })
+        if isinstance(completion_res, dict) and completion_res.get('success'):
+            logging.info(f"Course completion configured: {completion_res.get('message')}")
+        else:
+            logging.warning(f"Completion config failure: {completion_res}")
+    except Exception as e:
+        logging.error(f"Failed to configure course completion: {e}")
 
 def post_announcement(course_id, subject, message, message_format=1):
     """
@@ -533,6 +589,7 @@ def post_announcement(course_id, subject, message, message_format=1):
     """
     try:
         # 1. Find the News forum
+
         forums_res = call_moodle_json('mod_forum_get_forums_by_courses', {'courseids': [course_id]})
         news_forum_id = None
         
@@ -650,19 +707,7 @@ def build_pdf_course(course_id, base_name, pdf_path):
     logging.info(f"PDF Resource created successfully for course {course_id}")
     
     # Configure course completion settings.
-    logging.info(f"Configuring course completion for {base_name}...")
-    try:
-        completion_res = call_moodle_json('local_masterbuilder_configure_course_completion', {
-            'courseid': int(course_id),
-            'requiregrade': 0,  # Do NOT require specific grade for PDF courses
-            'requireactivity': 1  # Require activity completion
-        })
-        if isinstance(completion_res, dict) and completion_res.get('success'):
-            logging.info(f"Course completion configured: {completion_res.get('message')}")
-        else:
-            logging.warning(f"Course completion config response: {completion_res}")
-    except Exception as e:
-        logging.error(f"Failed to configure course completion: {e}")
+    configure_pdf_completion(course_id)
 
 def build_quiz_course(course_id, base_name):
     """
@@ -758,36 +803,11 @@ def build_quiz_course(course_id, base_name):
     except Exception as e:
         logging.error(f"Question Creation Error: {e}")
 
-    # --- CONFIGURE QUIZ SETTINGS ---
-    logging.info("Configuring Quiz Settings (Grade 10, Passing 10)...")
-    try:
-        quiz_conf_res = call_moodle_json('local_masterbuilder_configure_quiz_settings', {
-            'quizid': int(quiz_instance_id),
-            'gradetopass': 100.0
-        })
-        if isinstance(quiz_conf_res, dict) and quiz_conf_res.get('success'):
-            logging.info(f"Quiz configured: {quiz_conf_res.get('message')}")
-        else:
-            logging.warning(f"Quiz config response: {quiz_conf_res}")
     except Exception as e:
-        logging.error(f"Failed to configure quiz settings: {e}")
+        logging.error(f"Question Creation Error: {e}")
 
-    # --- CONFIGURE COURSE COMPLETION ---
-    logging.info("Configuring Course Completion...")
-    try:
-        # Require grade (passing grade from quiz which is set to 10) and activity completion
-        completion_res = call_moodle_json('local_masterbuilder_configure_course_completion', {
-            'courseid': int(course_id),
-            'requiregrade': 1,
-            'requireactivity': 1
-        })
-        if isinstance(completion_res, dict) and completion_res.get('success'):
-            logging.info(f"Course completion configured: {completion_res.get('message')}")
-        else:
-            logging.warning(f"Course completion config response: {completion_res}")
-    except Exception as e:
-        logging.error(f"Failed to configure course completion: {e}")
-
+    # --- CONFIGURE SETTINGS ---
+    configure_quiz_full(course_id, quiz_instance_id)
 # --- 5. MAIN LOGIC ---
 
 def extract_id(item):
@@ -906,6 +926,11 @@ def main():
                         logging.warning(f"Skipping PDF course for {short_name} (No PDF available)")
             else:
                 logging.info(f"PDF up to date: {pdf_shortname} (version {current_version})")
+                # Enforce completion settings even if up to date
+                search_res = call_moodle_json('core_course_get_courses_by_field', {'field': 'shortname', 'value': pdf_shortname})
+                if isinstance(search_res, dict) and 'courses' in search_res and search_res['courses']:
+                    pdf_cid = search_res['courses'][0]['id']
+                    configure_pdf_completion(pdf_cid)
 
             # ========================================
             # --- Quiz Course (Competency) ---
@@ -920,7 +945,8 @@ def main():
                     category_id=PLM_CONFIG['category_id']
                 )
                 
-                if not check_quiz_exists(course_id):
+                quiz_instance_id = get_quiz_id(course_id)
+                if not quiz_instance_id:
                     build_quiz_course(course_id, short_name)
                     update_deployed_version(conn, title, quiz_shortname, 'quiz', current_version)
                     
@@ -931,7 +957,9 @@ def main():
                     
                     logging.info(f"Quiz course created: {quiz_shortname}")
                 else:
-                    logging.info(f"Quiz already exists: {quiz_shortname}")
+                    logging.info(f"Quiz already exists: {quiz_shortname} (ID: {quiz_instance_id})")
+                    # Enforce configuration
+                    configure_quiz_full(course_id, quiz_instance_id)
                     
             except Exception as e:
                 logging.error(f"Error creating Quiz course for {title}: {e}")
