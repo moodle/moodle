@@ -489,9 +489,6 @@ function local_coursematrix_progress_user_plan($userid, $completedcourseid) {
     return true;
 }
 
-    return true;
-}
-
 /**
  * Get the due date info for a user's course in a learning plan.
  *
