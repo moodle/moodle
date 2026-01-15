@@ -573,7 +573,7 @@ def configure_quiz_full(course_id, quiz_id):
     try:
         completion_res = call_moodle_json('local_masterbuilder_configure_course_completion', {
             'courseid': int(course_id),
-            'requiregrade': 1, # Require passing grade (which is enforced by quiz settings)
+            'requiregrade': 0, # Require passing grade (which is enforced by quiz settings)
             'requireactivity': 1
         })
         if isinstance(completion_res, dict) and completion_res.get('success'):

@@ -223,13 +223,16 @@ function local_coursematrix_enrol_user_in_course($userid, $courseid, $roleid, $e
         return;
     }
 
+    // Enrol user if not already enrolled.
     if (!$DB->record_exists('user_enrolments', ['enrolid' => $instance->id, 'userid' => $userid])) {
         $enrolmanual->enrol_user($instance, $userid, $roleid);
-
-        // Check if the user has ALREADY completed this course (retroactive progress).
-        local_coursematrix_check_and_progress_if_complete($userid, $courseid);
     }
+
+    // ALWAYS check if the user has ALREADY completed this course (retroactive progress).
+    // This must run even if user is already enrolled (e.g., from another plan).
+    local_coursematrix_check_and_progress_if_complete($userid, $courseid);
 }
+
 
 // ============================================================================
 // LEARNING PLAN FUNCTIONS
