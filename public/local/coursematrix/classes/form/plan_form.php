@@ -223,7 +223,13 @@ require(['jquery'], function($) {
     });
     
     // Sync on submit.
-    $('form').on('submit', function() {
+    // Use Moodle's standard form ID 'mform1'
+    $('#mform1').on('submit', function() {
+        updateHiddenField();
+    });
+
+    // Also catch click on submit buttons as a fallback
+    $('input[type="submit"], button[type="submit"]').on('click', function() {
         updateHiddenField();
     });
     
