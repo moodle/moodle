@@ -82,14 +82,13 @@ class plan_form extends \moodleform {
         // Explicit Add button (Moodle autocomplete doesn't fire reliable change events).
         $mform->addElement('button', 'add_course_btn', get_string('add'), ['id' => 'btn_add_course']);
 
-        // Use standard hidden element.
-        $mform->addElement('hidden', 'course_config');
-        $mform->setType('course_config', PARAM_RAW);
-        $mform->setDefault('course_config', '[]');
-        // Moodle automatically gives it id "id_course_config".
+        // Use raw HTML hidden field - Moodle's hidden element has state management issues.
+        // This ensures the field is in POST exactly as JS sets it.
+        $mform->addElement('html', '<input type="hidden" name="course_config" id="id_course_config" value="[]">');
 
         // Container for the dynamic course table.
         $mform->addElement('html', '<div id="course-config-container" class="mb-3"></div>');
+
 
 
         // Add JavaScript to handle dynamic course table.
@@ -260,8 +259,18 @@ require(['jquery'], function($) {
         }
 
         // Parse course config from JSON.
+        // CRITICAL: Moodle's form processing may reset hidden field values.
+        // Always check raw POST as primary source for this field.
         $courseconfig = [];
-        $rawconfig = $data->course_config ?? '';
+        
+        // Try raw POST first (bypasses Moodle form state issues).
+        $rawconfig = '';
+        if (isset($_POST['course_config']) && !empty($_POST['course_config'])) {
+            $rawconfig = $_POST['course_config'];
+        } else {
+            // Fallback to form data.
+            $rawconfig = $data->course_config ?? '';
+        }
         
         if (!empty($rawconfig) && $rawconfig !== '[]') {
             $decoded = json_decode($rawconfig, true);
@@ -269,6 +278,7 @@ require(['jquery'], function($) {
                 $courseconfig = $decoded;
             }
         }
+
 
         // Convert to expected format.
         $data->courses = [];
