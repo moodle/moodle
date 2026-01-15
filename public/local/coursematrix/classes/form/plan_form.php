@@ -113,12 +113,18 @@ require(['jquery'], function($) {
     // Call immediately to try and get data on load.
     loadExistingData();
     
-    // Also set a slight timeout to ensure value is populated if set_data runs late (though set_data runs on server side rendering usually).
-    // Actually, set_data populates the 'value' attribute of the input, so it should be ready on DOM ready.
+    // On DOM ready, load data and render.
     $(document).ready(function() {
         loadExistingData();
         renderTable();
     });
+    
+    // Listen for injected data from set_data (for Edit mode).
+    document.addEventListener('courseDataInjected', function() {
+        loadExistingData();
+        renderTable();
+    });
+
     
     function renderTable() {
         var html = '';
@@ -359,16 +365,30 @@ require(['jquery'], function($) {
             }
         }
         
-        // Directly set the hidden field value in the data object.
-        // Moodle's set_data will populate the element with name 'course_config'.
+        // Since we use raw HTML for the hidden field, we must inject data via JS.
+        // Moodle's set_data cannot populate raw HTML elements.
         if (!empty($courseconfig)) {
-            $data->course_config = json_encode($courseconfig);
-        } else {
-            $data->course_config = '[]';
+            $json = json_encode($courseconfig);
+            global $PAGE;
+            $PAGE->requires->js_amd_inline("
+require(['jquery'], function($) {
+    $(document).ready(function() {
+        // Inject existing course config data.
+        var existingData = " . json_encode($json) . ";
+        $('#id_course_config').val(existingData);
+        
+        // Trigger reload of courseData and re-render table.
+        // The main script's loadExistingData function will read from the hidden field.
+        var event = new Event('courseDataInjected');
+        document.dispatchEvent(event);
+    });
+});
+            ");
         }
         
         parent::set_data($data);
     }
 }
+
 
 
