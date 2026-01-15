@@ -69,6 +69,8 @@ $string['pathsunsecuredataroot'] = 'Veri yolu güvenli değil';
 $string['pathswrongadmindir'] = 'Yönetici klasörü yok';
 $string['phpextension'] = '{$a} PHP eklentisi';
 $string['phpversion'] = 'PHP sürümü';
+$string['webserverconfigproblemdescription'] = 'Web sunucunuz, /public dizini dışındaki dosyalara erişimi engelleyecek şekilde yapılandırılmamıştır. Web sunucunuzu nasıl yapılandıracağınızla ilgili ayrıntılar için lütfen <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> adresine bakın. Yeniden yapılandırdıktan sonra lütfen <a href="{$a}">web kökünü yeniden ziyaret edin</a>.';
+$string['webservernotconfigured'] = 'Web sunucusu yapılandırılmamış';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Bu sayfayı <strong>{$a->packname} {$a->packversion}</strong> paketini ilgisayarınıza başarıyla kurduğunuz için görüyorsunuz. Tebrikler!';
 $string['welcomep30'] = '<strong> {$a-> installername} </strong>\'in bu sürümü, <strong> Moodle </strong>\'ın çalışacağı bir ortam oluşturmak için uygulamaları içerir:';
