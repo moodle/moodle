@@ -60,13 +60,16 @@ class output_callbacks {
         require_once($CFG->libdir . '/completionlib.php');
 
         // Get all user's plan assignments.
-        $sql = "SELECT up.*, pc.courseid, pc.duedays, p.name as planname, c.fullname as coursename
+        // Use pc.id as first column to ensure uniqueness (each plan_course row is unique).
+        $sql = "SELECT pc.id, up.userid, up.planid, up.currentcourseid, up.startdate, up.status,
+                       pc.courseid, pc.duedays, p.name as planname, c.fullname as coursename
                 FROM {local_coursematrix_user_plans} up
                 JOIN {local_coursematrix_plan_courses} pc ON pc.planid = up.planid
                 JOIN {local_coursematrix_plans} p ON p.id = up.planid
                 JOIN {course} c ON c.id = pc.courseid
                 WHERE up.userid = ?";
         $enrollments = $DB->get_records_sql($sql, [$userid]);
+
 
         if (empty($enrollments)) {
             return;
