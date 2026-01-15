@@ -229,7 +229,7 @@ require(['jquery'], function($) {
     });
 
     // Also catch click on submit buttons as a fallback
-    $('input[type="submit"], button[type="submit"]').on('click', function() {
+    $('input[type=\"submit\"], button[type=\"submit\"]').on('click', function() {
         updateHiddenField();
     });
     
