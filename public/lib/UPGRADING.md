@@ -1,5 +1,13 @@
 # core (subsystem) Upgrade notes
 
+## 5.1.1+
+
+### Added
+
+- There is a new Behat `toast_message` named selector to more easily assert the presence of Toast messages on the page
+
+  For more information see [MDL-87443](https://tracker.moodle.org/browse/MDL-87443)
+
 ## 5.1.1
 
 ### Added
