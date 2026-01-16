@@ -1694,9 +1694,10 @@ class completion_info {
      * Return the number of modules completed by a user in one specific course.
      *
      * @param int $userid The User ID.
+     * @param array $moduleids The course modules to check.
      * @return int Total number of modules completed by a user
      */
-    public function count_modules_completed(int $userid): int {
+    public function count_modules_completed(int $userid, array $moduleids = []): int {
         global $DB;
 
         $sql = "SELECT COUNT(1)
@@ -1704,9 +1705,16 @@ class completion_info {
                   JOIN {course_modules_completion} cmc ON cm.id = cmc.coursemoduleid
                  WHERE cm.course = :courseid
                        AND cmc.userid = :userid
+                       AND cm.visible = 1
                        AND (cmc.completionstate = " . COMPLETION_COMPLETE . "
                         OR cmc.completionstate = " . COMPLETION_COMPLETE_PASS . ")";
         $params = ['courseid' => $this->course_id, 'userid' => $userid];
+
+        if (!empty($moduleids)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($moduleids, SQL_PARAMS_NAMED);
+            $sql.= " AND cm.id $insql";
+            $params = array_merge($params, $inparams);
+        }
 
         return $DB->count_records_sql($sql, $params);
     }
