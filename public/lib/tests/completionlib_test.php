@@ -2289,6 +2289,11 @@ final class completionlib_test extends advanced_testcase {
             return $module;
         }, $modules);
 
+        $moduleids = [];
+        $moduleids = array_map(function (array $module): int {
+            return $module['id'];
+        }, $modules);
+
         $completion = new completion_info($this->course);
 
         if ($existinguser) {
@@ -2311,11 +2316,11 @@ final class completionlib_test extends advanced_testcase {
             $DB->insert_records('course_modules_completion', $cmcompletionrecords);
 
             foreach ($users as $user) {
-                $this->assertEquals($expectedcount, $completion->count_modules_completed($user->id));
+                $this->assertEquals($expectedcount, $completion->count_modules_completed($user->id, $moduleids));
             }
         } else {
             $nonexistinguserid = 123;
-            $this->assertEquals($expectedcount, $completion->count_modules_completed($nonexistinguserid));
+            $this->assertEquals($expectedcount, $completion->count_modules_completed($nonexistinguserid, $moduleids));
         }
     }
 
