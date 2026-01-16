@@ -201,6 +201,7 @@ $allowed = ['wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermissions', '
     'proxyhost', 'proxyport', 'proxytype', 'proxyuser', 'proxypassword', 'proxybypass',
     'altcacheconfigpath', 'pathtogs', 'pathtophp', 'pathtodu', 'aspellpath', 'pathtodot',
     'pathtounoconv', 'alternative_file_system_class', 'pathtopython',
+    'routerconfigured',
 ];
 $productioncfg = (array) $CFG;
 $CFG = new stdClass();
