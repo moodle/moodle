@@ -1,0 +1,20 @@
+This files describes API changes in Moove theme,
+information provided here is intended especially for everyone.
+
+=== 5.1.2 ===
+
+* Adds dark mode
+* Adds my learning navbar icon
+* Improve quiz UI
+
+=== 5.1 ===
+
+* Release for Moodle 5.1
+
+=== 5.0 ===
+
+* Release for Moodle 5.0
+
+=== 4.4 ===
+
+* Release for Moodle 4.4

@@ -1,0 +1,44 @@
+{{< core/popover_region }}
+    {{$classes}}popover-region-mylearning{{/classes}}
+    {{$attributes}}id="nav-mylearning-popover-container"{{/attributes}}
+
+    {{$togglelabel}}{{!
+        }} {{#str}} mylearning, theme_moove {{/str}} {{!
+    }}{{/togglelabel}}
+
+    {{$togglecontent}}
+        <i class="fa fa-graduation-cap" title="{{#str}} mylearning, theme_moove {{/str}}" role="img" aria-label="{{#str}} mylearning, theme_moove {{/str}}"></i>
+    {{/togglecontent}}
+
+    {{$containerlabel}}{{#str}} mylearning, theme_moove {{/str}}{{/containerlabel}}
+
+    {{$headertext}}{{#str}} mylearning, theme_moove {{/str}}{{/headertext}}
+
+    {{$content}}
+        <div class="all-learning"
+             data-region="all-learning"
+             role="log"
+             aria-busy="false"
+             aria-atomic="false"
+             aria-relevant="additions"></div>
+        <div class="empty-message" tabindex="0" data-region="empty-message">{{#str}} nolearning, theme_moove {{/str}}</div>
+    {{/content}}
+
+    {{$anchor}}
+        <a class="see-all-link"
+           href="{{config.wwwroot}}/my/courses.php">
+            <div class="popover-region-footer-container">
+                <div class="popover-region-seeall-text">{{#str}} mycourses {{/str}}</div>
+            </div>
+        </a>
+    {{/anchor}}
+{{/ core/popover_region }}
+{{#js}}
+    require(['jquery', 'theme_moove/mylearning'], function($, MyLearning) {
+        var container = $('#nav-mylearning-popover-container');
+
+        var myLearning = new MyLearning(container);
+
+        myLearning.registerEventListeners();
+    });
+{{/js}}

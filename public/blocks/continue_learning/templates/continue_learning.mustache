@@ -1,0 +1,69 @@
+<div class="cl-card">
+
+    <!-- Header -->
+    <div class="cl-header">
+        <h3 class="cl-title">
+            {{title}}
+        </h3>
+
+        <a href="{{viewallurl}}" class="cl-viewall-btn">
+            {{#str}} viewall, block_continue_learning {{/str}}
+            <span class="cl-arrow">›</span>
+        </a>
+    </div>
+
+    <!-- Content -->
+    <div class="cl-content">
+
+        <!-- Badge -->
+        <span class="cl-badge">
+            {{#str}} continuewhereleftoff, block_continue_learning {{/str}}
+        </span>
+
+        <!-- Course title -->
+        <h2 class="cl-course-title">
+            {{coursename}}
+        </h2>
+
+        <!-- Summary -->
+        <p class="cl-summary">
+            {{summary}}
+        </p>
+
+        <!-- Meta -->
+        <div class="cl-meta">
+            {{#teacher}}
+                <span class="cl-teacher">{{teacher}}</span>
+            {{/teacher}}
+
+            {{#timeleft}}
+                <span class="cl-time">{{timeleft}}</span>
+            {{/timeleft}}
+        </div>
+
+        <!-- Progress -->
+        <div class="cl-progress-wrapper">
+            <div class="cl-progress">
+                <div
+                    class="cl-progress-bar"
+                    style="width: {{progress}}%;"
+                    aria-valuenow="{{progress}}"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
+                </div>
+            </div>
+
+            <div class="cl-progress-text">
+                {{progress}}% complete
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="cl-footer">
+            <a href="{{resumeurl}}" class="cl-btn">
+                ▶ {{#str}} resumecourse, block_continue_learning {{/str}}
+            </a>
+        </div>
+
+    </div>
+</div>

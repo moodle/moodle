@@ -1,0 +1,37 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_quiz/timer
+
+    Login page template
+
+    Example context (json):
+    {
+    }
+}}
+<div id="quiz-timer-wrapper" class="mb-2">
+    <div id="quiz-timer" class="quiz-timer-inner ml-auto" role="timer" aria-atomic="true" aria-relevant="text">
+        <svg class="quiz-timer-icon mr-2" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="7.25" stroke="currentColor" stroke-width="2"></circle>
+            <path stroke="currentColor" stroke-width="2" d="M12 8V12L14 14"></path>
+        </svg>
+        <span id="quiz-time-left"></span>
+        <button type="button" class="btn btn-light btn-xs ml-3" id="toggle-timer" aria-controls="quiz-timer" aria-describedby="quiz-timer">
+            {{#str}} hide, core {{/str}}
+        </button>
+    </div>
+</div>

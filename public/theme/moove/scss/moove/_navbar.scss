@@ -1,0 +1,269 @@
+.navbar .navbar-brand .logo.dark {
+    display: none;
+}
+
+.navbar-nav .popover-region .popover-region-toggle .icon {
+    font-weight: inherit;
+}
+
+.navbar.fixed-top {
+    border: none;
+    height: 70px;
+    background-color: var(--moove-navbar-bg-color);
+
+    .primary-navigation {
+        .navigation {
+            height: 70px;
+
+            .nav-link {
+                height: 70px;
+                border: none;
+                border-radius: 0;
+
+                &.active {
+                    font-weight: 700;
+                    border-bottom: 2px solid #fff;
+                }
+            }
+        }
+    }
+
+    .navbarcallbacks {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+}
+
+.secondary-navigation {
+    border: none;
+    align-items: stretch;
+    padding-top: 0;
+    padding-bottom: 0;
+    z-index: 1021;
+    background-color: var(--moove-secondary-navigation-bg-color);
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
+    position: fixed;
+    top: 70px;
+
+    > .moove-container-fluid {
+        padding: 0;
+    }
+
+    &.moove {
+        width: 100%;
+        max-width: 100% !important;
+    }
+
+    .moremenu {
+        box-shadow: none;
+        background-color: inherit;
+        border-top: none;
+        border-bottom: none;
+        height: 60px;
+
+        .nav-tabs {
+            border: none;
+            background-color: inherit;
+            max-width: none;
+
+            .nav-link {
+                display: flex;
+                align-items: center;
+                white-space: nowrap;
+                color: #fff;
+                border: none;
+                border-radius: 0;
+
+                &.active {
+                    border-bottom: 2px solid #fff;
+                    font-weight: 700;
+                }
+
+                &:hover,
+                &:focus {
+                    background-color: darken($brand-primary, 10%);
+                }
+            }
+        }
+    }
+}
+
+body[data-bs-theme="dark"] {
+    .navbar .navbar-brand .logo.light {
+        display: none;
+    }
+
+    .navbar .navbar-brand .logo.dark {
+        display: block;
+    }
+
+    .primary-navigation .navigation .nav-link {
+        color: $gray-300;
+
+        &:hover,
+        &:focus {
+            background-color: $gray-700;
+        }
+    }
+
+    .secondary-navigation {
+        .moremenu .nav-tabs .nav-link {
+            &:hover,
+            &:focus {
+                background-color: $gray-700;
+            }
+        }
+    }
+
+    .navbar-nav .popover-region .popover-region-toggle::before {
+        content: initial;
+    }
+}
+
+.popover-region-mylearning,
+.popover-region-notifications {
+    .popover-region-container {
+        @extend .scale-up;
+        top: 70px;
+        background-color: var(--moove-bg-white);
+        border: var(--bs-border-color);
+
+        .popover-region-header-container {
+            height: 50px;
+            padding: 11px 20px 15px;
+            border-bottom: 1px solid var(--bs-border-color);
+            background-color: var(--moove-gray-bg);
+        }
+
+        .popover-region-content-container {
+            height: calc(100% - 50px);
+
+            .content-item-container {
+                line-height: initial;
+                background-color: var(--moove-bg-white);
+                padding: 15px;
+                border-bottom: 1px solid var(--bs-border-color);
+
+                &.unread {
+                    background-color: var(--moove-bg-white);
+                }
+
+                &:hover {
+                    background-color: var(--moove-bg-white);
+                    color: inherit;
+
+                    .content-item-footer .timestamp {
+                        color: inherit;
+                    }
+                }
+
+                .content-item-body {
+                    font-weight: normal;
+                    width: calc(100% - 54px);
+
+                    h3,
+                    .notification-message {
+                        font-size: 1.2rem;
+                        margin-bottom: 5px;
+                        font-weight: normal;
+                    }
+
+                    p {
+                        line-height: initial;
+                    }
+
+                    .notification-message {
+                        font-size: 1rem;
+                    }
+                }
+
+                .view-more {
+                    font-size: .9rem;
+                }
+
+                .content-item-footer .timestamp {
+                    font-size: .9rem;
+                    line-height: inherit;
+                }
+
+                .unread-count-container {
+                    width: 24px;
+
+                    .badge {
+                        background-color: $brand-primary;
+                        width: 21px;
+                        height: 21px;
+                        border-radius: 11px;
+                        line-height: 17px;
+                    }
+                }
+            }
+        }
+
+        .popover-region-footer-container {
+            height: 50px;
+            padding: 15px 20px;
+            border: 1px solid var(--bs-border-color);
+            margin: 0 -1px;
+
+            .popover-region-seeall-text {
+                line-height: initial;
+            }
+        }
+    }
+}
+
+.popover-region-mylearning,
+.popover-region-notifications {
+    .popover-region-container[aria-hidden="false"] {
+        @extend .scale-up-show;
+    }
+}
+
+.popover-region-mylearning {
+    .all-learning:empty + .empty-message {
+        display: block;
+    }
+
+    .popover-region-container,
+    .popover-region-container .popover-region-content-container {
+        height: initial;
+    }
+
+    .content-item-container.mylearning {
+        padding: .5rem;
+    }
+
+    .content-item-container.mylearning:hover {
+        background-color: var(--moove-gray-bg) !important;
+        color: inherit;
+    }
+
+    .content-item-container.mylearning .content-item {
+        display: flex;
+    }
+
+    .content-item-container.mylearning .content-item .image img {
+        width: 80px;
+        height: 80px;
+        border-radius: .5rem;
+    }
+
+    .content-item-container.mylearning .content-item .text {
+        padding: 0 .5rem;
+        flex: 1 auto;
+    }
+}
+
+#toggle-darkmode {
+    .icon-sun {
+        width: 22px;
+        height: 22px;
+        margin-right: .25rem;
+    }
+
+    .icon-moon {
+        width: 18px;
+        height: 18px;
+    }
+}

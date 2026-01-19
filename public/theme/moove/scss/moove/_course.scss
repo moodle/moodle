@@ -1,0 +1,138 @@
+.pagelayout-course {
+    .page-context-header {
+        padding: 0;
+    }
+
+    .course-section .sectionname > a {
+        color: var(--bs-heading-color);
+    }
+}
+
+.pagelayout-incourse {
+    #topofscroll {
+        padding-top: 0 !important;
+    }
+}
+
+#page-course-view-participants {
+    .tertiary-navigation {
+        .navitem:last-of-type {
+            margin-left: auto;
+        }
+    }
+}
+
+.path-mod .activity-header:not(:empty) {
+    background-color: var(--moove-gray-bg);
+}
+
+.path-mod .activity-header .badge {
+    mix-blend-mode: normal;
+}
+
+.modchoosercontent .optionscontainer .option:not(.selected):hover {
+    background-color: var(--moove-bg-white);
+}
+
+.modchoosercontent .optionscontainer .option.selected {
+    background-color: var(--moove-bg-white);
+    border: var(--bs-border-color);
+}
+
+.activity-navigation {
+    margin-left: 15px;
+    margin-right: 15px;
+    border-top: none;
+
+    .nav-guide {
+        display: block;
+        letter-spacing: .1em;
+        font-style: normal;
+    }
+
+    #prev-activity,
+    #next-activity {
+        display: flex;
+        align-items: center;
+    }
+
+    #prev-activity-link,
+    #next-activity-link {
+        padding: .375rem 0;
+    }
+
+    #next-activity {
+        justify-content: end;
+    }
+
+    #next-activity .text {
+        text-align: right;
+    }
+
+    #next-activity .text .nav_guide,
+    #prev-activity .text .nav_guide {
+        letter-spacing: .1em;
+        font-style: normal;
+        color: #565656;
+    }
+
+    .larrow,
+    .rarrow {
+        font-size: 2em;
+        padding: .25rem;
+        text-align: center;
+    }
+
+    .larrow .icon-arrow-left,
+    .rarrow .icon-arrow-right {
+        display: block;
+        height: 1em;
+        width: 1em;
+        margin: .1em auto;
+    }
+
+    .larrow {
+        border-right: 1px solid #eee;
+        margin-right: .3em;
+
+        .icon-arrow-left {
+            background: transparent url('[[pix:theme|left-arrow]]') no-repeat 50% 50%;
+        }
+    }
+
+    .rarrow {
+        border-left: 1px solid #eee;
+        margin-left: .3em;
+
+        .icon-arrow-right {
+            background: transparent url('[[pix:theme|right-arrow]]') no-repeat 50% 50%;
+        }
+    }
+}
+
+.path-grade-report-grader {
+    .gradeparent tr.heading {
+        top: 130px;
+    }
+
+    &.hasaccessibilitybar {
+        .gradeparent tr.heading {
+            top: 160px;
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .activity-navigation {
+        .larrow,
+        .rarrow {
+            display: none;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .activity-navigation {
+        display: none;
+    }
+}

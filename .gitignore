@@ -1,14 +1,58 @@
-# This file specifies intentionally untracked files that all Moodle git
-# repositories should ignore. It is recommended not to modify this file in your
-# local clone. Instead, use .git/info/exclude and add new records there as
-# needed.
-#
-# Example: if you deploy a contributed plugin mod/foobar into your site, put
-# the following line into .git/info/exclude file in your Moodle clone:
-# /mod/foobar/
-#
-# See gitignore(5) man page for more details
-#
+# ==========================================
+# CUSTOM MOODLE FORK - Track only customs
+# ==========================================
+
+# Config with credentials
+config.php
+
+# Runtime directories
+cache/
+localcache/
+temp/
+sessions/
+phpunit/
+behat/
+moodledata/
+
+# Composer & dependencies
+/vendor/
+composer.phar
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# ==========================================
+# TRACK ONLY CUSTOM CODE
+# ==========================================
+
+# Ignore EVERYTHING first
+/*
+
+# Then UNIGNORE structure
+!/public/
+
+# Ignore all in public
+/public/*
+
+# UNIGNORE theme structure
+!/public/theme/
+/public/theme/*
+
+# UNIGNORE blocks structure
+!/public/blocks/
+/public/blocks/*
+
+# UNIGNORE YOUR CUSTOMS
+!/public/theme/moove/
+!/public/blocks/continue_learning/
+
+# Keep these files
+!/.gitignore
+!/config-dist.php
 
 # Swap files (vim)
 [._]*.s[a-v][a-z]
@@ -17,7 +61,6 @@
 [._]ss[a-gi-z]
 [._]sw[a-p]
 # Temporary files including undo
-*~
 #
 /config.php
 /tags
@@ -39,8 +82,6 @@ CVS
 .phpunit.result.cache
 phpunit.xml
 # Composer support. Do not ignore composer.json, or composer.lock. These should be shipped by us.
-composer.phar
-/vendor/
 /behat.yml
 */yui/build/*/*-coverage.js
 /lib/yuilib/*/build/*/*-coverage.js

@@ -1,0 +1,36 @@
+.pagelayout-incourse #region-main,
+.pagelayout-admin #region-main,
+.pagelayout-report #region-main {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#page-message-index {
+    .container-fluid {
+        max-width: 100%;
+    }
+}
+
+.pagelayout-popup {
+    background-color: #fff !important; /* stylelint-disable-line declaration-no-important */
+
+    .container-fluid {
+        max-width: 100%;
+    }
+}
+
+#page-my-index {
+    #region-main {
+        background-color: initial;
+
+        .block.block_myoverview {
+            background-color: var(--moove-bg-white);
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .moodle-dialogue-base .moodle-dialogue.mod_quiz_preflight_popup {
+        width: 100%;
+    }
+}

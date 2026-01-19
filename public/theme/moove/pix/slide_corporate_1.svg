@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 540">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a365d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d5a87;stop-opacity:1" />
+    </linearGradient>
+    <pattern id="pattern1" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/>
+    </pattern>
+  </defs>
+  <rect width="1500" height="540" fill="url(#grad1)"/>
+  <rect width="1500" height="540" fill="url(#pattern1)"/>
+  <!-- Decorative elements -->
+  <circle cx="200" cy="270" r="180" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="1300" cy="100" r="150" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="1400" cy="400" r="120" fill="rgba(255,255,255,0.05)"/>
+  <!-- Icons representing learning -->
+  <g transform="translate(150, 180)" fill="rgba(255,255,255,0.15)">
+    <path d="M0 80 L60 40 L120 80 L120 160 L0 160 Z"/>
+    <rect x="20" y="100" width="30" height="60" fill="rgba(255,255,255,0.2)"/>
+    <rect x="70" y="120" width="30" height="40" fill="rgba(255,255,255,0.2)"/>
+  </g>
+  <g transform="translate(1200, 300)" fill="rgba(255,255,255,0.1)">
+    <rect x="0" y="0" width="150" height="100" rx="5"/>
+    <rect x="10" y="10" width="60" height="8" fill="rgba(255,255,255,0.3)"/>
+    <rect x="10" y="25" width="100" height="4" fill="rgba(255,255,255,0.2)"/>
+    <rect x="10" y="35" width="80" height="4" fill="rgba(255,255,255,0.2)"/>
+    <circle cx="130" cy="80" r="15" fill="rgba(255,255,255,0.2)"/>
+  </g>
+  <!-- People icons -->
+  <g transform="translate(300, 350)" fill="rgba(255,255,255,0.12)">
+    <circle cx="30" cy="20" r="20"/>
+    <ellipse cx="30" cy="70" rx="30" ry="25"/>
+    <circle cx="90" cy="20" r="20"/>
+    <ellipse cx="90" cy="70" rx="30" ry="25"/>
+    <circle cx="150" cy="20" r="20"/>
+    <ellipse cx="150" cy="70" rx="30" ry="25"/>
+  </g>
+</svg>
+

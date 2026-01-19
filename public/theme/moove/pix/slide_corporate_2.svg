@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 540">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#065f46;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+    </linearGradient>
+    <pattern id="grid" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1500" height="540" fill="url(#grad2)"/>
+  <rect width="1500" height="540" fill="url(#grid)"/>
+  <!-- Shield/Compliance icon -->
+  <g transform="translate(100, 150)" fill="rgba(255,255,255,0.1)">
+    <path d="M100 0 L180 30 L180 120 C180 180 100 220 100 220 C100 220 20 180 20 120 L20 30 Z"/>
+    <path d="M70 110 L90 130 L130 90" stroke="rgba(255,255,255,0.3)" stroke-width="8" fill="none" stroke-linecap="round"/>
+  </g>
+  <!-- Leadership podium -->
+  <g transform="translate(1150, 250)" fill="rgba(255,255,255,0.1)">
+    <rect x="0" y="80" width="60" height="100"/>
+    <rect x="70" y="40" width="60" height="140"/>
+    <rect x="140" y="60" width="60" height="120"/>
+    <circle cx="100" cy="10" r="25" fill="rgba(255,255,255,0.15)"/>
+  </g>
+  <!-- Chart/Growth -->
+  <g transform="translate(600, 300)" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="3">
+    <polyline points="0,100 50,80 100,90 150,50 200,60 250,20"/>
+    <circle cx="250" cy="20" r="8" fill="rgba(255,255,255,0.2)"/>
+  </g>
+  <!-- Decorative circles -->
+  <circle cx="1350" cy="100" r="80" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="100" cy="450" r="100" fill="rgba(255,255,255,0.05)"/>
+</svg>
+

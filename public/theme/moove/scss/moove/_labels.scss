@@ -1,0 +1,86 @@
+.contentwithoutlink {
+    padding-right: 0 !important;
+
+    .labelbar {
+        margin: 1em 0;
+        padding: 0.5em;
+        border: 1px solid #dadada;
+        border-radius: .5rem;
+        border-top-width: .2em;
+        letter-spacing: .1em;
+        font-style: normal;
+        font-size: 1.4rem;
+        vertical-align: bottom;
+        display: flex;
+
+        i {
+            margin-right: 10px;
+            font-size: 32px;
+        }
+    }
+
+    .labelbar.primary {
+        border-top-color: $brand-primary;
+        color: $brand-primary;
+    }
+
+    .labelbar.green {
+        border-top-color: #8bc34a;
+        color: #8bc34a;
+    }
+
+    .labelbar.orange {
+        border-top-color: #f39c12;
+        color: #f39c12;
+    }
+
+    .labelbar.red {
+        border-top-color: #c0392b;
+        color: #c0392b;
+    }
+
+    .labelbar.purple {
+        border-top-color: #9b59b6;
+        color: #9b59b6;
+    }
+
+    .labelbar.asphalt {
+        border-top-color: #34495e;
+        color: #34495e;
+    }
+
+    .labelbar.turquoise {
+        border-top-color: #1abc9c;
+        color: #1abc9c;
+    }
+
+    .labelbar.emerald {
+        border-top-color: #2ecc71;
+        color: #2ecc71;
+    }
+
+    .labelbar.peterriver {
+        border-top-color: #3498db;
+        color: #3498db;
+    }
+
+    .labelbar.amethyst {
+        border-top-color: #9b59b6;
+        color: #9b59b6;
+    }
+
+    .labelbar.carrot {
+        border-top-color: #e67e22;
+        color: #e67e22;
+    }
+
+    .labelbar.alizarin {
+        background-color: #e74c3c;
+        color: #e74c3c;
+    }
+
+    .labelbar.concrete {
+        background-color: #95a5a6;
+        color: #95a5a6;
+    }
+}

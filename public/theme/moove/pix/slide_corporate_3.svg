@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 540">
+  <defs>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c2d12;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c2410c;stop-opacity:1" />
+    </linearGradient>
+    <pattern id="dots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="15" cy="15" r="1.5" fill="rgba(255,255,255,0.1)"/>
+    </pattern>
+  </defs>
+  <rect width="1500" height="540" fill="url(#grad3)"/>
+  <rect width="1500" height="540" fill="url(#dots)"/>
+  <!-- Code/Technical icon -->
+  <g transform="translate(100, 180)" fill="rgba(255,255,255,0.1)">
+    <rect x="0" y="0" width="200" height="150" rx="10"/>
+    <text x="20" y="40" font-family="monospace" font-size="20" fill="rgba(255,255,255,0.3)">&lt;code&gt;</text>
+    <rect x="20" y="55" width="100" height="8" fill="rgba(255,255,255,0.2)"/>
+    <rect x="30" y="75" width="80" height="8" fill="rgba(255,255,255,0.15)"/>
+    <rect x="30" y="95" width="120" height="8" fill="rgba(255,255,255,0.15)"/>
+    <rect x="20" y="115" width="60" height="8" fill="rgba(255,255,255,0.2)"/>
+  </g>
+  <!-- Gear/Settings -->
+  <g transform="translate(1200, 150)" fill="rgba(255,255,255,0.1)">
+    <circle cx="60" cy="60" r="50"/>
+    <circle cx="60" cy="60" r="25" fill="url(#grad3)"/>
+    <rect x="50" y="-5" width="20" height="30" rx="3"/>
+    <rect x="50" y="95" width="20" height="30" rx="3"/>
+    <rect x="-5" y="50" width="30" height="20" rx="3"/>
+    <rect x="95" y="50" width="30" height="20" rx="3"/>
+  </g>
+  <!-- Data/Analytics -->
+  <g transform="translate(600, 320)" fill="rgba(255,255,255,0.12)">
+    <rect x="0" y="60" width="30" height="80"/>
+    <rect x="40" y="30" width="30" height="110"/>
+    <rect x="80" y="50" width="30" height="90"/>
+    <rect x="120" y="10" width="30" height="130"/>
+    <rect x="160" y="40" width="30" height="100"/>
+  </g>
+  <!-- Decorative -->
+  <circle cx="1400" cy="450" r="120" fill="rgba(255,255,255,0.05)"/>
+  <circle cx="400" cy="450" r="80" fill="rgba(255,255,255,0.05)"/>
+</svg>
+

@@ -1,0 +1,20 @@
+<div class="content-item-container mylearning" data-region="mylearning-content-item-container" data-id="{{id}}" role="listitem">
+    <a class="context-link" href="{{url}}" data-action="content-item-link" tabindex="-1">
+        <div class="content-item">
+            <div class="image">
+                <img src="{{image}}" alt="{{fullname}}">
+            </div>
+            <div class="text">
+                <p>{{fullname}}</p>
+                {{#hasprogress}}
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: {{progress}}%;" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100">
+                            {{progress}}%
+                        </div>
+                    </div>
+                {{/hasprogress}}
+                <p class="mb-0 small">{{#str}}lastaccess{{/str}}: {{lastaccess}}</p>
+            </div>
+        </div>
+    </a>
+</div>
