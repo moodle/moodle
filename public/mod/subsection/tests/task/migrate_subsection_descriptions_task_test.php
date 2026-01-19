@@ -35,8 +35,12 @@ final class migrate_subsection_descriptions_task_test extends \advanced_testcase
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
+        // Add subsection with description.
         $summarytext = 'Section with description';
-        $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 1]);
+        $this->getDataGenerator()->create_module(
+            'subsection',
+            ['course' => $course->id, 'section' => 1, 'summary' => $summarytext],
+        );
         // Add forum to the subsection to test the order of the modules is preserved.
         $this->getDataGenerator()->create_module(
             'forum',
@@ -46,25 +50,9 @@ final class migrate_subsection_descriptions_task_test extends \advanced_testcase
                 'section' => 2,
             ],
         );
-        // Add description to course sections and the subsection.
-        $DB->set_field(
-            'course_sections',
-            'summary',
-            $summarytext,
-            ['course' => $course->id],
-        );
         // Add another subsection without description.
         $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 1]);
 
-        // Check only 2 sections and 1 subsection have description.
-        $this->assertEquals(
-            3,
-            $DB->count_records_select(
-                'course_sections',
-                'course = :courseid AND summary != \'\'',
-                ['courseid' => $course->id],
-            ),
-        );
         $this->assertEquals(
             2,
             $DB->count_records_select(
@@ -112,15 +100,6 @@ final class migrate_subsection_descriptions_task_test extends \advanced_testcase
         $this->assertStringContainsString(
             'Subsection descriptions migration task completed. Total migrated subsections: 1',
             trim($output),
-        );
-        // Check only 2 sections keep having description after running the task.
-        $this->assertEquals(
-            2,
-            $DB->count_records_select(
-                'course_sections',
-                'course = :courseid AND summary != \'\'',
-                ['courseid' => $course->id],
-            ),
         );
         // Check no subsection has description after running the task.
         $this->assertEquals(
@@ -184,18 +163,15 @@ final class migrate_subsection_descriptions_task_test extends \advanced_testcase
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
+        // Add subsection with file in the description.
         $summarytext = 'Subsection text with <a href="@@PLUGINFILE@@/intro.txt">link</a>';
-        $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 1]);
+        $this->getDataGenerator()->create_module(
+            'subsection',
+            ['course' => $course->id, 'section' => 1, 'summary' => $summarytext],
+        );
         $subsection = $DB->get_record(
             'course_sections',
             ['course' => $course->id, 'section' => 2],
-        );
-        // Add description to the subsection.
-        $DB->set_field(
-            'course_sections',
-            'summary',
-            $summarytext,
-            ['course' => $course->id, 'section' => $subsection->section],
         );
         $filerecord = [
             'component' => 'course',
@@ -321,24 +297,13 @@ final class migrate_subsection_descriptions_task_test extends \advanced_testcase
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
-        $summarytext = 'Section with description';
-        $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 1]);
-        // Add description to course sections and the subsection.
-        $DB->set_field(
-            'course_sections',
-            'summary',
-            $summarytext,
-            ['course' => $course->id],
+        // Add subsection with description.
+        $this->getDataGenerator()->create_module(
+            'subsection',
+            ['course' => $course->id, 'section' => 1, 'summary' => 'Summary text'],
         );
-        // Check only 2 sections and 1 subsection have description.
-        $this->assertEquals(
-            3,
-            $DB->count_records_select(
-                'course_sections',
-                'course = :courseid AND summary != \'\'',
-                ['courseid' => $course->id],
-            ),
-        );
+
+        // Check subsection has description.
         $this->assertEquals(
             1,
             $DB->count_records_select(
@@ -433,18 +398,15 @@ final class migrate_subsection_descriptions_task_test extends \advanced_testcase
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
+        // Add subsections with description.
         for ($i = 0; $i < 101; $i++) {
-            $this->getDataGenerator()->create_module('subsection', ['course' => $course->id, 'section' => 1]);
+            $this->getDataGenerator()->create_module(
+                'subsection',
+                ['course' => $course->id, 'section' => 1, 'summary' => 'Summary text'],
+            );
         }
-        // Add description to course sections and subsections.
-        $DB->set_field(
-            'course_sections',
-            'summary',
-            'Section with description',
-            ['course' => $course->id],
-        );
 
-        // Check 101 subsections have description.
+        // Check all subsections have description.
         $this->assertEquals(
             101,
             $DB->count_records_select(
