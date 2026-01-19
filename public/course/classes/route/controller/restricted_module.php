@@ -36,13 +36,13 @@ class restricted_module {
      * Restricted module.
      *
      * @param ResponseInterface $response
-     * @param modinfo $cm
+     * @param \stdClass $cmdata
      * @return ResponseInterface
      */
     #[route(
         path: '/cms/{cm}/restricted',
         pathtypes: [
-            new \core\router\parameters\path_module(),
+            new \core\router\parameters\path_coursemodule(name: 'cm'),
         ],
         requirelogin: new require_login(
             requirelogin: true,
@@ -52,28 +52,28 @@ class restricted_module {
     public function restricted_module_page(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        \stdClass $cm,
+        \stdClass $cmdata,
     ): ResponseInterface {
         global $OUTPUT, $PAGE;
 
-        $context = \context_module::instance($cm->id);
+        $context = \context_module::instance($cmdata->id);
 
-        $course = get_course($cm->course);
+        $course = get_course($cmdata->course);
         $modinfo = get_fast_modinfo($course);
-        $cminfo = $modinfo->get_cm($cm->id);
-        $sectioninfo = $modinfo->get_section_info_by_id($cm->section);
+        $cminfo = $modinfo->get_cm($cmdata->id);
+        $sectioninfo = $modinfo->get_section_info_by_id($cmdata->section);
 
         $format = course_get_format($course);
         $course->format = $format->get_format();
 
         $url = \core\router\util::get_path_for_callable(
             [self::class, 'restricted_module_page'],
-            ['cm' => $cm->id],
+            ['cm' => $cmdata->id],
         );
-        $PAGE->set_url($url, ['cm' => $cm->id]);
+        $PAGE->set_url($url, ['cm' => $cmdata->id]);
         $PAGE->add_body_class('limitedwidth');
         $PAGE->set_context($context);
-        $PAGE->set_pagetype('mod-' . $cm->modname . '-restricted');
+        $PAGE->set_pagetype('mod-' . $cminfo->modname . '-restricted');
         $strtitle = get_string('restrictedtitle', 'course', $cminfo->get_name());
         $PAGE->set_title($strtitle . \moodle_page::TITLE_SEPARATOR . $course->shortname);
         $PAGE->set_heading($course->fullname);
@@ -94,7 +94,7 @@ class restricted_module {
         $response->getBody()->write($OUTPUT->footer());
 
         $eventdata = [
-            'objectid' => $cm->id,
+            'objectid' => $cmdata->id,
             'context' => $context,
         ];
         $event = \core\event\course_restricted_module_viewed::create($eventdata);

@@ -17,13 +17,13 @@
 namespace core\router\parameters;
 
 /**
- * A Moodle parameter referenced in the path.
+ * A query parameter referencing a course.
  *
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class path_course extends \core\router\schema\parameters\path_parameter implements
+class query_course extends \core\router\schema\parameters\query_parameter implements
     \core\router\schema\parameters\mapped_property_parameter,
     \core\router\schema\referenced_object
 {

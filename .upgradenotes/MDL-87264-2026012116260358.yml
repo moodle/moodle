@@ -1,0 +1,10 @@
+issueNumber: MDL-87264
+notes:
+  core:
+    - message: >
+        Added new `core\router\parameter\query_course` and
+        `core\router\parameter\query_coursemodule` parameter types, to allow
+        course IDs and course module IDs to be accepted as query string
+        parameters for routes, and automatically converted into the
+        corresponding objects and contexts.
+      type: improved
