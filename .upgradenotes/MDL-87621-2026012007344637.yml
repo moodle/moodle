@@ -1,0 +1,9 @@
+issueNumber: MDL-87621
+notes:
+  mod_subsection:
+    - message: >-
+        The subsection generator now includes support for the `summary` field.
+        This has been added specifically to test migration tool compatibility
+        and will be removed in Moodle 7.0. Developers should use this field only
+        for testing migration workflows.
+      type: improved

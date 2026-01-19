@@ -23,4 +23,29 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_subsection_generator extends testing_module_generator {
+    #[\Override]
+    public function create_instance($record = null, ?array $options = null): stdClass {
+        global $DB;
+
+        // Ensure the record can be modified without affecting calling code.
+        $record = (object)(array)$record;
+
+        // Create the subsection instance.
+        $instance = parent::create_instance($record, (array)$options);
+
+        // Update the delegated section summary if needed.
+        if (isset($record->summary)) {
+            $DB->set_field(
+                'course_sections',
+                'summary',
+                $record->summary,
+                [
+                    'component' => 'mod_subsection',
+                    'itemid' => $instance->id,
+                ],
+            );
+        }
+
+        return $instance;
+    }
 }
