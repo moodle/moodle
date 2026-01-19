@@ -102,20 +102,6 @@
         </ROLES_ASSIGNMENTS>
       </BLOCK>
       <BLOCK>
-        <ID>315</ID>
-        <NAME>activity_modules</NAME>
-        <PAGEID>33</PAGEID>
-        <PAGETYPE>course-view</PAGETYPE>
-        <POSITION>l</POSITION>
-        <WEIGHT>1</WEIGHT>
-        <VISIBLE>1</VISIBLE>
-        <CONFIGDATA>Tjs=</CONFIGDATA>
-        <ROLES_OVERRIDES>
-        </ROLES_OVERRIDES>
-        <ROLES_ASSIGNMENTS>
-        </ROLES_ASSIGNMENTS>
-      </BLOCK>
-      <BLOCK>
         <ID>316</ID>
         <NAME>search_forums</NAME>
         <PAGEID>33</PAGEID>

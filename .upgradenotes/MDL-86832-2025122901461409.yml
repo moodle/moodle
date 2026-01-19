@@ -1,0 +1,5 @@
+issueNumber: MDL-86832
+notes:
+  core_block:
+    - message: Removed block_activity_modules from Moodle 5.2.
+      type: removed

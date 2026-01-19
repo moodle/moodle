@@ -59,7 +59,7 @@ class get_overview_information extends external_api {
      * @param int $courseid The course ID.
      * @param string $modname The module name.
      * @return stdClass The overview information.
-     * @throws \moodle_exception if the course ID is invalid or the module name is not found.
+     * @throws \moodle_exception if the course ID is invalid or home site, or the module name is not found.
      */
     public static function execute(int $courseid, string $modname): stdClass {
         [
@@ -71,6 +71,9 @@ class get_overview_information extends external_api {
         ]);
 
         // Validate course ID.
+        if ($courseid == SITEID) {
+            throw new \moodle_exception('The site home course overview page is not supported.');
+        }
         $course = get_course($courseid);
         if (!$course) {
             throw new \moodle_exception('invalidcourseid', 'error', '', $courseid);

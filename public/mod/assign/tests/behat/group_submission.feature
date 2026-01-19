@@ -290,14 +290,9 @@ Feature: Group assignment submissions
     And the following "mod_assign > submissions" exist:
       | assign                | user      | onlinetext                          |
       | Test assignment name  | student1  | I'm the student's first submission  |
-    And the following "blocks" exist:
-      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
-      | activity_modules | Course       | C1        | course-view-*   | side-pre      |
-    And I am on the "C1" Course page logged in as student1
-    And I click on "Assignments" "link" in the "Activities" "block"
+    And I am on the "C1" "course > activities > assign" page logged in as "student1"
     And I should see "Submitted for grading"
-    And I am on the "C1" Course page logged in as student2
-    And I click on "Assignments" "link" in the "Activities" "block"
+    And I am on the "C1" "course > activities > assign" page logged in as "student2"
     And I should see "Submitted for grading"
     And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Submissions" in current page administration

@@ -121,13 +121,3 @@ Feature: Testing overview integration in database activity
     # Check the Approve link.
     And I click on "Approve" "link" in the "data_overview_collapsible" "region"
     And I should see "Pending approval"
-
-  Scenario: The database activity index redirect to the activities overview
-    When I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Activities" block
-    And I click on "Database" "link" in the "Activities" "block"
-    Then I should see "An overview of all activities in the course"
-    And I should see "Name" in the "data_overview_collapsible" "region"
-    And I should see "Due date" in the "data_overview_collapsible" "region"
-    And I should see "Actions" in the "data_overview_collapsible" "region"

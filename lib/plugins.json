@@ -46,7 +46,6 @@
         ],
         "block": [
             "accessreview",
-            "activity_modules",
             "activity_results",
             "admin_bookmarks",
             "badges",
@@ -584,6 +583,7 @@
             "radius"
         ],
         "block": [
+            "activity_modules",
             "community",
             "course_overview",
             "messages",
