@@ -432,14 +432,6 @@ class action_menu implements renderable, templatable {
     }
 
     /**
-     * @deprecated since Moodle 3.2, use a list of action_icon instead.
-     */
-    #[\core\attribute\deprecated('Use a list of action_icons instead', since: '3.2', mdl: 'MDL-55904', final: true)]
-    public function do_not_enhance() {
-        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
-    }
-
-    /**
      * Returns true if this action menu will be enhanced.
      *
      * @return bool

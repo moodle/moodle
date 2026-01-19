@@ -156,16 +156,6 @@ class core_user_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders the unified filter element for the course participants page.
-     * @deprecated since 3.9
-     * @throws coding_exception
-     */
-    public function unified_filter() {
-        throw new coding_exception('unified_filter cannot be used any more, please use participants_filter instead');
-
-    }
-
-    /**
      * Render the data required for the participants filter on the course participants page.
      *
      * @param context $context The context of the course being displayed

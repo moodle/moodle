@@ -1914,32 +1914,6 @@ class file_storage {
     }
 
     /**
-     * Content exists
-     *
-     * @param string $contenthash
-     * @return bool
-     * @deprecated since 3.3
-     */
-    public function content_exists($contenthash) {
-        debugging('The content_exists function has been deprecated and should no longer be used.', DEBUG_DEVELOPER);
-
-        return false;
-    }
-
-    /**
-     * Tries to recover missing content of file from trash.
-     *
-     * @param stored_file $file stored_file instance
-     * @return bool success
-     * @deprecated since 3.3
-     */
-    public function try_content_recovery($file) {
-        debugging('The try_content_recovery function has been deprecated and should no longer be used.', DEBUG_DEVELOPER);
-
-        return false;
-    }
-
-    /**
      * When user referring to a moodle file, we build the reference field
      *
      * @param array|stdClass $params

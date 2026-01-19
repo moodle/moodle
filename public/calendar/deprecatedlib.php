@@ -142,19 +142,6 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
 }
 
 /**
- * @deprecated 3.9
- */
-#[\core\attribute\deprecated(
-    replacement: 'calendar_add_event_metadata no longer used',
-    since: '3.9',
-    mdl: 'MDL-58866',
-    final: true,
-)]
-function calendar_add_event_metadata() {
-    \core\deprecation::emit_deprecation(__FUNCTION__);
-}
-
-/**
  * Get a HTML link to a course.
  *
  * @param int|stdClass $course the course id or course object

@@ -1,0 +1,8 @@
+issueNumber: MDL-87426
+notes:
+  core_files:
+    - message: >-
+        The following methods have been removed from `public/lib/filestorage/file_storage.php`:
+        - `\file_storage::content_exists()`
+        - `\file_storage::try_content_recovery()`
+      type: removed

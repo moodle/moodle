@@ -591,19 +591,6 @@ class manager {
     }
 
     /**
-     * Used to be used to add models included with the Moodle core.
-     *
-     * @deprecated Deprecated since Moodle 3.7 (MDL-61667) - Use lib/db/analytics.php instead.
-     * @todo Remove this method in Moodle 3.11 (MDL-65186).
-     * @return void
-     */
-    public static function add_builtin_models() {
-
-        throw new \coding_exception('core_analytics\manager::add_builtin_models() has been removed. Core models ' .
-                        'are now automatically updated according to their declaration in the lib/db/analytics.php file.');
-    }
-
-    /**
      * Cleans up analytics db tables that do not directly depend on analysables that may have been deleted.
      */
     public static function cleanup() {
