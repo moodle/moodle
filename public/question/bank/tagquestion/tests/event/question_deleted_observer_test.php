@@ -47,4 +47,25 @@ final class question_deleted_observer_test extends \advanced_testcase {
 
         $this->assertEmpty(\core_tag_tag::get_item_tags('core_question', 'question', $question->id));
     }
+
+    /**
+     * Tag a question as one user, delete it as another user, confirm the tag was deleted.
+     */
+    public function test_delete_question_with_user_tags(): void {
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $user = $this->getDataGenerator()->create_user();
+        [, , $qcat, $questions] = $questiongenerator->setup_course_and_questions();
+        $questioncontext = \context::instance_by_id($qcat->contextid);
+        $question = reset($questions);
+        $tag = random_string();
+        \core_tag_tag::add_item_tag('core_question', 'question', $question->id, $questioncontext, $tag, $user->id);
+
+        $this->assertCount(1, \core_tag_tag::get_item_tags('core_question', 'question', $question->id));
+
+        $this->setAdminUser();
+        question_delete_question($question->id);
+
+        $this->assertEmpty(\core_tag_tag::get_item_tags('core_question', 'question', $question->id));
+    }
 }
