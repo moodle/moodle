@@ -3583,26 +3583,7 @@ class admin_setting_configselect extends admin_setting {
     }
 
     /**
-     * Returns XHTML select field
-     *
-     * Ensure the options are loaded, and generate the XHTML for the select
-     * element and any warning message. Separating this out from output_html
-     * makes it easier to subclass this class.
-     *
-     * @param string $data the option to show as selected.
-     * @param string $current the currently selected option in the database, null if none.
-     * @param string $default the default selected option.
-     * @return array the HTML for the select element, and a warning message.
-     * @deprecated since Moodle 3.2
-     */
-    public function output_select_html($data, $current, $default, $extraname = '') {
-        debugging('The method admin_setting_configselect::output_select_html is depreacted, do not use any more.', DEBUG_DEVELOPER);
-    }
-
-    /**
      * Returns XHTML select field and wrapping div(s)
-     *
-     * @see output_select_html()
      *
      * @param string $data the option to show as selected
      * @param string $query
@@ -5951,8 +5932,6 @@ class admin_setting_configselect_autocomplete extends admin_setting_configselect
 
     /**
      * Returns XHTML select field and wrapping div(s)
-     *
-     * @see output_select_html()
      *
      * @param string $data the option to show as selected
      * @param string $query

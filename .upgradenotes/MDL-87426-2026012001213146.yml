@@ -1,0 +1,5 @@
+issueNumber: MDL-87426
+notes:
+  core:
+    - message: The `\admin_setting_configselect::output_select_html()` has been removed from `public/lib/adminlib.php`.
+      type: removed
