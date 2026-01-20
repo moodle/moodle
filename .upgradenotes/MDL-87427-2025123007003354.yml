@@ -1,0 +1,5 @@
+issueNumber: MDL-87427
+notes:
+  core:
+    - message: The `relateduserid` key inside the `other` array has been removed.
+      type: removed

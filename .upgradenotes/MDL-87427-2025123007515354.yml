@@ -1,0 +1,18 @@
+issueNumber: MDL-87427
+notes:
+  core:
+    - message: >-
+        - The following files have been removed:
+          - `public/lib/classes/event/content_viewed.php`
+          - `public/lib/classes/exception/webservice_parameter_exception.php`
+        - The `lightbox` attribute has been removed from `public/lib/yui/src/notification/js/dialogue.js`.
+        - The following functions have been removed from `public/lib/deprecatedlib.php`:
+          - `get_context_instance()`
+          - `can_use_rotated_text()`
+          - `get_system_context()`
+          - `print_arrow()`
+      type: removed
+  core_course:
+    - message: >-
+        - The `\core_courseformat\output\section_renderer\core_course_renderer::course_category_tree_category()` has removed in `public/course/renderer.php`.
+      type: removed

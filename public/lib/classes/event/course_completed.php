@@ -32,8 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read int $relateduserid user who completed the course
  * @property-read array $other {
  *      Extra information about event.
- *
- *      - int relateduserid: deprecated since 2.7, please use property relateduserid
  * }
  *
  * @package    core
@@ -54,7 +52,6 @@ class course_completed extends base {
                 'relateduserid' => $completion->userid,
                 'context' => \context_course::instance($completion->course),
                 'courseid' => $completion->course,
-                'other' => array('relateduserid' => $completion->userid), // Deprecated since 2.7, please use property relateduserid.
             )
         );
         $event->add_record_snapshot('course_completions', $completion);
@@ -108,12 +105,6 @@ class course_completed extends base {
 
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('The \'relateduserid\' must be set.');
-        }
-
-        // Check that the 'relateduserid' value is set in other as well. This is because we introduced this in 2.6
-        // and some observers may be relying on this value to be present.
-        if (!isset($this->other['relateduserid'])) {
-            throw new \coding_exception('The \'relateduserid\' value must be set in other.');
         }
     }
 
