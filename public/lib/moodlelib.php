@@ -2645,7 +2645,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // Check visibility of activity to current user; includes visible flag, conditional availability, etc.
-    if ($cm && !$cm->uservisible) {
+    if ($cm && !$cm->uservisible && !$cm->is_visible_on_course_page()) {
         if ($preventredirect) {
             throw new require_login_exception('Activity is hidden');
         }
@@ -2656,24 +2656,35 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         redirect(course_get_url($course), $message, null, \core\output\notification::NOTIFY_ERROR);
     }
 
-    // Set the global $COURSE.
-    if ($cm) {
-        $PAGE->set_cm($cm, $course);
-        $PAGE->set_pagelayout('incourse');
-    } else if (!empty($courseorid)) {
-        $PAGE->set_course($course);
-    }
-
-    foreach ($afterlogins as $plugintype => $plugins) {
-        foreach ($plugins as $pluginfunction) {
-            $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+    if ($cm && !$cm->uservisible) {
+        if ($cm->is_visible_on_course_page()) {
+            $url = \core\router\util::get_path_for_callable(
+                [\core_course\route\controller\restricted_module::class, 'restricted_module_page'],
+                ['course' => $course->id, 'cm' => $cm->id],
+            );
+            redirect($url, '', null);
         }
-    }
+    } else {
+        // Set the global $COURSE.
+        if ($cm) {
+            $PAGE->set_cm($cm, $course);
+            $PAGE->set_pagelayout('incourse');
+        } else if (!empty($courseorid)) {
+            $PAGE->set_course($course);
+        }
 
-    // Finally access granted, update lastaccess times.
-    // Do not update access time for webservice or ajax requests.
-    if (!WS_SERVER && !AJAX_SCRIPT) {
-        user_accesstime_log($course->id);
+        foreach ($afterlogins as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+            }
+        }
+
+        // Finally access granted, update lastaccess times.
+        // Do not update access time for webservice or ajax requests.
+        if (!WS_SERVER && !AJAX_SCRIPT) {
+            user_accesstime_log($course->id);
+        }
+
     }
 }
 

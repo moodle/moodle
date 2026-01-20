@@ -323,17 +323,7 @@ class core_course_renderer extends plugin_renderer_base {
         if ($cm->uservisible) {
             return null;
         }
-        if (!$cm->availableinfo) {
-            return get_string('activityiscurrentlyhidden');
-        }
-
-        $altname = get_accesshide(' ' . $cm->modfullname);
-        $name = html_writer::empty_tag('img', ['src' => $cm->get_icon_url(),
-                'class' => 'activityicon', 'alt' => '']) .
-            html_writer::tag('span', ' '.$cm->get_formatted_name() . $altname, array('class' => 'instancename'));
-        $formattedinfo = \core_availability\info::format_info($cm->availableinfo, $cm->get_course());
-        return html_writer::div($name, 'activityinstance-error') .
-        html_writer::div($formattedinfo, 'availabilityinfo-error');
+        return get_string('activityiscurrentlyhidden');
     }
 
     /**

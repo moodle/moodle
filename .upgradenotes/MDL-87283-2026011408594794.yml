@@ -1,0 +1,5 @@
+issueNumber: MDL-87283
+notes:
+  core:
+    - message: A new path_module parameter type for routing has been created
+      type: improved
