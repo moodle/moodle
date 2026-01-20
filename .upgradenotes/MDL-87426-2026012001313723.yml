@@ -1,0 +1,5 @@
+issueNumber: MDL-87426
+notes:
+  mod_choice:
+    - message: Undo the deletion of public/mod/choice/classes/event/answer_updated.php file.
+      type: changed
