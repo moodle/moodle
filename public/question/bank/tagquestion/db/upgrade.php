@@ -30,7 +30,7 @@
  */
 function xmldb_qbank_tagquestion_upgrade(int $oldversion): bool {
     global $DB;
-    if ($oldversion < 2025112800) {
+    if ($oldversion < 2025100601) {
         // Delete orphaned question tags.
         $orphanedtags = $DB->get_records_sql("
             SELECT ti.id
@@ -44,7 +44,7 @@ function xmldb_qbank_tagquestion_upgrade(int $oldversion): bool {
             $DB->delete_records_list('tag_instance', 'id', array_keys($orphanedtags));
         }
 
-        upgrade_plugin_savepoint(true, 2025112800, 'qbank', 'tagquestion');
+        upgrade_plugin_savepoint(true, 2025100601, 'qbank', 'tagquestion');
     }
     return true;
 }
