@@ -70,9 +70,7 @@ $context = [
 ];
 echo $OUTPUT->render_from_template('core_admin/settings', $context);
 
-$opts = [
-    'dependencies' => $settings->get_dependencies_for_javascript(),
-];
-$PAGE->requires->js_call_amd('core/showhidesettings', 'init', [$opts]);
+$context = ['dependencies' => json_encode($settings->get_dependencies_for_javascript())];
+echo $OUTPUT->render_from_template('core_admin/settings_showhide', $context);
 
 echo $OUTPUT->footer();

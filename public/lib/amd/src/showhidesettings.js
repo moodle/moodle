@@ -339,8 +339,11 @@ define(['jquery'], function($) {
     }
 
     return {
-        init: function(opts) {
-            dependencies = opts.dependencies;
+        init: function(dependenciesId) {
+            const dependenciesData = document.getElementById(dependenciesId).dataset.dependencies;
+            if (dependenciesData) {
+                dependencies = JSON.parse(dependenciesData);
+            }
             initHandlers();
             hideDependencyInfo();
         }
