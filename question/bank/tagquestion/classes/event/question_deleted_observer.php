@@ -40,6 +40,6 @@ class question_deleted_observer {
      */
     public static function delete_question_tags(question_deleted $event): void {
         $questioncontext = context::instance_by_id($event->contextid);
-        \core_tag_tag::set_item_tags('core_question', 'question', $event->objectid, $questioncontext, null, $event->userid);
+        \core_tag_tag::set_item_tags('core_question', 'question', $event->objectid, $questioncontext, null);
     }
 }
