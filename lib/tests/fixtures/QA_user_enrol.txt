@@ -1,0 +1,3 @@
+username,firstname,lastname,email,course1,role1,course2,role2,course3,role3
+learner1,Learner,One,learner1@example.com,C1,student,C2,student,C3,student
+learner2,Learner,Two,learner2@example.com,C1,student,C2,student,C3,student
