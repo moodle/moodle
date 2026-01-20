@@ -31,24 +31,26 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Admin katalogi';
 $string['availablelangs'] = 'Mavjud til paketlari';
-$string['chooselanguagehead'] = 'Tilni tanlang';
+$string['chooselanguagehead'] = 'Tilni tanlash';
 $string['chooselanguagesub'] = 'Iltimos, o‘rnatish uchun tilni tanlang. Ushbu til saytning standart tili sifatida ham ishlatiladi, ammo keyinchalik o‘zgartirish mumkin.';
-$string['clialreadyconfigured'] = 'config.php konfiguratsiya fayli allaqachon mavjud. Iltimos, ushbu sayt uchun Moodleni o‘rnatish uchun admin/cli/install_database.php faylidan foydalaning.';
-$string['clialreadyinstalled'] = 'config.php konfiguratsiya fayli allaqachon mavjud. Iltimos, ushbu sayt uchun Moodleni yangilash uchun admin/cli/install_database.php faylidan foydalaning.';
-$string['cliinstallheader'] = 'Moodle {$a} komandali satr orqali o‘rnatish dasturi';
-$string['clitablesexist'] = 'Ma’lumotlar bazasidagi jadvallar allaqachon mavjud; CLI orqali o‘rnatish davom ettirilmaydi.';
+$string['clialreadyconfigured'] = 'config.php konfiguratsiya fayli allaqachon mavjud. Iltimos, ushbu sayt uchun Moodle’ni o‘rnatish uchun admin/cli/install_database.php faylidan foydalaning.';
+$string['clialreadyinstalled'] = 'config.php konfiguratsiya fayli allaqachon mavjud. Iltimos, ushbu sayt uchun Moodle’ni yangilash uchun admin/cli/install_database.php faylidan foydalaning.';
+$string['cliinstallheader'] = 'Moodle {$a} buyruq qatori o‘rnatish dasturi';
+$string['clitablesexist'] = 'Ma’lumotlar bazasi jadvallari allaqachon mavjud; CLI orqali o‘rnatish davom ettirilmaydi.';
 $string['databasehost'] = 'Ma’lumotlar bazasi serveri';
 $string['databasename'] = 'Ma’lumotlar bazasi nomi';
 $string['databasetypehead'] = 'Ma’lumotlar bazasi drayverini tanlang';
 $string['dataroot'] = 'Ma’lumotlar katalogi';
-$string['datarootpermission'] = 'Ma’lumotlar papkalariga ruxsatlar';
+$string['datarootpermission'] = 'Ma’lumotlar kataloglariga ruxsatlar';
 $string['dbprefix'] = 'Jadvallar prefiksi';
 $string['dirroot'] = 'Moodle katalogi';
-$string['environmenthead'] = 'Muhitingiz tekshirilmoqda…';
-$string['environmentsub2'] = 'Har bir Moodle versiyasi uchun minimal PHP versiyasi va bir qator majburiy PHP kengaytmalari talab qilinadi. To‘liq muhit tekshiruvi har bir o‘rnatish va yangilashdan oldin amalga oshiriladi. Yangi versiyani qanday o‘rnatish yoki PHP kengaytmalarni yoqishni bilmasangiz, server administratoriga murojaat qiling.';
-$string['errorsinenvironment'] = 'Muhit tekshiruvi muvaffaqiyatsiz yakunlandi!';
+$string['environmenthead'] = 'Muhitingiz tekshirilmoqda ...';
+$string['environmentsub2'] = 'Har bir Moodle versiyasi uchun minimal PHP talabi va bir qator majburiy PHP kengaytmalari mavjud.
+To‘liq muhit tekshiruvi har bir o‘rnatish va yangilashdan oldin amalga oshiriladi.
+Agar yangi versiyani qanday o‘rnatish yoki PHP kengaytmalarini yoqish bo‘yicha ma’lumotga ega bo‘lmasangiz, server administratoriga murojaat qiling.';
+$string['errorsinenvironment'] = 'Muhit tekshiruvi muvaffaqiyatsiz bo‘ldi!';
 $string['installation'] = 'O\'rnatish';
-$string['langdownloaderror'] = 'Afsuski, “{$a}” tili yuklab bo‘lmadi. O‘rnatish jarayoni ingliz tilida davom ettiriladi.';
+$string['langdownloaderror'] = 'Afsuski, "{$a}" tili yuklab bo‘lmadi. O‘rnatish jarayoni ingliz tilida davom ettiriladi.';
 $string['paths'] = 'O‘tkazib yuborishlar';
 $string['pathserrcreatedataroot'] = 'Ma’lumotlar papkasi ({$a->dataroot}) o‘rnatish dasturi tomonidan yaratilolmayapti.';
 $string['pathshead'] = 'O’tkazib yuborishlarni tasdiqlash';
