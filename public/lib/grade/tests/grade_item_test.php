@@ -33,6 +33,7 @@ final class grade_item_test extends \grade_base_testcase {
         $this->sub_test_grade_item_construct();
         $this->sub_test_grade_item_insert();
         $this->sub_test_grade_item_delete();
+        $this->sub_test_grade_item_delete_disabled_modules();
         $this->sub_test_grade_item_update();
         $this->sub_test_grade_item_load_scale();
         $this->sub_test_grade_item_load_outcome();
@@ -108,7 +109,7 @@ final class grade_item_test extends \grade_base_testcase {
         $last_grade_item = end($this->grade_items);
 
         $this->assertEquals($grade_item->id, $last_grade_item->id + 1);
-        $this->assertEquals(18, $grade_item->sortorder);
+        $this->assertEquals(19, $grade_item->sortorder);
 
         // Keep our reference collection the same as what is in the database.
         $this->grade_items[] = $grade_item;
@@ -148,6 +149,62 @@ final class grade_item_test extends \grade_base_testcase {
 
         // Keep our reference collection the same as the database.
         unset($this->grade_items[7]);
+    }
+
+    /**
+     * Tests the deletion of a grade item of an activity instance that has been globally disabled.
+     *
+     * @covers \grade_item::delete
+     */
+    protected function sub_test_grade_item_delete_disabled_modules(): void {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/course/lib.php');
+        $grade_item = new \grade_item($this->grade_items[18], false); // Use a grade item not touched by previous (or future) tests.
+        $this->assertTrue(method_exists($grade_item, 'delete'));
+
+        // Add two files.
+        $dummy = [
+            'contextid' => $grade_item->get_context()->id,
+            'component' => GRADE_FILE_COMPONENT,
+            'filearea' => GRADE_HISTORY_FEEDBACK_FILEAREA,
+            'itemid' => 1,
+            'filepath' => '/',
+            'filename' => 'feedback1.txt',
+        ];
+
+        $fs = get_file_storage();
+        $fs->create_file_from_string($dummy, '');
+
+        $dummy['itemid'] = 2;
+        $fs->create_file_from_string($dummy, '');
+
+        $files = $fs->get_area_files($grade_item->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        // Includes directories.
+        $this->assertCount(4, $files);
+
+        // Now disable the mod plugin.
+        $class = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $class::enable_plugin($this->course_module[8]->modname, false);
+        $this->assertFalse(in_array($this->course_module[8]->modname, \core\plugininfo\mod::get_enabled_plugins()));
+        rebuild_course_cache($this->course->id);
+
+        ob_start();
+        $this->assertTrue($grade_item->delete());
+        $result = ob_get_contents();
+        ob_end_clean();
+        // No mtrace warning about missing module when fetching the context should appear.
+        $this->assertEmpty($result);
+
+        $this->assertFalse($DB->get_record('grade_items', ['id' => $grade_item->id]));
+
+        $files = $fs->get_area_files($grade_item->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+        $this->assertEmpty($files);
+
+        // Keep our reference collection the same as the database.
+        unset($this->grade_items[18]);
+        $class::enable_plugin($this->course_module[8]->modname, true);
+        $this->assertTrue(in_array($this->course_module[8]->modname, \core\plugininfo\mod::get_enabled_plugins()));
+        rebuild_course_cache($this->course->id);
     }
 
     protected function sub_test_grade_item_update() {

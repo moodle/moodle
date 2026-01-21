@@ -2633,12 +2633,19 @@ class grade_item extends grade_object {
                 rebuild_course_cache($this->courseid, true);
                 $modinfo = get_fast_modinfo($this->courseid);
             }
-            // Even with a rebuilt cache the module does not exist. This means the
-            // database is in an invalid state - we will log an error and return
-            // the course context but the calling code should be updated.
+
+            // Even with a rebuilt cache the module does not exist. This means we are dealing
+            // with a mod plugin type that is disabled on the site (which are not included in the
+            // modinfo cache) or the database is in an invalid state. In the latter case we will
+            // log an error and return the course context, but the calling code should be updated.
             if (!isset($modinfo->instances[$this->itemmodule][$this->iteminstance])) {
-                mtrace(get_string('moduleinstancedoesnotexist', 'error'));
-                $context = \context_course::instance($this->courseid);
+                if ($cm = get_coursemodule_from_instance($this->itemmodule, $this->iteminstance)) {
+                    // Cache does not contain module plugins that are disabled.
+                    $context = \context_module::instance($cm->id);
+                } else {
+                    debugging(get_string('moduleinstancedoesnotexist', 'error'));
+                    $context = \context_course::instance($this->courseid);
+                }
             } else {
                 $cm = $modinfo->instances[$this->itemmodule][$this->iteminstance];
                 $context = \context_module::instance($cm->id);
