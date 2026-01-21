@@ -33,6 +33,8 @@ use core\router\schema\response\payload_response;
 use core\router\schema\response\response;
 use core_question\local\bank\formatted_bank;
 use core_question\local\bank\question_bank_helper;
+use core_question\output\question_category_selector;
+use core_question\question_category;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -179,4 +181,56 @@ class bank {
         );
     }
 
+    #[route(
+        path: '/categories', // Resolves to /api/rest/v2/question/categories.
+        queryparams: [
+            new query_coursemodule(),
+        ],
+        responses: [
+            new response(
+                statuscode: 200,
+                description: 'OK',
+                content: [
+                    new json_media_type(
+                        schema: new schema_object(
+                            content: [
+                                'context' => new array_of_strings(param::ALPHA, param::TEXT),
+                                'categories' => new array_of_things(question_category::class),
+                            ],
+                        ),
+                    ),
+                ],
+            ),
+        ],
+    )]
+    /**
+     * Return a list of question categories with names and info formatted for output.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param module $coursemodulecontext The module context.
+     * @param question_category_selector $categoryselector Injected dependency.
+     * @return payload_response The course module context id and name, and a list of question categories in that context.
+     */
+    public function categories(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        module $coursemodulecontext,
+        question_category_selector $categoryselector,
+    ): payload_response {
+        require_login();
+        $categories = $categoryselector->get_categories_for_contexts($coursemodulecontext->id, top: true);
+        return new payload_response(
+            request: $request,
+            response: $response,
+            payload: [
+                'context' => [
+                    'id' => $coursemodulecontext->id,
+                    'name' => $coursemodulecontext->get_context_name(false),
+                    'prefixedname' => $coursemodulecontext->get_context_name(),
+                ],
+                'categories' => $categories,
+            ],
+        );
+    }
 }
