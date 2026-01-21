@@ -28,7 +28,78 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings = new admin_settingpage('mod_subsection_settings', new lang_string('pluginname', 'mod_subsection'));
 
-    // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
     if ($ADMIN->fulltree) {
+        // Add description cleanup and migration links.
+        $count = $DB->count_records_select(
+            table: 'course_sections',
+            select: 'component = :component AND summary != :empty',
+            params: ['component' => 'mod_subsection', 'empty' => ''],
+        );
+        $task = \core\task\manager::get_queued_adhoc_task_record(new \mod_subsection\task\migrate_subsection_descriptions_task());
+        if ($task) {
+            // There is a pending migration task, show notification and pending count.
+            $notification = $OUTPUT->notification(
+                get_string('descriptionsmigratedsuccess', 'mod_subsection'),
+                \core\output\notification::NOTIFY_SUCCESS,
+            );
+            $settings->add(new admin_setting_heading(
+                'migratedescriptionsnotification',
+                '',
+                $notification,
+            ));
+            $settings->add(new admin_setting_heading(
+                'pendingcleandescriptions',
+                '',
+                new lang_string('descriptionsmigratedpending', 'mod_subsection', $count),
+            ));
+        } else if ($count > 0) {
+            // Show migration and deletion links.
+            $migrateaction = new \confirm_action(
+                message: get_string('migrateconfirmtext', 'mod_subsection', $count),
+                continuelabel: get_string('migrateconfirmbutton', 'mod_subsection'),
+                title: get_string('migrateconfirmtitle', 'mod_subsection'),
+            );
+            $migrateurl = new moodle_url(
+                '/mod/subsection/cleandescriptions.php',
+                ['action' => 'migrate', 'count' => $count, 'sesskey' => sesskey()],
+            );
+            $migratelink = $OUTPUT->action_link(
+                url: $migrateurl,
+                text: get_string('migratelinktext', 'mod_subsection'),
+                action: $migrateaction,
+                attributes: ['class' => 'btn btn-secondary'],
+            );
+
+            $deleteaction = new \confirm_action(
+                message: get_string('deleteconfirmtext', 'mod_subsection', $count),
+                continuelabel: get_string('deleteconfirmbutton', 'mod_subsection'),
+                title: get_string('deleteconfirmtitle', 'mod_subsection'),
+                dialogtype: 'delete',
+            );
+            $deleteurl = new moodle_url(
+                '/mod/subsection/cleandescriptions.php',
+                ['action' => 'delete', 'count' => $count, 'sesskey' => sesskey()],
+            );
+            $deletelink = $OUTPUT->action_link(
+                url: $deleteurl,
+                text: get_string('deletelinktext', 'mod_subsection'),
+                action: $deleteaction,
+                attributes: ['class' => 'btn btn-secondary'],
+            );
+
+            $settings->add(new admin_setting_heading(
+                'cleandescriptions',
+                '',
+                new lang_string(
+                    'cleandescriptionsdetail',
+                    'mod_subsection',
+                    [
+                        'count' => $count,
+                        'migratelink' => $migratelink,
+                        'deletelink' => $deletelink,
+                    ],
+                ),
+            ));
+        }
     }
 }

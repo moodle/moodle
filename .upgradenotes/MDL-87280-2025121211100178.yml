@@ -1,8 +1,0 @@
-issueNumber: MDL-87280
-notes:
-  mod_subsection:
-    - message: >-
-        A new scheduled task, `remove_existing_descriptions`, has been added.
-        Once enabled, this task will remove the descriptions for all existing
-        subsection instances.
-      type: improved
