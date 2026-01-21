@@ -281,6 +281,8 @@ class assign_feedback_status implements renderable {
     public $gradeddate = 0;
     /** @var mixed the grader (may be null) */
     public $grader = null;
+    /** @var array markers - array of marker user objects (for multi-marker assignments) */
+    public $markers = [];
     /** @var array feedbackplugins - array of feedback plugins */
     public $feedbackplugins = array();
     /** @var stdClass assign_grade record */
@@ -310,20 +312,25 @@ class assign_feedback_status implements renderable {
      * @param array $returnparams The list of params required to return to this page
      * @param bool $canviewfullnames
      * @param string $gradingcontrollergrade The grade information rendered by a grade controller
+     * @param array $markers Array of marker user objects for multi-marker assignments
      */
-    public function __construct($gradefordisplay,
-                                $gradeddate,
-                                $grader,
-                                $feedbackplugins,
-                                $grade,
-                                $coursemoduleid,
-                                $returnaction,
-                                $returnparams,
-                                $canviewfullnames,
-                                $gradingcontrollergrade = '') {
+    public function __construct(
+        $gradefordisplay,
+        $gradeddate,
+        $grader,
+        $feedbackplugins,
+        $grade,
+        $coursemoduleid,
+        $returnaction,
+        $returnparams,
+        $canviewfullnames,
+        $gradingcontrollergrade = '',
+        $markers = []
+    ) {
         $this->gradefordisplay = $gradefordisplay;
         $this->gradeddate = $gradeddate;
         $this->grader = $grader;
+        $this->markers = $markers;
         $this->feedbackplugins = $feedbackplugins;
         $this->grade = $grade;
         $this->coursemoduleid = $coursemoduleid;

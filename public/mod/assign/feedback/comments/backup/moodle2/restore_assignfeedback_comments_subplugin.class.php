@@ -62,13 +62,16 @@ class restore_assignfeedback_comments_subplugin extends restore_subplugin {
      */
     public function process_assignfeedback_comments_grade($data) {
         global $DB;
-
         $data = (object)$data;
         $data->assignment = $this->get_new_parentid('assign');
         $oldgradeid = $data->grade;
-        // The mapping is set in the restore for the core assign activity
-        // when a grade node is processed.
+        $oldmarkid = $data->mark;
         $data->grade = $this->get_mappingid('grade', $data->grade);
+        if (is_null($oldmarkid)) {
+            $data->mark = $oldmarkid;
+        } else {
+            $data->mark = $this->get_mappingid('mark', $data->mark);
+        }
 
         $DB->insert_record('assignfeedback_comments', $data);
 
@@ -79,5 +82,14 @@ class restore_assignfeedback_comments_subplugin extends restore_subplugin {
             null,
             $oldgradeid
         );
+
+        $this->add_related_files(
+            'assignfeedback_comments',
+            'feedback_marker',
+            'mark',
+            null,
+            $oldmarkid
+        );
+
     }
 }

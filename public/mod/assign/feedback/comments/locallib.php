@@ -33,6 +33,9 @@ define('ASSIGNFEEDBACK_COMMENTS_COMPONENT', 'assignfeedback_comments');
 // File area for feedback comments.
 define('ASSIGNFEEDBACK_COMMENTS_FILEAREA', 'feedback');
 
+// File area for marker feedback comments.
+define('ASSIGNFEEDBACK_COMMENTS_FILEAREA_MARKER', 'feedback_marker');
+
 /**
  * Library class for comment feedback plugin extending feedback plugin base class.
  *
@@ -54,12 +57,34 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * Get the feedback comment from the database.
      *
      * @param int $gradeid
+     * @param int|null $markid (Optional) assign_mark record ID.
+     *
      * @return stdClass|false The feedback comments for the given grade if it exists.
      *                        False if it doesn't.
      */
-    public function get_feedback_comments($gradeid) {
+    public function get_feedback_comments($gradeid, ?int $markid = null) {
         global $DB;
-        return $DB->get_record('assignfeedback_comments', array('grade'=>$gradeid));
+        return $DB->get_record('assignfeedback_comments', [
+            'grade' => $gradeid,
+            'mark' => $markid,
+        ]);
+    }
+
+    /**
+     * Get all the feedback comments for a grade, including all marker ones.
+     *
+     * Marker feedback is sorted first, followed by overall/grade feedback.
+     *
+     * @param int $gradeid Assign grade ID.
+     * @return array Array of assignfeedback_comments records.
+     */
+    public function get_all_feedback_comments(int $gradeid): array {
+        global $DB;
+        $sql = "SELECT *
+                  FROM {assignfeedback_comments}
+                 WHERE grade = :gradeid
+              ORDER BY CASE WHEN mark IS NULL THEN 1 ELSE 0 END, mark ASC";
+        return $DB->get_records_sql($sql, ['gradeid' => $gradeid]);
     }
 
     /**
@@ -67,25 +92,66 @@ class assign_feedback_comments extends assign_feedback_plugin {
      *
      * @param int $userid The user id in the table this quickgrading element relates to
      * @param mixed $grade - The grade data - may be null if there are no grades for this user (yet)
+     * @param string $colname - The column name so we can parse marker columns.
      * @return mixed - A html string containing the html form elements required for quickgrading
      */
-    public function get_quickgrading_html($userid, $grade) {
+    public function get_quickgrading_html($userid, $grade, string $colname = '') {
+        global $USER;
         $commenttext = '';
+        $markid = null;
+        $fieldid = 'quickgrade_comments_' . $userid;
+        $labeltext = get_string('pluginname', 'assignfeedback_comments');
         if ($grade) {
-            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            // Is this a marker comment column?
+            if (assign_grading_table::is_plugin_marker_column($colname)) {
+                // Work out the marker for this column number.
+                $markid = -1;
+                $marker = assign_grading_table::extract_marker_from_marker_column($this->assignment, $userid, $colname);
+                // If there is a marker for this column, see if there's a mark record for it.
+                if ($marker) {
+                    $mark = $this->assignment->get_mark($grade->id, $marker->id);
+                    if ($mark) {
+                        $markid = $mark->id;
+                    }
+                }
+                // If we are not the marker, then we just return the text summary of the comment.
+                if (!$marker || $marker->id != $USER->id) {
+                    $showlink = false;
+                    return $this->view_text($grade, $showlink, $markid);
+                }
+                $fieldid .= '_marker';
+                // Extract the marker number from the end of the column name for the label text.
+                preg_match('/\d+$/', $colname, $markernumber);
+                $labeltext = get_string('markercomment1', 'assignfeedback_comments', $markernumber[0]);
+            }
+            $feedbackcomments = $this->get_feedback_comments($grade->id, $markid);
             if ($feedbackcomments) {
                 $commenttext = $feedbackcomments->commenttext;
             }
+        } else if (assign_grading_table::is_plugin_marker_column($colname)) {
+            // There is no grade record yet, but this is a marker column.
+            // There won't be any comments or a mark record, so if we are not the marker, we can just display nothing.
+            $marker = assign_grading_table::extract_marker_from_marker_column($this->assignment, $userid, $colname);
+            if (!$marker || $marker->id != $USER->id) {
+                return '';
+            }
+            $fieldid .= '_marker';
+            // Extract the marker number from the end of the column name for the label text.
+            preg_match('/\d+$/', $colname, $markernumber);
+            $labeltext = get_string('markercomment1', 'assignfeedback_comments', $markernumber[0]);
         }
 
-        $pluginname = get_string('pluginname', 'assignfeedback_comments');
-        $labeloptions = array('for'=>'quickgrade_comments_' . $userid,
-                              'class'=>'accesshide');
-        $textareaoptions = array('name'=>'quickgrade_comments_' . $userid,
-                                 'id'=>'quickgrade_comments_' . $userid,
-                                 'class'=>'quickgrade');
-        return html_writer::tag('label', $pluginname, $labeloptions) .
-               html_writer::tag('textarea', $commenttext, $textareaoptions);
+        $labeloptions = [
+            'for' => $fieldid,
+            'class' => 'accesshide',
+        ];
+        $textareaoptions = [
+            'name' => $fieldid,
+            'id' => $fieldid,
+            'class' => 'quickgrade',
+        ];
+        return html_writer::tag('label', $labeltext, $labeloptions) .
+            html_writer::tag('textarea', $commenttext, $textareaoptions);
     }
 
     /**
@@ -93,20 +159,42 @@ class assign_feedback_comments extends assign_feedback_plugin {
      *
      * @param int $userid The user id in the table this quickgrading element relates to
      * @param stdClass $grade The grade
-     * @return boolean - true if the quickgrading form element has been modified
+     * @param bool $checkmarker (Optional) (Default: false) Are we checking for the marker field modification?
+     * @return bool - true if the quickgrading form element has been modified
      */
-    public function is_quickgrading_modified($userid, $grade) {
+    public function is_quickgrading_modified($userid, $grade, bool $checkmarker = false) {
+        global $USER;
         $commenttext = '';
+        $newvalue = ($checkmarker) ?
+            optional_param('quickgrade_comments_' . $userid . '_marker', false, PARAM_RAW) :
+            optional_param('quickgrade_comments_' . $userid, false, PARAM_RAW);
+
         if ($grade) {
-            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            if ($checkmarker) {
+                // We need to get the mark id to get the comments for this marker.
+                $mark = $this->assignment->get_mark($grade->id, $USER->id);
+                // If there's no mark, we use -1 as the markid instead of null. Because null gets the overall comment.
+                $markid = ($mark) ? $mark->id : -1;
+                $feedbackcomments = $this->get_feedback_comments($grade->id, $markid);
+            } else {
+                $feedbackcomments = $this->get_feedback_comments($grade->id);
+            }
+            // If we successfully found comments in the DB, get the text to compare.
             if ($feedbackcomments) {
                 $commenttext = $feedbackcomments->commenttext;
             }
         }
         // Note that this handles the difference between empty and not in the quickgrading
         // form at all (hidden column).
-        $newvalue = optional_param('quickgrade_comments_' . $userid, false, PARAM_RAW);
-        return ($newvalue !== false) && ($newvalue != $commenttext);
+        $result = ($newvalue !== false) && ($newvalue != $commenttext);
+        if (!$checkmarker) {
+            // If we're not checking marker comments for modification, return true if overall comment is modified
+            // or if the call to check the marker comments subsequently returns modified.
+            return ($result || $this->is_quickgrading_modified($userid, $grade, true));
+        } else {
+            return $result;
+        }
+
     }
 
     /**
@@ -117,9 +205,14 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @return boolean True if the comment feedback has been modified, else false.
      */
     public function is_feedback_modified(stdClass $grade, stdClass $data) {
+        $markid = null;
+        if ($this->assignment->is_marking()) {
+            $mark = $this->assignment->get_mark($grade->id, $grade->grader);
+            $markid = ($mark) ? $mark->id : null;
+        }
         $commenttext = '';
         if ($grade) {
-            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            $feedbackcomments = $this->get_feedback_comments($grade->id, $markid);
             if ($feedbackcomments) {
                 $commenttext = $feedbackcomments->commenttext;
             }
@@ -164,16 +257,14 @@ class assign_feedback_comments extends assign_feedback_plugin {
      *
      * @param string $name
      * @param int $gradeid
+     * @param int|null $markid The id of the mark record.
      * @return string
      */
-    public function get_editor_text($name, $gradeid) {
-        if ($name == 'comments') {
-            $feedbackcomments = $this->get_feedback_comments($gradeid);
-            if ($feedbackcomments) {
-                return $feedbackcomments->commenttext;
-            }
+    public function get_editor_text($name, $gradeid, ?int $markid = null) {
+        $feedbackcomments = $this->get_feedback_comments($gradeid, $markid);
+        if ($feedbackcomments) {
+            return $feedbackcomments->commenttext;
         }
-
         return '';
     }
 
@@ -183,24 +274,24 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @param string $name
      * @param string $value
      * @param int $gradeid
+     * @param int|null $markid The id of the mark record.
      * @return string
      */
-    public function set_editor_text($name, $value, $gradeid) {
+    public function set_editor_text($name, $value, $gradeid, ?int $markid = null) {
         global $DB;
 
-        if ($name == 'comments') {
-            $feedbackcomment = $this->get_feedback_comments($gradeid);
-            if ($feedbackcomment) {
-                $feedbackcomment->commenttext = $value;
-                return $DB->update_record('assignfeedback_comments', $feedbackcomment);
-            } else {
-                $feedbackcomment = new stdClass();
-                $feedbackcomment->commenttext = $value;
-                $feedbackcomment->commentformat = FORMAT_HTML;
-                $feedbackcomment->grade = $gradeid;
-                $feedbackcomment->assignment = $this->assignment->get_instance()->id;
-                return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
-            }
+        $feedbackcomment = $this->get_feedback_comments($gradeid, $markid);
+        if ($feedbackcomment) {
+            $feedbackcomment->commenttext = $value;
+            return $DB->update_record('assignfeedback_comments', $feedbackcomment);
+        } else {
+            $feedbackcomment = new stdClass();
+            $feedbackcomment->commenttext = $value;
+            $feedbackcomment->commentformat = FORMAT_HTML;
+            $feedbackcomment->grade = $gradeid;
+            $feedbackcomment->mark = $markid;
+            $feedbackcomment->assignment = $this->assignment->get_instance()->id;
+            return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
         }
 
         return false;
@@ -215,8 +306,12 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function save_quickgrading_changes($userid, $grade) {
         global $DB;
-        $feedbackcomment = $this->get_feedback_comments($grade->id);
+
+        // Save any marker comment first.
+        $this->save_quickgrading_changes_marker($userid, $grade);
+
         $quickgradecomments = optional_param('quickgrade_comments_' . $userid, null, PARAM_RAW);
+        $feedbackcomment = $this->get_feedback_comments($grade->id);
         if (!$quickgradecomments && $quickgradecomments !== '') {
             return true;
         }
@@ -230,6 +325,45 @@ class assign_feedback_comments extends assign_feedback_plugin {
             $feedbackcomment->grade = $grade->id;
             $feedbackcomment->assignment = $this->assignment->get_instance()->id;
             return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
+        }
+    }
+
+    /**
+     * Save the marker comment from the quickgrading window.
+     *
+     * @param int $userid User ID of the student.
+     * @param stdClass $grade Grade object.
+     * @return bool
+     */
+    private function save_quickgrading_changes_marker(int $userid, stdClass $grade): bool {
+        global $USER, $DB;
+
+        $quickgrademarkercomments = optional_param('quickgrade_comments_' . $userid . '_marker', null, PARAM_RAW);
+
+        // If no marker comment submitted, just return true.
+        if (is_null($quickgrademarkercomments)) {
+            return true;
+        }
+
+        // There might not be an assign_mark record yet if the comment is added first.
+        // So we need to get/create one.
+        $mark = $this->assignment->get_mark($grade->id, $USER->id, true);
+
+        // Then get the comment record if it exists.
+        $feedbackcomment = $this->get_feedback_comments($grade->id, $mark->id);
+
+        // And then save it.
+        if ($feedbackcomment) {
+            $feedbackcomment->commenttext = $quickgrademarkercomments;
+            return $DB->update_record('assignfeedback_comments', $feedbackcomment);
+        } else {
+            $feedbackcomment = new stdClass();
+            $feedbackcomment->commenttext = $quickgrademarkercomments;
+            $feedbackcomment->commentformat = FORMAT_HTML;
+            $feedbackcomment->grade = $grade->id;
+            $feedbackcomment->mark = $mark->id;
+            $feedbackcomment->assignment = $this->assignment->get_instance()->id;
+            return ($DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0);
         }
     }
 
@@ -343,12 +477,26 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @return bool true if elements were added to the form
      */
     public function get_form_elements_for_user($grade, MoodleQuickForm $mform, stdClass $data, $userid) {
+        global $USER;
         $commentinlinenabled = $this->get_config('commentinline');
         $submission = $this->assignment->get_user_submission($userid, false);
         $feedbackcomments = false;
+        $markid = null;
+        $fileitemid = $grade->id;
+        $filearea = ASSIGNFEEDBACK_COMMENTS_FILEAREA;
+
+        // If we are marking, we need to change a few things for loading the comments and files.
+        if ($this->assignment->is_marking()) {
+            $mark = $this->assignment->get_mark($grade->id, $USER->id);
+            if ($mark) {
+                $markid = $mark->id;
+                $fileitemid = $mark->id;
+                $filearea = ASSIGNFEEDBACK_COMMENTS_FILEAREA_MARKER;
+            }
+        }
 
         if ($grade) {
-            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            $feedbackcomments = $this->get_feedback_comments($grade->id, $markid);
         }
 
         // Check first for data from last form submission in case grading validation failed.
@@ -374,8 +522,8 @@ class assign_feedback_comments extends assign_feedback_plugin {
             $this->get_editor_options(),
             $this->assignment->get_context(),
             ASSIGNFEEDBACK_COMMENTS_COMPONENT,
-            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
-            $grade->id
+            $filearea,
+            $fileitemid,
         );
 
         $mform->addElement('editor', 'assignfeedbackcomments_editor', $this->get_name(), null, $this->get_editor_options());
@@ -392,6 +540,15 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function save(stdClass $grade, stdClass $data) {
         global $DB;
+        $markid = null;
+        $fileitemid = $grade->id;
+        $filearea = ASSIGNFEEDBACK_COMMENTS_FILEAREA;
+        if ($this->assignment->is_marking()) {
+            $mark = $this->assignment->get_mark($grade->id, $grade->grader, true);
+            $markid = $mark->id;
+            $fileitemid = $mark->id;
+            $filearea = ASSIGNFEEDBACK_COMMENTS_FILEAREA_MARKER;
+        }
 
         // Save the files.
         $data = file_postupdate_standard_editor(
@@ -400,11 +557,11 @@ class assign_feedback_comments extends assign_feedback_plugin {
             $this->get_editor_options(),
             $this->assignment->get_context(),
             ASSIGNFEEDBACK_COMMENTS_COMPONENT,
-            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
-            $grade->id
+            $filearea,
+            $fileitemid,
         );
 
-        $feedbackcomment = $this->get_feedback_comments($grade->id);
+        $feedbackcomment = $this->get_feedback_comments($grade->id, $markid);
         if ($feedbackcomment) {
             $feedbackcomment->commenttext = $data->assignfeedbackcomments;
             $feedbackcomment->commentformat = $data->assignfeedbackcommentsformat;
@@ -414,25 +571,27 @@ class assign_feedback_comments extends assign_feedback_plugin {
             $feedbackcomment->commenttext = $data->assignfeedbackcomments;
             $feedbackcomment->commentformat = $data->assignfeedbackcommentsformat;
             $feedbackcomment->grade = $grade->id;
+            $feedbackcomment->mark = $markid;
             $feedbackcomment->assignment = $this->assignment->get_instance()->id;
             return $DB->insert_record('assignfeedback_comments', $feedbackcomment) > 0;
         }
     }
 
     /**
-     * Display the comment in the feedback table.
+     * View the comment as text for rendering in quickgrading if we're not the marker, and on submission page.
      *
-     * @param stdClass $grade
-     * @param bool $showviewlink Set to true to show a link to view the full feedback
+     * @param stdClass $grade The grade object.
+     * @param bool $showviewlink Set to true to show a link to view the full feedback.
+     * @param int|null $markid Mark record id.
      * @return string
      */
-    public function view_summary(stdClass $grade, & $showviewlink) {
-        $feedbackcomments = $this->get_feedback_comments($grade->id);
-        if ($feedbackcomments) {
-            $text = $this->rewrite_feedback_comments_urls($feedbackcomments->commenttext, $grade->id);
+    public function view_text(stdClass $grade, bool &$showviewlink, ?int $markid = null): string {
+        $comment = $this->get_feedback_comments($grade->id, $markid);
+        if ($comment) {
+            $text = $this->rewrite_feedback_comments_urls($comment->commenttext, $grade->id, $markid);
             $text = format_text(
                 $text,
-                $feedbackcomments->commentformat,
+                $comment->commentformat,
                 [
                     'context' => $this->assignment->get_context()
                 ]
@@ -447,13 +606,54 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
+     * Display all the comments on the student's submission page, once the grade has been released.
+     * Or from the quickgrading table, in which case this will divert to view_text().
+     *
+     * @param stdClass $grade The grade object.
+     * @param bool $showviewlink Set to true to show a link to view the full feedback.
+     * @param bool $fromgradingtable (Optional) Are we viewing the summary from the grading table?
+     * @param int|null $markid (Optional) assign_mark record id.
+     * @return string
+     */
+    public function view_summary(stdClass $grade, &$showviewlink, bool $fromgradingtable = false, ?int $markid = null) {
+        global $DB, $OUTPUT;
+
+        // If we are viewing from the grading table, we just want the text of one comment not the whole summary.
+        if ($fromgradingtable) {
+            return $this->view_text($grade, $showviewlink, $markid);
+        }
+
+        // Find all the comments for this grade object and render them one by one.
+        $data = ['comments' => []];
+        $comments = $this->get_all_feedback_comments($grade->id);
+        foreach ($comments as $comment) {
+            $value = $this->view_text($grade, $showviewlink, $comment->mark);
+            if ($value !== '') {
+                if (is_null($comment->mark)) {
+                    $context = get_string('overallcomment', 'assignfeedback_comments');
+                } else {
+                    $mark = $DB->get_record('assign_mark', ['id' => $comment->mark], 'marker');
+                    $marker = $DB->get_record('user', ['id' => $mark->marker]);
+                    $context = get_string('markercomment', 'assignfeedback_comments', fullname($marker));
+                }
+                $data['comments'][] = [
+                    'context' => $context,
+                    'html' => $value,
+                ];
+            }
+        }
+        return $OUTPUT->render_from_template('assignfeedback_comments/summary', $data);
+    }
+
+    /**
      * Display the comment in the feedback table.
      *
      * @param stdClass $grade
      * @return string
      */
     public function view(stdClass $grade) {
-        $feedbackcomments = $this->get_feedback_comments($grade->id);
+        $markid = optional_param('markid', null, PARAM_INT);
+        $feedbackcomments = $this->get_feedback_comments($grade->id, $markid);
         if ($feedbackcomments) {
             $text = $this->rewrite_feedback_comments_urls($feedbackcomments->commenttext, $grade->id);
             $text = format_text(
@@ -604,7 +804,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @return bool
      */
     public function is_empty(stdClass $grade) {
-        return $this->view($grade) == '';
+        return count($this->get_all_feedback_comments($grade->id)) == 0;
     }
 
     /**
@@ -642,15 +842,23 @@ class assign_feedback_comments extends assign_feedback_plugin {
      *
      * @param string $text the Text to check
      * @param int $gradeid The grade ID which refers to the id in the gradebook
+     * @param int|null $markid assign_mark record id
      */
-    private function rewrite_feedback_comments_urls(string $text, int $gradeid) {
+    private function rewrite_feedback_comments_urls(string $text, int $gradeid, ?int $markid = null) {
+        if (!is_null($markid)) {
+            $filearea = ASSIGNFEEDBACK_COMMENTS_FILEAREA_MARKER;
+            $itemid = $markid;
+        } else {
+            $filearea = ASSIGNFEEDBACK_COMMENTS_FILEAREA;
+            $itemid = $gradeid;
+        }
         return file_rewrite_pluginfile_urls(
             $text,
             'pluginfile.php',
             $this->assignment->get_context()->id,
             ASSIGNFEEDBACK_COMMENTS_COMPONENT,
-            ASSIGNFEEDBACK_COMMENTS_FILEAREA,
-            $gradeid
+            $filearea,
+            $itemid
         );
     }
 
@@ -668,6 +876,28 @@ class assign_feedback_comments extends assign_feedback_plugin {
             'accepted_types' => '*',
             'context' => $this->assignment->get_context(),
             'maxfiles' => EDITOR_UNLIMITED_FILES
+        ];
+    }
+
+    /**
+     * Yes, this plugin has the comments column which is required per marker.
+     *
+     * @return true
+     */
+    public function has_marker_columns(): bool {
+        return true;
+    }
+
+    /**
+     * Return the array of extra comment columns per marker.
+     *
+     * @param int $markernumber The marker number.
+     * @return array [headertitle => columntext]
+     */
+    public function get_marker_columns(int $markernumber): array {
+        $key = 'markercomment' . $markernumber;
+        return [
+            $key => get_string('markercomment1', 'assignfeedback_comments', $markernumber),
         ];
     }
 }

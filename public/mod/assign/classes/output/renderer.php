@@ -430,12 +430,22 @@ class renderer extends \plugin_renderer_base {
             $this->add_table_row_tuple($t, $cell1content, $cell2content);
         }
 
-        if ($status->grader) {
-            // Grader.
+        if ($status->grader || !empty($status->markers)) {
+            $people = [];
+            // Add the overall grader.
+            if ($status->grader) {
+                $people[] = $this->output->user_picture($status->grader) . fullname($status->grader, $status->canviewfullnames);
+            }
+            // Add the markers.
+            foreach ($status->markers as $marker) {
+                // Skip any marker who is already listed as the overall grader.
+                if ($status->grader && $marker->id == $status->grader->id) {
+                    continue;
+                }
+                $people[] = $this->output->user_picture($marker) . fullname($marker, $status->canviewfullnames);
+            }
             $cell1content = get_string('gradedby', 'assign');
-            $cell2content = $this->output->user_picture($status->grader) .
-                            $this->output->spacer(array('width' => 30)) .
-                            fullname($status->grader, $status->canviewfullnames);
+            $cell2content = implode(html_writer::empty_tag('br'), $people);
             $this->add_table_row_tuple($t, $cell1content, $cell2content);
         }
 
