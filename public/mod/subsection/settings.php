@@ -35,8 +35,9 @@ if ($hassiteconfig) {
             select: 'component = :component AND summary != :empty',
             params: ['component' => 'mod_subsection', 'empty' => ''],
         );
-        $task = \core\task\manager::get_queued_adhoc_task_record(new \mod_subsection\task\migrate_subsection_descriptions_task());
-        if ($task) {
+        if (
+            \core\task\manager::get_queued_adhoc_task_record(new \mod_subsection\task\migrate_subsection_descriptions_task())
+        ) {
             // There is a pending migration task, show notification and pending count.
             $notification = $OUTPUT->notification(
                 get_string('descriptionsmigratedsuccess', 'mod_subsection'),
@@ -52,6 +53,24 @@ if ($hassiteconfig) {
                 '',
                 new lang_string('descriptionsmigratedpending', 'mod_subsection', $count),
             ));
+        } else if (
+            \core\task\manager::get_queued_adhoc_task_record(new \mod_subsection\task\remove_subsection_descriptions_task())
+        ) {
+            // There is a pending removal task, show notification and pending count.
+            $notification = $OUTPUT->notification(
+                get_string('descriptionsdeletedsuccess', 'mod_subsection'),
+                \core\output\notification::NOTIFY_SUCCESS,
+            );
+            $settings->add(new admin_setting_heading(
+                'removedescriptionsnotification',
+                '',
+                $notification,
+            ));
+            $settings->add(new admin_setting_heading(
+                'pendingcleandescriptions',
+                '',
+                new lang_string('descriptionsdeletedpending', 'mod_subsection', $count),
+            ));
         } else if ($count > 0) {
             // Show migration and deletion links.
             $migrateaction = new \confirm_action(
@@ -61,7 +80,7 @@ if ($hassiteconfig) {
             );
             $migrateurl = new moodle_url(
                 '/mod/subsection/cleandescriptions.php',
-                ['action' => 'migrate', 'count' => $count, 'sesskey' => sesskey()],
+                ['action' => 'migrate', 'sesskey' => sesskey()],
             );
             $migratelink = $OUTPUT->action_link(
                 url: $migrateurl,
@@ -78,7 +97,7 @@ if ($hassiteconfig) {
             );
             $deleteurl = new moodle_url(
                 '/mod/subsection/cleandescriptions.php',
-                ['action' => 'delete', 'count' => $count, 'sesskey' => sesskey()],
+                ['action' => 'delete', 'sesskey' => sesskey()],
             );
             $deletelink = $OUTPUT->action_link(
                 url: $deleteurl,

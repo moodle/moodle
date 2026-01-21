@@ -40,6 +40,11 @@ Feature: Subsection clean descriptions
     When I click on "Delete descriptions" "link" in the "region-main" "region"
     And I should see "This will permanently delete 2 subsection descriptions from the database." in the "Delete all subsection descriptions?" "dialogue"
     And I click on "Delete all descriptions" "button" in the "Delete all subsection descriptions?" "dialogue"
-    Then I should see "2 subsection descriptions deleted." in the "region-main" "region"
+    Then I should see "The removal task for all subsection descriptions has been created." in the "region-main" "region"
+    And I should see "Subsection descriptions waiting to be deleted: 2" in the "region-main" "region"
     And I reload the page
-    And I should not see "Subsection pages and descriptions are no longer supported in Moodle 5.2"
+    And I should see "The removal task for all subsection descriptions has been created." in the "region-main" "region"
+    And I should see "Subsection descriptions waiting to be deleted: 2" in the "region-main" "region"
+    And I run all adhoc tasks
+    And I reload the page
+    And I should not see "Subsection descriptions waiting to be deleted:" in the "region-main" "region"
