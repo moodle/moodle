@@ -137,20 +137,43 @@ final class completionlib_test extends advanced_testcase {
      * @covers ::update_state
      */
     public function test_update_state(): void {
+        global $DB;
         $this->mock_setup();
 
         $mockbuilder = $this->getMockBuilder('completion_info');
         $mockbuilder->onlyMethods(array('is_enabled', 'get_data', 'internal_get_state', 'internal_set_data',
                                        'user_can_override_completion'));
         $mockbuilder->setConstructorArgs(array((object)array('id' => 42)));
-        $cm = (object)array('id' => 13, 'course' => 42);
+        $cm = (object) ['id' => 13, 'modname' => 'forum', 'course' => 42];
 
-        // Not enabled, should do nothing.
+        // Mock check for enabled plugins. First simulate that no activity plugin type is enabled, especially not
+        // the forum plugin which we are using in this test.
+        $enabledplugins = [];
+        /** @var PHPUnit\Framework\MockObject\MockObject $DB */
+        $DB->expects($this->any())
+            ->method('get_records_menu')
+            ->with('modules', ['visible' => 1], 'name ASC', 'name, name AS val')
+            ->willReturnCallback(function () use (&$enabledplugins) {
+                return $enabledplugins;
+            });
+
+        // If the forum plugin is not enabled, the update_state method will not get to the point where the is_enabled
+        // method is being called, but will early exit before.
+        $c = $mockbuilder->getMock();
+        $c->expects($this->never())
+            ->method('is_enabled')
+            ->with($cm)
+            ->will($this->returnValue(false));
+        $c->update_state($cm);
+
+        // Enable forum plugin type for the rest of the test method.
+        $enabledplugins = ['forum' => 'forum'];
+
         $c = $mockbuilder->getMock();
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $c->update_state($cm);
 
         // Enabled, but current state is same as possible result, do nothing.
@@ -181,7 +204,7 @@ final class completionlib_test extends advanced_testcase {
 
         // Manual, change state (no change).
         $c = $mockbuilder->getMock();
-        $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_MANUAL);
+        $cm = (object) ['id' => 13, 'modname' => 'forum', 'course' => 42, 'completion' => COMPLETION_TRACKING_MANUAL];
         $current->completionstate = COMPLETION_COMPLETE;
         $c->expects($this->once())
             ->method('is_enabled')
@@ -213,7 +236,7 @@ final class completionlib_test extends advanced_testcase {
 
         // Auto, change state.
         $c = $mockbuilder->getMock();
-        $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $cm = (object) ['id' => 13, 'modname' => 'forum', 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC];
         $current = (object)array('completionstate' => COMPLETION_COMPLETE, 'overrideby' => null);
         $c->expects($this->once())
             ->method('is_enabled')
@@ -237,7 +260,7 @@ final class completionlib_test extends advanced_testcase {
 
         // Manual tracking, change state by overriding it manually.
         $c = $mockbuilder->getMock();
-        $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_MANUAL);
+        $cm = (object) ['id' => 13, 'modname' => 'forum', 'course' => 42, 'completion' => COMPLETION_TRACKING_MANUAL];
         $current1 = (object)array('completionstate' => COMPLETION_INCOMPLETE, 'overrideby' => null);
         $current2 = (object)array('completionstate' => COMPLETION_COMPLETE, 'overrideby' => null);
         $c->expects($this->exactly(2))
@@ -298,7 +321,7 @@ final class completionlib_test extends advanced_testcase {
 
         // Auto, change state via override, incomplete to complete.
         $c = $mockbuilder->getMock();
-        $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $cm = (object) ['id' => 13, 'modname' => 'forum', 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC];
         $current = (object)array('completionstate' => COMPLETION_INCOMPLETE, 'overrideby' => null);
         $c->expects($this->once())
             ->method('is_enabled')
@@ -324,7 +347,7 @@ final class completionlib_test extends advanced_testcase {
 
         // Now confirm the status can be changed back from complete to incomplete using an override.
         $c = $mockbuilder->getMock();
-        $cm = (object)array('id' => 13, 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $cm = (object) ['id' => 13, 'modname' => 'forum', 'course' => 42, 'completion' => COMPLETION_TRACKING_AUTOMATIC];
         $current = (object)array('completionstate' => COMPLETION_COMPLETE, 'overrideby' => 2);
         $c->expects($this->once())
             ->method('is_enabled')
