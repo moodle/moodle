@@ -935,3 +935,31 @@ $divider-hover-color: $primary !default;
         width: (16 * $mod-indent-size);
     }
 }
+
+/* Temporary visual highlight for anchors. */
+$highlight-style: highlight-fade 2s ease-in-out;
+
+[id^="section-"]:target {
+    animation: $highlight-style;
+}
+[id^="module-"]:target {
+    body:not(.editing) &,
+    body.editing & .activity-item {
+        animation: $highlight-style;
+    }
+}
+
+@keyframes highlight-fade {
+    0% {
+        @include border-radius($activity-border-radius);
+        outline: $activity-border-width solid $activity-hover-border-color;
+    }
+    70% {
+        @include border-radius($activity-border-radius);
+        outline: $activity-border-width solid $activity-hover-border-color;
+    }
+    100% {
+        @include border-radius($activity-border-radius);
+        outline: $activity-border-width solid transparent;
+    }
+}
