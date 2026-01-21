@@ -44,13 +44,19 @@ class backup_assignfeedback_editpdf_subplugin extends backup_subplugin {
         $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
         $subpluginelementfiles = new backup_nested_element('feedback_editpdf_files', null, array('gradeid'));
+        $subpluginelementmarkerfiles = new backup_nested_element('feedback_editpdf_marker_files', null, ['markid']);
         $subpluginelementannotations = new backup_nested_element('feedback_editpdf_annotations');
-        $subpluginelementannotation = new backup_nested_element('annotation', null, array('gradeid', 'pageno', 'type', 'x', 'y', 'endx', 'endy', 'colour', 'path', 'draft'));
+        $subpluginelementannotation = new backup_nested_element('annotation', null, [
+            'gradeid', 'markid', 'pageno', 'type', 'x', 'y', 'endx', 'endy', 'colour', 'path', 'draft',
+        ]);
         $subpluginelementcomments = new backup_nested_element('feedback_editpdf_comments');
-        $subpluginelementcomment = new backup_nested_element('comment', null, array('gradeid', 'pageno', 'x', 'y', 'width', 'rawtext', 'colour', 'draft'));
+        $subpluginelementcomment = new backup_nested_element('comment', null, [
+            'gradeid', 'markid', 'pageno', 'x', 'y', 'width', 'rawtext', 'colour', 'draft',
+        ]);
         $subpluginelementrotation = new backup_nested_element('feedback_editpdf_rotation');
-        $subpluginelementpagerotation = new backup_nested_element('pagerotation', null,
-            array('gradeid', 'pageno', 'pathnamehash', 'isrotated', 'degree'));
+        $subpluginelementpagerotation = new backup_nested_element('pagerotation', null, [
+            'gradeid', 'markid', 'pageno', 'pathnamehash', 'isrotated', 'degree',
+        ]);
 
         // Connect XML elements into the tree.
         $subplugin->add_child($subpluginwrapper);
@@ -58,21 +64,35 @@ class backup_assignfeedback_editpdf_subplugin extends backup_subplugin {
         $subpluginelementcomments->add_child($subpluginelementcomment);
         $subpluginelementrotation->add_child($subpluginelementpagerotation);
         $subpluginwrapper->add_child($subpluginelementfiles);
+        $subpluginwrapper->add_child($subpluginelementmarkerfiles);
         $subpluginwrapper->add_child($subpluginelementannotations);
         $subpluginwrapper->add_child($subpluginelementcomments);
         $subpluginwrapper->add_child($subpluginelementrotation);
 
         // Set source to populate the data.
         $subpluginelementfiles->set_source_sql('SELECT id AS gradeid from {assign_grades} where id = :gradeid', array('gradeid' => backup::VAR_PARENTID));
+        $subpluginelementmarkerfiles->set_source_sql(
+            'SELECT id AS markid from {assign_mark} where gradeid = :gradeid',
+            ['gradeid' => backup::VAR_PARENTID]
+        );
         $subpluginelementannotation->set_source_table('assignfeedback_editpdf_annot', array('gradeid' => backup::VAR_PARENTID));
         $subpluginelementcomment->set_source_table('assignfeedback_editpdf_cmnt', array('gradeid' => backup::VAR_PARENTID));
         $subpluginelementpagerotation->set_source_table('assignfeedback_editpdf_rot', array('gradeid' => backup::VAR_PARENTID));
+
         // We only need to backup the files in the final pdf area, and the readonly page images - the others can be regenerated.
         $subpluginelementfiles->annotate_files('assignfeedback_editpdf',
             \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA, 'gradeid');
         $subpluginelementfiles->annotate_files('assignfeedback_editpdf',
             \assignfeedback_editpdf\document_services::PAGE_IMAGE_READONLY_FILEAREA, 'gradeid');
         $subpluginelementfiles->annotate_files('assignfeedback_editpdf', 'stamps', 'gradeid');
+
+        // Back up the annotated marker files.
+        $subpluginelementmarkerfiles->annotate_files(
+            'assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA_MARKER,
+            'markid'
+        );
+
         return $subplugin;
     }
 

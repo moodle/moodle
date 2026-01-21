@@ -258,4 +258,13 @@ abstract class assign_feedback_plugin extends assign_plugin {
     public function set_editor_text($name, $value, $submissionorgradeid, ?int $markid = null) {
         return false;
     }
+
+    /**
+     * Does this feedback plugin have marker columns which can be downloaded in the assignfeedback_offline spreadsheet?
+     *
+     * @return bool Default: false - To be overridden by plugins which support it.
+     */
+    public function has_downloadable_marker_columns(): bool {
+        return false;
+    }
 }

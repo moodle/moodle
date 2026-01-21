@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
+use assignfeedback_editpdf\document_services;
 use \core_privacy\local\metadata\collection;
 use \mod_assign\privacy\assignfeedback_provider;
 use \core_privacy\local\request\writer;
@@ -105,12 +106,28 @@ class provider implements
         $currentpath = $exportdata->get_subcontext();
         $currentpath[] = get_string('privacy:path', 'assignfeedback_editpdf');
         $assign = $exportdata->get_assign();
-        $plugin = $assign->get_plugin_by_type('assignfeedback', 'editpdf');
-        $fileareas = $plugin->get_user_data_file_areas();
         $grade = $exportdata->get_pluginobject();
-        foreach ($fileareas as $filearea => $notused) {
-            writer::with_context($exportdata->get_context())
-                    ->export_area_files($currentpath, 'assignfeedback_editpdf', $filearea, $grade->id);
+        // Overall annotated files (not marker ones).
+        writer::with_context($exportdata->get_context())
+            ->export_area_files(
+                $currentpath,
+                'assignfeedback_editpdf',
+                document_services::FINAL_PDF_FILEAREA,
+                $grade->id
+            );
+
+        // Marker annotated files.
+        $marks = $assign->get_mark_records($grade->id, $grade->userid);
+        if ($marks) {
+            foreach ($marks as $mark) {
+                writer::with_context($exportdata->get_context())
+                    ->export_area_files(
+                        $currentpath,
+                        'assignfeedback_editpdf',
+                        document_services::FINAL_PDF_FILEAREA_MARKER,
+                        $mark->id
+                    );
+            }
         }
     }
 
@@ -156,19 +173,44 @@ class provider implements
      */
     public static function delete_feedback_for_grades(assign_plugin_request_data $deletedata) {
         global $DB;
-
         if (empty($deletedata->get_gradeids())) {
             return;
         }
-
         $assign = $deletedata->get_assign();
         $plugin = $assign->get_plugin_by_type('assignfeedback', 'editpdf');
-        $fileareas = $plugin->get_file_areas();
         $fs = get_file_storage();
+
+        // Delete overall pdf files.
         list($sql, $params) = $DB->get_in_or_equal($deletedata->get_gradeids(), SQL_PARAMS_NAMED);
+        $fileareas = $plugin->get_overall_file_areas();
         foreach ($fileareas as $filearea => $notused) {
-            // Delete pdf files.
-            $fs->delete_area_files_select($deletedata->get_context()->id, 'assignfeedback_editpdf', $filearea, $sql, $params);
+            $fs->delete_area_files_select(
+                $deletedata->get_context()->id,
+                'assignfeedback_editpdf',
+                $filearea,
+                $sql,
+                $params
+            );
+        }
+
+        // Now delete the pdf files for the marker areas.
+        foreach ($deletedata->get_gradeids() as $gradeid) {
+            foreach ($deletedata->get_userids() as $userid) {
+                $marks = $assign->get_mark_records($gradeid, $userid);
+                if ($marks) {
+                    foreach ($marks as $mark) {
+                        $fileareas = $plugin->get_marker_file_areas();
+                        foreach ($fileareas as $filearea => $notused) {
+                            $fs->delete_area_files(
+                                $deletedata->get_context()->id,
+                                'assignfeedback_editpdf',
+                                $filearea,
+                                $mark->id,
+                            );
+                        }
+                    }
+                }
+            }
         }
 
         // Remove table entries.

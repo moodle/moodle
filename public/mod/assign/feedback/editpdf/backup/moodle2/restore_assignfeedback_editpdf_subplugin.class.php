@@ -49,6 +49,10 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         $elepath = $this->get_pathfor('/feedback_editpdf_files');
         $paths[] = new restore_path_element($elename, $elepath);
 
+        $elename = $this->get_namefor('marker_files');
+        $elepath = $this->get_pathfor('/feedback_editpdf_marker_files');
+        $paths[] = new restore_path_element($elename, $elepath);
+
         // Now we have the list of comments and annotations per grade.
         $elename = $this->get_namefor('comment');
         $elepath = $this->get_pathfor('/feedback_editpdf_comments/comment');
@@ -66,6 +70,22 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
     }
 
     /**
+     * Restore the annotated marker files.
+     *
+     * @param mixed $data Restore data.
+     */
+    public function process_assignfeedback_editpdf_marker_files(mixed $data): void {
+        $data = (object)$data;
+        $this->add_related_files(
+            'assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA_MARKER,
+            'mark',
+            null,
+            $data->markid,
+        );
+    }
+
+    /**
      * Processes one feedback_editpdf_files element
      * @param mixed $data
      */
@@ -73,10 +93,20 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         $data = (object)$data;
 
         // In this case the id is the old gradeid which will be mapped.
-        $this->add_related_files('assignfeedback_editpdf',
-            \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA, 'grade', null, $data->gradeid);
-        $this->add_related_files('assignfeedback_editpdf',
-            \assignfeedback_editpdf\document_services::PAGE_IMAGE_READONLY_FILEAREA, 'grade', null, $data->gradeid);
+        $this->add_related_files(
+            'assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA,
+            'grade',
+            null,
+            $data->gradeid,
+        );
+        $this->add_related_files(
+            'assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::PAGE_IMAGE_READONLY_FILEAREA,
+            'grade',
+            null,
+            $data->gradeid,
+        );
         $this->add_related_files('assignfeedback_editpdf', 'stamps', 'grade', null, $data->gradeid);
     }
 
@@ -88,13 +118,12 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         global $DB;
 
         $data = (object)$data;
-        $oldgradeid = $data->gradeid;
+
         // The mapping is set in the restore for the core assign activity
         // when a grade node is processed.
         $data->gradeid = $this->get_mappingid('grade', $data->gradeid);
-
+        $data->markid = $this->get_mappingid('mark', $data->markid, null);
         $DB->insert_record('assignfeedback_editpdf_annot', $data);
-
     }
 
     /**
@@ -105,13 +134,12 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         global $DB;
 
         $data = (object)$data;
-        $oldgradeid = $data->gradeid;
+
         // The mapping is set in the restore for the core assign activity
         // when a grade node is processed.
         $data->gradeid = $this->get_mappingid('grade', $data->gradeid);
-
+        $data->markid = $this->get_mappingid('mark', $data->markid, null);
         $DB->insert_record('assignfeedback_editpdf_cmnt', $data);
-
     }
 
     /**
@@ -123,6 +151,7 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         $data = (object)$data;
         $oldgradeid = $data->gradeid;
         $data->gradeid = $this->get_mappingid('grade', $oldgradeid);
+        $data->markid = $this->get_mappingid('mark', $data->markid, null);
         $DB->insert_record('assignfeedback_editpdf_rot', $data);
     }
 }

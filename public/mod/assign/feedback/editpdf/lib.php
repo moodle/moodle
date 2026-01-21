@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use assignfeedback_editpdf\document_services;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -71,13 +73,26 @@ function assignfeedback_editpdf_pluginfile(
     }
 
     if ($context->contextlevel == CONTEXT_MODULE) {
-
         require_login($course, false, $cm);
+
         $itemid = (int)array_shift($args);
+        $gradeid = $itemid;
 
+        // If it's a marker-based filearea, we want to get the grade from the mark record.
+        if (
+            in_array($filearea, [
+                document_services::COMBINED_PDF_FILEAREA_MARKER,
+                document_services::IMPORT_HTML_FILEAREA_MARKER,
+                document_services::PARTIAL_PDF_FILEAREA_MARKER,
+                document_services::FINAL_PDF_FILEAREA_MARKER,
+                document_services::PAGE_IMAGE_FILEAREA_MARKER,
+            ])
+        ) {
+            $gradeid = $DB->get_field('assign_mark', 'gradeid', ['id' => $itemid]);
+        }
+
+        $record = $DB->get_record('assign_grades', ['id' => $gradeid], 'userid, assignment', MUST_EXIST);
         $assign = new assign($context, $cm, $course);
-
-        $record = $DB->get_record('assign_grades', array('id' => $itemid), 'userid,assignment', MUST_EXIST);
         $userid = $record->userid;
         if ($assign->get_instance()->id != $record->assignment) {
             return false;

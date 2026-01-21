@@ -40,13 +40,16 @@ class page_editor {
      * @param int $gradeid
      * @param int $pageno
      * @param bool $draft
+     * @param int|null $markid ID of the mark record.
      * @return comment[]
      */
-    public static function get_comments($gradeid, $pageno, $draft) {
+    public static function get_comments($gradeid, $pageno, $draft, ?int $markid = null) {
         global $DB;
 
         $comments = array();
-        $params = array('gradeid'=>$gradeid, 'pageno'=>$pageno, 'draft'=>1);
+        $params = [
+            'gradeid' => $gradeid, 'pageno' => $pageno, 'draft' => 1, 'markid' => $markid,
+        ];
         if (!$draft) {
             $params['draft'] = 0;
         }
@@ -64,12 +67,15 @@ class page_editor {
      * @param int $gradeid
      * @param int $pageno
      * @param comment[] $comments
+     * @param int|null $markid ID of the mark record.
      * @return int - the number of comments.
      */
-    public static function set_comments($gradeid, $pageno, $comments) {
+    public static function set_comments($gradeid, $pageno, $comments, ?int $markid = null) {
         global $DB;
 
-        $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid'=>$gradeid, 'pageno'=>$pageno, 'draft'=>1));
+        $DB->delete_records('assignfeedback_editpdf_cmnt', [
+            'gradeid' => $gradeid, 'pageno' => $pageno, 'draft' => 1, 'markid' => $markid,
+        ]);
 
         $added = 0;
         foreach ($comments as $record) {
@@ -83,6 +89,7 @@ class page_editor {
                 continue;
             }
             $comment->gradeid = $gradeid;
+            $comment->markid = $markid;
             $comment->pageno = $pageno;
             $comment->draft = 1;
             if (self::add_comment($comment)) {
@@ -132,16 +139,17 @@ class page_editor {
      * @param int $gradeid
      * @param int $pageno
      * @param bool $draft
+     * @param int|null $markid ID of the mark record.
      * @return annotation[]
      */
-    public static function get_annotations($gradeid, $pageno, $draft) {
+    public static function get_annotations($gradeid, $pageno, $draft, ?int $markid = null) {
         global $DB;
 
-        $params = array('gradeid'=>$gradeid, 'pageno'=>$pageno, 'draft'=>1);
+        $params = ['gradeid' => $gradeid, 'markid' => $markid, 'pageno' => $pageno, 'draft' => 1];
         if (!$draft) {
             $params['draft'] = 0;
         }
-        $annotations = array();
+        $annotations = [];
         $records = $DB->get_records('assignfeedback_editpdf_annot', $params);
         foreach ($records as $record) {
             array_push($annotations, new annotation($record));
@@ -155,12 +163,18 @@ class page_editor {
      * @param int $gradeid
      * @param int $pageno
      * @param annotation[] $annotations
+     * @param int|null $markid ID of the mark record.
      * @return int - the number of annotations.
      */
-    public static function set_annotations($gradeid, $pageno, $annotations) {
+    public static function set_annotations($gradeid, $pageno, $annotations, ?int $markid = null) {
         global $DB;
 
-        $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid' => $gradeid, 'pageno' => $pageno, 'draft' => 1));
+        $DB->delete_records('assignfeedback_editpdf_annot', [
+            'gradeid' => $gradeid,
+            'markid' => $markid,
+            'pageno' => $pageno,
+            'draft' => 1,
+        ]);
         $added = 0;
         foreach ($annotations as $record) {
             // Force these.
@@ -170,6 +184,7 @@ class page_editor {
                 $annotation = $record;
             }
             $annotation->gradeid = $gradeid;
+            $annotation->markid = $markid;
             $annotation->pageno = $pageno;
             $annotation->draft = 1;
             if (self::add_annotation($annotation)) {
@@ -188,7 +203,7 @@ class page_editor {
     public static function get_annotation($annotationid) {
         global $DB;
 
-        $record = $DB->get_record('assignfeedback_editpdf_annot', array('id'=>$annotationid), '*', IGNORE_MISSING);
+        $record = $DB->get_record('assignfeedback_editpdf_annot', ['id' => $annotationid], '*', IGNORE_MISSING);
         if ($record) {
             return new annotation($record);
         }
@@ -198,37 +213,51 @@ class page_editor {
     /**
      * Unrelease drafts
      * @param int $gradeid
+     * @param int|null $markid ID of the mark record.
      * @return bool
      */
-    public static function unrelease_drafts($gradeid) {
+    public static function unrelease_drafts($gradeid, ?int $markid = null) {
         global $DB;
 
         // Delete the non-draft annotations and comments.
-        $result = $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid'=>$gradeid, 'draft'=>0));
-        $result = $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid'=>$gradeid, 'draft'=>0)) && $result;
+        $result = $DB->delete_records('assignfeedback_editpdf_cmnt', [
+            'gradeid' => $gradeid, 'draft' => 0, 'markid' => $markid,
+        ]);
+        $result = $DB->delete_records('assignfeedback_editpdf_annot', [
+            'gradeid' => $gradeid, 'draft' => 0, 'markid' => $markid,
+        ]) && $result;
         return $result;
     }
 
     /**
      * Release the draft comments and annotations to students.
      * @param int $gradeid
+     * @param int|null $markid ID of the mark record.
      * @return bool
      */
-    public static function release_drafts($gradeid) {
+    public static function release_drafts($gradeid, ?int $markid = null) {
         global $DB;
 
         // Delete the previous non-draft annotations and comments.
-        $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid'=>$gradeid, 'draft'=>0));
-        $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid'=>$gradeid, 'draft'=>0));
+        $DB->delete_records('assignfeedback_editpdf_cmnt', [
+            'gradeid' => $gradeid, 'draft' => 0, 'markid' => $markid,
+        ]);
+        $DB->delete_records('assignfeedback_editpdf_annot', [
+            'gradeid' => $gradeid, 'draft' => 0, 'markid' => $markid,
+        ]);
 
         // Copy all the draft annotations and comments to non-drafts.
-        $records = $DB->get_records('assignfeedback_editpdf_annot', array('gradeid'=>$gradeid, 'draft'=>1));
+        $records = $DB->get_records('assignfeedback_editpdf_annot', [
+            'gradeid' => $gradeid, 'draft' => 1, 'markid' => $markid,
+        ]);
         foreach ($records as $record) {
             unset($record->id);
             $record->draft = 0;
             $DB->insert_record('assignfeedback_editpdf_annot', $record);
         }
-        $records = $DB->get_records('assignfeedback_editpdf_cmnt', array('gradeid'=>$gradeid, 'draft'=>1));
+        $records = $DB->get_records('assignfeedback_editpdf_cmnt', [
+            'gradeid' => $gradeid, 'draft' => 1, 'markid' => $markid,
+        ]);
         foreach ($records as $record) {
             unset($record->id);
             $record->draft = 0;
@@ -241,11 +270,13 @@ class page_editor {
     /**
      * Has annotations or comments.
      * @param int $gradeid
+     * @param $includedraft
+     * @param int|null $markid ID of the mark record.
      * @return bool
      */
-    public static function has_annotations_or_comments($gradeid, $includedraft) {
+    public static function has_annotations_or_comments($gradeid, $includedraft, ?int $markid = null): bool {
         global $DB;
-        $params = array('gradeid'=>$gradeid);
+        $params = ['gradeid' => $gradeid, 'markid' => $markid];
         if (!$includedraft) {
             $params['draft'] = 0;
         }
@@ -253,6 +284,23 @@ class page_editor {
             return true;
         }
         if ($DB->count_records('assignfeedback_editpdf_annot', $params)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if there are any active annotations or comments for overall or any markers.
+     *
+     * @param int $gradeid Grade record id.
+     * @return bool
+     */
+    public static function has_any_active_annotations_or_comments(int $gradeid): bool {
+        global $DB;
+        if ($DB->record_exists('assignfeedback_editpdf_cmnt', ['gradeid' => $gradeid, 'draft' => 0])) {
+            return true;
+        }
+        if ($DB->record_exists('assignfeedback_editpdf_annot', ['gradeid' => $gradeid, 'draft' => 0])) {
             return true;
         }
         return false;
@@ -307,7 +355,7 @@ class page_editor {
     public static function remove_annotation($annotationid) {
         global $DB;
 
-        return $DB->delete_records('assignfeedback_editpdf_annot', array('id'=>$annotationid));
+        return $DB->delete_records('assignfeedback_editpdf_annot', ['id' => $annotationid]);
     }
 
     /**
@@ -317,38 +365,65 @@ class page_editor {
      * @param int|\assign $assignment
      * @param \stdClass $grade
      * @param int $sourceuserid
+     * @param int|null $markid ID of the mark record.
      * @return bool
      */
-    public static function copy_drafts_from_to($assignment, $grade, $sourceuserid) {
-        global $DB;
+    public static function copy_drafts_from_to($assignment, $grade, $sourceuserid, ?int $markid = null) {
+        global $DB, $USER;
 
         // Delete any existing annotations and comments from current user.
-        $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid' => $grade->id));
-        $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid' => $grade->id));
+        $DB->delete_records('assignfeedback_editpdf_annot', ['gradeid' => $grade->id, 'markid' => $markid]);
+        $DB->delete_records('assignfeedback_editpdf_cmnt', ['gradeid' => $grade->id, 'markid' => $markid]);
+
         // Get gradeid, annotations and comments from sourceuserid.
         $sourceusergrade = $assignment->get_user_grade($sourceuserid, true, $grade->attemptnumber);
-        $annotations = $DB->get_records('assignfeedback_editpdf_annot', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
-        $comments = $DB->get_records('assignfeedback_editpdf_cmnt', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
-        $contextid = $assignment->get_context()->id;
+        $sourcemarkid = null;
         $sourceitemid = $sourceusergrade->id;
+
+        // If we are copying mark-related drafts, get the mark id of the source user to use.
+        if ($markid) {
+            $sourcemarkid = $assignment->get_mark($sourceusergrade->id, $USER->id)->id;
+            $sourceitemid = $sourcemarkid;
+        }
+
+        $annotations = $DB->get_records(
+            'assignfeedback_editpdf_annot',
+            ['gradeid' => $sourceusergrade->id, 'markid' => $sourcemarkid, 'draft' => 1],
+        );
+        $comments = $DB->get_records(
+            'assignfeedback_editpdf_cmnt',
+            ['gradeid' => $sourceusergrade->id, 'markid' => $sourcemarkid, 'draft' => 1],
+        );
+
+        $contextid = $assignment->get_context()->id;
 
         // Add annotations and comments to current user to generate feedback file.
         foreach ($annotations as $annotation) {
             $annotation->gradeid = $grade->id;
+            $annotation->markid = $markid;
             $DB->insert_record('assignfeedback_editpdf_annot', $annotation);
         }
         foreach ($comments as $comment) {
             $comment->gradeid = $grade->id;
+            $comment->markid = $markid;
             $DB->insert_record('assignfeedback_editpdf_cmnt', $comment);
         }
 
         $fs = get_file_storage();
 
         // Copy the stamp files.
-        self::replace_files_from_to($fs, $contextid, $sourceitemid, $grade->id, document_services::STAMPS_FILEAREA, true);
+        [$filearea, $fileitemid] = document_services::get_file_area_and_id($assignment, $grade, document_services::STAMPS_FILEAREA);
+        self::replace_files_from_to($fs, $contextid, $sourceusergrade->id, $fileitemid, $filearea, true);
 
         // Copy the PAGE_IMAGE_FILEAREA files.
-        self::replace_files_from_to($fs, $contextid, $sourceitemid, $grade->id, document_services::PAGE_IMAGE_FILEAREA);
+        [$filearea, $fileitemid] = document_services::get_file_area_and_id(
+            $assignment,
+            $grade,
+            document_services::PAGE_IMAGE_FILEAREA,
+            false,
+            $markid
+        );
+        self::replace_files_from_to($fs, $contextid, $sourceitemid, $fileitemid, $filearea);
 
         return true;
     }
@@ -387,11 +462,12 @@ class page_editor {
      * might not be relevant any more, therefore we should delete them.
      *
      * @param int $gradeid The grade ID.
+     * @param int|null $markid ID of mark record.
      * @return bool
      */
-    public static function delete_draft_content($gradeid) {
+    public static function delete_draft_content($gradeid, ?int $markid = null) {
         global $DB;
-        $conditions = array('gradeid' => $gradeid, 'draft' => 1);
+        $conditions = ['gradeid' => $gradeid, 'markid' => $markid, 'draft' => 1];
         $result = $DB->delete_records('assignfeedback_editpdf_annot', $conditions);
         $result = $result && $DB->delete_records('assignfeedback_editpdf_cmnt', $conditions);
         return $result;
@@ -404,14 +480,16 @@ class page_editor {
      * @param bool $isrotated whether the page is rotated or not.
      * @param string $pathnamehash path name hash
      * @param int $degree rotation degree.
+     * @param int|null $markid ID of the mark record.
      * @throws \dml_exception
      */
-    public static function set_page_rotation($gradeid, $pageno, $isrotated, $pathnamehash, $degree = 0) {
+    public static function set_page_rotation($gradeid, $pageno, $isrotated, $pathnamehash, $degree = 0, ?int $markid = null) {
         global $DB;
-        $oldrecord = self::get_page_rotation($gradeid, $pageno);
-        if ($oldrecord == null) {
+        $oldrecord = self::get_page_rotation($gradeid, $pageno, $markid);
+        if (!$oldrecord) {
             $record = new \stdClass();
             $record->gradeid = $gradeid;
+            $record->markid = $markid;
             $record->pageno = $pageno;
             $record->isrotated = $isrotated;
             $record->pathnamehash = $pathnamehash;
@@ -429,13 +507,15 @@ class page_editor {
      * Get Page Rotation Value.
      * @param int $gradeid grade id.
      * @param int $pageno page number.
+     * @param int|null $markid ID of the mark record.
      * @return mixed
      * @throws \dml_exception
      */
-    public static function get_page_rotation($gradeid, $pageno) {
+    public static function get_page_rotation($gradeid, $pageno, ?int $markid = null) {
         global $DB;
-        $result = $DB->get_record('assignfeedback_editpdf_rot', array('gradeid' => $gradeid, 'pageno' => $pageno));
-        return $result;
+        return $DB->get_record(
+            'assignfeedback_editpdf_rot',
+            ['gradeid' => $gradeid, 'markid' => $markid, 'pageno' => $pageno],
+        );
     }
-
 }

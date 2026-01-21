@@ -4173,6 +4173,10 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
                     'stamps' => 'Annotate PDF',
                     'tmp_jpg_to_pdf' => 'Annotate PDF',
                     'tmp_rotated_jpg' => 'Annotate PDF',
+                    'download_marker' => 'Annotate PDF',
+                    'combined_marker' => 'Annotate PDF',
+                    'partial_marker' => 'Annotate PDF',
+                    'importhtml_marker' => 'Annotate PDF',
                 ];
                 $this->assertEquals($checkareas, $fileareas);
                 $usingfilearea++;
