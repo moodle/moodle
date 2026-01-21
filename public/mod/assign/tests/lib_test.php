@@ -164,7 +164,7 @@ final class lib_test extends \advanced_testcase {
 
         $this->add_submission($student, $assign);
         $this->submit_for_grading($student, $assign);
-        $this->mark_submission($teacher, $assign, $student, 50.0);
+        $this->grade_submission($teacher, $assign, $student, 50.0);
 
         $this->setUser($teacher);
         $data = $assign->get_user_grade($student->id, true);

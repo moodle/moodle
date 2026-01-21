@@ -250,7 +250,7 @@ final class markerallocation_test extends \advanced_testcase {
                 if ($studentnumber < 6) {
                     $this->assertEquals(99, $mark->mark);
                 } else {
-                    $this->assertFalse($mark);
+                    $this->assertNull($mark);
                 }
             }
         }
@@ -319,7 +319,7 @@ final class markerallocation_test extends \advanced_testcase {
         // Firstly, there should be no mark currently for either marker.
         $gradeobject = $assignment->get_user_grade($this->users[2]->id, true);
         $mark = $assignment->get_mark($gradeobject->id, $this->users[0]->id);
-        $this->assertFalse($mark);
+        $this->assertNull($mark);
 
         // Assign a mark as teacher1.
         $gradeobject->grader = $this->users[0]->id;

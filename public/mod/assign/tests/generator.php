@@ -110,15 +110,16 @@ trait mod_assign_test_generator {
     }
 
     /**
-     * Mark the submission.
+     * Grade the submission.
      *
      * @param   \stdClass   $teacher The user to mark as
      * @param   \assign     $assign The assignment to mark
      * @param   \stdClass   $student The user to grade
+     * @param   float       $grade The grade score to set.
      * @param   array       $data Additional data to set
      * @param   bool        $changeuser Whether to switch user to the user being submitted as.
      */
-    protected function mark_submission($teacher, $assign, $student, $grade = 50.0, $data = [], $attempt = 0) {
+    protected function grade_submission($teacher, $assign, $student, $grade = 50.0, $data = [], $attempt = 0): void {
         global $DB;
 
         // Mark the submission.
@@ -128,8 +129,12 @@ trait mod_assign_test_generator {
             ]);
 
         // Bump all timecreated and timemodified for this user back.
-        $DB->execute('UPDATE {assign_submission} SET timecreated = timecreated - 1, timemodified = timemodified - 1 WHERE userid = :userid',
-            ['userid' => $student->id]);
+        $DB->execute(
+            'UPDATE {assign_submission}
+                SET timecreated = timecreated - 1, timemodified = timemodified - 1
+              WHERE userid = :userid',
+            ['userid' => $student->id],
+        );
 
         $assign->testable_apply_grade_to_user($data, $student->id, $attempt);
     }

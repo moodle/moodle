@@ -1465,6 +1465,7 @@ function mod_assign_output_fragment_gradingpanel($args) {
         'marker' => $args['marker'],
     );
 
+    $assign->set_is_marking($args['marker']);
     return $assign->view('gradingpanel', $viewargs);
 }
 
