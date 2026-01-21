@@ -126,4 +126,138 @@ final class manager_test extends \advanced_testcase {
 
         ];
     }
+
+    /**
+     * Test clear_description.
+     */
+    public function test_clear_description(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        // Add a couple of subsections with file in the description.
+        $module1 = $this->getDataGenerator()->create_module('subsection', [
+            'course' => $course->id,
+            'section' => 1,
+            'summary' => 'Subsection text with <a href="@@PLUGINFILE@@/intro1.txt">link</a>',
+        ]);
+        $subsection1 = $DB->get_record(
+            'course_sections',
+            ['course' => $course->id, 'itemid' => $module1->id],
+        );
+        $filerecord = [
+            'component' => 'course',
+            'filearea' => 'section',
+            'contextid' => \context_course::instance($course->id)->id,
+            'itemid' => $subsection1->id,
+            'filename' => 'intro1.txt',
+            'filepath' => '/',
+        ];
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, 'Test intro file');
+
+        $module2 = $this->getDataGenerator()->create_module('subsection', [
+            'course' => $course->id,
+            'section' => 1,
+            'summary' => 'Subsection text with <a href="@@PLUGINFILE@@/intro2.txt">link</a>',
+        ]);
+        $subsection2 = $DB->get_record(
+            'course_sections',
+            ['course' => $course->id, 'itemid' => $module2->id],
+        );
+        $filerecord = [
+            'component' => 'course',
+            'filearea' => 'section',
+            'contextid' => \context_course::instance($course->id)->id,
+            'itemid' => $subsection2->id,
+            'filename' => 'intro2.txt',
+            'filepath' => '/',
+        ];
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, 'Test intro file');
+        // Add one more subsection with description but no files.
+        $module3 = $this->getDataGenerator()->create_module('subsection', [
+            'course' => $course->id,
+            'section' => 1,
+            'summary' => 'Subsection text with no files',
+        ]);
+
+        // Check subsections have descriptions.
+        $this->assertEquals(
+            3,
+            $DB->count_records_select(
+                'course_sections',
+                'course = :courseid AND component = \'mod_subsection\' AND summary != \'\'',
+                ['courseid' => $course->id],
+            ),
+        );
+        $this->assertEquals(
+            2,
+            $DB->count_records_select(
+                'files',
+                'component = :component AND filearea = :filearea AND (filename != :filename)',
+                [
+                    'component' => 'course',
+                    'filearea' => 'section',
+                    'filename' => '.',
+                ],
+            ),
+        );
+
+        // Clear the description for subsection with files.
+        $manager = manager::create_from_id($course->id, $module1->id);
+        $manager->clear_description();
+
+        // Check only subsection description and its files have been removed.
+        $this->assertEquals(
+            2,
+            $DB->count_records_select(
+                'course_sections',
+                'course = :courseid AND component = \'mod_subsection\' AND summary != \'\'',
+                ['courseid' => $course->id],
+            ),
+        );
+        // Check the file has been removed too.
+        $this->assertEquals(
+            1,
+            $DB->count_records_select(
+                'files',
+                'component = :component AND filearea = :filearea AND (filename != :filename)',
+                [
+                    'component' => 'course',
+                    'filearea' => 'section',
+                    'filename' => '.',
+                ],
+            ),
+        );
+
+        // Clear the description for subsection without files.
+        $manager = manager::create_from_id($course->id, $module3->id);
+        $manager->clear_description();
+
+        // Check only subsection3 description has been removed.
+        $this->assertEquals(
+            1,
+            $DB->count_records_select(
+                'course_sections',
+                'course = :courseid AND component = \'mod_subsection\' AND summary != \'\'',
+                ['courseid' => $course->id],
+            ),
+        );
+        // Check no files have been removed.
+        $this->assertEquals(
+            1,
+            $DB->count_records_select(
+                'files',
+                'component = :component AND filearea = :filearea AND (filename != :filename)',
+                [
+                    'component' => 'course',
+                    'filearea' => 'section',
+                    'filename' => '.',
+                ],
+            ),
+        );
+    }
 }
