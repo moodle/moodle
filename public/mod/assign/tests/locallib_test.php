@@ -4177,7 +4177,10 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
                 $this->assertEquals($checkareas, $fileareas);
                 $usingfilearea++;
             } else if ($type == 'file') {
-                $this->assertEquals(['feedback_files' => 'Feedback files'], $fileareas);
+                $this->assertEquals([
+                    'feedback_files' => 'Feedback files',
+                    'feedback_marker' => 'Feedback files',
+                ], $fileareas);
                 $usingfilearea++;
             } else if ($type == 'comments') {
                 $this->assertEquals(['feedback' => 'Feedback comments'], $fileareas);

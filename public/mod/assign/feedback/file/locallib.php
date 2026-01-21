@@ -28,13 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 use mod_assign\output\assign_header;
 use core_external\external_value;
 
-// File areas for file feedback assignment.
-define('ASSIGNFEEDBACK_FILE_FILEAREA', 'feedback_files');
-define('ASSIGNFEEDBACK_FILE_BATCH_FILEAREA', 'feedback_files_batch');
-define('ASSIGNFEEDBACK_FILE_IMPORT_FILEAREA', 'feedback_files_import');
-define('ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES', 5);
-define('ASSIGNFEEDBACK_FILE_MAXSUMMARYUSERS', 5);
-define('ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME', 120);
+require_once(__DIR__ . '/constants.php');
 
 /**
  * Library class for file feedback plugin extending feedback plugin base class.
@@ -44,7 +38,6 @@ define('ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME', 120);
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class assign_feedback_file extends assign_feedback_plugin {
-
     /**
      * Get the name of the file feedback plugin.
      *
@@ -57,12 +50,24 @@ class assign_feedback_file extends assign_feedback_plugin {
     /**
      * Get file feedback information from the database.
      *
-     * @param int $gradeid
-     * @return mixed
+     * @param int $gradeid The grade ID.
+     * @param ?int $markid The mark ID or null if we want the overall feedback file.
+     * @return \stdClass|false
      */
-    public function get_file_feedback($gradeid) {
+    public function get_file_feedback(int $gradeid, ?int $markid = null): \stdClass|false {
         global $DB;
-        return $DB->get_record('assignfeedback_file', array('grade'=>$gradeid));
+        return $DB->get_record('assignfeedback_file', ['grade' => $gradeid, 'mark' => $markid]);
+    }
+
+    /**
+     * Get all file feedback information from the database, including marking feedback.
+     *
+     * @param int $gradeid The Grade ID.
+     * @return ?array Array of assignfeedback_file records, or null if none found.
+     */
+    public function get_all_file_feedback(int $gradeid): ?array {
+        global $DB;
+        return $DB->get_records('assignfeedback_file', ['grade' => $gradeid]) ?? null;
     }
 
     /**
@@ -90,6 +95,7 @@ class assign_feedback_file extends assign_feedback_plugin {
     public function is_feedback_modified(stdClass $grade, stdClass $data) {
         global $USER;
 
+        [$filearea, $fileitemid] = $this->get_fileitem_area_id($grade);
         $filekey = null;
         $draftareainfo = null;
         foreach ($data as $key => $value) {
@@ -99,7 +105,7 @@ class assign_feedback_file extends assign_feedback_plugin {
         }
         if (isset($filekey)) {
             $draftareainfo = file_get_draft_area_info($data->$filekey);
-            $filecount = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
+            $filecount = $this->count_files($fileitemid, $filearea);
             if ($filecount != $draftareainfo['filecount']) {
                 return true;
             } else {
@@ -107,12 +113,14 @@ class assign_feedback_file extends assign_feedback_plugin {
                 $usercontext = context_user::instance($USER->id);
                 $fs = get_file_storage();
                 $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $data->$filekey, 'id', true);
-                $files = $fs->get_area_files($this->assignment->get_context()->id,
-                                     'assignfeedback_file',
-                                     ASSIGNFEEDBACK_FILE_FILEAREA,
-                                     $grade->id,
-                                     'id',
-                                     false);
+                $files = $fs->get_area_files(
+                    $this->assignment->get_context()->id,
+                    'assignfeedback_file',
+                    $filearea,
+                    $fileitemid,
+                    'id',
+                    false,
+                );
                 foreach ($files as $key => $file) {
                     // Flag for recording if we have a matching file.
                     $matchflag = false;
@@ -212,18 +220,21 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @return bool true if elements were added to the form
      */
     public function get_form_elements_for_user($grade, MoodleQuickForm $mform, stdClass $data, $userid) {
-
+        global $USER;
         $fileoptions = $this->get_file_options();
         $gradeid = $grade ? $grade->id : 0;
         $elementname = 'files_' . $userid;
-
-        $data = file_prepare_standard_filemanager($data,
-                                                  $elementname,
-                                                  $fileoptions,
-                                                  $this->assignment->get_context(),
-                                                  'assignfeedback_file',
-                                                  ASSIGNFEEDBACK_FILE_FILEAREA,
-                                                  $gradeid);
+        $markid = $this->assignment->is_marking() ? $this->assignment->get_mark($gradeid, $USER->id, true)->id : null;
+        [$filearea, $fileitemid] = $this->get_fileitem_area_id($grade, $markid, $USER->id);
+        $data = file_prepare_standard_filemanager(
+            $data,
+            $elementname,
+            $fileoptions,
+            $this->assignment->get_context(),
+            'assignfeedback_file',
+            $filearea,
+            $fileitemid,
+        );
         $mform->addElement('filemanager', $elementname . '_filemanager', $this->get_name(), null, $fileoptions);
 
         return true;
@@ -232,20 +243,20 @@ class assign_feedback_file extends assign_feedback_plugin {
     /**
      * Count the number of files.
      *
-     * @param int $gradeid
-     * @param string $area
+     * @param int $fileitemid The itemid of the file
+     * @param string $area The filearea of the file
      * @return int
      */
-    private function count_files($gradeid, $area) {
-
+    private function count_files(int $fileitemid, string $area): int {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->assignment->get_context()->id,
-                                     'assignfeedback_file',
-                                     $area,
-                                     $gradeid,
-                                     'id',
-                                     false);
-
+        $files = $fs->get_area_files(
+            $this->assignment->get_context()->id,
+            'assignfeedback_file',
+            $area,
+            $fileitemid,
+            'id',
+            false,
+        );
         return count($files);
     }
 
@@ -253,20 +264,26 @@ class assign_feedback_file extends assign_feedback_plugin {
      * Update the number of files in the file area.
      *
      * @param stdClass $grade The grade record
+     * @param ?int $markid The mark ID.
      * @return bool - true if the value was saved
      */
-    public function update_file_count($grade) {
+    public function update_file_count($grade, ?int $markid = null) {
         global $DB;
 
-        $filefeedback = $this->get_file_feedback($grade->id);
+        $filefeedback = $this->get_file_feedback($grade->id, $markid);
+        [$filearea, $fileitemid] = $this->get_fileitem_area_id($grade);
+
         if ($filefeedback) {
-            $filefeedback->numfiles = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
+            $filefeedback->numfiles = $this->count_files($fileitemid, $filearea);
             return $DB->update_record('assignfeedback_file', $filefeedback);
         } else {
             $filefeedback = new stdClass();
-            $filefeedback->numfiles = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
+            $filefeedback->numfiles = $this->count_files($fileitemid, $filearea);
             $filefeedback->grade = $grade->id;
             $filefeedback->assignment = $this->assignment->get_instance()->id;
+            if (is_integer($markid) && $markid > 0) {
+                $filefeedback->mark = $markid;
+            }
             return $DB->insert_record('assignfeedback_file', $filefeedback) > 0;
         }
     }
@@ -279,7 +296,12 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @return bool
      */
     public function save(stdClass $grade, stdClass $data) {
-        $fileoptions = $this->get_file_options();
+        $markid = null;
+        if ($this->assignment->is_marking()) {
+            $markid = $this->assignment->get_mark($grade->id, $grade->grader, true)->id;
+        }
+
+        [$filearea, $fileitemid] = $this->get_fileitem_area_id($grade, $markid);
 
         // The element name may have been for a different user.
         foreach ($data as $key => $value) {
@@ -288,15 +310,17 @@ class assign_feedback_file extends assign_feedback_plugin {
             }
         }
 
-        $data = file_postupdate_standard_filemanager($data,
-                                                     $elementname,
-                                                     $fileoptions,
-                                                     $this->assignment->get_context(),
-                                                     'assignfeedback_file',
-                                                     ASSIGNFEEDBACK_FILE_FILEAREA,
-                                                     $grade->id);
+        $data = file_postupdate_standard_filemanager(
+            $data,
+            $elementname,
+            $this->get_file_options(),
+            $this->assignment->get_context(),
+            'assignfeedback_file',
+            $filearea,
+            $fileitemid,
+        );
 
-        return $this->update_file_count($grade);
+        return $this->update_file_count($grade, $markid);
     }
 
     /**
@@ -304,22 +328,69 @@ class assign_feedback_file extends assign_feedback_plugin {
      *
      * @param stdClass $grade
      * @param bool $showviewlink - Set to true to show a link to see the full list of files
+     * @param bool $fromgradingtable Is the summary being loaded from the grading table?
+     * @param int|null $markid The mark ID.
      * @return string
      */
-    public function view_summary(stdClass $grade, & $showviewlink) {
+    public function view_summary(stdClass $grade, &$showviewlink, bool $fromgradingtable = false, ?int $markid = null) {
+        global $DB, $OUTPUT;
 
-        $count = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
+        if ($fromgradingtable) {
+            [$filearea, $fileitemid] = $this->get_fileitem_area_id($grade, $markid);
+            $count = $this->count_files($fileitemid, $filearea);
 
-        // Show a view all link if the number of files is over this limit.
-        $showviewlink = $count > ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES;
+            // Show a view all link if the number of files is over this limit.
+            $showviewlink = $count > ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES;
 
-        if ($count <= ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES) {
-            return $this->assignment->render_area_files('assignfeedback_file',
-                                                        ASSIGNFEEDBACK_FILE_FILEAREA,
-                                                        $grade->id);
-        } else {
-            return get_string('countfiles', 'assignfeedback_file', $count);
+            if ($count <= ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES) {
+                return $this->assignment->render_area_files(
+                    'assignfeedback_file',
+                    $filearea,
+                    $fileitemid,
+                );
+            } else {
+                return get_string('countfiles', 'assignfeedback_file', $count);
+            }
         }
+
+        $filefeedbackitems = $this->get_all_file_feedback($grade->id);
+        $data = ['filefeedback' => []];
+        foreach ($filefeedbackitems as $filefeedbackitem) {
+            $feedback = [];
+            if (is_null($filefeedbackitem->mark)) {
+                $feedback['context'] = get_string('overallfiles', 'assignfeedback_file');
+                $overall = true;
+            } else {
+                $mark = $DB->get_record('assign_mark', ['id' => $filefeedbackitem->mark], 'marker');
+                $marker = $DB->get_record('user', ['id' => $mark->marker]);
+                $feedback['context'] = get_string('markerfile', 'assignfeedback_file', fullname($marker));
+                $overall = false;
+            }
+
+            [$filearea, $fileitemid] = $this->get_fileitem_area_id($grade, $filefeedbackitem->mark);
+            $count = $this->count_files($fileitemid, $filearea);
+
+            // Show a view all link if the number of files is over this limit.
+            $showviewlink = $count > ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES;
+
+            if ($count <= ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES) {
+                $feedback['html'] = $this->assignment->render_area_files(
+                    'assignfeedback_file',
+                    $filearea,
+                    $fileitemid,
+                );
+            } else {
+                $feedback['html'] = get_string('countfiles', 'assignfeedback_file', $count);
+            }
+
+            if ($overall) {
+                $data['filefeedback'][] = $feedback;
+            } else {
+                array_unshift($data['filefeedback'], $feedback);
+            }
+        }
+
+        return $OUTPUT->render_from_template('assignfeedback_file/summary', $data);
     }
 
     /**
@@ -328,10 +399,13 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @param stdClass $grade
      * @return string
      */
-    public function view(stdClass $grade) {
-        return $this->assignment->render_area_files('assignfeedback_file',
-                                                    ASSIGNFEEDBACK_FILE_FILEAREA,
-                                                    $grade->id);
+    public function view(stdClass $grade): string {
+        [$filearea, $fileitemid] = $this->get_fileitem_area_id($grade);
+        return $this->assignment->render_area_files(
+            'assignfeedback_file',
+            $filearea,
+            $fileitemid,
+        );
     }
 
     /**
@@ -354,7 +428,7 @@ class assign_feedback_file extends assign_feedback_plugin {
      * @param stdClass $grade
      */
     public function is_empty(stdClass $grade) {
-        return $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA) == 0;
+        return count($this->get_all_file_feedback($grade->id)) === 0;
     }
 
     /**
@@ -362,8 +436,11 @@ class assign_feedback_file extends assign_feedback_plugin {
      *
      * @return array - An array of fileareas (keys) and descriptions (values)
      */
-    public function get_file_areas() {
-        return array(ASSIGNFEEDBACK_FILE_FILEAREA=>$this->get_name());
+    public function get_file_areas(): array {
+        return [
+            ASSIGNFEEDBACK_FILE_FILEAREA => $this->get_name(),
+            ASSIGNFEEDBACK_FILE_FILEAREA_MARKER => $this->get_name(),
+        ];
     }
 
     /**
@@ -507,32 +584,43 @@ class assign_feedback_file extends assign_feedback_plugin {
                                                          $USER->id);
             $fs = get_file_storage();
 
-            // Now copy each of these files to the users feedback file area.
+
+            // Copy each of these files to the user's feedback file area.
             foreach ($users as $userid) {
                 $grade = $this->assignment->get_user_grade($userid, true);
                 $this->assignment->notify_grade_modified($grade);
+                $markid = null;
+                if ($this->assignment->is_marking()) {
+                    $mark = $this->assignment->get_mark($grade->id, $USER->id, true);
+                    $markid = $mark?->id;
+                }
 
-                $this->copy_area_files($fs,
-                                       $this->assignment->get_context()->id,
-                                       'assignfeedback_file',
-                                       ASSIGNFEEDBACK_FILE_BATCH_FILEAREA,
-                                       $USER->id,
-                                       $this->assignment->get_context()->id,
-                                       'assignfeedback_file',
-                                       ASSIGNFEEDBACK_FILE_FILEAREA,
-                                       $grade->id);
+                [$filearea, $fileitemid] = $this->get_fileitem_area_id($grade, $markid, $USER->id);
 
-                $filefeedback = $this->get_file_feedback($grade->id);
+                $this->copy_area_files(
+                    $fs,
+                    $this->assignment->get_context()->id,
+                    'assignfeedback_file',
+                    ASSIGNFEEDBACK_FILE_BATCH_FILEAREA,
+                    $USER->id,
+                    $this->assignment->get_context()->id,
+                    'assignfeedback_file',
+                    $filearea,
+                    $fileitemid,
+                );
+
+                $filefeedback = $this->get_file_feedback($grade->id, $markid);
                 if ($filefeedback) {
-                    $filefeedback->numfiles = $this->count_files($grade->id,
-                                                                 ASSIGNFEEDBACK_FILE_FILEAREA);
+                    $filefeedback->numfiles = $this->count_files($fileitemid, $filearea);
                     $DB->update_record('assignfeedback_file', $filefeedback);
                 } else {
                     $filefeedback = new stdClass();
-                    $filefeedback->numfiles = $this->count_files($grade->id,
-                                                                 ASSIGNFEEDBACK_FILE_FILEAREA);
+                    $filefeedback->numfiles = $this->count_files($fileitemid, $filearea);
                     $filefeedback->grade = $grade->id;
                     $filefeedback->assignment = $this->assignment->get_instance()->id;
+                    if (is_integer($markid) && $markid > 0) {
+                        $filefeedback->mark = $markid;
+                    }
                     $DB->insert_record('assignfeedback_file', $filefeedback);
                 }
             }
@@ -718,5 +806,50 @@ class assign_feedback_file extends assign_feedback_plugin {
      */
     public function get_config_for_external() {
         return (array) $this->get_config();
+    }
+
+    /**
+     * Yes, this plugin has the files column which is required per marker.
+     *
+     * @return true
+     */
+    public function has_marker_columns(): bool {
+        return true;
+    }
+
+    /**
+     * Return the array of extra file columns per marker.
+     *
+     * @param int $markernumber The marker number.
+     * @return array [headertitle => columntext]
+     */
+    public function get_marker_columns(int $markernumber): array {
+        $key = 'markerfile' . $markernumber;
+        return [
+            $key => get_string('markernumberfile', 'assignfeedback_file', $markernumber),
+        ];
+    }
+
+    /**
+     * Get fileitem area and id.
+     *
+     * @param \stdClass $grade The grade object.
+     * @param ?int $markid The mark ID.
+     * @param ?int $graderid The user ID of the grader.
+     * @return array
+     */
+    protected function get_fileitem_area_id(\stdClass $grade, ?int $markid = null, ?int $graderid = null): array {
+        $filearea = ASSIGNFEEDBACK_FILE_FILEAREA;
+        $fileitemid = $grade->id;
+        if (is_integer($markid)) {
+            $filearea = ASSIGNFEEDBACK_FILE_FILEAREA_MARKER;
+            $fileitemid = $markid;
+        } else if ($this->assignment->is_marking()) {
+            $graderid = is_integer($graderid) ? $graderid : $grade->grader;
+            $mark = $this->assignment->get_mark($grade->id, $graderid, true);
+            $filearea = ASSIGNFEEDBACK_FILE_FILEAREA_MARKER;
+            $fileitemid = $mark->id;
+        }
+        return [$filearea, $fileitemid];
     }
 }

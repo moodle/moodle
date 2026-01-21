@@ -98,7 +98,7 @@ class provider implements
         $assign = $exportdata->get_assign();
         $plugin = $assign->get_plugin_by_type('assignfeedback', 'file');
         $gradeid = $exportdata->get_pluginobject()->id;
-        $filefeedback = $plugin->get_file_feedback($gradeid);
+        $filefeedback = $plugin->get_all_file_feedback($gradeid);
         if ($filefeedback) {
             $fileareas = $plugin->get_file_areas();
             foreach ($fileareas as $filearea => $notused) {

@@ -15,16 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the version information for the comments feedback plugin
+ * This file contains all the defined constants to do with portfolios.
  *
- * @package assignfeedback_file
- * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    assignfeedback_file
+ * @copyright  2025 Michael Kotlyar <michael.kotlyar@catalyst-eu.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2026042001;
-$plugin->requires  = 2026041000;
-$plugin->component = 'assignfeedback_file';
-
+define('ASSIGNFEEDBACK_FILE_FILEAREA', 'feedback_files');
+define('ASSIGNFEEDBACK_FILE_FILEAREA_MARKER', 'feedback_marker');
+define('ASSIGNFEEDBACK_FILE_BATCH_FILEAREA', 'feedback_files_batch');
+define('ASSIGNFEEDBACK_FILE_IMPORT_FILEAREA', 'feedback_files_import');
+define('ASSIGNFEEDBACK_FILE_MAXSUMMARYFILES', 5);
+define('ASSIGNFEEDBACK_FILE_MAXSUMMARYUSERS', 5);
+define('ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME', 120);
