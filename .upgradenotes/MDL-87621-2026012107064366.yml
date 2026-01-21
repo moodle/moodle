@@ -1,0 +1,9 @@
+issueNumber: MDL-87621
+notes:
+  mod_subsection:
+    - message: >-
+        A new ad-hoc task, `remove_existing_descriptions`, has been added. This
+        task will remove the descriptions for all existing subsection instances.
+        To ensure system stability, the task processes records in batches of 100
+        and clears the original description upon completion.
+      type: improved
