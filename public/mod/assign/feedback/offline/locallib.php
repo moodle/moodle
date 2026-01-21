@@ -134,33 +134,46 @@ class assign_feedback_offline extends assign_feedback_plugin {
         $gradebookplugin = $adminconfig->feedback_plugin_for_gradebook;
 
         $updategradecount = 0;
+        $updatemarkcount = 0;
         $updatefeedbackcount = 0;
         while ($record = $gradeimporter->next()) {
             $user = $record->user;
             $modified = $record->modified;
             $userdesc = fullname($user);
+            $mark = ($record->mark) ?? null;
             $usergrade = $this->assignment->get_user_grade($user->id, false);
+            $usermark = false;
+            if ($usergrade) {
+                $usermark = $this->assignment->get_mark($usergrade->id, $USER->id);
+            }
 
             if (!empty($scaleoptions)) {
                 // This is a scale - we need to convert any grades to indexes in the scale.
                 $scaleindex = array_search($record->grade, $scaleoptions);
-                if ($scaleindex !== false) {
-                    $record->grade = $scaleindex;
-                } else {
-                    $record->grade = '';
-                }
+                $markindex = array_search($mark, $scaleoptions);
+                $record->grade = ($scaleindex !== false) ? $scaleindex : '';
+                $mark = ($markindex !== false) ? $markindex : '';
             } else {
                 $record->grade = unformat_float($record->grade);
+                $mark = unformat_float($mark);
             }
 
             // Note: Do not count the seconds when comparing modified dates.
             $skip = false;
             $stalemodificationdate = ($usergrade && $usergrade->timemodified > ($modified + 60));
 
-            if ($usergrade && $usergrade->grade == $record->grade) {
+            if (
+                $usergrade &&
+                $usergrade->grade == $record->grade &&
+                $usermark &&
+                $usermark->mark == $mark
+            ) {
                 // Skip - grade not modified.
                 $skip = true;
-            } else if (!isset($record->grade) || $record->grade === '' || $record->grade < 0) {
+            } else if (
+                (!isset($record->grade) || $record->grade === '' || $record->grade < 0) &&
+                (!isset($mark) || $mark === '' || $mark < 0)
+            ) {
                 // Skip - grade has no value.
                 $skip = true;
             } else if (!$ignoremodified && $stalemodificationdate) {
@@ -176,34 +189,84 @@ class assign_feedback_offline extends assign_feedback_plugin {
             }
 
             if (!$skip) {
-                $grade = $this->assignment->get_user_grade($record->user->id, true);
+                $grademodified = ($record->grade && $record->grade !== '' && $record->grade >= 0);
+                if ($usergrade) {
+                    $grademodified = ($grademodified && $record->grade != $usergrade->grade);
+                }
+                $markmodified = ($mark && $mark !== '' && $mark >= 0);
+                if ($usermark) {
+                    $markmodified = ($markmodified && $mark != $usermark->mark);
+                }
 
-                $grade->grade = $record->grade;
-                $grade->grader = $USER->id;
-                if ($this->assignment->update_grade($grade)) {
-                    $this->assignment->notify_grade_modified($grade);
-                    $updategradecount += 1;
+                // If either grade or mark were modified, we need to get/create the grade object.
+                if ($grademodified || $markmodified) {
+                    $grade = $this->assignment->get_user_grade($record->user->id, true);
+                }
+
+                // We updated the grade from the spreadsheet.
+                if ($grademodified) {
+                    $grade->grade = $record->grade;
+                    $grade->grader = $USER->id;
+                    if ($this->assignment->update_grade($grade)) {
+                        $this->assignment->notify_grade_modified($grade);
+                        $updategradecount += 1;
+                    }
+                }
+
+                // We updated the mark from the spreadsheet.
+                if ($markmodified) {
+                    $grade->grader = $USER->id;
+                    $this->assignment->update_mark($grade, $mark);
+                    $updatemarkcount++;
                 }
             }
 
             if ($ignoremodified || !$stalemodificationdate) {
                 foreach ($record->feedback as $feedback) {
+                    $markid = null;
+                    $ismarkercol = false;
+                    $isourmarkercol = false;
+                    // Is it a marker column? And is this user one of the markers for the student?
+                    if (isset($feedback['markernumber'])) {
+                        $ismarkercol = true;
+                        // Get the mark record or create it if it doesn't exist.
+                        $marker = $this->assignment->get_marker_number($user->id, $feedback['markernumber'] - 1);
+                        if ($marker && $marker->id == $USER->id) {
+                            $isourmarkercol = true;
+                        }
+                    }
                     $plugin = $feedback['plugin'];
                     $field = $feedback['field'];
                     $newvalue = $feedback['value'];
                     $description = $feedback['description'];
                     $oldvalue = '';
+
+                    // If it's a marker column but not ours, skip it.
+                    if ($ismarkercol && !$isourmarkercol) {
+                        continue;
+                    }
+
+                    // If it's our marker column, get the mark id to use.
+                    if ($ismarkercol && $isourmarkercol) {
+                        $grade = $this->assignment->get_user_grade($record->user->id, true);
+                        $usermark = $this->assignment->get_mark($grade->id, $USER->id, true);
+                        $markid = $usermark->id;
+                    }
+
                     if ($usergrade) {
-                        $oldvalue = $plugin->get_editor_text($field, $usergrade->id);
+                        $oldvalue = $plugin->get_editor_text($field, $usergrade->id, $markid);
                         if (empty($oldvalue)) {
                             $oldvalue = '';
                         }
                     }
+
                     if ($newvalue != $oldvalue) {
+
                         $updatefeedbackcount += 1;
                         $grade = $this->assignment->get_user_grade($record->user->id, true);
                         $this->assignment->notify_grade_modified($grade);
-                        $plugin->set_editor_text($field, $newvalue, $grade->id);
+
+                        $plugin->set_editor_text($field, $newvalue, $grade->id, $markid);
 
                         // If this is the gradebook comments plugin - post an update to the gradebook.
                         if (($plugin->get_subtype() . '_' . $plugin->get_type()) == $gradebookplugin) {
@@ -227,6 +290,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                                                   get_string('importgrades', 'assignfeedback_offline')));
         $strparams = [
             'gradeupdatescount' => $updategradecount,
+            'markupdatescount' => $updatemarkcount,
             'feedbackupdatescount' => $updatefeedbackcount,
         ];
         $o .= $renderer->box(get_string('updatedgrades', 'assignfeedback_offline', $strparams));
