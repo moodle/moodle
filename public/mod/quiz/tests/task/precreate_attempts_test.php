@@ -146,6 +146,22 @@ final class precreate_attempts_test extends \advanced_testcase {
             'grade' => 100.0,
             'sumgrades' => 2,
         ]);
+        // Generate a quiz with teacher's preview and timeopen 11 hours in the future.
+        $quizwithpreviewonly = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'timeopen' => time() + 39600,
+            'questionsperpage' => 0,
+            'grade' => 100.0,
+            'sumgrades' => 2,
+        ]);
+        // Generate a quiz with student attempt, teacher's preview and timeopen 11 hours in the future.
+        $quizwithpreviewandattempt = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'timeopen' => time() + 39600,
+            'questionsperpage' => 0,
+            'grade' => 100.0,
+            'sumgrades' => 2,
+        ]);
         // Add questions to the quizzes.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $this->add_two_regular_questions($questiongenerator, $quizinfuture);
@@ -153,14 +169,20 @@ final class precreate_attempts_test extends \advanced_testcase {
         $this->add_two_regular_questions($questiongenerator, $quizinpast);
         $this->add_two_regular_questions($questiongenerator, $quizwithattempts);
         $this->add_two_regular_questions($questiongenerator, $quizinprecreateperiod);
+        $this->add_two_regular_questions($questiongenerator, $quizwithpreviewonly);
+        $this->add_two_regular_questions($questiongenerator, $quizwithpreviewandattempt);
 
         // Create attempts for one student on quiz 5.
-        $quiz5settings = quiz_settings::create($quizwithattempts->id);
-        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quiz5settings->get_context());
-        $quba->set_preferred_behaviour($quiz5settings->get_quiz()->preferredbehaviour);
-        $attempt = quiz_create_attempt($quiz5settings, 1, false, time(), false, $student1->id);
-        quiz_start_new_attempt($quiz5settings, $quba, $attempt, 1, time());
-        quiz_attempt_save_started($quiz5settings, $quba, $attempt);
+        $this->add_quiz_attempt($quizwithattempts->id, $student1->id, false);
+
+        // Create attempts for a teacher.
+        $this->add_quiz_attempt($quizwithpreviewonly->id, $teacher->id, true);
+
+        // Create attempts for a teacher in another quiz.
+        $this->add_quiz_attempt($quizwithpreviewandattempt->id, $teacher->id, true);
+
+        // Create attempts for student2.
+        $this->add_quiz_attempt($quizwithpreviewandattempt->id, $student2->id, false);
 
         $this->assertEmpty(
             quiz_get_user_attempts(
@@ -215,7 +237,7 @@ final class precreate_attempts_test extends \advanced_testcase {
         $task->execute();
         $log = ob_get_clean();
 
-        $this->assertMatchesRegularExpression('/Found 1 quizzes to create attempts for/', $log);
+        $this->assertMatchesRegularExpression('/Found 2 quizzes to create attempts for/', $log);
         $this->assertDoesNotMatchRegularExpression("/Creating attempts for {$quizinfuture->name}/", $log);
         $this->assertDoesNotMatchRegularExpression("/Creating attempts for {$quiznotimeopen->name}/", $log);
         $this->assertDoesNotMatchRegularExpression("/Creating attempts for {$quizinpast->name}/", $log);
@@ -223,7 +245,9 @@ final class precreate_attempts_test extends \advanced_testcase {
         $this->assertMatchesRegularExpression("/Creating attempts for {$quizinprecreateperiod->name}/", $log);
         $this->assertMatchesRegularExpression("/Created 2 attempts for {$quizinprecreateperiod->name}/", $log);
         $this->assertDoesNotMatchRegularExpression("/Creating attempts for {$quizwithoutquestions->name}/", $log);
-        $this->assertMatchesRegularExpression('/Created attempts for 1 quizzes./', $log);
+        $this->assertMatchesRegularExpression("/Created 2 attempts for {$quizwithpreviewonly->name}/", $log);
+        $this->assertDoesNotMatchRegularExpression("/Creating attempts for {$quizwithpreviewandattempt->name}/", $log);
+        $this->assertMatchesRegularExpression('/Created attempts for 2 quizzes./', $log);
 
         // Students should have no attempts on quizzes that didn't meet criteria for pre-creation.
         $this->assertEmpty(
@@ -442,5 +466,22 @@ final class precreate_attempts_test extends \advanced_testcase {
         $this->assertDoesNotMatchRegularExpression("/Creating attempts for {$quiznoprecreate->name}/", $log);
         $this->assertMatchesRegularExpression("/Creating attempts for {$quizprecreatenull->name}/", $log);
         $this->assertMatchesRegularExpression('/Created attempts for 1 quizzes./', $log);
+    }
+
+    /**
+     * Helper to add a quiz attempt.
+     *
+     * @param int $quizid
+     * @param int $userid
+     * @param bool $ispreview
+     * @return void
+     */
+    protected function add_quiz_attempt($quizid, $userid, bool $ispreview) {
+        $quiz5settings = quiz_settings::create($quizid);
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quiz5settings->get_context());
+        $quba->set_preferred_behaviour($quiz5settings->get_quiz()->preferredbehaviour);
+        $attempt = quiz_create_attempt($quiz5settings, 1, false, time(), $ispreview, $userid);
+        quiz_start_new_attempt($quiz5settings, $quba, $attempt, 1, time());
+        quiz_attempt_save_started($quiz5settings, $quba, $attempt);
     }
 }

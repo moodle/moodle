@@ -75,6 +75,7 @@ class precreate_attempts extends scheduled_task {
               FROM {quiz} q
               JOIN {quiz_slots} qs ON q.id = qs.quizid
          LEFT JOIN {quiz_attempts} qa ON q.id = qa.quiz
+                   AND qa.preview = 0
              WHERE qa.id IS NULL
                    AND q.timeopen > :now
                    AND q.timeopen < :threshold
