@@ -599,4 +599,28 @@ class tool_uploadcourse_helper {
         }
         return $id;
     }
+
+    /**
+     * Validates that custom field headers do not contain spaces.
+     *
+     * Throws a moodle_exception if any custom field header contains spaces.
+     *
+     * @param array $columns The CSV header columns to validate.
+     * @throws moodle_exception If a custom field header contains spaces.
+     */
+    public static function validate_customfield_headers($columns) {
+        foreach ($columns as $header) {
+            if (preg_match('/^customfield\s*_(.+)$/', $header)) {
+                if (preg_match('/\s/', $header)) {
+		    throw new \moodle_exception(
+			'customfieldheaderwithspaces',
+			'tool_uploadcourse',
+			'',
+			$header
+			);
+                }
+            }
+        }
+    }
+
 }

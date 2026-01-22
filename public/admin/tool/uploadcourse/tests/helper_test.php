@@ -494,4 +494,27 @@ final class helper_test extends \advanced_testcase {
             'configdata' => $configdata,
         ]);
     }
+
+    public function test_validate_customfield_headers_with_spaces() {
+    $this->expectException(\moodle_exception::class);
+    $columns = ['shortname', 'fullname', 'customfield _hours'];
+    tool_uploadcourse_helper::validate_customfield_headers($columns);
+    }
+
+    public function test_validate_customfield_headers_without_spaces() {
+        $columns = ['shortname', 'fullname', 'customfield_hours'];
+        tool_uploadcourse_helper::validate_customfield_headers($columns);
+        $this->assertTrue(true);
+    }
+
+    public function test_non_customfield_columns_are_ignored() {
+        tool_uploadcourse_helper::validate_customfield_headers(['shortname', 'fullname']);
+        $this->assertTrue(true);
+    }
+
+    public function test_customfield_header_with_leading_space() {
+        $this->expectException(\moodle_exception::class);
+        tool_uploadcourse_helper::validate_customfield_headers([' customfield_hours']);
+    }
+
 }

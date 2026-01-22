@@ -386,5 +386,6 @@ class tool_uploadcourse_processor {
         } else if (count($this->columns) < 2) {
             throw new moodle_exception('csvfewcolumns', 'error');
         }
+	\tool_uploadcourse_helper::validate_customfield_headers($this->columns);
     }
 }

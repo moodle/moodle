@@ -133,6 +133,7 @@ $string['updatewithdataonly'] = 'Update with CSV data only';
 $string['uploadcourse:use'] = 'Use upload course tool';
 $string['uploadcourses'] = 'Upload courses';
 $string['uploadcourses_help'] = 'Courses may be uploaded via text file. The format of the file should be as follows:
+$string['customfieldheaderwithspaces'] = "Custom field header '{$a}' contains spaces. Please remove spaces from custom field headers.";
 
 * Each line of the file contains one record
 * Each record is a series of data separated by the selected separator

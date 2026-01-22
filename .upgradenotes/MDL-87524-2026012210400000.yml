@@ -1,0 +1,4 @@
+issue: MDL-87524
+type: improvement
+summary: >
+  The course upload tool now validates custom field headers and will reject CSV files with spaces in custom field header names. Previously, such fields were silently ignored.
