@@ -890,7 +890,7 @@ final class backup_test extends \advanced_testcase {
         quiz_add_quiz_question($questionv2->id, $testdata->quiz);
         $structure1->update_slot_version($structure1->get_slot_id_for_slot(1), 2);
 
-        $backupid = $this->backup_course($testdata->course);
+        $backupid = $this->backup_course_module($testdata->quiz->cmid);
 
         question_delete_question($questionv4->id); // Actually deleted.
         question_delete_question($questionv3->id); // Actually deleted.
@@ -1006,7 +1006,7 @@ final class backup_test extends \advanced_testcase {
         quiz_add_quiz_question($questionv2->id, $testdata->quiz);
         $structure1->update_slot_version($structure1->get_slot_id_for_slot(1), 2);
 
-        $backupid = $this->backup_course($testdata->course);
+        $backupid = $this->backup_course_module($testdata->quiz->cmid);
 
         question_delete_question($questionv4->id); // Actually deleted.
         question_delete_question($questionv3->id); // Actually deleted.
