@@ -124,7 +124,7 @@ export default class {
             sectioninfo: false, // Init to false to prevent mustache recursion loops.
         };
         if (cminfo.hasdelegatedsection) {
-            const sectioninfo = state.section.get(cminfo.delegatesectionid);
+            const sectioninfo = state.section.get(cminfo.delegatesectionid) ?? {};
             cm.sectioninfo = this.section(state, sectioninfo);
         }
         return cm;
@@ -279,20 +279,22 @@ export default class {
         if (cmInfo.hasdelegatedsection) {
             const items = [];
             const delegatedsection = state.section.get(cmInfo.delegatesectionid);
-            items.push({
-                type: 'section',
-                id: delegatedsection.id,
-                url: delegatedsection.sectionurl
-            });
-            const delegatedCmlist = delegatedsection.cmlist ?? [];
-            delegatedCmlist.forEach(cmid => {
-                const cmInfo = state.cm.get(cmid);
+            if (delegatedsection) {
                 items.push({
-                    type: 'cm',
-                    id: cmInfo.id,
-                    url: cmInfo.url
+                    type: 'section',
+                    id: delegatedsection.id,
+                    url: delegatedsection.sectionurl
                 });
-            });
+                const delegatedCmlist = delegatedsection.cmlist ?? [];
+                delegatedCmlist.forEach(cmid => {
+                    const cmInfo = state.cm.get(cmid);
+                    items.push({
+                        type: 'cm',
+                        id: cmInfo.id,
+                        url: cmInfo.url
+                    });
+                });
+            }
             return items;
         }
 
