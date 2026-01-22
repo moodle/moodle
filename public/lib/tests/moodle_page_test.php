@@ -888,6 +888,47 @@ final class moodle_page_test extends \advanced_testcase {
         $page->set_show_course_index(false);
         $this->assertFalse($page->get_show_course_index());
     }
+
+    /**
+     * Test that the AI visibility hint defaults to true.
+     */
+    public function test_ai_visibility_hint_defaults_to_true(): void {
+        $page = new moodle_page();
+
+        $this->assertTrue(
+            $page->get_ai_visibility_hint(),
+            'AI visibility hint should default to true.'
+        );
+    }
+
+    /**
+     * Test that the AI visibility hint can be disabled via the setter.
+     */
+    public function test_ai_visibility_hint_can_be_set_to_false(): void {
+        $page = new moodle_page();
+
+        $page->set_ai_visibility_hint(false);
+
+        $this->assertFalse(
+            $page->get_ai_visibility_hint(),
+            'AI visibility hint should be false after being explicitly disabled.'
+        );
+    }
+
+    /**
+     * Test that the AI visibility hint can be re-enabled via the setter.
+     */
+    public function test_ai_visibility_hint_can_be_set_to_true(): void {
+        $page = new moodle_page();
+
+        $page->set_ai_visibility_hint(false);
+        $page->set_ai_visibility_hint(true);
+
+        $this->assertTrue(
+            $page->get_ai_visibility_hint(),
+            'AI visibility hint should be true after being re-enabled.'
+        );
+    }
 }
 
 /**

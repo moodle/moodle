@@ -438,6 +438,16 @@ class moodle_page {
     protected bool $_showcourseindex = true;
 
     /**
+     * Hint indicating whether AI-related UI elements should be shown on this page.
+     *
+     * This value is advisory only. Individual AI placements are responsible
+     * for deciding whether to respect this hint.
+     *
+     * @var bool
+     */
+    protected bool $aivisibilityhint = true;
+
+    /**
      * Force the settings menu to be displayed on this page. This will only force the
      * settings menu on an activity / resource page that is being displayed on a theme that
      * uses a settings menu.
@@ -2487,5 +2497,33 @@ class moodle_page {
      */
     public function get_show_course_index(): bool {
         return $this->_showcourseindex;
+    }
+
+    /**
+     * Sets a hint indicating whether AI-related UI elements should be shown
+     * on this page.
+     *
+     * This hint is not enforced globally and does not guarantee that AI UI
+     * elements will be hidden or shown. Each AI placement must explicitly
+     * check this value.
+     *
+     * @param bool $visible
+     * @return void
+     */
+    public function set_ai_visibility_hint(bool $visible): void {
+        $this->aivisibilityhint = $visible;
+    }
+
+    /**
+     * Returns a hint indicating whether AI-related UI elements should be shown
+     * on this page.
+     *
+     * This value does not enforce visibility. AI placements may choose whether
+     * and how to respect this hint.
+     *
+     * @return bool
+     */
+    public function get_ai_visibility_hint(): bool {
+        return $this->aivisibilityhint;
     }
 }
