@@ -17,6 +17,8 @@
 namespace core_course\task;
 
 use core\task\manager;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use stdClass;
 
 /**
@@ -26,8 +28,9 @@ use stdClass;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_course\task\reset_course
  */
+#[CoversClass(reset_course::class)]
+#[CoversMethod(\core\task\stored_progress_task_trait::class, 'initialise_stored_progress')]
 final class reset_course_test extends \advanced_testcase {
     /**
      * Skip processing if the course does not exist.
@@ -126,5 +129,41 @@ final class reset_course_test extends \advanced_testcase {
         // Get the task ID from the database.
         $taskid = reset_course::get_taskid_for_course($course->id);
         $this->assertEquals($queuedid, $taskid);
+    }
+
+    /**
+     * Initialising progress for an existing running task does not replace its progress record.
+     *
+     */
+    public function test_initialise_stored_progress_preserves_running_progress(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $clock = $this->mock_clock_with_frozen();
+        $resetdata = (object) ['id' => 123];
+
+        $task = reset_course::create($resetdata);
+        $taskid = manager::queue_adhoc_task($task, true);
+        $this->assertIsInt($taskid);
+        $task->set_id($taskid);
+        $task->initialise_stored_progress();
+
+        $progress = $DB->get_record('stored_progress', [], '*', MUST_EXIST);
+        $DB->update_record('stored_progress', [
+            'id' => $progress->id,
+            'timestart' => $clock->time(),
+            'percentcompleted' => 50,
+        ]);
+        $DB->set_field('task_adhoc', 'timestarted', $clock->time(), ['id' => $taskid]);
+
+        $duplicatetask = reset_course::create($resetdata);
+        $duplicateid = manager::queue_adhoc_task($duplicatetask, true);
+        $this->assertEquals($taskid, $duplicateid);
+        $duplicatetask->set_id($duplicateid);
+        $duplicatetask->initialise_stored_progress();
+
+        $updatedprogress = $DB->get_record('stored_progress', [], '*', MUST_EXIST);
+        $this->assertEquals($progress->id, $updatedprogress->id);
+        $this->assertEquals(50, $updatedprogress->percentcompleted);
     }
 }

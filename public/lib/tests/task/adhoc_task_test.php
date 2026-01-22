@@ -703,45 +703,52 @@ final class adhoc_task_test extends \advanced_testcase {
         // Schedule same adhoc task with different custom data.
         $task = new adhoc_test_task();
         $task->set_custom_data(['courseid' => 1]);
-        $this->assertNotEmpty(manager::queue_adhoc_task($task, true));
+        $taskid3a = manager::queue_adhoc_task($task, true);
+        $this->assertNotEmpty($taskid3a);
         $this->assertEquals(3, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
 
         // Schedule same adhoc task with same custom data.
         $task = new adhoc_test_task();
         $task->set_custom_data(['courseid' => 1]);
-        $this->assertEmpty(manager::queue_adhoc_task($task, true));
+        $taskid3b = manager::queue_adhoc_task($task, true);
+        $this->assertEquals($taskid3a, $taskid3b);
         $this->assertEquals(3, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
 
         // Schedule same adhoc task with same custom data and a user.
         $task = new adhoc_test_task();
         $task->set_custom_data(['courseid' => 1]);
         $task->set_userid($user->id);
-        $this->assertNotEmpty(manager::queue_adhoc_task($task, true));
+        $taskid4 = manager::queue_adhoc_task($task, true);
+        $this->assertNotEmpty($taskid4);
         $this->assertEquals(4, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
 
         // Schedule same adhoc task without custom data.
         // Note: This task was created earlier.
         $task = new adhoc_test_task();
-        $this->assertNotEmpty(manager::queue_adhoc_task($task, true));
+        $taskid5a = manager::queue_adhoc_task($task, true);
+        $this->assertNotEmpty($taskid5a);
         $this->assertEquals(5, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
 
         // Schedule same adhoc task without custom data (again).
         $task5 = new adhoc_test_task();
-        $this->assertEmpty(manager::queue_adhoc_task($task5, true));
+        $taskid5b = manager::queue_adhoc_task($task5, true);
+        $this->assertEquals($taskid5a, $taskid5b);
         $this->assertEquals(5, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
 
         // Schedule same adhoc task without custom data but with a userid.
         $task6 = new adhoc_test_task();
         $user = \core_user::get_user_by_username('admin');
         $task6->set_userid($user->id);
-        $this->assertNotEmpty(manager::queue_adhoc_task($task6, true));
+        $taskid6a = manager::queue_adhoc_task($task6, true);
+        $this->assertNotEmpty($taskid6a);
         $this->assertEquals(6, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
 
         // Schedule same adhoc task again without custom data but with a userid.
         $task6 = new adhoc_test_task();
         $user = \core_user::get_user_by_username('admin');
         $task6->set_userid($user->id);
-        $this->assertEmpty(manager::queue_adhoc_task($task6, true));
+        $taskid6b = manager::queue_adhoc_task($task6, true);
+        $this->assertEquals($taskid6a, $taskid6b);
         $this->assertEquals(6, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
     }
 
