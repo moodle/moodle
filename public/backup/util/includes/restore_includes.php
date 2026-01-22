@@ -39,6 +39,7 @@ require_once($CFG->dirroot . '/backup/util/helper/backup_anonymizer_helper.class
 require_once($CFG->dirroot . '/backup/util/helper/backup_file_manager.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/copy_helper.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_prechecks_helper.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/restore_questionbanks_parser_processor.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_moodlexml_parser_processor.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_inforef_parser_processor.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_users_parser_processor.class.php');
