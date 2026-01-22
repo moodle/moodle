@@ -160,4 +160,23 @@ class environment {
 
         return !empty($CFG->debugdeveloper);
     }
+
+    /**
+     * Ensure that the Router is correctly configured.
+     *
+     * @param \environment_results $result
+     * @return \environment_results|null
+     */
+    public static function check_router_configuration(\environment_results $result): ?\environment_results {
+        global $CFG;
+
+        if (empty($CFG->routerconfigured)) {
+            // The router has not been marked as configured.
+            $result->setInfo('Router not configured');
+            $result->setFeedbackStr('routernotconfigured');
+            return $result;
+        }
+
+        return null;
+    }
 }

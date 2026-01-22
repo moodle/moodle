@@ -97,6 +97,7 @@ class manager {
             new environment\environment(),
             new environment\upgradecheck(),
             new environment\antivirus(),
+            new environment\router(),
         ];
 
         // Any plugin can add status checks to this report by implementing a callback

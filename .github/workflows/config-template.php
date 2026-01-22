@@ -58,6 +58,8 @@ $CFG->pathtophp = getenv('pathtophp');
 $CFG->phpunit_dataroot  = realpath(dirname(__DIR__)) . '/phpunitdata';
 $CFG->phpunit_prefix = 't_';
 
+$CFG->routerconfigured = true;
+
 define('TEST_EXTERNAL_FILES_HTTP_URL', 'http://localhost:8080');
 define('TEST_EXTERNAL_FILES_HTTPS_URL', 'http://localhost:8080');
 

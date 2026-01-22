@@ -1,0 +1,11 @@
+issueNumber: MDL-87648
+notes:
+  core:
+    - message: >
+        The Checks API now supports multiple results being returned for a single
+        instance of `\core\check\check`.
+
+
+        To support this a new `get_results(): array;` method has been created
+        which returns an array of `\core\check\result` objects.
+      type: improved
