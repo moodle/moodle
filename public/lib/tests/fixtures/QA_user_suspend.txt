@@ -1,0 +1,3 @@
+username,course1,role1,enrolstatus1,course2,role2,enrolstatus2,course3,role3,enrolstatus3
+learner1,C1,student,0,C2,student,0,C3,student,1
+learner2,C1,student,0,C2,student,1,C3,student,0
