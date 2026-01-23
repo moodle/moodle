@@ -118,15 +118,11 @@ class field_config_form extends \core_form\dynamic_form {
         $field = $this->get_field();
         $handler = $field->get_handler();
 
-        // Check the shortname is specified and is unique for this component-area-itemid combination.
+        // Check the shortname is specified and is unique for this component-area-itemid combination and shared fields.
         if (!preg_match('/^[a-z0-9_]+$/', $data['shortname'])) {
             // Check allowed pattern (numbers, letters and underscore).
             $errors['shortname'] = get_string('invalidshortnameerror', 'core_customfield');
-        } else if ($DB->record_exists_sql('SELECT 1 FROM {customfield_field} f ' .
-            'JOIN {customfield_category} c ON c.id = f.categoryid ' .
-            'WHERE f.shortname = ? AND f.id <> ? AND c.component = ? AND c.area = ? AND c.itemid = ?',
-            [$data['shortname'], $data['id'],
-                $handler->get_component(), $handler->get_area(), $handler->get_itemid()])) {
+        } else if (!\core_customfield\api::is_shortname_unique($handler, $data['shortname'], $field->get('id'))) {
             $errors['shortname'] = get_string('formfieldcheckshortname', 'core_customfield');
         }
 

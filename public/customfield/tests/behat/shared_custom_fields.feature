@@ -15,6 +15,37 @@ Feature: Create shared categories and fields
     And I wait until the page is ready
     And I wait until "Other fields" "text" does not exist
 
+  Scenario: Shared custom field short name must be unique across all instance fields
+    Given the following "custom field categories" exist:
+      | name                | component        | area   | itemid |
+      | Category for course | core_course      | course | 0      |
+      | Category for cohort | core_cohort      | cohort | 0      |
+      | Shared category     | core_customfield | shared | 0      |
+    And the following "custom fields" exist:
+      | name    | category            | type   | shortname | description |
+      | Field 1 | Category for course | text   | f1        | d1          |
+      | Field 2 | Category for cohort | text   | f2        | d2          |
+      | Field 3 | Shared category     | text   | shf1      | shd1        |
+    When I log in as "admin"
+    And I navigate to "Custom fields > Shared custom fields" in site administration
+    And I click on "Add a new custom field" "link"
+    And I click on "Short text" "link"
+    And I set the following fields to these values:
+      | Name        | Test field |
+      | Short name  | shf1       |
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
+    Then I should see "Short name already exists" in the "Short name" "form_row"
+    And I set the field "Short name" to "f1"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
+    Then I should see "Short name already exists" in the "Short name" "form_row"
+    And I set the field "Short name" to "f2"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
+    Then I should see "Short name already exists" in the "Short name" "form_row"
+    And I set the field "Short name" to "f3"
+    And I click on "Save changes" "button" in the "Adding a new Short text" "dialogue"
+    And I should see "Add a new category"
+    And I should see "f3"
+
   Scenario: Shared customfields are displayed in other entities
     Given the following "custom field categories" exist:
       | name               | component        | area   | itemid |
