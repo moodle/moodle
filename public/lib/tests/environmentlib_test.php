@@ -65,7 +65,11 @@ final class environmentlib_test extends \advanced_testcase {
      * @param environment_results $result
      */
     public function test_environment($result): void {
-        $sslmessages = ['ssl/tls configuration not supported', 'invalid ssl/tls configuration'];
+        $optionaltests = [
+            'ssl/tls configuration not supported',
+            'invalid ssl/tls configuration',
+            'Router not configured',
+        ];
 
         if (
             $result->part === 'php_setting'
@@ -99,7 +103,7 @@ final class environmentlib_test extends \advanced_testcase {
                 && $result->getLevel() === 'optional'
                 && $result->getStatus() === false
         ) {
-            if (in_array($result->info, $sslmessages)) {
+            if (in_array($result->info, $optionaltests)) {
                 $this->markTestSkipped('Up-to-date TLS libraries are not necessary for unit testing.');
             }
             if ($result->info === 'php not 64 bits' && PHP_INT_SIZE == 4) {
@@ -107,6 +111,7 @@ final class environmentlib_test extends \advanced_testcase {
                 $this->markTestSkipped('64-bit check is not necessary for unit testing.');
             }
         }
+
         $info = "{$result->part}:{$result->info}";
         $this->assertTrue($result->getStatus(), "Problem detected in environment ($info), fix all warnings and errors!");
     }
