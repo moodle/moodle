@@ -36,19 +36,18 @@ $string['chooselanguagesub'] = 'Iltimos, o‘rnatish uchun tilni tanlang. Ushbu 
 $string['clialreadyconfigured'] = 'config.php konfiguratsiya fayli allaqachon mavjud. Iltimos, ushbu sayt uchun Moodle’ni o‘rnatish uchun admin/cli/install_database.php faylidan foydalaning.';
 $string['clialreadyinstalled'] = 'config.php konfiguratsiya fayli allaqachon mavjud. Iltimos, ushbu sayt uchun Moodle’ni yangilash uchun admin/cli/install_database.php faylidan foydalaning.';
 $string['cliinstallheader'] = 'Moodle {$a} buyruq qatori o‘rnatish dasturi';
-$string['clitablesexist'] = 'Ma’lumotlar bazasi jadvallari allaqachon mavjud; CLI orqali o‘rnatish davom ettirilmaydi.';
-$string['databasehost'] = 'Ma’lumotlar bazasi serveri';
+$string['clitablesexist'] = 'Ma’lumotlar bazasi jadvallari allaqachon mavjud; CLI orqali o‘rnatish davom ettirib bo‘lmaydi.';
+$string['databasehost'] = 'Ma’lumotlar bazasi mezboni';
 $string['databasename'] = 'Ma’lumotlar bazasi nomi';
 $string['databasetypehead'] = 'Ma’lumotlar bazasi drayverini tanlang';
 $string['dataroot'] = 'Ma’lumotlar katalogi';
-$string['datarootpermission'] = 'Ma’lumotlar kataloglariga ruxsatlar';
+$string['datarootpermission'] = 'Data kataloglari uchun ruxsatlar';
 $string['dbprefix'] = 'Jadvallar prefiksi';
 $string['dirroot'] = 'Moodle katalogi';
 $string['environmenthead'] = 'Muhitingiz tekshirilmoqda ...';
-$string['environmentsub2'] = 'Har bir Moodle versiyasi uchun minimal PHP talabi va bir qator majburiy PHP kengaytmalari mavjud.
-To‘liq muhit tekshiruvi har bir o‘rnatish va yangilashdan oldin amalga oshiriladi.
-Agar yangi versiyani qanday o‘rnatish yoki PHP kengaytmalarini yoqish bo‘yicha ma’lumotga ega bo‘lmasangiz, server administratoriga murojaat qiling.';
-$string['errorsinenvironment'] = 'Muhit tekshiruvi muvaffaqiyatsiz bo‘ldi!';
+$string['environmentsub2'] = 'Har bir Moodle versiyasi minimal PHP versiyasi talabi va majburiy PHP kengaytmalariga ega.
+To‘liq muhit tekshiruvi har bir o‘rnatish yoki yangilashdan oldin amalga oshiriladi. Agar yangi versiyani o‘rnatish yoki PHP kengaytmalarini yoqishni bilmasangiz, server administratoriga murojaat qiling.';
+$string['errorsinenvironment'] = 'Muhitni tekshirish muvaffaqiyatsiz tugadi!';
 $string['installation'] = 'O\'rnatish';
 $string['langdownloaderror'] = 'Afsuski, "{$a}" tili yuklab bo‘lmadi. O‘rnatish jarayoni ingliz tilida davom ettiriladi.';
 $string['paths'] = 'O‘tkazib yuborishlar';
