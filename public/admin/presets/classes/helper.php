@@ -287,7 +287,7 @@ class helper {
         static::add_item($presetid, 'pushcourseratingstouserplans', '1', 'core_competency');
         static::add_item($presetid, 'showdataretentionsummary', '1', 'tool_dataprivacy');
         static::add_item($presetid, 'forum_maxattachments', '9');
-        static::add_item($presetid, 'guestloginbutton', '1');
+        static::add_item($presetid, 'guestloginbutton', '0');
 
         // Modules: Enable database, external tool (lti), IMS content package (imscp), lesson, SCORM, wiki, workshop.
         static::add_plugin($presetid, 'mod', 'data', true);

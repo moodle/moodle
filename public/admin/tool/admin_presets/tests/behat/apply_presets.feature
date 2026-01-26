@@ -55,7 +55,6 @@ Feature: I can apply presets
     And I should see "Flickr" in the "Setting changes" "table"
     And I should see "Global search" in the "Setting changes" "table"
     And I should see "Guest access" in the "Setting changes" "table"
-    And I should see "Guest login button" in the "Setting changes" "table"
     And I should see "IMS content package" in the "Setting changes" "table"
     And I should see "Immediate feedback with CBM" in the "Setting changes" "table"
     And I should see "Latest badges" in the "Setting changes" "table"

@@ -7,6 +7,7 @@ Feature: Guest and not logged users could see the option to add new post or repl
   Background:
     Given the following config values are set as admin:
       | enrol_guest | Yes |
+      | guestloginbutton | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher  | Teacher   | 1        | teacher@example.com |
