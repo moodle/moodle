@@ -32,7 +32,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "Previous activity with completion"
     And I press "Save and return to course"
     Then I should see "Not available unless: The previous activity with completion" in the "region-main" "region"
@@ -58,7 +58,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "Previous activity with completion"
     And I press "Save and return to course"
     Then I should see "Not available unless: The previous activity with completion" in the "region-main" "region"
@@ -83,7 +83,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "Previous activity with completion"
     And I press "Save and return to course"
     Then I should see "Not available unless: The previous activity with completion" in the "region-main" "region"
@@ -112,7 +112,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "Previous activity with completion"
     And I press "Save changes"
     Then I should see "Not available unless: The previous activity with completion" in the "region-main" "region"
@@ -138,7 +138,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     Then the "Activity or resource" select box should not contain "Previous activity with completion"
 
     # Set Page2 restriction to Previous Activity with completion and delete Page1.
@@ -148,7 +148,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "Previous activity with completion"
     And I press "Save and return to course"
     Then I should see "Not available unless: The previous activity with completion" in the "region-main" "region"
@@ -170,7 +170,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "Previous activity with completion"
     And I press "Save changes"
     Then I should see "Not available unless: The previous activity with completion" in the "region-main" "region"
@@ -184,7 +184,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "Previous activity with completion"
     And I press "Save changes"
     And I should see "Not available unless: The previous activity with completion" in the "region-main" "region"
