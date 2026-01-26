@@ -116,7 +116,12 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_manageauths());
     $temp->add(new admin_setting_heading('manageauthscommonheading', new lang_string('commonsettings', 'admin'), ''));
     $temp->add(new admin_setting_special_registerauth());
-    $temp->add(new admin_setting_configcheckbox('authloginviaemail', new lang_string('authloginviaemail', 'core_auth'), new lang_string('authloginviaemail_desc', 'core_auth'), 0));
+    $temp->add(new admin_setting_configcheckbox(
+        'authloginviaemail',
+        new lang_string('authloginviaemail', 'core_auth'),
+        new lang_string('authloginviaemail_desc', 'core_auth'),
+        1,
+    ));
     $temp->add(new admin_setting_configcheckbox('allowaccountssameemail',
                     new lang_string('allowaccountssameemail', 'core_auth'),
                     new lang_string('allowaccountssameemail_desc', 'core_auth'), 0));

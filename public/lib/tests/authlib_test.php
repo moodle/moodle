@@ -152,6 +152,8 @@ final class authlib_test extends \advanced_testcase {
 
         // Test login via email
         $reason = null;
+        // Explicitly disable email login for this test (MDL-87527: default is now enabled).
+        set_config('authloginviaemail', 0);
         $this->assertEmpty($CFG->authloginviaemail);
         $sink = $this->redirectEvents();
         $result = authenticate_user_login('email1@example.com', 'password1', false, $reason);
