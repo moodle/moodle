@@ -187,7 +187,13 @@ if (($launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW)) {
         "geolocation $ltiallow; " .
         "midi $ltiallow; " .
         "encrypted-media $ltiallow; " .
-        "autoplay $ltiallow";
+        "autoplay $ltiallow;";
+
+    // Only allow local-network-access if it is enabled in config.php.
+    if (isset($CFG->ltiallowlocalnetwork) && $CFG->ltiallowlocalnetwork) {
+        $attributes['allow'] .= " local-network-access $ltiallow;";
+    }
+
     $attributes['allowfullscreen'] = 1;
     $iframehtml = html_writer::tag('iframe', $content, $attributes);
     echo $iframehtml;
