@@ -16,7 +16,6 @@
 
 namespace customfield_number\task;
 
-use coding_exception;
 use core\task\adhoc_task;
 use core_customfield\field_controller;
 use customfield_number\provider_base;
@@ -58,9 +57,15 @@ class recalculate extends adhoc_task {
 
         // Schedule recalculate for each field, checking component, area and the presense of provider.
         $instanceid = clean_param($customdata->instanceid ?? null, PARAM_INT);
+        $component = clean_param($customdata->component ?? 'core_course', PARAM_COMPONENT);
+        $area = clean_param($customdata->area ?? 'course', PARAM_AREA);
+        $itemid = clean_param($customdata->itemid ?? 0, PARAM_INT);
         foreach ($fields as $field) {
-            if ($this->field_is_scheduled($field) && ($provider = provider_base::instance($field))) {
-                $provider->recalculate($instanceid ?: null);
+            if ($this->field_is_scheduled($field)) {
+                $provider = provider_base::instance($field);
+                if ($provider?->is_available()) {
+                    $provider->recalculate($instanceid ?: null, $component, $area, $itemid);
+                }
             }
         }
     }
@@ -87,11 +92,26 @@ class recalculate extends adhoc_task {
      *
      * @param int $fieldid in of the custom field
      * @param int|null $instanceid if specified, only recalculates for the given instance id
+     * @param string|null $component the component related to the instance
+     * @param string|null $area the area related to the instance
+     * @param int $itemid
      * @return void
      */
-    public static function schedule_for_field(int $fieldid, ?int $instanceid = null) {
+    public static function schedule_for_field(
+        int $fieldid,
+        ?int $instanceid = null,
+        ?string $component = null,
+        ?string $area = null,
+        int $itemid = 0,
+    ) {
         $task = new static();
-        $task->set_custom_data(['fieldid' => $fieldid, 'instanceid' => $instanceid]);
+        $task->set_custom_data([
+            'fieldid' => $fieldid,
+            'instanceid' => $instanceid,
+            'component' => $component,
+            'area' => $area,
+            'itemid' => $itemid,
+        ]);
         \core\task\manager::queue_adhoc_task($task, true);
     }
 
@@ -102,16 +122,23 @@ class recalculate extends adhoc_task {
      * @param string|null $component
      * @param string|null $area
      * @param int|null $instanceid
+     * @param int $itemid
      * @return void
      */
-    public static function schedule_for_fieldtype(string $fieldtype, ?string $component = null, ?string $area = null,
-            ?int $instanceid = null) {
+    public static function schedule_for_fieldtype(
+        string $fieldtype,
+        ?string $component = null,
+        ?string $area = null,
+        ?int $instanceid = null,
+        int $itemid = 0,
+    ) {
         $task = new static();
         $task->set_custom_data([
             'fieldtype' => $fieldtype,
             'component' => $component,
             'area' => $area,
             'instanceid' => $instanceid,
+            'itemid' => $itemid,
         ]);
         \core\task\manager::queue_adhoc_task($task, true);
     }

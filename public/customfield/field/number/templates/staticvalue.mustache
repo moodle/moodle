@@ -20,7 +20,10 @@
     {
         "value": 5,
         "instanceid": 4,
-        "fieldid": 5
+        "fieldid": 5,
+        "component": "core_course",
+        "area": "course",
+        "itemid": 0
     }
 }}
 <div class="customfield_number-recalculate-wrapper d-flex mt-2" data-fieldtype="wrapper">
@@ -28,7 +31,9 @@
     {{#instanceid}}
         <div class="customfield_number-recalculate-link ms-2">
             <a href="#" data-customfield_number-action="recalculate" data-fieldtype="link"
-                data-fieldid="{{fieldid}}" data-instanceid="{{instanceid}}">{{#pix}}t/reload, core{{/pix}}{{#str}} update, core {{/str}}</a>
+               data-fieldid="{{fieldid}}" data-instanceid="{{instanceid}}"
+               data-component="{{component}}" data-area="{{area}}" data-itemid="{{itemid}}"
+            >{{#pix}}t/reload, core{{/pix}}{{#str}} update, core {{/str}}</a>
         </div>
     {{/instanceid}}
 </div>
