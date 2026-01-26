@@ -8,6 +8,32 @@
 
   For more information see [MDL-86916](https://tracker.moodle.org/browse/MDL-86916)
 
+### Removed
+
+- - The following functions have been removed from `public/mod/quiz/deprecatedlib.php`:
+    - `quiz_has_question_use()`
+    - `quiz_update_sumgrades()`
+    - `quiz_update_all_attempt_sumgrades()`
+    - `quiz_update_all_final_grades()`
+    - `quiz_set_grade()`
+    - `quiz_save_best_grade()`
+    - `quiz_calculate_best_grade()`
+    - `quiz_calculate_best_attempt()`
+    - `quiz_delete_override()`
+    - `quiz_delete_all_overrides()`
+    - `quiz_add_random_questions()`
+  - The following functions have been removed from `public/mod/quiz/classes/output/renderer.php`:
+    - `\mod_quiz\output\renderer::no_questions_message()`
+    - `\mod_quiz\output\renderer::render_mod_quiz_links_to_other_attempts()`
+    - `\mod_quiz\output\renderer::render_quiz_nav_question_button()`
+    - `\mod_quiz\output\renderer::render_quiz_nav_section_heading()`
+  - The following functions have been removed from `public/mod/quiz/classes/local/structure/slot_random.php`:
+    - `\mod_quiz\local\structure\slot_random::set_tags()`
+    - `\mod_quiz\local\structure\slot_random::set_tags_by_id()`
+  - The `\mod_quiz\structure::is_display_number_customised()` has been removed from `public/mod/quiz/classes/structure.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Added

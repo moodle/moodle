@@ -19,6 +19,12 @@
 - Added the `set_visibility` method to the `core_courseformat\sectionactions` class. To optimize performance, this method does not return the list of affected resources, avoiding unnecessary database queries since the return value is unused.
 
   For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
+- A new restricted page has been created using routing for users to access the activity information. Only the activities with visible restrictions will be available.
+
+  For more information see [MDL-87283](https://tracker.moodle.org/browse/MDL-87283)
+- Public course_section_cm_unavailable_error_message() function has been changed to return the same message for all restricted activities.
+
+  For more information see [MDL-87283](https://tracker.moodle.org/browse/MDL-87283)
 
 ### Changed
 
@@ -40,6 +46,12 @@
 - The `set_section_visible` function has been deprecated and should no longer be used. Please consider using the equivalent method, `set_visibility`, in `core_courseformat\local\sectionactions` instead.
 
   For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
+
+### Removed
+
+- - The `\core_courseformat\output\local\content\section\availability::availability_info()` has been removed from `public/course/format/classes/output/local/content/section/availability.php`. - The `\core_courseformat\base::get_section_number()` has been removed from `public/course/format/classes/base.php`. - The `\core_courseformat\stateactions::section_move()` has been removed from `public/course/format/classes/stateactions.php`. - The `\core_courseformat\output\section_renderer\core_course_renderer::render_activity_information()` has been removed from `public/course/renderer.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
 
 ## 5.1
 

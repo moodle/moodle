@@ -1,5 +1,13 @@
 # mod_wiki Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- The `\mod_wiki_renderer::wiki_info()` has been removed from `public/mod/wiki/renderer.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Added

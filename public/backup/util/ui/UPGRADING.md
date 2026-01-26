@@ -1,5 +1,15 @@
 # core_backup (subsystem) Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The following methods have been removed from `public/backup/controller/base_controller.class.php`:
+    - `\base_controller::set_copy()`
+    - `\base_controller::get_copy()`
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.0
 
 ### Added

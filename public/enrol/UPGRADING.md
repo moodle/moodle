@@ -1,5 +1,13 @@
 # core_enrol (subsystem / plugintype) Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The `\enrol_plugin::update_communication()` has been removed from `public/lib/enrollib.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.0
 
 ### Added

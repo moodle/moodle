@@ -1,5 +1,13 @@
 # core_calendar (subsystem) Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The `calendar_add_event_metadata()` has been removed from `public/calendar/deprecatedlib.php`. - The `\core_external\external_api\calendar_information::prepare_for_view()` has been removed from `public/calendar/lib.php`. - The `\core_calendar_renderer::event()` has been removed from `public/calendar/renderer.php`.
+
+  For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
 ## 5.0
 
 ### Deprecated

@@ -7,6 +7,23 @@
 - In Moodle 4.2, the legacy Gradebook base widget from 4.1 has been removed and replaced with a simpler class-based system due to a breaking change and excessive complexity in the old pattern. The files `core/grades/basewidget.js` and templates in `grade/templates/searchwidget/` have been deleted, with minimal expected third-party impact.
 
   For more information see [MDL-78325](https://tracker.moodle.org/browse/MDL-78325)
+- - The `\grade_report::get_lang_string()` has been removed from `public/grade/report/lib.php`. - The following methods have been removed from `public/grade/tests/behat/behat_grade.php`:
+    - `\behat_grade::select_in_gradebook_tabs()`
+    - `\behat_grade::select_in_gradebook_navigation_selector()`
+  - The following methods have been removed from `public/grade/lib.php`:
+    - `\grade_structure::get_element_icon()`
+    - `\grade_structure::get_element_type_string()`
+    - `\grade_structure::get_element_header()`
+    - `\grade_structure::get_activity_link()`
+    - `\grade_structure::get_grade_analysis_icon()`
+    - `\grade_structure::get_reset_icon()`
+    - `\grade_structure::get_edit_icon()`
+    - `\grade_structure::get_hiding_icon()`
+    - `\grade_structure::get_locking_icon()`
+    - `\grade_structure::get_calculation_icon()`
+    - `\grade_helper::get_lang_string()`
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
 
 ## 5.1
 

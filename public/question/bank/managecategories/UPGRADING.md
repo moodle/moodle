@@ -1,5 +1,19 @@
 # qbank_managecategories Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The following methods have been removed from `public/question/bank/managecategories/classes/category_condition.php`:
+    - `\qbank_managecategories\category_condition::display_options()`
+    - `\qbank_managecategories\category_condition::display_options_adv()`
+    - `\qbank_managecategories\category_condition::display_category_form()`
+    - `\qbank_managecategories\category_condition::print_choose_category_message()`
+    - `\qbank_managecategories\category_condition::get_current_category()`
+    - `\qbank_managecategories\category_condition::print_category_info()`
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 4.5
 
 ### Changed

@@ -1,5 +1,13 @@
 # core_files (subsystem) Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- The following methods have been removed from `public/lib/filestorage/file_storage.php`: - `\file_storage::content_exists()` - `\file_storage::try_content_recovery()`
+
+  For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
 ## 5.0
 
 ### Added

@@ -1,5 +1,13 @@
 # tool_mfa Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- The `\tool_mfa\output\renderer::setup_factor()` has been removed from `public/admin/tool/mfa/classes/output/renderer.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.0
 
 ### Added

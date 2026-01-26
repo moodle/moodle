@@ -14,6 +14,16 @@
 
   For more information see [MDL-85621](https://tracker.moodle.org/browse/MDL-85621)
 
+### Removed
+
+- - The following methods have been removed from `public/badges/renderer.php`:
+    - `\core_badges_renderer::print_badge_table_actions()`
+    - `\core_badges_renderer::render_badge_collection()`
+    - `\core_badges_renderer::render_badge_management()`
+    - `\core_badges_renderer::render_badge_recipients()`
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Added

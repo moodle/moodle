@@ -1,5 +1,13 @@
 # theme_boost Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The `public/theme/boost/templates/flat_navigation.mustache` file has been removed. - The `public/theme/boost/templates/nav-drawer.mustache` file has been removed.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Added

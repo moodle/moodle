@@ -1,5 +1,13 @@
 # gradereport_singleview Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The `public/grade/report/singleview/classes/local/screen/select.php` file has been removed.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Added

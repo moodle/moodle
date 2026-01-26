@@ -1,5 +1,25 @@
 # mod_data Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The following functions have been removed from `public/mod/data/deprecatedlib.php`:
+    - `data_print_template()`
+    - `data_preset_name()`
+    - `data_get_available_presets()`
+    - `data_get_available_site_presets()`
+    - `data_delete_site_preset()`
+    - `data_presets_save()`
+    - `data_presets_generate_xml()`
+    - `data_presets_export()`
+    - `data_user_can_delete_preset()`
+    - `data_view()`
+    - `is_directory_a_preset()`
+  - The `\mod_data_renderer::import_setting_mappings()` has been removed from `public/mod/data/renderer.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Added

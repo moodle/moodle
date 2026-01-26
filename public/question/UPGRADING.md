@@ -8,6 +8,15 @@
 
   For more information see [MDL-86798](https://tracker.moodle.org/browse/MDL-86798)
 
+### Removed
+
+- - The following methods have been removed from `public/question/renderer.php`:
+    - `\core_question_bank_renderer::render_category_condition()`
+    - `\core_question_bank_renderer::render_category_condition_advanced()`
+    - `\core_question_bank_renderer::render_hidden_condition_advanced()`
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ### Fixed
 
 - In order to prevent re-use of question version numbers after a version is deleted, the `nextversion` column was added to `question_bank_entries`. This serves as a counter incremented each time a version is created.

@@ -1,5 +1,18 @@
 # core_form (subsystem) Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The following methods have been removed from `public/lib/antivirus/clamav/classes/scanner.php`:
+    - `\antivirus_clamav\scanner::scan_data_execute_unixsocket()`
+    - `\antivirus_clamav\scanner::scan_file_execute_unixsocket()`
+  - The following methods have been removed from `public/lib/form/classes/filetypes_util.php`:
+    - `\core_form\filetypes_util::is_whitelisted()`
+    - `\core_form\filetypes_util::get_not_whitelisted()`
+
+  For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
 ## 5.0
 
 ### Changed

@@ -8,6 +8,14 @@
 
   For more information see [MDL-86607](https://tracker.moodle.org/browse/MDL-86607)
 
+### Removed
+
+- - The following files have been removed:
+    - `public/mod/feedback/edit_form.php`.
+    - `public/mod/feedback/use_templ_form.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Added

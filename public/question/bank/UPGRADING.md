@@ -1,5 +1,15 @@
 # qbank (plugin type) Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The following methods have been removed from `public/question/engine/bank.php`:
+    - `\question_finder::get_questions_from_categories_with_usage_counts()`
+    - `\question_finder::get_questions_from_categories_and_tags_with_usage_counts()`
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.0
 
 ### Removed

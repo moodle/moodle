@@ -1,5 +1,13 @@
 # report_log Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- The `public/report/log/graph.php` has been removed.
+
+  For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
 ## 5.0
 
 ### Removed

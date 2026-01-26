@@ -32,6 +32,18 @@
 
   For more information see [MDL-86860](https://tracker.moodle.org/browse/MDL-86860)
 
+### Removed
+
+- - The `\core_course_bulk_activity_completion_renderer::edit_default_completion()` has been removed from `public/course/classes/output/bulk_activity_completion_renderer.php`. - The `\core_course\reportbuilder\local\formatters\enrolment::enrolment_name()` has been removed from `public/course/classes/reportbuilder/local/formatters/enrolment.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+- The `replaceSectionActionItem()` has been removed from `public/course/amd/src/actions.js`.
+
+  For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+- - The `\core_courseformat\output\section_renderer\core_course_renderer::course_category_tree_category()` has removed in `public/course/renderer.php`.
+
+  For more information see [MDL-87427](https://tracker.moodle.org/browse/MDL-87427)
+
 ## 5.1
 
 ### Added

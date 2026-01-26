@@ -1,5 +1,13 @@
 # mod_assign Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` constant has been removed from the `public/mod/assign/locallib.php`. - The `public/mod/assign/renderer.php` file has been removed.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Added

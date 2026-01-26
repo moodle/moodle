@@ -1,5 +1,21 @@
 # mod_choice Upgrade notes
 
+## 5.2dev
+
+### Changed
+
+- Undo the deletion of public/mod/choice/classes/event/answer_updated.php file.
+
+  For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
+### Removed
+
+- - The following files have been removed:
+    - `public/mod/choice/classes/event/answer_submitted.php`
+    - `public/mod/choice/classes/event/answer_updated.php`
+
+  For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
 ## 5.1
 
 ### Added

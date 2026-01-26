@@ -1,5 +1,13 @@
 # mod_folder Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The `\mod_folder_renderer::htmllize_tree()` has been removed from `public/mod/folder/renderer.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Deprecated

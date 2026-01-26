@@ -1,5 +1,17 @@
 # gradereport_grader Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The `\behat_gradereport_grader::get_grade_item_id()` has been removed from `public/grade/report/grader/tests/behat/behat_gradereport_grader.php`. - The following methods have been removed from `public/grade/report/grader/lib.php`:
+    - `\grade_report_grader::get_left_icons_row()`
+    - `\grade_report_grader::get_right_icons_row()`
+    - `\grade_report_grader::get_right_avg_row()`
+    - `\grade_report_grader::get_icons()`
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Removed

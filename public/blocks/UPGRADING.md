@@ -1,5 +1,13 @@
 # core_block (subsystem / plugintype) Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- Removed block_activity_modules from Moodle 5.2.
+
+  For more information see [MDL-86832](https://tracker.moodle.org/browse/MDL-86832)
+
 ## 5.1
 
 ### Changed

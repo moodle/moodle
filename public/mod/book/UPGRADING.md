@@ -1,5 +1,13 @@
 # mod_book Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- The `book_get_nav_classes()` has been removed from `public/mod/book/deprecatedlib.php`.
+
+  For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
 ## 5.1
 
 ### Deprecated

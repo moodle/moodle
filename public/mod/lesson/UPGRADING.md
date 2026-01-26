@@ -1,5 +1,15 @@
 # mod_lesson Upgrade notes
 
+## 5.2dev
+
+### Removed
+
+- - The following files have been removed:
+    - `public/mod/lesson/classes/event/highscore_added.php`
+    - `public/mod/lesson/classes/event/highscores_viewed.php`
+
+  For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
 ## 5.1
 
 ### Added
