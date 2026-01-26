@@ -89,13 +89,13 @@ Feature: edit_availability
     And I should see "Date" in the "Restrict access" "fieldset"
     And ".availability-item .availability-eye img" "css_element" should be visible
     And ".availability-item .availability-delete img" "css_element" should be visible
-    And the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Displayed if student"
+    And the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Item name displayed"
 
     # Toggle the eye icon.
     When I click on ".availability-item .availability-eye img" "css_element"
     Then the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Hidden entirely"
     When I click on ".availability-item .availability-eye img" "css_element"
-    Then the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Displayed if student"
+    Then the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Item name displayed"
 
     # Click the delete button.
     When I click on ".availability-item .availability-delete img" "css_element"

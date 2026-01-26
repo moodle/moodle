@@ -173,7 +173,7 @@ Feature: Display and choose from the available activities in course
     And I should see "1 results found" in the "Add an activity or resource" "dialogue"
     And I should see "Database" in the "Add an activity or resource" "dialogue"
     # Test help.
-    And I set the field "search" to "Define the information each entry should include, such as text, dates, images, or links."
+    And I set the field "search" to "Define the information each entry should include, such as text, dates, images, or links"
     And I should see "1 results found" in the "Add an activity or resource" "dialogue"
     And I should see "Database" in the "Add an activity or resource" "dialogue"
     # Test tip.
