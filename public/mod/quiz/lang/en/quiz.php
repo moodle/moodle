@@ -568,18 +568,18 @@ $string['missingitemtypename'] = 'Missing name';
 $string['missingquestion'] = 'This question no longer seems to exist';
 $string['modulename'] = 'Quiz';
 $string['modulename_help'] = '###### Key features
-- Use different question types, such as multiple choice, true/false, matching, essay, and more
-- Grade most question types automatically, with manual grading for essays
-- Make each attempt unique by randomising questions and shuffling answer choices.
-- Set time limits to complete a quiz, and decide when students can see hints, feedback, or correct answers
-- Save and reuse questions across different Quiz activities and courses
-- Create secure online exam environments
+* Use different question types, such as multiple choice, true/false, matching, essay, and more
+* Grade most question types automatically, with manual grading for essays
+* Make each attempt unique by randomising questions and shuffling answer choices
+* Set time limits to complete a quiz, and decide when students can see hints, feedback, or correct answers
+* Save and reuse questions across different quiz activities and courses
+* Create secure online exam environments
 
 ###### Ways to use it
-- Deliver a timed exam with automatic grading
-- Provide a practice test with questions randomly drawn from a pool
-- Create a self-assessment with detailed feedback for each answer
-- Run short weekly quizzes to check understanding of topics';
+* Deliver a timed exam with automatic grading
+* Provide a practice test with questions randomly drawn from a pool
+* Create a self-assessment with detailed feedback for each answer
+* Run short weekly quizzes to check understanding of topics';
 $string['modulename_link'] = 'mod/quiz/view';
 $string['modulename_summary'] = 'Create a variety of assessments, from simple multiple-choice tests to complex exams with detailed feedback.';
 $string['modulename_tip'] = 'Create your questions in the question bank first to reuse them easily in multiple quizzes.';
@@ -1138,7 +1138,7 @@ $string['upgradingveryoldquizattempts'] = 'Upgrading very old quiz attempts: {$a
 $string['url'] = 'URL';
 $string['usedcategorymoved'] = 'This category has been preserved and moved to the site level because it is a published category still in use by other courses.';
 $string['useroverrides'] = 'User overrides';
-$string['usersnone'] = 'There are no users enrolled in this course.';
+$string['usersnone'] = 'There are no users enrolled in this course or no users can access the quiz.';
 $string['validate'] = 'Validate';
 $string['viewallanswers'] = 'View {$a} quiz attempts';
 $string['viewallreports'] = 'View reports for {$a} attempts';

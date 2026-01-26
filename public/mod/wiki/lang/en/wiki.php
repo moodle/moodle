@@ -140,15 +140,15 @@ $string['missingpages'] = 'Pages without content';
 $string['modified'] = 'Modified';
 $string['modulename'] = 'Wiki';
 $string['modulename_help'] = '###### Key features
-- Add text, images, links, and media to pages
-- Set up a collaborative wiki for the whole class, or individual wikis for each student
-- View each student\'s contributions with a full page history
+* Add text, images, links, and media to pages
+* Set up a collaborative wiki for the whole class, or individual wikis for each student
+* View each student\'s contributions with a full page history
 
 ###### Ways to use it
-- Build shared lecture notes or study guides
-- Develop a group project where you can track the contributions of each student
-- Have students create a story or case study together, with each person adding sections
-- Have each student keep a personal wiki to track drafts, notes, or planning';
+* Build shared lecture notes or study guides
+* Develop a group project where you can track the contributions of each student
+* Have students create a story or case study together, with each person adding sections
+* Have each student keep a personal wiki to track drafts, notes, or planning';
 $string['modulename_link'] = 'mod/wiki/view';
 $string['modulename_summary'] = 'Allow students to create and edit a collection of web pages collaboratively or individually.';
 $string['modulenameplural'] = 'Wikis';

@@ -76,12 +76,12 @@ $string['legacyfilesdone'] = 'Finished';
 $string['modifieddate'] = 'Modified {$a}';
 $string['modulename'] = 'File';
 $string['modulename_help'] = '###### Key features
-- Upload any type of digital file for students to view or download
+* Upload any type of digital file for students to view or download
 
 ###### Ways to use it
-- Upload an audio recording of a guest speaker
-- Share lecture notes in different formats, such as PDF, Word documents, or PPT
-- Provide a reading handout for a session';
+* Upload an audio recording of a guest speaker
+* Share lecture notes in different formats, such as Portable Document Format (PDF), Word documents, or PowerPoint presentation (PPT)
+* Provide a reading handout for a session';
 $string['modulename_link'] = 'mod/resource/view';
 $string['modulename_summary'] = 'Share a file for students to view or download.';
 $string['modulename_tip'] = 'Make sure students have the necessary software to open and view the files you upload.';

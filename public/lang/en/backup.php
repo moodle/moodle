@@ -36,7 +36,7 @@ $string['asyncemailenable'] = 'Enable notifications';
 $string['asyncemailenabledetail'] = 'If enabled, users will receive a notification when an asynchronous backup or restore completes.';
 $string['asyncmessagebody'] = 'Notification';
 $string['asyncmessagebodydetail'] = 'Notification to send when an asynchronous backup or restore completes.';
-$string['asyncmessagebodydefault'] = 'Your {operation} (ID: {backupid}) has completed successfully. You can access it here: <a href="{link}">{link}</a>.';
+$string['asyncmessagebodydefault'] = '{operation} (ID: {backupid}) completed. Access it here: <a href="{link}">{link}</a>.';
 $string['asyncmessagesubject'] = 'Subject';
 $string['asyncmessagesubjectdetail'] = 'Notification subject';
 $string['asyncmessagesubjectdefault'] = 'Moodle {operation} completed successfully';

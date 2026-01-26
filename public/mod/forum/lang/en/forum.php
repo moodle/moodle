@@ -370,8 +370,8 @@ $string['indicator:socialbreadth_help'] = 'This indicator is based on the social
 $string['indicator:socialbreadthdef'] = 'Forum social';
 $string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Forum activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
-$string['showimmediately'] = 'Show other replies immediately after posting';
-$string['showimmediately_help'] = 'This will show the replies of other participants before reaching the maximum editing time ({$a} minutes). Participants could still change their post during this time.';
+$string['showimmediately'] = 'Show replies immediately after posting';
+$string['showimmediately_help'] = 'Show replies from other participants with no editing time delay ({$a} minutes). A participant can still change their post during this time.';
 $string['starredonly'] = 'Search starred discussions only';
 $string['indexoutoftotal'] = '{$a->index} out of {$a->total}';
 $string['inforum'] = 'in {$a}';
@@ -434,15 +434,15 @@ $string['modenestedv2'] = 'Display replies in experimental nested form';
 $string['modethreaded'] = 'Display replies in threaded form';
 $string['modulename'] = 'Forum';
 $string['modulename_help'] = '###### Key features
-- Include text, images, or files in forum posts
-- Allow participants to subscribe to forums so they receive notifications of new posts
-- Grade a student\'s overall participation across the forum, or grade individual posts separately
+* Include text, images, or files in forum posts
+* Allow participants to subscribe to forums so they receive notifications of new posts
+* Grade a student\'s overall participation across the forum, or grade individual posts separately
 
 ###### Ways to use it
-- Run a Q&A board where students ask and answer each other\'s questions
-- Host discussions linked to course readings
-- Create a social space where students get to know each other
-- Continue a class debate after a face-to-face session';
+* Run a question and answer board where students ask and answer each other\'s questions
+* Host discussions linked to course readings
+* Create a social space where students get to know each other
+* Continue a class debate after a face-to-face session';
 $string['modulename_link'] = 'mod/forum/view';
 $string['modulename_summary'] = 'Create online discussions where participants can post and reply.';
 $string['modulenameplural'] = 'Forums';

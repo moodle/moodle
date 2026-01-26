@@ -45,14 +45,14 @@ $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
 $string['modulename'] = 'Page';
 $string['modulename_help'] = '###### Key features
-- Add text, lists, tables, images, and other embedded media such as videos, maps, charts, or presentations
-- Edit and update content quickly
-- Present information that students can read online, without needing to download a file
+* Add text, lists, tables, images, and other embedded media such as videos, maps, charts, or presentations
+* Edit and update content quickly
+* Present information that students can read online, without needing to download a file
 
 ###### Ways to use it
-- Present a course syllabus or unit overview
-- Create a list of reading and reference materials
-- Maintain an up-to-date list of office hours or an ongoing project schedule.';
+* Present a course syllabus or unit overview
+* Create a list of reading and reference materials
+* Maintain an up-to-date list of office hours or an ongoing project schedule';
 $string['modulename_link'] = 'mod/page/view';
 $string['modulename_summary'] = 'Create a page resource to display content.';
 $string['modulename_tip'] = 'For long, structured content, use a Book instead.';

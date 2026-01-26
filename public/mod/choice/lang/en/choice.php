@@ -90,14 +90,14 @@ $string['limitno'] = 'Limit {no}';
 $string['limitanswers'] = 'Limit the number of responses allowed';
 $string['modulename'] = 'Choice';
 $string['modulename_help'] = '###### Key features
-- Limit how many people can choose each option
-- Publish results or keep them hidden
-- Make results anonymous or show student names
+* Limit how many people can choose each option
+* Publish results or keep them hidden
+* Make results anonymous or show student names
 
 ###### Ways to use it
-- Let students select a seminar group or project team
-- Ask students to vote for a preferred date or topic
-- Check the understanding of a concept with a quick, anonymous question';
+* Let students select a seminar group or project team
+* Ask students to vote for a preferred date or topic
+* Check the understanding of a concept with a quick, anonymous question';
 $string['modulename_link'] = 'mod/choice/view';
 $string['modulename_summary'] = 'Run a single-question poll and let students choose from a list of options.';
 $string['modulenameplural'] = 'Choices';

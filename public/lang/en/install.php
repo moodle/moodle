@@ -216,7 +216,7 @@ $string['sessionautostarthelp'] = '<p>Moodle requires session support and will n
 
 <p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
 $string['upgradingqtypeplugin'] = 'Upgrading question/type plugin';
-$string['webserverconfigproblemdescription'] = 'Your web server is not configured to prevent access to files outside the /public directory. Please refer to <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> for details on how to configure your web server. Once reconfigured, please <a href="{$a}">revisit the web root</a>.';
+$string['webserverconfigproblemdescription'] = 'Your web server is not configured to prevent access to files outside the /public directory. For details of how to configure your web server correctly, see the documentation <a href="https://docs.moodle.org/en/Upgrading#Code_directories_restructure">Upgrading - Code directories restructure</a>. Once reconfigured, <a href="{$a}">revisit the web root</a>.';
 $string['webservernotconfigured'] = 'Web server not configured';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and

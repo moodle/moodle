@@ -26,15 +26,15 @@ defined('MOODLE_INTERNAL') || die;
 
 $string['modulename'] = 'Book';
 $string['modulename_help'] = '###### Key features
-- Add text, lists, tables, images, video, and other embedded media
-- Use chapters and subchapters to break up long content
-- Include a table of contents so students can navigate easily
-- Provide a print-friendly (downloadable) version of the book
+* Add text, lists, tables, images, video, and other embedded media
+* Use chapters and subchapters to break up long content
+* Include a table of contents so students can navigate easily
+* Provide a print-friendly (downloadable) version of the book
 
 ###### Ways to use it
-- Create a structured course handbook with policies or schedules
-- Organise lecture notes into chapters and subchapters, so it feels like an online textbook.
-- Create a tutorial with step-by-step instructions spread over pages';
+* Create a structured course handbook with policies or schedules
+* Organise lecture notes into chapters and subchapters, so it feels like an online textbook
+* Create a tutorial with step-by-step instructions spread over pages';
 $string['modulename_link'] = 'mod/book/view';
 $string['modulename_summary'] = 'Organise and display content in a book-like format.';
 $string['modulenameplural'] = 'Books';

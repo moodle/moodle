@@ -60,11 +60,11 @@ $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Soci
 $string['invalidurl'] = 'Entered URL is invalid';
 $string['modulename'] = 'URL';
 $string['modulename_help'] = '###### Key features
-- Link to any online content
+* Link to any online content
 
 ###### Ways to use it
-- Link to an online article
-- Link to a video hosted on an external platform';
+* Link to an online article
+* Link to a video hosted on an external platform';
 $string['modulename_link'] = 'mod/url/view';
 $string['modulename_summary'] = 'Add a link to an external web page or online file.';
 $string['modulenameplural'] = 'URLs';
