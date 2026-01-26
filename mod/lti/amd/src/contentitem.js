@@ -42,13 +42,15 @@ define(
              * Init function.
              *
              * @param {string} url The URL for the content item selection.
+             * @param {string} toolUrl The URL of the LTI tool.
              * @param {object} postData The data to be sent for the content item selection request.
              * @param {Function} cb The callback to run once the content item has been processed.
              */
-            init: function(url, postData, cb) {
+            init: function(url, toolUrl, postData, cb) {
                 doneCallback = cb;
                 var context = {
                     url: url,
+                    toolUrl: toolUrl,
                     postData: postData
                 };
                 var bodyPromise = templates.render('mod_lti/contentitem', context);
