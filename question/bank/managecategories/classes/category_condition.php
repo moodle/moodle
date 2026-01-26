@@ -311,6 +311,7 @@ class category_condition extends condition {
         array $filtercondition,
         stdClass $setreference,
         restore_questions_activity_structure_step $restorestep,
+        bool $originalbankinbackup = false,
     ): array {
         global $DB;
         // Map category id used for category filter condition and corresponding context id.
@@ -325,13 +326,12 @@ class category_condition extends condition {
             !$restorestep->get_task()->is_samesite()
             || !$questionscontext
             || !$DB->record_exists('question_categories', ['id' => $oldcategoryid])
+            || $originalbankinbackup
             || $setreference->usingcontextid == $setreference->questionscontextid
             || !has_capability('moodle/question:useall', $questionscontext)
         ) {
             $newcategoryid = $restorestep->get_mappingid('question_category', $oldcategoryid);
             $filtercondition['filter']['category']['values'][0] = $newcategoryid;
-            // Make sure the questions context matches the new category.
-            $setreference->questionscontextid = $DB->get_field('question_categories', 'contextid', ['id' => $newcategoryid]);
         }
 
         $filtercondition['cat'] = implode(

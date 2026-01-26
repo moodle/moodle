@@ -6510,6 +6510,12 @@ trait restore_question_set_reference_data_trait {
         $data->usingcontextid = $this->get_mappingid('context', $data->usingcontextid);
         $data->itemid = $this->get_new_parentid('quiz_question_instance');
 
+        $originalbankinbackup = (bool) restore_dbops::get_backup_ids_record(
+            $this->get_restoreid(),
+            'questionbank',
+            $data->questionscontextid,
+        );
+
         if ($context = $this->get_mappingid('context', $data->questionscontextid)) {
             $data->questionscontextid = $context;
         } else {
@@ -6538,7 +6544,7 @@ trait restore_question_set_reference_data_trait {
             $qbankfeature = new $qbankfeatureclass();
             $filters = $qbankfeature->get_question_filters();
             foreach ($filters as $filter) {
-                $filtercondition = $filter->restore_filtercondition($filtercondition, $data, $this);
+                $filtercondition = $filter->restore_filtercondition($filtercondition, $data, $this, $originalbankinbackup);
             }
         }
 

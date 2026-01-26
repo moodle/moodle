@@ -78,6 +78,9 @@ class restore_root_task extends restore_task {
         // Unconditionally, load create all the needed outcomes
         $this->add_step(new restore_outcomes_structure_step('create_scales', 'outcomes.xml'));
 
+        // If we haven't preloaded information, load all the question banks to temp_ids_table.
+        $this->add_step(new \core\backup\restore_load_questionbanks('load_questionbanks'));
+
         // If we haven't preloaded information, load all the needed categories and questions (reduced) to temp_ids_table
         $this->add_step(new restore_load_categories_and_questions('load_categories_and_questions'));
 
