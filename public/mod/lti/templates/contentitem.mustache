@@ -32,6 +32,7 @@
     Example context (json):
     {
         "url": "/",
+        "toolUrl": "http://external.tool.url",
         "postData": {
             "id": "1",
             "course": "1",
@@ -48,7 +49,7 @@
         <p id="tool-loading-failed" class="hidden">{{#str}} register_warning, mod_lti {{/str}}</p>
     </div>
     <div class="contentitem-page">
-        <iframe id="contentitem-page-iframe" name="contentitem-page-iframe" class="hidden" tabindex="0">
+        <iframe id="contentitem-page-iframe" name="contentitem-page-iframe" class="hidden" tabindex="0" {{#toolUrl}}allow="local-network-access {{.}}" {{/toolUrl}}>
         </iframe>
         <form target="contentitem-page-iframe" action="{{url}}" id="contentitem-request-form" method="post">
             <input type="hidden" name="id" value="{{postData.id}}" />
