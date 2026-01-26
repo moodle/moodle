@@ -35,6 +35,7 @@ notes:
           - `fix_column_width()`
           - `stripHTML()`
           - `M.form.init_smartselect()`
+      type: removed
   core_form:
     - message: >-
         - The following methods have been removed from `public/lib/antivirus/clamav/classes/scanner.php`:

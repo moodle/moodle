@@ -229,12 +229,6 @@ notes:
   core_mnet:
     - message: The `\mnet_peer::get_public_key()` has been removed from `public/mnet/peer.php`.
       type: removed
-  report_eventlist:
-    - message: >-
-        - The following methods have been removed from `public/report/eventlist/classes/list_generator.php`:
-          - `\report_eventlist_list_generator::get_core_events_list()`
-          - `\report_eventlist_list_generator::get_non_core_event_list()`
-      type: removed
   core_badges:
     - message: >-
         - The following methods have been removed from `public/badges/renderer.php`:
