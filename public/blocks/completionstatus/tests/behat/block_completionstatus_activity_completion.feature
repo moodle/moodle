@@ -115,7 +115,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "task A"
     And I press "Save and return to course"
     And I log out
@@ -164,7 +164,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I set the field "Activity or resource" to "task A"
     And I press "Save and return to course"
     When I am on the "Course 1" course page logged in as student1
@@ -237,7 +237,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I click on "Add restriction..." "button"
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
     And I set the field "Activity or resource" to "task A"
-    And I click on "Displayed if student doesn't meet this condition • Click to hide" "link"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
     And I press "Save changes"
     And I log out
     When I am on the "Course 1" course page logged in as student1
