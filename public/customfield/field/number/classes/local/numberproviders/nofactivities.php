@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace customfield_number\local\numberproviders;
 
 use context_course;
+use core\exception\coding_exception;
 use core_plugin_manager;
 use customfield_number\data_controller;
 use customfield_number\provider_base;
@@ -80,9 +81,21 @@ class nofactivities extends provider_base {
      * Recalculate the number of activities in the course.
      *
      * @param int|null $instanceid
+     * @param string $component
+     * @param string $area
+     * @param int $itemid
      */
-    public function recalculate(?int $instanceid = null): void {
+    public function recalculate(
+        ?int $instanceid = null,
+        string $component = 'core_course',
+        string $area = 'course',
+        int $itemid = 0,
+    ): void {
         global $DB;
+        if ($component !== 'core_course' || $area !== 'course') {
+            throw new coding_exception('Can only calculate number of activities for courses');
+        }
+
         $types = $this->field->get_configdata_property('activitytypes');
         $displaywhenzero = $this->field->get_configdata_property('displaywhenzero');
 

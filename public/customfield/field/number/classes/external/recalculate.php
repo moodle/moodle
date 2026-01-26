@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace customfield_number\external;
 
 use core\exception\invalid_parameter_exception;
+use core_customfield\handler;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_api;
@@ -44,6 +45,9 @@ class recalculate extends external_api {
         return new external_function_parameters([
             'fieldid' => new external_value(PARAM_INT, 'Field id', VALUE_REQUIRED),
             'instanceid' => new external_value(PARAM_INT, 'Instance id', VALUE_REQUIRED),
+            'component' => new external_value(PARAM_COMPONENT, 'Component related to instance id', VALUE_DEFAULT, 'core_course'),
+            'area' => new external_value(PARAM_AREA, 'Area related to instance id', VALUE_DEFAULT, 'course'),
+            'itemid' => new external_value(PARAM_INT, 'Item id', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -52,16 +56,31 @@ class recalculate extends external_api {
      *
      * @param int $fieldid
      * @param int $instanceid
+     * @param string $component
+     * @param string $area
+     * @param int $itemid
      * @return array
      */
-    public static function execute(int $fieldid, int $instanceid): array {
+    public static function execute(
+        int $fieldid,
+        int $instanceid,
+        string $component = 'core_course',
+        string $area = 'course',
+        int $itemid = 0,
+    ): array {
         // Parameter validation.
         [
             'fieldid' => $fieldid,
             'instanceid' => $instanceid,
+            'component' => $component,
+            'area' => $area,
+            'itemid' => $itemid,
         ] = self::validate_parameters(self::execute_parameters(), [
             'fieldid' => $fieldid,
             'instanceid' => $instanceid,
+            'component' => $component,
+            'area' => $area,
+            'itemid' => $itemid,
         ]);
 
         // Access validation.
@@ -70,19 +89,25 @@ class recalculate extends external_api {
 
         $field = \core_customfield\field_controller::create($fieldid);
         $provider = provider_base::instance($field);
-        if (!$provider) {
+        if (!$provider || !$provider->is_available()) {
             throw new invalid_parameter_exception('Invalid parameter');
         }
 
-        $handler = $field->get_handler();
+        $handler = handler::get_handler($component, $area, $itemid);
         if (!$handler->can_edit($field, $instanceid)) {
             throw new \moodle_exception('nopermissions', '', '', get_string('update'));
         }
 
-        $provider->recalculate($instanceid);
+        $provider->recalculate($instanceid, $component, $area, $itemid);
 
-        $data = $handler->get_instance_fields_data(
-            [$fieldid => $field], $instanceid)[$fieldid];
+        $datas = \core_customfield\api::get_instance_fields_data(
+            fields: [$fieldid => $field],
+            instanceid: $instanceid,
+            component: $component,
+            area: $area,
+            itemid: $itemid,
+        );
+        $data = $datas[$fieldid];
 
         return ['value' => $data->export_value()];
     }
