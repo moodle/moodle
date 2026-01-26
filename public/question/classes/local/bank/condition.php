@@ -249,12 +249,14 @@ abstract class condition {
      * @param array $filtercondition The origin $filtercondition with preceding conversions applied.
      * @param stdClass $setreference The set reference record from the backup.
      * @param restore_questions_activity_structure_step $restorestep The restore step.
+     * @param bool $originalbankinbackup Was the original question bank these questions belonged to included in the backup?
      * @return array the modified $filtercondition
      */
     public function restore_filtercondition(
         array $filtercondition,
         stdClass $setreference,
         restore_questions_activity_structure_step $restorestep,
+        bool $originalbankinbackup = false,
     ): array {
         return $filtercondition;
     }
