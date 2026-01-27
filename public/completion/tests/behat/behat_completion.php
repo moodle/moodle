@@ -302,7 +302,7 @@ class behat_completion extends behat_base {
      * @param string $activityname The activity name.
      */
     public function the_manual_completion_button_for_activity_should_be_disabled(string $activityname): void {
-        $selector = "div[data-region='activity-information'][data-activityname='$activityname'] button";
+        $selector = "button[data-activityname='$activityname'][data-completion='manual']";
 
         $params = [$selector, "css_element"];
         $this->execute("behat_general::the_element_should_be_disabled", $params);
@@ -315,7 +315,7 @@ class behat_completion extends behat_base {
      * @param string $activityname The activity name.
      */
     public function the_manual_completion_button_for_activity_should_not_exist(string $activityname): void {
-        $selector = "div[data-region=activity-information][data-activityname='$activityname'] button";
+        $selector = "button[data-activityname='$activityname'][data-completion='manual']";
 
         $params = [$selector, "css_element"];
         $this->execute('behat_general::should_not_exist', $params);
@@ -328,7 +328,7 @@ class behat_completion extends behat_base {
      * @param string $activityname The activity name.
      */
     public function the_manual_completion_button_for_activity_should_exist(string $activityname): void {
-        $selector = "div[data-region=activity-information][data-activityname='$activityname'] button";
+        $selector = "button[data-activityname='$activityname'][data-completion='manual']";
 
         $params = [$selector, "css_element"];
         $this->execute('behat_general::should_exist', $params);
