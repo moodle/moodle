@@ -99,13 +99,15 @@ class forums extends datasource {
             ->add_join("LEFT JOIN {user} {$useralias} ON {$useralias}.id = {$postalias}.userid"));
 
         // Add report elements from each of the entities we added to the report.
-        $this->add_all_from_entity($coursecatentity->get_entity_name());
-        $this->add_all_from_entity($courseentity->get_entity_name());
-        $this->add_all_from_entity($coursemodentity->get_entity_name());
-        $this->add_all_from_entity($forumentity->get_entity_name());
-        $this->add_all_from_entity($discussionentity->get_entity_name());
-        $this->add_all_from_entity($postentity->get_entity_name());
-        $this->add_all_from_entity($userentity->get_entity_name());
+        $this->add_all_from_entities([
+            $coursecatentity->get_entity_name(),
+            $courseentity->get_entity_name(),
+            $coursemodentity->get_entity_name(),
+            $forumentity->get_entity_name(),
+            $discussionentity->get_entity_name(),
+            $postentity->get_entity_name(),
+            $userentity->get_entity_name(),
+        ]);
     }
 
     /**

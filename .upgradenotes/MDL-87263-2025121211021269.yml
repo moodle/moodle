@@ -1,0 +1,8 @@
+issueNumber: MDL-87263
+notes:
+  core_reportbuilder:
+    - message: >-
+        The order in which `$entitynames` are passed to the datasource
+        `add_all_from_entities()` method is now observed, taking precedence over
+        the order in which they were already added to the report
+      type: changed

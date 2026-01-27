@@ -89,15 +89,12 @@ class badges extends datasource {
 
         // Add report elements from each of the entities we added to the report.
         $this->add_all_from_entity($badgeentity->get_entity_name());
-
-        // Add specific tag entity elements.
-        $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
-        $this->add_filter($tagentity->get_filter('name'));
-        $this->add_condition($tagentity->get_condition('name'));
-
-        $this->add_all_from_entity($badgeissuedentity->get_entity_name());
-        $this->add_all_from_entity($userentity->get_entity_name());
-        $this->add_all_from_entity($courseentity->get_entity_name());
+        $this->add_all_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink'], ['name'], ['name']);
+        $this->add_all_from_entities([
+            $badgeissuedentity->get_entity_name(),
+            $userentity->get_entity_name(),
+            $courseentity->get_entity_name(),
+        ]);
     }
 
     /**

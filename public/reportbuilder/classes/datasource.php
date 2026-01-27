@@ -20,11 +20,9 @@ namespace core_reportbuilder;
 
 use coding_exception;
 use core_reportbuilder\local\helpers\report;
-use core_reportbuilder\local\models\column as column_model;
-use core_reportbuilder\local\models\filter as filter_model;
+use core_reportbuilder\local\models\{column as column_model, filter as filter_model};
 use core_reportbuilder\local\report\base;
-use core_reportbuilder\local\report\column;
-use core_reportbuilder\local\report\filter;
+use core_reportbuilder\local\report\{column, filter};
 
 /**
  * Class datasource
@@ -34,7 +32,6 @@ use core_reportbuilder\local\report\filter;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class datasource extends base {
-
     /** @var float[] $elementsmodified Track the time elements of specific reports have been added, updated, removed */
     private static $elementsmodified = [];
 
@@ -61,8 +58,10 @@ abstract class datasource extends base {
         $columnidentifiers = $this->get_default_columns();
 
         $defaultcolumnsorting = $this->get_default_column_sorting();
-        $defaultcolumnsortinginvalid = array_diff_key($defaultcolumnsorting,
-            array_fill_keys($columnidentifiers, 1));
+        $defaultcolumnsortinginvalid = array_diff_key(
+            $defaultcolumnsorting,
+            array_fill_keys($columnidentifiers, 1),
+        );
 
         if (count($defaultcolumnsortinginvalid) > 0) {
             throw new coding_exception('Invalid column name', array_key_first($defaultcolumnsortinginvalid));
@@ -221,7 +220,7 @@ abstract class datasource extends base {
         $entity = $this->get_entity($entityname);
 
         // Retrieve filtered conditions from entity, respecting given $include/$exclude parameters.
-        $conditions = array_filter($entity->get_conditions(), function(filter $condition) use ($include, $exclude): bool {
+        $conditions = array_filter($entity->get_conditions(), function (filter $condition) use ($include, $exclude): bool {
             if (!empty($include)) {
                 return $this->report_element_search($condition->get_name(), $include);
             }
@@ -332,15 +331,23 @@ abstract class datasource extends base {
     /**
      * Adds all columns/filters/conditions from all the entities added to the report at once
      *
-     * @param string[] $entitynames If specified, then only these entity elements are added (otherwise all)
+     * @param string[] $entitynames If specified, then only these entity elements are added in the order that they are specified
      */
     final protected function add_all_from_entities(array $entitynames = []): void {
-        foreach ($this->get_entities() as $entity) {
-            $entityname = $entity->get_entity_name();
-            if (!empty($entitynames) && array_search($entityname, $entitynames) === false) {
-                continue;
-            }
-            $this->add_all_from_entity($entityname);
+        if (empty($entitynames)) {
+            $entities = $this->get_entities();
+        } else {
+            $entities = array_combine(
+                $entitynames,
+                array_map(
+                    fn(string $entityname) => $this->get_entity($entityname),
+                    $entitynames,
+                ),
+            );
+        }
+
+        foreach ($entities as $entity) {
+            $this->add_all_from_entity($entity->get_entity_name());
         }
     }
 

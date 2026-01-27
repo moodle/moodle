@@ -61,7 +61,7 @@ class participants extends datasource {
         $coursecatentity = new course_category();
         $categories = $coursecatentity->get_table_alias('course_categories');
         $this->add_entity($coursecatentity
-            ->add_join("JOIN {course_categories} {$categories} ON {$categories}.id = {$course}.category"));
+            ->add_join("LEFT JOIN {course_categories} {$categories} ON {$categories}.id = {$course}.category"));
 
         // Join the enrolment method entity.
         $enrolentity = new enrol();
@@ -152,10 +152,10 @@ class participants extends datasource {
 
         // Add all entities columns/filters/conditions.
         $this->add_all_from_entities([
-            $courseentity->get_entity_name(),
             $coursecatentity->get_entity_name(),
-            $enrolmententity->get_entity_name(),
+            $courseentity->get_entity_name(),
             $enrolentity->get_entity_name(),
+            $enrolmententity->get_entity_name(),
             $userentity->get_entity_name(),
             $roleentity->get_entity_name(),
             $groupentity->get_entity_name(),
