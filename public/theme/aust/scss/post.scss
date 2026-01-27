@@ -1173,9 +1173,17 @@ body.pagelayout-login,
 // Ensure containers are transparent on login page so body background shows
 body.pagelayout-login #page-wrapper,
 body.pagelayout-login #page,
-body.pagelayout-login #page-content,
-body.pagelayout-login .login-wrapper,
-body.pagelayout-login .login-container {
+body.pagelayout-login #page-content {
     background-color: transparent !important;
     background: transparent !important;
+}
+
+// Restore generic card look for the login form container
+body.pagelayout-login .login-container {
+    background-color: #fff !important;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 500px; // Ensure it doesn't stretch too wide
+    margin: 0 auto; // Center it
 }
