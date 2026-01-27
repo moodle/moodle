@@ -797,7 +797,9 @@ nav.moremenu {
                     border-color: #333 !important;
                     color: #fff !important;
 
+
                     &:hover {
+
                         background-color: #333 !important;
                         color: $aust-gold !important;
                     }
@@ -1152,4 +1154,13 @@ nav.moremenu {
             color: inherit !important;
         }
     }
+}
+
+// Login Page Specifics
+body.pagelayout-login {
+    background-image: url([[pix:theme|login_background]]) !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
