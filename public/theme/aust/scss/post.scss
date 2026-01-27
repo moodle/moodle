@@ -48,9 +48,6 @@ nav.navbar {
         &:hover {
             color: #fff !important;
         }
-
-        // Hide site name text if we want only logo, but user fixed this earlier by removing bg image
-        // Keeping text visible for now unless specifically hidden
     }
 
     .nav-link,
@@ -84,17 +81,12 @@ nav.navbar {
     display: none !important;
 }
 
-
 // --- LIGHT MODE SPECIFIC ---
-// Only apply these "Force White" styles when proper light mode is active
 @media (prefers-color-scheme: light) {
 
-    // Body Background (Standard)
-    body {
-        background-color: #fce4ec; // Fallback or standard light bg
-    }
+    // Removed the pink background!
 
-    // Dropdown Menus - FORCE WHITE
+    // Header Dropdown Menu - White text in light mode
     .dropdown-menu,
     nav .dropdown-menu,
     .navbar .dropdown-menu,
@@ -118,7 +110,24 @@ nav.navbar {
         }
     }
 
-    // Notification Popovers - FORCE WHITE
+    // Search Button Icon - White on blue background
+    .simplesearchform .btn,
+    .simplesearchform .btn-submit,
+    .simplesearchform button[type="submit"],
+    button.btn.btn-submit {
+        background-color: $aust-blue !important;
+        border-color: $aust-blue !important;
+
+        .icon,
+        .fa,
+        .fa-magnifying-glass,
+        i.icon,
+        i.fa {
+            color: #fff !important;
+        }
+    }
+
+    // Notification Popovers - White
     .popover-region-container,
     .popover-region-content,
     .popover-region-notifications .popover-region-content,
@@ -138,6 +147,25 @@ nav.navbar {
 
         .content-item-container:hover {
             background-color: #f8f9fa !important;
+        }
+    }
+
+    // Footer Debugging - White
+    .footer-content-debugging {
+        background-color: #fff !important;
+        color: #000 !important;
+        border-top: 1px solid #dee2e6 !important;
+
+        &.footer-dark,
+        &.bg-dark,
+        &.text-light {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+        .footer-dark-inner {
+            background-color: #fff !important;
+            color: #000 !important;
         }
     }
 
@@ -163,7 +191,7 @@ nav.navbar {
         color: #000 !important;
     }
 
-    // Transparent Wrappers to show background
+    // Transparent Wrappers
     body.pagelayout-login #page-wrapper,
     body.pagelayout-login #page,
     body.pagelayout-login #page-content {
@@ -173,11 +201,10 @@ nav.navbar {
 }
 
 
-// --- DARK MODE SPECIFIC ---
-// Apply these when system prefers dark mode
-@media (prefers-color-scheme: dark) {
+// --- DARK MODE MIXIN ---
+@mixin dark-mode-styles {
 
-    // Global Reset for Dark Mode
+    // Global Reset
     body,
     html,
     #page,
@@ -190,30 +217,38 @@ nav.navbar {
         color: #e0e0e0 !important;
     }
 
-    // EXCEPTION: Login Page Background
-    // Do NOT apply background-image: none here.
-    // Instead, define the image specifically for the login page.
+    // Text & Headers
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    .text-muted,
+    .text-dark {
+        color: #f0f0f0 !important;
+    }
 
+    // Links
+    a {
+        color: #64b5f6 !important;
+
+        &:hover {
+            color: $aust-gold !important;
+        }
+    }
+
+    // Login Page (Specific Fixes)
+    &.pagelayout-login body,
     body.pagelayout-login,
-    html body.pagelayout-login,
     #page-login-index {
         background-color: transparent !important;
         background-image: url([[pix:theme|login_background]]) !important;
         background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
         background-attachment: fixed;
     }
 
-    // Login Page Containers must be transparent
-    body.pagelayout-login #page-wrapper,
-    body.pagelayout-login #page,
-    body.pagelayout-login #page-content {
-        background-color: transparent !important;
-        background: transparent !important;
-    }
-
-    // Login Card - Dark Mode (Semi-transparent dark or AuST Blue)
     body.pagelayout-login .login-container {
         background-color: rgba(0, 0, 0, 0.85) !important;
         border: 1px solid rgba(255, 255, 255, 0.15);
@@ -230,13 +265,17 @@ nav.navbar {
             border-color: #444 !important;
             color: #fff !important;
         }
-
-        img.img-fluid {
-            // Ensure logo is visible (it should be since it's an image)
-        }
     }
 
-    // Dropdown Menus - FORCE DARK
+    // Login Page Wrappers
+    body.pagelayout-login #page-wrapper,
+    body.pagelayout-login #page,
+    body.pagelayout-login #page-content {
+        background-color: transparent !important;
+        background: transparent !important;
+    }
+
+    // Dropdown Menus
     .dropdown-menu,
     #user-action-menu.dropdown-menu,
     .dropdown-menu.show,
@@ -262,7 +301,7 @@ nav.navbar {
         }
     }
 
-    // Notification Popovers - FORCE DARK
+    // Notifications
     .popover-region-container,
     .popover-region-content-container,
     .popover-region-content,
@@ -281,10 +320,6 @@ nav.navbar {
         background-color: #1d2125 !important;
         border-bottom: 1px solid #444 !important;
 
-        .notification-message {
-            color: #e6edf3 !important;
-        }
-
         &:hover {
             background-color: #2c333b !important;
         }
@@ -292,9 +327,140 @@ nav.navbar {
         &.unread {
             background-color: #2a2f35 !important;
         }
+
+        .notification-message {
+            color: #e6edf3 !important;
+        }
     }
 
-    // Report Builder & Filter Sidebars
+    // Tables
+    .table,
+    .generaltable {
+        color: #e0e0e0 !important;
+        background-color: transparent !important;
+
+        th,
+        td,
+        .cell {
+            border-color: #333 !important;
+            background-color: transparent !important;
+            color: #fff !important;
+        }
+
+        &.table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+    }
+
+    // Alerts
+    .alert {
+        background-color: #252525 !important;
+        border-color: #333 !important;
+        color: #e0e0e0 !important;
+
+        &.alert-info {
+            background-color: rgba(0, 75, 135, 0.3) !important;
+            border-color: $aust-blue !important;
+        }
+
+        &.alert-success {
+            background-color: rgba(40, 167, 69, 0.3) !important;
+            border-color: #28a745 !important;
+        }
+
+        &.alert-warning {
+            background-color: rgba(253, 185, 19, 0.2) !important;
+            border-color: $aust-gold !important;
+        }
+    }
+
+    // Forms
+    input,
+    textarea,
+    select,
+    .form-control,
+    .custom-select {
+        background-color: #2c2c2c !important;
+        border: 1px solid #444 !important;
+        color: #fff !important;
+
+        &:focus {
+            background-color: #333 !important;
+            border-color: $aust-blue !important;
+        }
+    }
+
+    // Quiz
+    .que {
+
+        .info,
+        .formulation {
+            background-color: #1e1e1e !important;
+            color: #fff !important;
+            border-color: #333 !important;
+        }
+
+        .qtext,
+        .ablock,
+        .prompt,
+        .answer,
+        label {
+            color: #fff !important;
+        }
+    }
+
+    // Grade Report / User Report
+    .user-report-container {
+        background-color: transparent !important;
+        color: #e0e0e0 !important;
+
+        .table-responsive,
+        table.user-grade {
+            background-color: transparent !important;
+            color: #e0e0e0 !important;
+
+            th,
+            td {
+                background-color: transparent !important;
+                border-color: #444 !important;
+            }
+
+            tr.category,
+            th.category {
+                background-color: #252525 !important;
+                color: #fff !important;
+            }
+
+            tr.baggt,
+            th.baggt,
+            td.baggt {
+                background-color: #2a2a2a !important;
+                color: #fff !important;
+            }
+        }
+    }
+
+    // Chat / Messaging
+    .message-app,
+    .message-drawer,
+    .header-container,
+    .body-container,
+    .footer-container {
+        background-color: #1e1e1e !important;
+        color: #e0e0e0 !important;
+    }
+
+    .message {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: 1px solid #444 !important;
+
+        .time {
+            color: #ccc !important;
+        }
+    }
+
+    // Report Builder
     .reportbuilder-filters-sidebar,
     .filter-group {
         background-color: #1e1e1e !important;
@@ -307,7 +473,8 @@ nav.navbar {
     }
 
     // Modals
-    .modal-content {
+    .modal-content,
+    .moodle-dialogue-base .moodle-dialogue-wrap {
         background-color: #1e1e1e !important;
         border-color: #333 !important;
         color: #e0e0e0 !important;
@@ -320,65 +487,41 @@ nav.navbar {
         .close,
         .btn-close {
             filter: invert(1);
+            opacity: 1 !important;
+        }
+
+        .modal-title,
+        h5 {
+            color: #fff !important;
         }
     }
 
-    // Form Controls (General)
-    input,
-    textarea,
-    select,
-    .form-control,
-    .custom-select {
-        background-color: #2c2c2c !important;
-        border: 1px solid #444 !important;
-        color: #fff !important;
-    }
-
-    // Block Drawers (Right side)
+    // Drawers
     .drawer,
     .drawer-content {
         background-color: #1e1e1e !important;
         color: #e0e0e0 !important;
     }
-}
 
-// --- EXPLICIT DARK MODE ATTRIBUTE (For Toggles) ---
-// Mirrors the media query for [data-bs-theme="dark"]
-[data-bs-theme="dark"] {
-    // Re-apply the crucial dark mode styles here
-
-    // Dropdowns
-    .dropdown-menu {
-        background-color: #1d2125 !important;
-        border-color: #444 !important;
-        color: #e6edf3 !important;
-
-        .dropdown-item {
-            color: #e6edf3 !important;
-
-            &:hover {
-                background-color: $aust-blue !important;
-                color: #fff !important;
-            }
-        }
-    }
-
-    // Notifications
-    .popover-region-container,
-    .popover-region-content {
-        background-color: #1d2125 !important;
-        color: #e6edf3 !important;
-    }
-
-    // Login Page
-    &.pagelayout-login body,
-    body.pagelayout-login {
-        background-image: url([[pix:theme|login_background]]) !important;
-        background-size: cover;
-    }
-
-    .login-container {
-        background-color: rgba(0, 0, 0, 0.85) !important;
+    // Icons
+    .icon,
+    .fa,
+    .fa-regular,
+    .fa-solid,
+    i.icon,
+    svg.icon {
         color: #fff !important;
     }
+}
+
+// --- APPLY DARK MODE ---
+
+// 1. System Preference
+@media (prefers-color-scheme: dark) {
+    @include dark-mode-styles;
+}
+
+// 2. Explicit Theme Attribute (Toggle)
+[data-bs-theme="dark"] {
+    @include dark-mode-styles;
 }
