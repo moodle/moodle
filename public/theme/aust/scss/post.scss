@@ -1157,8 +1157,14 @@ nav.moremenu {
 }
 
 // Login Page Specifics
-body.pagelayout-login {
-    background-image: url([[pix:theme|login_background.jpg]]) !important;
+body.pagelayout-login,
+#page-login-index {
+    // Debug color (Gold) - if you see this, the selector works but image failed
+    background-color: #fdb913 !important;
+
+    // Try standard macro without extension (Moodle handles extensions)
+    background-image: url([[pix:theme|login_background]]) !important;
+
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
