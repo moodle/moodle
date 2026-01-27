@@ -1,0 +1,8 @@
+issueNumber: MDL-87621
+notes:
+  mod_subsection:
+    - message: >-
+        The `manager::clear_description()` method has been added to remove
+        legacy data. When called, it deletes the description text associated
+        with a subsection and any files linked to that description.
+      type: improved

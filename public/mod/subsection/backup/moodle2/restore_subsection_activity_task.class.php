@@ -91,4 +91,14 @@ class restore_subsection_activity_task extends restore_activity_task {
 
         return $rules;
     }
+
+    /**
+     * This function, executed after all the tasks in the plan have been executed.
+     * This must be done here and not in normal execution steps because the subsection can be restored after the section.
+     */
+    public function after_restore() {
+        // Clear subsection descriptions (they were removed from mod_subsection in Moodle 5.2).
+        mod_subsection\manager::create_from_id($this->get_courseid(), $this->get_activityid())
+            ->clear_description();
+    }
 }

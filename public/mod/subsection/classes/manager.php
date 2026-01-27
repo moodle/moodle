@@ -205,4 +205,43 @@ class manager {
         }
         return $delegatedsection;
     }
+
+    /**
+     * Deletes the subsection description and its associated files.
+     * Descriptions are no longer supported for subsections since Moodle 5.2.
+     */
+    public function clear_description(): void {
+        global $DB;
+
+        // Find and delete the files from the subsection summary.
+        $fs = get_file_storage();
+        $coursesectionid = $DB->get_field(
+            'course_sections',
+            'id',
+            [
+                'component' => 'mod_subsection',
+                'itemid' => $this->instance->id,
+            ],
+        );
+        $files = $fs->get_area_files(
+            contextid: \context_course::instance($this->cm->course)->id,
+            component: 'course',
+            filearea: 'section',
+            itemid: $coursesectionid,
+        );
+        foreach ($files as $file) {
+            $file->delete();
+        }
+
+        // Remove the subsection summary.
+        $DB->set_field(
+            'course_sections',
+            'summary',
+            '',
+            [
+                'component' => 'mod_subsection',
+                'itemid' => $this->instance->id,
+            ],
+        );
+    }
 }

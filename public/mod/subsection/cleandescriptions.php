@@ -27,7 +27,6 @@ require_once('../../config.php');
 require_admin();
 
 $action = required_param('action', PARAM_ALPHA);
-$count = optional_param('count', 0, PARAM_INT);
 $return = new moodle_url('/admin/settings.php', ['section' => 'mod_subsection_settings']);
 
 $PAGE->set_url('/mod/subsection/cleandescriptions.php');
@@ -35,14 +34,9 @@ $PAGE->set_context(context_system::instance());
 
 require_sesskey();
 if ($action === 'delete') {
-    // Remove all existing subsection descriptions.
-    $DB->set_field('course_sections', 'summary', '', ['component' => 'mod_subsection']);
-    redirect(
-        $return,
-        get_string('descriptionsdeletedsuccess', 'mod_subsection', $count),
-        null,
-        \core\output\notification::NOTIFY_SUCCESS
-    );
+    // Schedule the ad-hoc task to remove subsection descriptions.
+    \core\task\manager::queue_adhoc_task(new \mod_subsection\task\remove_subsection_descriptions_task(), true);
+    redirect($return);
 } else if ($action === 'migrate') {
     // Schedule the ad-hoc task to migrate subsection descriptions.
     \core\task\manager::queue_adhoc_task(new \mod_subsection\task\migrate_subsection_descriptions_task(), true);
