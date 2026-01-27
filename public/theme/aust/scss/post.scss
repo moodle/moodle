@@ -3,7 +3,7 @@
 $aust-blue: #036;
 $aust-gold: #fdb913;
 
-// --- GLOBAL OVERRIDES (Applies to Light Mode & Base) ---
+// --- COMMON STYLES (Applies to ALL Modes) ---
 
 .bg-primary {
     background-color: $aust-blue !important;
@@ -11,12 +11,6 @@ $aust-gold: #fdb913;
 
 .text-primary {
     color: $aust-blue !important;
-}
-
-// Global Icons (Light Mode Default)
-// Helps ensure icons are visible on white backgrounds unless overridden
-.icon:not(.text-white):not(.text-light) {
-    color: #333; // Dark Grey/Black for visibility
 }
 
 a {
@@ -39,257 +33,45 @@ a {
     }
 }
 
-// Top Navbar (Unified Style - AuST Blue for both Light & Dark)
-nav.navbar,
-nav.navbar-light,
-.navbar.navbar-light,
-.navbar-light.bg-white,
-.navbar-light.bg-white,
-nav.navbar.navbar-light.bg-white,
-nav.fixed-top.navbar.navbar-light.bg-white,
-.fixed-top.navbar-light.bg-white {
+// Navbar Base Styles
+nav.navbar {
     background-color: $aust-blue !important;
     border-bottom: 4px solid $aust-gold !important;
 
-    // Logo styling
     .navbar-brand {
-        // background-image removed to prevent double logo
-        // padding-left removed
-        // height removed
-        // width removed
-        // FIX: Set color to White directly so text is visible
         color: #fff !important;
         font-weight: bold;
         font-size: 1.25rem;
-        display: flex; // Ensure proper alignment if needed
+        display: flex;
         align-items: center;
 
         &:hover {
-            color: #fff !important; // Keep white on hover
-        }
-
-        // Keep this just in case, but the main text is likely direct child
-        .site-name {
             color: #fff !important;
         }
+
+        // Hide site name text if we want only logo, but user fixed this earlier by removing bg image
+        // Keeping text visible for now unless specifically hidden
     }
 
-    // Reset backgrounds for children to transparent
-    .navbar-nav,
-    .more-nav,
-    ul.navbar-nav,
-    ul.more-nav,
-    .nav,
-    .nav-item,
-    li.nav-item,
-    .navbar-nav .nav-item,
-    .more-nav .nav-item,
-    ul .nav-item {
-        background-color: transparent !important;
-    }
-
-    // Links - White text
     .nav-link,
-    a,
     .nav-item .nav-link,
-    .nav-item a {
+    a {
         color: rgba(255, 255, 255, 0.9) !important;
-        background-color: transparent !important;
-    }
 
-    // Hover
-    .nav-item:hover,
-    .nav-link:hover,
-    a:hover {
-        color: $aust-gold !important;
-        background-color: rgba(255, 255, 255, 0.1) !important;
-    }
-
-    // Active
-    .nav-item.active,
-    .nav-link.active {
-        background-color: rgba(255, 255, 255, 0.15) !important;
-        color: #fff !important;
-    }
-
-    .btn {
-        color: white !important;
-    }
-
-    // FORCE Always White Elements (Edit Switch & Notification Icons)
-    // Overrides global text-primary and icon colors
-    .form-check-label[for*="editingswitch"],
-    .icon.fa-message,
-    .icon.fa-bell {
-        color: #fff !important;
-    }
-
-    // Search icon should be white in navbar (light mode fix)
-    .simplesearchform .icon,
-    .icon.fa-magnifying-glass,
-    .fa-magnifying-glass {
-        color: #fff !important;
-    }
-}
-
-// --- LIGHT MODE FIXES ---
-// These apply when NOT in dark mode
-
-// Header Dropdown Menu - Black text in light mode (aggressive override)
-.dropdown-menu,
-nav .dropdown-menu,
-.navbar .dropdown-menu,
-.moremenu .dropdown-menu,
-[data-region="moredropdown"] {
-    background-color: #fff !important;
-    border: 1px solid #dee2e6 !important;
-
-    .dropdown-item,
-    a.dropdown-item,
-    li a,
-    a[role="menuitem"] {
-        color: #000 !important;
-        background-color: #fff !important;
-
-        &:hover,
-        &:focus {
-            background-color: #f8f9fa !important;
-            color: #000 !important;
-        }
-
-        &.active {
-            background-color: #e9ecef !important;
-            color: #000 !important;
+        &:hover {
+            color: $aust-gold !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
         }
     }
 
-    // List items themselves
-    li.nav-item {
-        background-color: #fff !important;
-
-        a {
-            color: #000 !important;
-        }
-    }
-}
-
-// Search Button Icon - White on blue background
-.simplesearchform .btn,
-.simplesearchform .btn-submit,
-.simplesearchform button[type="submit"],
-button.btn.btn-submit {
-    background-color: $aust-blue !important;
-    border-color: $aust-blue !important;
-
+    // Always white icons in navbar
     .icon,
-    .fa,
-    .fa-magnifying-glass,
-    i.icon,
-    i.fa {
+    .fa {
         color: #fff !important;
     }
 }
 
-// Notifications Popup Content - Black text in light mode
-// Only target the popover content, not the navbar trigger
-.popover-region-container .popover-region-content,
-.popover-region-notifications .popover-region-content,
-.popover-region-container .all-notifications,
-.popover-region-content .all-notifications {
-    background-color: #fff !important;
-
-    .content-item-container,
-    .notification {
-        background-color: #fff !important;
-        border-bottom: 1px solid #dee2e6 !important;
-
-        .notification-message,
-        .content-item-body,
-        .timestamp,
-        .content-item-footer,
-        div {
-            color: #000 !important;
-        }
-
-        a.context-link,
-        a.view-more {
-            color: $aust-blue !important;
-
-            &:hover {
-                color: darken($aust-blue, 15%) !important;
-            }
-        }
-
-        &.unread {
-            background-color: #f8f9fa !important;
-        }
-    }
-
-    // Popover header
-    .popover-region-header-container {
-        background-color: #fff !important;
-        color: #000 !important;
-        border-bottom: 1px solid #dee2e6 !important;
-
-        .popover-region-header-text {
-            color: #000 !important;
-        }
-    }
-}
-
-// Footer Debugging/Purge Section - White background, black text in light mode
-.footer-content-debugging {
-    background-color: #fff !important;
-    color: #000 !important;
-    border-top: 1px solid #dee2e6 !important;
-
-    &.footer-dark,
-    &.bg-dark,
-    &.text-light {
-        background-color: #fff !important;
-        color: #000 !important;
-    }
-
-    .footer-dark-inner {
-        background-color: #fff !important;
-        color: #000 !important;
-    }
-
-    .purgecaches a {
-        color: $aust-blue !important;
-
-        &:hover {
-            color: darken($aust-blue, 15%) !important;
-        }
-    }
-
-    // Reactive debug panel
-    #reactive-debugpanel,
-    [id*="reactive-debugpanel"] {
-        color: #000 !important;
-    }
-}
-
-// Secondary Navigation (Global - Active State)
-.secondary-navigation,
-.secondary-navigation .moremenu,
-.secondary-navigation .navigation,
-.secondary-navigation .navbar-nav,
-.secondary-navigation .nav-tabs,
-nav.moremenu {
-    .nav-link {
-        &.active {
-            border-bottom: 2px solid $aust-gold !important;
-            color: $aust-gold !important;
-        }
-
-        &:hover {
-            color: $aust-gold !important;
-        }
-    }
-}
-
-// Login Logo
+// Login Logo (Shared)
 .login-container img.img-fluid,
 .login-wrapper img.img-fluid {
     content: url([[pix:theme|logo]]);
@@ -297,1014 +79,121 @@ nav.moremenu {
     width: auto;
 }
 
-// User Action Menu Dropdown - Force Black Text
-#user-action-menu {
-
-    .dropdown-item,
-    .dropdown-toggle,
-    a {
-        color: #000 !important;
-
-        &:hover {
-            color: #000 !important;
-            background-color: #f8f9fa !important; // Light hover background
-        }
-    }
+// Hide default site name text next to logo on login page only
+.pagelayout-login .navbar-brand .site-name {
+    display: none !important;
 }
 
-// --- DARK MODE ---
-@media (prefers-color-scheme: dark) {
 
-    // Page backgrounds
-    body,
-    html,
-    #page,
-    #page-wrapper,
-    #page-content,
-    #region-main-box,
-    #region-main,
-    .region-main-content,
-    .region-main-content-inner,
-    .pagelayout-admin #page,
-    .pagelayout-standard #page,
-    .pagelayout-incourse #page,
-    #page.drawers,
-    .pagelayout-login #page,
-    body.pagelayout-login {
-        background-color: #121212 !important;
-        background-image: none !important; // Ensure no background image
-        color: #e0e0e0 !important;
+// --- LIGHT MODE SPECIFIC ---
+// Only apply these "Force White" styles when proper light mode is active
+@media (prefers-color-scheme: light) {
+
+    // Body Background (Standard)
+    body {
+        background-color: #fce4ec; // Fallback or standard light bg
     }
 
-    // Login Page Specifics
-    // 1. Wrapper/Container should be DARK
-    .login-wrapper,
-    .login-container {
-        background-color: #121212 !important;
-        color: #e0e0e0 !important;
-    }
-
-    // Fix for potential top white bar (toast wrapper or fixed top elements)
-    .toast-wrapper,
-    .fixed-top {
-        background-color: transparent !important;
-    }
-
-    // 2. The Card itself (.loginform) should be AuST Blue (Flipped)
-    .loginform {
-        background-color: $aust-blue !important; // AuST Blue Card
-        color: #fff !important; // White text on Blue
-        border-radius: 8px;
-        padding: 20px;
-
-        .login-heading {
-            color: #fff !important;
-        }
-
-        // Inputs: Dark background, White text
-        .form-control,
-        input {
-            background-color: #2c2c2c !important; // Dark input
-            border: 1px solid #555 !important;
-            color: #fff !important; // White text
-
-            &::placeholder {
-                color: #aaa !important;
-            }
-        }
-
-        // Buttons: All buttons Orange
-        .btn,
-        .btn-primary,
-        .btn-secondary,
-        button {
-            background-color: $aust-gold !important;
-            border-color: $aust-gold !important;
-            color: #000 !important; // Black text on Orange
-
-            &:hover {
-                background-color: darken($aust-gold, 10%) !important;
-            }
-        }
-
-        .d-flex {
-            color: #fff !important;
-        }
-
-        a {
-            color: $aust-gold !important; // Gold links on Blue for visibility
-
-            nav.navbar,
-            header.navbar,
-            .fixed-top {
-                background-color: $aust-blue !important;
-                border-bottom: 4px solid $aust-gold !important;
-
-                // Ensure text is white in the blue header
-                .navbar-brand {
-                    color: #fff !important;
-                }
-            }
-        }
-    }
-
-    // Secondary Navbar (Dark Mode Specifics)
-    .secondary-navigation,
-    .secondary-navigation .moremenu,
-    .secondary-navigation .navigation,
-    .secondary-navigation .navbar-nav,
-    .secondary-navigation .nav-tabs,
-    .secondary-navigation .bg-white,
-    nav.moremenu {
-        background-color: transparent !important;
-        border-bottom: 1px solid #333 !important;
-
-        .nav-link {
-            color: #e0e0e0 !important;
-
-            &.active {
-                background-color: transparent !important;
-                border-bottom: 2px solid $aust-gold !important;
-                color: $aust-gold !important;
-            }
-
-            &:hover {
-                background-color: transparent !important;
-                color: $aust-gold !important;
-            }
-        }
-    }
-
-    // Cards & Containers (General)
-    .card,
-    .card-body,
-    .well,
-    .userprofile .profile_tree,
-    .groupinfobox,
-    .adminwarning,
-    .main-inner,
-    .tab-content {
-        background-color: #1e1e1e !important;
-        border-color: #333 !important;
-        color: #e0e0e0 !important;
-    }
-
-    // Override Card for Login specifically again to be safe
-    .pagelayout-login .card,
-    .pagelayout-login .card-body {
-        background-color: $aust-blue !important;
-        color: #fff !important;
-    }
-
-    // Form Controls (General Dark Mode)
-    .form-control,
-    .custom-select,
-    input,
-    textarea,
-    select {
-        background-color: #2c2c2c !important;
-        border: 1px solid #444 !important;
-        color: #fff !important;
-
-        &:focus {
-            background-color: #333 !important;
-            border-color: $aust-blue !important;
-            color: #fff !important;
-        }
-    }
-
-    // Search
-    .simplesearchform .btn {
-        background-color: #333 !important;
-        border-color: #444 !important;
-        color: #fff !important;
-    }
-
-    // Tables
-    .table,
-    .generaltable {
-        color: #e0e0e0 !important;
-        background-color: transparent !important;
-
-        th,
-        td,
-        .cell {
-            border-color: #333 !important;
-            background-color: transparent !important;
-            color: #fff !important;
-        }
-
-        &.table-striped tbody tr:nth-of-type(odd),
-        tbody tr:nth-child(odd) {
-            background-color: rgba(255, 255, 255, 0.05) !important;
-        }
-
-        &:hover tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-        }
-    }
-
-    // Drawers & Lists
-    .list-group-item,
-    .drawer,
-    .drawer-content,
-    .drawerheader {
-        background-color: #1e1e1e !important;
-        border-color: #333 !important;
-        color: #e0e0e0 !important;
-    }
-
-    // Alerts
-    .alert {
-        background-color: #252525 !important;
-        border-color: #333 !important;
-        color: #e0e0e0 !important;
-
-        &.alert-info {
-            background-color: rgba(0, 75, 135, 0.3) !important;
-            border-color: $aust-blue !important;
-            color: #b3e5fc !important;
-        }
-
-        &.alert-success {
-            background-color: rgba(40, 167, 69, 0.3) !important;
-            border-color: #28a745 !important;
-            color: #d4edda !important;
-        }
-
-        &.alert-warning {
-            background-color: rgba(253, 185, 19, 0.2) !important;
-            border-color: $aust-gold !important;
-            color: #fff3cd !important;
-        }
-
-        .close {
-            color: #fff !important;
-            opacity: 0.8 !important;
-            text-shadow: none !important;
-        }
-    }
-
-    // Buttons
-    .btn-secondary {
-        background-color: #333 !important;
-        border-color: #444 !important;
-        color: #e0e0e0 !important;
-
-    }
-
-    // Activity Icons
-    .activityiconcontainer,
-    .activityicon {
-        background-color: transparent !important;
-    }
-
-    // Links
-    a {
-        color: #64b5f6 !important;
-
-        &:hover {
-            color: $aust-gold !important;
-        }
-    }
-
-    // Headers
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        color: #f0f0f0 !important;
-    }
-
-    // Course Activity Header
-    .activity-header {
-        background-color: #1e1e1e !important;
-        color: #e0e0e0 !important;
-
-        .activity-information,
-        .completion-info {
-            color: #e0e0e0 !important;
-        }
-    }
-
-    // Quiz Styles
-    .que {
-        .info {
-            background-color: #1e1e1e !important;
-            color: #fff !important;
-            border-color: #333 !important;
-
-            // Fix for edit button in quiz info
-            .questionflag.editable {
-                color: #fff !important;
-            }
-        }
-
-        .formulation {
-            background-color: #1e1e1e !important;
-            color: #fff !important;
-            border-color: #333 !important;
-
-            &.active {
-                background-color: transparent !important;
-                border-bottom: 2px solid $aust-gold !important;
-                color: $aust-gold !important;
-            }
-
-            &:hover {
-                background-color: transparent !important;
-                color: $aust-gold !important;
-            }
-        }
-
-        .qtext,
-        .ablock,
-        .prompt,
-        .answer,
-        label {
-            color: #fff !important;
-        }
-    }
-
-    // Global Paragraph Text
-    p {
-        color: #fff !important;
-    }
-
-    // Fixes for specific text classes in Dark Mode
-    .text-muted,
-    .form-defaultinfo,
-    .text-dark,
-    small.text-dark {
-        color: #fff !important;
-    }
-
-    // --- Messaging Drawer & Chat ---
-    .message-app,
-    .message-drawer,
-    .header-container,
-    .body-container,
-    .footer-container,
-    .bg-white {
-        background-color: #1e1e1e !important;
-        color: #e0e0e0 !important;
-    }
-
-    // Close Widget
-    .closewidget a {
-        color: #fff !important;
-    }
-
-    // Chat Bubbles
-    .message {
-        background-color: #333 !important;
-        color: #fff !important;
-        border: 1px solid #444 !important;
-
-        .time {
-            color: #ccc !important;
-        }
-
-        // Tail color fix (optional, might need specific targeting)
-        .tail {
-            border-bottom-color: #333 !important;
-        }
-    }
-
-    // Send Icon
-    .btn-icon[data-action="send-message"] .icon,
-    .btn-icon[data-action="toggle-emoji-picker"] .icon,
-    .icon.fa-paper-plane {
-        color: #fff !important;
-    }
-
-    // Content Message Container
-    .content-message-container {
-        background-color: #1e1e1e !important;
-    }
-
-    // Textarea/Input in Chat
-    .message-app textarea,
-    .message-app input {
-        background-color: #2c2c2c !important;
-        color: #fff !important;
-        border: 1px solid #444 !important;
-
-        &::placeholder {
-            color: #aaa !important;
-        }
-    }
-
-    // Fix for "Mark as done" buttons
-    .btn.btn-subtle-body {
-        color: #fff !important;
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        border-color: #444 !important;
-
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.2) !important;
-            color: $aust-gold !important;
-        }
-    }
-
-    // Fix for Page Header Headings background
-    .page-header-headings {
-        background-color: transparent !important;
-        color: #fff !important;
-
-        h1 {
-            color: #fff !important;
-        }
-    }
-
-    // --- FORCE ALL ICONS WHITE (Comprehensive Rule) ---
-    .icon,
-    .fa,
-    .fa-regular,
-    .fa-solid,
-    .fa-brands,
-    i.icon,
-    i.fa,
-    svg.icon {
-        color: #fff !important;
-    }
-
-    // Fix for expanded-icon (Chevron) - More specific
-    span.expanded-icon,
-    .expanded-icon {
-        background-color: transparent !important;
-        color: #fff !important;
-
-        .icon {
-            color: #fff !important;
-        }
-    }
-
-    // Fix for Collapse/Expand Buttons (Chevron)
-    .btn.icons-collapse-expand,
-    .icons-collapse-expand {
-        background-color: transparent !important;
-        color: #fff !important;
-        border: none !important;
-        box-shadow: none !important;
-
-        .expanded-icon,
-        .collapsed-icon {
-            background-color: transparent !important;
-        }
-
-        .icon {
-            color: #fff !important;
-        }
-
-        &:hover,
-        &:focus {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: $aust-gold !important;
-        }
-    }
-
-    // Fix for Autocomplete Selection Badges
-    .badge.bg-secondary,
-    .badge.text-dark {
-        background-color: transparent !important;
-        border: 1px solid #444 !important;
-        color: #fff !important;
-    }
-
-    // Dropdown Toggle - White text, Transparent background
-    .btn.dropdown-toggle {
-        color: #fff !important;
-        background-color: transparent !important;
-        border-color: #444 !important;
-
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: #fff !important;
-        }
-    }
-
-    // Initial Bar / Pagination
-    .initialbargroups {
-        .pagination {
-            .page-item {
-                .page-link {
-                    background-color: #1e1e1e !important;
-                    border-color: #333 !important;
-                    color: #fff !important;
-
-
-                    &:hover {
-
-                        background-color: #333 !important;
-                        color: $aust-gold !important;
-                    }
-                }
-
-                &.active .page-link {
-                    background-color: $aust-blue !important;
-                    border-color: $aust-blue !important;
-                    color: #fff !important;
-                }
-            }
-        }
-    }
-
-    // Filter Group Fixes
-    .filter-group {
-        background-color: #1e1e1e !important;
-        border-color: #333 !important;
-        color: #e0e0e0 !important;
-
-        .bg-white,
-        .bg-light {
-            background-color: #2c2c2c !important;
-            border-color: #444 !important;
-            color: #fff !important;
-        }
-    }
-
-    // --- USER GRADE REPORT FIXES ---
-    .user-report-container {
-        background-color: transparent !important;
-        color: #e0e0e0 !important;
-
-        .table-responsive {
-            background-color: transparent !important;
-        }
-
-        table.user-grade {
-            background-color: transparent !important;
-            color: #e0e0e0 !important;
-
-            th,
-            td {
-                background-color: transparent !important;
-                border-color: #444 !important;
-                color: #e0e0e0 !important;
-            }
-
-            // Category rows (often have hardcoded backgrounds)
-            tr.category,
-            th.category {
-                background-color: #252525 !important;
-                color: #fff !important;
-            }
-
-            // Total rows
-            tr.baggt,
-            th.baggt,
-            td.baggt {
-                background-color: #2a2a2a !important;
-                color: #fff !important;
-                font-weight: bold;
-            }
-
-            // Toggle Category Button
-            .btn.toggle-category {
-                background-color: transparent !important;
-                color: #fff !important;
-                border: none !important;
-
-                &:hover {
-                    background-color: rgba(255, 255, 255, 0.1) !important;
-                }
-
-                .icon {
-                    color: #fff !important;
-                }
-            }
-        }
-    }
-
-    // Modals (Popups) - Aggressive Override
-    .modal-content,
-    .modal-dialog .modal-content,
-    .moodle-dialogue-base .moodle-dialogue-wrap,
-    .moodle-dialogue-base .moodle-dialogue-content,
-    .yui3-widget-stdmod {
-        background: #1e1e1e !important;
-        border: 1px solid #333 !important;
-        color: #e0e0e0 !important;
-
-        .modal-header,
-        .modal-body,
-        .modal-footer,
-        .moodle-dialogue-hd,
-        .moodle-dialogue-bd,
-        .moodle-dialogue-ft {
-            background: #1e1e1e !important;
-            color: #e0e0e0 !important;
-            border-color: #333 !important;
-            text-shadow: none !important;
-        }
-
-        .close,
-        .btn-close,
-        .closebutton {
-            color: #fff !important;
-            filter: invert(1) grayscale(100%) brightness(200%);
-            opacity: 1 !important;
-            background-image: none !important; // Some close buttons use images
-
-            // Ensure YUI close button is visible (often an 'x' character or sprite)
-            &::after {
-                color: #fff !important;
-            }
-        }
-
-        .modal-title,
-        .moodle-dialogue-hd h1,
-        .moodle-dialogue-hd h2,
-        .moodle-dialogue-hd h3,
-        .moodle-dialogue-hd .heading,
-        h5 {
-            color: #fff !important;
-        }
-    }
-
-    // Exception Dialog Specifics
-    .moodle-exception {
-        color: #e0e0e0 !important;
-
-        .moodle-exception-message {
-            color: #ff8080 !important; // Light red for error message
-        }
-
-        .moodle-exception-param {
-            color: #e0e0e0 !important;
-
-            label {
-                color: #aaa !important;
-                font-weight: bold;
-            }
-        }
-
-        pre {
-            background-color: #2c2c2c !important;
-            color: #f0f0f0 !important;
-            border: 1px solid #444 !important;
-            padding: 10px;
-        }
-    }
-
-    // --- DROPDOWNS & FILTERS ---
-    // General Dropdown Menu Override
-    .dropdown-menu {
-        background-color: #1e1e1e !important;
-        border: 1px solid #333 !important;
-        color: #e0e0e0 !important;
-
-        .dropdown-item {
-            color: #e0e0e0 !important;
+    // Dropdown Menus - FORCE WHITE
+    .dropdown-menu,
+    nav .dropdown-menu,
+    .navbar .dropdown-menu,
+    .moremenu .dropdown-menu,
+    [data-region="moredropdown"] {
+        background-color: #fff !important;
+        border: 1px solid #dee2e6 !important;
+        color: #000 !important;
+
+        .dropdown-item,
+        a.dropdown-item,
+        li a {
+            color: #000 !important;
+            background-color: #fff !important;
 
             &:hover,
             &:focus {
-                background-color: rgba(255, 255, 255, 0.1) !important;
-                color: $aust-gold !important;
-            }
-
-            // Danger actions (Delete)
-            &.text-danger,
-            &[data-action="delete"] {
-                color: #ff6b6b !important; // Light red for dark mode
-
-                &:hover {
-                    color: #ff8080 !important;
-                }
-            }
-        }
-
-        // Link color fix within dropdowns
-        a {
-            color: #e0e0e0 !important;
-
-            &:hover {
-                color: $aust-gold !important;
-            }
-        }
-
-        // Divider
-        .dropdown-divider {
-            border-top-color: #444 !important;
-        }
-    }
-
-    // Fix for Top Bar Dropdown (User Menu) specifically
-    #user-action-menu {
-
-        .dropdown-item,
-        .dropdown-toggle,
-        a {
-            color: #fff !important;
-
-            &:hover {
-                color: $aust-gold !important;
-                background-color: rgba(255, 255, 255, 0.1) !important;
-            }
-        }
-    }
-
-    // Report Builder Filters Sidebar specifically
-    .reportbuilder-filters-sidebar {
-        background-color: #1e1e1e !important;
-
-        .filter-header {
-            color: #fff !important;
-        }
-
-        // Ensure form labels are visible
-        label,
-        .col-form-label {
-            color: #ccc !important;
-        }
-    }
-
-    // Fix for "Is equal to" bubbles or similar select containers
-    .form-autocomplete-selection {
-        background-color: transparent !important;
-        color: #fff !important;
-
-        .badge {
-            background-color: #333 !important;
-            color: #fff !important;
-            border: 1px solid #555 !important;
-        }
-    }
-
-    // Notification Popover Fix (Dark Mode)
-    .popover-region-container {
-        background-color: #1e1e1e !important;
-        border: 1px solid #333 !important;
-        color: #e0e0e0 !important;
-    }
-
-    .popover-region-header-container {
-        background-color: #1e1e1e !important;
-        border-bottom: 1px solid #333 !important;
-
-        .popover-region-header-text {
-            color: #fff !important;
-        }
-
-        .popover-region-header-actions {
-            .btn {
-                color: #ccc !important;
-
-                &:hover {
-                    color: $aust-gold !important;
-                    background-color: rgba(255, 255, 255, 0.1) !important;
-                }
-            }
-        }
-    }
-
-    .popover-region-content-container {
-        background-color: #1e1e1e !important;
-        color: #e0e0e0 !important;
-
-        .empty-message {
-            color: #ccc !important;
-        }
-
-        // Notification items
-        .content-item {
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.05) !important;
-            }
-
-            &.unread {
-                background-color: rgba(253, 185, 19, 0.1) !important; // Slight gold tint for unread
-            }
-        }
-    }
-
-    .popover-region-footer-container {
-        background-color: #1e1e1e !important;
-        border-top: 1px solid #333 !important;
-
-        .popover-region-seeall-text {
-            color: $aust-gold !important;
-        }
-    }
-
-    // --- NEW FIXES (Block Drawers, Footer Popover, Autocomplete) ---
-
-    // 1. Block Drawer Toggle Buttons (Top-Right "Open block drawer")
-    .btn[data-toggler="drawers"] {
-        color: #fff !important; // Force white icon
-        background-color: transparent !important;
-
-        .icon {
-            color: #fff !important;
-        }
-
-        &:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: $aust-gold !important;
-        }
-    }
-
-    // 2. Footer Help Popover (Question Mark)
-    .btn-footer-popover {
-        background-color: #333 !important; // Dark grey circle
-        color: #fff !important;
-        border: 1px solid #444 !important;
-
-        .icon {
-            color: #fff !important;
-        }
-
-        &:hover {
-            background-color: $aust-gold !important;
-            color: #000 !important;
-            border-color: $aust-gold !important;
-
-            .icon {
+                background-color: #f8f9fa !important;
                 color: #000 !important;
             }
         }
     }
 
-    // 3. Autocomplete Suggestions (Search Dropdowns)
-    .form-autocomplete-suggestions {
-        background-color: #1e1e1e !important;
-        border: 1px solid #333 !important;
-        color: #e0e0e0 !important;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
-
-        li {
-            color: #e0e0e0 !important;
-            padding: 8px 12px;
-
-            &:hover,
-            &[aria-selected="true"] {
-                background-color: $aust-blue !important;
-                color: #fff !important;
-            }
-        }
-
-        // Ensure span/small text inside suggestions is also white/readable
-        span,
-        small {
-            color: inherit !important;
-        }
-    }
-}
-
-// Login Page Specifics
-
-// Fix Double Logo - Hide text, keep image
-.navbar-brand .site-name {
-    display: none !important;
-}
-
-// Login Page Specifics
-body.pagelayout-login,
-#page-login-index {
-    background-image: url([[pix:theme|login_background]]) !important;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
-
-// Ensure containers are transparent on login page so body background shows
-body.pagelayout-login #page-wrapper,
-body.pagelayout-login #page,
-body.pagelayout-login #page-content {
-    background-color: transparent !important;
-    background: transparent !important;
-}
-
-// Restore generic card look for the login form container (Light Mode)
-body.pagelayout-login .login-container {
-    background-color: #fff !important;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-// --- DARK MODE OVERRIDES ---
-
-// Mixin for shared styles
-@mixin dark-mode-styles {
-
-    // ----------------------------------------------------------
-    // DROPDOWN MENUS (User Menu, Language, etc.)
-    // ----------------------------------------------------------
-    // Targeting generic .dropdown-menu and specific IDs to win specificity
-    .dropdown-menu,
-    #user-action-menu.dropdown-menu,
-    .dropdown-menu.show {
-        background-color: #1d2125 !important;
-        border-color: #444 !important;
-        color: #e6edf3 !important;
-
-        .dropdown-item {
-            color: #e6edf3 !important;
-
-            &:hover,
-            &:focus,
-            &:active,
-            &.active {
-                background-color: $aust-blue !important;
-                color: #fff !important;
-            }
-        }
-
-        .dropdown-divider {
-            border-top-color: #444 !important;
-        }
-
-        .carousel-navigation-link {
-            color: #e6edf3 !important;
-        }
-    }
-
-    // ----------------------------------------------------------
-    // NOTIFICATION POPOVERS
-    // ----------------------------------------------------------
-    // Using deep nesting to override 'element.style' or core !important rules
+    // Notification Popovers - FORCE WHITE
     .popover-region-container,
-    .popover-region-content-container,
-    .popover-region-footer-container,
-    .popover-region-container .popover-region-content,
+    .popover-region-content,
     .popover-region-notifications .popover-region-content,
-    .popover-region-container .all-notifications,
-    .popover-region-content .all-notifications {
-        background-color: #1d2125 !important;
-        border-color: #444 !important;
-        color: #e6edf3 !important;
-    }
-
-    .popover-region-header-container {
-        background-color: #1d2125 !important;
-        border-bottom: 1px solid #444 !important;
+    .popover-region-header-container,
+    .content-item-container,
+    .popover-region-footer-container {
+        background-color: #fff !important;
+        color: #000 !important;
+        border-color: #dee2e6 !important;
 
         .popover-region-header-text,
-        .icon {
-            color: #fff !important;
+        .notification-message,
+        .content-item-body,
+        div {
+            color: #000 !important;
+        }
+
+        .content-item-container:hover {
+            background-color: #f8f9fa !important;
         }
     }
 
-    .content-item-container {
-        background-color: #1d2125 !important;
-        border-bottom: 1px solid #444 !important;
-
-        .notification-message {
-            color: #e6edf3 !important;
-        }
-
-        .timestamp {
-            color: #a0a0a0 !important;
-        }
-
-        .view-more {
-            color: $aust-gold !important;
-        }
-
-        &:hover {
-            background-color: #2c333b !important;
-        }
-
-        &.unread {
-            background-color: #2a2f35 !important;
-
-            &:hover {
-                background-color: #353b42 !important;
-            }
-        }
+    // Login Page - Light Mode Base
+    body.pagelayout-login,
+    #page-login-index {
+        background-image: url([[pix:theme|login_background]]) !important;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-color: transparent !important;
     }
 
-    .popover-region-seeall-text {
-        color: $aust-gold !important;
+    // Login Card - Light Mode
+    body.pagelayout-login .login-container {
+        background-color: #fff !important;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin: 0 auto;
+        color: #000 !important;
     }
 
-    .empty-message {
-        color: #aaa !important;
+    // Transparent Wrappers to show background
+    body.pagelayout-login #page-wrapper,
+    body.pagelayout-login #page,
+    body.pagelayout-login #page-content {
+        background-color: transparent !important;
+        background: transparent !important;
     }
 }
 
-// ----------------------------------------------------------
-// APPLY STYLES
-// ----------------------------------------------------------
 
-// 1. Explicit Theme Attribute
-[data-bs-theme="dark"] {
-    @include dark-mode-styles;
-}
-
-// 2. System Preference (Media Query)
+// --- DARK MODE SPECIFIC ---
+// Apply these when system prefers dark mode
 @media (prefers-color-scheme: dark) {
-    @include dark-mode-styles;
 
-    // LOGIN PAGE SPECIFIC - HIGH SPECIFICITY
-    // Overriding 'background-image: none !important' from core
+    // Global Reset for Dark Mode
+    body,
+    html,
+    #page,
+    #page-wrapper,
+    #page-content,
+    .card,
+    .userprofile .profile_tree,
+    .groupinfobox {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+
+    // EXCEPTION: Login Page Background
+    // Do NOT apply background-image: none here.
+    // Instead, define the image specifically for the login page.
+
     body.pagelayout-login,
     html body.pagelayout-login,
     #page-login-index {
@@ -1316,63 +205,180 @@ body.pagelayout-login .login-container {
         background-attachment: fixed;
     }
 
-    body.pagelayout-login .login-container {
-        background-color: rgba(0, 0, 0, 0.75) !important;
-        box-shadow: none !important;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        color: #fff !important;
-
-        .form-control {
-            background-color: #2c333b !important;
-            border-color: #444 !important;
-            color: #fff !important;
-
-            &::placeholder {
-                color: #aaa !important;
-            }
-        }
-    }
-
-    // Force transparency on wrappers
+    // Login Page Containers must be transparent
     body.pagelayout-login #page-wrapper,
     body.pagelayout-login #page,
     body.pagelayout-login #page-content {
         background-color: transparent !important;
         background: transparent !important;
     }
-}
 
-// 3. Fallback/Explicit Login Page Dark Mode
-[data-bs-theme="dark"] body.pagelayout-login,
-body[data-bs-theme="dark"].pagelayout-login {
-    background-color: transparent !important;
-    background-image: url([[pix:theme|login_background]]) !important;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-
-    .login-container {
-        background-color: rgba(0, 0, 0, 0.75) !important;
-        box-shadow: none !important;
+    // Login Card - Dark Mode (Semi-transparent dark or AuST Blue)
+    body.pagelayout-login .login-container {
+        background-color: rgba(0, 0, 0, 0.85) !important;
         border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        box-shadow: none !important;
         color: #fff !important;
+
+        .loginform {
+            background-color: transparent !important;
+        }
 
         .form-control {
             background-color: #2c333b !important;
             border-color: #444 !important;
             color: #fff !important;
+        }
 
-            &::placeholder {
-                color: #aaa !important;
+        img.img-fluid {
+            // Ensure logo is visible (it should be since it's an image)
+        }
+    }
+
+    // Dropdown Menus - FORCE DARK
+    .dropdown-menu,
+    #user-action-menu.dropdown-menu,
+    .dropdown-menu.show,
+    nav .dropdown-menu {
+        background-color: #1d2125 !important;
+        border-color: #444 !important;
+        color: #e6edf3 !important;
+
+        .dropdown-item,
+        a,
+        .dropdown-toggle {
+            color: #e6edf3 !important;
+
+            &:hover,
+            &:focus {
+                background-color: $aust-blue !important;
+                color: #fff !important;
+            }
+        }
+
+        .dropdown-divider {
+            border-top-color: #444 !important;
+        }
+    }
+
+    // Notification Popovers - FORCE DARK
+    .popover-region-container,
+    .popover-region-content-container,
+    .popover-region-content,
+    .popover-region-header-container,
+    .popover-region-footer-container {
+        background-color: #1d2125 !important;
+        border-color: #444 !important;
+        color: #e6edf3 !important;
+    }
+
+    .popover-region-header-text {
+        color: #fff !important;
+    }
+
+    .content-item-container {
+        background-color: #1d2125 !important;
+        border-bottom: 1px solid #444 !important;
+
+        .notification-message {
+            color: #e6edf3 !important;
+        }
+
+        &:hover {
+            background-color: #2c333b !important;
+        }
+
+        &.unread {
+            background-color: #2a2f35 !important;
+        }
+    }
+
+    // Report Builder & Filter Sidebars
+    .reportbuilder-filters-sidebar,
+    .filter-group {
+        background-color: #1e1e1e !important;
+        color: #e0e0e0 !important;
+
+        .filter-header,
+        label {
+            color: #fff !important;
+        }
+    }
+
+    // Modals
+    .modal-content {
+        background-color: #1e1e1e !important;
+        border-color: #333 !important;
+        color: #e0e0e0 !important;
+
+        .modal-header,
+        .modal-footer {
+            border-color: #333 !important;
+        }
+
+        .close,
+        .btn-close {
+            filter: invert(1);
+        }
+    }
+
+    // Form Controls (General)
+    input,
+    textarea,
+    select,
+    .form-control,
+    .custom-select {
+        background-color: #2c2c2c !important;
+        border: 1px solid #444 !important;
+        color: #fff !important;
+    }
+
+    // Block Drawers (Right side)
+    .drawer,
+    .drawer-content {
+        background-color: #1e1e1e !important;
+        color: #e0e0e0 !important;
+    }
+}
+
+// --- EXPLICIT DARK MODE ATTRIBUTE (For Toggles) ---
+// Mirrors the media query for [data-bs-theme="dark"]
+[data-bs-theme="dark"] {
+    // Re-apply the crucial dark mode styles here
+
+    // Dropdowns
+    .dropdown-menu {
+        background-color: #1d2125 !important;
+        border-color: #444 !important;
+        color: #e6edf3 !important;
+
+        .dropdown-item {
+            color: #e6edf3 !important;
+
+            &:hover {
+                background-color: $aust-blue !important;
+                color: #fff !important;
             }
         }
     }
 
-    #page-wrapper,
-    #page,
-    #page-content {
-        background-color: transparent !important;
-        background: transparent !important;
+    // Notifications
+    .popover-region-container,
+    .popover-region-content {
+        background-color: #1d2125 !important;
+        color: #e6edf3 !important;
+    }
+
+    // Login Page
+    &.pagelayout-login body,
+    body.pagelayout-login {
+        background-image: url([[pix:theme|login_background]]) !important;
+        background-size: cover;
+    }
+
+    .login-container {
+        background-color: rgba(0, 0, 0, 0.85) !important;
+        color: #fff !important;
     }
 }
