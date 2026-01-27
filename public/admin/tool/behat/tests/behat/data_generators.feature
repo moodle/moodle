@@ -4,6 +4,10 @@ Feature: Set up contextual data for tests
   As a developer
   I need to fill the database with fixtures
 
+  Background:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+
   Scenario: Add a bunch of users
     Given the following "users" exist:
       | username  | password  | firstname | lastname |

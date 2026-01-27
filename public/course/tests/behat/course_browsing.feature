@@ -5,7 +5,9 @@ Feature: Restricting access to course lists
   I need to be able to give/revoke capabilities to view list of courses
 
   Background:
-    Given the following "categories" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "categories" exist:
       | name | category | idnumber |
       | Science category | 0 | SCI |
       | English category | 0 | ENG |

@@ -5,7 +5,9 @@ Feature: My courses page block layout in Boost theme
   I need to see the blocks in the expected placement
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email               |
       | student1 | Student   | 1        | student@example.com |
     And I log in as "admin"

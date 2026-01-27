@@ -225,7 +225,8 @@ Feature: A user can control their own subscription preferences for a discussion
       | user  | forum  | name                  | message               |
       | admin | forum1 | Test post subject one | Test post message one |
     And the following config values are set as admin:
-      | forcelogin | 0 |
+      | forcelogin   | 0 |
+      | enablemyhome | 1 |
     When I am on site homepage
     And I follow "Test forum name"
     Then "Subscribe to this discussion" "checkbox" should not exist in the "Test post subject one" "table_row"

@@ -5,7 +5,9 @@ Feature: The search forums block allows users to search for forum posts on front
   I can add the search forums block
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | student1 | Student | 1 | student1@example.com | S1 |
     And the following "blocks" exist:

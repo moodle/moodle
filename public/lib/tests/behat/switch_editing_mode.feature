@@ -3,7 +3,9 @@ Feature: Turn editing mode on
   Users should be able to turn editing mode on and off
 
   Background:
-    Given the following "courses" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
     And the following "users" exist:

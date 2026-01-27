@@ -5,7 +5,9 @@ Feature: Prevent yours from being marked as complete
     I can prevent a user tour from being marked as complete
 
   Background:
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And I log in as "admin"
     And I add a new user tour with:
       | Name               | First tour    |
       | Description        | My first tour |

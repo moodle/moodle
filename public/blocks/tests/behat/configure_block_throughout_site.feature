@@ -5,7 +5,9 @@ Feature: Add and configure blocks throughout the site
   I need to set and configure blocks throughout the site
 
   Background:
-    Given the following "courses" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And the following "users" exist:

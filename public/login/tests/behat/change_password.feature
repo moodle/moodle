@@ -5,7 +5,9 @@ Feature: Change password
   I need to test all the way to change my password
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | testuser | Test | User | moodle@example.com |
 

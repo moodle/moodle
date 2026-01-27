@@ -34,6 +34,7 @@ final class primary_test extends \advanced_testcase {
         global $PAGE;
         parent::setUp();
         $this->resetAfterTest();
+        set_config('enablemyhome', 1);
         $pagecourse = $this->getDataGenerator()->create_course();
         $assign = $this->getDataGenerator()->create_module('assign', ['course' => $pagecourse->id]);
         $cm = get_coursemodule_from_id('assign', $assign->cmid);
@@ -143,6 +144,46 @@ final class primary_test extends \advanced_testcase {
             "Export the menu data when: custom menu does not exist; langs not installed; user is not logged in." => [
                 false, false, '', ['mobileprimarynav', 'moremenu', 'user']
             ],
+        ];
+    }
+
+    /**
+     * Test the primary export when the home link is disabled.
+     *
+     * @covers \core\navigation\output\primary::export_for_template
+     * @dataProvider primary_export_without_home_provider
+     * @param bool $withlang Setup with langs
+     * @param array $expecteditems An array of nodes expected with content in them.
+     */
+    public function test_primary_export_without_home(bool $withlang, array $expecteditems): void {
+        global $CFG, $PAGE;
+
+        set_config('enablemyhome', 0);
+        $this->setUser(0);
+
+        if ($withlang) {
+            mkdir("$CFG->dataroot/lang/de", 0777, true);
+            mkdir("$CFG->dataroot/lang/fr", 0777, true);
+            $stringmanager = get_string_manager();
+            $stringmanager->reset_caches(true);
+        }
+
+        $primary = new primary($PAGE);
+        $renderer = $PAGE->get_renderer('core');
+        $data = array_filter($primary->export_for_template($renderer));
+
+        $this->assertEqualsCanonicalizing($expecteditems, array_keys($data));
+    }
+
+    /**
+     * Provider for the test_primary_export_without_home function.
+     *
+     * @return array
+     */
+    public static function primary_export_without_home_provider(): array {
+        return [
+            'No home link and no additional languages' => [false, ['user']],
+            'No home link and multiple languages available' => [true, ['lang', 'user']],
         ];
     }
 

@@ -5,7 +5,9 @@ Feature: Delete a blog entry
   I need to be able to delete entries I no longer wish to appear
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | testuser | Test | User | moodle@example.com |
     And the following "core_blog > entries" exist:

@@ -12,6 +12,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
       | user                | course | role    |
       | userwithinformation | C1     | student |
     And the following config values are set as admin:
+      | enablemyhome    | 1     |
       | registerauth    | email |
     And the following "custom profile fields" exist:
       | datatype | shortname              | name                  | signup | visible |

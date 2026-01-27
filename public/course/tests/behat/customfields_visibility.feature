@@ -5,10 +5,12 @@ Feature: The visibility of fields control where they are displayed
   I can change the visibility of the fields
 
   Background:
-    Given the following "custom field categories" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "custom field categories" exist:
       | name              | component   | area   | itemid |
       | Category for test | core_course | course | 0      |
-    Given the following "users" exist:
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | student1 | Student   | 1        | student@example.com  |

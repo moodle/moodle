@@ -5,7 +5,9 @@ Feature: Content bank custom fields
   I need to be able to access the custom fields
 
   Background:
-    Given the following "blocks" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "blocks" exist:
       | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
       | private_files | System       | 1         | my-index        | side-post     |
     And the following "custom field categories" exist:

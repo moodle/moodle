@@ -33,6 +33,8 @@ final class navbar_test extends \advanced_testcase {
 
         // We need to reset after this test because we using the generator.
         $this->resetAfterTest();
+        set_config('enablemyhome', 0);
+        set_config('enabledashboard', 1);
 
         $generator = self::getDataGenerator();
         $cat1 = $generator->create_category();

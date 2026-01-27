@@ -4,6 +4,10 @@ Feature: Check for minimum or maximimum version of Moodle
     As a developer
     I should be able to skip tests according to the Moodle version present on a site
 
+  Background:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+
   Scenario: Minimum version too low
     Given the site is running Moodle version 99.0 or higher
     # The following steps should not be executed. If they are, the test will fail.

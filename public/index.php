@@ -72,6 +72,24 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
 \core\hub\registration::registration_reminder('/index.php');
 
 $homepage = get_home_page();
+
+// If enablemyhome is disabled, redirect unconditionally, ignoring the redirect param.
+// Any explicit link to / should be redirected away.
+// $homepage is used (not $CFG->defaulthomepage) as it already resolves stale DB values.
+if (empty($CFG->enablemyhome)) {
+    if (!isloggedin()) {
+        // Non-logged-in users must log in first (forcelogin may be off, but the
+        // page they are headed for is disabled, so send them to the login page).
+        redirect(get_login_url());
+    } else if ($homepage != HOMEPAGE_SITE) {
+        if ($homepage == HOMEPAGE_MY) {
+            redirect($CFG->wwwroot . '/my/');
+        } else if ($homepage == HOMEPAGE_MYCOURSES) {
+            redirect($CFG->wwwroot . '/my/courses.php');
+        }
+    }
+}
+
 if ($homepage != HOMEPAGE_SITE) {
     if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
         set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
@@ -82,6 +100,9 @@ if ($homepage != HOMEPAGE_SITE) {
         redirect($CFG->wwwroot .'/my/courses.php');
     } else if ($homepage == HOMEPAGE_URL) {
         redirect(get_default_home_page_url());
+    } else if ($homepage == HOMEPAGE_USER) {
+        // All homepage options disabled - redirect to user preferences page.
+        redirect($CFG->wwwroot . '/user/preferences.php');
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER)) {
         $frontpagenode = $PAGE->settingsnav->find('frontpage', null);
         if ($frontpagenode) {

@@ -5,7 +5,9 @@ Feature: Download H5P content from the content bank
   I need to be able to download any H5P content from the content bank
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username    | firstname | lastname | email              |
       | manager     | Max       | Manager  | man@example.com    |
     And the following "role assigns" exist:

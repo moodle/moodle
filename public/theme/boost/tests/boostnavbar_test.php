@@ -189,6 +189,7 @@ final class boostnavbar_test extends \advanced_testcase {
         global $PAGE;
 
         $this->resetAfterTest();
+        set_config('enablemyhome', 1);
         // Unfortunate hack needed because people use global $PAGE around the place.
         $PAGE->set_url('/');
         $course = $this->getDataGenerator()->create_course();
@@ -371,6 +372,7 @@ final class boostnavbar_test extends \advanced_testcase {
      */
     public function test_remove_duplicate_items(array $navbarnodes, array $expected): void {
         $this->resetAfterTest();
+        set_config('enablemyhome', 1);
         $page = new \moodle_page();
         $page->set_url('/');
 
@@ -399,6 +401,63 @@ final class boostnavbar_test extends \advanced_testcase {
             $actual[] = $value->text;
         }
         $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Test the remove_duplicate_items function when the home node is disabled.
+     *
+     * @dataProvider remove_duplicate_items_without_home_provider
+     * @param array $navbarnodes The array containing the text and action of the nodes to be added to the navbar
+     * @param array $expected The array containing the text of the expected navbar nodes
+     */
+    public function test_remove_duplicate_items_without_home(array $navbarnodes, array $expected): void {
+        $this->resetAfterTest();
+        set_config('enablemyhome', 0);
+        set_config('enabledashboard', 1);
+        $page = new \moodle_page();
+        $page->set_url('/');
+
+        foreach ($navbarnodes as $node) {
+            $page->navbar->add($node['text'], $node['action'], \navigation_node::TYPE_CUSTOM);
+        }
+
+        $boostnavbar = $this->getMockBuilder(boostnavbar::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+
+        $rc = new \ReflectionClass(boostnavbar::class);
+        $rcp = $rc->getProperty('items');
+        $rcp->setValue($boostnavbar, $page->navbar->get_items());
+
+        $rcm = $rc->getMethod('remove_duplicate_items');
+        $rcm->invoke($boostnavbar);
+
+        $values = $rcp->getValue($boostnavbar);
+        $actual = [];
+        foreach ($values as $value) {
+            $actual[] = $value->text;
+        }
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Provider for test_remove_duplicate_items_without_home.
+     *
+     * @return array
+     */
+    public static function remove_duplicate_items_without_home_provider(): array {
+        $cases = [];
+
+        foreach (self::remove_duplicate_items_provider() as $name => $case) {
+            [$navbarnodes, $expected] = $case;
+            // When home is disabled, anonymous users still get 'Home' (site homepage).
+            // Logged-in users would get 'Dashboard', but this test doesn't log in a user.
+            $cases[$name . ' (home disabled)'] = [$navbarnodes, $expected];
+        }
+
+        return $cases;
     }
 
 
@@ -494,6 +553,7 @@ final class boostnavbar_test extends \advanced_testcase {
         // Unfortunate hack needed because people use global $PAGE around the place.
         $PAGE->set_url('/');
         $this->resetAfterTest();
+        set_config('enablemyhome', 1);
         $page = new \moodle_page();
         $page->set_url('/');
 

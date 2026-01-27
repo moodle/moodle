@@ -5,7 +5,9 @@ Feature: Default value for the textarea custom field can contain images
   I need to be able to add images to the default value
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher  | Teacher   | 1        | teacher1@example.com |
       | manager  | Manager   | 1        | manager1@example.com |

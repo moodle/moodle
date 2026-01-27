@@ -8,6 +8,7 @@ Feature: Courses can be set up to display dates relative to the user's enrolment
   Scenario: Create a course with relative dates feature disabled
     Given the following config values are set as admin:
       | enablecourserelativedates | 0 |
+      | enablemyhome              | 1 |
     And  I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
@@ -20,6 +21,7 @@ Feature: Courses can be set up to display dates relative to the user's enrolment
   Scenario: Create a course with relative dates feature enabled
     Given the following config values are set as admin:
       | enablecourserelativedates | 1 |
+      | enablemyhome              | 1 |
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on

@@ -5,7 +5,9 @@ Feature: Browse course list and return back from enrolment page
   I need to be able to return back from enrolment page
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | user1 | User | 1 | user1@example.com |
       | user2 | User | 2 | user2@example.com |

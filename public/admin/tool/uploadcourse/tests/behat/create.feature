@@ -5,7 +5,9 @@ Feature: An admin can create courses using a CSV file
   I need to be able to upload a CSV file and navigate through the import process
 
   Background:
-    Given the following "courses" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "courses" exist:
       | fullname | shortname | category |
       | First course | C1 | 0 |
     And I log in as "admin"

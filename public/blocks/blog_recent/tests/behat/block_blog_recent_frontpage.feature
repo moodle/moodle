@@ -12,6 +12,7 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
       | blockname   | contextlevel | reference | pagetypepattern | defaultregion |
       | blog_recent | System       | 1         | site-index      | side-pre      |
     And the following config values are set as admin:
+      | enablemyhome    | 1 | |
       | unaddableblocks | | theme_boost|
     And I log in as "admin"
     And I am on site homepage

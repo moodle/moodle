@@ -5,7 +5,9 @@ Feature: Access to preferences page
   I need global permissions to view the page.
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student2@example.com |

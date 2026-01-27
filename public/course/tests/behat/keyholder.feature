@@ -3,7 +3,9 @@ Feature: Keyholder role is listed as course contact
   As a student I need to know who the keyholder is to enrol in a course
 
   Background:
-    Given the following "role" exists:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "role" exists:
         | shortname          | keyholder |
         | name               | Keyholder |
         | context_coursecat  | 1         |

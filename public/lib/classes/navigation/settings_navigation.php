@@ -1093,7 +1093,7 @@ class settings_navigation extends navigation_node {
             // breadcrumb.
             $mainpage->display = false;
             $homepage = get_home_page();
-            if (($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES)) {
+            if ($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES || $homepage == HOMEPAGE_USER) {
                 $mainpage->mainnavonly = true;
             }
 
@@ -1265,9 +1265,12 @@ class settings_navigation extends navigation_node {
         // Default homepage.
         $defaulthomepageuser = (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
         if (isloggedin() && !isguestuser($user) && $defaulthomepageuser) {
+            require_once($CFG->dirroot . '/user/lib.php');
+            $options = user_get_default_homepage_options();
             if (
-                $currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||
-                    has_capability('moodle/user:editprofile', $usercontext)
+                !empty($options) &&
+                    ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||
+                        has_capability('moodle/user:editprofile', $usercontext))
             ) {
                 $url = new url('/user/defaulthomepage.php', ['id' => $user->id]);
                 $useraccount->add(get_string('defaulthomepageuser'), $url, self::TYPE_SETTING, null, 'defaulthomepageuser');

@@ -2,7 +2,9 @@
 Feature: Run tests over my courses page
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email             |
       | user1    | User      | 1        | user1@example.com |
     And the following "categories" exist:
@@ -164,7 +166,9 @@ Feature: Run tests over my courses page
 
   @javascript
   Scenario: Admin can see relevant blocks but not add or move them
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | defaulthomepage | 0 |
+    And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     And I add the "Text" block to the default region with:

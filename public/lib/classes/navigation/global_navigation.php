@@ -182,6 +182,7 @@ class global_navigation extends navigation_node {
         // - courses: Additional courses are added here.
         // - users: Other users information loaded here.
         $this->rootnodes = [];
+        $homeenabled = !empty($CFG->enablemyhome);
         $defaulthomepage = get_home_page();
         if ($defaulthomepage == HOMEPAGE_SITE) {
             // The home element should be my moodle because the root element is the site.
@@ -199,7 +200,7 @@ class global_navigation extends navigation_node {
                     $this->rootnodes['home']->showinflatnavigation = true;
                 }
             }
-        } else {
+        } else if ($homeenabled) {
             // The home element should be the site because the root node is my moodle.
             $this->rootnodes['home'] = $this->add(
                 get_string('sitehome'),

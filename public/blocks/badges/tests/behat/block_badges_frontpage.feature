@@ -4,6 +4,10 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
   As a admin
   I can add badges block to the frontpage
 
+  Background:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+
   Scenario: Add the recent badges block on the frontpage and view recent badges
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |

@@ -14,6 +14,8 @@ Feature: Set the site home page and dashboard as the default home page
     And the following "course enrolments" exist:
       | user     | course | role           |
       | user1    | C1     | student        |
+    And the following config values are set as admin:
+      | enablemyhome | 1 |
 
   Scenario: Admin sets the site page and then the dashboard as the default home page
     # This functionality does not work without the administration block.

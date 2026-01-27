@@ -5,7 +5,9 @@ Feature: View my courses in navigation block
   I need my courses displayed in the navigation block
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
     And the following "categories" exist:

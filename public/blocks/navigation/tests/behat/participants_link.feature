@@ -5,7 +5,9 @@ Feature: Displaying the link to the Participants page
   I need a link to the Participants page be displayed (but only if I can access that page)
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Student   | One      | student1@example.com |
       | student2 | Student   | Two      | student2@example.com |

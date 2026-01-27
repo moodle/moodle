@@ -80,6 +80,8 @@ Feature: Managers can create courses
       | moodle/course:create           | allow   |
       | moodle/course:manageactivities | allow   |
       | moodle/course:viewparticipants | allow   |
+    And the following config values are set as admin:
+      | enablemyhome | 1 |
     And I log in as "kevin"
     And I am on site homepage
     When I press "Add a new course"
@@ -102,6 +104,8 @@ Feature: Managers can create courses
     And I set the following administration settings values:
       | Creators' role in new courses | Non-editing teacher |
     And I log out
+    And the following config values are set as admin:
+      | enablemyhome | 1 |
     And I log in as "kevin"
     And I am on site homepage
     When I press "Add a new course"

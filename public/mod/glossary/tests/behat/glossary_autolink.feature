@@ -5,7 +5,9 @@ Feature: Glossary entries are displayed properly when autolinked
   I can set the glossary activity to autolink the entries
 
   Background:
-    Given remote langimport tests are enabled
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And remote langimport tests are enabled
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
