@@ -44,6 +44,7 @@ nav.navbar,
 nav.navbar-light,
 .navbar.navbar-light,
 .navbar-light.bg-white,
+.navbar-light.bg-white,
 nav.navbar.navbar-light.bg-white,
 nav.fixed-top.navbar.navbar-light.bg-white,
 .fixed-top.navbar-light.bg-white {
@@ -1190,11 +1191,16 @@ body.pagelayout-login .login-container {
 
 // --- DARK MODE OVERRIDES ---
 
-// Apply to BOTH explicit theme attribute AND system preference
+// Mixin for shared styles
 @mixin dark-mode-styles {
 
-    // Dropdown Menus
-    .dropdown-menu {
+    // ----------------------------------------------------------
+    // DROPDOWN MENUS (User Menu, Language, etc.)
+    // ----------------------------------------------------------
+    // Targeting generic .dropdown-menu and specific IDs to win specificity
+    .dropdown-menu,
+    #user-action-menu.dropdown-menu,
+    .dropdown-menu.show {
         background-color: #1d2125 !important;
         border-color: #444 !important;
         color: #e6edf3 !important;
@@ -1203,7 +1209,9 @@ body.pagelayout-login .login-container {
             color: #e6edf3 !important;
 
             &:hover,
-            &:focus {
+            &:focus,
+            &:active,
+            &.active {
                 background-color: $aust-blue !important;
                 color: #fff !important;
             }
@@ -1218,12 +1226,20 @@ body.pagelayout-login .login-container {
         }
     }
 
-    // Notification Popovers
+    // ----------------------------------------------------------
+    // NOTIFICATION POPOVERS
+    // ----------------------------------------------------------
+    // Using deep nesting to override 'element.style' or core !important rules
     .popover-region-container,
     .popover-region-content-container,
-    .popover-region-footer-container {
+    .popover-region-footer-container,
+    .popover-region-container .popover-region-content,
+    .popover-region-notifications .popover-region-content,
+    .popover-region-container .all-notifications,
+    .popover-region-content .all-notifications {
         background-color: #1d2125 !important;
         border-color: #444 !important;
+        color: #e6edf3 !important;
     }
 
     .popover-region-header-container {
@@ -1248,6 +1264,10 @@ body.pagelayout-login .login-container {
             color: #a0a0a0 !important;
         }
 
+        .view-more {
+            color: $aust-gold !important;
+        }
+
         &:hover {
             background-color: #2c333b !important;
         }
@@ -1264,20 +1284,30 @@ body.pagelayout-login .login-container {
     .popover-region-seeall-text {
         color: $aust-gold !important;
     }
+
+    .empty-message {
+        color: #aaa !important;
+    }
 }
 
-// Apply the mixin to both contexts
+// ----------------------------------------------------------
+// APPLY STYLES
+// ----------------------------------------------------------
+
+// 1. Explicit Theme Attribute
 [data-bs-theme="dark"] {
     @include dark-mode-styles;
 }
 
+// 2. System Preference (Media Query)
 @media (prefers-color-scheme: dark) {
     @include dark-mode-styles;
 
-    // Login Page Specifics for Media Query
-    // increasing specificity to override core theme
+    // LOGIN PAGE SPECIFIC - HIGH SPECIFICITY
+    // Overriding 'background-image: none !important' from core
     body.pagelayout-login,
-    html body.pagelayout-login {
+    html body.pagelayout-login,
+    #page-login-index {
         background-color: transparent !important;
         background-image: url([[pix:theme|login_background]]) !important;
         background-size: cover;
@@ -1303,6 +1333,7 @@ body.pagelayout-login .login-container {
         }
     }
 
+    // Force transparency on wrappers
     body.pagelayout-login #page-wrapper,
     body.pagelayout-login #page,
     body.pagelayout-login #page-content {
@@ -1311,10 +1342,9 @@ body.pagelayout-login .login-container {
     }
 }
 
-// Keep the explicit attribute selector as well, just in case
+// 3. Fallback/Explicit Login Page Dark Mode
 [data-bs-theme="dark"] body.pagelayout-login,
 body[data-bs-theme="dark"].pagelayout-login {
-    // Force background image
     background-color: transparent !important;
     background-image: url([[pix:theme|login_background]]) !important;
     background-size: cover;
