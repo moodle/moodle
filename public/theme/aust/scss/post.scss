@@ -1190,10 +1190,10 @@ body.pagelayout-login .login-container {
 
 // --- DARK MODE OVERRIDES ---
 
-// 1. Generic Dark Mode Fixes (Dropdowns & Popovers)
-[data-bs-theme="dark"] {
+// Apply to BOTH explicit theme attribute AND system preference
+@mixin dark-mode-styles {
 
-    // Dropdown Menus (User Menu, etc.)
+    // Dropdown Menus
     .dropdown-menu {
         background-color: #1d2125 !important;
         border-color: #444 !important;
@@ -1213,7 +1213,6 @@ body.pagelayout-login .login-container {
             border-top-color: #444 !important;
         }
 
-        // Fix the arrow in carousel menus
         .carousel-navigation-link {
             color: #e6edf3 !important;
         }
@@ -1267,27 +1266,32 @@ body.pagelayout-login .login-container {
     }
 }
 
-// 2. Login Page - Dark Mode SPECIFIC
-// Using robust selectors to handle variations in where the attribute is placed
-body[data-bs-theme="dark"].pagelayout-login,
-html[data-bs-theme="dark"] body.pagelayout-login {
+// Apply the mixin to both contexts
+[data-bs-theme="dark"] {
+    @include dark-mode-styles;
+}
 
-    // Force background image
-    background-color: transparent !important;
-    background-image: url([[pix:theme|login_background]]) !important;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+@media (prefers-color-scheme: dark) {
+    @include dark-mode-styles;
 
-    // Make login card dark and transparent
-    .login-container {
+    // Login Page Specifics for Media Query
+    // increasing specificity to override core theme
+    body.pagelayout-login,
+    html body.pagelayout-login {
+        background-color: transparent !important;
+        background-image: url([[pix:theme|login_background]]) !important;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    body.pagelayout-login .login-container {
         background-color: rgba(0, 0, 0, 0.75) !important;
         box-shadow: none !important;
         border: 1px solid rgba(255, 255, 255, 0.15);
         color: #fff !important;
 
-        // Ensure input fields are readable in the dark card
         .form-control {
             background-color: #2c333b !important;
             border-color: #444 !important;
@@ -1299,7 +1303,42 @@ html[data-bs-theme="dark"] body.pagelayout-login {
         }
     }
 
-    // Ensure all page wrappers are transparent
+    body.pagelayout-login #page-wrapper,
+    body.pagelayout-login #page,
+    body.pagelayout-login #page-content {
+        background-color: transparent !important;
+        background: transparent !important;
+    }
+}
+
+// Keep the explicit attribute selector as well, just in case
+[data-bs-theme="dark"] body.pagelayout-login,
+body[data-bs-theme="dark"].pagelayout-login {
+    // Force background image
+    background-color: transparent !important;
+    background-image: url([[pix:theme|login_background]]) !important;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    .login-container {
+        background-color: rgba(0, 0, 0, 0.75) !important;
+        box-shadow: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff !important;
+
+        .form-control {
+            background-color: #2c333b !important;
+            border-color: #444 !important;
+            color: #fff !important;
+
+            &::placeholder {
+                color: #aaa !important;
+            }
+        }
+    }
+
     #page-wrapper,
     #page,
     #page-content {
