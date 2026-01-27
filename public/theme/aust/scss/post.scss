@@ -552,6 +552,82 @@ nav.navbar {
         color: #e0e0e0 !important;
     }
 
+    // Navigation / More Menu
+    .moremenu,
+    .nav-tabs {
+        background-color: transparent !important;
+        border-bottom-color: #444 !important;
+
+        .nav-link {
+            background-color: transparent !important;
+            color: #e0e0e0 !important;
+            border-color: transparent !important;
+
+            &:hover,
+            &:focus {
+                background-color: #2c2c2c !important;
+                color: #fff !important;
+                border-color: #333 !important;
+            }
+
+            &.active {
+                background-color: #1e1e1e !important;
+                color: #fff !important;
+                border-color: #444 #444 #1e1e1e !important; // Top/Sides dark, Bottom transparent/matching bg
+            }
+        }
+    }
+
+    // Dropdowns (Global Dark Mode)
+    .dropdown-menu {
+        background-color: #2c2c2c !important;
+        border-color: #444 !important;
+
+        .dropdown-item {
+            color: #e0e0e0 !important;
+
+            &:hover,
+            &:focus {
+                background-color: #0f6cbf !important; // AuST Blue
+                color: #fff !important;
+            }
+        }
+    }
+
+    // Course List & Course Boxes
+    .coursebox,
+    #frontpage-available-course-list,
+    .courses .coursebox {
+        background-color: #1e1e1e !important;
+        border-color: #333 !important;
+        color: #e0e0e0 !important;
+
+        .info,
+        .content {
+            background-color: transparent !important;
+        }
+
+        .coursename a {
+            color: #64b5f6 !important; // Light Blue for contrast
+        }
+    }
+
+    // Footer Popover Button
+    .btn-footer-popover {
+        &.bg-secondary {
+            background-color: #444 !important; // Darker than default secondary
+            color: #fff !important;
+        }
+
+        .icon {
+            color: #fff !important;
+        }
+
+        &:hover {
+            background-color: #555 !important;
+        }
+    }
+
     // Icons
     .icon,
     .fa,
