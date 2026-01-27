@@ -84,7 +84,12 @@ nav.navbar {
 // --- LIGHT MODE SPECIFIC ---
 @media (prefers-color-scheme: light) {
 
-    // Removed the pink background!
+    // Body Background - Ensure NO pink
+    body {
+        background-color: #fce4ec; // Resetting to system default or mild color if needed, but user hated pink. 
+        // Setting to white/gray standard for now to be safe, or just commenting out the pink one.
+        background-color: #fff;
+    }
 
     // Header Dropdown Menu - White text in light mode
     .dropdown-menu,
@@ -212,8 +217,16 @@ nav.navbar {
     #page-content,
     .card,
     .userprofile .profile_tree,
-    .groupinfobox {
+    .groupinfobox,
+    .main-inner,
+    #topofscroll {
         background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+
+    // Force .bg-white to be dark in dark mode contexts
+    .bg-white {
+        background-color: #1e1e1e !important;
         color: #e0e0e0 !important;
     }
 
@@ -390,6 +403,14 @@ nav.navbar {
         }
     }
 
+    // Input Groups (Search boxes)
+    .input-group-text,
+    .input-group-text.bg-white {
+        background-color: #2c2c2c !important;
+        border-color: #444 !important;
+        color: #fff !important;
+    }
+
     // Quiz
     .que {
 
@@ -440,14 +461,42 @@ nav.navbar {
         }
     }
 
-    // Chat / Messaging
+    // Chat / Messaging - AGRESSIVE FIXES
     .message-app,
     .message-drawer,
     .header-container,
     .body-container,
-    .footer-container {
+    .footer-container,
+    .drawer,
+    [data-region="message-drawer"],
+    [data-region="right-hand-drawer"] {
         background-color: #1e1e1e !important;
         color: #e0e0e0 !important;
+
+        // Force white backgrounds inside here to be dark
+        .bg-white {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+        }
+
+        // List items (Conversations)
+        .list-group-item {
+            background-color: #1e1e1e !important;
+            border-color: #333 !important;
+            color: #e0e0e0 !important;
+
+            &:hover,
+            &.list-group-item-action:hover {
+                background-color: #2c333b !important;
+                color: #fff !important;
+            }
+        }
+
+        // Textareas
+        textarea {
+            background-color: #2c2c2c !important;
+            color: #fff !important;
+        }
     }
 
     .message {
