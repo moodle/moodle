@@ -552,11 +552,24 @@ nav.navbar {
         color: #e0e0e0 !important;
     }
 
-    // Navigation / More Menu - Fix container background
+    // Navigation - Force Navbar to Dark
+    nav.navbar {
+        background-color: #1e1e1e !important;
+        border-bottom: 4px solid #fdb913 !important; // Keep AuST Gold border
+
+        // Ensure brand text is white
+        .navbar-brand {
+            color: #fff !important;
+        }
+    }
+
+    // Navigation Items & Menus
     .moremenu,
     .nav-tabs,
-    .secondary-navigation {
-        background-color: #1e1e1e !important; // Force container to be dark
+    .secondary-navigation,
+    .primary-navigation,
+    .navbar-nav {
+        background-color: transparent !important;
         border-bottom-color: #444 !important;
 
         .nav-link {
@@ -566,14 +579,14 @@ nav.navbar {
 
             &:hover,
             &:focus {
-                background-color: #333 !important;
+                background-color: rgba(255, 255, 255, 0.1) !important;
                 color: #fff !important;
             }
 
             &.active {
-                background-color: #2c2c2c !important; // Slightly lighter than bg
+                background-color: rgba(255, 255, 255, 0.1) !important; // Translucent active state
                 color: #fff !important;
-                border-bottom: 2px solid #0f6cbf !important; // Active indicator
+                border-bottom: 3px solid #fdb913 !important; // AuST Gold active indicator to match border
             }
         }
     }
@@ -592,6 +605,27 @@ nav.navbar {
                 color: #fff !important;
             }
         }
+    }
+
+    // CARDS & BLOCKS - Critical Fix for White Areas
+    .card,
+    .block,
+    .card-body,
+    .block-cards,
+    .activity-item,
+    .section-item,
+    .custom-card {
+        background-color: #1e1e1e !important;
+        border-color: #333 !important;
+        color: #e0e0e0 !important;
+    }
+
+    // Ensure card footers/headers match
+    .card-footer,
+    .card-header {
+        background-color: #252525 !important;
+        border-bottom-color: #333 !important;
+        border-top-color: #333 !important;
     }
 
     // Course List & Course Boxes
