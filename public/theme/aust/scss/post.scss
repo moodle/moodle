@@ -1178,12 +1178,42 @@ body.pagelayout-login #page-content {
     background: transparent !important;
 }
 
-// Restore generic card look for the login form container
+// Restore generic card look for the login form container (Light Mode)
 body.pagelayout-login .login-container {
     background-color: #fff !important;
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    max-width: 500px; // Ensure it doesn't stretch too wide
-    margin: 0 auto; // Center it
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+// Dark Mode Overrides
+[data-bs-theme="dark"] {
+
+    &.pagelayout-login,
+    body.pagelayout-login {
+        // Ensure background image shows in dark mode
+        background-color: transparent !important;
+        background-image: url([[pix:theme|login_background]]) !important;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    // Remove white background from login card in dark mode
+    .login-container {
+        background-color: rgba(0, 0, 0, 0.6) !important; // Semi-transparent dark
+        box-shadow: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    // Ensure all parents are transparent
+    #page-wrapper,
+    #page,
+    #page-content {
+        background-color: transparent !important;
+        background: transparent !important;
+    }
 }
