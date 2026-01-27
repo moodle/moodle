@@ -1157,10 +1157,17 @@ nav.moremenu {
 }
 
 // Login Page Specifics
+
+// Fix Double Logo - Hide text, keep image
+.navbar-brand .site-name {
+    display: none !important;
+}
+
+// Login Page Specifics
 body.pagelayout-login,
 #page-login-index {
-    // Debug color (Gold) - if you see this, the selector works but image failed
-    background-color: #fdb913 !important;
+    // Debug color (Magenta) - if you see this, the selector works but image failed
+    background-color: #ff00ff !important;
 
     // Try standard macro without extension (Moodle handles extensions)
     background-image: url([[pix:theme|login_background]]) !important;
