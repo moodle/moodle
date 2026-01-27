@@ -7,8 +7,10 @@ import base64
 import psycopg2
 import psycopg2.extras
 import time
+import csv
 from dotenv import load_dotenv
 from typing import Dict, List, Optional
+from difflib import SequenceMatcher
 
 # Import your provided alerter
 import job_alerter
@@ -25,24 +27,236 @@ logging.basicConfig(
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 # --- CONFIG ---
-# Dictionary mapping Fusion item titles to short course names
-# Key: Full title from FactItems table
-# Value: Short name to use in course shortname/fullname
-ITEM_CONFIG = {
-    # "Fusion Title": "Short Name"
-    "F20-MI-000713 - F20 Manufacturing Instruction - End Cut, Attach, & Finish - ": "F20 Manufacturing Instruction",
-    "ZDN-MI-000805 - ZDN Catheter Manufacturing Procedure - ": "ZDN Catheter Manufacturing Procedure",
+# Moodle Categories - ID to Name mapping for fuzzy matching
+MOODLE_CATEGORIES = {
+    10: "All Company",
+    11: "All Company Compliance",
+    12: "SOP Training",
+    13: "Human Resources",
+    29: "AGI",
+    19: "BLN",
+    35: "F20",
+    1: "Category 1",
+    30: "F20",
+    24: "BLN",
+    25: "CTI",
+    44: "SPX",
+    15: "Technical",
+    31: "Sub Assembly",
+    26: "BMD",
+    20: "CTI",
+    21: "BMD",
+    14: "Engineering",
+    2: "Production",
+    7: "New Hire Orientation",
+    8: "Direct Labor",
+    9: "Indirect Labor",
+    3: "FPC-AuST",
+    4: "FPC-CP",
+    5: "Train the Trainer",
+    6: "Production Leadership",
+    36: "CTI",
+    16: "SSPC-AuST",
+    17: "SSPC-CP",
+    22: "MP3",
+    38: "FPC",
+    23: "SMG",
+    32: "SMG",
+    18: "SMG",
+    27: "MP3",
+    41: "Dragonfly",
+    37: "BMD",
+    33: "BLN",
+    28: "Agile-AuST",
+    46: "FST",
+    34: "AGI",
+    39: "APV",
+    40: "Low Volume",
+    43: "NVS",
+    42: "VPU",
+    45: "BFC",
+    47: "ACF",
+    48: "AUD",
 }
+
+# Reverse lookup: name to IDs (multiple IDs may have same name)
+CATEGORY_NAME_TO_IDS = {}
+for cat_id, cat_name in MOODLE_CATEGORIES.items():
+    name_lower = cat_name.lower()
+    if name_lower not in CATEGORY_NAME_TO_IDS:
+        CATEGORY_NAME_TO_IDS[name_lower] = []
+    CATEGORY_NAME_TO_IDS[name_lower].append(cat_id)
 
 PLM_CONFIG = {
     'workspace_id': '193',
-    'category_id': 1
+    'category_id': 15  # Default to Technical (ID 15) as fallback
 }
+
+# Path to the Document List CSV
+DOCUMENT_LIST_CSV = os.path.join(os.path.dirname(__file__), "Document List.csv")
 
 # FLAGS
 STRICT_PDF_ONLY = True 
 DOWNLOAD_DIR = "temp_staging_area"
 NUKE_VERSION_TABLE = False # Set to True to wipe the DB state on run
+
+def load_document_list() -> List[Dict]:
+    """
+    Loads the Document List CSV and returns a list of document configurations.
+    """
+    documents = []
+    if not os.path.exists(DOCUMENT_LIST_CSV):
+        logging.error(f"Document List CSV not found: {DOCUMENT_LIST_CSV}")
+        return documents
+    
+    with open(DOCUMENT_LIST_CSV, 'r', encoding='utf-8-sig') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            # Normalize keys by stripping whitespace (handles "2 Courses " -> "2 Courses")
+            normalized_row = {k.strip(): v for k, v in row.items()}
+            
+            # Skip empty rows
+            if not normalized_row.get('Document', '').strip():
+                continue
+            
+            # Clean up the document ID (remove tabs and whitespace)
+            doc_id = normalized_row.get('Document', '').strip().replace('\t', '')
+            
+            # Get the "2 Courses" value (may have trailing space in original header)
+            two_courses_value = normalized_row.get('2 Courses', '').strip().lower()
+            
+            doc_config = {
+                'highest_category': normalized_row.get('Highest category', '').strip(),
+                'subcategory_1': normalized_row.get('subcategory 1', '').strip(),
+                'subcategory_2': normalized_row.get('subcategroy 2', '').strip(),  # Note: typo in CSV header
+                'document_id': doc_id,
+                'full_name': normalized_row.get('Full name', '').strip(),
+                'course_name': normalized_row.get('Course Name', '').strip(),
+                'create_quiz': two_courses_value == 'yes'
+            }
+            documents.append(doc_config)
+    
+    logging.info(f"Loaded {len(documents)} documents from CSV")
+    return documents
+
+def find_best_category_match(category_name: str) -> Optional[int]:
+    """
+    Finds the best matching Moodle category ID for a given category name.
+    Uses case-insensitive fuzzy matching.
+    """
+    if not category_name:
+        return None
+    
+    search_name = category_name.lower().strip()
+    
+    # Exact match first
+    if search_name in CATEGORY_NAME_TO_IDS:
+        return CATEGORY_NAME_TO_IDS[search_name][0]
+    
+    # Fuzzy match - find best similarity ratio
+    best_match = None
+    best_ratio = 0.0
+    
+    for cat_name_lower, cat_ids in CATEGORY_NAME_TO_IDS.items():
+        # Check substring match
+        if search_name in cat_name_lower or cat_name_lower in search_name:
+            # Substring match found - prefer this
+            ratio = 0.9 if len(search_name) > len(cat_name_lower) else 0.95
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_match = cat_ids[0]
+        else:
+            # Use sequence matcher for similarity
+            ratio = SequenceMatcher(None, search_name, cat_name_lower).ratio()
+            if ratio > best_ratio and ratio > 0.6:  # Minimum 60% match
+                best_ratio = ratio
+                best_match = cat_ids[0]
+    
+    if best_match:
+        logging.debug(f"Category match: '{category_name}' -> ID {best_match} (ratio: {best_ratio:.2f})")
+    else:
+        logging.warning(f"No category match found for: '{category_name}'")
+    
+    return best_match
+
+def get_or_create_category(name: str, parent_id: int = 0) -> Optional[int]:
+    """
+    Gets or creates a Moodle category by name under the specified parent.
+    Returns the category ID.
+    """
+    if not name:
+        return None
+    
+    # First, try to find existing category
+    try:
+        categories = call_moodle_json('core_course_get_categories', {
+            'criteria': [{'key': 'name', 'value': name}]
+        })
+        
+        if isinstance(categories, list):
+            for cat in categories:
+                if cat.get('name', '').lower() == name.lower():
+                    # Check parent matches if specified
+                    if parent_id == 0 or cat.get('parent', 0) == parent_id:
+                        logging.debug(f"Found existing category: {name} (ID: {cat['id']})")
+                        return cat['id']
+        
+        # Find by fuzzy match in existing categories
+        matched_id = find_best_category_match(name)
+        if matched_id:
+            return matched_id
+        
+        # Category not found, create it
+        logging.info(f"Creating category: {name} (parent: {parent_id})")
+        result = call_moodle_json('core_course_create_categories', {
+            'categories': [{
+                'name': name,
+                'parent': parent_id,
+                'description': f'Auto-created by Master Builder',
+                'descriptionformat': 1
+            }]
+        })
+        
+        if isinstance(result, list) and len(result) > 0:
+            new_id = result[0].get('id')
+            logging.info(f"Created category: {name} (ID: {new_id})")
+            return new_id
+        elif isinstance(result, dict) and 'exception' in result:
+            logging.error(f"Failed to create category '{name}': {result.get('message')}")
+            
+    except Exception as e:
+        logging.error(f"Error getting/creating category '{name}': {e}")
+    
+    return None
+
+def ensure_category_hierarchy(highest: str, sub1: str, sub2: str) -> int:
+    """
+    Ensures the full category hierarchy exists and returns the leaf category ID.
+    Creates categories as needed: highest -> sub1 -> sub2
+    """
+    # Start with default Technical category
+    final_category_id = PLM_CONFIG['category_id']
+    
+    # Try to find/create highest level category
+    if highest:
+        top_id = get_or_create_category(highest, 0)
+        if top_id:
+            final_category_id = top_id
+            
+            # Try sub1 under top
+            if sub1:
+                sub1_id = get_or_create_category(sub1, top_id)
+                if sub1_id:
+                    final_category_id = sub1_id
+                    
+                    # Try sub2 under sub1
+                    if sub2:
+                        sub2_id = get_or_create_category(sub2, sub1_id)
+                        if sub2_id:
+                            final_category_id = sub2_id
+    
+    return final_category_id
+
 
 # CREDENTIALS
 MOODLE_URL = os.getenv('MOODLE_URL')
@@ -199,6 +413,36 @@ def fetch_items_by_exact_titles(conn, titles: List[str]):
     """
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(query, (titles,))
+        return cur.fetchall()
+
+def fetch_items_by_document_prefix(conn, document_id: str, workspace_id: str = '193'):
+    """
+    Fetches items from FactItems table where title starts with the document ID.
+    This matches on the first part before the ' - ' in the title.
+    Excludes working versions (.w, w).
+    
+    Args:
+        document_id: The document ID prefix to match (e.g., 'DFE-MI-001249')
+        workspace_id: The Fusion workspace ID to filter by
+    
+    Returns:
+        List of matching items
+    """
+    if not document_id:
+        return []
+    
+    # Use LIKE to match titles starting with the document ID
+    search_pattern = f"{document_id}%"
+    
+    query = """
+        SELECT * FROM public."FactItems"
+        WHERE title LIKE %s
+          AND workspace_id = %s
+          AND version NOT LIKE '%%.w'
+          AND version_id != 'w'
+    """
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(query, (search_pattern, workspace_id))
         return cur.fetchall()
 
 def is_superseded_version(version_str: str) -> bool:
@@ -820,70 +1064,95 @@ def extract_id(item):
 
 def main():
     conn = get_db_connection()
+    failed_documents = []  # Track documents that couldn't be found
+    
     try:
         # Ensure version tracking table exists
         ensure_version_table_exists(conn)
         
-        if not ITEM_CONFIG:
-            logging.warning("No items configured in ITEM_CONFIG. Nothing to process.")
+        # Load documents from CSV
+        document_list = load_document_list()
+        
+        if not document_list:
+            logging.warning("No documents found in Document List CSV. Nothing to process.")
             return
         
-        # Get list of titles to fetch
-        titles_to_fetch = list(ITEM_CONFIG.keys())
+        logging.info(f"--- Processing {len(document_list)} documents from CSV ---")
         
-        logging.info(f"--- Fetching items for {len(titles_to_fetch)} configured titles ---")
-        all_items = fetch_items_by_exact_titles(conn, titles_to_fetch)
-        logging.info(f"Found {len(all_items)} total item records (all versions).")
-        
-        # Group by title to find latest version per title
-        grouped = {}
-        for item in all_items:
-            title = item.get('title')
-            if title not in grouped:
-                grouped[title] = []
-            grouped[title].append(item)
-        
-        logging.info(f"Processing {len(grouped)} unique documents.")
-
-        for title, items in grouped.items():
+        for doc_config in document_list:
+            document_id = doc_config['document_id']
+            course_name = doc_config['course_name']
+            full_name = doc_config['full_name']
+            create_quiz = doc_config['create_quiz']
+            
+            logging.info(f"Looking for document: {document_id}")
+            
+            # Fetch items matching the document ID prefix
+            items = fetch_items_by_document_prefix(conn, document_id, PLM_CONFIG['workspace_id'])
+            
+            if not items:
+                logging.warning(f"FAILED: No items found for document ID: {document_id}")
+                failed_documents.append({
+                    'document_id': document_id,
+                    'course_name': course_name,
+                    'reason': 'No items found in Fusion workspace 193'
+                })
+                continue
+            
+            # Get latest released version
             latest = get_latest_released_version(items)
             if not latest:
-                logging.warning(f"No released version for: {title}")
+                logging.warning(f"FAILED: No released version for: {document_id}")
+                failed_documents.append({
+                    'document_id': document_id,
+                    'course_name': course_name,
+                    'reason': 'No released (non-superseded) version found'
+                })
                 continue
             
             item_id = extract_id(latest)
             current_version = latest.get('version', '')
+            title = latest.get('title', document_id)
             
             if not item_id:
-                logging.warning(f"Skipping {title} - no item ID")
+                logging.warning(f"FAILED: No item ID for: {document_id}")
+                failed_documents.append({
+                    'document_id': document_id,
+                    'course_name': course_name,
+                    'reason': 'Could not extract item ID'
+                })
                 continue
-
-            # Get short name from config
-            short_name = ITEM_CONFIG.get(title, title[:20].replace(' ', '-'))
             
-            logging.info(f"Processing: {title} (Short: {short_name}, Version: {current_version})")
+            # Get or create the category hierarchy
+            category_id = ensure_category_hierarchy(
+                doc_config['highest_category'],
+                doc_config['subcategory_1'],
+                doc_config['subcategory_2']
+            )
+            
+            logging.info(f"Processing: {document_id} -> {course_name} (Version: {current_version}, Category: {category_id})")
 
             # ========================================
             # --- PDF Course (Read and Understand) ---
             # ========================================
-            pdf_shortname = f"{short_name}-RU"
-            pdf_fullname = f"{short_name} Read and Understand"
+            pdf_shortname = f"{course_name}-RU"
+            pdf_fullname = f"{course_name} Read and Understand"
             
-            deployed_pdf_version = get_deployed_version(conn, title, 'pdf')
+            deployed_pdf_version = get_deployed_version(conn, document_id, 'pdf')
             
             if deployed_pdf_version != current_version:
-                logging.info(f"PDF update needed: {short_name} ({deployed_pdf_version} -> {current_version})")
+                logging.info(f"PDF update needed: {course_name} ({deployed_pdf_version} -> {current_version})")
                 
-                pdf_path = download_pdf_logic(PLM_CONFIG['workspace_id'], item_id, short_name)
+                pdf_path = download_pdf_logic(PLM_CONFIG['workspace_id'], item_id, course_name)
                 if pdf_path:
                     try:
                         course_id, is_new = ensure_specific_course_exists(
                             shortname=pdf_shortname,
                             fullname=pdf_fullname,
-                            category_id=PLM_CONFIG['category_id']
+                            category_id=category_id
                         )
-                        build_pdf_course(course_id, short_name, pdf_path)
-                        update_deployed_version(conn, title, pdf_shortname, 'pdf', current_version)
+                        build_pdf_course(course_id, course_name, pdf_path)
+                        update_deployed_version(conn, document_id, pdf_shortname, 'pdf', current_version)
                         
                         # Reset course progress if it's an update (not a new course)
                         if not is_new:
@@ -895,35 +1164,36 @@ def main():
                                 logging.error(f"Failed to reset course progress: {e}")
                             
                             # Also reset quiz grades for the related competency course
-                            cmp_shortname = f"{short_name}-CMP"
-                            logging.info(f"Resetting quiz grades for competency course {cmp_shortname}...")
-                            try:
-                                # Find the quiz course
-                                search_res = call_moodle_json('core_course_get_courses_by_field', 
-                                    {'field': 'shortname', 'value': cmp_shortname})
-                                if isinstance(search_res, dict) and 'courses' in search_res:
-                                    search_res = search_res['courses']
-                                if isinstance(search_res, list) and len(search_res) > 0:
-                                    quiz_course_id = search_res[0]['id']
-                                    reset_quiz_grades(quiz_course_id)
-                                    logging.info(f"Quiz grades reset for course {quiz_course_id}")
-                            except Exception as e:
-                                logging.error(f"Failed to reset quiz grades: {e}")
+                            if create_quiz:
+                                cmp_shortname = f"{course_name}-CMP"
+                                logging.info(f"Resetting quiz grades for competency course {cmp_shortname}...")
+                                try:
+                                    # Find the quiz course
+                                    search_res = call_moodle_json('core_course_get_courses_by_field', 
+                                        {'field': 'shortname', 'value': cmp_shortname})
+                                    if isinstance(search_res, dict) and 'courses' in search_res:
+                                        search_res = search_res['courses']
+                                    if isinstance(search_res, list) and len(search_res) > 0:
+                                        quiz_course_id = search_res[0]['id']
+                                        reset_quiz_grades(quiz_course_id)
+                                        logging.info(f"Quiz grades reset for course {quiz_course_id}")
+                                except Exception as e:
+                                    logging.error(f"Failed to reset quiz grades: {e}")
                         
                         # Post announcement
                         subject = "Document Updated / Documento Actualizado"
-                        message = f"A new version ({current_version}) of '{short_name}' is available. Please review it and retake the competency assessment. / Una nueva versión ({current_version}) de '{short_name}' está disponible. Por favor revíselo y vuelva a realizar la evaluación de competencia."
+                        message = f"A new version ({current_version}) of '{course_name}' is available. Please review it and retake the competency assessment. / Una nueva versión ({current_version}) de '{course_name}' está disponible. Por favor revíselo y vuelva a realizar la evaluación de competencia."
                         post_announcement(course_id, subject, message)
                         
                         logging.info(f"PDF course updated: {pdf_shortname}")
                     except Exception as e:
-                        logging.error(f"Error creating PDF course for {title}: {e}")
+                        logging.error(f"Error creating PDF course for {document_id}: {e}")
                     finally:
                         if os.path.exists(pdf_path):
                             os.remove(pdf_path)
                 else:
                     if STRICT_PDF_ONLY:
-                        logging.warning(f"Skipping PDF course for {short_name} (No PDF available)")
+                        logging.warning(f"Skipping PDF course for {course_name} (No PDF available)")
             else:
                 logging.info(f"PDF up to date: {pdf_shortname} (version {current_version})")
                 # Enforce completion settings even if up to date
@@ -935,34 +1205,48 @@ def main():
             # ========================================
             # --- Quiz Course (Competency) ---
             # ========================================
-            quiz_shortname = f"{short_name}-CMP"
-            quiz_fullname = f"{short_name} Competency"
-            
-            try:
-                course_id, is_new = ensure_specific_course_exists(
-                    shortname=quiz_shortname,
-                    fullname=quiz_fullname,
-                    category_id=PLM_CONFIG['category_id']
-                )
+            if create_quiz:
+                quiz_shortname = f"{course_name}-CMP"
+                quiz_fullname = f"{course_name} Competency"
                 
-                quiz_instance_id = get_quiz_id(course_id)
-                if not quiz_instance_id:
-                    build_quiz_course(course_id, short_name)
-                    update_deployed_version(conn, title, quiz_shortname, 'quiz', current_version)
+                try:
+                    course_id, is_new = ensure_specific_course_exists(
+                        shortname=quiz_shortname,
+                        fullname=quiz_fullname,
+                        category_id=category_id
+                    )
                     
-                    # Post announcement for new quiz
-                    subject = "Competency Assessment Available / Evaluación de Competencia Disponible"
-                    message = f"Complete this assessment to demonstrate competency for {short_name}. / Complete esta evaluación para demostrar competencia en {short_name}."
-                    post_announcement(course_id, subject, message)
-                    
-                    logging.info(f"Quiz course created: {quiz_shortname}")
-                else:
-                    logging.info(f"Quiz already exists: {quiz_shortname} (ID: {quiz_instance_id})")
-                    # Enforce configuration
-                    configure_quiz_full(course_id, quiz_instance_id)
-                    
-            except Exception as e:
-                logging.error(f"Error creating Quiz course for {title}: {e}")
+                    quiz_instance_id = get_quiz_id(course_id)
+                    if not quiz_instance_id:
+                        build_quiz_course(course_id, course_name)
+                        update_deployed_version(conn, document_id, quiz_shortname, 'quiz', current_version)
+                        
+                        # Post announcement for new quiz
+                        subject = "Competency Assessment Available / Evaluación de Competencia Disponible"
+                        message = f"Complete this assessment to demonstrate competency for {course_name}. / Complete esta evaluación para demostrar competencia en {course_name}."
+                        post_announcement(course_id, subject, message)
+                        
+                        logging.info(f"Quiz course created: {quiz_shortname}")
+                    else:
+                        logging.info(f"Quiz already exists: {quiz_shortname} (ID: {quiz_instance_id})")
+                        # Enforce configuration
+                        configure_quiz_full(course_id, quiz_instance_id)
+                        
+                except Exception as e:
+                    logging.error(f"Error creating Quiz course for {document_id}: {e}")
+            else:
+                logging.info(f"Skipping quiz creation for {course_name} (2 Courses = No)")
+        
+        # Report failed documents
+        if failed_documents:
+            logging.error("=" * 60)
+            logging.error(f"FAILED DOCUMENTS SUMMARY: {len(failed_documents)} documents could not be processed")
+            logging.error("=" * 60)
+            for failed in failed_documents:
+                logging.error(f"  - {failed['document_id']} ({failed['course_name']}): {failed['reason']}")
+            logging.error("=" * 60)
+        else:
+            logging.info("All documents processed successfully!")
 
     except Exception as e:
         job_alerter.send_failure_alert(

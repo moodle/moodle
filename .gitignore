@@ -71,6 +71,7 @@ terraform/.terraform.tfstate.lock.info
 terraform/moodle-key.ppk
 terraform/.terraform/
 certs/
+Document List.csv
 
 # Ignore Grunt build artifacts
 **/amd/build/*.min.js
