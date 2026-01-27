@@ -142,13 +142,23 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     // Navigation settings
     $temp = new admin_settingpage('navigation', new lang_string('navigation'));
     $temp->add(new admin_setting_configcheckbox(
+        'enablemyhome',
+        new lang_string('enablemyhome', 'admin'),
+        new lang_string('enablemyhome_help', 'admin'),
+        0
+    ));
+
+    $temp->add(new admin_setting_configcheckbox(
         'enabledashboard',
         new lang_string('enabledashboard', 'admin'),
         new lang_string('enabledashboard_help', 'admin'),
         1
     ));
 
-    $choices = [HOMEPAGE_SITE => new lang_string('home')];
+    $choices = [];
+    if (!isset($CFG->enablemyhome) || $CFG->enablemyhome) {
+        $choices[HOMEPAGE_SITE] = new lang_string('home');
+    }
     if (!isset($CFG->enabledashboard) || $CFG->enabledashboard) {
         $choices[HOMEPAGE_MY] = new lang_string('mymoodle', 'admin');
     }
