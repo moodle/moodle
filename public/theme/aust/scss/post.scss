@@ -52,13 +52,10 @@ nav.fixed-top.navbar.navbar-light.bg-white,
 
     // Logo styling
     .navbar-brand {
-        background-image: url([[pix:theme|logo_small]]);
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: left center;
-        padding-left: 50px;
-        height: 40px;
-        width: auto;
+        // background-image removed to prevent double logo
+        // padding-left removed
+        // height removed
+        // width removed
         // FIX: Set color to White directly so text is visible
         color: #fff !important;
         font-weight: bold;
@@ -1166,14 +1163,19 @@ nav.moremenu {
 // Login Page Specifics
 body.pagelayout-login,
 #page-login-index {
-    // Debug color (Magenta) - if you see this, the selector works but image failed
-    background-color: #ff00ff !important;
-
-    // Try standard macro without extension (Moodle handles extensions)
     background-image: url([[pix:theme|login_background]]) !important;
-
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+}
+
+// Ensure containers are transparent on login page so body background shows
+body.pagelayout-login #page-wrapper,
+body.pagelayout-login #page,
+body.pagelayout-login #page-content,
+body.pagelayout-login .login-wrapper,
+body.pagelayout-login .login-container {
+    background-color: transparent !important;
+    background: transparent !important;
 }
