@@ -66,15 +66,11 @@ class behat_tool_dataprivacy extends behat_base {
      * @param TableNode $data
      */
     public function the_following_data_categories_exist($elementname, TableNode $data) {
-
-        // Now that we need them require the data generators.
-        require_once(__DIR__.'/../../../../../lib/phpunit/classes/util.php');
-
         if (empty(self::$elements[$elementname])) {
             throw new PendingException($elementname . ' data generator is not implemented');
         }
 
-        $datagenerator = testing_util::get_data_generator();
+        $datagenerator = \core\test\testing_util::get_data_generator();
         $dataprivacygenerator = $datagenerator->get_plugin_generator('tool_dataprivacy');
 
         $elementdatagenerator = self::$elements[$elementname]['datagenerator'];

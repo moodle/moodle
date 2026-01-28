@@ -40,7 +40,7 @@ final class mail_group_test extends \advanced_testcase {
     use mod_forum_tests_generator_trait;
 
     /**
-     * @var \phpunit_message_sink
+     * @var \core\test\phpunit\message_sink
      */
     protected $messagesink;
 

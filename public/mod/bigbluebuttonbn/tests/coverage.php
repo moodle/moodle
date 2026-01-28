@@ -13,28 +13,16 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Coverage information for the mod_bigbluebuttonbn component.
- *
- * @package   mod_bigbluebuttonbn
- * @copyright 2018 - present, Blindside Networks Inc
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author    Laurent David (laurent@call-learning.fr)
- */
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class bbb_coverage information for the core subsystem.
  *
- * Note that we had to change the definition of this class due to a bug in local_moodlecheck
- * https://github.com/moodlehq/moodle-local_moodlecheck/issues/50
  * @package   mod_bigbluebuttonbn
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
  */
-class bbb_coverage extends phpunit_coverage_info {
+return new class extends \core\test\phpunit\coverage_info {
     /** @var array The list of folders relative to the plugin root to includelist in coverage generation. */
     protected $includelistfolders = [
         'classes',
@@ -51,5 +39,4 @@ class bbb_coverage extends phpunit_coverage_info {
 
     /** @var array The list of files relative to the plugin root to excludelist in coverage generation. */
     protected $excludelistfiles = [];
-}
-return new bbb_coverage;
+};

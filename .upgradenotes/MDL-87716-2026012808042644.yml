@@ -1,0 +1,18 @@
+issueNumber: MDL-87716
+notes:
+  core:
+    - message: |
+        The following classes have been renamed and now support autoloading.
+
+        The old names will be maintained without debugging until Moodle 6.0.
+
+         | Old class name            | New class name                      |
+         | ---                       | ---                                 |
+         | `\phpunit_coverage_info`  | `\core\test\phpunit\coverage_info`  |
+         | `\phpunit_event_mock`     | `\core\test\phpunit\event_mock`     |
+         | `\phpunit_event_sink`     | `\core\test\phpunit\event_sink`     |
+         | `\phpunit_message_sink`   | `\core\test\phpunit\message_sink`   |
+         | `\phpunit_phpmailer_sink` | `\core\test\phpunit\phpmailer_sink` |
+         | `\phpunit_util`           | `\core\test\phpunit\phpunit_util`   |
+         | `\testing_util`           | `\core\test\testing_util`           |
+      type: changed

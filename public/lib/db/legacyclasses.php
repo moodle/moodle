@@ -376,4 +376,13 @@ $legacyclasses = [
         'core_courseformat',
         'output/local/content/activitychooserbutton.php',
     ],
+
+    \testing_util::class => 'test/testing_util.php',
+    \phpunit_util::class => 'test/phpunit/phpunit_util.php',
+    \phpunit_coverage_info::class => 'test/phpunit/coverage_info.php',
+    \phpunit_message_sink::class => 'test/phpunit/message_sink.php',
+    \phpunit_phpmailer_sink::class => 'test/phpunit/phpmailer_sink.php',
+    \phpunit_event_mock::class => 'test/phpunit/event_mock.php',
+    \phpunit_event_sink::class => 'test/phpunit/event_sink.php',
+    \tests_finder::class => 'test/test_finder.php',
 ];

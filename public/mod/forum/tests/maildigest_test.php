@@ -41,10 +41,10 @@ final class maildigest_test extends \advanced_testcase {
     // Make use of the test generator trait.
     use mod_forum_tests_generator_trait;
 
-    /** @var \phpunit_message_sink */
+    /** @var \core\test\phpunit\message_sink */
     protected $messagesink;
 
-    /** @var \phpunit_message_sink */
+    /** @var \core\test\phpunit\message_sink */
     protected $mailsink;
 
     /**

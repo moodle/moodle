@@ -122,7 +122,7 @@ TBD;
 TBC;
 
         $loader = new mustache_template_source_loader();
-        $actual = \phpunit_util::call_internal_method(
+        $actual = \core\test\phpunit\phpunit_util::call_internal_method(
             $loader,
             'strip_template_comments',
             [$templatewithcomment],
@@ -494,7 +494,7 @@ TEMPLATE;
      * @param string $expected The expected output
      */
     public function test_scan_template_source_for_dependencies($loader, $source, $expected): void {
-        $actual = \phpunit_util::call_internal_method(
+        $actual = \core\test\phpunit\phpunit_util::call_internal_method(
             $loader,
             'scan_template_source_for_dependencies',
             [$source],

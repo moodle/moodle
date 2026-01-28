@@ -15,16 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * tool_generator course backend code.
- *
- * @package tool_generator
- * @copyright 2013 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
  * Backend code for the 'make large course' tool.
  *
  * @package tool_generator
@@ -217,7 +207,6 @@ class tool_generator_course_backend extends tool_generator_backend {
      */
     public function make() {
         global $DB, $CFG, $USER;
-        require_once($CFG->dirroot . '/lib/phpunit/classes/util.php');
 
         raise_memory_limit(MEMORY_EXTRA);
 
@@ -228,7 +217,7 @@ class tool_generator_course_backend extends tool_generator_backend {
         $entirestart = microtime(true);
 
         // Get generator.
-        $this->generator = phpunit_util::get_data_generator();
+        $this->generator = \core\test\phpunit\phpunit_util::get_data_generator();
 
         // Make course.
         $this->course = $this->create_course();

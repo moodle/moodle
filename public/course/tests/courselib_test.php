@@ -29,7 +29,6 @@ use context_course;
 use context_module;
 use context_system;
 use context_coursecat;
-use core\event\section_viewed;
 use core_completion_external;
 use core_courseformat\formatactions;
 use core_external;
@@ -43,7 +42,6 @@ use grade_item;
 use grading_manager;
 use moodle_exception;
 use moodle_url;
-use phpunit_util;
 use rating_manager;
 use restore_controller;
 use stdClass;
@@ -3880,7 +3878,7 @@ final class courselib_test extends advanced_testcase {
 
         // Now, run the adhoc task to delete the modules from section 0.
         $sink = $this->redirectEvents(); // To capture the events.
-        phpunit_util::run_all_adhoc_tasks();
+        \core\test\phpunit\phpunit_util::run_all_adhoc_tasks();
 
         // Confirm the modules have been deleted.
         list($insql, $assignids) = $DB->get_in_or_equal([$assign0->cmid, $assign1->cmid, $assign2->cmid]);

@@ -23,13 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once(__DIR__ . '/../lib.php');
 require_once($CFG->dirroot . '/lib/phpunit/lib.php');
-
 
 /**
  * Makes some protected methods of question_attempt public to facilitate testing.
@@ -612,8 +610,8 @@ abstract class question_testcase extends advanced_testcase {
      */
     public function assert_same_xml($expectedxml, $xml) {
         $this->assertEquals(
-            phpunit_util::normalise_line_endings($expectedxml),
-            phpunit_util::normalise_line_endings($xml)
+            \core\test\phpunit\phpunit_util::normalise_line_endings($expectedxml),
+            \core\test\phpunit\phpunit_util::normalise_line_endings($xml)
         );
     }
 }

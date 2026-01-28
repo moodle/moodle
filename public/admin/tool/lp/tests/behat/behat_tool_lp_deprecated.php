@@ -25,8 +25,8 @@
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_deprecated_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode;
-use Behat\Behat\Tester\Exception\PendingException as PendingException;
+use Behat\Gherkin\Node\TableNode;
+use Behat\Behat\Tester\Exception\PendingException;
 use core_competency\competency;
 use core_competency\competency_framework;
 use core_competency\plan;
@@ -114,14 +114,11 @@ class behat_tool_lp_deprecated extends behat_deprecated_base {
 
         ]);
 
-        // Now that we need them require the data generators.
-        require_once(__DIR__.'/../../../../../lib/phpunit/classes/util.php');
-
         if (empty(self::$elements[$elementname])) {
             throw new PendingException($elementname . ' data generator is not implemented');
         }
 
-        $datagenerator = testing_util::get_data_generator();
+        $datagenerator = \core\test\testing_util::get_data_generator();
         $this->datageneratorlp = $datagenerator->get_plugin_generator('core_competency');
 
         $elementdatagenerator = self::$elements[$elementname]['datagenerator'];

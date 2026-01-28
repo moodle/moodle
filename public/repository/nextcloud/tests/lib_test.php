@@ -23,10 +23,9 @@
  */
 namespace repository_nextcloud;
 
-use PHPUnit\Framework\MockObject\MockObject;
-use repository;
 use repository_nextcloud;
 use webdav_client;
+use PHPUnit\Framework\MockObject\MockObject;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -615,7 +614,7 @@ JSON;
         $oauthmock->expects($this->once())->method('get_accesstoken')->will($this->returnValue($fakeaccesstoken));
         $this->set_private_property($oauthmock, 'client');
 
-        $dav = \phpunit_util::call_internal_method($this->repo, "initiate_webdavclient", [], 'repository_nextcloud');
+        $dav = \core\test\phpunit\phpunit_util::call_internal_method($this->repo, "initiate_webdavclient", [], 'repository_nextcloud');
 
         // Verify that port is set correctly (private property).
         $refclient = new \ReflectionClass($dav);

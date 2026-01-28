@@ -16,7 +16,7 @@
 
 namespace core;
 
-use phpunit_util;
+use core\test\phpunit\phpunit_util;
 
 /**
  * Test basic_testcase extra features and PHPUnit Moodle integration.
@@ -27,7 +27,7 @@ use phpunit_util;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(\basic_testcase::class)]
-#[\PHPUnit\Framework\Attributes\CoversClass(\phpunit_util::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(phpunit_util::class)]
 final class basic_test extends \basic_testcase {
     /** @var bool */
     protected bool $testassertexecuted = false;

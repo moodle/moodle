@@ -18,82 +18,14 @@
  * Coverage information for PHPUnit.
  *
  * @package    core
- * @category   phpunit
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @category   test
+ * @copyright  Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class phpunit_coverage_info {
 
-    /** @var array The list of folders relative to the plugin root to include in coverage generation. */
-    protected $includelistfolders = [];
-
-    /** @var array The list of files relative to the plugin root to include in coverage generation. */
-    protected $includelistfiles = [];
-
-    /** @var array The list of folders relative to the plugin root to exclude from coverage generation. */
-    protected $excludelistfolders = [];
-
-    /** @var array The list of files relative to the plugin root to exclude from coverage generation. */
-    protected $excludelistfiles = [];
-
-    /**
-     * Get the formatted XML list of files and folders to include.
-     *
-     * @param   string  $plugindir The root of the plugin, relative to the dataroot.
-     * @return  array
-     */
-    final public function get_includelists(string $plugindir): array {
-        $coverages = [];
-
-        $includelistfolders = array_merge([
-            'classes',
-            'tests/generator',
-        ], $this->includelistfolders);;
-
-        $includelistfiles = array_merge([
-            'externallib.php',
-            'lib.php',
-            'locallib.php',
-            'renderer.php',
-            'rsslib.php',
-        ], $this->includelistfiles);
-
-        if (!empty($plugindir)) {
-            $plugindir .= "/";
-        }
-
-        foreach (array_unique($includelistfolders) as $folder) {
-            $coverages[] = html_writer::tag('directory', "{$plugindir}{$folder}", ['suffix' => '.php']);
-        }
-
-        foreach (array_unique($includelistfiles) as $file) {
-            $coverages[] = html_writer::tag('file', "{$plugindir}{$file}");
-        }
-
-        return $coverages;
-    }
-
-    /**
-     * Get the formatted XML list of files and folders to exclude.
-     *
-     * @param   string  $plugindir The root of the plugin, relative to the dataroot.
-     * @return  array
-     */
-    final public function get_excludelists(string $plugindir): array {
-        $coverages = [];
-
-        if (!empty($plugindir)) {
-            $plugindir .= "/";
-        }
-
-        foreach ($this->excludelistfolders as $folder) {
-            $coverages[] = html_writer::tag('directory', "{$plugindir}{$folder}", ['suffix' => '.php']);
-        }
-
-        foreach ($this->excludelistfiles as $file) {
-            $coverages[] = html_writer::tag('file', "{$plugindir}{$file}");
-        }
-
-        return $coverages;
-    }
-}
+debugging(
+    'The coverage_info.php file is deprecated and will be removed in Moodle 6.0. ' .
+    'It should not be manually included. ' .
+    'The class can now be autoloaded from \core\test\phpunit\coverage_info.',
+    DEBUG_DEVELOPER
+);

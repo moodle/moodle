@@ -14,20 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Data generator class for mod_data.
- *
- * @package    mod_data
- * @category   test
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 use mod_data\manager;
 use mod_data\preset;
-
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Data generator class for mod_data.

@@ -455,7 +455,7 @@ final class advanced_test extends \advanced_testcase {
         $this->assertEquals(count($processors1) + 1, count($processors3));
     }
 
-    public function test_message_redirection(): \phpunit_message_sink {
+    public function test_message_redirection(): \core\test\phpunit\message_sink {
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
         $this->resetAfterTest(false);
 
@@ -570,14 +570,14 @@ final class advanced_test extends \advanced_testcase {
         $this->assertEquals(1, $sink->count());
 
         // Test if sink can be carried over to next test.
-        $this->assertTrue(\phpunit_util::is_redirecting_messages());
+        $this->assertTrue(\core\test\phpunit\phpunit_util::is_redirecting_messages());
         return $sink;
     }
 
     /**
      * @depends test_message_redirection
      */
-    public function test_message_redirection_noreset(\phpunit_message_sink $sink): void {
+    public function test_message_redirection_noreset(\core\test\phpunit\message_sink $sink): void {
         if ($this->isInIsolation()) {
             $this->markTestSkipped('State cannot be carried over between tests in isolated tests');
         }
@@ -585,7 +585,7 @@ final class advanced_test extends \advanced_testcase {
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
         $this->resetAfterTest();
 
-        $this->assertTrue(\phpunit_util::is_redirecting_messages());
+        $this->assertTrue(\core\test\phpunit\phpunit_util::is_redirecting_messages());
         $this->assertEquals(1, $sink->count());
 
         $message = new \core\message\message();
@@ -609,7 +609,7 @@ final class advanced_test extends \advanced_testcase {
      * @depends test_message_redirection_noreset
      */
     public function test_message_redirection_reset(): void {
-        $this->assertFalse(\phpunit_util::is_redirecting_messages(), 'Test reset must stop message redirection.');
+        $this->assertFalse(\core\test\phpunit\phpunit_util::is_redirecting_messages(), 'Test reset must stop message redirection.');
     }
 
     public function test_set_timezone(): void {

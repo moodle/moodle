@@ -465,7 +465,7 @@ final class cmactions_test extends \advanced_testcase {
         $sink = $this->redirectEvents();
 
         // Now, run the adhoc task which performs the hard deletion.
-        \phpunit_util::run_all_adhoc_tasks();
+        \core\test\phpunit\phpunit_util::run_all_adhoc_tasks();
 
         // Fetch and validate the event data.
         $events = $sink->get_events();

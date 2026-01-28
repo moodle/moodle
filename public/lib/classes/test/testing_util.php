@@ -14,8 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\test;
+
+use testing_data_generator;
+
 /**
- * Testing util classes
+ * Testing utility classes.
  *
  * @package    core
  * @category   test
@@ -79,6 +83,11 @@ abstract class testing_util {
     protected static $sequencenextstartingid = null;
 
     /**
+     * @var array List of dataroot files and folders to not delete during reset_dataroot.
+     */
+    protected static $datarootskiponreset = [];
+
+    /**
      * Return the name of the JSON file containing the init filenames.
      *
      * @static
@@ -120,20 +129,31 @@ abstract class testing_util {
      * @static
      * @return string
      */
-    final protected static function get_framework() {
+    protected static function get_framework() {
+        debugging('You must override testing_util::get_framework in subclass', DEBUG_DEVELOPER);
+
         $classname = get_called_class();
+        $reflectedclass = new \ReflectionClass($classname);
+
+        if ($reflectedclass->inNamespace()) {
+            $namespaces = explode('\\', $reflectedclass->getNamespaceName());
+            return array_shift($namespaces);
+        }
+
         return substr($classname, 0, strpos($classname, '_'));
     }
 
     /**
      * Get data generator
      * @static
-     * @return testing_data_generator
+     * @return \testing_data_generator
      */
     public static function get_data_generator() {
+        global $CFG;
+
         if (is_null(self::$generator)) {
-            require_once(__DIR__ . '/../generator/lib.php');
-            self::$generator = new testing_data_generator();
+            require_once($CFG->libdir . '/testing/generator/lib.php');
+            self::$generator = new \testing_data_generator();
         }
         return self::$generator;
     }
@@ -148,7 +168,7 @@ abstract class testing_util {
     public static function is_test_site() {
         global $DB, $CFG;
 
-        $framework = self::get_framework();
+        $framework = static::get_framework();
 
         if (!file_exists(self::get_dataroot() . '/' . $framework . 'testdir.txt')) {
             // This is already tested in bootstrap script,
@@ -177,7 +197,7 @@ abstract class testing_util {
     public static function is_test_data_updated() {
         global $DB;
 
-        $framework = self::get_framework();
+        $framework = static::get_framework();
 
         $datarootpath = self::get_dataroot() . '/' . $framework;
         if (!file_exists($datarootpath . '/tabledata.ser') || !file_exists($datarootpath . '/tablestructure.ser')) {
@@ -188,7 +208,7 @@ abstract class testing_util {
             return false;
         }
 
-        $hash = core_component::get_all_versions_hash();
+        $hash = \core\component::get_all_versions_hash();
         $oldhash = file_get_contents($datarootpath . '/versionshash.txt');
 
         if ($hash !== $oldhash) {
@@ -213,7 +233,7 @@ abstract class testing_util {
     protected static function store_database_state() {
         global $DB, $CFG;
 
-        $framework = self::get_framework();
+        $framework = static::get_framework();
 
         // Store data for all tables.
         $data = [];
@@ -246,8 +266,8 @@ abstract class testing_util {
     protected static function store_versions_hash() {
         global $CFG;
 
-        $framework = self::get_framework();
-        $hash = core_component::get_all_versions_hash();
+        $framework = static::get_framework();
+        $hash = \core\component::get_all_versions_hash();
 
         // Add test db flag.
         set_config($framework . 'test', $hash);
@@ -265,7 +285,7 @@ abstract class testing_util {
      */
     protected static function get_tabledata() {
         if (!isset(self::$tabledata)) {
-            $framework = self::get_framework();
+            $framework = static::get_framework();
 
             $datafile = self::get_dataroot() . '/' . $framework . '/tabledata.ser';
             if (!file_exists($datafile)) {
@@ -294,7 +314,7 @@ abstract class testing_util {
      */
     public static function get_tablestructure() {
         if (!isset(self::$tablestructure)) {
-            $framework = self::get_framework();
+            $framework = static::get_framework();
 
             $structurefile = self::get_dataroot() . '/' . $framework . '/tablestructure.ser';
             if (!file_exists($structurefile)) {
@@ -334,7 +354,7 @@ abstract class testing_util {
 
         self::$sequencenames = [];
         foreach ($structure as $table => $ignored) {
-            $name = $DB->get_manager()->generator->getSequenceFromDB(new xmldb_table($table));
+            $name = $DB->get_manager()->generator->getSequenceFromDB(new \xmldb_table($table));
             if ($name !== false) {
                 self::$sequencenames[$table] = $name;
             }
@@ -628,7 +648,7 @@ abstract class testing_util {
         // Remove extra tables.
         foreach ($tables as $table) {
             if (!isset($data[$table])) {
-                $DB->get_manager()->drop_table(new xmldb_table($table));
+                $DB->get_manager()->drop_table(new \xmldb_table($table));
             }
         }
 
@@ -645,10 +665,8 @@ abstract class testing_util {
     public static function reset_dataroot() {
         global $CFG;
 
-        $childclassname = self::get_framework() . '_util';
-
         // Do not delete automatically installed files.
-        self::skip_original_data_files($childclassname);
+        self::skip_original_data_files();
 
         // Clear file status cache, before checking file_exists.
         clearstatcache();
@@ -656,7 +674,7 @@ abstract class testing_util {
         // Clean up the dataroot folder.
         $handle = opendir(self::get_dataroot());
         while (false !== ($item = readdir($handle))) {
-            if (in_array($item, $childclassname::$datarootskiponreset)) {
+            if (in_array($item, static::$datarootskiponreset)) {
                 continue;
             }
             if (is_dir(self::get_dataroot() . "/$item")) {
@@ -671,7 +689,7 @@ abstract class testing_util {
         if (file_exists(self::get_dataroot() . '/filedir')) {
             $handle = opendir(self::get_dataroot() . '/filedir');
             while (false !== ($item = readdir($handle))) {
-                if (in_array('filedir' . DIRECTORY_SEPARATOR . $item, $childclassname::$datarootskiponreset)) {
+                if (in_array('filedir' . DIRECTORY_SEPARATOR . $item, static::$datarootskiponreset)) {
                     continue;
                 }
                 if (is_dir(self::get_dataroot() . "/filedir/$item")) {
@@ -689,11 +707,11 @@ abstract class testing_util {
         make_localcache_directory('');
         // Purge all data from the caches. This is required for consistency between tests.
         // Any file caches that happened to be within the data root will have already been clearer (because we just deleted cache)
-        // and now we will purge any other caches as well.  This must be done before the cache_factory::reset() as that
+        // and now we will purge any other caches as well.  This must be done before the core_cache\factory::reset() as that
         // removes all definitions of caches and purge does not have valid caches to operate on.
-        cache_helper::purge_all();
+        \core_cache\helper::purge_all();
         // Reset the cache API so that it recreates it's required directories as well.
-        cache_factory::reset();
+        \core_cache\factory::reset();
     }
 
     /**
@@ -855,7 +873,7 @@ abstract class testing_util {
         }
         $dotsonline = 0;
         foreach ($tables as $tablename) {
-            $table = new xmldb_table($tablename);
+            $table = new \xmldb_table($tablename);
             $DB->get_manager()->drop_table($table);
 
             if ($dotsonline == 60) {
@@ -881,7 +899,7 @@ abstract class testing_util {
     protected static function drop_dataroot() {
         global $CFG;
 
-        $framework = self::get_framework();
+        $framework = static::get_framework();
         $childclassname = $framework . '_util';
 
         $files = scandir(self::get_dataroot() . '/'  . $framework);
@@ -908,11 +926,8 @@ abstract class testing_util {
 
     /**
      * Skip the original dataroot files to not been reset.
-     *
-     * @static
-     * @param string $utilclassname the util class name..
      */
-    protected static function skip_original_data_files($utilclassname) {
+    protected static function skip_original_data_files() {
         $jsonfilepath = self::get_dataroot() . '/' . self::$originaldatafilesjson;
         if (file_exists($jsonfilepath)) {
             $listfiles = file_get_contents($jsonfilepath);
@@ -922,8 +937,8 @@ abstract class testing_util {
                 $originaldatarootfiles = json_decode($listfiles);
                 // Keep the json file. Only drop_dataroot() should delete it.
                 $originaldatarootfiles[] = self::$originaldatafilesjson;
-                $utilclassname::$datarootskiponreset = array_merge(
-                    $utilclassname::$datarootskiponreset,
+                static::$datarootskiponreset = array_merge(
+                    static::$datarootskiponreset,
                     $originaldatarootfiles
                 );
                 self::$originaldatafilesjsonadded = true;
@@ -949,8 +964,8 @@ abstract class testing_util {
 
             $filedir = self::get_dataroot() . '/filedir';
             if (file_exists($filedir)) {
-                $directory = new RecursiveDirectoryIterator($filedir);
-                foreach (new RecursiveIteratorIterator($directory) as $file) {
+                $directory = new \RecursiveDirectoryIterator($filedir);
+                foreach (new \RecursiveIteratorIterator($directory) as $file) {
                     if ($file->isDir()) {
                         $key = substr($file->getPath(), strlen(self::get_dataroot() . '/'));
                     } else {
@@ -1006,3 +1021,8 @@ abstract class testing_util {
         return $env;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(testing_util::class, \testing_util::class);

@@ -688,7 +688,7 @@ setup_DB();
 if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
     // Make sure tests do not run in parallel.
     $suffix = '';
-    if (phpunit_util::is_in_isolated_process()) {
+    if (\core\test\phpunit\phpunit_util::is_in_isolated_process()) {
         $suffix = '.isolated';
     }
     test_lock::acquire('phpunit', $suffix);
@@ -696,7 +696,7 @@ if (PHPUNIT_TEST and !PHPUNIT_UTIL) {
     try {
         if ($dbhash = $DB->get_field('config', 'value', array('name'=>'phpunittest'))) {
             // reset DB tables
-            phpunit_util::reset_database();
+            \core\test\phpunit\phpunit_util::reset_database();
         }
     } catch (Exception $e) {
         if ($dbhash) {
@@ -736,7 +736,7 @@ if (is_readable($bootstraplocalfile)) {
 
 // Load up any configuration from the config table or MUC cache.
 if (PHPUNIT_TEST) {
-    phpunit_util::initialise_cfg();
+    \core\test\phpunit\phpunit_util::initialise_cfg();
 } else {
     initialise_cfg();
 }

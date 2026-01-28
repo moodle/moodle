@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+use core\test\phpunit\phpunit_util;
+
 /**
  * PHPUnit related utilities.
  *

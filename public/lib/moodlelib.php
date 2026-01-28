@@ -1259,7 +1259,7 @@ function purge_caches($options = []) {
  * Purge all non-MUC caches not otherwise purged in purge_caches.
  *
  * IMPORTANT - If you are adding anything here to do with the cache directory you should also have a look at
- * {@link phpunit_util::reset_dataroot()}
+ * {@link \core\test\phpunit\phpunit_util::reset_dataroot()}
  */
 function purge_other_caches() {
     global $DB, $CFG;

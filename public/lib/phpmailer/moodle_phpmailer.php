@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 // PLEASE NOTE: we use the phpmailer class _unmodified_
 // through the joys of OO. Distros are free to use their stock
 // version of this file.
@@ -129,7 +127,7 @@ class moodle_phpmailer extends \PHPMailer\PHPMailer\PHPMailer {
     public function postSend() {
         // Now ask phpunit if it wants to catch this message.
         if (PHPUNIT_TEST) {
-            if (!phpunit_util::is_redirecting_phpmailer()) {
+            if (!\core\test\phpunit\phpunit_util::is_redirecting_phpmailer()) {
                 debugging('Unit tests must not send real emails! Use $this->redirectEmails()');
                 return true;
             }
@@ -139,7 +137,7 @@ class moodle_phpmailer extends \PHPMailer\PHPMailer\PHPMailer {
             $mail->subject = $this->Subject;
             $mail->from = $this->From;
             $mail->to = $this->to[0][0];
-            phpunit_util::phpmailer_sent($mail);
+            \core\test\phpunit\phpunit_util::phpmailer_sent($mail);
             return true;
         } else {
             return parent::postSend();

@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../lib.php');
-require_once(__DIR__ . '/../../testing/classes/util.php');
 require_once(__DIR__ . '/behat_command.php');
 require_once(__DIR__ . '/behat_config_manager.php');
 
@@ -45,7 +44,7 @@ use Behat\Mink\Exception\ExpectationException;
  * @copyright 2013 David Monllaó
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_util extends testing_util {
+class behat_util extends \core\test\testing_util {
 
     /**
      * The behat test site fullname and shortname.
@@ -530,5 +529,11 @@ Run optional tests:
 EOF;
 
         return $siteinfo;
+    }
+
+
+    #[\Override]
+    protected static function get_framework() {
+        return 'behat';
     }
 }

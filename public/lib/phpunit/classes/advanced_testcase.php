@@ -17,6 +17,7 @@
 use core\di;
 use core\hook;
 use core\http_client;
+use core\test\phpunit\phpunit_util;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -337,7 +338,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function assertEventLegacyData($expected, \core\event\base $event, $message = '') {
-        $legacydata = phpunit_event_mock::testable_get_legacy_eventdata($event);
+        $legacydata = \core\test\phpunit\event_mock::testable_get_legacy_eventdata($event);
         if ($message === '') {
             $message = 'Event legacy data does not match expected value.';
         }
@@ -353,7 +354,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function assertEventLegacyLogData($expected, \core\event\base $event, $message = '') {
-        $legacydata = phpunit_event_mock::testable_get_legacy_logdata($event);
+        $legacydata = \core\test\phpunit\event_mock::testable_get_legacy_logdata($event);
         if ($message === '') {
             $message = 'Event legacy log data does not match expected value.';
         }
@@ -372,8 +373,8 @@ abstract class advanced_testcase extends base_testcase {
      */
     public function assertEventContextNotUsed(\core\event\base $event, $message = '') {
         // Save current event->context and set it to false.
-        $eventcontext = phpunit_event_mock::testable_get_event_context($event);
-        phpunit_event_mock::testable_set_event_context($event, false);
+        $eventcontext = \core\test\phpunit\event_mock::testable_get_event_context($event);
+        \core\test\phpunit\event_mock::testable_set_event_context($event, false);
         if ($message === '') {
             $message = 'Event should not use context property of event in any method.';
         }
@@ -383,7 +384,7 @@ abstract class advanced_testcase extends base_testcase {
         $event->get_description();
 
         // Restore event->context (note that this is unreachable when the event uses context). But ok for correct events.
-        phpunit_event_mock::testable_set_event_context($event, $eventcontext);
+        \core\test\phpunit\event_mock::testable_set_event_context($event, $eventcontext);
     }
 
     /**
@@ -417,7 +418,7 @@ abstract class advanced_testcase extends base_testcase {
      * array in the returned messaging sink instance. The redirection
      * can be stopped by calling $sink->close();
      *
-     * @return phpunit_message_sink
+     * @return \core\test\phpunit\message_sink
      */
     public function redirectMessages() {
         return phpunit_util::start_message_redirection();
@@ -430,7 +431,7 @@ abstract class advanced_testcase extends base_testcase {
      * array in the returned phpmailer sink instance. The redirection
      * can be stopped by calling $sink->close();
      *
-     * @return phpunit_message_sink
+     * @return \core\test\phpunit\message_sink
      */
     public function redirectEmails() {
         return phpunit_util::start_phpmailer_redirection();
@@ -443,7 +444,7 @@ abstract class advanced_testcase extends base_testcase {
      * array in the returned event sink instance. The redirection
      * can be stopped by calling $sink->close();
      *
-     * @return phpunit_event_sink
+     * @return \core\test\phpunit\event_sink
      */
     public function redirectEvents() {
         return phpunit_util::start_event_redirection();

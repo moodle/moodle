@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Coverage information for the qtype_numerical.
  *
  * @copyright  2022 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-return new class extends phpunit_coverage_info {
+return new class extends \core\test\phpunit\coverage_info {
     /** @var array The list of files relative to the plugin root to include in coverage generation. */
     protected $includelistfiles = [
         'question.php',

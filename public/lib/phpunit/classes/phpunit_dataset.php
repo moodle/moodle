@@ -32,6 +32,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 declare(strict_types=1);
 
 /**
@@ -202,7 +203,7 @@ class phpunit_dataset {
             }
         }
 
-        $structure = phpunit_util::get_tablestructure();
+        $structure = \core\test\phpunit\phpunit_util::get_tablestructure();
 
         foreach ($this->tables as $table) {
             // Apply filter.
