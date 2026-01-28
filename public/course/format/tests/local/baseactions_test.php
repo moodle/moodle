@@ -99,7 +99,8 @@ final class baseactions_test extends \advanced_testcase {
 
         // Section info should be always the most updated one.
         course_update_section($course, $originalsection, (object)['name' => 'New name']);
-        move_section_to($course, 1, 3);
+        $sectionactions  = formatactions::section($course);
+        $sectionactions->move_at($sectioninfo, 3);
 
         $sectioninfo = $method->invoke($baseactions, $originalsection->id);
         $this->assertInstanceOf(section_info::class, $sectioninfo);

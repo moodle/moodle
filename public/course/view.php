@@ -272,15 +272,18 @@ if ($PAGE->user_allowed_editing()) {
             'The move param is deprecated. Please use the standard move modal instead.',
             DEBUG_DEVELOPER
         );
-        $destsection = $section + $move;
-        if (move_section_to($course, $section, $destsection)) {
+        $destsectionnum = $section + $move;
+        $sectionactions = \core_courseformat\formatactions::section($course);
+        $modinfo = get_fast_modinfo($course);
+        $sectioninfo = $modinfo->get_section_info($section);
+        if ($sectionactions->move_at($sectioninfo, $destsectionnum)) {
             if ($course->id == SITEID) {
                 redirect($CFG->wwwroot . '/?redirect=0');
             } else {
                 if ($format->get_course_display() == COURSE_DISPLAY_MULTIPAGE) {
                     redirect(course_get_url($course));
                 } else {
-                    redirect(course_get_url($course, $destsection));
+                    redirect(course_get_url($course, $destsectionnum));
                 }
             }
         } else {

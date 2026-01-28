@@ -1,0 +1,5 @@
+issueNumber: MDL-86862
+notes:
+  core_course:
+    - message: Add a new invalidation event for course action state so we can purge the courseactionsinstances cache when needed.
+      type: improved

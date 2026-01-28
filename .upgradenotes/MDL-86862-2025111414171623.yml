@@ -1,0 +1,5 @@
+issueNumber: MDL-86862
+notes:
+  core_courseformat:
+    - message: Deprecates the move_section_to logic
+      type: deprecated
