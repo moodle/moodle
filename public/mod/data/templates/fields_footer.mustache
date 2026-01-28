@@ -14,18 +14,13 @@
 {{!
     @template mod_data/fields_footer
 
-    The mod_data fields sticky footer content.
+    The mod_data fields footer content.
 
     Example context (json):
     {
         "pageurl": "http://yoursite/mod/data/field.php"
     }
 }}
-{{< core/sticky_footer }}
-    {{$ stickyclasses }} justify-content-start{{/ stickyclasses }}
-    {{$ stickycontent }}
-    <div class="ps-3">
-        <a href="{{pageurl}}">{{#str}} viewtemplates, mod_data {{/str}}</a>
-    </div>
-    {{/ stickycontent }}
-{{/ core/sticky_footer }}
+<div class="ps-3">
+    <a href="{{pageurl}}">{{#str}} viewtemplates, mod_data {{/str}}</a>
+</div>

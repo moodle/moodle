@@ -121,10 +121,7 @@ class mod_data_renderer extends plugin_renderer_base {
             'value' => get_string('continue'),
         ]);
         $actionbuttons .= html_writer::end_div();
-
-        $stickyfooter = new core\output\sticky_footer($actionbuttons);
-        $html .= $this->render($stickyfooter);
-
+        $html .= $actionbuttons;
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('form');
         $html .= html_writer::end_tag('div');

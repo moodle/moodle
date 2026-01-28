@@ -37,7 +37,7 @@ Feature: Edit existing database entries
     And I wait until the page is ready
     And I set the field "headline" to "New headline"
     And I set the field "description" to "New text"
-    When I click on "Save" "button" in the "sticky-footer" "region"
+    When I click on "Save" "button"
     Then I should not see "Headline 1" in the "region-main" "region"
     And I should not see "Original text" in the "region-main" "region"
     And I should see "New headline" in the "region-main" "region"
@@ -54,17 +54,17 @@ Feature: Edit existing database entries
     # Trigger autosave.
     And I press tab
     And I wait "1" seconds
-    And I click on "Cancel" "button" in the "sticky-footer" "region"
+    And I click on "Cancel" "button"
     # Edit the second DB entry headline only.
     And I select "Single view" from the "jump" singleselect
-    And I click on "2" "link" in the "sticky-footer" "region"
+    And I click on "2" "link"
     And I click on ".defaulttemplate-single-body .action-menu" "css_element"
     And I click on "Edit" "link" in the ".defaulttemplate-single-body .dropdown-menu" "css_element"
     And I wait until the page is ready
     And I set the field "headline" to "New headline"
-    And I click on "Save" "button" in the "sticky-footer" "region"
+    And I click on "Save" "button"
     And I select "Single view" from the "jump" singleselect
-    And I click on "2" "link" in the "sticky-footer" "region"
+    And I click on "2" "link"
     # Only the new heading is updated and the description field autosave did not carry over from the first entry.
     And I should see "New headline" in the "region-main" "region"
     And I should not see "Unsaved changes" in the "region-main" "region"

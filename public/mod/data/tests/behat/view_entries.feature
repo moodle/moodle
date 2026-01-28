@@ -87,7 +87,7 @@ Feature: Users can view and search database entries
       | Test field name   | Student original entry tagged   |
       | Test field 2 name | Student original entry tagged 2 |
     And I set the field with xpath "//div[@class='datatagcontrol']//input[@type='text']" to "Tag1"
-    And I press "Save"
+    And I press "saveandview"
     And I should see "Student original entry"
     And I should see "Tag1" in the "div.tag_list" "css_element"
     And I open the action menu in "#defaulttemplate-single" "css_element"
@@ -149,7 +149,7 @@ Feature: Users can view and search database entries
     And I set the field "Templates tertiary navigation" to "List view template"
     And I set the following fields to these values:
       | Repeated entry | ##delcheck##[[Test field name]]! |
-    And I click on "Save" "button" in the "sticky-footer" "region"
+    And I click on "Save" "button"
     When I navigate to "Database" in current page administration
     When I click on "Select all" "button"
     And I click on "Delete selected" "button"

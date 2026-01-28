@@ -16,8 +16,8 @@
 
 namespace mod_data\output;
 
-use action_link;
-use core\output\sticky_footer;
+use core\output\renderable;
+use core\output\templatable;
 use html_writer;
 use mod_data\manager;
 use mod_data\template;
@@ -25,14 +25,13 @@ use moodle_url;
 use renderer_base;
 
 /**
- * Renderable class for sticky footer in the view pages of the database activity.
+ * Renderable class for footer in the view pages of the database activity.
  *
  * @package    mod_data
  * @copyright  2022 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class view_footer extends sticky_footer {
-
+class view_footer implements renderable, templatable {
     /** @var int $totalcount the total records count. */
     private $totalcount;
 
@@ -84,30 +83,12 @@ class view_footer extends sticky_footer {
      * @return array data context for a mustache template
      */
     public function export_for_template(renderer_base $output) {
-        $this->set_content(
-            $this->get_footer_output($output)
-        );
-        return parent::export_for_template($output);
-    }
-
-    /**
-     * Generate the pre-rendered footer content.
-     *
-     * @param \renderer_base $output The renderer to be used to render the action bar elements.
-     * @return string the rendered content
-     */
-    public function get_footer_output(renderer_base $output): string {
         $data = [];
 
-        $cm = $this->manager->get_coursemodule();
-        $instance = $this->manager->get_instance();
-        $currentgroup = groups_get_activity_group($cm);
-        $groupmode = groups_get_activity_groupmode($cm);
         $context = $this->manager->get_context();
         $canmanageentries = has_capability('mod/data:manageentries', $context);
         $parser = $this->parser;
 
-        // Sticky footer content.
         $data['pagination'] = $output->paging_bar(
             $this->totalcount,
             $this->currentpage,
@@ -138,19 +119,6 @@ class view_footer extends sticky_footer {
                 'data-toggle' => 'action',
             ]);
         }
-        if (data_user_can_add_entry($instance, $currentgroup, $groupmode, $context)) {
-            $addentrylink = new moodle_url(
-                '/mod/data/edit.php',
-                ['id' => $cm->id, 'backto' => $this->baseurl]
-            );
-            $addentrybutton = new action_link(
-                $addentrylink,
-                get_string('add', 'mod_data'),
-                null,
-                ['class' => 'btn btn-primary mx-1', 'role' => 'button']
-            );
-            $data['addentrybutton'] = $addentrybutton->export_for_template($output);
-        }
-        return $output->render_from_template('mod_data/view_footer', $data);
+        return $data;
     }
 }

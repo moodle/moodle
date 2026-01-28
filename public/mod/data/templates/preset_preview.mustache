@@ -31,18 +31,14 @@
     {{{preview}}}
     </div>
 </div>
-{{< core/sticky_footer }}
-    {{$ stickycontent }}
-    <form method="post" action="{{formactionurl}}">
-        <input type="hidden" name="cmid" value="{{cmid}}">
-        <input type="hidden" name="mode" value="usepreset">
-        <input type="hidden" name="action" value="select">
-        <input type="hidden" name="fullname" value="{{userid}}/{{shortname}}">
-        <input type="submit" name="selectpreset" data-action="selectpreset" value="{{#str}}usepreset, mod_data{{/str}}" class="btn btn-primary"
-               data-cmid="{{cmid}}" data-presetname="{{userid}}/{{shortname}}">
-    </form>
-    {{/ stickycontent }}
-{{/ core/sticky_footer }}
+<form method="post" action="{{formactionurl}}">
+    <input type="hidden" name="cmid" value="{{cmid}}">
+    <input type="hidden" name="mode" value="usepreset">
+    <input type="hidden" name="action" value="select">
+    <input type="hidden" name="fullname" value="{{userid}}/{{shortname}}">
+    <input type="submit" name="selectpreset" data-action="selectpreset" value="{{#str}}usepreset, mod_data{{/str}}" class="btn btn-primary"
+           data-cmid="{{cmid}}" data-presetname="{{userid}}/{{shortname}}">
+</form>
 
 {{#js}}
     require(['mod_data/importmappingdialogue'], function(importPreset) {

@@ -521,7 +521,7 @@ if ($showactivity) {
                 echo $OUTPUT->box_end();
             }
 
-            $stickyfooter = new mod_data\output\view_footer(
+            $viewfooter = new mod_data\output\view_footer(
                 $manager,
                 $totalcount,
                 $page,
@@ -529,7 +529,7 @@ if ($showactivity) {
                 $baseurl,
                 $parser
             );
-            echo $OUTPUT->render($stickyfooter);
+            echo $OUTPUT->render($viewfooter);
 
             echo html_writer::end_tag('form');
         }

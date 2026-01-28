@@ -73,7 +73,7 @@ Feature: Users can use the Journal preset
     When I press "Add entry"
     And I set the field "Title" to "This is the title"
     And I set the field "Content" to "This is the content for the new entry."
-    And I press "Save"
+    And I press "saveandview"
     Then I should see "This is the title"
     And I should see "This is the content for the new entry."
 

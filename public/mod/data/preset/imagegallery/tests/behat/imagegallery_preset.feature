@@ -87,7 +87,7 @@ Feature: Users can use the Image gallery preset
     When I press "Add entry"
     And I set the field "title" to "New image"
     And I set the field "description" to "This is the description for the new image."
-    And I press "Save"
+    And I press "saveandview"
     Then I should see "New image"
     And I should see "This is the description for the new image."
 

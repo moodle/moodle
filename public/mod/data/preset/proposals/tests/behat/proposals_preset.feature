@@ -89,7 +89,7 @@ Feature: Users can use the Proposals preset
     And I set the field "Summary" to "This is the summary for the new entry."
     And I set the field "Content" to "This is the content for the new entry."
     And I set the field "Status" to "Approved"
-    And I press "Save"
+    And I press "saveandview"
     Then I should see "This is the title"
     And I should see "Approved"
     And I should see "This is the summary for the new entry."
