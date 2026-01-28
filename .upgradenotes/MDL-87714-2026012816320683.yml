@@ -1,0 +1,15 @@
+issueNumber: MDL-87714
+notes:
+  customfield_number:
+    - message: >-
+        In order to fully support shared custom field categories, additional
+        component/area/itemid parameters have been added to the following:
+
+
+        * The `customfield_number_recalculate_value` external method
+
+        * The abstract `\customfield_number\provider_base::recalculate()` method
+
+        * The `\customfield_number\task\recalculate` helpers for queueing task
+        instances
+      type: changed
