@@ -52,7 +52,7 @@
 .path-mod-book #mod_book-chaptersnavigation {
     top: 80px;
     width: inherit;
-    margin: 0 -35px;
+    margin: 0 -50px;
     position: sticky; /* Make navigation sticky. */
 }
 
@@ -69,17 +69,14 @@
 
 .path-mod-book .btn-previous,
 .path-mod-book .btn-next {
-    background: #dee2e6;
     box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 0.075);
-    padding: 13px 10px;
-}
-
-.path-mod-book .btn-previous {
-    border-radius: 200px 0 0 200px;
-}
-
-.path-mod-book .btn-next {
-    border-radius: 0 200px 200px 0;
+    width: 48px;
+    height: 48px;
+    padding: 16px 12px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    transform: translateY(100px);
 }
 
 .path-mod-book.dir-rtl .btn-previous .icon,
@@ -89,10 +86,21 @@
 
 .path-mod-book .btn-previous .icon,
 .path-mod-book .btn-next .icon {
-    font-size: 24px;
     width: auto;
     height: auto;
-    margin: auto;
+    margin-left: 6px;
+    display: flex;
+    font-size: 16px;
+    color: #212529;
+}
+
+#mod_book-chaptersnavigation .btn-link:hover {
+    text-decoration: none;
+}
+
+#mod_book-chaptersnavigation .btn:hover {
+    background-color: #dee2e6;
+    border-color: #dee2e6;
 }
 
 @media (max-width: 768px) {
@@ -109,6 +117,7 @@
         padding: 10px;
         width: 45px;
         height: 45px;
+        transform: none;
     }
 
     .path-mod-book .book_content {
