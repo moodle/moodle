@@ -1,0 +1,8 @@
+issueNumber: MDL-87059
+notes:
+  core_customfield:
+    - message: >-
+        Added new `\core_customfield\api::is_shortname_unique(...)` method to
+        determine whether a shortname is available for use inside a given
+        handler
+      type: improved
