@@ -487,4 +487,60 @@ class api {
         ];
         return shared::record_exists_select($sql, $params);
     }
+
+    /**
+     * Checks if the given shortname is unique for the handler's component-area-itemid combination and shared fields.
+     *
+     * @param handler $handler
+     * @param string $shortname
+     * @param int $fieldid
+     * @return bool
+     */
+    public static function is_shortname_unique(handler $handler, string $shortname, int $fieldid): bool {
+        global $DB;
+
+        if ($handler->get_component() === 'core_customfield' && $handler->get_area() === 'shared') {
+            // If it's a shared field, just check the shortname is unique among all fields.
+            $params = [
+                'shortname' => $shortname,
+                'fieldid' => $fieldid,
+            ];
+            return !$DB->record_exists_select('customfield_field', 'shortname = :shortname AND id <> :fieldid', $params);
+        } else {
+            // Check the shortname is unique for this component-area-itemid combination and shared fields.
+            $query = "
+                SELECT 1
+                  FROM {customfield_field} f
+                  JOIN {customfield_category} c ON c.id = f.categoryid
+                 WHERE f.shortname = :shortname
+                   AND (
+                            (
+                                f.id <> :fieldid
+                                AND c.component = :component
+                                AND c.area = :area
+                                AND c.itemid = :itemid
+                            )
+                            OR
+                            (
+                                c.component = :sharedcomponent
+                                AND c.area = :sharedarea
+                                AND c.itemid = :shareditemid
+                            )
+                       )
+            ";
+
+            $params = [
+                'shortname' => $shortname,
+                'fieldid' => $fieldid,
+                'component' => $handler->get_component(),
+                'area' => $handler->get_area(),
+                'itemid' => $handler->get_itemid(),
+                'sharedcomponent' => 'core_customfield',
+                'sharedarea' => 'shared',
+                'shareditemid' => 0,
+            ];
+
+            return !$DB->record_exists_sql($query, $params);
+        }
+    }
 }
