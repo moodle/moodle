@@ -19,6 +19,7 @@ namespace core_customfield;
 /**
  * Functional test for class \core_customfield\api
  *
+ * @covers     \core_customfield\api
  * @package    core_customfield
  * @category   test
  * @copyright  2018 Toni Barbera <toni@moodle.com>
@@ -270,5 +271,59 @@ final class api_test extends \advanced_testcase {
         list($sql, $p) = $DB->get_in_or_equal($category1fieldsids);
         $this->assertCount(6, $DB->get_records_select(\core_customfield\field::TABLE, 'id '.$sql, $p));
         $this->assertCount(6, $DB->get_records_select(\core_customfield\data::TABLE, 'fieldid '.$sql, $p));
+    }
+
+    /**
+     * Test for function api::is_shortname_unique()
+     */
+    public function test_is_shortname_unique(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var \core_customfield_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+
+        // Create shared category and fields.
+        $sharedcategory = $generator->create_category(['component' => 'core_customfield', 'area' => 'shared']);
+        $generator->create_field([
+            'categoryid' => $sharedcategory->get('id'),
+            'name' => 'My shared field',
+            'shortname' => 'mysharedfield',
+            'type' => 'text',
+        ]);
+        $sharedfield2 = $generator->create_field([
+            'categoryid' => $sharedcategory->get('id'),
+            'name' => 'My shared field 2',
+            'shortname' => 'mysharedfield2',
+            'type' => 'text',
+        ]);
+
+        // Create a course category and fields.
+        $coursecategory = $generator->create_category(['component' => 'core_course', 'area' => 'course']);
+        $generator->create_field([
+            'categoryid' => $coursecategory->get('id'),
+            'name' => 'My course field',
+            'shortname' => 'mycoursefield',
+            'type' => 'text',
+        ]);
+        $coursefield2 = $generator->create_field([
+            'categoryid' => $coursecategory->get('id'),
+            'name' => 'My course field 2',
+            'shortname' => 'mycoursefield2',
+            'type' => 'text',
+        ]);
+
+        $coursehandler = \core_course\customfield\course_handler::create();
+        $sharedhandler = \core_customfield\customfield\shared_handler::create();
+
+        $this->assertTrue(api::is_shortname_unique($coursehandler, 'otherfield', $coursefield2->get('id')));
+        $this->assertTrue(api::is_shortname_unique($coursehandler, 'mycoursefield2', $coursefield2->get('id')));
+        $this->assertFalse(api::is_shortname_unique($coursehandler, 'mycoursefield', $coursefield2->get('id')));
+        $this->assertFalse(api::is_shortname_unique($coursehandler, 'mysharedfield', $coursefield2->get('id')));
+
+        $this->assertTrue(api::is_shortname_unique($sharedhandler, 'otherfield', $sharedfield2->get('id')));
+        $this->assertTrue(api::is_shortname_unique($sharedhandler, 'mysharedfield2', $sharedfield2->get('id')));
+        $this->assertFalse(api::is_shortname_unique($sharedhandler, 'mycoursefield', $sharedfield2->get('id')));
+        $this->assertFalse(api::is_shortname_unique($sharedhandler, 'mysharedfield', $sharedfield2->get('id')));
     }
 }
