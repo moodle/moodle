@@ -184,6 +184,19 @@ function testing_error($errorcode, $text = '') {
  * @param   bool $updatedependencies Upgrade dependencies
  */
 function testing_update_composer_dependencies(bool $selfupdate = true, bool $updatedependencies = true): void {
+    // Check if we are running inside another project that already loaded composer.
+    if (class_exists(\Composer\InstalledVersions::class)) {
+        // The Composer library is already loaded.
+        // Check to see if Moodle is the root package.
+        $rootpackage = \Composer\InstalledVersions::getRootPackage();
+        if ($rootpackage['name'] !== 'moodle/moodle') {
+            // Assume that the user has already run the composer commands manually.
+            echo "  Composer library is already loaded by another project ({$rootpackage['name']}).\n";
+            echo "  Skipping composer self-update and dependency update.\n";
+            return;
+        }
+    }
+
     // To restore the value after finishing.
     $cwd = getcwd();
 
