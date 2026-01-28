@@ -1,0 +1,9 @@
+issueNumber: MDL-87694
+notes:
+  core:
+    - message: >-
+        `\core\output\core_renderer::confirm()`'s `$displayoptions` parameter
+        now also accepts a `headinglevel` option that developers can use to
+        specify the heading level of the confirmation's heading. If not
+        specified, the confirmation heading will be rendered in an `h4` tag.
+      type: changed
