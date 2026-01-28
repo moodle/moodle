@@ -22,12 +22,11 @@ use core\output\html_writer;
  * Coverage information for PHPUnit.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class coverage_info {
-
     /** @var array The list of folders relative to the plugin root to include in coverage generation. */
     protected $includelistfolders = [];
 
@@ -68,7 +67,7 @@ class coverage_info {
         $includelistfolders = array_merge([
             'classes',
             'tests/generator',
-        ], $this->includelistfolders);;
+        ], $this->includelistfolders);
 
         $includelistfiles = array_merge([
             'externallib.php',

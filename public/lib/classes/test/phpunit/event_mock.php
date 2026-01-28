@@ -20,7 +20,7 @@ namespace core\test\phpunit;
  * Event mock class.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

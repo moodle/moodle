@@ -20,13 +20,13 @@ namespace core\test\phpunit;
  * Event redirection sink.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class event_sink {
     /** @var \core\event\base[] array of events */
-    protected $events = array();
+    protected $events = [];
 
     /**
      * Stop event redirection.
@@ -40,7 +40,6 @@ class event_sink {
     /**
      * To be called from phpunit_util only!
      *
-     * @private
      * @param \core\event\base $event record from event_read table
      */
     public function add_event(\core\event\base $event) {
@@ -74,7 +73,7 @@ class event_sink {
      * Removes all previously stored events.
      */
     public function clear() {
-        $this->events = array();
+        $this->events = [];
     }
 }
 

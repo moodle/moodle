@@ -20,13 +20,13 @@ namespace core\test\phpunit;
  * Message sink.
  *
  * @package    core
- * @category   phpunit
+ * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class message_sink {
     /** @var array of records from messages table */
-    protected $messages = array();
+    protected $messages = [];
 
     /**
      * Stop message redirection.
@@ -89,7 +89,7 @@ class message_sink {
         string $component,
         string $type,
     ): array {
-        return array_filter($this->get_messages_by_component($component), function($message) use ($type) {
+        return array_filter($this->get_messages_by_component($component), function ($message) use ($type) {
             return $message->eventtype == $type;
         });
     }
@@ -106,7 +106,7 @@ class message_sink {
      * Removes all previously stored messages.
      */
     public function clear() {
-        $this->messages = array();
+        $this->messages = [];
     }
 }
 

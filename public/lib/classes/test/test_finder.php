@@ -17,7 +17,7 @@
 namespace core\test;
 
 /**
- * Finds components and plugins with tests
+ * Finds components and plugins with tests.
  *
  * @package    core
  * @category   test
@@ -26,34 +26,36 @@ namespace core\test;
  */
 class test_finder {
     /**
-     * Returns all the components with tests of the specified type
+     * Returns all the components with tests of the specified type.
+     *
      * @param string $testtype The kind of test we are looking for
      * @return array
      */
     public static function get_components_with_tests($testtype) {
 
-        // Get all the components
+        // Get all the components.
         $components = self::get_all_plugins_with_tests($testtype) + self::get_all_subsystems_with_tests($testtype);
 
-        // Get all the directories having tests
+        // Get all the directories having tests.
         $directories = self::get_all_directories_with_tests($testtype);
 
-        // Find any directory not covered by proper components
+        // Find any directory not covered by proper components.
         $remaining = array_diff($directories, $components);
 
-        // Add them to the list of components
+        // Add them to the list of components.
         $components += $remaining;
 
         return $components;
     }
 
     /**
-     * Returns all the plugins having tests
+     * Returns all the plugins having tests.
+     *
      * @param string $testtype The kind of test we are looking for
      * @return array  all the plugins having tests
      */
     private static function get_all_plugins_with_tests($testtype) {
-        $pluginswithtests = array();
+        $pluginswithtests = [];
 
         $plugintypes = \core\component::get_plugin_types();
         ksort($plugintypes);
@@ -61,7 +63,7 @@ class test_finder {
             $plugs = \core\component::get_plugin_list($type);
             ksort($plugs);
             foreach ($plugs as $plug => $fullplug) {
-                // Look for tests recursively
+                // Look for tests recursively.
                 if (self::directory_has_tests($fullplug, $testtype)) {
                     $pluginswithtests[$type . '_' . $plug] = $fullplug;
                 }
@@ -83,14 +85,14 @@ class test_finder {
     private static function get_all_subsystems_with_tests($testtype) {
         global $CFG;
 
-        $subsystemswithtests = array();
+        $subsystemswithtests = [];
 
         $subsystems = \core\component::get_core_subsystems();
 
-        // Hack the list a bit to cover some well-known ones
-        $subsystems['backup'] = $CFG->dirroot.'/backup';
-        $subsystems['db-dml'] = $CFG->dirroot.'/lib/dml';
-        $subsystems['db-ddl'] = $CFG->dirroot.'/lib/ddl';
+        // Hack the list a bit to cover some well-known ones.
+        $subsystems['backup'] = $CFG->dirroot . '/backup';
+        $subsystems['db-dml'] = $CFG->dirroot . '/lib/dml';
+        $subsystems['db-ddl'] = $CFG->dirroot . '/lib/ddl';
 
         ksort($subsystems);
         foreach ($subsystems as $subsys => $fullsubsys) {
@@ -100,7 +102,7 @@ class test_finder {
             if (!is_dir($fullsubsys)) {
                 continue;
             }
-            // Look for tests recursively
+            // Look for tests recursively.
             if (self::directory_has_tests($fullsubsys, $testtype)) {
                 $subsystemswithtests['core_' . $subsys] = $fullsubsys;
             }
@@ -118,11 +120,11 @@ class test_finder {
         global $CFG;
 
         // List of directories to exclude from test file searching.
-        $excludedir = array('node_modules', 'vendor');
+        $excludedir = ['node_modules', 'vendor'];
 
         // Get first level directories in which tests should be searched.
-        $directoriestosearch = array();
-        $alldirs = glob($CFG->dirroot . DIRECTORY_SEPARATOR . '*' , GLOB_ONLYDIR);
+        $directoriestosearch = [];
+        $alldirs = glob($CFG->dirroot . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR);
         foreach ($alldirs as $dir) {
             if (!in_array(basename($dir), $excludedir) && (filetype($dir) != 'link')) {
                 $directoriestosearch[] = $dir;
@@ -130,7 +132,7 @@ class test_finder {
         }
 
         // Search for tests in valid directories.
-        $dirs = array();
+        $dirs = [];
         foreach ($directoriestosearch as $dir) {
             $dirite = new \RecursiveDirectoryIterator($dir);
             $iteite = new \RecursiveIteratorIterator($dirite);
@@ -181,16 +183,16 @@ class test_finder {
 
         switch ($testtype) {
             case 'phpunit':
-                $regexp = '|'.$sep.'tests'.$sep.'.*_test\.php$|';
+                $regexp = '|' . $sep . 'tests' . $sep . '.*_test\.php$|';
                 break;
             case 'features':
-                $regexp = '|'.$sep.'tests'.$sep.'behat'.$sep.'.*\.feature$|';
+                $regexp = '|' . $sep . 'tests' . $sep . 'behat' . $sep . '.*\.feature$|';
                 break;
             case 'stepsdefinitions':
-                $regexp = '|'.$sep.'tests'.$sep.'behat'.$sep.'behat_.*\.php$|';
+                $regexp = '|' . $sep . 'tests' . $sep . 'behat' . $sep . 'behat_.*\.php$|';
                 break;
             case 'behat':
-                $regexp = '!'.$sep.'tests'.$sep.'behat'.$sep.'(.*\.feature)|(behat_.*\.php)$!';
+                $regexp = '!' . $sep . 'tests' . $sep . 'behat' . $sep . '(.*\.feature)|(behat_.*\.php)$!';
                 break;
         }
 

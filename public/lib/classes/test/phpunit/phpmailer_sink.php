@@ -28,7 +28,7 @@ class phpmailer_sink {
     /**
      * @var array of records which would have been sent by phpmailer.
      */
-    protected $messages = array();
+    protected $messages = [];
 
     /**
      * Stop message redirection.
@@ -74,7 +74,7 @@ class phpmailer_sink {
      * Removes all previously stored messages.
      */
     public function clear() {
-        $this->messages = array();
+        $this->messages = [];
     }
 }
 

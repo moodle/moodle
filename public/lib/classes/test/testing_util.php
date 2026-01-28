@@ -73,7 +73,7 @@ abstract class testing_util {
     private static $originaldatafilesjson = 'originaldatafiles.json';
 
     /**
-     * @var boolean set to true once $originaldatafilesjson file is created.
+     * @var bool set to true once $originaldatafilesjson file is created.
      */
     private static $originaldatafilesjsonadded = false;
 
@@ -90,7 +90,6 @@ abstract class testing_util {
     /**
      * Return the name of the JSON file containing the init filenames.
      *
-     * @static
      * @return string
      */
     public static function get_originaldatafilesjson() {
@@ -100,7 +99,6 @@ abstract class testing_util {
     /**
      * Return the dataroot. It's useful when mocking the dataroot when unit testing this class itself.
      *
-     * @static
      * @return string the dataroot.
      */
     public static function get_dataroot() {
@@ -118,7 +116,6 @@ abstract class testing_util {
      * Set the dataroot. It's useful when mocking the dataroot when unit testing this class itself.
      *
      * @param string $dataroot the dataroot of the test framework.
-     * @static
      */
     public static function set_dataroot($dataroot) {
         self::$dataroot = $dataroot;
@@ -126,7 +123,7 @@ abstract class testing_util {
 
     /**
      * Returns the testing framework name
-     * @static
+     *
      * @return string
      */
     protected static function get_framework() {
@@ -145,7 +142,7 @@ abstract class testing_util {
 
     /**
      * Get data generator
-     * @static
+     *
      * @return \testing_data_generator
      */
     public static function get_data_generator() {
@@ -162,7 +159,6 @@ abstract class testing_util {
      * Does this site (db and dataroot) appear to be used for production?
      * We try very hard to prevent accidental damage done to production servers!!
      *
-     * @static
      * @return bool
      */
     public static function is_test_site() {
@@ -280,7 +276,7 @@ abstract class testing_util {
 
     /**
      * Returns contents of all tables right after installation.
-     * @static
+     *
      * @return array  $table=>$records
      */
     protected static function get_tabledata() {
@@ -309,7 +305,7 @@ abstract class testing_util {
 
     /**
      * Returns structure of all tables right after installation.
-     * @static
+     *
      * @return array $table=>$records
      */
     public static function get_tablestructure() {
@@ -338,7 +334,7 @@ abstract class testing_util {
 
     /**
      * Returns the names of sequences for each autoincrementing id field in all standard tables.
-     * @static
+     *
      * @return array $table=>$sequencename
      */
     public static function get_sequencenames() {
@@ -366,7 +362,7 @@ abstract class testing_util {
     /**
      * Returns list of tables that are unmodified and empty.
      *
-     * @static
+     *
      * @return array of table names, empty if unknown
      */
     protected static function guess_unmodified_empty_tables() {
@@ -421,7 +417,6 @@ abstract class testing_util {
     /**
      * Determine the next unique starting id sequences.
      *
-     * @static
      * @param array $records The records to use to determine the starting value for the table.
      * @param string $table table name.
      * @return int The value the sequence should be set to.
@@ -450,9 +445,7 @@ abstract class testing_util {
     /**
      * Reset all database sequences to initial values.
      *
-     * @static
      * @param array $empties tables that are known to be unmodified and empty
-     * @return void
      */
     public static function reset_all_database_sequences(?array $empties = null) {
         global $DB;
@@ -554,7 +547,7 @@ abstract class testing_util {
 
     /**
      * Reset all database tables to default values.
-     * @static
+     *
      * @return bool true if reset done, false if skipped
      */
     public static function reset_database() {
@@ -658,9 +651,7 @@ abstract class testing_util {
     }
 
     /**
-     * Purge dataroot directory
-     * @static
-     * @return void
+     * Purge dataroot directory.
      */
     public static function reset_dataroot() {
         global $CFG;
@@ -855,7 +846,7 @@ abstract class testing_util {
 
     /**
      * Drop the whole test database
-     * @static
+     *
      * @param bool $displayprogress
      */
     protected static function drop_database($displayprogress = false) {
@@ -893,8 +884,7 @@ abstract class testing_util {
     }
 
     /**
-     * Drops the test framework dataroot
-     * @static
+     * Drops the test framework dataroot.
      */
     protected static function drop_dataroot() {
         global $CFG;
