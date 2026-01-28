@@ -186,10 +186,11 @@ class course_summary_exporter extends \core\external\exporter {
         $image = \cache::make('core', 'course_image')->get($course->id);
 
         if (is_null($image)) {
-            $image = false;
+            return false;
         }
 
-        return $image;
+        $url = new moodle_url($image);
+        return $url->out();
     }
 
     /**
