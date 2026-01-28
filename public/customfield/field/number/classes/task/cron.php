@@ -67,7 +67,7 @@ class cron extends scheduled_task {
             $field = field_controller::create(0, $row, $category);
             if ($provider = provider_base::instance($field)) {
                 if ($provider->is_available()) {
-                    $provider->recalculate();
+                    $provider->recalculate(null, $cat->component, $cat->area, $cat->itemid);
                 }
             }
         }
