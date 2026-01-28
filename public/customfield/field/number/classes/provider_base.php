@@ -64,8 +64,16 @@ abstract class provider_base {
      * Recalculate field value.
      *
      * @param int|null $instanceid
+     * @param string $component
+     * @param string $area
+     * @param int $itemid
      */
-    public function recalculate(?int $instanceid = null): void {
+    public function recalculate(
+        ?int $instanceid = null,
+        string $component = 'core_course',
+        string $area = 'course',
+        int $itemid = 0,
+    ): void {
     }
 
     /**

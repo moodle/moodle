@@ -54,13 +54,13 @@ export function init() {
         }
         e.preventDefault();
 
-        const {fieldid, instanceid} = target.dataset;
+        const {fieldid, instanceid, component, area, itemid} = target.dataset;
 
         const pendingPromise = new Pending('recalculate_customfield_number');
         addIconToContainer(el).then(() => {
             return Ajax.call([{
                 methodname: 'customfield_number_recalculate_value',
-                args: {fieldid, instanceid}
+                args: {fieldid, instanceid, component, area, itemid}
             }])[0];
         }).then((data) => {
             el.innerHTML = data.value;
