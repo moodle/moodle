@@ -447,7 +447,13 @@ abstract class handler {
      *     In the last case data_controller::get_value() and export_value() functions will return default values.
      */
     public function get_instances_data(array $instanceids, bool $returnall = false): array {
-        $result = api::get_instances_fields_data($this->get_fields(), $instanceids);
+        $result = api::get_instances_fields_data(
+            fields: $this->get_fields(),
+            instanceids: $instanceids,
+            component: $this->get_component(),
+            area: $this->get_area(),
+            itemid: $this->get_itemid(),
+        );
 
         if (!$returnall) {
             // Filter only by visible fields (list of visible fields may be different for each instance).
