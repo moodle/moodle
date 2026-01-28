@@ -709,6 +709,14 @@
     }
 }
 
+.path-grade {
+    .groupsearchdropdown {
+        &.dropdown-menu {
+            width: 400px;
+        }
+    }
+}
+
 .search-widget {
     .dropdown-menu {
         padding: 0.8rem 1.2rem;
