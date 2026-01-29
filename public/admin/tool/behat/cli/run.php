@@ -223,7 +223,7 @@ if (empty($parallelrun)) {
     $runtestscommand .= ' ' . $extraoptstr;
     $cmds['singlerun'] = $runtestscommand;
 
-    echo "Running single behat site:" . PHP_EOL;
+    echo "Running single behat site: with " . $runtestscommand . PHP_EOL;
     passthru("php $runtestscommand", $status);
     $exitcodes['singlerun'] = $status;
     chdir($cwd);
