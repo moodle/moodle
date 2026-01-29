@@ -17,7 +17,7 @@
 /**
  * This function fetches math. images from the data directory
  * If not, it obtains the corresponding TeX expression from the cache_tex db table
- * and uses mimeTeX to create the image file
+ * and uses LaTeX to create the image file
  *
  * @package    filter
  * @subpackage tex
@@ -84,11 +84,6 @@
         }
     }
 
-    // Action: Show Image
-    if ($action=='ShowImageMimetex') {
-        tex2image($texexp);
-    }
-
     // Action: Check Slasharguments
     if ($action=='SlashArguments') {
         slasharguments($texexp);
@@ -131,68 +126,6 @@
         }
         echo "</pre></body></html>\n";
     }
-
-    function tex2image($texexp, $return=false) {
-        global $CFG;
-
-        if (!$texexp) {
-            echo 'No tex expresion specified';
-            return;
-        }
-
-        $image  = md5($texexp) . ".gif";
-        $filetype = 'image/gif';
-        if (!file_exists("$CFG->dataroot/filter/tex")) {
-            make_upload_directory("filter/tex");
-        }
-        $pathname = "$CFG->dataroot/filter/tex/$image";
-        if (file_exists($pathname)) {
-            unlink($pathname);
-        }
-
-        $texexp = '\Large '.$texexp;
-        $commandpath = filter_tex_get_executable(true);
-        $cmd = filter_tex_get_cmd($pathname, $texexp);
-        system($cmd, $status);
-
-        if ($return) {
-          return $image;
-        }
-
-        if (file_exists($pathname)) {
-            send_file($pathname, $image);
-
-        } else if (debugging()) {
-            $ecmd = "$cmd 2>&1";
-            echo `$ecmd` . "<br />\n";
-            echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
-            if ($status == 4) {
-                echo "Status corresponds to illegal instruction<br />\n";
-            } else if ($status == 11) {
-                echo "Status corresponds to bus error<br />\n";
-            } else if ($status == 22) {
-                echo "Status corresponds to abnormal termination<br />\n";
-            }
-            if (file_exists($commandpath)) {
-                echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br />";
-                echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br />";
-                if (function_exists("md5_file")) {
-                    echo "The md5 checksum of the file is " . md5_file($commandpath) . "<br />";
-                } else {
-                    $handle = fopen($commandpath,"rb");
-                    $contents = fread($handle,16384);
-                    fclose($handle);
-                    echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br />";
-                }
-            } else {
-                echo "mimetex executable $commandpath not found!<br />";
-            }
-            echo "Image not found!";
-        } else {
-            echo "Can not output detailed information due to security concerns, please turn on debug mode first.";
-        }
-    }
-
 
     // test Tex/Ghostscript output - command execution only
     function TexOutput($expression, $graphic=false) {
@@ -296,7 +229,9 @@
     function slasharguments($texexp) {
         global $CFG;
         $admin = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=http';
-        $image = tex2image($texexp,true);
+        $md5 = md5($texexp);
+        $convertformat = get_config('filter_tex', 'convertformat');
+        $image = $md5 . ".{$convertformat}";
         echo "<p>If the following image displays correctly, set your ";
         echo "<a href=\"$admin\" target=\"_blank\">Administration->Server->HTTP</a> ";
         echo "setting for slasharguments to file.php/1/pic.jpg: ";
@@ -329,9 +264,7 @@
                <label for="ShowDB">See the cache_filters database entry for this expression (if any).</label></li>
            <li><input type="radio" name="action" value="DeleteDB" id="DeleteDB" />
                <label for="DeleteDB">Delete the cache_filters database entry for this expression (if any).</label></li>
-           <li><input type="radio" name="action" value="ShowImageMimetex" id="ShowImageMimetex"  checked="checked" />
-               <label for="ShowImageMimetex">Show a graphic image of the algebraic expression rendered with mimetex.</label></li>
-           <li><input type="radio" name="action" value="ShowImageTex" id="ShowImageTex" />
+           <li><input type="radio" name="action" value="ShowImageTex" id="ShowImageTex" checked="checked" />
                <label for="ShowImageTex">Show a graphic image of the algebraic expression rendered with Tex/Ghostscript.</label></li>
            <li><input type="radio" name="action" value="ShowOutputTex" id="ShowOutputTex" />
                <label for="ShowOutputTex">Show command execution output from the algebraic expression rendered with Tex/Ghostscript.</label></li>
@@ -355,10 +288,9 @@ searches the database cache_filters table to see if this TeX expression had been
 processed before. If not, it adds a DB entry for that expression.  It then
 replaces the TeX expression by an &lt;img src=&quot;.../filter/tex/pix.php...&quot;&gt;
 tag.  The filter/tex/pix.php script then searches the database to find an
-appropriate gif/png/svg image file for that expression and to create one if it doesn't exist.
-It will then use either the LaTex/Ghostscript renderer (using external executables
-on your system) or the bundled Mimetex executable. The full Latex/Ghostscript
-renderer produces better results and is tried first.
+appropriate png/gif/svg image file for that expression and to create one if it doesn't exist.
+It uses the LaTeX/Ghostscript renderer (using external executables on your system)
+to produce the images.
 Here are a few common things that can go wrong and some suggestions on how
 you might try to fix them.</p>
 <ol>
@@ -366,21 +298,16 @@ you might try to fix them.</p>
 process this expression. Then the database entry for that expression contains
 a bad TeX expression in the rawtext field (usually blank). You can fix this
 by clicking on &quot;Delete DB Entry&quot;</li>
-<li>The TeX to gif/png/svg image conversion process does not work.
-If paths are specified in the filter configuation screen for the three
-executables these will be tried first. Note that they still must be correctly
+<li>The TeX to png/gif/svg image conversion process does not work.
+If paths are specified in the filter configuration screen for the LaTeX
+executables these will be used. Note that they must be correctly
 installed and have the correct permissions. In particular make sure that you
 have all the packages installed (e.g., on Debian/Ubuntu you need to install
 the 'tetex-extra' package). Running the 'show command execution' test should
 give a big clue.
-If this fails or is not available, the Mimetex executable is tried. If this
-fails a likely cause is that the mimetex binary you are using is
-incompatible with your operating system. You can try compiling it from the
-C sources downloaded from <a href="http://www.forkosh.com/mimetex.zip">
-http://www.forkosh.com/mimetex.zip</a>.
 Another possible problem which may affect
 both Unix and Windows servers is that the web server doesn't have execute permission
-on the mimetex binary. In that case change permissions accordingly</li>
+on the LaTeX binaries. In that case change permissions accordingly</li>
 </ol>
 </body>
 </html>

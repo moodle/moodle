@@ -172,16 +172,11 @@ final class admintree_test extends \advanced_testcase {
         $this->assertMatchesRegularExpression('/class="text-danger"/', $result);
 
         // Check for a file which is not executable.
-        $result = $executable->output_html($CFG->dirroot . '/filter/tex/readme_moodle.txt');
+        $result = $executable->output_html($CFG->dirroot . '/lib/upgrade.txt');
         $this->assertMatchesRegularExpression('/class="text-danger"/', $result);
 
-        // Check for an executable file.
-        if ($CFG->ostype == 'WINDOWS') {
-            $filetocheck = 'mimetex.exe';
-        } else {
-            $filetocheck = 'mimetex.darwin';
-        }
-        $result = $executable->output_html($CFG->dirroot . '/filter/tex/' . $filetocheck);
+        // Check for an executable file using PHP_BINARY (the current PHP executable).
+        $result = $executable->output_html(PHP_BINARY);
         $this->assertMatchesRegularExpression('/class="text-success"/', $result);
 
         // Check for no file specified.

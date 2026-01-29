@@ -19,25 +19,18 @@ namespace filter_algebra;
 use core\context\system as context_system;
 use core\output\actions\popup_action;
 use core\url;
+use core_useragent;
 use stdClass;
 
 /**
- * Moodle - Filter for converting simple calculator-type algebraic expressions to cached gif images
+ * Moodle - Filter for converting simple calculator-type algebraic expressions to cached images
  *
  * NOTE: This Moodle text filter converts algebraic expressions delimited
  * by either @@...@@ or by <algebra...>...</algebra> tags
  * first converts it to TeX using WeBWorK algebra parser Perl library
  * AlgParser.pm, part of the WeBWorK distribution obtained from
  * http://webhost.math.rochester.edu/downloadwebwork/
- * then converts the TeX to gif images using
- * mimetex.cgi obtained from http://www.forkosh.com/mimetex.html authored by
- * John Forkosh john@forkosh.com. The mimetex.cgi ELF binary compiled for Linux i386
- * as well as AlgParser.pm are included with this distribution.
- * Note that there may be patent restrictions on the production of gif images
- * in Canada and some parts of Western Europe and Japan until July 2004.
- * -------------------------------------------------------------------------
- * You will then need to edit your moodle/config.php to invoke mathml_filter.php
- * -------------------------------------------------------------------------
+ * then converts the TeX to PNG or SVG images using LaTeX tools.
  *
  * @package    filter_algebra
  * @subpackage algebra
@@ -92,7 +85,11 @@ class text_filter extends \core_filters\text_filter {
             }
 
             $md5 = md5($algebra);
-            $filename = $md5  . ".gif";
+            $convertformat = get_config('filter_algebra', 'convertformat');
+            if ($convertformat == 'svg' && !core_useragent::supports_svg()) {
+                $convertformat = 'png';
+            }
+            $filename = $md5 . ".{$convertformat}";
             if (! $texcache = $DB->get_record("cache_filters", ["filter" => "algebra", "md5key" => $md5])) {
                 $algebra = str_replace('&lt;', '<', $algebra);
                 $algebra = str_replace('&gt;', '>', $algebra);

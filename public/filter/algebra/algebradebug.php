@@ -1,7 +1,7 @@
 <?php
       // This function fetches math. images from the data directory
-      // If not, it obtains the corresponding TeX expression from the cache_tex db table
-      // and uses mimeTeX to create the image file
+      // If not, it obtains the corresponding TeX expression from the cache_filters db table
+      // and uses LaTeX to create the image file.
 
     require_once("../../config.php");
 
@@ -11,6 +11,8 @@
 
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->dirroot.'/filter/tex/lib.php');
+    require_once($CFG->dirroot . '/filter/algebra/lib.php');
+    require_once($CFG->dirroot . '/filter/tex/latex.php');
 
     $action = optional_param('action', '', PARAM_ALPHANUM);
     $algebra = optional_param('algebra', '', PARAM_RAW);
@@ -203,9 +205,8 @@ function tex2image($texexp, $md5, $return=false) {
         return;
     }
 
-    $texexp = '\Large ' . $texexp;
-    $image  = $md5 . ".gif";
-    $filetype = 'image/gif';
+    $convertformat = get_config('filter_algebra', 'convertformat');
+    $image = $md5 . ".{$convertformat}";
     if (!file_exists("$CFG->dataroot/filter/algebra")) {
         make_upload_directory("filter/algebra");
     }
@@ -213,42 +214,22 @@ function tex2image($texexp, $md5, $return=false) {
     if (file_exists($pathname)) {
         unlink($pathname);
     }
-    $commandpath = filter_tex_get_executable(true);
-    $cmd = filter_tex_get_cmd($pathname, $texexp);
-    system($cmd, $status);
+
+    // Render with LaTeX.
+    $latex = new latex('filter_algebra');
+    $density = get_config('filter_algebra', 'density');
+    $background = get_config('filter_algebra', 'latexbackground');
+    $lateximage = $latex->render($texexp, $image, 12, $density, $background);
 
     if ($return) {
         return $image;
     }
-    if (file_exists($pathname)) {
+    if ($lateximage) {
+        copy($lateximage, $pathname);
         send_file($pathname, $image);
-
     } else {
-        $ecmd = "$cmd 2>&1";
-        echo `$ecmd` . "<br />\n";
-        echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
-        if ($status == 4) {
-            echo "Status corresponds to illegal instruction<br />\n";
-        } else if ($status == 11) {
-            echo "Status corresponds to bus error<br />\n";
-        } else if ($status == 22) {
-            echo "Status corresponds to abnormal termination<br />\n";
-        }
-        if (file_exists($commandpath)) {
-            echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br />";
-            echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br />";
-            if (function_exists("md5_file")) {
-                echo "The md5 checksum of the file is " . md5_file($commandpath) . "<br />";
-            } else {
-                $handle = fopen($commandpath,"rb");
-                $contents = fread($handle,16384);
-                fclose($handle);
-                echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br />";
-            }
-        } else {
-            echo "mimetex executable $commandpath not found!<br />";
-        }
-        echo "Image not found!";
+        echo "Image not found!<br />";
+        echo "Please check that LaTeX tools are properly configured in the filter settings.";
     }
 }
 
@@ -314,7 +295,7 @@ looks for the TeX translation in the Moodle database in the table cache_filters
 in the field rawtext. If not found, it passes the algebraic expression to the
 Perl script algebra2tex.pl, which also uses the Perl library AlgParser.pm.
 It then saves the TeX translation in the database for subsequent uses and
-passes the TeX to the mimetex executable to be converted to a gif image.
+passes the TeX to the LaTeX renderer to be converted to a png/gif/svg image.
 Here are a few common things that can go wrong and some suggestions on how
 you might try to fix them.</p>
 <ol>
@@ -334,12 +315,11 @@ on the algebra2tex.pl script. In that case change permissions accordingly</li>
 a bug in the algebra filter. Post the original algebraic expression and the
 bad TeX translation in the <a href="http://moodle.org/mod/forum/view.php?id=752">
 Mathematics Tools</a> forum in the Using Moodle course on moodle.org.</li>
-<li>The TeX to gif image conversion process does not work. If your server is
-running Unix, a likely cause is that the mimetex binary you are using is
-incompatible with your operating system. You can try compiling it from the
-C sources downloaded from <a href="http://www.forkosh.com/mimetex.zip">
-http://www.forkosh.com/mimetex.zip</a>. Lastly check the execute permissions
-on your mimetex binary, as outlined in item 2 above.</li>
+<li>The TeX to png/gif/svg image conversion process does not work. This requires
+LaTeX tools to be properly installed and configured. Check that the paths
+to latex, dvips, convert/dvisvgm are correctly set in the filter_algebra
+settings. Make sure that you have all the packages installed. Lastly check
+the execute permissions on your LaTeX binaries, as outlined in item 2 above.</li>
 </ol>
 </body>
 </html>
