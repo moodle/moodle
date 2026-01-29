@@ -1250,7 +1250,7 @@ EOF;
         // Do setup for cron task.
         \core\cron::setup_user();
 
-        // Discard task output as not appropriate for Behat output!
+        // Capture task output, in case we need it to report an error.
         ob_start();
 
         // Run all tasks which have a scheduled runtime of before now.
@@ -1268,11 +1268,9 @@ EOF;
             // If a task was successful it will be removed.
             // If it failed then it will still exist.
             if ($DB->record_exists('task_adhoc', ['id' => $task->get_id()])) {
-                // End ouptut buffering and flush the current buffer.
-                // This should be from just the current task.
-                ob_end_flush();
-
-                throw new DriverException('An adhoc task failed', 0);
+                // Report the error, including the task output up to the failure.
+                // This includes the output of any exception or other error that occurred.
+                throw new DriverException("An adhoc task failed. mtrace() output:\n\n" . ob_get_clean());
             }
         }
         ob_end_clean();
