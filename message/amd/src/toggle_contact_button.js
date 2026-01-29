@@ -154,7 +154,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         };
         sendRequest(element, request).done(function() {
             setContactRequested(element);
-            element.addClass('disabled');
+            element.addClass('disabled border-0');
             const templateContext = {
                 'displaytextlabel': displayTextLabel(element)
             };
