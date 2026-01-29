@@ -1,0 +1,22 @@
+{
+    "type": "project",
+    "require": {
+        "moodle/composer-installer": "^1",
+        "moodle/moodle-composer-scaffold": "^1",
+        "moodle/moodle": "@dev",
+        "moodle/moodle-testing": "^1.0"
+    },
+    "repositories": [
+        {
+            "name": "moodleundertest",
+            "type": "path",
+            "url": "../moodle"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "moodle/composer-installer": true,
+            "moodle/moodle-composer-scaffold": true
+        }
+    }
+}

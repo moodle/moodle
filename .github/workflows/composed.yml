@@ -1,0 +1,117 @@
+name: Run tests in a Composed Moodle Setup
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - MOODLE_[0-9]+_STABLE
+    tags-ignore:
+      - v[0-9]+.[0-9]+.[0-9]+*
+  workflow_dispatch:
+    inputs:
+      phpunit_extra_options:
+        description: Additional options to apply to PHPUnit
+        required: false
+        default: ''
+
+env:
+  php: 8.4
+
+jobs:
+  PHPUnit:
+    runs-on: ${{ matrix.os }}
+    services:
+      exttests:
+        image: moodlehq/moodle-exttests
+        ports:
+          - 8080:80
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # MySQL builds always run with the lowest PHP supported version.
+          - os: ubuntu-24.04
+            php: 8.3
+            extensions:
+            db: mysqli
+          # PostgreSQL builds always run with the highest PHP supported version.
+          - os: ubuntu-24.04
+            php: 8.4
+            db: pgsql
+
+    steps:
+      - name: Setting up DB mysql
+        if: ${{ matrix.db == 'mysqli' }}
+        uses: moodlehq/mysql-action@v1
+        with:
+          collation server: utf8mb4_bin
+          mysql version: 8.4
+          mysql database: test
+          mysql user: test
+          mysql password: test
+          use tmpfs: true
+          tmpfs size: '1024M'
+          extra conf: --skip-log-bin
+
+      - name: Setting up DB pgsql
+        if: ${{ matrix.db == 'pgsql' }}
+        uses: m4nu56/postgresql-action@v1
+        with:
+          postgresql version: 16
+          postgresql db: test
+          postgresql user: test
+          postgresql password: test
+
+      - name: Configuring git vars
+        uses: rlespinasse/github-slug-action@v5
+
+      - name: Setting up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
+          ini-values: max_input_vars=5000
+          coverage: none
+          tools: composer
+
+      - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
+        uses: actions/checkout@v6
+        with:
+          path: 'moodle'
+
+      - name: 'Preparing the environment'
+        run: |
+          echo "pathtophp=$(which php)" >> $GITHUB_ENV # Inject installed pathtophp to env. The template config needs it.
+          sudo locale-gen en_AU.UTF-8
+
+      - name: Create the new Composer Project
+        run: |
+          mkdir testsite
+          cp moodle/.github/workflows/composed/composer.json testsite/composer.json
+          cp moodle/.github/workflows/composed/config.php testsite/config.php
+          mkdir -p testsite/data/moodledata
+          mkdir -p testsite/data/phpunitdata
+
+      - name: Install the Moodle test site
+        working-directory: testsite
+        run: |
+          composer install --no-interaction
+
+      - name: Setting up PHPUnit
+        working-directory: testsite
+        env:
+          dbtype: ${{ matrix.db }}
+        run: |
+          php moodle/public/admin/tool/phpunit/cli/init.php --no-composer-self-update
+
+      - name: Running PHPUnit tests
+        working-directory: testsite
+        env:
+          dbtype: ${{ matrix.db }}
+          phpunit_options: ${{ secrets.phpunit_options }}
+        run: |
+            vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
