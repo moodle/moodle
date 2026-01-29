@@ -16,6 +16,7 @@
 
 namespace core_sms;
 
+use core\lang_string;
 
 /**
  * Tests for sms
@@ -51,7 +52,7 @@ final class message_status_test extends \advanced_testcase {
 
     public function test_description(): void {
         foreach (message_status::cases() as $case) {
-            $this->assertInstanceOf(\lang_string::class, $case->description());
+            $this->assertInstanceOf(lang_string::class, $case->description());
         }
     }
 }

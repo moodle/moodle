@@ -17,6 +17,7 @@
 namespace core_sms;
 
 use core\attribute_helper;
+use core\attribute\description;
 
 /**
  * The general status of a message. Gateways are able to provide more specific statuses to supplement these.

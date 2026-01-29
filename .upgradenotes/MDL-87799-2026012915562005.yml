@@ -1,0 +1,8 @@
+issueNumber: MDL-87799
+notes:
+  core:
+    - message: >-
+        New `\core\attribute\description` attribute, previously
+        `\core_sms\description`, for representing a language string in code
+        attributes
+      type: improved

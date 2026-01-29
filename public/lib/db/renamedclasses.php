@@ -45,4 +45,6 @@ $renamedclasses = [
     // Since Moodle 5.1.
     'core_xml_parser' => 'core\\xml_parser',
     'xml_format_exception' => 'core\\exception\\xml_format_exception',
+    // Since Moodle 5.2.
+    'core_sms\\description' => 'core\\attribute\\description',
 ];
