@@ -211,6 +211,19 @@ class qtype_calculatedmulti extends qtype_calculated {
         }
 
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
+
+        // If datasets missing Show error with a link if editing let the user edit
+        if (!$this->has_dataset_items((int)$questiondata->id) && !$this->is_question_editing_request()) {
+            $context = \context::instance_by_id($questiondata->contextid);
+
+            if (has_capability('moodle/question:editall', $context) || has_capability('moodle/question:editmine', $context)) {
+                $fixurl = $this->get_fix_datasets_url((int)$questiondata->id);
+                throw new \moodle_exception('missingdatasetswithlink', 'qtype_calculated', $fixurl->out(false));
+            }
+
+            throw new \moodle_exception('missingdatasets', 'qtype_calculated');
+        }
+
     }
 
     /**

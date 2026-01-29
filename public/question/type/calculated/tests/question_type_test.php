@@ -16,6 +16,7 @@
 
 namespace qtype_calculated;
 
+use core\exception\moodle_exception;
 use qtype_calculated;
 use qtype_numerical;
 use question_bank;
@@ -101,7 +102,7 @@ final class question_type_test extends \advanced_testcase {
         $this->assertEquals(0, $questiondata->penalty);
         $this->assertEquals('calculated', $questiondata->qtype);
         $this->assertEquals(1, $questiondata->length);
-        $this->assertEquals(\core_question\local\bank\question_version_status::QUESTION_STATUS_READY, $questiondata->status);
+        $this->assertEquals(\core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT, $questiondata->status);
         $this->assertEquals($question->createdby, $questiondata->createdby);
         $this->assertEquals($question->createdby, $questiondata->modifiedby);
         $this->assertEquals('', $questiondata->idnumber);
@@ -258,4 +259,82 @@ final class question_type_test extends \advanced_testcase {
         $this->assertIsObject($answer);
         $this->assertInfinite($answer->answer);
     }
+
+    public function test_missing_datasets_throws_friendly_exception_when_not_editing(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $syscontext = \context_system::instance();
+        /** @var \core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        // Create a calculated question but do NOT complete datasets/items step.
+        $fromform = \test_question_maker::get_question_form_data('calculated');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = (object)[
+            'category' => $category->id,
+            'qtype' => 'calculated',
+            'createdby' => 0,
+        ];
+        $this->qtype->save_question($question, $fromform);
+
+        // Simulate a non-editing page (e.g. quiz attempt start).
+        $PAGE->set_pagetype('mod-quiz-startattempt');
+
+        try {
+            // This should trigger initialise_question_instance() and throw your exception.
+            question_bank::load_question($question->id);
+            $this->fail('Expected moodle_exception was not thrown.');
+        } catch (\moodle_exception $e) {
+            $this->assertEquals('missingdatasetswithlink', $e->errorcode);
+            $this->assertEquals('qtype_calculated', $e->module);
+        }
+    }
+
+    /**
+     * @throws moodle_exception
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     * @throws \Exception
+     */
+    public function test_missing_datasets_does_not_block_question_editing(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $syscontext = \context_system::instance();
+        /** @var \core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category(['contextid' => $syscontext->id]);
+
+        $fromform = \test_question_maker::get_question_form_data('calculated');
+        $fromform->category = $category->id . ',' . $syscontext->id;
+
+        $question = (object)[
+            'category' => $category->id,
+            'qtype' => 'calculated',
+            'createdby' => 0,
+        ];
+        $this->qtype->save_question($question, $fromform);
+
+        // Simulate being on the editquestion.php page (most reliable signal).
+        $_SERVER['SCRIPT_NAME'] = '/question/bank/editquestion/question.php';
+        $PAGE->set_url(
+            new \moodle_url(
+                '/question/bank/editquestion/question.php',
+                ['id' => $question->id, 'cmid' => 2]
+            )
+        );
+        $PAGE->set_pagetype('question-bank-editquestion-question');
+
+        $qdef = question_bank::load_question($question->id);
+        $this->assertInstanceOf(\question_definition::class, $qdef);
+    }
+
 }

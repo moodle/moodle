@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 require_once($CFG->dirroot . '/question/type/questionbase.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
+use core_question\local\bank\question_version_status;
 
 
 /**
@@ -276,6 +277,99 @@ class qtype_calculated extends question_type {
         return true;
     }
 
+    /**
+     * Build a URL to the question editing screen so missing datasets can be fixed.
+     *
+     * If available, the current cmid is preserved so the editor can return
+     * correctly to the quiz context.
+     *
+     * @param int $questionid The question ID to edit.
+     * @return \moodle_url URL to the question editing page.
+     * @throws \core\exception\moodle_exception
+     * @throws coding_exception
+     */
+    protected function get_fix_datasets_url(int $questionid): \moodle_url {
+        // In the quiz context, the question editing screen requires cmid.
+        $cmid = optional_param('cmid', 0, PARAM_INT);
+
+        $params = ['id' => $questionid];
+        if (!empty($cmid)) {
+            $params['cmid'] = $cmid;
+        }
+
+        return new \moodle_url('/question/bank/editquestion/question.php', $params);
+    }
+
+    /**
+     * Determine whether the current request is part of the question editing flow.
+     *
+     * Used to allow incomplete calculated questions to be opened for editing
+     * without throwing runtime exceptions.
+     *
+     * @return bool True if this is a question editing request.
+     */
+    protected function is_question_editing_request(): bool {
+        global $PAGE;
+
+        if (!isset($PAGE)) {
+            return false;
+        }
+
+        // When editing a question, page type is typically question-bank-editquestion-question.
+        if (method_exists($PAGE, 'pagetype') && strpos($PAGE->pagetype, 'question-bank-editquestion') === 0) {
+            return true;
+        }
+
+        // Extra safety: script path check.
+        $script = $_SERVER['SCRIPT_NAME'] ?? '';
+        return (str_contains($script, '/question/bank/editquestion/question.php'));
+    }
+
+    /**
+     * Check whether a calculated question has at least one dataset item defined.
+     *
+     * @param int $questionid The question ID to check.
+     * @return bool True if dataset items exist, false otherwise.
+     * @throws dml_exception
+     */
+    protected function has_dataset_items(int $questionid): bool {
+        global $DB;
+
+        $sql = "SELECT 1
+                  FROM {question_datasets} qd
+                  JOIN {question_dataset_items} qdi
+                    ON qdi.definition = qd.datasetdefinition
+                 WHERE qd.question = ?";
+
+        return $DB->record_exists_sql($sql, [$questionid]);
+    }
+
+    /**
+     * Update the status of the current question version if it differs from the given value.
+     *
+     * @param int $questionid The question ID whose version status should be updated.
+     * @param string $status The target status (e.g. QUESTION_STATUS_DRAFT or READY).
+     * @return void
+     * @throws dml_exception
+     */
+    protected function set_question_version_status(int $questionid, string $status): void {
+        global $DB;
+
+        $version = $DB->get_record(
+            'question_versions',
+            ['questionid' => $questionid],
+            'id,status',
+            IGNORE_MISSING
+        );
+
+        if (!$version || $version->status === $status) {
+            return;
+        }
+
+        $version->status = $status;
+        $DB->update_record('question_versions', $version);
+    }
+
     public function import_datasets($question) {
         global $DB;
         $n = count($question->dataset);
@@ -367,8 +461,19 @@ class qtype_calculated extends question_type {
         $question->ap = question_bank::get_qtype(
                 'numerical')->make_answer_processor(
                 $questiondata->options->units, $questiondata->options->unitsleft);
-
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
+
+        // If datasets missing Show error with a link if editing let the user edit.
+        if (!$this->has_dataset_items((int)$questiondata->id) && !$this->is_question_editing_request()) {
+            $context = \context::instance_by_id($questiondata->contextid);
+
+            if (has_capability('moodle/question:editall', $context) || has_capability('moodle/question:editmine', $context)) {
+                $fixurl = $this->get_fix_datasets_url((int)$questiondata->id);
+                throw new \moodle_exception('missingdatasetswithlink', 'qtype_calculated', $fixurl->out(false));
+            }
+
+            throw new \moodle_exception('missingdatasets', 'qtype_calculated');
+        }
     }
 
     public function finished_edit_wizard($form) {
@@ -624,6 +729,7 @@ class qtype_calculated extends question_type {
      * @param object $form
      * @param int $course
      * @param PARAM_ALPHA $wizardnow should be added as we are coming from question2.php
+     * @throws dml_exception
      */
     public function save_question($question, $form) {
         global $DB;
@@ -653,6 +759,13 @@ class qtype_calculated extends question_type {
                     $this->preparedatasets($form);
                     $form->id = $question->id;
                     $this->save_dataset_definitions($form);
+                    if (!$this->has_dataset_items($question->id)) {
+                        $this->set_question_version_status(
+                            $question->id,
+                            question_version_status::QUESTION_STATUS_DRAFT
+                        );
+                    }
+
                     if (isset($form->synchronize) && $form->synchronize == 2) {
                         $this->addnamecategory($question);
                     }
@@ -663,6 +776,12 @@ class qtype_calculated extends question_type {
                     $this->preparedatasets($form, $questionfromid);
                     $form->id = $question->id;
                     $this->save_as_new_dataset_definitions($form, $questionfromid);
+                    if (!$this->has_dataset_items($question->id)) {
+                        $this->set_question_version_status(
+                            $question->id,
+                            question_version_status::QUESTION_STATUS_DRAFT
+                        );
+                    }
                     if (isset($form->synchronize) && $form->synchronize == 2) {
                         $this->addnamecategory($question);
                     }
@@ -689,6 +808,17 @@ class qtype_calculated extends question_type {
             case 'datasetitems':
                 $this->save_dataset_items($question, $form);
                 $this->save_question_calculated($question, $form);
+                if ($this->has_dataset_items($question->id)) {
+                    $this->set_question_version_status(
+                        $question->id,
+                        question_version_status::QUESTION_STATUS_READY
+                    );
+                } else {
+                    $this->set_question_version_status(
+                        $question->id,
+                        question_version_status::QUESTION_STATUS_DRAFT
+                    );
+                }
                 break;
             default:
                 throw new \moodle_exception('invalidwizardpage', 'question');
