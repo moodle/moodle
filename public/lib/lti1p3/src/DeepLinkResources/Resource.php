@@ -50,7 +50,7 @@ class Resource
         if (isset($this->line_item)) {
             $resource['lineItem'] = [
                 'scoreMaximum' => $this->line_item->getScoreMaximum(),
-                'label' => $this->line_item->getLabel(),
+                ...(!is_null($this->line_item->getLabel()) ? ['label' => $this->line_item->getLabel()] : []),
             ];
         }
 
