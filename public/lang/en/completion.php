@@ -112,6 +112,7 @@ $string['completionduration'] = 'Enrolment';
 $string['completionsettingslocked'] = 'Completion settings locked';
 $string['completionpassgrade'] = 'Require passing grade';
 $string['completionpassgrade_desc'] = 'Passing grade';
+$string['completionrequirements'] = 'Completion requirements:';
 $string['completionusegrade'] = 'Require grade';
 $string['completionusegrade_desc'] = 'Receive a grade';
 $string['completionupdated'] = 'Updated completion for activity <b>{$a}</b>';

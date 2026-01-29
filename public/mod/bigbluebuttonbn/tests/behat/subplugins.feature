@@ -86,7 +86,7 @@ Feature: BigBlueButtonBN Subplugins test
     And the BigBlueButtonBN activity "BBB Instance name" has sent recording all its events
     And I run all adhoc tasks
     When I reload the page
-    Then I should see "Done: Raise hand twice in a meeting."
+    Then the "Raise hand twice in a meeting." completion condition of "BBB Instance name" is displayed as "done"
 
   @javascript
   Scenario: I check that custom events are triggered and sent to subplugin when enabled

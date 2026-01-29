@@ -56,9 +56,12 @@
             <div class="completion-info" data-region="completion-info">
                 {{#isautomatic}}
                     <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
-                        {{#completiondetails}}
-                            {{> core_course/completion_automatic }}
-                        {{/completiondetails}}
+                        <div class="automatic-completion-title"><strong>{{#str}}completionrequirements, core_completion{{/str}}</strong></div>
+                        <ul class="activity-completion-list">
+                            {{#completiondetails}}
+                                {{> core_course/completion_automatic }}
+                            {{/completiondetails}}
+                        </ul>
                     </div>
                 {{/isautomatic}}
                 {{^isautomatic}}

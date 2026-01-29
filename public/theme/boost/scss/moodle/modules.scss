@@ -30,14 +30,15 @@ select {
             border-bottom: $border-width solid $border-color;
         }
         .completion-info {
-            padding-top: map-get($spacers, 3);
-            padding-bottom: map-get($spacers, 3);
+            padding-top: map-get($spacers, 2);
+            padding-bottom: map-get($spacers, 2);
             border-bottom: $border-width solid $border-color;
         }
     }
     .activity-description {
         padding-top: map-get($spacers, 3);
         padding-bottom: map-get($spacers, 3);
+        border-bottom: $border-width solid $border-color;
         & > .box.py-3 {
             padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
             padding-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
@@ -45,6 +46,27 @@ select {
         & > .box.py-3:empty {
             display: none;
         }
+    }
+    .automatic-completion-title {
+        padding-top: map-get($spacers, 2);
+        padding-bottom: map-get($spacers, 2);
+    }
+    .automatic-completion-conditions ul {
+        list-style: none;
+        padding-left: 0;
+    }
+    .automatic-completion-conditions li {
+        position: relative;
+        padding-left: map-get($spacers, 5);
+    }
+    .automatic-completion-conditions li::before {
+        content: "•";
+        position: absolute;
+        left: map-get($spacers, 2);
+        /* Scaling the dot down while keeping it centered */
+        font-size: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
     }
     .automatic-completion-conditions .badge {
         font-size: 80%;
@@ -63,6 +85,33 @@ select {
 
         &:first-child {
             margin-top: 0;
+        }
+    }
+    .automatic-completion-conditions {
+        li {
+            &:has(.automatic-completion-is-complete),
+            &:has(.automatic-completion-is-failed) {
+                &::before {
+                    content: "";
+                }
+            }
+        }
+
+        li {
+            &:has(.automatic-completion-is-complete) {
+                color: $success;
+                padding-left: map-get($spacers, 1);
+                .icon {
+                    font-size: 0.8rem;
+                }
+            }
+        }
+
+        li {
+            &:has(.automatic-completion-is-failed) {
+                color: $danger;
+                padding-left: map-get($spacers, 1);
+            }
         }
     }
     .activity-description .no-overflow p:last-child {

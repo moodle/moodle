@@ -29,37 +29,42 @@
 }}
 {{#istrackeduser}}
     {{#statuscomplete}}
-    <div class="badge rounded-pill bg-success icon-no-margin" role="listitem" {{!
-        }}{{#accessibledescription}}{{!
-            }}title="{{.}}" {{!
-            }}aria-label="{{.}}" {{!
-        }}{{/accessibledescription}}>
-        {{#pix}}i/checked{{/pix}}
-        <strong>{{#str}}completion_automatic:done, core_course{{/str}}</strong> <span class="fw-normal">{{description}}</span>
-    </div>
+    <li>
+        <div class="automatic-completion-is-complete" {{!
+            }}{{#accessibledescription}}{{!
+                }}title="{{.}}" {{!
+                }}aria-label="{{.}}" {{!
+            }}{{/accessibledescription}}>
+            {{#pix}}i/checked{{/pix}}
+            <strong>{{#str}}completion_automatic:done, core_course{{/str}}</strong>&nbsp;<span class="fw-normal">{{description}}</span>
+        </div>
+    </li>
     {{/statuscomplete}}
     {{#statuscompletefail}}
-    <div class="badge rounded-pill bg-danger icon-no-margin" role="listitem" {{!
-        }}{{#accessibledescription}}{{!
-            }}title="{{.}}" {{!
-            }}aria-label="{{.}}" {{!
-        }}{{/accessibledescription}}>
-        {{#pix}}e/cancel{{/pix}}
-        <strong>{{#str}}completion_automatic:failed, core_course{{/str}}</strong> <span class="fw-normal">{{description}}</span>
-    </div>
+    <li>
+        <div class="automatic-completion-is-failed" {{!
+            }}{{#accessibledescription}}{{!
+                }}title="{{.}}" {{!
+                }}aria-label="{{.}}" {{!
+            }}{{/accessibledescription}}>
+            {{#pix}}e/cancel{{/pix}}
+            <strong>{{#str}}completion_automatic:failed, core_course{{/str}}</strong>&nbsp;<span class="fw-normal">{{description}}</span>
+        </div>
+    </li>
     {{/statuscompletefail}}
     {{#statusincomplete}}
-    <div class="badge rounded-pill bg-light text-dark" role="listitem" {{!
-        }}{{#accessibledescription}}{{!
-            }}title="{{.}}" {{!
-            }}aria-label="{{.}}" {{!
-        }}{{/accessibledescription}}>
-        <strong>{{#str}}completion_automatic:todo, core_course{{/str}}</strong> <span class="fw-normal">{{description}}</span>
-    </div>
+    <li>
+        <div class="automatic-completion-is-incomplete" {{!
+            }}{{#accessibledescription}}{{!
+                }}title="{{.}}" {{!
+                }}aria-label="{{.}}" {{!
+            }}{{/accessibledescription}}>
+            <span class="visually-hidden">{{#str}}completion_automatic:todo, core_course{{/str}}</span>
+            <span class="fw-normal">{{description}}</span>
+        </div>
+    </li>
     {{/statusincomplete}}
 {{/istrackeduser}}
 {{^istrackeduser}}
-    <div class="badge rounded-pill bg-light text-dark" role="listitem">
-        <span class="fw-normal">{{description}}</span>
-    </div>
+    <li class="fw-normal">{{description}}</li>
 {{/istrackeduser}}

@@ -26,7 +26,7 @@ Feature: As a user I can complete a BigblueButtonBN activity by usual or custom 
     And I press "Save and display"
     And I log out
     And I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as traverst
-    Then I should see "Done: View"
+    Then the "View" completion condition of "RoomRecordings" is displayed as "done"
 
   @javascript
   Scenario: I set the completion type to custom completion
@@ -60,7 +60,7 @@ Feature: As a user I can complete a BigblueButtonBN activity by usual or custom 
     And the BigBlueButtonBN activity "RoomRecordings" has sent recording all its events
     And I run all adhoc tasks
     And I reload the page
-    Then I should see "Done: Participate in 1 chat(s)"
+    Then the "Participate in 1 chat(s)." completion condition of "RoomRecordings" is displayed as "done"
 
   @javascript
   Scenario: Validate completion when registering live sessions
