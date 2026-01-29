@@ -153,6 +153,7 @@ $string['searchresults'] = 'Search results: {$a}';
 $string['sectionlink'] = 'Permalink';
 $string['showstartedcoursestask'] = 'Show courses on start date';
 $string['submitsearch'] = 'Submit search';
+$string['subsectiondescriptionwarning'] = '<strong>Subsection descriptions will be discontinued in Moodle 5.2</strong>. To add a description, use a <strong>Text and media area</strong> instead.';
 $string['supports'] = 'This activity supports';
 $string['studentsatriskincourse'] = 'Students at risk in {$a} course';
 $string['studentsatriskinfomessage'] = 'Hi {$a->userfirstname},
