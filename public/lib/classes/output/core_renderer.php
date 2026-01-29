@@ -4176,7 +4176,7 @@ EOD;
                                     $contacttitle = 'waitingforcontactaccept';
                                 }
                                 $linkattributes = array_merge($linkattributes, [
-                                    'class' => 'disabled',
+                                    'class' => 'disabled border-0',
                                     'tabindex' => '-1',
                                 ]);
                             } else {
