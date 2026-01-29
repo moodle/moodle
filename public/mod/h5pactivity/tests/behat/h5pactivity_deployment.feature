@@ -26,7 +26,7 @@ Feature: Undeployed H5P activities packages should be available only to any user
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I press "Delete" action in the "Teacher 1" report row
-    And I click on "Delete" "button" in the "Delete user" "dialogue"
+    And I click on "Delete" "button" in the "Delete user Teacher 1?" "dialogue"
     And I should see "Deleted user Teacher 1"
 
   @javascript

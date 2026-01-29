@@ -32,8 +32,9 @@ Feature: Deleting users
     And I press "Add to selection"
     And I set the field "id_action" to "Delete"
     And I press "Go"
-    And I should see "Are you sure you want to delete user User Four, including data such as profile details, enrolments, group and cohort membership and some user activity data?"
-    And I press "Yes"
+    And "Delete user User Four?" "dialogue" should be visible
+    And I should see "This action will remove data such as profile information, enrolments, group and cohort memberships, and certain user activity records." in the "Delete user User Four?" "dialogue"
+    And I press "Delete"
     And I should see "Changes saved"
     And I press "Continue"
     Then the "Available" select box should not contain "User Four"
@@ -49,8 +50,9 @@ Feature: Deleting users
     And I press "Add to selection"
     And I set the field "id_action" to "Delete"
     And I press "Go"
-    And I should see "Are you sure you want to delete user User Four, User Three, including data such as profile details, enrolments, group and cohort membership and some user activity data?"
-    And I press "Yes"
+    And "Delete users User Four, User Three?" "dialogue" should be visible
+    And I should see "This action will remove data such as profile information, enrolments, group and cohort memberships, and certain user activity records." in the "Delete users User Four, User Three?" "dialogue"
+    And I press "Delete"
     And I should see "Changes saved"
     And I press "Continue"
     Then the "Available" select box should not contain "User Four"
@@ -64,8 +66,9 @@ Feature: Deleting users
     And I click on "User Four" "checkbox"
     And I click on "User Three" "checkbox"
     And I set the field "Bulk user actions" to "Delete"
-    And I should see "Are you sure you want to delete user User Four, User Three, including data such as profile details, enrolments, group and cohort membership and some user activity data?"
-    And I press "Yes"
+    And "Delete users User Four, User Three?" "dialogue" should be visible
+    And I should see "This action will remove data such as profile information, enrolments, group and cohort memberships, and certain user activity records." in the "Delete users User Four, User Three?" "dialogue"
+    And I press "Delete"
     And I should see "Changes saved"
     And I press "Continue"
     And I should see "Browse list of users"
@@ -89,7 +92,9 @@ Feature: Deleting users
     And I press "Add to selection"
     And I set the field "id_action" to "Delete"
     And I press "Go"
-    And I press "Yes"
+    And "Delete users User Four, User One?" "dialogue" should be visible
+    And I should see "This action will remove data such as profile information, enrolments, group and cohort memberships, and certain user activity records." in the "Delete users User Four, User One?" "dialogue"
+    And I press "Delete"
     Then I should see "Changes saved"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration
     And I set the field "Available" to "User Two"
@@ -98,7 +103,9 @@ Feature: Deleting users
     And I press "Add to selection"
     And I set the field "id_action" to "Delete"
     And I press "Go"
-    And I press "Yes"
+    And "Delete users User Three, User Two?" "dialogue" should be visible
+    And I should see "This action will remove data such as profile information, enrolments, group and cohort memberships, and certain user activity records." in the "Delete users User Three, User Two?" "dialogue"
+    And I press "Delete"
     And I should see "Changes saved"
     And I press "Continue"
     And the "Available" select box should not contain "User Four"
@@ -117,7 +124,7 @@ Feature: Deleting users
     Then I should see "User One"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I press "Delete" action in the "User One" report row
-    And I click on "Delete" "button" in the "Delete user" "dialogue"
+    And I click on "Delete" "button" in the "Delete user User One?" "dialogue"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration
     Then I should not see "User One"
 
