@@ -557,6 +557,11 @@ final class setuplib_test extends \advanced_testcase {
         $this->assertStringContainsString(' of /public/lib/tests/setuplib_test.php', $output);
 
         // And a vendor path.
-        $this->assertStringContainsString(' of /vendor/', $output);
+        $rootdir = realpath(\Composer\InstalledVersions::getRootPackage()['install_path']);
+        // If the vendor directory is within the $CFG->root it won't be present.
+        if (str_starts_with($rootdir, realpath(dirname(__DIR__, 3)))) {
+            $rootdir = '';
+        }
+        $this->assertStringContainsString(" of {$rootdir}/vendor", $output);
     }
 }
