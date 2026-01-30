@@ -16,6 +16,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87443](https://tracker.moodle.org/browse/MDL-87443)
 
+### core_customfield
+
+#### Added
+
+- Added new `\core_customfield\api::is_shortname_unique(...)` method to determine whether a shortname is available for use inside a given handler
+
+  For more information see [MDL-87059](https://tracker.moodle.org/browse/MDL-87059)
+
 ### core_question
 
 #### Fixed
@@ -24,6 +32,18 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Do not query this field directly. Instead use `core_question\versions::get_next_version()` to read the value, which will initialise it based on the existing versions if it is not set yet. By default, it will increment the version number automatically, unless you pass `increment: false`. Because of this, it is advisable to call it inside a transaction, that is only committed after the version number is used in a `question_versions` record.
 
   For more information see [MDL-86798](https://tracker.moodle.org/browse/MDL-86798)
+
+### customfield_number
+
+#### Changed
+
+- In order to fully support shared custom field categories, additional component/area/itemid parameters have been added to the following:
+
+  * The `customfield_number_recalculate_value` external method
+  * The abstract `\customfield_number\provider_base::recalculate()` method
+  * The `\customfield_number\task\recalculate` helpers for queueing task instances
+
+  For more information see [MDL-87714](https://tracker.moodle.org/browse/MDL-87714)
 
 ## 5.1.1
 

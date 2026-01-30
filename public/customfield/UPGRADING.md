@@ -1,5 +1,13 @@
 # core_customfield (subsystem) Upgrade notes
 
+## 5.1.1+
+
+### Added
+
+- Added new `\core_customfield\api::is_shortname_unique(...)` method to determine whether a shortname is available for use inside a given handler
+
+  For more information see [MDL-87059](https://tracker.moodle.org/browse/MDL-87059)
+
 ## 5.1
 
 ### Changed
