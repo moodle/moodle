@@ -146,12 +146,11 @@ class repository_coursefiles extends repository {
     }
 
     public function get_link($encoded) {
-        $info = array();
-
         $browser = get_file_browser();
 
         // the final file
-        $params = unserialize(base64_decode($encoded));
+        $params = (array) unserialize_array(base64_decode($encoded));
+
         $contextid  = clean_param($params['contextid'], PARAM_INT);
         $fileitemid = clean_param($params['itemid'], PARAM_INT);
         $filename = clean_param($params['filename'], PARAM_FILE);
