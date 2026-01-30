@@ -19,6 +19,12 @@
 - Added the `set_visibility` method to the `core_courseformat\sectionactions` class. To optimize performance, this method does not return the list of affected resources, avoiding unnecessary database queries since the return value is unused.
 
   For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
+- Add a new core_courseformat\sectionactions::move_after to replace the current move_section_to logic.
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
+- Add sectionactions::move_at to move a section at a given position.
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
 - A new restricted page has been created using routing for users to access the activity information. Only the activities with visible restrictions will be available.
 
   For more information see [MDL-87283](https://tracker.moodle.org/browse/MDL-87283)
@@ -46,6 +52,12 @@
 - The `set_section_visible` function has been deprecated and should no longer be used. Please consider using the equivalent method, `set_visibility`, in `core_courseformat\local\sectionactions` instead.
 
   For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
+- Deprecates the move_section_to logic
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
+- Deprecates and remove all usages of reorder_sections that is used only internally.
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
 
 ### Removed
 

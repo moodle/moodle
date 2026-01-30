@@ -10,4 +10,3 @@
     - `\qbank_statistics\helper::calculate_average_question_discrimination_index()`
 
   For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
-

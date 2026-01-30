@@ -250,6 +250,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The external function `core_course_get_course_contents` now includes the `candisplay` property for each returned module. If this is false, the module should not be displayed on the course page (for example, for question banks).
 
   For more information see [MDL-85405](https://tracker.moodle.org/browse/MDL-85405)
+- Add a new invalidation event for course action state so we can purge the courseactionsinstances cache when needed.
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
 - Two optional new strings, `modulename_summary` and `modulename_tip`, have been added to modules and will be displayed in the activity chooser interface when defined.
 
   For more information see [MDL-87117](https://tracker.moodle.org/browse/MDL-87117)
@@ -306,6 +309,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added the `set_visibility` method to the `core_courseformat\sectionactions` class. To optimize performance, this method does not return the list of affected resources, avoiding unnecessary database queries since the return value is unused.
 
   For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
+- Add a new core_courseformat\sectionactions::move_after to replace the current move_section_to logic.
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
+- Add sectionactions::move_at to move a section at a given position.
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
 - A new restricted page has been created using routing for users to access the activity information. Only the activities with visible restrictions will be available.
 
   For more information see [MDL-87283](https://tracker.moodle.org/browse/MDL-87283)
@@ -333,12 +342,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `set_section_visible` function has been deprecated and should no longer be used. Please consider using the equivalent method, `set_visibility`, in `core_courseformat\local\sectionactions` instead.
 
   For more information see [MDL-86861](https://tracker.moodle.org/browse/MDL-86861)
+- Deprecates the move_section_to logic
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
+- Deprecates and remove all usages of reorder_sections that is used only internally.
+
+  For more information see [MDL-86862](https://tracker.moodle.org/browse/MDL-86862)
 
 #### Removed
 
 - - The `\core_courseformat\output\local\content\section\availability::availability_info()` has been removed from `public/course/format/classes/output/local/content/section/availability.php`. - The `\core_courseformat\base::get_section_number()` has been removed from `public/course/format/classes/base.php`. - The `\core_courseformat\stateactions::section_move()` has been removed from `public/course/format/classes/stateactions.php`. - The `\core_courseformat\output\section_renderer\core_course_renderer::render_activity_information()` has been removed from `public/course/renderer.php`.
 
   For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
+
+### core_customfield
+
+#### Added
+
+- Added new `\core_customfield\api::is_shortname_unique(...)` method to determine whether a shortname is available for use inside a given handler
+
+  For more information see [MDL-87059](https://tracker.moodle.org/browse/MDL-87059)
 
 ### core_enrol
 
@@ -355,6 +378,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The following methods have been removed from `public/lib/filestorage/file_storage.php`: - `\file_storage::content_exists()` - `\file_storage::try_content_recovery()`
 
   For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
+### core_filters
+
+#### Removed
+
+- MimeTeX support has been removed from both `filter_tex` and `filter_algebra`. These filters now depend on LaTeX tools (`latex`, `dvips`, and `convert`/`dvisvgm`), and as a result, the `pathmimetex` setting has been removed.
+
+  For more information see [MDL-85233](https://tracker.moodle.org/browse/MDL-85233)
 
 ### core_form
 
@@ -483,6 +514,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-86699](https://tracker.moodle.org/browse/MDL-86699)
 
+#### Changed
+
+- The order in which `$entitynames` are passed to the datasource `add_all_from_entities()` method is now observed, taking precedence over the order in which they were already added to the report
+
+  For more information see [MDL-87263](https://tracker.moodle.org/browse/MDL-87263)
+
 #### Deprecated
 
 - The following `user_filter_manager` methods have been deprecated:
@@ -547,6 +584,18 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - The `public/auth/ldap/cli/sync_users.php` file has been removed.
 
   For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
+
+### customfield_number
+
+#### Changed
+
+- In order to fully support shared custom field categories, additional component/area/itemid parameters have been added to the following:
+
+  * The `customfield_number_recalculate_value` external method
+  * The abstract `\customfield_number\provider_base::recalculate()` method
+  * The `\customfield_number\task\recalculate` helpers for queueing task instances
+
+  For more information see [MDL-87714](https://tracker.moodle.org/browse/MDL-87714)
 
 ### enrol_self
 
@@ -741,6 +790,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - A new ad-hoc task, `migrate_subsection_descriptions_task`, has been added. This task will migrate all existing subsection descriptions into Text and media. To ensure system stability, the task processes records in batches of 100 and clears the original description upon successful migration.
 
   For more information see [MDL-87281](https://tracker.moodle.org/browse/MDL-87281)
+- The subsection generator now includes support for the `summary` field. This has been added specifically to test migration tool compatibility and will be removed in Moodle 7.0. Developers should use this field only for testing migration workflows.
+
+  For more information see [MDL-87621](https://tracker.moodle.org/browse/MDL-87621)
+- A new ad-hoc task, `remove_existing_descriptions`, has been added. This task will remove the descriptions for all existing subsection instances. To ensure system stability, the task processes records in batches of 100 and clears the original description upon completion.
+
+  For more information see [MDL-87621](https://tracker.moodle.org/browse/MDL-87621)
+- The `manager::clear_description()` method has been added to remove legacy data. When called, it deletes the description text associated with a subsection and any files linked to that description.
+
+  For more information see [MDL-87621](https://tracker.moodle.org/browse/MDL-87621)
+
+#### Changed
+
+- When restoring backups, subsection descriptions are now ignored. This change ensures that subsection do not incorrectly restore legacy summary.
+
+  For more information see [MDL-87621](https://tracker.moodle.org/browse/MDL-87621)
 
 ### mod_wiki
 

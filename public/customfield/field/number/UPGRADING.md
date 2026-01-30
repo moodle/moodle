@@ -1,5 +1,17 @@
 # customfield_number Upgrade notes
 
+## 5.2dev
+
+### Changed
+
+- In order to fully support shared custom field categories, additional component/area/itemid parameters have been added to the following:
+
+  * The `customfield_number_recalculate_value` external method
+  * The abstract `\customfield_number\provider_base::recalculate()` method
+  * The `\customfield_number\task\recalculate` helpers for queueing task instances
+
+  For more information see [MDL-87714](https://tracker.moodle.org/browse/MDL-87714)
+
 ## 4.5
 
 ### Added

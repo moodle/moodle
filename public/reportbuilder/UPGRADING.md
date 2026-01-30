@@ -22,6 +22,12 @@
 
   For more information see [MDL-86699](https://tracker.moodle.org/browse/MDL-86699)
 
+### Changed
+
+- The order in which `$entitynames` are passed to the datasource `add_all_from_entities()` method is now observed, taking precedence over the order in which they were already added to the report
+
+  For more information see [MDL-87263](https://tracker.moodle.org/browse/MDL-87263)
+
 ### Deprecated
 
 - The following `user_filter_manager` methods have been deprecated:
