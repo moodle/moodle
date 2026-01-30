@@ -104,6 +104,7 @@
 
 use core_admin\local\settings\linkable_settings_page;
 use core_admin\admin_search;
+use core\hook\admin_setting_locked_custom_message;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -9291,12 +9292,19 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
 
     $context->warning = $warning;
     $context->override = '';
-    if (empty($setting->plugin)) {
-        if ($setting->is_forceable() && array_key_exists($setting->name, $CFG->config_php_settings)) {
-            $context->override = get_string('configoverride', 'admin');
-        }
-    } else {
-        if (array_key_exists($setting->plugin, $CFG->forced_plugin_settings) and array_key_exists($setting->name, $CFG->forced_plugin_settings[$setting->plugin])) {
+    $is_forced_core = empty($setting->plugin) && $setting->is_forceable() && array_key_exists($setting->name, $CFG->config_php_settings);
+    $is_forced_plugin = !empty($setting->plugin) && array_key_exists($setting->plugin, $CFG->forced_plugin_settings) && array_key_exists($setting->name, $CFG->forced_plugin_settings[$setting->plugin]);
+
+    if ($is_forced_core || $is_forced_plugin) {
+        // Checking if the setting is forced via config.php or forced_plugin settings.
+        $component = empty($setting->plugin) ? 'moodle' : $setting->plugin;
+        $message_hook = new admin_setting_locked_custom_message($setting->name, $component, $setting->get_setting());
+        \core\di::get(\core\hook\manager::class)->dispatch($message_hook);
+        if (!empty($message_hook->custom_message)) {
+            // Setting a custom message if the hook provides one.
+            $context->override = $message_hook->custom_message;
+        } else {
+            // Setting the default message if no custom message is provided by the hook.
             $context->override = get_string('configoverride', 'admin');
         }
     }
