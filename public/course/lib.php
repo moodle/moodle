@@ -302,6 +302,30 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
         // Retrieve all records from course_modules regardless of module type visibility.
         $rawmods = $DB->get_records('course_modules', array('course' => $courseid), 'id', 'id,section');
     }
+
+    // Get subsection module id to identify subsection modules.
+    $subsectionmoduleids = $DB->get_fieldset_sql(
+        "SELECT cm.id 
+           FROM {course_modules} cm
+           JOIN {modules} m ON cm.module = m.id
+          WHERE m.name = ?", ['subsection']
+    );
+
+    // Get the non-delegated sections (component IS NULL) to use as fallback for orphaned subsection modules.
+    $nondelegatedsections = $DB->get_records_select(
+        'course_sections',
+        'course = ? AND component IS NULL',
+        [$courseid],
+    );
+
+    // Get the list of delegated sections (component IS NOT NULL) for subsection modules.
+    $subsectionsectionids = $DB->get_fieldset_select(
+        'course_sections',
+        'id',
+        'course = ? AND component = ?',
+        [$courseid, 'mod_subsection'],
+    );
+
     if ($rawmods === null) {
         $rawmods = get_course_mods($courseid);
     }
@@ -331,6 +355,23 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
             foreach ($sequence as $cmid) {
                 if (array_key_exists($cmid, $modsection) && isset($rawmods[$cmid])) {
                     // Some course module id appears to be in more than one section's sequences.
+                    // Check if this would create a nested subsection (subsection module in subsection section).
+                    $issubsectionmodule = in_array($cmid, $subsectionmoduleids);
+                    $issubsectionsection = in_array($sectionid, $subsectionsectionids);
+                    if ($issubsectionmodule && $issubsectionsection) {
+                        // Do not move subsection module into subsection section - this would create nested subsections.
+                        // Remove from current (subsection) section instead of from the previous section.
+                        $sections[$sectionid]->newsequence = trim(
+                            preg_replace("/,$cmid,/", ',', ',' . $sections[$sectionid]->newsequence . ','),
+                            ','
+                        );
+                        $messages[] = $debuggingprefix . 'Course module [' . $cmid .
+                            '] must be removed from sequence of subsection section [' . $sectionid .
+                            '] to prevent nested subsections';
+                        // Keep the previous assignment, do not update $modsection[$cmid].
+                        continue;
+                    }
+
                     $wrongsectionid = $modsection[$cmid];
                     $sections[$wrongsectionid]->newsequence = trim(preg_replace("/,$cmid,/", ',', ','.$sections[$wrongsectionid]->newsequence. ','), ',');
                     $messages[] = $debuggingprefix.'Course module ['.$cmid.'] must be removed from sequence of section ['.
@@ -348,9 +389,18 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
                 // This is a module that is not mentioned in course_section.sequence at all.
                 // Add it to the section $mod->section or to the last available section.
                 if ($mod->section && isset($sections[$mod->section])) {
-                    $modsection[$cmid] = $mod->section;
+                    $issubsectionmodule = in_array($cmid, $subsectionmoduleids);
+                    $issubsectionsection = in_array($mod->section, $subsectionsectionids);
+                    if ($issubsectionmodule && $issubsectionsection) {
+                        // Do not add subsection module into subsection section - this would create nested subsections.
+                        // Add to the first non-delegated section instead.
+                        $firstsection = reset($nondelegatedsections);
+                        $modsection[$cmid] = $firstsection->id;
+                    } else {
+                        $modsection[$cmid] = $mod->section;
+                    }
                 } else {
-                    $firstsection = reset($sections);
+                    $firstsection = reset($nondelegatedsections);
                     $modsection[$cmid] = $firstsection->id;
                 }
                 $sections[$modsection[$cmid]]->newsequence = trim($sections[$modsection[$cmid]]->newsequence.','.$cmid, ',');
