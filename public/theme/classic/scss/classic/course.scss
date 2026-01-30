@@ -47,3 +47,15 @@
         white-space: pre-wrap;
     }
 }
+
+.path-mod {
+    .activity-header {
+        max-width: initial;
+    }
+}
+
+@media (max-width: map-get($grid-breakpoints, "xl")) {
+    .path-mod .activity-dates {
+        grid-template-columns: 1fr; // Stack them on small screens
+    }
+}

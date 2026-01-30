@@ -10,7 +10,11 @@ select {
 }
 
 .path-mod {
-    .activity-header:not(:empty) {
+    .activity-header {
+        max-width: $course-content-maxwidth;
+        margin: 0 auto !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .activity-details:not(:empty) {
         background-color: $gray-100;
         margin-bottom: map-get($spacers, 3);
         padding-left: map-get($spacers, 3);
@@ -22,17 +26,34 @@ select {
             border-bottom: 0;
         }
     }
-    .activity-information {
+    .activity-dates {
+        padding-top: map-get($spacers, 2);
+        padding-bottom: map-get($spacers, 3);
+        display: grid;
+        grid-template-columns: 1fr 1fr; // Creates two equal columns
+        gap: map-get($spacers, 2) map-get($spacers, 4); // Vertical and horizontal spacing
+        width: 100%;
+        align-items: center;
+        .date-item {
+            color: $gray-700;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
 
-        .activity-dates {
-            padding-top: map-get($spacers, 3);
-            padding-bottom: map-get($spacers, 3);
-            border-bottom: $border-width solid $border-color;
+            &:not(:last-child)::after {
+                display: none;
+            }
+
+            .date-item-label {
+                font-weight: 600;
+                margin-right: map-get($spacers, 1);
+            }
         }
+    }
+    .activity-details {
         .completion-info {
             padding-top: map-get($spacers, 2);
             padding-bottom: map-get($spacers, 2);
-            border-bottom: $border-width solid $border-color;
         }
     }
     .activity-description {
@@ -117,6 +138,12 @@ select {
     .activity-description .no-overflow p:last-child {
         padding-bottom: 0;
         margin-bottom: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .path-mod .activity-dates {
+        grid-template-columns: 1fr; // Stack them on small screens
     }
 }
 

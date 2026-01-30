@@ -196,6 +196,7 @@ class activity_header implements renderable, templatable {
             $activitydates = new \core_course\output\activity_dates($activitydates);
             $activitydatesdata = (array) $activitydates->export_for_template($output);
             $data = array_merge($activitycompletiondata, $activitydatesdata);
+            $data['description'] = $this->description;
 
             $activityinfo = $output->render_from_template('core_course/activity_info', $data);
         }

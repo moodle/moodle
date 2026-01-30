@@ -325,6 +325,10 @@ $divider-hover-color: $primary !default;
         @include media-breakpoint-down(sm) {
             margin-top: map-get($spacers, 2);
         }
+        .date-item-label {
+            font-weight: 600;
+            margin-right: map-get($spacers, 1);
+        }
     }
     .activity-name-area {
         grid-area: name;

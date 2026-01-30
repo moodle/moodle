@@ -50,29 +50,6 @@
     }
 }}
 <div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
-
-    {{#hascompletion}}
-        {{#uservisible}}
-            <div class="completion-info" data-region="completion-info">
-                {{#isautomatic}}
-                    <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
-                        <div class="automatic-completion-title"><strong>{{#str}}completionrequirements, core_completion{{/str}}</strong></div>
-                        <ul class="activity-completion-list">
-                            {{#completiondetails}}
-                                {{> core_course/completion_automatic }}
-                            {{/completiondetails}}
-                        </ul>
-                    </div>
-                {{/isautomatic}}
-                {{^isautomatic}}
-                    {{#showmanualcompletion}}
-                        {{> core_course/completion_manual }}
-                    {{/showmanualcompletion}}
-                {{/isautomatic}}
-            </div>
-        {{/uservisible}}
-    {{/hascompletion}}
-
     {{#hasdates}}
     <div data-region="activity-dates" class="activity-dates">
         {{#activitydates}}
@@ -80,4 +57,34 @@
         {{/activitydates}}
     </div>
     {{/hasdates}}
+
+    <div data-region="activity-details" class="activity-details">
+        {{#description}}
+            <div class="activity-description" id="intro">
+                {{{description}}}
+            </div>
+        {{/description}}
+
+        {{#hascompletion}}
+            {{#uservisible}}
+                <div class="completion-info" data-region="completion-info">
+                    {{#isautomatic}}
+                        <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
+                            <div class="automatic-completion-title"><strong>{{#str}}completionrequirements, core_completion{{/str}}</strong></div>
+                            <ul class="activity-completion-list">
+                                {{#completiondetails}}
+                                    {{> core_course/completion_automatic }}
+                                {{/completiondetails}}
+                            </ul>
+                        </div>
+                    {{/isautomatic}}
+                    {{^isautomatic}}
+                        {{#showmanualcompletion}}
+                            {{> core_course/completion_manual }}
+                        {{/showmanualcompletion}}
+                    {{/isautomatic}}
+                </div>
+            {{/uservisible}}
+        {{/hascompletion}}
+    </div>
 </div>

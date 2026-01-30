@@ -30717,6 +30717,10 @@ table.calendartable caption {
     margin-top: 0.5rem;
   }
 }
+.activity-item .activity-dates .date-item-label {
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
 .activity-item .activity-name-area {
   grid-area: name;
 }
@@ -35596,25 +35600,45 @@ select {
   width: auto;
 }
 
-.path-mod .activity-header:not(:empty) {
+.path-mod .activity-header {
+  max-width: 830px;
+  margin: 0 auto !important; /* stylelint-disable-line declaration-no-important */
+}
+.path-mod .activity-details:not(:empty) {
   background-color: #f8f9fa;
   margin-bottom: 1rem;
   padding-left: 1rem;
   padding-right: 1rem;
   border-radius: 0.375rem;
 }
-.path-mod .activity-header:not(:empty) > div:last-child > div:last-child {
+.path-mod .activity-details:not(:empty) > div:last-child > div:last-child {
   border-bottom: 0;
 }
-.path-mod .activity-information .activity-dates {
-  padding-top: 1rem;
+.path-mod .activity-dates {
+  padding-top: 0.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #dee2e6;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1.5rem;
+  width: 100%;
+  align-items: center;
 }
-.path-mod .activity-information .completion-info {
+.path-mod .activity-dates .date-item {
+  color: #495057;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.path-mod .activity-dates .date-item:not(:last-child)::after {
+  display: none;
+}
+.path-mod .activity-dates .date-item .date-item-label {
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
+.path-mod .activity-details .completion-info {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #dee2e6;
 }
 .path-mod .activity-description {
   padding-top: 1rem;
@@ -35685,6 +35709,11 @@ select {
   margin-bottom: 0;
 }
 
+@media (max-width: 767px) {
+  .path-mod .activity-dates {
+    grid-template-columns: 1fr;
+  }
+}
 .path-mod-choice .horizontal .choices .option {
   display: inline-block;
 }
