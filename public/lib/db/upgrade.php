@@ -1670,5 +1670,33 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026011600.01);
     }
 
+    if ($oldversion < 2026013000.01) {
+        // Define index nextruntime_classname (not unique) to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $index = new xmldb_index('nextruntime_classname', XMLDB_INDEX_NOTUNIQUE, ['nextruntime', 'classname']);
+
+        // Conditionally launch add index nextruntime_classname.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026013000.01);
+    }
+
+    if ($oldversion < 2026013000.02) {
+        // Define index lastruntime_nextruntime (not unique) to be added to task_scheduled.
+        $table = new xmldb_table('task_scheduled');
+        $index = new xmldb_index('lastruntime_nextruntime', XMLDB_INDEX_NOTUNIQUE, ['lastruntime', 'nextruntime']);
+
+        // Conditionally launch add index lastruntime_nextruntime.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026013000.02);
+    }
+
     return true;
 }
