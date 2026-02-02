@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_mobile/referer
+
+    This template will render the code to
+    redirect to the URL setting the site referer.
+
+    Variables required for this template:
+    * lang: The language of the user.
+    * url: The URL to redirect to.
+    * delay: The delay in milliseconds before the redirection happens.
+    * debug: Boolean to indicate if debug info should be shown.
+    * useragent: The user agent of the client, displayed when debug enabled.
+    * referer: The referer header of the client, displayed when debug enabled.
+
+    Example context (json):
+    {
+        "lang": "en",
+        "url": "https://example.com",
+        "delay": 500,
+        "debug": true,
+        "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "referer": "https://moodle.example.com"
+    }
+
+}}
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+    <title>{{#str}} redirect, core {{/str}}</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+    {{#debug}}
+    <div lang="en">
+        <h1>Debug Information</h1>
+        <p>Your User Agent is: {{useragent}}</p>
+        <p>Your referer is: {{referer}}</p>
+    </div>
+    {{/debug}}
+
+    <p><a id="redirect-link" href="{{url}}">{{#str}} redirect, core {{/str}}</a></p>
+
+    <script type="text/javascript">
+        setTimeout(function() {
+            document.getElementById('redirect-link').click();
+        }, {{delay}});
+    </script>
+
+</body>
+</html>
