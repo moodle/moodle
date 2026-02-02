@@ -111,8 +111,11 @@ class context_header implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output): array {
         // Heading.
+        $heading = '';
         $headingtext = isset($this->heading) ? $this->heading : $output->get_page()->heading;
-        $heading = $output->heading($headingtext, $this->headinglevel, "h2 mb-0");
+        if ('' !== $headingtext) {
+            $heading = $output->heading($headingtext, $this->headinglevel, "h2 mb-0");
+        }
 
         // Buttons.
         if (isset($this->additionalbuttons)) {
