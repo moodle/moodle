@@ -52,9 +52,15 @@ if (!empty($CFG->forceloginforprofiles)) {
         $PAGE->set_context(context_system::instance());
         $PAGE->set_title(get_string('user'));
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('guestcantaccessprofiles', 'error'),
-                              get_login_url(),
-                              $CFG->wwwroot);
+        echo $OUTPUT->confirm(
+            get_string('guestcantaccessprofiles', 'error'),
+            get_login_url(),
+            $CFG->wwwroot,
+            [
+                'headinglevel' => 1,
+                'confirmtitle' => get_string('loginrequired'),
+            ],
+        );
         echo $OUTPUT->footer();
         die;
     }
