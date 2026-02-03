@@ -381,16 +381,16 @@ $string['mod_form_field_welcome_help'] = 'The welcome message is displayed when 
 $string['mod_form_locksettings'] = 'Lock settings';
 $string['modulename'] = 'BigBlueButton';
 $string['modulename_help'] = '###### Key features
-- Host live sessions with audio, video, and chat
-- Use built-in quizzes and polling tools
-- Share slides, your screen, or a collaborative whiteboard
-- Create breakout rooms for activities in groups
-- Record sessions so students can watch later
+*  Host live sessions with audio, video, and chat
+*  Use built-in quizzes and polling tools
+*  Share slides, your screen, or a collaborative whiteboard
+*  Create breakout rooms for activities in groups
+*  Record sessions so students can watch later
 
 ###### Ways to use it
-- Run a live online lecture where students can ask questions in real time
-- Hold virtual office hours
-- Organise group discussions using breakout rooms';
+*  Run a live online lecture where students can ask questions in real time
+*  Hold virtual office hours
+*  Organise group discussions using breakout rooms';
 $string['modulename_link'] = 'BigBlueButton/view';
 $string['modulename_summary'] = 'Host live online sessions with video, audio, and tools for presenting and collaborating.';
 $string['modulenameplural'] = 'BigBlueButton';

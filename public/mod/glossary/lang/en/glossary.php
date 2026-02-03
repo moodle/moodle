@@ -242,14 +242,14 @@ $string['maxtimehaspassed'] = 'Sorry, but the maximum time for editing this comm
 $string['myentries'] = 'My entries';
 $string['modulename'] = 'Glossary';
 $string['modulename_help'] = '###### Key features
-- Create entries with text, images, video, and other embedded media
-- Browse entries alphabetically, by category, or by author
-- Allow students to create, comment on, and rate entries
+* Create entries with text, images, video, and other embedded media
+* Browse entries alphabetically, by category, or by author
+* Allow students to create, comment on, and rate entries
 
 ###### Ways to use it
-- Build a collection of key concepts for a course
-- Collect vocabulary words and definitions in a language class
-- Develop a collaborative glossary of technical terms';
+* Build a collection of key concepts for a course
+* Collect vocabulary words and definitions in a language class
+* Develop a collaborative glossary of technical terms';
 $string['modulename_link'] = 'mod/glossary/view';
 $string['modulename_summary'] = 'Create a list of terms and definitions, like a dictionary, for students to browse or contribute to.';
 $string['modulenameplural'] = 'Glossaries';

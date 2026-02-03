@@ -270,7 +270,7 @@ $string['listview'] = 'List view';
 $string['listtemplate'] = 'List view template';
 $string['longitude'] = 'Longitude';
 $string['manageapproved'] = 'Allow editing of approved entries';
-$string['manageapproved_help'] = 'Allow students to edit or delete their entries after they’ve been approved. Edited entries will need to be reapproved.';
+$string['manageapproved_help'] = 'Allow students to edit or delete their entries after they\'ve been approved. Edited entries will need to be reapproved.';
 $string['managefields'] = 'Manage fields';
 $string['mapexistingfield'] = 'Map to {$a}';
 $string['mapnewfield'] = 'Create a new field';
@@ -291,16 +291,16 @@ $string['missingdata'] = 'Data ID or object must be provided for field class.';
 $string['missingfield'] = 'Programmer error: You must specify field and/or data when defining field class.';
 $string['modulename'] = 'Database';
 $string['modulename_help'] = '###### Key features
-- Define the information each entry should include, such as text, dates, images, or links.
-- Customise how entries are displayed
-- Let students add entries, rate, or comment on each other’s work
-- Approve entries before they are visible, or publish them directly
+* Define the information each entry should include, such as text, dates, images, or links
+* Customise how entries are displayed
+* Let students add entries, rate, or comment on each other\'s work
+* Approve entries before they are visible, or publish them directly
 
 ###### Ways to use it
-- Create a collection of articles with summaries written by students
-- Build a gallery of images with captions
-- Develop a set of resources that can be searched by author, topic, or keyword
-- Display work created by students for peer rating and review';
+* Create a collection of articles with summaries written by students
+* Build a gallery of images with captions
+* Develop a set of resources that can be searched by author, topic, or keyword
+* Display work created by students for peer rating and review';
 $string['modulename_link'] = 'mod/data/view';
 $string['modulename_summary'] = 'Build a shared, searchable collection of entries, like a directory or gallery, that students can contribute to.';
 $string['modulename_tip'] = 'For a quick start, use one of the built-in presets such as an image gallery, journal, or resource list.';
@@ -386,7 +386,7 @@ $string['recordsnotsaved'] = 'No entry was saved. Please check the format of the
 $string['recordssaved'] = 'entries saved';
 $string['removealldatatags'] = 'All database tags';
 $string['requireapproval'] = 'Approval required';
-$string['requireapproval_help'] = 'A teacher has to approve entries before they’re visible to everyone.';
+$string['requireapproval_help'] = 'A teacher has to approve entries before they\'re visible to everyone.';
 $string['required'] = 'Required';
 $string['requiredentries'] = 'Entries required for completion (old)';
 $string['requiredentries_help'] = "If set, a message is displayed stating the number of entries required for completion. Note that this setting is not connected to activity completion.

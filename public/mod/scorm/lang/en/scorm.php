@@ -278,15 +278,15 @@ $string['missing_tag'] = 'Missing tag {$a->tag}';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'SCORM package';
 $string['modulename_help'] = '###### Key features
-- Add SCORM content packages as zip files
-- Track student progress, completion, and grades
+* Add SCORM content packages as zip files
+* Track student progress, completion, and grades
 
 ###### Ways to use it
-- Import a commercial e-learning SCORM module and track student performance
-- Provide an interactive tutorial and track whether students complete it
-- Deliver a simulation packaged in SCORM format';
+* Import a commercial e-learning SCORM module and track student performance
+* Provide an interactive tutorial and track whether students complete it
+* Deliver a simulation packaged in SCORM format';
 $string['modulename_link'] = 'mod/scorm/view';
-$string['modulename_summary'] = 'Upload and display existing SCORM content. SCORM is commonly used with third-party courseware.';
+$string['modulename_summary'] = 'Upload and display existing Sharable Content Object Reference Model (SCORM) content. SCORM is commonly used with third-party courseware.';
 $string['modulenameplural'] = 'SCORM packages';
 $string['nav'] = 'Show Navigation';
 $string['nav_help'] = 'This setting specifies whether to show or hide the navigation buttons and their position.

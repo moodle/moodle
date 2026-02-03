@@ -180,4 +180,4 @@ Feature: Display availability for activities and sections
     And I should not see "Date" in the "Restrict access" "fieldset"
     And I press "Add restriction..."
     And I click on "Grade" "button" in the "Add restriction..." "dialogue"
-    And the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Displayed if student"
+    And the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Item name displayed"

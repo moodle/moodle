@@ -46,11 +46,11 @@ $string['labelname_help'] = 'The title is only used to identify the Text and med
 $string['labeltext'] = 'Text';
 $string['modulename'] = 'Text and media area';
 $string['modulename_help'] = '###### Key features
-- Display text and multimedia embedded on the course page
+* Display text and multimedia embedded in the course page
 
 ###### Ways to use it
-- Add banners or images to change the look and feel of the course page
-- Break up long lists of activities on your course page with visuals or labels.';
+* Add banners or images to change the look and feel of the course page
+* Break up long lists of activities on your course page with visuals or labels';
 $string['modulename_link'] = 'mod/label/view';
 $string['modulename_summary'] = 'Insert graphics and text anywhere in the course page.';
 $string['modulename_tip'] = 'Use Text and media areas for decorative items or images you want embedded on the course page. For course content, use a Page instead.';

@@ -210,18 +210,18 @@ $string['latesubmissionsallowed'] = 'Late submissions are allowed';
 $string['maxbytes'] = 'Maximum submission attachment size';
 $string['modulename'] = 'Workshop';
 $string['modulename_help'] = '###### Key features
-- Allow students to submit any kind of file or type directly into an online text editor
-- Create an assessment guide for students to review each other’s work
-- Provide example submissions so students can practise reviewing before assessing peers
-- Assign reviewers yourself, or let the system do it automatically
-- Give students two grades: one for their own work and one for their reviews of other students\' work
+* Allow students to submit any kind of file or type directly into an online text editor
+* Create an assessment guide for students to review each other\'s work
+* Provide example submissions so students can practise reviewing before assessing peers
+* Assign reviewers yourself, or let the system do it automatically
+* Give students two grades: one for their own work and one for their reviews of other students\' work
 
 ###### Ways to use it
-- Run a peer review exercise for essays or reports
-- Facilitate peer evaluation of presentations, designs, or portfolios
-- Use in large classes or MOOCs to manage feedback and grading at a large scale';
+* Run a peer review exercise for essays or reports
+* Facilitate peer evaluation of presentations, designs, or portfolios
+* Use in a large class or a Massive Open Online Course (MOOC) to manage feedback and grading at a large scale';
 $string['modulename_link'] = 'mod/workshop/view';
-$string['modulename_summary'] = 'Facilitate peer assessment. Students submit work and review each other’s submissions using criteria you define.';
+$string['modulename_summary'] = 'Facilitate peer assessment. Students submit work and review each other\'s submissions using criteria you define.';
 $string['modulenameplural'] = 'Workshops';
 $string['myassessments'] = 'My assessments';
 $string['mysubmission'] = 'My submission';

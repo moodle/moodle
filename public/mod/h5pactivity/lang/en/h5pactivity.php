@@ -97,16 +97,16 @@ $string['h5pdisplay'] = 'H5P options';
 $string['maxscore'] = 'Max score';
 $string['modulename'] = 'H5P';
 $string['modulename_help'] = '###### Key features
-- Choose from a wide range of interactive activities, including slide presentations, image pairing, or timelines
-- Provide instant feedback to students through automated marking
-- Reuse or edit existing H5P content
+* Choose from a wide range of interactive activities, including slide presentations, image pairing, or timelines
+* Provide instant feedback to students through automated marking
+* Reuse or edit existing H5P content
 
 ###### Ways to use it
-- Create an interactive video where students answer questions as they watch
-- Design drag-and-drop activities to reinforce key concepts
-- Share an image with clickable hotspots that show extra information when students click on them';
+* Create an interactive video where students answer questions as they watch
+* Design drag-and-drop activities to reinforce key concepts
+* Share an image with clickable hotspots that show extra information when students click on them';
 $string['modulename_link'] = 'mod/h5pactivity/view';
-$string['modulename_summary'] = 'Create or upload H5P interactive content, like drag-and-drop activities, flashcards, or interactive videos.';
+$string['modulename_summary'] = 'Create or upload HTML5 Package (H5P) interactive content, like drag-and-drop activities, flashcards, or interactive videos.';
 $string['modulenameplural'] = 'H5P';
 $string['myattempts'] = 'My attempts';
 $string['newsubmissions'] = 'H5P submitted';

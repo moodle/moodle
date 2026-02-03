@@ -420,16 +420,16 @@ $string['messageprovider:assign_overdue'] = 'Assignment overdue notification';
 $string['messageprovider:assign_notification'] = 'Assignment notifications';
 $string['modulename'] = 'Assignment';
 $string['modulename_help'] = '###### Key features
-- Provide instructions and requirements for the assignment
-- Allow students to submit any kind of file or type directly into an online text editor
-- Manage deadlines and control whether late submissions are accepted
-- Use rubrics or marking guides to give grades and feedback
-- Students can submit individually or in groups
+*  Provide instructions and requirements for the assignment
+*  Allow students to submit any kind of file or type directly into an online text editor
+*  Manage deadlines and control whether late submissions are accepted
+*  Use rubrics or marking guides to give grades and feedback
+*  Students can submit individually or in groups
 
 ###### Ways to use it
-- Collect essays or coursework for feedback and grading
-- Set group tasks where students submit one shared presentation
-- Record and grade offline work, such as a classroom performance or field trips';
+*  Collect essays or coursework for feedback and grading
+*  Set group tasks where students submit one shared presentation
+*  Record and grade offline work, such as a classroom performance or field trips';
 $string['modulename_link'] = 'mod/assignment/view';
 $string['modulename_summary'] = 'Collect student submissions such as essays, reports, or projects, and provide feedback and grades.';
 $string['modulenameplural'] = 'Assignments';
@@ -705,8 +705,8 @@ $string['userextensiondate'] = 'Extension granted until: {$a}';
 $string['userassignmentdefaults'] = 'User assignment defaults';
 $string['useridlistnotcached'] = 'The grade changes were NOT saved, as it was not possible to determine which submission they were for.';
 $string['useroverrides'] = 'User overrides';
+$string['usersnone'] = 'There are no users enrolled in this course or no users can access the assignment.';
 $string['usersubmissioncannotberemoved'] = 'The submission of {$a} cannot be removed.';
-$string['usersnone'] = 'There are no users enrolled in this course.';
 $string['userswhoneedtosubmit'] = 'Users who need to submit: {$a}';
 $string['usergrade'] = 'User grade';
 $string['validmarkingworkflowstates'] = 'Valid marking workflow states';

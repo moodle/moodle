@@ -233,7 +233,7 @@ $string['matchgrades_help'] = 'Imported grades must match one of the fixed list 
 
 *  Error if grade not listed - If a question contains any grades not found in the list an error is displayed and that question will not be imported
 * Nearest grade if not listed - If a grade is found that does not match a value in the list, the grade is changed to the closest matching value in the list ';
-$string['missingcapability'] = 'You must have a capability allowing usage or management of questions, for example {$a}';
+$string['missingcapability'] = 'You must have a capability allowing the use or management of questions, for example {$a}.';
 $string['missingcourseorcmid'] = 'Need to provide courseid or cmid to print_question.';
 $string['missingcourseorcmidtolink'] = 'Need to provide courseid or cmid to get_question_edit_link.';
 $string['missingimportantcode'] = 'This question type is missing important code: {$a}.';

@@ -46,13 +46,13 @@ $string['indicator:socialbreadthdef_help'] = 'The participant has reached this p
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['modulename'] = 'Folder';
 $string['modulename_help'] = '###### Key features
-- Organise files in folders and subfolders
-- Allow students to download the entire folder as a zip file
+* Organise files in folders and subfolders
+* Allow students to download the entire folder as a zip file
 
 ###### Ways to use it
-- Share a set of past documents for revision
-- Provide readings (articles, slides, PDF files) in one spot
-- Share downloadable images for an art or design project';
+* Share a set of past documents for revision
+* Provide readings (articles, slides, PDF files) in one spot
+* Share downloadable images for an art or design project';
 $string['modulename_link'] = 'mod/folder/view';
 $string['modulename_summary'] = 'Create a folder on your course to upload and organise files.';
 $string['modulenameplural'] = 'Folders';

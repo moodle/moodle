@@ -42,14 +42,14 @@ $string['imscp:addinstance'] = 'Add a new IMS content package';
 $string['imscp:view'] = 'View IMS content';
 $string['modulename'] = 'IMS content package';
 $string['modulename_help'] = '###### Key features
-- Add IMS content packages as zip files
-- Display content across multiple pages with navigation
+* Add IMS content packages as zip files
+* Display content across multiple pages with navigation
 
 ###### Ways to use it
-- Display a multimedia learning module created with IMS authoring software
-- Import a vendor-provided interactive lesson';
+* Display a multimedia learning module created with IMS authoring software
+* Import a vendor-provided interactive lesson';
 $string['modulename_link'] = 'mod/imscp/view';
-$string['modulename_summary'] = 'Upload and display existing IMS content packages in your course. IMS is commonly used with third-party courseware.';
+$string['modulename_summary'] = 'Upload and display existing IMS Global Learning Consortium (IMS) content packages in your course. IMS is commonly used with third-party courseware.';
 $string['modulenameplural'] = 'IMS content packages';
 $string['navigation'] = 'Navigation';
 $string['page-mod-imscp-x'] = 'Any IMS content package module page';

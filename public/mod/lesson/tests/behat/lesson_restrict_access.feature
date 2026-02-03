@@ -40,7 +40,7 @@ Feature: Lesson activity access can be restricted
     And I click on "Group" "button" in the "Add restriction..." "dialogue"
     # Set only Group 1 can access activity
     And I set the field "Group" in the "Restrict access" "fieldset" to "Group 1"
-    And I click on "Displayed if student doesn't meet this condition" "button"
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition" "button"
     And I press "Save and return to course"
     # Confirm that student1 can see lesson but student2 can't
     When I am on the "Course 1" course page logged in as <user>
