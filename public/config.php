@@ -28,4 +28,4 @@ if (!file_exists($configfile)) {
     die;
 }
 
-require($configfile);
+require_once($configfile);
