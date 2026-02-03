@@ -204,6 +204,16 @@ class component {
             spl_autoload_register([self::class, 'classloader']);
         }
 
+        // Attempt to load the Composer autoloader from the Moodle root.
+        // In composer scaffolded installations this is a shim which delegates to the parent project.
+        global $CFG;
+        if (!empty($CFG->root)) {
+            $composerautoload = "{$CFG->root}/vendor/autoload.php";
+            if (is_file($composerautoload)) {
+                require_once($composerautoload);
+            }
+        }
+
         // Load any composer-driven autoload files.
         // This is intended to mimic the behaviour of the standard Composer Autoloader.
         foreach (static::$composerautoloadfiles as $file) {

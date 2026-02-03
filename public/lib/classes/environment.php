@@ -24,6 +24,26 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class environment {
+
+    /**
+     * Get the Composer root install path for the active Composer runtime.
+     *
+     * @return string|null
+     */
+    protected static function get_composer_root_install_path(): ?string {
+        if (!class_exists(\Composer\InstalledVersions::class)) {
+            return null;
+        }
+
+        $rootpackage = \Composer\InstalledVersions::getRootPackage();
+        if (!is_array($rootpackage) || empty($rootpackage['install_path'])) {
+            return null;
+        }
+
+        $realpath = realpath($rootpackage['install_path']);
+        return $realpath ?: null;
+    }
+
     /**
      * Ensure that Composer dependencies are installed and the necessary files are present.
      *
@@ -32,24 +52,7 @@ class environment {
      */
     public static function check_composer_dependencies_installed(\environment_results $result): ?\environment_results {
         // Check if the composer vendor directory exists.
-        $vendorpath = static::get_vendor_path();
-        if (!is_dir($vendorpath)) {
-            $result->setInfo('Composer vendor directory not found');
-            $result->setFeedbackStr('composernotfound');
-            return $result;
-        }
-
-        // Check if the composer autoload file exists.
-        $autoloadpath = "{$vendorpath}/autoload.php";
-        if (!is_file($autoloadpath)) {
-            $result->setInfo('Composer autoload file not found');
-            $result->setFeedbackStr('composernotfound');
-            return $result;
-        }
-
-        // Check if the installed.php file exists in the composer directory.
-        $installedpath = "{$vendorpath}/composer/installed.php";
-        if (!is_file($installedpath)) {
+        if (!class_exists(\Composer\InstalledVersions::class)) {
             $result->setInfo('Composer installed data not found');
             $result->setFeedbackStr('composernotfound');
             return $result;
@@ -72,21 +75,34 @@ class environment {
             return null; // Skip this check in developer mode.
         }
 
-        $vendorpath = static::get_vendor_path();
-        if (!is_dir($vendorpath)) {
-            return null; // No vendor directory, so no developer dependencies to check.
+        if (!class_exists(\Composer\InstalledVersions::class)) {
+            return null; // Composer not installed, so no developer dependencies to check.
         }
 
-        // Check if the installed.php file exists in the composer directory.
-        $installedpath = "{$vendorpath}/composer/installed.php";
-        if (!is_file($installedpath)) {
-            return null; // No installed file, so no developer dependencies to check.
+        $installed = \Composer\InstalledVersions::getAllRawData();
+        if (!is_array($installed)) {
+            return null;
         }
 
-        // Check if developer dependencies have been installed too.
-        $installed = include($installedpath);
-        if (is_array($installed) && array_key_exists('root', $installed)) {
-            if ($installed['root']['dev']) {
+        // Only consider the installed data set which matches the active Composer root.
+        // This reduces the risk of reporting false positives if multiple Composer autoloaders
+        // have been included in the same process.
+        $rootinstallpath = static::get_composer_root_install_path();
+        if ($rootinstallpath === null) {
+            return null;
+        }
+
+        foreach ($installed as $data) {
+            if (!is_array($data) || !array_key_exists('root', $data) || !is_array($data['root'])) {
+                continue;
+            }
+
+            $installpath = $data['root']['install_path'] ?? null;
+            if (empty($installpath) || realpath($installpath) !== $rootinstallpath) {
+                continue;
+            }
+
+            if (!empty($data['root']['dev'])) {
                 $result->setInfo('Composer Developer dependencies are installed');
                 $result->setFeedbackStr('composerdeveloperdependenciesinstalled');
                 return $result;
@@ -106,12 +122,27 @@ class environment {
     public static function check_composer_dependencies_optimised(
         \environment_results $result
     ): ?\environment_results {
-        $vendorpath = static::get_vendor_path();
-        if (!is_dir($vendorpath)) {
-            return null; // No vendor directory, so no developer dependencies to check.
+        if (!class_exists(\Composer\InstalledVersions::class)) {
+            return null; // Composer not installed, so no developer dependencies to check.
         }
 
-        $autoloader = require("{$vendorpath}/autoload.php");
+        $rootpackage = \Composer\InstalledVersions::getRootPackage();
+        if (!is_array($rootpackage) || empty($rootpackage['install_path'])) {
+            return null;
+        }
+
+        $rootpath = $rootpackage['install_path'];
+        $rootvendor = realpath("{$rootpath}/vendor");
+        if (!$rootvendor) {
+            return null;
+        }
+
+        $loaders = \Composer\Autoload\ClassLoader::getRegisteredLoaders();
+        if (!array_key_exists($rootvendor, $loaders)) {
+            return null; // No autoloader for our vendor dir, so nothing to check.
+        }
+
+        $autoloader = $loaders[$rootvendor];
 
         if (static::is_developer_mode_enabled()) {
             if ($autoloader->isClassMapAuthoritative()) {

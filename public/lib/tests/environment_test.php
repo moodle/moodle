@@ -28,50 +28,6 @@ use core\tests\environment as environment_tester;
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(environment::class)]
 final class environment_test extends \advanced_testcase {
-    #[\PHPUnit\Framework\Attributes\DataProvider('composer_error_states_provider')]
-    public function test_composer_not_installed_cases(
-        array $fs = [],
-        string $expectedfeedback = 'composernotfound'
-    ): void {
-        \org\bovigo\vfs\vfsStream::setup('root', null, $fs);
-        environment_tester::set_vendor_path(\org\bovigo\vfs\vfsStream::url('root/vendor'));
-
-        $result = new \environment_results('custom_check');
-        $result = environment_tester::check_composer_dependencies_installed($result);
-        $this->assertEquals($expectedfeedback, $result->getFeedbackStr());
-
-        // Check that the developer dependencies tests do not error in these conditions.
-        $result = new \environment_results('custom_check');
-        $result = environment_tester::check_composer_developer_dependencies_not_installed($result);
-        $this->assertNull($result);
-    }
-
-    /**
-     * Data provider for test_composer_not_installed_cases.
-     *
-     * @return \Generator
-     */
-    public static function composer_error_states_provider(): \Generator {
-        yield 'composer vendor directory not found' => [
-            'fs' => [],
-            'expectedfeedback' => 'composernotfound',
-        ];
-        yield 'composer autoload file not found' => [
-            'fs' => [
-                'vendor' => [],
-            ],
-            'expectedfeedback' => 'composernotfound',
-        ];
-        yield 'composer installed data not found' => [
-            'fs' => [
-                'vendor' => [
-                    'autoload.php' => '',
-                ],
-            ],
-            'expectedfeedback' => 'composernotfound',
-        ];
-    }
-
     public function test_composer_installed(): void {
         \org\bovigo\vfs\vfsStream::setup('root', null, [
             'vendor' => [
