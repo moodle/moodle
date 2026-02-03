@@ -82,7 +82,11 @@ class bulk_move implements \renderable, \templatable {
             )[0];
         }
 
-        $categoryselector = new question_category_selector([$currentbankcm->context], autocomplete: true);
+        $categoryselector = new question_category_selector(
+            [$currentbankcm->context],
+            selected: "{$this->currentcategoryid},{$currentbankcm->context->id}",
+            autocomplete: true,
+        );
 
         $savebutton = new single_button(
             new moodle_url('#'),

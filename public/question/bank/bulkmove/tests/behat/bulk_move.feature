@@ -133,6 +133,33 @@ Feature: Use the qbank plugin manager page for bulkmove
     And the "class" attribute of "Question 2" "table_row" should not contain "highlight"
 
   @javascript
+  Scenario: Move a question to a different bank in a specified category
+    Given the following "question categories" exist:
+      | contextlevel    | reference | name              |
+      | Activity module | qbank2    | Test questions 3b |
+    And the following "questions" exist:
+      | questioncategory | qtype       | name       | questiontext              |
+      | Test questions   | truefalse   | Question 1 | Answer the first question |
+    And I am on the "Course 1" "core_question > course question bank" page logged in as teacher1
+    And I apply question bank filter "Category" with value "Test questions"
+    And I click on "Question 1" "checkbox"
+    And I click on "With selected" "button"
+    And I click on "move" "button"
+    And I open the autocomplete suggestions list in the ".search-banks" "css_element"
+    And I click on "C2 - Question bank 2" item in the autocomplete list
+    And I open the autocomplete suggestions list in the ".search-categories" "css_element"
+    And I click on "Test questions 3b" item in the autocomplete list
+    And I click on "Move questions" "button"
+    Then I should see "Are you sure you want to move these questions?"
+    And I click on "Confirm" "button"
+    # Confirm that selected questions are moved to selected category while unselected questions are not moved.
+    Then I should see "Questions successfully moved"
+    And I should see "Test questions 3b"
+    And I should see "Question 1"
+    And I should not see "Question 2"
+    And I should not see "Question 3"
+
+  @javascript
   Scenario: Unable to bulk move questions from history page
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     And I apply question bank filter "Category" with value "Test questions 1"
@@ -182,7 +209,7 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "With selected" "button"
     And I click on "move" "button"
     And the field "searchbanks" matches value "C1 - Test quiz"
-    And the field "selectcategory" matches value "Default for Test quiz"
+    And the field "selectcategory" matches value "Test questions 1 (2)"
     And I open the autocomplete suggestions list in the ".search-banks" "css_element"
     And I should see "C1 - Question bank 1" in the ".search-banks .form-autocomplete-suggestions" "css_element"
     And I should see "C2 - Question bank 2" in the ".search-banks .form-autocomplete-suggestions" "css_element"
@@ -200,7 +227,7 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I click on "With selected" "button"
     And I click on "move" "button"
     And the field "searchbanks" matches value "C1 - Question bank 1"
-    And the field "selectcategory" matches value "Default for Question bank 1 (1)"
+    And the field "selectcategory" matches value "Test questions 2 (2)"
     # The moved question should be highlighted
     And the "class" attribute of "Seventh question" "table_row" should contain "highlight"
 
