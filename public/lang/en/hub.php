@@ -45,6 +45,7 @@ $string['courseshortname'] = 'Shortname';
 $string['courseshortname_help'] = 'Enter a short name for your course. It does not need to be unique.';
 $string['coursesnumber'] = 'Number of courses ({$a})';
 $string['dbtype'] = 'Database type ({$a})';
+$string['defaulthomepage'] = 'Start page for users ({$a})';
 $string['demourl'] = 'Demo URL';
 $string['demourl_help'] = 'Enter the demo URL of your course. By default it is the URL of your course. The demo URL is displayed as a link in a search result.';
 $string['diskusagesize'] = 'Disk usage size ({$a} MB)';

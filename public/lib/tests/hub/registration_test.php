@@ -197,4 +197,44 @@ final class registration_test extends \advanced_testcase {
         $this->assertEquals(get_string('time_range', 'hub'), $timerange['label']);
         $this->assertTrue(!empty($timerange['values']));
     }
+
+    /**
+     * Test getting the title for the defaulthomepage setting value.
+     *
+     * @covers \core\hub\registration::get_defaulthomepage_name
+     */
+    public function test_get_defaulthomepage_name(): void {
+        $this->resetAfterTest();
+
+        // Test HOMEPAGE_SITE constant.
+        $result = registration::get_defaulthomepage_name(HOMEPAGE_SITE);
+        $this->assertEquals(get_string('home'), $result);
+
+        // Test HOMEPAGE_MY constant.
+        $result = registration::get_defaulthomepage_name(HOMEPAGE_MY);
+        $this->assertEquals(get_string('mymoodle', 'admin'), $result);
+
+        // Test HOMEPAGE_USER constant.
+        $result = registration::get_defaulthomepage_name(HOMEPAGE_USER);
+        $this->assertEquals(get_string('userpreference', 'admin'), $result);
+
+        // Test HOMEPAGE_MYCOURSES constant.
+        $result = registration::get_defaulthomepage_name(HOMEPAGE_MYCOURSES);
+        $this->assertEquals(get_string('mycourses', 'admin'), $result);
+
+        // Test custom homepage option via hook.
+        $customurl = '/local/customhomepage/landing.php';
+        $customtitle = 'Custom landing page';
+        $callback = function (\core_user\hook\extend_default_homepage $hook) use ($customurl, $customtitle) {
+            $hook->add_option(new \core\url($customurl), $customtitle);
+        };
+        $this->redirectHook(\core_user\hook\extend_default_homepage::class, $callback);
+
+        $result = registration::get_defaulthomepage_name($customurl);
+        $this->assertEquals($customtitle, $result);
+
+        // Test unknown URL.
+        $result = registration::get_defaulthomepage_name('/unknown/page');
+        $this->assertEquals('/unknown/page', $result);
+    }
 }
