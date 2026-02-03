@@ -39,7 +39,9 @@ Y.extend(ALERT, M.core.notification.info, {
                     .append(Y.Node.create('<div class="confirmation-buttons text-xs-right"></div>')
                             .append(yes));
         this.get(BASE).addClass('moodle-dialogue-confirm');
-        this.setStdModContent(Y.WidgetStdMod.BODY, content, Y.WidgetStdMod.REPLACE);
+        setTimeout((function() {
+            this.setStdModContent(Y.WidgetStdMod.BODY, content, Y.WidgetStdMod.REPLACE);
+        }).bind(this), 100);
         this.setStdModContent(Y.WidgetStdMod.HEADER,
                 '<h5 id="moodle-dialogue-' + this.get('COUNT') + '-wrap-header-text">' + this.get(TITLE) + '</h5>',
                 Y.WidgetStdMod.REPLACE);
