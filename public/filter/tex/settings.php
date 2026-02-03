@@ -33,7 +33,7 @@ if ($ADMIN->fulltree) {
     $items[] = new admin_setting_heading('filter_tex/latexheading', get_string('latexsettings', 'filter_tex'), '');
     $items[] = new admin_setting_configtextarea('filter_tex/latexpreamble', get_string('latexpreamble','filter_tex'),
                    '', "\\usepackage[latin1]{inputenc}\n\\usepackage{amsmath}\n\\usepackage{amsfonts}\n\\RequirePackage{amsmath,amssymb,latexsym}\n");
-    $items[] = new admin_setting_configtext('filter_tex/latexbackground', get_string('backgroundcolour', 'admin'), '', '#FFFFFF');
+    $items[] = new admin_setting_configcolourpicker('filter_tex/latexbackground', get_string('backgroundcolour', 'admin'), '', '#FFFFFF');
     $items[] = new admin_setting_configtext('filter_tex/density', get_string('density', 'admin'), '', '120', PARAM_INT);
 
     $default_filter_tex_pathlatex   = '';
