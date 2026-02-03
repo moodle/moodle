@@ -69,6 +69,11 @@ class renderer extends \mod_forum_renderer {
         $options = new \stdClass();
         $options->para = true;
         $options->context = $context;
+        $options->filter = false;   // Disable auto-filters to apply them manually below.
+
+        // Apply filters, excluding those incompatible with email output.
+        $skipfilters = ['mediaplugin'];
+        $message = \core_filters\filter_manager::instance()->filter_text($message, $context, [], $skipfilters);
         return format_text($message, $post->messageformat, $options);
     }
 
