@@ -653,17 +653,12 @@ $string['emailagain'] = 'Email (again)';
 $string['emailconfirm'] = 'Confirm your account';
 $string['emailconfirmation'] = 'Hi {$a->firstname},
 
-A new account has been requested at \'{$a->sitename}\'
-using your email address.
+A new account has been requested at \'{$a->sitename}\' using your email address.
 
-To confirm your new account, please go to this web address:
+To confirm your new account, please click the link below:
 
-{$a->link}
+<a href="{$a->link}">Confirm your account</a>
 
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
-line at the top of your web browser window.
 
 If you need help, please contact the site administrator,
 {$a->admin}';
@@ -710,20 +705,14 @@ $string['emailnotfound'] = 'The email address was not found in the database';
 $string['emailonlyallowed'] = 'This email cannot be used. Allowed email domains are: {$a}.';
 $string['emailpasswordconfirmation'] = 'Hi {$a->firstname},
 
-Someone (probably you) has requested a new password for your
-account on \'{$a->sitename}\'.
+Someone (probably you) has requested a new password for your account on \'{$a->sitename}\'.
 
-To confirm this and have a new password sent to you via email,
-go to the following web address:
+To confirm this and have a new password sent to you via email, please click the link below:
 
-{$a->link}
+<a href="{$a->link}">Get a new password</a>
 
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
-line at the top of your web browser window.
 
-If you need help, please contact the site administrator,
+If you need help, please contact the site administrator.
 {$a->admin}';
 $string['emailpasswordconfirmationsubject'] = '{$a}: Change password confirmation';
 $string['emailpasswordconfirmmaybesent'] = '<p>If you supplied a correct username or unique email address then an email should have been sent to you.</p>
@@ -739,19 +728,14 @@ $string['emailpasswordconfirmsent'] = 'An email should have been sent to your ad
 If you continue to have difficulty, contact the site administrator.';
 $string['emailpasswordchangeinfo'] = 'Hi {$a->firstname},
 
-Someone (probably you) has requested a new password for your
-account \'{$a->username}\' on \'{$a->sitename}\'.
+Someone (probably you) has requested a new password for your account \'{$a->username}\' on \'{$a->sitename}\'.
 
-To change your password, please go to the following web address:
+To change your password, please click the link below:
 
-{$a->link}
+<a href="{$a->link}">Change password</a>
 
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
-line at the top of your web browser window.
 
-If you need help, please contact the site administrator,
+If you need help, please contact the site administrator.
 {$a->admin}';
 $string['emailpasswordchangeinfodisabled'] = 'Hi {$a->firstname},
 
@@ -768,14 +752,17 @@ $string['emailresetconfirmation'] = 'Hi {$a->firstname},
 
 A password reset was requested for your account \'{$a->username}\' at {$a->sitename}.
 
-To confirm this request, and set a new password for your account, please go to the following web address:
-<a href="{$a->link}">{$a->link}</a>
+To confirm this request, and set a new password for your account, please click the link below:
+
+<a href="{$a->link}">Reset password</a>
+
 
 (This link is valid for {$a->resetminutes} minutes from the time this reset was first requested.)
 
 If this password reset was not requested by you, no action is needed.
 
-If you need help, please contact the site administrator, {$a->admin}';
+If you need help, please contact the site administrator.
+{$a->admin}';
 $string['emailresetconfirmationsubject'] = '{$a}: Password reset request';
 $string['emailresetconfirmsent'] = 'An email has been sent to your address at <b>{$a}</b>.
 <br />It contains easy instructions to confirm and complete this password change.
@@ -1527,10 +1514,10 @@ An account has been created for you at \'{$a->sitename}\'.
 
 (You will be prompted to change your password when you log in for the first time.)
 
-To start using \'{$a->sitename}\', log in at
-   {$a->link}
 
-If you need help, contact the site administrator,
+<a href="{$a->link}">Click to log in</a> and start using \'{$a->sitename}\'.
+
+If you need help, contact the site administrator.
 {$a->signoff}';
 $string['newusers'] = 'New users';
 $string['newwindow'] = 'New window';
