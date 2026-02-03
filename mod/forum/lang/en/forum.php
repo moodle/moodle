@@ -63,6 +63,7 @@ $string['blockperiod'] = 'Time period for blocking';
 $string['blockperiod_help'] = 'Students can be blocked from posting more than a given number of posts in a given time period. Users with the capability mod/forum:postwithoutthrottling are exempt from post limits.';
 $string['blockperioddisabled'] = 'Don\'t block';
 $string['blogforum'] = 'Standard forum displayed in a blog-like format';
+$string['browsediscussions'] = 'Browse discussions';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
 $string['cachedef_forum_count_discussions'] = 'Forum discussions count';
 $string['cachedef_forum_is_tracked'] = 'Forum tracking status for user';
