@@ -76,6 +76,7 @@ class restricted_module {
         $PAGE->set_heading($course->fullname);
         $PAGE->set_cm($cminfo);
         $PAGE->set_secondary_navigation(false);
+        $PAGE->set_ai_visibility_hint(false);
 
         $restrictedclass = $format->get_output_classname('content\\cm\\restricted');
         $cmoutput = new $restrictedclass(

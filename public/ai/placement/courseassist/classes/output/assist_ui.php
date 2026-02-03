@@ -100,7 +100,10 @@ class assist_ui {
         if ($PAGE->context->contextlevel != CONTEXT_MODULE) {
             return false;
         }
-
+        // Check the advisory AI visibility hint on the page.
+        if (!$PAGE->get_ai_visibility_hint()) {
+            return false;
+        }
         // Check if the user has permission to use the AI service.
         return utils::is_course_assist_available();
     }
