@@ -27,19 +27,14 @@ $string['auth_oauth2description'] = 'OAuth 2 standards based authentication';
 $string['auth_oauth2settings'] = 'OAuth 2 authentication settings.';
 $string['confirmaccountemail'] = 'Hi {$a->firstname},
 
-A new account has been requested at \'{$a->sitename}\'
-using your email address.
+A new account has been requested at \'{$a->sitename}\' using your email address.
 
-To confirm your new account, please go to this web address:
+To confirm your new account, please click the link below:
 
-{$a->link}
+<a href="{$a->link}">Confirm your account</a>
 
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
-line at the top of your web browser window.
 
-If you need help, please contact the site administrator,
+If you need help, please contact the site administrator.
 {$a->admin}
 
 If you did not do this, someone else could be trying to compromise your account.
@@ -53,16 +48,12 @@ A request has been made to link the {$a->issuername} login
 {$a->linkedemail} to your account at \'{$a->sitename}\'
 using your email address.
 
-To confirm this request and link these logins, please go to this web address:
+To confirm this request and link these logins, please click the link below:
 
-{$a->link}
+<a href="{$a->link}">Link your accounts</a>
 
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then cut and paste the address into the address
-line at the top of your web browser window.
 
-If you need help, please contact the site administrator,
+If you need help, please contact the site administrator.
 {$a->admin}
 
 If you did not do this, someone else could be trying to compromise your account.
