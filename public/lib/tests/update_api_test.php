@@ -45,11 +45,26 @@ final class update_api_test extends \advanced_testcase {
         $client = \core\update\testable_api::client();
 
         $this->assertSame('2.9', $client->convert_branch_numbering_format(29));
+        $this->assertSame('29.9', $client->convert_branch_numbering_format(299));
         $this->assertSame('3.0', $client->convert_branch_numbering_format('30'));
         $this->assertSame('3.1', $client->convert_branch_numbering_format(3.1));
+        $this->assertSame('3.1', $client->convert_branch_numbering_format(3.10));
         $this->assertSame('3.1', $client->convert_branch_numbering_format('3.1'));
-        $this->assertSame('10.1', $client->convert_branch_numbering_format(101));
-        $this->assertSame('10.2', $client->convert_branch_numbering_format('102'));
+        $this->assertSame('3.10', $client->convert_branch_numbering_format(310));
+        $this->assertSame('3.10', $client->convert_branch_numbering_format('310'));
+        $this->assertSame('3.10', $client->convert_branch_numbering_format('3.10'));
+        $this->assertSame('3.11', $client->convert_branch_numbering_format(311));
+        $this->assertSame('3.99', $client->convert_branch_numbering_format(399));
+        $this->assertSame('4.0', $client->convert_branch_numbering_format(400));
+        $this->assertSame('4.1', $client->convert_branch_numbering_format(401));
+        $this->assertSame('5.2', $client->convert_branch_numbering_format(502));
+        $this->assertSame('5.2', $client->convert_branch_numbering_format('502'));
+        $this->assertSame('9.0', $client->convert_branch_numbering_format(900));
+        $this->assertSame('9.9', $client->convert_branch_numbering_format(909));
+        $this->assertSame('9.99', $client->convert_branch_numbering_format(999));
+        $this->assertSame('10.0', $client->convert_branch_numbering_format(1000));
+        $this->assertSame('10.1', $client->convert_branch_numbering_format(1001));
+        $this->assertSame('10.10', $client->convert_branch_numbering_format(1010));
     }
 
     /**
