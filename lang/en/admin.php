@@ -821,16 +821,12 @@ $string['lockoutemailbody'] = 'Hi {$a->firstname},
 Your account with username {$a->username} on server \'{$a->sitename}\'
 was locked out after multiple invalid login attempts.
 
-To unlock the account immediately go to the following address
+To unlock the account immediately, please click the link below:
 
-{$a->link}
+<a href="{$a->link}">Unlock account</a>
 
-In most mail programs, this should appear as a blue link
-which you can just click on.  If that doesn\'t work,
-then copy and paste the address into the address
-line at the top of your web browser window.
 
-If you need help, please contact the site administrator,
+If you need help, please contact the site administrator.
 {$a->admin}';
 $string['lockoutemailsubject'] = 'Your account on {$a} was locked out';
 $string['lockouterrorunlock'] = 'Invalid account unlock information supplied.';
