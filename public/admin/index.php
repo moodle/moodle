@@ -990,6 +990,13 @@ $result = new environment_results('custom_checks');
 $result = check_xmlrpc_usage($result);
 $xmlrpcwarning = !is_null($result) ? get_string($result->getFeedbackStr(), 'admin') : '';
 
+// Check whether MoodleNet features are enabled and warn about removal.
+$moodlenetwarning = '';
+$moodlenetenabled = get_config('tool_moodlenet', 'enablemoodlenet');
+if ($moodlenetenabled) {
+    $moodlenetwarning = get_string('moodlenetremovalwarning', 'admin');
+}
+
 admin_externalpage_setup('adminnotifications');
 
 $output = $PAGE->get_renderer('core', 'admin');
@@ -1016,5 +1023,6 @@ echo $output->admin_notifications_page(
     $showcampaigncontent,
     $showfeedbackencouragement,
     $servicesandsupportcontent,
-    $xmlrpcwarning
+    $xmlrpcwarning,
+    $moodlenetwarning
 );
