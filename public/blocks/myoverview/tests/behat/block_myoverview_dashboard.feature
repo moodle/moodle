@@ -322,6 +322,6 @@ Feature: The my overview block allows users to easily access their courses
     Then I should not see "Category 1" in the "Course overview" "block"
 
   @accessibility
-  Scenario: The dashboard page must have sufficient colour contrast
+  Scenario: The My courses page must meet accessibility standards
     When I am on the "My courses" page logged in as "student1"
-    Then the page should meet "wcag143" accessibility standards
+    Then the page should meet accessibility standards with "best-practice" extra tests
