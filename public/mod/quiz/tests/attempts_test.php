@@ -19,6 +19,7 @@ namespace mod_quiz;
 use core_question_generator;
 use mod_quiz\task\update_overdue_attempts;
 use mod_quiz_generator;
+use moodle_recordset;
 use question_engine;
 use mod_quiz\quiz_settings;
 
@@ -35,6 +36,7 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @copyright  2012 Matt Petro
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(update_overdue_attempts::class)]
 final class attempts_test extends \advanced_testcase {
 
     /**
@@ -602,5 +604,175 @@ final class attempts_test extends \advanced_testcase {
         } catch (\moodle_exception $e) {
             $this->assertEquals('invalidcoursemodule', $e->errorcode);
         }
+    }
+
+    /**
+     * Confirm that update_overdue_attempts refetches the attempt from the DB and does not act on stale data.
+     */
+    public function test_update_overdue_attempts_refetches_attempts_before_processing(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student1 = $this->getDataGenerator()->create_user();
+        $student2 = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->assertTrue(enrol_try_internal_enrol($course->id, $student1->id, $studentrole->id));
+        $this->assertTrue(enrol_try_internal_enrol($course->id, $student2->id, $studentrole->id));
+
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $quiz = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'overduehandling' => 'autosubmit',
+            'timelimit' => 1,
+        ]);
+
+        $category = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('truefalse', null, ['category' => $category->id]);
+        $quizobj = quiz_settings::create($quiz->id);
+        quiz_add_quiz_question($question->id, $quiz);
+        $quizobj->get_grade_calculator()->recompute_quiz_sumgrades();
+
+        // Create one attempt that is already finished and one that cron should submit.
+        $this->setUser($student1);
+        $finishedattempt = $quizgenerator->create_attempt($quiz->id, $student1->id);
+        $finishedattemptid = $finishedattempt->id;
+
+        $this->setUser($student2);
+        $overdueattempt = $quizgenerator->create_attempt($quiz->id, $student2->id);
+        $overdueattemptid = $overdueattempt->id;
+
+        $finishedtime = $finishedattempt->timestart + 10;
+        $DB->update_record('quiz_attempts', (object)[
+            'id' => $finishedattemptid,
+            'state' => 'finished',
+            'timemodified' => $finishedtime,
+            'timefinish' => $finishedtime,
+            'timecheckstate' => null,
+        ]);
+
+        $attemptsinfo = [
+            (object)[
+                'id' => $finishedattemptid,
+                'quiz' => $quiz->id,
+                'usertimeclose' => 0,
+                'usertimelimit' => 1,
+            ],
+            (object)[
+                'id' => $overdueattemptid,
+                'quiz' => $quiz->id,
+                'usertimeclose' => 0,
+                'usertimelimit' => 1,
+            ],
+        ];
+
+        $originaloverdueattempt = $DB->get_record('quiz_attempts', ['id' => $overdueattemptid]);
+        $this->assertEquals('inprogress', $originaloverdueattempt->state);
+
+        $recordset = new class ($attemptsinfo) extends moodle_recordset {
+            /** @var array */
+            private array $records;
+
+            /** @var int */
+            private int $position = 0;
+
+            /**
+             * Constructor.
+             *
+             * @param array $records records to iterate over.
+             */
+            public function __construct(array $records) {
+                $this->records = array_values($records);
+            }
+
+            /**
+             * Get the current record.
+             *
+             * @return mixed
+             */
+            #[\Override]
+            public function current(): mixed {
+                return $this->records[$this->position] ?? false;
+            }
+
+            /**
+             * Get the current key.
+             *
+             * @return mixed
+             */
+            #[\Override]
+            public function key(): mixed {
+                return $this->position;
+            }
+
+            /**
+             * Move to the next record.
+             */
+            #[\Override]
+            public function next(): void {
+                $this->position++;
+            }
+
+            /**
+             * Whether the current position is valid.
+             */
+            #[\Override]
+            public function valid(): bool {
+                return isset($this->records[$this->position]);
+            }
+
+            /**
+             * Close the recordset.
+             */
+            #[\Override]
+            public function close() {
+                $this->records = [];
+                $this->position = 0;
+            }
+        };
+
+        $this->setAdminUser();
+
+        $overduetask = new class ($recordset) extends update_overdue_attempts {
+            /** @var moodle_recordset */
+            private moodle_recordset $recordset;
+
+            /**
+             * Constructor.
+             *
+             * @param moodle_recordset $recordset recordset to return.
+             */
+            public function __construct(moodle_recordset $recordset) {
+                $this->recordset = $recordset;
+            }
+
+            /**
+             * Return the recordset of overdue attempts.
+             *
+             * @param int $processto timestamp to process up to.
+             * @return moodle_recordset
+             */
+            #[\Override]
+            public function get_list_of_overdue_attempts(int $processto): moodle_recordset {
+                return $this->recordset;
+            }
+        };
+
+        $timenow = $overdueattempt->timestart + 100;
+        $overduetask->update_all_overdue_attempts($timenow, 0);
+
+        $latestfinishedattempt = $DB->get_record('quiz_attempts', ['id' => $finishedattemptid]);
+        $this->assertEquals($finishedtime, $latestfinishedattempt->timefinish);
+        $this->assertEquals($finishedtime, $latestfinishedattempt->timemodified);
+        $this->assertEquals('finished', $latestfinishedattempt->state);
+
+        $latestoverdueattempt = $DB->get_record('quiz_attempts', ['id' => $overdueattemptid]);
+        $this->assertEquals('finished', $latestoverdueattempt->state);
+        $this->assertGreaterThan(0, $latestoverdueattempt->timefinish);
+        $this->assertNotEquals(0, $latestoverdueattempt->timemodified);
     }
 }
