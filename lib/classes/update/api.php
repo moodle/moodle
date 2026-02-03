@@ -297,15 +297,26 @@ class api {
      * versioning and stable branches numbering scheme. The API at
      * download.moodle.org uses the X.Y numbering scheme.
      *
-     * @param int $branch moodle branch in the XY format (e.g. 29, 30, 31 etc)
-     * @return string moodle branch in the X.Y format (e.g. 2.9, 3.0, 3.1 etc)
+     * Branch integers are interpreted differently from Moodle 3.10 onwards.
+     * 299 = 29.9 (prior to 3.10).
+     * 399 = 3.99 (3.10 onwards).
+     *
+     * @param int $branch moodle branch in the XY format (e.g. 29, 30, 31, 311, 502 etc)
+     * @return string moodle branch in the X.Y format (e.g. 2.9, 3.0, 3.1, 3.11, 5.2 etc)
      */
     protected function convert_branch_numbering_format($branch) {
 
-        $branch = (string)$branch;
+        $branch = (string) $branch;
 
         if (strpos($branch, '.') === false) {
-            $branch = substr($branch, 0, -1).'.'.substr($branch, -1);
+            $intbranch = (int) $branch;
+            if ($intbranch >= 310) {
+                $major = floor($intbranch / 100);
+                $minor = $intbranch - 100 * $major;
+                $branch = (string) ($major . '.' . $minor);
+            } else {
+                $branch = substr($branch, 0, -1) . '.' . substr($branch, -1);
+            }
         }
 
         return $branch;
