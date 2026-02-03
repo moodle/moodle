@@ -23,6 +23,7 @@
 
 "use strict";
 
+import $ from 'jquery';
 import {addIconToContainerRemoveOnCompletion} from 'core/loadingicon';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
@@ -123,13 +124,13 @@ export const init = async(cmId) => {
     const sortableList = new SortableList(document.querySelector(Selectors.sortableListRegion));
     sortableList.getElementName = element => Promise.resolve(element[0].querySelector(Selectors.sortableElementTitle)?.textContent);
 
-    document.addEventListener(SortableList.EVENTS.elementDrop, event => {
-        if (!event.detail.positionChanged) {
+    $(Selectors.sortableListRegion).on(SortableList.EVENTS.DROP, (event, info) => {
+        if (!info.positionChanged) {
             return;
         }
         const pendingPromise = new Pending('mod_feedback/questions:reorder');
-        const itemOrder = getItemOrder(event.detail.element[0]);
-        addIconToContainerRemoveOnCompletion(event.detail.element[0], pendingPromise);
+        const itemOrder = getItemOrder(info.element[0]);
+        addIconToContainerRemoveOnCompletion(info.element[0], pendingPromise);
         reorderQuestions(moduleId, itemOrder)
             .then(() => getString('questionmoved', 'mod_feedback'))
             .then(addToast)
