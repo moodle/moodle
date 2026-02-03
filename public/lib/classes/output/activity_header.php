@@ -201,9 +201,12 @@ class activity_header implements renderable, templatable {
             if (
                 !empty($data)
                 && !empty($data['uservisible'])
-                && !empty($data['showmanualcompletion'])
             ) {
-                $this->add_manual_completion_to_page_header($output, $data);
+                if (!empty($data['showmanualcompletion'])) {
+                    $this->add_manual_completion_to_page_header($output, $data);
+                } else if (!empty($data['hascompletion']) && !empty($data['isautomatic'])) {
+                    $this->add_completion_status_to_page_header($output, $data);
+                }
             }
 
             $activityinfo = $output->render_from_template('core_course/activity_info', $data);
@@ -252,6 +255,26 @@ class activity_header implements renderable, templatable {
             'core_courseformat/local/content/activity_header',
             'init',
             ["[data-for='page-heading']"],
+        );
+        return true;
+    }
+
+    /**
+     * Adds the completion status component to the page header actions.
+     *
+     * @param renderer_base $output
+     * @param array $data the template data for the completion component
+     * @return bool if the completion was added
+     */
+    private function add_completion_status_to_page_header(renderer_base $output, array $data): bool {
+        // Some themes may not use completion in the header, so we check first.
+        $showcompletion = $this->page?->layout_options['completioninheader'] ?? true;
+        if (!$showcompletion) {
+            return false;
+        }
+
+        $this->page->add_header_action(
+            $output->render_from_template('core_course/completion_status', $data)
         );
         return true;
     }

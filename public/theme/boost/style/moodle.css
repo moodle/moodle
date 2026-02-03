@@ -35648,6 +35648,13 @@ select {
   padding-bottom: 0;
   margin-bottom: 0;
 }
+.path-mod .completion-status {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.path-mod .completion-status i {
+  margin-right: 0.25rem;
+}
 
 .path-mod-choice .horizontal .choices .option {
   display: inline-block;

@@ -32,15 +32,20 @@ Feature: Automatic completion in the choice activity
     When I am on the "What to drink?" "choice activity" page logged in as student1
     Then the "View" completion condition of "What to drink?" is displayed as "done"
     And the "Make a choice" completion condition of "What to drink?" is displayed as "todo"
+    # Initially, the completion status should be shown as not completed.
+    And ".completion-status" "css_element" should not exist
     And I set the field "Beer" to "1"
     And I press "Save my choice"
     And the "View" completion condition of "What to drink?" is displayed as "done"
     And the "Make a choice" completion condition of "What to drink?" is displayed as "done"
+    # Now, the activity completion status should be shown as completed.
+    And I should see "Done" in the ".completion-status" "css_element"
 
   Scenario: Viewing a choice activity with automatic completion as a teacher
     When I am on the "What to drink?" "choice activity" page logged in as teacher1
     Then "What to drink?" should have the "View" completion condition
     And "What to drink?" should have the "Make a choice" completion condition
+    And ".completion-status" "css_element" should not exist
 
   @javascript
   Scenario: Overriding automatic choice completion for a user
@@ -53,3 +58,4 @@ Feature: Automatic completion in the choice activity
     When I am on the "What to drink?" "choice activity" page logged in as student1
     Then the "View" completion condition of "What to drink?" overridden by "Teacher 1" is displayed as "done"
     And the "Make a choice" completion condition of "What to drink?" overridden by "Teacher 1" is displayed as "done"
+    And I should see "Done" in the ".completion-status" "css_element"
