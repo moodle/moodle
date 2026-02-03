@@ -2171,13 +2171,20 @@ M.core_filepicker.init = function(Y, options) {
         show_recent_repository: function() {
             this.hide_header();
             this.viewbar_set_enabled(false);
-            var repository_id = this.get_preference('recentrepository');
+            var repositoryid = this.get_preference('recentrepository');
+            // If no user preference for a selected repository exists then default to the first repo on the list.
+            if (!repositoryid) {
+                var repokeys = Object.keys(this.options.repositories);
+                if (repokeys.length) {
+                    repositoryid = repokeys[0];
+                }
+            }
             this.viewmode = this.get_preference('recentviewmode');
             if (this.viewmode != 2 && this.viewmode != 3) {
                 this.viewmode = 1;
             }
-            if (this.options.repositories[repository_id]) {
-                this.list({'repo_id':repository_id});
+            if (this.options.repositories[repositoryid]) {
+                this.list({'repo_id': repositoryid});
             }
         },
         get_preference: function (name) {
