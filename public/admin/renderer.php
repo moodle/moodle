@@ -283,13 +283,31 @@ class core_admin_renderer extends plugin_renderer_base {
      *
      * @return string HTML to output.
      */
-    public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
-            $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
-            $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
-            $themedesignermode = false, $devlibdir = false, $mobileconfigured = false,
-            $overridetossl = false, $invalidforgottenpasswordurl = false, $croninfrequent = false,
-            $showcampaigncontent = false, bool $showfeedbackencouragement = false, bool $showservicesandsupport = false,
-            $xmlrpcwarning = '', $moodlenetwarning = '') {
+    public function admin_notifications_page(
+        $maturity,
+        $insecuredataroot,
+        $errorsdisplayed,
+        $cronoverdue,
+        $dbproblems,
+        $maintenancemode,
+        $availableupdates,
+        $availableupdatesfetch,
+        $buggyiconvnomb,
+        $registered,
+        array $cachewarnings = [],
+        $eventshandlers = 0,
+        $themedesignermode = false,
+        $devlibdir = false,
+        $mobileconfigured = false,
+        $overridetossl = false,
+        $invalidforgottenpasswordurl = false,
+        $croninfrequent = false,
+        $showcampaigncontent = false,
+        bool $showfeedbackencouragement = false,
+        bool $showservicesandsupport = false,
+        $xmlrpcwarning = '',
+        $moodlenetwarning = ''
+    ) {
 
         global $CFG;
         $output = '';
