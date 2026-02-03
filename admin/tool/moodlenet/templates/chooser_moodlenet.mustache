@@ -27,8 +27,16 @@
     <div class="content text-start mb-5 px-5 py-4" data-region="chooser-option-summary-content-container">
         <div data-region="moodle-net">
             <div class="overlay-icon-container z-index-1 d-none" data-region="spinner"></div>
-            <img class="w-25 mb-4" aria-hidden="true" src="{{{img}}}">
+            <img class="w-25 mb-4" alt="" aria-hidden="true" src="{{{img}}}">
             <p>{{#str}} instancedescription, tool_moodlenet {{/str}}</p>
+
+            {{! Removal warning - always visible when MoodleNet integration is enabled }}
+            <div class="alert alert-warning w-75 mx-auto mb-3" role="alert">
+                <strong>{{#str}}removalwarning_title, tool_moodlenet{{/str}}</strong>
+                <p class="mb-1">{{#str}}removalwarning_service, tool_moodlenet{{/str}}</p>
+                <p class="mb-0">{{#str}}removalwarning_feature, tool_moodlenet{{/str}}</p>
+            </div>
+
             <p class="w-75 mx-auto mb-1 mt-5">{{#str}} connectandbrowse, tool_moodlenet {{/str}}</p>
             <a class="btn btn-secondary d-block w-75 mx-auto mb-4"
                data-action="browse"
