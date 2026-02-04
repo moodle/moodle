@@ -29,8 +29,9 @@ import ContentItem from 'mod_lti/contentitem';
  * Initialise module.
  *
  * @param {int} courseId the course id.
+ * @param {string} toolUrl the external tool url.
  */
-const init = (courseId) => {
+const init = (courseId, toolUrl) => {
     const contentItemButton = document.querySelector('[name="selectcontent"]');
 
     if (!contentItemButton) {
@@ -51,7 +52,7 @@ const init = (courseId) => {
             };
 
             // The callback below is called after the content item has been returned and processed.
-            ContentItem.init(contentItemUrl, postData, (returnData) => {
+            ContentItem.init(contentItemUrl, toolUrl, postData, (returnData) => {
                 if (!returnData.multiple) {
                     // The state of the grade checkbox has already been set by processContentItemReturnData() but that
                     // hasn't fired the click/change event required by formslib to show/hide the dependent grade fields.
