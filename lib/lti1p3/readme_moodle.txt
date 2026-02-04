@@ -2,6 +2,7 @@ LTI 1.3 Tool Library import instructions
 
 This library is a patched for use in Moodle - it requires the following changes be applied on top of the packback upstream base:
 1. Removal of phpseclib dependency (replaces a single call with openssl equivalent)
+2. The fix included in MDL-87789, ensuring optional lineitem properties are omitted if not set.
 
 To upgrade to a new version of this library:
 1. Clone the latest version of the upstream library from github:
