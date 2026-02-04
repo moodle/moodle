@@ -139,7 +139,7 @@
 
             // Run convert on document (.ps to .png/.gif) or run dvisvgm (.ps to .svg).
             if ($background) {
-                $bg_opt = "-transparent \"$background\""; // Makes transparent background
+                $bg_opt = '-transparent ' . escapeshellarg($background); // Makes transparent background
             } else {
                 $bg_opt = "";
             }
