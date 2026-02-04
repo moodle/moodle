@@ -39,3 +39,6 @@ $string['cliunknowoption'] = 'अपरिचित विकल्प:
    {$a}
 कृपया --help विकल्प का उपयोग करें।';
 $string['cliyesnoprompt'] = 'टाइप Y (का मतलब है हाँ) या N (का मतलब है नहीं )';
+$string['environmentrequireinstall'] = 'स्थापित और सक्षम होना चाहिए';
+$string['environmentrequireversion'] = 'version {$a->needed} की आवश्यकता है और आप {$a-> current} चला रहे हैं';
+$string['upgradekeyset'] = 'उन्नयन कुंजी (इसे सेट न करने के लिए खाली छोड़ दें)';
