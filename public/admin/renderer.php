@@ -279,16 +279,35 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $showfeedbackencouragement Whether the feedback encouragement content should be displayed or not.
      * @param bool $showservicesandsupport Whether the services and support content should be displayed or not.
      * @param string $xmlrpcwarning XML-RPC deprecation warning message.
+     * @param string $moodlenetwarning MoodleNet removal warning message.
      *
      * @return string HTML to output.
      */
-    public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
-            $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
-            $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0,
-            $themedesignermode = false, $devlibdir = false, $mobileconfigured = false,
-            $overridetossl = false, $invalidforgottenpasswordurl = false, $croninfrequent = false,
-            $showcampaigncontent = false, bool $showfeedbackencouragement = false, bool $showservicesandsupport = false,
-            $xmlrpcwarning = '') {
+    public function admin_notifications_page(
+        $maturity,
+        $insecuredataroot,
+        $errorsdisplayed,
+        $cronoverdue,
+        $dbproblems,
+        $maintenancemode,
+        $availableupdates,
+        $availableupdatesfetch,
+        $buggyiconvnomb,
+        $registered,
+        array $cachewarnings = [],
+        $eventshandlers = 0,
+        $themedesignermode = false,
+        $devlibdir = false,
+        $mobileconfigured = false,
+        $overridetossl = false,
+        $invalidforgottenpasswordurl = false,
+        $croninfrequent = false,
+        $showcampaigncontent = false,
+        bool $showfeedbackencouragement = false,
+        bool $showservicesandsupport = false,
+        $xmlrpcwarning = '',
+        $moodlenetwarning = ''
+    ) {
 
         global $CFG;
         $output = '';
@@ -313,6 +332,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->mobile_configuration_warning($mobileconfigured);
         $output .= $this->forgotten_password_url_warning($invalidforgottenpasswordurl);
         $output .= $this->mnet_deprecation_warning($xmlrpcwarning);
+        $output .= $this->moodlenet_removal_warning($moodlenetwarning);
         $output .= $this->userfeedback_encouragement($showfeedbackencouragement);
         $output .= $this->services_and_support_content($showservicesandsupport);
         $output .= $this->campaign_content($showcampaigncontent);
@@ -2324,6 +2344,20 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         return $this->warning($xmlrpcwarning);
+    }
+
+    /**
+     * Display a warning about the removal of MoodleNet integration.
+     *
+     * @param string $moodlenetwarning The warning message
+     * @return string HTML to output.
+     */
+    protected function moodlenet_removal_warning($moodlenetwarning) {
+        if (empty($moodlenetwarning)) {
+            return '';
+        }
+
+        return $this->warning($moodlenetwarning);
     }
 
     /**
