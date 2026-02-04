@@ -36,7 +36,7 @@ if ($ADMIN->fulltree) {
         "\\usepackage[latin1]{inputenc}\n\\usepackage{amsmath}\n" .
         "\\usepackage{amsfonts}\n\\RequirePackage{amsmath,amssymb,latexsym}\n"
     );
-    $items[] = new admin_setting_configtext(
+    $items[] = new admin_setting_configcolourpicker(
         'filter_algebra/latexbackground',
         get_string('backgroundcolour', 'admin'),
         '',
