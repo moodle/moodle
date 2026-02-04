@@ -169,7 +169,7 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
 
             echo $OUTPUT->header();
             if ($report->fill_table(true, true)) {
-                echo html_writer::tag('h3', get_string('coursesiamtaking', 'grades'));
+                echo $OUTPUT->heading(get_string('coursesiamtaking', 'grades'));
                 echo '<br />' . $report->print_table(true);
             }
         } else { // We have a course context. We must be navigating from the gradebook.
@@ -189,7 +189,7 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     }
 
     if (count($report->teachercourses)) {
-        echo html_writer::tag('h3', get_string('coursesiamteaching', 'grades'));
+        echo $OUTPUT->heading(get_string('coursesiamteaching', 'grades'));
         $report->print_teacher_table();
     }
 
