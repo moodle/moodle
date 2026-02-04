@@ -50,9 +50,9 @@ class Resource
         if (isset($this->line_item)) {
             $resource['lineItem'] = [
                 'scoreMaximum' => $this->line_item->getScoreMaximum(),
-                'label' => $this->line_item->getLabel(),
-                'resourceId' => $this->line_item->getResourceId(),
-                'tag' => $this->line_item->getTag(),
+                ...(!is_null($this->line_item->getLabel()) ? ['label' => $this->line_item->getLabel()] : []),
+                ...(!is_null($this->line_item->getResourceId()) ? ['resourceId' => $this->line_item->getResourceId()] : []),
+                ...(!is_null($this->line_item->getTag()) ? ['tag' => $this->line_item->getTag()] : []),
             ];
         }
 
