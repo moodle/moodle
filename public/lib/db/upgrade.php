@@ -1698,5 +1698,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026013000.02);
     }
 
+    if ($oldversion < 2026013000.03) {
+        core_question\versions::resolve_unique_version_violations();
+
+        // Define index questionbankentryid-version (unique) to be added to question_versions.
+        $table = new xmldb_table('question_versions');
+        $index = new xmldb_index('questionbankentryid-version', XMLDB_INDEX_UNIQUE, ['questionbankentryid', 'version']);
+
+        // Conditionally launch add index questionbankentryid-version.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2026013000.03);
+    }
     return true;
 }
