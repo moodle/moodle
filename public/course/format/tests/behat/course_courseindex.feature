@@ -61,6 +61,22 @@ Feature: Course index depending on role
     And I should see "Activity sample 1" in the "courseindex-content" "region"
 
   @javascript
+  Scenario: Course title is displayed in the course index heading
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I navigate to "Settings" in current page administration
+    And I set the field "Course full name" to "<span lang=\"en\" class=\"multilang\">My course</span><span lang=\"es\" class=\"multilang\">Mi curso</span>"
+    And I press "Save and display"
+    # Course title should be displayed in the course index heading.
+    And I should see "My course" in the "courseindexdrawerheading" "region"
+    And I click on "Activity sample 1" "link" in the "#courseindex" "css_element"
+    And I should not see "Activity sample 2" in the "region-main" "region"
+    # Check course title link goes to the course main page.
+    When I click on "My course" "link" in the "courseindexdrawerheading" "region"
+    Then I should see "Activity sample 2" in the "region-main" "region"
+
+  @javascript
   Scenario: Course index as a teacher
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage

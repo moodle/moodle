@@ -215,8 +215,8 @@ $right-drawer-width: 320px;
         }
 
         .drawertoggle {
-            margin-right: auto;
-            margin-left: 5px;
+            margin-left: auto;
+            margin-right: 5px;
         }
     }
     &.drawer-bottom {
@@ -265,12 +265,17 @@ $right-drawer-width: 320px;
     padding: 0;
     height: $navbar-height;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     .sitename {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
         margin-right: 16px;
+    }
+    .draweractions {
+        display: flex;
+        margin-left: map-get($spacers, 2);
     }
 }
 .drawer.scrolled .drawerheader {

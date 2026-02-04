@@ -32208,8 +32208,8 @@ body.drawer-ease {
   visibility: visible;
 }
 .drawer.drawer-left .drawertoggle {
-  margin-right: auto;
-  margin-left: 5px;
+  margin-left: auto;
+  margin-right: 5px;
 }
 .drawer.drawer-bottom {
   bottom: -110%;
@@ -32239,6 +32239,7 @@ body.drawer-ease {
   padding: 0;
   height: 60px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 .drawerheader .sitename {
@@ -32246,6 +32247,10 @@ body.drawer-ease {
   white-space: nowrap;
   text-overflow: ellipsis;
   margin-right: 16px;
+}
+.drawerheader .draweractions {
+  display: flex;
+  margin-left: 0.5rem;
 }
 
 .drawer.scrolled .drawerheader {
@@ -32320,8 +32325,8 @@ body.drawer-ease {
 }
 @media (max-width: 991.98px) {
   .drawer-md.drawer-left .drawertoggle {
-    margin-right: auto;
-    margin-left: 5px;
+    margin-left: auto;
+    margin-right: 5px;
   }
 }
 @media (max-width: 991.98px) {
@@ -32406,8 +32411,8 @@ body.drawer-ease {
 }
 @media (max-width: 767.98px) {
   .drawer-sm.drawer-left .drawertoggle {
-    margin-right: auto;
-    margin-left: 5px;
+    margin-left: auto;
+    margin-right: 5px;
   }
 }
 @media (max-width: 767.98px) {
@@ -40654,7 +40659,32 @@ div.editor_atto_toolbar button .icon {
   font-weight: bold;
 }
 
+.drawerheader .drawerheading {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.drawerheader .drawerheading #courseindexdrawerheading {
+  font-size: 1rem;
+  margin-left: 1rem;
+  min-width: 0;
+  overflow: hidden;
+}
+.drawerheader .drawerheading #courseindexdrawerheading .courseindex-link {
+  display: block;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  color: var(--bs-secondary-color);
+}
+.drawerheader .drawerheading #courseindexdrawerheading .courseindex-link:hover, .drawerheader .drawerheading #courseindexdrawerheading .courseindex-link:focus {
+  color: black;
+  text-decoration: none;
+}
+.drawerheader .drawerheading i.icon {
+  color: var(--bs-secondary-color);
+}
+
 .courseindex .courseindex-item {
+  align-items: center;
   padding: 0.5rem 0.5rem;
   border: 1px solid transparent;
   border-radius: 0.5rem;
@@ -40664,6 +40694,9 @@ div.editor_atto_toolbar button .icon {
 }
 .courseindex .courseindex-item .icons-collapse-expand {
   padding-right: 4px;
+}
+.courseindex .courseindex-item .courseindex-link {
+  font-size: 0.875rem;
 }
 .courseindex .courseindex-item .courseindex-link,
 .courseindex .courseindex-item .courseindex-chevron {
@@ -40755,7 +40788,7 @@ div.editor_atto_toolbar button .icon {
   color: #fff;
 }
 .courseindex .courseindex-item .completioninfo {
-  min-width: 24px;
+  min-width: 20px;
 }
 .courseindex .courseindex-item .completioninfo.completion_complete {
   color: #357a32;
@@ -40787,18 +40820,26 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-section.current .delegated-section .current-badge {
   display: none;
 }
+.courseindex .courseindex-section .delegated-section .courseindex-section-title {
+  margin-left: -0.25rem;
+  padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+.courseindex .courseindex-section .delegated-section .courseindex-item-content {
+  margin-left: -0.5rem;
+}
 .courseindex .courseindex-section.dropready .courseindex-item-content {
   /* Extra dropzone space */
   padding-bottom: 1em;
 }
-.courseindex .courseindex-section .courseindex-sectioncontent .courseindex-item {
-  padding-left: 0.5rem;
+.courseindex .courseindex-section .courseindex-sectioncontent:not(.delegated-section) .courseindex-item {
+  padding-left: 1.5rem;
 }
 .courseindex .courseindex-section.delegated-section {
   width: 100%;
 }
 .courseindex .icon {
   font-size: 10px;
+  margin-right: 0;
 }
 .courseindex .d-flex-noedit {
   display: none;
