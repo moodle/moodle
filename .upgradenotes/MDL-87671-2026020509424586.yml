@@ -1,0 +1,7 @@
+issueNumber: MDL-87671
+notes:
+  core:
+    - message: >-
+        Nodes from sections with visible restrictions have been added to the
+        navigation tree
+      type: improved
