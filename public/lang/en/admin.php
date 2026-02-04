@@ -979,6 +979,7 @@ $string['maxtimelimit'] = 'Maximum time limit';
 $string['maxtimelimit_desc'] = 'To restrict the maximum PHP execution time that Moodle will allow without any output being displayed, enter a value in seconds here. 0 means that Moodle default restrictions are used. If you have a front-end server with its own time limit, set this value lower to receive PHP errors in logs. Does not apply to CLI scripts.';
 $string['moodlebrandedapp'] = 'Branded Moodle app';
 $string['moodlebrandedappreference'] = 'Alternatively, get a <a href="https://moodle.com/branded-app/">Branded Moodle app</a> with your own custom branding.';
+$string['moodlenetremovalwarning'] = 'The MoodleNet service will be shut down on 20 April 2026. If you wish to continue using MoodleNet on your site, install the MoodleNet plugin from the <a href="https://moodle.org/plugins" target="_blank">Moodle plugins directory <i class="fa fa-external-link" role="img" aria-label="Opens in new window" title="Opens in new window"></i></a> and connect it to a self-hosted MoodleNet instance. Following this, the MoodleNet profile ID field will be removed; please migrate that data if you are using it for other purposes.';
 $string['noreplyaddress'] = 'No-reply address';
 $string['noreplydomain'] = 'No-reply and domain';
 $string['noreplydomaindetail'] = 'Settings for No-reply and configured domains';
