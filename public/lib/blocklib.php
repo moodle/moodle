@@ -2820,6 +2820,7 @@ function blocks_add_default_system_blocks() {
             'recentlyaccesseditems',
         ],
         'content' => [
+            'myoverview',
             'timeline',
             'calendar_month',
         ]]),

@@ -23,6 +23,7 @@ Feature: Reset dashboard page to default
     And I press "Reset page to default"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     Then "Latest announcements" "block" should not exist
+    And "Course overview" "block" should exist
     And "Timeline" "block" should exist
     And "Calendar" "block" should exist
     And I should not see "Reset page to default"
