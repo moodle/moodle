@@ -764,14 +764,24 @@ function initialise_fullme_cli() {
     $topfile = realpath($topfile['file']);
     $dirroot = realpath($CFG->dirroot);
 
-    if (strpos($topfile, $dirroot) !== 0) {
-        // Probably some weird external script
-        $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
-    } else {
+    if (strpos($topfile, $dirroot) === 0) {
+        // Normal case: Script is under dirroot (e.g., public/course/view.php).
         $relativefile = substr($topfile, strlen($dirroot));
-        $relativefile = str_replace('\\', '/', $relativefile); // Win fix
+        $relativefile = str_replace('\\', '/', $relativefile); // Win fix.
         $SCRIPT = $FULLSCRIPT = $relativefile;
         $FULLME = $ME = null;
+    } else {
+        // Moodle 5.1+ structure: Admin CLI scripts are in parent directory of dirroot.
+        $root = dirname($dirroot);
+        if (strpos($topfile, $root) === 0) {
+            $relativefile = substr($topfile, strlen($root));
+            $relativefile = str_replace('\\', '/', $relativefile); // Win fix.
+            $SCRIPT = $FULLSCRIPT = $relativefile;
+            $FULLME = $ME = null;
+        } else {
+            // Probably some weird external script.
+            $SCRIPT = $FULLSCRIPT = $FULLME = $ME = null;
+        }
     }
 }
 
