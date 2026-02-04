@@ -122,6 +122,7 @@ class sync_tool_grades extends adhoc_task {
                         mtrace("Skipping - Invalid grade $mtracecontent.");
                         continue;
                     }
+                    $grade = floatval($grade); // Grade must be sent as a numeric value, not a string.
 
                     if (empty($grademax)) {
                         mtrace("Skipping - Invalid grademax $mtracecontent.");
