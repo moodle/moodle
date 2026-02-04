@@ -88,4 +88,4 @@ Feature: Zero state on my overview block
   @javascript @accessibility
   Scenario: Evaluate the accessibility of the My courses (zero state)
     When I am on the "My courses" page logged in as "manager"
-    Then the page should meet accessibility standards
+    Then the page should meet accessibility standards with "best-practice" extra tests
