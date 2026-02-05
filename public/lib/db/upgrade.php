@@ -1711,5 +1711,12 @@ function xmldb_main_upgrade($oldversion) {
         }
         upgrade_main_savepoint(true, 2026013000.03);
     }
+
+    if ($oldversion < 2026013000.04) {
+        \core_question\category_manager::fix_restored_category_parents();
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026013000.04);
+    }
+
     return true;
 }
