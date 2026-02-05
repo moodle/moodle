@@ -24,6 +24,13 @@
  */
 import GroupSearch from 'core_group/comboboxsearch/group';
 import Url from 'core/url';
+import emitDeprecation from 'core/deprecated';
+
+emitDeprecation('gradereport_singleview/group', {
+    replacement: 'core_course/actionbar/group',
+    since: '4.5',
+    mdl: 'MDL-80745',
+});
 
 export default class Group extends GroupSearch {
 
@@ -37,11 +44,6 @@ export default class Group extends GroupSearch {
      * @param {string} item The page type we are currently on.
      */
     constructor(item) {
-        window.console.warn(
-            'The gradereport_singleview/group module has been deprecated since Moodle 4.5.' +
-            ' Please use core_course/actionbar/group instead.',
-        );
-
         super();
         this.item = item;
 

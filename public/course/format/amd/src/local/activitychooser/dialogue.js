@@ -37,6 +37,7 @@ import * as Repository from 'core_courseformat/local/activitychooser/repository'
 import selectors from 'core_courseformat/local/activitychooser/selectors';
 import * as Templates from 'core/templates';
 const getPlugin = pluginName => import(pluginName);
+import emitDeprecation from 'core/deprecated';
 
 /**
  * Display the activity chooser modal.
@@ -111,10 +112,11 @@ export async function displayActivityChooserModal(
  * @param {Object} footerData Our base footer object.
  */
 export const displayChooser = (modalPromise, sectionModules, partialFavourite, footerData) => {
-    window.console.warn(
-        'The displayChooser function is deprecated. ' +
-        'Please displayActivityChooserModal instead.'
-    );
+    emitDeprecation('core_courseformat/local/activitychooser/dialogue::displayChooser', {
+        replacement: 'core_courseformat/local/activitychooser/dialogue::displayActivityChooserModal',
+        since: '5.1',
+        mdl: 'MDL-85533',
+    });
 
     // Register event listeners.
     modalPromise.then(modal => {

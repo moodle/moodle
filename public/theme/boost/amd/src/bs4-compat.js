@@ -28,10 +28,18 @@
  * @todo       Final deprecation in Moodle 6.0. See MDL-84465.
  */
 
-import {DefaultAllowlist} from './bootstrap/util/sanitizer';
+import { DefaultAllowlist } from './bootstrap/util/sanitizer';
 import Popover from 'theme_boost/bootstrap/popover';
 import Tooltip from 'theme_boost/bootstrap/tooltip';
 import log from 'core/log';
+import emitDeprecation from 'core/deprecated';
+
+emitDeprecation('theme_boost/bs4-compat', {
+    since: '5.0',
+    mdl: 'MDL-84450',
+    replacement: 'BS5 code',
+    reason: 'Bootstrap 4 is deprecated in favor of Bootstrap 5',
+});
 
 /**
  * List of Bootstrap 4 elements to replace with Bootstrap 5 elements.
@@ -44,77 +52,77 @@ const bootstrapElements = [
     {
         selector: '.alert button.close',
         replacements: [
-            {bs4: 'data-dismiss', bs5: 'data-bs-dismiss'},
+            { bs4: 'data-dismiss', bs5: 'data-bs-dismiss' },
         ],
     },
     {
         selector: '[data-toggle="modal"]',
         replacements: [
-            {bs4: 'data-toggle', bs5: 'data-bs-toggle'},
-            {bs4: 'data-target', bs5: 'data-bs-target'},
+            { bs4: 'data-toggle', bs5: 'data-bs-toggle' },
+            { bs4: 'data-target', bs5: 'data-bs-target' },
         ],
     },
     {
         selector: '.modal .modal-header button.close',
         replacements: [
-            {bs4: 'data-dismiss', bs5: 'data-bs-dismiss'},
+            { bs4: 'data-dismiss', bs5: 'data-bs-dismiss' },
         ],
     },
     {
         selector: '[data-toggle="dropdown"]',
         replacements: [
-            {bs4: 'data-toggle', bs5: 'data-bs-toggle'},
+            { bs4: 'data-toggle', bs5: 'data-bs-toggle' },
         ],
     },
     {
         selector: '[data-toggle="collapse"]',
         replacements: [
-            {bs4: 'data-toggle', bs5: 'data-bs-toggle'},
-            {bs4: 'data-target', bs5: 'data-bs-target'},
-            {bs4: 'data-parent', bs5: 'data-bs-parent'},
+            { bs4: 'data-toggle', bs5: 'data-bs-toggle' },
+            { bs4: 'data-target', bs5: 'data-bs-target' },
+            { bs4: 'data-parent', bs5: 'data-bs-parent' },
         ],
     },
     {
         selector: '.carousel [data-slide]',
         replacements: [
-            {bs4: 'data-slide', bs5: 'data-bs-slide'},
-            {bs4: 'data-target', bs5: 'data-bs-target'},
+            { bs4: 'data-slide', bs5: 'data-bs-slide' },
+            { bs4: 'data-target', bs5: 'data-bs-target' },
         ],
     },
     {
         selector: '[data-toggle="tooltip"]',
         replacements: [
-            {bs4: 'data-toggle', bs5: 'data-bs-toggle'},
-            {bs4: 'data-placement', bs5: 'data-bs-placement'},
-            {bs4: 'data-animation', bs5: 'data-bs-animation'},
-            {bs4: 'data-delay', bs5: 'data-bs-delay'},
-            {bs4: 'data-title', bs5: 'data-bs-title'},
-            {bs4: 'data-html', bs5: 'data-bs-html'},
-            {bs4: 'data-trigger', bs5: 'data-bs-trigger'},
-            {bs4: 'data-selector', bs5: 'data-bs-selector'},
-            {bs4: 'data-container', bs5: 'data-bs-container'},
+            { bs4: 'data-toggle', bs5: 'data-bs-toggle' },
+            { bs4: 'data-placement', bs5: 'data-bs-placement' },
+            { bs4: 'data-animation', bs5: 'data-bs-animation' },
+            { bs4: 'data-delay', bs5: 'data-bs-delay' },
+            { bs4: 'data-title', bs5: 'data-bs-title' },
+            { bs4: 'data-html', bs5: 'data-bs-html' },
+            { bs4: 'data-trigger', bs5: 'data-bs-trigger' },
+            { bs4: 'data-selector', bs5: 'data-bs-selector' },
+            { bs4: 'data-container', bs5: 'data-bs-container' },
         ],
     },
     {
         selector: '[data-toggle="popover"]',
         replacements: [
-            {bs4: 'data-toggle', bs5: 'data-bs-toggle'},
-            {bs4: 'data-content', bs5: 'data-bs-content'},
-            {bs4: 'data-placement', bs5: 'data-bs-placement'},
-            {bs4: 'data-animation', bs5: 'data-bs-animation'},
-            {bs4: 'data-delay', bs5: 'data-bs-delay'},
-            {bs4: 'data-title', bs5: 'data-bs-title'},
-            {bs4: 'data-html', bs5: 'data-bs-html'},
-            {bs4: 'data-trigger', bs5: 'data-bs-trigger'},
-            {bs4: 'data-selector', bs5: 'data-bs-selector'},
-            {bs4: 'data-container', bs5: 'data-bs-container'},
+            { bs4: 'data-toggle', bs5: 'data-bs-toggle' },
+            { bs4: 'data-content', bs5: 'data-bs-content' },
+            { bs4: 'data-placement', bs5: 'data-bs-placement' },
+            { bs4: 'data-animation', bs5: 'data-bs-animation' },
+            { bs4: 'data-delay', bs5: 'data-bs-delay' },
+            { bs4: 'data-title', bs5: 'data-bs-title' },
+            { bs4: 'data-html', bs5: 'data-bs-html' },
+            { bs4: 'data-trigger', bs5: 'data-bs-trigger' },
+            { bs4: 'data-selector', bs5: 'data-bs-selector' },
+            { bs4: 'data-container', bs5: 'data-bs-container' },
         ],
     },
     {
         selector: '[data-toggle="tab"]',
         replacements: [
-            {bs4: 'data-toggle', bs5: 'data-bs-toggle'},
-            {bs4: 'data-target', bs5: 'data-bs-target'},
+            { bs4: 'data-toggle', bs5: 'data-bs-toggle' },
+            { bs4: 'data-target', bs5: 'data-bs-target' },
         ],
     },
 ];
@@ -151,7 +159,7 @@ const initializeBootsrap4Components = (container) => {
     const popoverConfig = {
         container: 'body',
         trigger: 'focus',
-        allowList: Object.assign(DefaultAllowlist, {table: [], thead: [], tbody: [], tr: [], th: [], td: []}),
+        allowList: Object.assign(DefaultAllowlist, { table: [], thead: [], tbody: [], tr: [], th: [], td: [] }),
     };
     container.querySelectorAll('[data-bs-toggle="popover"]').forEach((tooltipTriggerEl) => {
         const popOverInstance = Popover.getInstance(tooltipTriggerEl);

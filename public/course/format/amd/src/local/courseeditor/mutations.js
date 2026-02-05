@@ -15,8 +15,8 @@
 
 import ajax from 'core/ajax';
 import {getString} from "core/str";
-import log from 'core/log';
 import SRLogger from "core/local/reactive/srlogger";
+import emitDeprecation from 'core/deprecated';
 
 /**
  * Flag to determine whether the screen reader-only logger has already been set, so we only need to set it once.
@@ -78,7 +78,12 @@ export default class {
      * @param {number} targetCmId optional target cm id
      */
     async _callAddModuleWebservice(courseId, modName, targetSectionNum, targetCmId) {
-        log.debug('_callAddModuleWebservice() is deprecated. Use _callNewModuleWebservice() instead');
+        emitDeprecation('core_courseformat/local/activitychooser/mutations::_callAddModuleWebservice', {
+            replacement: 'core_courseformat/local/activitychooser/mutations::_callNewModuleWebservice',
+            since: '5.0',
+            mdl: 'MDL-83469',
+        });
+
         const args = {
             courseid: courseId,
             modname: modName,
@@ -443,7 +448,12 @@ export default class {
      * @param {number} targetCmId optional the target cm id
      */
     async addModule(stateManager, modName, targetSectionNum, targetCmId) {
-        log.debug('addModule() is deprecated. Use newModule() instead');
+        emitDeprecation('core_courseformat/local/activitychooser/mutations::addModule', {
+            replacement: 'core_courseformat/local/activitychooser/mutations::newModule',
+            since: '5.0',
+            mdl: 'MDL-83469',
+        });
+
         if (!modName) {
             throw new Error(`Mutation addModule requires moduleName`);
         }

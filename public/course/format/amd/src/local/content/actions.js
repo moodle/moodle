@@ -28,7 +28,6 @@
 import {BaseComponent} from 'core/reactive';
 import {eventTypes} from 'core/local/inplace_editable/events';
 import Collapse from 'theme_boost/bootstrap/collapse';
-import log from 'core/log';
 import Modal from 'core/modal';
 import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalDeleteCancel from 'core/modal_delete_cancel';
@@ -41,6 +40,7 @@ import {getFirst} from 'core/normalise';
 import {toggleBulkSelectionAction} from 'core_courseformat/local/content/actions/bulkselection';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
+import emitDeprecation from 'core/deprecated';
 
 // Load global strings.
 prefetchStrings('core', ['movecoursesection', 'movecoursemodule', 'confirm', 'delete']);
@@ -457,7 +457,11 @@ export default class extends BaseComponent {
      * @param {Event} event the triggered event
      */
     async _requestAddModule(target, event) {
-        log.debug('AddModule action is deprecated. Use newModule instead');
+        emitDeprecation('core_courseformat/local/activitychooser/actions::addModule', {
+            replacement: 'core_courseformat/local/activitychooser/actions::newModule',
+            since: '5.0',
+            mdl: 'MDL-83469',
+        });
         event.preventDefault();
         this.reactive.dispatch('addModule', target.dataset.modname, target.dataset.sectionnum, target.dataset.beforemod);
     }
