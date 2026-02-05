@@ -67,6 +67,9 @@
 - The Hook Manager now uses localcache instead of caching via MUC.
 
   For more information see [MDL-87107](https://tracker.moodle.org/browse/MDL-87107)
+- `\core\output\core_renderer::confirm()`'s `$displayoptions` parameter now also accepts a `headinglevel` option that developers can use to specify the heading level of the confirmation's heading. If not specified, the confirmation heading will be rendered in an `h4` tag.
+
+  For more information see [MDL-87694](https://tracker.moodle.org/browse/MDL-87694)
 
 ### Removed
 

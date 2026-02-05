@@ -75,6 +75,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The Hook Manager now uses localcache instead of caching via MUC.
 
   For more information see [MDL-87107](https://tracker.moodle.org/browse/MDL-87107)
+- `\core\output\core_renderer::confirm()`'s `$displayoptions` parameter now also accepts a `headinglevel` option that developers can use to specify the heading level of the confirmation's heading. If not specified, the confirmation heading will be rendered in an `h4` tag.
+
+  For more information see [MDL-87694](https://tracker.moodle.org/browse/MDL-87694)
 
 #### Removed
 
@@ -573,6 +576,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The WebService core_webservice_get_site_info now returns three new fields: "usercanviewconfig" indicating whether the current user can see the administration tree, "usercanchangeconfig" indicating whether the current user can change the site configuration, and site secret.
 
   For more information see [MDL-87034](https://tracker.moodle.org/browse/MDL-87034)
+
+### aiplacement
+
+#### Added
+
+- A new page-level property has been added to moodle_page to indicate whether AI-related UI elements are preferred to be shown on a given page. This value acts as an advisory hint only. It does not enforce the visibility of AI-related UI elements globally.
+
+  For more information see [MDL-87658](https://tracker.moodle.org/browse/MDL-87658)
 
 ### auth_ldap
 
