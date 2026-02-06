@@ -1,6 +1,6 @@
 # core_customfield (subsystem) Upgrade notes
 
-## 5.1.1+
+## 5.1.2
 
 ### Added
 
