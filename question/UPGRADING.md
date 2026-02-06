@@ -1,6 +1,6 @@
 # core_question (subsystem) Upgrade notes
 
-## 5.0.4+
+## 5.0.5
 
 ### Fixed
 
