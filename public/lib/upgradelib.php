@@ -2518,7 +2518,11 @@ function check_upgrade_key($upgradekeyhash) {
 
                 /** @var core_admin_renderer $output */
                 $output = $PAGE->get_renderer('core', 'admin');
-                echo $output->upgradekey_form_page(new moodle_url('/admin/index.php', array('cache' => 0)));
+
+                echo $output->upgradekey_form_page_with_validation(
+                    new moodle_url('/admin/index.php', ['cache' => 0]),
+                    $upgradekeyhash !== null,
+                );
                 die();
             } else {
                 // This should not happen.
