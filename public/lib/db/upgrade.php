@@ -2431,5 +2431,27 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025100601.10);
     }
 
+    if ($oldversion < 2025100602.01) {
+        $table = new xmldb_table('customfield_data');
+
+        // Define index fieldid-decvalue (not unique) to be dropped form customfield_data.
+        $index = new xmldb_index('fieldid-decvalue', XMLDB_INDEX_NOTUNIQUE, ['fieldid', 'decvalue']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Changing precision of field decvalue on table customfield_data to (15, 5).
+        $field = new xmldb_field('decvalue', XMLDB_TYPE_NUMBER, '15, 5', null, null, null, null, 'intvalue');
+        $dbman->change_field_precision($table, $field);
+
+        // Conditionally launch add index fieldid-decvalue.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025100602.01);
+    }
+
     return true;
 }
