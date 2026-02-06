@@ -1,0 +1,9 @@
+issueNumber: MDL-87896
+notes:
+  core_admin:
+    - message: >-
+        The `core_admin_renderer::upgradekey_form_page(...)` method has been
+        deprecated, existing callers and/or overrides of this method should
+        instead use replacement
+        `core_admin_renderer::upgradekey_form_page_with_validation(...)`
+      type: deprecated
