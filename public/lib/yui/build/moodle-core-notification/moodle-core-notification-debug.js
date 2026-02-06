@@ -30,7 +30,6 @@ Y.log("The moodle-core-notification parent module has been deprecated. " +
     "requires": [
         "moodle-core-notification-dialogue",
         "moodle-core-notification-alert",
-        "moodle-core-notification-confirm",
         "moodle-core-notification-exception",
         "moodle-core-notification-ajaxexception"
     ]

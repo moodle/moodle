@@ -28,7 +28,6 @@ YUI.add('moodle-core-notification', function (Y, NAME) {
     "requires": [
         "moodle-core-notification-dialogue",
         "moodle-core-notification-alert",
-        "moodle-core-notification-confirm",
         "moodle-core-notification-exception",
         "moodle-core-notification-ajaxexception"
     ]

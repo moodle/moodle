@@ -46,11 +46,9 @@ class confirm_action extends component_action {
         ?string $dialogtype = null,
     ) {
         if ($callback !== null) {
-            debugging(
-                'The callback argument to new confirm_action() has been deprecated.' .
-                    ' If you need to use a callback, please write Javascript to use moodle-core-notification-confirmation ' .
-                    'and attach to the provided events.',
-                DEBUG_DEVELOPER,
+            throw new \core\exception\coding_exception(
+                'The callback argument to new confirm_action() has been deprecated. '
+                . 'If you need to use a callback, please write appropriate Javascript.',
             );
         }
         parent::__construct('click', 'M.util.show_confirm_dialog', [
