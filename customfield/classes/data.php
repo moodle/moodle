@@ -103,22 +103,34 @@ class data extends persistent {
     /**
      * For integer data field, persistent won't allow empty string, swap for null
      *
+     * Ensure we constrain maximum value to that supported by database
+     *
      * @param string|null $value
      * @return self
      */
     protected function set_intvalue(?string $value): self {
-        $value = (string) $value === '' ? null : (int) $value;
+        if ((string) $value === '') {
+            $value = null;
+        } else {
+            $value = min((int) $value, SQL_INT_MAX);
+        }
         return $this->raw_set('intvalue', $value);
     }
 
     /**
      * For decimal data field, persistent won't allow empty string, swap for null
      *
+     * Ensure we constrain maximum value to that supported by database
+     *
      * @param string|null $value
      * @return self
      */
     protected function set_decvalue(?string $value): self {
-        $value = (string) $value === '' ? null : (float) $value;
+        if ((string) $value === '') {
+            $value = null;
+        } else {
+            $value = min((float) $value, SQL_INT_MAX + .9999);
+        }
         return $this->raw_set('decvalue', $value);
     }
 
