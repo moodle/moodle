@@ -68,7 +68,7 @@ $string['pathsunsecuredataroot'] = 'Dataroot-en kokapena ez da segurua';
 $string['pathswrongadmindir'] = 'Admin direktorioa ez da existitzen';
 $string['phpextension'] = '{$a} PHP hedapena';
 $string['phpversion'] = 'PHP bertsioa';
-$string['webserverconfigproblemdescription'] = 'Zure web zerbitzaria ez dago /public direktoriotik kanpoko fitxategietara sarbidea saihesteko. Zure web zerbitzaria zehazki nola konfiguratu behar duzun jakiteko egin klik hemen: <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> . Behin konfigurazioa aldatzean, <a href="{$a}">joan berriz webgunearen jatorrira</a>.';
+$string['webserverconfigproblemdescription'] = 'Zure web zerbitzaria ez dago /public direktoriotik kanpoko fitxategietara sarbidea saihesteko. Zure web zerbitzaria konfiguratzeko xehetasunetarako egin klik hemen: <a href="https://moodledev.io/docs/5.1/guides/restructure">Upgrading - Code directories restructure</a>. Behin konfigurazioa aldatzean, <a href="{$a}">joan berriz webgunearen jatorrira</a>.';
 $string['webservernotconfigured'] = 'Web zerbitzaria konfiguratu gabe';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Orri hau ikusten baduzu <strong>{$a->packname} {$a->packversion}</strong> paketea zure ordenagailuan instalatu ahal izan duzu. Zorionak!';
