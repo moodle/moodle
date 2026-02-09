@@ -2351,7 +2351,7 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     protected function moodlenet_removal_warning(): string {
         $moodlenetenabled = get_config('tool_moodlenet', 'enablemoodlenet');
-        if (empty($moodlenetenabled)) {
+        if (!empty($moodlenetenabled)) {
             $moodlenetwarning = get_string('moodlenetremovalwarning', 'admin');
             return $this->warning($moodlenetwarning);
         }
