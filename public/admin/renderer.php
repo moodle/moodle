@@ -279,7 +279,6 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $showfeedbackencouragement Whether the feedback encouragement content should be displayed or not.
      * @param bool $showservicesandsupport Whether the services and support content should be displayed or not.
      * @param string $xmlrpcwarning XML-RPC deprecation warning message.
-     * @param string $moodlenetwarning MoodleNet removal warning message.
      *
      * @return string HTML to output.
      */
@@ -305,8 +304,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $showcampaigncontent = false,
         bool $showfeedbackencouragement = false,
         bool $showservicesandsupport = false,
-        $xmlrpcwarning = '',
-        $moodlenetwarning = ''
+        $xmlrpcwarning = ''
     ) {
 
         global $CFG;
@@ -332,7 +330,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->mobile_configuration_warning($mobileconfigured);
         $output .= $this->forgotten_password_url_warning($invalidforgottenpasswordurl);
         $output .= $this->mnet_deprecation_warning($xmlrpcwarning);
-        $output .= $this->moodlenet_removal_warning($moodlenetwarning);
+        $output .= $this->moodlenet_removal_warning();
         $output .= $this->userfeedback_encouragement($showfeedbackencouragement);
         $output .= $this->services_and_support_content($showservicesandsupport);
         $output .= $this->campaign_content($showcampaigncontent);
@@ -2349,15 +2347,16 @@ class core_admin_renderer extends plugin_renderer_base {
     /**
      * Display a warning about the removal of MoodleNet integration.
      *
-     * @param string $moodlenetwarning The warning message
      * @return string HTML to output.
      */
-    protected function moodlenet_removal_warning($moodlenetwarning) {
-        if (empty($moodlenetwarning)) {
-            return '';
+    protected function moodlenet_removal_warning(): string {
+        $moodlenetenabled = get_config('tool_moodlenet', 'enablemoodlenet');
+        if (empty($moodlenetenabled)) {
+            $moodlenetwarning = get_string('moodlenetremovalwarning', 'admin');
+            return $this->warning($moodlenetwarning);
         }
 
-        return $this->warning($moodlenetwarning);
+        return '';
     }
 
     /**
