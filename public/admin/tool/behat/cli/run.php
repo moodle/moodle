@@ -224,6 +224,11 @@ if (empty($parallelrun)) {
     $cmds['singlerun'] = $runtestscommand;
 
     echo "Running single behat site: with " . $runtestscommand . PHP_EOL;
+    // The inner PHP process is not marked as having an interactive terminal even if it's passed
+    // through from this one which does, so we need to pass it through as an environment variable.
+    if (function_exists('posix_isatty') && posix_isatty(STDOUT)) {
+        putenv('MOODLE_BEHAT_RUNNING_IN_TTY=1');
+    }
     passthru("php $runtestscommand", $status);
     $exitcodes['singlerun'] = $status;
     chdir($cwd);
