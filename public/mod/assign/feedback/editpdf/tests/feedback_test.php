@@ -384,9 +384,14 @@ final class feedback_test extends \advanced_testcase {
         $this->assertEquals($combinedpdf->get_contenthash(), document_services::BLANK_PDF_HASH);
 
         // Generate page images and verify that the combined pdf has been replaced.
-        document_services::get_page_images_for_attempt($assign, $student->id, -1);
+        $pageimages = document_services::get_page_images_for_attempt($assign, $student->id, -1);
         $combinedpdf = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertNotEquals($combinedpdf->get_contenthash(), document_services::BLANK_PDF_HASH);
+
+        // Verify that the file name contains the page number from Ghostscript.
+        foreach ($pageimages as $index => $image) {
+            $this->assertTrue(str_contains($image->get_filename(), "page{$index}"));
+        }
 
         $notempty = page_editor::has_annotations_or_comments($grade->id, false);
         $this->assertFalse($notempty);
