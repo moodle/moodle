@@ -144,6 +144,11 @@ class core_course_external extends external_api {
         //retrieve the course
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
 
+        // Accessing the site home via the web service is not allowed when it is disabled.
+        if ($course->id == SITEID && empty($CFG->enablemyhome)) {
+            throw new moodle_exception('error:sitehomeisdisabled', 'course');
+        }
+
         // now security checks
         $context = context_course::instance($course->id, IGNORE_MISSING);
         try {

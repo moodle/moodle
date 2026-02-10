@@ -242,6 +242,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $expected[] = ['name' => 'coursegraceperiodafter', 'value' => $CFG->coursegraceperiodafter];
         $expected[] = ['name' => 'coursegraceperiodbefore', 'value' => $CFG->coursegraceperiodbefore];
 
+        $expected[] = ['name' => 'enablemyhome', 'value' => $CFG->enablemyhome ?? 1];
         $expected[] = ['name' => 'enabledashboard', 'value' => $CFG->enabledashboard];
         $expected[] = ['name' => 'customusermenuitems', 'value' => $CFG->customusermenuitems];
         $expected[] = ['name' => 'timezone', 'value' => $CFG->timezone];
