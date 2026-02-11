@@ -70,7 +70,7 @@ $string['resettags'] = 'Delete tags';
 $string['resetlogs'] = 'Delete custom logs';
 $string['resetrecordings'] = 'Delete recordings';
 $string['resetlogs_help'] = 'Deleting the logs will result in lost references to recordings.';
-$string['resetrecordings_help'] = 'Deleting the recordings will make them inaccessible from anywhere. This action cannot be undone!';
+$string['resetrecordings_help'] = 'Deleting the recordings will remove them from this course. The media stored on the BigBlueButton server are not affected.';
 
 $string['search:activity'] = 'BigBlueButton - activity information';
 $string['search:tags'] = 'BigBlueButton - tags information';
@@ -537,7 +537,7 @@ $string['view_conference_action_end'] = 'End session';
 $string['view_recording'] = 'recording';
 $string['view_recording_link'] = 'imported link';
 $string['view_recording_link_warning'] = 'This is a link pointing to a recording that was created in a different course or activity.';
-$string['view_recording_delete_confirmation'] = 'Are you sure you want to delete {$a}?';
+$string['view_recording_delete_confirmation'] = 'Are you sure you want to permanently delete the {$a}? This will remove the media file from the BigBlueButton server and cannot be undone.';
 $string['view_recording_delete_confirmation_warning_s'] = 'This recording has {$a} link associated that was imported into a different course or activity. If the recording is deleted, this link will also be removed.';
 $string['view_recording_delete_confirmation_warning_p'] = 'This recording has {$a} links associated that were imported into different courses or activities. If the recording is deleted, these links will also be removed.';
 $string['view_recording_publish_confirmation'] = 'Are you sure you want to publish this {$a}?';
