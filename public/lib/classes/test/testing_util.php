@@ -1019,7 +1019,11 @@ abstract class testing_util {
     public static function get_moodle_relative_to_root_package(): string {
         global $CFG;
 
-        $rootpackage = \Composer\InstalledVersions::getRootPackage();
+        if (!class_exists(\Composer\InstalledVersions::class)) {
+            // If composer is not being used, we assume that the root package is Moodle and return empty string.
+            return '';
+        }
+
         $rootpath = realpath(\Composer\InstalledVersions::getRootPackage()['install_path']);
 
         $moodlepath = realpath($CFG->root);
