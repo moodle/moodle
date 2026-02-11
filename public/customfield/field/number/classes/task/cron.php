@@ -18,7 +18,9 @@ namespace customfield_number\task;
 
 use core\task\scheduled_task;
 use core_customfield\category_controller;
+use core_customfield\customfield\shared_handler;
 use core_customfield\field_controller;
+use core_customfield\handler;
 use customfield_number\provider_base;
 
 /**
@@ -65,10 +67,24 @@ class cron extends scheduled_task {
             $category = category_controller::create(0, $cat);
             // Create an instance of field controller for each field and recalculate the value if field provider is available.
             $field = field_controller::create(0, $row, $category);
-            if ($provider = provider_base::instance($field)) {
-                if ($provider->is_available()) {
-                    $provider->recalculate(null, $cat->component, $cat->area, $cat->itemid);
+            $provider = provider_base::instance($field);
+            if (!$provider || !$provider->is_available()) {
+                continue;
+            }
+            // For shared custom fields, all other component/areas must be recalculated.
+            if ($cat->component === 'core_customfield' && $cat->area === 'shared') {
+                $handlers = \core_component::get_component_classes_in_namespace(null, 'customfield');
+                // Remove shared handler since the shared area has no instances.
+                unset($handlers[shared_handler::class]);
+                foreach ($handlers as $handlerclass => $path) {
+                    if (!is_subclass_of($handlerclass, handler::class)) {
+                        continue;
+                    }
+                    $handler = $handlerclass::create();
+                    $provider->recalculate(null, $handler->get_component(), $handler->get_area(), $handler->get_itemid());
                 }
+            } else {
+                $provider->recalculate(null, $cat->component, $cat->area, (int)$cat->itemid);
             }
         }
     }
