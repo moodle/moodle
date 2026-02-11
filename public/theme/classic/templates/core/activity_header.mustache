@@ -80,6 +80,14 @@
             </div>
         {{/showmanualcompletion}}
     {{/isautomatic}}
+    {{#hascompletion}}
+        {{#isautomatic}}
+            <div class="header-actions">
+                {{> core_course/completion_status }}
+            </div>
+        {{/isautomatic}}
+    {{/hascompletion}}
+
 </div>
 
 
