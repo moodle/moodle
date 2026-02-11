@@ -25,7 +25,7 @@ namespace core\tests;
  */
 class environment extends \core\environment {
     /** @var string|null The path to the vendor dir if modified */
-    protected static ?string $vendorpath;
+    protected static ?string $vendorpath = null;
 
     /** @var bool|null Whether developer mode is enabled, or defer to $CFG */
     protected static ?bool $devmode = null;
