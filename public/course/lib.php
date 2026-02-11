@@ -2505,8 +2505,8 @@ function update_module($moduleinfo) {
  */
 function mod_duplicate_activity($course, $cm, $sr = null) {
     global $PAGE;
-
-    $newcm = duplicate_module($course, $cm);
+    $cmaction = \core_courseformat\formatactions::cm($course->id);
+    $newcm = $cmaction->duplicate($cm->id);
 
     $resp = new stdClass();
     if ($newcm) {

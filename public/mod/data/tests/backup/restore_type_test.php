@@ -71,7 +71,7 @@ final class restore_type_test extends \advanced_testcase {
             $data
         );
         // Duplicate the data module with the type.
-        $newdata = duplicate_module($course, get_fast_modinfo($course)->get_cm($data->cmid));
+        $newdata = \core_courseformat\formatactions::cm($course)->duplicate($data->cmid);
         // Verify the settings of the duplicated activity.
         $fields = $DB->get_records('data_fields', ['dataid' => $newdata->instance], 'id');
         $newfield = reset($fields);

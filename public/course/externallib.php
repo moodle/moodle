@@ -3785,8 +3785,8 @@ class core_course_external extends external_api {
                 if (!course_allowed_module($course, $cm->modname)) {
                     throw new moodle_exception('No permission to create that activity');
                 }
-                if ($newcm = duplicate_module($course, $cm)) {
-
+                $cmaction = \core_courseformat\formatactions::cm($course->id);
+                if ($newcm = $cmaction->duplicate($cm->id)) {
                     $modinfo = $format->get_modinfo();
                     $section = $modinfo->get_section_info($newcm->sectionnum);
                     $cm = $modinfo->get_cm($id);

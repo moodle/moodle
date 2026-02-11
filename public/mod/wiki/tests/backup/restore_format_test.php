@@ -72,7 +72,7 @@ final class restore_format_test extends \advanced_testcase {
         $course = $generator->create_course();
         $wiki = $generator->create_module('wiki', array_merge(['course' => $course->id, 'defaultformat' => $format]));
         // Duplicate the wiki.
-        $newwikicm = duplicate_module($course, get_fast_modinfo($course)->get_cm($wiki->cmid));
+        $newwikicm = \core_courseformat\formatactions::cm($course)->duplicate($wiki->cmid);
         // Verify the settings of the duplicated activity.
         $newwiki = $DB->get_record('wiki', ['id' => $newwikicm->instance]);
         $this->assertEquals($expected, $newwiki->defaultformat);

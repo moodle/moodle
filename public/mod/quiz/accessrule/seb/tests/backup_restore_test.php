@@ -72,7 +72,7 @@ final class backup_restore_test extends \advanced_testcase {
      * @return \cm_info|null
      */
     protected function backup_and_restore_quiz() {
-        return duplicate_module($this->course, get_fast_modinfo($this->course)->get_cm($this->quiz->cmid));
+        return \core_courseformat\formatactions::cm($this->course)->duplicate($this->quiz->cmid);
     }
 
     /**

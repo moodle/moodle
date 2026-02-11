@@ -577,7 +577,7 @@ class stateactions {
         $affectedcmids = [];
         $action = formatactions::cm($course);
         foreach ($cms as $cm) {
-            if ($newcm = duplicate_module($course, $cm)) {
+            if ($newcm = $action->duplicate($cm->id)) {
                 if ($targetsection) {
                     if ($beforecm) {
                         $action->move_before($newcm->id, $beforecm->id);

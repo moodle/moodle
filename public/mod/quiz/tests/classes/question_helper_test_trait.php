@@ -199,7 +199,7 @@ trait question_helper_test_trait {
      * @return \cm_info|null
      */
     protected function duplicate_quiz($course, $quiz): ?\cm_info {
-        return duplicate_module($course, get_fast_modinfo($course)->get_cm($quiz->cmid));
+        return \core_courseformat\formatactions::cm($course)->duplicate($quiz->cmid);
     }
 
     /**
