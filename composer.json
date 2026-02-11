@@ -11,10 +11,12 @@
         "filp/whoops": "^2.15",
         "moodle/moodle-testing": "^1.0"
     },
-    "autoload-dev": {
+    "autoload": {
         "psr-0": {
             "Moodle\\BehatExtension": "lib/behat/extension/"
-        },
+        }
+    },
+    "autoload-dev": {
         "psr-4": {
             "core_testing\\": "public/lib/testing/classes/",
             "core_phpunit\\": "public/lib/phpunit/classes/"

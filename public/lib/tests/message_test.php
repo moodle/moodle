@@ -261,8 +261,8 @@ final class message_test extends \advanced_testcase {
     /**
      * Test get_messages_by_component method.
      *
-     * @covers \phpunit_message_sink::get_messages_by_component
-     * @covers \phpunit_message_sink::get_messages_by_component_and_type
+     * @covers \core\test\phpunit\message_sink::get_messages_by_component
+     * @covers \core\test\phpunit\message_sink::get_messages_by_component_and_type
      */
     public function test_get_messages_by_component(): void {
         $this->resetAfterTest();

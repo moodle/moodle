@@ -2157,7 +2157,7 @@ You can see it appended to your <a href="' . $assignurl .
         $this->add_submission($student, $assign);
         $this->submit_for_grading($student, $assign);
         $this->mark_submission($teacher, $assign, $student);
-        \phpunit_util::stop_message_redirection();
+        \core\test\phpunit\phpunit_util::stop_message_redirection();
 
         // Now run cron and see that one message was sent.
         \core\cron::setup_user();

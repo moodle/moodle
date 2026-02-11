@@ -2505,7 +2505,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         }
         $from = format_backtrace($backtrace, CLI_SCRIPT || NO_DEBUG_DISPLAY);
         if (PHPUNIT_TEST) {
-            if (phpunit_util::debugging_triggered($message, $level, $from)) {
+            if (\core\test\phpunit\phpunit_util::debugging_triggered($message, $level, $from)) {
                 // We are inside test, the debug message was logged.
                 return true;
             }

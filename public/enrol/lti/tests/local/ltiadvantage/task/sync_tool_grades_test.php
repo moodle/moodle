@@ -20,8 +20,6 @@ use enrol_lti\helper;
 use Packback\Lti1p3\LtiAssignmentsGradesService;
 use Packback\Lti1p3\LtiGrade;
 use Packback\Lti1p3\LtiLineitem;
-use core\task\manager;
-use phpunit_util;
 
 defined('MOODLE_INTERNAL') || die();
 

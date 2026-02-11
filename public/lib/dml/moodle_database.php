@@ -454,7 +454,6 @@ abstract class moodle_database {
                     defined('BEHAT_SITE_RUNNING')) {
 
                     // Set list of tables that are updated.
-                    require_once(__DIR__.'/../testing/classes/util.php');
                     testing_util::set_table_modified_by_sql($sql);
                 }
         }

@@ -23,5 +23,5 @@ namespace core_phpunit\exception;
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_exception extends \core\exception\coding_exception {
-}
+
+class_alias(\core\test\phpunit\exception\test_exception::class, test_exception::class);

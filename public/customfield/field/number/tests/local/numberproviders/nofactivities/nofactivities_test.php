@@ -108,7 +108,7 @@ final class nofactivities_test extends advanced_testcase {
         $this->assertEquals(3.0000, $course1customfield);
 
         // Now, run the course module deletion adhoc task.
-        \phpunit_util::run_all_adhoc_tasks();
+        \core\test\phpunit\phpunit_util::run_all_adhoc_tasks();
         $providers[0]->recalculate((int)$course1->id);
         $course1customfield = $DB->get_field('customfield_data', 'decvalue', ['instanceid' => $course1->id]);
         $this->assertEquals(3.0000, $course1customfield);

@@ -44,6 +44,11 @@ putenv('BEHAT_CLI=0');
 require_once(__DIR__ . '/../../../../lib/clilib.php');
 require_once(__DIR__ . '/../../../../lib/behat/lib.php');
 
+$autoload = __DIR__ . '/../../../../../vendor/autoload.php';
+if (file_exists($autoload)) {
+    require_once($autoload);
+}
+
 list($options, $unrecognized) = cli_get_params(
     array(
         'parallel' => 0,

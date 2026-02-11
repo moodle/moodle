@@ -42,6 +42,11 @@ require_once(__DIR__.'/../../../../lib/clilib.php');
 require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 require_once(__DIR__.'/../../../../lib/testing/lib.php');
 
+$autoload = __DIR__ . '/../../../../../vendor/autoload.php';
+if (file_exists($autoload)) {
+    require_once($autoload);
+}
+
 list($options, $unrecognized) = cli_get_params(
     [
         'help'                 => false,

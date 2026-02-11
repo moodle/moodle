@@ -123,7 +123,7 @@ CSS
      */
     public function test_is_valid_file($path, $valid): void {
         $scss = new \core_scss();
-        $pathvalid = \phpunit_util::call_internal_method($scss, 'is_valid_file', [$path], \core_scss::class);
+        $pathvalid = \core\test\phpunit\phpunit_util::call_internal_method($scss, 'is_valid_file', [$path], \core_scss::class);
         $this->assertSame($valid, $pathvalid);
     }
 

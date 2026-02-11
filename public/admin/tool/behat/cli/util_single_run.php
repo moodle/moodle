@@ -40,6 +40,7 @@ putenv('BEHAT_CLI=0');
 // Basic functions.
 require_once(__DIR__ . '/../../../../lib/clilib.php');
 require_once(__DIR__ . '/../../../../lib/behat/lib.php');
+require_once(dirname(__DIR__, 5) . '/vendor/autoload.php');
 
 // CLI options.
 list($options, $unrecognized) = cli_get_params(

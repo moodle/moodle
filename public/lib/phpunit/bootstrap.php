@@ -267,12 +267,12 @@ if (PHPUNIT_UTIL) {
 \core\hook\manager::get_instance();
 
 // Is database and dataroot ready for testing?
-[$errorcode, $message] = phpunit_util::testing_ready_problem();
+[$errorcode, $message] = \core\test\phpunit\phpunit_util::testing_ready_problem();
 // Print some version info.
-phpunit_util::bootstrap_moodle_info();
+\core\test\phpunit\phpunit_util::bootstrap_moodle_info();
 if ($errorcode) {
     phpunit_bootstrap_error($errorcode, $message);
 }
 
 // Prepare for the first test run - store fresh globals, reset database and dataroot, etc.
-phpunit_util::bootstrap_init();
+\core\test\phpunit\phpunit_util::bootstrap_init();

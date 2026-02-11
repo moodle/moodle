@@ -472,7 +472,7 @@ function get_docs_url($path = null) {
  */
 function format_backtrace($callers, $plaintext = false) {
     // Do not use $CFG->dirroot because it might not be available in destructors.
-    $dirroot = dirname(__DIR__, 2);
+    $dirroot = realpath(dirname(__DIR__, 2));
 
     if (empty($callers)) {
         return '';
@@ -490,7 +490,7 @@ function format_backtrace($callers, $plaintext = false) {
         $line .= sprintf(
             'line %d of %s',
             $caller['line'],
-            str_replace($dirroot, '', $caller['file']),
+            str_replace($dirroot, '', realpath($caller['file'])),
         );
         if (isset($caller['function'])) {
             $line .= ': call to ';

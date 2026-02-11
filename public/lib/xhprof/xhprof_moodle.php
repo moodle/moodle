@@ -30,7 +30,6 @@ require_once($CFG->libdir . '/xhprof/xhprof_lib/utils/xhprof_runs.php');
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->libdir . '/setuplib.php');
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->libdir . '/phpunit/classes/util.php');
 require_once($CFG->dirroot . '/backup/util/xml/xml_writer.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/output/xml_output.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/output/file_xml_output.class.php');
@@ -679,7 +678,7 @@ function profiling_export_generate(array $runids, $tmpdir) {
     $release = $CFG->release;
     $version = $CFG->version;
     $dbtype = $CFG->dbtype;
-    $githash = phpunit_util::get_git_hash();
+    $githash = \core\test\phpunit\phpunit_util::get_git_hash();
     $date = time();
 
     // Create the xml output and writer for the main file.

@@ -17,10 +17,12 @@
 /**
  * Coverage information for the core_block subsystem.
  *
+ * @package    core
+ * @category   phpunit
  * @copyright  2021 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-return new class extends phpunit_coverage_info {
+return new class extends \core\test\phpunit\coverage_info {
     /** @var array The list of files relative to the plugin root to include in coverage generation. */
     protected $includelistfiles = [
         'moodleblock.class.php',

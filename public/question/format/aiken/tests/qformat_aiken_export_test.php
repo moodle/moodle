@@ -48,8 +48,8 @@ final class qformat_aiken_export_test extends advanced_testcase {
      */
     public function assert_same_aiken($expectedtext, $text) {
         $this->assertEquals(
-            phpunit_util::normalise_line_endings($expectedtext),
-            phpunit_util::normalise_line_endings($text)
+            \core\test\phpunit\phpunit_util::normalise_line_endings($expectedtext),
+            \core\test\phpunit\phpunit_util::normalise_line_endings($text)
         );
     }
 

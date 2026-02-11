@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/message/output/popup/tests/base.php');
 final class externallib_test extends \advanced_testcase {
     use message_popup_test_helper;
 
-    /** @var \phpunit_message_sink message redirection. */
+    /** @var \core\test\phpunit\message_sink message redirection. */
     public $messagesink;
 
     /**

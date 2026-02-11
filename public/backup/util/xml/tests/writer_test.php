@@ -26,7 +26,6 @@
 namespace core_backup;
 
 use memory_xml_output;
-use phpunit_util;
 use xml_contenttransformer;
 use xml_output;
 use xml_writer;
@@ -333,7 +332,7 @@ final class writer_test extends \basic_testcase {
         $fcontents = file_get_contents($CFG->dirroot . '/backup/util/xml/tests/fixtures/test1.xml');
 
         // Normalise carriage return characters.
-        $fcontents = phpunit_util::normalise_line_endings($fcontents);
+        $fcontents = \core\test\phpunit\phpunit_util::normalise_line_endings($fcontents);
         $this->assertEquals(trim($result), trim($fcontents));
     }
 }

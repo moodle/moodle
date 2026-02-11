@@ -187,7 +187,7 @@ final class cachestore_cluster_redis_test extends \advanced_testcase {
         $store = new cachestore_redis('TestCluster', $config);
         $debugging = $this->getDebuggingMessages();
         // Failed to connect should show a debugging message.
-        $this->assertCount(1, \phpunit_util::get_debugging_messages() );
+        $this->assertCount(1, \core\test\phpunit\phpunit_util::get_debugging_messages() );
         $this->assertStringContainsString('Couldn\'t map cluster keyspace using any provided seed', $debugging[0]->message);
         $this->resetDebugging();
         $this->assertFalse($store->is_ready());

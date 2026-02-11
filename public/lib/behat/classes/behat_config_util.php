@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/behat_command.php');
-require_once(__DIR__ . '/../../testing/classes/tests_finder.php');
 
 /**
  * Behat configuration manager
@@ -1064,7 +1063,7 @@ class behat_config_util {
     /**
      * Cleans the path returned by get_components_with_tests() to standarize it
      *
-     * @see tests_finder::get_all_directories_with_tests() it returns the path including /tests/
+     * @see \core\test\test_finder::get_all_directories_with_tests() it returns the path including /tests/
      * @param string $path
      * @return string The string without the last /tests part
      */
@@ -1127,7 +1126,7 @@ class behat_config_util {
      */
     protected function get_components_with_tests() {
         if (empty($this->componentswithtests)) {
-            $this->componentswithtests = tests_finder::get_components_with_tests('behat');
+            $this->componentswithtests = \core\test\test_finder::get_components_with_tests('behat');
         }
 
         return $this->componentswithtests;

@@ -1,5 +1,4 @@
 <?php
-use PHPUnit\Framework\Attributes\After;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,6 +13,8 @@ use PHPUnit\Framework\Attributes\After;
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+use PHPUnit\Framework\Attributes\After;
 
 /**
  * The simplest PHPUnit test case customised for Moodle
@@ -47,11 +48,11 @@ abstract class basic_testcase extends base_testcase {
         global $DB;
 
         if ($DB->is_transaction_started()) {
-            phpunit_util::reset_all_data();
+            \core\test\phpunit\phpunit_util::reset_all_data();
             throw new coding_exception('basic_testcase ' . $this->getName() . ' is not supposed to use database transactions!');
         }
 
-        phpunit_util::reset_all_data(true);
+        \core\test\phpunit\phpunit_util::reset_all_data(true);
     }
 
     /**

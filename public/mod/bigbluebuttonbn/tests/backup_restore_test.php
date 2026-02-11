@@ -206,7 +206,7 @@ final class backup_restore_test extends restore_date_testcase {
         // Delete the course module.
         \core_courseformat\formatactions::cm($this->course->id)->delete($bbactivitycm->id);
         // Now, run the course module deletion adhoc task.
-        \phpunit_util::run_all_adhoc_tasks();
+        \core\test\phpunit\phpunit_util::run_all_adhoc_tasks();
         $currentinstances = instance::get_all_instances_in_course($this->course->id);
         $this->assertEmpty($currentinstances);
         // Try restoring.

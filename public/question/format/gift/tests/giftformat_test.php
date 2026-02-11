@@ -16,7 +16,7 @@
 
 namespace qformat_gift;
 
-use phpunit_util;
+use core\test\phpunit\phpunit_util;
 use qformat_gift;
 use question_bank;
 use question_check_specified_fields_expectation;

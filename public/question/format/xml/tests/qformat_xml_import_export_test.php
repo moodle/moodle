@@ -21,7 +21,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/questionlib.php');
@@ -85,7 +84,7 @@ final class qformat_xml_import_export_test extends advanced_testcase {
      */
     protected function normalise_xml($xml) {
         // Normalise line endings.
-        $xml = phpunit_util::normalise_line_endings($xml);
+        $xml = \core\test\phpunit\phpunit_util::normalise_line_endings($xml);
         $xml = preg_replace("~\n$~", "", $xml); // Strip final newline in file.
 
         // Replace all numbers in question id comments with 0.
