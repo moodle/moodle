@@ -35632,13 +35632,14 @@ select {
   border-bottom: 1px solid #dee2e6;
 }
 .path-mod .activity-information .completion-info {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid #dee2e6;
 }
 .path-mod .activity-description {
   padding-top: 1rem;
   padding-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6;
 }
 .path-mod .activity-description > .box.py-3 {
   padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
@@ -35646,6 +35647,27 @@ select {
 }
 .path-mod .activity-description > .box.py-3:empty {
   display: none;
+}
+.path-mod .automatic-completion-title {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.path-mod .automatic-completion-conditions ul {
+  list-style: none;
+  padding-left: 0;
+}
+.path-mod .automatic-completion-conditions li {
+  position: relative;
+  padding-left: 2rem;
+}
+.path-mod .automatic-completion-conditions li::before {
+  content: "•";
+  position: absolute;
+  left: 0.5rem;
+  /* Scaling the dot down while keeping it centered */
+  font-size: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .path-mod .automatic-completion-conditions .badge {
   font-size: 80%;
@@ -35663,6 +35685,20 @@ select {
 }
 .path-mod .automatic-completion-conditions .badge:first-child {
   margin-top: 0;
+}
+.path-mod .automatic-completion-conditions li:has(.automatic-completion-is-complete)::before, .path-mod .automatic-completion-conditions li:has(.automatic-completion-is-failed)::before {
+  content: "";
+}
+.path-mod .automatic-completion-conditions li:has(.automatic-completion-is-complete) {
+  color: #357a32;
+  padding-left: 0.25rem;
+}
+.path-mod .automatic-completion-conditions li:has(.automatic-completion-is-complete) .icon {
+  font-size: 0.8rem;
+}
+.path-mod .automatic-completion-conditions li:has(.automatic-completion-is-failed) {
+  color: #ca3120;
+  padding-left: 0.25rem;
 }
 .path-mod .activity-description .no-overflow p:last-child {
   padding-bottom: 0;

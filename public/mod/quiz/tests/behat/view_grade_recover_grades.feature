@@ -54,7 +54,7 @@ Feature: Testing view quiz grade feedback with recover grades setting
     # Grade feedback and grade score should be the same. Recover grades setting should not affect users who are not unenrolled
     Then I should see "Highest grade: 100.00 / 100.00"
     And I should see "100.00 out of 100.00" in the "Grade" "table_row"
-    And I should see "Done: Receive a grade" in the "[data-region='completion-info']" "css_element"
+    And the "Receive a grade" completion condition of "Quiz 1" is displayed as "done"
 
     Examples:
       | recovergradesetting |
@@ -76,7 +76,7 @@ Feature: Testing view quiz grade feedback with recover grades setting
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     Then I should see "<overallgradefeedback>" in the "[id='feedback']" "css_element"
     And I should see "100.00 out of 100.00" in the "Grade" "table_row"
-    And I should see "<mycompletionstatus>" in the "[data-region='completion-info']" "css_element"
+    And the "Receive a grade" completion condition of "Quiz 1" is displayed as "<mycompletionstatus>"
     # Re-attempt the quiz
     And I press "Re-attempt quiz"
     And I should see "First question"
@@ -88,6 +88,6 @@ Feature: Testing view quiz grade feedback with recover grades setting
     And I should see "Highest grade: 100.00 / 100.00" in the "[id='feedback']" "css_element"
 
     Examples:
-      | recovergradesetting | overallgradefeedback                   | mycompletionstatus     |
-      | 0                   | Highest grade: Not yet graded / 100.00 | To do: Receive a grade |
-      | 1                   | Highest grade: 100.00 / 100.00         | Done: Receive a grade  |
+      | recovergradesetting | overallgradefeedback                   | mycompletionstatus |
+      | 0                   | Highest grade: Not yet graded / 100.00 | todo               |
+      | 1                   | Highest grade: 100.00 / 100.00         | done               |
