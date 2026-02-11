@@ -40,9 +40,8 @@ class restricted_module {
      * @return ResponseInterface
      */
     #[route(
-        path: '/{course}/restricted/{cm}',
+        path: '/cms/{cm}/restricted',
         pathtypes: [
-            new \core\router\parameters\path_course(),
             new \core\router\parameters\path_module(),
         ],
         requirelogin: new require_login(
@@ -53,13 +52,13 @@ class restricted_module {
     public function restricted_module_page(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        \stdClass $course,
         \stdClass $cm,
     ): ResponseInterface {
         global $OUTPUT, $PAGE;
 
         $context = \context_module::instance($cm->id);
 
+        $course = get_course($cm->course);
         $modinfo = get_fast_modinfo($course);
         $cminfo = $modinfo->get_cm($cm->id);
         $sectioninfo = $modinfo->get_section_info_by_id($cm->section);
@@ -67,7 +66,11 @@ class restricted_module {
         $format = course_get_format($course);
         $course->format = $format->get_format();
 
-        $PAGE->set_url('/restricted.php', ['id' => $cm->id]);
+        $url = \core\router\util::get_path_for_callable(
+            [self::class, 'restricted_module_page'],
+            ['cm' => $cm->id],
+        );
+        $PAGE->set_url($url, ['cm' => $cm->id]);
         $PAGE->add_body_class('limitedwidth');
         $PAGE->set_context($context);
         $PAGE->set_pagetype('mod-' . $cm->modname . '-restricted');

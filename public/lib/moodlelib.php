@@ -2660,7 +2660,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         if ($cm->is_visible_on_course_page()) {
             $url = \core\router\util::get_path_for_callable(
                 [\core_course\route\controller\restricted_module::class, 'restricted_module_page'],
-                ['course' => $course->id, 'cm' => $cm->id],
+                ['cm' => $cm->id],
             );
             redirect($url, '', null);
         }
