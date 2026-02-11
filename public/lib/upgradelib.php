@@ -455,6 +455,12 @@ function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
     $someexamplesofremovedfiles = [
+        // Removed in 5.2.
+        '/availability/renderer.php',
+        '/course/tests/behat/course_controls.feature',
+        '/lib/amd/src/addblockmodal.js',
+        '/question/qengine.js',
+        '/tag/classes/manage_table.php',
         // Removed in 5.1.
         '/badges/classes/observer.php',
         '/course/request_form.php',
