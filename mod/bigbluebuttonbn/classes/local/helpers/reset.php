@@ -54,9 +54,9 @@ class reset {
             true
         );
         if ($recordings) {
-            // Remove all the recordings.
+            // Remove all the recordings locally only (do NOT delete from BBB server).
             foreach ($recordings as $recording) {
-                $recording->delete();
+                $recording->set_skip_remote_deletion(true)->delete();
             }
         }
     }
