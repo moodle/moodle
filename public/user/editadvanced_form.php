@@ -162,6 +162,7 @@ class user_editadvanced_form extends moodleform {
         }
 
         $this->add_action_buttons(true, $btnstring);
+        $mform->set_sticky_footer('buttonar');
 
         $this->set_data($user);
     }
