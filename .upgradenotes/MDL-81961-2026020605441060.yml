@@ -1,0 +1,12 @@
+issueNumber: MDL-81961
+notes:
+  core_question:
+    - message: |
+        core_question:
+            - message: |
+                Final deprecation of `moodle-question-chooser` YUI module.
+              type: removed
+            - message: |
+                Final deprecation of `core_question/qbank_chooser` template.
+              type: removed
+      type: removed

@@ -1,7 +1,0 @@
-{
-    "moodle-question-chooser": {
-        "requires": [
-            "moodle-core-chooserdialogue"
-        ]
-    }
-}
