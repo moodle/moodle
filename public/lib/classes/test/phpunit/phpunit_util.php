@@ -1096,6 +1096,11 @@ class phpunit_util extends \core\test\testing_util {
      * @return bool|string
      */
     protected static function get_package_root(): string {
+        if (!class_exists(\Composer\InstalledVersions::class)) {
+            // If composer is not being used, we assume that the root package is Moodle and return empty string.
+            return dirname(__DIR__, 5);
+        }
+
         return realpath(\Composer\InstalledVersions::getRootPackage()['install_path']);
     }
 }
