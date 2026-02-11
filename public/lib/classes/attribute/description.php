@@ -14,15 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_sms;
+namespace core\attribute;
+
+use core\lang_string;
 
 /**
  * A language string attribute used for a description.
  *
- * @package    core_sms
+ * @package    core
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\Attribute]
-class description extends \lang_string {
+class description extends lang_string {
 }
