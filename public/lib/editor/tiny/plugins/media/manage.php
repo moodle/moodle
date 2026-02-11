@@ -113,21 +113,21 @@ $mform = new tiny_media\form\manage_files_form(null, [
 
 if ($data = $mform->get_data()) {
     if (!empty($data->deletefile)) {
-        foreach (array_keys($data->deletefile) as $filehash) {
-            if ($file = $fs->get_file_by_hash($filehash)) {
-                // Make sure the user didn't modify the filehash to delete another file.
-                if ($file->get_component() !== 'user' || $file->get_filearea() !== 'draft') {
-                    // The file must belong to the user/draft area.
-                    continue;
-                }
-                if ($file->get_contextid() != $usercontext->id) {
-                    // The user must own the file - that is it must be in their user draft file area.
-                    continue;
-                }
-                if ($file->get_itemid() != $itemid) {
-                    // It must be the file they requested be deleted.
-                    continue;
-                }
+        foreach ($data->deletefile as $filehash => $selected) {
+            if (!$selected) {
+                continue;
+            }
+            $file = $fs->get_file_by_hash($filehash);
+            if (!$file) {
+                continue;
+            }
+            // Confirm ownership and file area before deleting.
+            if (
+                $file->get_component() === 'user' &&
+                $file->get_filearea() === 'draft' &&
+                $file->get_itemid() == $itemid &&
+                $file->get_contextid() == $usercontext->id
+            ) {
                 $file->delete();
             }
         }
