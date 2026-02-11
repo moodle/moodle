@@ -1,0 +1,19 @@
+@import "../../ckeditor/contents.css";
+
+code {
+  color: #3d3d3d;
+  background: #e0e0e0;
+  border-radius: 2px;
+  padding: 0 5px;
+}
+pre > code {
+  background-color: #fafafa;
+  padding: 5px;
+  display: block;
+  line-height: normal;
+  border: 1px solid #c7c7c7;
+  border-left-width: 4px;
+  max-width: 100%;
+  white-space: pre;
+  overflow: auto;
+}

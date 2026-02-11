@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/aiemotion/db"
+       VERSION="2025122707"
+       COMMENT="AI Emotion plugin database">
+
+    <TABLES>
+
+        <TABLE NAME="local_aiemotion_assign" COMMENT="AI feedback settings per assignment">
+
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="assignmentid" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="enableaifeedback" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+                <FIELD NAME="aifeedbackprompt" TYPE="text" NOTNULL="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+            </FIELDS>
+
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+
+            <INDEXES>
+                <INDEX NAME="assignmentid_uk" UNIQUE="true" FIELDS="assignmentid"/>
+            </INDEXES>
+
+        </TABLE>
+
+    </TABLES>
+</XMLDB>

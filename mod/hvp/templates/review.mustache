@@ -1,0 +1,44 @@
+<div class="clearer"></div>
+<div class="h5p-reporting-main-container">
+  <div class="h5p-reporting-main-header">
+
+    <!--Title-->
+    <div class="h5p-reporting-main-title">{{title}}</div>
+
+    <!--Scoring-->
+    {{# maxScore }}
+    <div class="h5p-reporting-main-score-wrapper">
+
+      <!--Raw score-->
+      <div class="h5p-reporting-main-score-container">
+        <span class="h5p-reporting-main-score-label">
+          {{# str }} reportingscorelabel, mod_hvp {{/ str }}
+        </span>
+        <span class="h5p-reporting-main-score">
+          <span class="h5p-reporting-main-score-raw-score">
+            {{rawScore}}
+          </span>
+          {{# str }} reportingscoredelimiter, mod_hvp {{/ str }} {{maxScore}}
+        </span>
+      </div>
+
+      <!--Scaled score-->
+      <div class="h5p-reporting-main-scaled-container">
+        <span class="h5p-reporting-scaled-label">
+          {{# str }} reportingscaledscorelabel, mod_hvp {{/ str }}
+        </span>
+        <span class="h5p-reporting-scaled-score">
+          <span class="h5p-reporting-main-score-scaled-score">
+            {{scaledScore}}
+          </span>
+          {{# str }} reportingscoredelimiter, mod_hvp {{/ str }} {{maxScaledScore}}
+        </span>
+      </div>
+    </div>
+    {{/ maxScore }}
+
+  </div>
+
+  <!--Render report as html-->
+  <div class="h5p-report-view">{{{report}}}</div>
+</div>

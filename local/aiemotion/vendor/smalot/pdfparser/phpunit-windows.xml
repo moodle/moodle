@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" backupGlobals="false" bootstrap="vendor\autoload.php" colors="true" processIsolation="false" stopOnFailure="false" cacheDirectory=".phpunit.cache" backupStaticProperties="false" displayDetailsOnTestsThatTriggerWarnings="true" displayDetailsOnTestsThatTriggerDeprecations="true">
+  <coverage>
+    <include>
+      <directory>src</directory>
+    </include>
+  </coverage>
+  <php>
+    <ini name="error_reporting" value="-1"/>
+    <ini name="zend.enable_gc" value="0"/>
+    <ini name="error_reporting" value="-1"/>
+    <ini name="intl.error_level" value="0"/>
+    <ini name="display_errors" value="On"/>
+  </php>
+  <testsuites>
+    <testsuite name="all">
+      <directory>tests/PHPUnit</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

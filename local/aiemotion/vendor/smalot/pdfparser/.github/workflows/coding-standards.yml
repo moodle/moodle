@@ -1,0 +1,37 @@
+name: "CS"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  coding-standards:
+    name: "CS Fixer & PHPStan"
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        env:
+          COMPOSER_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          coverage: none
+          php-version: "7.4"
+          tools: "composer:v2"
+      -
+        name: Install dependencies with Composer
+        uses: ramsey/composer-install@v2
+      -
+        name: Install dev tools
+        run: make install-dev-tools
+      -
+        name: Run PHP CS Fixer
+        run: 'make run-php-cs-fixer ARGS="--verbose --dry-run"'
+      -
+        name: Run PHPStan
+        run: 'make run-phpstan ARGS="--no-progress"'

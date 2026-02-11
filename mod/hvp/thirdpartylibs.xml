@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>library</location>
+        <name>H5P Core</name>
+        <version>1.13</version>
+        <license>MIT</license>
+    </library>
+    <library>
+        <location>editor</location>
+        <name>H5P Editor</name>
+        <version>(86b5450)</version>
+        <license>MIT</license>
+    </library>
+    <library>
+        <location>reporting</location>
+        <name>H5P Reporting</name>
+        <version>(8fe2c5d)</version>
+        <license>MIT</license>
+    </library>
+</libraries>
