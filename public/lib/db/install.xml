@@ -4339,7 +4339,7 @@
         <FIELD NAME="fieldid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="intvalue" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="decvalue" TYPE="number" LENGTH="10" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
+        <FIELD NAME="decvalue" TYPE="number" LENGTH="15" NOTNULL="false" SEQUENCE="false" DECIMALS="5"/>
         <FIELD NAME="shortcharvalue" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="charvalue" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
