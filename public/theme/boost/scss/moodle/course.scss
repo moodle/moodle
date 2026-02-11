@@ -200,7 +200,6 @@ $divider-hover-color: $primary !default;
     list-style: none;
     padding-top: map-get($spacers, 1);
     margin-top: map-get($spacers, 1);
-    border-top: $border-width solid $border-color;
     &.indented {
         .activity-item {
             margin-left: map-get($spacers, 3);
@@ -218,7 +217,14 @@ $divider-hover-color: $primary !default;
 
 .activity-item {
     padding: $activity-item-padding;
-    @include border-radius($activity-border-radius);
+    // In not editing mode we add a grayed line as a separator between activities.
+    body:not(.editing) & {
+        border-bottom: $border-width solid $border-color;
+    }
+    // Remove last activity bottom border in sections outside course content (like single section page).
+    .section-list .section .section-item .activity:last-child & {
+        border-bottom: none;
+    }
     &.activityinline {
         padding: $activity-item-padding 0;
     }
@@ -663,6 +669,13 @@ $divider-hover-color: $primary !default;
         .section-item {
             padding: 0;
             border: none;
+            // No rounded borders
+            border-radius: 0;
+            // Add bottom border back to last activity in section in non editing mode.
+            body:not(.editing) & .activity:last-child {
+                border-bottom: $border-width solid $border-color;
+            }
+
         }
     }
 }
@@ -764,11 +777,12 @@ $divider-hover-color: $primary !default;
 /* Subsections */
 
 .activity.subsection {
-    border-top: none;
     > .activity-item {
-        border: $border-width solid $border-color;
+        // Remove bottom border from subsection container.
+        border-bottom: none;
         padding: 0;
         margin: map-get($spacers, 2) 0;
+
         > .activity-grid > .activity-altcontent {
             margin-top: 0;
         }
@@ -791,9 +805,6 @@ $divider-hover-color: $primary !default;
             font-size: inherit;
         }
     }
-    + .activity {
-        border-top: none;
-    }
     // Allow v-parent-focus only for closest acvitity (avoiding subsection).
     .focus-control:not(:has(.focus-control)) {
         &:focus-within .v-parent-focus,
@@ -806,6 +817,23 @@ $divider-hover-color: $primary !default;
     .focus-control:hover .focus-control .v-parent-focus {
         opacity: 0;
         visibility: hidden;
+    }
+    .activity {
+        margin-left: map-get($spacers, 4);
+    }
+    body:not(.editing) & {
+        .section-item {
+            .course-content-item-content {
+                border-bottom: $border-width solid $border-color;
+            }
+            .section .activity:last-child {
+                border-bottom: none;
+            }
+            .course-section-header {
+                border-bottom: $border-width solid $border-color;
+                padding-bottom: map-get($spacers, 3);
+            }
+        }
     }
 }
 
