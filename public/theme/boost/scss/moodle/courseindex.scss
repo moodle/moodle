@@ -55,9 +55,37 @@ $courseindex-item-current: $primary !default;
     }
 }
 
+.drawerheader {
+    .drawerheading {
+        min-width: 0;
+        flex: 1 1 auto;
+        #courseindexdrawerheading {
+            font-size: $font-size-base;
+            margin-left: map-get($spacers, 3);
+            min-width: 0;
+            overflow: hidden;
+            .courseindex-link {
+                display: block;
+                max-width: 100%;
+                text-overflow: ellipsis;
+                color: $courseindex-link-color;
+                &:hover,
+                &:focus {
+                    color: $courseindex-link-hover-color;
+                    text-decoration: none;
+                }
+            }
+        }
+        i.icon {
+            color: $courseindex-link-color;
+        }
+    }
+}
+
 .courseindex {
     // Both activity and section items.
     .courseindex-item {
+        align-items: center;
         padding: $courseindex-item-padding-y $courseindex-item-padding-x;
         border: $border-width solid transparent;
         @include border-radius($courseindex-item-radius);
@@ -68,6 +96,10 @@ $courseindex-item-current: $primary !default;
 
         .icons-collapse-expand {
             padding-right: 4px;
+        }
+
+        .courseindex-link {
+            font-size: $font-size-base * 0.875;
         }
 
         .courseindex-link,
@@ -130,7 +162,7 @@ $courseindex-item-current: $primary !default;
 
         // Completion.
         .completioninfo {
-            min-width: 24px;
+            min-width: 20px;
 
             &.completion_complete {
                 color: $success;
@@ -171,14 +203,24 @@ $courseindex-item-current: $primary !default;
             }
         }
 
+        .delegated-section {
+            .courseindex-section-title {
+                margin-left: -(map-get($spacers, 1));
+                padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+            }
+            .courseindex-item-content {
+                margin-left: -(map-get($spacers, 2));
+            }
+        }
+
         &.dropready .courseindex-item-content {
             /* Extra dropzone space */
             padding-bottom: 1em;
         }
 
-        .courseindex-sectioncontent {
+        .courseindex-sectioncontent:not(.delegated-section) {
             .courseindex-item {
-                padding-left: $courseindex-item-padding-x;
+                padding-left: $courseindex-item-padding-x * 3;
             }
         }
         &.delegated-section {
@@ -189,6 +231,7 @@ $courseindex-item-current: $primary !default;
     // General icons size.
     .icon {
         font-size: 10px;
+        margin-right: 0;
     }
 
     // Element visible only on editing mode.
