@@ -93,6 +93,7 @@ final class field_controller_test extends advanced_testcase {
         $field = $generator->create_field(['categoryid' => $category->get('id'), 'type' => 'number']);
 
         $submitdata = (array) $field->to_record();
+        $submitdata['maximum'] = SQL_INT_MAX + 1;
         $submitdata['configdata'] = array_merge($field->get('configdata'), [
             'defaultvalue' => $defaultvalue,
             'minimumvalue' => $minimumvalue,
