@@ -394,8 +394,13 @@ if (isloggedin() and !isguestuser()) {
     // prevent logging when already logged in, we do not want them to relogin by accident because sesskey would be changed
     echo $OUTPUT->box_start();
     $logout = new single_button(new moodle_url('/login/logout.php', array('sesskey'=>sesskey(),'loginpage'=>1)), get_string('logout'), 'post');
-    $continue = new single_button(new moodle_url('/'), get_string('cancel'), 'get');
-    echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
+    $continue = new single_button(new moodle_url('/'), get_string('gobacktosite'), 'get');
+    echo $OUTPUT->confirm(
+        message: get_string('alreadyloggedin', 'error', fullname($USER)),
+        continue: $logout,
+        cancel: $continue,
+        displayoptions: ['confirmtitle' => get_string('logoutconfirmtitle')],
+    );
     echo $OUTPUT->box_end();
 } else {
     $loginform = new \core_auth\output\login($authsequence, $frm->username);
