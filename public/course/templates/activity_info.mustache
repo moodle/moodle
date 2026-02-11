@@ -50,24 +50,6 @@
     }
 }}
 <div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
-
-    {{#hascompletion}}
-        {{#uservisible}}
-            {{#isautomatic}}
-                <div class="completion-info" data-region="completion-info">
-                    <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
-                        <div class="automatic-completion-title"><strong>{{#str}}completionrequirements, core_completion{{/str}}</strong></div>
-                        <ul class="activity-completion-list">
-                            {{#completiondetails}}
-                                {{> core_course/completion_automatic }}
-                            {{/completiondetails}}
-                        </ul>
-                    </div>
-                </div>
-            {{/isautomatic}}
-        {{/uservisible}}
-    {{/hascompletion}}
-
     {{#hasdates}}
     <div data-region="activity-dates" class="activity-dates">
         {{#activitydates}}
@@ -75,4 +57,28 @@
         {{/activitydates}}
     </div>
     {{/hasdates}}
+
+    <div data-region="activity-details" class="activity-details">
+        {{#description}}
+            <div class="activity-description" id="intro">
+                {{{description}}}
+            </div>
+        {{/description}}
+        {{#hascompletion}}
+            {{#uservisible}}
+                {{#isautomatic}}
+                    <div class="completion-info" data-region="completion-info">
+                        <div class="automatic-completion-conditions" data-region ="completionrequirements" role="list" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
+                            <div class="automatic-completion-title"><strong>{{#str}}completionrequirements, core_completion{{/str}}</strong></div>
+                            <ul class="activity-completion-list">
+                                {{#completiondetails}}
+                                    {{> core_course/completion_automatic }}
+                                {{/completiondetails}}
+                            </ul>
+                        </div>
+                    </div>
+                {{/isautomatic}}
+            {{/uservisible}}
+        {{/hascompletion}}
+    </div>
 </div>
