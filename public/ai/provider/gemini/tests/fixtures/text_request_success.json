@@ -1,0 +1,30 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Photosynthesis is the process plants use to make their own food. They take in sunlight, water from the soil, and carbon dioxide from the air. Inside their leaves, a green substance called chlorophyll captures the sunlight's energy. This energy is then used to convert the water and carbon dioxide into sugar, which is the plant's food, and oxygen, which the plant releases into the air as a byproduct. Essentially, plants are using light energy to transform simple ingredients into food for themselves and oxygen for us to breathe."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 65,
+    "candidatesTokenCount": 105,
+    "totalTokenCount": 316,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 65
+      }
+    ],
+    "thoughtsTokenCount": 146
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "9r5Uaa7hEarkg8UPndKw4AY"
+}
