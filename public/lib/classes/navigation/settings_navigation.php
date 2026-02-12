@@ -766,6 +766,12 @@ class settings_navigation extends navigation_node {
         $modulenode->nodetype = navigation_node::NODETYPE_BRANCH;
         $modulenode->force_open();
 
+        // If the user doesn't have permission to view the full activity information, we could leave.
+        // This could happen, for example, in the restricted page.
+        if (!$this->page->cm->get_user_visible()) {
+            return $modulenode;
+        }
+
         // Settings for the module.
         if (has_capability('moodle/course:manageactivities', $this->page->cm->context)) {
             $url = new url('/course/modedit.php', ['update' => $this->page->cm->id, 'return' => 1]);

@@ -182,6 +182,7 @@ Feature: Display availability for activities and sections
     And I click on "Grade" "button" in the "Add restriction..." "dialogue"
     And the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Item name displayed"
 
+  @javascript
   Scenario: Restricted section page
     # Set up.
     Given the following config values are set as admin:
@@ -223,14 +224,17 @@ Feature: Display availability for activities and sections
     # Set up.
     Given the following config values are set as admin:
       | unaddableblocks | | theme_boost|
+    And the following "activities" exist:
+      | activity | course | section | name       |
+      | glossary | C1     | 1       | Glossary 1 |
     And the following "groups" exist:
       | course | name | idnumber |
       | C1     | G1   | GI1      |
     And the following "groupings" exist:
       | name | course | idnumber |
       | GX1  | C1     | GXI1     |
-    And I am on the "Page 1" "page activity editing" page logged in as "teacher1"
-    # Add a restriction to Page 1 (visible to students).
+    And I am on the "Glossary 1" "glossary activity editing" page logged in as "teacher1"
+    # Add a restriction to Glossary 1 (visible to students).
     And I set the following fields to these values:
       | Access restrictions | Grouping: GX1 |
     And I press "Save and return to course"
@@ -239,11 +243,12 @@ Feature: Display availability for activities and sections
     # Change to student view.
     And I am on the "Course 1" "Course" page logged in as "student1"
     And I expand "Section 1" node
-    And "Page 1" "link" should appear before "Section 2" "link" in the "Navigation" "block"
-    When I click on "Page 1" "link" in the "Navigation" "block"
-    # Page 1 should be visible and show info.
-    Then I should see "Page 1" in the "page-header" "region"
+    And "Glossary 1" "link" should appear before "Section 2" "link" in the "Navigation" "block"
+    When I click on "Glossary 1" "link" in the "Navigation" "block"
+    # Glossary 1 should be visible and show info.
+    Then I should see "Glossary 1" in the "page-header" "region"
     And I should see "Not available unless" in the "region-main" "region"
+    And "Add a new entry" "link" should not exist
     # Check the logs.
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports > Logs" in current page administration
@@ -251,4 +256,4 @@ Feature: Display availability for activities and sections
     And I should see "Restricted module viewed"
     And I click on "Restricted module viewed" "link"
     And I switch to "action" window
-    And I should see "Page 1" in the "page-header" "region"
+    And I should see "Glossary 1" in the "page-header" "region"
