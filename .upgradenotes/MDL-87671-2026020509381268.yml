@@ -1,0 +1,5 @@
+issueNumber: MDL-87671
+notes:
+  core:
+    - message: A new path_section parameter type for routing has been created
+      type: improved

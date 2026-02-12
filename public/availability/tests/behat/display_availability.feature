@@ -181,3 +181,30 @@ Feature: Display availability for activities and sections
     And I press "Add restriction..."
     And I click on "Grade" "button" in the "Add restriction..." "dialogue"
     And the "alt" attribute of ".availability-item .availability-eye img" "css_element" should contain "Item name displayed"
+
+  Scenario: Restricted section page
+    # Set up.
+    Given the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+    And the following "groups" exist:
+      | course | name | idnumber |
+      | C1     | G1   | GI1      |
+    And the following "groupings" exist:
+      | name | course | idnumber |
+      | GX1  | C1     | GXI1     |
+    And I am on the "C1" "Course" page logged in as "teacher1"
+    And I turn editing mode on
+    And I add the "Navigation" block if not present
+    # Add a restriction to section 1 (visible to students).
+    And I edit the section "1"
+    And I set the following fields to these values:
+      | Access restrictions | Grouping: GX1 |
+    And I press "Save changes"
+    # Change to student view.
+    And I am on the "Course 1" "Course" page logged in as "student1"
+    And "Section 1" "link" should appear before "Section 2" "link" in the "Navigation" "block"
+    When I click on "Section 1" "link" in the "Navigation" "block"
+    # Section 1 should be visible and show info.
+    And I should see "Section 1" in the "page-header" "region"
+    And I should see "Not available unless" in the "region-main" "region"
+    And "Page 1" "link" should not exist in the "region-main" "region"
