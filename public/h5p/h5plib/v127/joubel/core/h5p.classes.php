@@ -683,7 +683,7 @@ class H5PValidator {
 
   // Schemas used to validate the h5p files
   private $h5pRequired = array(
-    'title' => '/^.{1,255}$/',
+    'title' => '/^.{1,255}$/u',
     'language' => '/^[-a-zA-Z]{1,10}$/',
     'preloadedDependencies' => array(
       'machineName' => '/^[\w0-9\-\.]{1,255}$/i',

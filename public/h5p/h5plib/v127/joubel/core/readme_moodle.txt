@@ -44,7 +44,10 @@ The library needs to be saved in the database first before creating the files, b
 5. Check if new methods have been added to any of the interfaces. If that's the case, implement them in the proper class. For
 instance, if a new method is added to h5p-file-storage.interface.php, it should be implemented in h5p/classes/file_storage.php.
 
-6. Open js/h5p.js and in function contentUserDataAjax() add the following patch:
+6. In the H5PValidator class in core/h5p.classes.php, ensure $h5pRequired['title'] regular expression contains "u" modifier
+   until https://github.com/h5p/h5p-php-library/issues/276 is resolved and the library is upgraded to a version containing that fix
+
+7. Open js/h5p.js and in function contentUserDataAjax() add the following patch:
   function contentUserDataAjax(contentId, dataType, subContentId, done, data, preload, invalidate, async) {
     if (H5PIntegration.user === undefined) {
       // Not logged in, no use in saving.
