@@ -304,7 +304,9 @@ class formatting {
         if ($blanktarget) {
             $domdoc = new \DOMDocument();
             libxml_use_internal_errors(true);
-            $domdoc->loadHTML('<?xml version="1.0" encoding="UTF-8" ?>' . $text);
+            // Use meta charset tag to properly handle UTF-8 instead of XML declaration hack.
+            // The XML declaration approach no longer works with libxml2 >= 2.14.0.
+            $domdoc->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $text);
             libxml_clear_errors();
             foreach ($domdoc->getElementsByTagName('a') as $link) {
                 if ($link->hasAttribute('target') && strpos($link->getAttribute('target'), '_blank') === false) {
@@ -320,11 +322,20 @@ class formatting {
             // $domdoc->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD); however it seems like some libxml
             // versions don't work properly and end up leaving <html><body>, so I'm forced to use
             // this regex to remove those tags as a preventive measure.
+            // Also strip head and meta tags added by the charset workaround.
             $text = trim(preg_replace(
-                '~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i',
+                '~<(?:!DOCTYPE|/?(?:html|head|body)|meta\s[^>]*?)>\s*~i',
                 '',
                 $domdoc->saveHTML($domdoc->documentElement),
             ));
+            // Libxml2 >= 2.14.0 doesn't wrap plain text in <p> tags, so add them for consistency.
+            if (LIBXML_VERSION >= 21400 && !empty($text) && !preg_match('/^\s*</', $text)) {
+                $text = '<p>' . $text . '</p>';
+            }
+            // The meta charset approach preserves leading/trailing whitespace in <p> tags more than the old XML
+            // declaration approach. Normalize this by trimming whitespace inside <p> tags to match old behavior.
+            $text = preg_replace('~<p>\s+~i', '<p>', $text);
+            $text = preg_replace('~\s+</p>~i', '</p>', $text);
         }
 
         return $text;

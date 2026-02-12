@@ -225,7 +225,8 @@ function(
             if (!isMedia) {
                 // Try to get the text value of the content.
                 // If that's not possible, we'll report it under the catch-all 'other media'.
-                var messagePreview = $(lastMessage.text).text();
+                // Use textContent to safely extract text without jQuery selector parsing.
+                var messagePreview = tmpElement.textContent || tmpElement.innerText || '';
                 if (messagePreview) {
                     // The text value of the message must have no html/script tags.
                     if (messagePreview.indexOf('<') == -1) {
