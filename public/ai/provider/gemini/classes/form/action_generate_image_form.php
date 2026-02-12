@@ -39,6 +39,7 @@ class action_generate_image_form extends action_form {
         $mform->addElement(
             'text',
             'endpoint',
+            get_string("action:{$this->actionname}:endpoint", 'aiprovider_gemini'),
             [
                 'maxlength' => '255',
                 'size' => '30',
