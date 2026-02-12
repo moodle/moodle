@@ -708,13 +708,22 @@ class helper {
         if (!empty($message)) {
             $doc = new DOMDocument();
             $olderror = libxml_use_internal_errors(true);
-            $doc->loadHTML('<?xml version="1.0" encoding="UTF-8" ?>' . $message);
+            // Use meta charset tag to properly handle UTF-8 instead of XML declaration hack.
+            // The XML declaration approach no longer works with libxml2 >= 2.14.0.
+            $doc->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $message);
             libxml_clear_errors();
             libxml_use_internal_errors($olderror);
-            $html = $doc->getElementsByTagName('body')->item(0)->C14N(false, true);
-            if ($removebody) {
-                // Remove <body> element added in C14N function.
-                $html = preg_replace('~<(/?(?:body))[^>]*>\s*~i', '', $html);
+            $body = $doc->getElementsByTagName('body')->item(0);
+            if ($body) {
+                $html = $body->C14N(false, true);
+                if ($removebody) {
+                    // Remove <body> element added in C14N function.
+                    $html = preg_replace('~<(/?(?:body))[^>]*>\s*~i', '', $html);
+                    // Libxml2 >= 2.14.0 doesn't wrap plain text in <p> tags, so add them for consistency.
+                    if (LIBXML_VERSION >= 21400 && !empty($html) && !preg_match('/^\s*</', $html)) {
+                        $html = '<p>' . $html . '</p>';
+                    }
+                }
             }
         }
 
