@@ -416,8 +416,10 @@ class view_table_php extends XMLDBAction {
 
         // Launch the proper DDL
         $result .= XMLDB_LINEFEED;
-        $result .= '        // Launch rename field ' . $field->getName() . '.' . XMLDB_LINEFEED;
-        $result .= '        $dbman->rename_field($table, $field, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        // Conditionally launch rename field ' . $field->getName() . '.' . XMLDB_LINEFEED;
+        $result .= '        if ($dbman->field_exists($table, $field)) {' . XMLDB_LINEFEED;
+        $result .= '            $dbman->rename_field($table, $field, ' . "'" . 'NEWNAMEGOESHERE' . "'" . ');' . XMLDB_LINEFEED;
+        $result .= '        }' . XMLDB_LINEFEED;
 
         // Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
