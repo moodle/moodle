@@ -687,24 +687,37 @@ final class tablelib_test extends \advanced_testcase {
     }
 
     /**
-     * Test export in CSV format
+     * Test export in CSV format.
+     *
+     * By default, CSV strips HTML tags. Ensure inputs are exported as expected.
      */
     public function test_table_export(): void {
         $table = new flexible_table('tablelib_test_export');
         $table->define_baseurl('/invalid.php');
-        $table->define_columns(['c1', 'c2', 'c3']);
-        $table->define_headers(['Col1', 'Col2', 'Col3']);
+        $table->define_columns(['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']);
+        $table->define_headers(['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8']);
 
         ob_start();
         $table->is_downloadable(true);
         $table->is_downloading('csv');
 
         $table->setup();
-        $table->add_data(['column0' => 'a', 'column1' => 'b', 'column2' => 'c']);
+        $table->add_data([
+            'Hello', // Simple string.
+            '<h1>My</h1><div>Contents</div>', // Tags should be removed, leaving the contents.
+            '2>1', // Mathematical statements should not be misinterpreted as tags.
+            '3 < 4', // Mathematical statements should not be misinterpreted as tags (with spaces).
+            '<img src="pic.gif"/>Tag was here', // Self-closing tag should be removed.
+            '&lt;span&gt;htmlentities&lt;/span&gt;', // HTML entities should be detected too.
+            "1 <lessthan\ngreaterthan> 2", // Multiline pseudo-mathematical should not be removed.
+            "<taglikes>removed", // Tag-likes will also be removed.
+        ]);
         $output = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals("Col1,Col2,Col3\na,b,c\n", substr($output, 3));
+        $expected = "Col1,Col2,Col3,Col4,Col5,Col6,Col7,Col8\n";
+        $expected .= "Hello,MyContents,2>1,\"3 < 4\",\"Tag was here\",htmlentities,\"1 <lessthan\ngreaterthan> 2\",removed\n";
+        $this->assertEquals($expected, substr($output, 3));
     }
 
     /**
