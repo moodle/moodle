@@ -59,7 +59,7 @@ final class backup_test extends \advanced_testcase {
         $numorderingquestions = $DB->count_records('question', ['qtype' => 'ordering']);
 
         // Duplicate the page.
-        duplicate_module($course, get_fast_modinfo($course)->get_cm($quiz->cmid));
+        \core_courseformat\formatactions::cm($course)->duplicate($quiz->cmid);
 
         // Verify the copied quiz exists.
         $this->assertCount($numquizzes + 1, get_fast_modinfo($course)->instances['quiz']);

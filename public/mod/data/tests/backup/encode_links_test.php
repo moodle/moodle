@@ -67,7 +67,7 @@ final class encode_links_test extends \advanced_testcase {
         $DB->update_record('data', $data);
 
         // Duplicate the data module with the type.
-        $newcm = duplicate_module($course, get_fast_modinfo($course)->get_cm($data->cmid));
+        $newcm = \core_courseformat\formatactions::cm($course)->duplicate($data->cmid);
 
         $newdata = $DB->get_record('data', ['id' => $newcm->instance]);
 

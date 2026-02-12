@@ -2182,7 +2182,12 @@ abstract class base {
                     continue;
                 }
                 if (!$originalcm->deletioninprogress) {
-                    duplicate_module($course, $originalcm, $newsection->id, false);
+                    $cmaction = \core_courseformat\formatactions::cm($course->id);
+                    $cmaction->duplicate(
+                        cmid: $originalcm->id,
+                        targetsectionid: $newsection->id,
+                        newname: $originalcm->name  // Do not change name.
+                    );
                 }
             }
         }

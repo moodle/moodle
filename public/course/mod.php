@@ -139,7 +139,8 @@ if (!empty($add)) {
     require_all_capabilities(['moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport'], $coursecontext);
 
     // Duplicate the module.
-    $newcm = duplicate_module($course, $cm);
+    $cmaction = \core_courseformat\formatactions::cm($course->id);
+    $newcm = $cmaction->duplicate($cm->id);
     redirect(course_get_url($course, $cm->sectionnum, $urloptions));
 
 } else if (!empty($delete)) {

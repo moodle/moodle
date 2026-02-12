@@ -1,0 +1,7 @@
+issueNumber: MDL-86858
+notes:
+  core_courseformat:
+    - message: >-
+        Create a new core_courseformat\cmactions::duplicate aiming to replace
+        the course/lib.php version
+      type: improved

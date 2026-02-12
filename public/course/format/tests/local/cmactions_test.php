@@ -207,7 +207,7 @@ final class cmactions_test extends \advanced_testcase {
 
         $executedhook = null;
 
-        $testcallback = function(after_cm_name_edited $hook) use (&$executedhook): void {
+        $testcallback = function (after_cm_name_edited $hook) use (&$executedhook): void {
             $executedhook = $hook;
         };
         $this->redirectHook(after_cm_name_edited::class, $testcallback);
@@ -737,5 +737,409 @@ final class cmactions_test extends \advanced_testcase {
         $this->expectException(\dml_missing_record_exception::class);
         $cmactions = new cmactions($course);
         $cmactions->set_groupmode(10000, VISIBLEGROUPS);
+    }
+
+    /**
+     * Test duplicating a course module.
+     *
+     * @param array $coursedata Array defining the course structure. Keys are section names, values are arrays of cm names.
+     * @param string $cmname Name of the course module to duplicate.
+     * @param string|null $sectionname Name of the section to duplicate into, or null to duplicate into the same section.
+     * @param string|null $newname New name for the duplicated course module, or null to use default naming
+     * (original name + ' (copy)').
+     * @param array $expected Expected result array with keys: 'section' (int), 'position' (int), 'name' (string).
+     * @return void
+     *
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('duplicate_provider')]
+    public function test_duplicate(
+        array $coursedata,
+        string $cmname,
+        ?string $sectionname,
+        ?string $newname,
+        array $expected
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->create_course_from_data($coursedata);
+        // Lookup cmid and sectionid based on names.
+        $cmactions = new cmactions($course);
+        $modinfo = get_fast_modinfo($course);
+        $targetsectionid = null;
+        $allcms = $modinfo->get_cms();
+        $allcmsbyname = array_combine(
+            array_map(fn($cminfo) => $cminfo->get_name(), $allcms),
+            $allcms
+        );
+        $cmid = $allcmsbyname[$cmname]->id;
+
+        $allsectionsbyname = $this->get_sections_by_name($course);
+        if ($sectionname !== null) {
+            $targetsectionid = $allsectionsbyname[$sectionname]->id;
+        }
+        // For backup/restore operations, we need to be logged in.
+        $this->setAdminUser();
+        $newcm = $cmactions->duplicate(
+            cmid: $cmid,
+            targetsectionid: $targetsectionid,
+            newname: $newname,
+        );
+        // Verify expected result.
+        $mappedcourse = [];
+        $modinfo = get_fast_modinfo($course); // Refresh modinfo.
+        foreach ($modinfo->get_section_info_all() as $sectioninfo) {
+            if (empty($sectioninfo->name)) {
+                continue; // Ignore sections without a name.
+            }
+            $mappedcourse[$sectioninfo->name] = [];
+            foreach ($sectioninfo->get_sequence_cm_infos() as $cminfo) {
+                $mappedcourse[$sectioninfo->name][] = $cminfo->name;
+            }
+        }
+        $this->assertEquals($expected, $mappedcourse);
+
+        // We ignore obvious differences and also sections information as it is already tested above (and
+        // can differ due to section movements).
+        $ignoredproperties = ['id', 'url', 'instance', 'added', 'context', 'section', 'sectionid', 'sectionnum'];
+        // Make sure they are the same, except obvious id changes.
+        foreach ($modinfo->get_cm($cmid) as $prop => $value) {
+            if (in_array($prop, $ignoredproperties, true)) {
+                // Ignore obviously different properties.
+                continue;
+            }
+            if ($prop == 'name') {
+                if (empty($newname)) {
+                    $value = get_string('duplicatedmodule', 'moodle', $value);
+                } else {
+                    $value = $newname;
+                }
+            }
+            $this->assertEquals($value, $newcm->$prop);
+        }
+    }
+
+    /**
+     * Data provider for test_duplicate.
+     *
+     * @return \Generator
+     */
+    public static function duplicate_provider(): \Generator {
+        yield 'duplicate after current module, no name provided' => [
+            'coursedata' => [
+                'Section 1' => [
+                    'cm1',
+                    'cm2',
+                    'cm3',
+                ],
+            ],
+            'cmname' => 'cm1',
+            'sectionname' => null,
+            'newname' => null,
+            'expected' => [
+                'Section 1' => [
+                    'cm1',
+                    'cm1 (copy)',
+                    'cm2',
+                    'cm3',
+                ],
+            ],
+        ];
+
+        yield 'duplicate after current module, name provided' => [
+            'coursedata' => [
+                'Section 1' => [
+                    'cm1',
+                    'cm2',
+                    'cm3',
+                ],
+            ],
+            'cmname' => 'cm1',
+            'sectionname' => null,
+            'newname' => 'New name',
+            'expected' => [
+                'Section 1' => [
+                    'cm1',
+                    'New name',
+                    'cm2',
+                    'cm3',
+                ],
+            ],
+        ];
+        yield 'duplicate at the end of a section, name not provided' => [
+            'coursedata' => [
+                'Section 1' => [
+                    'cm1',
+                ],
+                'Section 2' => [
+                    'cm2',
+                ],
+            ],
+            'cmname' => 'cm1',
+            'sectionname' => 'Section 2',
+            'newname' => null,
+            'expected' => [
+                'Section 1' => [
+                    'cm1',
+                ],
+                'Section 2' => [
+                    'cm2',
+                    'cm1 (copy)',
+                ],
+            ],
+        ];
+        yield 'duplicate at the end of a section, name provided' => [
+            'coursedata' => [
+                'Section 1' => [
+                    'cm1',
+                ],
+                'Section 2' => [
+                    'cm2',
+                ],
+            ],
+            'cmname' => 'cm1',
+            'sectionname' => 'Section 2',
+            'newname' => 'New name',
+            'expected' => [
+                'Section 1' => [
+                    'cm1',
+                ],
+                'Section 2' => [
+                    'cm2',
+                    'New name',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test duplicating a course with wrong cmid (from another course).
+     *
+     * @return void
+     */
+    public function test_duplicate_wrong_cm(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        $course1  = $generator->create_course();
+        $course2  = $generator->create_course();
+        $cm5 = $generator->create_module(
+            'assign',
+            ['course' => $course2->id, 'name' => 'cm5', 'section' => 1],
+        );
+
+        // Lookup cmid and sectionid based on names.
+        $cmactions = new cmactions($course1);
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage('Invalid course module ID: ' . $cm5->cmid);
+        // For backup/restore operations, we need to be logged in.
+        $this->setAdminUser();
+        $this->assertFalse(
+            $cmactions->duplicate(
+                cmid: $cm5->cmid,
+            )
+        );
+    }
+
+    /**
+     * Test duplicating a course with wrong targetsectionid.
+     *
+     * @return void
+     */
+    public function test_duplicate_wrong_targetsectionid(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 2]);
+        $cm = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'name' => 'cm1', 'section' => 1],
+        );
+        $cmactions = new cmactions($course);
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage('This section does not exist');
+        // For backup/restore operations, we need to be logged in.
+        $this->setAdminUser();
+        $this->assertFalse(
+            $cmactions->duplicate(
+                cmid: $cm->cmid,
+                targetsectionid: 99999,
+            )
+        );
+    }
+
+    /**
+     * Test that duplicating a module triggers the expected event.
+     */
+    public function test_duplicate_module_created_event(): void {
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create an assign module.
+        $sink = $this->redirectEvents();
+        $course = $this->getDataGenerator()->create_course();
+        $module = $this->getDataGenerator()->create_module('assign', ['course' => $course]);
+        $sink->clear(); // Make sure we only capture events from duplication.
+        // Lookup cmid and sectionid based on names.
+        $cmactions = new cmactions($course);
+        $newcm = $cmactions->duplicate($module->cmid);
+        $events = $sink->get_events();
+        $eventscount = 0;
+        $sink->close();
+
+        foreach ($events as $event) {
+            if ($event instanceof \core\event\course_module_created) {
+                $eventscount++;
+                // Validate event data.
+                $this->assertInstanceOf('\core\event\course_module_created', $event);
+                $this->assertEquals($newcm->id, $event->objectid);
+                $this->assertEquals($USER->id, $event->userid);
+                $this->assertEquals($course->id, $event->courseid);
+                $url = new \core\url('/mod/assign/view.php', ['id' => $newcm->id]);
+                $this->assertEquals($url, $event->get_url());
+            }
+        }
+        // Only one \core\event\course_module_created event should be triggered.
+        $this->assertEquals(1, $eventscount);
+    }
+
+    /**
+     * Test that permissions are correctly duplicated when duplicating a module.
+     */
+    public function test_duplicate_module_permissions(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create course and course module.
+        $course = self::getDataGenerator()->create_course();
+        $res = self::getDataGenerator()->create_module('assign', ['course' => $course]);
+        $cm = get_coursemodule_from_id('assign', $res->cmid, 0, false, MUST_EXIST);
+        $cmcontext = \context_module::instance($cm->id);
+
+        // Enrol student user.
+        $user = self::getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        // Add capability to original course module.
+        assign_capability('gradereport/grader:view', CAP_ALLOW, $roleid, $cmcontext->id);
+
+        // Duplicate module.
+        $cmactions = new cmactions($course);
+        $newcm = $cmactions->duplicate($res->cmid);
+        $newcmcontext = \context_module::instance($newcm->id);
+
+        // Assert that user still has capability.
+        $this->assertTrue(has_capability('gradereport/grader:view', $newcmcontext, $user));
+
+        // Assert that both modules contain the same count of overrides.
+        $overrides = $DB->get_records('role_capabilities', ['contextid' => $cmcontext->id]);
+        $newoverrides = $DB->get_records('role_capabilities', ['contextid' => $newcmcontext->id]);
+        $this->assertEquals(count($overrides), count($newoverrides));
+    }
+
+    /**
+     * Test that calendar events are correctly duplicated when duplicating a module with a due date.
+     */
+    public function test_duplicate_calendar_event(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $duedate = time() + 3600;
+        $module = self::getDataGenerator()->create_module('assign', ['course' => $course, 'duedate' => $duedate]);
+
+        $event = $DB->get_record('event', [
+            'modulename' => 'assign',
+            'instance' => $module->id,
+            'eventtype' => 'due',
+        ], '*', MUST_EXIST);
+        $this->assertEquals($duedate, $event->timestart);
+
+        $cmactions = new cmactions($course);
+        $newcm = $cmactions->duplicate($module->cmid);
+
+        $newevent = $DB->get_record('event', [
+            'modulename' => 'assign',
+            'instance' => $newcm->instance,
+            'eventtype' => 'due',
+        ], '*', MUST_EXIST);
+        $this->assertEquals($duedate, $newevent->timestart);
+    }
+
+    /**
+     * Test that local permissions are correctly duplicated when duplicating a module.
+     */
+    public function test_duplicate_module_role_assignments(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create course and course module.
+        $course = self::getDataGenerator()->create_course();
+        $res = self::getDataGenerator()->create_module('assign', ['course' => $course]);
+        $cm = get_coursemodule_from_id('assign', $res->cmid, 0, false, MUST_EXIST);
+        $cmcontext = \context_module::instance($cm->id);
+
+        // Enrol student user.
+        $user = self::getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        // Assign user a new local role.
+        $newroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+        role_assign($newroleid, $user->id, $cmcontext->id);
+
+        // Duplicate module.
+        $cmactions = new cmactions($course);
+        $newcm = $cmactions->duplicate($res->cmid);
+        $newcmcontext = \context_module::instance($newcm->id);
+
+        // Assert that user still has role assigned.
+        $this->assertTrue(user_has_role_assignment($user->id, $newroleid, $newcmcontext->id));
+
+        // Assert that both modules contain the same count of overrides.
+        $overrides = $DB->get_records('role_assignments', ['contextid' => $cmcontext->id]);
+        $newoverrides = $DB->get_records('role_assignments', ['contextid' => $newcmcontext->id]);
+        $this->assertEquals(count($overrides), count($newoverrides));
+    }
+
+    /**
+     * Helper function to create a course from given data.
+     *
+     * @param array $coursedata Array defining the course structure.
+     * @return \stdClass The created course object.
+     */
+    private function create_course_from_data(array $coursedata): \stdClass {
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['numsections' => count($coursedata), 'initsections' => 1]);
+        $allsections = $this->get_sections_by_name($course);
+        $allsectionsbyname = array_filter($allsections, fn($section) => !empty($section->name));
+        // Create course modules as per $coursedata.
+        foreach ($coursedata as $sectionname => $cmlist) {
+            $section  = $allsectionsbyname[$sectionname];
+            foreach ($cmlist as $cm) {
+                $generator->create_module(
+                    'assign',
+                    ['course' => $course->id, 'name' => $cm, 'section' => $section->section],
+                );
+            }
+        }
+        return $course;
+    }
+
+    /**
+     * Helper function to get sections by name.
+     *
+     * @param \stdClass $course The course object.
+     * @return array Array of sections indexed by their names.
+     */
+    private function get_sections_by_name(\stdClass $course): array {
+        $modinfo = get_fast_modinfo($course);
+        $allsections = $modinfo->get_section_info_all();
+        return array_combine(
+            array_map(fn($section) => $section->name, $allsections),
+            $allsections
+        );
     }
 }

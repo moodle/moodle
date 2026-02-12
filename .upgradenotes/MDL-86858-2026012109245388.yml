@@ -1,0 +1,7 @@
+issueNumber: MDL-86858
+notes:
+  core_course:
+    - message: >-
+        The duplicate_module has been deprecated in favor of
+        core_courseformat\cmactions::duplicate
+      type: deprecated

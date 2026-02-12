@@ -83,7 +83,7 @@ final class quiz_restore_decode_links_test extends \advanced_testcase {
         $DB->set_field('question_answers', 'answer', $CFG->wwwroot . '/mod/quiz/index.php?id=' . $quiz->cmid,
             ['id' => $fourthanswer->id]);
 
-        $newcm = duplicate_module($course, get_fast_modinfo($course)->get_cm($quiz->cmid));
+        $newcm = \core_courseformat\formatactions::cm($course)->duplicate($quiz->cmid);
 
         $quizquestions = \mod_quiz\question\bank\qbank_helper::get_question_structure(
                 $newcm->instance, \context_module::instance($newcm->id));

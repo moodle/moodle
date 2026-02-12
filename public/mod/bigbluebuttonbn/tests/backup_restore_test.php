@@ -188,7 +188,7 @@ final class backup_restore_test extends restore_date_testcase {
     public function test_duplicate_module_no_meetingid(int $type): void {
         list($bbactivitycontext, $bbactivitycm, $bbactivity)
             = $this->create_instance($this->get_course(), ['type' => $type]);
-        $newcm = duplicate_module($this->get_course(), $bbactivitycm);
+        $newcm = \core_courseformat\formatactions::cm($this->get_course())->duplicate($bbactivitycm->id);
         $oldinstance = instance::get_from_cmid($bbactivitycm->id);
         $newinstance = instance::get_from_cmid($newcm->id);
 

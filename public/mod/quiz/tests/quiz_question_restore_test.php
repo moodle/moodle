@@ -401,8 +401,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
 
     /**
      * Test quiz duplicate for quiz question bank.
-     *
-     * @covers ::duplicate_module
      */
     public function test_quiz_duplicate_for_quiz_question_bank_questions(): void {
         $this->resetAfterTest();

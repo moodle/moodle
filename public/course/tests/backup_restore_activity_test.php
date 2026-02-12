@@ -52,7 +52,7 @@ final class backup_restore_activity_test extends \advanced_testcase {
         $page = $generator->create_module('page', ['course' => $course->id, 'lang' => 'en']);
 
         // Duplicate the page.
-        $newpagecm = duplicate_module($course, get_fast_modinfo($course)->get_cm($page->cmid));
+        $newpagecm = \core_courseformat\formatactions::cm($course)->duplicate($page->cmid);
 
         // Verify the settings of the duplicated activity.
         $this->assertEquals('en', $newpagecm->lang);
