@@ -419,14 +419,15 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         $rubrictemplate .= $rubrictable;
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $value = get_string('addcriterion', 'gradingform_rubric');
-            $criteriainputparams = array(
+            $criteriainputparams = [
                 'type' => 'submit',
                 'name' => '{NAME}[criteria][addcriterion]',
                 'id' => '{NAME}-criteria-addcriterion',
+                'class' => 'btn btn-secondary',
                 'value' => $value
-            );
+            ];
             $input = html_writer::empty_tag('input', $criteriainputparams);
-            $rubrictemplate .= html_writer::tag('div', $input, array('class' => 'addcriterion btn btn-secondary'));
+            $rubrictemplate .= html_writer::tag('div', $input, ['class' => 'addcriterion my-2']);
         }
         $rubrictemplate .= $this->rubric_edit_options($mode, $options);
         $rubrictemplate .= html_writer::end_tag('div');
