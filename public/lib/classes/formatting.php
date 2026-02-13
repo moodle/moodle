@@ -329,8 +329,11 @@ class formatting {
                 $domdoc->saveHTML($domdoc->documentElement),
             ));
             // Libxml2 >= 2.14.0 doesn't wrap plain text in <p> tags, so add them for consistency.
-            if (LIBXML_VERSION >= 21400 && !empty($text) && !preg_match('/^\s*</', $text)) {
-                $text = '<p>' . $text . '</p>';
+            if (LIBXML_VERSION >= 21400) {
+                $trimmed = trim($text);
+                if ($trimmed !== '' && !preg_match('/^</', $trimmed)) {
+                    $text = '<p>' . $text . '</p>';
+                }
             }
             // The meta charset approach preserves leading/trailing whitespace in <p> tags more than the old XML
             // declaration approach. Normalize this by trimming whitespace inside <p> tags to match old behavior.
