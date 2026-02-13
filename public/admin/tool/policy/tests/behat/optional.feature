@@ -63,8 +63,7 @@ Feature: Optional policies
       | ConsentPageCompulsory1 | full text3 | short text3 | 0              | 0         |
       | OwnPageCompulsory1     | full text4 | short text4 | 1              | 0         |
       | OwnPageOptional1       | full text5 | short text5 | 1              | 1         |
-    And I am on site homepage
-    And I follow "Log in"
+    And I am on homepage
     And I click on "Create new account" "link"
     # Compulsory policies displayed on own page are shown first and must be agreed.
     And I should see "OwnPageCompulsory1" in the "region-main" "region"

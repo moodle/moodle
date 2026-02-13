@@ -8,8 +8,7 @@ Feature: Both first name and last name are always available for every user
     Given the following config values are set as admin:
       | registerauth    | email |
       | passwordpolicy  | 0     |
-    And I am on site homepage
-    And I follow "Log in"
+    And I am on homepage
     And I click on "Create new account" "link"
     When I set the following fields to these values:
       | Username      | mrwhitespace        |

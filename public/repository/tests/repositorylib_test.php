@@ -44,6 +44,7 @@ final class repositorylib_test extends \advanced_testcase {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $syscontext = \context_system::instance();
         $repositorypluginname = 'dropbox';

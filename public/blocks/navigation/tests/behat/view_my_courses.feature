@@ -80,6 +80,8 @@ Feature: View my courses in navigation block
     Given the following config values are set as admin:
       | navshowmycoursecategories | 1 |
       | navshowallcourses         | 1 |
+      | forcelogin                | 0 |
+    When I am on homepage
     And I expand "Courses" node
     And I should see "cat1" in the "Navigation" "block"
     And I should see "cat2" in the "Navigation" "block"

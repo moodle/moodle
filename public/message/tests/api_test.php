@@ -5300,6 +5300,7 @@ final class api_test extends \advanced_testcase {
      */
     public function test_get_conversation_members(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $lastaccess = new \stdClass();
         $lastaccess->lastaccess = time();
@@ -5373,6 +5374,7 @@ final class api_test extends \advanced_testcase {
      */
     public function test_get_conversation_members_with_contact_requests(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $lastaccess = new \stdClass();
         $lastaccess->lastaccess = time();
@@ -5471,6 +5473,7 @@ final class api_test extends \advanced_testcase {
         $lastaccess->lastaccess = time();
 
         $user1 = self::getDataGenerator()->create_user($lastaccess);
+        $this->setUser($user1);
 
         $selfconversation = api::get_self_conversation($user1->id);
         testhelper::send_fake_message_to_conversation($user1, $selfconversation->id, 'This is a self-message!');

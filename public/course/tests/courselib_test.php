@@ -2890,6 +2890,7 @@ final class courselib_test extends advanced_testcase {
         global $DB;
 
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $generator = $this->getDataGenerator();
         $category = $generator->create_category();

@@ -2068,6 +2068,7 @@ final class lib_test extends \advanced_testcase {
     }
 
     public function test_discussion_pinned_sort(): void {
+        $this->setAdminUser();
         list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
         $cm = get_coursemodule_from_instance('forum', $forum->id);
         $discussions = forum_get_discussions($cm);

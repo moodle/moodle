@@ -10,7 +10,7 @@ Feature: Test if the login form provides the correct feedback
       | teacher1 |
 
   Scenario: Check invalid login message
-    Given I follow "Log in"
+    Given I am on homepage
     And I set the field "Username" to "teacher1"
     And I set the field "Password" to "incorrect"
     When I press "Log in"
@@ -24,7 +24,7 @@ Feature: Test if the login form provides the correct feedback
       | es       |
     And the following config values are set as admin:
       | langmenu | 1 |
-    And I follow "Log in"
+    And I am on homepage
     And I open the action menu in "region-main" "region"
     # The line below contains the unicode character U+200E before and after the brackets, please be very careful editing this line.
     When I choose "Nederlands ‎(nl)‎" in the open action menu
@@ -37,13 +37,12 @@ Feature: Test if the login form provides the correct feedback
     And I upload "course/tests/fixtures/image.jpg" file to "Logo" filemanager
     And I press "Save changes"
     And I log out
-    And I follow "Log in"
     Then "//img[@id='logoimage']" "xpath_element" should exist
 
   Scenario: Add a custom welcome message
     Given the following config values are set as admin:
       | auth_instructions | Lorem ipsum dolor sit amet |
-    And I follow "Log in"
+    And I am on homepage
     Then I should see "Lorem ipsum dolor sit amet"
 
   @javascript @accessibility
@@ -51,14 +50,14 @@ Feature: Test if the login form provides the correct feedback
     Given the following config values are set as admin:
       | maintenance_enabled | 1                     |
       | maintenance_message | Back online tomorrow  |
-    And I follow "Log in"
+    And I am on homepage
     Then I should see "Back online tomorrow"
     And the page should meet accessibility standards with "best-practice" extra tests
 
   Scenario: User self registration
     Given the following config values are set as admin:
       | registerauth | Email-based self-registration |
-    And I follow "Log in"
+    And I am on homepage
     Then I should see "Create new account"
 
   Scenario: Set OAuth providers
@@ -79,7 +78,7 @@ Feature: Test if the login form provides the correct feedback
     And I set the field "Client secret" to "1234"
     And I press "Save changes"
     And I log out
-    And I follow "Log in"
+    And I am on homepage
     Then I should see "Google"
     And I should see "Facebook"
     And I should see "Microsoft"
@@ -87,18 +86,18 @@ Feature: Test if the login form provides the correct feedback
   Scenario: Test the login page auto focus feature
     Given the following config values are set as admin:
       | loginpageautofocus | Enabled |
-    And I follow "Log in"
+    And I am on homepage
     Then the focused element is "Username" "field"
     And I set the field "Username" to "admin"
     And I set the field "Password" to "admin"
     And I press "Log in"
     And I log out
-    And I follow "Log in"
+    And I am on homepage
     Then the focused element is "Password" "field"
 
   @accessibility
   Scenario: Test the login page focus after error feature
-    Given I follow "Log in"
+    Given I am on homepage
     And I set the field "Username" to "admin"
     And I set the field "Password" to "wrongpassword"
     And I press "Log in"
@@ -109,7 +108,7 @@ Feature: Test if the login form provides the correct feedback
   Scenario: Display the password visibility toggle icon
     Given the following config values are set as admin:
       | loginpasswordtoggle | 1 |
-    When I follow "Log in"
+    And I am on homepage
     Then "Toggle sensitive" "button" should be visible
     And the following config values are set as admin:
       | loginpasswordtoggle | 0 |
@@ -119,7 +118,7 @@ Feature: Test if the login form provides the correct feedback
   Scenario: Display the password visibility toggle icon for small screens only
     Given the following config values are set as admin:
       | loginpasswordtoggle | 2 |
-    When I follow "Log in"
+    And I am on homepage
     Then "Toggle sensitive" "button" should not be visible
     And I change the viewport size to "mobile"
     And "Toggle sensitive" "button" should be visible

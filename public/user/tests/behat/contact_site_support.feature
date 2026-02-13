@@ -32,6 +32,8 @@ Feature: Contact site support method and availability can be customised
   Scenario: Contact site support can be limited to authenticated users
     Given the following config values are set as admin:
       | supportavailability | 1 |
+    And the following config values are set as admin:
+      | forcelogin | 0 |
     # Confirm unauthenticated visitor cannot see the option or directly access the page.
     When I am on site homepage
     Then I should not see "Contact site support" in the "page-footer" "region"

@@ -39,7 +39,13 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // "sitepolicies" settingpage
     $temp = new admin_settingpage('sitepolicies', new lang_string('sitepolicies', 'admin'));
     $temp->add(new admin_setting_configcheckbox('protectusernames', new lang_string('protectusernames', 'admin'), new lang_string('configprotectusernames', 'admin'), 1));
-    $temp->add(new admin_setting_configcheckbox('forcelogin', new lang_string('forcelogin', 'admin'), new lang_string('configforcelogin', 'admin'), 0));
+    // Force to show the login page for fresh installs.
+    $temp->add(new admin_setting_configcheckbox(
+        'forcelogin',
+        new lang_string('forcelogin', 'admin'),
+        new lang_string('configforcelogin', 'admin'),
+        1
+    ));
     $temp->add(new admin_setting_configcheckbox('forceloginforprofiles', new lang_string('forceloginforprofiles', 'admin'), new lang_string('configforceloginforprofiles', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('forceloginforprofileimage', new lang_string('forceloginforprofileimage', 'admin'), new lang_string('forceloginforprofileimage_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('opentowebcrawlers', new lang_string('opentowebcrawlers', 'admin'), new lang_string('configopentowebcrawlers', 'admin'), 0));

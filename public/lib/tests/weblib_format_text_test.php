@@ -97,6 +97,7 @@ final class weblib_format_text_test extends \advanced_testcase {
     public function test_format_text_nolink(): void {
         global $CFG;
         $this->resetAfterTest();
+        $this->setAdminUser();
         filter_set_global_state('activitynames', TEXTFILTER_ON);
 
         $course = $this->getDataGenerator()->create_course();

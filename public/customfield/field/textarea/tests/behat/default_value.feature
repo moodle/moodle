@@ -24,6 +24,8 @@ Feature: Default value for the textarea custom field can contain images
     And the following "user private files" exist:
       | user  | filepath                       |
       | admin | lib/tests/fixtures/gd-logo.png |
+    And the following config values are set as admin:
+      | forcelogin | 0 |
     And I log in as "admin"
     And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"

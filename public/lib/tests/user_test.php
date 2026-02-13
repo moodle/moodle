@@ -937,6 +937,7 @@ final class user_test extends \advanced_testcase {
     public function test_display_profile_picture(): void {
         global $OUTPUT, $CFG;
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $user1 = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Doe']);
         $user2 = $this->getDataGenerator()->create_user(['picture' => 1]);

@@ -44,6 +44,7 @@ final class sync_members_test extends \lti_advantage_testcase {
     protected function verify_user_profile_image(int $userid, bool $match = true): void {
         global $CFG;
         $user = \core_user::get_user($userid);
+        $this->setUser($user);
         $usercontext = \context_user::instance($user->id);
         $expected = $CFG->wwwroot . '/pluginfile.php/' . $usercontext->id . '/user/icon/boost/f2?rev='. $user->picture;
 

@@ -312,6 +312,7 @@ final class datalib_test extends \advanced_testcase {
      */
     public function test_get_courses_with_fields(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $category = $this->getDataGenerator()->create_category();
         $course = $this->getDataGenerator()->create_course(['category' => $category->id]);
@@ -707,6 +708,7 @@ final class datalib_test extends \advanced_testcase {
     public function test_max_courses_in_category(): void {
         global $CFG;
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         // Default settings.
         $this->assertEquals(MAX_COURSES_IN_CATEGORY, get_max_courses_in_category());

@@ -19,6 +19,8 @@ Feature: Course summary block used on the frontpage
     # The course summary block a default front page block, so no need to add it.
 
   Scenario: Guest can view site summary
+    Given the following config values are set as admin:
+      | forcelogin | 0 |
     When I am on site homepage
     Then "Course/site summary" "block" should exist
     And I should not see "Course summary" in the "Course/site summary" "block"

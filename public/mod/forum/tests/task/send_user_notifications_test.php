@@ -66,6 +66,7 @@ final class send_user_notifications_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/mod/forum/lib.php');
         $CFG->handlebounces = true;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
         $this->preventResetByRollback();
         $this->redirectEmails();
 

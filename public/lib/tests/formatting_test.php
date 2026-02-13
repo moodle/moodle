@@ -493,6 +493,7 @@ final class formatting_test extends \advanced_testcase {
     public function test_format_text_nolink(): void {
         global $CFG;
         $this->resetAfterTest();
+        $this->setAdminUser();
         $formatter = new formatting();
 
         filter_set_global_state('activitynames', TEXTFILTER_ON);

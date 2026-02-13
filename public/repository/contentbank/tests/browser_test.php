@@ -46,16 +46,16 @@ final class browser_test extends \advanced_testcase {
         $coursecategory = $this->getDataGenerator()->create_category(['name' => 'Category']);
         $coursecatcontext = \context_coursecat::instance($coursecategory->id);
 
+        $admin = get_admin();
+        // Log in as admin.
+        $this->setUser($admin);
+
         // Get the default course category.
         $defaultcat = \core_course_category::get(1);
         $defaultcatcontext = \context_coursecat::instance($defaultcat->id);
 
         // Create course.
         $course = $this->getDataGenerator()->create_course(['category' => $coursecategory->id]);
-
-        $admin = get_admin();
-        // Create a user (not enrolled in a course).
-        $user = $this->getDataGenerator()->create_user();
 
         // Add some content to the content bank.
         $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
@@ -64,8 +64,6 @@ final class browser_test extends \advanced_testcase {
         $contentbankcontents = $generator->generate_contentbank_data('contenttype_h5p', 3, $admin->id,
             $systemcontext, true, $filepath);
 
-        // Log in as admin.
-        $this->setUser($admin);
         // Get the content bank nodes displayed to the admin in the system context.
         $browser = new \repository_contentbank\browser\contentbank_browser_context_system($systemcontext);
         $repositorycontentnodes = $browser->get_content();
@@ -86,6 +84,8 @@ final class browser_test extends \advanced_testcase {
         $expected = $this->generate_expected_content($contextfolders, $contentbankcontents);
         $this->assertEqualsCanonicalizing($expected, $repositorycontentnodes);
 
+        // Create a user (not enrolled in a course).
+        $user = $this->getDataGenerator()->create_user();
         // Log in as a user.
         $this->setUser($user);
         // Get the content bank nodes displayed to an authenticated user in the system context.
