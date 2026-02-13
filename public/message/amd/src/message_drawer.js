@@ -586,6 +586,7 @@ function(
                 $('#' + button).focus();
             }
             PubSub.publish(Events.TOGGLE_VISIBILITY, button);
+            PubSub.publish(Events.HIDE, {});
         });
 
         PubSub.subscribe(Events.CREATE_CONVERSATION_WITH_USER, function(args) {
