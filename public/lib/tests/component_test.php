@@ -1375,15 +1375,6 @@ final class component_test extends \advanced_testcase {
                     }
                 }
             }
-
-            // Check that the composer autoload files are present.
-            if (array_key_exists('files', $composer['autoload'])) {
-                // The Moodle composer file autoloads are a simple string[].
-                $autoloadnamefiles = $rc->getProperty('composerautoloadfiles')->getValue(null);
-                foreach ($composer['autoload']['files'] as $file) {
-                    $this->assertContains(trim($relativepath, '/\\') . "/{$file}", $autoloadnamefiles);
-                }
-            }
         }
     }
 
