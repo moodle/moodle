@@ -39,7 +39,7 @@ final class path_module_test extends route_testcase {
         $modcontext = \context_module::instance($mod->cmid);
 
         $param = new path_module();
-        $request = new ServerRequest('GET', '/course/' . $course->id . '/restricted/' . $mod->cmid);
+        $request = new ServerRequest('GET', '/course/cms/' . $mod->cmid . '/restricted');
         $newrequest = $param->add_attributes_for_parameter_value($request, $mod->cmid);
 
         $this->assertInstanceOf(stdClass::class, $newrequest->getAttribute('cm'));
@@ -60,7 +60,7 @@ final class path_module_test extends route_testcase {
         $course = $this->getDataGenerator()->create_course();
         $modid = 9999;
 
-        $request = new ServerRequest('GET', '/course/' . $course->id . '/restricted/' . $modid);
+        $request = new ServerRequest('GET', '/course/cms/' . $modid . '/restricted');
 
         $this->expectException(not_found_exception::class);
         $param->add_attributes_for_parameter_value($request, $modid);
