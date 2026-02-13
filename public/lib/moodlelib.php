@@ -7843,14 +7843,23 @@ function moodle_setlocale($locale='') {
 /**
  * Count words in a string.
  *
- * Words are defined as things between whitespace.
+ * Words are defined as things between whitespace. Developments have tried to ensure that this
+ * method gives the same results as Libre Office, MS Word, etc. However, word-counting rules are
+ * subtle, and not identical between languages, so there may be differences in non-English languages.
  *
  * @category string
  * @param string $string The text to be searched for words. May be HTML.
- * @param int|null $format
+ * @param int|null $format a FORMAT_... constant. In the API this is optional,
+ *      but really, it is required to get accurate results, so should be passed.
  * @return int The count of words in the specified string
  */
 function count_words($string, $format = null) {
+    // If format is plain, remove < characters that are attached to non-HTML words.
+    if ($format === null || $format == FORMAT_PLAIN) {
+        // Remove < that is attached to a word but doesn't form a valid HTML tag.
+        // This matches < followed by word characters that don't have a closing >.
+        $string = preg_replace('/(\w|^|\s)<(?![^<>]*>)(?=\w)/u', '$1', $string);
+    }
     // Before stripping tags, add a space after the close tag of anything that is not obviously inline.
     // Also, br is a special case because it definitely delimits a word, but has no close tag.
     $string = preg_replace('~
