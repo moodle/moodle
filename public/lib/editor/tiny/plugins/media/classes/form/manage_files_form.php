@@ -101,8 +101,15 @@ class manage_files_form extends \moodleform {
         $mform->addElement('header', 'deletefileshdr', get_string('unusedfilesheader', 'tiny_media'));
         $mform->addElement('static', '', '', html_writer::tag('div', get_string('unusedfilesdesc', 'tiny_media')));
 
+        $this->add_checkbox_controller(1);
         foreach ($files as $hash => $file) {
-            $mform->addElement('checkbox', "deletefile[{$hash}]", '', $file, ['data-filename' => $file, 'data-filehash' => $hash]);
+            $mform->addElement(
+                'advcheckbox',
+                'deletefile[' . $hash . ']',
+                '',
+                $file,
+                ['data-filename' => $file, 'data-filehash' => $hash, 'group' => 1]
+            );
             $mform->setType("deletefile[{$hash}]", PARAM_INT);
         }
 
