@@ -699,8 +699,11 @@ class helper {
                     // Remove <body> element added in C14N function.
                     $html = preg_replace('~<(/?(?:body))[^>]*>\s*~i', '', $html);
                     // Libxml2 >= 2.14.0 doesn't wrap plain text in <p> tags, so add them for consistency.
-                    if (LIBXML_VERSION >= 21400 && !empty($html) && !preg_match('/^\s*</', $html)) {
-                        $html = '<p>' . $html . '</p>';
+                    if (LIBXML_VERSION >= 21400) {
+                        $trimmed = trim($html);
+                        if ($trimmed !== '' && !preg_match('/^</', $trimmed)) {
+                            $html = '<p>' . $html . '</p>';
+                        }
                     }
                 }
             }
