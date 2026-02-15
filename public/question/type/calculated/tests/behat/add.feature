@@ -1,8 +1,8 @@
-@qtype @qtype_calculatedmulti
-Feature: Test creating a Calculated multichoice question
+@qtype @qtype_calculated
+Feature: Test creating a Calculated question
   As a teacher
   In order to test my students
-  I need to be able to create Calculated multichoice questions
+  I need to be able to create Calculated questions
 
   Background:
     Given the following "users" exist:
@@ -18,19 +18,19 @@ Feature: Test creating a Calculated multichoice question
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
 
-  Scenario: Create a Calculated multichoice question
+  Scenario: Create a Calculated question
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     And I press "Create a new question ..."
-    And I set the field "Calculated multichoice" to "1"
+    And I set the field "Calculated" to "1"
     And I press "Add"
     And I set the following fields to these values:
-      | Question name | calculatedmulti-001                               |
-      | Question text | What is the sum of those two numbers: {a} and {b} |
-      | Choice 1      | {a}+{b}                                           |
-      | Grade         | 100%                                              |
-      | Choice 2      | {a}*{b}                                           |
-      | Choice 3      | {a}-{b}                                           |
+      | Question name    | calculated-001                                    |
+      | Question text    | What is the sum of those two numbers: {a} and {b} |
+      | Answer 1 formula | {a}+{b}                                           |
+      | fraction[0]      | 100%                                              |
     And I press "id_submitbutton"
+    Then the field "Wild card {a}" matches value "will use a new private dataset"
+    And I should not see "will use the same existing private dataset as before"
     And I should see "Choose wildcards dataset properties"
     And I press "id_submitbutton"
     And I should see "Edit the wildcards datasets"
@@ -40,8 +40,8 @@ Feature: Test creating a Calculated multichoice question
       | id_number_1       | 4.0 |
     And I press "id_savechanges"
     # Checking that the wildcard values are there
-    And I am on the "calculatedmulti-001" "core_question > edit" page logged in as teacher
+    And I am on the "calculated-001" "core_question > edit" page logged in as teacher
     And I press "id_submitbutton"
     And I should see "Choose wildcards dataset properties"
     And I press "id_submitbutton"
-    Then I should see "3+4"
+    And I should see "3+4"
