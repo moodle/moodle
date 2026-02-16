@@ -226,6 +226,48 @@ document.onreadystatechange = async() => {
     const Pending = await getPendingClass();
     var resizePending = new Pending('core_h5p/iframe:resize');
 
+    // Track when the embedded H5P content is fully attached.
+    const contentLoadedPending = new Pending('core_h5p/iframe:contentLoaded');
+    let contentLoaded = false;
+    const markContentLoaded = function() {
+        const body = iFrame?.contentDocument?.body;
+        const hasContent = body && body.querySelector('.h5p-container, .h5p-content');
+
+        // Check that H5P instance is actually ready with proper initialization
+        if (contentLoaded || !hasContent || !H5P?.instances?.[0]) {
+            return false;
+        }
+
+        contentLoaded = true;
+        contentLoadedPending.resolve();
+        H5PEmbedCommunicator.send('contentLoaded');
+        return true;
+    };
+
+    // If the content is already there, mark it immediately.
+    markContentLoaded();
+
+    // Observe the iframe document for the first appearance of the H5P container.
+    if (!contentLoaded && iFrame.contentDocument?.body) {
+        const contentObserver = new MutationObserver(function() {
+            if (markContentLoaded()) {
+                contentObserver.disconnect();
+            }
+        });
+        contentObserver.observe(iFrame.contentDocument.body, {childList: true, subtree: true});
+    }
+
+    // Extended fallback timeout to ensure pending resolves even if content detection fails.
+    if (!contentLoaded) {
+        setTimeout(function() {
+            if (!contentLoaded) {
+                contentLoaded = true;
+                contentLoadedPending.resolve();
+                H5PEmbedCommunicator.send('contentLoaded');
+            }
+        }, 1000);
+    }
+
     H5P.on(instance, 'resize', function() {
         if (H5P.isFullscreen) {
             return; // Skip iframe resize.
@@ -248,6 +290,8 @@ document.onreadystatechange = async() => {
             resizePending.resolve();
         }, 150);
     });
+
+    H5P.externalDispatcher.on('domChanged', markContentLoaded);
 
     // Get emitted xAPI data.
     H5P.externalDispatcher.on('xAPI', function(event) {
