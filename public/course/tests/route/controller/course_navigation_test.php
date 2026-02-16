@@ -132,7 +132,7 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm3', // Students cannot see stealth modules in the course page.
             ],
         ];
-        yield 'Last activity of a course (student)' => [
+        yield 'Last activity of a section (student)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
                 ['name' => 'cm2', 'options' => ['visible' => false]],
@@ -141,6 +141,15 @@ final class course_navigation_test extends route_testcase {
             'expected' => [
                 'type' => 'section',
                 'id' => '1',
+            ],
+        ];
+        yield 'Last activity of a course (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'course',
             ],
         ];
         yield 'With next module being a subsection (student)' => [
@@ -628,13 +637,13 @@ final class course_navigation_test extends route_testcase {
             case 'section':
                 $sectioninfo = $coursemodinfo->get_section_info($elementid);
                 $this->assertEquals(
-                    new url('/course/section.php', ['id' => $sectioninfo->id]),
+                    course_get_url($courseid, $sectioninfo, ['navigation' => true]),
                     new url($location)
                 );
                 break;
             case 'course':
                 $this->assertEquals(
-                    new url('/course/view.php', ['id' => $courseid]),
+                    course_get_url($courseid),
                     new url($location)
                 );
                 break;

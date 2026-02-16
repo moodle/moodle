@@ -80,8 +80,7 @@ class course_navigation {
                 return $this->redirect($response, $nextcm->get_url());
             }
         }
-
-        return $this->page_not_found($request, $response);
+        return $this->redirect_to_course($response, $cm->get_course()->id);
     }
 
     /**
@@ -217,7 +216,7 @@ class course_navigation {
 
         return $this->redirect(
             $response,
-            new url('/course/section.php', ['id' => $section->id]),
+            course_get_url($modinfo->get_course(), $section, ['navigation' => true]),
         );
     }
 
@@ -266,7 +265,7 @@ class course_navigation {
     ): ResponseInterface {
         return $this->redirect(
             $response,
-            new url('/course/view.php', ['id' => $courseid]),
+            course_get_url($courseid),
         );
     }
 }
