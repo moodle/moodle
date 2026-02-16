@@ -10,7 +10,7 @@ Feature: Relogin prevention
       | testuser | test     | Test      | User     | user@example.com |
 
   Scenario: A logged in user tries to access the login page again
-    Given I follow "Log in"
+    Given I am on homepage
     And I set the field "Username" to "testuser"
     And I set the field "Password" to "test"
     And I press "Log in"
