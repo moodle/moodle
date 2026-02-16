@@ -13,7 +13,6 @@
  * <dl>
  *  <dt> moodle-core-notification-dialogue</dt>
  *  <dt> moodle-core-notification-alert</dt>
- *  <dt> moodle-core-notification-confirm</dt>
  *  <dt> moodle-core-notification-exception</dt>
  *  <dt> moodle-core-notification-ajaxexception</dt>
  * </dl>

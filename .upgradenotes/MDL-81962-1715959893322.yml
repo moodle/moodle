@@ -1,0 +1,13 @@
+issueNumber: MDL-81962
+notes:
+  core:
+    - message: The `moodle-core-notification-confirm` YUI module has been removed after an extensive deprecation period. Please use the AMD `core/modal` module as a replacement.
+      type: removed
+    - message: |
+        The following feaetures of the `moodle-core-notification` YUI module have been removed after an extensive deprecation process.:
+
+         - method: `keyDelegation`
+         - property: `lightbox`
+
+        There is no direct replacement for these features, but they were not widely used and their removal should not cause significant issues. If you were using these features, you will need to implement your own solutions for key delegation and lightbox functionality.
+      type: removed

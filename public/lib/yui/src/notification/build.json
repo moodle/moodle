@@ -19,12 +19,6 @@
         "alert.js"
       ]
     },
-    "moodle-core-notification-confirm": {
-      "jsfiles": [
-        "shared.js",
-        "confirm.js"
-      ]
-    },
     "moodle-core-notification-exception": {
       "jsfiles": [
         "shared.js",

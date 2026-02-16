@@ -502,25 +502,6 @@ Y.extend(DIALOGUE, Y.Panel, {
 
         return DIALOGUE.superclass.hide.call(this, arguments);
     },
-    /**
-     * Setup key delegation to keep tabbing within the open dialogue.
-     *
-     * @method keyDelegation
-     */
-    keyDelegation: function() {
-        Y.log('The keyDelegation function has been deprecated in favour of the AMD core/local/aria/focuslock module');
-        var bb = this.get('boundingBox');
-        bb.delegate('key', function(e) {
-            var target = e.target;
-            var direction = 'forward';
-            if (e.shiftKey) {
-                direction = 'backward';
-            }
-            if (this.trapFocus(target, direction)) {
-                e.preventDefault();
-            }
-        }, 'down:9', CAN_RECEIVE_FOCUS_SELECTOR, this);
-    },
 
     /**
      * Trap the tab focus within the open modal.
