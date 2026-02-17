@@ -217,3 +217,38 @@ Feature: Display availability for activities and sections
     And I switch to "action" window
     And I should see "Section 1" in the "page-header" "region"
     And I should see "Not available unless" in the "region-main" "region"
+
+  @javascript
+  Scenario: Restricted activity page
+    # Set up.
+    Given the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+    And the following "groups" exist:
+      | course | name | idnumber |
+      | C1     | G1   | GI1      |
+    And the following "groupings" exist:
+      | name | course | idnumber |
+      | GX1  | C1     | GXI1     |
+    And I am on the "Page 1" "page activity editing" page logged in as "teacher1"
+    # Add a restriction to Page 1 (visible to students).
+    And I set the following fields to these values:
+      | Access restrictions | Grouping: GX1 |
+    And I press "Save and return to course"
+    And I turn editing mode on
+    And I add the "Navigation" block if not present
+    # Change to student view.
+    And I am on the "Course 1" "Course" page logged in as "student1"
+    And I expand "Section 1" node
+    And "Page 1" "link" should appear before "Section 2" "link" in the "Navigation" "block"
+    When I click on "Page 1" "link" in the "Navigation" "block"
+    # Page 1 should be visible and show info.
+    Then I should see "Page 1" in the "page-header" "region"
+    And I should see "Not available unless" in the "region-main" "region"
+    # Check the logs.
+    And I am on the "C1" "Course" page logged in as "teacher1"
+    And I navigate to "Reports > Logs" in current page administration
+    And I click on "Get these logs" "button"
+    And I should see "Restricted module viewed"
+    And I click on "Restricted module viewed" "link"
+    And I switch to "action" window
+    And I should see "Page 1" in the "page-header" "region"
