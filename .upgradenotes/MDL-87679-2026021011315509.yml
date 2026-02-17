@@ -1,0 +1,8 @@
+issueNumber: MDL-87679
+notes:
+  core_course:
+    - message: >-
+        New 'restricted' parameter has been added to course_section_view()
+        function to define whether the section was restricted for the user or
+        not.
+      type: improved

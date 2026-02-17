@@ -60,6 +60,7 @@ class restricted_section {
         require_once($CFG->dirroot . '/course/lib.php');
 
         $course = get_course($section->course);
+        $context = \context_course::instance($course->id);
         $format = course_get_format($course->id);
         $format->set_sectionid($section->id);
         $outputclass = $format->get_output_classname('content');
@@ -70,7 +71,7 @@ class restricted_section {
         $PAGE->set_pagelayout('course');
         $PAGE->add_body_classes(['limitedwidth', 'single-section-page']);
         $PAGE->set_pagetype('course-view-section-' . $course->format . '-restricted');
-        $PAGE->set_context(\context_course::instance($course->id));
+        $PAGE->set_context($context);
 
         $sectiontitle = $format->get_section_name($section);
         $strtitle = get_string('restrictedtitle', 'course', $sectiontitle);
@@ -81,6 +82,9 @@ class restricted_section {
         $response->getBody()->write($OUTPUT->header());
         $response->getBody()->write($renderer->render($sectionoutput));
         $response->getBody()->write($OUTPUT->footer());
+
+        // Trigger section viewed event.
+        course_section_view($context, $section->id, true);
 
         return $response;
     }

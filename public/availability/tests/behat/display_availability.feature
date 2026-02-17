@@ -208,3 +208,12 @@ Feature: Display availability for activities and sections
     And I should see "Section 1" in the "page-header" "region"
     And I should see "Not available unless" in the "region-main" "region"
     And "Page 1" "link" should not exist in the "region-main" "region"
+    # Check the logs.
+    And I am on the "C1" "Course" page logged in as "teacher1"
+    And I navigate to "Reports > Logs" in current page administration
+    And I click on "Get these logs" "button"
+    And I should see "Restricted section viewed"
+    And I click on "Restricted section viewed" "link"
+    And I switch to "action" window
+    And I should see "Section 1" in the "page-header" "region"
+    And I should see "Not available unless" in the "region-main" "region"

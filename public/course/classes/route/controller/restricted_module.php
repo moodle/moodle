@@ -93,6 +93,14 @@ class restricted_module {
         $response->getBody()->write($renderer->render($cmoutput));
         $response->getBody()->write($OUTPUT->footer());
 
+        $eventdata = [
+            'objectid' => $cm->id,
+            'context' => $context,
+        ];
+        $event = \core\event\course_restricted_module_viewed::create($eventdata);
+        $event->trigger();
+        user_accesstime_log($context->instanceid);
+
         return $response;
     }
 }

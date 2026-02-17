@@ -7235,6 +7235,37 @@ final class courselib_test extends advanced_testcase {
     }
 
     /**
+     * Test course_section_view() function for restricted sections.
+     *
+     * @covers ::course_section_view
+     */
+    public function test_course_restricted_section_view(): void {
+
+        $this->resetAfterTest();
+
+        // Course without sections.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 5], ['createsections' => true]);
+        $coursecontext = context_course::instance($course->id);
+        $format = course_get_format($course->id);
+        $sections = $format->get_sections();
+        $section = reset($sections);
+
+        // Redirect events to the sink, so we can recover them later.
+        $sink = $this->redirectEvents();
+
+        course_section_view($coursecontext, $section->id, true);
+
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\core\event\restricted_section_viewed', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals($section->id, $event->objectid);
+    }
+
+    /**
      * Tests get_sorted_course_formats returns plugins in cases where plugins are
      * installed previously but no longer exist, or not installed yet.
      *

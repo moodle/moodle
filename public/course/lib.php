@@ -4255,15 +4255,20 @@ function course_update_communication_instance_data(stdClass $data): void {
  *
  * @param context_course $context course context object
  * @param int $sectionid section number
+ * @param bool $restricted Whether the section is restricted for the user or not.
  * @since Moodle 4.4.
  */
-function course_section_view(context_course $context, int $sectionid): void {
+function course_section_view(context_course $context, int $sectionid, bool $restricted = false): void {
 
     $eventdata = [
         'objectid' => $sectionid,
         'context' => $context,
     ];
-    $event = \core\event\section_viewed::create($eventdata);
+    if ($restricted) {
+        $event = \core\event\restricted_section_viewed::create($eventdata);
+    } else {
+        $event = \core\event\section_viewed::create($eventdata);
+    }
     $event->trigger();
 
     user_accesstime_log($context->instanceid);
