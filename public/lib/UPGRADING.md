@@ -47,6 +47,15 @@
   To support this a new `get_results(): array;` method has been created which returns an array of `\core\check\result` objects.
 
   For more information see [MDL-87648](https://tracker.moodle.org/browse/MDL-87648)
+- A new path_section parameter type for routing has been created
+
+  For more information see [MDL-87671](https://tracker.moodle.org/browse/MDL-87671)
+- Nodes from sections with visible restrictions have been added to the navigation tree
+
+  For more information see [MDL-87671](https://tracker.moodle.org/browse/MDL-87671)
+- New `\core\attribute\description` attribute, previously `\core_sms\description`, for representing a language string in code attributes
+
+  For more information see [MDL-87799](https://tracker.moodle.org/browse/MDL-87799)
 
 ### Changed
 
@@ -70,6 +79,21 @@
 - `\core\output\core_renderer::confirm()`'s `$displayoptions` parameter now also accepts a `headinglevel` option that developers can use to specify the heading level of the confirmation's heading. If not specified, the confirmation heading will be rendered in an `h4` tag.
 
   For more information see [MDL-87694](https://tracker.moodle.org/browse/MDL-87694)
+- The following classes have been renamed and now support autoloading.
+
+  The old names will be maintained without debugging until Moodle 6.0.
+
+   | Old class name            | New class name                      |
+   | ---                       | ---                                 |
+   | `\phpunit_coverage_info`  | `\core\test\phpunit\coverage_info`  |
+   | `\phpunit_event_mock`     | `\core\test\phpunit\event_mock`     |
+   | `\phpunit_event_sink`     | `\core\test\phpunit\event_sink`     |
+   | `\phpunit_message_sink`   | `\core\test\phpunit\message_sink`   |
+   | `\phpunit_phpmailer_sink` | `\core\test\phpunit\phpmailer_sink` |
+   | `\phpunit_util`           | `\core\test\phpunit\phpunit_util`   |
+   | `\testing_util`           | `\core\test\testing_util`           |
+
+  For more information see [MDL-87716](https://tracker.moodle.org/browse/MDL-87716)
 
 ### Removed
 
@@ -82,6 +106,17 @@
   - `core/modal_factory`
 
   For more information see [MDL-79182](https://tracker.moodle.org/browse/MDL-79182)
+- The `moodle-core-notification-confirm` YUI module has been removed after an extensive deprecation period. Please use the AMD `core/modal` module as a replacement.
+
+  For more information see [MDL-81962](https://tracker.moodle.org/browse/MDL-81962)
+- The following feaetures of the `moodle-core-notification` YUI module have been removed after an extensive deprecation process.:
+
+   - method: `keyDelegation`
+   - property: `lightbox`
+
+  There is no direct replacement for these features, but they were not widely used and their removal should not cause significant issues. If you were using these features, you will need to implement your own solutions for key delegation and lightbox functionality.
+
+  For more information see [MDL-81962](https://tracker.moodle.org/browse/MDL-81962)
 - Legacy constructors have been removed. These relate to PHP 4 and earlier.
 
   For more information see [MDL-82284](https://tracker.moodle.org/browse/MDL-82284)

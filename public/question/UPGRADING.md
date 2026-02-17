@@ -10,6 +10,15 @@
 
 ### Removed
 
+- core_question:
+      - message: |
+          Final deprecation of `moodle-question-chooser` YUI module.
+        type: removed
+      - message: |
+          Final deprecation of `core_question/qbank_chooser` template.
+        type: removed
+
+  For more information see [MDL-81961](https://tracker.moodle.org/browse/MDL-81961)
 - - The following methods have been removed from `public/question/renderer.php`:
     - `\core_question_bank_renderer::render_category_condition()`
     - `\core_question_bank_renderer::render_category_condition_advanced()`

@@ -31,6 +31,9 @@
 - Deprecates set_coursemodule_groupmode in favor of core_courseformat\cmactions::set_groupmode
 
   For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
+- The duplicate_module has been deprecated in favor of core_courseformat\cmactions::duplicate
+
+  For more information see [MDL-86858](https://tracker.moodle.org/browse/MDL-86858)
 - The `course_set_marker` function has been deprecated and should no longer be used. Please consider using the equivalent methods, `set_marker` or `remove_all_markers`, in `core_courseformat\local\sectionactions` instead.
 
   For more information see [MDL-86860](https://tracker.moodle.org/browse/MDL-86860)

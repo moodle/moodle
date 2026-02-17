@@ -1,5 +1,13 @@
 # theme (plugin type) Upgrade notes
 
+## 5.2dev
+
+### Added
+
+- The manual completion button has been moved to the activity header to improve visibility and proximity to the activity name. A new theme layout option, `completioninheader`, has been introduced to control this behaviour and is enabled by default. Themes that set completioninheader to false must manually override the relevant template (such as `activity_header` or `activity_info`) to ensure the completion information is displayed correctly.
+
+  For more information see [MDL-87662](https://tracker.moodle.org/browse/MDL-87662)
+
 ## 5.1
 
 ### Deprecated

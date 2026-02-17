@@ -55,6 +55,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   To support this a new `get_results(): array;` method has been created which returns an array of `\core\check\result` objects.
 
   For more information see [MDL-87648](https://tracker.moodle.org/browse/MDL-87648)
+- A new path_section parameter type for routing has been created
+
+  For more information see [MDL-87671](https://tracker.moodle.org/browse/MDL-87671)
+- Nodes from sections with visible restrictions have been added to the navigation tree
+
+  For more information see [MDL-87671](https://tracker.moodle.org/browse/MDL-87671)
+- New `\core\attribute\description` attribute, previously `\core_sms\description`, for representing a language string in code attributes
+
+  For more information see [MDL-87799](https://tracker.moodle.org/browse/MDL-87799)
 
 #### Changed
 
@@ -78,6 +87,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - `\core\output\core_renderer::confirm()`'s `$displayoptions` parameter now also accepts a `headinglevel` option that developers can use to specify the heading level of the confirmation's heading. If not specified, the confirmation heading will be rendered in an `h4` tag.
 
   For more information see [MDL-87694](https://tracker.moodle.org/browse/MDL-87694)
+- The following classes have been renamed and now support autoloading.
+
+  The old names will be maintained without debugging until Moodle 6.0.
+
+   | Old class name            | New class name                      |
+   | ---                       | ---                                 |
+   | `\phpunit_coverage_info`  | `\core\test\phpunit\coverage_info`  |
+   | `\phpunit_event_mock`     | `\core\test\phpunit\event_mock`     |
+   | `\phpunit_event_sink`     | `\core\test\phpunit\event_sink`     |
+   | `\phpunit_message_sink`   | `\core\test\phpunit\message_sink`   |
+   | `\phpunit_phpmailer_sink` | `\core\test\phpunit\phpmailer_sink` |
+   | `\phpunit_util`           | `\core\test\phpunit\phpunit_util`   |
+   | `\testing_util`           | `\core\test\testing_util`           |
+
+  For more information see [MDL-87716](https://tracker.moodle.org/browse/MDL-87716)
 
 #### Removed
 
@@ -90,6 +114,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   - `core/modal_factory`
 
   For more information see [MDL-79182](https://tracker.moodle.org/browse/MDL-79182)
+- The `moodle-core-notification-confirm` YUI module has been removed after an extensive deprecation period. Please use the AMD `core/modal` module as a replacement.
+
+  For more information see [MDL-81962](https://tracker.moodle.org/browse/MDL-81962)
+- The following feaetures of the `moodle-core-notification` YUI module have been removed after an extensive deprecation process.:
+
+   - method: `keyDelegation`
+   - property: `lightbox`
+
+  There is no direct replacement for these features, but they were not widely used and their removal should not cause significant issues. If you were using these features, you will need to implement your own solutions for key delegation and lightbox functionality.
+
+  For more information see [MDL-81962](https://tracker.moodle.org/browse/MDL-81962)
 - Legacy constructors have been removed. These relate to PHP 4 and earlier.
 
   For more information see [MDL-82284](https://tracker.moodle.org/browse/MDL-82284)
@@ -277,6 +312,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Deprecates set_coursemodule_groupmode in favor of core_courseformat\cmactions::set_groupmode
 
   For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
+- The duplicate_module has been deprecated in favor of core_courseformat\cmactions::duplicate
+
+  For more information see [MDL-86858](https://tracker.moodle.org/browse/MDL-86858)
 - The `course_set_marker` function has been deprecated and should no longer be used. Please consider using the equivalent methods, `set_marker` or `remove_all_markers`, in `core_courseformat\local\sectionactions` instead.
 
   For more information see [MDL-86860](https://tracker.moodle.org/browse/MDL-86860)
@@ -306,6 +344,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add set_groupmode method to the core_courseformat\cmactions (course format actions)
 
   For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
+- Create a new core_courseformat\cmactions::duplicate aiming to replace the course/lib.php version
+
+  For more information see [MDL-86858](https://tracker.moodle.org/browse/MDL-86858)
 - Added `set_marker` and `remove_all_markers` methods to the `core_courseformat\sectionactions` class.
 
   For more information see [MDL-86860](https://tracker.moodle.org/browse/MDL-86860)
@@ -481,6 +522,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Removed
 
+- core_question:
+      - message: |
+          Final deprecation of `moodle-question-chooser` YUI module.
+        type: removed
+      - message: |
+          Final deprecation of `core_question/qbank_chooser` template.
+        type: removed
+
+  For more information see [MDL-81961](https://tracker.moodle.org/browse/MDL-81961)
 - - The following methods have been removed from `public/question/renderer.php`:
     - `\core_question_bank_renderer::render_category_condition()`
     - `\core_question_bank_renderer::render_category_condition_advanced()`
@@ -914,6 +964,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
 
+### theme
+
+#### Added
+
+- The manual completion button has been moved to the activity header to improve visibility and proximity to the activity name. A new theme layout option, `completioninheader`, has been introduced to control this behaviour and is enabled by default. Themes that set completioninheader to false must manually override the relevant template (such as `activity_header` or `activity_info`) to ensure the completion information is displayed correctly.
+
+  For more information see [MDL-87662](https://tracker.moodle.org/browse/MDL-87662)
+
 ### theme_boost
 
 #### Removed
@@ -937,6 +995,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The WS tool_mobile_get_public_config now returns whether MFA and reCAPTCHA are enabled for login/recover password.
 
   For more information see [MDL-87003](https://tracker.moodle.org/browse/MDL-87003)
+
+### tool_xmldb
+
+#### Changed
+
+- Generated `rename_field(...)` upgrade step code now checks for field existence, to ensure it can be executed multiple times
+
+  For more information see [MDL-87158](https://tracker.moodle.org/browse/MDL-87158)
 
 ## 5.1
 

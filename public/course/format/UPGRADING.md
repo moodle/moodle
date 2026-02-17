@@ -13,6 +13,9 @@
 - Add set_groupmode method to the core_courseformat\cmactions (course format actions)
 
   For more information see [MDL-86857](https://tracker.moodle.org/browse/MDL-86857)
+- Create a new core_courseformat\cmactions::duplicate aiming to replace the course/lib.php version
+
+  For more information see [MDL-86858](https://tracker.moodle.org/browse/MDL-86858)
 - Added `set_marker` and `remove_all_markers` methods to the `core_courseformat\sectionactions` class.
 
   For more information see [MDL-86860](https://tracker.moodle.org/browse/MDL-86860)
