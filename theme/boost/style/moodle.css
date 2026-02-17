@@ -40433,10 +40433,8 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-item.dimmed .courseindex-chevron {
   color: #6a737b;
 }
-.courseindex .courseindex-item.dimmed.pageitem {
-  color: #fff;
-}
-.courseindex .courseindex-item.dimmed.pageitem a {
+.courseindex .courseindex-item.dimmed .pageitem .courseindex-link,
+.courseindex .courseindex-item.dimmed .pageitem .courseindex-chevron {
   color: #fff;
 }
 .courseindex .courseindex-item .courseindex-locked {
@@ -40444,6 +40442,12 @@ div.editor_atto_toolbar button .icon {
 }
 .courseindex .courseindex-item.restrictions .courseindex-locked {
   display: block;
+}
+.courseindex .courseindex-item.restrictions.pageitem {
+  color: #fff;
+}
+.courseindex .courseindex-item.restrictions.pageitem a {
+  color: #fff;
 }
 .courseindex .courseindex-item.pageitem {
   background-color: #0f6cbf;
