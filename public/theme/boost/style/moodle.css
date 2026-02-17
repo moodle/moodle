@@ -28300,6 +28300,12 @@ body.dragging .dragging {
   margin-left: 0;
   margin-right: 4px;
   width: 9px;
+  display: inline-block;
+  vertical-align: 0.255em;
+}
+
+.dropleft .dropdown-toggle::after {
+  content: none;
 }
 
 .dir-rtl .dropleft .dropdown-toggle::before {
@@ -28309,6 +28315,7 @@ body.dragging .dragging {
 .dropright .dropdown-toggle::after {
   border: 0;
   font: var(--fa-font-solid);
+  font-size: 9px;
   content: "\f054";
 }
 
@@ -28319,6 +28326,7 @@ body.dragging .dragging {
 .dropup .dropdown-toggle::after {
   border: 0;
   font: var(--fa-font-solid);
+  font-size: 9px;
   content: "\f077";
 }
 
