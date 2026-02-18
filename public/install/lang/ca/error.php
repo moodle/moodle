@@ -33,7 +33,7 @@ $string['cannotcreatedboninstall'] = '<p>No es pot crear la base de dades.</p> <
 <p>L\'administrador del lloc hauria de verificar la configuració de la base de dades.</p>';
 $string['cannotcreatelangdir'] = 'No s\'ha pogut crear el directori d\'idiomes';
 $string['cannotcreatetempdir'] = 'No s\'ha pogut crear el directori temporal';
-$string['cannotdownloadcomponents'] = 'No s\'han pogut baixar components';
+$string['cannotdownloadcomponents'] = 'No s\'han pogut descarregar els components';
 $string['cannotdownloadzipfile'] = 'No s\'ha pogut baixar el fitxer ZIP';
 $string['cannotfindcomponent'] = 'No s\'ha pogut trobar el component';
 $string['cannotsavemd5file'] = 'No s\'ha pogut desar el fitxer md5';
