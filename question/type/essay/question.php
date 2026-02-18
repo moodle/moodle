@@ -132,7 +132,7 @@ class qtype_essay_question extends question_with_responses {
 
         // If there is a response and min/max word limit is set in the form then validate the number of words in response.
         if ($hasinlinetext) {
-            if ($this->check_input_word_count($response['answer'])) {
+            if ($this->check_input_word_count($response['answer'], $response['answerformat'] ?? FORMAT_PLAIN)) {
                 return false;
             }
         }
@@ -180,7 +180,7 @@ class qtype_essay_question extends question_with_responses {
         if ($this->is_complete_response($response)) {
             return '';
         }
-        return $this->check_input_word_count($response['answer']);
+        return $this->check_input_word_count($response['answer'], $response['answerformat'] ?? FORMAT_PLAIN);
     }
 
     public function is_gradable_response(array $response) {
@@ -262,10 +262,11 @@ class qtype_essay_question extends question_with_responses {
      * Check the input word count and return a message to user
      * when the number of words are outside the boundary settings.
      *
-     * @param string $responsestring
-     * @return string|null
+     * @param string $responsestring the student's response to count the words in.
+     * @param int $responseformat the FORMAT_... constant for what format $responsestring is.
+     * @return string|null null if the word-count is in range, otherwise a string message about how it is not.
      .*/
-    private function check_input_word_count($responsestring) {
+    private function check_input_word_count(string $responsestring, int $responseformat) {
         if (!$this->responserequired) {
             return null;
         }
@@ -275,7 +276,7 @@ class qtype_essay_question extends question_with_responses {
         }
 
         // Count the number of words in the response string.
-        $count = count_words($responsestring);
+        $count = count_words($responsestring, $responseformat);
         if ($this->maxwordlimit && $count > $this->maxwordlimit) {
             return get_string('maxwordlimitboundary', 'qtype_essay',
                     ['limit' => $this->maxwordlimit, 'count' => $count]);
@@ -306,7 +307,7 @@ class qtype_essay_question extends question_with_responses {
             return '';
         }
 
-        $count = count_words($response['answer']);
+        $count = count_words($response['answer'], $response['answerformat'] ?? FORMAT_PLAIN);
         if ($this->maxwordlimit && $count > $this->maxwordlimit) {
             return get_string('wordcounttoomuch', 'qtype_essay',
                     ['limit' => $this->maxwordlimit, 'count' => $count]);
