@@ -38,6 +38,8 @@ final class participants_action_bar_test extends \advanced_testcase {
     public function test_get_content_for_select($type, $expectedcount, $expecteditems): void {
         global $PAGE;
         $this->resetAfterTest();
+        $this->setAdminUser();
+
         $course = $this->getDataGenerator()->create_course();
         $module = $this->getDataGenerator()->create_module('assign', [
             'course' => $course->id
@@ -52,7 +54,6 @@ final class participants_action_bar_test extends \advanced_testcase {
             $PAGE->set_cm($cm);
         }
 
-        $this->setAdminUser();
         $PAGE->set_url($url);
         $PAGE->set_context($context);
         $output = new participants_action_bar($course, $PAGE, null);
