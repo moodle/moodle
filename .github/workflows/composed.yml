@@ -29,6 +29,14 @@ jobs:
         image: redis
         ports:
           - 6379:6379
+      postgres:
+        image: ${{ matrix.db == 'pgsql' && 'postgres:16' || '' }}
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
     strategy:
       fail-fast: false
       matrix:
@@ -44,27 +52,20 @@ jobs:
             db: pgsql
 
     steps:
-      - name: Setting up DB mysql
+      - name: Run MySQL Server
         if: ${{ matrix.db == 'mysqli' }}
-        uses: moodlehq/mysql-action@v1
-        with:
-          collation server: utf8mb4_bin
-          mysql version: 8.4
-          mysql database: test
-          mysql user: test
-          mysql password: test
-          use tmpfs: true
-          tmpfs size: '1024M'
-          extra conf: --skip-log-bin
-
-      - name: Setting up DB pgsql
-        if: ${{ matrix.db == 'pgsql' }}
-        uses: m4nu56/postgresql-action@v1
-        with:
-          postgresql version: 16
-          postgresql db: test
-          postgresql user: test
-          postgresql password: test
+        run: |
+          docker run --rm \
+            -e MYSQL_DATABASE=test \
+            -e MYSQL_USER=test \
+            -e MYSQL_PASSWORD=test \
+            -e MYSQL_ROOT_PASSWORD=test \
+            -p 3306:3306 \
+            -d \
+            --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=1024M \
+            mysql:8.4 \
+              --skip-log-bin \
+              --collation-server=utf8mb4_bin
 
       - name: Configuring git vars
         uses: rlespinasse/github-slug-action@v5
