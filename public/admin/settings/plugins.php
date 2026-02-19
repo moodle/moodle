@@ -115,37 +115,14 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('manageauths', new lang_string('authsettings', 'admin'));
     $temp->add(new admin_setting_manageauths());
     $temp->add(new admin_setting_heading('manageauthscommonheading', new lang_string('commonsettings', 'admin'), ''));
-    $temp->add(new admin_setting_special_registerauth());
-    $temp->add(new admin_setting_configcheckbox(
-        'authloginviaemail',
-        new lang_string('authloginviaemail', 'core_auth'),
-        new lang_string('authloginviaemail_desc', 'core_auth'),
-        1,
-    ));
     $temp->add(new admin_setting_configcheckbox('allowaccountssameemail',
                     new lang_string('allowaccountssameemail', 'core_auth'),
                     new lang_string('allowaccountssameemail_desc', 'core_auth'), 0));
     $temp->add(new admin_setting_configcheckbox('authpreventaccountcreation', new lang_string('authpreventaccountcreation', 'admin'), new lang_string('authpreventaccountcreation_help', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('loginpageautofocus', new lang_string('loginpageautofocus', 'admin'), new lang_string('loginpageautofocus_help', 'admin'), 0));
-    $temp->add(new admin_setting_configselect(
-        'guestloginbutton',
-        new lang_string('guestloginbutton', 'auth'),
-        new lang_string('showguestlogin', 'auth'),
-        '0',
-        [ 0 => new lang_string('hide'), 1 => new lang_string('show')],
-    ));
     $options = array(0 => get_string('no'), 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 10 => 10, 20 => 20, 50 => 50);
     $temp->add(new admin_setting_configselect('limitconcurrentlogins',
         new lang_string('limitconcurrentlogins', 'core_auth'),
         new lang_string('limitconcurrentlogins_desc', 'core_auth'), 0, $options));
-    $temp->add(new admin_setting_configtext('alternateloginurl', new lang_string('alternateloginurl', 'auth'),
-                                            new lang_string('alternatelogin', 'auth', htmlspecialchars(get_login_url(), ENT_COMPAT)), ''));
-    $temp->add(new admin_setting_configcheckbox('showloginform', new lang_string('showloginform', 'core_auth'),
-                                                new lang_string('showloginform_desc', 'core_auth'), 1));
-    $temp->add(new admin_setting_configtext('forgottenpasswordurl', new lang_string('forgottenpasswordurl', 'auth'),
-                                            new lang_string('forgottenpassword', 'auth'), '', PARAM_URL));
-    $temp->add(new admin_setting_confightmleditor('auth_instructions', new lang_string('instructions', 'auth'),
-                                                new lang_string('authinstructions', 'auth'), ''));
     $setting = new admin_setting_configtext('allowemailaddresses', new lang_string('allowemailaddresses', 'admin'),
         new lang_string('configallowemailaddresses', 'admin'), '', PARAM_NOTAGS);
     $setting->set_force_ltr(true);
@@ -156,45 +133,7 @@ if ($hassiteconfig) {
     $temp->add($setting);
     $temp->add(new admin_setting_configcheckbox('verifychangedemail', new lang_string('verifychangedemail', 'admin'), new lang_string('configverifychangedemail', 'admin'), 1));
 
-    // ReCaptcha.
-    $temp->add(new admin_setting_configselect('enableloginrecaptcha',
-        new lang_string('auth_loginrecaptcha', 'auth'),
-        new lang_string('auth_loginrecaptcha_desc', 'auth'),
-        0,
-        [
-            new lang_string('no'),
-            new lang_string('yes'),
-        ],
-    ));
-
-
-    // Forgot password ReCaptcha.
-    $temp->add(new admin_setting_configcheckbox(
-        'enableforgotpasswordrecaptcha',
-        new lang_string('auth_forgotpasswordrecaptcha', 'auth'),
-        new lang_string('auth_forgotpasswordrecaptcha_desc', 'auth'),
-        0,
-    ));
-
-    $setting = new admin_setting_configtext('recaptchapublickey', new lang_string('recaptchapublickey', 'admin'), new lang_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS);
-    $setting->set_force_ltr(true);
-    $temp->add($setting);
-    $setting = new admin_setting_configtext('recaptchaprivatekey', new lang_string('recaptchaprivatekey', 'admin'), new lang_string('configrecaptchaprivatekey', 'admin'), '', PARAM_NOTAGS);
-    $setting->set_force_ltr(true);
-    $temp->add($setting);
     $ADMIN->add('authsettings', $temp);
-
-    // Toggle password visiblity icon.
-    $temp->add(new admin_setting_configselect('loginpasswordtoggle',
-        new lang_string('auth_loginpasswordtoggle', 'auth'),
-        new lang_string('auth_loginpasswordtoggle_desc', 'auth'),
-        TOGGLE_SENSITIVE_ENABLED,
-        [
-            TOGGLE_SENSITIVE_DISABLED => get_string('disabled', 'admin'),
-            TOGGLE_SENSITIVE_ENABLED => get_string('enabled', 'admin'),
-            TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY => get_string('smallscreensonly', 'admin'),
-        ],
-    ));
 
     $temp = new admin_externalpage('authtestsettings', get_string('testsettings', 'core_auth'), new moodle_url("/auth/test_settings.php"), 'moodle/site:config', true);
     $ADMIN->add('authsettings', $temp);
