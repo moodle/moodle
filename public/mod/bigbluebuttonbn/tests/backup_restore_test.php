@@ -247,4 +247,72 @@ final class backup_restore_test extends restore_date_testcase {
             array_filter((array) $bbbdest, $filterfunction, ARRAY_FILTER_USE_KEY)
         );
     }
+
+    /**
+     * Test that timecreated and timemodified are the same during backup and restore.
+     *
+     * This confirms that apply_date_offset is NOT applied to these fields.
+     */
+    public function test_backup_restore_time_dates(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Make an activity, a recording, and a log.
+        [$bbactivitycontext, $bbactivitycm, $bbactivity] = $this->create_instance($this->get_course());
+
+        // Due to mod_helper::process_pre_save_instance, any new instances have their timemodified set to zero.
+        // So manually update it here.
+        $DB->update_record('bigbluebuttonbn', ['id' => $bbactivity->id, 'timemodified' => time()]);
+        $bbactivity = $DB->get_record('bigbluebuttonbn', ['id' => $bbactivity->id]);
+
+        $recording = new recording(0, (object)[
+            'courseid' => $this->get_course()->id,
+            'bigbluebuttonbnid' => $bbactivity->id,
+            'groupid' => 0,
+            'recordingid' => '123456789',
+            'imported' => 0,
+            'status' => recording::RECORDING_STATUS_PROCESSED,
+        ]);
+        $recording->save();
+        $log = $DB->get_record('bigbluebuttonbn_logs', ['courseid' => $this->get_course()->id]);
+
+        $this->assertCount(1, $DB->get_records(recording::TABLE));
+        $this->assertCount(1, $DB->get_records('bigbluebuttonbn_logs'));
+        $this->assertCount(1, $DB->get_records('bigbluebuttonbn'));
+
+        $originalrecordingtimecreated = $recording->get('timecreated');
+        $originalrecordingtimemodified = $recording->get('timemodified');
+        $originalactivitytimecreated = $bbactivity->timecreated;
+        $originalactivitytimemodified = $bbactivity->timemodified;
+        $originallogtimecreated = $log->timecreated;
+
+        // Update the course to have a start time in the future.
+        $testtime = time();
+        $originalcoursestarttime = $testtime + YEARSECS;
+        $DB->update_record('course', ['id' => $this->get_course()->id, 'startdate' => $originalcoursestarttime]);
+
+        // Backup and restore to new course, with a start date even later in the future.
+        $newcoursestartime = $testtime + 2 * YEARSECS;
+        $newcourseid = $this->backup_and_restore($this->get_course(), $newcoursestartime);
+
+        // Sanity check the backup and restore was ok.
+        $this->assertCount(2, $DB->get_records(recording::TABLE));
+        $this->assertCount(2, $DB->get_records('bigbluebuttonbn_logs'));
+        $this->assertCount(2, $DB->get_records('bigbluebuttonbn'));
+
+        $newactivity = $DB->get_record('bigbluebuttonbn', ['course' => $newcourseid]);
+        $newlog = $DB->get_record('bigbluebuttonbn_logs', ['courseid' => $newcourseid]);
+        $newrecording = $DB->get_record(recording::TABLE, ['courseid' => $newcourseid]);
+        $this->assertNotEmpty($newactivity);
+        $this->assertNotEmpty($newlog);
+        $this->assertNotEmpty($newrecording);
+
+        // Assert times is the same.
+        $this->assertEquals($originalrecordingtimecreated, $newrecording->timecreated);
+        $this->assertEquals($originalrecordingtimemodified, $newrecording->timemodified);
+        $this->assertEquals($originalactivitytimecreated, $newactivity->timecreated);
+        $this->assertEquals($originalactivitytimemodified, $newactivity->timemodified);
+        $this->assertEquals($originallogtimecreated, $newlog->timecreated);
+        // Note: Logs don't have a timemodified.
+    }
 }
