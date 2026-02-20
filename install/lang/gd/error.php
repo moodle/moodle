@@ -42,3 +42,4 @@ $string['cannotsavezipfile'] = 'Chan urrainn faidhle ZIP a shàbhaladh';
 $string['cannotunzipfile'] = 'Chan urrainn am faidhle siopach fhosgladh';
 $string['componentisuptodate'] = 'Tha a’ cho-phàirt ris an latha';
 $string['dmlexceptiononinstall'] = '<p>Tha mearachd stòir-dàta air tachairt \\[{$a->errorcode}].<br />{$a->debuginfo}</p>';
+$string['downloadedfilecheckfailed'] = 'Dh’fhàillig sgrùdadh an fhaidhle a chaidh a luchdachadh a-nuas';
