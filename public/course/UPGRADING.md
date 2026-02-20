@@ -13,6 +13,12 @@
 - Two optional new strings, `modulename_summary` and `modulename_tip`, have been added to modules and will be displayed in the activity chooser interface when defined.
 
   For more information see [MDL-87117](https://tracker.moodle.org/browse/MDL-87117)
+- Add new routes for course module, so we can predict what would be the next page to show when using course linear navigation. The route url will be like course/cms/<cmid>/next. If there is not next page, this will return a 404 error.
+
+  For more information see [MDL-87467](https://tracker.moodle.org/browse/MDL-87467)
+- New 'restricted' parameter has been added to course_section_view() function to define whether the section was restricted for the user or not.
+
+  For more information see [MDL-87679](https://tracker.moodle.org/browse/MDL-87679)
 
 ### Changed
 
