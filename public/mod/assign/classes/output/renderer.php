@@ -252,15 +252,18 @@ class renderer extends \plugin_renderer_base {
         $this->page->set_heading($this->page->course->fullname);
 
         $description = $header->preface;
-        if ($header->showintro || $header->activity) {
-            $description = $this->output->box_start('generalbox boxaligncenter');
-            if ($header->showintro) {
-                $description .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
-            }
-            if ($header->activity) {
-                $description .= $this->format_activity_text($header->assign, $header->coursemoduleid);
-            }
-            $description .= $header->postfix;
+        $introcontent = '';
+        if ($header->showintro) {
+            $introcontent .= format_module_intro('assign', $header->assign, $header->coursemoduleid);
+        }
+        if ($header->activity) {
+            $introcontent .= $this->format_activity_text($header->assign, $header->coursemoduleid);
+        }
+        $introcontent .= $header->postfix ?? '';
+
+        if (trim($introcontent) !== '') {
+            $description .= $this->output->box_start('generalbox boxaligncenter');
+            $description .= $introcontent;
             $description .= $this->output->box_end();
         }
 
