@@ -618,7 +618,6 @@ class component {
      * Create cache file content.
      *
      * @private this is intended for $CFG->alternative_component_cache only.
-     *
      * @return string
      */
     public static function get_cache_content() {
@@ -777,8 +776,11 @@ $cache = ' . var_export($cache, true) . ';
         foreach (['deprecatedplugintypes', 'deletedplugintypes'] as $key) {
             $illegaltypes = array_intersect(self::$supportsubplugins, array_keys($plugintypesmap[$key]));
             if (!empty($illegaltypes)) {
-                debugging("Deprecation of a plugin type which supports subplugins is not supported. These plugin types will ".
-                    "continue to be treated as active.", DEBUG_DEVELOPER);
+                debugging(
+                    "Deprecation of a plugin type which supports subplugins is not supported. "
+                        . "These plugin types will continue to be treated as active.",
+                    DEBUG_DEVELOPER
+                );
                 foreach ($illegaltypes as $plugintype) {
                     $plugintypesmap['plugintypes'][$plugintype] = $plugintypesmap[$key][$plugintype];
                     unset($plugintypesmap[$key][$plugintype]);
@@ -807,8 +809,11 @@ $cache = ' . var_export($cache, true) . ';
                     'deletedplugintypes' => $allsubtypes['deletedplugintypes'] ?? [],
                 ];
 
-                if (!$subplugintypesdata['plugintypes'] && !$subplugintypesdata['deprecatedplugintypes']
-                        && !$subplugintypesdata['deletedplugintypes']) {
+                if (
+                    !$subplugintypesdata['plugintypes']
+                    && !$subplugintypesdata['deprecatedplugintypes']
+                    && !$subplugintypesdata['deletedplugintypes']
+                ) {
                     continue;
                 }
                 $subplugintypesmap['plugintypes'][$type . '_' . $plugin] = [];
@@ -817,9 +822,11 @@ $cache = ' . var_export($cache, true) . ';
 
                 foreach ($subplugintypesdata as $key => $subplugintypes) {
                     foreach ($subplugintypes as $subtype => $subdir) {
-                        if (isset($plugintypesmap['plugintypes'][$subtype])
-                                || isset($plugintypesmap['deprecatedplugintypes'][$subtype])
-                                || isset($plugintypesmap['deletedplugintypes'][$subtype])) {
+                        if (
+                            isset($plugintypesmap['plugintypes'][$subtype])
+                            || isset($plugintypesmap['deprecatedplugintypes'][$subtype])
+                            || isset($plugintypesmap['deletedplugintypes'][$subtype])
+                        ) {
                             error_log("Invalid subtype '$subtype', duplicate detected.");
                             continue;
                         }
@@ -845,8 +852,11 @@ $cache = ' . var_export($cache, true) . ';
                     'deprecatedplugintypes' => $allsubtypes['deprecatedplugintypes'] ?? [],
                     'deletedplugintypes' => $allsubtypes['deletedplugintypes'] ?? [],
                 ];
-                if (!$subplugintypesdata['plugintypes'] && !$subplugintypesdata['deprecatedplugintypes']
-                        && !$subplugintypesdata['deletedplugintypes']) {
+                if (
+                    !$subplugintypesdata['plugintypes']
+                    && !$subplugintypesdata['deprecatedplugintypes']
+                    && !$subplugintypesdata['deletedplugintypes']
+                ) {
                     continue;
                 }
                 $subplugintypesmap['plugintypes'][$type . '_' . $plugin] = [];
@@ -855,9 +865,11 @@ $cache = ' . var_export($cache, true) . ';
 
                 foreach ($subplugintypesdata as $key => $subplugintypes) {
                     foreach ($subplugintypes as $subtype => $subdir) {
-                        if (isset($plugintypesmap['plugintypes'][$subtype])
-                                || isset($plugintypesmap['deprecatedplugintypes'][$subtype])
-                                || isset($plugintypesmap['deletedplugintypes'][$subtype])) {
+                        if (
+                            isset($plugintypesmap['plugintypes'][$subtype])
+                            || isset($plugintypesmap['deprecatedplugintypes'][$subtype])
+                            || isset($plugintypesmap['deletedplugintypes'][$subtype])
+                        ) {
                             error_log("Invalid subtype '$subtype', duplicate detected.");
                             continue;
                         }
