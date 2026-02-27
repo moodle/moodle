@@ -41,7 +41,6 @@ require_once('templatable_form_element.php');
  * @category  form
  * @copyright 2009 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @todo      MDL-29421 element Freezing
  * @todo      MDL-29426 ajax format conversion
  */
 class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatable {
@@ -486,12 +485,50 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
     }
 
     /**
+     * Used by getFrozenHtml() to pass the element's value if _persistantFreeze is on
+     *
+     * @return string
+     */
+    public function _getPersistantData() {
+        if (!$this->_persistantFreeze) {
+            return '';
+        } else {
+            $id = $this->getAttribute('id');
+            if (isset($id)) {
+                // Id of persistant input is different then the actual input.
+                $id = ['id' => $id . '_persistant'];
+            } else {
+                $id = [];
+            }
+
+            $str = '';
+            foreach ($this->getValue() as $key => $value) {
+                $str .= html_writer::empty_tag('input', [
+                    'type' => 'hidden',
+                    'name' => $this->getName() . "[{$key}]",
+                    'value' => $value,
+                ] + $id);
+            }
+            return $str;
+        }
+    }
+
+    /**
      * Returns the formatted value. The return from parent class is not acceptable.
      *
      * @return string
      */
     public function getFrozenHtml(): string {
-        return format_text($this->get_text(), $this->getFormat()) . $this->_getPersistantData();
+        global $CFG;
+
+        ['text' => $text, 'format' => $format] = $this->getValue();
+
+        // In post-formatted content, draftfiles are never expected to exist. However, in this case we do need to show
+        // embedded draft files, because they are expected to exist in the editor element.
+        $content = format_text($text, $format, ['context' => $this->_options['context'], 'overflowdiv' => true]);
+        $content = str_replace("\"$CFG->wwwroot/brokenfile.php#", "\"$CFG->wwwroot/draftfile.php", $content);
+
+        return $content . $this->_getPersistantData();
     }
 
     /**

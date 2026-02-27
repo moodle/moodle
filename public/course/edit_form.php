@@ -217,8 +217,6 @@ class course_edit_form extends moodleform {
         }
 
         if (!empty($course->id) and !has_capability('moodle/course:changesummary', $coursecontext)) {
-            // Remove the description header it does not contain anything any more.
-            $mform->removeElement('descriptionhdr');
             $mform->hardFreeze($summaryfields);
         }
 
