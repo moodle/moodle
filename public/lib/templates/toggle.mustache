@@ -35,7 +35,10 @@
 }}
 
 <div class="form-check form-switch {{$extraclasses}}{{extraclasses}}{{/extraclasses}}">
-    <input type="checkbox" class="form-check-input" id="{{$id}}{{id}}{{/id}}"
+    <input
+        type="checkbox"
+        class="form-check-input pe-auto"
+        id="{{$id}}{{id}}{{/id}}"
         {{$attributes}}
             {{#extraattributes}}{{name}}="{{value}}" {{/extraattributes}}
             {{#checked}}checked{{/checked}}
