@@ -5,6 +5,7 @@
             "editor"
         ],
         "aiprovider": [
+            "awsbedrock",
             "azureai",
             "deepseek",
             "gemini",
