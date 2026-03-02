@@ -20,6 +20,7 @@ use core\router\route_loader_interface;
 use core\tests\router\route_testcase;
 use core\url;
 use core_course\modinfo;
+use core_courseformat\formatactions;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -65,6 +66,7 @@ final class course_navigation_test extends route_testcase {
      * @return \Generator
      */
     public static function cm_next_provider(): \Generator {
+        $emailavailability = '{"op":"&","c":[{"type":"profile","sf":"email","op":"isequalto","v":"';
         yield 'Simple case (teacher)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
@@ -132,27 +134,79 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm3', // Students cannot see stealth modules in the course page.
             ],
         ];
-        yield 'Last activity of a section (student)' => [
+        yield 'Restricted module visible (editingteacher)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
-                ['name' => 'cm2', 'options' => ['visible' => false]],
-            ],
-            'current' => 'cm2',
-            'expected' => [
-                'type' => 'section',
-                'id' => '1',
-            ],
-        ];
-        yield 'Last activity of a course (student)' => [
-            'cmsdef' => [
-                ['name' => 'cm1', 'options' => ['section' => 2]],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}'],
+                ],
+                ['name' => 'cm3'],
             ],
             'current' => 'cm1',
             'expected' => [
-                'type' => 'course',
+                'id' => 'cm2', // Teachers can always see restricted modules.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Restricted module visible (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}'],
+                ],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm2', // Students can see restricted modules when the restrictions are visible.
             ],
         ];
-        yield 'With next module being a subsection (student)' => [
+        yield 'Restricted module hidden (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}'],
+                ],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm2', // Teachers can always see restricted modules.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Restricted module hidden (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}'],
+                ],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // Students cannot see restricted modules when the restrictions are hidden.
+            ],
+        ];
+        yield 'Restricted module hidden when user meets the restriction (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'student@moodle.invalid"}],"showc":[false]}'],
+                ],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm2', // Students can see restricted modules when they meet the restriction.
+            ],
+        ];
+        yield 'Subsection: With next module being a subsection (student)' => [
             'cmsdef' => [
                 ['name' => 'cm1', 'options' => ['section' => 2]],
                 ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 2]],
@@ -163,7 +217,7 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm2',
             ],
         ];
-        yield 'With next module being a label and subsections (student)' => [
+        yield 'Subsection: With next module being a label and subsections (student)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
                 ['name' => 'cm2', 'type' => 'label'],
@@ -175,25 +229,121 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm3',
             ],
         ];
-        yield 'With last module without url (student)' => [
+        yield 'Subsection: With next module being in a hidden subsection (student)' => [
             'cmsdef' => [
                 ['name' => 'cm1', 'options' => ['section' => 2]],
-                ['name' => 'cm2', 'type' => 'label'],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 2, 'visibility' => false]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
             ],
             'current' => 'cm1',
             'expected' => [
-                'type' => 'course',
+                'id' => 'cm3', // Students cannot see cm2 because it's in a hidden subsection.
             ],
         ];
-        yield 'With module that does not exist (student)' => [
+        yield 'Subsection: With next module being in a hidden subsection (editingteacher)' => [
             'cmsdef' => [
-                ['name' => 'cm0'],
-                ['name' => 'cm1'],
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 2, 'visibility' => false]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
             ],
-            'current' => 'cmthatdoesnotexist',
+            'current' => 'cm1',
             'expected' => [
-                'type' => 'error',
-                'statuscode' => 404,
+                'id' => 'cm2', // Teachers can see modules in hidden subsections.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Subsection: With next module being in a restricted public subsection (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // Students cannot see modules in a restricted subsection if the restrictions are not met.
+            ],
+        ];
+        yield 'Subsection: With next module being in a restricted public subsection (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm2', // Teachers can see modules in a restricted subsection even if they don't meet the restriction.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Subsection: With next module being in a restricted hidden subsection (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // Students cannot see modules in a restricted subsection if the restrictions are not met.
+            ],
+        ];
+        yield 'Subsection: With next module being in a restricted hidden subsection (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm2', // Teachers can see modules in a restricted subsection even if they don't meet the restriction.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Subsection: With next module being in a restricted public subsection when user meets the restrictions (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'student@moodle.invalid"}],"showc":[true]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm2',
+            ],
+        ];
+        yield 'Subsection: With next module being in a restricted hidden subsection when user meets the restrictions (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'student@moodle.invalid"}],"showc":[false]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm2',
             ],
         ];
         yield 'Sections - Simple case (teacher)' => [
@@ -294,6 +444,47 @@ final class course_navigation_test extends route_testcase {
                 'id' => '2',
             ],
         ];
+        yield 'Last activity of a section (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'options' => ['visible' => false]],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'type' => 'section',
+                'id' => '1',
+            ],
+        ];
+        yield 'Last activity of a course (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'course',
+            ],
+        ];
+        yield 'With last module without url (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'cm2', 'type' => 'label'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'course',
+            ],
+        ];
+        yield 'With module that does not exist (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm0'],
+                ['name' => 'cm1'],
+            ],
+            'current' => 'cmthatdoesnotexist',
+            'expected' => [
+                'type' => 'error',
+                'statuscode' => 404,
+            ],
+        ];
     }
 
     /**
@@ -329,6 +520,7 @@ final class course_navigation_test extends route_testcase {
      * @return \Generator
      */
     public static function cm_previous_provider(): \Generator {
+        $emailavailability = '{"op":"&","c":[{"type":"profile","sf":"email","op":"isequalto","v":"';
         yield 'Simple case (teacher)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
@@ -396,18 +588,79 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm1', // Students cannot see stealth modules in the course page.
             ],
         ];
-        yield 'First activity of a course (student)' => [
+        yield 'Restricted module visible (editingteacher)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
-                ['name' => 'cm2'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}'],
+                ],
+                ['name' => 'cm3'],
             ],
-            'current' => 'cm1',
+            'current' => 'cm3',
             'expected' => [
-                'type' => 'section',
-                'id' => '0',
+                'id' => 'cm2', // Teachers can always see restricted modules.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Restricted module visible (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}'],
+                ],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm2', // Students can see restricted modules when the restrictions are visible.
             ],
         ];
-        yield 'With previous module being a subsection (student)' => [
+        yield 'Restricted module hidden (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}'],
+                ],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm2', // Teachers can always see restricted modules.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Restricted module hidden (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}'],
+                ],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm1', // Students cannot see restricted modules when the restrictions are hidden.
+            ],
+        ];
+        yield 'Restricted module hidden when user meets the restriction (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                [
+                    'name' => 'cm2',
+                    'options' => ['availability' => $emailavailability . 'student@moodle.invalid"}],"showc":[false]}'],
+                ],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm2', // Students can see restricted modules when they meet the restriction.
+            ],
+        ];
+        yield 'Subsection: With previous module being a subsection (student)' => [
             'cmsdef' => [
                 ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 2]],
                 ['name' => 'cm1', 'options' => ['section' => 'subsection1']],
@@ -418,7 +671,7 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm1',
             ],
         ];
-        yield 'With previous module outside a subsection (student)' => [
+        yield 'Subsection: With previous module outside a subsection (student)' => [
             'cmsdef' => [
                 ['name' => 'cm1', 'options' => ['section' => 2]],
                 ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 2]],
@@ -429,7 +682,7 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm1',
             ],
         ];
-        yield 'With a subsection with only one module (student)' => [
+        yield 'Subsection: With a subsection with only one module (student)' => [
             'cmsdef' => [
                 ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 2]],
                 ['name' => 'cm1', 'options' => ['section' => 'subsection1']],
@@ -440,7 +693,7 @@ final class course_navigation_test extends route_testcase {
                 'id' => '2',
             ],
         ];
-        yield 'With previous module being a label and subsections (student)' => [
+        yield 'Subsection: With previous module being a label and subsections (student)' => [
             'cmsdef' => [
                 ['name' => 'subsection1', 'type' => 'subsection'],
                 ['name' => 'cm1', 'options' => ['section' => 'subsection1']],
@@ -452,26 +705,121 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm1',
             ],
         ];
-        yield 'With first module without url (student)' => [
+        yield 'Subsection: With previous module being in a hidden subsection (student)' => [
             'cmsdef' => [
-                ['name' => 'cm1', 'type' => 'label'],
-                ['name' => 'cm2', 'options' => ['section' => 2]],
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 2, 'visibility' => false]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
             ],
-            'current' => 'cm2',
+            'current' => 'cm3',
             'expected' => [
-                'type' => 'section',
-                'id' => '2',
+                'id' => 'cm1', // Students cannot see cm2 because it's in a hidden subsection.
             ],
         ];
-        yield 'With module that does not exist (student)' => [
+        yield 'Subsection: With previous module being in a hidden subsection (editingteacher)' => [
             'cmsdef' => [
-                ['name' => 'cm1'],
-                ['name' => 'cm2'],
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 2, 'visibility' => false]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
             ],
-            'current' => 'cmthatdoesnotexist',
+            'current' => 'cm3',
             'expected' => [
-                'type' => 'error',
-                'statuscode' => 404,
+                'id' => 'cm2', // Teachers can see modules in hidden subsections.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Subsection: With previous module being in a restricted public subsection (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm1', // Students cannot see modules in a restricted subsection if the restrictions are not met.
+            ],
+        ];
+        yield 'Subsection: With previous module being in a restricted public subsection (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm2', // Teachers can see modules in a restricted subsection even if they don't meet the restriction.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Subsection: With previous module being in a restricted hidden subsection (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm1', // Students cannot see modules in a restricted subsection if the restrictions are not met.
+            ],
+        ];
+        yield 'Subsection: With previous module being in a restricted hidden subsection (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm2', // Teachers can see modules in a restricted subsection even if they don't meet the restriction.
+            ],
+            'role' => 'editingteacher',
+        ];
+        yield 'Subsection: With previous module being in a restricted public subsection when user meets restrictions (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'student@moodle.invalid"}],"showc":[true]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm2',
+            ],
+        ];
+        yield 'Subsection: With previous module being in a restricted hidden subsection when user meets restrictions (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 2]],
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => [
+                    'section' => 2,
+                    'availability' => $emailavailability . 'student@moodle.invalid"}],"showc":[false]}',
+                ]],
+                ['name' => 'cm2', 'options' => ['section' => 'subsection1']],
+                ['name' => 'cm3', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm2',
             ],
         ];
         yield 'Sections - Simple case (teacher)' => [
@@ -535,6 +883,39 @@ final class course_navigation_test extends route_testcase {
             'role' => 'editingteacher',
             'hiddensections' => [2],
         ];
+        yield 'First activity of a course (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'section',
+                'id' => '0',
+            ],
+        ];
+        yield 'With first module without url (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'type' => 'label'],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'type' => 'section',
+                'id' => '2',
+            ],
+        ];
+        yield 'With module that does not exist (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2'],
+            ],
+            'current' => 'cmthatdoesnotexist',
+            'expected' => [
+                'type' => 'error',
+                'statuscode' => 404,
+            ],
+        ];
     }
 
     /**
@@ -566,8 +947,9 @@ final class course_navigation_test extends route_testcase {
             $sectioninfo = get_fast_modinfo($course)->get_section_info($sectiontohide);
             \core_courseformat\formatactions::section($course)->update($sectioninfo, ['visible' => false]);
         }
-        $user = $generator->create_and_enrol($course, $role);
+        $user = $generator->create_and_enrol($course, $role, ['email' => $role . '@moodle.invalid']);
         $cms = [];
+        $hiddensubsections = [];
         foreach ($cmsdef as $cmdef) {
             $cms[$cmdef['name']] = $this->create_module_or_subsection(
                 courseid: $course->id,
@@ -575,7 +957,21 @@ final class course_navigation_test extends route_testcase {
                 type: $cmdef['type'] ?? 'assign',
                 options: $cmdef['options'] ?? [],
             );
+            // Mark the subsection as hidden, to change the visibility later, once all the course modules are created.
+            if (
+                isset($cmdef['type']) && $cmdef['type'] === 'subsection'
+                && isset($cmdef['options']['visibility']) && $cmdef['options']['visibility'] === false
+            ) {
+                $hiddensubsections[] = $cms[$cmdef['name']];
+            }
         }
+
+        // If there are hidden subsections, call the API method to set the visibility of the course modules inside them too.
+        foreach ($hiddensubsections as $hiddensubsection) {
+            $sectioninfo = get_fast_modinfo($course->id)->get_section_info_by_component('mod_subsection', $hiddensubsection->id);
+            formatactions::section($course->id)->set_visibility($sectioninfo, false);
+        }
+
         $cmid = $cms[$current]->cmid ?? 9999; // If we cannot find it we will test the error case of not found.
 
         $this->setUser($user);
