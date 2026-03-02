@@ -210,7 +210,12 @@ class course_navigation {
             return $this->redirect_to_course($response, $modinfo->get_course()->id);
         }
 
-        if (!$section->uservisible || $section->is_delegated()) {
+        // If the section is hidden, or its restrictions are hidden (eye closed),
+        // find the next available section.
+        if (
+            (!$section->uservisible && (!$section->visible || !$section->availableinfo))
+            || $section->is_delegated()
+        ) {
             return $this->redirect_to_section($response, $modinfo, $section, $direction);
         }
 

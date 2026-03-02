@@ -40,7 +40,7 @@ final class course_navigation_test extends route_testcase {
      * @param string $current
      * @param array $expected
      * @param string $role
-     * @param array $hiddensections
+     * @param array $sectionsdef
      */
     #[DataProvider('cm_next_provider')]
     public function test_cm_next(
@@ -48,7 +48,7 @@ final class course_navigation_test extends route_testcase {
         string $current,
         array $expected,
         string $role = 'student',
-        array $hiddensections = [],
+        array $sectionsdef = [],
     ): void {
         $this->execute_cm_navigation_test(
             cmsdef: $cmsdef,
@@ -56,7 +56,7 @@ final class course_navigation_test extends route_testcase {
             expected: $expected,
             role: $role,
             direction: 'next',
-            hiddensections: $hiddensections,
+            sectionsdef: $sectionsdef,
         );
     }
 
@@ -380,7 +380,9 @@ final class course_navigation_test extends route_testcase {
                 'type' => 'section',
                 'id' => '2', // Students cannot see the hidden section, so the next one should be the one after.
             ],
-            'hiddensections' => [1],
+            'sectionsdef' => [
+                ['section' => 1, 'hidden' => true],
+            ],
         ];
         yield 'Sections - Hidden section (teacher)' => [
             'cmsdef' => [
@@ -394,7 +396,9 @@ final class course_navigation_test extends route_testcase {
                 'id' => '2', // Non-editing teachers cannot see the hidden section, so the next one should be the one after.
             ],
             'role' => 'teacher',
-            'hiddensections' => [1],
+            'sectionsdef' => [
+                ['section' => 1, 'hidden' => true],
+            ],
         ];
         yield 'Sections - Hidden section (editingteacher)' => [
             'cmsdef' => [
@@ -408,7 +412,9 @@ final class course_navigation_test extends route_testcase {
                 'id' => '1', // Teachers can see the hidden section.
             ],
             'role' => 'editingteacher',
-            'hiddensections' => [1],
+            'sectionsdef' => [
+                ['section' => 1, 'hidden' => true],
+            ],
         ];
         yield 'Sections - With last module in a hidden section (student)' => [
             'cmsdef' => [
@@ -419,7 +425,9 @@ final class course_navigation_test extends route_testcase {
             'expected' => [
                 'type' => 'course', // As the next section is hidden, we should redirect to course page.
             ],
-            'hiddensections' => [2],
+            'sectionsdef' => [
+                ['section' => 2, 'hidden' => true],
+            ],
         ];
         yield 'Sections - With last module in a hidden section (editingteacher)' => [
             'cmsdef' => [
@@ -432,7 +440,9 @@ final class course_navigation_test extends route_testcase {
                 'id' => '2',
             ],
             'role' => 'editingteacher',
-            'hiddensections' => [2],
+            'sectionsdef' => [
+                ['section' => 2, 'hidden' => true],
+            ],
         ];
         yield 'Sections - Empty section (student)' => [
             'cmsdef' => [
@@ -442,6 +452,77 @@ final class course_navigation_test extends route_testcase {
             'expected' => [
                 'type' => 'section',
                 'id' => '2',
+            ],
+        ];
+        yield 'Restricted section visible - Simple case (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 1]],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'section', // Editing teachers can see the restricted section.
+                'id' => '2',
+            ],
+            'role' => 'editingteacher',
+            'sectionsdef' => [
+                ['section' => 2, 'available' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}'],
+            ],
+        ];
+        yield 'Restricted section visible - Simple case (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 1]],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'section',
+                'id' => '2',
+            ],
+            'sectionsdef' => [
+                ['section' => 2, 'available' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}'],
+            ],
+        ];
+        yield 'Restricted section hidden - Simple case (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 1]],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'section', // Editing teachers can see the restricted section.
+                'id' => '2',
+            ],
+            'role' => 'editingteacher',
+            'sectionsdef' => [
+                ['section' => 2, 'available' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}'],
+            ],
+        ];
+        yield 'Restricted section hidden - Simple case (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 1]],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'course', // Students cannot see the restricted section.
+            ],
+            'sectionsdef' => [
+                ['section' => 2, 'available' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[false]}'],
+            ],
+        ];
+        yield 'Restricted section hidden - Simple case when user meets the restriction (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 1]],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'section', // Student meets the restriction, so the section should be visible.
+                'id' => '2',
+            ],
+            'sectionsdef' => [
+                ['section' => 2, 'available' => $emailavailability . 'student@moodle.invalid"}],"showc":[false]}'],
             ],
         ];
         yield 'Last activity of a section (student)' => [
@@ -494,7 +575,7 @@ final class course_navigation_test extends route_testcase {
      * @param string $current
      * @param array $expected
      * @param string $role
-     * @param array $hiddensections
+     * @param array $sectionsdef
      */
     #[DataProvider('cm_previous_provider')]
     public function test_cm_previous(
@@ -502,7 +583,7 @@ final class course_navigation_test extends route_testcase {
         string $current,
         array $expected,
         string $role = 'student',
-        array $hiddensections = [],
+        array $sectionsdef = [],
     ): void {
         $this->execute_cm_navigation_test(
             cmsdef: $cmsdef,
@@ -510,7 +591,7 @@ final class course_navigation_test extends route_testcase {
             expected: $expected,
             role: $role,
             direction: 'previous',
-            hiddensections: $hiddensections,
+            sectionsdef: $sectionsdef,
         );
     }
 
@@ -855,7 +936,9 @@ final class course_navigation_test extends route_testcase {
                 'type' => 'section',
                 'id' => '2',
             ],
-            'hiddensections' => [1],
+            'sectionsdef' => [
+                ['section' => 1, 'hidden' => true],
+            ],
         ];
         yield 'Sections - Hidden section (editingteacher)' => [
             'cmsdef' => [
@@ -868,7 +951,9 @@ final class course_navigation_test extends route_testcase {
                 'id' => '2',
             ],
             'role' => 'editingteacher',
-            'hiddensections' => [1],
+            'sectionsdef' => [
+                ['section' => 1, 'hidden' => true],
+            ],
         ];
         yield 'Sections - With module in a hidden section (editingteacher)' => [
             'cmsdef' => [
@@ -881,7 +966,38 @@ final class course_navigation_test extends route_testcase {
                 'id' => '2', // Teachers can see the hidden section.
             ],
             'role' => 'editingteacher',
-            'hiddensections' => [2],
+            'sectionsdef' => [
+                ['section' => 2, 'hidden' => true],
+            ],
+        ];
+        yield 'Restricted section visible - Simple case (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 1]],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'type' => 'section', // Editing teachers can see the restricted section.
+                'id' => '2',
+            ],
+            'role' => 'editingteacher',
+            'sectionsdef' => [
+                ['section' => 2, 'available' => $emailavailability . 'nomail@moodle.invalid"}],"showc":[true]}'],
+            ],
+        ];
+        yield 'Restricted section hidden - Simple case when user meets the restriction (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['section' => 1]],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'type' => 'section', // Student meets the restriction, so the section should be visible.
+                'id' => '2',
+            ],
+            'sectionsdef' => [
+                ['section' => 2, 'available' => $emailavailability . 'student@moodle.invalid"}],"showc":[false]}'],
+            ],
         ];
         yield 'First activity of a course (student)' => [
             'cmsdef' => [
@@ -927,7 +1043,7 @@ final class course_navigation_test extends route_testcase {
      * @param string $role
      * @param string $direction
      * @param int $numsections
-     * @param array $hiddensections
+     * @param array $sectionsdef
      */
     protected function execute_cm_navigation_test(
         array $cmsdef,
@@ -936,16 +1052,22 @@ final class course_navigation_test extends route_testcase {
         string $role = 'student',
         string $direction = 'next',
         int $numsections = 2,
-        array $hiddensections = [],
+        array $sectionsdef = [],
     ): void {
         $this->resetAfterTest();
         set_config('allowstealth', 1);
 
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['numsections' => $numsections]);
-        foreach ($hiddensections as $sectiontohide) {
-            $sectioninfo = get_fast_modinfo($course)->get_section_info($sectiontohide);
-            \core_courseformat\formatactions::section($course)->update($sectioninfo, ['visible' => false]);
+        foreach ($sectionsdef as $section) {
+            if (isset($section['hidden'])) {
+                $sectioninfo = get_fast_modinfo($course)->get_section_info($section['section']);
+                \core_courseformat\formatactions::section($course)->update($sectioninfo, ['visible' => !$section['hidden']]);
+            } else if (isset($section['available'])) {
+                $sectioninfo = get_fast_modinfo($course)->get_section_info($section['section']);
+                $availability = $section['available'];
+                \core_courseformat\formatactions::section($course)->update($sectioninfo, ['availability' => $availability]);
+            }
         }
         $user = $generator->create_and_enrol($course, $role, ['email' => $role . '@moodle.invalid']);
         $cms = [];
