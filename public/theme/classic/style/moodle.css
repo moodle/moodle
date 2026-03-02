@@ -28533,10 +28533,10 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
 
 @keyframes animate-pop {
   0% {
-    transform: scale(0.9, 0.9);
+    scale: 0.9;
   }
   100% {
-    transform: scale(1, 1);
+    scale: 1;
   }
 }
 .dir-rtl .action-menu .dropdown-subpanel .dropdown-item::after {

@@ -52,11 +52,11 @@
 
 @keyframes animate-pop {
     0% {
-        transform: scale(0.90, 0.90);
+        scale: 0.90;
     }
 
     100% {
-        transform: scale(1, 1);
+        scale: 1;
     }
 }
 
