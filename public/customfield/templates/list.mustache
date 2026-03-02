@@ -46,6 +46,8 @@
             "nameeditable": "Other fields",
             "addfieldmenu": "Add field",
             "canedit": true,
+            "canconvert": true,
+            "hasduplicatecustomfield": false,
             "fields": [
                 { "id": 0, "name": "Field name", "shortname": "shortname", "type": "Text" },
                 { "id": 0, "name": "Another field", "shortname": "checkme", "type": "Checkbox" }
@@ -89,7 +91,21 @@
                         {{/canmovecategories}}
                         {{{nameeditable}}}
                         {{#canedit}}
-                            <button type="button" class="btn btn-link btn-icon icon-size-3" data-role="deletecategory" data-id="{{id}}" title="{{#str}} deletecategory, customfield, {{name}} {{/str}}" aria-label="{{#str}} deletecategory, customfield, {{name}} {{/str}}">
+                            {{#canconvert}}
+                                {{^hasduplicatecustomfield}}
+                                    <button type="button" class="btn btn-icon icon-size-3" data-role="convertcategory" data-id="{{id}}" title="{{#str}} convertcategory, customfield {{/str}}">
+                                        {{#pix}} i/siteevent, core {{/pix}}
+                                        <span class="visually-hidden">{{#str}} convertcategory, customfield {{/str}}</span>
+                                    </button>
+                                {{/hasduplicatecustomfield}}
+                                {{#hasduplicatecustomfield}}
+                                    <button type="button" class="btn btn-icon icon-size-3" data-role="hasduplicatecustomfield" data-id="{{id}}" title="{{#str}} convertcategory, customfield {{/str}}">
+                                        {{#pix}} i/siteevent, core {{/pix}}
+                                        <span class="visually-hidden">{{#str}} convertcategory, customfield {{/str}}</span>
+                                    </button>
+                                {{/hasduplicatecustomfield}}
+                            {{/canconvert}}
+                            <button type="button" class="btn btn-icon icon-size-3" data-role="deletecategory" data-id="{{id}}" title="{{#str}} deletecategory, customfield, {{name}} {{/str}}" aria-label="{{#str}} deletecategory, customfield, {{name}} {{/str}}">
                                 {{#pix}} t/delete, core {{/pix}}
                             </button>
                         {{/canedit}}
