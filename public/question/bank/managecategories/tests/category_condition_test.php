@@ -250,31 +250,26 @@ final class category_condition_test extends \advanced_testcase {
     }
 
     /**
-     * When the category is updated in the filter condition, the context ID is also updated.
+     * As {@see test_restore_filtercondition}, but the original question bank was present in the backup.
      */
-    public function test_restore_filtercondition_update_context(): void {
+    public function test_restore_filtercondition_questionbankinbackup(): void {
         $this->resetAfterTest();
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $category = $questiongenerator->create_question_category();
-        $fakecategory = $category->id + 1;
-        $fakecontext = $category->contextid + 1;
         $filtercondition = [
             'filter' => [
                 'category' => [
                     'values' => [
-                        $fakecategory,
+                        $category->id,
                     ],
                 ],
             ],
-            'cat' => [
-                "{$fakecategory},{$fakecontext}",
-            ],
         ];
         $setreference = (object) [
-            'questionscontextid' => $fakecontext,
-            'usingcontextid' => $category->contextid,
+            'questionscontextid' => $category->contextid,
+            'usingcontextid' => $category->contextid + 1,
         ];
-        $mappedid = $category->id;
+        $mappedid = $category->id + 1;
         $mockstep = $this->get_mock_step($this->get_samesite_task());
         $mockstep->method('get_mappingid')->willReturn($mappedid);
 
@@ -282,10 +277,8 @@ final class category_condition_test extends \advanced_testcase {
 
         $condition = new category_condition();
 
-        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep);
+        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep, true);
 
         $this->assertEquals($mappedid, $filtercondition['filter']['category']['values'][0]);
-        $this->assertEquals($category->contextid, $setreference->questionscontextid);
-        $this->assertEquals($filtercondition['cat'], "{$mappedid},{$category->contextid}");
     }
 }
