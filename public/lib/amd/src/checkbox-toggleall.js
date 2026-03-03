@@ -20,7 +20,7 @@
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/pubsub'], function($, PubSub) {
+define(['jquery', 'core/pubsub', 'core/deprecated'], function($, PubSub, Deprecated) {
 
     /**
      * Whether event listeners have already been registered.
@@ -72,7 +72,13 @@ define(['jquery', 'core/pubsub'], function($, PubSub) {
         // TODO: Remove this backward compatibility code in Moodle 6.0.
         const oldTargets = getToggleGroupElements(root, toggleGroup, false).filter('[data-toggle="slave"]');
         if (Array.isArray(oldTargets) && oldTargets.length > 0) {
-            window.console.warn('The use of data-toggle="slave" is deprecated. Please use data-toggle="target" instead.');
+            Deprecated('core/checkbox-toggleall::master/slave', {
+                alternativeNotice: 'The use of data-toggle="slave" is deprecated. Please use data-toggle="target" instead.',
+                since: '4.5',
+                mdl: 'MDL-79753',
+                replacement: 'data-toggle="target"',
+            });
+
             targets.concat(oldTargets);
         }
         // End of backward compatibility code.
@@ -95,7 +101,12 @@ define(['jquery', 'core/pubsub'], function($, PubSub) {
         // TODO: Remove this backward compatibility code in Moodle 6.0.
         const oldTogglers = getToggleGroupElements(root, toggleGroup, exactMatch).filter('[data-toggle="master"]');
         if (Array.isArray(oldTogglers) && oldTogglers.length > 0) {
-            window.console.warn('The use of data-toggle="master" is deprecated. Please use data-toggle="toggler" instead.');
+            Deprecated('core/checkbox-toggleall::master/slave', {
+                alternativeNotice: 'The use of data-toggle="master" is deprecated. Please use data-toggle="toggler" instead.',
+                since: '4.5',
+                mdl: 'MDL-79756',
+                replacement: 'data-toggle="toggler"',
+            });
             togglers.concat(oldTogglers);
         }
         // End of backward compatibility code.
@@ -144,9 +155,13 @@ define(['jquery', 'core/pubsub'], function($, PubSub) {
      * @deprecated since Moodle 5.0.
      */
     var updateSlavesFromMasterState = function(root, toggleGroupName) {
-        window.console.warn(
-            'The use of updateSlavesFromMasterState is deprecated. Please use updateTargetsFromTogglerState instead.'
-        );
+        Deprecated('core/checkbox-toggleall::updateSlavesFromMasterState', {
+            alternativeNotice: 'The use of updateSlavesFromMasterState is deprecated. '
+                + 'Please use updateTargetsFromTogglerState instead.',
+            since: '5.0',
+            mdl: 'MDL-79756',
+            replacement: 'updateTargetsFromTogglerState',
+        });
         updateTargetsFromTogglerState(root, toggleGroupName);
     };
 
@@ -362,12 +377,22 @@ define(['jquery', 'core/pubsub'], function($, PubSub) {
             // TODO: Remove this backward compatibility code in Moodle 6.0.
             const oldTogglers = document.querySelectorAll('[data-action="toggle"][data-toggle="master"]');
             if (oldTogglers.length > 0) {
-                window.console.warn('The use of data-toggle="master" is deprecated. Please use data-toggle="toggler" instead.');
+                Deprecated('core/checkbox-toggleall::master/slave', {
+                    alternativeNotice: 'The use of data-toggle="master" is deprecated. Please use data-toggle="toggler" instead.',
+                    since: '4.5',
+                    mdl: 'MDL-79753',
+                    replacement: 'data-toggle="toggler"',
+                });
                 root.on('click', '[data-action="toggle"][data-toggle="master"]', {root: root}, toggleTargetsFromTogglers);
             }
             const oldTargets = document.querySelectorAll('[data-action="toggle"][data-toggle="slave"]');
             if (oldTargets.length > 0) {
-                window.console.warn('The use of data-toggle="slave" is deprecated. Please use data-toggle="target" instead.');
+                Deprecated('core/checkbox-toggleall::master/slave', {
+                    alternativeNotice: 'The use of data-toggle="slave" is deprecated. Please use data-toggle="target" instead.',
+                    since: '4.5',
+                    mdl: 'MDL-79753',
+                    replacement: 'data-toggle="target"',
+                });
                 root.on('click', '[data-action="toggle"][data-toggle="slave"]', {root: root}, toggleTogglersFromTargets);
             }
             // End of backward compatibility code.

@@ -30,8 +30,9 @@
  * });
  */
 
-import {getString} from 'core/str';
-import {dispatchEvent} from 'core/event_dispatcher';
+import { getString } from 'core/str';
+import { dispatchEvent } from 'core/event_dispatcher';
+import emitDeprecation from 'core/deprecated';
 
 let changesMadeString;
 
@@ -234,26 +235,26 @@ export const notifyUploadCompleted = elementId => {
 };
 
 /**
- * Trigger upload start event.
- *
- * @method
- * @param {String} elementId
- * @returns {CustomEvent}
- * @fires uploadStarted
  * @deprecated Since Moodle 4.0 See {@link module:core_form/events.notifyUploadStarted notifyUploadStarted}
  */
-export const triggerUploadStarted = notifyUploadStarted;
+export const triggerUploadStarted = () => emitDeprecation('core_form/events.triggerUploadStarted', {
+    since: '4.0',
+    mdl: 'MDL-70990',
+    replacement: 'core_form/events.notifyUploadStarted',
+    reason: 'Consistent naming for all event notifiers',
+    final: true,
+});
 
 /**
- * Trigger upload complete event.
- *
- * @method
- * @param {String} elementId
- * @returns {CustomEvent}
- * @fires uploadCompleted
  * @deprecated Since Moodle 4.0 See {@link module:core_form/events.notifyUploadCompleted notifyUploadCompleted}
  */
-export const triggerUploadCompleted = notifyUploadCompleted;
+export const triggerUploadCompleted = () => emitDeprecation('core_form/events.triggerUploadCompleted', {
+    since: '4.0',
+    mdl: 'MDL-70990',
+    replacement: 'core_form/events.notifyUploadCompleted',
+    reason: 'Consistent naming for all event notifiers',
+    final: true,
+});
 
 /**
  * Trigger an event to notify the file upload field has been changed.

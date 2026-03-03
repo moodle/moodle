@@ -24,17 +24,19 @@
  */
 import GroupSearch from 'core_group/comboboxsearch/group';
 import Url from 'core/url';
+import emitDeprecation from 'core/deprecated';
+
+emitDeprecation('gradereport_grader/group', {
+    replacement: 'core_course/actionbar/group',
+    since: '4.5',
+    mdl: 'MDL-80745',
+});
 
 export default class Group extends GroupSearch {
 
     courseID;
 
     constructor() {
-        window.console.warn(
-            'The gradereport_grader/group module has been deprecated since Moodle 4.5.' +
-            ' Please use core_course/actionbar/group instead.',
-        );
-
         super();
 
         // Define our standard lookups.

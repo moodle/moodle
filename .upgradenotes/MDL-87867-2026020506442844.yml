@@ -1,0 +1,61 @@
+issueNumber: MDL-87867
+notes:
+  core:
+    - message: >
+        A new JS module has been added to assist with deprecations.
+
+
+        This has similar behaviour to the `\core\attribute\deprecated` attribute
+        in PHP and respects the `developerdebug` setting for displaying
+        deprecation warnings.
+
+
+        To use:
+
+
+        ```js
+
+        import emitDeprecation from 'core/deprecated';
+
+
+        const deprecatedMethod = () => {
+            emitDeprecation('core/example::deprecatedMethod', {
+                mdl: 'MDL-12345',
+                since: '5.0',
+                replacement: 'myNewMethod',
+                reason: 'To support some new technology',
+            });
+        }
+
+        ```
+
+
+        When the item is _finally_ deprecated, meaning it has passed through the
+        entire deprecation period and should now cause errors, passing the
+        `final: true` option will cause this to Error instead of warning in the
+        console.
+
+
+        ```js
+
+        import emitDeprecation from 'core/deprecated';
+
+
+        const deprecatedMethod = () => {
+            emitDeprecation('core/example::deprecatedMethod', {
+                mdl: 'MDL-12345',
+                since: '5.0',
+                replacement: 'myNewMethod',
+                reason: 'To support some new technology',
+                final: true,
+            });
+        }
+
+        ```
+
+
+        A `emit` option may also be passed and allows the UI message to be
+        suppressed for non-final deprecations.
+
+        Items may be ignored by adding them to the `jsdeprecationignorelist` config setting, which is an array of strings matching the first argument passed to `emitDeprecation`.
+      type: improved

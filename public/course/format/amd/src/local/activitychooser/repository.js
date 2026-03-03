@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import ajax from 'core/ajax';
-import Log from 'core/log';
+import emitDeprecation from 'core/deprecated';
 
 // A promises map for caching specific section modules data.
 const sectionsModulesPromises = new Map();
@@ -40,7 +40,12 @@ const sectionsFooterPromises = new Map();
  * @return {object} jQuery promise
  */
 export const activityModules = (courseid, sectionnum) => {
-    Log.debug('The activityModules function is deprecated. Use sectionActivityModules instead.');
+    emitDeprecation('core_courseformat/local/activitychooser/repository::activityModules', {
+        replacement: 'core_courseformat/local/activitychooser/repository::sectionActivityModules',
+        since: '5.1',
+        mdl: 'MDL-80295',
+    });
+
     const request = {
         methodname: 'core_course_get_course_content_items',
         args: {
@@ -154,7 +159,12 @@ export const fetchFooterData = (courseid, sectionid) => {
  * @return {Object} Tab data.
  */
 export async function getModulesData(courseId, sectionNum, sectionReturnNum, beforeMod) {
-    Log.debug('The getModulesData function is deprecated. Use getSectionModulesData instead.');
+    emitDeprecation('core_courseformat/local/activitychooser/repository::getModulesData', {
+        replacement: 'core_courseformat/local/activitychooser/repository::getSectionsModulesData',
+        since: '5.1',
+        mdl: 'MDL-80295',
+    });
+
     const cacheKey = `${courseId}-${sectionNum}`;
     if (!sectionsModulesPromises.has(cacheKey)) {
         sectionsModulesPromises.set(

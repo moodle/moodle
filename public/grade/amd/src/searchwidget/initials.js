@@ -27,6 +27,13 @@ import Pending from 'core/pending';
 import * as Url from 'core/url';
 import CustomEvents from "core/custom_interaction_events";
 import Dropdown from 'theme_boost/bootstrap/dropdown';
+import emitDeprecation from 'core/deprecated';
+
+emitDeprecation('core_grades/searchwidget/initials', {
+    replacement: 'core_course/actionbar/initials',
+    since: '4.5',
+    mdl: 'MDL-80746',
+});
 
 /**
  * Whether the event listener has already been registered for this module.
