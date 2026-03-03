@@ -35663,6 +35663,8 @@ select {
 .path-mod .activity-description {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+.path-mod .activity-description.has-automatic-completion {
   border-bottom: 1px solid #dee2e6;
 }
 .path-mod .activity-description > .box.py-3 {
