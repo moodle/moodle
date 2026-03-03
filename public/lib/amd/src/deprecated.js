@@ -194,9 +194,11 @@ export default function (thing, {
 
     const message = getMessage(thing, alternativeNotice, replacement, since, reason, mdl);
 
-    // If developer debug is enabled display a modal.
-    if (canEmit() && emit) {
-        if (final || !isIgnored(thing)) {
+    // Always emit if the deprecation is final.
+    // For non-final deprecations emit if the message does not prevent it, and the user has not ignored it.
+    // Non-final deprecations are only shown.
+    if (final || canEmit()) {
+        if (final || (emit && !isIgnored(thing))) {
             emitNotice('Deprecation Warning', getHTMLMessage(thing, alternativeNotice, replacement, since, reason, mdl));
         }
     }
