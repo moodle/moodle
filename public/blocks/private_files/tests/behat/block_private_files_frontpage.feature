@@ -5,7 +5,9 @@ Feature: The private files block allows users to store files privately in moodle
   I can upload the file to my private files area using the private files block from the front page
 
   Background:
-    Given the following "courses" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And the following "users" exist:

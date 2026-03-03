@@ -4,6 +4,10 @@ Feature: Verify that keyboard steps work as expected
   As a test writer
   I need to verify that the keyboard steps work as expected
 
+  Background:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+
   @javascript
   Scenario: Typing keys into a field causes them to be input
     Given the following "users" exist:

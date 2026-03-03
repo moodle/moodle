@@ -5,7 +5,9 @@ Feature: tool_monitor_subscriptions
   I need to create a new rule, subscribe to it, receive notification and delete subscription
 
   Background:
-    Given the following "courses" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |
       | Course 2 | C2        |

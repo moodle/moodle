@@ -95,6 +95,7 @@ $string['downloadcontent_help'] = 'Should this activity or resource be included 
 
 The setting has no effect on mobile app content download for offline usage.';
 $string['enabledownloadcoursecontent'] = 'Enable download course content';
+$string['error:sitehomeisdisabled'] = 'The Site Home has been disabled by an administrator.';
 $string['errorendbeforestart'] = 'The end date ({$a}) is before the course start date.';
 $string['favourite'] = 'Starred course';
 $string['filterbothactive'] = 'First ({$a->first}) Last ({$a->last})';

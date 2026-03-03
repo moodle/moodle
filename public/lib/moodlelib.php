@@ -9916,10 +9916,18 @@ function mnet_get_idp_jump_url($user) {
 function get_home_page() {
     global $CFG;
 
-    if (isloggedin() && !empty($CFG->defaulthomepage)) {
+    $homeenabled = !empty($CFG->enablemyhome);
+
+    if (isloggedin() && isset($CFG->defaulthomepage) && $CFG->defaulthomepage !== '') {
         // If dashboard is disabled, home will be set to default page.
         $defaultpage = get_default_home_page();
-        if ($CFG->defaulthomepage == HOMEPAGE_MY && (!isguestuser() || !empty($CFG->allowguestmymoodle))) {
+        if ($CFG->defaulthomepage == HOMEPAGE_SITE) {
+            if ($homeenabled) {
+                return HOMEPAGE_SITE;
+            } else {
+                return $defaultpage;
+            }
+        } else if ($CFG->defaulthomepage == HOMEPAGE_MY && (!isguestuser() || !empty($CFG->allowguestmymoodle))) {
             if (!empty($CFG->enabledashboard)) {
                 return HOMEPAGE_MY;
             } else {
@@ -9929,6 +9937,9 @@ function get_home_page() {
             return HOMEPAGE_MYCOURSES;
         } else if ($CFG->defaulthomepage == HOMEPAGE_USER && !isguestuser()) {
             $userhomepage = get_user_preferences('user_home_page_preference', $defaultpage);
+            if (!$homeenabled && $userhomepage == HOMEPAGE_SITE) {
+                $userhomepage = $defaultpage;
+            }
             if (empty($CFG->enabledashboard) && $userhomepage == HOMEPAGE_MY) {
                 // If the user was using the dashboard but it's disabled, return the default home page.
                 $userhomepage = $defaultpage;
@@ -9940,19 +9951,37 @@ function get_home_page() {
             return HOMEPAGE_URL;
         }
     }
+    if (!$homeenabled && isloggedin()) {
+        return get_default_home_page();
+    }
     return HOMEPAGE_SITE;
 }
 
 /**
  * Returns the default home page to display if current one is not defined or can't be applied.
- * The default behaviour is to return Dashboard if it's enabled or My courses page if it isn't.
+ * The default behaviour is to return Dashboard if enabled, then My Courses, then Site Home,
+ * or User Preference page if all three are disabled.
  *
  * @return int The default home page.
  */
 function get_default_home_page(): int {
     global $CFG;
 
-    return (!isset($CFG->enabledashboard) || $CFG->enabledashboard) ? HOMEPAGE_MY : HOMEPAGE_MYCOURSES;
+    // Priority: Dashboard → My Courses → Site Home → User Preference page.
+    if (!isset($CFG->enabledashboard) || $CFG->enabledashboard) {
+        return HOMEPAGE_MY;
+    }
+
+    if (!isset($CFG->enablemycourses) || $CFG->enablemycourses) {
+        return HOMEPAGE_MYCOURSES;
+    }
+
+    if (!isset($CFG->enablemyhome) || $CFG->enablemyhome) {
+        return HOMEPAGE_SITE;
+    }
+
+    // All three disabled - redirect to User Preference page.
+    return HOMEPAGE_USER;
 }
 
 /**

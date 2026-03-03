@@ -4,6 +4,10 @@ Feature: Edit activities in Additional activities block
   As an admin
   I need to add and edit activities there
 
+  Background:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+
   @javascript
   Scenario: Edit name of activity in-place in Additional activities block
     Given the following "activity" exists:

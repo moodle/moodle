@@ -4,6 +4,10 @@ Feature: Add notes to course participants
   As a teacher
   I need to add notes from the course particpants list
 
+  Background:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+
   Scenario: An teacher can add multiple notes
     Given the following "users" exist:
       | username | firstname | lastname | email |

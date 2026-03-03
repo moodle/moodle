@@ -6,6 +6,7 @@ Feature: Both first name and last name are always available for every user
 
   Scenario: Attempting to self-register as a new user with empty names
     Given the following config values are set as admin:
+      | enablemyhome    | 1     |
       | registerauth    | email |
       | passwordpolicy  | 0     |
     And I am on homepage

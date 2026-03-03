@@ -5,7 +5,9 @@ Feature: Managers can manage course custom fields textarea
   I need to create, edit, remove and sort custom fields
 
   Background:
-    Given the following "custom field categories" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "custom field categories" exist:
       | name              | component   | area   | itemid |
       | Category for test | core_course | course | 0      |
     And I log in as "admin"

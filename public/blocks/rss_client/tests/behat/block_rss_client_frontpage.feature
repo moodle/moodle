@@ -5,7 +5,9 @@ Feature: Enable RSS client block menu on the frontpage
   I can add RSS client block to the frontpage
 
   Background:
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And I log in as "admin"
     When I navigate to "Plugins > Blocks > Manage blocks" in site administration
     Then I enable "rss_client" "block" plugin
     And the following "blocks" exist:

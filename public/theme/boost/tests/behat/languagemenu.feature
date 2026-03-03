@@ -5,7 +5,9 @@ Feature: Language selector menu
   I need to be presented with a language selector menu
 
   Background:
-    Given remote langimport tests are enabled
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And remote langimport tests are enabled
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |

@@ -5,7 +5,9 @@ Feature: Test manual authentication works.
   I need to go on login page and enter username and password.
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username |
       | teacher1 |
     And the following config values are set as admin:

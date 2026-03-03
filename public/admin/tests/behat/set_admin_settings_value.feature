@@ -5,7 +5,9 @@ Feature: Set admin settings value
   I need to set admin setting value and verify it is applied
 
   Background:
-    Given the following "courses" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course fullname | C_shortname | 0 |
     And I log in as "admin"

@@ -5,7 +5,9 @@ Feature: Test if the login form provides the correct feedback
   I need to go on login page and see feedback on incorrect username or password.
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username |
       | teacher1 |
 

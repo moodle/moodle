@@ -815,6 +815,33 @@ function user_convert_text_to_menu_items($text, $page) {
 }
 
 /**
+ * Returns available default homepage options for user preferences.
+ *
+ * @return array
+ */
+function user_get_default_homepage_options(): array {
+    global $CFG;
+
+    $options = [];
+    if (!isset($CFG->enablemyhome) || $CFG->enablemyhome) {
+        $options[HOMEPAGE_SITE] = new lang_string('home');
+    }
+    if (!isset($CFG->enabledashboard) || $CFG->enabledashboard) {
+        $options[HOMEPAGE_MY] = new lang_string('mymoodle', 'admin');
+    }
+    if (!isset($CFG->enablemycourses) || $CFG->enablemycourses) {
+        $options[HOMEPAGE_MYCOURSES] = new lang_string('mycourses', 'admin');
+    }
+
+    // Allow hook callbacks to extend options.
+    $hook = new \core_user\hook\extend_default_homepage(true);
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+    $options += $hook->get_options();
+
+    return $options;
+}
+
+/**
  * Get a list of essential user navigation items.
  *
  * @param stdclass $user user object.

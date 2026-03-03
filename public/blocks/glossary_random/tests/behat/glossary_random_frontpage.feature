@@ -9,7 +9,8 @@ Feature: Random glossary entry block can be added to the frontpage
       | activity   | name             | intro                          | course               | idnumber  |
       | glossary   | Tips and Tricks  | Frontpage glossary description | Acceptance test site | glossary0 |
     And the following config values are set as admin:
-      | forcelogin | 0 |
+      | forcelogin   | 0 |
+      | enablemyhome | 1 |
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on

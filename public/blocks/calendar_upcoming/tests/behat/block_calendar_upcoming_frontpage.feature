@@ -5,7 +5,9 @@ Feature: View a site event on the frontpage
   I can view the event in the upcoming events block
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | teacher1 | Teacher | 1 | teacher1@example.com | T1 |
     And the following "blocks" exist:

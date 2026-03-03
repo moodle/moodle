@@ -5,7 +5,9 @@ Feature: Enable the course_list block on the frontpage and view it's contents
   I can add the course list block to the frontpage
 
   Background:
-    Given the following "categories" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "categories" exist:
       | name        | category | idnumber |
       | Category A  | 0        | CATA     |
       | Category B  | 0        | CATB     |

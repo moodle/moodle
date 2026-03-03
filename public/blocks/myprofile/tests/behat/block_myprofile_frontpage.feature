@@ -5,7 +5,9 @@ Feature: The logged in user block allows users to view their profile information
   I can add the logged in user block to the frontpage and view my information
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email                | idnumber |
       | teacher1 | Teacher   | One      | teacher1@example.com | T1       |
     And the following "blocks" exist:

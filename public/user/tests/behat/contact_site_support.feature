@@ -5,7 +5,9 @@ Feature: Contact site support method and availability can be customised
   I need to be able to configure the site support method and who has access to it
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email             |
       | user1    | User      | One      | user1@example.com |
 

@@ -379,6 +379,7 @@ class api {
         }
 
         if (empty($section) || $section === 'navigation') {
+            $settings->enablemyhome = $CFG->enablemyhome ?? 1;
             $settings->enabledashboard = $CFG->enabledashboard;
         }
 

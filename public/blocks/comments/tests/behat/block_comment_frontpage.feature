@@ -5,7 +5,9 @@ Feature: Enable Block comments on the frontpage and view comments
   I can add the comments block to the frontpage
 
   Scenario: Add the comments block on the frontpage and add comments
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | teacher1 | Teacher | 1 | teacher1@example.com | T1 |
     And the following "blocks" exist:

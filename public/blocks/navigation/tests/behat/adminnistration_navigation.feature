@@ -5,7 +5,9 @@ Feature: Test that admin can see related nodes in Administration block
   I need to be able to see related nodes in Administration block
 
   Background:
-    Given the following "categories" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "categories" exist:
       | name   | category | idnumber | visible |
       | cat1   | 0        | cat1     | 1       |
     And the following "courses" exist:

@@ -6,7 +6,9 @@ Feature: The online users block allow you to see who is currently online on fron
   I can add the online users block to the frontpage
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |

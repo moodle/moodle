@@ -348,22 +348,26 @@ function core_login_get_return_url() {
         unset($SESSION->wantsurl);
     }
 
-    // If the url to go to is the same as the site page, check for default homepage.
-    if ($urltogo == ($CFG->wwwroot . '/')) {
+    // If the url to go to is a homepage URL (site root, /my/, or /my/courses.php), check for default homepage.
+    $ishomepageurl = ($urltogo == ($CFG->wwwroot . '/') ||
+                      $urltogo == ($CFG->wwwroot . '/my/') ||
+                      $urltogo == ($CFG->wwwroot . '/my/courses.php'));
+
+    if ($ishomepageurl) {
         $homepage = get_home_page();
-        // Go to my-moodle page instead of site homepage if defaulthomepage set to homepage_my.
-        if ($homepage === HOMEPAGE_MY && !isguestuser()) {
-            if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
-                $urltogo = $CFG->wwwroot.'/my/';
-            }
-        }
-        if ($homepage === HOMEPAGE_MYCOURSES && !isguestuser()) {
-            if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
-                $urltogo = $CFG->wwwroot.'/my/courses.php';
-            }
-        }
-        if ($homepage === HOMEPAGE_URL) {
+
+        // Set urltogo based on the default homepage setting.
+        if ($homepage === HOMEPAGE_SITE) {
+            $urltogo = $CFG->wwwroot . '/';
+        } else if ($homepage === HOMEPAGE_MY && !isguestuser()) {
+            $urltogo = $CFG->wwwroot . '/my/';
+        } else if ($homepage === HOMEPAGE_MYCOURSES && !isguestuser()) {
+            $urltogo = $CFG->wwwroot . '/my/courses.php';
+        } else if ($homepage === HOMEPAGE_URL) {
             $urltogo = (string) get_default_home_page_url();
+        } else if ($homepage === HOMEPAGE_USER) {
+            // All homepage options disabled - redirect to user preferences page.
+            $urltogo = $CFG->wwwroot . '/user/preferences.php';
         }
     }
     return $urltogo;
@@ -617,4 +621,3 @@ function core_login_post_signup_requests($data) {
         }
     }
 }
-

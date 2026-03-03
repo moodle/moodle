@@ -5,7 +5,9 @@ Feature: Copy content from the content bank
   I need to be able to copy any content from the content bank
 
   Background:
-    Given the following "contentbank content" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "contentbank content" exist:
       | contextlevel | reference | contenttype       | user    | contentname      | filepath                                |
       | System       |           | contenttype_h5p   | admin   | content2copy.h5p | /h5p/tests/fixtures/filltheblanks.h5p   |
     And I log in as "admin"

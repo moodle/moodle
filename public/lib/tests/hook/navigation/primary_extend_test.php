@@ -82,6 +82,8 @@ final class primary_extend_test extends \advanced_testcase {
     public function test_unsupported_hacks(): void {
         global $PAGE;
         $this->resetAfterTest();
+        set_config('enablemyhome', 0);
+        set_config('enabledashboard', 1);
 
         $PAGE = new \moodle_page();
         $PAGE->set_url('/');
@@ -93,14 +95,20 @@ final class primary_extend_test extends \advanced_testcase {
 
         $primarynav = new \core\navigation\views\primary($PAGE);
         $primarynav->initialise();
-        $this->assertSame(['home'], $primarynav->get_children_key_list(),
-            'Unsupported primary menu modification detected, use new primary_extend hook instead.');
+        $this->assertSame(
+            [],
+            $primarynav->get_children_key_list(),
+            'Unsupported primary menu modification detected, use new primary_extend hook instead.'
+        );
 
         $this->setAdminUser();
         $primarynav = new \core\navigation\views\primary($PAGE);
         $primarynav->initialise();
-        $this->assertSame(['home', 'myhome', 'mycourses'], $primarynav->get_children_key_list(),
-            'Unsupported primary menu modification detected, use new primary_extend hook instead.');
+        $this->assertSame(
+            ['myhome', 'mycourses'],
+            $primarynav->get_children_key_list(),
+            'Unsupported primary menu modification detected, use new primary_extend hook instead.'
+        );
     }
 
     /**
@@ -110,6 +118,8 @@ final class primary_extend_test extends \advanced_testcase {
     public function test_primary_menu_extending(): void {
         global $PAGE;
         $this->resetAfterTest();
+        set_config('enablemyhome', 0);
+        set_config('enabledashboard', 1);
 
         $PAGE = new \moodle_page();
         $PAGE->set_url('/');
@@ -123,12 +133,10 @@ final class primary_extend_test extends \advanced_testcase {
         $primarynav = new \core\navigation\views\primary($PAGE);
         $primarynav->initialise();
         $keys = $primarynav->get_children_key_list();
-        $this->assertCount(2, $keys);
+        $this->assertCount(1, $keys);
         $firstkey = array_shift($keys);
-        $this->assertSame('home', $firstkey);
-        $secondkey = array_shift($keys);
         /** @var \navigation_node $pokus */
-        $pokus = $primarynav->get($secondkey);
+        $pokus = $primarynav->get($firstkey);
         $this->assertInstanceOf(\navigation_node::class, $pokus);
         $this->assertSame('Pokus', $pokus->text);
     }
@@ -140,6 +148,8 @@ final class primary_extend_test extends \advanced_testcase {
     public function test_primary_menu_replacing(): void {
         global $PAGE;
         $this->resetAfterTest();
+        set_config('enablemyhome', 0);
+        set_config('enabledashboard', 1);
 
         $PAGE = new \moodle_page();
         $PAGE->set_url('/');

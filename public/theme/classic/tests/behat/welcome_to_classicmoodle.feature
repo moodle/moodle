@@ -4,6 +4,10 @@ Feature: Welcome message on classic
   As a User
   I need to see a welcome message on the first page
 
+  Background:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+
   Scenario: Login and be welcomed on the homepage
     Given the following config values are set as admin:
       | defaulthomepage | 0 |

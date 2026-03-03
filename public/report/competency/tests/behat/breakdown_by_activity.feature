@@ -5,7 +5,9 @@ Feature: See the competencies for an activity
   I need to see the competencies linked to one activity in the breakdown report.
 
   Background:
-    Given the following "core_competency > frameworks" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "core_competency > frameworks" exist:
       | shortname      | idnumber |
       | Test-Framework | ID-FW1   |
     And the following "core_competency > competencies" exist:

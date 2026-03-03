@@ -5,7 +5,9 @@ Feature: Make content public or unlisted
   I need to be able to access the edition options
 
   Background:
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     And the following config values are set as admin:

@@ -5,7 +5,9 @@ Feature: Mapping courses in a feedback
   I need to be able to map site feedback to courses
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "users" exist:
       | username | firstname | lastname |
       | user1    | Username  | 1        |
       | user2    | Username  | 2        |

@@ -6,7 +6,8 @@ Feature: Site home activities section
 
   Background:
     Given the following config values are set as admin:
-      | numsections | 1 |
+      | enablemyhome | 1 |
+      | numsections  | 1 |
 
   Scenario: Activities should appear in frontpage
     Given the following "activities" exist:

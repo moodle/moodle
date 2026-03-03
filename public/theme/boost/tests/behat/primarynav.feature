@@ -8,6 +8,8 @@ Feature: Primary navigation
     Given the following "users" exist:
       | username | firstname | lastname | email             |
       | user1    | User      | One      | user1@example.com |
+    And the following config values are set as admin:
+      | enablemyhome | 1 |
 
   @javascript @theme_boost
   Scenario Outline: Admin sets defaulthomepage and verify the landing page and site home link

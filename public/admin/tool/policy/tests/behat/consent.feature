@@ -4,6 +4,10 @@ Feature: User must accept policy managed by this plugin when logging in and sign
   As a user
   I need to be able to accept site policy during sign up
 
+  Background:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+
   Scenario: Accept policy on sign up manage by plugin, no site policy
     Given the following config values are set as admin:
       | registerauth    | email |

@@ -5,7 +5,9 @@ Feature: Import course content bank content
   I need to confirm that errors will not happen
 
   Background:
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And I log in as "admin"
     And the following config values are set as admin:
       | unaddableblocks | | theme_boost|
     And I am on site homepage

@@ -1,7 +1,9 @@
 @tool @tool_usertours
 Feature: Apply accessibility to a tour
   Background:
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And I log in as "admin"
     And I add a new user tour with:
       | Name                | First tour |
       | Description         | My first tour |
