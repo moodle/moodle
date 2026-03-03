@@ -521,4 +521,37 @@ final class tag_condition_test extends \advanced_testcase {
 
         $this->assertArrayNotHasKey('qtagids', $filtercondition['filter']);
     }
+
+    /**
+     * Restoring the filter when the original question bank was in the backup doesn't change the behaviour.
+     */
+    public function test_restore_filtercondition_originalbankinbackup(): void {
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $tag1 = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+        $filtercondition = [
+            'filter' => [
+                'qtagids' => [
+                    'values' => [
+                        $tag1->id,
+                        $tag2->id,
+                    ],
+                ],
+            ],
+        ];
+        $setreference = (object) [
+            'questionscontextid' => $category->contextid,
+            'usingcontextid' => $category->contextid,
+        ];
+        $mockstep = $this->get_mock_step($this->get_samesite_task());
+        $mockstep->method('get_mappingid')->willReturn($tag2->id + 1);
+
+        $condition = new tag_condition();
+
+        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep, true);
+
+        $this->assertEquals([$tag1->id, $tag2->id], $filtercondition['filter']['qtagids']['values']);
+    }
 }

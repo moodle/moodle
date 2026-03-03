@@ -167,6 +167,7 @@ class tag_condition extends condition {
         array $filtercondition,
         stdClass $setreference,
         restore_questions_activity_structure_step $restorestep,
+        bool $originalbankinbackup = false,
     ): array {
         if (isset($filtercondition['filter']['qtagids'])) {
             $newtagids = [];
