@@ -1,0 +1,8 @@
+issueNumber: MDL-87993
+notes:
+  core:
+    - message: >-
+        The `core/toast` JS module now accepts a `visuallyHidden` configuration
+        parameter to render visually hidden toast messages for screen reader
+        users.
+      type: improved
