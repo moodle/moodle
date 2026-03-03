@@ -5,7 +5,9 @@ Feature: Store the content bank view preference
   I need to be able to store my view preference
 
   Background:
-    Given the following "user private files" exist:
+    Given the following config values are set as admin:
+      | enablemyhome | 1 |
+    And the following "user private files" exist:
       | user  | filepath                             |
       | admin | h5p/tests/fixtures/filltheblanks.h5p |
       | admin | h5p/tests/fixtures/greeting-card.h5p |
