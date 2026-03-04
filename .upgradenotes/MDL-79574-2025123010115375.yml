@@ -1,0 +1,7 @@
+issueNumber: MDL-79574
+notes:
+  core:
+    - message: >-
+        The `\core\persistent::get_records(...)` class method now returns
+        instances keyed by record ID
+      type: changed

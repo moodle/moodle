@@ -65,18 +65,17 @@ final class reorder_test extends \core_external\tests\externallib_testcase {
         $this->assertCount(4, $result['activefilters']);
 
         // Assert report filters order.
-        $filters = filter::get_filter_records($report->get('id'), 'filterorder');
-
-        $filteridentifiers = array_map(static function(filter $filter): string {
-            return $filter->get('uniqueidentifier');
-        }, $filters);
+        $filteridentifiers = array_map(
+            fn(filter $filter): string => $filter->get('uniqueidentifier'),
+            filter::get_filter_records($report->get('id'), 'filterorder'),
+        );
 
         $this->assertEquals([
             'user:fullname',
             'user:city',
             'user:email',
             'user:country',
-        ], $filteridentifiers);
+        ], array_values($filteridentifiers));
     }
 
     /**

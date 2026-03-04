@@ -970,7 +970,8 @@ class api {
      * @return \tool_dataprivacy\purpose[]
      */
     public static function get_purposes() {
-        return purpose::get_records([], 'name', 'ASC');
+        $purposes = purpose::get_records([], 'name');
+        return array_values($purposes);
     }
 
     /**
@@ -1021,7 +1022,8 @@ class api {
      * @return \tool_dataprivacy\category[]
      */
     public static function get_categories() {
-        return category::get_records([], 'name', 'ASC');
+        $categories = category::get_records([], 'name');
+        return array_values($categories);
     }
 
     /**

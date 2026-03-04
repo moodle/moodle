@@ -494,7 +494,7 @@ final class events_test extends \advanced_testcase {
         $sink = $this->redirectEvents();
         api::create_plans_from_template_cohort($t1->get('id'), $c1->id);
         // Get our event event.
-        $plans = plan::get_records(array('templateid' => $t1->get('id')), 'id');
+        $plans = array_values(plan::get_records(['templateid' => $t1->get('id')], 'id'));
         $events = $sink->get_events();
         $this->assertCount(2, $events);
         $this->assertCount(2, $plans);

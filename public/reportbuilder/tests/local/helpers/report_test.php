@@ -141,34 +141,34 @@ final class report_test extends advanced_testcase {
         // Assert new report columns.
         $newcolumns = column::get_records(['reportid' => $newreport->get('id')]);
         $this->assertCount(1, $newcolumns);
-        [$newcolumn] = $newcolumns;
+        $newcolumn = reset($newcolumns);
         $this->assertNotEquals($column->get('id'), $newcolumn->get('id'));
         $this->assertEquals('user:lastname', $newcolumn->get('uniqueidentifier'));
 
         // Assert new report conditions.
         $newconditions = filter::get_condition_records($newreport->get('id'));
         $this->assertCount(1, $newconditions);
-        [$newcondition] = $newconditions;
+        $newcondition = reset($newconditions);
         $this->assertNotEquals($condition->get('id'), $newcondition->get('id'));
         $this->assertEquals('user:firstname', $newcondition->get('uniqueidentifier'));
 
         // Assert new report filters.
         $newfilters = filter::get_filter_records($newreport->get('id'));
         $this->assertCount(1, $newfilters);
-        [$newfilter] = $newfilters;
+        $newfilter = reset($newfilters);
         $this->assertNotEquals($filter->get('id'), $newfilter->get('id'));
         $this->assertEquals('user:email', $newfilter->get('uniqueidentifier'));
 
         // Assert new report audiences.
         $newaudiences = audience::get_records(['reportid' => $newreport->get('id')]);
         $this->assertCount(1, $newaudiences);
-        [$newaudience] = $newaudiences;
+        $newaudience = reset($newaudiences);
         $this->assertNotEquals($audience->get_persistent()->get('id'), $newaudience->get('id'));
 
          // Assert new report schedules.
         $newschedules = schedule::get_records(['reportid' => $newreport->get('id')]);
         $this->assertCount(1, $newschedules);
-        [$newschedule] = $newschedules;
+        $newschedule = reset($newschedules);
         $this->assertNotEquals($schedule->get('id'), $newschedule->get('id'));
         $this->assertEquals([
             $newaudience->get('id'),
@@ -369,18 +369,17 @@ final class report_test extends advanced_testcase {
         $this->assertTrue($result);
 
         // Assert report columns order.
-        $columns = column::get_records(['reportid' => $report->get('id')], 'columnorder');
-
-        $columnidentifiers = array_map(static function(column $column): string {
-            return $column->get('uniqueidentifier');
-        }, $columns);
+        $columnidentifiers = array_map(
+            fn(column $column): string => $column->get('uniqueidentifier'),
+            column::get_records(['reportid' => $report->get('id')], 'columnorder'),
+        );
 
         $this->assertEquals([
             'user:fullname',
             'user:city',
             'user:email',
             'user:country',
-        ], $columnidentifiers);
+        ], array_values($columnidentifiers));
     }
 
     /**
@@ -425,19 +424,18 @@ final class report_test extends advanced_testcase {
         $result = report::reorder_report_column_sorting($report->get('id'), $columncity->get('id'), 2);
         $this->assertTrue($result);
 
-        // Assert report columns order.
-        $columns = column::get_records(['reportid' => $report->get('id')], 'sortorder');
-
-        $columnidentifiers = array_map(static function(column $column): string {
-            return $column->get('uniqueidentifier');
-        }, $columns);
+        // Assert report column sort order.
+        $columnidentifiers = array_map(
+            fn(column $column): string => $column->get('uniqueidentifier'),
+            column::get_records(['reportid' => $report->get('id')], 'sortorder'),
+        );
 
         $this->assertEquals([
             'user:fullname',
             'user:city',
             'user:email',
             'user:country',
-        ], $columnidentifiers);
+        ], array_values($columnidentifiers));
     }
 
     /**
@@ -633,18 +631,17 @@ final class report_test extends advanced_testcase {
         $this->assertTrue($result);
 
         // Assert report conditions order.
-        $conditions = filter::get_condition_records($report->get('id'), 'filterorder');
-
-        $conditionidentifiers = array_map(static function(filter $condition): string {
-            return $condition->get('uniqueidentifier');
-        }, $conditions);
+        $conditionidentifiers = array_map(
+            fn(filter $condition): string => $condition->get('uniqueidentifier'),
+            filter::get_condition_records($report->get('id'), 'filterorder'),
+        );
 
         $this->assertEquals([
             'user:fullname',
             'user:city',
             'user:email',
             'user:country',
-        ], $conditionidentifiers);
+        ], array_values($conditionidentifiers));
     }
 
     /**
@@ -799,18 +796,17 @@ final class report_test extends advanced_testcase {
         $this->assertTrue($result);
 
         // Assert report filters order.
-        $filters = filter::get_filter_records($report->get('id'), 'filterorder');
-
-        $filteridentifiers = array_map(static function(filter $filter): string {
-            return $filter->get('uniqueidentifier');
-        }, $filters);
+        $filteridentifiers = array_map(
+            fn(filter $filter): string => $filter->get('uniqueidentifier'),
+            filter::get_filter_records($report->get('id'), 'filterorder'),
+        );
 
         $this->assertEquals([
             'user:fullname',
             'user:city',
             'user:email',
             'user:country',
-        ], $filteridentifiers);
+        ], array_values($filteridentifiers));
     }
 
     /**

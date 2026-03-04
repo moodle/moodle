@@ -102,7 +102,7 @@ class api {
         require_capability('moodle/role:manage', $context);
 
         // OK - all set.
-        return cohort_role_assignment::get_records(array(), $sort, $order, $skip, $limit);
+        return array_values(cohort_role_assignment::get_records([], $sort, $order, $skip, $limit));
     }
 
     /**
@@ -149,7 +149,7 @@ class api {
         $DB->delete_records_select('tool_cohortroles', "roleid NOT IN (SELECT id FROM {role})");
 
         // Get all cohort role assignments and group them by user and role.
-        $all = cohort_role_assignment::get_records(array(), 'userid, roleid');
+        $all = static::list_cohort_role_assignments('userid, roleid');
         // We build an better structure to loop on.
         $info = array();
         foreach ($all as $cra) {

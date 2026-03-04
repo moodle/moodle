@@ -62,18 +62,17 @@ final class reorder_test extends \core_external\tests\externallib_testcase {
         $this->assertNotEmpty($result['activeconditionsform']);
 
         // Assert report conditions order.
-        $conditions = filter::get_condition_records($report->get('id'), 'filterorder');
-
-        $conditionidentifiers = array_map(static function(filter $condition): string {
-            return $condition->get('uniqueidentifier');
-        }, $conditions);
+        $conditionidentifiers = array_map(
+            fn(filter $condition): string => $condition->get('uniqueidentifier'),
+            filter::get_condition_records($report->get('id'), 'filterorder'),
+        );
 
         $this->assertEquals([
             'user:fullname',
             'user:city',
             'user:email',
             'user:country',
-        ], $conditionidentifiers);
+        ], array_values($conditionidentifiers));
     }
 
     /**

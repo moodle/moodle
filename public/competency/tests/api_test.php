@@ -780,7 +780,7 @@ final class api_test extends \advanced_testcase {
         $this->assertEquals(2, \core_competency\user_competency::count_records());
         $this->assertEquals(3, \core_competency\user_competency_plan::count_records());
 
-        $usercompetenciesplan = \core_competency\user_competency_plan::get_records();
+        $usercompetenciesplan = array_values(\core_competency\user_competency_plan::get_records());
 
         $this->assertEquals($uclist[0]->get('userid'), $usercompetenciesplan[0]->get('userid'));
         $this->assertEquals($uclist[0]->get('competencyid'), $usercompetenciesplan[0]->get('competencyid'));
@@ -1533,7 +1533,7 @@ final class api_test extends \advanced_testcase {
         $this->assertEquals(2, \core_competency\user_competency::count_records());
         $this->assertEquals(3, \core_competency\user_competency_plan::count_records());
 
-        $usercompetenciesplan = \core_competency\user_competency_plan::get_records();
+        $usercompetenciesplan = array_values(\core_competency\user_competency_plan::get_records());
 
         $this->assertEquals($uclist[0]->get('userid'), $usercompetenciesplan[0]->get('userid'));
         $this->assertEquals($uclist[0]->get('competencyid'), $usercompetenciesplan[0]->get('competencyid'));
@@ -2964,8 +2964,8 @@ final class api_test extends \advanced_testcase {
         api::complete_plan($plan);
 
         // Check user competency plan created correctly.
-        $this->assertEquals(3, \core_competency\user_competency_plan::count_records());
-        $ucp = \core_competency\user_competency_plan::get_records();
+        $ucp = array_values(\core_competency\user_competency_plan::get_records());
+        $this->assertCount(3, $ucp);
         $this->assertEquals($ucp[0]->get('competencyid'), $c1->get('id'));
         $this->assertEquals($ucp[1]->get('competencyid'), $c2->get('id'));
         $this->assertEquals($ucp[2]->get('competencyid'), $c3->get('id'));
@@ -2976,7 +2976,7 @@ final class api_test extends \advanced_testcase {
 
         // Check that user competency plan did not change.
         $competencies = $plan->get_competencies();
-        $this->assertEquals(3, count($competencies));
+        $this->assertCount(3, $competencies);
         $ucp1 = array($c1->get('id'), $c2->get('id'), $c3->get('id'));
         $ucp2 = array();
         foreach ($competencies as $id => $cmp) {
@@ -3316,10 +3316,9 @@ final class api_test extends \advanced_testcase {
         $this->assertEquals(0, \core_competency\template_competency::count_competencies($tpl->get('id')));
 
         // Check that associated plan still exist but unlink from template.
-        $plans = \core_competency\plan::get_records(array('id' => $p1->get('id')));
-        $this->assertEquals(1, count($plans));
-        $this->assertEquals($plans[0]->get('origtemplateid'), $tpl->get('id'));
-        $this->assertNull($plans[0]->get('templateid'));
+        $p1->read();
+        $this->assertEquals($p1->get('origtemplateid'), $tpl->get('id'));
+        $this->assertNull($p1->get('templateid'));
     }
 
     public function test_delete_competency(): void {

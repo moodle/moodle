@@ -55,7 +55,7 @@ final class column {
     public const TYPE_LONGTEXT = 6;
 
     /** @var int $index Column index within a report */
-    private $index;
+    private int $index = 0;
 
     /** @var bool $hascustomcolumntitle Used to store if the column has been given a custom title */
     private $hascustomcolumntitle = false;

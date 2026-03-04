@@ -122,8 +122,9 @@ abstract class datasource extends base {
 
         $this->activecolumns = ['builttime' => microtime(true), 'values' => []];
 
-        $activecolumns = column_model::get_records(['reportid' => $reportid], 'columnorder');
-        foreach ($activecolumns as $index => $column) {
+        $columnindex = 0;
+        $columns = column_model::get_records(['reportid' => $reportid], 'columnorder');
+        foreach ($columns as $column) {
             $instance = $this->get_column($column->get('uniqueidentifier'));
 
             // Ensure the column is still present and available.
@@ -137,7 +138,7 @@ abstract class datasource extends base {
 
                 // We should clone the report column to ensure if it's added twice to a report, each operates independently.
                 $this->activecolumns['values'][] = clone $instance
-                    ->set_index($index)
+                    ->set_index($columnindex++)
                     ->set_persistent($column)
                     ->set_aggregation($columnaggregation, $instance->get_aggregation_options($columnaggregation));
             }

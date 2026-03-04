@@ -71,7 +71,8 @@ class api {
         $context = context_user::instance($userid);
         require_capability('auth/oauth2:managelinkedlogins', $context);
 
-        return linked_login::get_records(['userid' => $userid, 'confirmtoken' => '']);
+        $logins = linked_login::get_records(['userid' => $userid, 'confirmtoken' => '']);
+        return array_values($logins);
     }
 
     /**

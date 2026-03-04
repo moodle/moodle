@@ -2528,11 +2528,9 @@ final class external_test extends \core_external\tests\externallib_testcase {
 
         $this->assertTrue(external::reorder_plan_competency($pl1->get('id'), $c2->get('id'), $c5->get('id')));
         $this->assertTrue(external::reorder_plan_competency($pl1->get('id'), $c3->get('id'), $c1->get('id')));
-        $plancompetencies = plan_competency::get_records(array('planid' => $pl1->get('id')), 'sortorder', 'ASC');
-        $plcmp1 = $plancompetencies[0];
-        $plcmp2 = $plancompetencies[1];
-        $plcmp3 = $plancompetencies[2];
-        $plcmp4 = $plancompetencies[3];
+
+        $plancompetencies = plan_competency::get_records(['planid' => $pl1->get('id')], 'sortorder');
+        [$plcmp1, $plcmp2, $plcmp3, $plcmp4] = array_values($plancompetencies);
 
         $this->assertEquals($plcmp1->get('competencyid'), $c3->get('id'));
         $this->assertEquals($plcmp2->get('competencyid'), $c1->get('id'));
