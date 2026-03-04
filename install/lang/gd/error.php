@@ -46,3 +46,6 @@ $string['downloadedfilecheckfailed'] = 'Dh’fhàillig sgrùdadh an fhaidhle a c
 $string['missingrequiredfield'] = 'Tha raon deatamach air choireigin a dhìth';
 $string['remotedownloaderror'] = '<p>Dh’fhàillig luchdachadh na co-phàirte a-nuas chun fhrithealaiche agad. Dearbh na suidheachaidhean procsaidh: thathas a’ moladh an leudachain PHP cURL gu mòr.</p>
 <p>Feumaidh tu am faidhle <a href="{$a->url}">{$a->url}</a> a luchdachadh a-nuas le làimh, lethbhreac dheth a chur ann an "{$a->dest}" san fhrithealaiche agad agus an siopadh fhosgladh an sin.</p>';
+$string['wrongdestpath'] = 'Slighe ceann-uidhe ceàrr';
+$string['wrongsourcebase'] = 'Bun-thùs URL ceàrr';
+$string['wrongzipfilename'] = 'Ainm ceàrr don fhaidhle ZIP';
