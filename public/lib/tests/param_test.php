@@ -22,16 +22,16 @@ namespace core;
  * @package   core
  * @copyright Andrew Lyons <andrew@nicols.co.uk>
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\param
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(param::class)]
 final class param_test extends \advanced_testcase {
     /**
      * Test that the Moodle `from_type` method provides canonicalised parameter values.
      *
-     * @dataProvider valid_param_provider
      * @param string $type
      * @param param $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_param_provider')]
     public function test_from_type(string $type, param $expected): void {
         $this->assertEquals($expected, param::from_type($type));
     }
@@ -71,10 +71,10 @@ final class param_test extends \advanced_testcase {
     /**
      * Test that deprecated parameters are marked as such.
      *
-     * @dataProvider is_deprecated_provider
      * @param param $param
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_deprecated_provider')]
     public function test_is_deprecated(param $param, bool $expected): void {
         $this->assertEquals(
             $expected,
@@ -105,9 +105,9 @@ final class param_test extends \advanced_testcase {
     /**
      * Test that finally deprecated params throw an exception when cleaning.
      *
-     * @dataProvider deprecated_param_provider
-     * @param param $params
+     * @param param $param
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('deprecated_param_provider')]
     public function test_deprecated_params_except(param $param): void {
         $this->expectException(\coding_exception::class);
         $param->clean('foo');
@@ -131,5 +131,66 @@ final class param_test extends \advanced_testcase {
                 },
             ),
         );
+    }
+
+    /**
+     * Test that valid parameters clean correctly (i.e. return the input value).
+     *
+     * @param string $input
+     * @param \core\param $param
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_param_clean_provider')]
+    public function test_param_clean(
+        string $input,
+        \core\param $param,
+    ): void {
+        $cleaned = $param->clean($input);
+        $this->assertEquals($input, $cleaned);
+    }
+
+    /**
+     * Data provider for the valid provider for param::clean.
+     *
+     * @return array<param|string>[]
+     */
+    public static function valid_param_clean_provider(): array {
+        return [
+            ['1', param::INT],
+            ['1.5', param::FLOAT],
+            ['foo', param::ESM_PATH],
+            ['foo/bar', param::ESM_PATH],
+            ['foo/bar/baz', param::ESM_PATH],
+            ['@moodle/lms/example', param::ESM_PATH],
+            ['react/jsx-runtime', param::ESM_PATH],
+            ['button.small', param::ESM_PATH],
+            ['@moodlehq/design-system/button.small', param::ESM_PATH],
+        ];
+    }
+
+    /**
+     * Test that valid parameters clean correctly (i.e. return the input value).
+     *
+     * @param string $input
+     * @param \core\param $param
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_param_clean_invalid_provider')]
+    public function test_param_clean_invalid(
+        string $input,
+        \core\param $param,
+    ): void {
+        $cleaned = $param->clean($input);
+        $this->assertEquals('', $cleaned);
+    }
+
+    /**
+     * Data provider for the invalid provider for param::clean.
+     *
+     * @return array<param|string>[]
+     */
+    public static function valid_param_clean_invalid_provider(): array {
+        return [
+            ['foo@', param::ESM_PATH],
+            ['@moodle/lms/@example', param::ESM_PATH],
+        ];
     }
 }

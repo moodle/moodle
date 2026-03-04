@@ -343,6 +343,16 @@ enum param: string {
     #[param_clientside_regex('^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$')]
     case PLUGIN = 'plugin';
 
+
+    /**
+     * PARAM_ESM_PATH is used for ES module script paths as they arrive at the ESM controller,
+     * such as 'react', '@moodle/lms/mod_forum/index', 'react/jsx-runtime', or '@moodlehq/design-system/button.small'.
+     * Accepts lowercase letters, numbers, hyphens, underscores, dots, forward slashes, and a leading @.
+     * The path must start with a letter or @. Directory traversal via '..' is rejected by the ESM controller.
+     */
+    #[param_clientside_regex('^[@a-z][a-z0-9_.-]*(/[a-z0-9_./-]+)?$')]
+    case ESM_PATH = 'esm_path';
+
     /**
      * Get the canonical enumerated parameter from the parameter type name.
      *
@@ -1330,6 +1340,30 @@ enum param: string {
         $param = (string)fix_utf8($param);
         $timezonepattern = '/^(([+-]?(0?[0-9](\.[5|0])?|1[0-3](\.0)?|1[0-2]\.5))|(99)|[[:alnum:]]+(\/?[[:alpha:]_-])+)$/';
         if (preg_match($timezonepattern, $param)) {
+            return $param;
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Clean an ESM script path value.
+     *
+     * Accepts only paths that match the ESM_PATH regex (lowercase letters, digits,
+     * hyphens, underscores, dots, and forward slashes, starting with a letter or @).
+     * Returns an empty string if the value does not match.
+     *
+     * Note: directory traversal via '..' segments is enforced by the ESM controller,
+     * not by this method.
+     *
+     * @param mixed $param The raw parameter value to clean.
+     * @return string The cleaned path, or an empty string if invalid.
+     */
+    protected function clean_param_value_esm_path(mixed $param): string {
+        // ESM paths must be relative and contain only safe characters.
+        $param = (string)fix_utf8($param);
+        $regex = $this->get_clientside_expression();
+        if (preg_match("~{$regex}~", $param)) {
             return $param;
         } else {
             return '';

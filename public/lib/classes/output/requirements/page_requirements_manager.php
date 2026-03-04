@@ -1039,6 +1039,33 @@ class page_requirements_manager {
     }
 
     /**
+     * Returns the import map script tag for React platform files.
+     *
+     * @return string
+     */
+    public function get_import_map(): string {
+        $importmap = \core\di::get(import_map::class);
+        $importmap->set_default_loader(
+            \core\router\util::get_path_for_callable(
+                [\core\route\controller\esm_controller::class, 'serve'],
+                [
+                    'revision' => $this->get_jsrev(),
+                    'scriptpath' => '',
+                ]
+            ),
+        );
+
+        return html_writer::tag(
+            'script',
+            json_encode(
+                $importmap,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+            ),
+            ['type' => 'importmap'],
+        );
+    }
+
+    /**
      * !!!DEPRECATED!!! please use js_init_call() if possible
      * Ensure that the specified JavaScript function is called from an inline script
      * somewhere on this page.
@@ -1700,6 +1727,9 @@ EOF;
             }
             $output .= html_writer::script($js);
         }
+
+        // Inject the ES module import map for bare specifier resolution.
+        $output .= $this->get_import_map();
 
         // Mark head sending done, it is not possible to anything there.
         $this->headdone = true;
