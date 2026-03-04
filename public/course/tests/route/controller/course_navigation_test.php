@@ -525,6 +525,41 @@ final class course_navigation_test extends route_testcase {
                 ['section' => 2, 'available' => $emailavailability . 'student@moodle.invalid"}],"showc":[false]}'],
             ],
         ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+        ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (teacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+            'role' => 'teacher',
+        ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+            'role' => 'editingteacher',
+        ];
         yield 'Last activity of a section (student)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
@@ -565,41 +600,6 @@ final class course_navigation_test extends route_testcase {
                 'type' => 'error',
                 'statuscode' => 404,
             ],
-        ];
-        yield 'With module not supporting FEATURE_CAN_DISPLAY (student)' => [
-            'cmsdef' => [
-                ['name' => 'cm1'],
-                ['name' => 'cm2', 'type' => 'qbank'],
-                ['name' => 'cm3'],
-            ],
-            'current' => 'cm1',
-            'expected' => [
-                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
-            ],
-        ];
-        yield 'With module not supporting FEATURE_CAN_DISPLAY (teacher)' => [
-            'cmsdef' => [
-                ['name' => 'cm1'],
-                ['name' => 'cm2', 'type' => 'qbank'],
-                ['name' => 'cm3'],
-            ],
-            'current' => 'cm1',
-            'expected' => [
-                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
-            ],
-            'role' => 'teacher',
-        ];
-        yield 'With module not supporting FEATURE_CAN_DISPLAY (editingteacher)' => [
-            'cmsdef' => [
-                ['name' => 'cm1'],
-                ['name' => 'cm2', 'type' => 'qbank'],
-                ['name' => 'cm3'],
-            ],
-            'current' => 'cm1',
-            'expected' => [
-                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
-            ],
-            'role' => 'editingteacher',
         ];
     }
 
@@ -704,6 +704,48 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm1', // Students cannot see stealth modules in the course page.
             ],
         ];
+        yield 'Hidden first module (teacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['visible' => false]],
+                ['name' => 'cm2'],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'id' => 'cm1', // Students cannot see stealth modules in the course page.
+            ],
+            'role' => 'teacher',
+        ];
+        yield 'Hidden first module (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['visible' => false]],
+                ['name' => 'cm2'],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'type' => 'course', // Students cannot see hidden modules.
+            ],
+        ];
+        yield 'Stealth first module (teacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['visibleoncoursepage' => false]],
+                ['name' => 'cm2'],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'id' => 'cm1', // Students cannot see stealth modules in the course page.
+            ],
+            'role' => 'teacher',
+        ];
+        yield 'Stealth first module (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'options' => ['visibleoncoursepage' => false]],
+                ['name' => 'cm2'],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'type' => 'course', // Students cannot see stealth modules in the course page.
+            ],
+        ];
         yield 'Restricted module visible (editingteacher)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
@@ -785,6 +827,16 @@ final class course_navigation_test extends route_testcase {
             'current' => 'cm2',
             'expected' => [
                 'id' => 'cm1',
+            ],
+        ];
+        yield 'Subsection: With previous module being a subsection in the first section (student)' => [
+            'cmsdef' => [
+                ['name' => 'subsection1', 'type' => 'subsection', 'options' => ['section' => 0]],
+                ['name' => 'cm1', 'options' => ['section' => 'subsection1']],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'course',
             ],
         ];
         yield 'Subsection: With previous module outside a subsection (student)' => [
@@ -1034,39 +1086,6 @@ final class course_navigation_test extends route_testcase {
                 ['section' => 2, 'available' => $emailavailability . 'student@moodle.invalid"}],"showc":[false]}'],
             ],
         ];
-        yield 'First activity of a course (student)' => [
-            'cmsdef' => [
-                ['name' => 'cm1'],
-                ['name' => 'cm2'],
-            ],
-            'current' => 'cm1',
-            'expected' => [
-                'type' => 'section',
-                'id' => '0',
-            ],
-        ];
-        yield 'With first module without url (student)' => [
-            'cmsdef' => [
-                ['name' => 'cm1', 'type' => 'label'],
-                ['name' => 'cm2', 'options' => ['section' => 2]],
-            ],
-            'current' => 'cm2',
-            'expected' => [
-                'type' => 'section',
-                'id' => '2',
-            ],
-        ];
-        yield 'With module that does not exist (student)' => [
-            'cmsdef' => [
-                ['name' => 'cm1'],
-                ['name' => 'cm2'],
-            ],
-            'current' => 'cmthatdoesnotexist',
-            'expected' => [
-                'type' => 'error',
-                'statuscode' => 404,
-            ],
-        ];
         yield 'With module not supporting FEATURE_CAN_DISPLAY (student)' => [
             'cmsdef' => [
                 ['name' => 'cm1'],
@@ -1101,6 +1120,48 @@ final class course_navigation_test extends route_testcase {
                 'id' => 'cm1', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
             ],
             'role' => 'editingteacher',
+        ];
+        yield 'First activity of a course (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'type' => 'course',
+            ],
+        ];
+        yield 'With first module without url in the first section (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'type' => 'label'],
+                ['name' => 'cm2', 'options' => ['section' => 0]],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'type' => 'course',
+            ],
+        ];
+        yield 'With first module without url (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1', 'type' => 'label'],
+                ['name' => 'cm2', 'options' => ['section' => 2]],
+            ],
+            'current' => 'cm2',
+            'expected' => [
+                'type' => 'section',
+                'id' => '2',
+            ],
+        ];
+        yield 'With module that does not exist (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2'],
+            ],
+            'current' => 'cmthatdoesnotexist',
+            'expected' => [
+                'type' => 'error',
+                'statuscode' => 404,
+            ],
         ];
     }
 

@@ -129,7 +129,7 @@ class course_navigation {
                 return $this->redirect($response, $prevcm->get_url());
             }
         }
-        return $this->page_not_found($request, $response);
+        return $this->redirect_to_course($response, $cm->get_course()->id);
     }
 
     /**
@@ -203,6 +203,10 @@ class course_navigation {
         string $direction = 'next',
     ): ?ResponseInterface {
         if ($direction === 'previous') {
+            if ($currentsection->sectionnum == 0) {
+                // Going to previous on the first section.
+                return $this->redirect_to_course($response, $modinfo->get_course()->id);
+            }
             $section = $modinfo->get_section_info($currentsection->sectionnum);
         } else {
             $section = $modinfo->get_section_info($currentsection->sectionnum + 1);
