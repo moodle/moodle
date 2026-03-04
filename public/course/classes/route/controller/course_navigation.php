@@ -143,7 +143,9 @@ class course_navigation {
             // Skip modules that don't have a URL (like labels).
             !empty($cm->get_url())
             // Skip modules that are not visible to the user.
-            && $cm->is_visible_on_course_page();
+            && $cm->is_visible_on_course_page()
+            // Skip modules that are not displayable.
+            && modinfo::is_mod_type_visible_on_course($cm->modname);
     }
 
     /**

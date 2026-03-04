@@ -566,6 +566,41 @@ final class course_navigation_test extends route_testcase {
                 'statuscode' => 404,
             ],
         ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+        ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (teacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+            'role' => 'teacher',
+        ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm1',
+            'expected' => [
+                'id' => 'cm3', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+            'role' => 'editingteacher',
+        ];
     }
 
     /**
@@ -1031,6 +1066,41 @@ final class course_navigation_test extends route_testcase {
                 'type' => 'error',
                 'statuscode' => 404,
             ],
+        ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (student)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm1', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+        ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (teacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm1', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+            'role' => 'teacher',
+        ];
+        yield 'With module not supporting FEATURE_CAN_DISPLAY (editingteacher)' => [
+            'cmsdef' => [
+                ['name' => 'cm1'],
+                ['name' => 'cm2', 'type' => 'qbank'],
+                ['name' => 'cm3'],
+            ],
+            'current' => 'cm3',
+            'expected' => [
+                'id' => 'cm1', // The cm2 should be skipped as it does not support FEATURE_CAN_DISPLAY.
+            ],
+            'role' => 'editingteacher',
         ];
     }
 
