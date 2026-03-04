@@ -81,17 +81,10 @@ if ($courseid) {
 }
 $preview = html_writer::link($previewlnk, $previewimg);
 
-$PAGE->activityheader->set_description("");
-
 // Print the page header.
 echo $OUTPUT->header();
 
-// Show description.
-echo $OUTPUT->box_start('generalbox feedback_description');
-$options = (object)array('noclean' => true);
-echo format_module_intro('feedback', $feedback, $cm->id);
 echo $renderer->main_action_bar($actionbar);
-echo $OUTPUT->box_end();
 
 //show some infos to the feedback
 if (has_capability('mod/feedback:edititems', $context)) {
