@@ -1,0 +1,13 @@
+issueNumber: MDL-87451
+notes:
+  core_reportbuilder:
+    - message: >-
+        The following methods now support both string or entity instance types
+        for parameters referring to entities by name, which prevents lookups of
+        instances which most report sources will already have:
+
+
+        - `add_all_from_[entity|entities]()`
+
+        - `add_[columns|filters|conditions]_from_entity()`
+      type: changed

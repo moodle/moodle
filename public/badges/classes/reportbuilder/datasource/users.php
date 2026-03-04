@@ -99,15 +99,15 @@ class users extends datasource {
         ]));
 
         // Add report elements from each of the entities we added to the report.
-        $this->add_all_from_entities([
-            $userentity->get_entity_name(),
-            $badgeissuedentity->get_entity_name(),
-            $badgeentity->get_entity_name(),
-        ]);
-        $this->add_all_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink'], ['name'], ['name']);
-        $this->add_all_from_entity($courseentity->get_entity_name());
-        $this->add_all_from_entity($cohortentity->get_entity_name(), ['name', 'idnumber', 'description', 'customfield*'],
-            ['cohortselect', 'name', 'idnumber', 'customfield*'], ['cohortselect', 'name', 'idnumber', 'customfield*']);
+        $this->add_all_from_entities([$userentity, $badgeissuedentity, $badgeentity]);
+        $this->add_all_from_entity($tagentity, ['name', 'namewithlink'], ['name'], ['name']);
+        $this->add_all_from_entity($courseentity);
+        $this->add_all_from_entity(
+            $cohortentity,
+            ['name', 'idnumber', 'description', 'customfield*'],
+            ['cohortselect', 'name', 'idnumber', 'customfield*'],
+            ['cohortselect', 'name', 'idnumber', 'customfield*'],
+        );
     }
 
     /**

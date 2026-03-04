@@ -306,6 +306,17 @@ abstract class base {
     }
 
     /**
+     * Helper to normalise entity instance based on type of passed parameter
+     *
+     * @param string|entity_base $entity
+     * @return entity_base
+     */
+    final protected function normalise_entity(string|entity_base $entity): entity_base {
+        $entityname = $entity instanceof entity_base ? $entity->get_entity_name() : $entity;
+        return $this->get_entity($entityname);
+    }
+
+    /**
      * Define a new entity for the report
      *
      * @param string $name
@@ -385,17 +396,21 @@ abstract class base {
      *
      * Wildcard matching is supported with '*' in both $include and $exclude, e.g. ['customfield*']
      *
-     * @param string $entityname
+     * @param string|entity_base $entityname
      * @param string[] $include Include only these columns, if omitted then include all
      * @param string[] $exclude Exclude these columns, if omitted then exclude none
      * @throws coding_exception If both $include and $exclude are non-empty
      */
-    final protected function add_columns_from_entity(string $entityname, array $include = [], array $exclude = []): void {
+    final protected function add_columns_from_entity(
+        string|entity_base $entityname,
+        array $include = [],
+        array $exclude = [],
+    ): void {
         if (!empty($include) && !empty($exclude)) {
             throw new coding_exception('Cannot specify columns to include and exclude simultaneously');
         }
 
-        $entity = $this->get_entity($entityname);
+        $entity = $this->normalise_entity($entityname);
 
         // Retrieve filtered columns from entity, respecting given $include/$exclude parameters.
         $columns = array_filter($entity->get_columns(), function(column $column) use ($include, $exclude): bool {
@@ -683,17 +698,21 @@ abstract class base {
      *
      * Wildcard matching is supported with '*' in both $include and $exclude, e.g. ['customfield*']
      *
-     * @param string $entityname
+     * @param string|entity_base $entityname
      * @param string[] $include Include only these filters, if omitted then include all
      * @param string[] $exclude Exclude these filters, if omitted then exclude none
      * @throws coding_exception If both $include and $exclude are non-empty
      */
-    final protected function add_filters_from_entity(string $entityname, array $include = [], array $exclude = []): void {
+    final protected function add_filters_from_entity(
+        string|entity_base $entityname,
+        array $include = [],
+        array $exclude = [],
+    ): void {
         if (!empty($include) && !empty($exclude)) {
             throw new coding_exception('Cannot specify filters to include and exclude simultaneously');
         }
 
-        $entity = $this->get_entity($entityname);
+        $entity = $this->normalise_entity($entityname);
 
         // Retrieve filtered filters from entity, respecting given $include/$exclude parameters.
         $filters = array_filter($entity->get_filters(), function(filter $filter) use ($include, $exclude): bool {

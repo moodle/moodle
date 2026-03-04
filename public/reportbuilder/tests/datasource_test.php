@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace core_reportbuilder;
 
 use advanced_testcase;
+use core\exception\coding_exception;
 use core\lang_string;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\entities\base;
@@ -40,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for base datasource
  *
  * @package     core_reportbuilder
- * @coversDefaultClass \core_reportbuilder\datasource
+ * @covers      \core_reportbuilder\datasource
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -91,8 +92,6 @@ final class datasource_test extends advanced_testcase {
      * @param string[] $exclude
      * @param string[] $expectedcolumns
      *
-     * @covers ::add_columns_from_entity
-     *
      * @dataProvider add_columns_from_entity_provider
      */
     public function test_add_columns_from_entity(
@@ -102,10 +101,10 @@ final class datasource_test extends advanced_testcase {
     ): void {
         $instance = $this->get_datasource_test_source();
 
+        // Assert we can pass the entity name when adding columns.
         $method = (new ReflectionClass($instance))->getMethod('add_columns_from_entity');
         $method->invoke($instance, 'entityone', $include, $exclude);
 
-        // Get all our entity columns.
         $this->assertEquals(
             $expectedcolumns,
             array_map(
@@ -113,6 +112,56 @@ final class datasource_test extends advanced_testcase {
                 array_values($instance->get_columns()),
             ),
         );
+    }
+
+    /**
+     * Test adding columns from entity instance
+     */
+    public function test_add_columns_from_entity_instance(): void {
+        $instance = $this->get_datasource_test_source();
+
+        // Get the entity instance.
+        $method = (new ReflectionClass($instance))->getMethod('get_entity');
+        $entity = $method->invoke($instance, 'entityone');
+
+        // Assert we can pass the entity instance itself when adding columns.
+        $method = (new ReflectionClass($instance))->getMethod('add_columns_from_entity');
+        $method->invoke($instance, $entity, ['first']);
+
+        $this->assertEquals(
+            [
+                'dummy:test',
+                'entityone:first',
+            ],
+            array_map(
+                fn(column $column) => $column->get_unique_identifier(),
+                array_values($instance->get_columns()),
+            ),
+        );
+    }
+
+    /**
+     * Test adding columns from entity that has not been added to report
+     */
+    public function test_add_columns_from_entity_invalid(): void {
+        $instance = $this->get_datasource_test_source();
+        $method = (new ReflectionClass($instance))->getMethod('add_columns_from_entity');
+
+        // Invalid entity name.
+        try {
+            $method->invoke($instance, 'invalid');
+            $this->fail('Exception expected');
+        } catch (coding_exception $exception) {
+            $this->assertStringContainsString("Invalid entity name (invalid)", $exception->getMessage());
+        }
+
+        // Invalid entity instance.
+        try {
+            $method->invoke($instance, new datasource_test_entity());
+            $this->fail('Exception expected');
+        } catch (coding_exception $exception) {
+            $this->assertStringContainsString("Invalid entity name (datasource_test_entity)", $exception->getMessage());
+        }
     }
 
     /**
@@ -158,8 +207,6 @@ final class datasource_test extends advanced_testcase {
      * @param string[] $exclude
      * @param string[] $expectedfilters
      *
-     * @covers ::add_filters_from_entity
-     *
      * @dataProvider add_filters_from_entity_provider
      */
     public function test_add_filters_from_entity(
@@ -169,10 +216,10 @@ final class datasource_test extends advanced_testcase {
     ): void {
         $instance = $this->get_datasource_test_source();
 
+        // Assert we can pass the entity name when adding filters.
         $method = (new ReflectionClass($instance))->getMethod('add_filters_from_entity');
         $method->invoke($instance, 'entityone', $include, $exclude);
 
-        // Get all our entity filters.
         $this->assertEquals(
             $expectedfilters,
             array_map(
@@ -180,6 +227,55 @@ final class datasource_test extends advanced_testcase {
                 array_values($instance->get_filters()),
             ),
         );
+    }
+
+    /**
+     * Test adding filters from entity instance
+     */
+    public function test_add_filters_from_entity_instance(): void {
+        $instance = $this->get_datasource_test_source();
+
+        // Get the entity instance.
+        $method = (new ReflectionClass($instance))->getMethod('get_entity');
+        $entity = $method->invoke($instance, 'entityone');
+
+        // Assert we can pass the entity instance itself when adding filters.
+        $method = (new ReflectionClass($instance))->getMethod('add_filters_from_entity');
+        $method->invoke($instance, $entity, ['first']);
+
+        $this->assertEquals(
+            [
+                'entityone:first',
+            ],
+            array_map(
+                fn(filter $filter) => $filter->get_unique_identifier(),
+                array_values($instance->get_filters()),
+            ),
+        );
+    }
+
+    /**
+     * Test adding filters from entity that has not been added to report
+     */
+    public function test_add_filters_from_entity_invalid(): void {
+        $instance = $this->get_datasource_test_source();
+        $method = (new ReflectionClass($instance))->getMethod('add_filters_from_entity');
+
+        // Invalid entity name.
+        try {
+            $method->invoke($instance, 'invalid');
+            $this->fail('Exception expected');
+        } catch (coding_exception $exception) {
+            $this->assertStringContainsString("Invalid entity name (invalid)", $exception->getMessage());
+        }
+
+        // Invalid entity instance.
+        try {
+            $method->invoke($instance, new datasource_test_entity());
+            $this->fail('Exception expected');
+        } catch (coding_exception $exception) {
+            $this->assertStringContainsString("Invalid entity name (datasource_test_entity)", $exception->getMessage());
+        }
     }
 
     /**
@@ -225,8 +321,6 @@ final class datasource_test extends advanced_testcase {
      * @param string[] $exclude
      * @param string[] $expectedconditions
      *
-     * @covers ::add_conditions_from_entity
-     *
      * @dataProvider add_conditions_from_entity_provider
      */
     public function test_add_conditions_from_entity(
@@ -236,10 +330,10 @@ final class datasource_test extends advanced_testcase {
     ): void {
         $instance = $this->get_datasource_test_source();
 
+        // Assert we can pass the entity name when adding conditions.
         $method = (new ReflectionClass($instance))->getMethod('add_conditions_from_entity');
         $method->invoke($instance, 'entityone', $include, $exclude);
 
-        // Get all our entity conditions.
         $this->assertEquals(
             $expectedconditions,
             array_map(
@@ -250,9 +344,56 @@ final class datasource_test extends advanced_testcase {
     }
 
     /**
+     * Test adding conditions from entity instance
+     */
+    public function test_add_conditions_from_entity_instance(): void {
+        $instance = $this->get_datasource_test_source();
+
+        // Get the entity instance.
+        $method = (new ReflectionClass($instance))->getMethod('get_entity');
+        $entity = $method->invoke($instance, 'entityone');
+
+        // Assert we can pass the entity instance itself when adding conditions.
+        $method = (new ReflectionClass($instance))->getMethod('add_conditions_from_entity');
+        $method->invoke($instance, $entity, ['first']);
+
+        $this->assertEquals(
+            [
+                'entityone:first',
+            ],
+            array_map(
+                fn(filter $condition) => $condition->get_unique_identifier(),
+                array_values($instance->get_conditions()),
+            ),
+        );
+    }
+
+    /**
+     * Test adding conditions from entity that has not been added to report
+     */
+    public function test_add_conditions_from_entity_invalid(): void {
+        $instance = $this->get_datasource_test_source();
+        $method = (new ReflectionClass($instance))->getMethod('add_conditions_from_entity');
+
+        // Invalid entity name.
+        try {
+            $method->invoke($instance, 'invalid');
+            $this->fail('Exception expected');
+        } catch (coding_exception $exception) {
+            $this->assertStringContainsString("Invalid entity name (invalid)", $exception->getMessage());
+        }
+
+        // Invalid entity instance.
+        try {
+            $method->invoke($instance, new datasource_test_entity());
+            $this->fail('Exception expected');
+        } catch (coding_exception $exception) {
+            $this->assertStringContainsString("Invalid entity name (datasource_test_entity)", $exception->getMessage());
+        }
+    }
+
+    /**
      * Test adding all from entity
-     *
-     * @covers ::add_all_from_entity
      */
     public function test_add_all_from_entity(): void {
         $instance = $this->get_datasource_test_source();
@@ -393,8 +534,6 @@ final class datasource_test extends advanced_testcase {
      * @param string[] $expectedfilters
      * @param string[] $expectedconditions
      *
-     * @covers ::add_all_from_entities
-     *
      * @dataProvider add_all_from_entities_provider
      */
     public function test_add_all_from_entities(
@@ -438,8 +577,6 @@ final class datasource_test extends advanced_testcase {
 
     /**
      * Test getting active conditions
-     *
-     * @covers ::get_active_conditions
      */
     public function test_get_active_conditions(): void {
         $instance = $this->get_datasource_test_source();

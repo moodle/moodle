@@ -152,22 +152,21 @@ class participants extends datasource {
 
         // Add all entities columns/filters/conditions.
         $this->add_all_from_entities([
-            $coursecatentity->get_entity_name(),
-            $courseentity->get_entity_name(),
-            $enrolentity->get_entity_name(),
-            $enrolmententity->get_entity_name(),
-            $userentity->get_entity_name(),
-            $roleentity->get_entity_name(),
-            $groupentity->get_entity_name(),
+            $coursecatentity,
+            $courseentity,
+            $enrolentity,
+            $enrolmententity,
+            $userentity,
+            $roleentity,
+            $groupentity,
         ]);
-
-        $this->add_all_from_entity($cohortentity->get_entity_name(), ['name', 'idnumber', 'description', 'customfield*'],
-            ['cohortselect', 'name', 'idnumber', 'customfield*'], ['cohortselect', 'name', 'idnumber', 'customfield*']);
-
-        $this->add_all_from_entities([
-            $completionentity->get_entity_name(),
-            $accessentity->get_entity_name(),
-        ]);
+        $this->add_all_from_entity(
+            $cohortentity,
+            ['name', 'idnumber', 'description', 'customfield*'],
+            ['cohortselect', 'name', 'idnumber', 'customfield*'],
+            ['cohortselect', 'name', 'idnumber', 'customfield*'],
+        );
+        $this->add_all_from_entities([$completionentity, $accessentity]);
     }
 
     /**

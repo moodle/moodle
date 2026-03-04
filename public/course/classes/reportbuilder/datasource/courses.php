@@ -87,20 +87,15 @@ class courses extends datasource {
                AND {$filesalias}.filename != '.'"));
 
         // Add all columns/filters/conditions from entities to be available in custom reports.
-        $this->add_all_from_entities([
-            $coursecatentity->get_entity_name(),
-            $courseentity->get_entity_name(),
-        ]);
-
+        $this->add_all_from_entities([$coursecatentity, $courseentity]);
         $this->add_all_from_entity(
-            $tagentity->get_entity_name(),
+            $tagentity,
             ['name', 'namewithlink'],
             ['name'],
             ['name'],
         );
-
         $this->add_all_from_entity(
-            $fileentity->get_entity_name(),
+            $fileentity,
             ['name', 'size', 'type', 'timecreated'],
             ['name', 'size', 'timecreated'],
             ['name', 'size', 'timecreated'],

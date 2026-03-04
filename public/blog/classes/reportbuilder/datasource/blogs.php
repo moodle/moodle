@@ -105,24 +105,17 @@ class blogs extends datasource {
             ->add_join("LEFT JOIN {user} {$commenteralias} ON {$commenteralias}.id = {$commentalias}.userid"));
 
         // Add report elements from each of the entities we added to the report.
-        $this->add_all_from_entity($blogentity->get_entity_name());
-
+        $this->add_all_from_entity($blogentity);
         $this->add_all_from_entity(
-            $fileentity->get_entity_name(),
+            $fileentity,
             ['name', 'size', 'type', 'timecreated'],
             ['name', 'size', 'timecreated'],
             ['name', 'size', 'timecreated'],
         );
-
-        $this->add_all_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink'], ['name'], ['name']);
-
-        $this->add_all_from_entities([
-            $authorentity->get_entity_name(),
-            $courseentity->get_entity_name(),
-        ]);
-
-        $this->add_all_from_entity($commententity->get_entity_name(), ['content', 'timecreated'], ['timecreated'], ['timecreated']);
-        $this->add_all_from_entity($commenterentity->get_entity_name());
+        $this->add_all_from_entity($tagentity, ['name', 'namewithlink'], ['name'], ['name']);
+        $this->add_all_from_entities([$authorentity, $courseentity]);
+        $this->add_all_from_entity($commententity, ['content', 'timecreated'], ['timecreated'], ['timecreated']);
+        $this->add_all_from_entity($commenterentity);
     }
 
     /**
