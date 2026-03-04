@@ -485,7 +485,7 @@ class behat_util extends \core\test\testing_util {
         $posixexists = function_exists('posix_isatty');
 
         // Make sure this step is only used with interactive terminal (if detected).
-        if ($posixexists && !@posix_isatty(STDOUT)) {
+        if ($posixexists && !@posix_isatty(STDOUT) && getenv('MOODLE_BEHAT_RUNNING_IN_TTY') !== '1') {
             throw new ExpectationException('Break point should only be used with interactive terminal.', $session);
         }
 
