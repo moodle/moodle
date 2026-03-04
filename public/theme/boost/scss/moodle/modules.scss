@@ -59,7 +59,9 @@ select {
     .activity-description {
         padding-top: map-get($spacers, 3);
         padding-bottom: map-get($spacers, 3);
-        border-bottom: $border-width solid $border-color;
+        &.has-automatic-completion {
+            border-bottom: $border-width solid $border-color;
+        }
         & > .box.py-3 {
             padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
             padding-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */

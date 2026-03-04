@@ -52,7 +52,7 @@
 <div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
     <div data-region="activity-details" class="activity-details">
         {{#description}}
-            <div class="activity-description" id="intro">
+            <div class="activity-description{{#hascompletion}}{{#uservisible}}{{#isautomatic}} has-automatic-completion{{/isautomatic}}{{/uservisible}}{{/hascompletion}}" id="intro">
                 {{{description}}}
             </div>
         {{/description}}
