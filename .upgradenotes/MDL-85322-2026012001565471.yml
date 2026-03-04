@@ -1,0 +1,8 @@
+issueNumber: MDL-85322
+notes:
+  block_html:
+    - message: >-
+        Treat Dashboard (pagetype 'my-index') as trusted in web services so
+        get_content_for_external preserves embedded HTML (e.g. iframes) on user
+        Dashboard.
+      type: changed
