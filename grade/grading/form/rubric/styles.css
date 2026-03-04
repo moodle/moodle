@@ -136,7 +136,7 @@
 
 .gradingform_rubric .plainvalue.empty {
     font-style: italic;
-    color: #aaa;
+    color: #555;
 }
 
 /* Make invisible the buttons 'Move up' for the first criterion and

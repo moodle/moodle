@@ -79,7 +79,7 @@
 
 .gradingform_guide .plainvalue.empty {
     font-style: italic;
-    color: #aaa;
+    color: #555;
 }
 
 .gradingform_guide .plainvalue.editname {
