@@ -60,3 +60,4 @@ phpcs.xml
 jsconfig.json
 UPGRADING-CURRENT.md
 .phpunit.cache
+tsconfig.aliases.json

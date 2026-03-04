@@ -37,6 +37,9 @@ const babelRename = function(destPath, srcPath) {
 };
 
 module.exports = grunt => {
+    // Load the React build tasks.
+    require('./react')(grunt);
+
     // Load the Ignorefiles tasks.
     require('./ignorefiles')(grunt);
 
@@ -57,7 +60,7 @@ module.exports = grunt => {
     // Register JS tasks.
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
     grunt.registerTask('amd', ['ignorefiles', 'eslint:amd', 'rollup']);
-    grunt.registerTask('js', ['amd', 'yui']);
+    grunt.registerTask('js', ['amd', 'yui', 'react']);
 
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-watch');

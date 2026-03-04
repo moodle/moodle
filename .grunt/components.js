@@ -386,6 +386,23 @@ const getThirdPartyLibsUpgradable = async() => {
 };
 
 /**
+ * Get the list of paths to build react sources.
+ *
+ * @param {string} relativeTo
+ * @returns {string[]}
+ */
+const getReactTsSrcGlobList = (relativeTo = '') => {
+    const globList = [];
+    fetchComponentData().pathList.forEach(componentPath => {
+        const relativeComponentPath = componentPath.replace(relativeTo, '');
+        globList.push(`${relativeComponentPath}/js/esm/src/**/*.ts`);
+        globList.push(`${relativeComponentPath}/js/esm/src/**/*.tsx`);
+    });
+
+    return globList.map(componentPath => componentPath.replace(/\\/g, '/'));
+};
+
+/**
  * Get the list of thirdparty libraries.
  *
  * @returns {Array}
@@ -432,4 +449,5 @@ module.exports = {
     getThirdPartyLibsList,
     getThirdPartyPaths,
     getThirdPartyLibsUpgradable,
+    getReactTsSrcGlobList,
 };

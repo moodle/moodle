@@ -140,6 +140,17 @@ const setupMoodleEnvironment = grunt => {
         return cwd;
     };
 
+    const getReactTsConfiguration = () => {
+        // Globbing pattern for matching all react source files.
+        if (inComponent) {
+            return [
+                `${componentDirectory}/js/esm/src/**/*.ts`,
+                `${componentDirectory}/js/esm/src/**/*.tsx`,
+            ];
+        }
+        return ComponentList.getReactTsSrcGlobList(`${gruntFilePath}/`);
+    };
+
     // Detect directories:
     // * gruntFilePath          The real path on disk to this Gruntfile.js
     // * cwd                    The current working directory, which can be overridden by the `root` option
@@ -153,12 +164,14 @@ const setupMoodleEnvironment = grunt => {
     const relativeCwd = path.relative(gruntFilePath, cwd);
     const componentDirectory = ComponentList.getOwningComponentDirectory(relativeCwd);
     const inComponent = !!componentDirectory;
+    const inEsm = !!componentDirectory && !path.relative(`${componentDirectory}/js/esm/src`, cwd).startsWith('..');
     const inTheme = !!componentDirectory && componentDirectory.startsWith('public/theme/');
     const runDir = inComponent ? componentDirectory : relativeCwd;
     const fullRunDir = fs.realpathSync(gruntFilePath + path.sep + runDir);
     const {inAMD, amdSrc} = getAmdConfiguration();
     const {yuiSrc} = getYuiConfiguration();
     const {cssSrc, scssSrc} = getStyleConfiguration();
+    const reactSrc = getReactTsConfiguration();
 
     let files = null;
     if (grunt.option('files')) {
@@ -195,11 +208,13 @@ const setupMoodleEnvironment = grunt => {
         gruntFilePath,
         inAMD,
         inComponent,
+        inEsm,
         inTheme,
         relativeCwd,
         runDir,
         scssSrc,
         yuiSrc,
+        reactSrc,
     };
 };
 
