@@ -18,7 +18,8 @@ declare(strict_types=1);
 
 namespace core_notes\reportbuilder\local\entities;
 
-use lang_string;
+use core\{context, context_helper};
+use core\lang_string;
 use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{date, select, text};
@@ -46,6 +47,7 @@ class note extends base {
      */
     protected function get_default_tables(): array {
         return [
+            'context',
             'post',
         ];
     }
@@ -65,7 +67,10 @@ class note extends base {
      * @return column[]
      */
     protected function get_available_columns(): array {
-        $postalias = $this->get_table_alias('post');
+        [
+            'context' => $contextalias,
+            'post' => $postalias,
+        ] = $this->get_table_aliases();
 
         // Content.
         $columns[] = (new column(
@@ -74,14 +79,27 @@ class note extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
+            ->add_join("LEFT JOIN {context} {$contextalias}
+                    ON {$contextalias}.contextlevel = " . CONTEXT_COURSE . "
+                   AND {$contextalias}.instanceid = {$postalias}.courseid")
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_fields("{$postalias}.content, {$postalias}.format")
+            ->add_fields("{$postalias}.content, {$postalias}.format, {$postalias}.id")
+            ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
             ->add_callback(static function(?string $content, stdClass $note): string {
-                if ($content === null) {
+                global $CFG;
+                require_once("{$CFG->libdir}/filelib.php");
+
+                if ($content === null || $note->ctxid === null) {
                     return '';
                 }
-                return format_text($content, $note->format);
+
+                context_helper::preload_from_record(clone $note);
+                $context = context::instance_by_id($note->ctxid);
+
+                $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $context->id, 'notes', 'content', $note->id);
+
+                return format_text($content, $note->format, ['context' => $context]);
             });
 
         // Publish state.

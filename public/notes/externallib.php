@@ -313,12 +313,16 @@ class core_notes_external extends external_api {
                 $context = context_course::instance($note->courseid);
                 self::validate_context($context);
                 require_capability('moodle/notes:view', $context);
-                list($gotnote['text'], $gotnote['format']) = util::format_text($note->content,
-                                                                                  $note->format,
-                                                                                  $context->id,
-                                                                                  'notes',
-                                                                                  '',
-                                                                                  '');
+
+                [$gotnote['text'], $gotnote['format']] = util::format_text(
+                    $note->content,
+                    $note->format,
+                    $context,
+                    'notes',
+                    'content',
+                    $note->id,
+                );
+
                 $gotnote['noteid'] = $note->id;
                 $gotnote['userid'] = $note->userid;
                 $gotnote['publishstate'] = $note->publishstate;
@@ -485,7 +489,7 @@ class core_notes_external extends external_api {
      * Create a notes list
      *
      * @param int $courseid ID of the Course
-     * @param stdClass $context context object
+     * @param context $context context instance
      * @param int $userid ID of the User
      * @param int $state
      * @param int $author
@@ -500,10 +504,10 @@ class core_notes_external extends external_api {
             [$note['content'], $note['format']] = util::format_text(
                 $note['content'],
                 $note['format'],
-                $context->id,
-                '',
-                '',
-                0
+                $context,
+                'notes',
+                'content',
+                $note['id'],
             );
             $results[$key] = $note;
         }

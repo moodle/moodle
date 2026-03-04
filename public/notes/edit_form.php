@@ -27,12 +27,14 @@ class note_edit_form extends moodleform {
      */
     public function definition() {
         $mform =& $this->_form;
+
+        $editoroptions = $this->_customdata['editoroptions'];
+
         $mform->addElement('header', 'general', get_string('note', 'notes'));
 
-        $mform->addElement('textarea', 'content', get_string('content', 'notes'), array('rows' => 15, 'cols' => 40));
-        $mform->setType('content', PARAM_RAW);
-        $mform->addRule('content', get_string('nocontent', 'notes'), 'required', null, 'client');
-        $mform->setForceLtr('content', false);
+        $mform->addElement('editor', 'content_editor', get_string('content', 'notes'), null, $editoroptions);
+        $mform->setType('content_editor', PARAM_RAW);
+        $mform->addRule('content_editor', get_string('nocontent', 'notes'), 'required', null, 'client');
 
         $mform->addElement('select', 'publishstate', get_string('publishstate', 'notes'), note_get_state_names());
         $mform->setDefault('publishstate', NOTES_STATE_PUBLIC);

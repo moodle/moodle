@@ -172,13 +172,16 @@ function note_delete($note) {
     $note = $DB->get_record('post', array('id' => $noteid), '*', MUST_EXIST);
     $return = $DB->delete_records('post', array('id' => $note->id, 'module' => 'notes'));
 
+    $context = \core\context\course::instance($note->courseid);
+    get_file_storage()->delete_area_files($context->id, 'notes', 'content', $note->id);
+
     // Trigger event.
     $event = \core\event\note_deleted::create(array(
         'objectid' => $note->id,
         'courseid' => $note->courseid,
         'relateduserid' => $note->userid,
         'userid' => $note->usermodified,
-        'context' => context_course::instance($note->courseid),
+        'context' => $context,
         'other' => array('publishstate' => $note->publishstate)
     ));
     $event->add_record_snapshot('post', $note);
@@ -263,7 +266,8 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     // Print note content.
     if ($detail & NOTES_SHOW_BODY) {
         echo '<div class="content">';
-        echo format_text($note->content, $note->format, array('overflowdiv' => true));
+        $content = file_rewrite_pluginfile_urls($note->content, 'pluginfile.php', $context->id, 'notes', 'content', $note->id);
+        echo format_text($content, $note->format, ['overflowdiv' => true, 'context' => $context]);
         echo '</div>';
     }
 
@@ -343,6 +347,9 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
  */
 function note_delete_all($courseid) {
     global $DB;
+
+    $context = \core\context\course::instance($courseid);
+    get_file_storage()->delete_area_files($context->id, 'notes', 'content');
 
     return $DB->delete_records('post', array('module' => 'notes', 'courseid' => $courseid));
 }

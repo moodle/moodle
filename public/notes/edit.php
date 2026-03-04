@@ -37,6 +37,8 @@ if ($noteid) {
     $state    = optional_param('publishstate', NOTES_STATE_PUBLIC, PARAM_ALPHA);
 
     $note = new stdClass();
+    $note->id = null;
+    $note->format = FORMAT_HTML;
     $note->courseid     = $courseid;
     $note->userid       = $userid;
     $note->publishstate = $state;
@@ -67,7 +69,16 @@ if (!$user = $DB->get_record('user', array('id' => $note->userid))) {
     throw new \moodle_exception('invaliduserid');
 }
 
-$noteform = new note_edit_form();
+$editoroptions = [
+    'context' => $context,
+    'maxfiles' => EDITOR_UNLIMITED_FILES,
+    'maxbytes' => get_user_max_upload_file_size($context, $CFG->maxbytes, $course->maxbytes),
+];
+
+$note->contentformat = $note->format;
+$note = file_prepare_standard_editor($note, 'content', $editoroptions, $context, 'notes', 'content', $note->id);
+
+$noteform = new note_edit_form(null, ['editoroptions' => $editoroptions]);
 $noteform->set_data($note);
 
 // If form was cancelled then return to the notes list of the note.
@@ -83,7 +94,17 @@ if ($note = $noteform->get_data()) {
         unset($note->courseid);
         unset($note->userid);
     }
+
+    // Extract editor content so it can be initially saved.
+    $contenteditor = $note->content_editor;
+    ['text' => $note->content, 'format' => $note->format] = $contenteditor;
     note_save($note);
+
+    // Post-process editor content.
+    $note->content_editor = $contenteditor;
+    file_postupdate_standard_editor($note, 'content', $editoroptions, $context, 'notes', 'content', $note->id);
+    $DB->update_record('post', $note);
+
     // Redirect to notes list that contains this note.
     redirect($CFG->wwwroot . '/notes/index.php?course=' . $note->courseid . '&amp;user=' . $note->userid);
 }
