@@ -315,7 +315,12 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (false !== array_search($catparts[1], $contextlistarr)) ||
                 !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
-            throw new \moodle_exception('invalidcategory', 'question');
+            $exception = 'invalidcategory';
+            if ($edittab === 'editq') {
+                // If this might be due to MDL-86691, return a message including fix instructions.
+                $exception = 'invalidcategoryeditq';
+            }
+            throw new \moodle_exception($exception, 'question');
         }
     } else {
         $category = $defaultcategory;
