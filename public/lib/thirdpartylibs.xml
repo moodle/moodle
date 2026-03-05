@@ -749,7 +749,7 @@ All rights reserved.</copyright>
     <location>symfony/deprecation-contracts</location>
     <name>Symfony Deprecation contracts</name>
     <description>A generic function and convention to trigger deprecation notices</description>
-    <version>3.5.1</version>
+    <version>3.6.0</version>
     <license>MIT</license>
     <repository>https://github.com/symfony/deprecation-contracts</repository>
   </library>
@@ -764,7 +764,7 @@ All rights reserved.</copyright>
   <library>
       <location>webauthn</location>
       <name>WebAuthn</name>
-      <version>2.2.2</version>
+      <version>2.2.0</version>
       <license>MIT</license>
       <repository>https://github.com/lbuchs/WebAuthn</repository>
   </library>

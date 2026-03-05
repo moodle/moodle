@@ -29,15 +29,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class aws_sns implements aws_sms_service_provider {
-
-    /**
-     * Include the required calls.
-     */
-    private static function require(): void {
-        global $CFG;
-        require_once($CFG->libdir . '/aws-sdk/src/functions.php');
-    }
-
     #[\Override]
     public static function send_sms_message(
         string $messagecontent,
@@ -45,7 +36,6 @@ class aws_sns implements aws_sms_service_provider {
         stdclass $config,
     ): message_status {
         global $SITE;
-        self::require();
 
         // Setup client params and instantiate client.
         $params = [
