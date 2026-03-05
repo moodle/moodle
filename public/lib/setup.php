@@ -592,7 +592,12 @@ ini_set('include_path', $CFG->libdir . '/pear' . PATH_SEPARATOR . ini_get('inclu
 // Register our classloader.
 \core\component::register_autoloader();
 
-// Early profiling start, based exclusively on config.php $CFG settings
+// Register our shutdown manager, do NOT use register_shutdown_function().
+if (\core\shutdown_manager::is_initialized() === false) {
+    \core\shutdown_manager::initialize();
+}
+
+// Early profiling start, based exclusively on config.php $CFG settings.
 if (!empty($CFG->earlyprofilingenabled) && !defined('ABORT_AFTER_CONFIG_CANCEL')) {
     require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
     profiling_start();
@@ -778,10 +783,7 @@ if (!isset($CFG->debugdisplay)) {
     ini_set('display_errors', '1');
 }
 
-// Register our shutdown manager, do NOT use register_shutdown_function().
-\core\shutdown_manager::initialize();
-
-// Verify upgrade is not running unless we are in a script that needs to execute in any case
+// Verify upgrade is not running unless we are in a script that needs to execute in any case.
 if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
     if ($CFG->upgraderunning < time()) {
         unset_config('upgraderunning');

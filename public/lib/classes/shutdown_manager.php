@@ -43,7 +43,7 @@ class shutdown_manager {
      */
     public static function initialize(): void {
         if (self::$registered) {
-            debugging('Shutdown manager is already initialised!');
+            self::log('Shutdown manager is already initialised!');
             return;
         }
         self::$registered = true;
@@ -74,6 +74,15 @@ class shutdown_manager {
                 }
             }
         }
+    }
+
+    /**
+     * Whether the shutdown manager initialized.
+     *
+     * @return bool
+     */
+    public static function is_initialized(): bool {
+        return self::$registered;
     }
 
     /**
@@ -169,12 +178,17 @@ class shutdown_manager {
     public static function shutdown_handler(): void {
         global $DB;
 
-        // In case we caught an out of memory shutdown we increase memory limit to unlimited, so we can gracefully shut down.
-        raise_memory_limit(MEMORY_UNLIMITED);
+        if (function_exists('raise_memory_limit')) {
+            // In case we caught an out of memory shutdown we increase memory limit to unlimited,
+            // so we can gracefully shut down.
+            raise_memory_limit(MEMORY_UNLIMITED);
+        }
 
-        // Always ensure we know who the user is in access logs even if they
-        // were logged in a weird way midway through the request.
-        set_access_log_user();
+        if (function_exists('set_access_log_user')) {
+            // Always ensure we know who the user is in access logs even if they
+            // were logged in a weird way midway through the request.
+            set_access_log_user();
+        }
 
         // Custom stuff first.
         foreach (self::$callbacks as $data) {
@@ -189,7 +203,7 @@ class shutdown_manager {
 
         // Handle DB transactions, session need to be written afterwards
         // in order to maintain consistency in all session handlers.
-        if ($DB->is_transaction_started()) {
+        if ($DB && $DB->is_transaction_started()) {
             if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
                 // This should not happen, it usually indicates wrong catching of exceptions,
                 // because all transactions should be finished manually or in default exception handler.
@@ -242,7 +256,12 @@ class shutdown_manager {
                 // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                 error_log('Mem usage over ' . $apachereleasemem . ': marking Apache child for reaping.');
             }
-            if (MDL_PERFTOLOG) {
+
+            $logperformance = MDL_PERFTOLOG;
+            $logperformance = $logperformance || !empty($PERF->perfdebugdeferred);
+            $logperformance = $logperformance && function_exists('get_performance_info');
+
+            if ($logperformance) {
                 $perf = get_performance_info();
                 // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
                 error_log("PERF: " . $perf['txt']);
@@ -251,6 +270,7 @@ class shutdown_manager {
                 $perf = get_performance_info();
                 echo $OUTPUT->select_element_for_replace('#perfdebugfooter', $perf['html']);
             }
+
             if (MDL_PERFINC) {
                 $inc = get_included_files();
                 $ts  = 0;
@@ -274,14 +294,32 @@ class shutdown_manager {
             }
         }
 
-        // Close the current streaming element if any.
-        if ($OUTPUT->has_started()) {
-            echo $OUTPUT->close_element_for_append();
+        if ($OUTPUT) {
+            // Close the current streaming element if any.
+            if ($OUTPUT->has_started()) {
+                echo $OUTPUT->close_element_for_append();
+            }
         }
 
         // Print any closing buffered tags.
         if (!empty($CFG->closingtags)) {
             echo $CFG->closingtags;
+        }
+    }
+
+    /**
+     * Logging for the shutdown manager.
+     *
+     * @param string $value
+     */
+    protected static function log(string $value): void {
+        if (function_exists('debugging')) {
+            // Use Moodle's debugging function if available.
+            debugging($value, DEBUG_DEVELOPER);
+        } else {
+            // Fallback to error_log if debugging is not available.
+            // This is useful for older PHP versions or when debugging is not set up.
+            error_log($value); // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
         }
     }
 }

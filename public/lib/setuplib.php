@@ -136,7 +136,10 @@ function get_whoops(): ?\Whoops\Run {
 function default_exception_handler(Throwable $ex): void {
     global $CFG, $DB, $OUTPUT, $USER, $FULLME, $SESSION, $PAGE;
 
-    // detect active db transactions, rollback and log as error
+    // Record the throwable in OpenTelemetry if it's available.
+    \core\telemetry::record_throwable($ex);
+
+    // Detect active db transactions, rollback and log as error.
     abort_all_db_transactions();
 
     if (($ex instanceof required_capability_exception) && !CLI_SCRIPT && !AJAX_SCRIPT && !empty($CFG->autologinguests) && !empty($USER->autologinguest)) {
