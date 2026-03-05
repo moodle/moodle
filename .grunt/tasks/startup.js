@@ -33,6 +33,9 @@ module.exports = grunt => {
         // Are we in an AMD directory?
         } else if (grunt.moodleEnv.inAMD) {
             grunt.task.run('amd');
+        // Are we in an ESM source directory?
+        } else if (grunt.moodleEnv.inEsm) {
+            grunt.task.run('react');
         } else {
             // Run all of the requested startup tasks.
             grunt.moodleEnv.startupTasks.forEach(taskName => grunt.task.run(taskName));

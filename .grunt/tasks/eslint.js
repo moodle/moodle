@@ -41,6 +41,14 @@ module.exports = grunt => {
 
             // Check YUI module source files.
             yui: {src: files ? files : grunt.moodleEnv.yuiSrc},
+
+            // Check React source files.
+            'react': {
+                options: {
+                    fix: true,
+                },
+                src: files ? files : grunt.moodleEnv.reactSrc,
+            },
         },
     });
 
