@@ -409,4 +409,31 @@ class category_manager {
             $DB->update_record('question_categories', $categorytofix, true);
         }
     }
+
+    /**
+     * Upgrade step to find questions with no category and delete them.
+     *
+     * Due to MDL-86154, there may be questions left in the database after a restore, whose category has been deleted. This will
+     * find any questions like that and delete them. These questions will always be unused.
+     *
+     * Now that we have prevented this occurring, this function is used by the upgrade process to clean up these questions.
+     *
+     * @return int A count of deleted questions.
+     * @todo Deprecate in 6.0 MDL-87844 for Removal in 7.0 MDL-87845.
+     */
+    public static function cleanup_questions_without_categories(): int {
+        global $DB;
+        $questionids = $DB->get_fieldset_sql("
+            SELECT q.id
+              FROM {question_bank_entries} qbe
+              JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
+              JOIN {question} q ON qv.questionid = q.id
+         LEFT JOIN {question_categories} qc ON qbe.questioncategoryid = qc.id
+             WHERE qc.id IS NULL
+        ");
+        foreach ($questionids as $questionid) {
+            question_delete_question($questionid);
+        }
+        return count($questionids);
+    }
 }

@@ -666,4 +666,49 @@ final class category_manager_test extends \advanced_testcase {
         $this->assertEquals($quiz2top->id, $DB->get_field('question_categories', 'parent', ['id' => $quiz2nontop->id]));
         $this->assertEquals($qbank2top->id, $DB->get_field('question_categories', 'parent', ['id' => $qbank2nontop->id]));
     }
+
+    /**
+     * A question with no category should be deleted, while other questions remain as-is.
+     *
+     * @todo Deprecate in 6.0 MDL-87844 for Removal in 7.0 MDL-87845.
+     */
+    public function test_cleanup_questions_without_categories(): void {
+        global $DB;
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $context = \context_module::instance($quiz->cmid);
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $topcategory = question_get_top_category($context->id, true);
+        $defaultcategory = question_get_default_category($context->id);
+        $deletedcategory = $questiongenerator->create_question_category(
+            ['contextid' => $context->id, 'parent' => $topcategory->id],
+        );
+        // Create 2 questions. One in the default category, and  in the category being deleted.
+        $question = $questiongenerator->create_question('truefalse', overrides: ['category' => $defaultcategory->id]);
+        $orphan = $questiongenerator->create_question('truefalse', overrides: ['category' => $deletedcategory->id]);
+
+        $DB->delete_records('question_categories', ['id' => $deletedcategory->id]);
+
+        $this->assertEquals(1, category_manager::cleanup_questions_without_categories());
+
+        // The default category question is unchanged.
+        $this->assertTrue(
+            $DB->record_exists_sql(
+                "SELECT *
+                   FROM {question} q
+                   JOIN {question_versions} qv on qv.questionid = q.id
+                   JOIN {question_bank_entries} qbe ON qv.questionbankentryid = qbe.id
+                  WHERE q.id = :questionid AND qbe.questioncategoryid = :categoryid",
+                [
+                    'questionid' => $question->id,
+                    'categoryid' => $defaultcategory->id,
+                ],
+            ),
+        );
+        // The orphaned question has been deleted.
+        $this->assertFalse($DB->record_exists('question', ['id' => $orphan->id]));
+    }
 }
