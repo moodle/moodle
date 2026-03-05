@@ -40,6 +40,7 @@ export const init = () => {
     new Popover(footerButton, {
         content: getFooterContent,
         container: container,
+        sanitize: false,
         html: true,
         placement: 'top',
         fallbackPlacements: ['bottom'],
