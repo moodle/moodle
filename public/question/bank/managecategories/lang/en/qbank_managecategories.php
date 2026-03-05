@@ -27,6 +27,7 @@ $string['after'] = 'After {$a}';
 $string['before'] = 'Before {$a}';
 $string['categoryincategory'] = 'Cannot move category in same category.';
 $string['categorymoved'] = 'The category has been moved successfully.';
+$string['categorymovedto'] = 'Category moved to <a href="{$a->url}">{$a->name}</a>.';
 $string['confirmdelete'] = 'Delete category "{$a}"?. Any child categories will be moved to this category\'s parent.';
 $string['descriptionnotdisplayed'] = 'Categories description not displayed';
 $string['displaydescription'] = 'Categories description displayed';

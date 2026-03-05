@@ -104,3 +104,34 @@ Feature: A teacher can reorder question categories
     And I should not see "+" in the "Course category 2" "list_item"
     When I drag "Course category 3" "list_item" and I drop it in "Course category 1" "text"
     Then I should see "+" in the "Course category 1" "list_item"
+
+  Scenario: Teacher can move a category to another bank
+    Given the following "question categories" exist:
+      | contextlevel    | reference | name                   | idnumber     | questioncategory  |
+      | Activity module | qbank1    | Course category 4      | questioncat4 | Course category 1 |
+    And I reload the page
+    And "Default for Qbank 1" "list_item" should exist
+    And "Course category 1" "list_item" should exist
+    And "Course category 2" "list_item" should exist
+    And "Course category 3" "list_item" should exist
+    And "Course category 4" "list_item" should exist
+    And I open the action menu in "Course category 1" "list_item"
+    And I choose "Move" in the open action menu
+    And I should see "Question bank: Qbank 1" in the "Move Course category 1" "dialogue"
+    And I should see "Before Course category 3" in the "Move Course category 1" "dialogue"
+    And I press "Switch bank"
+    And I click on "Qbank 2" "link" in the "Select question bank" "dialogue"
+    And I should see "Question bank: Qbank 2" in the "Move Course category 1" "dialogue"
+    And I should not see "Before Course category 3" in the "Move Course category 1" "dialogue"
+    And I should see "As new child of Default for Qbank 2" in the "Move Course category 1" "dialogue"
+    When I follow "As new child of Default for Qbank 2"
+    Then "Default for Qbank 1" "list_item" should exist
+    And "Course category 1" "list_item" should not exist
+    And "Course category 2" "list_item" should exist
+    And "Course category 3" "list_item" should exist
+    And "Course category 4" "list_item" should not exist
+    And I should see "Category moved to Question bank: Qbank 2"
+    And I follow "Question bank: Qbank 2"
+    And "Default for Qbank 2" "list_item" should exist
+    And "Course category 1" "list_item" should exist
+    And "Course category 4" "list_item" should exist

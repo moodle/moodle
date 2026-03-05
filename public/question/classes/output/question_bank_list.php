@@ -18,6 +18,7 @@ namespace core_question\output;
 
 use action_link;
 use core\output\pix_icon;
+use core_question\local\bank\formatted_bank;
 use renderer_base;
 use core_courseformat\output\local\content\cm\controlmenu;
 use core_question\local\bank\question_bank_helper;
@@ -34,10 +35,10 @@ class question_bank_list implements \renderable, \templatable {
     /**
      * Instantiate the output class.
      *
-     * @param array $bankinstances {@see question_bank_helper::get_activity_instances_with_shareable_questions()}
+     * @param formatted_bank[] $bankinstances {@see question_bank_helper::get_activity_instances_with_shareable_questions()}
      */
     public function __construct(
-        /** @var array $bankinstances */
+        /** @var formatted_bank[] $bankinstances */
         protected readonly array $bankinstances
     ) {
     }
@@ -51,6 +52,7 @@ class question_bank_list implements \renderable, \templatable {
     public function export_for_template(renderer_base $output): array {
         $banks = [];
         foreach ($this->bankinstances as $instance) {
+            $instance = $instance->get_formatted();
             if (plugin_supports('mod', $instance->cminfo->modname, FEATURE_PUBLISHES_QUESTIONS)) {
                 $returnurl = question_bank_helper::get_url_for_qbank_list($instance->cminfo->course);
                 $format = course_get_format($instance->cminfo->course);

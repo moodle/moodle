@@ -19,6 +19,8 @@ namespace core_question\local\bank;
 use cm_info;
 use context;
 use context_course;
+use core\context\course;
+use core\context\module;
 use core\context_helper;
 use core\di;
 use core\task\manager;
@@ -366,7 +368,7 @@ class question_bank_helper {
      * @param int $notincourseid if supplied don't return any in this course id
      * @param ?context $filtercontext Optional context to use for all string filtering, useful for performance when calling with
      *       parameters that will get banks across multiple contexts.
-     * @return cm_info[]
+     * @return formatted_bank[]
      */
     public static function get_recently_used_open_banks(
         int $userid,
@@ -397,7 +399,7 @@ class question_bank_helper {
             if (!empty($havingcap) && !(new question_edit_contexts($context))->have_one_cap($havingcap)) {
                 continue;
             }
-            $record = self::get_formatted_bank($cm, filtercontext: $filtercontext);
+            $record = self::get_formatted_bank($cm, filtercontext: $filtercontext, isrecent: true);
             $banks[] = $record;
         }
 
@@ -445,9 +447,15 @@ class question_bank_helper {
      *     Used in qbank_bulkmove/bulk_move.mustache
      * @param ?context $filtercontext Optional context in which to apply filters.
      *
-     * @return stdClass
+     * @return formatted_bank
      */
-    private static function get_formatted_bank(stdClass $cm, int $currentbankid = 0, ?context $filtercontext = null): stdClass {
+    private static function get_formatted_bank(
+        stdClass $cm,
+        int $currentbankid = 0,
+        ?context $filtercontext = null,
+        bool $isshared = true,
+        bool $isrecent = false,
+    ): formatted_bank {
 
         $cminfo = cm_info::create($cm);
         $concatedcats = !empty($cm->cats) ? explode(self::CATEGORY_SEPARATOR, $cm->cats) : [];
@@ -461,21 +469,14 @@ class question_bank_helper {
             return $cat;
         }, $concatedcats);
 
-        $bank = new stdClass();
-        $filteroptions = ['escape' => false];
-        if (!is_null($filtercontext)) {
-            $filteroptions['context'] = $filtercontext;
-        }
-        $bank->name = $cminfo->get_formatted_name($filteroptions);
-        $bank->modid = $cminfo->id;
-        $bank->contextid = $cminfo->context->id;
-        if (!isset($filteroptions['context'])) {
-            $filteroptions['context'] = context_course::instance($cminfo->get_course()->id);
-        }
-        $bank->coursenamebankname = format_string($cminfo->get_course()->shortname, true, $filteroptions) . " - {$bank->name}";
-        $bank->cminfo = $cminfo;
-        $bank->questioncategories = $categories;
-        return $bank;
+        $filtercontext ??= context_course::instance($cminfo->get_course()->id);
+        return new formatted_bank(
+            $cminfo,
+            $filtercontext,
+            $categories,
+            $isshared,
+            $isrecent,
+        );
     }
 
     /**
@@ -736,5 +737,52 @@ class question_bank_helper {
         }
         // As a failsafe, limit the length of the final string in case the lang string is too long.
         return shorten_text($bankname, self::BANK_NAME_MAX_LENGTH);
+    }
+
+    /**
+     * Return a list of question banks.
+     *
+     * By default, this will just return a list of shared question banks (activities with FEATURE_PUBLISHES_QUESTIONS) in the given
+     * course context.
+     * Other options allow you to include private question banks and banks recently accessed by the user
+     * (which may be in other courses).
+     *
+     * @param course $coursecontext The course context to find shared and private banks within.
+     * @param module|null $modulecontext If set, use this instead of $coursecontext when applying text filters on bank names.
+     * @param bool $includeshared Include banks with shared questions.
+     * @param bool $includerecent Include banks recently viewed by the user.
+     * @return formatted_bank[]
+     */
+    public static function get_banks_for_course(
+        course $coursecontext,
+        ?module $modulecontext = null,
+        bool $includeshared = true,
+        bool $includerecent = false,
+    ): array {
+        global $USER;
+        if ($modulecontext) {
+            $context = $modulecontext;
+        } else {
+            $context = $coursecontext;
+        }
+        $capabilities = ['moodle/question:useall', 'moodle/question:usemine'];
+        $banks = [];
+        if ($includeshared) {
+            $sharedbanks = self::get_activity_instances_with_shareable_questions(
+                incourseids: [$coursecontext->instanceid],
+                havingcap: $capabilities,
+                filtercontext: $context,
+            );
+            $banks = array_merge($banks, $sharedbanks);
+        }
+        if ($includerecent) {
+            $recentbanks = self::get_recently_used_open_banks(
+                $USER->id,
+                filtercontext: $context,
+                havingcap: $capabilities,
+            );
+            $banks = array_merge($banks, $recentbanks);
+        }
+        return $banks;
     }
 }

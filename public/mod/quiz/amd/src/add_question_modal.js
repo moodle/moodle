@@ -22,9 +22,6 @@
  */
 
 import Modal from 'core/modal';
-import * as Fragment from 'core/fragment';
-import {getString} from 'core/str';
-import AutoComplete from 'core/form-autocomplete';
 
 export default class AddQuestionModal extends Modal {
     configure(modalConfig) {
@@ -43,6 +40,7 @@ export default class AddQuestionModal extends Modal {
         // This is because the URL cmid param will change during filter operations as we will be in another bank context.
         this.quizCmId = modalConfig.quizCmId;
         this.bankCmId = modalConfig.bankCmId;
+        this.courseId = modalConfig.courseId;
 
         // Store the original title of the modal, so we can revert back to it once we have switched to another bank.
         this.originalTitle = modalConfig.title;
@@ -98,51 +96,5 @@ export default class AddQuestionModal extends Modal {
      */
     getAddOnPageId() {
         return this.addOnPageId;
-    }
-
-    /**
-     * Update the modal with a list of banks to switch to and enhance the standard selects to Autocomplete fields.
-     *
-     * @param {String} Selector for the original select element.
-     * @return {Promise} Modal.
-     */
-    async handleSwitchBankContentReload(Selector) {
-        this.setTitle(getString('selectquestionbank', 'mod_quiz'));
-
-        // Create a 'Go back' button and set it in the footer.
-        const el = document.createElement('button');
-        el.classList.add('btn', 'btn-primary');
-        el.textContent = await getString('gobacktoquiz', 'mod_quiz');
-        el.setAttribute('data-action', 'go-back');
-        el.setAttribute('value', this.bankCmId);
-        this.setFooter(el);
-
-        this.setBody(
-            Fragment.loadFragment(
-                'mod_quiz',
-                'switch_question_bank',
-                this.getContextId(),
-                {
-                    'quizcmid': this.quizCmId,
-                    'bankcmid': this.bankCmId,
-                })
-        );
-        const placeholder = await getString('searchbyname', 'mod_quiz');
-        await this.getBodyPromise();
-        await AutoComplete.enhance(
-            Selector,
-            false,
-            'core_question/question_banks_datasource',
-            placeholder,
-            false,
-            true,
-            '',
-            true
-        );
-
-        // Hide the selection element as we don't need it.
-        document.querySelector('.search-banks .form-autocomplete-selection')?.classList.add('d-none');
-
-        return this;
     }
 }

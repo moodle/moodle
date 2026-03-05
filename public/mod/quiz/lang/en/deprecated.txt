@@ -5,3 +5,5 @@ groupoverridesdeleted,mod_quiz
 randomcoursecatwithsubcat,mod_quiz
 randomcoursewithsubcat,mod_quiz
 randomsystemwithsubcat,mod_quiz
+selectquestionbank,mod_quiz
+gobacktoquiz,mod_quiz

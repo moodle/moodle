@@ -1,0 +1,26 @@
+issueNumber: MDL-87264
+notes:
+  mod_quiz:
+    - message: >
+        The `mod_quiz_output_fragment_switch_question_bank()` Fragment API
+        callback is deprecated in favour of
+        `core_question\route\api\bank::banks()`, available via the route
+        `/api/rest/v2/core/question/banks?courseid=X`.
+      type: deprecated
+    - message: >
+        The "gobacktoquiz" and "selectquestionbank" lang strings have been deprecated.
+        These are only used by the question bank switching UI, so have been replaced
+        with the "switchergoback" and "switcherselectbank" strings in the core_question
+        component.
+      type: deprecated
+  core_question:
+    - message: >
+        The `\core_question\output\switch_question_bank` renderable is now deprecated,
+        as rendering of the switch_question_bank template is now all handled client-side
+        by the `core_question/bank_switcher` Javascript module.
+      type: deprecated
+    - message: >
+        The UI for switching question banks is now encapsulated in the
+        `core_question/bank_switcher` Javascript module. This takes an existing modal
+        and replaces the content with the switcher. It will then emit a custom
+        `bankSwitched` event on the modal's DOM element when a new bank is selected.

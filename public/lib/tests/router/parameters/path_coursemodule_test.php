@@ -17,7 +17,6 @@
 namespace core\router\parameters;
 
 use core\exception\not_found_exception;
-use core\router\parameters\path_module;
 use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\ServerRequest;
 use stdClass;
@@ -28,9 +27,9 @@ use stdClass;
  * @package    core
  * @copyright  Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\parameters\path_module
+ * @covers     \core\router\parameters\path_coursemodule
  */
-final class path_module_test extends route_testcase {
+final class path_coursemodule_test extends route_testcase {
     public function test_module_id(): void {
         $this->resetAfterTest();
 
@@ -38,15 +37,15 @@ final class path_module_test extends route_testcase {
         $mod = $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
         $modcontext = \context_module::instance($mod->cmid);
 
-        $param = new path_module();
+        $param = new path_coursemodule();
         $request = new ServerRequest('GET', '/course/cms/' . $mod->cmid . '/restricted');
         $newrequest = $param->add_attributes_for_parameter_value($request, $mod->cmid);
 
-        $this->assertInstanceOf(stdClass::class, $newrequest->getAttribute('cm'));
-        $this->assertInstanceOf(\core\context\module::class, $newrequest->getAttribute('cmcontext'));
+        $this->assertInstanceOf(stdClass::class, $newrequest->getAttribute('coursemoduledata'));
+        $this->assertInstanceOf(\core\context\module::class, $newrequest->getAttribute('coursemodulecontext'));
 
-        $this->assertEquals($mod->cmid, $newrequest->getAttribute('cm')->id);
-        $this->assertEquals($modcontext->id, $newrequest->getAttribute('cmcontext')->id);
+        $this->assertEquals($mod->cmid, $newrequest->getAttribute('coursemoduledata')->id);
+        $this->assertEquals($modcontext->id, $newrequest->getAttribute('coursemodulecontext')->id);
     }
 
     /**
@@ -55,7 +54,7 @@ final class path_module_test extends route_testcase {
     public function test_module_not_found(): void {
         $this->resetAfterTest();
 
-        $param = new path_module();
+        $param = new path_coursemodule();
 
         $course = $this->getDataGenerator()->create_course();
         $modid = 9999;

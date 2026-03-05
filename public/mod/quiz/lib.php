@@ -2490,8 +2490,15 @@ function mod_quiz_output_fragment_quiz_question_bank($args): string {
  * @param array $args provided by the AJAX request.
  * @return string html to render to the modal.
  */
+#[\core\attribute\deprecated(
+    replacement: 'core_question\route\api\bank::switcher',
+    since: '5.2',
+    reason: 'Replaced with a non-quiz-specific API endpoint',
+    mdl: 'MDL-87264',
+)]
 function mod_quiz_output_fragment_switch_question_bank($args): string {
     global $USER, $COURSE, $OUTPUT;
+    \core\deprecation::emit_deprecation(__FUNCTION__);
 
     $quizcmid = clean_param($args['quizcmid'], PARAM_INT);
 

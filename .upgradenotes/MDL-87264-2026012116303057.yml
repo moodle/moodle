@@ -1,0 +1,7 @@
+issueNumber: MDL-87264
+notes:
+  core_question:
+    - message: >-
+        Added a new route at `/api/rest/v2/question/categories` for returning a
+        list of question categories in a particular course module.
+      type: improved

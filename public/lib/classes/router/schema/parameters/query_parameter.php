@@ -74,7 +74,13 @@ class query_parameter extends parameter {
                     default => throw new \ValueError('Invalid boolean value.'),
                 };
             }
-            $this->type->validate_param($params[$this->name]);
+            $value = $params[$this->name];
+
+            $this->type->validate_param($value);
+
+            if ($value !== null && is_a($this, mapped_property_parameter::class)) {
+                $request = $this->add_attributes_for_parameter_value($request, $value);
+            }
 
             return $this->update_request_params(
                 $request,

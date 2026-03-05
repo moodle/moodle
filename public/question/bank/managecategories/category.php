@@ -45,8 +45,6 @@ if ($courseid = optional_param('courseid', 0, PARAM_INT)) {
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
     question_edit_setup('categories', '/question/bank/managecategories/category.php');
 
-$thiscontext = context_module::instance($cmid)->id;
-
 $todelete = optional_param('delete', 0, PARAM_INT); // The ID of a category to delete.
 
 $PAGE->set_url($thispageurl);
@@ -110,16 +108,10 @@ if ($questionstomove) {
     echo $OUTPUT->box(get_string('categorymove', 'question', $vars), 'generalbox boxaligncenter');
     $moveform->display();
 } else {
-    // Get module contexts we have capabilities to manage.
-    $contextswithcaps = $contexts->having_one_edit_tab_cap('categories');
-    $modcontexts = array_filter($contextswithcaps, static fn ($context) => $context->contextlevel === CONTEXT_MODULE);
     // Display the user interface.
     $questioncategories = new question_categories(
         $thispageurl,
-        $modcontexts,
-        $cmid,
-        $courseid,
-        $thiscontext,
+        cmid: $cmid,
     );
     $PAGE->requires->js_call_amd('qbank_managecategories/categorymanager', 'init'); // Load reactive module.
     echo $OUTPUT->render(new categories_header($questioncategories));

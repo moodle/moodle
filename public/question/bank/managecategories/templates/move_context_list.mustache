@@ -17,67 +17,44 @@
 {{!
     @template qbank_managecategories/move_context_list
 
-    Modal to move a category.
+    Modal to move a category within a context.
 
     Context variables required for this template:
-    * contexts - Array of contexts containing question categories
-        * contextid - The id of the context.
-        * contextname - The name of the context to display as a heading.
-        * categories - Array of category objects. See qbank_managecategories/move_category_list partial for details.
+    * contextid - The id of the context.
+    * contextname - The name of the context to display as a heading.
+    * categories - Array of category objects. See qbank_managecategories/move_category_list partial for details.
 
     Example context (json):
     {
-        "contexts": [
+        "contexid": 1,
+        "cmid": 1,
+        "contextname": "Question bank: Qbank 1",
+        "categories": [
             {
-                "contexid": 1,
-                "contextname": "Course 1",
-                "categories": [
-                    {
-                        "categoryname": "Default category for course 1",
-                        "categoryid": 3,
-                        "firstchild": true,
-                        "current": false,
-                        "hascategories": false,
-                        "categories": []
-                    },
-                    {
-                        "categoryname": "Default category for course category 1",
-                        "categoryid": 4,
-                        "firstchild": false,
-                        "current": true,
-                        "hascategories": false,
-                        "categories": []
-                    }
-                ]
+                "categoryname": "Default category for Qbank 1",
+                "categoryid": 3,
+                "firstchild": true,
+                "current": false,
+                "hascategories": false,
+                "categories": []
             },
             {
-                "contexid": 3,
-                "contextname": "Course 2",
-                "categories": [
-                    {
-                        "categoryname": "Default category for course 2",
-                        "categoryid": 5,
-                        "firstchild": true,
-                        "current": false,
-                        "hascategories": false,
-                        "categories": []
-                    },
-                    {
-                        "categoryname": "Default category for course category 2",
-                        "categoryid": 6,
-                        "firstchild": false,
-                        "current": false,
-                        "hascategories": false,
-                        "categories": []
-                    }
-                ]
+                "categoryname": "New category",
+                "categoryid": 4,
+                "firstchild": false,
+                "current": true,
+                "hascategories": false,
+                "categories": []
             }
         ]
     }
 }}
 <div role="tree">
-    {{#contexts}}
-        <h3>{{{contextname}}}</h3>
-        {{>qbank_managecategories/move_category_list}}
-    {{/contexts}}
+    <div class="d-flex">
+        <h3 class="bank-header" data-cmid="{{cmid}}">{{{contextname}}}</h3>
+        <button data-action="switch-question-bank" type="button" class="btn btn-secondary ms-auto mb-2">
+            {{#str}}switchbank, core_question{{/str}}
+        </button>
+    </div>
+    {{>qbank_managecategories/move_category_list}}
 </div>

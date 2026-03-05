@@ -26,12 +26,21 @@
 namespace core_question\output;
 
 use cm_info;
+use core\attribute\deprecated;
+use core\deprecation;
+use core_question\local\bank\formatted_bank;
 use core_question\local\bank\question_bank_helper;
 use renderer_base;
 
 /**
  * Get the switch question bank rendered content. Displays lists of shared banks the viewing user has access to.
  */
+#[deprecated(
+    replacement: 'core_question/bank_switcher Javascript module',
+    since: 5.2,
+    reason: 'Bank switching interface is now rendered client-side.',
+    mdl: 'MDL-87264',
+)]
 class switch_question_bank implements \renderable, \templatable {
 
     /**
@@ -41,6 +50,12 @@ class switch_question_bank implements \renderable, \templatable {
      * @param int $courseid of the current course.
      * @param int $userid of the user viewing the page.
      */
+    #[deprecated(
+        replacement: 'core_question/bank_switcher Javascript module',
+        since: 5.2,
+        reason: 'Bank switching interface is now rendered client-side.',
+        mdl: 'MDL-87264',
+    )]
     public function __construct(
         /** @var int quiz course module id */
         private readonly int $quizcmid,
@@ -49,6 +64,7 @@ class switch_question_bank implements \renderable, \templatable {
         /** @var int id of the user viewing the page */
         private readonly int $userid
     ) {
+        deprecation::emit_deprecation([$this, __FUNCTION__]);
     }
 
     /**
@@ -57,18 +73,28 @@ class switch_question_bank implements \renderable, \templatable {
      * @param renderer_base $output
      * @return array
      */
+    #[deprecated(
+        replacement: 'core_question/bank_switcher Javascript module',
+        since: 5.2,
+        reason: 'Bank switching interface is now rendered client-side.',
+        mdl: 'MDL-87264',
+    )]
     public function export_for_template(renderer_base $output) {
-
+        deprecation::emit_deprecation([$this, __FUNCTION__]);
         [, $cm] = get_module_from_cmid($this->quizcmid);
         $cminfo = cm_info::create($cm);
 
         $capabilities = ['moodle/question:useall', 'moodle/question:usemine'];
-        $coursesharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(
-            incourseids: [$this->courseid],
-            havingcap: $capabilities,
-            filtercontext:  $cminfo->context,
+        $coursesharedbanks = formatted_bank::format_banks(
+            question_bank_helper::get_activity_instances_with_shareable_questions(
+                incourseids: [$this->courseid],
+                havingcap: $capabilities,
+                filtercontext:  $cminfo->context,
+            ),
         );
-        $recentlyviewedbanks = question_bank_helper::get_recently_used_open_banks($this->userid, havingcap: $capabilities);
+        $recentlyviewedbanks = formatted_bank::format_banks(
+            question_bank_helper::get_recently_used_open_banks($this->userid, havingcap: $capabilities),
+        );
 
         return [
             'quizname' => $cminfo->get_formatted_name(),

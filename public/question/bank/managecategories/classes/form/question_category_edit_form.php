@@ -68,28 +68,14 @@ class question_category_edit_form extends \core_form\dynamic_form {
     protected function get_current_data() {
         // If categoryid is set, we are editing an existing category.
         $currentcat = isset($this->_ajaxformdata['categoryid']) ? (int)$this->_ajaxformdata['categoryid'] : 0;
-        // Determine the context based on the provided IDs.
+        // Determine the context based on the provided ID.
         $cmid = isset($this->_ajaxformdata['cmid']) ? (int)$this->_ajaxformdata['cmid'] : 0;
         $courseid = isset($this->_ajaxformdata['courseid']) ? (int)$this->_ajaxformdata['courseid'] : 0;
         if ($cmid !== 0) {
             $thiscontext = context_module::instance($cmid);
         }
 
-        if ($courseid !== 0) {
-            $thiscontext = context_course::instance($courseid);
-        }
-
-        if ($courseid === 0 && $cmid === 0) {
-            $parentcontext = (int)explode(',', $this->_ajaxformdata['parent'])[1];
-            $contextid = $parentcontext === 0 ? $this->_ajaxformdata['contextid'] : (int)$parentcontext;
-            $thiscontext = context::instance_by_id($contextid);
-        }
-
-        if ($thiscontext) {
-            $contexts = new question_edit_contexts($thiscontext);
-            $contexts = $contexts->all();
-        }
-        return [$currentcat, $cmid, $courseid, $thiscontext, $contexts];
+        return [$currentcat, $cmid, $courseid, $thiscontext, [$thiscontext]];
     }
 
     /**

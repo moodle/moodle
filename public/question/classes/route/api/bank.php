@@ -20,12 +20,25 @@ use core\context\course;
 use core\context\module;
 use core\exception\required_capability_exception;
 use core\param;
+use core\router\parameters\query_course;
+use core\router\parameters\query_coursemodule;
 use core\router\require_login;
 use core\router\route;
+use core\router\schema\example;
+use core\router\schema\objects\array_of_strings;
+use core\router\schema\objects\array_of_things;
+use core\router\schema\objects\schema_object;
 use core\router\schema\parameters\path_parameter;
+use core\router\schema\parameters\query_parameter;
+use core\router\schema\response\content\json_media_type;
 use core\router\schema\response\payload_response;
+use core\router\schema\response\response;
+use core_question\local\bank\formatted_bank;
+use core_question\local\bank\question_bank_helper;
 use core_question\local\bank\question_edit_contexts;
 use core_question\local\bank\question_version_status;
+use core_question\output\question_category_selector;
+use core_question\question_category;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -113,6 +126,115 @@ class bank {
             ],
             request: $request,
             response: $response,
+        );
+    }
+
+    /**
+     * Return a list of formatted question banks matching the parameters.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param course $coursecontext The course context.
+     * @param module $currentmodulecontext The module context.
+     * @param question_bank_helper $helper Injected dependency.
+     * @return payload_response A list of question banks with formatted names, and whether they are shared and recently used.
+     */
+    #[route(
+        path: '/banks', // Resolves to /api/rest/v2/question/banks.
+        queryparams: [
+            new query_course(required: true),
+            new query_coursemodule('currentmodule'),
+            new query_parameter(name: 'includeshared', type: param::BOOL, default: true),
+            new query_parameter(name: 'includerecent', type: param::BOOL, default: false),
+        ],
+        responses: [
+            new response(
+                statuscode: 200,
+                description: 'OK',
+                content: [
+                    new json_media_type(
+                        schema: new schema_object(
+                            content: [
+                                'banks' => new array_of_things(thingtype: formatted_bank::class),
+                            ],
+                        ),
+                    ),
+                ],
+            ),
+        ],
+        requirelogin: new require_login(true, courseattributename: 'course'),
+    )]
+    public function banks(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        course $coursecontext,
+        module $currentmodulecontext,
+        question_bank_helper $helper,
+    ): payload_response {
+        $params = $request->getQueryParams();
+        $banks = $helper::get_banks_for_course(
+            $coursecontext,
+            $currentmodulecontext,
+            $params['includeshared'],
+            $params['includerecent'],
+        );
+        return new payload_response(
+            request: $request,
+            response: $response,
+            payload: ['banks' => $banks],
+        );
+    }
+
+    #[route(
+        path: '/categories', // Resolves to /api/rest/v2/question/categories.
+        queryparams: [
+            new query_coursemodule(),
+        ],
+        responses: [
+            new response(
+                statuscode: 200,
+                description: 'OK',
+                content: [
+                    new json_media_type(
+                        schema: new schema_object(
+                            content: [
+                                'context' => new array_of_strings(param::ALPHA, param::TEXT),
+                                'categories' => new array_of_things(question_category::class),
+                            ],
+                        ),
+                    ),
+                ],
+            ),
+        ],
+    )]
+    /**
+     * Return a list of question categories with names and info formatted for output.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param module $coursemodulecontext The module context.
+     * @param question_category_selector $categoryselector Injected dependency.
+     * @return payload_response The course module context id and name, and a list of question categories in that context.
+     */
+    public function categories(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        module $coursemodulecontext,
+        question_category_selector $categoryselector,
+    ): payload_response {
+        require_login();
+        $categories = $categoryselector->get_categories_for_contexts($coursemodulecontext->id, top: true);
+        return new payload_response(
+            request: $request,
+            response: $response,
+            payload: [
+                'context' => [
+                    'id' => $coursemodulecontext->id,
+                    'name' => $coursemodulecontext->get_context_name(false),
+                    'prefixedname' => $coursemodulecontext->get_context_name(),
+                ],
+                'categories' => $categories,
+            ],
         );
     }
 }

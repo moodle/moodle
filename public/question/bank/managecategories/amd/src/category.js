@@ -25,6 +25,10 @@ import {categorymanager} from 'qbank_managecategories/categorymanager';
 import Templates from 'core/templates';
 import Modal from "core/modal";
 import {get_string as getString} from "core/str";
+import BankSwitcher from 'core_question/bank_switcher';
+import Fetch from 'core/fetch';
+import Notification from 'core/notification';
+import * as CoreUrl from 'core/url';
 import {eventTypes as inplaceEditableEventTypes} from 'core/local/inplace_editable/events';
 
 export default class extends BaseComponent {
@@ -45,6 +49,8 @@ export default class extends BaseComponent {
             CONTENT_CONTAINER: id => `#category-${id} .qbank_managecategories-childlistcontainer`,
             CHILD_LIST: id => `ul[data-categoryid="${id}"]`,
             PREVIOUS_SIBLING: sortorder => `:scope > [data-sortorder="${sortorder}"]`,
+            SWITCH_QUESTION_BANK: '[data-action="switch-question-bank"]',
+            MOVE_BANK_HEADER: '.bank-header',
         };
         this.classes = {
             NO_BOTTOM_PADDING: 'pb-0',
@@ -254,41 +260,50 @@ export default class extends BaseComponent {
         // Move to a new parent category.
         let newParent;
         const originParent = document.querySelector(this.selectors.CHILD_LIST(this.getElement().dataset.parent));
-        if (parseInt(this.getElement().dataset.parent) !== element.parent) {
-            newParent = document.querySelector(this.selectors.CHILD_LIST(element.parent));
-            if (!newParent) {
-                // The target category doesn't have a child list yet. We'd better create one.
-                newParent = await this.createChildList({categoryid: element.parent});
-            }
-            this.getElement().dataset.parent = element.parent;
-        } else {
-            newParent = this.getElement().parentElement;
-        }
-
-        // Move to a new position within the parent.
-        let previousSibling;
-        let nextSibling;
-        if (newParent.firstElementChild && parseInt(element.sortorder) <= parseInt(newParent.firstElementChild.dataset.sortorder)) {
-            // Move to the top of the list.
-            nextSibling = newParent.firstElementChild;
-        } else {
-            // Move later in the list.
-            previousSibling = newParent.querySelector(this.selectors.PREVIOUS_SIBLING(element.sortorder - 1));
-            nextSibling = previousSibling?.nextElementSibling;
-        }
-
-        // Check if this has actually moved, or if it's just having its sortorder updated due to another element moving.
-        const moved = (newParent !== this.getElement().parentElement || nextSibling !== this.getElement());
-
-        if (moved) {
-            if (nextSibling) {
-                // Move to the specified position in the list.
-                newParent.insertBefore(this.getElement(), nextSibling);
+        if (element.contextid === categorymanager.state.page.contextid) {
+            if (parseInt(this.getElement().dataset.parent) !== element.parent) {
+                newParent = document.querySelector(this.selectors.CHILD_LIST(element.parent));
+                if (!newParent) {
+                    // The target category doesn't have a child list yet. We'd better create one.
+                    newParent = await this.createChildList({categoryid: element.parent});
+                }
+                this.getElement().dataset.parent = element.parent;
             } else {
-                // Move to the end of the list (may also be the top of the list is empty).
-                newParent.appendChild(this.getElement());
+                newParent = this.getElement().parentElement;
             }
+
+            // Move to a new position within the parent.
+            let previousSibling;
+            let nextSibling;
+            if (
+                newParent.firstElementChild &&
+                parseInt(element.sortorder) <= parseInt(newParent.firstElementChild.dataset.sortorder)
+            ) {
+                // Move to the top of the list.
+                nextSibling = newParent.firstElementChild;
+            } else {
+                // Move later in the list.
+                previousSibling = newParent.querySelector(this.selectors.PREVIOUS_SIBLING(element.sortorder - 1));
+                nextSibling = previousSibling?.nextElementSibling;
+            }
+
+            // Check if this has actually moved, or if it's just having its sortorder updated due to another element moving.
+            const moved = (newParent !== this.getElement().parentElement || nextSibling !== this.getElement());
+
+            if (moved) {
+                if (nextSibling) {
+                    // Move to the specified position in the list.
+                    newParent.insertBefore(this.getElement(), nextSibling);
+                } else {
+                    // Move to the end of the list (may also be the top of the list is empty).
+                    newParent.appendChild(this.getElement());
+                }
+            }
+        } else {
+            // The category was moved to a different context, it should no longer appear on this page.
+            this.getElement().remove();
         }
+
         if (originParent !== newParent) {
             // Update child count of old and new parent.
             this.reactive.stateManager.processUpdates([
@@ -325,45 +340,117 @@ export default class extends BaseComponent {
     }
 
     /**
-     * Recursively create a list of all valid destinations for a current category within a parent category.
+     * Create a list of category data from the elements on the page.
      *
-     * @param {Element} item
-     * @param {Number} movingCategoryId
-     * @return {Array<Object>}
+     * This will find the category list item elements on the page and extract the category ID, parent ID, and name from the dataset
+     * of each element, with any child categories nested underneath. This list can then be passed to createMoveCategoryList to
+     * create a tree of move targets.
+     *
+     * @param {Element} element The category element from the page.
+     * @return {Array} List of categories containing categoryId, parentId, categoryName, and a nested array of children.
      */
-    createMoveCategoryList(item, movingCategoryId) {
+    getCategoryDataFromElements(element) {
         const categories = [];
-        if (item.children) {
-            let precedingSibling = null;
-            item.children.forEach(category => {
-                const categoryId = parseInt(category.dataset.categoryid);
-                // Don't create a target for the category that's moving.
-                if (categoryId === movingCategoryId) {
-                    return;
-                }
-                // Create a target to move before this child.
+        if (element.children) {
+            element.children.forEach(category => {
+                // Add this category to the list.
                 let child = {
-                    categoryid: categoryId,
-                    movingcategoryid: movingCategoryId,
-                    precedingsiblingid: precedingSibling?.dataset.categoryid ?? 0,
-                    parent: category.dataset.parent,
-                    categoryname: category.dataset.categoryname,
-                    categories: null,
-                    current: categoryId === movingCategoryId,
+                    categoryId: category.dataset.categoryid,
+                    parentId: category.dataset.parent,
+                    categoryName: category.dataset.categoryname,
+                    children: null,
                 };
                 const childList = category.querySelector(this.selectors.CATEGORY_LIST);
                 if (childList) {
                     // If the child has its own children, recursively make a list of those.
-                    child.categories = this.createMoveCategoryList(childList, movingCategoryId);
+                    child.children = this.getCategoryDataFromElements(childList);
+                }
+                categories.push(child);
+            });
+        }
+        return categories;
+    }
+
+    /**
+     * Get the category data from the records retrieved from the web service.
+     *
+     * This will process the list of category records and extract the category ID, parent ID, and name from each,
+     * with any child categories nested underneath. This list can then be passed to createMoveCategoryList to
+     * create a tree of move targets.
+     *
+     * @param {Object} record The category record.
+     * @return {Array} List of categories containing categoryId, parentId, categoryName, and a nested array of children.
+     */
+    getCategoryDataFromRecords(record) {
+        const categories = [];
+        if (record.children) {
+            for (const childId in record.children) {
+                const category = record.children[childId];
+                // Add this category to the list.
+                let child = {
+                    categoryId: parseInt(category.id),
+                    parentId: parseInt(category.parent),
+                    categoryName: category.name,
+                    children: null,
+                };
+                if (category.children) {
+                    // If the child has its own children, recursively make a list of those.
+                    child.children = this.getCategoryDataFromRecords(category);
+                }
+                categories.push(child);
+            }
+        }
+        return categories;
+    }
+
+
+    /**
+     * Recursively create a list of all valid destinations for a current category within a parent category.
+     *
+     * Each entry in the list represents moving the category "before" another category by default, but may also represent
+     * moving "after" another category, or "as a new child of" a parent category.
+     *
+     * @param {Object} categoryData A list of category data from getCategoryDataFromElements() or getCategoryDataFromRecords().
+     * @param {Number} movingCategoryId The ID of the category currently being moved.
+     * @return {Array<Object>} A list of objects representing valid move targets for the category. Each object has:
+     *  movingcategoryid - The ID of the category we are moving.
+     *  precedingsiblingid - The ID of the previous category under the same parent as this target. 0 if this is the first child.
+     *  parent - The ID of the target category's parent category. 0 if this is the top category.
+     *  categoryname - The name of the target category, to display as part of the destination.
+     *  categories - An array of child category targets. If there are no children, this must be null
+     *      to prevent infinite recursion in the template.
+     *  newchild - If true, this destination is "as a new child of the parent".
+     *  lastchild - If true, this destination is after the target category, rather than before.
+     */
+    createMoveCategoryList(categoryData, movingCategoryId) {
+        const categories = [];
+        if (categoryData) {
+            let precedingSibling = null;
+            categoryData.forEach(category => {
+                // Don't create a target for the category that's moving.
+                if (parseInt(category.categoryId) === movingCategoryId) {
+                    return;
+                }
+                // Create a target to move before this child.
+                let child = {
+                    movingcategoryid: movingCategoryId,
+                    precedingsiblingid: precedingSibling?.categoryId ?? 0,
+                    parent: category.parentId,
+                    categoryname: category.categoryName,
+                    categories: null, // Prevent infinite recursion in the template.
+                };
+                if (category.children) {
+                    // If the child has its own children, recursively make a list of those.
+                    child.categories = this.createMoveCategoryList(category.children, movingCategoryId);
                 } else {
                     // Otherwise, create a target to move as a new child of this one.
                     child.categories = [
                         {
                             movingcategoryid: movingCategoryId,
                             precedingsiblingid: 0,
-                            parent: categoryId,
-                            categoryname: category.dataset.categoryname,
-                            categories: null,
+                            parent: category.categoryId,
+                            categoryname: category.categoryName,
+                            categories: null, // Prevent infinite recursion in the template.
                             newchild: true,
                         }
                     ];
@@ -372,15 +459,14 @@ export default class extends BaseComponent {
                 precedingSibling = category;
             });
             if (precedingSibling) {
-                const precedingId = parseInt(precedingSibling.dataset.categoryid);
-                if (precedingId !== movingCategoryId) {
+                if (precedingSibling.categoryId !== movingCategoryId) {
                     // If this is the last child of its parent, also create a target to move the category after this one.
                     categories.push({
                         movingcategoryid: movingCategoryId,
-                        precedingsiblingid: precedingId,
-                        parent: precedingSibling.dataset.parent,
-                        categoryname: precedingSibling.dataset.categoryname,
-                        categories: null,
+                        precedingsiblingid: precedingSibling.categoryId,
+                        parent: precedingSibling.parentId,
+                        categoryname: precedingSibling.categoryName,
+                        categories: null, // Prevent infinite recursion in the template.
                         lastchild: true,
                     });
                 }
@@ -409,34 +495,111 @@ export default class extends BaseComponent {
         item.setAttribute('aria-disabled', true);
 
         // Build the list of move links.
-        let moveList = {contexts: []};
-        const contexts = document.querySelectorAll(this.selectors.CONTEXT);
-        contexts.forEach(context => {
-            const moveContext = {
-                contextname: context.dataset.contextname,
-                categories: [],
-                hascategories: false,
-            };
-            moveContext.categories = this.createMoveCategoryList(context, parseInt(item.dataset.categoryid));
-            moveContext.hascategories = moveContext.categories.length > 0;
-            moveList.contexts.push(moveContext);
-        });
+        const contextElement = document.querySelector(this.selectors.CONTEXT);
+        const categoryData = this.getCategoryDataFromElements(contextElement);
 
+        const moveContext = {
+            contextname: contextElement.dataset.contextname,
+            contextid: contextElement.dataset.contextid,
+            cmid: categorymanager.state.page.cmid,
+            categories: [],
+            hascategories: false,
+        };
+        const movingCategoryId = parseInt(item.dataset.categoryid);
+        moveContext.categories = this.createMoveCategoryList(categoryData, movingCategoryId);
+        moveContext.hascategories = moveContext.categories.length > 0;
+
+        const moveCategory = getString('movecategory', 'qbank_managecategories', item.dataset.categoryname);
         const modal = await Modal.create({
-            title: getString('movecategory', 'qbank_managecategories', item.dataset.categoryname),
-            body: Templates.render('qbank_managecategories/move_context_list', moveList),
+            title: moveCategory,
+            body: Templates.render('qbank_managecategories/move_context_list', moveContext),
             footer: '',
             show: true,
             large: true,
         });
-        // Show modal and add click event for list items.
-        modal.getBody()[0].addEventListener('click', e => {
-            const target = e.target.closest(this.selectors.MODAL_CATEGORY_ITEM);
-            if (!target) {
+        const switcher = new BankSwitcher();
+        // Show modal and add click event for list items and bank switcher.
+        modal.getBody()[0].addEventListener('click', async(e) => {
+            const categoryItem = e.target.closest(this.selectors.MODAL_CATEGORY_ITEM);
+            const moveHeader = e.currentTarget.querySelector(this.selectors.MOVE_BANK_HEADER);
+            if (categoryItem) {
+                categorymanager.moveCategory(
+                    categoryItem.dataset.movingcategoryid,
+                    categoryItem.dataset.parent,
+                    categoryItem.dataset.precedingsiblingid,
+                );
+                if (moveHeader.dataset.cmid !== categorymanager.state.page.cmid) {
+                    const url = CoreUrl.relativeUrl(
+                        '/question/bank/managecategories/category.php',
+                        {cmid: moveHeader.dataset.cmid}
+                    );
+                    const message = await getString(
+                        'categorymovedto',
+                        'qbank_managecategories',
+                        {url, name: moveHeader.textContent},
+                    );
+                    Notification.addNotification({message: message, type: 'info'});
+                }
+                modal.destroy();
                 return;
             }
-            categorymanager.moveCategory(target.dataset.movingcategoryid, target.dataset.parent, target.dataset.precedingsiblingid);
-            modal.destroy();
+            const switchButton = e.target.closest(this.selectors.SWITCH_QUESTION_BANK);
+            if (switchButton) {
+                const pageState = categorymanager.state.page;
+                try {
+                    const contextId = parseInt(contextElement.dataset.contextid);
+                    await switcher.show(modal, pageState.courseid, contextId, parseInt(moveHeader.dataset.cmid), pageState.cmid);
+                } catch (ex) {
+                    Notification.exception(ex);
+                }
+            }
+        });
+        modal.getModal()[0].addEventListener('bankSwitched', async(e) => {
+            try {
+                const params = {coursemodule: e.detail.cmid};
+                const categoriesResponse = await Fetch.performGet(
+                    'core_question',
+                    'categories',
+                    {params},
+                );
+                const {context, categories} = await categoriesResponse.json();
+                // Convert the list of categories into a nested tree.
+                for (const id in categories) {
+                    const category = categories[id];
+                    if (category.parent > 0) {
+                        const parentitem = categories[category.parent];
+                        if (!parentitem.hasOwnProperty('children')) {
+                            parentitem.children = {};
+                        }
+                        categories[category.parent].children[category.id] = category;
+                    }
+                }
+                // Get the top category with all the others nested below.
+                let topCategory;
+                for (const id in categories) {
+                    if (parseInt(categories[id].parent) === 0) {
+                        topCategory = categories[id];
+                    }
+                }
+                const categoryData = this.getCategoryDataFromRecords(topCategory);
+                const moveContext = {
+                    contextname: context.prefixedname,
+                    contextid: context.prefixedname,
+                    cmid: e.detail.cmid,
+                    categories: [],
+                    hascategories: false,
+                };
+                moveContext.categories = this.createMoveCategoryList(categoryData, movingCategoryId);
+                moveContext.hascategories = moveContext.categories.length > 0;
+                modal.setBody(
+                    Templates.render('qbank_managecategories/move_context_list', moveContext),
+                );
+                await modal.getBodyPromise();
+                modal.setTitle(moveCategory);
+                modal.setFooter('');
+            } catch (ex) {
+                Notification.alert(getString('error', 'error'), ex);
+            }
         });
         item.setAttribute('aria-disabled', false);
     }

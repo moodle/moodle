@@ -40,13 +40,13 @@ class course_navigation {
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @param \stdClass $cm
+     * @param \stdClass $cmdata
      * @return ResponseInterface
      */
     #[route(
         path: '/cms/{cm}/next',
         pathtypes: [
-            new \core\router\parameters\path_module(),
+            new \core\router\parameters\path_coursemodule(name: 'cm'),
         ],
         requirelogin: new require_login(
             requirelogin: true,
@@ -56,11 +56,11 @@ class course_navigation {
     public function cm_next_element(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        \stdClass $cm,
+        \stdClass $cmdata,
     ): ResponseInterface {
         // The pathinfo module returns a stdClass and not a cm_info, so we need to
         // get the cm_info instance from the course modinfo.
-        $cm = cm_info::create($cm);
+        $cm = cm_info::create($cmdata);
         $modinfo = $cm->get_modinfo();
         $section = $this->get_section($cm);
         $allsectioncms = $this->get_all_section_cms($modinfo, $section);
@@ -88,13 +88,13 @@ class course_navigation {
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @param \stdClass $cm
+     * @param \stdClass $cmdata
      * @return ResponseInterface
      */
     #[route(
         path: '/cms/{cm}/previous',
         pathtypes: [
-            new \core\router\parameters\path_module(),
+            new \core\router\parameters\path_coursemodule(name: 'cm'),
         ],
         requirelogin: new require_login(
             requirelogin: true,
@@ -104,11 +104,11 @@ class course_navigation {
     public function cm_previous_element(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        \stdClass $cm,
+        \stdClass $cmdata,
     ): ResponseInterface {
         // The pathinfo module returns a stdClass and not a cm_info, so we need to
         // get the cm_info instance from the course modinfo.
-        $cm = cm_info::create($cm);
+        $cm = cm_info::create($cmdata);
         $modinfo = $cm->get_modinfo();
         $section = $this->get_section($cm);
         $allsectioncms = $this->get_all_section_cms($modinfo, $section);

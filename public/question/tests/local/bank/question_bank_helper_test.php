@@ -17,6 +17,7 @@
 namespace core_question;
 
 use core\exception\coding_exception;
+use core_question\local\bank\formatted_bank;
 use core_question\local\bank\question_bank_helper;
 
 /**
@@ -127,7 +128,8 @@ final class question_bank_helper_test extends \advanced_testcase {
         );
 
         $count = 0;
-        foreach ($sharedbanks as $courseinstance) {
+        foreach ($sharedbanks as $sharedbank) {
+            $courseinstance = $sharedbank->get_formatted();
             // Must all be mod_qbanks.
             $this->assertEquals('qbank', $courseinstance->cminfo->modname);
             // Must have 2 categories each bank.
@@ -148,7 +150,8 @@ final class question_bank_helper_test extends \advanced_testcase {
         );
 
         $count = 0;
-        foreach ($privatebanks as $courseinstance) {
+        foreach ($privatebanks as $privatebank) {
+            $courseinstance = $privatebank->get_formatted();
             // Must all be mod_quiz.
             $this->assertEquals('quiz', $courseinstance->cminfo->modname);
             // Must have 1 category in each bank.
@@ -239,7 +242,9 @@ final class question_bank_helper_test extends \advanced_testcase {
         $this->assertCount(22, $allsharedbanks);
 
         // Searching for "2", we get the 4 banks with "2" in the name.
-        $twobanks = question_bank_helper::get_activity_instances_with_shareable_questions(search: '2');
+        $twobanks = formatted_bank::format_banks(
+            question_bank_helper::get_activity_instances_with_shareable_questions(search: '2'),
+        );
         $this->assertCount(4, $twobanks);
         $this->assertEquals(
             [$sharedmods[2]->cmid, $sharedmods[12]->cmid, $sharedmods[20]->cmid, $sharedmods[21]->cmid],
@@ -247,12 +252,16 @@ final class question_bank_helper_test extends \advanced_testcase {
         );
 
         // Searching for "Shared bank" with no limit, we should get all 21, but not "Another bank".
-        $sharedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(search: 'Shared bank');
+        $sharedbanks = formatted_bank::format_banks(
+            question_bank_helper::get_activity_instances_with_shareable_questions(search: 'Shared bank'),
+        );
         $this->assertCount(21, $sharedbanks);
         $this->assertEmpty(array_filter($sharedbanks, fn($bank) => in_array($bank->name, ['Another bank'])));
 
         // Searching for "Shared bank" with a limit of 20, we should get all except number 21 and "Another bank".
-        $limitedbanks = question_bank_helper::get_activity_instances_with_shareable_questions(search: 'Shared bank', limit: 20);
+        $limitedbanks = formatted_bank::format_banks(
+            question_bank_helper::get_activity_instances_with_shareable_questions(search: 'Shared bank', limit: 20),
+        );
         $this->assertCount(20, $limitedbanks);
         $this->assertEmpty(array_filter($limitedbanks, fn($bank) => in_array($bank->name, ['Shared bank 21', 'Another bank'])));
     }
@@ -413,14 +422,18 @@ final class question_bank_helper_test extends \advanced_testcase {
 
         $viewedorder = array_reverse($banks);
         // Check that the courseid filter works.
-        $recentlyviewed = question_bank_helper::get_recently_used_open_banks($user->id, $course1->id);
+        $recentlyviewed = formatted_bank::format_banks(
+            question_bank_helper::get_recently_used_open_banks($user->id, $course1->id),
+        );
         $this->assertCount(3, $recentlyviewed);
         // We should have the viewed banks in course 2.
         $courseviewed = array_slice($banks, 3, 3);
         $this->assertEqualsCanonicalizing(array_column($recentlyviewed, 'modid'), array_column($courseviewed, 'cmid'));
 
         // Check that the capability filter works.
-        $recentlyviewed = question_bank_helper::get_recently_used_open_banks($user->id, havingcap: ['moodle/question:useall']);
+        $recentlyviewed = formatted_bank::format_banks(
+            question_bank_helper::get_recently_used_open_banks($user->id, havingcap: ['moodle/question:useall']),
+        );
         $this->assertCount(2, $recentlyviewed);
         // We should have the 2 most recently viewed banks in course 1.
         $capabilityviewed = array_slice($banks, 1, 2);
@@ -431,7 +444,7 @@ final class question_bank_helper_test extends \advanced_testcase {
         // We only keep a record of 5 maximum.
         $this->assertCount(5, $recentlyviewed);
         foreach ($recentlyviewed as $order => $record) {
-            $this->assertEquals($viewedorder[$order]->cmid, $record->modid);
+            $this->assertEquals($viewedorder[$order]->cmid, $record->cminfo->id);
         }
 
         // Now if we view one of those again it should get bumped to the front of the list.
@@ -444,12 +457,12 @@ final class question_bank_helper_test extends \advanced_testcase {
         // We should still have 5 maximum.
         $this->assertCount(5, $recentlyviewed);
         // The recently viewed on got bumped to the front.
-        $this->assertEquals($banks[2]->cmid, $recentlyviewed[0]->modid);
+        $this->assertEquals($banks[2]->cmid, $recentlyviewed[0]->cminfo->id);
         // The others got sorted accordingly behind it.
-        $this->assertEquals($banks[5]->cmid, $recentlyviewed[1]->modid);
-        $this->assertEquals($banks[4]->cmid, $recentlyviewed[2]->modid);
-        $this->assertEquals($banks[3]->cmid, $recentlyviewed[3]->modid);
-        $this->assertEquals($banks[1]->cmid, $recentlyviewed[4]->modid);
+        $this->assertEquals($banks[5]->cmid, $recentlyviewed[1]->cminfo->id);
+        $this->assertEquals($banks[4]->cmid, $recentlyviewed[2]->cminfo->id);
+        $this->assertEquals($banks[3]->cmid, $recentlyviewed[3]->cminfo->id);
+        $this->assertEquals($banks[1]->cmid, $recentlyviewed[4]->cminfo->id);
 
         // Now create a quiz and trigger the bank view of it.
         $quiz = self::getDataGenerator()->get_plugin_generator('mod_quiz')->create_instance(['course' => $course1]);
@@ -463,7 +476,7 @@ final class question_bank_helper_test extends \advanced_testcase {
 
         // Make sure that we only store bank views for plugins that support FEATURE_PUBLISHES_QUESTIONS.
         foreach ($recentlyviewed as $record) {
-            $this->assertNotEquals($quiz->cmid, $record->modid);
+            $this->assertNotEquals($quiz->cmid, $record->cminfo->id);
         }
 
         // Now delete one of the viewed bank modules and get the records again.
@@ -472,10 +485,10 @@ final class question_bank_helper_test extends \advanced_testcase {
         $this->assertCount(4, $recentlyviewed);
 
         // Check the order was retained.
-        $this->assertEquals($banks[5]->cmid, $recentlyviewed[0]->modid);
-        $this->assertEquals($banks[4]->cmid, $recentlyviewed[1]->modid);
-        $this->assertEquals($banks[3]->cmid, $recentlyviewed[2]->modid);
-        $this->assertEquals($banks[1]->cmid, $recentlyviewed[3]->modid);
+        $this->assertEquals($banks[5]->cmid, $recentlyviewed[0]->cminfo->id);
+        $this->assertEquals($banks[4]->cmid, $recentlyviewed[1]->cminfo->id);
+        $this->assertEquals($banks[3]->cmid, $recentlyviewed[2]->cminfo->id);
+        $this->assertEquals($banks[1]->cmid, $recentlyviewed[3]->cminfo->id);
     }
 
     /**

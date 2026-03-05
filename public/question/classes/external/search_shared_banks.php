@@ -22,6 +22,7 @@ use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_multiple_structure;
 use core_external\external_value;
+use core_question\local\bank\formatted_bank;
 use core_question\local\bank\question_bank_helper;
 use core\context;
 
@@ -135,10 +136,13 @@ class search_shared_banks extends external_api {
         );
 
         $suggestions = array_map(
-            fn($sharedbank) => [
-                'value' => $sharedbank->modid,
-                'label' => $sharedbank->coursenamebankname,
-            ],
+            function (formatted_bank $sharedbank): array {
+                $sharedbank = $sharedbank->get_formatted();
+                return [
+                    'value' => $sharedbank->modid,
+                    'label' => $sharedbank->coursenamebankname,
+                ];
+            },
             $sharedbanks,
         );
 

@@ -48,31 +48,27 @@ class categories implements renderable, templatable {
     #[\Override]
     public function export_for_template(renderer_base $output): array {
         $categories = [];
-        foreach ($this->categories->editlists as $contextid => $list) {
-            // Get list elements.
-            $context = context::instance_by_id($contextid);
-            $itemstab = [];
-            if (count($list->items)) {
-                foreach ($list->items as $item) {
-                    $category = new category($item, $context);
-                    $itemstab['items'][] = $category->export_for_template($output);
-                }
+        $list = $this->categories->editlist;
+        // Get list elements.
+        $itemstab = [];
+        if (count($list->items)) {
+            foreach ($list->items as $item) {
+                $category = new category($item, $list->context);
+                $itemstab['items'][] = $category->export_for_template($output);
             }
-            if (isset($itemstab['items'])) {
-                $ctxlvl = "contextlevel" . $list->context->contextlevel;
-                $contextname = $list->context->get_context_name();
-                $heading = get_string('questioncatsfor', 'question', $contextname);
+        }
+        if (isset($itemstab['items'])) {
+            $contextname = $list->context->get_context_name();
+            $heading = get_string('questioncatsfor', 'question', $contextname);
 
-                // Get categories context.
-                $categories[] = [
-                    'ctxlvl' => $ctxlvl,
-                    'contextid' => $list->context->id,
-                    'contextname' => $contextname,
-                    'heading' => $heading,
-                    'items' => $itemstab['items'],
-                    'categoryid' => $list->categoryid,
-                ];
-            }
+            // Get categories context.
+            $categories[] = [
+                'contextid' => $list->context->id,
+                'contextname' => $contextname,
+                'heading' => $heading,
+                'items' => $itemstab['items'],
+                'categoryid' => $list->categoryid,
+            ];
         }
         $data = [
             'categoriesrendered' => $categories,

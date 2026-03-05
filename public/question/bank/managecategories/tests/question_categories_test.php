@@ -49,9 +49,9 @@ final class question_categories_test extends manage_category_test_base {
         // Create ordered tree.
         $questioncategories = new question_categories(
             new \moodle_url('/'),
-            [$context],
+            cmid: $qbank->cmid,
         );
-        $items = $questioncategories->editlists[$context->id]->items;
+        $items = $questioncategories->editlist->items;
 
         // Two top categories (1 and 3) in the course.
         $this->assertCount(2, $items);
