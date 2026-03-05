@@ -687,8 +687,9 @@ function move_question_set_references(int $oldcategoryid, int $newcatgoryid,
                 && $oldcategoryid !== $newcatgoryid
             ) {
                 $filter['filter']['category']['values'][0] = $newcatgoryid;
-                $setreference->filtercondition = json_encode($filter);
             }
+            $filter['cat'] = implode(',', [$filter['filter']['category']['values'][0], $newcontextid]);
+            $setreference->filtercondition = json_encode($filter);
             $DB->update_record('question_set_references', $setreference);
         }
         $setreferences->close();
