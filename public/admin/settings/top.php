@@ -32,6 +32,7 @@ $ADMIN->add('root', new admin_category('badges', new lang_string('badges'), empt
 $ADMIN->add('root', new admin_category('h5p', new lang_string('h5p', 'core_h5p')));
 $ADMIN->add('root', new admin_category('license', new lang_string('license')));
 $ADMIN->add('root', new admin_category('location', new lang_string('location','admin')));
+$ADMIN->add('root', new admin_category('login', new lang_string('login', 'admin')));
 $ADMIN->add('root', new admin_category('language', new lang_string('language')));
 $ADMIN->add('root', new admin_category('messaging', new lang_string('messagingcategory', 'admin')));
 $ADMIN->add('root', new admin_category('payment', new lang_string('payments', 'payment')));
