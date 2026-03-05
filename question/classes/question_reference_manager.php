@@ -142,4 +142,33 @@ class question_reference_manager {
         }
         return $filtercondition;
     }
+
+    /**
+     * Ensure consistency of filter 'cat' parameter and questioncontextid in all set references.
+     *
+     * Some set references may have been moved to a different context, but the filter condition not updated with the context ID.
+     * Since the filter condition is JSON-encoded, we have to check each set reference record for inconsistencies.
+     *
+     * This is used in a CLI script to fix bad data due to MDL-86691.
+     *
+     * @return int The number of records that were updated.
+     * @todo Deprecate in Moodle 6.0 (MDL-87844) for removal in 7.0 (MDL-87845).
+     */
+    public static function fix_set_references_category_context(): int {
+        global $DB;
+        $updates = 0;
+        $sets = $DB->get_recordset('question_set_references');
+        foreach ($sets as $set) {
+            $filtercondition = json_decode($set->filtercondition, true);
+            [$catid, $catcontext] = explode(',', $filtercondition['cat']);
+            if ($catcontext != $set->questionscontextid) {
+                $filtercondition['cat'] = implode(',', [$catid, $set->questionscontextid]);
+                $set->filtercondition = json_encode($filtercondition);
+                $DB->update_record('question_set_references', $set);
+                $updates++;
+            }
+        }
+        $sets->close();
+        return $updates;
+    }
 }
