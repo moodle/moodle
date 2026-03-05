@@ -2453,5 +2453,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025100603.01);
     }
 
+    if ($oldversion < 2025100603.05) {
+        $orphanedquestions = core_question\category_manager::cleanup_questions_without_categories();
+        if ($orphanedquestions > 0) {
+            upgrade_log(UPGRADE_LOG_NORMAL, null, "Cleaned up {$orphanedquestions} questions left over from restores.");
+        }
+
+        upgrade_main_savepoint(true, 2025100603.05);
+    }
+
     return true;
 }

@@ -716,6 +716,8 @@ final class backup_test extends \advanced_testcase {
         // Check we have the expected restored categories.
         $this->assertEquals(2, $DB->count_records('question_categories', ['stamp' => $data->quizcategory->stamp]));
         $this->assertEquals(1, $DB->count_records('question_categories', ['stamp' => $data->qbankcategory->stamp]));
+        // Check there is no additional copy of the referenced question bank question.
+        $this->assertEquals(1, $DB->count_records('question', ['name' => $data->qbankquestion->name]));
     }
 
     /**

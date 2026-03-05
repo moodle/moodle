@@ -5715,20 +5715,20 @@ class restore_move_module_questions_categories extends restore_execution_step {
                 );
             }
         }
-        // Remove any remaining course-level question categories from the restored course.
+        // Remove any remaining course-level question categories and their questions from the restored course.
         $coursecatsql = "
-            SELECT qc.id AS categoryid
+            SELECT qc.id AS id, qc.contextid AS contextid
               FROM {question_categories} qc
               JOIN {context} c ON c.id = qc.contextid
              WHERE c.contextlevel = :courselevel AND c.instanceid = :courseid
         ";
-        $DB->delete_records_subquery(
-            'question_categories',
-            'id',
-            'categoryid',
+        $categories = $DB->get_records_sql(
             $coursecatsql,
-            ['courselevel' => context_course::LEVEL, 'courseid' => $this->task->get_courseid()]
+            ['courselevel' => context_course::LEVEL, 'courseid' => $this->task->get_courseid()],
         );
+        foreach ($categories as $category) {
+            question_category_delete_safe($category);
+        }
     }
 }
 
