@@ -1,5 +1,16 @@
 # core (subsystem) Upgrade notes
 
+## 5.0.6+
+
+### Added
+
+- There is a new Behat `toast_message` named selector to more easily assert the presence of Toast messages on the page
+
+  For more information see [MDL-87443](https://tracker.moodle.org/browse/MDL-87443)
+- The `core/toast` JS module now accepts a `visuallyHidden` configuration parameter to render visually hidden toast messages for screen reader users.
+
+  For more information see [MDL-87993](https://tracker.moodle.org/browse/MDL-87993)
+
 ## 5.0.5
 
 ### Changed
