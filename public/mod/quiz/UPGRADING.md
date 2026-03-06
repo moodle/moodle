@@ -8,6 +8,15 @@
 
   For more information see [MDL-86916](https://tracker.moodle.org/browse/MDL-86916)
 
+### Deprecated
+
+- The `mod_quiz_output_fragment_switch_question_bank()` Fragment API callback is deprecated in favour of `core_question\route\api\bank::banks()`, available via the route `/api/rest/v2/core/question/banks?courseid=X`.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
+- The "gobacktoquiz" and "selectquestionbank" lang strings have been deprecated. These are only used by the question bank switching UI, so have been replaced with the "switchergoback" and "switcherselectbank" strings in the core_question component.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
+
 ### Removed
 
 - - The following functions have been removed from `public/mod/quiz/deprecatedlib.php`:

@@ -35,6 +35,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The CLI script used to terminate user sessions (kill_all_sessions.php) has been improved to make it safer and more flexible.  A new '--run' parameter has been introduced. Without '--run', the script performs a dry run making no changes. The script now supports targeted session termination using '--for-users' parameter.
 
   For more information see [MDL-87173](https://tracker.moodle.org/browse/MDL-87173)
+- Added new `core\router\parameter\query_course` and `core\router\parameter\query_coursemodule` parameter types, to allow course IDs and course module IDs to be accepted as query string parameters for routes, and automatically converted into the corresponding objects and contexts.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
 - The __construct() method of the confirm_action class now accepts two optional new parameters: `$title` (string) to set the dialogue's heading, and `$dialogtype` (string) to specify the visual style of the action ('delete' for displaying the danger button).
 
   For more information see [MDL-87281](https://tracker.moodle.org/browse/MDL-87281)
@@ -64,9 +67,51 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New `\core\attribute\description` attribute, previously `\core_sms\description`, for representing a language string in code attributes
 
   For more information see [MDL-87799](https://tracker.moodle.org/browse/MDL-87799)
+- A new JS module has been added to assist with deprecations.
+
+  This has similar behaviour to the `\core\attribute\deprecated` attribute in PHP and respects the `developerdebug` setting for displaying deprecation warnings.
+
+  To use:
+
+  ```js
+  import emitDeprecation from 'core/deprecated';
+
+  const deprecatedMethod = () => {
+      emitDeprecation('core/example::deprecatedMethod', {
+          mdl: 'MDL-12345',
+          since: '5.0',
+          replacement: 'myNewMethod',
+          reason: 'To support some new technology',
+      });
+  }
+  ```
+
+  When the item is _finally_ deprecated, meaning it has passed through the entire deprecation period and should now cause errors, passing the `final: true` option will cause this to Error instead of warning in the console.
+
+  ```js
+  import emitDeprecation from 'core/deprecated';
+
+  const deprecatedMethod = () => {
+      emitDeprecation('core/example::deprecatedMethod', {
+          mdl: 'MDL-12345',
+          since: '5.0',
+          replacement: 'myNewMethod',
+          reason: 'To support some new technology',
+          final: true,
+      });
+  }
+  ```
+
+  A `emit` option may also be passed and allows the UI message to be suppressed for non-final deprecations.
+  Items may be ignored by adding them to the `jsdeprecationignorelist` config setting, which is an array of strings matching the first argument passed to `emitDeprecation`.
+
+  For more information see [MDL-87867](https://tracker.moodle.org/browse/MDL-87867)
 - Added new metadata field to the page class for header-level information. Use this field to pass extra strings (like the activity dates) that need to be rendered adjacent to the activity header.
 
   For more information see [MDL-87931](https://tracker.moodle.org/browse/MDL-87931)
+- The `core/toast` JS module now accepts a `visuallyHidden` configuration parameter to render visually hidden toast messages for screen reader users.
+
+  For more information see [MDL-87993](https://tracker.moodle.org/browse/MDL-87993)
 
 #### Changed
 
@@ -81,6 +126,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   ```
 
   For more information see [MDL-71368](https://tracker.moodle.org/browse/MDL-71368)
+- The `\core\persistent::get_records(...)` class method now returns instances keyed by record ID
+
+  For more information see [MDL-79574](https://tracker.moodle.org/browse/MDL-79574)
 - The `core/drag_handle` template has been modified to use a native HTML button for a more accessible experience and a consistent look with other buttons on the page.
 
   For more information see [MDL-86846](https://tracker.moodle.org/browse/MDL-86846)
@@ -415,6 +463,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added new `\core_customfield\api::is_shortname_unique(...)` method to determine whether a shortname is available for use inside a given handler
 
   For more information see [MDL-87059](https://tracker.moodle.org/browse/MDL-87059)
+- A new WebService `core_customfield_convert_category` has been added. It allows the conversion of any entity custom field category to a shared category.
+
+  For more information see [MDL-87690](https://tracker.moodle.org/browse/MDL-87690)
+
+#### Changed
+
+- The WebService `core_customfield_reload_template` now returns a new parameter "canconvert".
+
+  For more information see [MDL-87690](https://tracker.moodle.org/browse/MDL-87690)
+
+#### Deprecated
+
+- The Javascript module `core_customfield/repository/toggle_shared` has been deprecated. Please, use `core_customfield/repository` instead.
+
+  For more information see [MDL-87690](https://tracker.moodle.org/browse/MDL-87690)
 
 ### core_enrol
 
@@ -528,12 +591,24 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - During restore of a question_set_reference, mapping of IDs in the filtercondition is now delegated to qbank plugins. If your qbank plugin defines a filter condition that uses database IDs, add an override of `restore_filtercondition()` to the `condition` class, which checks the condition's data and replaces the IDs with mapped values if required. See  `qbank_managecategories\category_condition` for an example.
 
   For more information see [MDL-86524](https://tracker.moodle.org/browse/MDL-86524)
+- Added a new route at `/api/rest/v2/question/categories` for returning a list of question categories in a particular course module.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
+
+#### Changed
+
+- The UI for switching question banks is now encapsulated in the `core_question/bank_switcher` Javascript module. This takes an existing modal and replaces the content with the switcher. It will then emit a custom `bankSwitched` event on the modal's DOM element when a new bank is selected.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
 
 #### Deprecated
 
 - `get_next_version()` from questionlib.php is now deprecated. Use `\core_question\versions::get_next_version()` instead.
 
   For more information see [MDL-86798](https://tracker.moodle.org/browse/MDL-86798)
+- The `\core_question\output\switch_question_bank` renderable is now deprecated, as rendering of the switch_question_bank template is now all handled client-side by the `core_question/bank_switcher` Javascript module.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
 
 #### Removed
 
@@ -587,6 +662,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The order in which `$entitynames` are passed to the datasource `add_all_from_entities()` method is now observed, taking precedence over the order in which they were already added to the report
 
   For more information see [MDL-87263](https://tracker.moodle.org/browse/MDL-87263)
+- The following methods now support both string or entity instance types for parameters referring to entities by name, which prevents lookups of instances which most report sources will already have:
+
+  - `add_all_from_[entity|entities]()`
+  - `add_[columns|filters|conditions]_from_entity()`
+
+  For more information see [MDL-87451](https://tracker.moodle.org/browse/MDL-87451)
 
 #### Deprecated
 
@@ -661,6 +742,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
 
+### block_html
+
+#### Changed
+
+- Treat Dashboard (pagetype 'my-index') as trusted in web services so get_content_for_external preserves embedded HTML (e.g. iframes) on user Dashboard.
+
+  For more information see [MDL-85322](https://tracker.moodle.org/browse/MDL-85322)
+
 ### customfield_number
 
 #### Changed
@@ -721,6 +810,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Changed
 
+- mod_choice_get_choice_results web service: new userresponse structure. The mod_choice_get_choice_results web service now includes a new userresponse field that returns the current user selections in a structured format with optionid and text properties. This enhancement provides better access to user choice data for API consumers.
+
+  For more information see [MDL-86932](https://tracker.moodle.org/browse/MDL-86932)
 - Undo the deletion of public/mod/choice/classes/event/answer_updated.php file.
 
   For more information see [MDL-87426](https://tracker.moodle.org/browse/MDL-87426)
@@ -833,6 +925,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-86916](https://tracker.moodle.org/browse/MDL-86916)
 
+#### Deprecated
+
+- The `mod_quiz_output_fragment_switch_question_bank()` Fragment API callback is deprecated in favour of `core_question\route\api\bank::banks()`, available via the route `/api/rest/v2/core/question/banks?courseid=X`.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
+- The "gobacktoquiz" and "selectquestionbank" lang strings have been deprecated. These are only used by the question bank switching UI, so have been replaced with the "switchergoback" and "switcherselectbank" strings in the core_question component.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
+
 #### Removed
 
 - - The following functions have been removed from `public/mod/quiz/deprecatedlib.php`:
@@ -919,6 +1020,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For more information see [MDL-87425](https://tracker.moodle.org/browse/MDL-87425)
 
 ### qbank_managecategories
+
+#### Deprecated
+
+- Support for displaying multiple contexts has been removed from the question category management UI. As such, the `editlists` property, `contexts`, `courseid` and `thiscontext` constructor parameters in `qbank_managecategories\question_categories` are deprecated. The constructor now just uses `cmid` to determine the current context  parent course.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
 
 #### Removed
 

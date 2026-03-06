@@ -27,6 +27,12 @@
 - The order in which `$entitynames` are passed to the datasource `add_all_from_entities()` method is now observed, taking precedence over the order in which they were already added to the report
 
   For more information see [MDL-87263](https://tracker.moodle.org/browse/MDL-87263)
+- The following methods now support both string or entity instance types for parameters referring to entities by name, which prevents lookups of instances which most report sources will already have:
+
+  - `add_all_from_[entity|entities]()`
+  - `add_[columns|filters|conditions]_from_entity()`
+
+  For more information see [MDL-87451](https://tracker.moodle.org/browse/MDL-87451)
 
 ### Deprecated
 

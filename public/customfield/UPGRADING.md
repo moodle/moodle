@@ -7,6 +7,21 @@
 - Added new `\core_customfield\api::is_shortname_unique(...)` method to determine whether a shortname is available for use inside a given handler
 
   For more information see [MDL-87059](https://tracker.moodle.org/browse/MDL-87059)
+- A new WebService `core_customfield_convert_category` has been added. It allows the conversion of any entity custom field category to a shared category.
+
+  For more information see [MDL-87690](https://tracker.moodle.org/browse/MDL-87690)
+
+### Changed
+
+- The WebService `core_customfield_reload_template` now returns a new parameter "canconvert".
+
+  For more information see [MDL-87690](https://tracker.moodle.org/browse/MDL-87690)
+
+### Deprecated
+
+- The Javascript module `core_customfield/repository/toggle_shared` has been deprecated. Please, use `core_customfield/repository` instead.
+
+  For more information see [MDL-87690](https://tracker.moodle.org/browse/MDL-87690)
 
 ## 5.1
 

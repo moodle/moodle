@@ -27,6 +27,9 @@
 - The CLI script used to terminate user sessions (kill_all_sessions.php) has been improved to make it safer and more flexible.  A new '--run' parameter has been introduced. Without '--run', the script performs a dry run making no changes. The script now supports targeted session termination using '--for-users' parameter.
 
   For more information see [MDL-87173](https://tracker.moodle.org/browse/MDL-87173)
+- Added new `core\router\parameter\query_course` and `core\router\parameter\query_coursemodule` parameter types, to allow course IDs and course module IDs to be accepted as query string parameters for routes, and automatically converted into the corresponding objects and contexts.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
 - The __construct() method of the confirm_action class now accepts two optional new parameters: `$title` (string) to set the dialogue's heading, and `$dialogtype` (string) to specify the visual style of the action ('delete' for displaying the danger button).
 
   For more information see [MDL-87281](https://tracker.moodle.org/browse/MDL-87281)
@@ -56,9 +59,51 @@
 - New `\core\attribute\description` attribute, previously `\core_sms\description`, for representing a language string in code attributes
 
   For more information see [MDL-87799](https://tracker.moodle.org/browse/MDL-87799)
+- A new JS module has been added to assist with deprecations.
+
+  This has similar behaviour to the `\core\attribute\deprecated` attribute in PHP and respects the `developerdebug` setting for displaying deprecation warnings.
+
+  To use:
+
+  ```js
+  import emitDeprecation from 'core/deprecated';
+
+  const deprecatedMethod = () => {
+      emitDeprecation('core/example::deprecatedMethod', {
+          mdl: 'MDL-12345',
+          since: '5.0',
+          replacement: 'myNewMethod',
+          reason: 'To support some new technology',
+      });
+  }
+  ```
+
+  When the item is _finally_ deprecated, meaning it has passed through the entire deprecation period and should now cause errors, passing the `final: true` option will cause this to Error instead of warning in the console.
+
+  ```js
+  import emitDeprecation from 'core/deprecated';
+
+  const deprecatedMethod = () => {
+      emitDeprecation('core/example::deprecatedMethod', {
+          mdl: 'MDL-12345',
+          since: '5.0',
+          replacement: 'myNewMethod',
+          reason: 'To support some new technology',
+          final: true,
+      });
+  }
+  ```
+
+  A `emit` option may also be passed and allows the UI message to be suppressed for non-final deprecations.
+  Items may be ignored by adding them to the `jsdeprecationignorelist` config setting, which is an array of strings matching the first argument passed to `emitDeprecation`.
+
+  For more information see [MDL-87867](https://tracker.moodle.org/browse/MDL-87867)
 - Added new metadata field to the page class for header-level information. Use this field to pass extra strings (like the activity dates) that need to be rendered adjacent to the activity header.
 
   For more information see [MDL-87931](https://tracker.moodle.org/browse/MDL-87931)
+- The `core/toast` JS module now accepts a `visuallyHidden` configuration parameter to render visually hidden toast messages for screen reader users.
+
+  For more information see [MDL-87993](https://tracker.moodle.org/browse/MDL-87993)
 
 ### Changed
 
@@ -73,6 +118,9 @@
   ```
 
   For more information see [MDL-71368](https://tracker.moodle.org/browse/MDL-71368)
+- The `\core\persistent::get_records(...)` class method now returns instances keyed by record ID
+
+  For more information see [MDL-79574](https://tracker.moodle.org/browse/MDL-79574)
 - The `core/drag_handle` template has been modified to use a native HTML button for a more accessible experience and a consistent look with other buttons on the page.
 
   For more information see [MDL-86846](https://tracker.moodle.org/browse/MDL-86846)

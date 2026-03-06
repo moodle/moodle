@@ -7,12 +7,24 @@
 - During restore of a question_set_reference, mapping of IDs in the filtercondition is now delegated to qbank plugins. If your qbank plugin defines a filter condition that uses database IDs, add an override of `restore_filtercondition()` to the `condition` class, which checks the condition's data and replaces the IDs with mapped values if required. See  `qbank_managecategories\category_condition` for an example.
 
   For more information see [MDL-86524](https://tracker.moodle.org/browse/MDL-86524)
+- Added a new route at `/api/rest/v2/question/categories` for returning a list of question categories in a particular course module.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
+
+### Changed
+
+- The UI for switching question banks is now encapsulated in the `core_question/bank_switcher` Javascript module. This takes an existing modal and replaces the content with the switcher. It will then emit a custom `bankSwitched` event on the modal's DOM element when a new bank is selected.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
 
 ### Deprecated
 
 - `get_next_version()` from questionlib.php is now deprecated. Use `\core_question\versions::get_next_version()` instead.
 
   For more information see [MDL-86798](https://tracker.moodle.org/browse/MDL-86798)
+- The `\core_question\output\switch_question_bank` renderable is now deprecated, as rendering of the switch_question_bank template is now all handled client-side by the `core_question/bank_switcher` Javascript module.
+
+  For more information see [MDL-87264](https://tracker.moodle.org/browse/MDL-87264)
 
 ### Removed
 
