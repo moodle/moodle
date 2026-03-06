@@ -1,5 +1,13 @@
 # core (subsystem) Upgrade notes
 
+## 5.1.3+
+
+### Added
+
+- The `core/toast` JS module now accepts a `visuallyHidden` configuration parameter to render visually hidden toast messages for screen reader users.
+
+  For more information see [MDL-87993](https://tracker.moodle.org/browse/MDL-87993)
+
 ## 5.1.2
 
 ### Added
