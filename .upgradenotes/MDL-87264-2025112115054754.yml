@@ -24,3 +24,4 @@ notes:
         `core_question/bank_switcher` Javascript module. This takes an existing modal
         and replaces the content with the switcher. It will then emit a custom
         `bankSwitched` event on the modal's DOM element when a new bank is selected.
+      type: changed
