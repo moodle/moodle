@@ -257,13 +257,7 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $url = new url(
-            $this->baseurl,
-            [
-                'movesection' => $this->section->sectionnum,
-                'section' => $this->section->sectionnum,
-            ]
-        );
+        $url = new url($this->baseurl);
 
         return new link_secondary(
             url: $url,

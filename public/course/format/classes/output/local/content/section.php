@@ -192,7 +192,7 @@ class section implements named_templatable, renderable {
         $headerdata = $header->export_for_template($output);
 
         // When a section is displayed alone the title goes over the section, not inside it.
-        if ($section->section != 0 && $section->section == $format->get_sectionnum()) {
+        if ($section->section != 0 && $section->id == $format->get_sectionid()) {
             $data->singleheader = $headerdata;
         } else {
             $data->header = $headerdata;
@@ -214,7 +214,7 @@ class section implements named_templatable, renderable {
         $format = $this->format;
 
         $showsummary = ($section->section != 0 &&
-            $section->section != $format->get_sectionnum() &&
+            $section->id != $format->get_sectionid() &&
             ($format->get_course_display() == COURSE_DISPLAY_MULTIPAGE && !$section->is_delegated()) &&
             !$format->show_editor()
         );

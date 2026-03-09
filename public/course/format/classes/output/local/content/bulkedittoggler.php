@@ -50,9 +50,10 @@ class bulkedittoggler implements named_templatable, renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
-        $section = optional_param('section', 0, PARAM_INT);
         $format = $this->format;
         $course = $format->get_course();
+        $sectionid = $format->get_sectionid();
+        $section = ($sectionid !== null) ? $format->get_modinfo()->get_section_info_by_id($sectionid) : null;
 
         $data = (object)[
             'id' => $course->id,
