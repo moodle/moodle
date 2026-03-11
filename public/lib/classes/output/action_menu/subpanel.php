@@ -19,6 +19,7 @@ namespace core\output\action_menu;
 use core\output\action_link;
 use core\output\pix_icon;
 use core\output\renderable;
+use moodle_url;
 use stdClass;
 
 /**
@@ -47,12 +48,14 @@ class subpanel extends action_link implements renderable {
      * @param renderable $subpanel the subpanel content
      * @param array|null $attributes an optional array of attributes
      * @param pix_icon|null $icon an optional icon
+     * @param moodle_url|null $url an optional URL. If not provided, item will be non-clickable and only used to trigger subpanel.
      */
     public function __construct(
         $text,
         renderable $subpanel,
         ?array $attributes = null,
-        ?pix_icon $icon = null
+        ?pix_icon $icon = null,
+        ?moodle_url $url = null,
     ) {
         $this->text = $text;
         $this->subpanel = $subpanel;
@@ -61,6 +64,7 @@ class subpanel extends action_link implements renderable {
         }
         $this->attributes = (array) $attributes;
         $this->icon = $icon;
+        $this->url = $url;
     }
 
     /**
