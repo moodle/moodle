@@ -86,7 +86,7 @@ class link extends action_link implements renderable {
         $data->icon = null;
         if ($this->icon) {
             $icon = $this->icon;
-            if ($this->primary || !$this->actionmenu->will_be_enhanced()) {
+            if ($this->primary || !$this->actionmenu?->will_be_enhanced()) {
                 $attributes['title'] = $data->text;
             }
             $data->icon = $icon ? $icon->export_for_pix() : null;

@@ -36,12 +36,32 @@
         @include optional-animation(0.15s animate-pop);
     }
 
+    // Fix subpanel position to be aligned with the parent item.
+    .dropstart,
+    .dropend {
+        .dropdown-subpanel-content.dropdown-menu[data-bs-popper] {
+            /* stylelint-disable declaration-no-important */
+            top: calc(-#{$dropdown-header-padding-y} - #{$dropdown-border-width}) !important;
+            /* stylelint-enable declaration-no-important */
+        }
+    }
+
     // Chevrons in sub panel items are always to end.
-    .dropdown-subpanel .dropdown-item {
+    .dropdown-subpanel > .dropdown-item {
+        display: inline-flex;
+        align-items: center;
+        gap: map-get($spacers, 1);
+
         &::after {
+            display: inline-block;
             border: 0;
             font: var(--fa-font-solid);
             content: fa-content($fa-var-chevron-right);
+            margin-left: auto;
+
+            .dir-rtl & {
+                content: fa-content($fa-var-chevron-left);
+            }
         }
 
         &::before {
@@ -57,22 +77,6 @@
 
     100% {
         scale: 1;
-    }
-}
-
-.dir-rtl .action-menu {
-
-    // Chevrons in subpanels items are always to end.
-    .dropdown-subpanel .dropdown-item {
-        &::after {
-            border: 0;
-            font: var(--fa-font-solid);
-            content: fa-content($fa-var-chevron-left);
-        }
-
-        &::before {
-            display: none;
-        }
     }
 }
 

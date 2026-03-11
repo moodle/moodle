@@ -1,0 +1,7 @@
+issueNumber: MDL-88312
+notes:
+  core:
+    - message: >-
+        Added new `core\output\submenu` renderable, that can be added to a
+        `core\output\action_menu\subpanel` to create menu sub-levels.
+      type: improved
