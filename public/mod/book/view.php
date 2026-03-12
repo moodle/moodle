@@ -92,10 +92,13 @@ if ($chapterid == '0') { // Go to first chapter if no given.
 }
 
 // Prepare header.
-$pagetitle = $book->name;
+$titleparts = [];
 if ($chapter = $DB->get_record('book_chapters', ['id' => $chapterid, 'bookid' => $book->id])) {
-    $pagetitle .= \moodle_page::TITLE_SEPARATOR . $chapter->title;
+    $chaptertitle = book_get_chapter_title($chapterid, $chapters, $book, $context);
+    $titleparts[] = $chaptertitle;
 }
+$titleparts[] = format_string($book->name, true, ['context' => $context]);
+$pagetitle = implode(moodle_page::TITLE_SEPARATOR, $titleparts);
 
 $PAGE->set_other_editing_capability('mod/book:edit');
 $PAGE->set_title($pagetitle);
