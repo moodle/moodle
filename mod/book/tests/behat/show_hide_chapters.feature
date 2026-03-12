@@ -32,28 +32,30 @@ Feature: Book activity chapter visibility management
     And I am on the "Test book" "book activity" page
     And I click on "4. Fourth chapter" "link" in the "Table of contents" "block"
 
-  @javascript
+  @javascript @accessibility
   Scenario: Show/hide chapters and subchapters
     When I follow "Hide chapter \"2. Second chapter\""
     And I follow "Hide chapter \"2. Third chapter\""
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
     And I am on the "Test book" "book activity" page
     And I am on "Course 1" course homepage
     And I turn editing mode off
     And I click on "Test book" "link" in the "region-main" "region"
-    Then the "class" attribute of "a[title='Second chapter']" "css_element" should contain "dimmed_text"
-    And the "class" attribute of "a[title='Third chapter']" "css_element" should contain "dimmed_text"
+    Then the "class" attribute of "2. Second chapter" "link" should contain "dimmed_text"
+    And the "class" attribute of "3. Third chapter" "link" should contain "dimmed_text"
     And I am on "Course 1" course homepage with editing mode on
     And I click on "Test book" "link" in the "region-main" "region"
-    And I follow "Next"
+    And I follow "Next: Second chapter"
     And I should see "Second chapter" in the ".book_content" "css_element"
-    And I follow "Next"
+    And I follow "Next: Sub chapter"
     And I should see "Sub chapter" in the ".book_content" "css_element"
-    And I follow "Next"
+    And I follow "Next: Third chapter"
     And I should see "Third chapter" in the ".book_content" "css_element"
-    And I follow "Next"
+    And I follow "Next: Fourth chapter"
     And I should see "Fourth chapter" in the ".book_content" "css_element"
     And I am on the "Test book" "book activity" page logged in as student1
     And I should not see "Second chapter" in the "Table of contents" "block"
     And I should not see "Third chapter" in the "Table of contents" "block"
-    And I follow "Next"
+    And I follow "Next: Fourth chapter"
     And I should see "Fourth chapter" in the ".book_content" "css_element"
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests

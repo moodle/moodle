@@ -30,8 +30,8 @@ Feature: In a book, verify log entries
       | Chapter title | First chapter edited |
       | Content | First chapter edited |
     And I press "Save changes"
-    And I click on "Next" "link"
-    And I click on "Previous" "link"
+    And I follow "Next: Second chapter"
+    And I follow "Previous: First chapter edited"
     And I navigate to "Print book" in current page administration
     And I am on the "Test book" "book activity" page
     And I navigate to "Download IMS CP" in current page administration
