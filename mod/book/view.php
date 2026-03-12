@@ -133,14 +133,15 @@ if (!$chapterid) {
     echo $OUTPUT->box_start('generalbox book_content' . $hidden, 'mod_book-chapter');
 
     if (!$book->customtitles) {
+        $headinglevel = $PAGE->activityheader->get_heading_level();
         if (!$chapter->subchapter) {
             $currtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
-            echo $OUTPUT->heading($currtitle, 3);
+            echo $OUTPUT->heading($currtitle, $headinglevel);
         } else {
             $currtitle = book_get_chapter_title($chapters[$chapter->id]->parent, $chapters, $book, $context);
             $currsubtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
-            echo $OUTPUT->heading($currtitle, 3);
-            echo $OUTPUT->heading($currsubtitle, 4);
+            echo $OUTPUT->heading($currtitle, $headinglevel);
+            echo $OUTPUT->heading($currsubtitle, ++$headinglevel);
         }
     }
     $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book',
