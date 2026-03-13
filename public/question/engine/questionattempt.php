@@ -235,7 +235,7 @@ class question_attempt {
      * @return question_definition the question this is an attempt at.
      */
     public function get_question($requirequestioninitialised = true) {
-        if ($requirequestioninitialised && !empty($this->steps)) {
+        if ($requirequestioninitialised && $this->has_steps()) {
             $this->ensure_question_initialised();
         }
         return $this->question;
@@ -325,7 +325,7 @@ class question_attempt {
      * @return question_behaviour the behaviour that is controlling this attempt.
      */
     public function get_behaviour($requirequestioninitialised = true) {
-        if ($requirequestioninitialised && !empty($this->steps)) {
+        if ($requirequestioninitialised && $this->has_steps()) {
             $this->ensure_question_initialised();
         }
         return $this->behaviour;
@@ -458,15 +458,25 @@ class question_attempt {
     }
 
     /**
+     * Whether this question attempt has any steps.
+     *
+     * @return bool
+     */
+    protected function has_steps(): bool {
+        return $this->get_num_steps() > 0;
+    }
+
+    /**
      * Return the latest step in this question_attempt.
      * For internal/test code use only.
      * @return question_attempt_step
      */
     public function get_last_step() {
-        if (count($this->steps) == 0) {
+        $numsteps = $this->get_num_steps();
+        if ($numsteps == 0) {
             return new question_null_step();
         }
-        return end($this->steps);
+        return $this->get_step($numsteps - 1);
     }
 
     /**
@@ -1529,7 +1539,7 @@ class question_attempt {
 
     /** @return bool Whether this question attempt has had a manual comment added. */
     public function has_manual_comment() {
-        foreach ($this->steps as $step) {
+        foreach ($this->get_step_iterator() as $step) {
             if ($step->has_behaviour_var('comment')) {
                 return true;
             }
@@ -1699,11 +1709,11 @@ class question_attempt {
             return; // Already done.
         }
 
-        if (empty($this->steps)) {
+        if (!$this->has_steps()) {
             throw new coding_exception('You must call start() before doing anything to a question_attempt().');
         }
 
-        $this->question->apply_attempt_state($this->steps[0]);
+        $this->question->apply_attempt_state($this->get_step(0));
         $this->questioninitialised = self::QUESTION_STATE_APPLIED;
     }
 
