@@ -14,6 +14,7 @@ $displayformat = optional_param('displayformat',-1, PARAM_INT);
 $mode    = required_param('mode', PARAM_ALPHA);             // mode to show the entries
 $hook    = optional_param('hook','ALL', PARAM_CLEAN);       // what to show
 $sortkey = optional_param('sortkey','UPDATE', PARAM_ALPHA); // Sorting key
+$fullsearch = optional_param('fullsearch', 0, PARAM_INT); // Search concept and definition.
 
 $url = new moodle_url('/mod/glossary/print.php', array('id'=>$id));
 if ($sortorder !== 'asc') {

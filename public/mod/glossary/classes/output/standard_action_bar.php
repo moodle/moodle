@@ -194,15 +194,16 @@ class standard_action_bar implements renderable, templatable {
         }
 
         if (has_capability('mod/glossary:manageentries', $this->context) or $this->module->allowprintview) {
-            $params = array(
+            $params = [
                 'id'        => $this->cm->id,
                 'mode'      => $this->mode,
                 'hook'      => $this->hook,
                 'sortkey'   => $this->sortkey,
                 'sortorder' => $this->sortorder,
                 'offset'    => $this->offset,
-                'pagelimit' => $this->pagelimit
-            );
+                'pagelimit' => $this->pagelimit,
+                'fullsearch'  => $this->fullsearch,
+            ];
             $printurl = new moodle_url('/mod/glossary/print.php', $params);
             $buttons[get_string('printerfriendly', 'glossary')] = $printurl->out(false);
             $openinnewwindow[] = $printurl->out(false);
