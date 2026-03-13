@@ -3565,12 +3565,11 @@ function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $li
     $count = count($entries);
 
     // Now applying limit.
-    if (isset($limit)) {
-        if (isset($from)) {
-            $entries = array_slice($filteredentries, $from, $limit);
-        } else {
-            $entries = array_slice($filteredentries);
-        }
+    $from = $from ?? 0;
+    if ($limit > 0) {
+        $entries = array_slice($filteredentries, $from, $limit);
+    } else if ($from > 0) {
+        $entries = array_slice($filteredentries, $from);
     } else {
         $entries = $filteredentries;
     }
@@ -4064,12 +4063,11 @@ function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit,
     $count = count($entries);
 
     // Now applying limit.
-    if (isset($limit)) {
-        if (isset($from)) {
-            $entries = array_slice($filteredentries, $from, $limit);
-        } else {
-            $entries = array_slice($filteredentries);
-        }
+    $from = $from ?? 0;
+    if ($limit > 0) {
+        $entries = array_slice($filteredentries, $from, $limit);
+    } else if ($from > 0) {
+        $entries = array_slice($filteredentries, $from);
     } else {
         $entries = $filteredentries;
     }
@@ -4172,13 +4170,12 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
     }
 
     // Now applying limit.
-    if (isset($limit)) {
-        $count = count($filteredentries);
-        if (isset($from)) {
-            $filteredentries = array_slice($filteredentries, $from, $limit);
-        } else {
-            $filteredentries = array_slice($filteredentries, 0, $limit);
-        }
+    $count = count($filteredentries);
+    $from = $from ?? 0;
+    if ($limit > 0) {
+        $filteredentries = array_slice($filteredentries, $from, $limit);
+    } else if ($from > 0) {
+        $filteredentries = array_slice($filteredentries, $from);
     }
 
     return [$filteredentries, $count];
