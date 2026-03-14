@@ -149,8 +149,8 @@ Feature: H5P file upload to content bank for non admins
     And I click on "filltheblanks.h5p" "link"
     And I click on "Select this file" "button"
     And I click on "Save changes" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Of which countries"
     Then I should not see "missing-main-library"
     And I switch to the main frame
@@ -173,5 +173,5 @@ Feature: H5P file upload to content bank for non admins
     And I click on "Content bank" "link"
     And I should see "filltheblanks.h5p"
     And I click on "filltheblanks.h5p" "link"
-    And I switch to "h5p-player" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "missing-main-library"
