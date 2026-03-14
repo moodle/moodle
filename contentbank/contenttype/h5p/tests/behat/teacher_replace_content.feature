@@ -47,8 +47,8 @@ Feature: Replace H5P file from an existing content requires special capabilities
     And I click on "Replace with file" "link"
     And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Upload content" filemanager
     And I click on "Save changes" "button"
-    Then I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    Then I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Lorum ipsum"
     And I switch to the main frame
 
