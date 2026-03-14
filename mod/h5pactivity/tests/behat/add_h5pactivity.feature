@@ -30,8 +30,8 @@ Feature: Add H5P activity
       | packagefilepath | h5p/tests/fixtures/ipsums.h5p |
     When I am on the "Awesome H5P package" "h5pactivity activity" page
     Then I should see "H5P activity Description"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Lorum ipsum"
     And I should not see "Reuse"
     And I should not see "Rights of use"
@@ -46,8 +46,8 @@ Feature: Add H5P activity
       | displayoptions  | 12                            |
       | packagefilepath | h5p/tests/fixtures/ipsums.h5p |
     When I am on the "Awesome H5P package" "h5pactivity activity" page
-    Then I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    Then I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And "Reuse" "text" should exist in the ".h5p-actions" "css_element"
     And I should not see "Rights of use"
     And I should not see "Embed"
@@ -61,8 +61,8 @@ Feature: Add H5P activity
       | displayoptions  | 10                            |
       | packagefilepath | h5p/tests/fixtures/ipsums.h5p |
     When I am on the "Awesome H5P package" "h5pactivity activity" page
-    Then I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    Then I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And "Reuse" "text" should not exist in the ".h5p-actions" "css_element"
     And I should not see "Rights of use"
     And I should see "Embed"
@@ -77,8 +77,8 @@ Feature: Add H5P activity
       | packagefilepath | h5p/tests/fixtures/guess-the-answer.h5p |
     And I change window size to "large"
     When I am on the "Awesome H5P package" "h5pactivity activity" page
-    Then I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    Then I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And "Reuse" "text" should not exist in the ".h5p-actions" "css_element"
     And I should see "Rights of use"
     And I should not see "Embed"
@@ -100,8 +100,8 @@ Feature: Add H5P activity
       | displayoptions  | 6                             |
       | packagefilepath | h5p/tests/fixtures/ipsums.h5p |
     When I am on the "Awesome H5P package" "h5pactivity activity" page
-    Then I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    Then I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And "Reuse" "text" should not exist in the ".h5p-actions" "css_element"
     And I should not see "Rights of use"
     And I should not see "Embed"
@@ -115,8 +115,8 @@ Feature: Add H5P activity
       | displayoptions  | 0                                       |
       | packagefilepath | h5p/tests/fixtures/guess-the-answer.h5p |
     When I am on the "Awesome H5P package" "h5pactivity activity" page
-    Then I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    Then I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And "Reuse" "text" should exist in the ".h5p-actions" "css_element"
     And I should see "Rights of use"
     And I should see "Embed"

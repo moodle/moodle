@@ -33,19 +33,19 @@ Feature: Undeployed H5P activities packages should be available only to any user
   Scenario: In an H5P activity, as student I should not be able to deploy the package if not deployed by the teacher
   beforehand. Then if a second teacher deploys the package, I can see it.
     Given I am on the "Music history" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
     And "This file can't be displayed because it has been uploaded by a user without the required capability to deploy H5P content" "text" should exist
     And I switch to the main frame
     And I log out
     # Then teacher2 will be allowed to deploy the package.
     And I am on the "Music history" "h5pactivity activity" page logged in as teacher2
-    And I switch to "h5p-player" class iframe
-    When I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    When I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Of which countries are Berlin"
     And I switch to the main frame
     And I log out
     # Now student1 should be able to see the package.
     And I am on the "Music history" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    When I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    When I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Of which countries are Berlin"

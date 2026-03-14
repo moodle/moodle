@@ -31,67 +31,67 @@ Feature: Users can save the current state of an H5P activity
     Given the following config values are set as admin:
       | enablesavestate | 0 | mod_h5pactivity|
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Narnia"
     And I switch to the main frame
     And I am on the "Course 1" course page
     When I am on the "Awesome H5P package" "h5pactivity activity" page
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" does not match value "Narnia"
 
   Scenario: Content state is saved when enablesavestate is enabled
     Given the following config values are set as admin:
       | enablesavestate | 1 | mod_h5pactivity|
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Narnia"
     And I switch to the main frame
     And I am on the "Course 1" course page
     When I am on the "Awesome H5P package" "h5pactivity activity" page
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" matches value "Narnia"
 
   Scenario: Content state is not saved for teachers when enablesavestate is enabled
     Given the following config values are set as admin:
       | enablesavestate | 1 | mod_h5pactivity|
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as teacher1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Narnia"
     And I switch to the main frame
     And I am on the "Course 1" course page
     When I am on the "Awesome H5P package" "h5pactivity activity" page
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" does not match value "Narnia"
 
   Scenario: Content state is reseted when content changes
     Given the following config values are set as admin:
       | enablesavestate | 1 | mod_h5pactivity|
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Narnia"
     And I switch to the main frame
     And I am on the "Course 1" course page
     When I am on the "Awesome H5P package" "h5pactivity activity" page logged in as admin
     # Change the content.
     And I follow "Edit H5P content"
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I set the field "Title" to "Capitals"
     And I switch to the main frame
     And I click on "Save changes" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Check"
     # Check the content state has been reseted.
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Data Reset"
     And I should see "This content has changed since you last used it."
     And I click on "OK" "button"
@@ -101,26 +101,26 @@ Feature: Users can save the current state of an H5P activity
     Given the following config values are set as admin:
       | enablesavestate | 1 | mod_h5pactivity|
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Narnia"
     And I switch to the main frame
     And I am on the "Course 1" course page
     When I am on the "Awesome H5P package" "h5pactivity activity" page logged in as admin
     # Start content edition.
     And I follow "Edit H5P content"
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I set the field "Title" to "Capitals"
     And I switch to the main frame
     And I click on "Cancel" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Check"
     # Check the content state hasn't been reseted.
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     And I should see "Awesome H5P package"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should not see "Data Reset"
     And I should not see "This content has changed since you last used it."
     And the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" matches value "Narnia"
@@ -130,31 +130,31 @@ Feature: Users can save the current state of an H5P activity
       | enablesavestate | 1 | mod_h5pactivity|
     # Save state content for student2, to check this data is not removed when student1 finishes their attempt.
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student2
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Vallhonesta"
     # Confirm the content state has been saved properly.
     And I reload the page
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" matches value "Vallhonesta"
     # Create an attempt for student1.
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     And I should not see "Attempts report"
-    When I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    When I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Narnia"
     And I click on "Check" "button"
     # Check the state content has been removed.
     And I reload the page
     Then I should see "Attempts report"
     And I am on the "Awesome H5P package" "h5pactivity activity" page
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" does not match value "Narnia"
     And I switch to the main frame
     # Check the state content for student2 is still there.
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student2
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" matches value "Vallhonesta"
