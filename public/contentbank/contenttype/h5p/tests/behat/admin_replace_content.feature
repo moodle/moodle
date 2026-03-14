@@ -18,15 +18,15 @@ Feature: Replace H5P file from an existing content
 
   Scenario: Admins can replace the original .h5p file with a new one
     Given I click on "filltheblanks.h5p" "link"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Of which countries"
     And I switch to the main frame
     When I click on "More" "button"
     And I click on "Replace with file" "link"
     And I upload "h5p/tests/fixtures/ipsums.h5p" file to "Upload content" filemanager
     And I click on "Save changes" "button"
-    Then I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    Then I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Lorum ipsum"
     And I switch to the main frame

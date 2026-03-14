@@ -44,19 +44,19 @@ Feature: Inline editing H5P content
     And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Save and display" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Hello world!"
     And I switch to the main frame
     # Modify the H5P content using the edit button (which opens the H5P editor).
     And I follow "Edit H5P content"
     And I should see "This content may be in use in other places."
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I set the field "Greeting text" to "It's a Wonderful Life!"
     And I switch to the main frame
     And I click on "Save changes" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     # Check the H5P content has changed.
     And I should not see "Hello world!"
     And I should see "It's a Wonderful Life!"
@@ -66,8 +66,8 @@ Feature: Inline editing H5P content
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "Greeting card" "link"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should not see "Hello world!"
     And I should see "It's a Wonderful Life!"
     And I switch to the main frame
@@ -106,20 +106,20 @@ Feature: Inline editing H5P content
     And I click on "Make a copy of the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Save and display" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Hello world!"
     And I switch to the main frame
     # Modify the H5P content using the edit button (which opens the H5P editor).
     And I follow "Edit H5P content"
     And I should not see "This content may be in use in other places."
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I set the field "Greeting text" to "The nightmare before Christmas"
     And I switch to the main frame
     And I click on "Save changes" "button"
     # Check the H5P content has changed.
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should not see "Hello world!"
     And I should see "The nightmare before Christmas"
     And I switch to the main frame
@@ -128,8 +128,8 @@ Feature: Inline editing H5P content
     And I click on "Site pages" "list_item" in the "Navigation" "block"
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "Greeting card" "link"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Hello world!"
     And I should not see "The nightmare before Christmas"
     And I switch to the main frame
@@ -163,20 +163,20 @@ Feature: Inline editing H5P content
     And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Save and display" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Hello world!"
     And I switch to the main frame
     # Modify the H5P content using the edit button (which opens the H5P editor).
     And I follow "Edit H5P content"
     And I should see "This content may be in use in other places."
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I set the field "Greeting text" to "Little women"
     And I switch to the main frame
     And I click on "Save changes" "button"
     # Check the H5P content has changed.
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should not see "Hello world!"
     And I should see "Little women"
     And I switch to the main frame
