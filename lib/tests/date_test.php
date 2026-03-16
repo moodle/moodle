@@ -133,10 +133,14 @@ final class date_test extends advanced_testcase {
 
         $this->assertCount(104, $matches); // NOTE: If the file contents change edit the core_date class and update this.
 
+        $defaulttz = core_date::get_default_php_timezone();
+
         foreach ($matches as $match) {
             $result = core_date::normalise_timezone($match[1]);
-            if ($result == $match[2]) {
+            if ($result === $match[2]) {
                 $this->assertSame($match[2], $result);
+            } else if ($result === $defaulttz) {
+                $this->assertSame($match[1], $defaulttz, "$match[1] unexpectedly converted to the default timezone $defaulttz");
             } else {
                 $goodzone = core_date::normalise_timezone($match[2]);
                 $data = new DateTime('now', new DateTimeZone($goodzone));
