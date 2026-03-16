@@ -89,7 +89,7 @@ final class date_test extends advanced_testcase {
 
         $this->assertSame('Asia/Kabul', core_date::normalise_timezone(4.5));
         $this->assertSame('Asia/Kolkata', core_date::normalise_timezone(5.5));
-        $this->assertSame('Asia/Rangoon', core_date::normalise_timezone(6.5));
+        $this->assertSame('Asia/Yangon', core_date::normalise_timezone(6.5));
         $this->assertSame('Australia/Darwin', core_date::normalise_timezone('9.5'));
 
         $this->setTimezone('99', 'Pacific/Auckland');
@@ -138,11 +138,12 @@ final class date_test extends advanced_testcase {
             if ($result == $match[2]) {
                 $this->assertSame($match[2], $result);
             } else {
-                $data = new DateTime('now', new DateTimeZone($match[2]));
+                $goodzone = core_date::normalise_timezone($match[2]);
+                $data = new DateTime('now', new DateTimeZone($goodzone));
                 $expectedoffset = $data->getOffset();
                 $data = new DateTime('now', new DateTimeZone($result));
                 $resultoffset = $data->getOffset();
-                $this->assertSame($expectedoffset, $resultoffset, "$match[1] is expected to be converted to $match[2] not $result");
+                $this->assertSame($expectedoffset, $resultoffset, "$match[1] is expected to be converted to $goodzone not $result");
             }
         }
     }
@@ -429,7 +430,7 @@ final class date_test extends advanced_testcase {
             ['5.0', 'Etc/GMT-5'],
             ['5.5', 'Asia/Kolkata'],
             ['6.0', 'Etc/GMT-6'],
-            ['6.5', 'Asia/Rangoon'],
+            ['6.5', 'Asia/Yangon'],
             ['7.0', 'Etc/GMT-7'],
             ['7.5', 'Etc/GMT-7'],
             ['8.0', 'Etc/GMT-8'],
