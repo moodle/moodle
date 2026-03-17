@@ -1,41 +1,146 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/wellbeing/db" VERSION="2026020600">
+<XMLDB PATH="local/wellbeing/db"
+       VERSION="2026021009"
+       COMMENT="XMLDB file for local_wellbeing"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+
   <TABLES>
 
-    <TABLE NAME="local_wellbeing_courses" COMMENT="Wellbeing enabled courses">
+    <!-- ========================= -->
+    <!-- Wellbeing Enabled Courses -->
+    <!-- ========================= -->
+    <TABLE NAME="local_wellbeing_courses"
+           COMMENT="Stores courses where wellbeing feature is enabled">
+
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="isenabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="course_unique" TYPE="unique" FIELDS="courseid"/>
-      </KEYS>
-    </TABLE>
-    
-    <TABLE NAME="local_wellbeing_metrics" COMMENT="Stores wellbeing metrics per submission">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="assignmentid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="metrics" TYPE="text" NOTNULL="true"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="id"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               SEQUENCE="true"
+               COMMENT="Primary key"/>
+
+        <FIELD NAME="courseid"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="Course ID reference"/>
+
+        <FIELD NAME="isenabled"
+               TYPE="int"
+               LENGTH="1"
+               NOTNULL="true"
+               DEFAULT="1"
+               COMMENT="Whether wellbeing is enabled (1=yes, 0=no)"/>
+
+        <FIELD NAME="timecreated"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="Record creation time"/>
+
+        <FIELD NAME="timemodified"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="Record modification time"/>
       </FIELDS>
 
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="primary"
+             TYPE="primary"
+             FIELDS="id"
+             COMMENT="Primary key"/>
+
+        <KEY NAME="course_unique"
+             TYPE="unique"
+             FIELDS="courseid"
+             COMMENT="Ensures one entry per course"/>
+      </KEYS>
+
+    </TABLE>
+
+
+    <!-- ========================= -->
+    <!-- Wellbeing Metrics Table -->
+    <!-- ========================= -->
+    <TABLE NAME="local_wellbeing_metrics"
+           COMMENT="Stores wellbeing metrics per user submission">
+
+      <FIELDS>
+
+        <FIELD NAME="id"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               SEQUENCE="true"
+               COMMENT="Primary key"/>
+
+        <FIELD NAME="courseid"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="Course ID reference"/>
+
+        <FIELD NAME="assignmentid"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="Assignment ID reference"/>
+
+        <FIELD NAME="submissionid"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="Submission ID reference"/>
+
+        <FIELD NAME="userid"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="User ID reference"/>
+
+        <FIELD NAME="metrics"
+               TYPE="text"
+               NOTNULL="true"
+               COMMENT="JSON encoded wellbeing metrics"/>
+
+        <FIELD NAME="timecreated"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="Record creation time"/>
+
+        <FIELD NAME="timemodified"
+               TYPE="int"
+               LENGTH="10"
+               NOTNULL="true"
+               COMMENT="Record modification time"/>
+
+      </FIELDS>
+
+      <KEYS>
+        <KEY NAME="primary"
+             TYPE="primary"
+             FIELDS="id"
+             COMMENT="Primary key"/>
       </KEYS>
 
       <INDEXES>
-        <INDEX NAME="submission_unique" UNIQUE="true" FIELDS="submissionid"/>
+        <INDEX NAME="submission_unique"
+               UNIQUE="true"
+               FIELDS="submissionid"
+               COMMENT="Ensures one metrics entry per submission"/>
+
+        <INDEX NAME="course_user_index"
+               UNIQUE="false"
+               FIELDS="courseid, userid"
+               COMMENT="Index for faster course and user lookups"/>
       </INDEXES>
 
     </TABLE>
+
   </TABLES>
+
 </XMLDB>

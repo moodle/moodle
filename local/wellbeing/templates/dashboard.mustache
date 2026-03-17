@@ -1,0 +1,55 @@
+<div class="wellbeing-dashboard">
+
+    <h2 class="text-center">🌱 Your Wellbeing Journey</h2>
+
+    <div class="chart-container">
+        <canvas id="wellbeingChart"></canvas>
+    </div>
+
+    <div class="overall-card">
+        <div class="emoji">{{emoji}}</div>
+        <h3>Overall Score: {{overall}}</h3>
+        <p>{{message}}</p>
+    </div>
+
+    <div class="growth-card">
+        {{#growth}}
+        <p>📈 Growth: +{{growth}} points</p>
+        {{/growth}}
+        {{^growth}}
+        <p>📉 Growth: {{growth}} points</p>
+        {{/growth}}
+    </div>
+
+</div>
+
+<style>
+.wellbeing-dashboard {
+    max-width: 900px;
+    margin: auto;
+}
+
+.chart-container {
+    margin: 40px 0;
+}
+
+.overall-card {
+    text-align: center;
+    padding: 20px;
+    border-radius: 15px;
+    background: #f5f9ff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.emoji {
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.growth-card {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #eef7f2;
+}
+</style>
