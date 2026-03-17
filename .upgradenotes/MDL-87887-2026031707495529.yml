@@ -1,0 +1,8 @@
+issueNumber: MDL-87887
+notes:
+  mod_forum:
+    - message: >-
+        Add new mod_forum_set_read_state web service to allow clients to
+        manually mark individual forum posts as read or unread (when manual read
+        tracking is enabled), returning a simple status and warnings structure.
+      type: changed
