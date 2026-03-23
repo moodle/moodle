@@ -135,8 +135,8 @@
 
 {{#js}}
 // Initialise the JS.
-require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 'jquery'],
-        function(ariatree, treeModel, actions, $) {
+require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions'],
+        function(ariatree, treeModel, actions) {
 
     treeModel.init({{framework.id}},
                    {{#quote}} {{{framework.shortname}}} {{/quote}},
