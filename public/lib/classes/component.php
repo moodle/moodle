@@ -187,7 +187,7 @@ class component {
     protected static $composerautoloadfiles = [
         // The AWS SDK always defines functions, even if they already exist.
         'public/lib/aws-sdk/src/functions.php' => [
-            'Aws\describe_region_info',
+            'Aws\constantly',
         ],
 
         // The following files check if functions have already been defined.
@@ -223,7 +223,8 @@ class component {
         // This is intended to mimic the behaviour of the standard Composer Autoloader.
         foreach (static::$composerautoloadfiles as $file => $test) {
             if (is_array($test)) {
-                if (array_filter($test, fn ($function): bool => !function_exists($function))) {
+                if (array_filter($test, fn ($function): bool => function_exists($function))) {
+                    // Skip loading the library if the function is already loaded.
                     continue;
                 }
             }
