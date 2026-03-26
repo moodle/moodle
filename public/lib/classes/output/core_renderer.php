@@ -37,6 +37,7 @@ use core\hook\output\after_standard_main_region_html_generation;
 use core\hook\output\before_footer_html_generation;
 use core\hook\output\before_html_attributes;
 use core\hook\output\before_http_headers;
+use core\hook\output\before_help_icon_rendered;
 use core\hook\output\before_standard_footer_html_generation;
 use core\hook\output\before_standard_top_of_body_html_generation;
 use core\output\actions\component_action;
@@ -2255,7 +2256,21 @@ class core_renderer extends renderer_base {
      */
     protected function render_help_icon(help_icon $helpicon) {
         $context = $helpicon->export_for_template($this);
-        return $this->render_from_template('core/help_icon', $context);
+
+        $hook = new before_help_icon_rendered($helpicon, $this, $context);
+        di::get(hook_manager::class)->dispatch($hook);
+
+        // If a plugin provided a complete replacement, return it directly.
+        if ($hook->get_replacement() !== null) {
+            return $hook->get_replacement();
+        }
+
+        // Render with any extra HTML before/after the help icon.
+        $output = $hook->get_before_icon();
+        $output .= $this->render_from_template('core/help_icon', $hook->get_templatecontext());
+        $output .= $hook->get_after_icon();
+
+        return $output;
     }
 
     /**

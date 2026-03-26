@@ -1,0 +1,10 @@
+issueNumber: MDL-88319
+notes:
+  core:
+    - message: >-
+        A new `\core\hook\output\before_help_icon_rendered` hook is dispatched
+        when a help icon is rendered. Callbacks can modify the template context
+        (e.g. the popover `text`), add HTML before or after the icon using
+        `add_before_icon()` and `add_after_icon()`, or replace the whole help
+        icon output using `set_replacement()`.
+      type: improved
