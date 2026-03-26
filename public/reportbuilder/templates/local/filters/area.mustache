@@ -21,7 +21,6 @@
 
     Example context (json):
     {
-        "contextid": 1,
         "filtersapplied": 3,
         "filtersform": "form"
     }
@@ -50,6 +49,6 @@
 
 {{#js}}
     require(['core_reportbuilder/filters'], function(filters) {
-        filters.init('reportbuilder-report-{{uniqid}}', {{contextid}});
+        filters.init('reportbuilder-report-{{uniqid}}');
     });
 {{/js}}

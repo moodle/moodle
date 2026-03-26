@@ -54,7 +54,6 @@ class audience extends base {
         return [
             'tabheading' => get_string('audience', 'core_reportbuilder'),
             'reportid' => $reportid,
-            'contextid' => (new report($reportid))->get('contextid'),
             'sidebarmenucards' => $menucards,
             'instances' => $audienceinstances,
             'hasinstances' => !empty($audienceinstances),

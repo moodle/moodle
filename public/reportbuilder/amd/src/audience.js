@@ -23,6 +23,7 @@
 
 "use strict";
 
+import Config from 'core/config';
 import 'core/inplace_editable';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
@@ -36,31 +37,37 @@ import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {loadFragment} from 'core/fragment';
 import {markFormAsDirty} from 'core_form/changechecker';
 
-let reportId = 0;
-let contextId = 0;
-
 /**
  * Add audience card
  *
+ * @param {Number} reportId
  * @param {String} className
  * @param {String} title
  */
-const addAudienceCard = (className, title) => {
+const addAudienceCard = (reportId, className, title) => {
     const pendingPromise = new Pending('core_reportbuilder/audience:add');
 
     const audiencesContainer = document.querySelector(reportSelectors.regions.audiencesContainer);
     const audienceCardLength = audiencesContainer.querySelectorAll(reportSelectors.regions.audienceCard).length;
 
-    const params = {
-        classname: className,
-        reportid: reportId,
-        showormessage: (audienceCardLength > 0),
-        title: title,
-    };
-
     // Load audience card fragment, render and then initialise the form within.
-    loadFragment('core_reportbuilder', 'audience_form', contextId, params)
-        .then((html, js) => {
+    loadFragment('core_reportbuilder', 'audience_form', Config.contextid, {
+        reportid: reportId,
+        classname: className,
+    })
+        .then((html, js) => Promise.all([
+            js,
+            Templates.renderForPromise('core_reportbuilder/local/audience/form', {
+                instanceid: 0,
+                heading: title,
+                headingeditable: title,
+                form: html,
+                canedit: true,
+                candelete: true,
+                showormessage: (audienceCardLength > 0),
+            }),
+        ]))
+        .then(([js, {html}]) => {
             const audienceCard = Templates.appendNodeContents(audiencesContainer, html, js)[0];
             const audienceEmptyMessage = audiencesContainer.querySelector(reportSelectors.regions.audienceEmptyMessage);
 
@@ -79,9 +86,10 @@ const addAudienceCard = (className, title) => {
 /**
  * Edit audience card
  *
- * @param {Element} audienceCard
+ * @param {Element} audienceEdit The edit action button within the audience card
  */
-const editAudienceCard = audienceCard => {
+const editAudienceCard = audienceEdit => {
+    const audienceCard = audienceEdit.closest(reportSelectors.regions.audienceCard);
     const pendingPromise = new Pending('core_reportbuilder/audience:edit');
 
     // Load audience form with data for editing, then toggle visible controls in the card.
@@ -142,9 +150,10 @@ const initAudienceCardForm = audienceCard => {
 /**
  * Delete audience card
  *
- * @param {Element} audienceDelete
+ * @param {Number} reportId
+ * @param {Element} audienceDelete The delete action button within the audience card
  */
-const deleteAudienceCard = audienceDelete => {
+const deleteAudienceCard = (reportId, audienceDelete) => {
     const audienceCard = audienceDelete.closest(reportSelectors.regions.audienceCard);
     const {audienceId, audienceTitle, audienceEditWarning = false} = audienceCard.dataset;
 
@@ -213,10 +222,9 @@ let initialized = false;
 /**
  * Initialise audiences tab.
  *
- * @param {Number} id
- * @param {Number} contextid
+ * @param {Number} reportId
  */
-export const init = (id, contextid) => {
+export const init = reportId => {
     prefetchStrings('core_reportbuilder', [
         'audienceadded',
         'audiencedeleted',
@@ -230,9 +238,6 @@ export const init = (id, contextid) => {
         'delete',
     ]);
 
-    reportId = id;
-    contextId = contextid;
-
     if (initialized) {
         // We already added the event listeners (can be called multiple times by mustache template).
         return;
@@ -244,23 +249,21 @@ export const init = (id, contextid) => {
         const audienceAdd = event.target.closest(reportSelectors.actions.audienceAdd);
         if (audienceAdd) {
             event.preventDefault();
-            addAudienceCard(audienceAdd.dataset.uniqueIdentifier, audienceAdd.dataset.name);
+            addAudienceCard(reportId, audienceAdd.dataset.uniqueIdentifier, audienceAdd.dataset.name);
         }
 
         // Edit instance.
         const audienceEdit = event.target.closest(reportSelectors.actions.audienceEdit);
         if (audienceEdit) {
-            const audienceEditCard = audienceEdit.closest(reportSelectors.regions.audienceCard);
-
             event.preventDefault();
-            editAudienceCard(audienceEditCard);
+            editAudienceCard(audienceEdit);
         }
 
         // Delete instance.
         const audienceDelete = event.target.closest(reportSelectors.actions.audienceDelete);
         if (audienceDelete) {
             event.preventDefault();
-            deleteAudienceCard(audienceDelete);
+            deleteAudienceCard(reportId, audienceDelete);
         }
     });
 

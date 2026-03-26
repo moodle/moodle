@@ -22,7 +22,6 @@
     Example context (json):
     {
         "reportid": 1,
-        "contextid": 1,
         "hasinstances": 1,
         "instances": [{
             "instanceid": 1,
@@ -63,6 +62,6 @@
 </div>
 {{#js}}
     require(['core_reportbuilder/audience'], function(audience) {
-        audience.init({{reportid}}, {{contextid}});
+        audience.init({{reportid}});
     });
 {{/js}}
