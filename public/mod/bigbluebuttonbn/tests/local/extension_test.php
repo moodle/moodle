@@ -23,6 +23,7 @@ use mod_bigbluebuttonbn\completion\custom_completion;
 use mod_bigbluebuttonbn\extension;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
+use mod_bigbluebuttonbn\plugininfo\bbbext;
 use mod_bigbluebuttonbn\meeting;
 use mod_bigbluebuttonbn\test\subplugins_test_helper_trait;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
@@ -504,6 +505,65 @@ final class extension_test extends \advanced_testcase {
             'changed sortorder' => [
                 ['simpleone' => 1, 'simpletwo' => 0],
                 ['simpletwo', 'simpleone'],
+            ],
+        ];
+    }
+
+    /**
+     * Test that bbbext subplugins are returned only when both the parent module
+     * and subplugin are enabled.
+     *
+     * @dataProvider enabled_plugins_provider
+     * @covers \mod_bigbluebuttonbn\plugininfo\bbbext::get_enabled_plugins
+     *
+     * @param bool $bbbenabled Whether the BigBlueButton module is enabled.
+     * @param bool $subplugindisabled Whether the subplugin is disabled.
+     * @param bool $expectedenabled Whether the subplugin should be returned as enabled.
+     */
+    public function test_get_enabled_plugins(
+        bool $bbbenabled,
+        bool $subplugindisabled,
+        bool $expectedenabled
+    ): void {
+        $this->resetAfterTest();
+        \core\plugininfo\mod::enable_plugin('bigbluebuttonbn', $bbbenabled);
+
+        if ($subplugindisabled) {
+            set_config('disabled', 1, extension::BBB_EXTENSION_PLUGIN_NAME . '_simple');
+        } else {
+            unset_config('disabled', extension::BBB_EXTENSION_PLUGIN_NAME . '_simple');
+        }
+
+        $enabledplugins = bbbext::get_enabled_plugins();
+
+        if ($expectedenabled) {
+            $this->assertArrayHasKey('simple', $enabledplugins);
+        } else {
+            $this->assertArrayNotHasKey('simple', $enabledplugins);
+        }
+    }
+
+    /**
+     * Data provider for test_get_enabled_plugins().
+     *
+     * @return array
+     */
+    public static function enabled_plugins_provider(): array {
+        return [
+            'parent disabled' => [
+                'bbbenabled' => false,
+                'subplugindisabled' => false,
+                'expectedenabled' => false,
+            ],
+            'parent and subplugin enabled' => [
+                'bbbenabled' => true,
+                'subplugindisabled' => false,
+                'expectedenabled' => true,
+            ],
+            'subplugin disabled' => [
+                'bbbenabled' => true,
+                'subplugindisabled' => true,
+                'expectedenabled' => false,
             ],
         ];
     }
