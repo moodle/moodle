@@ -94,6 +94,33 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 get_string('deletedchoice', 'qtype_multichoice'), $this->currentoutput);
     }
 
+    public function test_multichoice_single_question_text_describes_answer_group(): void {
+        // Render a single-choice question, which uses radio inputs.
+        $mc = \test_question_maker::make_a_multichoice_single_question();
+        $this->start_attempt_at_question($mc, 'deferredfeedback', 1);
+        $this->render();
+
+        // Parse the rendered question HTML.
+        $questiontextid = $this->get_question_attempt()->get_qt_field_name('qtext');
+        $dom = new \DOMDocument();
+        $previousinternalerrors = libxml_use_internal_errors(true);
+        $dom->loadHTML($this->currentoutput);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousinternalerrors);
+
+        // Verify that the expected ID identifies the question text element.
+        $questiontext = $dom->getElementById($questiontextid);
+        $this->assertNotNull($questiontext);
+        $this->assertSame('div', $questiontext->nodeName);
+        $this->assertSame('qtext', $questiontext->getAttribute('class'));
+
+        // Verify that the radio button group is described by that question text.
+        $fieldsets = $dom->getElementsByTagName('fieldset');
+        $this->assertSame(1, $fieldsets->length);
+        $answergroup = $fieldsets->item(0);
+        $this->assertSame($questiontextid, $answergroup->getAttribute('aria-describedby'));
+    }
+
     public function test_deferredfeedback_feedback_multichoice_single_showstandardunstruction_yes(): void {
 
         // Create a multichoice, single question.
