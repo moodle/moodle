@@ -5,6 +5,7 @@ on:
     branches-ignore:
       - main
       - MOODLE_[0-9]+_STABLE
+      - UCSFCLE_[0-9]+_STABLE
     tags-ignore:
       - v[0-9]+.[0-9]+.[0-9]+*
   workflow_dispatch:
@@ -13,6 +14,7 @@ on:
         description: Additional options to apply to PHPUnit
         required: false
         default: ''
+  pull_request:
 
 env:
   php: 8.4
@@ -62,13 +64,15 @@ jobs:
         include:
           # MySQL builds always run with the lowest PHP supported version.
           - os: ubuntu-24.04
-            php: 8.2
+            # We are only testing with PHP 8.4 (the version on production) instead of minimum supported version, 8.2.
+            php: 8.4
             extensions:
             db: mysqli
-          # PostgreSQL builds always run with the highest PHP supported version.
-          - os: ubuntu-24.04
-            php: 8.4
-            db: pgsql
+          # Disable testing with PostgreSQL for now since we are not using it.
+          # # PostgreSQL builds always run with the highest PHP supported version.
+          # - os: ubuntu-24.04
+          #   php: 8.4
+          #   db: pgsql
 
     steps:
       - name: Setting up DB mysql
@@ -84,14 +88,14 @@ jobs:
           tmpfs size: '1024M'
           extra conf: --skip-log-bin
 
-      - name: Setting up DB pgsql
-        if: ${{ matrix.db == 'pgsql' }}
-        uses: m4nu56/postgresql-action@v1
-        with:
-          postgresql version: 15
-          postgresql db: test
-          postgresql user: test
-          postgresql password: test
+      # - name: Setting up DB pgsql
+      #   if: ${{ matrix.db == 'pgsql' }}
+      #   uses: m4nu56/postgresql-action@v1
+      #   with:
+      #     postgresql version: 15
+      #     postgresql db: test
+      #     postgresql user: test
+      #     postgresql password: test
 
       - name: Configuring git vars
         uses: rlespinasse/github-slug-action@v4
@@ -106,6 +110,8 @@ jobs:
 
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Setting up PHPUnit
         env:
