@@ -1,0 +1,10 @@
+{
+  "name": "moodle-local_kaltura-ltiservice",
+  "builds": {
+    "moodle-local_kaltura-ltiservice": {
+      "jsfiles": [
+        "ltiservice.js"
+      ]
+    }
+  }
+}

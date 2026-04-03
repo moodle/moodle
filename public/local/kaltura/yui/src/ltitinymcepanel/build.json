@@ -1,0 +1,10 @@
+{
+  "name": "moodle-local_kaltura-ltitinymcepanel",
+  "builds": {
+    "moodle-local_kaltura-ltitinymcepanel": {
+      "jsfiles": [
+        "ltitinymcepanel.js"
+      ]
+    }
+  }
+}

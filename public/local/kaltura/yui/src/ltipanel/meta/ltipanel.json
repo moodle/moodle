@@ -1,0 +1,10 @@
+{
+  "moodle-local_kaltura-ltipanel": {
+    "requires": [
+        "base",
+        "node",
+        "panel",
+        "node-event-simulate"
+    ]
+  }
+}
