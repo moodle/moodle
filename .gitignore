@@ -2,7 +2,6 @@
 *
 
 # except our plugins':
-
 !mod/kalvidassign/**/*
 !mod/kalvidres/**/*
 
@@ -16,3 +15,17 @@
 
 !createPackage.sh
 !incrementVersion.sh
+
+!public/mod/kalvidassign/**/*
+!public/mod/kalvidres/**/*
+
+!public/filter/kaltura/**/*
+
+!public/local/kaltura/**/*
+!public/local/kalturamediagallery/**/*
+!public/local/mymedia/**/*
+
+!public/lib/editor/tinymce/plugins/kalturamedia/**/*
+
+!public/createPackage.sh
+!public/incrementVersion.sh
