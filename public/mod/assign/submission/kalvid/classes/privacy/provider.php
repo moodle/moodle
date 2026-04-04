@@ -134,4 +134,29 @@ class provider implements
         $DB->delete_records('assignsubmission_kalvid', ['assignment' => $deletedata->get_assignid(),
             'submission' => $submissionid]);
     }
+
+    /**
+     * Delete multiple submissions for a given context.
+     *
+     * @param \mod_assign\privacy\assign_plugin_request_data $requestdata
+     */
+    public static function delete_submissions(assign_plugin_request_data $requestdata) {
+        global $DB;
+
+        $submissionids = $requestdata->get_submissionids();
+
+        if (empty($submissionids)) {
+            return;
+        }
+
+        list($insql, $params) = $DB->get_in_or_equal($submissionids, SQL_PARAMS_NAMED);
+
+        $params['assignment'] = $requestdata->get_assignid();
+
+        $DB->delete_records_select(
+            'assignsubmission_kalvid',
+            "assignment = :assignment AND submission $insql",
+            $params
+        );
+    }
 }
