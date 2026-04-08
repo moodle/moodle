@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/local/kaltura/migrationlib.php');
 /**
  * @group local_kaltura
  */
-class local_kaltura_migrationlib_testcase extends advanced_testcase {
+class migrationlib_test extends advanced_testcase {
     /**
      * Test initialization of config values.
      */
