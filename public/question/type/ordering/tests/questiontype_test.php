@@ -320,4 +320,272 @@ final class questiontype_test extends \question_testcase {
             phpunit_util::normalise_line_endings($gift)
         );
     }
+
+    /**
+     * Test that move_files moves the files for answer, combined feedback and hints
+     */
+    public function test_move_files(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category();
+        $question = $generator->create_question('ordering', 'moodle', ['category' => $category->id]);
+
+        $oldcontextid = $category->contextid;
+
+        $fs = get_file_storage();
+
+        // Put files into various fileareas in the old context.
+        // Answer areas (both 'answer' and 'answerfeedback').
+        $answers = $DB->get_records('question_answers', ['question' => $question->id]);
+        foreach ($answers as $ans) {
+            $fs->create_file_from_string(
+                [
+                    'contextid' => $oldcontextid,
+                    'component' => 'question',
+                    'filearea' => 'answer',
+                    'itemid' => $ans->id,
+                    'filepath' => '/',
+                    'filename' => 'ans.txt',
+                ],
+                'answer area content'
+            );
+
+            $fs->create_file_from_string(
+                [
+                    'contextid' => $oldcontextid,
+                    'component' => 'question',
+                    'filearea' => 'answerfeedback',
+                    'itemid' => $ans->id,
+                    'filepath' => '/',
+                    'filename' => 'ansfb.txt',
+                ],
+                'answer feedback content'
+            );
+        }
+
+        // Combined feedback areas.
+        $fs->create_file_from_string(
+            [
+                'contextid' => $oldcontextid,
+                'component' => 'question',
+                'filearea' => 'correctfeedback',
+                'itemid' => $question->id,
+                'filepath' => '/',
+                'filename' => 'correct.txt',
+            ],
+            'correct'
+        );
+        $fs->create_file_from_string(
+            [
+                'contextid' => $oldcontextid,
+                'component' => 'question',
+                'filearea' => 'partiallycorrectfeedback',
+                'itemid' => $question->id,
+                'filepath' => '/',
+                'filename' => 'partial.txt',
+            ],
+            'partial'
+        );
+        $fs->create_file_from_string(
+            [
+                'contextid' => $oldcontextid,
+                'component' => 'question',
+                'filearea' => 'incorrectfeedback',
+                'itemid' => $question->id,
+                'filepath' => '/',
+                'filename' => 'incorrect.txt',
+            ],
+            'incorrect'
+        );
+
+        // Create a hint and add a file for it.
+        $hint = new \stdClass();
+        $hint->questionid = $question->id;
+        $hint->hint = 'a hint';
+        $hint->hintformat = FORMAT_MOODLE;
+        $hint->shownumcorrect = 0;
+        $hintid = $DB->insert_record('question_hints', $hint);
+        $fs->create_file_from_string(
+            [
+            'contextid' => $oldcontextid,
+            'component' => 'question',
+            'filearea' => 'hint',
+            'itemid' => $hintid,
+            'filepath' => '/',
+            'filename' => 'hint.txt',
+            ],
+            'hinttext'
+        );
+
+        // Destination context (different category).
+        $newcategory = $generator->create_question_category();
+        $newcontextid = $newcategory->contextid;
+
+        $qtype = new qtype_ordering();
+        $qtype->move_files($question->id, $oldcontextid, $newcontextid);
+
+        foreach ($answers as $ans) {
+            // Answer 'answer' files should been moved.
+            $oldfiles = $fs->get_area_files($oldcontextid, 'question', 'answer', $ans->id, 'id', false);
+            $this->assertEmpty($oldfiles);
+            $newfiles = $fs->get_area_files($newcontextid, 'question', 'answer', $ans->id, 'id', false);
+            $this->assertNotEmpty($newfiles);
+
+            // Answer feedback should have been moved.
+            $oldaf = $fs->get_area_files($oldcontextid, 'question', 'answerfeedback', $ans->id, 'id', false);
+            $this->assertEmpty($oldaf);
+            $newaf = $fs->get_area_files($newcontextid, 'question', 'answerfeedback', $ans->id, 'id', false);
+            $this->assertNotEmpty($newaf);
+        }
+
+        // Combined feedback and hint files should have been moved.
+        $this->assertEmpty($fs->get_area_files($oldcontextid, 'question', 'correctfeedback', $question->id, 'id', false));
+        $this->assertNotEmpty($fs->get_area_files($newcontextid, 'question', 'correctfeedback', $question->id, 'id', false));
+
+        $this->assertEmpty($fs->get_area_files($oldcontextid, 'question', 'partiallycorrectfeedback', $question->id, 'id', false));
+        $this->assertNotEmpty(
+            $fs->get_area_files(
+                $newcontextid,
+                'question',
+                'partiallycorrectfeedback',
+                $question->id,
+                'id',
+                false
+            )
+        );
+
+        $this->assertEmpty(
+            $fs->get_area_files(
+                $oldcontextid,
+                'question',
+                'incorrectfeedback',
+                $question->id,
+                'id',
+                false
+            )
+        );
+        $this->assertNotEmpty(
+            $fs->get_area_files(
+                $newcontextid,
+                'question',
+                'incorrectfeedback',
+                $question->id,
+                'id',
+                false
+            )
+        );
+
+        $this->assertEmpty($fs->get_area_files($oldcontextid, 'question', 'hint', $hintid, 'id', false));
+        $this->assertNotEmpty($fs->get_area_files($newcontextid, 'question', 'hint', $hintid, 'id', false));
+    }
+
+    /**
+     * Test that delete_files deletes question's files in questiontext,
+     * generalfeedback, answers, combined feedback and hints.
+     */
+    public function test_delete_files(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category();
+        $question = $generator->create_question('ordering', 'moodle', ['category' => $category->id]);
+
+        $contextid = $category->contextid;
+        $fs = get_file_storage();
+
+        // Add files to questiontext and generalfeedback.
+        $fs->create_file_from_string([
+            'contextid' => $contextid,
+            'component' => 'question',
+            'filearea' => 'questiontext',
+            'itemid' => $question->id,
+            'filepath' => '/',
+            'filename' => 'qtext.txt',
+        ], 'qtext');
+        $fs->create_file_from_string([
+            'contextid' => $contextid,
+            'component' => 'question',
+            'filearea' => 'generalfeedback',
+            'itemid' => $question->id,
+            'filepath' => '/',
+            'filename' => 'gfb.txt',
+        ], 'gfb');
+
+        // Answer files.
+        $answers = $DB->get_records('question_answers', ['question' => $question->id]);
+        foreach ($answers as $ans) {
+            $fs->create_file_from_string([
+                'contextid' => $contextid,
+                'component' => 'question',
+                'filearea' => 'answer',
+                'itemid' => $ans->id,
+                'filepath' => '/',
+                'filename' => 'ans.txt',
+            ], 'answer area content');
+            $fs->create_file_from_string([
+                'contextid' => $contextid,
+                'component' => 'question',
+                'filearea' => 'answerfeedback',
+                'itemid' => $ans->id,
+                'filepath' => '/',
+                'filename' => 'ansfb.txt',
+            ], 'answer feedback content');
+        }
+
+        // Combined feedback.
+        $fs->create_file_from_string(
+            [
+                'contextid' => $contextid,
+                'component' => 'question',
+                'filearea' => 'correctfeedback',
+                'itemid' => $question->id,
+                'filepath' => '/',
+                'filename' => 'correct.txt',
+            ],
+            'correct'
+        );
+
+        // Hint.
+        $hint = new \stdClass();
+        $hint->questionid = $question->id;
+        $hint->hint = 'a hint';
+        $hint->hintformat = FORMAT_MOODLE;
+        $hint->shownumcorrect = 0;
+        $hintid = $DB->insert_record('question_hints', $hint);
+        $fs->create_file_from_string(
+            [
+                'contextid' => $contextid,
+                'component' => 'question',
+                'filearea' => 'hint',
+                'itemid' => $hintid,
+                'filepath' => '/',
+                'filename' => 'hint.txt',
+            ],
+            'hinttext'
+        );
+
+        $qtype = new qtype_ordering();
+        $qtype->delete_files($question->id, $contextid);
+
+        // Questiontext and generalfeedback removed.
+        $this->assertEmpty($fs->get_area_files($contextid, 'question', 'questiontext', $question->id, 'id', false));
+        $this->assertEmpty($fs->get_area_files($contextid, 'question', 'generalfeedback', $question->id, 'id', false));
+
+        // Answer and answerfeedback removed.
+        foreach ($answers as $ans) {
+            $this->assertEmpty($fs->get_area_files($contextid, 'question', 'answer', $ans->id, 'id', false));
+            $this->assertEmpty($fs->get_area_files($contextid, 'question', 'answerfeedback', $ans->id, 'id', false));
+        }
+
+        // Combined feedback and hint files removed.
+        $this->assertEmpty($fs->get_area_files($contextid, 'question', 'correctfeedback', $question->id, 'id', false));
+        $this->assertEmpty($fs->get_area_files($contextid, 'question', 'hint', $hintid, 'id', false));
+    }
 }
