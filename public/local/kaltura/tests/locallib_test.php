@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/local/kaltura/API/KalturaTypes.php');
 /**
  * @group local_kaltura
  */
-class local_kaltura_locallib_testcase extends advanced_testcase {
+class locallib_test extends advanced_testcase {
     /**
      * A Dataprovider method, providing invalid data.
      */
