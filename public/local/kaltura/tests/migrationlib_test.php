@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/local/kaltura/migrationlib.php');
 /**
  * @group local_kaltura
  */
-class local_kaltura_migrationlib_testcase extends advanced_testcase {
+class migrationlib_test extends advanced_testcase {
     /**
      * Test initialization of config values.
      */
@@ -44,12 +44,12 @@ class local_kaltura_migrationlib_testcase extends advanced_testcase {
 
         $configsettings = get_config(KALTURA_PLUGIN_NAME);
 
-        $this->assertObjectHasAttribute('migrationstarted', $configsettings);
-        $this->assertObjectHasAttribute('existingcategoryrun', $configsettings);
-        $this->assertObjectHasAttribute('sharedcategoryrun', $configsettings);
-        $this->assertObjectHasAttribute('categoriescreated', $configsettings);
-        $this->assertObjectHasAttribute('entriesmigrated', $configsettings);
-        $this->assertObjectHasAttribute('kafcategoryrootid', $configsettings);
+        $this->assertObjectHasProperty('migrationstarted', $configsettings);
+        $this->assertObjectHasProperty('existingcategoryrun', $configsettings);
+        $this->assertObjectHasProperty('sharedcategoryrun', $configsettings);
+        $this->assertObjectHasProperty('categoriescreated', $configsettings);
+        $this->assertObjectHasProperty('entriesmigrated', $configsettings);
+        $this->assertObjectHasProperty('kafcategoryrootid', $configsettings);
         $this->assertEquals(0, $configsettings->migrationstarted);
         $this->assertEquals(0, $configsettings->existingcategoryrun);
         $this->assertEquals(0, $configsettings->sharedcategoryrun);
