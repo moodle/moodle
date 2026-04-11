@@ -1,0 +1,75 @@
+services:
+  webserver:
+    image: "tugboatqa/php:8.3.6-apache"
+    default: true
+    checkout_path: "/var/www/moodle"
+    depends_on:
+      - db
+    commands:
+      init:
+        - echo "****** initializing webserver *****"
+        - echo "****** installing required php extensions *****"
+        - apt-get update && apt-get install -y libzip-dev libldap2-dev libmemcached-dev libmsgpack-dev libpspell-dev unzip git libxml2-dev libcurl4-openssl-dev libxslt-dev
+        - pecl install redis solr
+        - docker-php-ext-install mysqli zip soap intl exif ldap ffi ftp gettext pspell shmop sockets sysvmsg sysvsem sysvshm xsl
+        - docker-php-ext-enable redis solr
+
+        - echo "****** initializing the submodules *****"
+        - git submodule update --init
+
+        - echo "****** Setting php config variables ******"
+        - echo "max_input_vars = 5000" >> /usr/local/etc/php/conf.d/ucsfcle.ini
+        - echo "post_max_size = 2G" >> /usr/local/etc/php/conf.d/ucsfcle.ini
+        - echo "upload_max_filesize = 2G" >> /usr/local/etc/php/conf.d/ucsfcle.ini
+
+        # Link the document root to the expected path.
+        - ln -snf "$TUGBOAT_ROOT" "${DOCROOT}"
+
+        #make required dirs and set permissions.
+        - mkdir /var/www/moodledata
+        - chmod 0777 /var/www/moodledata
+
+      update:
+        - echo "****** updating webserver *****"
+        - composer install --optimize-autoloader --ignore-platform-req=ext-zip --ignore-platform-req=ext-intl
+        - service apache2 start
+
+      build:
+        - echo "****** building webserver *****"
+        - chown www-data $DOCROOT
+        - |
+          sudo -u www-data php admin/cli/install.php \
+          --non-interactive --agree-license --lang=en \
+          --wwwroot=https://${TUGBOAT_DEFAULT_SERVICE_URL_HOST} \
+          --dataroot=/var/www/moodledata \
+          --dbtype=${MOODLE_DBTYPE} --dbhost=db --dbname=${MOODLE_DBNAME} --dbuser=${MOODLE_DBUSER} --dbpass=${MOODLE_DBPASS} --prefix=m_ \
+          --adminuser=${MOODLE_DBADMIN_NAME} --adminpass=${MOODLE_DBADMIN_PASS} \
+          --fullname=${TUGBOAT_PREVIEW_NAME} --shortname=PREVIEW --adminemail=${MOODLE_ADMIN_EMAIL}
+        - chown -R root $DOCROOT
+
+      online:
+        - php admin/tool/generator/cli/maketestsite.php --size=S --bypasscheck
+
+  db:
+    image: "tugboatqa/mariadb:11.4.5"
+    commands:
+      init:
+        - echo "*** intializing database service ***"
+        - mariadb -e "SET GLOBAL character_set_server=utf8mb4;
+          SET GLOBAL collation_server=utf8mb4_bin;
+          SET GLOBAL innodb_file_per_table=ON;
+          SET GLOBAL wait_timeout=28800;
+          SET GLOBAL max_allowed_packet=1073741824;
+          SET GLOBAL net_buffer_length=1048576;
+          SET GLOBAL innodb_buffer_pool_size=1073741824;"
+
+        - echo "max_allowed_packet=1073741824" >> /etc/mysql/conf.d/tugboat.cnf
+
+        - export MYSQL_ROOT_PASSWORD=${MOODLE_DBPASS}
+        - export MYSQL_DATABASE=${MOODLE_DBNAME}
+        - export MYSQL_USER=${MOODLE_DBUSER}
+        - export MYSQL_PASSWORD=${MOODLE_DBPASS}
+
+        - mariadb -e "CREATE DATABASE IF NOT EXISTS ${MOODLE_DBNAME};
+          GRANT ALL PRIVILEGES ON moodle.* TO '${MOODLE_DBNAME}'@'%' IDENTIFIED BY '${MOODLE_DBPASS}';
+          FLUSH PRIVILEGES;"
