@@ -154,4 +154,32 @@ final class cron_test extends \advanced_testcase {
 
         // phpcs:enable
     }
+
+    /**
+     * Test running failed adhoc tasks ignores the attemptsavailable filter.
+     */
+    public function test_run_failed_adhoc_tasks(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        require_once(__DIR__ . '/fixtures/task_fixtures.php');
+
+        // Create a standard test task.
+        $task = new \core\task\adhoc_test_task();
+        \core\task\manager::queue_adhoc_task($task);
+
+        // Force it into an exhausted, failed state.
+        $DB->set_field('task_adhoc', 'faildelay', 60);
+        $DB->set_field('task_adhoc', 'attemptsavailable', 0);
+
+        $this->assertEquals(1, $DB->count_records('task_adhoc'));
+
+        // Silence the output of the CLI runner.
+        ob_start();
+        cron::run_failed_adhoc_tasks();
+        ob_end_clean();
+
+        // The task should have run and been deleted.
+        $this->assertEquals(0, $DB->count_records('task_adhoc'));
+    }
 }
