@@ -23,11 +23,12 @@ services:
         - echo "upload_max_filesize = 2G" >> /usr/local/etc/php/conf.d/ucsfcle.ini
 
         # Link the document root to the expected path.
-        - ln -snf "$TUGBOAT_ROOT" "${DOCROOT}"
+        - ln -snf "$TUGBOAT_ROOT/public" "${DOCROOT}"
 
-        #make required dirs and set permissions.
+        # Make required dirs and set permissions, so that the webserver can write to moodledata.
         - mkdir /var/www/moodledata
-        - chmod 0777 /var/www/moodledata
+        - chown -R www-data:www-data /var/www/moodledata
+        - chmod 700 /var/www/moodledata
 
       update:
         - echo "****** updating webserver *****"
@@ -36,7 +37,8 @@ services:
 
       build:
         - echo "****** building webserver *****"
-        - chown www-data $DOCROOT
+        # Moodle will create the config.php file on install, so we need to make sure the webserver can write to the root directory.
+        - chown www-data:www-data /var/www/moodle
         - |
           sudo -u www-data php admin/cli/install.php \
           --non-interactive --agree-license --lang=en \
@@ -44,11 +46,12 @@ services:
           --dataroot=/var/www/moodledata \
           --dbtype=${MOODLE_DBTYPE} --dbhost=db --dbname=${MOODLE_DBNAME} --dbuser=${MOODLE_DBUSER} --dbpass=${MOODLE_DBPASS} --prefix=m_ \
           --adminuser=${MOODLE_DBADMIN_NAME} --adminpass=${MOODLE_DBADMIN_PASS} \
-          --fullname=${TUGBOAT_PREVIEW_NAME} --shortname=PREVIEW --adminemail=${MOODLE_ADMIN_EMAIL}
-        - chown -R root $DOCROOT
+          --fullname="${TUGBOAT_PREVIEW_NAME}" --shortname=PREVIEW --adminemail=${MOODLE_ADMIN_EMAIL}
+        - chown -R root:root /var/www/moodle
+        - chmod 644 /var/www/moodle/config.php
 
       online:
-        - php admin/tool/generator/cli/maketestsite.php --size=S --bypasscheck
+        - php public/admin/tool/generator/cli/maketestsite.php --size=S --bypasscheck
 
   db:
     image: "tugboatqa/mariadb:11.4.5"
