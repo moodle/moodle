@@ -1,0 +1,13 @@
+version: 2
+
+updates:
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "05:00"
+    # The limit on the number of maximum number of pull requests for version updates open at any time.
+    open-pull-requests-limit: 10
+
+    # PRs will target this branch (the branch in your repo)
+    target-branch: "UCSFCLE_501_STABLE"
