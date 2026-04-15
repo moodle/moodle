@@ -79,6 +79,11 @@ class mnet_peer {
             return true;
         }
 
+        $securityhelper = new \core\files\curl_security_helper();
+        if ($securityhelper->url_is_blocked($wwwroot)) {
+            throw new moodle_exception('curlsecurityurlblocked', 'admin');
+        }
+
         $hostname = mnet_get_hostname_from_uri($wwwroot);
         // Get the IP address for that host - if this fails, it will return the hostname string
         $ip_address = gethostbyname($hostname);
