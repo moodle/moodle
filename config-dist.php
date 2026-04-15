@@ -817,6 +817,8 @@ $CFG->admin = 'admin';
 //
 //      $CFG->maxgradesperpage = 200000;
 //
+// Maximum character length for a user profile description.
+//      define('USER_DESCRIPTION_MAX_LENGTH', 50000);
 //
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
