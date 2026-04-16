@@ -281,6 +281,9 @@ class media_videojs_plugin extends core_media_player_native {
         $result = [];
         // Youtube.
         $this->youtube = false;
+        // Reset before the YouTube early return to prevent ogvtech state leaking
+        // between sequential media embeds processed by the same plugin instance.
+        $this->ogvtech = false;
         if (count($urls) == 1 && get_config('media_videojs', 'youtube')) {
             $url = reset($urls);
 
