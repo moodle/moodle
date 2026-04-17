@@ -1,6 +1,16 @@
+[submodule "public/admin/tool/ilioscategoryassignment"]
+	path = public/admin/tool/ilioscategoryassignment
+	url = https://github.com/ilios/tool_ilioscategoryassignment
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
 [submodule "public/blocks/course_recent"]
 	path = public/blocks/course_recent
 	url = https://github.com/ucsf-education/moodle-block-course_recent
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
+[submodule "public/local/navbarhelpmenu"]
+	path = public/local/navbarhelpmenu
+	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
 [submodule "public/mod/attendance"]
@@ -12,8 +22,3 @@
 	url = https://github.com/drachels/moodle-mod_diary
 	branch = MOODLE_501_STABLE
 	tag = v5.0.0
-[submodule "public/local/navbarhelpmenu"]
-	path = public/local/navbarhelpmenu
-	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
-	branch = MOODLE_501_STABLE
-	tag = v5.1.0
