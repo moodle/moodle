@@ -47,42 +47,38 @@ final class mustache_template_finder_test extends \advanced_testcase {
                     'mod/assign/templates/',
                 ],
             ],
-            'plugin: mod_assign with classic' => [
+            'plugin: mod_assign with boost' => [
                 'component' => 'mod_assign',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'themeoverrides' => true,
                 'paths' => [
-                    'theme/classic/templates/mod_assign/',
                     'theme/boost/templates/mod_assign/',
                     'mod/assign/templates/',
                 ],
             ],
             'subsystem: core_user' => [
                 'component' => 'core_user',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'themeoverrides' => true,
                 'paths' => [
-                    'theme/classic/templates/core_user/',
                     'theme/boost/templates/core_user/',
                     'user/templates/',
                 ],
             ],
             'theme: theme_boost' => [
                 'component' => 'theme_boost',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'themeoverrides' => true,
                 'paths' => [
-                    'theme/classic/templates/theme_boost/',
                     'theme/boost/templates/theme_boost/',
                     'theme/boost/templates/',
                 ],
             ],
             'core' => [
                 'component' => 'core',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'themeoverrides' => true,
                 'paths' => [
-                    'theme/classic/templates/core/',
                     'theme/boost/templates/core/',
                     'lib/templates/',
                 ],
@@ -95,9 +91,9 @@ final class mustache_template_finder_test extends \advanced_testcase {
                     'mod/assign/templates/',
                 ],
             ],
-            'plugin: mod_assign with classic (without overrides)' => [
+            'plugin: mod_assign with boost (without overrides)' => [
                 'component' => 'mod_assign',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'themeoverrides' => false,
                 'paths' => [
                     'mod/assign/templates/',
@@ -105,7 +101,7 @@ final class mustache_template_finder_test extends \advanced_testcase {
             ],
             'subsystem: core_user (without overrides)' => [
                 'component' => 'core_user',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'themeoverrides' => false,
                 'paths' => [
                     'user/templates/',
@@ -113,7 +109,7 @@ final class mustache_template_finder_test extends \advanced_testcase {
             ],
             'theme: theme_boost (without overrides)' => [
                 'component' => 'theme_boost',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'themeoverrides' => false,
                 'paths' => [
                     'theme/boost/templates/',
@@ -121,7 +117,7 @@ final class mustache_template_finder_test extends \advanced_testcase {
             ],
             'core (without overrides)' => [
                 'component' => 'core',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'themeoverrides' => false,
                 'paths' => [
                     'lib/templates/',
@@ -159,6 +155,37 @@ final class mustache_template_finder_test extends \advanced_testcase {
     }
 
     /**
+     * Tests for get_template_directories_for_component using a child theme and its parents.
+     *
+     * @covers ::get_template_directories_for_component
+     */
+    public function test_get_template_directories_for_component_theme_hierarchy(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Use the fixture themes, where child has parent and boost as parent themes.
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes';
+
+        $dirs = mustache_template_finder::get_template_directories_for_component('mod_assign', 'child', true);
+        $this->assertEquals([
+            $CFG->dirroot . '/theme/child/templates/mod_assign/',
+            $CFG->themedir . '/child/templates/mod_assign/',
+            $CFG->dirroot . '/theme/parent/templates/mod_assign/',
+            $CFG->themedir . '/parent/templates/mod_assign/',
+            $CFG->dirroot . '/theme/boost/templates/mod_assign/',
+            $CFG->themedir . '/boost/templates/mod_assign/',
+            $CFG->dirroot . '/mod/assign/templates/',
+        ], $dirs);
+
+        // Theme overrides disabled: only the component directory is returned.
+        $dirs = mustache_template_finder::get_template_directories_for_component('mod_assign', 'child', false);
+        $this->assertEquals([
+            $CFG->dirroot . '/mod/assign/templates/',
+        ], $dirs);
+    }
+
+    /**
      * Tests for get_template_directories_for_component when dealing with an invalid component.
      *
      * @covers ::get_template_directories_for_component
@@ -166,7 +193,7 @@ final class mustache_template_finder_test extends \advanced_testcase {
     public function test_invalid_component_get_template_directories_for_component(): void {
         // Test something invalid.
         $this->expectException(\coding_exception::class);
-        mustache_template_finder::get_template_directories_for_component('octopus', 'classic');
+        mustache_template_finder::get_template_directories_for_component('octopus', 'boost');
     }
 
     /**
@@ -189,15 +216,10 @@ final class mustache_template_finder_test extends \advanced_testcase {
             ],
             'Template overridden by theme but child theme selected' => [
                 'template' => 'core_form/element-float-inline',
-                'theme' => 'classic',
+                'theme' => 'boost',
                 'location' => 'theme/boost/templates/core_form/element-float-inline.mustache',
             ],
-            'Template overridden by child theme' => [
-                'template' => 'core/full_header',
-                'theme' => 'classic',
-                'location' => 'theme/classic/templates/core/full_header.mustache',
-            ],
-            'Template overridden by child theme but tested against default theme' => [
+            'Template not overridden by theme and tested against default theme' => [
                 'template' => 'core/full_header',
                 'theme' => '',
                 'location' => 'lib/templates/full_header.mustache',
@@ -213,22 +235,22 @@ final class mustache_template_finder_test extends \advanced_testcase {
                 'location' => 'user/templates/status_details.mustache',
             ],
             'Theme own template' => [
-                'template' => 'theme_classic/columns',
+                'template' => 'theme_boost/columns1',
                 'theme' => '',
-                'location' => 'theme/classic/templates/columns.mustache',
+                'location' => 'theme/boost/templates/columns1.mustache',
             ],
             'Theme overridden template against that theme' => [
-                'template' => 'theme_classic/navbar',
-                'theme' => 'classic',
-                'location' => 'theme/classic/templates/navbar.mustache',
+                'template' => 'theme_boost/navbar',
+                'theme' => 'boost',
+                'location' => 'theme/boost/templates/navbar.mustache',
             ],
             // Note: This one looks strange but is correct. It is legitimate to request theme's component template in
             // the context of another theme. For example, this is used by child themes making use of parent theme
             // templates.
             'Theme overridden template against the default theme' => [
-                'template' => 'theme_classic/navbar',
+                'template' => 'theme_boost/navbar',
                 'theme' => '',
-                'location' => 'theme/classic/templates/navbar.mustache',
+                'location' => 'theme/boost/templates/navbar.mustache',
             ],
             'Template overridden by theme but original template requested using exclamation mark' => [
                 'template' => 'core/sticky_footer!',
@@ -236,9 +258,9 @@ final class mustache_template_finder_test extends \advanced_testcase {
                 'location' => 'lib/templates/sticky_footer.mustache',
             ],
             'Template overridden by theme which is explicitly specified' => [
-                'template' => 'theme_classic/core/full_header',
+                'template' => 'theme_boost/core/sticky_footer',
                 'theme' => '',
-                'location' => 'theme/classic/templates/core/full_header.mustache',
+                'location' => 'theme/boost/templates/core/sticky_footer.mustache',
             ],
         ];
     }
@@ -268,7 +290,7 @@ final class mustache_template_finder_test extends \advanced_testcase {
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage('Coding error detected, it must be fixed by a programmer: ' .
                                       'Component was not valid: core_octopus');
-        mustache_template_finder::get_template_filepath('core_octopus/octopus', 'classic');
+        mustache_template_finder::get_template_filepath('core_octopus/octopus', 'boost');
     }
 
     /**
@@ -279,7 +301,7 @@ final class mustache_template_finder_test extends \advanced_testcase {
     public function test_missing_template_get_template_filepath(): void {
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage('Sorry, the requested file could not be found (core/octopus)');
-        mustache_template_finder::get_template_filepath('core/octopus', 'classic');
+        mustache_template_finder::get_template_filepath('core/octopus', 'boost');
     }
 
     /**
@@ -290,6 +312,6 @@ final class mustache_template_finder_test extends \advanced_testcase {
     public function test_invalid_name_get_template_filepath(): void {
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage('Templates names must be specified as "componentname/templatename" (octopus requested)');
-        mustache_template_finder::get_template_filepath('octopus', 'classic');
+        mustache_template_finder::get_template_filepath('octopus', 'boost');
     }
 }

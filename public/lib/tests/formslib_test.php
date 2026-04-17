@@ -574,7 +574,7 @@ final class formslib_test extends \advanced_testcase {
         global $CFG;
         $this->resetAfterTest(true);
 
-        $CFG->theme = 'classic';
+        $CFG->theme = 'boost';
         $form = new formslib_multiple_modgrade_form();
         ob_start();
         $form->display();
@@ -602,7 +602,7 @@ final class formslib_test extends \advanced_testcase {
     public function test_persistantrreeze_element(): void {
         global $CFG;
         $this->resetAfterTest(true);
-        $CFG->theme = 'classic';
+        $CFG->theme = 'boost';
 
         $form = new formslib_persistantrreeze_element();
         ob_start();

@@ -150,7 +150,8 @@ final class theme_config_test extends advanced_testcase {
         global $CFG;
 
         $this->resetAfterTest();
-        $theme = theme_config::load('classic');
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes/';
+        $theme = theme_config::load('child');
         $editorscss = $CFG->dirroot.'/theme/boost/scss/editor.scss';
 
         $this->assertTrue(file_exists($editorscss));

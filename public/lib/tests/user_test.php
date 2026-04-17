@@ -685,7 +685,7 @@ final class user_test extends \advanced_testcase {
         // Test against theme property choices.
         $choices = \core_user::get_property_choices('theme');
         $this->assertArrayHasKey('boost', $choices);
-        $this->assertArrayHasKey('classic', $choices);
+        $this->assertArrayNotHasKey('classic', $choices);
         $this->assertArrayNotHasKey('unknowntheme', $choices);
         $this->assertArrayNotHasKey('wrongtheme', $choices);
 

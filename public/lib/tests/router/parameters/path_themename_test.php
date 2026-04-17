@@ -114,7 +114,7 @@ final class path_themename_test extends route_testcase {
         return [
             // Note: This is handled with a regex, not an actual lookup.
             ['boost'],
-            ['classic'],
+            ['mytheme'],
             ['blueberry_jam'],
             ['abc-def'],
             ['1theme'],

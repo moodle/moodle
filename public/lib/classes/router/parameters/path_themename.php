@@ -48,8 +48,8 @@ class path_themename extends \core\router\schema\parameters\path_parameter imple
                 value: 'boost',
             ),
             new example(
-                name: 'The Classic theme',
-                value: 'classic',
+                name: 'A custom theme name',
+                value: 'mytheme',
             ),
         ];
 

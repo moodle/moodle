@@ -60,6 +60,7 @@ class theme extends base {
 
         $DB->set_field('course', 'theme', '', array('theme'=>$this->name));
         $DB->set_field('course_categories', 'theme', '', array('theme'=>$this->name));
+        $DB->set_field('cohort', 'theme', '', array('theme' => $this->name));
         $DB->set_field('user', 'theme', '', array('theme'=>$this->name));
         $DB->set_field('mnet_host', 'theme', '', array('theme'=>$this->name));
 

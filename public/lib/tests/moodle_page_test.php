@@ -736,9 +736,12 @@ final class moodle_page_test extends \advanced_testcase {
      * @dataProvider get_user_theme_provider
      */
     public function test_cohort_get_user_theme($usertheme, $sitetheme, $cohortthemes, $expected): void {
-        global $DB, $PAGE, $USER;
+        global $CFG, $DB, $PAGE, $USER;
 
         $this->resetAfterTest();
+
+        // Use the fixture themes to test the precedence between different themes.
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes/';
 
         // Enable cohort themes.
         set_config('allowuserthemes', 1);
@@ -747,8 +750,10 @@ final class moodle_page_test extends \advanced_testcase {
         $systemctx = \context_system::instance();
 
         set_config('theme', $sitetheme);
-        // Create user.
-        $user = $this->getDataGenerator()->create_user(array('theme' => $usertheme));
+        // Create user. The theme is set directly as the fixture themes are not returned
+        // by get_list_of_themes(), which the user field validation checks against.
+        $user = $this->getDataGenerator()->create_user();
+        $DB->set_field('user', 'theme', $usertheme, ['id' => $user->id]);
 
         // Create cohorts and add user as member.
         $cohorts = array();
@@ -797,41 +802,41 @@ final class moodle_page_test extends \advanced_testcase {
                 'usertheme' => '',
                 'sitetheme' => 'boost',
                 'cohortthemes' => [
-                    'classic',
+                    'parent',
                 ],
-                'expected' => 'classic',
+                'expected' => 'parent',
             ],
             'User member of one cohort which has a theme set, and one without a theme' => [
                 'usertheme' => '',
                 'sitetheme' => 'boost',
                 'cohortthemes' => [
-                    'classic',
+                    'parent',
                     '',
                 ],
-                'expected' => 'classic',
+                'expected' => 'parent',
             ],
             'User member of one cohort which has a theme set, and one with a different theme' => [
                 'usertheme' => '',
                 'sitetheme' => 'boost',
                 'cohortthemes' => [
-                    'classic',
-                    'someother',
+                    'parent',
+                    'child',
                 ],
                 'expected' => 'boost',
             ],
             'User with a theme but not a member of any cohort' => [
-                'usertheme' => 'classic',
+                'usertheme' => 'parent',
                 'sitetheme' => 'boost',
                 'cohortthemes' => [],
-                'expected' => 'classic',
+                'expected' => 'parent',
             ],
             'User with a theme and member of one cohort which has a theme set' => [
-                'usertheme' => 'classic',
+                'usertheme' => 'parent',
                 'sitetheme' => 'boost',
                 'cohortthemes' => [
-                    'boost',
+                    'child',
                 ],
-                'expected' => 'classic',
+                'expected' => 'parent',
             ],
         ];
     }

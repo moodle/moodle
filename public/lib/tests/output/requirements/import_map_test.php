@@ -293,7 +293,7 @@ final class import_map_test extends \advanced_testcase {
     public function test_non_themable_import_generates_single_entry(): void {
         $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
-        $map->set_available_themes(['boost', 'classic']);
+        $map->set_available_themes(['boost', 'mytheme']);
         $map->add_import('mylib', path: 'lib/mylib/index', themable: false);
 
         $data = $map->jsonSerialize();
@@ -301,7 +301,7 @@ final class import_map_test extends \advanced_testcase {
         $this->assertArrayHasKey('mylib', $data['imports']);
         $this->assertArrayNotHasKey('mylib/theme-original', $data['imports']);
         $this->assertArrayNotHasKey('mylib/theme-boost', $data['imports']);
-        $this->assertArrayNotHasKey('mylib/theme-classic', $data['imports']);
+        $this->assertArrayNotHasKey('mylib/theme-mytheme', $data['imports']);
     }
 
     /**
@@ -313,7 +313,7 @@ final class import_map_test extends \advanced_testcase {
         return [
             'no current theme uses plain specifier in URL' => [null, 'mymod/'],
             'current theme boost redirects default to theme-boost sub-path' => ['boost', 'mymod/theme-boost/'],
-            'current theme classic redirects default to theme-classic sub-path' => ['classic', 'mymod/theme-classic/'],
+            'current theme mytheme redirects default to theme-mytheme sub-path' => ['mytheme', 'mymod/theme-mytheme/'],
         ];
     }
 
@@ -354,11 +354,11 @@ final class import_map_test extends \advanced_testcase {
             'single available theme generates its own entry alongside original' => [
                 'availablethemes' => ['boost'],
                 'expectedkeys' => ['mymod/', 'mymod/theme-original/', 'mymod/theme-boost/'],
-                'absentkeys' => ['mymod/theme-classic/'],
+                'absentkeys' => ['mymod/theme-mytheme/'],
             ],
             'multiple available themes generate all entries' => [
-                'availablethemes' => ['boost', 'classic'],
-                'expectedkeys' => ['mymod/', 'mymod/theme-original/', 'mymod/theme-boost/', 'mymod/theme-classic/'],
+                'availablethemes' => ['boost', 'mytheme'],
+                'expectedkeys' => ['mymod/', 'mymod/theme-original/', 'mymod/theme-boost/', 'mymod/theme-mytheme/'],
                 'absentkeys' => [],
             ],
         ];

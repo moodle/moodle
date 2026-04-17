@@ -597,8 +597,10 @@ final class blocklib_test extends \advanced_testcase {
         // There should be no blocks in the DB.
 
         $PAGE->reset_theme_and_output();
-        // Change to a theme with undeletable blocks.
-        $CFG->theme = 'classic';
+        // Change to a fixture theme which does not define requiredblocks, so the
+        // default required blocks (navigation and settings) apply.
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes';
+        $CFG->theme = 'parent';
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
             $context, 'page-type');
@@ -633,6 +635,7 @@ final class blocklib_test extends \advanced_testcase {
         $this->assertCount(2, $blocks);
 
         $requiredbytheme = $blockmanager->get_required_by_theme_block_types();
+        $this->assertEquals(['navigation', 'settings'], $requiredbytheme);
         foreach ($requiredbytheme as $blockname) {
             $instance = $DB->get_record('block_instances', array('blockname' => $blockname));
             $this->assertEquals(1, $instance->requiredbytheme);
@@ -851,14 +854,15 @@ final class blocklib_test extends \advanced_testcase {
         $this->assertContains('settings', $blocks);
         $this->assertContains('course_list', $blocks);
 
-        // Change to a theme without unaddable blocks.
+        // Change to a fixture theme which does not configure any unaddable blocks.
         $PAGE->reset_theme_and_output();
-        $CFG->theme = 'classic';
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes';
+        $CFG->theme = 'parent';
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager([$regionname], $context, 'page-type');
         $blockmanager->load_blocks();
         $blocks = $blockmanager->get_unaddable_by_theme_block_types();
-        // Assert that no blocks are excluded for classic theme.
+        // Assert that no blocks are excluded for a theme without unaddable blocks.
         $this->assertEmpty($blocks);
     }
 }
