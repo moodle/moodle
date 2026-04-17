@@ -833,9 +833,12 @@ final class lib_test extends \advanced_testcase {
      * Create a cohort with allowcohortthemes enabled/disabled.
      */
     public function test_cohort_add_theme_cohort(): void {
-        global $DB;
+        global $CFG, $DB;
 
         $this->resetAfterTest();
+
+        // Use the fixture themes so cohort themes can differ from the site theme.
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes';
 
         // Theme is added when allowcohortthemes is enabled.
         set_config('allowcohortthemes', 1);
@@ -843,7 +846,7 @@ final class lib_test extends \advanced_testcase {
 
         $systemctx = \context_system::instance();
         $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 1',
-            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'classic'));
+            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'parent'));
 
         $id = cohort_add_cohort($cohort1);
         $this->assertNotEmpty($id);
@@ -862,7 +865,7 @@ final class lib_test extends \advanced_testcase {
         set_config('allowcohortthemes', 0);
 
         $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 2',
-            'idnumber' => 'testid2', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'classic'));
+            'idnumber' => 'testid2', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'parent'));
 
         $id = cohort_add_cohort($cohort2);
         $this->assertNotEmpty($id);
@@ -875,9 +878,12 @@ final class lib_test extends \advanced_testcase {
      * Update a cohort with allowcohortthemes enabled/disabled.
      */
     public function test_cohort_update_theme_cohort(): void {
-        global $DB;
+        global $CFG, $DB;
 
         $this->resetAfterTest();
+
+        // Use the fixture themes so cohort themes can differ from the site theme.
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes';
 
         // Enable cohort themes.
         set_config('allowcohortthemes', 1);
@@ -885,14 +891,14 @@ final class lib_test extends \advanced_testcase {
 
         $systemctx = \context_system::instance();
         $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid' => $systemctx->id, 'name' => 'test cohort 1',
-            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'classic'));
+            'idnumber' => 'testid1', 'description' => 'test cohort desc', 'descriptionformat' => FORMAT_HTML, 'theme' => 'parent'));
         $id = cohort_add_cohort($cohort1);
         $this->assertNotEmpty($id);
 
         // Theme is updated when allowcohortthemes is enabled.
         $cohort1 = $DB->get_record('cohort', array('id' => $id));
         $cohort1->name = 'test cohort 1 updated';
-        $cohort1->theme = 'classic';
+        $cohort1->theme = 'child';
         cohort_update_cohort($cohort1);
         $updatedcohort = $DB->get_record('cohort', array('id' => $id));
         $this->assertEquals($cohort1->contextid, $updatedcohort->contextid);
@@ -904,7 +910,7 @@ final class lib_test extends \advanced_testcase {
         // Theme is not updated neither overwritten when allowcohortthemes is disabled.
         set_config('allowcohortthemes', 0);
         $cohort2 = $DB->get_record('cohort', array('id' => $id));
-        $cohort2->theme = 'classic';
+        $cohort2->theme = 'parent';
         cohort_update_cohort($cohort2);
         $updatedcohort = $DB->get_record('cohort', array('id' => $id));
         $this->assertEquals($cohort2->contextid, $updatedcohort->contextid);
