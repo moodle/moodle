@@ -44,7 +44,7 @@ final class configexecutable_test extends \advanced_testcase {
         global $CFG;
         $this->resetAfterTest();
 
-        $CFG->theme = 'classic';
+        $CFG->theme = 'boost';
         $executable = new configexecutable('test1', 'Text 1', 'Help Path', '');
 
         // Check for an invalid path.
