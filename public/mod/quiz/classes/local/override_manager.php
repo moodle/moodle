@@ -38,6 +38,9 @@ class override_manager {
     /** @var array quiz setting keys that can be overwritten **/
     private const OVERRIDEABLE_QUIZ_SETTINGS = ['timeopen', 'timeclose', 'timelimit', 'attempts', 'password'];
 
+    /** @var array override fields that are numeric and can validly be 0 **/
+    private const OVERRIDE_NUMERIC_FIELDS = ['attempts', 'timelimit', 'timeopen', 'timeclose'];
+
     /**
      * Create override manager
      *
@@ -611,12 +614,13 @@ class override_manager {
 
             // If the formdata is empty, set it to null.
             // This avoids putting 0, false, or '' into the DB since the override logic expects null.
-            // Attempts is the exception, it can have a integer value of '0', so we use is_numeric instead.
-            if ($key != 'attempts' && empty($formdata[$key])) {
+            if (!in_array($key, self::OVERRIDE_NUMERIC_FIELDS, true) && empty($formdata[$key])) {
                 $formdata[$key] = null;
             }
 
-            if ($key == 'attempts' && !is_numeric($formdata[$key])) {
+            // Few fields like attempts, timelimit, timeopen and timeclose are exceptions, they can have an integer value of '0',
+            // so we use is_numeric instead.
+            if (in_array($key, self::OVERRIDE_NUMERIC_FIELDS, true) && !is_numeric($formdata[$key])) {
                 $formdata[$key] = null;
             }
         }
