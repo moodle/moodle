@@ -1,11 +1,11 @@
 @theme_boost
 Feature: Course sections selector is not available on boost theme
-  In order to view course sections selector
+  In order to navigate the course using the course index drawer
   As admin
-  I need to use the classic theme
+  I need to confirm the course section selector is not shown in the boost theme
 
-  # Please note: This is a sister test to "Use the course section selector in classic theme" to confirm
-  # that the "Jump to" menu does not exist on the section page.
+  # Confirm that the "Jump to" menu does not exist on the section page, as the boost
+  # theme provides the course index drawer instead.
   Scenario Outline: Course sections selector is not available on boost theme regardless of the course format
     Given the following "courses" exist:
       | fullname | shortname | format         | coursedisplay | initsections |
