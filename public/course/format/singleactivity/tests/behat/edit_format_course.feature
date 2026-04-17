@@ -32,7 +32,7 @@ Feature: Edit format course to Single Activity format
     And I should see "Forum 1" in the "New subsection" "section"
 
   Scenario: Change activity type in Single activity course format
-    # Navigate to any course page, like groups, to guarantee that Course settings are displayed in boost and classic themes.
+    # Navigate to any course page, like groups, to guarantee that Course settings are displayed in boost-based themes.
     Given I am on the "Course 1" "groups" page logged in as "teacher1"
     When I navigate to "Settings" in current page administration
     # If there is an existing activity, it will be used as main activity.

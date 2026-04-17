@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/completionlib.php');
 redirect_if_major_upgrade_required();
 
 $sectionid = required_param('id', PARAM_INT);
-// This parameter is used by the classic theme to force editing on.
+// This parameter is used by legacy non-drawer themes to force editing on.
 $edit = optional_param('edit', -1, PARAM_BOOL);
 
 if (!$section = $DB->get_record('course_sections', ['id' => $sectionid], '*')) {
@@ -118,7 +118,7 @@ $PAGE->set_other_editing_capability('moodle/course:movesections');
 
 $renderer = $PAGE->get_renderer('format_' . $course->format);
 
-// This is used by the Classic theme to change the editing mode based on the 'edit' parameter value.
+// This supports legacy non-drawer themes using the 'edit' parameter to toggle editing mode.
 if (!isset($USER->editing)) {
     $USER->editing = 0;
 }
@@ -137,7 +137,7 @@ if ($PAGE->user_allowed_editing()) {
     }
 }
 
-// This is used by the Classic theme, to display the Turn editing on/off button.
+// This supports legacy non-drawer themes, to display the Turn editing on/off button.
 // We are currently keeping the button here from 1.x to help new teachers figure out what to do, even though the link also appears
 // in the course admin block. It also means you can back out of a situation where you removed the admin block.
 if ($PAGE->user_allowed_editing()) {
