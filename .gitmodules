@@ -2,3 +2,8 @@
 	path = public/mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
 	branch = MOODLE_501_STABLE
+[submodule "public/local/navbarhelpmenu"]
+	path = public/local/navbarhelpmenu
+	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
