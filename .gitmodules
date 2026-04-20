@@ -7,9 +7,13 @@
 	path = public/mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
 	branch = MOODLE_501_STABLE
+[submodule "public/mod/diary"]
+	path = public/mod/diary
+	url = https://github.com/drachels/moodle-mod_diary
+	branch = MOODLE_501_STABLE
+	tag = v5.0.0
 [submodule "public/local/navbarhelpmenu"]
 	path = public/local/navbarhelpmenu
 	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
-
