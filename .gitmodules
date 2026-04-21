@@ -3,6 +3,11 @@
 	url = https://github.com/ilios/tool_ilioscategoryassignment
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/blocks/checklist"]
+	path = public/blocks/checklist
+	url = https://github.com/davosmith/moodle-block_checklist
+	branch = MOODLE_500_STABLE
+	tag = 4.0.0.1
 [submodule "public/blocks/course_recent"]
 	path = public/blocks/course_recent
 	url = https://github.com/ucsf-education/moodle-block-course_recent
