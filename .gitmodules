@@ -8,6 +8,11 @@
 	url = https://github.com/ucsf-education/moodle-block-course_recent
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/enrol/ilios"]
+	path = public/enrol/ilios
+	url = https://github.com/ilios/moodle-enrol-ilios
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
 [submodule "public/local/navbarhelpmenu"]
 	path = public/local/navbarhelpmenu
 	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
