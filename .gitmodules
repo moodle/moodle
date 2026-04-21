@@ -1,3 +1,8 @@
+[submodule "public/admin/tool/ilioscategoryassignment"]
+	path = public/admin/tool/ilioscategoryassignment
+	url = https://github.com/ilios/tool_ilioscategoryassignment
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
 [submodule "public/blocks/course_recent"]
 	path = public/blocks/course_recent
 	url = https://github.com/ucsf-education/moodle-block-course_recent
@@ -17,6 +22,11 @@
 	path = public/mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
 	branch = MOODLE_501_STABLE
+[submodule "public/mod/checklist"]
+	path = public/mod/checklist
+	url = https://github.com/davosmith/moodle-checklist
+	branch = MOODLE_500_STABLE
+	tag = 4.1.0.7
 [submodule "public/mod/diary"]
 	path = public/mod/diary
 	url = https://github.com/drachels/moodle-mod_diary
@@ -25,5 +35,10 @@
 [submodule "public/theme/ucsf"]
 	path = public/theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
+[submodule "public/question/type/knowledgecheck"]
+	path = public/question/type/knowledgecheck
+	url = https://github.com/ucsf-education/knowledgecheck
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
