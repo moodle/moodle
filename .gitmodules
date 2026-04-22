@@ -45,7 +45,7 @@
 	path = public/theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_501_STABLE
-	tag = v5.1.0
+	tag = v5.1.1
 [submodule "public/question/type/knowledgecheck"]
 	path = public/question/type/knowledgecheck
 	url = https://github.com/ucsf-education/knowledgecheck
