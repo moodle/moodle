@@ -43,17 +43,37 @@ class refresh_subscription_cache_adhoc extends \core\task\adhoc_task {
     public function execute() {
         global $CFG;
 
+        mtrace('tool_mobile: Running adhoc subscription cache refresh scheduled task...');
         if (empty($CFG->enablemobilewebservice)) {
             mtrace('tool_mobile: adhoc task not running, mobile app is not enabled.');
             return;
         }
 
         // Force a fresh request to the Apps Portal, ignoring any cached value.
-        $data = api::get_subscription_information(false, true);
-        if ($data === null) {
-            mtrace('tool_mobile: adhoc subscription cache refresh failed.');
+        $cache = \cache::make('tool_mobile', 'subscriptioninfo');
+        $cachedata = $cache->get(0);
+        if (is_array($cachedata) && isset($cachedata['subscription']['plan'])) {
+            mtrace('tool_mobile: previous cache plan: ' . $cachedata['subscription']['plan'] . '.');
         } else {
-            mtrace('tool_mobile: adhoc subscription cache refreshed.');
+            mtrace('tool_mobile: previous cache plan: unknown.');
+        }
+
+        $errormessage = '';
+        $data = api::get_subscription_information(false, true, 10, $errormessage);
+        if ($data === null) {
+            mtrace('tool_mobile: subscription cache refresh failed.');
+            if (!empty($errormessage)) {
+                mtrace('tool_mobile: ' . $errormessage);
+            }
+        } else if (!empty($errormessage)) {
+            mtrace('tool_mobile: ' . $errormessage);
+            mtrace('tool_mobile: scheduled subscription cache refresh failed, serving previously cached data.');
+        } else {
+            mtrace(
+                'tool_mobile: scheduled subscription cache refreshed. ' .
+                'Plan: ' . ($data['subscription']['plan'] ?? 'unknown')
+            );
+            mtrace('tool_mobile: scheduled subscription cache refresh completed successfully.');
         }
     }
 }

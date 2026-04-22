@@ -32,6 +32,7 @@
     * extraclasses Additional classes to apply to the notification.
     * closebutton Whether a close button should be displayed to dismiss the message.
     * announce Whether the notification should be announced to screen readers.
+    * headinglevel The optional heading level to use for the title (1-6). Defaults to 3.
 
     Example context (json):
     {
@@ -40,6 +41,7 @@
         "announce": 1,
         "extraclasses": "foo bar",
         "title": "Notification title",
+        "headinglevel": 4,
         "titleicon": {
             "icon": "i/circleinfo",
             "component": "core"
@@ -55,9 +57,9 @@
                     {{#pix}}{{icon}}, {{component}}{{/pix}}
                 </span>
             {{/titleicon}}
-            <h3 class="h6 mb-0">
+            <h{{#headinglevel}}{{.}}{{/headinglevel}}{{^headinglevel}}3{{/headinglevel}} class="h6 mb-0">
                 <span class="align-middle">{{.}}</span>
-            </h3>
+            </h{{#headinglevel}}{{.}}{{/headinglevel}}{{^headinglevel}}3{{/headinglevel}}>
         </div>
     {{/title}}
     {{{ message }}}

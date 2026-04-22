@@ -1,0 +1,9 @@
+issueNumber: MDL-88458
+notes:
+  core:
+    - message: >-
+        The core/notification_base Mustache template now accepts an optional
+        integer headinglevel context value to control the heading level used for
+        the notification title. If not specified, the title continues to be
+        rendered using the previous default heading level.
+      type: changed

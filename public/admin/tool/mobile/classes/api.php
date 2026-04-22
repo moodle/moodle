@@ -896,14 +896,23 @@ class api {
      * @param bool $forcecache If true, return only cached data. Has priority over $ignorecache.
      * @param bool $ignorecache If true, ignore cached data and request information from the Application Portal.
      * @param int $timeout Time in seconds to wait for the Apps Portal response before giving up. Defaults to 10 seconds.
-     * @return array Subscription information
+     * @param string $errormessage Output parameter: set to the error that occurred while contacting the Apps
+     *     Portal, or left as an empty string when the request succeeded (or cache was used without contacting it).
+     * @return array|null Subscription information, or null if it could not be retrieved and no cached fallback is available.
      */
-    public static function get_subscription_information($forcecache = false, $ignorecache = false, $timeout = 10): ?array {
+    public static function get_subscription_information(
+        $forcecache = false,
+        $ignorecache = false,
+        $timeout = 10,
+        &$errormessage = ''
+    ): ?array {
         global $CFG;
+
+        $errormessage = '';
 
         require_once($CFG->libdir . '/filelib.php');
 
-        $timeout = min(30, $timeout);
+        $timeout = max(1, min(30, $timeout));
         // Manage cache of the subscription information to avoid requesting it too often to the Moodle Apps Portal.
         $cache = \cache::make('tool_mobile', 'subscriptioninfo');
         $subscriptiondata = $cache->get(0);
@@ -964,37 +973,33 @@ class api {
 
         $serverurl = static::MOODLE_APPS_PORTAL_URL . "/lib/ajax/service-nologin.php?lang=$settingslang";
         $query = 'args=' . urlencode(json_encode($args));
-        $wsresponse = @json_decode($curl->post($serverurl, $query), true);
+        $response = $curl->post($serverurl, $query);
 
+        $wsresponse = @json_decode($response, true);
         $info = $curl->get_info();
+
         if ($curlerrno = $curl->get_errno()) {
             // CURL connection error.
-            debugging("Unexpected response from the Moodle Apps Portal server, CURL error number: $curlerrno");
-            if (!$ignorecache && $subscriptiondata !== false) {
-                return $subscriptiondata;
-            }
-            return null;
+            $errormessage = "Unexpected response from the Moodle Apps Portal server, CURL error number: $curlerrno";
         } else if (!empty($curl->error)) {
             // CURL error without an error number.
-            debugging('Unexpected response from the Moodle Apps Portal server, CURL error: ' . $curl->error);
-            if (!$ignorecache && $subscriptiondata !== false) {
-                return $subscriptiondata;
-            }
-            return null;
+            $errormessage = 'Unexpected response from the Moodle Apps Portal server, CURL error: ' . $curl->error;
         } else if ($info['http_code'] != 200) {
             // Unexpected error from server.
-            debugging('Unexpected response from the Moodle Apps Portal server, HTTP code:' . $info['http_code']);
-            if (!$ignorecache && $subscriptiondata !== false) {
-                return $subscriptiondata;
-            }
-            return null;
+            $errormessage = 'Unexpected response from the Moodle Apps Portal server, HTTP code:' . $info['http_code'];
+        } else if (!is_array($wsresponse) || !isset($wsresponse[0])) {
+            // The response wasn't valid JSON (or wasn't shaped as expected).
+            $errormessage = 'Unexpected response from the Moodle Apps Portal server: invalid JSON received.';
         } else if (!empty($wsresponse[0]['error'])) {
             // Unexpected error from Moodle Apps Portal.
-            debugging('Unexpected response from the Moodle Apps Portal server:' . json_encode($wsresponse[0]));
-            return null;
+            $errormessage = 'Unexpected response from the Moodle Apps Portal server:' . json_encode($wsresponse[0]);
         } else if (empty($wsresponse[0]['data'])) {
-            debugging('Unexpected response from the Moodle Apps Portal server:' . json_encode($wsresponse));
-            return null;
+            $errormessage = 'Unexpected response from the Moodle Apps Portal server:' . json_encode($wsresponse);
+        }
+
+        if (!empty($errormessage)) {
+            debugging($errormessage);
+            return $subscriptiondata !== false ? $subscriptiondata : null;
         }
 
         $cache->set(0, $wsresponse[0]['data']);
