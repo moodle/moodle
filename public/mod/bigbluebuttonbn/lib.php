@@ -329,8 +329,24 @@ function bigbluebuttonbn_reset_userdata(stdClass $data) {
     $items = reset::reset_course_items();
     $status = [];
 
-    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
-    // See MDL-9367.
+    $componentstr = get_string('modulenameplural', 'bigbluebuttonbn');
+
+    // Updating dates - shift may be negative too.
+    if (!empty($data->timeshift)) {
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+        shift_course_mod_dates('bigbluebuttonbn', [
+            'openingtime',
+            'closingtime',
+        ], $data->timeshift, $data->courseid);
+
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('date'),
+            'error' => false,
+        ];
+    }
+
     if (array_key_exists('recordings', $items) && !empty($data->reset_bigbluebuttonbn_recordings)) {
         // Remove all the recordings from a BBB server that are linked to the room/activities in this course.
         reset::reset_recordings($data->courseid);
