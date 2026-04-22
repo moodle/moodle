@@ -2064,6 +2064,9 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         // Delete all events in the category.
         $DB->delete_records('event', array('categoryid' => $this->id));
 
+        // Delete all event subscriptions in the category.
+        $DB->delete_records('event_subscriptions', ['categoryid' => $this->id]);
+
         // Finally delete the category and it's context.
         $categoryrecord = $this->get_db_record();
         $DB->delete_records('course_categories', array('id' => $this->id));
