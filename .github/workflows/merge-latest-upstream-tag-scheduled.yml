@@ -1,0 +1,34 @@
+name: Scheduled Merge Latest Moodle Upstream Tag and Create Update PRs
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # Every day at 6:00 AM
+      timezone: 'America/Los_Angeles'
+
+jobs:
+  sync:
+    name: Update ${{ matrix.target }} to latest upstream ${{ matrix.version }}.x release from ${{ matrix.upstream }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: "Moodle 4.5"
+            upstream: MOODLE_405_STABLE
+            target: UCSFCLE_405_STABLE
+            assignees: ctam
+            reviewers: ucsf-education/moodlecodereviewers
+
+          - version: "Moodle 5.1"
+            upstream: MOODLE_501_STABLE
+            target: UCSFCLE_501_STABLE
+            assignees: ctam
+            reviewers: ucsf-education/moodlecodereviewers
+
+    uses: ./.github/workflows/merge-latest-upstream-tag.yml
+
+    with:
+      upstream_branch: ${{ matrix.upstream }}
+      target_branch: ${{ matrix.target }}
+      assignees: ${{ matrix.assignees }}
+      reviewers: ${{ matrix.reviewers }}
