@@ -317,6 +317,8 @@ final class category_test extends \advanced_testcase {
         $this->assertEquals($category4->id, $DB->get_field('course', 'category', array('id' => $course3->id)));
         $this->assertEquals($category3->id, $DB->get_field('course', 'category', array('id' => $course1->id)));
 
+        $DB->insert_record('event_subscriptions', ['url' => 'invalid', 'categoryid' => $category3->id]);
+
         // Delete category 3 completely.
         $this->assertFalse($category3->can_delete_full()); // No luck!
         // Add necessary capabilities.
@@ -335,6 +337,8 @@ final class category_test extends \advanced_testcase {
         $this->assertEquals(1, $DB->get_field_sql('SELECT count(*) FROM {course} WHERE id <> ?', array(SITEID)));
         $this->assertEquals(array('id' => $course4->id, 'category' => $category1->id),
                 (array)$DB->get_record_sql('SELECT id, category from {course} where id <> ?', array(SITEID)));
+
+        $this->assertEquals(0, $DB->count_records('event_subscriptions', ['categoryid' => $category3->id]));
     }
 
     public function test_get_children(): void {
