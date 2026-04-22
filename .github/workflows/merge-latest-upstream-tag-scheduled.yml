@@ -13,12 +13,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - version: "Moodle 4.5"
-            upstream: MOODLE_405_STABLE
-            target: UCSFCLE_405_STABLE
-            assignees: ctam
-            reviewers: ucsf-education/moodlecodereviewers
-
           - version: "Moodle 5.1"
             upstream: MOODLE_501_STABLE
             target: UCSFCLE_501_STABLE
