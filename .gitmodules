@@ -3,6 +3,11 @@
 	url = https://github.com/ilios/tool_ilioscategoryassignment
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/blocks/checklist"]
+	path = public/blocks/checklist
+	url = https://github.com/davosmith/moodle-block_checklist
+	branch = MOODLE_500_STABLE
+	tag = 4.0.0.1
 [submodule "public/blocks/attendance"]
 	path = public/blocks/attendance
 	url = https://github.com/danmarsden/moodle-block_attendance
