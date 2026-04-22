@@ -36,6 +36,11 @@
 	url = https://github.com/drachels/moodle-mod_diary
 	branch = MOODLE_501_STABLE
 	tag = v5.0.0
+[submodule "public/mod/questionnaire"]
+	path = public/mod/questionnaire
+	url = https://github.com/PoetOS/moodle-mod_questionnaire
+	branch = MOODLE_500_STABLE
+	tag = v5.0.1
 [submodule "public/theme/ucsf"]
 	path = public/theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
@@ -46,9 +51,3 @@
 	url = https://github.com/ucsf-education/knowledgecheck
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
-
-[submodule "public/mod/questionnaire"]
-	path = public/mod/questionnaire
-	url = https://github.com/PoetOS/moodle-mod_questionnaire
-	branch = MOODLE_500_STABLE
-	tag = v5.0.1
