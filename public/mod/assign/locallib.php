@@ -5514,6 +5514,9 @@ class assign {
     public function view_batch_markingallocation() {
         global $CFG, $DB;
 
+        require_capability('mod/assign:manageallocations', $this->context);
+
+        // Include batch marking allocation form.
         require_once($CFG->dirroot . '/mod/assign/batchsetallocatedmarkerform.php');
 
         $o = '';
@@ -9062,6 +9065,8 @@ class assign {
      */
     protected function process_set_batch_marking_allocation() {
         global $CFG, $DB;
+
+        require_capability('mod/assign:manageallocations', $this->context);
 
         // Include batch marking allocation form.
         require_once($CFG->dirroot . '/mod/assign/batchsetallocatedmarkerform.php');
