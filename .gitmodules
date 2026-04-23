@@ -36,6 +36,11 @@
 	url = https://github.com/davosmith/moodle-checklist
 	branch = MOODLE_500_STABLE
 	tag = 4.1.0.7
+[submodule "public/mod/customcert"]
+	path = public/mod/customcert
+	url = https://github.com/mdjnelson/moodle-mod_customcert
+	branch = MOODLE_500_STABLE
+	tag = v5.0.3
 [submodule "public/mod/diary"]
 	path = public/mod/diary
 	url = https://github.com/drachels/moodle-mod_diary
