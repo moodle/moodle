@@ -262,7 +262,7 @@ class quiz_overview_report extends attempts_report {
         }
 
         $dryrun = optional_param('dryrunregrade', 0, PARAM_BOOL);
-        if ($dryrun || optional_param('regrade', 0, PARAM_BOOL)) {
+        if (($dryrun || optional_param('regrade', 0, PARAM_BOOL)) && confirm_sesskey()) {
 
             $attemptids = [];
             if (optional_param('regradeselectedattempts', 0, PARAM_BOOL)) {
