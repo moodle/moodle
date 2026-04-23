@@ -72,12 +72,13 @@ class summarise_text extends external_api {
             'contextid' => $contextid,
             'prompttext' => $prompttext,
         ]);
+
         // Context validation and permission check.
-        // Get the context from the passed in ID.
         $context = \context::instance_by_id($contextid);
+        self::validate_context($context);
 
         // Check the user has permission to use the AI service.
-        self::validate_context($context);
+        require_capability('aiplacement/courseassist:summarise_text', $context);
 
         // Check if AI Placement course assist is available.
         if (!utils::is_course_assist_available()) {
