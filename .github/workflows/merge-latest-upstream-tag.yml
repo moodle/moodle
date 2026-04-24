@@ -205,18 +205,17 @@ jobs:
         run: |
           TAG=${{ steps.latest_tag.outputs.latest_tag }}
 
-          git merge "$TAG" --no-edit || {
+          git merge "$TAG" --no-ff --no-edit || {
             echo "Merge conflict detected"
             exit 1
           }
 
           # Detect workflow changes introduced by upstream
-          if git diff --name-only ORIG_HEAD HEAD | grep -q "^.github/workflows/"; then
+          if git diff --name-only ORIG_HEAD...HEAD | grep -q "^.github/workflows/"; then
             echo "workflow_changed=true" >> $GITHUB_OUTPUT
 
             # Revert workflow changes to avoid GitHub permission issues
-            git checkout ORIG_HEAD -- .github/workflows
-            git add .github/workflows
+            git restore --source=ORIG_HEAD --staged --worktree .github/workflows
             git commit -m "Revert upstream workflow changes"
           else
             echo "workflow_changed=false" >> $GITHUB_OUTPUT
@@ -242,10 +241,18 @@ jobs:
               echo "git diff ${{ env.TARGET_BRANCH }} ${{ steps.latest_tag.outputs.latest_tag }} -- .github/workflows"
               echo "\`\`\`"
               echo ""
-              echo "Merge manually if needed:"
+              echo "Merge manually to include Moodle core workflow changes:"
               echo "\`\`\`bash"
               echo "git checkout ${{ env.TARGET_BRANCH }}"
               echo "git merge ${{ steps.latest_tag.outputs.latest_tag }}"
+              echo "git push -f origin Merge-Moodle-${{ steps.latest_tag.outputs.latest_tag }}"
+              echo "\`\`\`"
+              echo ""
+              echo "Or revert the last commit that has reverted the Moodle core workflow changes (because GHA won't allow automated PR for workflow changes):"
+              echo "\`\`\`bash"
+              echo "git checkout Merge-Moodle-${{ steps.latest_tag.outputs.latest_tag }}"
+              echo "git reset --hard HEAD~1"
+              echo "git push -f origin Merge-Moodle-${{ steps.latest_tag.outputs.latest_tag }}"
               echo "\`\`\`"
               echo "EOF"
             } >> $GITHUB_OUTPUT
@@ -260,9 +267,9 @@ jobs:
         id: labels
         run: |
           if [ "${{ steps.merge.outputs.workflow_changed }}" = "true" ]; then
-            echo "labels=moodle-core,upstream-workflow-change" >> $GITHUB_OUTPUT
+            echo "labels=core changes,upstream,workflow changes" >> $GITHUB_OUTPUT
           else
-            echo "labels=moodle-core" >> $GITHUB_OUTPUT
+            echo "labels=core changes,upstream" >> $GITHUB_OUTPUT
           fi
 
       # ------------------------------------------------------------
