@@ -2,7 +2,7 @@
 	path = public/admin/tool/ilioscategoryassignment
 	url = https://github.com/ilios/tool_ilioscategoryassignment
 	branch = MOODLE_501_STABLE
-	tag = v5.1.0
+	tag = v5.1.1
 [submodule "public/blocks/checklist"]
 	path = public/blocks/checklist
 	url = https://github.com/davosmith/moodle-block_checklist
@@ -26,6 +26,12 @@
 	path = public/enrol/ucsfsis
 	url = https://github.com/ucsf-education/moodle-enrol-ucsfsis
 	branch = main
+	tag = v5.1.1
+[submodule "public/local/maintenance_livecheck"]
+	path = public/local/maintenance_livecheck
+	url = https://github.com/moodle-an-hochschulen/moodle-local_maintenance_livecheck
+	branch = MOODLE_501_STABLE
+	tag = v5.1-r1
 [submodule "public/local/navbarhelpmenu"]
 	path = public/local/navbarhelpmenu
 	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
@@ -50,11 +56,21 @@
 	url = https://github.com/PoetOS/moodle-mod_questionnaire
 	branch = MOODLE_500_STABLE
 	tag = v5.0.1
+[submodule "public/mod/quiz/report/archive"]
+	path = public/mod/quiz/report/archive
+	url = https://github.com/bfh/moodle-quiz_archive
+	branch = main
+	tag = v5.2-r1
+[submodule "public/plagiarism/turnitin"]
+	path = public/plagiarism/turnitin
+	url = https://github.com/turnitin/moodle-plagiarism_turnitin
+	branch = master
+	tag = v2025102901
 [submodule "public/theme/ucsf"]
 	path = public/theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_501_STABLE
-	tag = v5.1.1
+	tag = v5.1.2
 [submodule "public/question/type/knowledgecheck"]
 	path = public/question/type/knowledgecheck
 	url = https://github.com/ucsf-education/knowledgecheck
