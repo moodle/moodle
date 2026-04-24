@@ -21,6 +21,11 @@
 	path = public/enrol/ilios
 	url = https://github.com/ilios/moodle-enrol-ilios
 	branch = MOODLE_501_STABLE
+	tag = v5.1.0
+[submodule "public/enrol/ucsfsis"]
+	path = public/enrol/ucsfsis
+	url = https://github.com/ucsf-education/moodle-enrol-ucsfsis
+	branch = main
 	tag = v5.1.1
 [submodule "public/local/maintenance_livecheck"]
 	path = public/local/maintenance_livecheck
