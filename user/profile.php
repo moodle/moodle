@@ -146,6 +146,7 @@ if ($node = $PAGE->settingsnav->get('root')) {
 // Toggle the editing state and switches.
 if ($PAGE->user_allowed_editing()) {
     if ($reset !== null) {
+        require_sesskey();
         if (!is_null($userid)) {
             if (!$currentpage = my_reset_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
                 throw new \moodle_exception('reseterror', 'my');
