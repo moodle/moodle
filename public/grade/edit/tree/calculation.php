@@ -83,6 +83,7 @@ if ($data = $mform->get_data()) {
     redirect($returnurl);
 
 } elseif (!empty($section) AND $section='idnumbers' AND !empty($idnumbers)) { // Handle idnumbers separately (non-mform)
+    require_sesskey();
     //first validate and store the new idnumbers
     foreach ($idnumbers as $giid => $value) {
         if ($gi = grade_item::fetch(array('id' => $giid))) {
@@ -179,7 +180,7 @@ function get_grade_tree(&$gtree, $element, $current_itemid=null, $errors=null) {
     if ($type != 'category') {
         if (is_null($current_itemid) OR $grade_item->id != $current_itemid) {
             if ($idnumber) {
-                $name .= ": [[$idnumber]]";
+                $name .= ": [[" . s($idnumber) . "]]";
             } else {
                 $closingdiv = '';
                 if (!empty($errors[$grade_item->id])) {
