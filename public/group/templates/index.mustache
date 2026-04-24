@@ -27,6 +27,7 @@
 
     Context variables required for this template:
     * courseid int The course ID.
+    * sesskey string The sesskey of the user.
     * selectedgroup string The initially selected group.
     * editgroupsettingsdisabled bool Whether to disable the "Edit group settings" button on load.
     * deletegroupdisabled bool Whether to disable the "Delete selected group" button on load.
@@ -39,6 +40,7 @@
     Example context (json):
     {
         "courseid": "1",
+        "sesskey": "abc123",
         "selectedgroup": "Group 1 (3)",
         "editgroupsettingsdisabled": false,
         "deletegroupdisabled": false,
@@ -82,6 +84,7 @@
         <div class="row rtl-compatible">
             <div class="col-md-6 mb-1">
                 <input type="hidden" name="id" value="{{courseid}}">
+                <input type="hidden" name="sesskey" value="{{sesskey}}">
                 <div class="mb-3">
                     <label for="groups">
                         <span id="groupslabel">{{#str}}groups{{/str}}</span>
