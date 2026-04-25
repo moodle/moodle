@@ -61,3 +61,6 @@ jsconfig.json
 UPGRADING-CURRENT.md
 .phpunit.cache
 tsconfig.aliases.json
+
+# Ignore the types for AMD code.
+/.types
