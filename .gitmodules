@@ -55,6 +55,15 @@
 	path = public/mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
 	branch = MOODLE_501_STABLE
+[submodule "public/mod/diary"]
+	path = public/mod/diary
+	url = https://github.com/drachels/moodle-mod_diary
+	branch = MOODLE_501_STABLE
+	tag = v5.0.0
+[submodule "public/mod/chat"]
+	path = public/mod/chat
+	url = https://github.com/ucsf-education/moodle-mod_chat
+	branch = main
 [submodule "public/mod/checklist"]
 	path = public/mod/checklist
 	url = https://github.com/davosmith/moodle-checklist
@@ -65,16 +74,6 @@
 	url = https://github.com/mdjnelson/moodle-mod_customcert
 	branch = MOODLE_500_STABLE
 	tag = v5.0.3
-[submodule "public/mod/diary"]
-	path = public/mod/diary
-	url = https://github.com/drachels/moodle-mod_diary
-	branch = MOODLE_501_STABLE
-	tag = v5.0.0
-[submodule "public/mod/zoom"]
-	path = public/mod/zoom
-	url = https://github.com/ncstate-delta/moodle-mod_zoom
-	branch = main
-	tag = v5.5.0
 [submodule "public/mod/questionnaire"]
 	path = public/mod/questionnaire
 	url = https://github.com/PoetOS/moodle-mod_questionnaire
@@ -85,6 +84,11 @@
 	url = https://github.com/bfh/moodle-quiz_archive
 	branch = main
 	tag = v5.2-r1
+[submodule "public/mod/zoom"]
+	path = public/mod/zoom
+	url = https://github.com/ncstate-delta/moodle-mod_zoom
+	branch = main
+	tag = v5.5.0
 [submodule "public/plagiarism/turnitin"]
 	path = public/plagiarism/turnitin
 	url = https://github.com/turnitin/moodle-plagiarism_turnitin
