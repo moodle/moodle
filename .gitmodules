@@ -1,3 +1,8 @@
+[submodule "public/admin/tool/externaltaskmonitor"]
+	path = public/admin/tool/externaltaskmonitor
+	url = https://github.com/ucsf-education/tool_externaltaskmonitor
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
 [submodule "public/admin/tool/ilioscategoryassignment"]
 	path = public/admin/tool/ilioscategoryassignment
 	url = https://github.com/ilios/tool_ilioscategoryassignment
@@ -76,13 +81,13 @@
 	url = https://github.com/turnitin/moodle-plagiarism_turnitin
 	branch = master
 	tag = v2025102901
-[submodule "public/theme/ucsf"]
-	path = public/theme/ucsf
-	url = https://github.com/ucsf-education/moodle-theme-ucsf
-	branch = MOODLE_501_STABLE
-	tag = v5.1.2
 [submodule "public/question/type/knowledgecheck"]
 	path = public/question/type/knowledgecheck
 	url = https://github.com/ucsf-education/knowledgecheck
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/theme/ucsf"]
+	path = public/theme/ucsf
+	url = https://github.com/ucsf-education/moodle-theme-ucsf
+	branch = MOODLE_501_STABLE
+	tag = v5.1.2
