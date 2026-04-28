@@ -36,6 +36,11 @@
 	url = https://github.com/ucsf-education/moodle-enrol-ucsfsis
 	branch = main
 	tag = v5.1.1
+[submodule "public/filter/ucsfezproxy"]
+	path = public/filter/ucsfezproxy
+	url = https://github.com/ucsf-education/moodle-filter_ucsfezproxy
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
 [submodule "public/local/maintenance_livecheck"]
 	path = public/local/maintenance_livecheck
 	url = https://github.com/moodle-an-hochschulen/moodle-local_maintenance_livecheck
