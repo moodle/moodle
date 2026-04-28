@@ -46,14 +46,10 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I should see "Delete question"
     And I click on "Disable" "link" in the "Delete question" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I apply question bank filter "Category" with value "Test questions"
-    And I click on "With selected" "button"
     Then I should not see question bulk action "deleteselected"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Delete question" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I apply question bank filter "Category" with value "Test questions"
-    And I click on "With selected" "button"
     And I should see question bulk action "deleteselected"
 
   @javascript
@@ -90,7 +86,6 @@ Feature: Use the qbank plugin manager page for deletequestion
     # Select questions to be deleted.
     And I click on "Question 1" "checkbox"
     And I click on "Question 2" "checkbox"
-    And I click on "With selected" "button"
     When I press "Delete"
     # Confirm that delete confirmation message is displayed.
     Then I should see "This will delete the following questions and all their versions:"
@@ -140,7 +135,6 @@ Feature: Use the qbank plugin manager page for deletequestion
     And "Question 1" "heading" should exist
     And I click on "Question 1 A" "checkbox"
     And I click on "Question 1 C" "checkbox"
-    And I click on "With selected" "button"
     When I press "Delete"
     And I should see "This will delete selected versions of the following question" in the "Delete selected versions?" "dialogue"
     And I should see "Question 1 A v2" in the "Delete selected versions?" "dialogue"
@@ -184,7 +178,6 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I apply question bank filter "Category" with value "Test questions"
     And I click on "Question 2" "checkbox"
     And I click on "Question 3" "checkbox"
-    And I click on "With selected" "button"
     When I press "Delete"
     And I should see "This will delete the following questions and all their versions:" in the "Delete questions?" "dialogue"
     And I should see "* Denotes questions which can't be deleted because they are in use" in the "Delete questions?" "dialogue"
@@ -238,7 +231,6 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I choose "History" action for "Question 1" in the question bank
     And I click on "Question 1 A" "checkbox"
     And I click on "Question 1 B" "checkbox"
-    And I click on "With selected" "button"
     When I press "Delete"
     And I should see "This will delete selected versions of the following question" in the "Delete selected versions?" "dialogue"
     And I should see "* Denotes questions which can't be deleted because they are in use" in the "Delete selected versions?" "dialogue"

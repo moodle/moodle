@@ -54,4 +54,9 @@ class export_multiple_xml_action extends bulk_action_base {
             'moodle/question:viewall',
         ];
     }
+
+    #[\Override]
+    public function get_action_icon(): string {
+        return 'i/export';
+    }
 }

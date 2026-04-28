@@ -35,7 +35,6 @@ Feature: Use the qbank plugin manager page for exporttoxml
     And I apply question bank filter "Category" with value "Default for C1"
     And the "Export as Moodle XML" action should not exist for the "First question" question in the question bank
     And I click on "First question" "checkbox"
-    And I click on "With selected" "button"
     And I should not see question bulk action "Export to XML"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Export to XML" "table_row"
@@ -43,7 +42,6 @@ Feature: Use the qbank plugin manager page for exporttoxml
     And I apply question bank filter "Category" with value "Default for C1"
     And the "Export as Moodle XML" action should exist for the "First question" question in the question bank
     And I click on "First question" "checkbox"
-    And I click on "With selected" "button"
     And I should see question bulk action "exportselected"
 
   @javascript
@@ -59,7 +57,6 @@ Feature: Use the qbank plugin manager page for exporttoxml
     And I should see "Essay Foo Bar"
     And I click on "First question" "checkbox"
     And I click on "Essay Foo Bar" "checkbox"
-    And I click on "With selected" "button"
     And I should see question bulk action "exportselected"
     And I click on question bulk action "exportselected"
     # TODO: Uncomment the following step as part of MDL-86636 once non-link elements are supported.

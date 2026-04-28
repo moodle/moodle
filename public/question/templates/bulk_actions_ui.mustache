@@ -19,26 +19,52 @@
 
     Example context (json):
     {
-        "displaydata": [
-          {
-                "bulkactionitems": "<input value='Move to'>",
+        "bulkactionitems": [
+            {
                 "actionname": "Move to",
-                "actionkey": "deleteselected",
+                "actionkey": "move",
                 "actionurl": "/question/bank/bulkmove/move.php?courseid=2",
-                "actionclasses": "text-danger"
-          }
+                "icon": "i/move_2d"
+            },
+            {
+                "actionname": "Delete",
+                "actionkey": "delete",
+                "actionurl": "/question/bank/deletequestion/delete.php",
+                "actionclasses": "text-danger",
+                "icon": "i/delete"
+            }
         ]
     }
 }}
-
-<div class="btn-group dropup mt-2" id="bulkactionsui-container">
-    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="bulkactionsui-selector">
-        {{#str}} withselected, question{{/str}}
-    </button>
-    <div class="dropdown-menu" aria-labelledby="bulkactionsui-selector">
-        {{#bulkactionitems}}
-            <input type="submit" value="{{actionname}}" class="dropdown-item {{actionclasses}}" name="{{actionkey}}" data-action="toggle" data-togglegroup="qbank"
-                   data-toggle="action" form="questionsubmit" formaction="{{{actionurl}}}" disabled="disabled">
-        {{/bulkactionitems}}
+<div class="bulkenabled">
+{{< core/sticky_footer }}
+    {{$ stickyclasses }} justify-content-center bulkactions{{/ stickyclasses }}
+    {{$ extradata }} data-for="bulkedittools" {{/ extradata }}
+    {{$ stickycontent }}
+    <div class="btn-group dropup mt-2 d-flex align-items-center" id="bulkactionsui-container">
+        <span class="ma-1">{{#str}} withselected, question{{/str}}</span>
+        <ul class="actions nav flex-nowrap" data-for="bulkactions">
+            {{#bulkactionitems}}
+                <li class="nav-item">
+                    <button
+                        class="btn py-0 d-flex flex-column {{actionclasses}}"
+                        type="submit" value="{{actionname}}"
+                        name="{{actionkey}}"
+                        data-action="toggle"
+                        data-togglegroup="qbank"
+                        data-toggle="action"
+                        form="questionsubmit"
+                        formaction="{{{actionurl}}}"
+                        disabled="disabled"
+                        {{#title}} title="{{title}}" {{/title}}
+                    >
+                        <span class="bulkaction-icon w-100 ps-2">{{#pix}}{{icon}}{{/pix}}</span>
+                        <span class="bulkaction-name">{{actionname}}</span>
+                    </button>
+                </li>
+            {{/bulkactionitems}}
+        </ul>
     </div>
+    {{/ stickycontent }}
+{{/ core/sticky_footer }}
 </div>

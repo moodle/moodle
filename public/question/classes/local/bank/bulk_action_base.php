@@ -89,4 +89,11 @@ abstract class bulk_action_base extends view_component {
     public function initialise_javascript(): void {
 
     }
+
+    /**
+     * Return the icon identifier for the action.
+     *
+     * @return string
+     */
+    abstract public function get_action_icon(): string;
 }

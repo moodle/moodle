@@ -1125,6 +1125,7 @@ class view {
                 $actiondata->actionkey = $key;
                 $actiondata->actionurl = new \moodle_url($action->get_bulk_action_url(), $params);
                 $actiondata->actionclasses = $action->get_bulk_action_classes();
+                $actiondata->icon = $action->get_action_icon();
                 $bulkactiondata[] = $actiondata;
 
                 $bulkactiondatas ['bulkactionitems'] = $bulkactiondata;
