@@ -337,6 +337,7 @@ $string['gradepenalty_enabledmodules'] = 'Enabled activities';
 $string['gradepenalty_enabledmodules_help'] = 'Enable grade penalties for the selected activities.';
 $string['gradepenalty_indicator_info'] = 'Late penalty applied -{$a} marks';
 $string['gradepenalty_supportedplugins'] = 'Manage supported activities';
+$string['gradepenaltynodeerror'] = 'There are no accessible grade penalties';
 $string['gradepointdefault'] = 'Grade point default';
 $string['gradepointdefault_help'] = 'This setting determines the default value for the grade point value available in a grade item.';
 $string['gradepointdefault_validateerror'] = 'This setting must be an integer between 1 and the grade point maximum.';
