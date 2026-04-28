@@ -57,6 +57,12 @@ $PAGE->set_title(get_string('gradepenalty', 'core_grades'));
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->disable();
 
+// Ensure grade penalty container node exists (user can access at least one penalty type).
+$penaltynode = $PAGE->settingsnav->find('gradepenalty', \navigation_node::TYPE_CONTAINER);
+if ($penaltynode === false) {
+    throw new \core\exception\moodle_exception('gradepenaltynodeerror', 'core_grades');
+}
+
 // Check if the recalculate button is clicked.
 if ($recalculate) {
     // Show message for user confirmation.
@@ -91,12 +97,10 @@ if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEX
 
 // Penalty plugins.
 $haspenaltypluginnode = false;
-if ($penaltynode = $PAGE->settingsnav->find('gradepenalty', \navigation_node::TYPE_CONTAINER)) {
-    foreach ($penaltynode->children as $child) {
-        if ($child->display) {
-            $haspenaltypluginnode = true;
-            break;
-        }
+foreach ($penaltynode->children as $child) {
+    if ($child->display) {
+        $haspenaltypluginnode = true;
+        break;
     }
 }
 
