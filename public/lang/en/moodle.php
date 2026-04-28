@@ -655,6 +655,8 @@ $string['emailconfirmation'] = 'Hi {$a->firstname},
 
 A new account has been requested at \'{$a->sitename}\' using your email address.
 
+Your username is: {$a->username}
+
 To confirm your new account, please click the link below:
 
 <a href="{$a->link}">Confirm your account</a>
