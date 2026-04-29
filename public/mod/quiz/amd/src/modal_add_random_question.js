@@ -297,6 +297,22 @@ export default class ModalAddRandomQuestion extends Modal {
         cancelButton.clone().appendTo(tabFooters);
     }
 
+    loadFormFragment(bankcmid, savedfiltercondition) {
+        return Fragment.loadFragment(
+            'mod_quiz',
+            'add_random_question_form',
+            this.getContextId(),
+            {
+                addonpage: this.getAddOnPageId() ?? null,
+                returnurl: this.getReturnUrl(),
+                quizcmid: this.quizCmId,
+                bankcmid,
+                slotid: this.getSlotId(),
+                savedfiltercondition,
+            }
+        ).then((html, js) => ({html, js}));
+    }
+
     /**
      * Load the add random question form in a fragement and perform some transformation
      * on the HTML to convert it into tabs for rendering in the modal.
@@ -306,26 +322,24 @@ export default class ModalAddRandomQuestion extends Modal {
      */
     loadForm() {
         const addonpage = this.getAddOnPageId();
-        const returnurl = this.getReturnUrl();
         const quizcmid = this.quizCmId;
-        const bankcmid = this.bankCmId;
+        const lastBankCmid = window.sessionStorage.getItem('lastBankCmid');
         const savedfiltercondition = this.getSavedFilterCondition();
         this.setSavedFilterCondition(null);
 
-        return Fragment.loadFragment(
-            'mod_quiz',
-            'add_random_question_form',
-            this.getContextId(),
-            {
-                addonpage: addonpage ?? null,
-                returnurl,
-                quizcmid,
-                bankcmid,
-                slotid: this.getSlotId(),
-                savedfiltercondition,
-            }
-        )
-            .then((html, js) => {
+        let bankcmid = lastBankCmid ? lastBankCmid : this.bankCmId;
+        const fragmentPromise = this.loadFormFragment(bankcmid, savedfiltercondition)
+            .catch((ex) => {
+                if (lastBankCmid && (ex.errorcode === 'nopermissions' || ex.errorcode === 'invalidcoursemodule')) {
+                    // The user has lost access to their last accessed bank, try again with the current bank.
+                    bankcmid = this.bankCmId;
+                    return this.loadFormFragment(bankcmid, savedfiltercondition);
+                }
+                throw ex;
+            });
+
+        fragmentPromise
+            .then(({html, js}) => {
                 const form = $(html);
                 if (!this.getSlotId()) {
                     const existingCategoryTabContent = form.find(SELECTORS.EXISTING_CATEGORY_TAB);
@@ -415,9 +429,11 @@ export default class ModalAddRandomQuestion extends Modal {
                             'slotId': this.getSlotId(),
                             'courseId': this.getCourseId(),
                         };
-                        if (e.detail.cmid === this.bankCmId) {
+                        if (e.detail.cmid === bankcmid) {
                             // We're displaying the same bank as before, keep the current filters.
                             modalConfig.savedFilterCondition = this.getSavedFilterCondition();
+                        } else {
+                            window.sessionStorage.setItem('lastBankCmid', e.detail.cmid);
                         }
                         try {
                             await ModalAddRandomQuestion.create(modalConfig);

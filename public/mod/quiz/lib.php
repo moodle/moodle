@@ -2444,6 +2444,11 @@ function mod_quiz_output_fragment_quiz_question_bank($args): string {
         require_capability('moodle/question:usemine', $contexts->lowest());
     }
 
+    if (!plugin_supports('mod', $cm->modname, FEATURE_PUBLISHES_QUESTIONS) && $cm->id != $extraparams['quizcmid']) {
+        // We can't display the private questions from another module.
+        throw new moodle_exception('invalidcoursemodule');
+    }
+
     // Custom View.
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
 
@@ -2542,6 +2547,13 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
 
     // Parent category select.
     $usablecontexts = $contexts->having_cap('moodle/question:useall');
+    if (
+        empty($usablecontexts)
+        || (!plugin_supports('mod', $cm->modname, FEATURE_PUBLISHES_QUESTIONS) && $cm->id != $extraparams['quizcmid'])
+    ) {
+        // The user doesn't have permission to use the questions, or they are private questions from another module.
+        throw new moodle_exception('invalidcoursemodule');
+    }
     $categoriesarray = helper::question_category_options($usablecontexts);
     $catoptions = [];
     foreach ($categoriesarray as $group => $opts) {
