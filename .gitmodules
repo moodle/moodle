@@ -8,6 +8,10 @@
 	url = https://github.com/ilios/tool_ilioscategoryassignment
 	branch = MOODLE_501_STABLE
 	tag = v5.1.1
+[submodule "public/availability/condition/mobileapp"]
+	path = public/availability/condition/mobileapp
+	url = https://github.com/ucsf-education/moodle-availability_mobileapp
+	branch = UCSFCLE_501_STABLE
 [submodule "public/blocks/attendance"]
 	path = public/blocks/attendance
 	url = https://github.com/danmarsden/moodle-block_attendance
@@ -113,3 +117,4 @@
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_501_STABLE
 	tag = v5.1.2
+
