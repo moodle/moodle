@@ -1,0 +1,9 @@
+issueNumber: MDL-88407
+notes:
+  core_grades:
+    - message: >-
+        The `grade_item::update_deducted_mark()` method has been deprecated and
+        will be removed in a future release (See MDL-88663 for the final
+        deprecation). Penalties are now applied directly in `penalty_manager`
+        via `adjust_raw_grade()`. There is no replacement for this method.
+      type: deprecated

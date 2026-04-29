@@ -874,7 +874,15 @@ class grade_item extends grade_object {
                     continue;
                 }
 
-                $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+                if ($grade->deductedmark > 0) {
+                    // A penalty is recorded on this grade. Preserve it by recalculating
+                    // from the penalised raw grade so that a full regrade does not silently
+                    // undo the penalty that penalty_manager already applied.
+                    $penalisedraw = max($this->grademin, $grade->rawgrade - $grade->deductedmark);
+                    $grade->finalgrade = $this->adjust_raw_grade($penalisedraw, $grade->rawgrademin, $grade->rawgrademax);
+                } else {
+                    $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+                }
 
                 if (grade_floats_different($grade_record->finalgrade, $grade->finalgrade)) {
                     $success = $grade->update('system');
@@ -2067,7 +2075,15 @@ class grade_item extends grade_object {
 
         // update final grade if possible
         if (!$grade->is_locked() and !$grade->is_overridden()) {
-            $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+            if ($grade->deductedmark > 0 && $rawgrade === false) {
+                // No new rawgrade was provided (e.g. a submission-date update). The existing
+                // penalty must be preserved: recalculate finalgrade from the penalised raw grade
+                // rather than the plain rawgrade, so that the penalty indicator remains visible.
+                $penalisedraw = max($this->grademin, $grade->rawgrade - $grade->deductedmark);
+                $grade->finalgrade = $this->adjust_raw_grade($penalisedraw, $grade->rawgrademin, $grade->rawgrademax);
+            } else {
+                $grade->finalgrade = $this->adjust_raw_grade($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+            }
         }
 
         // TODO: hack alert - create new fields for these in 2.0
@@ -2098,7 +2114,7 @@ class grade_item extends grade_object {
         // end of hack alert
 
         // Only reset the deducted mark if the grade has changed.
-        if ($grade->timemodified !== $oldgrade->timemodified) {
+        if ($grade->timemodified !== $oldgrade->timemodified && $rawgrade !== false) {
             $grade->deductedmark = 0;
         }
 
@@ -2167,8 +2183,16 @@ class grade_item extends grade_object {
      *
      * @param int $userid The graded user
      * @param float $deductedmark The mark deducted from final grade
+     * @deprecated since Moodle 5.3 - please do not use this function any more
+     * @todo MDL-88663 Final deprecation in Moodle 7.0.
      */
+    #[\core\attribute\deprecated(
+        reason: 'The penalty is now applied directly in penalty_manager via adjust_raw_grade(); there is no replacement',
+        since: '5.3',
+        mdl: 'MDL-88407'
+    )]
     public function update_deducted_mark(int $userid, float $deductedmark): void {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
         $grade = new grade_grade([
                 'itemid' => $this->id,
                 'userid' => $userid,
