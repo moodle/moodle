@@ -121,7 +121,7 @@ function theme_classic_get_extra_scss($theme) {
     }
     $content .= 'body.pagelayout-login #page .login-layout-left { ';
     $content .= "background-image: url('$loginbackgroundimageurl'); ";
-    $content .= "background-size: cover; {$backgroundposition} position: relative;";
+    $content .= "background-size: cover; {$backgroundposition}";
     $content .= ' }';
 
     // Add a watermark to indicate the image is AI generated, but only for the default image.
