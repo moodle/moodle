@@ -61,6 +61,8 @@ if (!isset($roles[$roleid])) {
 
 if (!$enrol_manual = enrol_get_plugin('manual')) {
     throw new coding_exception('Can not instantiate enrol_manual');
+} else if (!enrol_is_enabled('manual')) {
+    throw new moodle_exception('plugindisabled', 'core_enrol', '', get_string('pluginname', 'enrol_manual'));
 }
 
 $url = new moodle_url('/enrol/manual/manage.php', ['enrolid' => $instance->id]);
