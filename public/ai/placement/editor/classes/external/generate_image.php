@@ -115,8 +115,11 @@ class generate_image extends external_api {
 
         // Check the user has permission to use the AI service.
         self::validate_context($context);
-        if (!utils::is_html_editor_placement_action_available($context, 'generate_text',
-                \core_ai\aiactions\generate_image::class)) {
+        if (!utils::is_html_editor_placement_action_available(
+            $context,
+            'generate_image',
+            \core_ai\aiactions\generate_image::class,
+        )) {
             throw new \moodle_exception('noeditor', 'aiplacement_editor');
         }
 
