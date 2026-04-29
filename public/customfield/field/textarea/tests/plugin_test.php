@@ -325,4 +325,40 @@ final class plugin_test extends \advanced_testcase {
 
         return $newcourseid;
     }
+
+    /**
+     * Ensures a textarea custom field still builds editor options via
+     * its course context before the data row exists.
+     *
+     * Before the fix, the editor fell back to context_system when no
+     * {customfield_data} record was saved yet, so non-admin roles
+     * (e.g., editingteachers) lacked the tiny_h5p permissions and the
+     * H5P button vanished from the wysiwyg editor.
+     * This test proves the controller now uses the owning course context
+     * right away, keeping those toolbar button visible.
+     */
+    public function test_value_editor_options_defaults_to_instance_context(): void {
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create the custom field controller as if we are about to add a brand-new
+        // textarea. Passing `0` and `null` means the {customfield_data} row doesn’t
+        // exist yet.
+        $controller = \core_customfield\data_controller::create(0, null, $this->cfields[1]);
+
+        // Simulate the “new data row” state by telling the controller which course
+        // owns the field (instanceid) while leaving contextid empty. That mirrors
+        // what happens when the course settings form initially renders.
+        $controller->set('instanceid', $course->id);
+        $controller->set('contextid', null);
+
+        // Run the protected method so we can inspect the editor options it builds
+        // in this first-load scenario.
+        $method = new \ReflectionMethod($controller, 'value_editor_options');
+        $options = $method->invoke($controller);
+
+        // Assert the course context is returned rather than the context_system.
+        $context = context_course::instance($course->id);
+        $this->assertInstanceOf(context_course::class, $options['context']);
+        $this->assertEquals($context->id, $options['context']->id);
+    }
 }

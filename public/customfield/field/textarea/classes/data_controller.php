@@ -53,7 +53,7 @@ class data_controller extends \core_customfield\data_controller {
     protected function value_editor_options() {
         /** @var field_controller $field */
         $field = $this->get_field();
-        return $field->value_editor_options($this->get('id') ? $this->get_context() : null);
+        return $field->value_editor_options($this->get_context());
     }
 
     /**
@@ -131,8 +131,8 @@ class data_controller extends \core_customfield\data_controller {
      */
     public function instance_form_before_set_data(\stdClass $instance) {
         $textoptions = $this->value_editor_options();
-        $context = $textoptions['context'];
         if ($this->get('id')) {
+            $context = $textoptions['context'];
             $text = $this->get('value');
             $format = $this->get('valueformat');
             $temp = (object) ['field' => $text, 'fieldformat' => $format, 'fieldtrust' => trusttext_trusted($context)];
@@ -140,10 +140,14 @@ class data_controller extends \core_customfield\data_controller {
                 'value', $this->get('id'));
             $value = $temp->field_editor;
         } else {
+            // Default value files are stored against the field's configuration context, not the instance context,
+            // so file_prepare_standard_editor must be given options matching that context.
+            $context = $this->get_field()->get_handler()->get_configuration_context();
+            $defaultvalueoptions = ['context' => $context] + $textoptions;
             $text = $this->get_field()->get_configdata_property('defaultvalue');
             $format = $this->get_field()->get_configdata_property('defaultvalueformat');
             $temp = (object) ['field' => $text, 'fieldformat' => $format, 'fieldtrust' => trusttext_trusted($context)];
-            file_prepare_standard_editor($temp, 'field', $textoptions, $context, 'customfield_textarea',
+            file_prepare_standard_editor($temp, 'field', $defaultvalueoptions, $context, 'customfield_textarea',
                 'defaultvalue', $this->get_field()->get('id'));
             $value = $temp->field_editor;
         }
