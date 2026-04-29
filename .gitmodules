@@ -104,6 +104,10 @@
 	url = https://github.com/ucsf-education/knowledgecheck
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/question/type/oumultiresponse"]
+    path = public/question/type/oumultiresponse
+    url = https://github.com/ucsf-education/moodle-qtype_oumultiresponse
+    branch = UCSFCLE_501_STABLE
 [submodule "public/theme/ucsf"]
 	path = public/theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
