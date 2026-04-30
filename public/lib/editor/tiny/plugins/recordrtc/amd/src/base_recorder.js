@@ -39,7 +39,6 @@ import AlertModal from 'core/local/modal/alert';
  */
 export default class {
 
-    stopRequested = false;
     buttonTimer = null;
     pauseTime = null;
     startTime = null;
@@ -518,10 +517,15 @@ export default class {
         // Change the label to "Record again".
         this.setRecordButtonTextFromString('recordagain');
 
-        // Show upload button.
+        // Show upload button, but only enable it if the file size is within the limit.
         this.setUploadButtonVisibility(true);
         this.setPlayerState(true);
-        this.setUploadButtonState(true);
+        if (this.getMaxUploadSize() !== -1 && this.data.blobSize >= this.getMaxUploadSize()) {
+            this.setUploadButtonState(false);
+            this.displayFileLimitHitMessage();
+        } else {
+            this.setUploadButtonState(true);
+        }
 
         // Hide the pause button.
         this.setPauseButtonVisibility(false);
@@ -788,10 +792,7 @@ export default class {
      */
     requestRecordingStop() {
         if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-            this.stopRequested = true;
-            if (this.isPaused()) {
-                this.stopRecorder();
-            }
+            this.stopRecorder();
         } else {
             // There is no recording to stop, but the stream must still be cleaned up.
             this.cleanupStream();
@@ -868,29 +869,15 @@ export default class {
     /**
      * Handle the mediaRecorder `dataavailable` event.
      *
+     * Without timeslice, this event fires once after stop() with all recorded data.
+     * Timeslice is not used because it causes incorrect duration metadata in the recorded file
+     * across browsers (Firefox, Safari).
+     *
      * @param {Event} event
      */
     handleDataAvailable(event) {
-        if (this.isRecording() || this.isPaused()) {
-            const newSize = this.data.blobSize + event.data.size;
-            // Max upload size is -1 mean there is no limit.
-            // Recording stops when either the maximum upload size is reached, or the time limit expires.
-            // The time limit is checked in the `updateButtonTime` function.
-            if (this.getMaxUploadSize() !== -1 && newSize >= this.getMaxUploadSize()) {
-                this.stopRecorder();
-                this.displayFileLimitHitMessage();
-            } else {
-                // Push recording slice to array.
-                this.data.chunks.push(event.data);
-
-                // Size of all recorded data so far.
-                this.data.blobSize = newSize;
-
-                if (this.stopRequested) {
-                    this.stopRecorder();
-                }
-            }
-        }
+        this.data.chunks.push(event.data);
+        this.data.blobSize += event.data.size;
     }
 
     async displayFileLimitHitMessage() {
@@ -967,10 +954,8 @@ export default class {
             blobSize: 0
         };
         this.setupPlayerSource();
-        this.stopRequested = false;
 
-        // Capture in 50ms chunks.
-        this.mediaRecorder.start(50);
+        this.mediaRecorder.start();
     }
 
     /**
