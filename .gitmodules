@@ -41,6 +41,11 @@
 	url = https://github.com/ucsf-education/moodle-filter_ucsfezproxy
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/lib/editor/tiny/plugins/fontcolor"]
+	path = public/lib/editor/tiny/plugins/fontcolor
+	url = https://github.com/bfh/moodle-tiny_fontcolor
+	branch = main
+	tag = V1.3
 [submodule "public/local/maintenance_livecheck"]
 	path = public/local/maintenance_livecheck
 	url = https://github.com/moodle-an-hochschulen/moodle-local_maintenance_livecheck
