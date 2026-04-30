@@ -187,6 +187,20 @@ Feature: Adding questions to a quiz from the question bank
     And I should see "question 03 name"
     And "Qbank 1 & < > " "text" should appear after "question 03 name" "text"
 
+  Scenario: After switching to a shared bank, I can switch back to the current quiz's bank
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I should see "Current bank: Quiz 1"
+    And I apply question bank filter "Category" with value "Test questions"
+    And I should see "question 01 name"
+    And I click on "Switch bank" "button"
+    And I click on "Question Bank A" "link" in the "Select question bank" "dialogue"
+    And I should see "Current bank: Question Bank A"
+    When I click on "Switch bank" "button"
+    And I click on "Quiz 1" "link" in the "Select question bank" "dialogue"
+    Then I should see "Current bank: Quiz 1"
+
   @javascript
   Scenario: Validate the sorting while adding questions from question bank
     Given the following "questions" exist:

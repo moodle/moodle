@@ -84,6 +84,7 @@ export default class BankSwitcher {
         };
         if (activityCmId) {
             params.currentmodule = activityCmId;
+            params.includeprivate = true;
         }
         const banksResponse = await Fetch.performGet('question', 'banks', {params});
         const {banks} = await banksResponse.json();
