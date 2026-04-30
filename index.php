@@ -73,8 +73,9 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
 
 $homepage = get_home_page();
 if ($homepage != HOMEPAGE_SITE) {
-    if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
+    if (optional_param('setdefaulthome', false, PARAM_BOOL) && confirm_sesskey()) {
         set_user_preference('user_home_page_preference', HOMEPAGE_SITE);
+        redirect($PAGE->url);
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && $redirect === 1) {
         // At this point, dashboard is enabled so we don't need to check for it (otherwise, get_home_page() won't return it).
         redirect($CFG->wwwroot .'/my/');
@@ -87,14 +88,17 @@ if ($homepage != HOMEPAGE_SITE) {
         if ($frontpagenode) {
             $frontpagenode->add(
                 get_string('makethismyhome'),
-                new moodle_url('/', array('setdefaulthome' => true)),
-                navigation_node::TYPE_SETTING);
+                new moodle_url('/', ['setdefaulthome' => 1, 'sesskey' => sesskey()]),
+                navigation_node::TYPE_SETTING,
+            );
         } else {
             $frontpagenode = $PAGE->settingsnav->add(get_string('frontpagesettings'), null, navigation_node::TYPE_SETTING, null);
             $frontpagenode->force_open();
-            $frontpagenode->add(get_string('makethismyhome'),
-                new moodle_url('/', array('setdefaulthome' => true)),
-                navigation_node::TYPE_SETTING);
+            $frontpagenode->add(
+                get_string('makethismyhome'),
+                new moodle_url('/', ['setdefaulthome' => 1, 'sesskey' => sesskey()]),
+                navigation_node::TYPE_SETTING,
+            );
         }
     }
 }
