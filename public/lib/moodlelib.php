@@ -3268,12 +3268,7 @@ function order_in_string($values, $stringformat) {
  * @return boolean Whether the plugin is available.
  */
 function exists_auth_plugin($auth) {
-    global $CFG;
-
-    if (file_exists("{$CFG->dirroot}/auth/$auth/auth.php")) {
-        return is_readable("{$CFG->dirroot}/auth/$auth/auth.php");
-    }
-    return false;
+    return \core\di::get(\core\authentication::class)->plugin_exists($auth);
 }
 
 /**
@@ -3283,13 +3278,7 @@ function exists_auth_plugin($auth) {
  * @return boolean Whether the plugin is enabled.
  */
 function is_enabled_auth($auth) {
-    if (empty($auth)) {
-        return false;
-    }
-
-    $enabled = get_enabled_auth_plugins();
-
-    return in_array($auth, $enabled);
+    return \core\di::get(\core\authentication::class)->is_enabled($auth);
 }
 
 /**
@@ -3299,17 +3288,7 @@ function is_enabled_auth($auth) {
  * @return auth_plugin_base An instance of the required authentication plugin.
  */
 function get_auth_plugin($auth) {
-    global $CFG;
-
-    // Check the plugin exists first.
-    if (! exists_auth_plugin($auth)) {
-        throw new \moodle_exception('authpluginnotfound', 'debug', '', $auth);
-    }
-
-    // Return auth plugin instance.
-    require_once("{$CFG->dirroot}/auth/$auth/auth.php");
-    $class = "auth_plugin_$auth";
-    return new $class;
+    return \core\di::get(\core\authentication::class)->get_plugin($auth);
 }
 
 /**
@@ -3319,39 +3298,7 @@ function get_auth_plugin($auth) {
  * @return array
  */
 function get_enabled_auth_plugins($fix=false) {
-    global $CFG;
-
-    $default = array('manual', 'nologin');
-
-    if (empty($CFG->auth)) {
-        $auths = array();
-    } else {
-        $auths = explode(',', $CFG->auth);
-    }
-
-    $auths = array_unique($auths);
-    $oldauthconfig = implode(',', $auths);
-    foreach ($auths as $k => $authname) {
-        if (in_array($authname, $default)) {
-            // The manual and nologin plugin never need to be stored.
-            unset($auths[$k]);
-        } else if (!exists_auth_plugin($authname)) {
-            debugging(get_string('authpluginnotfound', 'debug', $authname));
-            unset($auths[$k]);
-        }
-    }
-
-    // Ideally only explicit interaction from a human admin should trigger a
-    // change in auth config, see MDL-70424 for details.
-    if ($fix) {
-        $newconfig = implode(',', $auths);
-        if (!isset($CFG->auth) or $newconfig != $CFG->auth) {
-            add_to_config_log('auth', $oldauthconfig, $newconfig, 'core');
-            set_config('auth', $newconfig);
-        }
-    }
-
-    return (array_merge($default, $auths));
+    return \core\di::get(\core\authentication::class)->get_enabled_plugins($fix);
 }
 
 /**
@@ -3362,9 +3309,7 @@ function get_enabled_auth_plugins($fix=false) {
  * @return bool
  */
 function is_internal_auth($auth) {
-    // Throws error if bad $auth.
-    $authplugin = get_auth_plugin($auth);
-    return $authplugin->is_internal();
+    return \core\di::get(\core\authentication::class)->is_internal($auth);
 }
 
 /**
@@ -3376,9 +3321,7 @@ function is_internal_auth($auth) {
  * @return bool
  */
 function is_restored_user($username) {
-    global $CFG, $DB;
-
-    return $DB->record_exists('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id, 'password' => 'restored'));
+    return \core\di::get(\core\authentication::class)->is_restored_user($username);
 }
 
 /**
@@ -4232,7 +4175,7 @@ function complete_user_login($user, array $extrauserinfo = []) {
  * @return bool True if the $password matches the format of a bcrypt hash.
  */
 function password_is_legacy_hash(#[\SensitiveParameter] string $password): bool {
-    return (bool) preg_match('/^\$2y\$[\d]{2}\$[A-Za-z0-9\.\/]{53}$/', $password);
+    return \core\di::get(\core\authentication\password::class)->is_legacy_hash($password);
 }
 
 /**
@@ -4275,26 +4218,7 @@ function calculate_entropy(#[\SensitiveParameter] string $pepper): float {
  * @throws coding_exception If the entropy of the password pepper is less than the recommended minimum.
  */
 function get_password_peppers(): array {
-    global $CFG;
-
-    // Get all available peppers.
-    if (isset($CFG->passwordpeppers) && is_array($CFG->passwordpeppers)) {
-        // Sort the array in descending order of keys (numerical).
-        $peppers = $CFG->passwordpeppers;
-        krsort($peppers, SORT_NUMERIC);
-    } else {
-        $peppers = [];  // Set an empty array if no peppers are found.
-    }
-
-    // Check if the entropy of the most recent pepper is less than the minimum.
-    // Also, we allow the most recent pepper to be empty, to allow admins to migrate off peppers.
-    $lastpepper = reset($peppers);
-    if (!empty($peppers) && $lastpepper !== '' && calculate_entropy($lastpepper) < PEPPER_ENTROPY) {
-        throw new coding_exception(
-                'password pepper below minimum',
-                'The entropy of the password pepper is less than the recommended minimum.');
-    }
-    return $peppers;
+    return \core\di::get(\core\authentication\password::class)->get_peppers();
 }
 
 /**
@@ -4307,45 +4231,7 @@ function get_password_peppers(): array {
  * @return bool True if password is valid.
  */
 function validate_internal_user_password(stdClass $user, #[\SensitiveParameter] string $password): bool {
-
-    if (exceeds_password_length($password)) {
-        // Password cannot be more than MAX_PASSWORD_CHARACTERS characters.
-        return false;
-    }
-
-    if ($user->password === AUTH_PASSWORD_NOT_CACHED) {
-        // Internal password is not used at all, it can not validate.
-        return false;
-    }
-
-    $peppers = get_password_peppers(); // Get the array of available peppers.
-    $islegacy = password_is_legacy_hash($user->password); // Check if the password is a legacy bcrypt hash.
-
-    // If the password is a legacy hash, no peppers were used, so verify and update directly.
-    if ($islegacy && password_verify($password, $user->password)) {
-        update_internal_user_password($user, $password);
-        return true;
-    }
-
-    // If the password is not a legacy hash, iterate through the peppers.
-    $latestpepper = reset($peppers);
-    // Add an empty pepper to the beginning of the array. To make it easier to check if the password matches without any pepper.
-    $peppers = [-1 => ''] + $peppers;
-    foreach ($peppers as $pepper) {
-        $pepperedpassword = $password . $pepper;
-
-        // If the peppered password is correct, update (if necessary) and return true.
-        if (password_verify($pepperedpassword, $user->password)) {
-            // If the pepper used is not the latest one, update the password.
-            if ($pepper !== $latestpepper) {
-                update_internal_user_password($user, $password);
-            }
-            return true;
-        }
-    }
-
-    // If no peppered password was correct, the password is wrong.
-    return false;
+    return \core\di::get(\core\authentication\password::class)->validate($user, $password);
 }
 
 /**
@@ -4361,34 +4247,7 @@ function validate_internal_user_password(stdClass $user, #[\SensitiveParameter] 
  * @throws moodle_exception If a problem occurs while generating the hash.
  */
 function hash_internal_user_password(#[\SensitiveParameter] string $password, $fasthash = false, $pepperlength = 0): string {
-    if (exceeds_password_length($password, $pepperlength)) {
-        // Password cannot be more than MAX_PASSWORD_CHARACTERS.
-        throw new \moodle_exception(get_string("passwordexceeded", 'error', MAX_PASSWORD_CHARACTERS));
-    }
-
-    // Set the cost factor to 5000 for fast hashing, otherwise use default cost.
-    $rounds = $fasthash ? 5000 : 10000;
-
-    // First generate a cryptographically suitable salt.
-    $randombytes = random_bytes(16);
-    $salt = substr(strtr(base64_encode($randombytes), '+', '.'), 0, 16);
-
-    // Now construct the password string with the salt and number of rounds.
-    // The password string is in the format $algorithm$rounds$salt$hash. ($6 is the SHA512 algorithm).
-    $generatedhash = crypt($password, implode('$', [
-        '',
-        // The SHA512 Algorithm
-        '6',
-        "rounds={$rounds}",
-        $salt,
-        '',
-    ]));
-
-    if ($generatedhash === false || $generatedhash === null) {
-        throw new moodle_exception('Failed to generate password hash.');
-    }
-
-    return $generatedhash;
+    return \core\di::get(\core\authentication\password::class)->hash($password, $fasthash, $pepperlength);
 }
 
 /**
@@ -4419,59 +4278,7 @@ function update_internal_user_password(
         #[\SensitiveParameter] ?string $password,
         bool $fasthash = false
 ): bool {
-    global $CFG, $DB;
-
-    // Add the latest password pepper to the password before further processing.
-    $peppers = get_password_peppers();
-    if (!empty($peppers)) {
-        $password = $password . reset($peppers);
-    }
-
-    // Figure out what the hashed password should be.
-    if (!isset($user->auth)) {
-        debugging('User record in update_internal_user_password() must include field auth',
-                DEBUG_DEVELOPER);
-        $user->auth = $DB->get_field('user', 'auth', array('id' => $user->id));
-    }
-    $authplugin = get_auth_plugin($user->auth);
-    if ($authplugin->prevent_local_passwords()) {
-        $hashedpassword = AUTH_PASSWORD_NOT_CACHED;
-    } else {
-        $hashedpassword = hash_internal_user_password($password, $fasthash);
-    }
-
-    $algorithmchanged = false;
-
-    if ($hashedpassword === AUTH_PASSWORD_NOT_CACHED) {
-        // Password is not cached, update it if not set to AUTH_PASSWORD_NOT_CACHED.
-        $passwordchanged = ($user->password !== $hashedpassword);
-
-    } else if (isset($user->password)) {
-        // If verification fails then it means the password has changed.
-        $passwordchanged = !password_verify($password, $user->password);
-        $algorithmchanged = password_is_legacy_hash($user->password);
-    } else {
-        // While creating new user, password in unset in $user object, to avoid
-        // saving it with user_create()
-        $passwordchanged = true;
-    }
-
-    if ($passwordchanged || $algorithmchanged) {
-        $DB->set_field('user', 'password',  $hashedpassword, array('id' => $user->id));
-        $user->password = $hashedpassword;
-
-        // Trigger event.
-        $user = $DB->get_record('user', array('id' => $user->id));
-        \core\event\user_password_updated::create_from_user($user)->trigger();
-
-        // Remove WS user tokens.
-        if (!empty($CFG->passwordchangetokendeletion)) {
-            require_once($CFG->dirroot.'/webservice/lib.php');
-            webservice::delete_user_ws_tokens($user->id);
-        }
-    }
-
-    return true;
+    return \core\di::get(\core\authentication\password::class)->update($user, $password, $fasthash);
 }
 
 /**
@@ -4606,16 +4413,7 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
  * @return bool true if the password is valid according to the policy. false otherwise.
  */
 function check_password_policy(string $password, ?string &$errmsg, ?stdClass $user = null) {
-    global $CFG;
-    if (!empty($CFG->passwordpolicy) && !isguestuser($user)) {
-        $errors = get_password_policy_errors($password, $user);
-
-        foreach ($errors as $error) {
-            $errmsg .= '<div>' . $error . '</div>';
-        }
-    }
-
-    return $errmsg == '';
+    return \core\di::get(\core\authentication\password::class)->check_policy($password, $errmsg, $user);
 }
 
 /**
@@ -4628,42 +4426,7 @@ function check_password_policy(string $password, ?string &$errmsg, ?stdClass $us
  * @return string[] Array of error messages.
  */
 function get_password_policy_errors(string $password, ?stdClass $user = null) : array {
-    global $CFG;
-
-    $errors = [];
-
-    if (core_text::strlen($password) < $CFG->minpasswordlength) {
-        $errors[] = get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength);
-    }
-    if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
-        $errors[] = get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits);
-    }
-    if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
-        $errors[] = get_string('errorminpasswordlower', 'auth', $CFG->minpasswordlower);
-    }
-    if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
-        $errors[] = get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper);
-    }
-    if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
-        $errors[] = get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
-    }
-    if (!check_consecutive_identical_characters($password, $CFG->maxconsecutiveidentchars)) {
-        $errors[] = get_string('errormaxconsecutiveidentchars', 'auth', $CFG->maxconsecutiveidentchars);
-    }
-
-    // Fire any additional password policy functions from plugins.
-    // Plugin functions should output an error message string or empty string for success.
-    $pluginsfunction = get_plugins_with_function('check_password_policy');
-    foreach ($pluginsfunction as $plugintype => $plugins) {
-        foreach ($plugins as $pluginfunction) {
-            $pluginerr = $pluginfunction($password, $user);
-            if ($pluginerr) {
-                $errors[] = $pluginerr;
-            }
-        }
-    }
-
-    return $errors;
+    return \core\di::get(\core\authentication\password::class)->get_policy_errors($password, $user);
 }
 
 /**
@@ -8302,59 +8065,7 @@ function getweek ($startdate, $thedate) {
  * @return string
  */
 function generate_password($maxlen=10) {
-    global $CFG;
-
-    if (empty($CFG->passwordpolicy)) {
-        $fillers = PASSWORD_DIGITS;
-        $wordlist = file($CFG->wordlist);
-        $word1 = trim($wordlist[rand(0, count($wordlist) - 1)]);
-        $word2 = trim($wordlist[rand(0, count($wordlist) - 1)]);
-        $filler1 = $fillers[rand(0, strlen($fillers) - 1)];
-        $password = $word1 . $filler1 . $word2;
-    } else {
-        $minlen = !empty($CFG->minpasswordlength) ? $CFG->minpasswordlength : 0;
-        $digits = $CFG->minpassworddigits;
-        $lower = $CFG->minpasswordlower;
-        $upper = $CFG->minpasswordupper;
-        $nonalphanum = $CFG->minpasswordnonalphanum;
-        $total = $lower + $upper + $digits + $nonalphanum;
-        // Var minlength should be the greater one of the two ( $minlen and $total ).
-        $minlen = $minlen < $total ? $total : $minlen;
-        // Var maxlen can never be smaller than minlen.
-        $maxlen = $minlen > $maxlen ? $minlen : $maxlen;
-        $additional = $maxlen - $total;
-
-        // Make sure we have enough characters to fulfill
-        // complexity requirements.
-        $passworddigits = PASSWORD_DIGITS;
-        while ($digits > strlen($passworddigits)) {
-            $passworddigits .= PASSWORD_DIGITS;
-        }
-        $passwordlower = PASSWORD_LOWER;
-        while ($lower > strlen($passwordlower)) {
-            $passwordlower .= PASSWORD_LOWER;
-        }
-        $passwordupper = PASSWORD_UPPER;
-        while ($upper > strlen($passwordupper)) {
-            $passwordupper .= PASSWORD_UPPER;
-        }
-        $passwordnonalphanum = PASSWORD_NONALPHANUM;
-        while ($nonalphanum > strlen($passwordnonalphanum)) {
-            $passwordnonalphanum .= PASSWORD_NONALPHANUM;
-        }
-
-        // Now mix and shuffle it all.
-        $password = str_shuffle (substr(str_shuffle ($passwordlower), 0, $lower) .
-                                 substr(str_shuffle ($passwordupper), 0, $upper) .
-                                 substr(str_shuffle ($passworddigits), 0, $digits) .
-                                 substr(str_shuffle ($passwordnonalphanum), 0 , $nonalphanum) .
-                                 substr(str_shuffle ($passwordlower .
-                                                     $passwordupper .
-                                                     $passworddigits .
-                                                     $passwordnonalphanum), 0 , $additional));
-    }
-
-    return substr ($password, 0, $maxlen);
+    return \core\di::get(\core\authentication\password::class)->generate($maxlen);
 }
 
 /**
@@ -9896,30 +9607,7 @@ function get_site_identifier() {
  * @return bool
  */
 function check_consecutive_identical_characters($password, $maxchars) {
-
-    if ($maxchars < 1) {
-        return true; // Zero 0 is to disable this check.
-    }
-    if (strlen($password) <= $maxchars) {
-        return true; // Too short to fail this test.
-    }
-
-    $previouschar = '';
-    $consecutivecount = 1;
-    foreach (str_split($password) as $char) {
-        if ($char != $previouschar) {
-            $consecutivecount = 1;
-        } else {
-            $consecutivecount++;
-            if ($consecutivecount > $maxchars) {
-                return false; // Check failed already.
-            }
-        }
-
-        $previouschar = $char;
-    }
-
-    return true;
+    return \core\di::get(\core\authentication\password::class)->check_consecutive_identical_characters($password, $maxchars);
 }
 
 /**
@@ -10252,7 +9940,7 @@ function site_is_public() {
  * @return bool
  */
 function exceeds_password_length(string $password, int $pepperlength = 0): bool {
-    return (strlen($password) > (MAX_PASSWORD_CHARACTERS + $pepperlength));
+    return \core\di::get(\core\authentication\password::class)->exceeds_max_length($password, $pepperlength);
 }
 
 /**
