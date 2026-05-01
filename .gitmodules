@@ -27,6 +27,11 @@
 	url = https://github.com/ucsf-education/moodle-block-course_recent
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/blocks/massaction"]
+	path = public/blocks/massaction
+	url = https://github.com/Syxton/moodle-block_massaction
+	branch = master
+	tag = 7.5.1
 [submodule "public/blocks/quickmail"]
 	path = public/blocks/quickmail
 	url = https://github.com/ucsf-education/moodle-block_quickmail
