@@ -12,6 +12,11 @@
 	path = public/availability/condition/mobileapp
 	url = https://github.com/ucsf-education/moodle-availability_mobileapp
 	branch = UCSFCLE_501_STABLE
+[submodule "public/admin/tool/ucsfsomapi"]
+	path = public/admin/tool/ucsfsomapi
+	url = https://github.com/ucsf-education/tool_ucsfsomapi
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
 [submodule "public/blocks/attendance"]
 	path = public/blocks/attendance
 	url = https://github.com/danmarsden/moodle-block_attendance
