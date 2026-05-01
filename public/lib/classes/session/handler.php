@@ -196,13 +196,14 @@ abstract class handler {
     protected function destroy_all_expired_sessions(int $purgebefore): void {
         global $DB, $CFG;
 
-        $authsequence = get_enabled_auth_plugins();
+        $authentication = \core\di::get(\core\authentication::class);
+        $authsequence = $authentication->get_enabled_plugins();
         $authsequence = array_flip($authsequence);
         unset($authsequence['nologin']); // No login means user cannot login.
         $authsequence = array_flip($authsequence);
         $authplugins = [];
         foreach ($authsequence as $authname) {
-            $authplugins[$authname] = get_auth_plugin($authname);
+            $authplugins[$authname] = $authentication->get_plugin($authname);
         }
         $sql = "SELECT u.*, s.sid, s.timecreated AS s_timecreated, s.timemodified AS s_timemodified
                   FROM {user} u

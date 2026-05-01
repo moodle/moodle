@@ -44,7 +44,7 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
      * @return stdClass the user record.
      */
     protected function lti_advantage_user_authenticates(string $sub, array $migrationclaiminfo = []): \stdClass {
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
 
         $mockjwt = [
             'iss' => $this->issuer,

@@ -2340,9 +2340,10 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             }
 
             // Give auth plugins an opportunity to authenticate or redirect to an external login page
-            $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
+            $authentication = \core\di::get(\core\authentication::class);
+            $authsequence = $authentication->get_enabled_plugins(); // Auths, in sequence.
             foreach($authsequence as $authname) {
-                $authplugin = get_auth_plugin($authname);
+                $authplugin = $authentication->get_plugin($authname);
                 $authplugin->pre_loginpage_hook();
                 if (isloggedin()) {
                     if ($cm) {
@@ -2374,7 +2375,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
 
     // Check whether the user should be changing password (but only if it is REALLY them).
     if (get_user_preferences('auth_forcepasswordchange') && !\core\session\manager::is_loggedinas()) {
-        $userauth = get_auth_plugin($USER->auth);
+        $userauth = \core\di::get(\core\authentication::class)->get_plugin($USER->auth);
         if ($userauth->can_change_password() and !$preventredirect) {
             if ($setwantsurltome) {
                 $SESSION->wantsurl = qualified_me();
@@ -2718,9 +2719,10 @@ function require_logout() {
 
     // Execute hooks before action.
     $authplugins = array();
-    $authsequence = get_enabled_auth_plugins();
+    $authentication = \core\di::get(\core\authentication::class);
+    $authsequence = $authentication->get_enabled_plugins();
     foreach ($authsequence as $authname) {
-        $authplugins[$authname] = get_auth_plugin($authname);
+        $authplugins[$authname] = $authentication->get_plugin($authname);
         $authplugins[$authname]->prelogout_hook();
     }
 
@@ -3368,7 +3370,7 @@ function create_user_record($username, $password, $auth = 'manual') {
     // Just in case check text case.
     $username = trim(core_text::strtolower($username));
 
-    $authplugin = get_auth_plugin($auth);
+    $authplugin = \core\di::get(\core\authentication::class)->get_plugin($auth);
     $customfields = $authplugin->get_custom_user_profile_fields();
     $newuser = new stdClass();
     if ($newinfo = $authplugin->get_userinfo($username)) {
@@ -3411,7 +3413,7 @@ function create_user_record($username, $password, $auth = 'manual') {
         set_user_preference('auth_forcepasswordchange', 1, $user);
     }
     // Set the password.
-    update_internal_user_password($user, $password);
+    \core\di::get(\core\authentication\password::class)->update($user, $password);
 
     // Trigger event.
     \core\event\user_created::create_from_userid($newuser->id)->trigger();
@@ -3449,7 +3451,7 @@ function update_user_record_by_id($id) {
     $oldinfo = $DB->get_record('user', $params, '*', MUST_EXIST);
 
     $newuser = array();
-    $userauth = get_auth_plugin($oldinfo->auth);
+    $userauth = \core\di::get(\core\authentication::class)->get_plugin($oldinfo->auth);
 
     if ($newinfo = $userauth->get_userinfo($oldinfo->username)) {
         $newinfo = truncate_userinfo($newinfo);
@@ -3734,7 +3736,7 @@ function delete_user(stdClass $user) {
     $user->timemodified = $updateuser->timemodified;
 
     // Notify auth plugin - do not block the delete even when plugin fails.
-    $authplugin = get_auth_plugin($user->auth);
+    $authplugin = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
     $authplugin->user_delete($user);
 
     return true;
@@ -3850,7 +3852,7 @@ function authenticate_user_login(
         $auth = empty($user->auth) ? 'manual' : $user->auth;
 
         if (in_array($user->auth, $authsenabled)) {
-            $authplugin = get_auth_plugin($user->auth);
+            $authplugin = $authentication->get_plugin($user->auth);
             $authplugin->pre_user_login_hook($user);
         }
 
@@ -3923,7 +3925,7 @@ function authenticate_user_login(
     }
 
     foreach ($auths as $auth) {
-        $authplugin = get_auth_plugin($auth);
+        $authplugin = $authentication->get_plugin($auth);
 
         // On auth fail fall through to the next plugin.
         if (!$authplugin->user_login($username, $password)) {
@@ -3977,7 +3979,7 @@ function authenticate_user_login(
 
             // If the existing hash is using an out-of-date algorithm (or the legacy md5 algorithm), then we should update to
             // the current hash algorithm while we have access to the user's password.
-            update_internal_user_password($user, $password);
+            \core\di::get(\core\authentication\password::class)->update($user, $password);
 
             if ($authplugin->is_synchronised_with_external()) {
                 // Update user record from external DB.
@@ -4004,7 +4006,7 @@ function authenticate_user_login(
         $authplugin->sync_roles($user);
 
         foreach ($authsenabled as $hau) {
-            $hauth = get_auth_plugin($hau);
+            $hauth = $authentication->get_plugin($hau);
             $hauth->user_authenticated_hook($user, $username, $password);
         }
 
@@ -4156,7 +4158,7 @@ function complete_user_login($user, array $extrauserinfo = []) {
     }
 
     // Select password change url.
-    $userauth = get_auth_plugin($USER->auth);
+    $userauth = \core\di::get(\core\authentication::class)->get_plugin($USER->auth);
 
     // Check whether the user should be changing password.
     if (get_user_preferences('auth_forcepasswordchange', false)) {
@@ -5934,7 +5936,7 @@ function setnew_password_and_mail($user, $fasthash = false) {
 
     $newpassword = generate_password();
 
-    update_internal_user_password($user, $newpassword, $fasthash);
+    \core\di::get(\core\authentication\password::class)->update($user, $newpassword, $fasthash);
 
     $a = new stdClass();
     $placeholders = \core_user::get_name_placeholders($user);
@@ -6059,14 +6061,16 @@ function send_password_change_info($user) {
     $data->sitename  = format_string($site->fullname);
     $data->admin     = generate_email_signoff();
 
-    if (!is_enabled_auth($user->auth)) {
+    $authentication = \core\di::get(\core\authentication::class);
+
+    if (!$authentication->is_enabled($user->auth)) {
         $message = get_string('emailpasswordchangeinfodisabled', '', $data);
         $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
         // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
         return email_to_user($user, $supportuser, $subject, $message);
     }
 
-    $userauth = get_auth_plugin($user->auth);
+    $userauth = $authentication->get_plugin($user->auth);
     ['subject' => $subject, 'message' => $message] = $userauth->get_password_change_info($user);
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.

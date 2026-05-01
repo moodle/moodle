@@ -392,7 +392,7 @@ class enrol_self_plugin extends enrol_plugin {
         $fields = $this->get_instance_defaults();
 
         if ($this->get_config('requirepassword')) {
-            $fields['password'] = generate_password(20);
+            $fields['password'] = \core\di::get(\core\authentication\password::class)->generate(20);
         }
 
         return $this->add_instance($course, $fields);
@@ -770,7 +770,7 @@ class enrol_self_plugin extends enrol_plugin {
             }
             // Only check the password if it is set.
             if (!empty($instance->password) && $this->get_config('usepasswordpolicy')) {
-                if (!check_password_policy($instance->password, $errmsg)) {
+                if (!\core\di::get(\core\authentication\password::class)->check_policy($instance->password, $errmsg)) {
                     return false;
                 }
             }
@@ -1077,7 +1077,7 @@ class enrol_self_plugin extends enrol_plugin {
             } else if (!empty($data['password'])) {
                 if ($policy) {
                     $errmsg = '';
-                    if (!check_password_policy($data['password'], $errmsg)) {
+                    if (!\core\di::get(\core\authentication\password::class)->check_policy($data['password'], $errmsg)) {
                         $errors['password'] = $errmsg;
                     }
                 }
@@ -1275,7 +1275,7 @@ class enrol_self_plugin extends enrol_plugin {
         $policy = $this->get_config('usepasswordpolicy');
         if (!empty($enrolmentdata['password'])) {
             if ($policy) {
-                $errarray = get_password_policy_errors($enrolmentdata['password']);
+                $errarray = \core\di::get(\core\authentication\password::class)->get_policy_errors($enrolmentdata['password']);
                 foreach ($errarray as $i => $err) {
                     $errors['enrol_self' . $i] = $err;
                 }

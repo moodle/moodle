@@ -84,7 +84,7 @@ if (empty($preferences['newemailattemptsleft'])) {
     }
 
     // Update user email.
-    $authplugin = get_auth_plugin($user->auth);
+    $authplugin = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
     $authplugin->user_update($olduser, $user);
     user_update_user($user, false);
     $a->email = $user->email;

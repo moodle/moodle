@@ -43,7 +43,7 @@ if (!$auth) {
     $options = array();
     $plugins = core_component::get_plugin_list('auth');
     foreach ($plugins as $name => $fulldir) {
-        $plugin = get_auth_plugin($name);
+        $plugin = \core\di::get(\core\authentication::class)->get_plugin($name);
         if (!$plugin or !method_exists($plugin, 'test_settings')) {
             continue;
         }
@@ -62,7 +62,7 @@ if (!$auth) {
     echo $OUTPUT->footer();
 }
 
-$plugin = get_auth_plugin($auth);
+$plugin = \core\di::get(\core\authentication::class)->get_plugin($auth);
 if (!$plugin or !method_exists($plugin, 'test_settings')) {
     redirect($returnurl);
 }

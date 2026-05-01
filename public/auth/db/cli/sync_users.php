@@ -77,7 +77,7 @@ Sample cron entry:
     die;
 }
 
-if (!is_enabled_auth('db')) {
+if (!\core\di::get(\core\authentication::class)->is_enabled('db')) {
     cli_error('auth_db plugin is disabled, synchronisation stopped', 2);
 }
 
@@ -98,7 +98,7 @@ if (empty($options['verbose'])) {
 $update = empty($options['noupdate']);
 
 /** @var auth_plugin_db $dbauth */
-$dbauth = get_auth_plugin('db');
+$dbauth = \core\di::get(\core\authentication::class)->get_plugin('db');
 $result = $dbauth->sync_users($trace, $update);
 
 exit($result);

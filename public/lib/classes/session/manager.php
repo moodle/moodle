@@ -455,9 +455,10 @@ class manager {
 
             } else if ($record->timemodified < di::get(clock::class)->time() - $maxlifetime) {
                 $timeout = true;
-                $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
+                $authentication = di::get(\core\authentication::class);
+                $authsequence = $authentication->get_enabled_plugins(); // Auths, in sequence.
                 foreach ($authsequence as $authname) {
-                    $authplugin = get_auth_plugin($authname);
+                    $authplugin = $authentication->get_plugin($authname);
                     if ($authplugin->ignore_timeout_hook($_SESSION['USER'], $record->sid, $record->timecreated, $record->timemodified)) {
                         $timeout = false;
                         break;

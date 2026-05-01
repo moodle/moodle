@@ -49,7 +49,7 @@ final class provider_test extends provider_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->assertEmpty(provider::get_contexts_for_userid($user->id));
 
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
         $auth->create_user_binding('https://lms.example.com', 'abc123', $user->id);
 
         $contextlist = provider::get_contexts_for_userid($user->id);
@@ -68,7 +68,7 @@ final class provider_test extends provider_testcase {
      */
     public function test_export_user_data(): void {
         $user = $this->getDataGenerator()->create_user();
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
         $auth->create_user_binding('https://lms.example.com', 'abc123', $user->id);
         $usercontext = \context_user::instance($user->id);
 
@@ -90,7 +90,7 @@ final class provider_test extends provider_testcase {
      */
     public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
 
         $user1 = $this->getDataGenerator()->create_user();
         $auth->create_user_binding('https://lms.example.com', 'abc123', $user1->id);
@@ -122,7 +122,7 @@ final class provider_test extends provider_testcase {
      */
     public function test_delete_data_for_user(): void {
         global $DB;
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
 
         $user1 = $this->getDataGenerator()->create_user();
         $auth->create_user_binding('https://lms.example.com', 'abc123', $user1->id);
@@ -154,7 +154,7 @@ final class provider_test extends provider_testcase {
      * @covers ::get_users_in_context
      */
     public function test_get_users_in_context(): void {
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
         $component = 'auth_lti';
         $user = $this->getDataGenerator()->create_user();
         $usercontext = \context_user::instance($user->id);
@@ -186,7 +186,7 @@ final class provider_test extends provider_testcase {
      * @covers ::delete_data_for_users
      */
     public function test_delete_data_for_users(): void {
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
         $component = 'auth_lti';
         $user1 = $this->getDataGenerator()->create_user();
         $usercontext1 = \context_user::instance($user1->id);

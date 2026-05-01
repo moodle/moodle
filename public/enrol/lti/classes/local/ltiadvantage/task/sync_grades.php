@@ -44,7 +44,7 @@ class sync_grades extends scheduled_task {
      */
     public function execute() {
 
-        if (!is_enabled_auth('lti')) {
+        if (!\core\di::get(\core\authentication::class)->is_enabled('lti')) {
             mtrace('Skipping task - ' . get_string('pluginnotenabled', 'auth', get_string('pluginname', 'auth_lti')));
             return true;
         }

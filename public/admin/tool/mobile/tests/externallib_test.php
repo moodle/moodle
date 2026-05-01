@@ -76,7 +76,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'registerauth' => $CFG->registerauth,
             'forgottenpasswordurl' => $CFG->forgottenpasswordurl,
             'authinstructions' => $authinstructions,
-            'authnoneenabled' => (int) is_enabled_auth('none'),
+            'authnoneenabled' => (int) \core\di::get(\core\authentication::class)->is_enabled('none'),
             'enablewebservices' => $CFG->enablewebservices,
             'enablemobilewebservice' => $CFG->enablemobilewebservice,
             'maintenanceenabled' => $CFG->maintenance_enabled,

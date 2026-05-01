@@ -57,7 +57,7 @@ class sync_grades extends \core\task\scheduled_task {
         require_once($CFG->dirroot . '/grade/querylib.php');
 
         // Check if the authentication plugin is disabled.
-        if (!is_enabled_auth('lti')) {
+        if (!\core\di::get(\core\authentication::class)->is_enabled('lti')) {
             mtrace('Skipping task - ' . get_string('pluginnotenabled', 'auth', get_string('pluginname', 'auth_lti')));
             return true;
         }

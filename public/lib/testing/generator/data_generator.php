@@ -209,7 +209,7 @@ EOD;
         }
 
         if (isset($record['password'])) {
-            $record['password'] = hash_internal_user_password($record['password']);
+            $record['password'] = \core\di::get(\core\authentication\password::class)->hash($record['password']);
         }
 
         if (!isset($record['email'])) {

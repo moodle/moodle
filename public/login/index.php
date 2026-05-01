@@ -85,9 +85,10 @@ if (!empty($SESSION->has_timed_out)) {
 $frm  = false;
 $user = false;
 
-$authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
+$authentication = \core\di::get(\core\authentication::class);
+$authsequence = $authentication->get_enabled_plugins(); // Auths, in sequence.
 foreach($authsequence as $authname) {
-    $authplugin = get_auth_plugin($authname);
+    $authplugin = $authentication->get_plugin($authname);
     // The auth plugin's loginpage_hook() can eventually set $frm and/or $user.
     $authplugin->loginpage_hook();
 }
@@ -134,11 +135,11 @@ if ($anchor && isset($SESSION->wantsurl) && strpos($SESSION->wantsurl, '#') === 
 
 /// Check if the user has actually submitted login data to us
 
-if ($frm and isset($frm->username)) {                             // Login WITH cookies
-
+if ($frm && isset($frm->username)) {
+    // Login WITH cookies.
     $frm->username = trim(core_text::strtolower($frm->username));
 
-    if (is_enabled_auth('none') ) {
+    if ($authentication->is_enabled('none')) {
         if ($frm->username !== core_user::clean_field($frm->username, 'username')) {
             $errormsg = get_string('username').': '.get_string("invalidusername");
             $errorcode = 2;
@@ -148,8 +149,9 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
     if ($user) {
         // The auth plugin has already provided the user via the loginpage_hook() called above.
-    } else if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
-        $user = false;    /// Can't log in as guest if guest button is disabled
+    } else if (($frm->username == 'guest') && empty($CFG->guestloginbutton)) {
+        // Can't log in as guest if guest button is disabled
+        $user = false;
         $frm = false;
     } else {
         if (empty($errormsg)) {
@@ -159,8 +161,9 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         }
     }
 
-    // Intercept 'restored' users to provide them with info & reset password
-    if (!$user and $frm and is_restored_user($frm->username)) {
+    // Intercept 'restored' users to provide them with info & reset password.
+    $authhelper = \core\di::get(\core\authentication::class);
+    if (!$user && $frm && $authhelper->is_restored_user($frm->username)) {
         $PAGE->set_title(get_string('restoredaccount'));
         $PAGE->set_heading($site->fullname);
         echo $OUTPUT->header();
@@ -174,10 +177,9 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     }
 
     if ($user) {
-
-        // language setup
+        // Language setup.
         if (isguestuser($user)) {
-            // no predefined language for guests - use existing session or default site lang
+            // No predefined language for guests - use existing session or default site lang.
             unset($user->lang);
 
         } else if (!empty($user->lang)) {
@@ -234,7 +236,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
     /// check if user password has expired
     /// Currently supported only for ldap-authentication module
-        $userauth = get_auth_plugin($USER->auth);
+        $userauth = $authentication->get_plugin($USER->auth);
         if (!isguestuser() and !empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
             $externalchangepassword = false;
             if ($userauth->can_change_password()) {

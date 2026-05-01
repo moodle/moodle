@@ -29,18 +29,19 @@ require_once('../config.php');
 $PAGE->set_url('/login/logout.php');
 $PAGE->set_context(context_system::instance());
 
-$sesskey = optional_param('sesskey', '__notpresent__', PARAM_RAW); // we want not null default to prevent required sesskey warning
+// We want not null default to prevent required sesskey warning.
+$sesskey = optional_param('sesskey', '__notpresent__', PARAM_RAW);
 $login   = optional_param('loginpage', 0, PARAM_BOOL);
 
-// can be overridden by auth plugins
+// Can be overridden by auth plugins.
 if ($login) {
     $redirect = get_login_url();
 } else {
-    $redirect = $CFG->wwwroot.'/';
+    $redirect = $CFG->wwwroot . '/';
 }
 
 if (!isloggedin()) {
-    // no confirmation, user has already logged out
+    // No confirmation, user has already logged out.
     require_logout();
     redirect($redirect);
 
@@ -53,9 +54,10 @@ if (!isloggedin()) {
     die;
 }
 
-$authsequence = get_enabled_auth_plugins(); // auths, in sequence
-foreach($authsequence as $authname) {
-    $authplugin = get_auth_plugin($authname);
+$authentication = \core\di::get(\core\authentication::class);
+$authsequence = $authentication->get_enabled_plugins(); // Authentication plugins, in sequence.
+foreach ($authsequence as $authname) {
+    $authplugin = $authentication->get_plugin($authname);
     $authplugin->logoutpage_hook();
 }
 

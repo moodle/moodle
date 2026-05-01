@@ -397,7 +397,7 @@ final class password_test extends \advanced_testcase {
             'pw' => '$2y$10$LOSDi5eaQJhutSRun.OVJ.ZSxQZabCMay7TO1KmzMkDMPvU40zGXK',
             'abc' => '$2y$10$VWTOhVdsBbWwtdWNDRHSpewjd3aXBQlBQf5rBY/hVhw8hciarFhXa',
             // phpcs:ignore moodle.Strings.ForbiddenStrings.Found
-            'C0mP1eX_&}<?@*&%` |"' => '$2y$10$3PJf.q.9ywNJlsInPbqc8.IFeSsvXrGvQLKRFBIhVu1h1I3vpIry6',
+            'C0mP1eX_&}<?@*&%` |\"' => '$2y$10$3PJf.q.9ywNJlsInPbqc8.IFeSsvXrGvQLKRFBIhVu1h1I3vpIry6',
             'ĩńťėŕňăţĩōŋāĹ' => '$2y$10$3A2Y8WpfRAnP3czJiSv6N.6Xp0T8hW3QZz2hUCYhzyWr1kGP1yUve',
         ];
 
@@ -425,7 +425,7 @@ final class password_test extends \advanced_testcase {
                 '$6$rounds=10000$t0L6PklgpijV4tMB$1vpCRKCImsVqTPMiZTi6zLGbs.hpAU8I2BhD/IFliBnHJkFZCWEBfTCq6pEzo' .
                 '0Q8nXsryrgeZ.qngcW.eifuW.',
             // phpcs:ignore moodle.Strings.ForbiddenStrings.Found
-            'C0mP1eX_&}<?@*&%` |"2' =>
+            'C0mP1eX_&}<?@*&%` |\"2' =>
                 '$6$rounds=10000$3TAyVAXN0zmFZ4il$KF8YzduX6Gu0C2xHsY83zoqQ/rLVsb9mLe417wDObo9tO00qeUC68/y2tMq4F' .
                 'L2ixnMPH3OMwzGYo8VJrm8Eq1',
             'ĩńťėŕňăţĩōŋāĹ2' =>
@@ -604,7 +604,7 @@ final class password_test extends \advanced_testcase {
         $service->update($user, 'newpassword');
 
         $this->assertDebuggingCalled(
-            'User record in update_internal_user_password() must include field auth',
+            'User record in \\core\\authentication\\password::update() must include field auth',
             DEBUG_DEVELOPER,
         );
         $this->assertEquals('manual', $user->auth);

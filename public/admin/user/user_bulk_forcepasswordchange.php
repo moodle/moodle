@@ -26,11 +26,12 @@ echo $OUTPUT->header();
 
 if ($confirm and confirm_sesskey()) {
     // only force password change if user may actually change the password
-    $authsavailable = get_enabled_auth_plugins();
+    $authentication = \core\di::get(\core\authentication::class);
+    $authsavailable = $authentication->get_enabled_plugins();
     $changeable = array();
 
-    foreach($authsavailable as $authplugin) {
-        if (!$auth = get_auth_plugin($authplugin)) {
+    foreach ($authsavailable as $authplugin) {
+        if (!$auth = $authentication->get_plugin($authplugin)) {
             continue;
         }
         if ($auth->is_internal() and $auth->can_change_password()) {

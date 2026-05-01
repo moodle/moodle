@@ -48,7 +48,7 @@ $serviceshortname = required_param('service', PARAM_ALPHANUMEXT);
 echo $OUTPUT->header();
 
 $username = trim(core_text::strtolower($username));
-if (is_restored_user($username)) {
+if (\core\di::get(\core\authentication::class)->is_restored_user($username)) {
     throw new moodle_exception('restoredaccountresetpassword', 'webservice');
 }
 

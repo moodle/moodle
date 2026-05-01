@@ -132,7 +132,7 @@ class block_course_list extends block_list {
     function get_remote_courses() {
         global $CFG, $USER, $OUTPUT;
 
-        if (!is_enabled_auth('mnet')) {
+        if (!\core\di::get(\core\authentication::class)->is_enabled('mnet')) {
             // no need to query anything remote related
             return;
         }
@@ -199,5 +199,3 @@ class block_course_list extends block_list {
         ];
     }
 }
-
-

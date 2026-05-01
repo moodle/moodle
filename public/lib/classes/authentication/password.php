@@ -192,7 +192,7 @@ class password {
         // Figure out what the hashed password should be.
         if (!isset($user->auth)) {
             debugging(
-                'User record in update_internal_user_password() must include field auth',
+                'User record in \\core\\authentication\\password::update() must include field auth',
                 DEBUG_DEVELOPER,
             );
             $user->auth = $DB->get_field('user', 'auth', ['id' => $user->id]);

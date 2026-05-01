@@ -182,7 +182,7 @@ final class auth_ldap_test extends \advanced_testcase {
         $this->assertEquals(0, $DB->count_records('role_assignments'));
 
         /** @var \auth_plugin_ldap $auth */
-        $auth = get_auth_plugin('ldap');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('ldap');
 
         ob_start();
         $sink = $this->redirectEvents();
@@ -242,7 +242,7 @@ final class auth_ldap_test extends \advanced_testcase {
         set_config('removeuser', AUTH_REMOVEUSER_SUSPEND, 'auth_ldap');
 
         /** @var \auth_plugin_ldap $auth */
-        $auth = get_auth_plugin('ldap');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('ldap');
 
         ob_start();
         $sink = $this->redirectEvents();
@@ -306,7 +306,7 @@ final class auth_ldap_test extends \advanced_testcase {
         set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth_ldap');
 
         /** @var \auth_plugin_ldap $auth */
-        $auth = get_auth_plugin('ldap');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('ldap');
 
         $this->delete_ldap_user($connection, $topdn, 1);
 
@@ -359,7 +359,7 @@ final class auth_ldap_test extends \advanced_testcase {
         set_config('sync_updateuserchunk', 1, 'auth_ldap');
 
         /** @var auth_plugin_ldap $auth */
-        $auth = get_auth_plugin('ldap');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('ldap');
 
         $count = 0;
         ob_start();
@@ -413,7 +413,7 @@ final class auth_ldap_test extends \advanced_testcase {
         set_cache_flag($ldap->pluginconfig . '/ntlmsess', sesskey(), $user->username, AUTH_NTLMTIMEOUT);
 
         // We are going to need to set the sesskey as the user's password in order for the LDAP log in to work.
-        update_internal_user_password($user, sesskey());
+        \core\di::get(\core\authentication\password::class)->update($user, sesskey());
 
         // The function ntlmsso_finish is responsible for triggering the event, so call it directly and catch the event.
         $sink = $this->redirectEvents();
@@ -533,7 +533,7 @@ final class auth_ldap_test extends \advanced_testcase {
         $this->assertEquals(0, $DB->count_records('role_assignments'));
 
         /** @var \auth_plugin_ldap $auth */
-        $auth = get_auth_plugin('ldap');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('ldap');
 
         $sink = $this->redirectEvents();
         $mailsink = $this->redirectEmails();
@@ -584,7 +584,7 @@ final class auth_ldap_test extends \advanced_testcase {
     }
 
     protected function enable_plugin() {
-        $auths = get_enabled_auth_plugins();
+        $auths = \core\di::get(\core\authentication::class)->get_enabled_plugins();
         if (!in_array('ldap', $auths)) {
             $auths[] = 'ldap';
 

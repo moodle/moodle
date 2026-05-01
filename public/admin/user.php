@@ -33,7 +33,7 @@
             throw new \moodle_exception('nousers');
         }
 
-        $auth = get_auth_plugin($user->auth);
+        $auth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
 
         $result = $auth->user_confirm($user->username, $user->secret);
 

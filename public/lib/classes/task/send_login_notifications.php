@@ -58,7 +58,7 @@ class send_login_notifications extends adhoc_task {
 
         $changepasswordlink = (new \moodle_url('/user/preferences.php', ['userid' => $USER->id]))->out(false);
         // Find a better final URL for changing password.
-        $userauth = get_auth_plugin($USER->auth);
+        $userauth = \core\di::get(\core\authentication::class)->get_plugin($USER->auth);
         if ($userauth->can_change_password()) {
             if ($changepwurl = $userauth->change_password_url()) {
                 $changepasswordlink = $changepwurl;

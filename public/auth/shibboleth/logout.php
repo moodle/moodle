@@ -18,7 +18,7 @@ if (is_https()) {
 }
 
 // If the shibboleth plugin is not enable, throw an exception.
-if (!is_enabled_auth('shibboleth')) {
+if (!\core\di::get(\core\authentication::class)->is_enabled('shibboleth')) {
     throw new moodle_exception(get_string('pluginnotenabled', 'auth', 'shibboleth'));
 }
 

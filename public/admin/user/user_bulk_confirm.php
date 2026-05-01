@@ -33,7 +33,7 @@ if ($confirm and confirm_sesskey()) {
         if ($user->confirmed) {
             continue;
         }
-        $auth = get_auth_plugin($user->auth);
+        $auth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
         $result = $auth->user_confirm($user->username, $user->secret);
         if ($result != AUTH_CONFIRM_OK && $result != AUTH_CONFIRM_ALREADY) {
             $notifications .= $OUTPUT->notification(get_string('usernotconfirmed', '', fullname($user, true)));

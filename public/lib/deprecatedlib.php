@@ -353,8 +353,11 @@ function reset_password_and_mail($user) {
     $site  = get_site();
     $supportuser = core_user::get_support_user();
 
-    $userauth = get_auth_plugin($user->auth);
-    if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)) {
+    $userauth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
+    if (
+        !$userauth->can_reset_password()
+        || !\core\di::get(\core\authentication::class)->is_enabled($user->auth)
+    ) {
         trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
         return false;
     }

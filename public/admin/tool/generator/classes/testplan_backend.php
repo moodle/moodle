@@ -194,7 +194,7 @@ class tool_generator_testplan_backend extends tool_generator_backend {
 
             // Updating password to the one set in config.php.
             if ($updateuserspassword) {
-                $userauth = get_auth_plugin($user->auth);
+                $userauth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
                 if (!$userauth->user_update_password($user, $CFG->tool_generator_users_password)) {
                     throw new \moodle_exception('errorpasswordupdate', 'auth');
                 }

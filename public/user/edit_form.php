@@ -149,7 +149,7 @@ class user_edit_form extends moodleform {
 
             // Disable fields that are locked by auth plugins.
             $fields = get_user_fieldnames();
-            $authplugin = get_auth_plugin($user->auth);
+            $authplugin = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
             $customfields = $authplugin->get_custom_user_profile_fields();
             $customfieldsdata = profile_user_record($userid, false);
             $fields = array_merge($fields, $customfields);
@@ -242,5 +242,3 @@ class user_edit_form extends moodleform {
         return $errors;
     }
 }
-
-

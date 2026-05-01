@@ -1237,7 +1237,7 @@ enum param: string {
         $param = clean_param($param, PARAM_PLUGIN);
         if (empty($param)) {
             return '';
-        } else if (exists_auth_plugin($param)) {
+        } else if (\core\di::get(\core\authentication::class)->plugin_exists($param)) {
             return $param;
         } else {
             return '';

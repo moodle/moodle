@@ -54,7 +54,7 @@ class noauth extends \core\check\check {
      * @return result
      */
     public function get_result(): result {
-        if (is_enabled_auth('none')) {
+        if (\core\di::get(\core\authentication::class)->is_enabled('none')) {
             $status = result::ERROR;
             $summary = get_string('checknoautherror', 'auth_none');
         } else {
@@ -66,4 +66,3 @@ class noauth extends \core\check\check {
         return new result($status, $summary, $details);
     }
 }
-

@@ -199,7 +199,7 @@ class webservice {
         }
 
         //Check if the user password is expired
-        $auth = get_auth_plugin($user->auth);
+        $auth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
         if (!empty($auth->config->expiration) and $auth->config->expiration == 1) {
             $days2expire = $auth->password_expire($user->username);
             if (intval($days2expire) < 0) {
@@ -1021,11 +1021,11 @@ abstract class webservice_server implements webservice_server_interface {
 
             //we check that authentication plugin is enabled
             //it is only required by simple authentication
-            if (!is_enabled_auth('webservice')) {
+            if (!\core\di::get(\core\authentication::class)->is_enabled('webservice')) {
                 throw new webservice_access_exception('The web service authentication plugin is disabled.');
             }
 
-            if (!$auth = get_auth_plugin('webservice')) {
+            if (!$auth = \core\di::get(\core\authentication::class)->get_plugin('webservice')) {
                 throw new webservice_access_exception('The web service authentication plugin is missing.');
             }
 
@@ -1101,12 +1101,12 @@ abstract class webservice_server implements webservice_server_interface {
             throw new moodle_exception('sitemaintenance', 'admin', previous: $e);
         }
 
-        //retrieve the authentication plugin if no previously done
+        // Retrieve the authentication plugin if no previously done.
         if (empty($auth)) {
-          $auth  = get_auth_plugin($user->auth);
+            $auth  = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
         }
 
-        // now fake user login, the session is completely empty too
+        // Now fake user login, the session is completely empty too.
         enrol_check_plugins($user, false);
         \core\session\manager::set_user($user);
         set_login_session_preferences();

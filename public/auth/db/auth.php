@@ -75,7 +75,7 @@ class auth_plugin_db extends auth_plugin_base {
             if (isset($this->config->removeuser) and $this->config->removeuser == AUTH_REMOVEUSER_KEEP) {
                 // No need to connect to external database in this case because users are never removed and we verify password locally.
                 if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'auth'=>$this->authtype))) {
-                    return validate_internal_user_password($user, $password);
+                    return \core\di::get(\core\authentication\password::class)->validate($user, $password);
                 } else {
                     return false;
                 }
@@ -97,7 +97,7 @@ class auth_plugin_db extends auth_plugin_base {
                 $authdb->Close();
                 // User exists externally - check username/password internally.
                 if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'auth'=>$this->authtype))) {
-                    return validate_internal_user_password($user, $password);
+                    return \core\di::get(\core\authentication\password::class)->validate($user, $password);
                 }
             } else {
                 $rs->Close();
@@ -260,7 +260,7 @@ class auth_plugin_db extends auth_plugin_base {
             // This will also update the stored hash to the latest algorithm
             // if the existing hash is using an out-of-date algorithm (or the
             // legacy md5 algorithm).
-            if (update_internal_user_password($puser, $newpassword)) {
+            if (\core\di::get(\core\authentication\password::class)->update($puser, $newpassword)) {
                 $user->password = $puser->password;
                 return true;
             } else {

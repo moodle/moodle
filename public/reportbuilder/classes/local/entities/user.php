@@ -554,7 +554,7 @@ class user extends base {
         $authlist = array_keys(core_component::get_plugin_list('auth'));
 
         return array_map(
-            fn(string $auth) => get_auth_plugin($auth)->get_title(),
+            fn(string $auth) => \core\di::get(\core\authentication::class)->get_plugin($auth)->get_title(),
             array_combine($authlist, $authlist),
         );
     }

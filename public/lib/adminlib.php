@@ -6623,10 +6623,11 @@ class admin_setting_special_registerauth extends admin_setting_configselect {
         $this->choices = array();
         $this->choices[''] = get_string('disable');
 
-        $authsenabled = get_enabled_auth_plugins();
+        $authentication = \core\di::get(\core\authentication::class);
+        $authsenabled = $authentication->get_enabled_plugins();
 
         foreach ($authsenabled as $auth) {
-            $authplugin = get_auth_plugin($auth);
+            $authplugin = $authentication->get_plugin($auth);
             if (!$authplugin->can_signup()) {
                 continue;
             }
@@ -7324,7 +7325,7 @@ class admin_setting_manageauths extends admin_setting {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
-            $authplugin = get_auth_plugin($auth);
+            $authplugin = \core\di::get(\core\authentication::class)->get_plugin($auth);
             $authtitle = $authplugin->get_title();
             if (strpos(core_text::strtolower($authtitle), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
@@ -7353,7 +7354,8 @@ class admin_setting_manageauths extends admin_setting {
         $txt->testsettings = get_string('testsettings', 'core_auth');
 
         $authsavailable = core_component::get_plugin_list('auth');
-        get_enabled_auth_plugins(true); // fix the list of enabled auths
+        // Fix the list of enabled auths.
+        \core\di::get(\core\authentication::class)->get_enabled_plugins(true);
         if (empty($CFG->auth)) {
             $authsenabled = array();
         } else {
@@ -7365,8 +7367,9 @@ class admin_setting_manageauths extends admin_setting {
         $registrationauths = array();
         $registrationauths[''] = $txt->disable;
         $authplugins = array();
+        $authentication = \core\di::get(\core\authentication::class);
         foreach ($authsenabled as $auth) {
-            $authplugin = get_auth_plugin($auth);
+            $authplugin = $authentication->get_plugin($auth);
             $authplugins[$auth] = $authplugin;
             /// Get the auth title (from core or own auth lang files)
             $authtitle = $authplugin->get_title();
@@ -7381,7 +7384,7 @@ class admin_setting_manageauths extends admin_setting {
             if (array_key_exists($auth, $displayauths)) {
                 continue; //already in the list
             }
-            $authplugin = get_auth_plugin($auth);
+            $authplugin = $authentication->get_plugin($auth);
             $authplugins[$auth] = $authplugin;
             /// Get the auth title (from core or own auth lang files)
             $authtitle = $authplugin->get_title();

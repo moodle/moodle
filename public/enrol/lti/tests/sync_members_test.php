@@ -259,7 +259,7 @@ final class sync_members_test extends \advanced_testcase {
      * Enable auth_lti plugin.
      */
     protected function enable_auth() {
-        $auths = get_enabled_auth_plugins();
+        $auths = \core\di::get(\core\authentication::class)->get_enabled_plugins();
         if (!in_array('lti', $auths)) {
             $auths[] = 'lti';
         }

@@ -49,7 +49,7 @@ class auth_plugin_email extends auth_plugin_base {
     function user_login($username, $password) {
         global $CFG, $DB;
         if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
-            return validate_internal_user_password($user, $password);
+            return \core\di::get(\core\authentication\password::class)->validate($user, $password);
         }
         return false;
     }
@@ -69,7 +69,7 @@ class auth_plugin_email extends auth_plugin_base {
         // This will also update the stored hash to the latest algorithm
         // if the existing hash is using an out-of-date algorithm (or the
         // legacy md5 algorithm).
-        return update_internal_user_password($user, $newpassword);
+        return \core\di::get(\core\authentication\password::class)->update($user, $newpassword);
     }
 
     function can_signup() {
@@ -107,7 +107,7 @@ class auth_plugin_email extends auth_plugin_base {
         require_once($CFG->dirroot.'/user/lib.php');
 
         $plainpassword = $user->password;
-        $user->password = hash_internal_user_password($user->password);
+        $user->password = \core\di::get(\core\authentication\password::class)->hash($user->password);
         if (empty($user->calendartype)) {
             $user->calendartype = $CFG->calendartype;
         }

@@ -22,7 +22,11 @@
     $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
 
     $config = get_config('auth_shibboleth');
-    if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($config->auth_instructions)) {
+    if (
+        !empty($CFG->registerauth)
+        || \core\di::get(\core\authentication::class)->is_enabled('none')
+        || !empty($config->auth_instructions)
+    ) {
         $showinstructions = true;
     } else {
         $showinstructions = false;
@@ -94,7 +98,7 @@
         $cansignup = !empty($CFG->registerauth);
         // Default instructions.
         $instructions = format_text($config->auth_instructions);
-        if (is_enabled_auth('none')) {
+        if (\core\di::get(\core\authentication::class)->is_enabled('none')) {
             $instructions = get_string('loginstepsnone');
         } else if ($cansignup) {
             if ($CFG->registerauth === 'email' && empty($instructions)) {
