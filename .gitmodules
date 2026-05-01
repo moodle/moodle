@@ -127,6 +127,11 @@
     path = public/question/type/oumultiresponse
     url = https://github.com/ucsf-education/moodle-qtype_oumultiresponse
     branch = UCSFCLE_501_STABLE
+[submodule "public/question/type/wordselect"]
+	path = public/question/type/wordselect
+	url = https://github.com/marcusgreen/moodle-qtype_wordselect
+	branch = main
+	tag = v2.56
 [submodule "public/theme/ucsf"]
 	path = public/theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
