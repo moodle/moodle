@@ -615,6 +615,10 @@ enum param: string {
             } else if (!is_numeric($param) || !preg_match('/^[\+-]?[0-9]*\.?[0-9]*(e[-+]?[0-9]+)?$/i', (string)$param)) {
                 throw new invalid_parameter_exception($debuginfo);
             }
+        } else if ($this->canonical() === self::BOOL) {
+            if ($param != $cleaned) {
+                throw new invalid_parameter_exception($debuginfo);
+            }
         } else if ((string) $param !== (string) $cleaned) {
             // Conversion to string is usually lossless.
             throw new invalid_parameter_exception($debuginfo);

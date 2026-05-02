@@ -171,7 +171,7 @@ class auth_plugin_email extends auth_plugin_base {
      * @param string $confirmsecret
      */
     function user_confirm($username, $confirmsecret) {
-        global $DB, $SESSION;
+        global $DB;
         $user = get_complete_user_data('username', $username);
 
         if (!empty($user)) {
@@ -179,17 +179,15 @@ class auth_plugin_email extends auth_plugin_base {
                 return AUTH_CONFIRM_ERROR;
 
             } else if ($user->secret === $confirmsecret && $user->confirmed) {
+                // Clean up stale wantsurl preference if user clicks confirmation link again.
+                unset_user_preference('auth_email_wantsurl', $user);
                 return AUTH_CONFIRM_ALREADY;
 
             } else if ($user->secret === $confirmsecret) {   // They have provided the secret key to get in
                 $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
-
-                if ($wantsurl = get_user_preferences('auth_email_wantsurl', false, $user)) {
-                    // Ensure user gets returned to page they were trying to access before signing up.
-                    $SESSION->wantsurl = $wantsurl;
-                    unset_user_preference('auth_email_wantsurl', $user);
-                }
-
+                // Clean up the wantsurl preference regardless of how confirmation was triggered
+                // (e.g. /login/confirm.php, admin single confirm, bulk confirm, web service).
+                unset_user_preference('auth_email_wantsurl', $user);
                 return AUTH_CONFIRM_OK;
             }
         } else {

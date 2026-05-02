@@ -7295,6 +7295,12 @@ final class courselib_test extends advanced_testcase {
 
         // Manager has permissions.
         $this->assertTrue(course_allowed_module($course, 'assign', $manager));
+
+        // Disable the assign module.
+        $DB->set_field('modules', 'visible', 0, ['name' => 'assign']);
+
+        // Verify that disabled modules are not allowed.
+        $this->assertFalse(course_allowed_module($course, 'assign', $manager));
     }
 
     /**

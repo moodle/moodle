@@ -107,17 +107,12 @@ final class async_backup_test extends \advanced_testcase {
         $asynctask = new \core\task\asynchronous_backup_task();
         $asynctask->set_custom_data(['backupid' => $backupid]);
         $asynctask->set_userid($USER->id);
-        \core\task\manager::queue_adhoc_task($asynctask);
 
         // We are expecting trace output during this test.
         $this->expectOutputRegex("/$backupid/");
 
         // Execute adhoc task.
-        $now = time();
-        $task = \core\task\manager::get_next_adhoc_task($now);
-        $this->assertInstanceOf('\\core\\task\\asynchronous_backup_task', $task);
-        $task->execute();
-        \core\task\manager::adhoc_task_complete($task);
+        $asynctask->execute();
 
         $postbackuprec = $DB->get_record('backup_controllers', ['backupid' => $backupid]);
 
@@ -151,13 +146,9 @@ final class async_backup_test extends \advanced_testcase {
         // Create the adhoc task.
         $asynctask = new \core\task\asynchronous_backup_task();
         $asynctask->set_custom_data(['backupid' => $backupid]);
-        \core\task\manager::queue_adhoc_task($asynctask);
 
         // Execute adhoc task.
-        $now = time();
-        $task = \core\task\manager::get_next_adhoc_task($now);
-        $task->execute();
-        \core\task\manager::adhoc_task_complete($task);
+        $asynctask->execute();
 
         $postbackuprec = $DB->get_record('backup_controllers', ['backupid' => $backupid]);
 
@@ -241,19 +232,11 @@ final class async_backup_test extends \advanced_testcase {
         // Now queue an adhoc task and check it handles and completes gracefully.
         $asynctask = new \core\task\asynchronous_backup_task();
         $asynctask->set_custom_data(array('backupid' => $backupid));
-        \core\task\manager::queue_adhoc_task($asynctask);
 
         // We are expecting a specific message output during this test.
         $this->expectOutputRegex('/invalid controller/');
 
         // Execute adhoc task.
-        $now = time();
-        $task = \core\task\manager::get_next_adhoc_task($now);
-        $this->assertInstanceOf('\\core\\task\\asynchronous_backup_task', $task);
-        $task->execute();
-        \core\task\manager::adhoc_task_complete($task);
-
-        // Check the task record is removed.
-        $this->assertEquals(0, $DB->count_records('task_adhoc'));
+        $asynctask->execute();
     }
 }

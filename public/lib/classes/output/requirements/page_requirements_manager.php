@@ -886,6 +886,8 @@ class page_requirements_manager {
                             ['sizegb', 'moodle'], ['sizemb', 'moodle'], ['sizekb', 'moodle'], ['sizeb', 'moodle'],
                             ['maxareabytesreached', 'moodle'], ['serverconnection', 'error'],
                             ['changesmadereallygoaway', 'moodle'], ['complete', 'moodle'],
+                            ['upload_error_folders_not_supported', 'repository_upload'],
+                            ['upload_error_folders_not_supported_title', 'repository_upload'],
                         ],
                     ];
                     break;

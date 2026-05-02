@@ -64,17 +64,23 @@ export default class Component extends BaseComponent {
 
   /**
    * On-click event handler for the collapse-all button.
+   *
+   * @param {Event} event
    * @private
    */
-  _collapseAllSections() {
+  _collapseAllSections(event) {
+    event.preventDefault();
     this._toggleAllSections(true);
   }
 
   /**
    * On-click event handler for the expand-all button.
+   *
+   * @param {Event} event
    * @private
    */
-  _expandAllSections() {
+  _expandAllSections(event) {
+    event.preventDefault();
     this._toggleAllSections(false);
   }
 

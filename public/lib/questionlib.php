@@ -613,7 +613,7 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
     $questions = $DB->get_records_sql($sql, $params);
     foreach ($questions as $question) {
         if ($newcategorydata->contextid != $question->contextid) {
-            question_bank::get_qtype($question->qtype)->move_files(
+            question_bank::get_qtype($question->qtype, false)->move_files(
                     $question->id, $question->contextid, $newcategorydata->contextid);
         }
         // Check whether there could be a clash of idnumbers in the new category.
@@ -687,8 +687,9 @@ function move_question_set_references(int $oldcategoryid, int $newcatgoryid,
                 && $oldcategoryid !== $newcatgoryid
             ) {
                 $filter['filter']['category']['values'][0] = $newcatgoryid;
-                $setreference->filtercondition = json_encode($filter);
             }
+            $filter['cat'] = implode(',', [$filter['filter']['category']['values'][0], $newcontextid]);
+            $setreference->filtercondition = json_encode($filter);
             $DB->update_record('question_set_references', $setreference);
         }
         $setreferences->close();

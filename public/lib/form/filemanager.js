@@ -254,12 +254,23 @@ M.form_filemanager.init = function(Y, options) {
                 }
             }, true);
         },
-        /** displays message in a popup */
-        print_msg: function(msg, type, options) {
+        /**
+         * Displays a message in a popup dialog.
+         *
+         * @param {string} msg - The message to display in the popup.
+         * @param {string} type - The type of message ('error' or 'info').
+         * @param {Object} [options] - Additional options for the dialog (e.g., previousActiveElement).
+         * @param {string|number} [errorCode] - Optional error code for further identification.
+         * @returns {void}
+         */
+        print_msg: function(msg, type, options, errorCode) {
             var header = M.util.get_string('error', 'moodle');
             if (type != 'error') {
                 type = 'info'; // one of only two types excepted
                 header = M.util.get_string('info', 'moodle');
+            }
+            if (errorCode === 'invalidfiletype') {
+                header = M.util.get_string('invalidfiletypetitle', 'repository');
             }
             if (!this.msg_dlg) {
                 this.msg_dlg_node = Y.Node.create(M.form_filemanager.templates.message);
@@ -283,8 +294,13 @@ M.form_filemanager.init = function(Y, options) {
             }
 
             this.msg_dlg.set('headerContent', header);
-            this.msg_dlg_node.removeClass('fp-msg-info').removeClass('fp-msg-error').addClass('fp-msg-'+type)
-            this.msg_dlg_node.one('.fp-msg-text').setContent(Y.Escape.html(msg));
+            this.msg_dlg_node.removeClass('fp-msg-info').removeClass('fp-msg-error').addClass('fp-msg-' + type);
+            if (errorCode === 'invalidfiletype') {
+                // Allow HTML for accepted file types list.
+                this.msg_dlg_node.one('.fp-msg-text').setContent(msg);
+            } else {
+                this.msg_dlg_node.one('.fp-msg-text').setContent(Y.Escape.html(msg));
+            }
             this.msg_dlg.show();
         },
         is_disabled: function() {
@@ -850,16 +866,41 @@ M.form_filemanager.init = function(Y, options) {
                     var originalextension = (originalfilenamearr.length > 1) ? originalfilenamearr.pop() : "";
                     var newfilenamearr = newfilename.split('.');
                     var newextension = (newfilenamearr.length > 1) ? newfilenamearr.pop() : "";
+                    const fileManager = Y.one('#filemanager-' + this.client_id)
+                        || Y.one('#filepicker-wrapper-' + this.client_id);
+                    const fileTypesDescription = fileManager.get('parentNode').one('.form-filetypes-descriptions');
+                    let acceptedTypes = fileTypesDescription
+                        ? fileTypesDescription.getAttribute('data-all-allowed-extensions')
+                        : '';
+                    let stringVars;
 
                     if (newextension !== originalextension) {
                         if (newextension === "") {
                             var string = M.util.get_string('originalextensionremove', 'repository', originalextension);
+                        } else if (!this.isValidFileType(`.${newextension}`, acceptedTypes)) {
+                            stringVars = {
+                                fileextension: Y.Escape.html(newextension),
+                                acceptedfiletypes: fileTypesDescription ? fileTypesDescription.getContent() : '',
+                            };
+                            this.print_msg(
+                                M.util.get_string('updateinvalidfiletype', 'repository', stringVars),
+                                'error',
+                                options,
+                                'invalidfiletype',
+                            );
+                            // Revert the filename input to the original value.
+                            selectnode.one('.fp-saveas input').set('value', fileinfo.fullname);
+                            return;
                         } else {
-                            var stringvars = {
-                                originalextension: originalextension,
-                                newextension: newextension
+                            stringVars = {
+                                originalextension: Y.Escape.html(originalextension),
+                                newextension: Y.Escape.html(newextension),
                             }
-                            string = M.util.get_string('originalextensionchange', 'repository', stringvars);
+                            dialog_options.stringTitleKey = 'updatefileextensiontitle';
+                            dialog_options.stringTitleComponent = 'repository';
+                            dialog_options.message = M.util.get_string('originalextensionchange', 'repository', stringVars);
+                            this.show_confirm_dialog(dialog_options);
+                            return;
                         }
                         warnings = warnings.concat('<li>', string, '</li>');
                     }
@@ -907,15 +948,49 @@ M.form_filemanager.init = function(Y, options) {
             });
         },
         /**
+         * Validate a file extension against accepted types.
+         *
+         * @param {string} fileExtension - Extension including dot (e.g. ".jpg").
+         * @param {string} acceptedTypes - "*" | "optimised_image .png ..." names of extensions allowed.
+         * @returns {boolean} Whether the file is allowed.
+         */
+        isValidFileType: function(fileExtension, acceptedTypes) {
+            // If there are no accepted types, all file types are valid.
+            if (!acceptedTypes) {
+                return true;
+            }
+
+            const ext = fileExtension.toLowerCase().startsWith('.')
+                ? fileExtension.toLowerCase()
+                : `.${fileExtension.toLowerCase()}`;
+
+            const accepted = acceptedTypes
+                .toLowerCase()
+                .split(/\s+/)
+                .filter(Boolean);
+
+            return accepted.includes(ext);
+        },
+        /**
          * Displays a confirmation dialog
-         * Expected attributes in dialog_options: message, callback, callbackargs(optional), scope(optional)
+         *
+         * @param {Object} dialogOptions - options for the confirmation dialog.
+         *   - message: The dialog message.
+         *   - callback: Function to call on confirmation.
+         *   - callbackargs (optional): Arguments for the callback.
+         *   - scope (optional): Scope for the callback.
+         *   - stringTitleKey (optional): String key for the dialog title (default: 'confirm').
+         *   - stringTitleComponent (optional): Language component for the title (default: 'moodle').
          */
         show_confirm_dialog: function(dialogOptions) {
+            const stringTitleKey = dialogOptions.stringTitleKey ? dialogOptions.stringTitleKey : 'confirm';
+            const stringTitleComponent = dialogOptions.stringTitleComponent ? dialogOptions.stringTitleComponent : 'moodle';
+            const buttonKey = dialogOptions.stringTitleKey && dialogOptions.stringTitleKey ? 'rename' : 'yes';
             require(['core/notification', 'core/str'], function(Notification, Str) {
                 Notification.saveCancelPromise(
-                    Str.get_string('confirm', 'moodle'),
+                    Str.get_string(stringTitleKey, stringTitleComponent),
                     dialogOptions.message,
-                    Str.get_string('yes', 'moodle')
+                    Str.get_string(buttonKey, 'moodle'),
                 ).then(function() {
                     dialogOptions.callback.apply(dialogOptions.scope, dialogOptions.callbackargs);
                     return;

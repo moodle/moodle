@@ -338,7 +338,7 @@ final class modlib_test extends \advanced_testcase {
         $this->setUser($user);
 
         $this->expectException(\moodle_exception::class);
-
+        $this->expectExceptionMessage('This module (label) has been disabled for this particular course');
         can_add_moduleinfo($course, 'label', $section->section);
     }
 

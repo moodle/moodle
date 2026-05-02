@@ -120,7 +120,7 @@ final class questionbank_test extends \advanced_testcase {
         $q1v3 = $questiongenerator->update_question($q1v2, null, ['name' => 'Q1V3']);
         // The second question has the first version in status draft, the second version in status ready,
         // and third version in status draft.
-        $q2v1 = $questiongenerator->create_question('numerical', null, ['name' => 'Q2V2', 'category' => $cat->id,
+        $q2v1 = $questiongenerator->create_question('numerical', null, ['name' => 'Q2V1', 'category' => $cat->id,
             'status' => question_version_status::QUESTION_STATUS_DRAFT, ]);
         $q2v2 = $questiongenerator->update_question($q2v1, null, ['name' => 'Q2V2',
             'status' => question_version_status::QUESTION_STATUS_READY, ]);
@@ -133,11 +133,19 @@ final class questionbank_test extends \advanced_testcase {
             'status' => question_version_status::QUESTION_STATUS_DRAFT, ]);
         $q3v3 = $questiongenerator->update_question($q3v2, null, ['name' => 'Q3V3',
             'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+        // The fourth question has the first and the second versions in status ready, and the third version in status draft.
+        $q4v1 = $questiongenerator->create_question('essay', null, ['name' => 'Q4V1', 'category' => $cat->id,
+            'status' => question_version_status::QUESTION_STATUS_READY, ]);
+        $q4v2 = $questiongenerator->update_question($q4v1, null, ['name' => 'Q4V2',
+            'status' => question_version_status::QUESTION_STATUS_READY, ]);
+        $q4v3 = $questiongenerator->update_question($q4v2, null, ['name' => 'Q4V3',
+            'status' => question_version_status::QUESTION_STATUS_DRAFT]);
 
         // Test the returned array of questions in that category is the desired one with version three of the first
-        // question, version two of the second question, and the third question omitted completely since there are
-        // only draft versions.
-        $this->assertEquals([$q1v3->id => $q1v3->id, $q2v2->id => $q2v2->id],
+        // question, version two of the second question, the third question omitted completely since there are
+        // only draft versions, and the version two of the fourth question.
+        $this->assertEquals(
+            [$q1v3->id => $q1v3->id, $q2v2->id => $q2v2->id, $q4v2->id => $q4v2->id],
             question_bank::get_finder()->get_questions_from_categories([$cat->id], ""));
     }
 }

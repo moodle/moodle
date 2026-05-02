@@ -25,6 +25,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import {add as addToast} from 'core/toast';
 import Logger from 'core/local/reactive/logger';
 
 /**
@@ -53,23 +54,7 @@ export default class SRLogger extends Logger {
      */
     add(entry) {
         if (entry.feedbackMessage) {
-            // Fetch or create an ARIA live region that will serve as the container for the logger feedback.
-            let loggerFeedback = document.getElementById(SRLogger.liveRegionId);
-            if (!loggerFeedback) {
-                loggerFeedback = document.createElement('div');
-                loggerFeedback.id = SRLogger.liveRegionId;
-                loggerFeedback.classList.add('visually-hidden');
-                loggerFeedback.setAttribute('aria-live', 'polite');
-                document.body.append(loggerFeedback);
-            }
-            // Set the ARIA live region's contents with the feedback.
-            loggerFeedback.innerHTML = entry.feedbackMessage;
-
-            // Clear the feedback message after 4 seconds to avoid the contents from being read out in case the user navigates
-            // to this region. This is similar to the default timeout of toast messages before disappearing from view.
-            setTimeout(() => {
-                loggerFeedback.innerHTML = '';
-            }, 4000);
+            addToast(entry.feedbackMessage, {visuallyHidden: true});
         }
     }
 }

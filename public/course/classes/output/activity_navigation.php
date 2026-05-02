@@ -74,6 +74,7 @@ class activity_navigation implements renderable, templatable {
             $attributes = [
                 'class' => 'btn btn-link',
                 'id' => 'prev-activity-link',
+                'aria-label' => get_string('activitynavigation:preva', 'course', $linkname),
             ];
             $this->prevlink = new \action_link($linkurl, $OUTPUT->larrow() . ' ' . $linkname, null, $attributes);
         }
@@ -89,15 +90,16 @@ class activity_navigation implements renderable, templatable {
             $attributes = [
                 'class' => 'btn btn-link',
                 'id' => 'next-activity-link',
+                'aria-label' => get_string('activitynavigation:nexta', 'course', $linkname),
             ];
             $this->nextlink = new \action_link($linkurl, $linkname . ' ' . $OUTPUT->rarrow(), null, $attributes);
         }
 
         // Render the activity list dropdown menu if available.
         if (!empty($activitylist)) {
-            $select = new url_select($activitylist, '', array('' => get_string('jumpto')));
-            $select->set_label(get_string('jumpto'), ['class' => 'visually-hidden']);
-            $select->attributes = array('id' => 'jump-to-activity');
+            $select = new url_select($activitylist, '', ['' => get_string('activitynavigation:jumptoactivity', 'course')]);
+            $select->set_label(get_string('activitynavigation:jumptoactivity', 'course'), ['class' => 'visually-hidden']);
+            $select->attributes = ['id' => 'jump-to-activity'];
             $this->activitylist = $select;
         }
     }

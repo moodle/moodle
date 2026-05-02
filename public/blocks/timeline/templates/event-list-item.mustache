@@ -69,13 +69,13 @@
             </div>
             <div class="event-name-container flex-grow-1 line-height-3 nowrap text-truncate">
                 <div class="d-flex">
-                    <h6 class="event-name mb-0 pb-1 text-truncate">
+                    <h5 class="h6 event-name mb-0 pb-1 text-truncate">
                         {{#overdue}}<span class="badge rounded-pill bg-danger text-white ms-1 float-end">{{#str}} overdue, block_timeline {{/str}}</span>{{/overdue}}
                         <a href="{{url}}"
                                 title="{{name}}"
                                 aria-label='{{#cleanstr}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{activityname}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/cleanstr}}'>
                             {{{activityname}}}</a>
-                    </h6>
+                    </h5>
                 </div>
                 <small class="mb-0">
                     {{#courseview}}
@@ -89,7 +89,7 @@
         </div>
         {{#action.actionable}}
         <div class="d-flex timeline-action-button">
-            <h6 class="event-action">
+            <h5 class="h6 event-action">
                 <a class="list-group-item-action btn btn-outline-secondary btn-sm text-nowrap"
                     href="{{action.url}}"
                     aria-label="{{action.name}}"
@@ -99,7 +99,7 @@
                 <span class="badge bg-secondary text-dark">{{action.itemcount}}</span>
                 {{/action.showitemcount}}
                 </a>
-            </h6>
+            </h5>
         </div>
         {{/action.actionable}}
     </div>

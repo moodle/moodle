@@ -92,7 +92,7 @@ if ($reset || $deleteeall) {
     echo $OUTPUT->confirm(get_string('resetconfirm', 'gradepenalty_duedate'), $confirmurl, $url);
     echo $OUTPUT->footer();
     die;
-} else if (optional_param('resetconfirm', 0, PARAM_INT)) {
+} else if (optional_param('resetconfirm', 0, PARAM_INT) && confirm_sesskey()) {
     // Reset the penalty rules.
     penalty_rule::reset_rules($contextid);
 }

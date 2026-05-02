@@ -522,6 +522,10 @@ class meeting {
         $recordid = $jsonobj->{'internal_meeting_id'};
         $attendees = $jsonobj->{'data'}->{'attendees'};
         foreach ($attendees as $attendee) {
+            // Skip processing guest users with non-numeric userids.
+            if (!is_numeric($attendee->{'ext_user_id'})) {
+                continue;
+            }
             $userid = $attendee->{'ext_user_id'};
             $overrides['meetingid'] = $meetingid;
             $overrides['userid'] = $userid;

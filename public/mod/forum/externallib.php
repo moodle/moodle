@@ -191,7 +191,7 @@ class mod_forum_external extends external_api {
      * @return  array
      */
     public static function get_discussion_posts(int $discussionid, ?string $sortby, ?string $sortdirection, bool $includeinlineattachments = false) {
-        global $USER;
+        global $USER, $CFG;
         // Validate the parameter.
         $params = self::validate_parameters(self::get_discussion_posts_parameters(), [
                 'discussionid' => $discussionid,
@@ -247,8 +247,20 @@ class mod_forum_external extends external_api {
 
         $legacydatamapper = mod_forum\local\container::get_legacy_data_mapper_factory();
 
+        // Export the posts for the template before we mark them as read.
+        // This allows the template to indicate which are the new/unread ones
+        // whilst marking them as read right here and now.
+        $exportedposts = $postbuilder->build($USER, [$forum], [$discussion], $posts, $includeinlineattachments);
+
+        // Mark these posts as read.
+        if (!empty($posts)) {
+            if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forum->get_id())) {
+                forum_tp_mark_posts_read($USER, array_keys($posts));
+            }
+        }
+
         return [
-            'posts' => $postbuilder->build($USER, [$forum], [$discussion], $posts, $includeinlineattachments),
+            'posts' => $exportedposts,
             'forumid' => $discussion->get_forum_id(),
             'courseid' => $discussion->get_course_id(),
             'ratinginfo' => \core_rating\external\util::get_rating_info(
@@ -1720,7 +1732,7 @@ class mod_forum_external extends external_api {
      * @return  array
      */
     public static function get_discussion_posts_by_userid(int $userid, int $cmid, ?string $sortby, ?string $sortdirection) {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
         // Validate the parameter.
         $params = self::validate_parameters(self::get_discussion_posts_by_userid_parameters(), [
                 'userid' => $userid,
@@ -1817,6 +1829,13 @@ class mod_forum_external extends external_api {
                     'parentposts' => $parentposts,
                 ],
             ];
+
+            // Mark these posts as read.
+            if (!empty($posts)) {
+                if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forum->get_id())) {
+                    forum_tp_mark_posts_read($USER, array_keys($posts));
+                }
+            }
         }
 
         return [
@@ -2313,5 +2332,84 @@ class mod_forum_external extends external_api {
                 'warnings' => new external_warnings()
             ]
         );
+    }
+
+    /**
+     * Returns description of mark_posts_read parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function mark_posts_read_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'postids' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'The post ID to mark as read'),
+                'List of post IDs to mark as read',
+            ),
+            'discussionid' => new external_value(PARAM_INT, 'The discussion the posts belong to'),
+        ]);
+    }
+
+    /**
+     * Trigger the posts viewed event.
+     *
+     * This method differs from view_forum_discussion in that it is only
+     * interested in marking certain posts as viewed, and not an
+     * entire discussion.
+     *
+     * @param array $postids The post ids
+     * @param int $discussionid The discussion id
+     * @return bool True on success
+     */
+    public static function mark_posts_read(array $postids, int $discussionid): bool {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . "/mod/forum/lib.php");
+
+        $params = self::validate_parameters(
+            self::mark_posts_read_parameters(),
+            [
+                'postids' => $postids,
+                'discussionid' => $discussionid,
+            ]
+        );
+
+        // Check permissions.
+        $discussion = $DB->get_record('forum_discussions', ['id' => $discussionid], '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('forum', $discussion->forum, $discussion->course, false, MUST_EXIST);
+        $modcontext = context_module::instance($cm->id);
+        self::validate_context($modcontext);
+
+        require_capability('mod/forum:viewdiscussion', $modcontext, null, true, 'noviewdiscussionspermission', 'forum');
+
+        // Check the posts belong to the discussion.
+        [$insql, $params] = $DB->get_in_or_equal($postids, SQL_PARAMS_NAMED);
+        $params['discussionid'] = $discussionid;
+        $validposts = $DB->get_records_select(
+            'forum_posts',
+            "id $insql AND discussion = :discussionid",
+            $params,
+            '',
+            'id'
+        );
+
+        // Keep only valid posts.
+        $postids = array_intersect($postids, array_keys($validposts));
+        if (empty($postids)) {
+            return false;
+        }
+
+        // Mark as read if required.
+        $forum = $DB->get_record('forum', ['id' => $discussion->forum], '*', MUST_EXIST);
+        if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forum)) {
+            return forum_tp_mark_posts_read($USER, $postids);
+        }
+
+        return false;
+    }
+
+    /**
+     * Describes the data returned from mark_posts_read.
+     */
+    public static function mark_posts_read_returns(): external_value {
+        return new external_value(PARAM_BOOL, 'Returns true on success');
     }
 }

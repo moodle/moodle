@@ -60,54 +60,56 @@
             {{#str}} overdue, block_timeline {{/str}}
         </a>
         <div class="dropdown-divider" role="separator"></div>
-        <h6 class="dropdown-header">{{#str}} duedate, block_timeline {{/str}}</h6>
-        <a
-            class="dropdown-item"
-            href="#"
-            data-from="0"
-            data-to="7"
-            data-filtername="next7days"
-            {{#next7days}}aria-current="true"{{/next7days}}
-            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next7days, block_timeline {{/str}}{{/str}}"
-            role="menuitem"
-        >
-            {{#str}} next7days, block_timeline {{/str}}
-        </a>
-        <a
-            class="dropdown-item"
-            href="#"
-            data-from="0"
-            data-to="30"
-            data-filtername="next30days"
-            {{#next30days}}aria-current="true"{{/next30days}}
-            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next30days, block_timeline {{/str}}{{/str}}"
-            role="menuitem"
-        >
-            {{#str}} next30days, block_timeline {{/str}}
-        </a>
-        <a
-            class="dropdown-item"
-            href="#"
-            data-from="0"
-            data-to="90"
-            data-filtername="next3months"
-            {{#next3months}}aria-current="true"{{/next3months}}
-            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next3months, block_timeline {{/str}}{{/str}}"
-            role="menuitem"
-        >
-            {{#str}} next3months, block_timeline {{/str}}
-        </a>
-        <a
-            class="dropdown-item"
-            href="#"
-            data-from="0"
-            data-to="180"
-            data-filtername="next6months"
-            {{#next6months}}aria-current="true"{{/next6months}}
-            aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next6months, block_timeline {{/str}}{{/str}}"
-            role="menuitem"
-        >
-            {{#str}} next6months, block_timeline {{/str}}
-        </a>
+        <div role="group" aria-labelledby="duedatefiltergrouplabel">
+            <div class="h6 dropdown-header" role="presentation" id="duedatefiltergrouplabel">{{#str}} duedate, block_timeline {{/str}}</div>
+            <a
+                    class="dropdown-item"
+                    href="#"
+                    data-from="0"
+                    data-to="7"
+                    data-filtername="next7days"
+                    {{#next7days}}aria-current="true"{{/next7days}}
+                    aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next7days, block_timeline {{/str}}{{/str}}"
+                    role="menuitem"
+            >
+                {{#str}} next7days, block_timeline {{/str}}
+            </a>
+            <a
+                    class="dropdown-item"
+                    href="#"
+                    data-from="0"
+                    data-to="30"
+                    data-filtername="next30days"
+                    {{#next30days}}aria-current="true"{{/next30days}}
+                    aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next30days, block_timeline {{/str}}{{/str}}"
+                    role="menuitem"
+            >
+                {{#str}} next30days, block_timeline {{/str}}
+            </a>
+            <a
+                    class="dropdown-item"
+                    href="#"
+                    data-from="0"
+                    data-to="90"
+                    data-filtername="next3months"
+                    {{#next3months}}aria-current="true"{{/next3months}}
+                    aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next3months, block_timeline {{/str}}{{/str}}"
+                    role="menuitem"
+            >
+                {{#str}} next3months, block_timeline {{/str}}
+            </a>
+            <a
+                    class="dropdown-item"
+                    href="#"
+                    data-from="0"
+                    data-to="180"
+                    data-filtername="next6months"
+                    {{#next6months}}aria-current="true"{{/next6months}}
+                    aria-label="{{#str}} ariadayfilteroption, block_timeline, {{#str}} next6months, block_timeline {{/str}}{{/str}}"
+                    role="menuitem"
+            >
+                {{#str}} next6months, block_timeline {{/str}}
+            </a>
+        </div>
     </div>
 </div>

@@ -750,22 +750,23 @@ class view {
         $extracondition = '';
         if (!$showhiddenquestion) {
             // If Show hidden question option is off, then we need get the latest version that is not hidden.
-            $extracondition = ' AND v.status <> :hiddenstatus';
+            $extracondition = ' AND qv2.status <> :hiddenstatus';
             $this->sqlparams = array_merge($this->sqlparams, ['hiddenstatus' => question_version_status::QUESTION_STATUS_HIDDEN]);
         }
-        $latestversion = "qv.version = (SELECT MAX(v.version)
-                                          FROM {question_versions} v
-                                          JOIN {question_bank_entries} be
-                                            ON be.id = v.questionbankentryid
-                                         WHERE be.id = qbe.id $extracondition)";
 
         // Get higher level filter condition.
         $jointype = isset($this->pagevars['jointype']) ? (int)$this->pagevars['jointype'] : condition::JOINTYPE_DEFAULT;
         $nonecondition = ($jointype === datafilter::JOINTYPE_NONE) ? ' NOT ' : '';
         $separator = ($jointype === datafilter::JOINTYPE_ALL) ? ' AND ' : ' OR ';
         // Build the SQL.
-        $sql = ' FROM {question} q ' . implode(' ', $joins);
-        $sql .= ' WHERE q.parent = 0 AND ' . $latestversion;
+        $sql = '      FROM {question} q ' . implode(' ', $joins) .
+               ' LEFT JOIN {question_versions} qv2 ON (   qv2.questionbankentryid = qv.questionbankentryid
+                                                      AND qv2.version > qv.version' .
+                                                      $extracondition .
+                                                     ')' .
+               ' WHERE q.parent = :parent
+                   AND qv2.questionbankentryid IS NULL';
+        $this->sqlparams = array_merge(['parent' => 0], $this->sqlparams);
         if (!empty($conditions)) {
             $sql .= ' AND ' . $nonecondition . ' ( ';
             $sql .= implode($separator, $conditions);

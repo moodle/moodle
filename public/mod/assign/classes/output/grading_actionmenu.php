@@ -175,7 +175,7 @@ class grading_actionmenu implements templatable, renderable {
 
         if ($this->assign->is_any_submission_plugin_enabled()) {
             ['statusmenu' => $statusmenu, 'currentvalue' => $currentvalue] = $this->get_status_menu();
-            $statusselect = new \core\output\select_menu('status', $statusmenu, $currentvalue);
+            $statusselect = new \core\output\select_menu('status', $statusmenu, $currentvalue, true);
             $statusselect->set_label(get_string('status', 'mod_assign'), [], true);
             $data['statusselector'] = $statusselect->export_for_template($output);
         }

@@ -177,9 +177,8 @@ class gradingform_rubric_editrubric extends moodleform {
         }
 
         // freeze form elements and pass the values in hidden fields
-        // TODO MDL-29421 description_editor does not freeze the normal way, uncomment below when fixed
         $form = $this->_form;
-        foreach (array('rubric', 'name'/*, 'description_editor'*/) as $fieldname) {
+        foreach (['rubric', 'name', 'description_editor'] as $fieldname) {
             $el =& $form->getElement($fieldname);
             $el->freeze();
             $el->setPersistantFreeze(true);

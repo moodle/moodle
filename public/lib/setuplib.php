@@ -589,7 +589,11 @@ function initialise_local_config_cache() {
         copy($bootstrapsharedfile, $bootstraplocalfile);
     }
 
-    if (!empty($CFG->siteidentifier) && !file_exists($bootstrapsharedfile) && defined('SYSCONTEXTID')) {
+    if (
+        !empty($CFG->siteidentifier) &&
+        defined('SYSCONTEXTID') &&
+        !file_exists($bootstraplocalfile)
+    ) {
         $contents = "<?php
 // ********** This file is generated DO NOT EDIT **********
 \$CFG->siteidentifier = " . var_export($CFG->siteidentifier, true) . ";
@@ -600,15 +604,20 @@ if (\$CFG->bootstraphash === hash_local_config_cache() && !defined('SYSCONTEXTID
 }
 ";
 
-        // Create the central bootstrap first.
+        // Create the local cache first, in case the shared cache is not
+        // working then each local cache still works independently.
+        make_localcache_directory('', true);
+        $temp = $bootstraplocalfile . '.tmp' . uniqid();
+        file_put_contents($temp, $contents);
+        @chmod($temp, $CFG->filepermissions);
+        rename($temp, $bootstraplocalfile);
+
+        // Create the central bootstrap backup file.
         $temp = $bootstrapsharedfile . '.tmp' . uniqid();
         file_put_contents($temp, $contents);
         @chmod($temp, $CFG->filepermissions);
         rename($temp, $bootstrapsharedfile);
 
-        // Then prewarm the local cache as well.
-        make_localcache_directory('', true);
-        copy($bootstrapsharedfile, $bootstraplocalfile);
     }
 }
 

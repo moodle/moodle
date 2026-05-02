@@ -37,9 +37,9 @@ class moodle_api_authentication_middleware extends moodle_authentication_middlew
         // Currently only Cookie authentication is supported.
         if ($moodleroute && $moodleroute->requirelogin) {
             $requirements = $moodleroute->requirelogin;
-            if ($courseattributename = $requirements->get_course_attribute_name()) {
-                $courseorid = $request->getAttribute($courseattributename, null);
-            }
+
+            $courseattributename = $requirements->get_course_attribute_name();
+            $courseorid = $courseattributename ? $request->getAttribute($courseattributename, null) : null;
 
             if ($requirements->should_require_course_login()) {
                 require_course_login(

@@ -26,6 +26,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig and empty($CFG->disableupdateautodeploy)) {
+    $installer = tool_installaddon_installer::instance();
+    $ADMIN->add('modules', new admin_externalpage(
+        'tool_installaddon_marketplace',
+        get_string('marketplaceadminlinktext', 'tool_installaddon'),
+        $installer->get_marketplace_url()->out(false)
+    ), 'modsettings');
 
     $ADMIN->add('modules', new admin_externalpage('tool_installaddon_index',
         get_string('installaddons', 'tool_installaddon'),

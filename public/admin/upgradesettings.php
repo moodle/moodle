@@ -35,8 +35,6 @@ if (isset($newsettings['frontpagesettings'])) {
 $newsettingshtml = implode($newsettings);
 unset($newsettings);
 
-$focus = '';
-
 if (empty($adminroot->errors) and $newsettingshtml === '') {
     // there must be either redirect without message or continue button or else upgrade would be sometimes broken
     if ($return == 'site') {
@@ -48,12 +46,12 @@ if (empty($adminroot->errors) and $newsettingshtml === '') {
 
 if (!empty($adminroot->errors)) {
     $firsterror = reset($adminroot->errors);
-    $focus = $firsterror->id;
+    $PAGE->set_focuscontrol($firsterror->id);
 }
 
 // and finally, if we get here, then there are new settings and we have to print a form
 // to modify them
-echo $OUTPUT->header($focus);
+echo $OUTPUT->header();
 
 if (!empty($SITE->fullname) and !empty($SITE->shortname)) {
     echo $OUTPUT->box(get_string('upgradesettingsintro','admin'), 'generalbox');

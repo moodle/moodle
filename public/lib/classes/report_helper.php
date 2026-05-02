@@ -69,7 +69,7 @@ class report_helper {
                 }
 
             }
-            $selectmenu = new \core\output\select_menu('reporttype', $menuarray, $activeurl);
+            $selectmenu = new \core\output\select_menu('reporttype', $menuarray, $activeurl, true);
             $selectmenu->set_label(get_string('reporttype'), ['class' => 'visually-hidden']);
             $options = \html_writer::tag(
                 'div',

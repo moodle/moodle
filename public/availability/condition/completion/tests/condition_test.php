@@ -798,4 +798,155 @@ final class condition_test extends \advanced_testcase {
         $after = $cond->save();
         $this->assertEquals(condition::OPTION_PREVIOUS, $after->cm);
     }
+
+    /**
+     * Data provider for subsection previous activity tests.
+     *
+     * Each test case has:
+     * - testtype: What to test (subsection, first_activity, second_activity, delegated_section)
+     * - activity: Which activity to test (key in $activities array)
+     * - expectedprevious: Key of the expected previous activity
+     *
+     * @return array[]
+     */
+    public static function subsection_previous_activity_data(): array {
+        return [
+            'Subsection previous activity' => [
+                'testtype' => 'subsection',
+                'activity' => 'subsection',
+                'expectedprevious' => 'assigna1',
+            ],
+            'First activity inside subsection inherits parent previous' => [
+                'testtype' => 'first_activity',
+                'activity' => 'assigna2',
+                'expectedprevious' => 'assigna1',
+            ],
+            'Second activity inside subsection references sibling' => [
+                'testtype' => 'second_activity',
+                'activity' => 'assigna3',
+                'expectedprevious' => 'assigna2',
+            ],
+            'Delegated section previous for section restriction' => [
+                'testtype' => 'delegated_section',
+                'activity' => 'delegated_section',
+                'expectedprevious' => 'assigna1',
+            ],
+        ];
+    }
+
+    /**
+     * Test previous activity with completion in subsection context.
+     *
+     * Course structure:
+     * Section A:
+     *   - Assignment A1 (completion ON)
+     *   - Subsection
+     *     - Assignment A2 (completion ON)
+     *     - Assignment A3 (no completion)
+     * Section B:
+     *   - Assignment B1 (completion ON)
+     *
+     * @param string $testtype Test type
+     * @param string $activity Activity key
+     * @param string $expectedprevious Expected previous activity key
+     * @dataProvider subsection_previous_activity_data
+     * @covers \availability_completion\condition::load_course_structure
+     */
+    public function test_subsection_previous_activity_context(
+        string $testtype,
+        string $activity,
+        string $expectedprevious
+    ): void {
+        global $CFG;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $CFG->enablecompletion = true;
+        $CFG->enableavailability = true;
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['enablecompletion' => 1, 'numsections' => 2]);
+
+        // Section A: Assignment A1 (completion ON), Subsection.
+        $assigna1 = $generator->create_module('assign', [
+            'course' => $course->id,
+            'name' => 'Assignment A1',
+            'section' => 1,
+            'completion' => COMPLETION_TRACKING_MANUAL,
+        ]);
+
+        $subsection = $generator->create_module('subsection', [
+            'course' => $course->id,
+            'section' => 1,
+        ]);
+
+        // Section B: Assignment B1 (completion ON) - should not be referenced.
+        $assignb1 = $generator->create_module('assign', [
+            'course' => $course->id,
+            'name' => 'Assignment B1',
+            'section' => 2,
+            'completion' => COMPLETION_TRACKING_MANUAL,
+        ]);
+
+        // Get the delegated section and add activities inside.
+        $modinfo = get_fast_modinfo($course);
+        $subsectioncm = $modinfo->get_cm($subsection->cmid);
+        $delegatedsection = $subsectioncm->get_delegated_section_info();
+        $this->assertNotNull($delegatedsection);
+
+        // Inside subsection: Assignment A2 (completion ON), Assignment A3 (no completion).
+        $assigna2 = $generator->create_module('assign', [
+            'course' => $course->id,
+            'name' => 'Assignment A2',
+            'section' => $delegatedsection->section,
+            'completion' => COMPLETION_TRACKING_MANUAL,
+        ]);
+
+        $assigna3 = $generator->create_module('assign', [
+            'course' => $course->id,
+            'name' => 'Assignment A3',
+            'section' => $delegatedsection->section,
+            'completion' => COMPLETION_TRACKING_NONE,
+        ]);
+
+        // Rebuild modinfo.
+        $modinfo = get_fast_modinfo($course);
+
+        // Build activity map for easy reference.
+        $activities = [
+            'assigna1' => $assigna1,
+            'assigna2' => $assigna2,
+            'assigna3' => $assigna3,
+            'assignb1' => $assignb1,
+            'subsection' => $subsection,
+            'delegated_section' => $delegatedsection,
+        ];
+
+        $cond = new condition((object)[
+            'cm' => condition::OPTION_PREVIOUS,
+            'e' => COMPLETION_COMPLETE,
+        ]);
+
+        if ($testtype === 'delegated_section') {
+            // Test sectionfastprevious for section-level restrictions.
+            $ref = new \ReflectionMethod($cond, 'load_course_structure');
+            $ref->invoke($cond, $course);
+
+            $prop = new \ReflectionProperty($cond, 'sectionfastprevious');
+            $sectionfastprevious = $prop->getValue($cond);
+
+            $expectedcmid = $activities[$expectedprevious]->cmid;
+            $actualcmid = $sectionfastprevious[$activities['delegated_section']->id] ?? null;
+            $this->assertEquals($expectedcmid, $actualcmid);
+        } else {
+            // Test modfastprevious for module-level restrictions.
+            $testcmid = $testtype === 'subsection'
+                ? $activities['subsection']->cmid
+                : $activities[$activity]->cmid;
+
+            $expectedcmid = $activities[$expectedprevious]->cmid;
+            $prevcmid = $cond->get_cmid($course, $testcmid, null);
+            $this->assertEquals($expectedcmid, $prevcmid);
+        }
+    }
 }

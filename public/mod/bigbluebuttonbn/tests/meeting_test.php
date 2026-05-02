@@ -479,4 +479,61 @@ final class meeting_test extends \advanced_testcase {
         $meeting = new meeting($instance);
         return [$meeting, $useringroup, $usernotingroup, $groupid, $activity];
     }
+
+    /**
+     * Test process_meeting_events.
+     *
+     * @covers ::meeting_events
+     */
+    public function test_process_meeting_events(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        [$bbactivitycontext, $bbactivitycm, $bbactivity] = $this->create_instance(
+            $this->get_course(),
+            ['type' => instance::TYPE_ALL]
+        );
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+        $user = $this->getDataGenerator()->create_and_enrol($this->get_course());
+        $instance = instance::get_from_instanceid($bbactivity->id);
+
+        // Prepare meeting event data with guest user and Moodle user.
+        $data = json_decode(json_encode([
+            'meeting_id' => $instance->get_meeting_id(),
+            'internal_meeting_id' => sha1($instance->get_meeting_id()),
+            'data' => [
+                'attendees' => [
+                    [
+                        'ext_user_id' => 'w_abcdefg',
+                        'engagement' => [
+                            'chats' => 1,
+                            'talks' => 1,
+                        ],
+                    ],
+                    [
+                        'ext_user_id' => (string) $user->id,
+                        'engagement' => [
+                            'chats' => 2,
+                            'talks' => 3,
+                        ],
+                    ],
+                ],
+            ],
+        ]));
+
+        // Process the meeting events.
+        $result = meeting::meeting_events($instance, $data);
+
+        $logs = $DB->get_records('bigbluebuttonbn_logs', [
+            'bigbluebuttonbnid' => $bbactivity->id,
+            'log' => 'Summary',
+        ]);
+        $this->assertCount(1, $logs);
+
+        $log = reset($logs);
+        $this->assertEquals($user->id, $log->userid);
+        $meta = json_decode($log->meta);
+        $this->assertEquals(2, $meta->data->engagement->chats);
+        $this->assertEquals(3, $meta->data->engagement->talks);
+    }
 }

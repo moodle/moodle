@@ -335,21 +335,24 @@ Y.Moodle.mod_quiz.util.slot = {
             // Get the correct title.
             var action = '';
             var iconname = '';
+            var actionStr = '';
+            var slotNumber = this.getNumber(slot);
             if (Y.Moodle.mod_quiz.util.page.isPage(nextitem)) {
                 action = 'removepagebreak';
+                actionStr = 'removepagebreakafter';
                 iconname = 'e/remove_page_break';
             } else {
                 action = 'addpagebreak';
+                actionStr = 'addpagebreakafter';
                 iconname = 'e/insert_page_break';
             }
 
             // Update the link and image titles
-            pagebreaklink.set('title', M.util.get_string(action, 'quiz'));
+            pagebreaklink.set('title', M.util.get_string(actionStr, 'quiz', slotNumber));
+            pagebreaklink.set('aria-label', M.util.get_string(actionStr, 'quiz', slotNumber));
             pagebreaklink.setData('action', action);
             // Update the image title.
             var icon = pagebreaklink.one(this.SELECTORS.ICON);
-            icon.set('title', M.util.get_string(action, 'quiz'));
-            icon.set('alt', M.util.get_string(action, 'quiz'));
 
             // Update the image src.
             icon.set('src', M.util.image_url(iconname));
@@ -417,27 +420,27 @@ Y.Moodle.mod_quiz.util.slot = {
             requiresprevious = link.getData('action') === 'removedependency';
         }
 
+        var iconname = '';
         if (requiresprevious) {
             link.set('title', M.util.get_string('questiondependencyremove', 'quiz', a));
+            link.set('aria-label', M.util.get_string('questiondependencyremove', 'quiz', a));
             link.setData('action', 'removedependency');
-            window.require(['core/templates'], function(Templates) {
-                Templates.renderPix('t/locked', 'core', M.util.get_string('questiondependsonprevious', 'quiz')).then(
-                    function(html) {
-                        icon.replace(html);
-                    }
-                );
-            });
+            iconname = 't/locked';
         } else {
             link.set('title', M.util.get_string('questiondependencyadd', 'quiz', a));
+            link.set('aria-label', M.util.get_string('questiondependencyadd', 'quiz', a));
             link.setData('action', 'adddependency');
-            window.require(['core/templates'], function(Templates) {
-                Templates.renderPix('t/unlocked', 'core', M.util.get_string('questiondependencyfree', 'quiz')).then(
+            iconname = 't/unlocked';
+        }
+        window.require(['core/templates', 'core/notification'], function(Templates, Notification) {
+            Templates.renderPix(iconname, 'core', '')
+                .then(
                     function(html) {
                         icon.replace(html);
+                        return;
                     }
-                );
-            });
-        }
+                ).catch(Notification.exception);
+        });
     }
 };
 

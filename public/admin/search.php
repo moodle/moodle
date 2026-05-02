@@ -32,7 +32,6 @@ $adminroot = admin_get_root(); // need all settings here
 $adminroot->search = $query; // So we can reference it in search boxes later in this invocation
 $statusmsg = '';
 $errormsg  = '';
-$focus = '';
 
 // now we'll deal with the case that the admin has submitted the form with changed settings
 if ($data = data_submitted() and confirm_sesskey() and isset($data->action) and $data->action == 'save-settings') {
@@ -41,7 +40,7 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->action) and 
     if (!empty($adminroot->errors)) {
         $errormsg = get_string('errorwithsettings', 'admin');
         $firsterror = reset($adminroot->errors);
-        $focus = $firsterror->id;
+        $PAGE->set_focuscontrol($firsterror->id);
     } else {
         // No errors. Did we change any setting? If so, then redirect with success.
         if ($count) {
@@ -55,7 +54,7 @@ $PAGE->set_primary_active_tab('siteadminnode');
 
 // and finally, if we get here, then there are matching settings and we have to print a form
 // to modify them
-echo $OUTPUT->header($focus);
+echo $OUTPUT->header();
 
 // Display a warning if site is not registered.
 if (empty($query)) {

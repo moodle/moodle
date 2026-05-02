@@ -16,6 +16,10 @@
 
 namespace mod_quiz;
 
+use mod_quiz\task\queue_all_quiz_open_notification_tasks;
+use mod_quiz\task\queue_quiz_open_notification_tasks_for_users;
+use mod_quiz\task\send_quiz_open_soon_notification_to_user;
+
 /**
  * Test class for the quiz notification helper.
  *
@@ -30,22 +34,30 @@ final class notification_helper_test extends \advanced_testcase {
      * Run all the tasks related to the notifications.
      */
     protected function run_notification_helper_tasks(): void {
-        $task = \core\task\manager::get_scheduled_task(\mod_quiz\task\queue_all_quiz_open_notification_tasks::class);
+        $task = \core\task\manager::get_scheduled_task(queue_all_quiz_open_notification_tasks::class);
         $task->execute();
         $clock = \core\di::get(\core\clock::class);
 
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            queue_quiz_open_notification_tasks_for_users::class
+        );
         if ($adhoctask) {
-            $this->assertInstanceOf(\mod_quiz\task\queue_quiz_open_notification_tasks_for_users::class, $adhoctask);
             $adhoctask->execute();
             \core\task\manager::adhoc_task_complete($adhoctask);
+            \core\task\manager::reset_state();
         }
 
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            send_quiz_open_soon_notification_to_user::class
+        );
         if ($adhoctask) {
-            $this->assertInstanceOf(\mod_quiz\task\send_quiz_open_soon_notification_to_user::class, $adhoctask);
             $adhoctask->execute();
             \core\task\manager::adhoc_task_complete($adhoctask);
+            \core\task\manager::reset_state();
         }
     }
 
@@ -214,23 +226,16 @@ final class notification_helper_test extends \advanced_testcase {
         ]);
         $clock->bump(5);
 
-        // Get the users within the date range.
-        $quizzes = $helper::get_quizzes_within_date_range();
-        foreach ($quizzes as $q) {
-            $users = $helper::get_users_within_quiz($q->id);
-        }
-        $quizzes->close();
-
         // Run the tasks.
         $this->run_notification_helper_tasks();
 
         // Get the notifications that should have been created during the adhoc task.
-        $this->assertCount(1, $sink->get_messages());
+        $messages = $sink->get_messages_by_component('mod_quiz');
+        $this->assertCount(1, $messages);
 
         // Check the subject matches.
-        $messages = $sink->get_messages_by_component('mod_quiz');
         $message = reset($messages);
-        $stringparams = ['timeopen' => userdate($users[$user1->id]->timeopen), 'quizname' => $quiz->name];
+        $stringparams = ['timeopen' => userdate($timeopen), 'quizname' => $quiz->name];
         $expectedsubject = get_string('quizopendatesoonsubject', 'mod_quiz', $stringparams);
         $this->assertEquals($expectedsubject, $message->subject);
 

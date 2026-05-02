@@ -169,7 +169,7 @@ class action_form extends action_settings_form {
                 !empty($this->actionconfig['modelextraparams']))) {
             $defaultmodel = 'custom';
         } else if (empty($this->actionconfig['model'])) {
-            $defaultmodel = ($actionname === 'generate_image') ? 'dall-e-3' : 'gpt-4o';
+            $defaultmodel = ($actionname === 'generate_image') ? 'gpt-image-1.5' : 'gpt-4o';
         } else {
             $defaultmodel = $this->actionconfig['model'];
         }

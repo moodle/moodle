@@ -243,20 +243,11 @@ class custom_view extends \core_question\local\bank\view {
         }
 
         // Build the where clause.
-        $latestversion = 'qv.version = (SELECT MAX(v.version)
-                                          FROM {question_versions} v
-                                          JOIN {question_bank_entries} be
-                                            ON be.id = v.questionbankentryid
-                                         WHERE be.id = qbe.id AND v.status <> :substatus)';
-
         // An additional condition is required in the subquery to account for scenarios
         // where the latest version is hidden. This ensures we retrieve the previous
         // "Ready" version instead of the hidden latest version.
         $onlyready = '((qv.status = :status))';
-        $this->sqlparams = [
-            'status' => question_version_status::QUESTION_STATUS_READY,
-            'substatus' => question_version_status::QUESTION_STATUS_HIDDEN,
-        ];
+        $this->sqlparams['status'] = question_version_status::QUESTION_STATUS_READY;
         $conditions = [];
         foreach ($this->searchconditions as $searchcondition) {
             if ($searchcondition->where()) {
@@ -266,13 +257,20 @@ class custom_view extends \core_question\local\bank\view {
                 $this->sqlparams = array_merge($this->sqlparams, $searchcondition->params());
             }
         }
-        $majorconditions = ['q.parent = 0', $latestversion, $onlyready];
+        $latestversion = 'qv2.questionbankentryid IS NULL';
+        $majorconditions = ['q.parent = :parent', $latestversion, $onlyready];
+        $this->sqlparams = array_merge(['parent' => 0], $this->sqlparams);
         // Get higher level filter condition.
         $jointype = isset($this->pagevars['jointype']) ? (int)$this->pagevars['jointype'] : condition::JOINTYPE_DEFAULT;
         $nonecondition = ($jointype === datafilter::JOINTYPE_NONE) ? ' NOT ' : '';
         $separator = ($jointype === datafilter::JOINTYPE_ALL) ? ' AND ' : ' OR ';
         // Build the SQL.
-        $sql = ' FROM {question} q ' . implode(' ', $joins);
+        $this->sqlparams['substatus'] = question_version_status::QUESTION_STATUS_HIDDEN;
+        $sql = '      FROM {question} q ' . implode(' ', $joins) .
+               ' LEFT JOIN {question_versions} qv2 ON (   qv2.questionbankentryid = qv.questionbankentryid
+                                                      AND qv2.version > qv.version
+                                                      AND qv2.status <> :substatus
+                                                      )';
         $sql .= ' WHERE ' . implode(' AND ', $majorconditions);
         if (!empty($conditions)) {
             $sql .= ' AND ' . $nonecondition . ' ( ';

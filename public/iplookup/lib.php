@@ -38,7 +38,11 @@ function iplookup_find_location($ip) {
 
     if (!empty($CFG->geoip2file) and file_exists($CFG->geoip2file)) {
         $reader = new GeoIp2\Database\Reader($CFG->geoip2file);
-        $record = $reader->city($ip);
+        try {
+            $record = $reader->city($ip);
+        } catch (GeoIp2\Exception\GeoIp2Exception $e) {
+            $record = null;
+        }
 
         if (empty($record)) {
             $info['error'] = get_string('iplookupfailed', 'error', $ip);

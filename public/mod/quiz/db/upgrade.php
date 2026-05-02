@@ -136,8 +136,10 @@ function xmldb_quiz_upgrade($oldversion) {
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2025041401) {
+    // Automatically generated Moodle v5.1.0 release upgrade line.
+    // Put any upgrade step following this.
 
+    if ($oldversion < 2025100601) {
         // Changing precision of field name on table quiz to (1333).
         $table = new xmldb_table('quiz');
         $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'course');
@@ -146,11 +148,26 @@ function xmldb_quiz_upgrade($oldversion) {
         $dbman->change_field_precision($table, $field);
 
         // Quiz savepoint reached.
-        upgrade_mod_savepoint(true, 2025041401, 'quiz');
+        upgrade_mod_savepoint(true, 2025100601, 'quiz');
     }
 
-    // Automatically generated Moodle v5.1.0 release upgrade line.
-    // Put any upgrade step following this.
+    if ($oldversion < 2025100602) {
+        // Queue tasks to process stuck quiz attempts (state = 'submitted').
+        $attemptids = $DB->get_fieldset_select(
+            'quiz_attempts',
+            'id',
+            'state = ?',
+            [\mod_quiz\quiz_attempt::SUBMITTED],
+        );
+
+        foreach ($attemptids as $attemptid) {
+            $task = \mod_quiz\task\grade_submission::instance($attemptid);
+            \core\task\manager::queue_adhoc_task($task, true);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2025100602, 'quiz');
+    }
 
     return true;
 }

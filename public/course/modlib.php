@@ -589,7 +589,7 @@ function can_add_moduleinfo($course, $modulename, $sectionnum) {
     }
 
     if (!course_allowed_module($course, $module->name)) {
-        throw new \moodle_exception('moduledisable');
+        throw new \moodle_exception('moduledisable', 'error', '', $module->name);
     }
 
     return [$module, $context, $sectioninfo];

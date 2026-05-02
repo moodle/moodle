@@ -3224,4 +3224,54 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'messageformat' => FORMAT_MOODLE,
         ], $updatedpost);
     }
+
+    /**
+     * Test marking individual posts as read.
+     */
+    public function test_mark_posts_read(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $user = $this->getDataGenerator()->create_user(['trackforums' => 1]);
+        $role = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user->id, $course->id, $role->id);
+
+        // Add a discussion.
+        $record = new \stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        $parentpost = $DB->get_record('forum_posts', ['discussion' => $discussion->id]);
+
+        // Generate some posts.
+        $record = new \stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $record->discussion = $discussion->id;
+        $record->parent = $parentpost->id;
+        $post1 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $post2 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $post3 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+
+        // Track the forum.
+        $this->setUser($user);
+        forum_tp_start_tracking($forum->id, $user->id);
+
+        // There should be 4 unread posts (1 parent + 3 child posts).
+        $unreadposts = forum_tp_get_course_unread_posts($user->id, $course->id);
+        $this->assertEquals(4, $unreadposts[$forum->id]->unread);
+
+        // Marks some posts as read for this user.
+        $result = mod_forum_external::mark_posts_read([$post1->id, $post2->id], $discussion->id);
+        $this->assertTrue($result);
+
+        // There should be 2 unread posts left (1 parent + 1 child post).
+        $unreadposts = forum_tp_get_course_unread_posts($user->id, $course->id);
+        $this->assertEquals(2, $unreadposts[$forum->id]->unread);
+    }
 }

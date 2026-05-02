@@ -211,7 +211,10 @@ class award_criteria_courseset extends award_criteria {
                 $check_grade = ($grade->grade >= $param['grade']);
             }
 
-            if (!$filtered && isset($param['bydate'])) {
+            // When the user list is not filtered, or the aggregation method is ANY,
+            // ensure the course completion date is before the bydate (if set).
+            $comparedates = !$filtered || $this->method == BADGE_CRITERIA_AGGREGATION_ANY;
+            if ($comparedates && isset($param['bydate'])) {
                 $cparams = array(
                         'userid' => $userid,
                         'course' => $course->id,
@@ -254,9 +257,16 @@ class award_criteria_courseset extends award_criteria {
         $params = array();
 
         if ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+            $coursedata = [];
             foreach ($this->params as $param) {
-                $coursedata[] = " cc.course = :completedcourse{$param['course']} ";
+                $conditionsql = " cc.course = :completedcourse{$param['course']} ";
                 $params["completedcourse{$param['course']}"] = $param['course'];
+
+                if (isset($param['bydate'])) {
+                    $conditionsql .= " AND cc.timecompleted <= :completedbydate{$param['course']} ";
+                    $params["completedbydate{$param['course']}"] = $param['bydate'];
+                }
+                $coursedata[] = "({$conditionsql})";
             }
             if (!empty($coursedata)) {
                 $extraon = implode(' OR ', $coursedata);
@@ -272,6 +282,11 @@ class award_criteria_courseset extends award_criteria {
                           cc{$param['course']}.timecompleted > 0 ";
                 $where .= " AND cc{$param['course']}.course IS NOT NULL ";
                 $params["completedcourse{$param['course']}"] = $param['course'];
+
+                if (isset($param['bydate'])) {
+                    $where .= " AND cc{$param['course']}.timecompleted <= :completedbydate{$param['course']} ";
+                    $params["completedbydate{$param['course']}"] = $param['bydate'];
+                }
             }
             return array($join, $where, $params);
         }

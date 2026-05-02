@@ -814,7 +814,11 @@ class repository_onedrive extends repository {
             $size = filesize($filepath);
             $curlinstance->setHeader('Content-Range: bytes 0-' . ($size - 1) . '/' . $size);
             // Microsoft does not allow authorization headers for PUT, so we do not include them here.
-            $response = $curlinstance->put($created->uploadUrl, $options, [], false); // False = do not include auth header.
+            $response = $curlinstance->put(
+                $created->uploadUrl,
+                $options,
+                ['CURLOPT_USERPWD' => false], // We need to make sure no auth headers are sent.
+            );
             if ($curlinstance->errno == 0) {
                 $response = json_decode($response);
             }

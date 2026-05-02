@@ -133,6 +133,29 @@ Feature: Use the qbank plugin manager page for bulkmove
     And the "class" attribute of "Question 2" "table_row" should not contain "highlight"
 
   @javascript
+  Scenario: Questions with a missing type can be bulk moved to a different question bank
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name       | questiontext              |
+      | Test questions   | truefalse   | Question 1 | Answer the first question |
+      | Test questions   | missingtype | Question 2 | Write something           |
+    And I am on the "Course 1" "core_question > course question bank" page logged in as teacher1
+    And I apply question bank filter "Category" with value "Test questions"
+    # Select questions to be moved.
+    And I click on "Question 1" "checkbox"
+    And I click on "Question 2" "checkbox"
+    And I click on "With selected" "button"
+    When I press "Move to"
+    # Select a different question bank to move the questions into.
+    And I open the autocomplete suggestions list in the ".search-banks" "css_element"
+    And I click on "C2 - Question bank 2" item in the autocomplete list
+    And I press "Move questions"
+    And I click on "Confirm" "button"
+    # Confirm that selected questions are moved to selected category in the different bank.
+    Then I should see "Questions successfully moved"
+    And I should see "Question 1"
+    And I should see "Question 2"
+
+  @javascript
   Scenario: Move a question to a different bank in a specified category
     Given the following "question categories" exist:
       | contextlevel    | reference | name              |

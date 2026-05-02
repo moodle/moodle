@@ -66,7 +66,7 @@ $string['pathsunsecuredataroot'] = 'Lokacija direktorijuma sa podacima nije bezb
 $string['pathswrongadmindir'] = 'Admin direktorijum ne postoji';
 $string['phpextension'] = '{$a} PHP ekstenѕija';
 $string['phpversion'] = 'PHP verzija';
-$string['webserverconfigproblemdescription'] = 'Vaš veb server nije konfigurisan da spreči pristup datotekama van direktorijuma /public. Molim vas pogledajte <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> za detaljnije informacije o tome kako da konfigurišete svoj veb server. Jednom kada promenite konfiguraciju veb servera, molim vas da <a href="{$a}">ponovo pogledate njegov korenski direktorijum</a>.';
+$string['webserverconfigproblemdescription'] = 'Vaš veb server nije konfigurisan da spreči pristup datotekama van direktorijuma /public. Za detaljnije informacije o tome kako da konfigurišete svoj veb server pogledajte dokumentaciju <a href="https://docs.moodle.org/en/Upgrading#Code_directories_restructure">Nadogradnja - Restrukturiranje direktorijuma</a>. Jednom kada promenite konfiguraciju veb servera <a href="{$a}">ponovo pogledajte njegov korenski direktorijum</a>.';
 $string['webservernotconfigured'] = 'Veb server nije konfigurisan';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Ovu stranicu vidite zato što ste uspešno instalirali i pokrenuli <strong>{$a->packname} {$a->packversion}</strong> paket na svom serveru. Čestitamo!';

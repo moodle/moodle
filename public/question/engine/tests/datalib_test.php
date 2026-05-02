@@ -280,6 +280,51 @@ final class datalib_test extends \qbehaviour_walkthrough_test_base {
     }
 
     /**
+     * Test replacing an old question attempt with a new question of a different behaviour.
+     * Ensures the slot is updated and the behaviour changes as expected.
+     *
+     * @covers ::add_question_in_place_of_other
+     */
+    public function test_replace_old_attempt_with_a_question_have_different_behaviour(): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $course = $this->getDataGenerator()->create_course();
+        $qbank = $this->getDataGenerator()->create_module('qbank', ['course' => $course->id]);
+        $category = $generator->create_question_category(
+            ['contextid' => \context_module::instance($qbank->cmid)->id]
+        );
+        // Create and add the initial question (true/false) to a new usage.
+        $truefalse = $generator->create_question('truefalse', null, ['category' => $category->id]);
+        $usage = \question_engine::make_questions_usage_by_activity('test', \context_module::instance($qbank->cmid));
+        $usage->set_preferred_behaviour('deferredfeedback');
+        $slot = $usage->add_question(question_bank::load_question($truefalse->id));
+        $usage->start_all_questions();
+        \question_engine::save_questions_usage_by_activity($usage);
+
+        // Load the usage and get the current question in the slot.
+        $loadedusage = \question_engine::load_questions_usage_by_activity($usage->get_id());
+        $originalquestion = $loadedusage->get_question_attempt($slot)->get_question();
+
+        // Create a new replacement question (description type).
+        $replacementquestion = \test_question_maker::make_question('description');
+
+        // Replace the question in the slot with the new one.
+        $newslot = $loadedusage->add_question_in_place_of_other($slot, $replacementquestion, null, false);
+        $loadedusage->start_question($newslot);
+        $loadedusage->finish_all_questions();
+        \question_engine::save_questions_usage_by_activity($loadedusage);
+
+        // Get the new question in the slot after replacement.
+        $newquestion = $loadedusage->get_question_attempt($newslot)->get_question();
+
+        // Check the replacement and behaviour.
+        $this->assertEquals($replacementquestion->name, $newquestion->name);
+        $this->assertNotEquals($originalquestion->id, $newquestion->id);
+        $this->assertEquals($loadedusage->get_question_attempt($newslot)->get_behaviour_name(), 'informationitem');
+    }
+
+    /**
      * Test cases for {@see test_get_file_area_name()}.
      *
      * @return array test cases

@@ -57,6 +57,12 @@ $foruserid = optional_param('user', 0, PARAM_INT);
 
 $cm = get_coursemodule_from_id('lti', $cmid, 0, false, MUST_EXIST);
 $lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+
+$context = context_module::instance($cm->id);
+
+require_login($course, true, $cm);
+require_capability('mod/lti:view', $context);
 
 $typeid = $lti->typeid;
 if (empty($typeid) && ($tool = lti_get_tool_by_url_match($lti->toolurl))) {
@@ -73,6 +79,10 @@ if ($typeid) {
                 if ($action === 'gradeReport') {
                     $msgtype = 'LtiSubmissionReviewRequest';
                 }
+                // Do Completion and trigger events before launching the external tool and thus leaving Moodle.
+                if ($triggerview) {
+                    lti_view($lti, $course, $cm, $context);
+                }
                 echo lti_initiate_login($cm->course, $cmid, $lti, $config, $msgtype, '', '', $foruserid);
                 exit;
             } else {
@@ -82,12 +92,6 @@ if ($typeid) {
     }
 }
 
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-
-$context = context_module::instance($cm->id);
-
-require_login($course, true, $cm);
-require_capability('mod/lti:view', $context);
 
 if (!empty($missingtooltype)) {
     $PAGE->set_url(new moodle_url('/mod/lti/launch.php'));

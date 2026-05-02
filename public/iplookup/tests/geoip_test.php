@@ -44,6 +44,27 @@ final class geoip_test extends \advanced_testcase {
     }
 
     /**
+     * Test that iplookup_find_location doesn't throw up GeoIp2 exceptions.
+     *
+     * @covers ::iplookup_find_location
+     */
+    public function test_not_found_ip(): void {
+        $this->resetAfterTest();
+        $this->setup_geoip2file();
+
+        $result = iplookup_find_location('10.0.0.1');
+
+        $this->assertIsArray($result);
+        $this->assertNull($result['latitude']);
+        $this->assertNull($result['longitude']);
+        $this->assertNull($result['city']);
+        $this->assertNull($result['country']);
+        $this->assertIsArray($result['title']);
+        $this->assertEmpty($result['title']);
+        $this->assertEquals('Cannot find geo information about this IP address 10.0.0.1', $result['error']);
+    }
+
+    /**
      * Test the format of data returned in the iplookup_find_location function.
      *
      * @dataProvider ip_provider

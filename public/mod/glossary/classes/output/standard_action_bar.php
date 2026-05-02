@@ -131,7 +131,7 @@ class standard_action_bar implements renderable, templatable {
             'label' => get_string("searchindefinition", "glossary"),
         ];
 
-        $checkbox = $OUTPUT->render_from_template('core/checkbox', $check);
+        $checkbox = \html_writer::div($OUTPUT->render_from_template('core/checkbox', $check), 'mt-1');
 
         $hiddenfields = [
             (object) ['name' => 'id', 'value' => $this->cm->id],

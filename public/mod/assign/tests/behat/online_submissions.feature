@@ -37,14 +37,16 @@ Feature: In an assignment, students can add and edit text online
       | Online text | I'm the student first submission |
     And I press "Save changes"
     Then I should see "Submitted for grading"
-    And I should see "I'm the student first submission"
+    And "View full" "icon" should not exist in the "Online text" "table_row"
+    And I should see "I'm the student first submission" in the "Online text" "table_row"
     And I should see "Not graded"
     And I press "Edit submission"
     And I set the following fields to these values:
       | Online text | I'm the student second submission |
     And I press "Save changes"
     Then I should see "Submitted for grading"
-    And I should see "I'm the student second submission"
+    And "View full" "icon" should not exist in the "Online text" "table_row"
+    And I should see "I'm the student second submission" in the "Online text" "table_row"
     And I should not see "I'm the student first submission"
 
   @javascript

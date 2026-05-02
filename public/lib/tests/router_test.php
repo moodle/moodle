@@ -16,7 +16,10 @@
 
 namespace core;
 
+use core\router\util;
 use core\tests\router\route_testcase;
+use GuzzleHttp\Psr7\ServerRequest;
+use Psr\Http\Message\ResponseInterface;
 use Slim\App;
 
 /**
@@ -25,9 +28,10 @@ use Slim\App;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router
- * @covers     \core\router\response_handler
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\response_handler::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\util::class)]
 final class router_test extends route_testcase {
     public function test_get_app(): void {
         $router = $this->get_router('/example');
@@ -38,6 +42,7 @@ final class router_test extends route_testcase {
     }
 
     public function test_request_normalisation(): void {
+        $this->set_basepath('');
         $router = $this->get_router('');
 
         // Create handlers for the routes.
@@ -81,6 +86,28 @@ final class router_test extends route_testcase {
         $this->assertEmpty((array) $payload);
     }
 
+    /**
+     * Test that a routed URL can be set on the page without triggering debugging output.
+     */
+    public function test_routed_url_can_be_set_on_page(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->add_class_routes_to_route_loader(\core_user\route\api\preferences::class);
+
+        // We need to get the app so we initialise the basepath to an empty value.
+        $this->get_app();
+        $url = util::get_path_for_callable(
+            [\core_user\route\api\preferences::class, 'get_preferences'],
+            ['user' => 'current'],
+        );
+        $expectedurl = new url($url);
+        $PAGE->set_url($url);
+
+        $this->assertDebuggingNotCalled();
+        $this->assertSame($expectedurl->out(false), $PAGE->url->out(false));
+    }
+
     public function test_basepath_supplied(): void {
         $router = $this->get_router(
             basepath: '/example',
@@ -88,9 +115,8 @@ final class router_test extends route_testcase {
         $this->assertEquals('/example', $router->basepath);
     }
 
-    /**
-     * @dataProvider basepath_provider
-     */
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('basepath_provider')]
     public function test_basepath(
         string $wwwroot,
         string $expected,
@@ -105,11 +131,19 @@ final class router_test extends route_testcase {
         $this->assertEquals($expected, $router->basepath);
     }
 
-    public static function basepath_provider(): \Iterator {
+    /**
+     * Data provider for test_basepath.
+     *
+     * @return \Generator
+     */
+    public static function basepath_provider(): \Generator {
         yield 'Domain' => ['http://example.com', '/r.php'];
         yield 'Subdirectory' => ['http://example.com/moodle', '/moodle/r.php'];
     }
 
+    /**
+     * Test that the basepath is correctly guessed when accessed via r.php.
+     */
     public function test_basepath_guessed_rphp(): void {
         $wwwroot = new \moodle_url('/r.php');
         $_SERVER['SCRIPT_FILENAME'] = 'r.php';
@@ -151,11 +185,9 @@ final class router_test extends route_testcase {
     /**
      * Data provider for test_basepath_guessed_rphp_configuration_provided.
      *
-     * @return \Generator<string, array<bool|string|null>, mixed, void>
+     * @return \Generator
      */
-    public static function router_configured_basepath_provider(): \Iterator {
-        global $CFG;
-
+    public static function router_configured_basepath_provider(): \Generator {
         yield 'Root domain, Not configured, accessed via r.php' => [
             'http://example.com',
             null,
@@ -227,6 +259,54 @@ final class router_test extends route_testcase {
             false,
             '/example',
             '/moodle/r.php',
+        ];
+    }
+
+    /**
+     * Test the expected error codes of various exception types.
+     *
+     * @param \Throwable $exception The exception to throw.
+     * @param int $expectedstatus The expected HTTP status code.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('exception_provider')]
+    public function test_error_codes_correct(
+        \Throwable $exception,
+        int $expectedstatus,
+    ): void {
+        $this->set_basepath('');
+        $app = $this->get_app();
+
+        $app->map(['GET'], '/test', fn ($request, $response) => throw $exception);
+        // Handle the request.
+        $request = new ServerRequest('GET', '/test');
+        $returns = $app->handle($request);
+        $this->assertInstanceOf(ResponseInterface::class, $returns);
+        $this->assertEquals($expectedstatus, $returns->getStatusCode());
+    }
+
+    /**
+     * Data provider for testing error handling.
+     *
+     * @return \Generator
+     */
+    public static function exception_provider(): \Generator {
+        yield 'Generic Exception' => [new \Exception('Test'), 500];
+        yield 'Moodle not_found_exception' => [
+            new \core\exception\not_found_exception('test', 'thing'),
+            404,
+        ];
+        yield 'Not Found Exception' => [new \Slim\Exception\HttpNotFoundException(new ServerRequest('GET', '/test')), 404];
+        yield 'Method Not Allowed Exception' => [
+            new \Slim\Exception\HttpMethodNotAllowedException(
+                new ServerRequest('POST', '/test'),
+                'GET',
+            ),
+            405,
+        ];
+
+        yield 'Moodle exception not implementing response_aware_exception_interface' => [
+            new \core\exception\moodle_exception('test', 'thing'),
+            500,
         ];
     }
 }

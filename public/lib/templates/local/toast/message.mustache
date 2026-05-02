@@ -36,7 +36,7 @@
         "closebutton": true
     }
 }}
-<div id="toast-{{uniqid}}" class="toast mx-auto {{#type}}toast-{{type}}{{/type}}" data-bs-delay="{{delay}}" {{^autohide}}data-bs-autohide="false"{{/autohide}}>
+<div id="toast-{{uniqid}}" class="toast mx-auto {{#type}}toast-{{type}}{{/type}} {{#visuallyHidden}}visually-hidden{{/visuallyHidden}}" data-bs-delay="{{delay}}" {{^autohide}}data-bs-autohide="false"{{/autohide}}>
     {{#title}}
     <div class="toast-header">
         <span class="toast-title">{{{title}}}</span>

@@ -615,7 +615,7 @@ class question_bank_helper {
         if ($type === self::TYPE_STANDARD) {
             require_capability('moodle/course:manageactivities', $context);
             if (!course_allowed_module($course, $module->name)) {
-                throw new \moodle_exception('moduledisable');
+                throw new \moodle_exception('moduledisable', 'error', '', $module->name);
             }
         }
 

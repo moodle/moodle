@@ -42,14 +42,13 @@ Feature: File types of the submission and feedback attachments can be limitted
     And I upload "mod/workshop/tests/fixtures/moodlelogo.png" file to "Attachment" filemanager
     And I follow "moodlelogo.png"
     And I set the field "Name" to "testable.php"
-    And I press "Update"
-    And I should see "The original file extension has been modified as a part of the file name change. Changing the extension from \".png\" to \".php\" may result in a file which cannot be opened."
-    And I click on "Yes" "button" in the "Confirm" "dialogue"
-    When I press "Save changes"
-    Then I should see "Some files (testable.php) cannot be uploaded. Only file types image are allowed."
-    # Remove the invalid file and attach an image instead.
-    And I delete "testable.php" from "Attachment" filemanager
-    And I upload "mod/workshop/tests/fixtures/moodlelogo.png" file to "Attachment" filemanager
+    When I press "Update"
+    Then I should see "You cannot change the file extension to '.php' The accepted file types are:"
+    And I should see "Image files .ai .bmp .gdraw .gif .ico .jpe .jpeg .jpg .pct .pic .pict .png .svg .svgz .tif .tiff .webp"
+    And I click on "OK" "button" in the "File type not accepted" "dialogue"
+    # Name the file should reverted.
+    And I should not see "testable.php"
+    And I click on "Cancel" "button" in the "Edit moodlelogo.png" "dialogue"
     And I press "Save changes"
     And "//div[@class='submission-full' and contains(.,'Submission1') and contains(.,'submitted on')]" "xpath_element" should exist
 
@@ -94,14 +93,12 @@ Feature: File types of the submission and feedback attachments can be limitted
     And I upload "mod/workshop/tests/fixtures/testable.php" file to "Attachment" filemanager
     And I follow "testable.php"
     And I set the field "Name" to "renamed.png"
-    And I press "Update"
-    And I should see "The original file extension has been modified as a part of the file name change. Changing the extension from \".php\" to \".png\" may result in a file which cannot be opened."
-    And I click on "Yes" "button" in the "Confirm" "dialogue"
-    When I press "Save and close"
-    Then I should see "Some files (renamed.png) cannot be uploaded. Only file types .php are allowed."
+    When I press "Update"
+    Then I should see "You cannot change the file extension to '.png' The accepted file types are:"
+    And I click on "OK" "button" in the "File type not accepted" "dialogue"
+    # Name the file should reverted.
+    And I should not see "renamed.png"
+    And I click on "Cancel" "button" in the "Edit testable.php" "dialogue"
     And I should not see "Assigned submissions to assess"
-    # Finally make sure that allowed file gets uploaded.
-    And I delete "renamed.png" from "Attachment" filemanager
-    And I upload "mod/workshop/tests/fixtures/testable.php" file to "Attachment" filemanager
     And I press "Save and close"
     And I should see "Assigned submissions to assess"

@@ -616,11 +616,7 @@ final class quiz_question_restore_test extends \advanced_testcase {
             $setreference = $DB->get_record('question_set_references',
                 ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
             $filterconditions = json_decode($setreference->filtercondition);
-            $tags = [];
-            foreach ($filterconditions->tags as $tagstring) {
-                $tag = explode(',', $tagstring);
-                $tags[] = $tag[1];
-            }
+            $tags = array_map(fn($tag) => $tag->name, \core_tag_tag::get_bulk($filterconditions->filter->qtagids->values));
             $this->assertEquals([], array_diff($randomtags[$slot->slot], $tags));
         }
 
@@ -765,6 +761,11 @@ final class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.3 quiz restore for random question filter conditions.
      *
+     * This performs a high-level check that the filter condition is converted to the new structure. The precise
+     * behaviour of how the old category and tag conditions are converted are covered in
+     * {@see qbank_managecategories\category_condition_test} and
+     * {@see qbank_tagquestion\tag_condition_test} respectively.
+     *
      * @covers \restore_question_set_reference_data_trait::process_question_set_reference
      */
     public function test_pre_43_quiz_restore_for_random_question_filtercondition(): void {
@@ -810,7 +811,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
             $this->assertArrayHasKey('qperpage', $filterconditions);
             $this->assertArrayHasKey('filter', $filterconditions);
             $this->assertArrayHasKey('category', $filterconditions['filter']);
-            $this->assertArrayHasKey('qtagids', $filterconditions['filter']);
             $this->assertArrayHasKey('filteroptions', $filterconditions['filter']['category']);
             $this->assertArrayHasKey('includesubcategories', $filterconditions['filter']['category']['filteroptions']);
 
@@ -819,9 +819,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
 
             $this->assertArrayNotHasKey('questioncategoryid', $filterconditions);
             $this->assertArrayNotHasKey('tags', $filterconditions);
-            $expectedtags = \core_tag_tag::get_by_name_bulk(1, ['foo', 'bar']);
-            $expectedtagids = array_values(array_map(fn($expectedtag) => $expectedtag->id, $expectedtags));
-            $this->assertEquals($expectedtagids, $filterconditions['filter']['qtagids']['values']);
             $expectedcategory = $DB->get_record('question_categories', ['idnumber' => 'RAND']);
             $this->assertEquals($expectedcategory->id, $filterconditions['filter']['category']['values'][0]);
             $expectedcat = implode(',', [$expectedcategory->id, $expectedcategory->contextid]);

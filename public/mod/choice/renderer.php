@@ -296,7 +296,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $row = new html_table_row($columns);
         $table->data[] = $row;
 
-        $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
+        $html .= html_writer::tag('div', html_writer::table($table), ['class' => 'response mb-3']);
 
         $actiondata = '';
         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {

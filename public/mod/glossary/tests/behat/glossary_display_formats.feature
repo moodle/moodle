@@ -22,6 +22,7 @@ Feature: Glossary can be set to various display formats
       | Glossary 1 | Entry 1 | Entry 1 definition |
       | Glossary 1 | Entry 2 | Entry 2 definition |
 
+  @javascript @accessibility
   Scenario: Glossary display format is entry list style
     Given I am on the "Glossary 1" "glossary activity editing" page logged in as teacher1
     And I set the following fields to these values:
@@ -33,7 +34,9 @@ Feature: Glossary can be set to various display formats
     And I should not see "Entry 1 definition"
     And I should not see "Entry 2 definition"
     And ".entrylist" "css_element" should exist
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
 
+  @javascript @accessibility
   Scenario: Glossary display format is FAQ-style
     Given I am on the "Glossary 1" "glossary activity editing" page logged in as teacher1
     And I set the following fields to these values:
@@ -44,8 +47,9 @@ Feature: Glossary can be set to various display formats
     Then I should see "Question:"
     And I should see "Answer:"
     And ".faq" "css_element" should exist
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
 
-  @_file_upload @javascript
+  @_file_upload @javascript @accessibility
   Scenario: Glossary display format is full without author style
     Given I am on the "Glossary 1" "glossary activity editing" page logged in as teacher1
     And I set the following fields to these values:
@@ -65,8 +69,9 @@ Feature: Glossary can be set to various display formats
       | has mimetype | image/png |
     And I should not see "by Admin User"
     And ".fullwithoutauthor" "css_element" should exist
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
 
-  @_file_upload @javascript
+  @_file_upload @javascript @accessibility
   Scenario: Glossary display format is encyclopedia style
     Given I am on the "Glossary 1" "glossary activity editing" page logged in as teacher1
     And I set the following fields to these values:
@@ -83,7 +88,9 @@ Feature: Glossary can be set to various display formats
     # In this format, the image element should be displayed.
     Then "//img[contains(@src, 'gd-logo.png')]" "xpath_element" should exist
     And ".encyclopedia" "css_element" should exist
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
 
+  @javascript @accessibility
   Scenario Outline: Glossary display format can be set to dictionary, continuous and full with author
     Given I am on the "Glossary 1" "glossary activity editing" page logged in as teacher1
     # Assign the corresponding display format to glossary activity.
@@ -93,6 +100,7 @@ Feature: Glossary can be set to various display formats
     # Confirm that glossary format is the display format set in the previous step.
     Then I should <visibility> "by Admin User"
     And ".<display_format>" "css_element" should exist
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
 
     Examples:
       | display_format | visibility |

@@ -19,9 +19,9 @@ Feature: A user can navigate to previous and next discussions
       | student1 | C1 | student |
       | student2 | C1 | student |
     And the following "groups" exist:
-      | name | course | idnumber |
-      | Group 1 | C1 | G1 |
-      | Group 2 | C1 | G2 |
+      | name                  | course | idnumber |
+      | Group 1 & (EN) < '" > | C1     | G1       |
+      | Group 2               | C1     | G2       |
     And the following "group members" exist:
       | user | group |
       | teacher1 | G1 |
@@ -96,7 +96,9 @@ Feature: A user can navigate to previous and next discussions
     And I should see "Discussion 2 Group 1"
     And I should see "Discussion 2 Group 2"
     And I follow "Test forum name"
-    And I select "Group 1" from the "Visible groups" singleselect
+    And I select "Group 1 & (EN) < '" from the "Visible groups" singleselect
+    And I should see "Group 1 & (EN) < '\" >"
+    And I should not see "&amp;"
     And I follow "Discussion 1 Group 1"
     And I should see "Discussion 2 Group 0"
     And I should see "Discussion 2 Group 1"

@@ -42,7 +42,7 @@ Feature: Activity navigation in a single activity course
     # The first activity won't have the previous activity link.
     Then "#prev-activity-link" "css_element" should not exist
     And "#next-activity-link" "css_element" should exist
-    And "Jump to..." "field" should exist
+    And "Jump to activity" "field" should exist
 
   Scenario: The activity navigation asks for login to guest user
     Given I log in as "guest"

@@ -294,9 +294,46 @@ class condition extends \core_availability\condition {
                 }
                 $lastcmid = $othercm->id;
             }
-            // Fill empty sections index.
+
+            // Process delegated sections - modules inside delegated sections need their "previous"
+            // calculated relative to the parent subsection module, not from the broader course context.
+            $delegatedcms = $modinfo->get_sections_delegated_by_cm();
+            foreach ($delegatedcms as $parentcmid => $delegatedsection) {
+                // The delegated section's "previous" is the activity before the parent subsection module.
+                if (isset($this->modfastprevious[$parentcmid])) {
+                    $sectionprevious[$delegatedsection->id] = $this->modfastprevious[$parentcmid];
+                }
+
+                // Process modules inside the delegated section in sequence order.
+                // Note: Subsections do not support completion tracking (FEATURE_COMPLETION => false),
+                // so we inherit from the subsection's previous activity with completion.
+                $innerlastcmid = $this->modfastprevious[$parentcmid] ?? 0;
+                foreach ($delegatedsection->get_sequence_cm_infos() as $innercm) {
+                    if ($innercm->deletioninprogress) {
+                        continue;
+                    }
+                    // Clear any wrong value from main iteration - delegated section modules
+                    // must only have their previous calculated within this delegated context.
+                    unset($this->modfastprevious[$innercm->id]);
+                    if (!isset($sectionprevious[$innercm->section])) {
+                        $sectionprevious[$innercm->section] = $innerlastcmid;
+                    }
+                    if ($innerlastcmid) {
+                        $this->modfastprevious[$innercm->id] = $innerlastcmid;
+                    }
+                    if ($innercm->completion != COMPLETION_TRACKING_NONE) {
+                        $innerlastcmid = $innercm->id;
+                    }
+                }
+            }
+
+            // Fill empty regular sections index (reverse iteration).
             $isections = array_reverse($modinfo->get_section_info_all());
             foreach ($isections as $section) {
+                // Skip delegated sections - they were handled above.
+                if ($section->is_delegated()) {
+                    continue;
+                }
                 if (isset($sectionprevious[$section->id])) {
                     $lastcmid = $sectionprevious[$section->id];
                 } else {

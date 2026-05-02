@@ -45,7 +45,7 @@ final class validation_middleware_test extends \advanced_testcase {
         $requestvalidator->expects($this->once())
             ->method('validate_request')
             ->with($request)
-            ->willThrowException(new \Exception('Invalid request'));
+            ->willThrowException(new \Slim\Exception\HttpException($request, 'Invalid request'));
 
         // If the request fails validation, it will not be passed to next Middleware.
         $handler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
@@ -60,8 +60,10 @@ final class validation_middleware_test extends \advanced_testcase {
 
         // Execute the middleware.
         $middleware = di::get(validation_middleware::class);
-        $returns = $middleware->process($request, $handler);
-        $this->assertInstanceOf(ResponseInterface::class, $returns);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Invalid request');
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -97,9 +99,10 @@ final class validation_middleware_test extends \advanced_testcase {
 
         // Execute the middleware.
         $middleware = di::get(validation_middleware::class);
-        $returns = $middleware->process($request, $handler);
-        $this->assertInstanceOf(ResponseInterface::class, $returns);
-        $this->assertNotEquals($response, $returns);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Invalid response');
+        $middleware->process($request, $handler);
     }
 
     /**

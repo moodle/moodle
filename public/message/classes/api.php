@@ -1595,7 +1595,10 @@ class api {
                 return $member->id != $userid;
             });
             $otheruser = reset($otheruser);
-
+            // Check if the user still exists in the system.
+            if (!$otheruser || !\core\user::is_real_user($otheruser->id, true)) {
+                return false;
+            }
             return self::can_contact_user($otheruser->id, $userid);
         } else {
             throw new \moodle_exception("Invalid conversation type '$conversation->type'.");

@@ -378,8 +378,9 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             // Replace move icons
             var move = resourcesnode.one('a.' + CSS.EDITINGMOVE);
             if (move) {
-                var resourcedraghandle = this.get_drag_handle(M.util.get_string('move', 'moodle'),
-                                                              CSS.EDITINGMOVE, CSS.ICONCLASS, true);
+                var slotName = move.getAttribute('aria-label');
+                var dragHandleClass = 'btn px-1 icon-no-margin ' + CSS.EDITINGMOVE;
+                var resourcedraghandle = this.get_drag_handle(slotName, dragHandleClass, CSS.ICONCLASS);
                 move.replace(resourcedraghandle);
             }
         }, this);

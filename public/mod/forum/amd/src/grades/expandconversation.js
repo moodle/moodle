@@ -26,6 +26,7 @@ import {exception as showException} from "core/notification";
 import Templates from 'core/templates';
 import Modal from 'core/modal_cancel';
 import * as ModalEvents from 'core/modal_events';
+import Ajax from 'core/ajax';
 
 /**
  * Find the Node containing the gradable details from the provided node by searching up the tree.
@@ -124,4 +125,31 @@ export const registerEventListeners = (rootNode) => {
             }
         }
     });
+
+    // Each parent post can mark its own read state when it is clicked.
+    const parentContent = document.querySelectorAll(ForumSelectors.showContent);
+    parentContent.forEach(element => {
+        element.addEventListener('click', (e) => {
+            const target = e.currentTarget;
+            const postId = parseInt(target.dataset.parentPostid, 10);
+            const discussionId = parseInt(target.dataset.parentDiscussionid, 10);
+            markPostsRead([postId], discussionId);
+        });
+    });
+};
+
+/**
+ * Mark posts as read.
+ *
+ * @param {number[]} postIds The posts to mark as read
+ * @param {number} discussionId The discussion the posts belong to
+ */
+const markPostsRead = (postIds, discussionId) => {
+    Ajax.call([{
+        methodname: 'mod_forum_mark_posts_read',
+        args: {
+            postids: postIds,
+            discussionid: discussionId
+        },
+    }])[0].catch(showException.exception);
 };

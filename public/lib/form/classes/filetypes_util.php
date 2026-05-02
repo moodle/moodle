@@ -236,13 +236,14 @@ class filetypes_util {
         }
 
         $data = [];
-
+        $allowedextensions = [];
         foreach ($descriptions as $desc => $exts) {
             sort($exts);
             $data[] = (object)[
                 'description' => $desc,
                 'extensions' => join(' ', $exts),
             ];
+            $allowedextensions = array_merge($allowedextensions, $exts);
         }
 
         core_collator::asort_objects_by_property($data, 'description', core_collator::SORT_NATURAL);
@@ -250,6 +251,7 @@ class filetypes_util {
         return (object)[
             'hasdescriptions' => !empty($data),
             'descriptions' => array_values($data),
+            'allowedextensions' => implode(' ', array_unique($allowedextensions)),
         ];
     }
 

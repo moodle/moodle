@@ -53,27 +53,9 @@ class validation_middleware implements MiddlewareInterface {
 
     #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-        global $USER;
-
-        try {
-            $request = $this->requestvalidator->validate_request($request);
-        } catch (\Exception $e) {
-            $response = $this->responsehandler->get_response_from_exception($request, $e);
-            // Throw 'page not found' exception for non-admins.
-            // This hides stacktrace and errorcodes in detailed payload responses.
-            if (!is_siteadmin($USER->id) && $response->getStatusCode() == 404) {
-                return \core\router\util::throw_page_not_found($request, $response, $response->getReasonPhrase());
-            }
-            return $response;
-        }
-
+        $request = $this->requestvalidator->validate_request($request);
         $response = $handler->handle($request);
-
-        try {
-            $this->responsevalidator->validate_response($request, $response);
-        } catch (\Exception $e) {
-            return $this->responsehandler->get_response_from_exception($request, $e);
-        }
+        $this->responsevalidator->validate_response($request, $response);
 
         return $response;
     }

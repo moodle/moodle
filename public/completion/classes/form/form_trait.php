@@ -475,6 +475,19 @@ trait form_trait {
                     // Don't use hardFreeze or checkbox value gets lost.
                     $mform->freeze($completionviewel);
                 }
+
+                $receivegradegroupel = 'receiveagradegroup' . $suffix;
+                if ($mform->elementExists($receivegradegroupel)) {
+                    $groupelements = $mform->getElement($receivegradegroupel)->getElements();
+                    foreach ($groupelements as $element) {
+                        if ($element->_type == 'select') {
+                            $element->updateAttributes(['disabled' => 'disabled']);
+                        } else {
+                            $element->freeze();
+                        }
+                    }
+                }
+
                 $completionusegradeel = 'completionusegrade' . $suffix;
                 if ($mform->elementExists($completionusegradeel)) {
                     $mform->freeze($completionusegradeel);

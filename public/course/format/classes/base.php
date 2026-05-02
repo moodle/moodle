@@ -928,32 +928,32 @@ abstract class base {
      *     'expanded' (bool) if true the section will be shown expanded, true by default
      * @return null|moodle_url
      */
-    public function get_view_url($section, $options = array()) {
+    public function get_view_url($section, $options = []) {
         $course = $this->get_course();
-        $url = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $section = (is_object($section) || is_null($section)) ? $section : $this->get_section($section, IGNORE_MISSING);
 
+        // Determine page.
         if (array_key_exists('sr', $options)) {
-            $sectionno = $options['sr'];
-        } else if (is_object($section)) {
-            $sectionno = $section->section;
+            $pagesection = !is_null($options['sr']) ? $this->get_section($options['sr'], IGNORE_MISSING) : null;
+        } else if ($options['navigation'] ?? false) {
+            $pagesection = $section;
         } else {
-            $sectionno = $section;
+            $pagesection = null;
         }
-        if ((!empty($options['navigation']) || array_key_exists('sr', $options)) && $sectionno !== null) {
-            // Display section on separate page.
-            $sectioninfo = $this->get_section($sectionno);
-            return new moodle_url('/course/section.php', ['id' => $sectioninfo->id]);
+
+        // Base URL.
+        if (is_null($pagesection)) {
+            $url = new moodle_url('/course/view.php', ['id' => $course->id]);
+        } else {
+            $url = new moodle_url('/course/section.php', ['id' => $pagesection->id]);
         }
-        if ($this->uses_sections() && $sectionno !== null) {
-            // The url includes the parameter to expand the section by default.
-            if (!array_key_exists('expanded', $options)) {
-                $options['expanded'] = true;
+
+        // Add details.
+        if ($this->uses_sections() && $section && ($section->id != $pagesection?->id)) {
+            if ($options['expanded'] ?? true) {
+                $url->param('expandsection', $section->section);
             }
-            if ($options['expanded']) {
-                // This parameter is being set by default.
-                $url->param('expandsection', $sectionno);
-            }
-            $url->set_anchor('section-'.$sectionno);
+            $url->set_anchor('section-' . $section->section);
         }
 
         return $url;

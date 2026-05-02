@@ -151,12 +151,21 @@ final class process_summarise_text_test extends \advanced_testcase {
         $responses = [
             500 => new Response(500, ['Content-Type' => 'application/json']),
             503 => new Response(503, ['Content-Type' => 'application/json']),
-            401 => new Response(401, ['Content-Type' => 'application/json'],
-                '{"error": {"message": "Invalid Authentication"}}'),
-            404 => new Response(404, ['Content-Type' => 'application/json'],
-                '{"error": {"message": "You must be a member of an organization to use the API"}}'),
-            429 => new Response(429, ['Content-Type' => 'application/json'],
-                '{"error": {"message": "Rate limit reached for requests"}}'),
+            401 => new Response(
+                401,
+                ['Content-Type' => 'application/json'],
+                json_encode(['error' => 'Invalid Authentication']),
+            ),
+            404 => new Response(
+                404,
+                ['Content-Type' => 'application/json'],
+                json_encode(['error' => 'You must be a member of an organization to use the API']),
+            ),
+            429 => new Response(
+                429,
+                ['Content-Type' => 'application/json'],
+                json_encode(['error' => 'Rate limit reached for requests']),
+            ),
         ];
 
         $processor = new process_summarise_text($this->provider, $this->action);
@@ -317,7 +326,7 @@ final class process_summarise_text_test extends \advanced_testcase {
         $mock->append(new Response(
             401,
             ['Content-Type' => 'application/json'],
-            json_encode(['error' => ['message' => 'Invalid Authentication']]),
+            json_encode(['error' => 'Invalid Authentication']),
         ));
 
         $processor = new process_summarise_text($this->provider, $this->action);

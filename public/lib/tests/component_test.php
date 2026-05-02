@@ -17,6 +17,7 @@
 namespace core;
 
 use core\exception\coding_exception;
+use core\output\requirements\page_requirements_manager;
 use core\tests\fake_plugins_test_trait;
 use DirectoryIterator;
 use ReflectionClass;
@@ -1973,5 +1974,35 @@ final class component_test extends \advanced_testcase {
         $this->assertTrue(class_exists(\fullsubtype_example\dummy::class));
         $this->assertTrue(class_exists(\fulldeprecatedsubtype_test\dummy::class));
         $this->assertFalse(class_exists(\fulldeletedsubtype_demo\dummy::class));
+    }
+
+    /**
+     * Ensure that get_path() returns absolute paths using the correct directory separator.
+     *
+     * @covers \core\component::get_path
+     */
+    public function test_get_path(): void {
+        global $CFG;
+
+        // Get plugin paths used in the cache created from get_path.
+        $absolutepaths = \core\component::get_all_plugin_types();
+        $pluginpath = reset($absolutepaths);
+
+        // Ensure that the path contains $CFG->dirroot ('var/www/site/public'), which contains the
+        // correct directory separator.
+        $this->assertTrue(str_contains($pluginpath, $CFG->dirroot));
+
+        // Ensure js_module does not throw. It will call find_module which uses the cached path and
+        // checks it contains $CFG->dirroot.
+        $exception = false;
+        try {
+            $manager = new \page_requirements_manager();
+            $manager->js_module('mod_assign');
+        } catch (coding_exception $e) {
+            if ($e->getMessage() === 'Missing YUI3 module details.') {
+                $exception = true;
+            }
+        }
+        $this->assertFalse($exception);
     }
 }

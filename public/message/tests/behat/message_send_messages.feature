@@ -35,6 +35,7 @@ Feature: Message send messages
     And I open the "Group" conversations list
     And "Group 1" "core_message > Message" should exist
     And I select "Group 1" conversation in messaging
+    And I should not see "Cannot send messages"
     When I send "Hi!" message in the message area
     Then I should see "Hi!" in the "Group 1" "core_message > Message conversation"
     And I should see "##today##%d %B##" in the "Group 1" "core_message > Message conversation"
@@ -43,6 +44,7 @@ Feature: Message send messages
     And I open messaging
     And "Group 1" "core_message > Message" should exist
     And I select "Group 1" conversation in messaging
+    And I should not see "Cannot send messages"
     And I should see "Hi!" in the "Group 1" "core_message > Message conversation"
 
   Scenario: Send a message to a starred conversation

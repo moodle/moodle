@@ -32,7 +32,7 @@ Moodle also offers hosting through both [MoodleCloud][11], and our [partner netw
 
 ## License
 
-Moodle is provided freely as open source software, under version 3 of the GNU General Public License. For more information on our license see
+Moodle is provided freely as open source software, under version 3 of the GNU General Public License. See our [license page][12] for more information.
 
 [1]: https://moodle.org
 [2]: https://moodle.com
