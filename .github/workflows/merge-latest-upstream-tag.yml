@@ -205,20 +205,69 @@ jobs:
         run: |
           TAG=${{ steps.latest_tag.outputs.latest_tag }}
 
-          git merge "$TAG" --no-ff --no-edit || {
-            echo "Merge conflict detected"
-            exit 1
-          }
-
-          # Detect workflow changes introduced by upstream
-          if git diff --name-only ORIG_HEAD...HEAD | grep -q "^.github/workflows/"; then
+          # ------------------------------------------------------------
+          # Detect if upstream introduces workflow changes (ground truth)
+          # ------------------------------------------------------------
+          if git diff --name-only ORIG_HEAD...$TAG | grep -q "^.github/workflows/"; then
             echo "workflow_changed=true" >> $GITHUB_OUTPUT
-
-            # Revert workflow changes to avoid GitHub permission issues
-            git restore --source=ORIG_HEAD --staged --worktree .github/workflows
-            git commit -m "Revert upstream workflow changes"
+            WORKFLOW_CHANGED=true
           else
             echo "workflow_changed=false" >> $GITHUB_OUTPUT
+            WORKFLOW_CHANGED=false
+          fi
+
+          # ------------------------------------------------------------
+          # Attempt merge but allow conflicts
+          # ------------------------------------------------------------
+          set +e
+          git merge "$TAG" --no-ff --no-edit
+          MERGE_EXIT_CODE=$?
+          set -e
+
+          # ------------------------------------------------------------
+          # If workflows changed upstream, always restore them
+          # ------------------------------------------------------------
+          if [ "$WORKFLOW_CHANGED" = "true" ]; then
+            echo "Reverting upstream .github/workflows changes"
+            git restore --source=ORIG_HEAD --staged --worktree .github/workflows
+          fi
+
+          # ------------------------------------------------------------
+          # Handle merge conflicts
+          # ------------------------------------------------------------
+          if [ $MERGE_EXIT_CODE -ne 0 ]; then
+            echo "Merge had conflicts, checking if they are acceptable..."
+
+            # List unresolved conflicts
+            CONFLICTS=$(git diff --name-only --diff-filter=U)
+
+            # Fail if any conflict is NOT in workflows
+            NON_WORKFLOW_CONFLICTS=$(echo "$CONFLICTS" | grep -v "^.github/workflows/" || true)
+
+            if [ -n "$NON_WORKFLOW_CONFLICTS" ]; then
+              echo "❌ Conflicts outside .github/workflows detected:"
+              echo "$NON_WORKFLOW_CONFLICTS"
+              exit 1
+            fi
+
+            echo "Only workflow conflicts detected; resolving by exclusion"
+
+            # Stage everything after resolving workflows
+            git add -A
+
+            git commit -m "Merge $TAG (excluded upstream .github/workflows changes)"
+            exit 0
+          fi
+
+          # ------------------------------------------------------------
+          # No merge conflicts — but workflows may still need reverting
+          # ------------------------------------------------------------
+          if [ "$WORKFLOW_CHANGED" = "true" ]; then
+            # Check if restore actually changed anything
+            if ! git diff --quiet; then
+              git add .github/workflows
+              git commit -m "Revert upstream .github/workflows changes from $TAG"
+            fi
           fi
 
       # ------------------------------------------------------------
@@ -248,7 +297,10 @@ jobs:
               echo "git push -f origin Merge-Moodle-${{ steps.latest_tag.outputs.latest_tag }}"
               echo "\`\`\`"
               echo ""
-              echo "Or revert the last commit that has reverted the Moodle core workflow changes (because GHA won't allow automated PR for workflow changes):"
+              echo "Or, if the latest commit is a revert of the Moodle core workflow changes, revert it again to reapply those changes."
+              echo "(GitHub Actions cannot automatically create pull requests that include workflow changes.)"
+              echo ""
+              echo "This may not be the case if the merge commit indicates that '\`.github/workflows\` changes were excluded' due to a conflict resolution. In that case, follow the manual merge steps above to include the workflow changes, then force-push to overwrite the previous commit."
               echo "\`\`\`bash"
               echo "git checkout Merge-Moodle-${{ steps.latest_tag.outputs.latest_tag }}"
               echo "git reset --hard HEAD~1"
