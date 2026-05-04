@@ -318,7 +318,7 @@ class manager {
         }
 
         $usersjoin = $this->get_active_users_join();
-        $sql = "SELECT COUNT(*)
+        $sql = "SELECT COUNT(DISTINCT ha.id)
                  FROM {user} u $usersjoin->joins
                  WHERE $usersjoin->wheres";
         $params = array_merge($usersjoin->params);
