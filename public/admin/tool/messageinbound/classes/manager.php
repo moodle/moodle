@@ -733,14 +733,27 @@ class manager {
         if ($messages) {
             $messagedata = reset($messages);
 
+            // The upstream IMAP body-structure parser can deliver an incomplete part
+            // structure when the incoming message has a malformed or absent Content-Type
+            // header. Slots [1] (subtype), [2] (parameters) and [5] (encoding) may be
+            // missing or of the wrong type. Without these guards, strtoupper() and the
+            // typed `array $attributes` parameter of process_message_body_structure_parameters()
+            // raise TypeError on null. Falling back to empty values lets processing degrade
+            // gracefully -- unknown subtype skips the PLAIN/HTML branches, unknown encoding
+            // is treated as raw bytes by the existing array_search/else cascade below, and
+            // empty attributes leave $parameters untouched.
+            $subtyperaw = $partstructure[1] ?? '';
+            $attributes = isset($partstructure[2]) && is_array($partstructure[2]) ? $partstructure[2] : [];
+            $encodingraw = $partstructure[5] ?? '';
+
             // Parse encoding.
             $encoding = array_search(
-                needle: strtoupper($partstructure[5]),
+                needle: strtoupper($encodingraw),
                 haystack: utils::get_body_encoding(),
             );
 
             // Parse subtype.
-            $subtype = strtoupper($partstructure[1]);
+            $subtype = strtoupper($subtyperaw);
 
             // Section part may be encoded, even plain text messages, so check everything.
             if ($encoding == utils::ENCQUOTEDPRINTABLE) {
@@ -753,7 +766,7 @@ class manager {
 
             // Parse parameters.
             $parameters = $this->process_message_body_structure_parameters(
-                attributes: $partstructure[2],
+                attributes: $attributes,
                 parameters: $parameters,
             );
 
@@ -770,20 +783,28 @@ class manager {
             }
 
             // Parse size of contents in bytes.
-            $bytes = intval($partstructure[6]);
+            $bytes = intval($partstructure[6] ?? 0);
+
+            // Fall back to utf-8 when the sender omits the Content-Type charset parameter.
+            // This matches Moodle's outbound default (lib/moodlelib.php email_to_user()) and
+            // reflects the practical reality of modern mail. RFC 2046 §4.1.2 prescribes
+            // us-ascii as the spec default, but in practice undeclared modern mail is
+            // overwhelmingly utf-8, so the stricter default would silently corrupt real
+            // content via core_text::convert().
+            $charset = $parameters['CHARSET'] ?? 'utf-8';
 
             // PLAIN text.
             if ($subtype == 'PLAIN') {
                 $contentplain = $this->process_message_part_body(
                     bodycontent: $data,
-                    charset: $parameters['CHARSET'],
+                    charset: $charset,
                 );
             }
             // HTML.
             if ($subtype == 'HTML') {
                 $contenthtml = $this->process_message_part_body(
                     bodycontent: $data,
-                    charset: $parameters['CHARSET'],
+                    charset: $charset,
                 );
             }
             // ATTACHMENT.
@@ -800,7 +821,7 @@ class manager {
                 ) {
                     // Parse disposition.
                     $disposition = null;
-                    if (is_array($partstructure[8])) {
+                    if (is_array($partstructure[8] ?? null)) {
                         $disposition = strtolower($partstructure[8][0]);
                     }
                     $disposition = $disposition == 'inline' ? 'inline' : 'attachment';
