@@ -650,6 +650,30 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Test count_attempts is not inflated when a user is enrolled via multiple enrolment methods.
+     */
+    public function test_count_attempts_with_multiple_enrolments(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
+
+        $manager = manager::create_from_instance($activity);
+
+        // User enrolled via a single enrolment method with 3 completed attempts.
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->generate_fake_attempts($activity, $user1, 1);
+
+        // User enrolled via two different enrolment methods with 3 completed attempts.
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student', 'self');
+        $this->generate_fake_attempts($activity, $user2, 2);
+
+        $this->assertEquals(6, $manager->count_attempts());
+    }
+
+    /**
      * Data provider for test_count_attempts_all.
      *
      * @return array
