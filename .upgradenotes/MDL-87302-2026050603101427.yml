@@ -1,0 +1,9 @@
+issueNumber: MDL-87302
+notes:
+  format_weeks:
+    - message: >-
+        The `enablelinearnav` setting has been introduced to control course
+        linear navigation at the course level. A corresponding site-wide admin
+        setting is also available to define the default value for newly created
+        courses.
+      type: improved

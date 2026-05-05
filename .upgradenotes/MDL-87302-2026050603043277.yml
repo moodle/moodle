@@ -1,0 +1,9 @@
+issueNumber: MDL-87302
+notes:
+  core_courseformat:
+    - message: >-
+        The `\core_courseformat\base::uses_linear_navigation()` method has been
+        introduced to determine if a format supports linear navigation. Formats
+        should override this to return true (optionally via a format setting) to
+        enable the feature; it remains disabled by default.
+      type: improved
