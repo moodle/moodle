@@ -69,9 +69,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
     And the following "course enrolments" exist:
       | user             | course | role           |
       | user_updateusers | C1     | editingteacher |
-    And I log in as "user_updateusers"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "user_updateusers"
     And I follow "userwithinformation 1"
 
     Then I should see "everyonevisible_field"
@@ -106,9 +104,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
     And the following "course enrolments" exist:
       | user                | course | role           |
       | user_viewalldetails | C1     | editingteacher |
-    And I log in as "user_viewalldetails"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "user_viewalldetails"
     And I follow "userwithinformation 1"
 
     Then I should see "everyonevisible_field"
@@ -139,9 +135,7 @@ Feature: Custom profile fields should be visible and editable by those with the 
     And the following "course enrolments" exist:
       | user                              | course | role           |
       | user_viewalldetailsandupdateusers | C1     | editingteacher |
-    And I log in as "user_viewalldetailsandupdateusers"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "user_viewalldetailsandupdateusers"
     And I follow "userwithinformation 1"
 
     Then I should see "everyonevisible_field"

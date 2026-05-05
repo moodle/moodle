@@ -105,7 +105,7 @@ Feature: Enrolments are synchronised with meta courses
   Scenario: Unenrol a user from the course participants page that was enrolled via course meta link.
     Given I add "Course meta link" enrolment method in "Course 3" with:
       | Link course  | C4C4 |
-    And I navigate to course participants
+    And I am on the "Course 3" "enrolled users" page
     # Suspended users can be unenrolled.
     When I click on "//a[@data-action='unenrol']" "xpath_element" in the "student2" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"

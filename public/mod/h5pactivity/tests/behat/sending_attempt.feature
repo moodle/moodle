@@ -39,8 +39,7 @@ Feature: Do a H5P attempt
     And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as teacher1
     And I follow "Student 1"
     Then I follow "Today's logs"
     And I should see "xAPI statement received"
