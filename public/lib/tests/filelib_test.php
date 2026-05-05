@@ -27,6 +27,7 @@ namespace core;
 
 use core_filetypes;
 use curl;
+use PHPUnit\Framework\Attributes\CoversFunction;
 use repository;
 
 defined('MOODLE_INTERNAL') || die();
@@ -43,6 +44,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * @copyright 2009 Jerome Mouneyrac
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversFunction('file_save_draft_area_files')]
 final class filelib_test extends \advanced_testcase {
     public function test_format_postdata_for_curlcall(): void {
 
@@ -937,6 +939,52 @@ final class filelib_test extends \advanced_testcase {
         $text = file_save_draft_area_files(IGNORE_FILE_MERGE, $usercontext->id, 'user', 'private', 0, null, $inlinetext);
         $this->assertCount(2, $fs->get_area_files($usercontext->id, 'user', 'private'));
         $this->assertEquals($inlinetext, $text);
+    }
+
+    /**
+     * Test saving draft files into another draft area preserves draft source metadata.
+     */
+    public function test_file_save_draft_area_files_preserves_source_metadata_for_draft_destination(): void {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $fs = get_file_storage();
+        $syscontext = \context_system::instance();
+        $usercontext = \context_user::instance($USER->id);
+        $filename = 'license.jpg';
+        $originalrecord = [
+            'contextid' => $syscontext->id,
+            'component' => 'core',
+            'filearea' => 'unittest',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => $filename,
+        ];
+
+        $fs->create_file_from_string($originalrecord, 'Original file content');
+
+        $destinationdraftitemid = file_get_unused_draft_itemid();
+        $source = (object) ['source' => $filename, 'original' => $fs->pack_reference($originalrecord)];
+        $serialisedsource = serialize($source);
+        $sourcedraftitemid = file_get_unused_draft_itemid();
+        $sourcefile = $fs->create_file_from_string([
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => $sourcedraftitemid,
+            'filepath' => '/',
+            'filename' => $filename,
+        ], 'Draft file content');
+
+        $sourcefile->set_source($serialisedsource);
+        file_save_draft_area_files($sourcedraftitemid, $usercontext->id, 'user', 'draft', $destinationdraftitemid);
+
+        $destinationfile = $fs->get_file($usercontext->id, 'user', 'draft', $destinationdraftitemid, '/', $filename);
+
+        $this->assertInstanceOf(\stored_file::class, $destinationfile);
+        $this->assertSame($serialisedsource, $destinationfile->get_source());
     }
 
     /**
