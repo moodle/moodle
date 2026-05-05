@@ -50,8 +50,7 @@ Feature: Unenrol action to disable course enrolment
     And I set the field "Current users" to "Student 001 (student001@example.com)"
     And I wait "1" seconds
     And I press "Remove"
-    And I am on "Course 001" course homepage
-    And I navigate to course participants
+    And I am on the "Course 001" "enrolled users" page
     And I should see "Suspended" in the "Student 001" "table_row"
     And I should see "Active" in the "Student 002" "table_row"
     And I should see "Active" in the "Student 003" "table_row"
@@ -79,8 +78,7 @@ Feature: Unenrol action to disable course enrolment
     And I navigate to "Users > Accounts > Cohorts" in site administration
     When I press "Delete" action in the "System cohort" report row
     And I click on "Delete" "button" in the "Delete selected" "dialogue"
-    And I am on "Course 001" course homepage
-    And I navigate to course participants
+    And I am on the "Course 001" "enrolled users" page
     And I should see "Suspended" in the "Student 001" "table_row"
     And I should see "Suspended" in the "Student 002" "table_row"
     And I should see "Suspended" in the "Student 003" "table_row"

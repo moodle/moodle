@@ -71,9 +71,7 @@ Feature: Course participants can be filtered to display all the users
 
   @javascript
   Scenario: Show all users in a course that match a single filter value
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
     And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Student"
@@ -88,9 +86,7 @@ Feature: Course participants can be filtered to display all the users
 
   @javascript
   Scenario: Show all users as a student
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "student1"
     And I set the field "Match" in the "Filter 1" "fieldset" to "All"
     And I set the field "type" in the "Filter 1" "fieldset" to "Roles"
     And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Student"
@@ -104,9 +100,7 @@ Feature: Course participants can be filtered to display all the users
 
   @javascript
   Scenario: Apply one value for more than one filter and show all matching users
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I click on "Add condition" "button"
     And I set the field "Match" to "All"
     And I set the field "Match" in the "Filter 1" "fieldset" to "Any"

@@ -169,8 +169,7 @@ Feature: Upload users
     Then I should see "Upload users preview"
     And I press "Upload users"
     # Check user enrolment start date and period
-    And I am on "Maths" course homepage
-    Then I navigate to course participants
+    And I am on the "Maths" "enrolled users" page
     And I click on "Manual enrolments" "link" in the "Student One" "table_row"
     Then I should see "1 January 2019" in the "Enrolment starts" "table_row"
     And I should not see "Enrolment ends"

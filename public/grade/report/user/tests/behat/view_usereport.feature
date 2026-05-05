@@ -97,7 +97,7 @@ Feature: We can use the user report
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
     And I click on "Student 1" in the "Search users" search combo box
     And I should see "Student 1" in the "region-main" "region"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I click on "Unenrol" "icon" in the "Student 1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I am on "Course 1" course homepage

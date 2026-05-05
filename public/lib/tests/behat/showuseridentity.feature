@@ -63,8 +63,7 @@ Feature: Select user identity fields
   Scenario: When you choose custom fields, these should be displayed in the 'Participants' screen
     Given the following config values are set as admin:
       | showuseridentity | username,department,profile_field_speciality |
-    When I am on the "C1" "Course" page logged in as "user1"
-    And I navigate to course participants
+    When I am on the "C1" "enrolled users" page logged in as "user1"
     Then I should see "Frogs" in the "user1" "table_row"
     And I should see "Zombies" in the "user2" "table_row"
 
@@ -72,8 +71,7 @@ Feature: Select user identity fields
   Scenario: The user filtering options on the participants screen should work for custom profile fields
     Given the following config values are set as admin:
       | showuseridentity | username,department,profile_field_speciality |
-    When I am on the "C1" "Course" page logged in as "admin"
-    And I navigate to course participants
+    When I am on the "C1" "enrolled users" page logged in as "admin"
     And I set the field "type" in the "Filter 1" "fieldset" to "Keyword"
     And I set the field "Type..." in the "Filter 1" "fieldset" to "Frogs"
     # You have to tab out to make it actually apply.

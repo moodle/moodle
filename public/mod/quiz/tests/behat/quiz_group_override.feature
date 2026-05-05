@@ -205,8 +205,7 @@ Feature: Quiz group override
       | Override user | Sam 1 Student 1   |
       | timeopen      | ##tomorrow##      |
       | timeclose     | ##tomorrow noon## |
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I click on "Unenrol" "icon" in the "student1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     When I log in as "student1"

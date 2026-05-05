@@ -79,8 +79,7 @@ Feature: Cohort enrolment management
     And the "removeselect[]" select box should contain "Jane Doe (s4@example.com)"
     And the "removeselect[]" select box should not contain "John Smith (s2@example.com)"
     And I trigger cron
-    And I am on "Course 001" course homepage
-    And I navigate to course participants
+    And I am on the "Course 001" "enrolled users" page
     # Verifies students 1 and 4 are in the cohort and student 2 is not any more.
     And the following should exist in the "participants" table:
       | First name             | Email address  | Roles   | Groups        |
@@ -123,13 +122,13 @@ Feature: Cohort enrolment management
     And I add "Cohort sync" enrolment method in "Course 001" with:
       | Cohort | Alpha1 |
     And I should see "Cohort sync (Alpha1 - Student)"
-    And I navigate to course participants
+    And I am on the "Course 001" "enrolled users" page
     And I should see "Student" in the "Sandra Cole" "table_row"
     And I am on the "Course 001" "enrolment methods" page
     And I click on "Edit" "link" in the "Alpha1" "table_row"
     And I set the field "Assign role" to "Non-editing teacher"
     And I click on "Save" "button"
     Then I should see "Cohort sync (Alpha1 - Non-editing teacher)"
-    And I navigate to course participants
+    And I am on the "Course 001" "enrolled users" page
     And I should see "Non-editing teacher" in the "Sandra Cole" "table_row"
     And I should not see "Student" in the "Sandra Cole" "table_row"

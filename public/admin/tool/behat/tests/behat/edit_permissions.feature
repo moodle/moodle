@@ -76,7 +76,7 @@ Feature: Edit capabilities
       | Your word for 'Non-editing teacher' | Teacher < "editing" |
       | Your word for 'Student'             | Studier & 'learner' |
     And I press "Save"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     Then I should see "Teacher >= editing (Teacher)" in the "Teacher 1" "table_row"
     And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "Teaching Assistant" "table_row"
     And I should see "Studier & 'learner' (Student)" in the "Student One" "table_row"

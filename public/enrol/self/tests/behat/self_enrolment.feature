@@ -96,8 +96,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I set the following fields to these values:
       | Enrolment key | moodle_rules |
     And I click on "Enrol me" "button" in the "Test student enrolment" "dialogue"
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as teacher1
     And the following should exist in the "participants" table:
       | First name | Email address        | Roles   | Groups    |
       | Student 1  | student1@example.com | Student | Group 1   |
@@ -113,10 +112,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I am on "Course 1" course homepage
     And I press "Enrol me"
     And I should see "You are enrolled in the course"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "//a[@data-action='editenrolment']" "xpath_element" in the "student1" "table_row"
     And I should see "Edit Student 1's enrolment"
     And I set the field "Status" to "Suspended"
@@ -133,10 +129,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I am on "Course 1" course homepage
     And I press "Enrol me"
     And I should see "You are enrolled in the course"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "//a[@data-action='unenrol']" "xpath_element" in the "student1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     Then I should not see "Student 1" in the "participants" "table"

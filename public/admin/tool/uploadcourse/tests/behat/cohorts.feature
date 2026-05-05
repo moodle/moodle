@@ -138,7 +138,6 @@ Feature: An admin can create courses with cohort enrolments using a CSV file
     And I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_cohort_multiple.csv" file to "File" filemanager
     And I click on "Preview" "button"
     And I click on "Upload courses" "button"
-    When I am on the "Course 1" "course" page
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     Then I should see "Non-editing teacher" in the "Teacher 1" "table_row"
     And I should not see "Student" in the "Teacher 1" "table_row"

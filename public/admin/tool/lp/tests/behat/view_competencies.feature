@@ -152,7 +152,7 @@ Feature: View competencies
     # Participant learning plans
     And I click on "Close" "button" in the "Cakes" "dialogue"
     And I click on "Close" "button" in the "User competency summary" "dialogue"
-    And I navigate to course participants
+    And I am on the "C1" "enrolled users" page
     And I click on "Student first" "link"
     And I click on "Learning plans" "link"
     And I should see "Cookery"
