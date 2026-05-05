@@ -70,6 +70,10 @@
 	url = https://github.com/ucsf-education/moodle-local_navbarhelpmenu
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/local/oauthredirect"]
+	path = public/local/oauthredirect
+	url = https://github.com/ucsf-education/moodle-local_oauthredirect
+	branch = main
 [submodule "public/local/quizanon"]
 	path = public/local/quizanon
 	url = https://github.com/ucsf-education/local_quizanon
@@ -141,4 +145,3 @@
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_501_STABLE
 	tag = v5.1.2
-
