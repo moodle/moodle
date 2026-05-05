@@ -244,7 +244,7 @@ Feature: We can use Single view
   Scenario: Teacher does not see his last viewed user report if that user is no longer enrolled in the course.
     Given I navigate to "View > Single view" in the course gradebook
     And I click on "Gronya,Beecham" in the "Search users" search combo box
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I click on "Unenrol" "icon" in the "Gronya,Beecham" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     When I am on the "Course 1" "grades > Single view > View" page

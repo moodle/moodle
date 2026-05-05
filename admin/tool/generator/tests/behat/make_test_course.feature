@@ -16,7 +16,7 @@ Feature: Admins can create test courses
       | Course short name | fake                    |
     And I press "Create course"
     And I click on "Continue" "link"
-    And I navigate to course participants
+    And I am on the "Fake course for testing" "enrolled users" page
     Then I should not see "Teacher"
     And I should not see "Nothing to display"
     And the following config values are set as admin:
@@ -29,5 +29,5 @@ Feature: Admins can create test courses
       | Course short name | newfake                     |
     And I press "Create course"
     And I click on "Continue" "link"
-    And I navigate to course participants
+    And I am on the "New fake course for testing" "enrolled users" page
     And I should see "Teacher"

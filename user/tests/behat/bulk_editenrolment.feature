@@ -24,9 +24,7 @@ Feature: Bulk enrolments
 
   @javascript
   Scenario: Bulk edit enrolments
-    When I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "admin"
     And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Edit selected user enrolments"
     And I set the field "Alter status" to "Suspended"
@@ -37,9 +35,7 @@ Feature: Bulk enrolments
 
   @javascript
   Scenario: Bulk delete enrolments
-    When I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "admin"
     And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Delete selected user enrolments"
     And I press "Unenrol users"
@@ -50,9 +46,7 @@ Feature: Bulk enrolments
 
   @javascript
   Scenario: Bulk delete enrolments when user is themselves enrolled
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     # Select all three users (the teacher themselves and both students).
     And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Delete selected user enrolments"

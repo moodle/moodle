@@ -68,7 +68,7 @@ Feature: Reset course
     # Check that you're redirected to the course page.
     And I should not see "Reset course"
     # Check the course has been reset.
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I should see "Teacher 1"
     And I should not see "Student 1"
     And I am on the "Test assignment name" "assign activity" page

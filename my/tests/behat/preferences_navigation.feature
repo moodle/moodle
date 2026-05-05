@@ -51,8 +51,7 @@ Feature: Navigate and use preferences page
       | Register an external blog    |
 
   Scenario Outline: Navigating through course participant preferences
-    Given I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page
     And I follow "Sam Student"
     When I click on "Preferences" "link" in the "#region-main-box" "css_element"
     Then I should see "Sam Student" in the ".page-header-headings" "css_element"
@@ -98,8 +97,7 @@ Feature: Navigate and use preferences page
     And I follow "Event monitoring"
     # Confirm that user can subscribe to new rule.
     And "Subscribe to rule \"Testing1\"" "link" should exist
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I follow "Sam Student"
     And I click on "Preferences" "link" in the "#region-main-box" "css_element"
     # Confirm that admin cannot change student's event monitor subscription.

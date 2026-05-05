@@ -65,9 +65,7 @@ Feature: Testing view quiz grade feedback with recover grades setting
   Scenario Outline: View quiz after unenrolling and re-enrolling user
     Given the following config values are set as admin:
       | recovergradesdefault  | <recovergradesetting> |
-    And I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher"
     And I click on "Unenrol" "icon" in the "Student One" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And the following "course enrolments" exist:

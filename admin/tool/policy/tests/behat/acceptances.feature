@@ -206,8 +206,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I follow "Policies and agreements"
     And "Accepted" "text" should exist in the "This site policy" "table_row"
     # User can't see agreements link in other user profiles.
-    And I am on "Course1" course homepage
-    And I navigate to course participants
+    And I am on the "Course1" "enrolled users" page
     And I follow "User Two"
     And I should not see "Policies and agreements"
 
@@ -220,8 +219,7 @@ Feature: Viewing acceptances reports and accepting on behalf of other users
     And I set the field "I agree to the This site policy." to "1"
     And I press "Next"
     # User can see agreements link in other user profiles because has the capability for accepting on behalf of them.
-    When I am on "Course1" course homepage
-    And I navigate to course participants
+    When I am on the "Course1" "enrolled users" page
     And I follow "User Two"
     Then I should see "Policies and agreements"
 
