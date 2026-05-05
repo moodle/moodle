@@ -1080,6 +1080,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 
     $usercontext = context_user::instance($USER->id);
     $fs = get_file_storage();
+    $isdraftdestination = $component === 'user' && $filearea === 'draft';
 
     $options = (array)$options;
     if (!isset($options['subdirs'])) {
@@ -1200,8 +1201,9 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             // Field files.source for draftarea files contains serialised object with source and original information.
             // We only store the source part of it for non-draft file area.
             $newsource = $newfile->get_source();
-            if ($source = unserialize_object($newfile->get_source() ?? '')) {
-                if (isset($source->source)) {
+            if (!$isdraftdestination) {
+                $source = unserialize_object($newfile->get_source() ?? '');
+                if ($source && isset($source->source)) {
                     $newsource = $source->source;
                 }
             }
@@ -1236,10 +1238,11 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         // the size and subdirectory tests are extra safety only, the UI should prevent it
         foreach ($newhashes as $file) {
             $file_record = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid, 'timemodified'=>time());
-            if ($source = unserialize_object($file->get_source() ?? '')) {
+            if (!$isdraftdestination) {
+                $source = unserialize_object($file->get_source() ?? '');
                 // Field files.source for draftarea files contains serialised object with source and original information.
                 // We only store the source part of it for non-draft file area.
-                if (isset($source->source)) {
+                if ($source && isset($source->source)) {
                     $file_record['source'] = $source->source;
                 }
             }
