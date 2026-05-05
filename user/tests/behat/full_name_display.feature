@@ -24,25 +24,19 @@ Feature: Users' names are displayed across the site according to the user policy
       | alternativefullnameformat | middlename, alternatename, firstname, lastname |
 
   Scenario: As a student, 'fullnamedisplay' should be used in the participants list and when viewing my own course profile
-    Given I log in as "user1"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "user1"
     And I click on "Gronya,Beecham" "link" in the "Gronya,Beecham" "table_row"
     Then I should see "Gronya,Beecham" in the "region-main" "region"
     And I log out
 
   Scenario: As a student, 'fullnamedisplay' should be used in the participants list and when viewing another user's course profile
-    Given I log in as "user2"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "user2"
     And I click on "Gronya,Beecham" "link" in the "Gronya,Beecham" "table_row"
     Then I should see "Gronya,Beecham" in the "region-main" "region"
     And I log out
 
   Scenario: As a teacher, 'alternativefullnameformat' should be used in the participants list but 'fullnamedisplay' used on the course profile
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     Then I should see "Ann, Jill, Grainne, Beauchamp" in the "Ann, Jill, Grainne, Beauchamp" "table_row"
     And I click on "Ann, Jill, Grainne, Beauchamp" "link" in the "Ann, Jill, Grainne, Beauchamp" "table_row"
     And I should see "Gronya,Beecham" in the "region-main" "region"
@@ -74,9 +68,7 @@ Feature: Users' names are displayed across the site according to the user policy
 
   @javascript
   Scenario: As a teacher, the 'alternativefullnameformat' should be used when searching for and enrolling a user
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I press "Enrol users"
     And I click on "Select users" "field"
     And I type "three@example.com"

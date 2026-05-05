@@ -32,23 +32,19 @@ Feature: Set email display preference
 
   @javascript
   Scenario: Student peer on the same course viewing profiles
-    Given I log in as "studentp"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "studentp"
     When I follow "Student NONE"
     Then I should not see "studentN@example.com"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     When I follow "Student EVERYONE"
     Then I should see "studentE@example.com"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     When I follow "Student MEMBERS"
     Then I should see "studentM@example.com"
 
   @javascript
   Scenario: Student viewing teacher email (whose maildisplay = MEMBERS)
-    Given I log in as "studentp"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "studentp"
     When I follow "Teacher 1"
     Then I should see "teacher1@example.com"
 
@@ -56,12 +52,10 @@ Feature: Set email display preference
   Scenario: Teacher viewing student email, whilst site:showuseridentity = “email”
     Given the following config values are set as admin:
       | showuseridentity      | email |
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I follow "Student NONE"
     Then I should see "studentN@example.com"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     When I follow "Student MEMBERS"
     Then I should see "studentM@example.com"
 
@@ -70,11 +64,10 @@ Feature: Set email display preference
     Given I log in as "teacher1"
     And the following config values are set as admin:
       | showuseridentity      | |
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     When I follow "Student NONE"
     Then I should not see "studentN@example.com"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     When I follow "Student MEMBERS"
     Then I should see "studentM@example.com"
 
