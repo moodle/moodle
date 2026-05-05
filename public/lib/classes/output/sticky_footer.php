@@ -130,6 +130,8 @@ class sticky_footer implements named_templatable, renderable {
         if (!$this->autoenable) {
             $data['disable'] = true;
         }
+        // Signal that this is a sticky footer.
+        $output->get_page()->set_has_sticky_footer(true);
         return $data;
     }
 

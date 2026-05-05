@@ -1,0 +1,8 @@
+issueNumber: MDL-87302
+notes:
+  core:
+    - message: >-
+        The `moodle_page` class now includes `set_has_sticky_footer()` and
+        `has_sticky_footer()` to track sticky footer presence and prevent
+        redundant renders.
+      type: improved
