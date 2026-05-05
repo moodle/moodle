@@ -16,7 +16,7 @@ Feature: The context of a block can always be returned to it's original state.
     When I am on "Course 1" course homepage with editing mode on
     And I add the "Tags" block
     Then I should see "Tags" in the "Tags" "block"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I configure the "Tags" block
     And I set the following fields to these values:
       | Display on page types | Any page |
@@ -30,7 +30,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I should see "Tags" in the "Tags" "block"
     And I am on "Course 1" course homepage
     And "Tags" "block" should not exist
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And "Tags" "block" should not exist
     And I am on "Course 1" course homepage
     And I follow "Assignment2"
@@ -41,5 +41,5 @@ Feature: The context of a block can always be returned to it's original state.
     And I press "Save changes"
     And I am on "Course 1" course homepage
     And I should see "Tags" in the "Tags" "block"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I should see "Tags" in the "Tags" "block"

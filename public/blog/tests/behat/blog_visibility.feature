@@ -24,8 +24,7 @@ Feature: Blogs can be set to be only visible by the author.
     And I press "Save changes"
 
   Scenario: A student can not see another student's blog entries.
-    Given I am on the "Course 1" course page logged in as testuser
-    And I navigate to course participants
+    Given  I am on the "C1" "enrolled users" page logged in as testuser
     When I follow "Test2 User2"
     And I should see "Miscellaneous"
     Then I should not see "Blog entries"

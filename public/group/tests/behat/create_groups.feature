@@ -47,7 +47,7 @@ Feature: Organize students into groups
     And the "members" select box should contain "Student 3 (student3@example.com)"
     And the "members" select box should not contain "Student 0 (student0@example.com)"
     And the "members" select box should not contain "Student 1 (student1@example.com)"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
     And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Group 1"
     And I click on "Apply filters" "button"

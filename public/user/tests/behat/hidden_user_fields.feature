@@ -22,9 +22,7 @@ Feature: Hidden user fields behavior
       | hiddenuserfields | description,email |
 
   Scenario Outline: Hidden user fields on course context profile based on role permission
-    Given I log in as "<user>"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "<user>"
     And I should see "Profile User"
     When I click on "Profile User" "link"
     Then I <expected> "This is me"
@@ -38,9 +36,7 @@ Feature: Hidden user fields behavior
       | admin   | should see     |
 
   Scenario Outline: Hidden user fields on system context profile based on role permission
-    Given I log in as "<user>"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "<user>"
     And I should see "Profile User"
     When I click on "Profile User" "link"
     And I click on "Full profile" "link"
