@@ -1840,27 +1840,39 @@ function core_question_question_preview_pluginfile($previewcontext, $questionid,
 }
 
 /**
- * Return a list of page types
+ * Return a list of page types for questions and the page types for the current module/context.
+ *
+ * This list is used when displaying blocks on a question page, to provide the list of possible page type patterns for the block.
+ *
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block
  * @return array
  */
 function question_page_type_list($pagetype, $parentcontext, $currentcontext): array {
-    global $CFG;
     $types = [
         'question-*' => get_string('page-question-x', 'question'),
         'question-edit' => get_string('page-question-edit', 'question'),
-        'question-category' => get_string('page-question-category', 'question'),
-        'question-export' => get_string('page-question-export', 'question'),
-        'question-import' => get_string('page-question-import', 'question')
+        'question-bank-managecategories-category' => get_string('page-question-category', 'question'),
+        'question-bank-exportquestions-export' => get_string('page-question-export', 'question'),
+        'question-bank-importquestions-import' => get_string('page-question-import', 'question'),
     ];
-    if ($currentcontext && $currentcontext->contextlevel == CONTEXT_COURSE) {
-        require_once($CFG->dirroot . '/course/lib.php');
-        return array_merge(course_page_type_list($pagetype, $parentcontext, $currentcontext), $types);
-    } else {
-        return $types;
+    // If current page is in a module context, include the list of page types for that module, if it provides one.
+    if ($currentcontext && $currentcontext->contextlevel == CONTEXT_MODULE) {
+        [, $cm] = get_course_and_cm_from_cmid($currentcontext->instanceid);
+        $directory = core_component::get_plugin_directory('mod', $cm->modname);
+        if (!empty($directory)) {
+            $libfile = $directory . '/lib.php';
+            if (file_exists($libfile)) {
+                require_once($libfile);
+                $function = $cm->modname . '_page_type_list';
+                if (function_exists($function)) {
+                    return array_merge($function($pagetype, $parentcontext, $currentcontext), $types);
+                }
+            }
+        }
     }
+    return $types;
 }
 
 /**
