@@ -50,6 +50,10 @@
 	url = https://github.com/ucsf-education/moodle-enrol-ucsfsis
 	branch = main
 	tag = v5.1.1
+[submodule "public/filter/panorama"]
+	path = public/filter/panorama
+	url = https://github.com/ucsf-education/moodle-filter_panorama
+	branch = UCSFCLE_405_STABLE
 [submodule "public/filter/ucsfezproxy"]
 	path = public/filter/ucsfezproxy
 	url = https://github.com/ucsf-education/moodle-filter_ucsfezproxy
@@ -74,11 +78,19 @@
 	path = public/local/oauthredirect
 	url = https://github.com/ucsf-education/moodle-local_oauthredirect
 	branch = main
+[submodule "public/local/panorama"]
+	path = public/local/panorama
+	url = https://github.com/ucsf-education/moodle-local_panorama
+	branch = UCSFCLE_405_STABLE
 [submodule "public/local/quizanon"]
 	path = public/local/quizanon
 	url = https://github.com/ucsf-education/local_quizanon
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/local/replacementapipanorama"]
+	path = public/local/replacementapipanorama
+	url = https://github.com/ucsf-education/moodle-local_replacementapipanorama
+	branch = UCSFCLE_405_STABLE
 [submodule "public/mod/attendance"]
 	path = public/mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
