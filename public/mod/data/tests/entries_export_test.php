@@ -30,7 +30,6 @@ use mod_data\local\exporter\utils;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class entries_export_test extends \advanced_testcase {
-
     /**
      * Get the test data.
      *
@@ -171,6 +170,68 @@ final class entries_export_test extends \advanced_testcase {
         }
         $ziparchive->close();
         unlink($tmpdir . '/testexportarchive.zip');
+    }
+
+    /**
+     * Tests that exported CSV values are identical to the strings returned by export_text_value(),
+     * including edge cases like the value "0" which must not be treated as empty.
+     *
+     * @covers \mod_data\local\exporter\utils::data_exportdata
+     */
+    public function test_export_csv_values_match_export_text_value(): void {
+        $this->resetAfterTest();
+
+        /** @var \mod_data_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $course = $this->getDataGenerator()->create_course();
+        $this->setUser(get_admin());
+        $data = $generator->create_instance(['course' => $course->id]);
+
+        // Add a number field, a text field and a textarea field.
+        $fieldrecord = new \stdClass();
+        $fieldrecord->name = 'numberfield';
+        $fieldrecord->type = 'number';
+        $numberfield = $generator->create_field($fieldrecord, $data);
+
+        $fieldrecord->name = 'textfield';
+        $fieldrecord->type = 'text';
+        $textfield = $generator->create_field($fieldrecord, $data);
+
+        $fieldrecord->name = 'textareafield';
+        $fieldrecord->type = 'textarea';
+        $textareafield = $generator->create_field($fieldrecord, $data);
+
+        // Create an entry with edge-case values: "0" for number and text, and a complex HTML string for textarea.
+        $contents[$numberfield->field->id] = '0';
+        $contents[$textfield->field->id] = '0';
+        $htmlcontent = '<p>Hello &amp; <strong>World</strong>!</p><ul><li>Item "1"</li><li>Item \'2\'</li></ul>';
+        $contents[$textareafield->field->id] = $htmlcontent;
+        $generator->create_entry($data, $contents);
+
+        $manager = manager::create_from_instance($data);
+        $fields = $manager->get_fields();
+        $selectedfields = array_keys($fields);
+
+        $exporter = new csv_entries_exporter();
+        $exporter->set_export_file_name('testexportfile');
+
+        utils::data_exportdata(
+            dataid: $data->id,
+            fields: $fields,
+            selectedfields: $selectedfields,
+            exporter: $exporter,
+            includefiles: false
+        );
+
+        $csvcontent = $exporter->send_file(false);
+        $lines = explode("\n", trim($csvcontent));
+        // Second line is the data row.
+        $datarow = str_getcsv($lines[1], ',', '"', '');
+
+        // The value "0" must be preserved, not converted to an empty string.
+        $this->assertSame('0', $datarow[0]);
+        $this->assertSame('0', $datarow[1]);
+        $this->assertSame($htmlcontent, $datarow[2]);
     }
 
     /**
