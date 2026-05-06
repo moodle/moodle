@@ -97,6 +97,11 @@
 	url = https://github.com/davosmith/moodle-checklist
 	branch = MOODLE_500_STABLE
 	tag = 4.1.0.8
+[submodule "public/mod/choicegroup"]
+	path = public/mod/choicegroup
+	url = https://github.com/ndunand/moodle-mod_choicegroup
+	branch = master
+	tag = 2026013100
 [submodule "public/mod/customcert"]
 	path = public/mod/customcert
 	url = https://github.com/mdjnelson/moodle-mod_customcert
