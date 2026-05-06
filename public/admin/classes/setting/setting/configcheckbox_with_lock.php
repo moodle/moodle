@@ -24,7 +24,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configcheckbox_with_lock extends \admin_setting_configcheckbox {
+class configcheckbox_with_lock extends \core_admin\setting\setting\configcheckbox {
     /**
      * Constructor
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
@@ -36,7 +36,7 @@ class configcheckbox_with_lock extends \admin_setting_configcheckbox {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $yes='1', $no='0') {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $yes, $no);
-        $this->set_locked_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['locked']));
+        $this->set_locked_flag_options(\core_admin\setting\setting\flag::ENABLED, !empty($defaultsetting['locked']));
     }
 
 }

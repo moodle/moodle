@@ -23,7 +23,7 @@
  */
 namespace core_admin\setting\setting;
 
-class searchsetupinfo extends \admin_setting {
+class searchsetupinfo extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific arguments

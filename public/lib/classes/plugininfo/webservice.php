@@ -23,9 +23,6 @@
  */
 namespace core\plugininfo;
 
-use admin_settingpage;
-use part_of_admin_tree;
-
 /**
  * Class for webservice protocols
  */
@@ -95,7 +92,11 @@ class webservice extends base {
         return 'webservicesetting' . $this->name;
     }
 
-    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(
+        \core_admin\setting\tree\part_of_admin_tree $adminroot,
+        $parentnodename,
+        $hassiteconfig,
+    ) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
@@ -112,7 +113,12 @@ class webservice extends base {
 
         $section = $this->get_settings_section_name();
 
-        $settings = new admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core_admin\setting\settingpage\settingpage(
+            $section,
+            $this->displayname,
+            'moodle/site:config',
+            $this->is_enabled() === false,
+        );
         include($this->full_path('settings.php')); // This may also set $settings to null.
 
         if ($settings) {

@@ -16,8 +16,6 @@
 
 namespace core_admin\admin;
 
-use admin_setting;
-
 /**
  * Render a notification as part of other admin settings.
  *
@@ -26,7 +24,7 @@ use admin_setting;
  * @copyright  2025 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_notification extends admin_setting {
+class admin_setting_notification extends \core_admin\setting {
     /**
      * Constructor.
      *

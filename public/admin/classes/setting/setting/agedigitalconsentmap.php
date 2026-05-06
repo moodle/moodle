@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class agedigitalconsentmap extends \admin_setting_configtextarea {
+class agedigitalconsentmap extends \core_admin\setting\setting\configtextarea {
 
     /**
      * Constructor.

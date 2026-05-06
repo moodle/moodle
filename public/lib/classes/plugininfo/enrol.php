@@ -14,21 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\plugininfo;
+
 /**
- * Defines classes used for plugin info.
+ * Defines classes used for plugin info. 
  *
  * @package    core
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-namespace core\plugininfo;
-
-use admin_settingpage;
-use moodle_url;
-use part_of_admin_tree;
-
-/**
- * Class for enrolment plugins
  */
 class enrol extends base {
 
@@ -91,7 +84,11 @@ class enrol extends base {
         }
     }
 
-    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(
+        \core_admin\setting\tree\part_of_admin_tree $adminroot,
+        $parentnodename,
+        $hassiteconfig,
+    ) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
@@ -108,7 +105,7 @@ class enrol extends base {
 
         $section = $this->get_settings_section_name();
 
-        $settings = new admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
 
         include($this->full_path('settings.php')); // This may also set $settings to null!
 
@@ -126,10 +123,10 @@ class enrol extends base {
 
     /**
      * Return URL used for management of plugins of this type.
-     * @return moodle_url
+     * @return \core\url
      */
     public static function get_manage_url() {
-        return new moodle_url('/admin/settings.php', array('section'=>'manageenrols'));
+        return new \core\url('/admin/settings.php', array('section'=>'manageenrols'));
     }
 
     /**
@@ -150,7 +147,7 @@ class enrol extends base {
             return '';
         }
 
-        $migrateurl = new moodle_url('/admin/enrol.php', array('action'=>'migrate', 'enrol'=>$this->name, 'sesskey'=>sesskey()));
+        $migrateurl = new \core\url('/admin/enrol.php', array('action'=>'migrate', 'enrol'=>$this->name, 'sesskey'=>sesskey()));
         $migrate = new \single_button($migrateurl, get_string('migratetomanual', 'core_enrol'));
         $button = $OUTPUT->render($migrate);
 

@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configduration extends \admin_setting {
+class configduration extends \core_admin\setting {
 
     /** @var int default duration unit */
     protected $defaultunit;

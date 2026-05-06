@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class courselist_frontpage extends \admin_setting {
+class courselist_frontpage extends \core_admin\setting {
 
     /** @var array Array of choices value=>label. */
     public $choices;

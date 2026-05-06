@@ -25,7 +25,7 @@ use core_admin\admin_search;
  * @copyright  2018 Toni Barbera
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class managecustomfields extends \admin_setting {
+class managecustomfields extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific arguments

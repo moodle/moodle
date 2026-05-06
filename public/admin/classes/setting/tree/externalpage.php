@@ -26,7 +26,7 @@ use core_admin\local\settings\linkable_settings_page;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class externalpage implements \part_of_admin_tree, linkable_settings_page {
+class externalpage implements \core_admin\setting\tree\part_of_admin_tree, linkable_settings_page {
 
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;

@@ -24,7 +24,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configtext extends \admin_setting {
+class configtext extends \core_admin\setting {
 
     /** @var int default field size */
     public $size;

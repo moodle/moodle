@@ -19,7 +19,7 @@
  */
 namespace core_admin\setting\page;
 
-class pluginsoverview extends \admin_externalpage {
+class pluginsoverview extends \core_admin\setting\tree\externalpage {
 
     /**
      * Sets basic information about the external page

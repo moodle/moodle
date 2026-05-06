@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class encryptedpassword extends \admin_setting {
+class encryptedpassword extends \core_admin\setting {
 
     /**
      * Constructor. Same as parent except that the default value is always an empty string.

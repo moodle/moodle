@@ -16,8 +16,7 @@
 
 namespace core_ai\admin;
 
-use admin_setting;
-use coding_exception;
+use core\exception\coding_exception;
 
 /**
  * Admin setting provider manager.
@@ -26,7 +25,7 @@ use coding_exception;
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_provider_manager extends admin_setting {
+class admin_setting_provider_manager extends \core_admin\setting {
     /**
      * Constructor.
      *

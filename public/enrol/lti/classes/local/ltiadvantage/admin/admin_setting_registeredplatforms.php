@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace enrol_lti\local\ltiadvantage\admin;
+
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use core_admin\admin_search;
 
@@ -27,7 +28,7 @@ use core_admin\admin_search;
  * @copyright  2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_registeredplatforms extends \admin_setting {
+class admin_setting_registeredplatforms extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
      */

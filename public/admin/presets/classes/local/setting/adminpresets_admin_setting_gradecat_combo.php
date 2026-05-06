@@ -16,8 +16,6 @@
 
 namespace core_adminpresets\local\setting;
 
-use admin_setting;
-
 /**
  * A select with force and advanced options
  *
@@ -27,14 +25,13 @@ use admin_setting;
  * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class adminpresets_admin_setting_gradecat_combo extends adminpresets_admin_setting_configselect {
-
     /**
      * One db value for two setting attributes
      *
-     * @param admin_setting $settingdata
+     * @param \core_admin\setting $settingdata
      * @param mixed $dbsettingvalue
      */
-    public function __construct(admin_setting $settingdata, $dbsettingvalue) {
+    public function __construct(\core_admin\setting $settingdata, $dbsettingvalue) {
         // The set_attribute_value() method will mod the VARNAME_flag value.
         $this->attributes = ['forced' => $settingdata->name . '_flag', 'adv' => $settingdata->name . '_flag'];
         parent::__construct($settingdata, $dbsettingvalue);

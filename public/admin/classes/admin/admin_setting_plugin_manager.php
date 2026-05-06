@@ -16,8 +16,7 @@
 
 namespace core_admin\admin;
 
-use admin_setting;
-use core_plugin_manager;
+use \core\plugin_manager;
 use core_text;
 use core_admin\admin_search;
 
@@ -29,9 +28,9 @@ use core_admin\admin_search;
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_plugin_manager extends admin_setting {
-    /** @var core_plugin_manager The plugin manager instance */
-    protected core_plugin_manager $pluginmanager;
+class admin_setting_plugin_manager extends \core_admin\setting {
+    /** @var plugin_manager The plugin manager instance */
+    protected plugin_manager $pluginmanager;
 
     /** @var string The plugintype that this manager covers */
     protected string $plugintype;
@@ -48,7 +47,7 @@ class admin_setting_plugin_manager extends admin_setting {
         string $defaultsetting = '',
     ) {
         $this->nosave = true;
-        $this->pluginmanager = core_plugin_manager::instance();
+        $this->pluginmanager = plugin_manager::instance();
         $this->plugintype = $plugintype;
         $this->tableclass = $tableclass;
 

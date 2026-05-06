@@ -16,8 +16,6 @@
 
 namespace core_adminpresets\local\setting;
 
-use admin_setting;
-
 /**
  * Cross-class methods
  *
@@ -47,7 +45,7 @@ class delegation {
         return ', ' . $string;
     }
 
-    public function extra_loadchoices(admin_setting &$adminsetting) {
+    public function extra_loadchoices(\core_admin\setting &$adminsetting) {
         $adminsetting->load_choices();
     }
 }

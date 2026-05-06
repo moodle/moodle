@@ -20,7 +20,7 @@
  */
 namespace core_admin\setting\setting;
 
-class regradingcheckbox extends \admin_setting_configcheckbox {
+class regradingcheckbox extends \core_admin\setting\setting\configcheckbox {
     /**
      * Saves the new settings passed in $data
      *

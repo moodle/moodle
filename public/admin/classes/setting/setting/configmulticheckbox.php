@@ -23,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class configmulticheckbox extends \admin_setting {
+class configmulticheckbox extends \core_admin\setting {
     /** @var callable|null Loader function for choices */
     protected $choiceloader = null;
 

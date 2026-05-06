@@ -24,7 +24,7 @@ use core_admin\admin_search;
  * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class managedataformats extends \admin_setting {
+class managedataformats extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific arguments

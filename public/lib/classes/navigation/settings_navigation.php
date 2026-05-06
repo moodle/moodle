@@ -16,9 +16,10 @@
 
 namespace core\navigation;
 
-use admin_category;
-use admin_externalpage;
-use admin_settingpage;
+use core_admin\setting\setting\settingpage;
+use core_admin\setting\tree\category as admin_category;
+use core_admin\setting\tree\externalpage;
+use core_admin\setting\tree\part_of_admin_tree;
 use core\component;
 use core\context;
 use core\context\course as context_course;
@@ -31,9 +32,7 @@ use core\output\pix_icon;
 use core\url;
 use core_contentbank\contentbank;
 use core_plugin_manager;
-use dml_missing_record_exception;
 use moodle_page;
-use part_of_admin_tree;
 use repository;
 
 /**
@@ -344,8 +343,8 @@ class settings_navigation extends navigation_node {
             if ($adminbranch->is_hidden()) {
                 if (
                     (
-                        $adminbranch instanceof admin_externalpage
-                        || $adminbranch instanceof admin_settingpage
+                        $adminbranch instanceof externalpage
+                        || $adminbranch instanceof settingpage
                     )
                     && $adminbranch->name == $this->adminsection
                 ) {

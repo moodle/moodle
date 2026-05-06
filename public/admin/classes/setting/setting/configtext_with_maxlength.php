@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configtext_with_maxlength extends \admin_setting_configtext {
+class configtext_with_maxlength extends \core_admin\setting\setting\configtext {
 
     /** @var int maximum number of chars allowed. */
     protected $maxlength;

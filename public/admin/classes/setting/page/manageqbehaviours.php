@@ -24,7 +24,7 @@ use core_admin\admin_search;
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manageqbehaviours extends \admin_externalpage {
+class manageqbehaviours extends \core_admin\setting\tree\externalpage {
     /**
      * Constructor
      */

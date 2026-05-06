@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_registerauth extends \admin_setting_configselect {
+class special_registerauth extends \core_admin\setting\setting\configselect {
     /**
      * Calls parent::__construct with specific arguments
      */

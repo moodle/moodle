@@ -107,7 +107,7 @@ class flag {
      * @param array $data - The data submitted from the form or null to set the default value for new installs.
      * @return bool
      */
-    public function write_setting_flag(\admin_setting $setting, $data) {
+    public function write_setting_flag(\core_admin\setting $setting, $data) {
         $result = true;
         if ($this->is_enabled()) {
             if (!isset($data)) {
@@ -128,7 +128,7 @@ class flag {
      * @param \core_admin\setting $setting - The admin setting for this flag
      * @return string - The html for the checkbox.
      */
-    public function output_setting_flag(\admin_setting $setting) {
+    public function output_setting_flag(\core_admin\setting $setting) {
         global $OUTPUT;
 
         $value = $setting->get_setting_flag_value($this);

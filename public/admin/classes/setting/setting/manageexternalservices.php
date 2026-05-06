@@ -23,7 +23,7 @@ use core_admin\admin_search;
  *
  * @author Petr Skoda (skodak)
  */
-class manageexternalservices extends \admin_setting {
+class manageexternalservices extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
      */

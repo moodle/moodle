@@ -23,7 +23,7 @@
  */
 namespace core_admin\setting\setting;
 
-class servertimezone extends \admin_setting_configselect {
+class servertimezone extends \core_admin\setting\setting\configselect {
     /**
      * Constructor.
      */

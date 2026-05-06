@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configportlist extends \admin_setting_configtextarea {
+class configportlist extends \core_admin\setting\setting\configtextarea {
 
     /**
      * Validate the contents of the textarea as port numbers.

@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configmultiselect_modules extends \admin_setting_configmultiselect {
+class configmultiselect_modules extends \core_admin\setting\setting\configmultiselect {
     private $excludesystem;
 
     /**

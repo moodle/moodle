@@ -27,7 +27,7 @@
  */
 namespace core_admin\setting\setting;
 
-class countrycodes extends \admin_setting_configtext {
+class countrycodes extends \core_admin\setting\setting\configtext {
 
     /**
      * Construct the instance of the setting.

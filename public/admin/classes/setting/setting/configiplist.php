@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configiplist extends \admin_setting_configtextarea {
+class configiplist extends \core_admin\setting\setting\configtextarea {
 
     /**
      * Validate the contents of the textarea as IP addresses

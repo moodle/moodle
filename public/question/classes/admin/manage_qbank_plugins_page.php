@@ -14,28 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Manage question banks page.
- *
- * @package    core_question
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_question\admin;
 
 use core_admin\admin_search;
 
 /**
- * Class manage_qbank_plugins_page.
+ * Manage question banks page.
  *
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manage_qbank_plugins_page extends \admin_setting {
-
+class manage_qbank_plugins_page extends \core_admin\setting {
     /**
      * Class admin_page_manageqbanks constructor.
      */

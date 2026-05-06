@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_log\plugininfo;
+
 /**
  * Subplugin info class.
  *
@@ -21,18 +23,7 @@
  * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_log\plugininfo;
-
-use admin_settingpage;
-use core\plugininfo\base;
-use moodle_url;
-use part_of_admin_tree;
-
-/**
- * Plugin info class for logging store plugins.
- */
-class logstore extends base {
-
+class logstore extends \core\plugininfo\base {
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
@@ -78,7 +69,11 @@ class logstore extends base {
         return 'logsetting' . $this->name;
     }
 
-    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(
+        \core_admin\setting\tree\part_of_admin_tree $adminroot,
+        $parentnodename,
+        $hassiteconfig,
+    ) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
@@ -92,7 +87,12 @@ class logstore extends base {
             return;
         }
 
-        $settings = new admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core_admin\setting\settingpage\settingpage(
+            $section,
+            $this->displayname,
+            'moodle/site:config',
+            $this->is_enabled() === false,
+        );
         include($this->full_path('settings.php'));
 
         if ($settings) {
@@ -101,7 +101,7 @@ class logstore extends base {
     }
 
     public static function get_manage_url() {
-        return new moodle_url('/admin/settings.php', array('section' => 'managelogging'));
+        return new \core\url('/admin/settings.php', array('section' => 'managelogging'));
     }
 
     public function is_uninstall_allowed() {

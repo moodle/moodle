@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class sitesettext extends \admin_setting_configtext {
+class sitesettext extends \core_admin\setting\setting\configtext {
 
     /**
      * Constructor.

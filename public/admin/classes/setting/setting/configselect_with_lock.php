@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configselect_with_lock extends \admin_setting_configselect {
+class configselect_with_lock extends \core_admin\setting\setting\configselect {
     /**
      * Constructor
      * @param string $name unique ascii name, either 'mysetting' for settings that in config,
@@ -34,7 +34,7 @@ class configselect_with_lock extends \admin_setting_configselect {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $choices);
-        $this->set_locked_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['locked']));
+        $this->set_locked_flag_options(\core_admin\setting\setting\flag::ENABLED, !empty($defaultsetting['locked']));
     }
 }
 

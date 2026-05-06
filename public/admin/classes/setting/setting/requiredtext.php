@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class requiredtext extends \admin_setting_configtext {
+class requiredtext extends \core_admin\setting\setting\configtext {
 
     /**
      * Validate data before storage.

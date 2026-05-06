@@ -24,7 +24,7 @@ use core_admin\admin_search;
  * @copyright 2010 Petr Skoda {@link http://skodak.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manageenrols extends \admin_setting {
+class manageenrols extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
      */

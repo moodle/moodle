@@ -23,7 +23,7 @@ use core_admin\admin_search;
  *
  * @author Petr Skoda (skodak)
  */
-class managewebserviceprotocols extends \admin_setting {
+class managewebserviceprotocols extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific arguments

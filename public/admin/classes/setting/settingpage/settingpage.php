@@ -24,7 +24,7 @@ use core_admin\local\settings\linkable_settings_page;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class settingpage implements \part_of_admin_tree, linkable_settings_page {
+class settingpage implements \core_admin\setting\tree\part_of_admin_tree, linkable_settings_page {
 
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
@@ -179,7 +179,7 @@ class settingpage implements \part_of_admin_tree, linkable_settings_page {
      * @return bool true if successful, false if not
      */
     public function add($setting) {
-        if (!($setting instanceof \admin_setting)) {
+        if (!($setting instanceof \core_admin\setting)) {
             debugging('error - not a setting instance');
             return false;
         }
@@ -201,7 +201,7 @@ class settingpage implements \part_of_admin_tree, linkable_settings_page {
      * @param string $value
      */
     public function hide_if($settingname, $dependenton, $condition = 'notchecked', $value = '1') {
-        $this->dependencies[] = new \admin_settingdependency($settingname, $dependenton, $condition, $value);
+        $this->dependencies[] = new \core_admin\setting\settingpage\dependency($settingname, $dependenton, $condition, $value);
 
         // Reformat the dependency name to the plugin | name format used in the display.
         $dependenton = str_replace('/', ' | ', $dependenton);
@@ -291,7 +291,7 @@ class settingpage implements \part_of_admin_tree, linkable_settings_page {
         if (!$this->has_dependencies()) {
             return [];
         }
-        return \admin_settingdependency::prepare_for_javascript($this->dependencies);
+        return \core_admin\setting\settingpage\dependency::prepare_for_javascript($this->dependencies);
     }
 }
 

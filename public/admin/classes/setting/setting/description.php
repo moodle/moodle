@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class description extends \admin_setting {
+class description extends \core_admin\setting {
 
     /**
      * Not a setting, just text

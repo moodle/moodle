@@ -24,7 +24,7 @@ use core_admin\admin_search;
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class managecontentbankcontenttypes extends \admin_setting {
+class managecontentbankcontenttypes extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific arguments

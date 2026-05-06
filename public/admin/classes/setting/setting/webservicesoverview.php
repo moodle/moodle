@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class webservicesoverview extends \admin_setting {
+class webservicesoverview extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific arguments

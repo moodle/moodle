@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configmulticheckbox2 extends \admin_setting_configmulticheckbox {
+class configmulticheckbox2 extends \core_admin\setting\setting\configmulticheckbox {
 
     /**
      * Returns the setting if set

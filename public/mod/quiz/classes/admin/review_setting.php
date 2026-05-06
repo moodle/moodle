@@ -24,7 +24,7 @@ namespace mod_quiz\admin;
  * @copyright  2008 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class review_setting extends \admin_setting {
+class review_setting extends \core_admin\setting {
     /**
      * @var integer should match the constants defined in
      * {@see display_options}. Copied for performance reasons.

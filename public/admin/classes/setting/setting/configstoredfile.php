@@ -26,7 +26,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configstoredfile extends \admin_setting {
+class configstoredfile extends \core_admin\setting {
     /** @var array file area options - should be one file only */
     protected $options;
     /** @var string name of the file area */

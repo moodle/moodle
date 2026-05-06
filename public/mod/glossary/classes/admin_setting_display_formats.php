@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2021 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_glossary_admin_setting_display_formats extends admin_setting {
+class mod_glossary_admin_setting_display_formats extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
      */

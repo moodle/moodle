@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_frontpagedesc extends \admin_setting_confightmleditor {
+class special_frontpagedesc extends \core_admin\setting\setting\confightmleditor {
 
     /**
      * Calls parent::__construct with specific arguments

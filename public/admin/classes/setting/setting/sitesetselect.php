@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class sitesetselect extends \admin_setting_configselect {
+class sitesetselect extends \core_admin\setting\setting\configselect {
     /**
      * Returns the site name for the selected site
      *

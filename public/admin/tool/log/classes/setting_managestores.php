@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/adminlib.php");
 
-class tool_log_setting_managestores extends admin_setting {
+class tool_log_setting_managestores extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
      */

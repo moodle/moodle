@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configmixedhostiplist extends \admin_setting_configtextarea {
+class configmixedhostiplist extends \core_admin\setting\setting\configtextarea {
 
     /**
      * Validate the contents of the textarea as either IP addresses, domain name or wildcard domain name (RFC 4592).

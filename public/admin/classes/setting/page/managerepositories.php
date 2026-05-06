@@ -18,7 +18,7 @@ namespace core_admin\setting\page;
 
 use core_admin\admin_search;
 
-class managerepositories extends \admin_externalpage {
+class managerepositories extends \core_admin\setting\tree\externalpage {
 
 /**
      * Calls parent::__construct with specific arguments

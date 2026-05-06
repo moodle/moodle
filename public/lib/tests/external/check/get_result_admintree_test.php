@@ -16,19 +16,15 @@
 
 namespace core\external\check;
 
-defined('MOODLE_INTERNAL') || die();
-
-use admin_category;
-use admin_root;
-use admin_setting_check;
-use admin_settingpage;
-use context_system;
+use core_admin\setting\tree\root as admin_root;
+use core_admin\setting\setting\check as admin_setting_check;
+use core\context\system as context_system;
 use core\check\access\guestrole;
 use core\check\check;
 use core\check\external\get_result_admintree;
 use core\check\result;
 use core\check\security\passwordpolicy;
-use required_capability_exception;
+use core\exception\required_capability_exception;
 use ReflectionMethod;
 
 global $CFG;
@@ -54,11 +50,11 @@ final class get_result_admintree_test extends \core_external\tests\externallib_t
     private function setup_admin_tree(array $settings) {
         $root = new admin_root(true);
 
-        $category = new admin_category('testcategory', 'testcategory');
+        $category = new \core_admin\setting\tree\category('testcategory', 'testcategory');
         $root->add('root', $category);
 
         foreach ($settings as $i => $setting) {
-            $page = new admin_settingpage('testpage_' . $i, 'testpage');
+            $page = new \core_admin\setting\settingpage\settingpage('testpage_' . $i, 'testpage');
             $page->add($setting);
             $root->add('testcategory', $page);
         }

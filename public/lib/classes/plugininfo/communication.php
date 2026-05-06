@@ -16,10 +16,7 @@
 
 namespace core\plugininfo;
 
-use admin_settingpage;
-use core_communication\processor;
 use core_plugin_manager;
-use moodle_url;
 
 /**
  * Class for communication provider.
@@ -29,13 +26,12 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class communication extends base {
-
-    public static function get_manage_url(): ?moodle_url {
+    public static function get_manage_url(): ?\core\url {
         if (!\core_communication\api::is_available()) {
             return null;
         }
 
-        return new moodle_url('/admin/settings.php', ['section' => 'managecommunicationproviders']);
+        return new \core\url('/admin/settings.php', ['section' => 'managecommunicationproviders']);
     }
 
     public function get_settings_section_name(): string {
@@ -86,7 +82,11 @@ class communication extends base {
         return $enabled;
     }
 
-    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(
+        \core_admin\setting\tree\part_of_admin_tree $adminroot,
+        $parentnodename,
+        $hassiteconfig,
+    ) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this;      // Also can be used inside settings.php.
@@ -102,7 +102,7 @@ class communication extends base {
         $section = $this->get_settings_section_name();
         $settings = null;
         if (file_exists($this->full_path('settings.php'))) {
-            $settings = new admin_settingpage($section, $this->displayname,
+            $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname,
                 'moodle/site:config', $this->is_enabled() === false);
             include($this->full_path('settings.php')); // This may also set $settings to null.
         }

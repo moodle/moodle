@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class requiredpasswordunmask extends \admin_setting_configpasswordunmask {
+class requiredpasswordunmask extends \core_admin\setting\setting\configpasswordunmask {
 
     /**
      * Validate data before storage.

@@ -16,8 +16,6 @@
 
 namespace core_adminpresets\local\setting;
 
-use admin_setting_configcheckbox;
-
 /**
  * Checkbox setting.
  *
@@ -27,12 +25,11 @@ use admin_setting_configcheckbox;
  * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class adminpresets_admin_setting_configcheckbox extends adminpresets_setting {
-
     /**
      * Sets the visible name for the setting selected value
      */
     protected function set_visiblevalue() {
-        /** @var admin_setting_configcheckbox $settingdata */
+        /** @var \core_admin\setting\setting\configcheckbox $settingdata */
         $settingdata = $this->get_settingdata();
 
         // We need to compare the "yes" value of the inner checkbox, which isn't necessarily boolean.

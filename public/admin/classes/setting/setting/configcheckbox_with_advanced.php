@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configcheckbox_with_advanced extends \admin_setting_configcheckbox {
+class configcheckbox_with_advanced extends \core_admin\setting\setting\configcheckbox {
 
     /**
      * Constructor
@@ -35,7 +35,7 @@ class configcheckbox_with_advanced extends \admin_setting_configcheckbox {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $yes='1', $no='0') {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $yes, $no);
-        $this->set_advanced_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
+        $this->set_advanced_flag_options(\core_admin\setting\setting\flag::ENABLED, !empty($defaultsetting['adv']));
     }
 
 }

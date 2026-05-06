@@ -14,28 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * File size admin setting.
- *
- * @package    core_admin
- * @copyright  2019 Shamim Rezaie <shamim@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_admin\local\settings;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/adminlib.php');
 
 /**
  * An admin setting to support entering and displaying of file sizes in Bytes, KB, MB or GB.
  *
+ * @package     core_admin
  * @copyright   2019 Shamim Rezaie <shamim@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filesize extends \admin_setting {
-
+class filesize extends \core_admin\setting {
     /** @var int The byte unit. Number of bytes in a byte */
     const UNIT_B = 1;
 

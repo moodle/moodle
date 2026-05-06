@@ -23,7 +23,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configduration_with_advanced extends \admin_setting_configduration {
+class configduration_with_advanced extends \core_admin\setting\setting\configduration {
     /**
      * Constructor
      * @param string $name unique ascii name, either 'mysetting' for settings that in config,
@@ -36,7 +36,7 @@ class configduration_with_advanced extends \admin_setting_configduration {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $defaultunit = 86400) {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $defaultunit);
-        $this->set_advanced_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
+        $this->set_advanced_flag_options(\core_admin\setting\setting\flag::ENABLED, !empty($defaultsetting['adv']));
     }
 }
 

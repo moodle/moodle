@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_gradebookroles extends \admin_setting_pickroles {
+class special_gradebookroles extends \core_admin\setting\setting\pickroles {
     /**
      * Calls parent::__construct with specific arguments
      */

@@ -16,8 +16,6 @@
 
 namespace core_ai\admin;
 
-use admin_settingpage;
-
 /**
  * AI provider plugin admin settings pages manager.
  *
@@ -28,7 +26,7 @@ use admin_settingpage;
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_settingspage_provider extends admin_settingpage {
+class admin_settingspage_provider extends \core_admin\setting\settingpage\settingpage {
     #[\Override]
     public function show_save(): bool {
         return false;

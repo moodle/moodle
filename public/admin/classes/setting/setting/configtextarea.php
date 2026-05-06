@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configtextarea extends \admin_setting_configtext {
+class configtextarea extends \core_admin\setting\setting\configtext {
     private $rows;
     private $cols;
 

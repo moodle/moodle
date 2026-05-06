@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configexecutable extends \admin_setting_configfile {
+class configexecutable extends \core_admin\setting\setting\configfile {
 
     /**
      * Returns an XHTML field

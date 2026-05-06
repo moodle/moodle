@@ -24,7 +24,7 @@
  */
 namespace core_admin\setting\setting;
 
-class num_course_sections extends \admin_setting_configselect {
+class num_course_sections extends \core_admin\setting\setting\configselect {
     /**
      * Constructor.
      *

@@ -23,7 +23,7 @@
  */
 namespace core_admin\setting\setting;
 
-class filetypes extends \admin_setting_configtext {
+class filetypes extends \core_admin\setting\setting\configtext {
 
     /** @var array Allow selection from these file types only. */
     protected $onlytypes = [];

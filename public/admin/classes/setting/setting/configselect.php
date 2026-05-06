@@ -23,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class configselect extends \admin_setting {
+class configselect extends \core_admin\setting {
     /** @var array Array of choices value=>label */
     public $choices;
     /** @var array Array of choices grouped using optgroups */

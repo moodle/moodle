@@ -16,11 +16,11 @@
 
 namespace core_files\redactor\services;
 
-use admin_setting_configcheckbox;
-use admin_setting_configexecutable;
-use admin_setting_configselect;
-use admin_setting_configtextarea;
-use admin_setting_heading;
+use core_admin\setting\setting\configcheckbox;
+use core_admin\setting\setting\configexecutable;
+use core_admin\setting\setting\configselect;
+use core_admin\setting\setting\configtextarea;
+use core_admin\setting\setting\heading;
 use core\exception\moodle_exception;
 use core\output\html_writer;
 
@@ -402,7 +402,7 @@ class exifremover_service extends service implements file_redactor_service_inter
         ];
 
         $settings->add(
-            new admin_setting_configcheckbox(
+            new configcheckbox(
                 name: 'file_redactor_exifremoverenabled',
                 visiblename: get_string('redactor:exifremover:enabled', 'core_files'),
                 description: get_string('redactor:exifremover:enabled_desc', 'core_files', $a),
@@ -411,7 +411,7 @@ class exifremover_service extends service implements file_redactor_service_inter
         );
 
         $settings->add(
-            new admin_setting_heading(
+            new heading(
                 name: 'exifremoverheading',
                 heading: get_string('redactor:exifremover:heading', 'core_files'),
                 information: '',
@@ -419,7 +419,7 @@ class exifremover_service extends service implements file_redactor_service_inter
         );
 
         $settings->add(
-            new admin_setting_configexecutable(
+            new configexecutable(
                 name: 'file_redactor_exifremovertoolpath',
                 visiblename: get_string('redactor:exifremover:toolpath', 'core_files'),
                 description: get_string('redactor:exifremover:toolpath_desc', 'core_files'),
@@ -431,7 +431,7 @@ class exifremover_service extends service implements file_redactor_service_inter
             $removedtagchoices[$key] = get_string("redactor:exifremover:tag:$key", 'core_files');
         }
         $settings->add(
-            new admin_setting_configselect(
+            new configselect(
                 name: 'file_redactor_exifremoverremovetags',
                 visiblename: get_string('redactor:exifremover:removetags', 'core_files'),
                 description: get_string('redactor:exifremover:removetags_desc', 'core_files'),
@@ -445,7 +445,7 @@ class exifremover_service extends service implements file_redactor_service_inter
         image/tiff
         EOF;
         $settings->add(
-            new admin_setting_configtextarea(
+            new configtextarea(
                 name: 'file_redactor_exifremovermimetype',
                 visiblename: get_string('redactor:exifremover:mimetype', 'core_files'),
                 description: get_string('redactor:exifremover:mimetype_desc', 'core_files'),

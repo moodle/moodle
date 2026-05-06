@@ -195,8 +195,8 @@ class category implements
             return false;
         }
 
-        if ($something instanceof \part_of_admin_tree) {
-            if (!($parent instanceof \parentable_part_of_admin_tree)) {
+        if ($something instanceof \core_admin\setting\tree\part_of_admin_tree) {
+            if (!($parent instanceof \core_admin\setting\tree\parentable_part_of_admin_tree)) {
                 debugging('error - parts of tree can be inserted only into parentable parts');
                 return false;
             }

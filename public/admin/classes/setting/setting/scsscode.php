@@ -25,7 +25,7 @@
  */
 namespace core_admin\setting\setting;
 
-class scsscode extends \admin_setting_configtextarea {
+class scsscode extends \core_admin\setting\setting\configtextarea {
 
     /**
      * Validate the contents of the SCSS to ensure its parsable. Does not

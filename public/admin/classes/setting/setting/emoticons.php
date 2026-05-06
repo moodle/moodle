@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class emoticons extends \admin_setting {
+class emoticons extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific args

@@ -25,7 +25,7 @@ use core_admin\admin_search;
  * @copyright 2017 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class manage_plugins extends \admin_setting {
+abstract class manage_plugins extends \core_admin\setting {
 
     /**
      * Get the admin settings section name (just a unique string)

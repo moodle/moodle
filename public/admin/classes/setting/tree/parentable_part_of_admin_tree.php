@@ -26,7 +26,7 @@
  */
 namespace core_admin\setting\tree;
 
-interface parentable_part_of_admin_tree extends \part_of_admin_tree {
+interface parentable_part_of_admin_tree extends \core_admin\setting\tree\part_of_admin_tree {
 
 /**
  * Adds a part_of_admin_tree object to the admin tree.

@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_gradepointmax extends \admin_setting_configtext {
+class special_gradepointmax extends \core_admin\setting\setting\configtext {
 
     /**
      * Config gradepointmax constructor

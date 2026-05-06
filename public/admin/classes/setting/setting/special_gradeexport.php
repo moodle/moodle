@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_gradeexport extends \admin_setting_configmulticheckbox {
+class special_gradeexport extends \core_admin\setting\setting\configmulticheckbox {
     /**
      * Calls parent::__construct with specific arguments
      */

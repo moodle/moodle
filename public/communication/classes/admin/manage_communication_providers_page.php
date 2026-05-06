@@ -16,7 +16,6 @@
 
 namespace core_communication\admin;
 
-use admin_setting;
 use core_plugin_manager;
 use core_text;
 use html_table;
@@ -32,7 +31,7 @@ use core_admin\admin_search;
  * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manage_communication_providers_page extends admin_setting {
+class manage_communication_providers_page extends \core_admin\setting {
     public function __construct() {
         $this->nosave = true;
         parent::__construct(

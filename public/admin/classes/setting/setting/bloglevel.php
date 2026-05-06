@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class bloglevel extends \admin_setting_configselect {
+class bloglevel extends \core_admin\setting\setting\configselect {
     /**
      * Updates the database and save the setting
      *

@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configthemepreset extends \admin_setting_configselect {
+class configthemepreset extends \core_admin\setting\setting\configselect {
 
     /** @var string The name of the theme to check for */
     private $themename;

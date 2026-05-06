@@ -19,7 +19,7 @@
  */
 namespace core_admin\setting\setting;
 
-class confightmleditor extends \admin_setting_configtextarea {
+class confightmleditor extends \core_admin\setting\setting\configtextarea {
 
     /**
      * @param string $name

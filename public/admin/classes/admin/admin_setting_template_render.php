@@ -16,8 +16,6 @@
 
 namespace core_admin\admin;
 
-use admin_setting;
-
 /**
  * Render a template as part of other admin settings.
  * Use for rendering additional html in settings.
@@ -27,7 +25,7 @@ use admin_setting;
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_template_render extends admin_setting {
+class admin_setting_template_render extends \core_admin\setting {
     /**
      * Constructor.
      *

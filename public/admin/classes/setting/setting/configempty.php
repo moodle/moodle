@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configempty extends \admin_setting_configtext {
+class configempty extends \core_admin\setting\setting\configtext {
 
     /**
      * @param string $name

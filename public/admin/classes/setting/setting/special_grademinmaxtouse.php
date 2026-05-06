@@ -23,7 +23,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_grademinmaxtouse extends \admin_setting_configselect {
+class special_grademinmaxtouse extends \core_admin\setting\setting\configselect {
 
     /**
      * Constructor.

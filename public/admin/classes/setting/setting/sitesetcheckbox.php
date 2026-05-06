@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class sitesetcheckbox extends \admin_setting_configcheckbox {
+class sitesetcheckbox extends \core_admin\setting\setting\configcheckbox {
     /**
      * Returns the current sites name
      *

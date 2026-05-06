@@ -20,7 +20,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_gradelimiting extends \admin_setting_configcheckbox {
+class special_gradelimiting extends \core_admin\setting\setting\configcheckbox {
     /**
      * Calls parent::__construct with specific arguments
      */

@@ -23,7 +23,7 @@
  */
 namespace core_admin\setting\setting;
 
-class check extends \admin_setting {
+class check extends \core_admin\setting {
 
     /** @var \core\check\check $check the check to use **/
     private $check;

@@ -21,13 +21,13 @@
  */
 namespace core_admin\setting\setting;
 
-class configselect_with_advanced extends \admin_setting_configselect {
+class configselect_with_advanced extends \core_admin\setting\setting\configselect {
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $choices);
-        $this->set_advanced_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
+        $this->set_advanced_flag_options(\core_admin\setting\setting\flag::ENABLED, !empty($defaultsetting['adv']));
     }
 
 }

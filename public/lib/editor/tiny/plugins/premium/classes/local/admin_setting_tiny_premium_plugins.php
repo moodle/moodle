@@ -25,7 +25,7 @@ use tiny_premium\manager;
  * @copyright  2024 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_tiny_premium_plugins extends \admin_setting {
+class admin_setting_tiny_premium_plugins extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific arguments.

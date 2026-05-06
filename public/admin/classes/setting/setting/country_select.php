@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class country_select extends \admin_setting_configselect {
+class country_select extends \core_admin\setting\setting\configselect {
     protected $includeall;
     public function __construct($name, $visiblename, $description, $defaultsetting, $includeall=false) {
         $this->includeall = $includeall;

@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class question_behaviour extends \admin_setting_configselect {
+class question_behaviour extends \core_admin\setting\setting\configselect {
     /**
      * @param string $name name of config variable
      * @param string $visiblename display name

@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class heading extends \admin_setting {
+class heading extends \core_admin\setting {
 
     /**
      * not a setting, just text

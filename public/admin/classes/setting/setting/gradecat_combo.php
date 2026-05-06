@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class gradecat_combo extends \admin_setting {
+class gradecat_combo extends \core_admin\setting {
 
     /** @var array Array of choices value=>label. */
     public $choices;

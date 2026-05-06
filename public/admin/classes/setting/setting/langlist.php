@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class langlist extends \admin_setting_configtext {
+class langlist extends \core_admin\setting\setting\configtext {
     /**
      * Calls parent::__construct with specific arguments.
      *

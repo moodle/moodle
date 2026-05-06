@@ -76,7 +76,7 @@ class admin_setting_configtext_trim_lower extends admin_setting_configtext {
 
 }
 
-class admin_setting_ldap_rolemapping extends admin_setting {
+class admin_setting_ldap_rolemapping extends \core_admin\setting {
 
     /**
      * Constructor: uses parent::__construct

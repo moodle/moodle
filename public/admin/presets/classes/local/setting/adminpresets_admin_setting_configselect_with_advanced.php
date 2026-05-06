@@ -16,8 +16,6 @@
 
 namespace core_adminpresets\local\setting;
 
-use admin_setting;
-
 /**
  * Adds support for the "advanced" attribute.
  *
@@ -27,11 +25,10 @@ use admin_setting;
  * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class adminpresets_admin_setting_configselect_with_advanced extends adminpresets_admin_setting_configselect {
-
     /** @var string Name of the advanced setting. **/
     protected $advancedkey;
 
-    public function __construct(admin_setting $settingdata, $dbsettingvalue) {
+    public function __construct(\core_admin\setting $settingdata, $dbsettingvalue) {
         // Getting the advanced defaultsetting attribute name.
         if (is_array($settingdata->defaultsetting)) {
             foreach ($settingdata->defaultsetting as $key => $defaultvalue) {

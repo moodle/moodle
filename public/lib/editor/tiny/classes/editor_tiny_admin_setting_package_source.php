@@ -16,8 +16,6 @@
 
 namespace editor_tiny;
 
-use admin_setting_configdirectory;
-
 /**
  * Class for the TinyMCE package source setting.
  *
@@ -25,7 +23,7 @@ use admin_setting_configdirectory;
  * @copyright  2025 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class editor_tiny_admin_setting_package_source extends admin_setting_configdirectory {
+class editor_tiny_admin_setting_package_source extends \core_admin\setting\setting\configdirectory {
     #[\Override]
     public function output_html($data, $query = ''): string {
         global $CFG, $OUTPUT;

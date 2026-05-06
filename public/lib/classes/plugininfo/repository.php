@@ -23,9 +23,7 @@
  */
 namespace core\plugininfo;
 
-use admin_externalpage;
-use moodle_url;
-use part_of_admin_tree;
+use core\url;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/repository/lib.php');
@@ -136,7 +134,11 @@ class repository extends base {
         return 'repositorysettings'.$this->name;
     }
 
-    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(
+        \core_admin\setting\tree\part_of_admin_tree $adminroot,
+        $parentnodename,
+        $hassiteconfig,
+    ) {
         if (!$this->is_installed_and_upgraded()) {
             return;
         }
@@ -144,18 +146,23 @@ class repository extends base {
         if ($hassiteconfig && $this->is_enabled()) {
             // Completely no access to repository setting when it is not enabled.
             $sectionname = $this->get_settings_section_name();
-            $settings = new admin_externalpage($sectionname, $this->displayname,
-                new moodle_url('/admin/repository.php', ['action' => 'edit', 'repos' => $this->name]), 'moodle/site:config', false);
+            $settings = new \core_admin\setting\tree\externalpage(
+                $sectionname,
+                $this->displayname,
+                new url('/admin/repository.php', ['action' => 'edit', 'repos' => $this->name]),
+                'moodle/site:config',
+                false,
+            );
             $adminroot->add($parentnodename, $settings);
         }
     }
 
     /**
      * Return URL used for management of plugins of this type.
-     * @return moodle_url
+     * @return url
      */
     public static function get_manage_url() {
-        return new moodle_url('/admin/repository.php');
+        return new url('/admin/repository.php');
     }
 
     /**

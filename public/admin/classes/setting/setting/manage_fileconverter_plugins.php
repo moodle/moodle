@@ -23,7 +23,7 @@
  */
 namespace core_admin\setting\setting;
 
-class manage_fileconverter_plugins extends \admin_setting_manage_plugins {
+class manage_fileconverter_plugins extends \core_admin\setting\setting\manage_plugins {
     public function get_section_title() {
         return get_string('type_fileconverter_plural', 'plugin');
     }

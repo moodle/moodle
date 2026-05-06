@@ -18,7 +18,7 @@ namespace core_admin\setting\page;
 
 use core_admin\admin_search;
 
-class manageportfolios extends \admin_externalpage {
+class manageportfolios extends \core_admin\setting\tree\externalpage {
 
 /**
      * Calls parent::__construct with specific arguments

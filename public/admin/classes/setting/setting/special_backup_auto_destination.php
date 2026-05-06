@@ -24,7 +24,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_backup_auto_destination extends \admin_setting_configdirectory {
+class special_backup_auto_destination extends \core_admin\setting\setting\configdirectory {
 
     /**
      * Calls parent::__construct with specific arguments.

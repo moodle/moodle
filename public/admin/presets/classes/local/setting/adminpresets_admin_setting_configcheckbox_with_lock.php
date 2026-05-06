@@ -16,8 +16,6 @@
 
 namespace core_adminpresets\local\setting;
 
-use admin_setting;
-
 /**
  * Checkbox with an advanced checkbox that controls an additional $name.'_locked' config setting.
  *
@@ -27,8 +25,7 @@ use admin_setting;
  * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class adminpresets_admin_setting_configcheckbox_with_lock extends adminpresets_admin_setting_configcheckbox {
-
-    public function __construct(admin_setting $settingdata, $dbsettingvalue) {
+    public function __construct(\core_admin\setting $settingdata, $dbsettingvalue) {
         // To look for other values.
         $this->attributes = ['locked' => $settingdata->name . '_locked'];
         parent::__construct($settingdata, $dbsettingvalue);

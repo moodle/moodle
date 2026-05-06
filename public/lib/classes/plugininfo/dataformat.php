@@ -14,22 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines classes used for plugin info.
- *
- * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
- * @package    core
- */
 namespace core\plugininfo;
 
-use admin_settingpage;
 use core_plugin_manager;
-use moodle_url;
-use part_of_admin_tree;
 
 /**
- * Class for dataformats
+ * Defines classes used for plugin info.
  *
  * @package    core
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -154,7 +144,11 @@ class dataformat extends base {
      * @param string $parentnodename
      * @param bool $hassiteconfig whether the current user has moodle/site:config capability
      */
-    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(
+        \core_admin\setting\tree\part_of_admin_tree $adminroot,
+        $parentnodename,
+        $hassiteconfig,
+    ) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
@@ -177,7 +171,7 @@ class dataformat extends base {
         }
 
         $section = $this->get_settings_section_name();
-        $settings = new admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
         include($fullpath); // This may also set $settings to null.
 
         if ($settings) {
@@ -196,10 +190,10 @@ class dataformat extends base {
 
     /**
      * Return URL used for management of plugins of this type.
-     * @return moodle_url
+     * @return \core\url
      */
     public static function get_manage_url() {
-        return new moodle_url('/admin/settings.php?section=managedataformats');
+        return new \core\url('/admin/settings.php?section=managedataformats');
     }
 
 }

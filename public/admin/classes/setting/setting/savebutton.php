@@ -19,7 +19,7 @@
  */
 namespace core_admin\setting\setting;
 
-class savebutton extends \admin_setting {
+class savebutton extends \core_admin\setting {
     /**
      * Constructor.
      *

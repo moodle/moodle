@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_selectsetup extends \admin_setting_configselect {
+class special_selectsetup extends \core_admin\setting\setting\configselect {
     /**
      * Reads the setting directly from the database
      *

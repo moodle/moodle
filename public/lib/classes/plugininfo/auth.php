@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\plugininfo;
+
 /**
  * Defines classes used for plugin info.
  *
@@ -21,17 +23,7 @@
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\plugininfo;
-
-use admin_settingpage;
-use moodle_url;
-use part_of_admin_tree;
-
-/**
- * Class for authentication plugins
- */
 class auth extends base {
-
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
@@ -101,7 +93,11 @@ class auth extends base {
         return 'authsetting' . $this->name;
     }
 
-    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(
+        \core_admin\setting\tree\part_of_admin_tree $adminroot,
+        $parentnodename,
+        $hassiteconfig,
+    ) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
@@ -121,7 +117,7 @@ class auth extends base {
         $settings = null;
         if (file_exists($this->full_path('settings.php'))) {
             // TODO: finish implementation of common settings - locking, etc.
-            $settings = new admin_settingpage($section, $this->displayname,
+            $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname,
                 'moodle/site:config', $this->is_enabled() === false);
             include($this->full_path('settings.php')); // This may also set $settings to null.
         }
@@ -133,10 +129,10 @@ class auth extends base {
 
     /**
      * Return URL used for management of plugins of this type.
-     * @return moodle_url
+     * @return \core\url
      */
     public static function get_manage_url() {
-        return new moodle_url('/admin/settings.php', array('section'=>'manageauths'));
+        return new \core\url('/admin/settings.php', array('section'=>'manageauths'));
     }
 
     /**

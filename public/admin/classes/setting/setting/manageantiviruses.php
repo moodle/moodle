@@ -24,7 +24,7 @@ use core_admin\admin_search;
  * @copyright  2015 Ruslan Kabalin, Lancaster University.
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manageantiviruses extends \admin_setting {
+class manageantiviruses extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
      */

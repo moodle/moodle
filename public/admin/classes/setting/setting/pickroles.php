@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class pickroles extends \admin_setting_configmulticheckbox {
+class pickroles extends \core_admin\setting\setting\configmulticheckbox {
     /** @var array Array of capabilities which identify roles */
     private $types;
 

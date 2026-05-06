@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\tree;
 
-class root extends \admin_category {
+class root extends \core_admin\setting\tree\category {
 /** @var array List of errors */
     public $errors;
     /** @var string search query */

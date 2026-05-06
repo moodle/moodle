@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configpasswordunmask extends \admin_setting_configtext {
+class configpasswordunmask extends \core_admin\setting\setting\configtext {
 
     /**
      * Constructor

@@ -24,7 +24,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configtime extends \admin_setting {
+class configtime extends \core_admin\setting {
     /** @var string Used for setting second select (minutes) */
     public $name2;
 

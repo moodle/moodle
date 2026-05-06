@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_backupdays extends \admin_setting_configmulticheckbox2 {
+class special_backupdays extends \core_admin\setting\setting\configmulticheckbox2 {
     /**
      * Calls parent::__construct with specific arguments
      */

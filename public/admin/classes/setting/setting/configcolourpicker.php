@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configcolourpicker extends \admin_setting {
+class configcolourpicker extends \core_admin\setting {
 
     /**
      * Information for previewing the colour

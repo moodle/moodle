@@ -23,11 +23,6 @@
  */
 namespace core\plugininfo;
 
-use admin_settingpage;
-use core_plugin_manager;
-use moodle_url;
-use part_of_admin_tree;
-
 /**
  * Class for question types
  */
@@ -44,7 +39,7 @@ class qtype extends base {
     public static function get_enabled_plugins() {
         global $DB;
 
-        $plugins = core_plugin_manager::instance()->get_installed_plugins('qtype');
+        $plugins = \core\plugin_manager::instance()->get_installed_plugins('qtype');
         if (!$plugins) {
             return array();
         }
@@ -88,7 +83,7 @@ class qtype extends base {
 
         if ($haschanged) {
             add_to_config_log($settingname, $oldvalue, $disabled, 'question');
-            \core_plugin_manager::reset_caches();
+            \core\plugin_manager::reset_caches();
         }
 
         return $haschanged;
@@ -107,10 +102,10 @@ class qtype extends base {
 
     /**
      * Return URL used for management of plugins of this type.
-     * @return moodle_url
+     * @return \core\url
      */
     public static function get_manage_url() {
-        return new moodle_url('/admin/qtypes.php');
+        return new \core\url('/admin/qtypes.php');
     }
 
     /**
@@ -133,7 +128,11 @@ class qtype extends base {
         return 'qtypesetting' . $this->name;
     }
 
-    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(
+        \core_admin\setting\tree\part_of_admin_tree $adminroot,
+        $parentnodename,
+        $hassiteconfig,
+    ) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
@@ -150,8 +149,12 @@ class qtype extends base {
         $systemcontext = \context_system::instance();
         if (($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) &&
             file_exists($this->full_path('settings.php'))) {
-            $settings = new admin_settingpage($section, $this->displayname,
-                'moodle/question:config', $this->is_enabled() === false);
+            $settings = new \core_admin\setting\settingpage\settingpage(
+                $section,
+                $this->displayname,
+                'moodle/question:config',
+                $this->is_enabled() === false,
+            );
             include($this->full_path('settings.php')); // This may also set $settings to null.
         }
         if ($settings) {

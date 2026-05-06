@@ -23,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class configmultiselect extends \admin_setting_configselect {
+class configmultiselect extends \core_admin\setting\setting\configselect {
     /**
      * Constructor
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.

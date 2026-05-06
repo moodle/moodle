@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_adminseesall extends \admin_setting_configcheckbox {
+class special_adminseesall extends \core_admin\setting\setting\configcheckbox {
     /**
      * Calls the parent::__construct with default values
      *

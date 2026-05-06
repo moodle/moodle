@@ -21,7 +21,7 @@ use core_admin\admin_search;
 /**
  * Course formats manager. Allows to enable/disable formats and jump to settings
  */
-class manageformats extends \admin_setting {
+class manageformats extends \core_admin\setting {
 
     /**
      * Calls parent::__construct with specific arguments

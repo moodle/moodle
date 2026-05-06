@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class coursecat_select extends \admin_setting_configselect_autocomplete {
+class coursecat_select extends \core_admin\setting\setting\configselect_autocomplete {
     /**
      * Calls parent::__construct with specific arguments
      */

@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class pickfilters extends \admin_setting_configmulticheckbox {
+class pickfilters extends \core_admin\setting\setting\configmulticheckbox {
 
     /**
      * Constructor

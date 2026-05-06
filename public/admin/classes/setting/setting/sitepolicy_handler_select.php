@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class sitepolicy_handler_select extends \admin_setting_configselect {
+class sitepolicy_handler_select extends \core_admin\setting\setting\configselect {
 
     /**
      * Constructor

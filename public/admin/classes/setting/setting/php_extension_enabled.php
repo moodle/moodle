@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class php_extension_enabled extends \admin_setting {
+class php_extension_enabled extends \core_admin\setting {
 
     /** @var string The name of the extension to check for */
     private $extension;

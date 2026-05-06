@@ -23,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class managerepository extends \admin_setting {
+class managerepository extends \core_admin\setting {
 /** @var string */
     private $baseurl;
 

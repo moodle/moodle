@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class enablemobileservice extends \admin_setting_configcheckbox {
+class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
 
     /** @var boolean True means that the capability 'webservice/rest:use' is set for authenticated user role */
     private $restuse;

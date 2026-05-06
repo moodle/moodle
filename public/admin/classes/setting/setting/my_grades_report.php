@@ -22,7 +22,7 @@
  */
 namespace core_admin\setting\setting;
 
-class my_grades_report extends \admin_setting_configselect {
+class my_grades_report extends \core_admin\setting\setting\configselect {
 
     /**
      * Calls parent::__construct with specific arguments.

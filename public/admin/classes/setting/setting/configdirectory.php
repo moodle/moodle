@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configdirectory extends \admin_setting_configfile {
+class configdirectory extends \core_admin\setting\setting\configfile {
 
     /**
      * Returns an XHTML field

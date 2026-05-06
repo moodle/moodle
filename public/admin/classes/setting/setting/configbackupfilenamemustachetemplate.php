@@ -19,7 +19,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configbackupfilenamemustachetemplate extends \admin_setting_configtextarea {
+class configbackupfilenamemustachetemplate extends \core_admin\setting\setting\configtextarea {
     /**
      * Validates submitted data.
      * @param string $data

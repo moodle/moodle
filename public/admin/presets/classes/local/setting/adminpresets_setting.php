@@ -16,8 +16,8 @@
 
 namespace core_adminpresets\local\setting;
 
-use admin_setting;
-use moodle_exception;
+use core_admin\setting;
+use core\exception\moodle_exception;
 use stdClass;
 
 /**
@@ -31,7 +31,7 @@ use stdClass;
 class adminpresets_setting {
 
     /**
-     * @var admin_setting
+     * @var setting
      */
     protected $settingdata;
 
@@ -74,10 +74,10 @@ class adminpresets_setting {
     /**
      * Stores the setting data and the selected value
      *
-     * @param admin_setting $settingdata admin_setting subclass
+     * @param setting $settingdata setting subclass
      * @param mixed $dbsettingvalue Actual value
      */
-    public function __construct(admin_setting $settingdata, $dbsettingvalue) {
+    public function __construct(setting $settingdata, $dbsettingvalue) {
         $this->settingdata = $settingdata;
         $this->delegation = new delegation();
 
@@ -239,7 +239,7 @@ class adminpresets_setting {
     }
 
     /**
-     * Copy of config_write method of the admin_setting class
+     * Copy of config_write method of the setting class
      *
      * @param string $plugin
      * @param string $name
@@ -250,7 +250,7 @@ class adminpresets_setting {
     protected function to_log($plugin, $name, $value, $actualvalue) {
         global $DB, $USER;
 
-        // Log the change (pasted from admin_setting class).
+        // Log the change (pasted from setting class).
         $log = new stdClass();
         $log->userid = during_initial_install() ? 0 : $USER->id; // 0 as user id during install.
         $log->timemodified = time();

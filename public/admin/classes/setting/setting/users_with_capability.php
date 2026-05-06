@@ -29,7 +29,7 @@
  */
 namespace core_admin\setting\setting;
 
-class users_with_capability extends \admin_setting_configmultiselect {
+class users_with_capability extends \core_admin\setting\setting\configmultiselect {
     /** @var string The capabilities name */
     protected $capability;
     /** @var int include admin users too */

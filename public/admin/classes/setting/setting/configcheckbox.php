@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class configcheckbox extends \admin_setting {
+class configcheckbox extends \core_admin\setting {
     /** @var string Value used when checked */
     public $yes;
     /** @var string Value used when not checked */

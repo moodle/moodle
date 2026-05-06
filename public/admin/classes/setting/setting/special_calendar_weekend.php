@@ -21,7 +21,7 @@
  */
 namespace core_admin\setting\setting;
 
-class special_calendar_weekend extends \admin_setting {
+class special_calendar_weekend extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
      */
