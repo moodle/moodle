@@ -101,17 +101,27 @@ define([
             maxWidth = 0,
             maxHeight = 0;
 
-        // Find the maximum size of any drag in this groups.
+        // Reset all items to natural sizing and find max width.
         dragDropItems.each(function(i, drag) {
-            maxWidth = Math.max(maxWidth, Math.ceil(drag.offsetWidth));
-            maxHeight = Math.max(maxHeight, Math.ceil(0 + drag.offsetHeight));
+            $(drag).css({'width': '', 'height': '', 'lineHeight': ''});
         });
 
-        // The size we will want to set is a bit bigger than this.
+        dragDropItems.each(function(i, drag) {
+            maxWidth = Math.max(maxWidth, Math.ceil(drag.offsetWidth));
+        });
+
+        // The width we will want to set is a bit bigger than this.
         maxWidth += 8;
+
+        // Set width, then measure wrapped heights.
+        dragDropItems.each(function(i, drag) {
+            $(drag).width(maxWidth);
+            maxHeight = Math.max(maxHeight, drag.offsetHeight);
+        });
         maxHeight += 2;
+
         thisQ.questionDragDropWidthHeight[group] = {maxWidth: maxWidth, maxHeight: maxHeight};
-        // Set each drag home to that size.
+        // Set each drag and drop to the final size.
         dragDropItems.each(function(i, drag) {
             thisQ.setElementSize(drag, maxWidth, maxHeight);
         });
@@ -199,7 +209,7 @@ define([
      * @param {int} height
      */
     DragDropToTextQuestion.prototype.setElementSize = function(element, width, height) {
-        $(element).width(width).height(height).css('lineHeight', height + 'px');
+        $(element).width(width).height(height);
     };
 
     /**
