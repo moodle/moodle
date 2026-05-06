@@ -79,6 +79,11 @@
 	url = https://github.com/ucsf-education/local_quizanon
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/local/staticpage"]
+	path = public/local/staticpage
+	url = https://github.com/moodle-an-hochschulen/moodle-local_staticpage
+	branch = MOODLE_501_STABLE
+	tag = v5.1-r1
 [submodule "public/mod/attendance"]
 	path = public/mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
