@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -22,14 +24,14 @@ use core_admin\admin_search;
  * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_managedataformats extends admin_setting {
+class managedataformats extends \admin_setting {
 
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         $this->nosave = true;
-        parent::__construct('managedataformats', new lang_string('managedataformats'), '', '');
+        parent::__construct('managedataformats', new \lang_string('managedataformats'), '', '');
     }
 
     /**
@@ -71,13 +73,13 @@ class admin_setting_managedataformats extends admin_setting {
         if (parent::is_related($query)) {
             return true;
         }
-        $formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+        $formats = \core_plugin_manager::instance()->get_plugins_of_type('dataformat');
         foreach ($formats as $format) {
             if (strpos($format->component, $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
-            if (strpos(core_text::strtolower($format->displayname), $query) !== false) {
+            if (strpos(\core_text::strtolower($format->displayname), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -96,13 +98,13 @@ class admin_setting_managedataformats extends admin_setting {
         global $CFG, $OUTPUT;
         $return = '';
 
-        $formats = core_plugin_manager::instance()->get_plugins_of_type('dataformat');
+        $formats = \core_plugin_manager::instance()->get_plugins_of_type('dataformat');
 
         $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default'));
         $txt->uninstall = get_string('uninstallplugin', 'core_admin');
         $txt->updown = "$txt->up/$txt->down";
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center', 'center');
         $table->attributes['class'] = 'manageformattable table generaltable admintable table-striped table-hover';
@@ -118,7 +120,7 @@ class admin_setting_managedataformats extends admin_setting {
         }
         foreach ($formats as $format) {
             $status = $format->get_status();
-            $url = new moodle_url('/admin/dataformats.php',
+            $url = new \moodle_url('/admin/dataformats.php',
                     array('sesskey' => sesskey(), 'name' => $format->name));
 
             $class = '';
@@ -127,54 +129,59 @@ class admin_setting_managedataformats extends admin_setting {
                 if ($totalenabled == 1&& $format->is_enabled()) {
                     $hideshow = '';
                 } else {
-                    $hideshow = html_writer::link($url->out(false, array('action' => 'disable')),
+                    $hideshow = \html_writer::link($url->out(false, array('action' => 'disable')),
                         $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', array('class' => 'iconsmall')));
                 }
             } else {
                 $class = 'dimmed_text';
                 $strformatname = $format->displayname;
-                $hideshow = html_writer::link($url->out(false, array('action' => 'enable')),
+                $hideshow = \html_writer::link($url->out(false, array('action' => 'enable')),
                     $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', array('class' => 'iconsmall')));
             }
 
             $updown = '';
             if ($cnt) {
-                $updown .= html_writer::link($url->out(false, array('action' => 'up')),
+                $updown .= \html_writer::link($url->out(false, array('action' => 'up')),
                     $OUTPUT->pix_icon('t/up', $txt->up, 'moodle', array('class' => 'iconsmall'))). '';
             } else {
                 $updown .= $spacer;
             }
             if ($cnt < count($formats) - 1) {
-                $updown .= '&nbsp;'.html_writer::link($url->out(false, array('action' => 'down')),
+                $updown .= '&nbsp;'.\html_writer::link($url->out(false, array('action' => 'down')),
                     $OUTPUT->pix_icon('t/down', $txt->down, 'moodle', array('class' => 'iconsmall')));
             } else {
                 $updown .= $spacer;
             }
 
             $uninstall = '';
-            if ($status === core_plugin_manager::PLUGIN_STATUS_MISSING) {
+            if ($status === \core_plugin_manager::PLUGIN_STATUS_MISSING) {
                 $uninstall = get_string('status_missing', 'core_plugin');
-            } else if ($status === core_plugin_manager::PLUGIN_STATUS_NEW) {
+            } else if ($status === \core_plugin_manager::PLUGIN_STATUS_NEW) {
                 $uninstall = get_string('status_new', 'core_plugin');
-            } else if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('dataformat_'.$format->name, 'manage')) {
+            } else if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url('dataformat_'.$format->name, 'manage')) {
                 if ($totalenabled != 1 || !$format->is_enabled()) {
-                    $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
+                    $uninstall = \html_writer::link($uninstallurl, $txt->uninstall);
                 }
             }
 
             $settings = '';
             if ($format->get_settings_url()) {
-                $settings = html_writer::link($format->get_settings_url(), $txt->settings);
+                $settings = \html_writer::link($format->get_settings_url(), $txt->settings);
             }
 
-            $row = new html_table_row(array($strformatname, $hideshow, $updown, $uninstall, $settings));
+            $row = new \html_table_row(array($strformatname, $hideshow, $updown, $uninstall, $settings));
             if ($class) {
                 $row->attributes['class'] = $class;
             }
             $table->data[] = $row;
             $cnt++;
         }
-        $return .= html_writer::table($table);
+        $return .= \html_writer::table($table);
         return highlight($query, $return);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(managedataformats::class, \admin_setting_managedataformats::class);

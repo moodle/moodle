@@ -21,7 +21,9 @@
  * @copyright 2017 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_filetypes extends admin_setting_configtext {
+namespace core_admin\setting\setting;
+
+class filetypes extends \admin_setting_configtext {
 
     /** @var array Allow selection from these file types only. */
     protected $onlytypes = [];
@@ -136,3 +138,8 @@ class admin_setting_filetypes extends admin_setting_configtext {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(filetypes::class, \admin_setting_filetypes::class);

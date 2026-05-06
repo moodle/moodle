@@ -21,14 +21,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
-class admin_setting_forcetimezone extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class forcetimezone extends \admin_setting_configselect {
     /**
      * Constructor.
      */
     public function __construct() {
         parent::__construct('forcetimezone',
-            new lang_string('forcetimezone', 'core_admin'),
-            new lang_string('helpforcetimezone', 'core_admin'), '99', null);
+            new \lang_string('forcetimezone', 'core_admin'),
+            new \lang_string('helpforcetimezone', 'core_admin'), '99', null);
     }
 
     /**
@@ -42,9 +44,14 @@ class admin_setting_forcetimezone extends admin_setting_configselect {
         }
 
         $current = isset($CFG->forcetimezone) ? $CFG->forcetimezone : null;
-        $this->choices = core_date::get_list_of_timezones($current, true);
-        $this->choices['99'] = new lang_string('timezonenotforced', 'core_admin');
+        $this->choices = \core_date::get_list_of_timezones($current, true);
+        $this->choices['99'] = new \lang_string('timezonenotforced', 'core_admin');
 
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(forcetimezone::class, \admin_setting_forcetimezone::class);

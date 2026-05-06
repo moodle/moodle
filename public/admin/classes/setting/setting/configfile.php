@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configfile extends admin_setting_configtext {
+namespace core_admin\setting\setting;
+
+class configfile extends \admin_setting_configtext {
     /**
      * Constructor
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
@@ -85,3 +87,8 @@ class admin_setting_configfile extends admin_setting_configtext {
     }
 
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configfile::class, \admin_setting_configfile::class);

@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_sitesetselect extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class sitesetselect extends \admin_setting_configselect {
     /**
      * Returns the site name for the selected site
      *
@@ -42,7 +44,7 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         if (!in_array($data, array_keys($this->choices))) {
             return get_string('errorsetting', 'admin');
         }
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id           = SITEID;
         $temp                 = $this->name;
         $record->$temp        = $data;
@@ -56,14 +58,14 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         if ($SITE->id == $COURSE->id) {
             $COURSE = $SITE;
         }
-        core_courseformat\base::reset_course_cache($SITE->id);
+        \core_courseformat\base::reset_course_cache($SITE->id);
 
         return '';
 
     }
 
     /**
-     * admin_setting_sitesetselect is not meant to be overridden in config.php.
+     * The site select is not meant to be overridden in config.php.
      *
      * @return bool
      */
@@ -71,3 +73,8 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         return false;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(sitesetselect::class, \admin_setting_sitesetselect::class);

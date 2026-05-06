@@ -21,7 +21,9 @@
  * @copyright 2016 David Monllao {@link http://www.davidmonllao.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_searchsetupinfo extends admin_setting {
+namespace core_admin\setting\setting;
+
+class searchsetupinfo extends \admin_setting {
 
     /**
      * Calls parent::__construct with specific arguments
@@ -71,7 +73,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
         global $CFG, $OUTPUT, $ADMIN;
 
         $return = '';
-        $brtag = html_writer::empty_tag('br');
+        $brtag = \html_writer::empty_tag('br');
 
         $searchareas = \core_search\manager::get_search_areas_list();
         $anyenabled = !empty(\core_search\manager::get_search_areas_list(true));
@@ -86,7 +88,7 @@ class admin_setting_searchsetupinfo extends admin_setting {
 
         $return .= $OUTPUT->heading(get_string('searchsetupinfo', 'admin'), 3, 'main');
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head = array(get_string('step', 'search'), get_string('status'));
         $table->colclasses = array('leftalign step', 'leftalign status');
         $table->id = 'searchsetup';
@@ -97,13 +99,13 @@ class admin_setting_searchsetupinfo extends admin_setting {
 
         // Select a search engine.
         $row = array();
-        $url = new moodle_url('/admin/settings.php?section=manageglobalsearch#admin-searchengine');
-        $row[0] = '1. ' . html_writer::tag('a', get_string('selectsearchengine', 'admin'),
+        $url = new \moodle_url('/admin/settings.php?section=manageglobalsearch#admin-searchengine');
+        $row[0] = '1. ' . \html_writer::tag('a', get_string('selectsearchengine', 'admin'),
                         array('href' => $url));
 
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
+        $status = \html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
         if (!empty($CFG->searchengine)) {
-            $status = html_writer::tag('span', get_string('pluginname', 'search_' . $CFG->searchengine),
+            $status = \html_writer::tag('span', get_string('pluginname', 'search_' . $CFG->searchengine),
                 array('class' => 'badge bg-success text-white'));
 
         }
@@ -112,13 +114,13 @@ class admin_setting_searchsetupinfo extends admin_setting {
 
         // Available areas.
         $row = array();
-        $url = new moodle_url('/admin/searchareas.php');
-        $row[0] = '2. ' . html_writer::tag('a', get_string('enablesearchareas', 'admin'),
+        $url = new \moodle_url('/admin/searchareas.php');
+        $row[0] = '2. ' . \html_writer::tag('a', get_string('enablesearchareas', 'admin'),
                         array('href' => $url));
 
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
+        $status = \html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
         if ($anyenabled) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
+            $status = \html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
 
         }
         $row[1] = $status;
@@ -128,11 +130,11 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $row = array();
         if (empty($CFG->searchengine)) {
             $row[0] = '3. ' . get_string('setupsearchengine', 'admin');
-            $row[1] = html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
+            $row[1] = \html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
         } else {
             if ($ADMIN->locate('search' . $CFG->searchengine)) {
-                $url = new moodle_url('/admin/settings.php?section=search' . $CFG->searchengine);
-                $row[0] = '3. ' . html_writer::link($url, get_string('setupsearchengine', 'core_admin'));
+                $url = new \moodle_url('/admin/settings.php?section=search' . $CFG->searchengine);
+                $row[0] = '3. ' . \html_writer::link($url, get_string('setupsearchengine', 'core_admin'));
             } else {
                 $row[0] = '3. ' . get_string('setupsearchengine', 'core_admin');
             }
@@ -145,9 +147,9 @@ class admin_setting_searchsetupinfo extends admin_setting {
                 $serverstatus = $e->getMessage();
             }
             if ($serverstatus === true) {
-                $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
+                $status = \html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
             } else {
-                $status = html_writer::tag('span', $serverstatus, array('class' => 'badge bg-danger text-white'));
+                $status = \html_writer::tag('span', $serverstatus, array('class' => 'badge bg-danger text-white'));
             }
             $row[1] = $status;
         }
@@ -155,43 +157,48 @@ class admin_setting_searchsetupinfo extends admin_setting {
 
         // Indexed data.
         $row = array();
-        $url = new moodle_url('/admin/searchareas.php');
-        $row[0] = '4. ' . html_writer::tag('a', get_string('indexdata', 'admin'), array('href' => $url));
+        $url = new \moodle_url('/admin/searchareas.php');
+        $row[0] = '4. ' . \html_writer::tag('a', get_string('indexdata', 'admin'), array('href' => $url));
         if ($anyindexed) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
+            $status = \html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
         } else {
-            $status = html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
+            $status = \html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
         }
         $row[1] = $status;
         $table->data[] = $row;
 
         // Enable global search.
         $row = array();
-        $url = new moodle_url("/admin/search.php?query=enableglobalsearch");
-        $row[0] = '5. ' . html_writer::tag('a', get_string('enableglobalsearch', 'admin'),
+        $url = new \moodle_url("/admin/search.php?query=enableglobalsearch");
+        $row[0] = '5. ' . \html_writer::tag('a', get_string('enableglobalsearch', 'admin'),
                         array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
+        $status = \html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
         if (\core_search\manager::is_global_search_enabled()) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
+            $status = \html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
         }
         $row[1] = $status;
         $table->data[] = $row;
 
         // Replace front page search.
         $row = array();
-        $url = new moodle_url("/admin/search.php?query=searchincludeallcourses");
-        $row[0] = '6. ' . html_writer::tag('a', get_string('replacefrontsearch', 'admin'),
+        $url = new \moodle_url("/admin/search.php?query=searchincludeallcourses");
+        $row[0] = '6. ' . \html_writer::tag('a', get_string('replacefrontsearch', 'admin'),
                                            array('href' => $url));
-        $status = html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
+        $status = \html_writer::tag('span', get_string('no'), array('class' => 'badge bg-danger text-white'));
         if (\core_search\manager::can_replace_course_search()) {
-            $status = html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
+            $status = \html_writer::tag('span', get_string('yes'), array('class' => 'badge bg-success text-white'));
         }
         $row[1] = $status;
         $table->data[] = $row;
 
-        $return .= html_writer::table($table);
+        $return .= \html_writer::table($table);
 
         return highlight($query, $return);
     }
 
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(searchsetupinfo::class, \admin_setting_searchsetupinfo::class);

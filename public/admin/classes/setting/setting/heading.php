@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_heading extends admin_setting {
+namespace core_admin\setting\setting;
+
+class heading extends \admin_setting {
 
     /**
      * not a setting, just text
@@ -63,10 +65,15 @@ class admin_setting_heading extends admin_setting {
      */
     public function output_html($data, $query='') {
         global $OUTPUT;
-        $context = new stdClass();
+        $context = new \stdClass();
         $context->title = $this->visiblename;
         $context->description = $this->description;
         $context->descriptionformatted = highlight($query, markdown_to_html($this->description));
         return $OUTPUT->render_from_template('core_admin/setting_heading', $context);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(heading::class, \admin_setting_heading::class);

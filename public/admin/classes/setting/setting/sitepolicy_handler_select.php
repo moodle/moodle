@@ -20,7 +20,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2018 Marina Glancy
  */
-class admin_settings_sitepolicy_handler_select extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class sitepolicy_handler_select extends \admin_setting_configselect {
 
     /**
      * Constructor
@@ -45,14 +47,19 @@ class admin_settings_sitepolicy_handler_select extends admin_setting_configselec
             return true;
         }
 
-        $this->choices = ['' => new lang_string('sitepolicyhandlercore', 'core_admin')];
+        $this->choices = ['' => new \lang_string('sitepolicyhandlercore', 'core_admin')];
         $manager = new \core_privacy\local\sitepolicy\manager();
         $plugins = $manager->get_all_handlers();
         foreach ($plugins as $pname => $unused) {
-            $this->choices[$pname] = new lang_string('sitepolicyhandlerplugin', 'core_admin',
-                ['name' => new lang_string('pluginname', $pname), 'component' => $pname]);
+            $this->choices[$pname] = new \lang_string('sitepolicyhandlerplugin', 'core_admin',
+                ['name' => new \lang_string('pluginname', $pname), 'component' => $pname]);
         }
 
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(sitepolicy_handler_select::class, \admin_settings_sitepolicy_handler_select::class);

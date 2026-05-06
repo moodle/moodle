@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_coursecontact extends admin_setting_pickroles {
+namespace core_admin\setting\setting;
+
+class special_coursecontact extends \admin_setting_pickroles {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -28,7 +30,12 @@ class admin_setting_special_coursecontact extends admin_setting_pickroles {
             get_string('coursecontact_desc', 'admin'),
             array('editingteacher'));
         $this->set_updatedcallback(function (){
-            cache::make('core', 'coursecontacts')->purge();
+            \cache::make('core', 'coursecontacts')->purge();
         });
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_coursecontact::class, \admin_setting_special_coursecontact::class);

@@ -17,7 +17,9 @@
 /**
  * General text area with html editor.
  */
-class admin_setting_confightmleditor extends admin_setting_configtextarea {
+namespace core_admin\setting\setting;
+
+class confightmleditor extends \admin_setting_configtextarea {
 
     /**
      * @param string $name
@@ -59,3 +61,8 @@ class admin_setting_confightmleditor extends admin_setting_configtextarea {
         return parent::write_setting($data);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(confightmleditor::class, \admin_setting_confightmleditor::class);

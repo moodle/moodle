@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -21,7 +23,7 @@ use core_admin\admin_search;
  *
  * @author Petr Skoda (skodak)
  */
-class admin_setting_managewebserviceprotocols extends admin_setting {
+class managewebserviceprotocols extends \admin_setting {
 
     /**
      * Calls parent::__construct with specific arguments
@@ -70,14 +72,14 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
             return true;
         }
 
-        $protocols = core_component::get_plugin_list('webservice');
+        $protocols = \core_component::get_plugin_list('webservice');
         foreach ($protocols as $protocol=>$location) {
             if (strpos($protocol, $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
             $protocolstr = get_string('pluginname', 'webservice_'.$protocol);
-            if (strpos(core_text::strtolower($protocolstr), $query) !== false) {
+            if (strpos(\core_text::strtolower($protocolstr), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -104,8 +106,8 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         $strdisable = get_string('disable');
         $strversion = get_string('version');
 
-        $protocols_available = core_component::get_plugin_list('webservice');
-        $activeprotocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+        $protocols_available = \core_component::get_plugin_list('webservice');
+        $activeprotocols = empty($CFG->webserviceprotocols) ? array() : \explode(',', $CFG->webserviceprotocols);
         ksort($protocols_available);
 
         foreach ($activeprotocols as $key => $protocol) {
@@ -122,7 +124,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         }
         $return .= $OUTPUT->box_start('generalbox webservicesui');
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head  = array($strprotocol, $strversion, $strenable, $strsettings);
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->id = 'webserviceprotocols';
@@ -134,7 +136,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         foreach ($protocols_available as $protocol => $location) {
             $name = get_string('pluginname', 'webservice_'.$protocol);
 
-            $plugin = new stdClass();
+            $plugin = new \stdClass();
             if (file_exists($CFG->dirroot.'/webservice/'.$protocol.'/version.php')) {
                 include($CFG->dirroot.'/webservice/'.$protocol.'/version.php');
             }
@@ -161,10 +163,15 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
             // add a row to the table
             $table->data[] = array($displayname, $version, $hideshow, $settings);
         }
-        $return .= html_writer::table($table);
+        $return .= \html_writer::table($table);
         $return .= get_string('configwebserviceplugins', 'webservice');
         $return .= $OUTPUT->box_end();
 
         return highlight($query, $return);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(managewebserviceprotocols::class, \admin_setting_managewebserviceprotocols::class);

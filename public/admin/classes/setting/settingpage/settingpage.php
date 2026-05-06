@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\settingpage;
+
 use core_admin\admin_search;
 use core_admin\local\settings\linkable_settings_page;
 
@@ -22,7 +24,7 @@ use core_admin\local\settings\linkable_settings_page;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
+class settingpage implements \part_of_admin_tree, linkable_settings_page {
 
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
@@ -30,7 +32,7 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
     /** @var string The displayed name for this external page. Usually obtained through get_string(). */
     public $visiblename;
 
-    /** @var mixed An array of admin_setting objects that are part of this setting page. */
+    /** @var \core_admin\setting[] An array of setting objects that are part of this setting page. */
     public $settings;
 
     /** @var admin_settingdependency[] list of settings to hide when certain conditions are met */
@@ -52,7 +54,7 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
     public $visiblepath;
 
     /**
-     * see admin_settingpage for details of this function
+     * Create a new settingpage instance.
      *
      * @param string $name The internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects.
      * @param string $visiblename The displayed name for this external page. Usually obtained through get_string().
@@ -62,7 +64,7 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
      *      if you specify something other than system or front page. Defaults to system.
      */
     public function __construct($name, $visiblename, $req_capability='moodle/site:config', $hidden=false, $context=NULL) {
-        $this->settings    = new stdClass();
+        $this->settings    = new \stdClass();
         $this->name        = $name;
         $this->visiblename = $visiblename;
         if (is_array($req_capability)) {
@@ -79,8 +81,8 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
      *
      * @return moodle_url
      */
-    public function get_settings_page_url(): moodle_url {
-        return new moodle_url(
+    public function get_settings_page_url(): \moodle_url {
+        return new \moodle_url(
             '/admin/settings.php',
             [
                 'section' => $this->name,
@@ -89,7 +91,7 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
     }
 
     /**
-     * see admin_category
+     * See \core_admin\setting\tree\category for more information.
      *
      * @param string $name
      * @param bool $findpath
@@ -118,14 +120,14 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
         $found = false;
         // Prioritise matching the page title.
         if (
-            strpos(core_text::strtolower($this->visiblename), $query) !== false ||
+            strpos(\core_text::strtolower($this->visiblename), $query) !== false ||
             strpos(strtolower($this->name), $query) !== false
         ) {
             $type = admin_search::SEARCH_MATCH_PAGE_TITLE;
             $found = true;
         }
         if ($found) {
-            $result = new stdClass();
+            $result = new \stdClass();
             $result->page = $this;
             $result->settings = [];
             $result->searchmatchtype = $type;
@@ -143,7 +145,7 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
         if (!empty($foundrelated)) {
             $sortedresults = admin_search::sort_search_results($foundrelated);
 
-            $result = new stdClass();
+            $result = new \stdClass();
             $result->page = $this;
             $result->settings = $sortedresults;
             // Multiple related matches may have been found. Get the highest priority one.
@@ -165,16 +167,19 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
     }
 
     /**
-     * adds an admin_setting to this admin_settingpage
+     * Adds a setting to this settingpage.
      *
-     * not the same as add for admin_category. adds an admin_setting to this admin_settingpage. settings appear (on the settingpage) in the order in which they're added
-     * n.b. each admin_setting in an admin_settingpage must have a unique internal name
+     * Note: This is not the same as add for the category.
      *
-     * @param object $setting is the admin_setting object you want to add
+     * Settings appear (on the settingpage) in the order in which they're added.
+     *
+     * Note: each setting in a settingpage must have a unique internal name
+     *
+     * @param object $setting is the setting object you want to add
      * @return bool true if successful, false if not
      */
     public function add($setting) {
-        if (!($setting instanceof admin_setting)) {
+        if (!($setting instanceof \admin_setting)) {
             debugging('error - not a setting instance');
             return false;
         }
@@ -196,7 +201,7 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
      * @param string $value
      */
     public function hide_if($settingname, $dependenton, $condition = 'notchecked', $value = '1') {
-        $this->dependencies[] = new admin_settingdependency($settingname, $dependenton, $condition, $value);
+        $this->dependencies[] = new \admin_settingdependency($settingname, $dependenton, $condition, $value);
 
         // Reformat the dependency name to the plugin | name format used in the display.
         $dependenton = str_replace('/', ' | ', $dependenton);
@@ -211,14 +216,14 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
     }
 
     /**
-     * see admin_externalpage
+     * Determines if the current user has access to this setting page based on $this->req_capability.
      *
      * @return bool Returns true for yes false for no
      */
     public function check_access() {
         global $CFG;
-        $context = empty($this->context) ? context_system::instance() : $this->context;
-        foreach($this->req_capability as $cap) {
+        $context = empty($this->context) ? \core\context\system::instance() : $this->context;
+        foreach ($this->req_capability as $cap) {
             if (has_capability($cap, $context)) {
                 return true;
             }
@@ -227,7 +232,8 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
     }
 
     /**
-     * outputs this page as html in a table (suitable for inclusion in an admin pagetype)
+     * Outputs this page as html in a table (suitable for inclusion in an admin pagetype).
+     *
      * @return string Returns an XHTML string
      */
     public function output_html() {
@@ -285,6 +291,11 @@ class admin_settingpage implements part_of_admin_tree, linkable_settings_page {
         if (!$this->has_dependencies()) {
             return [];
         }
-        return admin_settingdependency::prepare_for_javascript($this->dependencies);
+        return \admin_settingdependency::prepare_for_javascript($this->dependencies);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(settingpage::class, \admin_settingpage::class);

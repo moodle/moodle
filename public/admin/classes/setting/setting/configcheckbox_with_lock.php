@@ -17,12 +17,14 @@
 /**
  * Checkbox with an advanced checkbox that controls an additional $name.'_locked' config setting.
  *
- * This is nearly a copy/paste of admin_setting_configcheckbox_with_adv
+ * This is nearly a copy/paste of configcheckbox_with_advanced.
  *
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configcheckbox_with_lock extends admin_setting_configcheckbox {
+namespace core_admin\setting\setting;
+
+class configcheckbox_with_lock extends \admin_setting_configcheckbox {
     /**
      * Constructor
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
@@ -34,7 +36,12 @@ class admin_setting_configcheckbox_with_lock extends admin_setting_configcheckbo
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $yes='1', $no='0') {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $yes, $no);
-        $this->set_locked_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['locked']));
+        $this->set_locked_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['locked']));
     }
 
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configcheckbox_with_lock::class, \admin_setting_configcheckbox_with_lock::class);

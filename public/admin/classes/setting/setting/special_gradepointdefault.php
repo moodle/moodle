@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_gradepointdefault extends admin_setting_configtext {
+namespace core_admin\setting\setting;
+
+class special_gradepointdefault extends \admin_setting_configtext {
     /**
      * Config gradepointmax constructor
      *
@@ -54,3 +56,8 @@ class admin_setting_special_gradepointdefault extends admin_setting_configtext {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_gradepointdefault::class, \admin_setting_special_gradepointdefault::class);

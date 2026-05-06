@@ -20,7 +20,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2018 Paul Holden (pholden@greenhead.ac.uk)
  */
-class admin_setting_configpasswordunmask_with_advanced extends admin_setting_configpasswordunmask {
+namespace core_admin\setting\setting;
+
+class configpasswordunmask_with_advanced extends \admin_setting_configpasswordunmask {
 
     /**
      * Constructor
@@ -32,6 +34,11 @@ class admin_setting_configpasswordunmask_with_advanced extends admin_setting_con
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value']);
-        $this->set_advanced_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
+        $this->set_advanced_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configpasswordunmask_with_advanced::class, \admin_setting_configpasswordunmask_with_advanced::class);

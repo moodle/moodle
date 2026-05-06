@@ -17,7 +17,9 @@
 /**
  * General plugins manager
  */
-class admin_page_pluginsoverview extends admin_externalpage {
+namespace core_admin\setting\page;
+
+class pluginsoverview extends \admin_externalpage {
 
     /**
      * Sets basic information about the external page
@@ -28,3 +30,8 @@ class admin_page_pluginsoverview extends admin_externalpage {
             "$CFG->wwwroot/$CFG->admin/plugins.php");
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(pluginsoverview::class, \admin_page_pluginsoverview::class);

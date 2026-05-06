@@ -23,6 +23,8 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core_admin\setting\tree;
+
 interface part_of_admin_tree {
 
 /**
@@ -84,3 +86,8 @@ interface part_of_admin_tree {
      */
     public function show_save();
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(part_of_admin_tree::class, \part_of_admin_tree::class);

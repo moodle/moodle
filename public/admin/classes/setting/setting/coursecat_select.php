@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_settings_coursecat_select extends admin_setting_configselect_autocomplete {
+namespace core_admin\setting\setting;
+
+class coursecat_select extends \admin_setting_configselect_autocomplete {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -36,7 +38,12 @@ class admin_settings_coursecat_select extends admin_setting_configselect_autocom
         if (is_array($this->choices)) {
             return true;
         }
-        $this->choices = core_course_category::make_categories_list('', 0, ' / ');
+        $this->choices = \core_course_category::make_categories_list('', 0, ' / ');
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(coursecat_select::class, \admin_settings_coursecat_select::class);

@@ -25,7 +25,9 @@
  * @copyright   2020 David Mudrák <david@moodle.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_countrycodes extends admin_setting_configtext {
+namespace core_admin\setting\setting;
+
+class countrycodes extends \admin_setting_configtext {
 
     /**
      * Construct the instance of the setting.
@@ -72,3 +74,8 @@ class admin_setting_countrycodes extends admin_setting_configtext {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(countrycodes::class, \admin_setting_countrycodes::class);

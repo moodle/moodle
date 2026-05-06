@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -21,7 +23,7 @@ use core_admin\admin_search;
  *
  * @author Petr Skoda (skodak)
  */
-class admin_setting_manageexternalservices extends admin_setting {
+class manageexternalservices extends \admin_setting {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -73,7 +75,7 @@ class admin_setting_manageexternalservices extends admin_setting {
 
         $services = $DB->get_records('external_services', array(), 'id, name');
         foreach ($services as $service) {
-            if (strpos(core_text::strtolower($service->name), $query) !== false) {
+            if (strpos(\core_text::strtolower($service->name), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -114,7 +116,7 @@ class admin_setting_manageexternalservices extends admin_setting {
 
 
 
-            $table = new html_table();
+            $table = new \html_table();
             $table->head  = array($strservice, $strplugin, $strfunctions, $strusers, $stredit);
             $table->colclasses = array('leftalign service', 'leftalign plugin', 'centeralign functions', 'centeralign users', 'centeralign ');
             $table->id = 'builtinservices';
@@ -147,14 +149,14 @@ class admin_setting_manageexternalservices extends admin_setting {
                 // add a row to the table
                 $table->data[] = array($displayname, $plugin, $functions, $users, $edit);
             }
-            $return .= html_writer::table($table);
+            $return .= \html_writer::table($table);
         }
 
         // Custom services
         $return .= $OUTPUT->heading(get_string('servicescustom', 'webservice'), 3, 'main');
         $services = $DB->get_records_select('external_services', 'component IS NULL', null, 'name');
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head  = array($strservice, $strdelete, $strfunctions, $strusers, $stredit);
         $table->colclasses = array('leftalign service', 'leftalign plugin', 'centeralign functions', 'centeralign users', 'centeralign ');
         $table->id = 'customservices';
@@ -189,7 +191,7 @@ class admin_setting_manageexternalservices extends admin_setting {
             $table->data[] = array($displayname, $delete, $functions, $users, $edit);
         }
         // add new custom service option
-        $return .= html_writer::table($table);
+        $return .= \html_writer::table($table);
 
         $return .= '<br />';
         // add a token to the table
@@ -198,3 +200,8 @@ class admin_setting_manageexternalservices extends admin_setting {
         return highlight($query, $return);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(manageexternalservices::class, \admin_setting_manageexternalservices::class);

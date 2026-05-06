@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -21,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_managerepository extends admin_setting {
+class managerepository extends \admin_setting {
 /** @var string */
     private $baseurl;
 
@@ -85,16 +87,16 @@ class admin_setting_managerepository extends admin_setting {
             return true;
         }
 
-        $repositories= core_component::get_plugin_list('repository');
+        $repositories= \core_component::get_plugin_list('repository');
         foreach ($repositories as $p => $dir) {
             if (strpos($p, $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
         }
-        foreach (repository::get_types() as $instance) {
+        foreach (\repository::get_types() as $instance) {
             $title = $instance->get_typename();
-            if (strpos(core_text::strtolower($title), $query) !== false) {
+            if (strpos(\core_text::strtolower($title), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -108,7 +110,7 @@ class admin_setting_managerepository extends admin_setting {
      */
 
     function repository_action_url($repository) {
-        return new moodle_url($this->baseurl, array('sesskey'=>sesskey(), 'repos'=>$repository));
+        return new \moodle_url($this->baseurl, array('sesskey'=>sesskey(), 'repos'=>$repository));
     }
 
     /**
@@ -146,13 +148,13 @@ class admin_setting_managerepository extends admin_setting {
         $disablestr = get_string('disable');
 
         // Table to list plug-ins
-        $table = new html_table();
+        $table = new \html_table();
         $table->head = array(get_string('name'), get_string('isactive', 'repository'), get_string('order'), $settingsstr);
         $table->align = array('left', 'center', 'center', 'center', 'center');
         $table->data = array();
 
         // Get list of used plug-ins
-        $repositorytypes = repository::get_types();
+        $repositorytypes = \repository::get_types();
         if (!empty($repositorytypes)) {
             // Array to store plugins being used
             $alreadyplugins = array();
@@ -162,26 +164,26 @@ class admin_setting_managerepository extends admin_setting {
                 $settings = '';
                 $typename = $i->get_typename();
                 // Display edit link only if you can config the type or if it has multiple instances (e.g. has instance config)
-                $typeoptionnames = repository::static_function($typename, 'get_type_option_names');
-                $instanceoptionnames = repository::static_function($typename, 'get_instance_option_names');
+                $typeoptionnames = \repository::static_function($typename, 'get_type_option_names');
+                $instanceoptionnames = \repository::static_function($typename, 'get_instance_option_names');
 
                 if (!empty($typeoptionnames) || !empty($instanceoptionnames)) {
                     // Calculate number of instances in order to display them for the Moodle administrator
                     if (!empty($instanceoptionnames)) {
                         $params = array();
-                        $params['context'] = array(context_system::instance());
+                        $params['context'] = array(\context_system::instance());
                         $params['onlyvisible'] = false;
                         $params['type'] = $typename;
-                        $admininstancenumber = count(repository::static_function($typename, 'get_instances', $params));
+                        $admininstancenumber = count(\repository::static_function($typename, 'get_instances', $params));
                         // site instances
                         $admininstancenumbertext = get_string('instancesforsite', 'repository', $admininstancenumber);
                         $params['context'] = array();
-                        $instances = repository::static_function($typename, 'get_instances', $params);
+                        $instances = \repository::static_function($typename, 'get_instances', $params);
                         $courseinstances = array();
                         $userinstances = array();
 
                         foreach ($instances as $instance) {
-                            $repocontext = context::instance_by_id($instance->instance->contextid);
+                            $repocontext = \context::instance_by_id($instance->instance->contextid);
                             if ($repocontext->contextlevel == CONTEXT_COURSE) {
                                 $courseinstances[] = $instance;
                             } else if ($repocontext->contextlevel == CONTEXT_USER) {
@@ -219,7 +221,7 @@ class admin_setting_managerepository extends admin_setting {
                     $currentaction = 'hide';
                 }
 
-                $select = new single_select($this->repository_action_url($typename, 'repos'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . basename($typename));
+                $select = new \single_select($this->repository_action_url($typename, 'repos'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . basename($typename));
 
                 // Display up/down link
                 $updown = '';
@@ -252,19 +254,24 @@ class admin_setting_managerepository extends admin_setting {
         }
 
         // Get all the plugins that exist on disk
-        $plugins = core_component::get_plugin_list('repository');
+        $plugins = \core_component::get_plugin_list('repository');
         if (!empty($plugins)) {
             foreach ($plugins as $plugin => $dir) {
                 // Check that it has not already been listed
                 if (!in_array($plugin, $alreadyplugins)) {
-                    $select = new single_select($this->repository_action_url($plugin, 'repos'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . basename($plugin));
+                    $select = new \single_select($this->repository_action_url($plugin, 'repos'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . basename($plugin));
                     $table->data[] = array(get_string('pluginname', 'repository_'.$plugin), $OUTPUT->render($select), '', '');
                 }
             }
         }
 
-        $return .= html_writer::table($table);
+        $return .= \html_writer::table($table);
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(managerepository::class, \admin_setting_managerepository::class);

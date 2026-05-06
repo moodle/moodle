@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configcheckbox extends admin_setting {
+namespace core_admin\setting\setting;
+
+class configcheckbox extends \admin_setting {
     /** @var string Value used when checked */
     public $yes;
     /** @var string Value used when not checked */
@@ -102,3 +104,8 @@ class admin_setting_configcheckbox extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $defaultinfo, $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configcheckbox::class, \admin_setting_configcheckbox::class);

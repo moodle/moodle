@@ -20,7 +20,9 @@
  * @copyright 2012 Petr Skoda (http://skodak.org)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configduration extends admin_setting {
+namespace core_admin\setting\setting;
+
+class configduration extends \admin_setting {
 
     /** @var int default duration unit */
     protected $defaultunit;
@@ -63,7 +65,7 @@ class admin_setting_configduration extends admin_setting {
      */
     public function set_min_duration(int $duration): void {
         if ($duration < 0) {
-            throw new coding_exception('The minimum duration must be at least 0.');
+            throw new \coding_exception('The minimum duration must be at least 0.');
         }
 
         $this->minduration = $duration;
@@ -269,3 +271,8 @@ class admin_setting_configduration extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, $inputid, '', $defaultinfo, $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configduration::class, \admin_setting_configduration::class);

@@ -20,7 +20,9 @@
  * @copyright 2009 Petr Skoda (http://skodak.org)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configcheckbox_with_advanced extends admin_setting_configcheckbox {
+namespace core_admin\setting\setting;
+
+class configcheckbox_with_advanced extends \admin_setting_configcheckbox {
 
     /**
      * Constructor
@@ -33,7 +35,12 @@ class admin_setting_configcheckbox_with_advanced extends admin_setting_configche
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $yes='1', $no='0') {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $yes, $no);
-        $this->set_advanced_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
+        $this->set_advanced_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['adv']));
     }
 
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configcheckbox_with_advanced::class, \admin_setting_configcheckbox_with_advanced::class);

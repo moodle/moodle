@@ -20,7 +20,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configempty extends admin_setting_configtext {
+namespace core_admin\setting\setting;
+
+class configempty extends \admin_setting_configtext {
 
     /**
      * @param string $name
@@ -50,3 +52,8 @@ class admin_setting_configempty extends admin_setting_configtext {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', get_string('none'), $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configempty::class, \admin_setting_configempty::class);

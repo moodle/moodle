@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_gradeexport extends admin_setting_configmulticheckbox {
+namespace core_admin\setting\setting;
+
+class special_gradeexport extends \admin_setting_configmulticheckbox {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -39,7 +41,7 @@ class admin_setting_special_gradeexport extends admin_setting_configmulticheckbo
         }
         $this->choices = array();
 
-        if ($plugins = core_component::get_plugin_list('gradeexport')) {
+        if ($plugins = \core_component::get_plugin_list('gradeexport')) {
             foreach($plugins as $plugin => $unused) {
                 $this->choices[$plugin] = get_string('pluginname', 'gradeexport_'.$plugin);
             }
@@ -47,3 +49,8 @@ class admin_setting_special_gradeexport extends admin_setting_configmulticheckbo
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_gradeexport::class, \admin_setting_special_gradeexport::class);

@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_gradeexportdefault extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class special_gradeexportdefault extends \admin_setting_configselect {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -54,7 +56,7 @@ class admin_setting_special_gradeexportdefault extends admin_setting_configselec
         }
         $this->choices = [];
 
-        if ($plugins = core_component::get_plugin_list('gradeexport')) {
+        if ($plugins = \core_component::get_plugin_list('gradeexport')) {
             foreach ($plugins as $plugin => $unused) {
                 $this->choices[$plugin] = get_string('pluginname', 'gradeexport_'.$plugin);
             }
@@ -62,3 +64,8 @@ class admin_setting_special_gradeexportdefault extends admin_setting_configselec
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_gradeexportdefault::class, \admin_setting_special_gradeexportdefault::class);

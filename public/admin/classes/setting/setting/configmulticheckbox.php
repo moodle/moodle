@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -21,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configmulticheckbox extends admin_setting {
+class configmulticheckbox extends \admin_setting {
     /** @var callable|null Loader function for choices */
     protected $choiceloader = null;
 
@@ -83,7 +85,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
         }
 
         foreach ($this->choices as $desc) {
-            if (strpos(core_text::strtolower($desc), $query) !== false) {
+            if (strpos(\core_text::strtolower($desc), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_VALUE;
                 return true;
             }
@@ -201,3 +203,8 @@ class admin_setting_configmulticheckbox extends admin_setting {
 
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configmulticheckbox::class, \admin_setting_configmulticheckbox::class);

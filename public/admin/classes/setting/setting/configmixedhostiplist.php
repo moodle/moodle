@@ -20,7 +20,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2016 Jake Dallimore (jrhdallimore@gmail.com)
  */
-class admin_setting_configmixedhostiplist extends admin_setting_configtextarea {
+namespace core_admin\setting\setting;
+
+class configmixedhostiplist extends \admin_setting_configtextarea {
 
     /**
      * Validate the contents of the textarea as either IP addresses, domain name or wildcard domain name (RFC 4592).
@@ -143,3 +145,8 @@ class admin_setting_configmixedhostiplist extends admin_setting_configtextarea {
         return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configmixedhostiplist::class, \admin_setting_configmixedhostiplist::class);

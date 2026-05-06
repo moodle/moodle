@@ -17,14 +17,16 @@
 /**
  * Text area for entering backup filename mustache templates, which are validated after submission.
  */
-class admin_setting_configbackupfilenamemustachetemplate extends admin_setting_configtextarea {
+namespace core_admin\setting\setting;
+
+class configbackupfilenamemustachetemplate extends \admin_setting_configtextarea {
     /**
      * Validates submitted data.
      * @param string $data
      * @return string|true string if error, else true if ok
      */
     public function validate($data) {
-        $errors = backup_plan_dbops::get_default_backup_filename_template_syntax_errors($data);
+        $errors = \backup_plan_dbops::get_default_backup_filename_template_syntax_errors($data);
 
         if (!empty($errors)) {
             return get_string('validateerror', 'admin');
@@ -33,3 +35,8 @@ class admin_setting_configbackupfilenamemustachetemplate extends admin_setting_c
         return parent::validate($data);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configbackupfilenamemustachetemplate::class, \admin_setting_configbackupfilenamemustachetemplate::class);

@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_gradecat_combo extends admin_setting {
+namespace core_admin\setting\setting;
+
+class gradecat_combo extends \admin_setting {
 
     /** @var array Array of choices value=>label. */
     public $choices;
@@ -86,7 +88,7 @@ class admin_setting_gradecat_combo extends admin_setting {
         // force regrade if needed
         if ($oldforced != $forced or ($forced and $value != $oldvalue)) {
             require_once($CFG->libdir.'/gradelib.php');
-            grade_category::updated_forced_settings();
+            \grade_category::updated_forced_settings();
         }
 
         if ($result1 and $result2) {
@@ -143,3 +145,8 @@ class admin_setting_gradecat_combo extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $defaultinfo, $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(gradecat_combo::class, \admin_setting_gradecat_combo::class);

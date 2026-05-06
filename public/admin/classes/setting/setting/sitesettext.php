@@ -20,7 +20,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_sitesettext extends admin_setting_configtext {
+namespace core_admin\setting\setting;
+
+class sitesettext extends \admin_setting_configtext {
 
     /**
      * Constructor.
@@ -77,7 +79,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
             return $validated;
         }
 
-        $record = new stdClass();
+        $record = new \stdClass();
         $record->id            = $SITE->id;
         $record->{$this->name} = $data;
         $record->timemodified  = time();
@@ -90,13 +92,13 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         if ($SITE->id == $COURSE->id) {
             $COURSE = $SITE;
         }
-        core_courseformat\base::reset_course_cache($SITE->id);
+        \core_courseformat\base::reset_course_cache($SITE->id);
 
         return '';
     }
 
     /**
-     * admin_setting_sitesettext is not meant to be overridden in config.php.
+     * The site text is not meant to be overridden in config.php.
      *
      * @return bool
      */
@@ -104,3 +106,8 @@ class admin_setting_sitesettext extends admin_setting_configtext {
         return false;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(sitesettext::class, \admin_setting_sitesettext::class);

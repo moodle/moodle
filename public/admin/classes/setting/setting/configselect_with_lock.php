@@ -20,7 +20,9 @@
  * @copyright 2017 Marina Glancy
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configselect_with_lock extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class configselect_with_lock extends \admin_setting_configselect {
     /**
      * Constructor
      * @param string $name unique ascii name, either 'mysetting' for settings that in config,
@@ -32,6 +34,11 @@ class admin_setting_configselect_with_lock extends admin_setting_configselect {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value'], $choices);
-        $this->set_locked_flag_options(admin_setting_flag::ENABLED, !empty($defaultsetting['locked']));
+        $this->set_locked_flag_options(\admin_setting_flag::ENABLED, !empty($defaultsetting['locked']));
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configselect_with_lock::class, \admin_setting_configselect_with_lock::class);

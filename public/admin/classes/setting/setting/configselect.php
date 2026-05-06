@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -21,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configselect extends admin_setting {
+class configselect extends \admin_setting {
     /** @var array Array of choices value=>label */
     public $choices;
     /** @var array Array of choices grouped using optgroups */
@@ -108,11 +110,11 @@ class admin_setting_configselect extends admin_setting {
             return false;
         }
         foreach ($this->choices as $key=>$value) {
-            if (strpos(core_text::strtolower($key), $query) !== false) {
+            if (strpos(\core_text::strtolower($key), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_VALUE;
                 return true;
             }
-            if (strpos(core_text::strtolower($value), $query) !== false) {
+            if (strpos(\core_text::strtolower($value), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_VALUE;
                 return true;
             }
@@ -247,3 +249,8 @@ class admin_setting_configselect extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, $warning, $defaultinfo, $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configselect::class, \admin_setting_configselect::class);

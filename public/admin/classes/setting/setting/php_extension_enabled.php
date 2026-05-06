@@ -20,7 +20,9 @@
  * @copyright 2013 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_php_extension_enabled extends admin_setting {
+namespace core_admin\setting\setting;
+
+class php_extension_enabled extends \admin_setting {
 
     /** @var string The name of the extension to check for */
     private $extension;
@@ -78,3 +80,8 @@ class admin_setting_php_extension_enabled extends admin_setting {
         return $o;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(php_extension_enabled::class, \admin_setting_php_extension_enabled::class);

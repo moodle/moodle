@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_emoticons extends admin_setting {
+namespace core_admin\setting\setting;
+
+class emoticons extends \admin_setting {
 
     /**
      * Calls parent::__construct with specific args
@@ -73,7 +75,7 @@ class admin_setting_emoticons extends admin_setting {
         if ($this->config_write($this->name, $manager->encode_stored_config($emoticons))) {
             return ''; // success
         } else {
-            return get_string('errorsetting', 'admin') . $this->visiblename . html_writer::empty_tag('br');
+            return get_string('errorsetting', 'admin') . $this->visiblename . \html_writer::empty_tag('br');
         }
     }
 
@@ -115,7 +117,7 @@ class admin_setting_emoticons extends admin_setting {
                     } else {
                         $alt = $fields[0]->value;
                     }
-                    $icon = new pix_emoticon($fields[1]->value, $alt, $fields[2]->value);
+                    $icon = new \pix_emoticon($fields[1]->value, $alt, $fields[2]->value);
                 }
                 $context->emoticons[] = [
                     'fields' => $fields,
@@ -126,7 +128,7 @@ class admin_setting_emoticons extends admin_setting {
             }
         }
 
-        $context->reseturl = new moodle_url('/admin/resetemoticons.php');
+        $context->reseturl = new \moodle_url('/admin/resetemoticons.php');
         $element = $OUTPUT->render_from_template('core_admin/setting_emoticons', $context);
         return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', NULL, $query);
     }
@@ -178,7 +180,7 @@ class admin_setting_emoticons extends admin_setting {
 
         $emoticons = array();
         for ($i = 0; $i < $count / 5; $i++) {
-            $emoticon                   = new stdClass();
+            $emoticon                   = new \stdClass();
             $emoticon->text             = clean_param(trim($form['text'.$i]), PARAM_NOTAGS);
             $emoticon->imagename        = clean_param(trim($form['imagename'.$i]), PARAM_PATH);
             $emoticon->imagecomponent   = clean_param(trim($form['imagecomponent'.$i]), PARAM_COMPONENT);
@@ -209,3 +211,8 @@ class admin_setting_emoticons extends admin_setting {
     }
 
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(emoticons::class, \admin_setting_emoticons::class);

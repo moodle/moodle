@@ -15,15 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * admin_setting_configselect for the default number of sections in a course,
- * simply so we can lazy-load the choices.
+ * A config select for the default number of sections in a course, simply so we can lazy-load the choices.
  *
  * @deprecated since Moodle 5.2.
  * @todo Remove this class in Moodle 6.0 (MDL-85272).
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_settings_num_course_sections extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class num_course_sections extends \admin_setting_configselect {
     /**
      * Constructor.
      *
@@ -56,3 +57,8 @@ class admin_settings_num_course_sections extends admin_setting_configselect {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(num_course_sections::class, \admin_settings_num_course_sections::class);

@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_requiredpasswordunmask extends admin_setting_configpasswordunmask {
+namespace core_admin\setting\setting;
+
+class requiredpasswordunmask extends \admin_setting_configpasswordunmask {
 
     /**
      * Validate data before storage.
@@ -36,3 +38,8 @@ class admin_setting_requiredpasswordunmask extends admin_setting_configpasswordu
         return parent::validate($data);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(requiredpasswordunmask::class, \admin_setting_requiredpasswordunmask::class);

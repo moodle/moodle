@@ -21,14 +21,16 @@
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_grademinmaxtouse extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class special_grademinmaxtouse extends \admin_setting_configselect {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        parent::__construct('grade_minmaxtouse', new lang_string('minmaxtouse', 'grades'),
-            new lang_string('minmaxtouse_desc', 'grades'), GRADE_MIN_MAX_FROM_GRADE_ITEM,
+        parent::__construct('grade_minmaxtouse', new \lang_string('minmaxtouse', 'grades'),
+            new \lang_string('minmaxtouse_desc', 'grades'), GRADE_MIN_MAX_FROM_GRADE_ITEM,
             array(
                 GRADE_MIN_MAX_FROM_GRADE_ITEM => get_string('gradeitemminmax', 'grades'),
                 GRADE_MIN_MAX_FROM_GRADE_GRADE => get_string('gradegrademinmax', 'grades')
@@ -58,3 +60,8 @@ class admin_setting_special_grademinmaxtouse extends admin_setting_configselect 
     }
 
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_grademinmaxtouse::class, \admin_setting_special_grademinmaxtouse::class);

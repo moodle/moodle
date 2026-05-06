@@ -20,7 +20,9 @@
  * @copyright 2010 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configcolourpicker extends admin_setting {
+namespace core_admin\setting\setting;
+
+class configcolourpicker extends \admin_setting {
 
     /**
      * Information for previewing the colour
@@ -158,7 +160,7 @@ class admin_setting_configcolourpicker extends admin_setting {
     public function output_html($data, $query = '') {
         global $PAGE, $OUTPUT;
 
-        $icon = new pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', ['class' => 'loadingicon']);
+        $icon = new \pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', ['class' => 'loadingicon']);
         $context = (object) [
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
@@ -177,3 +179,8 @@ class admin_setting_configcolourpicker extends admin_setting {
     }
 
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configcolourpicker::class, \admin_setting_configcolourpicker::class);

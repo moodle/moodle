@@ -20,7 +20,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class admin_setting {
+namespace core_admin;
+
+abstract class setting {
     /** @var string unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins. */
     public $name;
     /** @var lang_string|string localised name */
@@ -75,7 +77,7 @@ abstract class admin_setting {
      */
     protected function set_flag_options($enabled, $default, $shortname, $displayname) {
         if (empty($this->flags[$shortname])) {
-            $this->flags[$shortname] = new admin_setting_flag($enabled, $default, $shortname, $displayname);
+            $this->flags[$shortname] = new \admin_setting_flag($enabled, $default, $shortname, $displayname);
         } else {
             $this->flags[$shortname]->set_options($enabled, $default);
         }
@@ -88,7 +90,7 @@ abstract class admin_setting {
      * @param bool $default - The default for the flag
      */
     public function set_enabled_flag_options($enabled, $default) {
-        $this->set_flag_options($enabled, $default, 'enabled', new lang_string('enabled', 'core_admin'));
+        $this->set_flag_options($enabled, $default, 'enabled', new \lang_string('enabled', 'core_admin'));
     }
 
     /**
@@ -98,7 +100,7 @@ abstract class admin_setting {
      * @param bool $default - The default for the flag
      */
     public function set_advanced_flag_options($enabled, $default) {
-        $this->set_flag_options($enabled, $default, 'adv', new lang_string('advanced'));
+        $this->set_flag_options($enabled, $default, 'adv', new \lang_string('advanced'));
     }
 
 
@@ -109,7 +111,7 @@ abstract class admin_setting {
      * @param bool $default - The default for the flag
      */
     public function set_locked_flag_options($enabled, $default) {
-        $this->set_flag_options($enabled, $default, 'locked', new lang_string('locked', 'core_admin'));
+        $this->set_flag_options($enabled, $default, 'locked', new \lang_string('locked', 'core_admin'));
     }
 
     /**
@@ -119,7 +121,7 @@ abstract class admin_setting {
      * @param bool $default - The default for the flag.
      */
     public function set_required_flag_options($enabled, $default) {
-        $this->set_flag_options($enabled, $default, 'required', new lang_string('required', 'core_admin'));
+        $this->set_flag_options($enabled, $default, 'required', new \lang_string('required', 'core_admin'));
     }
 
     /**
@@ -146,10 +148,10 @@ abstract class admin_setting {
     /**
      * Get the currently saved value for a setting flag
      *
-     * @param admin_setting_flag $flag - One of the admin_setting_flag for this admin_setting.
+     * @param \core_admin\setting\setting\flag $flag The flag to fetch the value for
      * @return bool
      */
-    public function get_setting_flag_value(admin_setting_flag $flag) {
+    public function get_setting_flag_value(\admin_setting_flag $flag) {
         $value = $this->config_read($this->name . '_' . $flag->get_shortname());
         if (!isset($value)) {
             $value = $flag->get_default();
@@ -188,7 +190,7 @@ abstract class admin_setting {
         }
 
         if (!empty($output)) {
-            return html_writer::tag('span', $output, array('class' => 'adminsettingsflags'));
+            return \html_writer::tag('span', $output, array('class' => 'adminsettingsflags'));
         }
         return $output;
     }
@@ -220,18 +222,18 @@ abstract class admin_setting {
     private function parse_setting_name($name) {
         $bits = explode('/', $name);
         if (count($bits) > 2) {
-            throw new moodle_exception('invalidadminsettingname', '', '', $name);
+            throw new \moodle_exception('invalidadminsettingname', '', '', $name);
         }
         $this->name = array_pop($bits);
         if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->name)) {
-            throw new moodle_exception('invalidadminsettingname', '', '', $name);
+            throw new \moodle_exception('invalidadminsettingname', '', '', $name);
         }
         if (!empty($bits)) {
             $this->plugin = array_pop($bits);
             if ($this->plugin === 'moodle') {
                 $this->plugin = null;
             } else if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->plugin)) {
-                    throw new moodle_exception('invalidadminsettingname', '', '', $name);
+                    throw new \moodle_exception('invalidadminsettingname', '', '', $name);
                 }
         }
     }
@@ -408,18 +410,18 @@ abstract class admin_setting {
             $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
             return true;
         }
-        if (strpos(core_text::strtolower($this->visiblename), $query) !== false) {
+        if (strpos(\core_text::strtolower($this->visiblename), $query) !== false) {
             $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
             return true;
         }
-        if (strpos(core_text::strtolower($this->description), $query) !== false) {
+        if (strpos(\core_text::strtolower($this->description), $query) !== false) {
             $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_HELPER;
             return true;
         }
         $current = $this->get_setting();
         if (!is_null($current)) {
             if (is_string($current)) {
-                if (strpos(core_text::strtolower($current), $query) !== false) {
+                if (strpos(\core_text::strtolower($current), $query) !== false) {
                     $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_VALUE;
                     return true;
                 }
@@ -428,7 +430,7 @@ abstract class admin_setting {
         $default = $this->get_defaultsetting();
         if (!is_null($default)) {
             if (is_string($default)) {
-                if (strpos(core_text::strtolower($default), $query) !== false) {
+                if (strpos(\core_text::strtolower($default), $query) !== false) {
                     $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_HELPER;
                     return true;
                 }
@@ -493,3 +495,8 @@ abstract class admin_setting {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(setting::class, \admin_setting::class);

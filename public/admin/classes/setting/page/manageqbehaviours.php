@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\page;
+
 use core_admin\admin_search;
 
 /**
@@ -22,14 +24,14 @@ use core_admin\admin_search;
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_page_manageqbehaviours extends admin_externalpage {
+class manageqbehaviours extends \admin_externalpage {
     /**
      * Constructor
      */
     public function __construct() {
         global $CFG;
         parent::__construct('manageqbehaviours', get_string('manageqbehaviours', 'admin'),
-                new moodle_url('/admin/qbehaviours.php'));
+                new \moodle_url('/admin/qbehaviours.php'));
     }
 
     /**
@@ -46,8 +48,8 @@ class admin_page_manageqbehaviours extends admin_externalpage {
 
         $found = false;
         require_once($CFG->dirroot . '/question/engine/lib.php');
-        foreach (core_component::get_plugin_list('qbehaviour') as $behaviour => $notused) {
-            if (strpos(core_text::strtolower(question_engine::get_behaviour_name($behaviour)),
+        foreach (\core_component::get_plugin_list('qbehaviour') as $behaviour => $notused) {
+            if (strpos(\core_text::strtolower(\question_engine::get_behaviour_name($behaviour)),
                     $query) !== false) {
                 $type = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 $found = true;
@@ -55,7 +57,7 @@ class admin_page_manageqbehaviours extends admin_externalpage {
             }
         }
         if ($found) {
-            $result = new stdClass();
+            $result = new \stdClass();
             $result->page     = $this;
             $result->settings = array();
             $result->searchmatchtype = $type;
@@ -65,3 +67,8 @@ class admin_page_manageqbehaviours extends admin_externalpage {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(manageqbehaviours::class, \admin_page_manageqbehaviours::class);

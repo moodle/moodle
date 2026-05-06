@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -22,7 +24,7 @@ use core_admin\admin_search;
  * @copyright 2016 Marina Glancy
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_managemediaplayers extends admin_setting {
+class managemediaplayers extends \admin_setting {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -71,15 +73,15 @@ class admin_setting_managemediaplayers extends admin_setting {
             return true;
         }
 
-        $query = core_text::strtolower($query);
-        $plugins = core_plugin_manager::instance()->get_plugins_of_type('media');
+        $query = \core_text::strtolower($query);
+        $plugins = \core_plugin_manager::instance()->get_plugins_of_type('media');
         foreach ($plugins as $name => $plugin) {
             $localised = $plugin->displayname;
-            if (strpos(core_text::strtolower($name), $query) !== false) {
+            if (strpos(\core_text::strtolower($name), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
-            if (strpos(core_text::strtolower($localised), $query) !== false) {
+            if (strpos(\core_text::strtolower($localised), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -92,7 +94,7 @@ class admin_setting_managemediaplayers extends admin_setting {
      * @return \core\plugininfo\media[]
      */
     protected function get_sorted_plugins() {
-        $pluginmanager = core_plugin_manager::instance();
+        $pluginmanager = \core_plugin_manager::instance();
 
         $plugins = $pluginmanager->get_plugins_of_type('media');
         $enabledplugins = $pluginmanager->get_enabled_plugins('media');
@@ -132,14 +134,14 @@ class admin_setting_managemediaplayers extends admin_setting {
         $strname      = get_string('name');
         $strsupports  = get_string('supports', 'core_media');
 
-        $pluginmanager = core_plugin_manager::instance();
+        $pluginmanager = \core_plugin_manager::instance();
 
         $plugins = $this->get_sorted_plugins();
         $enabledplugins = $pluginmanager->get_enabled_plugins('media');
 
         $return = $OUTPUT->box_start('generalbox mediaplayersui');
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head  = array($strname, $strsupports, $strversion,
             $strenable, $strup.'/'.$strdown, $strsettings, $struninstall);
         $table->colclasses = array('leftalign', 'leftalign', 'centeralign',
@@ -150,7 +152,7 @@ class admin_setting_managemediaplayers extends admin_setting {
 
         // Iterate through media plugins and add to the display table.
         $updowncount = 1;
-        $url = new moodle_url('/admin/media.php', array('sesskey' => sesskey()));
+        $url = new \moodle_url('/admin/media.php', array('sesskey' => sesskey()));
         $printed = array();
         $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
 
@@ -171,10 +173,10 @@ class admin_setting_managemediaplayers extends admin_setting {
             } else {
                 $enabled = $plugininfo->is_enabled();
                 if ($enabled) {
-                    $hideshow = html_writer::link(new moodle_url($url, array('action' => 'disable')),
+                    $hideshow = \html_writer::link(new \moodle_url($url, array('action' => 'disable')),
                         $OUTPUT->pix_icon('t/hide', $strdisable, 'moodle', array('class' => 'iconsmall')));
                 } else {
-                    $hideshow = html_writer::link(new moodle_url($url, array('action' => 'enable')),
+                    $hideshow = \html_writer::link(new \moodle_url($url, array('action' => 'enable')),
                         $OUTPUT->pix_icon('t/show', $strenable, 'moodle', array('class' => 'iconsmall')));
                     $class = 'dimmed_text';
                 }
@@ -193,13 +195,13 @@ class admin_setting_managemediaplayers extends admin_setting {
             $updown = '';
             if ($enabled) {
                 if ($updowncount > 1) {
-                    $updown = html_writer::link(new moodle_url($url, array('action' => 'up')),
+                    $updown = \html_writer::link(new \moodle_url($url, array('action' => 'up')),
                         $OUTPUT->pix_icon('t/up', $strup, 'moodle', array('class' => 'iconsmall')));
                 } else {
                     $updown = $spacer;
                 }
                 if ($updowncount < count($enabledplugins)) {
-                    $updown .= html_writer::link(new moodle_url($url, array('action' => 'down')),
+                    $updown .= \html_writer::link(new \moodle_url($url, array('action' => 'down')),
                         $OUTPUT->pix_icon('t/down', $strdown, 'moodle', array('class' => 'iconsmall')));
                 } else {
                     $updown .= $spacer;
@@ -209,22 +211,22 @@ class admin_setting_managemediaplayers extends admin_setting {
 
             $uninstall = '';
             $status = $plugininfo->get_status();
-            if ($status === core_plugin_manager::PLUGIN_STATUS_MISSING) {
+            if ($status === \core_plugin_manager::PLUGIN_STATUS_MISSING) {
                 $uninstall = get_string('status_missing', 'core_plugin') . '<br/>';
             }
-            if ($status === core_plugin_manager::PLUGIN_STATUS_NEW) {
+            if ($status === \core_plugin_manager::PLUGIN_STATUS_NEW) {
                 $uninstall = get_string('status_new', 'core_plugin');
             } else if ($uninstallurl = $pluginmanager->get_uninstall_url('media_'.$name, 'manage')) {
-                $uninstall .= html_writer::link($uninstallurl, $struninstall);
+                $uninstall .= \html_writer::link($uninstallurl, $struninstall);
             }
 
             $settings = '';
             if ($plugininfo->get_settings_url()) {
-                $settings = html_writer::link($plugininfo->get_settings_url(), $strsettings);
+                $settings = \html_writer::link($plugininfo->get_settings_url(), $strsettings);
             }
 
             // Add a row to the table.
-            $row = new html_table_row(array($icon.$displayname, $supports, $version, $hideshow, $updown, $settings, $uninstall));
+            $row = new \html_table_row(array($icon.$displayname, $supports, $version, $hideshow, $updown, $settings, $uninstall));
             if ($class) {
                 $row->attributes['class'] = $class;
             }
@@ -233,8 +235,13 @@ class admin_setting_managemediaplayers extends admin_setting {
             $printed[$name] = true;
         }
 
-        $return .= html_writer::table($table);
+        $return .= \html_writer::table($table);
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(managemediaplayers::class, \admin_setting_managemediaplayers::class);

@@ -1021,7 +1021,7 @@ function admin_search_settings_html($query) {
         'sesskey' => sesskey(),
     ];
 
-    $sortedresults = admin_search::sort_search_results($findings);
+    $sortedresults = \core_admin\admin_search::sort_search_results($findings);
 
     foreach ($sortedresults as $result) {
         $page = $result->page;

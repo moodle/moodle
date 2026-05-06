@@ -24,7 +24,9 @@
  * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configstoredfile extends admin_setting {
+namespace core_admin\setting\setting;
+
+class configstoredfile extends \admin_setting {
     /** @var array file area options - should be one file only */
     protected $options;
     /** @var string name of the file area */
@@ -64,7 +66,7 @@ class admin_setting_configstoredfile extends admin_setting {
         $defaults = array(
             'mainfile' => '', 'subdirs' => 0, 'maxbytes' => -1, 'maxfiles' => 1,
             'accepted_types' => '*', 'return_types' => FILE_INTERNAL, 'areamaxbytes' => FILE_AREA_MAX_BYTES_UNLIMITED,
-            'context' => context_system::instance());
+            'context' => \context_system::instance());
         foreach($this->options as $k => $v) {
             $defaults[$k] = $v;
         }
@@ -106,7 +108,7 @@ class admin_setting_configstoredfile extends admin_setting {
             // Make sure the settings form was not open for more than 4 days and draft areas deleted in the meantime.
             // But we can safely ignore that if the destination area is empty, so that the user is not prompt
             // with an error because the draft area does not exist, as he did not use it.
-            $usercontext = context_user::instance($USER->id);
+            $usercontext = \context_user::instance($USER->id);
             if (!$fs->file_exists($usercontext->id, 'user', 'draft', $data, '/', '.') && $current !== '') {
                 return get_string('errorsetting', 'admin');
             }
@@ -166,7 +168,7 @@ class admin_setting_configstoredfile extends admin_setting {
         // Filemanager form element implementation is far from optimal, we need to rework this if we ever fix it...
         require_once("$CFG->dirroot/lib/form/filemanager.php");
 
-        $fmoptions = new stdClass();
+        $fmoptions = new \stdClass();
         $fmoptions->mainfile       = $options['mainfile'];
         $fmoptions->maxbytes       = $options['maxbytes'];
         $fmoptions->maxfiles       = $options['maxfiles'];
@@ -176,7 +178,7 @@ class admin_setting_configstoredfile extends admin_setting {
         $fmoptions->context        = $options['context'];
         $fmoptions->areamaxbytes   = $options['areamaxbytes'];
 
-        $fm = new MoodleQuickForm_filemanager($elname, $this->visiblename, ['id' => $id], $fmoptions);
+        $fm = new \MoodleQuickForm_filemanager($elname, $this->visiblename, ['id' => $id], $fmoptions);
         $fm->setValue($draftitemid);
 
         return format_admin_setting($this, $this->visiblename,
@@ -184,3 +186,8 @@ class admin_setting_configstoredfile extends admin_setting {
             $this->description, true, '', '', $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configstoredfile::class, \admin_setting_configstoredfile::class);

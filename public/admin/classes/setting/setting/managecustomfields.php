@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -23,14 +25,14 @@ use core_admin\admin_search;
  * @copyright  2018 Toni Barbera
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_managecustomfields extends admin_setting {
+class managecustomfields extends \admin_setting {
 
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         $this->nosave = true;
-        parent::__construct('customfieldsui', new lang_string('managecustomfields', 'core_admin'), '', '');
+        parent::__construct('customfieldsui', new \lang_string('managecustomfields', 'core_admin'), '', '');
     }
 
     /**
@@ -72,13 +74,13 @@ class admin_setting_managecustomfields extends admin_setting {
         if (parent::is_related($query)) {
             return true;
         }
-        $formats = core_plugin_manager::instance()->get_plugins_of_type('customfield');
+        $formats = \core_plugin_manager::instance()->get_plugins_of_type('customfield');
         foreach ($formats as $format) {
             if (strpos($format->component, $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
-            if (strpos(core_text::strtolower($format->displayname), $query) !== false) {
+            if (strpos(\core_text::strtolower($format->displayname), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -96,16 +98,16 @@ class admin_setting_managecustomfields extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG, $OUTPUT;
         $return = '';
-        $return = $OUTPUT->heading(new lang_string('customfields', 'core_customfield'), 3, 'main');
+        $return = $OUTPUT->heading(new \lang_string('customfields', 'core_customfield'), 3, 'main');
         $return .= $OUTPUT->box_start('generalbox customfieldsui');
 
-        $fields = core_plugin_manager::instance()->get_plugins_of_type('customfield');
+        $fields = \core_plugin_manager::instance()->get_plugins_of_type('customfield');
 
         $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down'));
         $txt->uninstall = get_string('uninstallplugin', 'core_admin');
         $txt->updown = "$txt->up/$txt->down";
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->uninstall, $txt->settings);
         $table->align = array('left', 'center', 'center', 'center');
         $table->attributes['class'] = 'managecustomfieldtable table generaltable admintable table-striped table-hover';
@@ -113,34 +115,39 @@ class admin_setting_managecustomfields extends admin_setting {
 
         $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
         foreach ($fields as $field) {
-            $url = new moodle_url('/admin/customfields.php',
+            $url = new \moodle_url('/admin/customfields.php',
                     array('sesskey' => sesskey(), 'field' => $field->name));
 
             if ($field->is_enabled()) {
                 $strfieldname = $field->displayname;
                 $class = '';
-                $hideshow = html_writer::link($url->out(false, array('action' => 'disable')),
+                $hideshow = \html_writer::link($url->out(false, array('action' => 'disable')),
                         $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', array('class' => 'iconsmall')));
             } else {
                 $strfieldname = $field->displayname;
                 $class = 'dimmed_text';
-                $hideshow = html_writer::link($url->out(false, array('action' => 'enable')),
+                $hideshow = \html_writer::link($url->out(false, array('action' => 'enable')),
                     $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', array('class' => 'iconsmall')));
             }
             $settings = '';
             if ($field->get_settings_url()) {
-                $settings = html_writer::link($field->get_settings_url(), $txt->settings);
+                $settings = \html_writer::link($field->get_settings_url(), $txt->settings);
             }
             $uninstall = '';
-            if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('customfield_'.$field->name, 'manage')) {
-                $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
+            if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url('customfield_'.$field->name, 'manage')) {
+                $uninstall = \html_writer::link($uninstallurl, $txt->uninstall);
             }
-            $row = new html_table_row(array($strfieldname, $hideshow, $uninstall, $settings));
+            $row = new \html_table_row(array($strfieldname, $hideshow, $uninstall, $settings));
             $row->attributes['class'] = $class;
             $table->data[] = $row;
         }
-        $return .= html_writer::table($table);
+        $return .= \html_writer::table($table);
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(managecustomfields::class, \admin_setting_managecustomfields::class);

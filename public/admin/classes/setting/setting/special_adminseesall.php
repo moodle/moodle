@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_adminseesall extends admin_setting_configcheckbox {
+namespace core_admin\setting\setting;
+
+class special_adminseesall extends \admin_setting_configcheckbox {
     /**
      * Calls the parent::__construct with default values
      *
@@ -44,3 +46,8 @@ class admin_setting_special_adminseesall extends admin_setting_configcheckbox {
         return parent::write_setting($data);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_adminseesall::class, \admin_setting_special_adminseesall::class);

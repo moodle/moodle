@@ -16,11 +16,14 @@
 
 /**
  * An additional option that can be applied to an admin setting.
+ *
  * The currently supported options are 'ADVANCED', 'LOCKED' and 'REQUIRED'.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_flag {
+namespace core_admin\setting\setting;
+
+class flag {
     /** @var bool Flag to indicate if this option can be toggled for this setting */
     private $enabled = false;
     /** @var bool Flag to indicate if this option defaults to true or false */
@@ -38,7 +41,7 @@ class admin_setting_flag {
      * Constructor
      *
      * @param bool $enabled Can this option can be toggled.
-     *                      Should be one of admin_setting_flag::ENABLED or admin_setting_flag::DISABLED.
+     *                      Should be one of self::ENABLED or self::DISABLED.
      * @param bool $default The default checked state for this setting option.
      * @param string $shortname The shortname of this flag. Currently supported flags are 'locked' and 'adv'
      * @param string $displayname The displayname of this flag. Used as a label for the flag.
@@ -53,7 +56,7 @@ class admin_setting_flag {
      * Update the values of this setting options class
      *
      * @param bool $enabled Can this option can be toggled.
-     *                      Should be one of admin_setting_flag::ENABLED or admin_setting_flag::DISABLED.
+     *                      Should be one of self::ENABLED or self::DISABLED.
      * @param bool $default The default checked state for this setting option.
      */
     public function set_options($enabled, $default) {
@@ -100,11 +103,11 @@ class admin_setting_flag {
     /**
      * Save the submitted data for this flag - or set it to the default if $data is null.
      *
-     * @param admin_setting $setting - The admin setting for this flag
+     * @param \core_admin\setting $setting - The admin setting for this flag
      * @param array $data - The data submitted from the form or null to set the default value for new installs.
      * @return bool
      */
-    public function write_setting_flag(admin_setting $setting, $data) {
+    public function write_setting_flag(\admin_setting $setting, $data) {
         $result = true;
         if ($this->is_enabled()) {
             if (!isset($data)) {
@@ -122,15 +125,15 @@ class admin_setting_flag {
     /**
      * Output the checkbox for this setting flag. Should only be called if the flag is enabled.
      *
-     * @param admin_setting $setting - The admin setting for this flag
+     * @param \core_admin\setting $setting - The admin setting for this flag
      * @return string - The html for the checkbox.
      */
-    public function output_setting_flag(admin_setting $setting) {
+    public function output_setting_flag(\admin_setting $setting) {
         global $OUTPUT;
 
         $value = $setting->get_setting_flag_value($this);
 
-        $context = new stdClass();
+        $context = new \stdClass();
         $context->id = $setting->get_id() . '_' . $this->get_shortname();
         $context->name = $setting->get_full_name() .  '_' . $this->get_shortname();
         $context->value = 1;
@@ -140,3 +143,8 @@ class admin_setting_flag {
         return $OUTPUT->render_from_template('core_admin/setting_flag', $context);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(flag::class, \self::class);

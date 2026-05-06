@@ -21,7 +21,9 @@
  * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
 * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_manage_fileconverter_plugins extends admin_setting_manage_plugins {
+namespace core_admin\setting\setting;
+
+class manage_fileconverter_plugins extends \admin_setting_manage_plugins {
     public function get_section_title() {
         return get_string('type_fileconverter_plural', 'plugin');
     }
@@ -38,3 +40,8 @@ class admin_setting_manage_fileconverter_plugins extends admin_setting_manage_pl
         return $plugininfo->get_supported_conversions();
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(manage_fileconverter_plugins::class, \admin_setting_manage_fileconverter_plugins::class);

@@ -23,7 +23,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2016 Dan Poltawski <dan@moodle.com>
  */
-class admin_setting_scsscode extends admin_setting_configtextarea {
+namespace core_admin\setting\setting;
+
+class scsscode extends \admin_setting_configtextarea {
 
     /**
      * Validate the contents of the SCSS to ensure its parsable. Does not
@@ -37,12 +39,12 @@ class admin_setting_scsscode extends admin_setting_configtextarea {
             return true;
         }
 
-        $scss = new core_scss();
+        $scss = new \core_scss();
         try {
             $scss->compile($data);
-        } catch (ScssPhp\ScssPhp\Exception\ParserException $e) {
+        } catch (\ScssPhp\ScssPhp\Exception\ParserException $e) {
             return get_string('scssinvalid', 'admin', $e->getMessage());
-        } catch (ScssPhp\ScssPhp\Exception\CompilerException $e) {
+        } catch (\ScssPhp\ScssPhp\Exception\CompilerException $e) {
             // Silently ignore this - it could be a scss variable defined from somewhere
             // else which we are not examining here.
             return true;
@@ -51,3 +53,8 @@ class admin_setting_scsscode extends admin_setting_configtextarea {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(scsscode::class, \admin_setting_scsscode::class);

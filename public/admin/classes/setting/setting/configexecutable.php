@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configexecutable extends admin_setting_configfile {
+namespace core_admin\setting\setting;
+
+class configexecutable extends \admin_setting_configfile {
 
     /**
      * Returns an XHTML field
@@ -53,3 +55,8 @@ class admin_setting_configexecutable extends admin_setting_configfile {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configexecutable::class, \admin_setting_configexecutable::class);

@@ -14,9 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\page;
+
 use core_admin\admin_search;
 
-class admin_page_managerepositories extends admin_externalpage {
+class managerepositories extends \admin_externalpage {
 
 /**
      * Calls parent::__construct with specific arguments
@@ -39,7 +41,7 @@ class admin_page_managerepositories extends admin_externalpage {
         }
 
         $found = false;
-        $repositories= core_component::get_plugin_list('repository');
+        $repositories= \core_component::get_plugin_list('repository');
         foreach ($repositories as $p => $dir) {
             if (strpos($p, $query) !== false) {
                 $type = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
@@ -48,9 +50,9 @@ class admin_page_managerepositories extends admin_externalpage {
             }
         }
         if (!$found) {
-            foreach (repository::get_types() as $instance) {
+            foreach (\repository::get_types() as $instance) {
                 $title = $instance->get_typename();
-                if (strpos(core_text::strtolower($title), $query) !== false) {
+                if (strpos(\core_text::strtolower($title), $query) !== false) {
                     $type = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                     $found = true;
                     break;
@@ -59,7 +61,7 @@ class admin_page_managerepositories extends admin_externalpage {
         }
 
         if ($found) {
-            $result = new stdClass();
+            $result = new \stdClass();
             $result->page     = $this;
             $result->settings = array();
             $result->searchmatchtype = $type;
@@ -69,3 +71,8 @@ class admin_page_managerepositories extends admin_externalpage {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(managerepositories::class, \admin_page_managerepositories::class);

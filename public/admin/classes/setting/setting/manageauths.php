@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -21,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_manageauths extends admin_setting {
+class manageauths extends \admin_setting {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -69,7 +71,7 @@ class admin_setting_manageauths extends admin_setting {
             return true;
         }
 
-        $authsavailable = core_component::get_plugin_list('auth');
+        $authsavailable = \core_component::get_plugin_list('auth');
         foreach ($authsavailable as $auth => $dir) {
             if (strpos($auth, $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
@@ -77,7 +79,7 @@ class admin_setting_manageauths extends admin_setting {
             }
             $authplugin = \core\di::get(\core\authentication::class)->get_plugin($auth);
             $authtitle = $authplugin->get_title();
-            if (strpos(core_text::strtolower($authtitle), $query) !== false) {
+            if (strpos(\core_text::strtolower($authtitle), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -103,7 +105,7 @@ class admin_setting_manageauths extends admin_setting {
         $txt->uninstall = get_string('uninstallplugin', 'core_admin');
         $txt->testsettings = get_string('testsettings', 'core_auth');
 
-        $authsavailable = core_component::get_plugin_list('auth');
+        $authsavailable = \core_component::get_plugin_list('auth');
         // Fix the list of enabled auths.
         \core\di::get(\core\authentication::class)->get_enabled_plugins(true);
         if (empty($CFG->auth)) {
@@ -148,7 +150,7 @@ class admin_setting_manageauths extends admin_setting {
         $return = $OUTPUT->heading(get_string('actauthhdr', 'auth'), 3, 'main');
         $return .= $OUTPUT->box_start('generalbox authsui');
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head  = array($txt->name, $txt->users, $txt->enable, $txt->updown, $txt->settings, $txt->testsettings, $txt->uninstall);
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->data  = array();
@@ -222,26 +224,31 @@ class admin_setting_manageauths extends admin_setting {
 
             // Uninstall link.
             $uninstall = '';
-            if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('auth_'.$auth, 'manage')) {
-                $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
+            if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url('auth_'.$auth, 'manage')) {
+                $uninstall = \html_writer::link($uninstallurl, $txt->uninstall);
             }
 
             $test = '';
             if (!empty($authplugins[$auth]) and method_exists($authplugins[$auth], 'test_settings')) {
-                $testurl = new moodle_url('/auth/test_settings.php', ['auth' => $auth]);
-                $test = html_writer::link($testurl, $txt->testsettings);
+                $testurl = new \moodle_url('/auth/test_settings.php', ['auth' => $auth]);
+                $test = \html_writer::link($testurl, $txt->testsettings);
             }
 
             // Add a row to the table.
-            $row = new html_table_row(array($displayname, $usercount, $hideshow, $updown, $settings, $test, $uninstall));
+            $row = new \html_table_row(array($displayname, $usercount, $hideshow, $updown, $settings, $test, $uninstall));
             if ($class) {
                 $row->attributes['class'] = $class;
             }
             $table->data[] = $row;
         }
-        $return .= html_writer::table($table);
+        $return .= \html_writer::table($table);
         $return .= get_string('configauthenticationplugins', 'admin').'<br />'.get_string('tablenosave', 'filters');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(manageauths::class, \admin_setting_manageauths::class);

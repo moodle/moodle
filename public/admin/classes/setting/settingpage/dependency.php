@@ -14,13 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core\exception\coding_exception;
+
 /**
  * Used to store details of the dependency between two settings elements.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2017 Davo Smith, Synergy Learning
  */
-class admin_settingdependency {
+namespace core_admin\setting\settingpage;
+
+class dependency {
     /** @var string the name of the setting to be shown/hidden */
     public $settingname;
     /** @var string the setting this is dependent on */
@@ -34,12 +38,13 @@ class admin_settingdependency {
     private static $validconditions = ['checked', 'notchecked', 'noitemselected', 'eq', 'neq', 'in'];
 
     /**
-     * admin_settingdependency constructor.
+     * Constructor for the dependency.
+     *
      * @param string $settingname
      * @param string $dependenton
      * @param string $condition
      * @param string $value
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function __construct($settingname, $dependenton, $condition, $value) {
         $this->settingname = $this->parse_name($settingname);
@@ -71,8 +76,9 @@ class admin_settingdependency {
     }
 
     /**
-     * Gather together all the dependencies in a format suitable for initialising javascript
-     * @param admin_settingdependency[] $dependencies
+     * Gather together all the dependencies in a format suitable for initialising javascript.
+     *
+     * @param self[] $dependencies
      * @return array
      */
     public static function prepare_for_javascript($dependencies) {
@@ -92,3 +98,8 @@ class admin_settingdependency {
         return $result;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(dependency::class, \admin_settingdependency::class);

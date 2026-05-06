@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configtextarea extends admin_setting_configtext {
+namespace core_admin\setting\setting;
+
+class configtextarea extends \admin_setting_configtext {
     private $rows;
     private $cols;
 
@@ -68,3 +70,8 @@ class admin_setting_configtextarea extends admin_setting_configtext {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $defaultinfo, $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configtextarea::class, \admin_setting_configtextarea::class);

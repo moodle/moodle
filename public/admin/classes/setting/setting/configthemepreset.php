@@ -20,7 +20,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2019 Bas Brands <bas@moodle.com>
  */
-class admin_setting_configthemepreset extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class configthemepreset extends \admin_setting_configselect {
 
     /** @var string The name of the theme to check for */
     private $themename;
@@ -67,8 +69,8 @@ class admin_setting_configthemepreset extends admin_setting_configselect {
         }
 
         $fs = get_file_storage();
-        $theme = theme_config::load($this->themename);
-        $context = context_system::instance();
+        $theme = \theme_config::load($this->themename);
+        $context = \context_system::instance();
 
         // If the preset has not changed there is no need to validate it.
         if ($theme->settings->preset == $data) {
@@ -78,12 +80,12 @@ class admin_setting_configthemepreset extends admin_setting_configselect {
         if ($presetfile = $fs->get_file($context->id, 'theme_' . $this->themename, 'preset', 0, '/', $data)) {
             // This operation uses a lot of resources.
             raise_memory_limit(MEMORY_EXTRA);
-            core_php_time_limit::raise(300);
+            \core_php_time_limit::raise(300);
 
             // TODO: MDL-62757 When changing anything in this method please do not forget to check
             // if the get_css_content_from_scss() method in class theme_config needs updating too.
 
-            $compiler = new core_scss();
+            $compiler = new \core_scss();
             $compiler->prepend_raw_scss($theme->get_pre_scss_code());
             $compiler->append_raw_scss($presetfile->get_content());
             if ($scssproperties = $theme->get_scss_property()) {
@@ -93,7 +95,7 @@ class admin_setting_configthemepreset extends admin_setting_configselect {
 
             try {
                 $compiler->to_css();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return get_string('invalidthemepreset', 'admin', $e->getMessage());
             }
 
@@ -105,3 +107,8 @@ class admin_setting_configthemepreset extends admin_setting_configselect {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configthemepreset::class, \admin_setting_configthemepreset::class);

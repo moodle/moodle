@@ -21,20 +21,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
-class admin_setting_servertimezone extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class servertimezone extends \admin_setting_configselect {
     /**
      * Constructor.
      */
     public function __construct() {
-        $default = core_date::get_default_php_timezone();
+        $default = \core_date::get_default_php_timezone();
         if ($default === 'UTC') {
             // Nobody really wants UTC, so instead default selection to the country that is confused by the UTC the most.
             $default = 'Europe/London';
         }
 
         parent::__construct('timezone',
-            new lang_string('timezone', 'core_admin'),
-            new lang_string('configtimezone', 'core_admin'), $default, null);
+            new \lang_string('timezone', 'core_admin'),
+            new \lang_string('configtimezone', 'core_admin'), $default, null);
     }
 
     /**
@@ -48,13 +50,18 @@ class admin_setting_servertimezone extends admin_setting_configselect {
         }
 
         $current = isset($CFG->timezone) ? $CFG->timezone : null;
-        $this->choices = core_date::get_list_of_timezones($current, false);
+        $this->choices = \core_date::get_list_of_timezones($current, false);
         if ($current == 99) {
             // Do not show 99 unless it is current value, we want to get rid of it over time.
-            $this->choices['99'] = new lang_string('timezonephpdefault', 'core_admin',
-                core_date::get_default_php_timezone());
+            $this->choices['99'] = new \lang_string('timezonephpdefault', 'core_admin',
+                \core_date::get_default_php_timezone());
         }
 
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(servertimezone::class, \admin_setting_servertimezone::class);

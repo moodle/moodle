@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configselect_autocomplete extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class configselect_autocomplete extends \admin_setting_configselect {
     /** @var boolean $tags Should we allow typing new entries to the field? */
     protected $tags = false;
     /** @var string $ajax Name of an AMD module to send/process ajax requests. */
@@ -60,3 +62,8 @@ class admin_setting_configselect_autocomplete extends admin_setting_configselect
         return $html;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configselect_autocomplete::class, \admin_setting_configselect_autocomplete::class);

@@ -20,7 +20,9 @@
  * @copyright 2015 onwards Ankit Agarwal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_configtext_with_maxlength extends admin_setting_configtext {
+namespace core_admin\setting\setting;
+
+class configtext_with_maxlength extends \admin_setting_configtext {
 
     /** @var int maximum number of chars allowed. */
     protected $maxlength;
@@ -55,7 +57,7 @@ class admin_setting_configtext_with_maxlength extends admin_setting_configtext {
         if ($parentvalidation === true) {
             if ($this->maxlength > 0) {
                 // Max length check.
-                $length = core_text::strlen($data);
+                $length = \core_text::strlen($data);
                 if ($length > $this->maxlength) {
                     return get_string('maximumchars', 'moodle',  $this->maxlength);
                 }
@@ -82,3 +84,8 @@ class admin_setting_configtext_with_maxlength extends admin_setting_configtext {
         return parent::output_html($data, $query);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configtext_with_maxlength::class, \admin_setting_configtext_with_maxlength::class);

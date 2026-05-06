@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\tree;
+
 use core_admin\admin_search;
 use core_admin\local\settings\linkable_settings_page;
 
@@ -24,7 +26,7 @@ use core_admin\local\settings\linkable_settings_page;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_externalpage implements part_of_admin_tree, linkable_settings_page {
+class externalpage implements \part_of_admin_tree, linkable_settings_page {
 
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
@@ -82,8 +84,8 @@ class admin_externalpage implements part_of_admin_tree, linkable_settings_page {
      *
      * @return moodle_url
      */
-    public function get_settings_page_url(): moodle_url {
-        return new moodle_url($this->url);
+    public function get_settings_page_url(): \moodle_url {
+        return new \moodle_url($this->url);
     }
 
     /**
@@ -125,14 +127,14 @@ class admin_externalpage implements part_of_admin_tree, linkable_settings_page {
     public function search($query) {
         $found = false;
         if (
-            strpos(core_text::strtolower($this->visiblename), $query) !== false ||
+            strpos(\core_text::strtolower($this->visiblename), $query) !== false ||
             strpos(strtolower($this->name), $query) !== false
         ) {
             $type = admin_search::SEARCH_MATCH_PAGE_TITLE;
             $found = true;
         }
         if ($found) {
-            $result = new stdClass();
+            $result = new \stdClass();
             $result->page = $this;
             $result->settings = [];
             $result->searchmatchtype = $type;
@@ -149,7 +151,7 @@ class admin_externalpage implements part_of_admin_tree, linkable_settings_page {
      */
     public function check_access() {
         global $CFG;
-        $context = empty($this->context) ? context_system::instance() : $this->context;
+        $context = empty($this->context) ? \context_system::instance() : $this->context;
         foreach($this->req_capability as $cap) {
             if (has_capability($cap, $context)) {
                 return true;
@@ -175,3 +177,8 @@ class admin_externalpage implements part_of_admin_tree, linkable_settings_page {
         return false;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(externalpage::class, \admin_externalpage::class);

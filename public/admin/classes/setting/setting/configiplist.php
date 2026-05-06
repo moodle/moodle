@@ -20,7 +20,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2011 Petr Skoda (http://skodak.org)
  */
-class admin_setting_configiplist extends admin_setting_configtextarea {
+namespace core_admin\setting\setting;
+
+class configiplist extends \admin_setting_configtextarea {
 
     /**
      * Validate the contents of the textarea as IP addresses
@@ -60,3 +62,8 @@ class admin_setting_configiplist extends admin_setting_configtextarea {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(configiplist::class, \admin_setting_configiplist::class);

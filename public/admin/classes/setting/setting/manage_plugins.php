@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -23,7 +25,7 @@ use core_admin\admin_search;
  * @copyright 2017 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class admin_setting_manage_plugins extends admin_setting {
+abstract class manage_plugins extends \admin_setting {
 
     /**
      * Get the admin settings section name (just a unique string)
@@ -113,15 +115,15 @@ abstract class admin_setting_manage_plugins extends admin_setting {
             return true;
         }
 
-        $query = core_text::strtolower($query);
-        $plugins = core_plugin_manager::instance()->get_plugins_of_type($this->get_plugin_type());
+        $query = \core_text::strtolower($query);
+        $plugins = \core_plugin_manager::instance()->get_plugins_of_type($this->get_plugin_type());
         foreach ($plugins as $name => $plugin) {
             $localised = $plugin->displayname;
-            if (strpos(core_text::strtolower($name), $query) !== false) {
+            if (strpos(\core_text::strtolower($name), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
-            if (strpos(core_text::strtolower($localised), $query) !== false) {
+            if (strpos(\core_text::strtolower($localised), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -135,7 +137,7 @@ abstract class admin_setting_manage_plugins extends admin_setting {
      * @return moodle_url
      */
     protected function get_manage_url() {
-        return new moodle_url('/admin/updatesetting.php');
+        return new \moodle_url('/admin/updatesetting.php');
     }
 
     /**
@@ -149,7 +151,7 @@ abstract class admin_setting_manage_plugins extends admin_setting {
         global $CFG, $OUTPUT, $DB, $PAGE;
 
         $context = (object) [
-            'manageurl' => new moodle_url($this->get_manage_url(), [
+            'manageurl' => new \moodle_url($this->get_manage_url(), [
                     'type' => $this->get_plugin_type(),
                     'sesskey' => sesskey(),
                 ]),
@@ -157,12 +159,12 @@ abstract class admin_setting_manage_plugins extends admin_setting {
             'plugins' => [],
         ];
 
-        $pluginmanager = core_plugin_manager::instance();
+        $pluginmanager = \core_plugin_manager::instance();
         $allplugins = $pluginmanager->get_plugins_of_type($this->get_plugin_type());
         $enabled = $pluginmanager->get_enabled_plugins($this->get_plugin_type());
         $plugins = array_merge($enabled, $allplugins);
         foreach ($plugins as $key => $plugin) {
-            $pluginlink = new moodle_url($context->manageurl, ['plugin' => $key]);
+            $pluginlink = new \moodle_url($context->manageurl, ['plugin' => $key]);
 
             $pluginkey = (object) [
                 'plugin' => $plugin->displayname,
@@ -176,19 +178,19 @@ abstract class admin_setting_manage_plugins extends admin_setting {
             ];
 
             // Enable/Disable link.
-            $togglelink = new moodle_url($pluginlink);
+            $togglelink = new \moodle_url($pluginlink);
             if ($plugin->is_enabled()) {
                 $toggletarget = false;
                 $togglelink->param('action', 'disable');
 
                 if (count($context->plugins)) {
                     // This is not the first plugin.
-                    $pluginkey->moveuplink = new moodle_url($pluginlink, ['action' => 'up']);
+                    $pluginkey->moveuplink = new \moodle_url($pluginlink, ['action' => 'up']);
                 }
 
                 if (count($enabled) > count($context->plugins) + 1) {
                     // This is not the last plugin.
-                    $pluginkey->movedownlink = new moodle_url($pluginlink, ['action' => 'down']);
+                    $pluginkey->movedownlink = new \moodle_url($pluginlink, ['action' => 'down']);
                 }
 
                 $pluginkey->info = $this->get_info_column($plugin);
@@ -201,7 +203,7 @@ abstract class admin_setting_manage_plugins extends admin_setting {
             $pluginkey->togglelink = $togglelink;
 
             $frankenstyle = $plugin->type . '_' . $plugin->name;
-            if ($uninstalllink = core_plugin_manager::instance()->get_uninstall_url($frankenstyle, 'manage')) {
+            if ($uninstalllink = \core_plugin_manager::instance()->get_uninstall_url($frankenstyle, 'manage')) {
                 // This plugin supports uninstallation.
                 $pluginkey->uninstalllink = $uninstalllink;
             }
@@ -218,3 +220,8 @@ abstract class admin_setting_manage_plugins extends admin_setting {
         return highlight($query, $str);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(manage_plugins::class, \admin_setting_manage_plugins::class);

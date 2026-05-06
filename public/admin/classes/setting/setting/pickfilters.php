@@ -20,7 +20,9 @@
  * @copyright 2015 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_pickfilters extends admin_setting_configmulticheckbox {
+namespace core_admin\setting\setting;
+
+class pickfilters extends \admin_setting_configmulticheckbox {
 
     /**
      * Constructor
@@ -50,9 +52,14 @@ class admin_setting_pickfilters extends admin_setting_configmulticheckbox {
         }
         $this->choices = array();
 
-        foreach (core_component::get_plugin_list('filter') as $plugin => $unused) {
+        foreach (\core_component::get_plugin_list('filter') as $plugin => $unused) {
             $this->choices[$plugin] = filter_get_name($plugin);
         }
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(pickfilters::class, \admin_setting_pickfilters::class);

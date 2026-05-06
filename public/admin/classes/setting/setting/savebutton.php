@@ -17,7 +17,9 @@
 /**
  * Show the save changes button.
  */
-class admin_setting_savebutton extends admin_setting {
+namespace core_admin\setting\setting;
+
+class savebutton extends \admin_setting {
     /**
      * Constructor.
      *
@@ -64,3 +66,8 @@ class admin_setting_savebutton extends admin_setting {
         return $OUTPUT->render_from_template('core_admin/setting_savebutton', []);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(savebutton::class, \admin_setting_savebutton::class);

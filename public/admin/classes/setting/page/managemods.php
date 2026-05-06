@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\page;
+
 use core_admin\admin_search;
 
 /**
@@ -21,7 +23,7 @@ use core_admin\admin_search;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_page_managemods extends admin_externalpage {
+class managemods extends \admin_externalpage {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -54,7 +56,7 @@ class admin_page_managemods extends admin_externalpage {
                     break;
                 }
                 $strmodulename = get_string('modulename', $module->name);
-                if (strpos(core_text::strtolower($strmodulename), $query) !== false) {
+                if (strpos(\core_text::strtolower($strmodulename), $query) !== false) {
                     $type = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                     $found = true;
                     break;
@@ -62,7 +64,7 @@ class admin_page_managemods extends admin_externalpage {
             }
         }
         if ($found) {
-            $result = new stdClass();
+            $result = new \stdClass();
             $result->page     = $this;
             $result->settings = array();
             $result->searchmatchtype = $type;
@@ -72,3 +74,8 @@ class admin_page_managemods extends admin_externalpage {
         }
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(managemods::class, \admin_page_managemods::class);

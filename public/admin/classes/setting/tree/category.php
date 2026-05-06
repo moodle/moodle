@@ -14,17 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\tree;
+
+use core\exception\coding_exception;
 use core_admin\local\settings\linkable_settings_page;
 
 /**
  * The object used to represent folders (a.k.a. categories) in the admin tree block.
  *
- * Each admin_category object contains a number of part_of_admin_tree objects.
+ * Each category object contains a number of part_of_admin_tree objects.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_category implements parentable_part_of_admin_tree, linkable_settings_page {
-
+class category implements
+    linkable_settings_page,
+    parentable_part_of_admin_tree
+{
     /** @var part_of_admin_tree[] An array of part_of_admin_tree objects that are this object's children */
     protected $children;
     /** @var string An internal name for this category. Must be unique amongst ALL part_of_admin_tree objects */
@@ -41,7 +46,7 @@ class admin_category implements parentable_part_of_admin_tree, linkable_settings
     /** @var array fast lookup category cache, all categories of one tree point to one cache */
     protected $category_cache;
 
-    /** @var bool If set to true children will be sorted when calling {@link admin_category::get_children()} */
+    /** @var bool If set to true children will be sorted when calling {@link category::get_children()} */
     protected $sort = false;
     /** @var bool If set to true children will be sorted in ascending order. */
     protected $sortasc = true;
@@ -69,8 +74,8 @@ class admin_category implements parentable_part_of_admin_tree, linkable_settings
      *
      * @return moodle_url
      */
-    public function get_settings_page_url(): moodle_url {
-        return new moodle_url(
+    public function get_settings_page_url(): \moodle_url {
+        return new \moodle_url(
             '/admin/category.php',
             [
                 'category' => $this->name,
@@ -190,8 +195,8 @@ class admin_category implements parentable_part_of_admin_tree, linkable_settings
             return false;
         }
 
-        if ($something instanceof part_of_admin_tree) {
-            if (!($parent instanceof parentable_part_of_admin_tree)) {
+        if ($something instanceof \part_of_admin_tree) {
+            if (!($parent instanceof \parentable_part_of_admin_tree)) {
                 debugging('error - parts of tree can be inserted only into parentable parts');
                 return false;
             }
@@ -226,15 +231,15 @@ class admin_category implements parentable_part_of_admin_tree, linkable_settings
                     );
                 }
             }
-            if ($something instanceof admin_category) {
+            if ($something instanceof category) {
                 if (isset($this->category_cache[$something->name])) {
                     debugging('Duplicate admin category name: '.$something->name);
                 } else {
                     $this->category_cache[$something->name] = $something;
                     $something->category_cache =& $this->category_cache;
                     foreach ($something->children as $child) {
-                        // just in case somebody already added subcategories
-                        if ($child instanceof admin_category) {
+                        // Just in case somebody already added subcategories.
+                        if ($child instanceof category) {
                             if (isset($this->category_cache[$child->name])) {
                                 debugging('Duplicate admin category name: '.$child->name);
                             } else {
@@ -320,21 +325,21 @@ class admin_category implements parentable_part_of_admin_tree, linkable_settings
                 $categories = array();
                 $pages = array();
                 foreach ($this->children as $child) {
-                    if ($child instanceof admin_category) {
+                    if ($child instanceof category) {
                         $categories[] = $child;
                     } else {
                         $pages[] = $child;
                     }
                 }
-                core_collator::asort_objects_by_property($categories, 'visiblename');
-                core_collator::asort_objects_by_property($pages, 'visiblename');
+                \core_collator::asort_objects_by_property($categories, 'visiblename');
+                \core_collator::asort_objects_by_property($pages, 'visiblename');
                 if (!$this->sortasc) {
                     $categories = array_reverse($categories);
                     $pages = array_reverse($pages);
                 }
                 $this->children = array_merge($pages, $categories);
             } else {
-                core_collator::asort_objects_by_property($this->children, 'visiblename');
+                \core_collator::asort_objects_by_property($this->children, 'visiblename');
                 if (!$this->sortasc) {
                     $this->children = array_reverse($this->children);
                 }
@@ -388,3 +393,8 @@ class admin_category implements parentable_part_of_admin_tree, linkable_settings
         throw new coding_exception('Invalid property requested.');
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(category::class, \admin_category::class);

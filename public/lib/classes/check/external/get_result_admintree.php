@@ -124,7 +124,7 @@ class get_result_admintree extends external_api {
 
         // Find the one that matches the unique id exactly and are check settings.
         $matchingsettings = array_filter($allsettings, function($s) use ($settingid) {
-            return $s->get_id() == $settingid && $s instanceof admin_setting_check;
+            return $s->get_id() == $settingid && $s instanceof \core_admin\setting\setting\check;
         });
 
         // There was either none found or more than one found.
@@ -150,4 +150,3 @@ class get_result_admintree extends external_api {
         ]);
     }
 }
-

@@ -20,7 +20,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2018 Mihail Geshoski <mihail@moodle.com>
  */
-class admin_setting_agedigitalconsentmap extends admin_setting_configtextarea {
+namespace core_admin\setting\setting;
+
+class agedigitalconsentmap extends \admin_setting_configtextarea {
 
     /**
      * Constructor.
@@ -60,3 +62,8 @@ class admin_setting_agedigitalconsentmap extends admin_setting_configtextarea {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(agedigitalconsentmap::class, \admin_setting_agedigitalconsentmap::class);

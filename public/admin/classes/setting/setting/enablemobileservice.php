@@ -19,7 +19,9 @@
  * If enable then we store the service id of the mobile service into config table
  * If disable then we unstore the service id from the config table
  */
-class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
+namespace core_admin\setting\setting;
+
+class enablemobileservice extends \admin_setting_configcheckbox {
 
     /** @var boolean True means that the capability 'webservice/rest:use' is set for authenticated user role */
     private $restuse;
@@ -60,7 +62,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
             $assign = true;
         }
         if (!empty($assign)) {
-            $systemcontext = context_system::instance();
+            $systemcontext = \context_system::instance();
             assign_capability('webservice/rest:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
         }
     }
@@ -78,7 +80,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
         $html = parent::output_html($data, $query);
 
         if ((string)$data === $this->yes) {
-            $notifications = tool_mobile\api::get_potential_config_issues(); // Safe to call, plugin available if we reach here.
+            $notifications = \tool_mobile\api::get_potential_config_issues(); // Safe to call, plugin available if we reach here.
             foreach ($notifications as $notification) {
                 $message = get_string($notification[0], $notification[1]);
                 $html .= $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
@@ -109,7 +111,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
         }
 
         require_once($CFG->dirroot . '/webservice/lib.php');
-        $webservicemanager = new webservice();
+        $webservicemanager = new \webservice();
         $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
         if ($mobileservice->enabled and $this->is_protocol_cap_allowed()) {
             return $result;
@@ -135,7 +137,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
         $servicename = MOODLE_OFFICIAL_MOBILE_SERVICE;
 
         require_once($CFG->dirroot . '/webservice/lib.php');
-        $webservicemanager = new webservice();
+        $webservicemanager = new \webservice();
 
         $updateprotocol = false;
         if ((string)$data === $this->yes) {
@@ -149,7 +151,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
              $webservicemanager->update_external_service($mobileservice);
 
              // Enable REST server.
-             $activeprotocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
+             $activeprotocols = empty($CFG->webserviceprotocols) ? array() : \explode(',', $CFG->webserviceprotocols);
 
              if (!in_array('rest', $activeprotocols)) {
                  $activeprotocols[] = 'rest';
@@ -172,3 +174,8 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
         return (parent::write_setting($data));
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(enablemobileservice::class, \admin_setting_enablemobileservice::class);

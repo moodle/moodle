@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_grade_profilereport extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class grade_profilereport extends \admin_setting_configselect {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -41,7 +43,7 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
         global $CFG;
         require_once($CFG->libdir.'/gradelib.php');
 
-        foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
+        foreach (\core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
             if (file_exists($plugindir.'/lib.php')) {
                 require_once($plugindir.'/lib.php');
                 $functionname = 'grade_report_'.$plugin.'_profilereport';
@@ -53,3 +55,8 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(grade_profilereport::class, \admin_setting_grade_profilereport::class);

@@ -20,7 +20,9 @@
  * @copyright 2018 onwards Amaia Anabitarte
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_description extends admin_setting {
+namespace core_admin\setting\setting;
+
+class description extends \admin_setting {
 
     /**
      * Not a setting, just text
@@ -73,10 +75,15 @@ class admin_setting_description extends admin_setting {
     public function output_html($data, $query='') {
         global $OUTPUT;
 
-        $context = new stdClass();
+        $context = new \stdClass();
         $context->title = $this->visiblename;
         $context->description = $this->description;
 
         return $OUTPUT->render_from_template('core_admin/setting_description', $context);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(description::class, \admin_setting_description::class);

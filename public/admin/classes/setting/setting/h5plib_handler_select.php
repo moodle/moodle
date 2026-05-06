@@ -20,7 +20,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2020 Sara Arjona <sara@moodle.com>
  */
-class admin_settings_h5plib_handler_select extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class h5plib_handler_select extends \admin_setting_configselect {
 
     /**
      * Constructor
@@ -47,10 +49,15 @@ class admin_settings_h5plib_handler_select extends admin_setting_configselect {
 
         $this->choices = \core_h5p\local\library\autoloader::get_all_handlers();
         foreach ($this->choices as $name => $class) {
-            $this->choices[$name] = new lang_string('sitepolicyhandlerplugin', 'core_admin',
-                ['name' => new lang_string('pluginname', $name), 'component' => $name]);
+            $this->choices[$name] = new \lang_string('sitepolicyhandlerplugin', 'core_admin',
+                ['name' => new \lang_string('pluginname', $name), 'component' => $name]);
         }
 
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(h5plib_handler_select::class, \admin_settings_h5plib_handler_select::class);

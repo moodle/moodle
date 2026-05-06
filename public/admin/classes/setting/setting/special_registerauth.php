@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_registerauth extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class special_registerauth extends \admin_setting_configselect {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -71,3 +73,8 @@ class admin_setting_special_registerauth extends admin_setting_configselect {
         return true;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_registerauth::class, \admin_setting_special_registerauth::class);

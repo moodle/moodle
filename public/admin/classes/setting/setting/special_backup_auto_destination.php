@@ -22,13 +22,15 @@
  * @copyright  2014 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_backup_auto_destination extends admin_setting_configdirectory {
+namespace core_admin\setting\setting;
+
+class special_backup_auto_destination extends \admin_setting_configdirectory {
 
     /**
      * Calls parent::__construct with specific arguments.
      */
     public function __construct() {
-        parent::__construct('backup/backup_auto_destination', new lang_string('saveto'), new lang_string('backupsavetohelp'), '');
+        parent::__construct('backup/backup_auto_destination', new \lang_string('saveto'), new \lang_string('backupsavetohelp'), '');
     }
 
     /**
@@ -51,3 +53,8 @@ class admin_setting_special_backup_auto_destination extends admin_setting_config
         return parent::write_setting($data);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_backup_auto_destination::class, \admin_setting_special_backup_auto_destination::class);

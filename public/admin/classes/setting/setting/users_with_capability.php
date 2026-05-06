@@ -27,7 +27,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_users_with_capability extends admin_setting_configmultiselect {
+namespace core_admin\setting\setting;
+
+class users_with_capability extends \admin_setting_configmultiselect {
     /** @var string The capabilities name */
     protected $capability;
     /** @var int include admin users too */
@@ -60,13 +62,13 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
         }
         list($sort, $sortparams) = users_order_by_sql('u');
         if (!empty($sortparams)) {
-            throw new coding_exception('users_order_by_sql returned some query parameters. ' .
+            throw new \coding_exception('users_order_by_sql returned some query parameters. ' .
                     'This is unexpected, and a problem because there is no way to pass these ' .
                     'parameters to get_users_by_capability. See MDL-34657.');
         }
         $userfieldsapi = \core_user\fields::for_name();
         $userfields = 'u.id, u.username, ' . $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-        $users = get_users_by_capability(context_system::instance(), $this->capability, $userfields, $sort);
+        $users = get_users_by_capability(\context_system::instance(), $this->capability, $userfields, $sort);
         $this->choices = array(
             '$@NONE@$' => get_string('nobody'),
             '$@ALL@$' => get_string('everyonewhocan', 'admin', get_capability_string($this->capability)),
@@ -137,3 +139,8 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
         return parent::write_setting($data);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(users_with_capability::class, \admin_setting_users_with_capability::class);

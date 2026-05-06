@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_root extends admin_category {
+namespace core_admin\setting\tree;
+
+class root extends \admin_category {
 /** @var array List of errors */
     public $errors;
     /** @var string search query */
@@ -74,3 +76,8 @@ class admin_root extends admin_category {
         $this->category_cache = array();
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(root::class, \admin_root::class);

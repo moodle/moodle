@@ -19,7 +19,9 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_selectsetup extends admin_setting_configselect {
+namespace core_admin\setting\setting;
+
+class special_selectsetup extends \admin_setting_configselect {
     /**
      * Reads the setting directly from the database
      *
@@ -45,3 +47,8 @@ class admin_setting_special_selectsetup extends admin_setting_configselect {
         return $result;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(special_selectsetup::class, \admin_setting_special_selectsetup::class);

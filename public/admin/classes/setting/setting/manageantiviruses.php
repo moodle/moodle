@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_admin\setting\setting;
+
 use core_admin\admin_search;
 
 /**
@@ -22,7 +24,7 @@ use core_admin\admin_search;
  * @copyright  2015 Ruslan Kabalin, Lancaster University.
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_manageantiviruses extends admin_setting {
+class manageantiviruses extends \admin_setting {
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -77,7 +79,7 @@ class admin_setting_manageantiviruses extends admin_setting {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
-            if (strpos(core_text::strtolower($antivirusstr), $query) !== false) {
+            if (strpos(\core_text::strtolower($antivirusstr), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
             }
@@ -119,7 +121,7 @@ class admin_setting_manageantiviruses extends admin_setting {
         $return = $OUTPUT->heading(get_string('actantivirushdr', 'antivirus'), 3, 'main', true);
         $return .= $OUTPUT->box_start('generalbox antivirusesui');
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings, $struninstall);
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->id = 'antivirusmanagement';
@@ -129,7 +131,7 @@ class admin_setting_manageantiviruses extends admin_setting {
         // Iterate through auth plugins and add to the display table.
         $updowncount = 1;
         $antiviruscount = count($activeantiviruses);
-        $baseurl = new moodle_url('/admin/antiviruses.php', array('sesskey' => sesskey()));
+        $baseurl = new \moodle_url('/admin/antiviruses.php', array('sesskey' => sesskey()));
         foreach ($antivirusesavailable as $antivirus => $name) {
             // Hide/show link.
             $class = '';
@@ -137,14 +139,14 @@ class admin_setting_manageantiviruses extends admin_setting {
                 $hideshowurl = $baseurl;
                 $hideshowurl->params(array('action' => 'disable', 'antivirus' => $antivirus));
                 $hideshowimg = $OUTPUT->pix_icon('t/hide', get_string('disable'));
-                $hideshow = html_writer::link($hideshowurl, $hideshowimg);
+                $hideshow = \html_writer::link($hideshowurl, $hideshowimg);
                 $enabled = true;
                 $displayname = $name;
             } else {
                 $hideshowurl = $baseurl;
                 $hideshowurl->params(array('action' => 'enable', 'antivirus' => $antivirus));
                 $hideshowimg = $OUTPUT->pix_icon('t/show', get_string('enable'));
-                $hideshow = html_writer::link($hideshowurl, $hideshowimg);
+                $hideshow = \html_writer::link($hideshowurl, $hideshowimg);
                 $enabled = false;
                 $displayname = $name;
                 $class = 'dimmed_text';
@@ -157,7 +159,7 @@ class admin_setting_manageantiviruses extends admin_setting {
                     $updownurl = $baseurl;
                     $updownurl->params(array('action' => 'up', 'antivirus' => $antivirus));
                     $updownimg = $OUTPUT->pix_icon('t/up', get_string('moveup'));
-                    $updown = html_writer::link($updownurl, $updownimg);
+                    $updown = \html_writer::link($updownurl, $updownimg);
                 } else {
                     $updownimg = $OUTPUT->spacer();
                 }
@@ -165,7 +167,7 @@ class admin_setting_manageantiviruses extends admin_setting {
                     $updownurl = $baseurl;
                     $updownurl->params(array('action' => 'down', 'antivirus' => $antivirus));
                     $updownimg = $OUTPUT->pix_icon('t/down', get_string('movedown'));
-                    $updown = html_writer::link($updownurl, $updownimg);
+                    $updown = \html_writer::link($updownurl, $updownimg);
                 } else {
                     $updownimg = $OUTPUT->spacer();
                 }
@@ -174,27 +176,32 @@ class admin_setting_manageantiviruses extends admin_setting {
 
             // Settings link.
             if (file_exists($CFG->dirroot.'/lib/antivirus/'.$antivirus.'/settings.php')) {
-                $eurl = new moodle_url('/admin/settings.php', array('section' => 'antivirussettings'.$antivirus));
-                $settings = html_writer::link($eurl, $txt->settings);
+                $eurl = new \moodle_url('/admin/settings.php', array('section' => 'antivirussettings'.$antivirus));
+                $settings = \html_writer::link($eurl, $txt->settings);
             } else {
                 $settings = '';
             }
 
             $uninstall = '';
-            if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('antivirus_'.$antivirus, 'manage')) {
-                $uninstall = html_writer::link($uninstallurl, $struninstall);
+            if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url('antivirus_'.$antivirus, 'manage')) {
+                $uninstall = \html_writer::link($uninstallurl, $struninstall);
             }
 
             // Add a row to the table.
-            $row = new html_table_row(array($displayname, $hideshow, $updown, $settings, $uninstall));
+            $row = new \html_table_row(array($displayname, $hideshow, $updown, $settings, $uninstall));
             if ($class) {
                 $row->attributes['class'] = $class;
             }
             $table->data[] = $row;
         }
-        $return .= html_writer::table($table);
-        $return .= get_string('configantivirusplugins', 'antivirus') . html_writer::empty_tag('br') . get_string('tablenosave', 'admin');
+        $return .= \html_writer::table($table);
+        $return .= get_string('configantivirusplugins', 'antivirus') . \html_writer::empty_tag('br') . get_string('tablenosave', 'admin');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(manageantiviruses::class, \admin_setting_manageantiviruses::class);

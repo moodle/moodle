@@ -21,7 +21,9 @@
  * @author Matthew Hilton <matthewhilton@catalyst-au.net>
  * @copyright Catalyst IT, 2023
  */
-class admin_setting_check extends admin_setting {
+namespace core_admin\setting\setting;
+
+class check extends \admin_setting {
 
     /** @var \core\check\check $check the check to use **/
     private $check;
@@ -111,3 +113,8 @@ class admin_setting_check extends admin_setting {
         return format_admin_setting($this, $this->visiblename, '', $statusdiv);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(check::class, \admin_setting_check::class);
