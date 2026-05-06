@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,20 +12,27 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * General text area without html editor.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class configtextarea extends \core_admin\setting\setting\configtext {
+    /** @var int The number of rows for the editor */
     private $rows;
+
+    /** @var int The number of columns for the editor */
     private $cols;
 
     /**
+     * Construct a new configtextarea setting.
+     *
      * @param string $name
      * @param string $visiblename
      * @param string $description
@@ -34,26 +41,28 @@ class configtextarea extends \core_admin\setting\setting\configtext {
      * @param string $cols The number of columns to make the editor
      * @param string $rows The number of rows to make the editor
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $cols='60', $rows='8') {
+    public function __construct(
+        $name,
+        $visiblename,
+        $description,
+        $defaultsetting,
+        $paramtype = PARAM_RAW,
+        $cols = '60',
+        $rows = '8',
+    ) {
         $this->rows = $rows;
         $this->cols = $cols;
         parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype);
     }
 
-    /**
-     * Returns an XHTML string for the editor
-     *
-     * @param string $data
-     * @param string $query
-     * @return string XHTML string for the editor
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $default = $this->get_defaultsetting();
         $defaultinfo = $default;
-        if (!is_null($default) and $default !== '') {
-            $defaultinfo = "\n".$default;
+        if (!is_null($default) && $default !== '') {
+            $defaultinfo = "\n" . $default;
         }
 
         $context = (object) [

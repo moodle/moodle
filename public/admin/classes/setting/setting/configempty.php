@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,22 +12,26 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Empty setting used to allow flags (advanced) on settings that can have no sensible default.
+ *
  * Note: Only advanced makes sense right now - locked does not.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class configempty extends \core_admin\setting\setting\configtext {
-
     /**
-     * @param string $name
-     * @param string $visiblename
-     * @param string $description
+     * Constructor for the empty setting.
+     *
+     * @param string $name A unique ascii name for the setting.
+     * @param string $visiblename Localised setting name
+     * @param string $description Setting description
      */
     public function __construct($name, $visiblename, $description) {
         parent::__construct($name, $visiblename, $description, '', PARAM_RAW);
@@ -40,12 +44,12 @@ class configempty extends \core_admin\setting\setting\configtext {
      * @param string $query
      * @return string XHTML string for the editor
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $context = (object) [
             'id' => $this->get_id(),
-            'name' => $this->get_full_name()
+            'name' => $this->get_full_name(),
         ];
         $element = $OUTPUT->render_from_template('core_admin/setting_configempty', $context);
 

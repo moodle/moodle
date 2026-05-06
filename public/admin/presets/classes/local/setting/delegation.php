@@ -45,6 +45,11 @@ class delegation {
         return ', ' . $string;
     }
 
+    /**
+     * Load extra choices.
+     *
+     * @param \core_admin\setting $adminsetting
+     */
     public function extra_loadchoices(\core_admin\setting &$adminsetting) {
         $adminsetting->load_choices();
     }

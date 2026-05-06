@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\tree;
 
@@ -20,11 +20,13 @@ use core\exception\coding_exception;
 use core_admin\local\settings\linkable_settings_page;
 
 /**
- * The object used to represent folders (a.k.a. categories) in the admin tree block.
+ * Represents a category (folder) in the admin settings tree.
  *
  * Each category object contains a number of part_of_admin_tree objects.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class category implements
     linkable_settings_page,
@@ -44,9 +46,9 @@ class category implements
     public $visiblepath;
 
     /** @var array fast lookup category cache, all categories of one tree point to one cache */
-    protected $category_cache;
+    protected $category_cache; // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
 
-    /** @var bool If set to true children will be sorted when calling {@link category::get_children()} */
+    /** @var bool If set to true children will be sorted when calling {@see category::get_children()} */
     protected $sort = false;
     /** @var bool If set to true children will be sorted in ascending order. */
     protected $sortasc = true;
@@ -62,8 +64,8 @@ class category implements
      * @param string $visiblename The displayed named for this category. Usually obtained through get_string()
      * @param bool $hidden hide category in admin tree block, defaults to false
      */
-    public function __construct($name, $visiblename, $hidden=false) {
-        $this->children    = array();
+    public function __construct($name, $visiblename, $hidden = false) {
+        $this->children    = [];
         $this->name        = $name;
         $this->visiblename = $visiblename;
         $this->hidden      = $hidden;
@@ -91,9 +93,9 @@ class category implements
      * @return mixed A reference to the object with internal name $name if found, otherwise a reference to NULL.
      *                  defaults to false
      */
-    public function locate($name, $findpath=false) {
+    public function locate($name, $findpath = false) {
         if (!isset($this->category_cache[$this->name])) {
-            // somebody much have purged the cache
+            // Somebody much have purged the cache.
             $this->category_cache[$this->name] = $this;
         }
 
@@ -105,19 +107,19 @@ class category implements
             return $this;
         }
 
-        // quick category lookup
-        if (!$findpath and isset($this->category_cache[$name])) {
+        // Quick category lookup.
+        if (!$findpath && isset($this->category_cache[$name])) {
             return $this->category_cache[$name];
         }
 
-        $return = NULL;
-        foreach($this->children as $childid=>$unused) {
+        $return = null;
+        foreach ($this->children as $childid => $unused) {
             if ($return = $this->children[$childid]->locate($name, $findpath)) {
                 break;
             }
         }
 
-        if (!is_null($return) and $findpath) {
+        if (!is_null($return) && $findpath) {
             $return->visiblepath[] = $this->visiblename;
             $return->path[]        = $this->name;
         }
@@ -128,15 +130,15 @@ class category implements
     /**
      * Search using query
      *
-     * @param string query
+     * @param string $query The search query.
      * @return mixed array-object structure of found settings and pages
      */
     public function search($query) {
-        $result = array();
+        $result = [];
         foreach ($this->get_children() as $child) {
             $subsearch = $child->search($query);
             if (!is_array($subsearch)) {
-                debugging('Incorrect search result from '.$child->name);
+                debugging('Incorrect search result from ' . $child->name);
                 continue;
             }
             $result = array_merge($result, $subsearch);
@@ -153,14 +155,14 @@ class category implements
     public function prune($name) {
 
         if ($this->name == $name) {
-            return false;  //can not remove itself
+            return false; // Can not remove itself.
         }
 
-        foreach($this->children as $precedence => $child) {
+        foreach ($this->children as $precedence => $child) {
             if ($child->name == $name) {
-                // clear cache and delete self
-                while($this->category_cache) {
-                    // delete the cache, but keep the original array address
+                // Clear cache and delete self.
+                while ($this->category_cache) {
+                    // Delete the cache, but keep the original array address.
                     array_pop($this->category_cache);
                 }
                 unset($this->children[$precedence]);
@@ -181,7 +183,7 @@ class category implements
      * a developer debugging message is displayed.
      *
      * @throws coding_exception if the $beforesibling is empty string or is not string at all.
-     * @param string $destinationame The internal name of the immediate parent that we want for $something.
+     * @param string $parentname The internal name of the immediate parent that we want for $something.
      * @param mixed $something A part_of_admin_tree or setting instance to be added.
      * @param string $beforesibling The name of the parent's child the $something should be prepended to.
      * @return bool True if successfully added, false if $something can not be added.
@@ -209,7 +211,7 @@ class category implements
                 // Append $something as the parent's last child.
                 $parent->children[] = $something;
             } else {
-                if (!is_string($beforesibling) or trim($beforesibling) === '') {
+                if (!is_string($beforesibling) || trim($beforesibling) === '') {
                     throw new coding_exception('Unexpected value of the beforesibling parameter');
                 }
                 // Try to find the position of the sibling.
@@ -221,19 +223,19 @@ class category implements
                     }
                 }
                 if (is_null($siblingposition)) {
-                    debugging('Sibling '.$beforesibling.' not found', DEBUG_DEVELOPER);
+                    debugging('Sibling ' . $beforesibling . ' not found', DEBUG_DEVELOPER);
                     $parent->children[] = $something;
                 } else {
                     $parent->children = array_merge(
                         array_slice($parent->children, 0, $siblingposition),
-                        array($something),
+                        [$something],
                         array_slice($parent->children, $siblingposition)
                     );
                 }
             }
             if ($something instanceof category) {
                 if (isset($this->category_cache[$something->name])) {
-                    debugging('Duplicate admin category name: '.$something->name);
+                    debugging('Duplicate admin category name: ' . $something->name);
                 } else {
                     $this->category_cache[$something->name] = $something;
                     $something->category_cache =& $this->category_cache;
@@ -241,7 +243,7 @@ class category implements
                         // Just in case somebody already added subcategories.
                         if ($child instanceof category) {
                             if (isset($this->category_cache[$child->name])) {
-                                debugging('Duplicate admin category name: '.$child->name);
+                                debugging('Duplicate admin category name: ' . $child->name);
                             } else {
                                 $this->category_cache[$child->name] = $child;
                                 $child->category_cache =& $this->category_cache;
@@ -251,12 +253,10 @@ class category implements
                 }
             }
             return true;
-
         } else {
             debugging('error - can not add this element');
             return false;
         }
-
     }
 
     /**
@@ -322,8 +322,8 @@ class category implements
         // If we should sort and it hasn't already been sorted.
         if ($this->sort && !$this->sorted) {
             if ($this->sortsplit) {
-                $categories = array();
-                $pages = array();
+                $categories = [];
+                $pages = [];
                 foreach ($this->children as $child) {
                     if ($child instanceof category) {
                         $categories[] = $child;
@@ -352,7 +352,7 @@ class category implements
     /**
      * Magically gets a property from this object.
      *
-     * @param $property
+     * @param string $property
      * @return part_of_admin_tree[]
      * @throws coding_exception
      */

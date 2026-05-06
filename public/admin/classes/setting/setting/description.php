@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,18 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * No setting - just name and description in same row.
- *
- * @copyright 2018 onwards Amaia Anabitarte
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Non-interactive name and description display.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class description extends \core_admin\setting {
-
     /**
      * Not a setting, just text
      *
@@ -72,7 +72,7 @@ class description extends \core_admin\setting {
      * @param string $query
      * @return string Returns an HTML string
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $context = new \stdClass();

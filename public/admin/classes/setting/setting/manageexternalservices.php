@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,16 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\setting;
 
 use core_admin\admin_search;
 
 /**
- * Special class for management of external services
+ * External services management.
  *
- * @author Petr Skoda (skodak)
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manageexternalservices extends \core_admin\setting {
     /**
@@ -32,20 +34,12 @@ class manageexternalservices extends \core_admin\setting {
         parent::__construct('webservicesui', get_string('externalservices', 'webservice'), '', '');
     }
 
-    /**
-     * Always returns true, does nothing
-     *
-     * @return true
-     */
+    #[\Override]
     public function get_setting() {
         return true;
     }
 
-    /**
-     * Always returns true, does nothing
-     *
-     * @return true
-     */
+    #[\Override]
     public function get_defaultsetting() {
         return true;
     }
@@ -55,17 +49,13 @@ class manageexternalservices extends \core_admin\setting {
      *
      * @return string Always returns ''
      */
+    #[\Override]
     public function write_setting($data) {
-    // do not write any setting
+        // Do not write any setting.
         return '';
     }
 
-    /**
-     * Checks if $query is one of the available external services
-     *
-     * @param string $query The string to search for
-     * @return bool Returns true if found, false if not
-     */
+    #[\Override]
     public function is_related($query) {
         global $DB;
 
@@ -73,7 +63,7 @@ class manageexternalservices extends \core_admin\setting {
             return true;
         }
 
-        $services = $DB->get_records('external_services', array(), 'id, name');
+        $services = $DB->get_records('external_services', [], 'id, name');
         foreach ($services as $service) {
             if (strpos(\core_text::strtolower($service->name), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
@@ -83,17 +73,11 @@ class manageexternalservices extends \core_admin\setting {
         return false;
     }
 
-    /**
-     * Builds the XHTML to display the control
-     *
-     * @param string $data Unused
-     * @param string $query
-     * @return string
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $CFG, $OUTPUT, $DB;
 
-        // display strings
+        // Display strings.
         $stradministration = get_string('administration');
         $stredit = get_string('edit');
         $strservice = get_string('externalservice', 'webservice');
@@ -108,26 +92,30 @@ class manageexternalservices extends \core_admin\setting {
         $efurl = "$CFG->wwwroot/$CFG->admin/webservice/service_functions.php";
         $euurl = "$CFG->wwwroot/$CFG->admin/webservice/service_users.php";
 
-        // built in services
+        // Built in services.
          $services = $DB->get_records_select('external_services', 'component IS NOT NULL', null, 'name');
          $return = "";
-         if (!empty($services)) {
+        if (!empty($services)) {
             $return .= $OUTPUT->heading(get_string('servicesbuiltin', 'webservice'), 3, 'main');
 
-
-
             $table = new \html_table();
-            $table->head  = array($strservice, $strplugin, $strfunctions, $strusers, $stredit);
-            $table->colclasses = array('leftalign service', 'leftalign plugin', 'centeralign functions', 'centeralign users', 'centeralign ');
+            $table->head  = [$strservice, $strplugin, $strfunctions, $strusers, $stredit];
+            $table->colclasses = [
+                'leftalign service',
+                'leftalign plugin',
+                'centeralign functions',
+                'centeralign users',
+                'centeralign ',
+            ];
             $table->id = 'builtinservices';
             $table->attributes['class'] = 'admintable externalservices table generaltable table-hover';
-            $table->data  = array();
+            $table->data  = [];
 
-            // iterate through auth plugins and add to the display table
+            // Iterate through auth plugins and add to the display table.
             foreach ($services as $service) {
                 $name = $service->name;
 
-                // hide/show link
+                // Hide/show link.
                 if ($service->enabled) {
                     $displayname = "<span>$name</span>";
                 } else {
@@ -146,36 +134,42 @@ class manageexternalservices extends \core_admin\setting {
 
                 $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
 
-                // add a row to the table
-                $table->data[] = array($displayname, $plugin, $functions, $users, $edit);
+                // Add a row to the table.
+                $table->data[] = [$displayname, $plugin, $functions, $users, $edit];
             }
             $return .= \html_writer::table($table);
         }
 
-        // Custom services
+        // Custom services.
         $return .= $OUTPUT->heading(get_string('servicescustom', 'webservice'), 3, 'main');
         $services = $DB->get_records_select('external_services', 'component IS NULL', null, 'name');
 
         $table = new \html_table();
-        $table->head  = array($strservice, $strdelete, $strfunctions, $strusers, $stredit);
-        $table->colclasses = array('leftalign service', 'leftalign plugin', 'centeralign functions', 'centeralign users', 'centeralign ');
+        $table->head  = [$strservice, $strdelete, $strfunctions, $strusers, $stredit];
+        $table->colclasses = [
+            'leftalign service',
+            'leftalign plugin',
+            'centeralign functions',
+            'centeralign users',
+            'centeralign ',
+        ];
         $table->id = 'customservices';
         $table->attributes['class'] = 'admintable externalservices table generaltable table-hover';
-        $table->data  = array();
+        $table->data  = [];
 
-        // iterate through auth plugins and add to the display table
+        // Iterate through auth plugins and add to the display table.
         foreach ($services as $service) {
             $name = $service->name;
 
-            // hide/show link
+            // Hide/show link.
             if ($service->enabled) {
                 $displayname = "<span>$name</span>";
             } else {
                 $displayname = "<span class=\"dimmed_text\">$name</span>";
             }
 
-            // delete link
-            $delete = "<a href=\"$esurl?action=delete&amp;sesskey=".sesskey()."&amp;id=$service->id\">$strdelete</a>";
+            // Delete link.
+            $delete = "<a href=\"$esurl?action=delete&amp;sesskey=" . sesskey() . "&amp;id=$service->id\">$strdelete</a>";
 
             $functions = "<a href=\"$efurl?id=$service->id\">$strfunctions</a>";
 
@@ -187,14 +181,14 @@ class manageexternalservices extends \core_admin\setting {
 
             $edit = "<a href=\"$esurl?id=$service->id\">$stredit</a>";
 
-            // add a row to the table
-            $table->data[] = array($displayname, $delete, $functions, $users, $edit);
+            // Add a row to the table.
+            $table->data[] = [$displayname, $delete, $functions, $users, $edit];
         }
-        // add new custom service option
+        // Add new custom service option.
         $return .= \html_writer::table($table);
 
         $return .= '<br />';
-        // add a token to the table
+        // Add a token to the table.
         $return .= "<a href=\"$esurl?id=0\">$stradd</a>";
 
         return highlight($query, $return);

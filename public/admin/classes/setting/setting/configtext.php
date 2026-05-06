@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * The most flexible setting, the user enters text.
@@ -20,12 +22,11 @@
  * This type of field should be used for config settings which are using
  * English words and are not localised (passwords, database name, list of values, ...).
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class configtext extends \core_admin\setting {
-
     /** @var int default field size */
     public $size;
     /** @var array List of arbitrary data attributes */
@@ -34,14 +35,16 @@ class configtext extends \core_admin\setting {
     /**
      * Config text constructor
      *
-     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $name unique ascii name, either:
+     *      'mysetting' for settings that in config; or
+     *      'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string $defaultsetting
      * @param mixed $paramtype int means PARAM_XXX type, string is a allowed format in regex
      * @param int $size default field size
      */
-    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $size=null) {
+    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype = PARAM_RAW, $size = null) {
         $this->paramtype = $paramtype;
         if (!is_null($size)) {
             $this->size  = $size;
@@ -51,11 +54,7 @@ class configtext extends \core_admin\setting {
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
-    /**
-     * Get whether this should be displayed in LTR mode.
-     *
-     * Try to guess from the PARAM type unless specifically set.
-     */
+    #[\Override]
     public function get_force_ltr() {
         $forceltr = parent::get_force_ltr();
         if ($forceltr === null) {
@@ -64,21 +63,18 @@ class configtext extends \core_admin\setting {
         return $forceltr;
     }
 
-    /**
-     * Return the setting
-     *
-     * @return mixed returns config if successful else null
-     */
+    #[\Override]
     public function get_setting() {
         return $this->config_read($this->name);
     }
 
+    #[\Override]
     public function write_setting($data) {
-        if ($this->paramtype === PARAM_INT and $data === '') {
-        // do not complain if '' used instead of 0
+        if ($this->paramtype === PARAM_INT && $data === '') {
+            // Do not complain if '' used instead of 0.
             $data = 0;
         }
-        // $data is a string
+        // The data value is a string.
         $validated = $this->validate($data);
         if ($validated !== true) {
             return $validated;
@@ -87,25 +83,24 @@ class configtext extends \core_admin\setting {
     }
 
     /**
-     * Validate data before storage
-     * @param string data
+     * Validate data before storage.
+     *
+     * @param string $data The data to validate.
      * @return mixed true if ok string if error found
      */
     public function validate($data) {
-        // allow paramtype to be a custom regex if it is the form of /pattern/
+        // Allow paramtype to be a custom regex if it is the form of /pattern/.
         if (preg_match('#^/.*/$#', $this->paramtype)) {
             if (preg_match($this->paramtype, $data)) {
                 return true;
             } else {
                 return get_string('validateerror', 'admin');
             }
-
         } else if ($this->paramtype === PARAM_RAW) {
             return true;
-
         } else {
             $cleaned = clean_param($data, $this->paramtype);
-            if ("$data" === "$cleaned") { // implicit conversion to string is needed to do exact comparison
+            if ("$data" === "$cleaned") { // Implicit conversion to string is needed to do exact comparison.
                 return true;
             } else {
                 return get_string('validateerror', 'admin');
@@ -114,10 +109,10 @@ class configtext extends \core_admin\setting {
     }
 
     /**
-     * Set arbitrary data attributes for template.
+     * Set the value of piece of data.
      *
-     * @param string $key Attribute key for template.
-     * @param string $value Attribute value for template.
+     * @param string $key The key to use for the data value.
+     * @param string $value The value to set for the data attribute.
      */
     public function set_data_attribute(string $key, string $value): void {
         $this->datavalues[] = [
@@ -126,10 +121,7 @@ class configtext extends \core_admin\setting {
         ];
     }
 
-    /**
-     * Return an XHTML string for the setting
-     * @return string Returns an XHTML string
-     */
+    #[\Override]
     public function output_html($data, $query = '') {
         global $OUTPUT;
 

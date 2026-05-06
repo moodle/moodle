@@ -32,7 +32,6 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * Class for repositories
  */
 class repository extends base {
-
     /** @var int Repository state, when it's enabled and visible. */
     public const REPOSITORY_ON = 1;
 
@@ -42,14 +41,12 @@ class repository extends base {
     /** @var int Repository state, when it's disabled. */
     public const REPOSITORY_DISABLED = -1;
 
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $DB;
         return $DB->get_records_menu('repository', null, 'type ASC', 'type, type AS val');
@@ -64,6 +61,7 @@ class repository extends base {
      * @param string $pluginname The plugin name to check.
      * @return int The current status (enabled, disabled...) of $pluginname.
      */
+    #[\Override]
     public static function get_enabled_plugin(string $pluginname): int {
         global $DB;
 
@@ -91,6 +89,7 @@ class repository extends base {
      *
      * @return bool Whether $pluginname has been updated or not.
      */
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         global $DB;
 
@@ -130,10 +129,12 @@ class repository extends base {
         return $haschanged;
     }
 
+    #[\Override]
     public function get_settings_section_name() {
-        return 'repositorysettings'.$this->name;
+        return 'repositorysettings' . $this->name;
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -157,18 +158,12 @@ class repository extends base {
         }
     }
 
-    /**
-     * Return URL used for management of plugins of this type.
-     * @return url
-     */
+    #[\Override]
     public static function get_manage_url() {
         return new url('/admin/repository.php');
     }
 
-    /**
-     * Defines if there should be a way to uninstall the plugin via the administration UI.
-     * @return boolean
-     */
+    #[\Override]
     public function is_uninstall_allowed() {
         if ($this->name === 'upload' || $this->name === 'coursefiles' || $this->name === 'user' || $this->name === 'recent') {
             return false;
@@ -179,13 +174,15 @@ class repository extends base {
 
     /**
      * Pre-uninstall hook.
+     *
      * This is intended for disabling of plugin, some DB table purging, etc.
      * Converts all linked files to standard files when repository is removed
      * and cleans up all records in the DB for that repository.
      */
+    #[\Override]
     public function uninstall_cleanup() {
         global $CFG;
-        require_once($CFG->dirroot.'/repository/lib.php');
+        require_once($CFG->dirroot . '/repository/lib.php');
 
         $repo = \repository::get_type_by_typename($this->name);
         if ($repo) {

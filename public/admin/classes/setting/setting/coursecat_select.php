@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,28 +12,31 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Course category selection
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class coursecat_select extends \core_admin\setting\setting\configselect_autocomplete {
     /**
      * Calls parent::__construct with specific arguments
+     *
+     * @param string $name The name of the setting
+     * @param string $visiblename The visible name of the setting
+     * @param string $description The description of the setting
+     * @param int $defaultsetting The default setting value
      */
     public function __construct($name, $visiblename, $description, $defaultsetting = 1) {
         parent::__construct($name, $visiblename, $description, $defaultsetting, $choices = null);
     }
 
-    /**
-     * Load the available choices for the select box
-     *
-     * @return bool
-     */
+    #[\Override]
     public function load_choices() {
         if (is_array($this->choices)) {
             return true;

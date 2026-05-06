@@ -26,6 +26,7 @@ use core_plugin_manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class communication extends base {
+    #[\Override]
     public static function get_manage_url(): ?\core\url {
         if (!\core_communication\api::is_available()) {
             return null;
@@ -34,10 +35,12 @@ class communication extends base {
         return new \core\url('/admin/settings.php', ['section' => 'managecommunicationproviders']);
     }
 
+    #[\Override]
     public function get_settings_section_name(): string {
         return $this->type . '_' . $this->name;
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         $haschanged = false;
 
@@ -61,6 +64,7 @@ class communication extends base {
         return $haschanged;
     }
 
+    #[\Override]
     public static function get_enabled_plugins(): ?array {
         $pluginmanager = core_plugin_manager::instance();
         $plugins = $pluginmanager->get_installed_plugins('communication');
@@ -82,6 +86,7 @@ class communication extends base {
         return $enabled;
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -102,8 +107,12 @@ class communication extends base {
         $section = $this->get_settings_section_name();
         $settings = null;
         if (file_exists($this->full_path('settings.php'))) {
-            $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname,
-                'moodle/site:config', $this->is_enabled() === false);
+            $settings = new \core_admin\setting\settingpage\settingpage(
+                $section,
+                $this->displayname,
+                'moodle/site:config',
+                $this->is_enabled() === false
+            );
             include($this->full_path('settings.php')); // This may also set $settings to null.
         }
         if ($settings) {
@@ -111,6 +120,7 @@ class communication extends base {
         }
     }
 
+    #[\Override]
     public function is_uninstall_allowed(): bool {
         if (in_array($this->name, \core_plugin_manager::standard_plugins_list('communication'))) {
             return false;
@@ -135,5 +145,4 @@ class communication extends base {
         return !($communicationavailable === \core_plugin_manager::PLUGIN_STATUS_MISSING ||
             !empty(get_config($fullpluginname, 'disabled')));
     }
-
 }

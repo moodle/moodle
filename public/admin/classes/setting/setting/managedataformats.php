@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,20 +12,20 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\setting;
 
 use core_admin\admin_search;
 
 /**
- * Data formats manager. Allow reorder and to enable/disable data formats and jump to settings
+ * Data format plugin management.
  *
- * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class managedataformats extends \core_admin\setting {
-
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -94,24 +94,24 @@ class managedataformats extends \core_admin\setting {
      * @param string $query
      * @return string highlight
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $CFG, $OUTPUT;
         $return = '';
 
         $formats = \core_plugin_manager::instance()->get_plugins_of_type('dataformat');
 
-        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default'));
+        $txt = get_strings(['settings', 'name', 'enable', 'disable', 'up', 'down', 'default']);
         $txt->uninstall = get_string('uninstallplugin', 'core_admin');
         $txt->updown = "$txt->up/$txt->down";
 
         $table = new \html_table();
-        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings);
-        $table->align = array('left', 'center', 'center', 'center', 'center');
+        $table->head  = [$txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings];
+        $table->align = ['left', 'center', 'center', 'center', 'center'];
         $table->attributes['class'] = 'manageformattable table generaltable admintable table-striped table-hover';
-        $table->data  = array();
+        $table->data  = [];
 
         $cnt = 0;
-        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
+        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', ['class' => 'iconsmall']);
         $totalenabled = 0;
         foreach ($formats as $format) {
             if ($format->is_enabled() && $format->is_installed_and_upgraded()) {
@@ -120,35 +120,45 @@ class managedataformats extends \core_admin\setting {
         }
         foreach ($formats as $format) {
             $status = $format->get_status();
-            $url = new \moodle_url('/admin/dataformats.php',
-                    array('sesskey' => sesskey(), 'name' => $format->name));
+            $url = new \moodle_url(
+                '/admin/dataformats.php',
+                ['sesskey' => sesskey(), 'name' => $format->name]
+            );
 
             $class = '';
             if ($format->is_enabled()) {
                 $strformatname = $format->displayname;
-                if ($totalenabled == 1&& $format->is_enabled()) {
+                if ($totalenabled == 1 && $format->is_enabled()) {
                     $hideshow = '';
                 } else {
-                    $hideshow = \html_writer::link($url->out(false, array('action' => 'disable')),
-                        $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', array('class' => 'iconsmall')));
+                    $hideshow = \html_writer::link(
+                        $url->out(false, ['action' => 'disable']),
+                        $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', ['class' => 'iconsmall'])
+                    );
                 }
             } else {
                 $class = 'dimmed_text';
                 $strformatname = $format->displayname;
-                $hideshow = \html_writer::link($url->out(false, array('action' => 'enable')),
-                    $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', array('class' => 'iconsmall')));
+                $hideshow = \html_writer::link(
+                    $url->out(false, ['action' => 'enable']),
+                    $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', ['class' => 'iconsmall'])
+                );
             }
 
             $updown = '';
             if ($cnt) {
-                $updown .= \html_writer::link($url->out(false, array('action' => 'up')),
-                    $OUTPUT->pix_icon('t/up', $txt->up, 'moodle', array('class' => 'iconsmall'))). '';
+                $updown .= \html_writer::link(
+                    $url->out(false, ['action' => 'up']),
+                    $OUTPUT->pix_icon('t/up', $txt->up, 'moodle', ['class' => 'iconsmall'])
+                ) . '';
             } else {
                 $updown .= $spacer;
             }
             if ($cnt < count($formats) - 1) {
-                $updown .= '&nbsp;'.\html_writer::link($url->out(false, array('action' => 'down')),
-                    $OUTPUT->pix_icon('t/down', $txt->down, 'moodle', array('class' => 'iconsmall')));
+                $updown .= '&nbsp;' . \html_writer::link(
+                    $url->out(false, ['action' => 'down']),
+                    $OUTPUT->pix_icon('t/down', $txt->down, 'moodle', ['class' => 'iconsmall'])
+                );
             } else {
                 $updown .= $spacer;
             }
@@ -158,7 +168,12 @@ class managedataformats extends \core_admin\setting {
                 $uninstall = get_string('status_missing', 'core_plugin');
             } else if ($status === \core_plugin_manager::PLUGIN_STATUS_NEW) {
                 $uninstall = get_string('status_new', 'core_plugin');
-            } else if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url('dataformat_'.$format->name, 'manage')) {
+            } else if (
+                $uninstallurl = \core_plugin_manager::instance()->get_uninstall_url(
+                    "dataformat_{$format->name}",
+                    "manage",
+                )
+            ) {
                 if ($totalenabled != 1 || !$format->is_enabled()) {
                     $uninstall = \html_writer::link($uninstallurl, $txt->uninstall);
                 }
@@ -169,7 +184,7 @@ class managedataformats extends \core_admin\setting {
                 $settings = \html_writer::link($format->get_settings_url(), $txt->settings);
             }
 
-            $row = new \html_table_row(array($strformatname, $hideshow, $updown, $uninstall, $settings));
+            $row = new \html_table_row([$strformatname, $hideshow, $updown, $uninstall, $settings]);
             if ($class) {
                 $row->attributes['class'] = $class;
             }

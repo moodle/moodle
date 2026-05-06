@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,20 +12,20 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
- * Class used for uploading of one file into file storage,
- * the file name is stored in config table.
+ * Setting for uploading a single file into file storage.
  *
  * Please note you need to implement your own '_pluginfile' callback function,
  * this setting only stores the file, it does not deal with file serving.
  *
- * @copyright 2013 Petr Skoda {@link http://skodak.org}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class configstoredfile extends \core_admin\setting {
     /** @var array file area options - should be one file only */
     protected $options;
@@ -44,7 +44,7 @@ class configstoredfile extends \core_admin\setting {
      * @param string $description description of setting
      * @param mixed $filearea file area for file storage
      * @param int $itemid itemid for file storage
-     * @param array $options file area options
+     * @param array|null $options file area options
      */
     public function __construct($name, $visiblename, $description, $filearea, $itemid = 0, ?array $options = null) {
         parent::__construct($name, $visiblename, $description, '');
@@ -63,21 +63,23 @@ class configstoredfile extends \core_admin\setting {
 
         require_once("$CFG->libdir/filelib.php");
         require_once("$CFG->dirroot/repository/lib.php");
-        $defaults = array(
+        $defaults = [
             'mainfile' => '', 'subdirs' => 0, 'maxbytes' => -1, 'maxfiles' => 1,
             'accepted_types' => '*', 'return_types' => FILE_INTERNAL, 'areamaxbytes' => FILE_AREA_MAX_BYTES_UNLIMITED,
-            'context' => \context_system::instance());
-        foreach($this->options as $k => $v) {
+            'context' => \context_system::instance()];
+        foreach ($this->options as $k => $v) {
             $defaults[$k] = $v;
         }
 
         return $defaults;
     }
 
+    #[\Override]
     public function get_setting() {
         return $this->config_read($this->name);
     }
 
+    #[\Override]
     public function write_setting($data) {
         global $USER;
 
@@ -97,9 +99,9 @@ class configstoredfile extends \core_admin\setting {
 
         $this->oldhashes = null;
         if ($current) {
-            $hash = sha1('/'.$options['context']->id.'/'.$component.'/'.$this->filearea.'/'.$this->itemid.$current);
+            $hash = sha1('/' . $options['context']->id . '/' . $component . '/' . $this->filearea . '/' . $this->itemid . $current);
             if ($file = $fs->get_file_by_hash($hash)) {
-                $this->oldhashes = $file->get_contenthash().$file->get_pathnamehash();
+                $this->oldhashes = $file->get_contenthash() . $file->get_pathnamehash();
             }
             unset($file);
         }
@@ -107,7 +109,7 @@ class configstoredfile extends \core_admin\setting {
         if ($fs->file_exists($options['context']->id, $component, $this->filearea, $this->itemid, '/', '.')) {
             // Make sure the settings form was not open for more than 4 days and draft areas deleted in the meantime.
             // But we can safely ignore that if the destination area is empty, so that the user is not prompt
-            // with an error because the draft area does not exist, as he did not use it.
+            // With an error because the draft area does not exist, as he did not use it.
             $usercontext = \context_user::instance($USER->id);
             if (!$fs->file_exists($usercontext->id, 'user', 'draft', $data, '/', '.') && $current !== '') {
                 return get_string('errorsetting', 'admin');
@@ -115,18 +117,26 @@ class configstoredfile extends \core_admin\setting {
         }
 
         file_save_draft_area_files($data, $options['context']->id, $component, $this->filearea, $this->itemid, $options);
-        $files = $fs->get_area_files($options['context']->id, $component, $this->filearea, $this->itemid, 'sortorder,filepath,filename', false);
+        $files = $fs->get_area_files(
+            $options['context']->id,
+            $component,
+            $this->filearea,
+            $this->itemid,
+            'sortorder,filepath,filename',
+            false,
+        );
 
         $filepath = '';
         if ($files) {
             /** @var stored_file $file */
             $file = reset($files);
-            $filepath = $file->get_filepath().$file->get_filename();
+            $filepath = $file->get_filepath() . $file->get_filename();
         }
 
         return ($this->config_write($this->name, $filepath) ? '' : get_string('errorsetting', 'admin'));
     }
 
+    #[\Override]
     public function post_write_settings($original) {
         $options = $this->get_options();
         $fs = get_file_storage();
@@ -135,9 +145,9 @@ class configstoredfile extends \core_admin\setting {
         $current = $this->get_setting();
         $newhashes = null;
         if ($current) {
-            $hash = sha1('/'.$options['context']->id.'/'.$component.'/'.$this->filearea.'/'.$this->itemid.$current);
+            $hash = sha1('/' . $options['context']->id . '/' . $component . '/' . $this->filearea . '/' . $this->itemid . $current);
             if ($file = $fs->get_file_by_hash($hash)) {
-                $newhashes = $file->get_contenthash().$file->get_pathnamehash();
+                $newhashes = $file->get_contenthash() . $file->get_pathnamehash();
             }
             unset($file);
         }
@@ -149,12 +159,13 @@ class configstoredfile extends \core_admin\setting {
         $this->oldhashes = null;
 
         $callbackfunction = $this->updatedcallback;
-        if (!empty($callbackfunction) and function_exists($callbackfunction)) {
+        if (!empty($callbackfunction) && function_exists($callbackfunction)) {
             $callbackfunction($this->get_full_name());
         }
         return true;
     }
 
+    #[\Override]
     public function output_html($data, $query = '') {
         global $CFG;
 
@@ -181,9 +192,16 @@ class configstoredfile extends \core_admin\setting {
         $fm = new \MoodleQuickForm_filemanager($elname, $this->visiblename, ['id' => $id], $fmoptions);
         $fm->setValue($draftitemid);
 
-        return format_admin_setting($this, $this->visiblename,
+        return format_admin_setting(
+            $this,
+            $this->visiblename,
             '<div class="form-filemanager" data-fieldtype="filemanager">' . $fm->toHtml() . '</div>',
-            $this->description, true, '', '', $query);
+            $this->description,
+            true,
+            '',
+            '',
+            $query
+        );
     }
 }
 

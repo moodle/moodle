@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\table;
 
@@ -26,10 +26,9 @@ use get_string_manager;
  *
  * @package core_admin
  * @copyright 2024 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class availability_management_table extends plugin_management_table {
-
     protected function get_table_id(): string {
         return 'availabilityconditions_administration_table';
     }
@@ -65,7 +64,7 @@ class availability_management_table extends plugin_management_table {
 
     protected function col_name(stdClass $row): string {
         return html_writer::span(
-           get_string('pluginname', 'availability_' . $row->plugininfo->name)
+            get_string('pluginname', 'availability_' . $row->plugininfo->name)
         );
     }
 
@@ -79,7 +78,9 @@ class availability_management_table extends plugin_management_table {
         ];
         $urldisplaymode = new moodle_url('/' . $CFG->admin . '/tool/availabilityconditions/', $paramsdisplaymode);
 
-        return html_writer::link($urldisplaymode, $OUTPUT->pix_icon('t/' . $displaymode,
-            get_string($displaymode)), ['class' => 'display-mode-' . $row->plugininfo->name]);
+        return html_writer::link($urldisplaymode, $OUTPUT->pix_icon(
+            't/' . $displaymode,
+            get_string($displaymode)
+        ), ['class' => 'display-mode-' . $row->plugininfo->name]);
     }
 }

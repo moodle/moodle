@@ -24,10 +24,12 @@ namespace tool_log\plugininfo;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class logstore extends \core\plugininfo\base {
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
+    #[\Override]
     public function is_enabled() {
         $enabled = get_config('tool_log', 'enabled_stores');
         if (!$enabled) {
@@ -38,6 +40,7 @@ class logstore extends \core\plugininfo\base {
         return isset($enabled['logstore_' . $this->name]);
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         $haschanged = false;
         $plugins = [];
@@ -65,10 +68,12 @@ class logstore extends \core\plugininfo\base {
         return $haschanged;
     }
 
+    #[\Override]
     public function get_settings_section_name() {
         return 'logsetting' . $this->name;
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -83,7 +88,7 @@ class logstore extends \core\plugininfo\base {
             return;
         }
 
-        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
             return;
         }
 
@@ -100,14 +105,17 @@ class logstore extends \core\plugininfo\base {
         }
     }
 
+    #[\Override]
     public static function get_manage_url() {
-        return new \core\url('/admin/settings.php', array('section' => 'managelogging'));
+        return new \core\url('/admin/settings.php', ['section' => 'managelogging']);
     }
 
+    #[\Override]
     public function is_uninstall_allowed() {
         return true;
     }
 
+    #[\Override]
     public function uninstall_cleanup() {
         $enabled = get_config('tool_log', 'enabled_stores');
         if ($enabled) {

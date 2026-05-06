@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,30 +12,35 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Generic class for managing plugins in a table that allows re-ordering and enable/disable of each plugin.
  * Requires a get_rank method on the plugininfo class for sorting.
  *
- * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
-* @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class manage_fileconverter_plugins extends \core_admin\setting\setting\manage_plugins {
+    #[\Override]
     public function get_section_title() {
         return get_string('type_fileconverter_plural', 'plugin');
     }
 
+    #[\Override]
     public function get_plugin_type() {
         return 'fileconverter';
     }
 
+    #[\Override]
     public function get_info_column_name() {
         return get_string('supportedconversions', 'plugin');
     }
 
+    #[\Override]
     public function get_info_column($plugininfo) {
         return $plugininfo->get_supported_conversions();
     }

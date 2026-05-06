@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,21 +12,19 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Regrading checkbox setting.
+ *
+ * @package    core_admin
+ * @copyright  onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class regradingcheckbox extends \core_admin\setting\setting\configcheckbox {
-    /**
-     * Saves the new settings passed in $data
-     *
-     * @param string $data
-     * @return mixed string or Array
-     */
+    #[\Override]
     public function write_setting($data) {
         global $CFG, $DB;
 
@@ -35,8 +33,8 @@ class regradingcheckbox extends \core_admin\setting\setting\configcheckbox {
         $newvalue  = $this->config_read($this->name);
 
         if ($oldvalue !== $newvalue) {
-        // force full regrading
-            $DB->set_field('grade_items', 'needsupdate', 1, array('needsupdate'=>0));
+            // Force full regrading.
+            $DB->set_field('grade_items', 'needsupdate', 1, ['needsupdate' => 0]);
         }
 
         return $return;

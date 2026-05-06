@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,16 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\setting;
 
 use core_admin\admin_search;
 
 /**
- * Select one value from list
+ * Single selection from a list of options.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class configselect extends \core_admin\setting {
     /** @var array Array of choices value=>label */
@@ -39,7 +41,8 @@ class configselect extends \core_admin\setting {
      * If you want to lazy-load the choices, pass a callback function that returns a choice
      * array for the $choices parameter.
      *
-     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $name A unique ascii name for the setting.
+     *      Either 'mysetting' for core settings, or 'myplugin/mysetting' for those belonging to a plugin.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string|int|array $defaultsetting
@@ -96,12 +99,7 @@ class configselect extends \core_admin\setting {
         return true;
     }
 
-    /**
-     * Check if this is $query is related to a choice
-     *
-     * @param string $query
-     * @return bool true if related, false if not
-     */
+    #[\Override]
     public function is_related($query) {
         if (parent::is_related($query)) {
             return true;
@@ -109,7 +107,7 @@ class configselect extends \core_admin\setting {
         if (!$this->load_choices()) {
             return false;
         }
-        foreach ($this->choices as $key=>$value) {
+        foreach ($this->choices as $key => $value) {
             if (strpos(\core_text::strtolower($key), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_VALUE;
                 return true;
@@ -122,27 +120,18 @@ class configselect extends \core_admin\setting {
         return false;
     }
 
-    /**
-     * Return the setting
-     *
-     * @return mixed returns config if successful else null
-     */
+    #[\Override]
     public function get_setting() {
         return $this->config_read($this->name);
     }
 
-    /**
-     * Save a setting
-     *
-     * @param string $data
-     * @return string empty of error string
-     */
+    #[\Override]
     public function write_setting($data) {
-        if (!$this->load_choices() or empty($this->choices)) {
+        if (!$this->load_choices() || empty($this->choices)) {
             return '';
         }
         if (!array_key_exists($data, $this->choices)) {
-            return ''; // ignore it
+            return ''; // Ignore it.
         }
 
         // Validate the new setting.
@@ -171,14 +160,8 @@ class configselect extends \core_admin\setting {
         }
     }
 
-    /**
-     * Returns XHTML select field and wrapping div(s)
-     *
-     * @param string $data the option to show as selected
-     * @param string $query
-     * @return string XHTML field and wrapping div
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $default = $this->get_defaultsetting();
@@ -196,14 +179,23 @@ class configselect extends \core_admin\setting {
         if (!is_null($default) && array_key_exists($default, $this->choices)) {
             $defaultinfo = $this->choices[$default];
         } else {
-            $defaultinfo = NULL;
+            $defaultinfo = null;
         }
 
         // Warnings.
         $warning = '';
+
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
         if ($current === null) {
             // First run.
-        } else if (empty($current) && (array_key_exists('', $this->choices) || array_key_exists(0, $this->choices))) {
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
+        } else if (
+            empty($current)
+            && (
+                array_key_exists('', $this->choices)
+                || array_key_exists(0, $this->choices)
+            )
+        ) {
             // No warning.
         } else if (!array_key_exists($current, $this->choices)) {
             $warning = get_string('warningcurrentsetting', 'admin', $current);
@@ -218,12 +210,12 @@ class configselect extends \core_admin\setting {
         if (!empty($this->optgroups)) {
             $optgroups = [];
             foreach ($this->optgroups as $label => $choices) {
-                $optgroup = array('label' => $label, 'options' => []);
+                $optgroup = ['label' => $label, 'options' => []];
                 foreach ($choices as $value => $name) {
                     $optgroup['options'][] = [
                         'value' => $value,
                         'name' => $name,
-                        'selected' => (string) $value == $data
+                        'selected' => (string) $value == $data,
                     ];
                     unset($this->choices[$value]);
                 }
@@ -238,7 +230,7 @@ class configselect extends \core_admin\setting {
             $options[] = [
                 'value' => $value,
                 'name' => $name,
-                'selected' => (string) $value == $data
+                'selected' => (string) $value == $data,
             ];
         }
         $context->options = $options;

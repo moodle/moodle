@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core_admin\admin_search;
+
 /**
  * Store management setting.
  *
@@ -21,13 +23,6 @@
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-use core_admin\admin_search;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once("$CFG->libdir/adminlib.php");
-
 class tool_log_setting_managestores extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
@@ -37,41 +32,23 @@ class tool_log_setting_managestores extends \core_admin\setting {
         parent::__construct('tool_log_manageui', get_string('managelogging', 'tool_log'), '', '');
     }
 
-    /**
-     * Always returns true, does nothing.
-     *
-     * @return true
-     */
+    #[\Override]
     public function get_setting() {
         return true;
     }
 
-    /**
-     * Always returns true, does nothing.
-     *
-     * @return true
-     */
+    #[\Override]
     public function get_defaultsetting() {
         return true;
     }
 
-    /**
-     * Always returns '', does not write anything.
-     *
-     * @param mixed $data ignored
-     * @return string Always returns ''
-     */
+    #[\Override]
     public function write_setting($data) {
         // Do not write any setting.
         return '';
     }
 
-    /**
-     * Checks if $query is one of the available log plugins.
-     *
-     * @param string $query The string to search for
-     * @return bool Returns true if found, false if not
-     */
+    #[\Override]
     public function is_related($query) {
         if (parent::is_related($query)) {
             return true;
@@ -93,13 +70,7 @@ class tool_log_setting_managestores extends \core_admin\setting {
         return false;
     }
 
-    /**
-     * Builds the XHTML to display the control.
-     *
-     * @param string $data Unused
-     * @param string $query
-     * @return string
-     */
+    #[\Override]
     public function output_html($data, $query = '') {
         global $OUTPUT, $PAGE;
 
@@ -117,12 +88,12 @@ class tool_log_setting_managestores extends \core_admin\setting {
         $available = $logmanager->get_store_plugins();
         $enabled = get_config('tool_log', 'enabled_stores');
         if (!$enabled) {
-            $enabled = array();
+            $enabled = [];
         } else {
             $enabled = array_flip(explode(',', $enabled));
         }
 
-        $allstores = array();
+        $allstores = [];
         foreach ($enabled as $key => $store) {
             $allstores[$key] = true;
             $enabled[$key] = true;
@@ -136,19 +107,19 @@ class tool_log_setting_managestores extends \core_admin\setting {
         $return .= $OUTPUT->box_start('generalbox loggingui');
 
         $table = new html_table();
-        $table->head = array(get_string('name'), get_string('reportssupported', 'tool_log'), $strversion, $strenable,
-                $strup . '/' . $strdown, $strsettings, $struninstall);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign',
-                'centeralign');
+        $table->head = [get_string('name'), get_string('reportssupported', 'tool_log'), $strversion, $strenable,
+                $strup . '/' . $strdown, $strsettings, $struninstall];
+        $table->colclasses = ['leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign',
+                'centeralign'];
         $table->id = 'logstoreplugins';
         $table->attributes['class'] = 'admintable table generaltable table-hover';
-        $table->data = array();
+        $table->data = [];
 
         // Iterate through store plugins and add to the display table.
         $updowncount = 1;
         $storecount = count($enabled);
-        $url = new moodle_url('/admin/tool/log/stores.php', array('sesskey' => sesskey()));
-        $printed = array();
+        $url = new moodle_url('/admin/tool/log/stores.php', ['sesskey' => sesskey()]);
+        $printed = [];
         foreach ($allstores as $store => $unused) {
             $plugininfo = $pluginmanager->get_plugin_info($store);
             $version = get_config($store, 'version');
@@ -171,14 +142,14 @@ class tool_log_setting_managestores extends \core_admin\setting {
 
             // Hide/show links.
             if (isset($enabled[$store])) {
-                $aurl = new moodle_url($url, array('action' => 'disable', 'store' => $store));
+                $aurl = new moodle_url($url, ['action' => 'disable', 'store' => $store]);
                 $hideshow = "<a href=\"$aurl\">";
                 $hideshow .= $OUTPUT->pix_icon('t/hide', $strdisable) . '</a>';
                 $isenabled = true;
                 $displayname = "<span>$name</span>";
             } else {
                 if (isset($available[$store])) {
-                    $aurl = new moodle_url($url, array('action' => 'enable', 'store' => $store));
+                    $aurl = new moodle_url($url, ['action' => 'enable', 'store' => $store]);
                     $hideshow = "<a href=\"$aurl\">";
                     $hideshow .= $OUTPUT->pix_icon('t/show', $strenable) . '</a>';
                     $isenabled = false;
@@ -190,7 +161,7 @@ class tool_log_setting_managestores extends \core_admin\setting {
                 }
             }
             if ($PAGE->theme->resolve_image_location('icon', $store, false)) {
-                $icon = $OUTPUT->pix_icon('icon', '', $store, array('class' => 'icon pluginicon'));
+                $icon = $OUTPUT->pix_icon('icon', '', $store, ['class' => 'icon pluginicon']);
             } else {
                 $icon = $OUTPUT->spacer();
             }
@@ -199,14 +170,14 @@ class tool_log_setting_managestores extends \core_admin\setting {
             $updown = '';
             if ($isenabled) {
                 if ($updowncount > 1) {
-                    $aurl = new moodle_url($url, array('action' => 'up', 'store' => $store));
+                    $aurl = new moodle_url($url, ['action' => 'up', 'store' => $store]);
                     $updown .= "<a href=\"$aurl\">";
                     $updown .= $OUTPUT->pix_icon('t/up', $strup) . '</a>&nbsp;';
                 } else {
                     $updown .= $OUTPUT->spacer();
                 }
                 if ($updowncount < $storecount) {
-                    $aurl = new moodle_url($url, array('action' => 'down', 'store' => $store));
+                    $aurl = new moodle_url($url, ['action' => 'down', 'store' => $store]);
                     $updown .= "<a href=\"$aurl\">";
                     $updown .= $OUTPUT->pix_icon('t/down', $strdown) . '</a>&nbsp;';
                 } else {
@@ -233,7 +204,7 @@ class tool_log_setting_managestores extends \core_admin\setting {
             }
 
             // Add a row to the table.
-            $table->data[] = array($icon . $displayname, $supportedreports, $version, $hideshow, $updown, $settings, $uninstall);
+            $table->data[] = [$icon . $displayname, $supportedreports, $version, $hideshow, $updown, $settings, $uninstall];
             $table->rowclasses[] = $isenabled ? '' : 'dimmed_text';
 
             $printed[$store] = true;

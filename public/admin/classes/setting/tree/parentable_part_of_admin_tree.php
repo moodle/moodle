@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\tree;
 
 /**
  * Interface implemented by any part_of_admin_tree that has children.
@@ -22,31 +24,30 @@
  * from ensuring part_of_admin_tree compliancy, it also ensures inheriting methods
  * include an add method for adding other part_of_admin_tree objects as children.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\tree;
-
 interface parentable_part_of_admin_tree extends \core_admin\setting\tree\part_of_admin_tree {
-
-/**
- * Adds a part_of_admin_tree object to the admin tree.
- *
- * Used to add a part_of_admin_tree object to this object or a child of this
- * object. $something should only be added if $destinationname matches
- * $this->name. If it doesn't, add should be called on child objects that are
- * also parentable_part_of_admin_tree's.
- *
- * $something should be appended as the last child in the $destinationname. If the
- * $beforesibling is specified, $something should be prepended to it. If the given
- * sibling is not found, $something should be appended to the end of $destinationname
- * and a developer debugging message should be displayed.
- *
- * @param string $destinationname The internal name of the new parent for $something.
- * @param part_of_admin_tree $something The object to be added.
- * @return bool True on success, false on failure.
- */
+    /**
+     * Adds a part_of_admin_tree object to the admin tree.
+     *
+     * Used to add a part_of_admin_tree object to this object or a child of this
+     * object. $something should only be added if $destinationname matches
+     * $this->name. If it doesn't, add should be called on child objects that are
+     * also parentable_part_of_admin_tree's.
+     *
+     * $something should be appended as the last child in the $destinationname. If the
+     * $beforesibling is specified, $something should be prepended to it. If the given
+     * sibling is not found, $something should be appended to the end of $destinationname
+     * and a developer debugging message should be displayed.
+     *
+     * @param string $destinationname The internal name of the new parent for $something.
+     * @param part_of_admin_tree $something The object to be added.
+     * @param string|null $beforesibling The internal name of the sibling to add $something before.
+     * @return bool True on success, false on failure.
+     */
     public function add($destinationname, $something, $beforesibling = null);
-
 }
 
 // Alias this class to the old name.

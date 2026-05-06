@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,16 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\page;
 
 use core_admin\admin_search;
 
 /**
- * Special class for filter administration.
+ * Filter administration page.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class managefilters extends \core_admin\setting\tree\externalpage {
     /**
@@ -36,8 +38,8 @@ class managefilters extends \core_admin\setting\tree\externalpage {
      * Searches all installed filters for specified filter
      *
      * @param string $query The filter(string) to search for
-     * @param string $query
      */
+    #[\Override]
     public function search($query) {
         global $CFG;
         if ($result = parent::search($query)) {
@@ -60,13 +62,13 @@ class managefilters extends \core_admin\setting\tree\externalpage {
         }
 
         if ($found) {
-            $result = new \stdClass;
+            $result = new \stdClass();
             $result->page = $this;
-            $result->settings = array();
+            $result->settings = [];
             $result->searchmatchtype = $type;
-            return array($this->name => $result);
+            return [$this->name => $result];
         } else {
-            return array();
+            return [];
         }
     }
 }

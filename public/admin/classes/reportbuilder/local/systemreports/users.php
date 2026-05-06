@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\reportbuilder\local\systemreports;
 
@@ -35,20 +35,19 @@ use pix_icon;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/authlib.php');
-require_once($CFG->libdir.'/enrollib.php');
-require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/authlib.php');
+require_once($CFG->libdir . '/enrollib.php');
+require_once($CFG->dirroot . '/user/lib.php');
 
 /**
  * Browse users system report class implementation
  *
  * @package    core_admin
  * @copyright  2023 David Carrillo <davidmc@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class users extends system_report {
-
     /**
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
@@ -69,22 +68,23 @@ class users extends system_report {
 
         if ($this->get_parameter('withcheckboxes', false, PARAM_BOOL)) {
             $canviewfullnames = has_capability('moodle/site:viewfullnames', \context_system::instance());
-            $this->set_checkbox_toggleall(static function(\stdClass $row) use ($canviewfullnames): array {
+            $this->set_checkbox_toggleall(static function (\stdClass $row) use ($canviewfullnames): array {
                 return [$row->id, fullname($row, $canviewfullnames)];
             });
         }
 
         $paramguest = database::generate_param_name();
-        $this->add_base_condition_sql("{$entityuseralias}.deleted <> 1 AND {$entityuseralias}.id <> :{$paramguest}",
-            [$paramguest => $CFG->siteguest]);
+        $this->add_base_condition_sql(
+            "{$entityuseralias}.deleted <> 1 AND {$entityuseralias}.id <> :{$paramguest}",
+            [$paramguest => $CFG->siteguest]
+        );
 
         $entitycohortmember = new cohort_member();
         $entitycohortmemberalias = $entitycohortmember->get_table_alias('cohort_members');
         $this->add_entity($entitycohortmember
             ->add_joins($entitycohortmember->get_joins())
             ->add_join("LEFT JOIN {cohort_members} {$entitycohortmemberalias}
-                ON {$entityuseralias}.id = {$entitycohortmemberalias}.userid")
-        );
+                ON {$entityuseralias}.id = {$entitycohortmemberalias}.userid"));
 
         $entitycohort = new cohort();
         $entitycohortalias = $entitycohort->get_table_alias('cohort');
@@ -92,8 +92,7 @@ class users extends system_report {
             ->add_joins($entitycohort->get_joins())
             ->add_joins($entitycohortmember->get_joins())
             ->add_join("LEFT JOIN {cohort} {$entitycohortalias}
-                ON {$entitycohortalias}.id = {$entitycohortmemberalias}.cohortid")
-        );
+                ON {$entitycohortalias}.id = {$entitycohortmemberalias}.cohortid"));
 
         // Join the role entity (Needed for the system role filter).
         $roleentity = new role();
@@ -103,9 +102,8 @@ class users extends system_report {
                 SELECT DISTINCT r0.id, ras.userid
                 FROM {role} r0
                 JOIN {role_assignments} ras ON ras.roleid = r0.id
-                WHERE ras.contextid = ".SYSCONTEXTID."
-             ) {$role} ON {$role}.userid = {$entityuseralias}.id")
-        );
+                WHERE ras.contextid = " . SYSCONTEXTID . "
+             ) {$role} ON {$role}.userid = {$entityuseralias}.id"));
 
         // Now we can call our helper methods to add the content we want to include in the report.
         $this->add_columns();
@@ -150,8 +148,7 @@ class users extends system_report {
                     return format_time(time() - $row->lastaccess);
                 }
                 return get_string('never');
-            })
-        );
+            }));
 
         if ($column = $this->get_column('user:fullnamewithpicturelink')) {
             $column
@@ -243,8 +240,7 @@ class users extends system_report {
             ->set_field_sql($sql, [
                 $now1 => $now,
                 $now2 => $now,
-            ])
-        );
+            ]));
 
         // Course role filter.
         $this->add_filter((new filter(
@@ -253,8 +249,7 @@ class users extends system_report {
             new lang_string('courserole', 'filters'),
             $this->get_entity('user')->get_entity_name(),
         ))
-            ->set_field_sql("{$entityuseralias}.id")
-        );
+            ->set_field_sql("{$entityuseralias}.id"));
 
         // Add user profile fields filters.
         $userprofilefields = new user_profile_fields($entityuseralias . '.id', $entityuser->get_entity_name());
@@ -287,7 +282,7 @@ class users extends system_report {
             [],
             false,
             new lang_string('edit', 'moodle'),
-        ))->add_callback(static function(\stdclass $row) use ($USER, $contextsystem): bool {
+        ))->add_callback(static function (\stdclass $row) use ($USER, $contextsystem): bool {
             return has_capability('moodle/user:update', $contextsystem) && (is_siteadmin($USER) || !is_siteadmin($row));
         }));
 
@@ -298,7 +293,7 @@ class users extends system_report {
             [],
             false,
             new lang_string('suspenduser', 'admin'),
-        ))->add_callback(static function(\stdclass $row) use ($USER, $contextsystem): bool {
+        ))->add_callback(static function (\stdclass $row) use ($USER, $contextsystem): bool {
             return has_capability('moodle/user:update', $contextsystem) && !$row->suspended && !is_mnet_remote_user($row) &&
                 !($row->id == $USER->id || is_siteadmin($row));
         }));
@@ -310,7 +305,7 @@ class users extends system_report {
             [],
             false,
             new lang_string('unsuspenduser', 'admin'),
-        ))->add_callback(static function(\stdclass $row) use ($USER, $contextsystem): bool {
+        ))->add_callback(static function (\stdclass $row) use ($USER, $contextsystem): bool {
             return has_capability('moodle/user:update', $contextsystem) && $row->suspended && !is_mnet_remote_user($row) &&
                 !($row->id == $USER->id || is_siteadmin($row));
         }));
@@ -322,7 +317,7 @@ class users extends system_report {
             [],
             false,
             new lang_string('unlockaccount', 'admin'),
-        ))->add_callback(static function(\stdclass $row) use ($contextsystem): bool {
+        ))->add_callback(static function (\stdclass $row) use ($contextsystem): bool {
             return has_capability('moodle/user:update', $contextsystem) && !is_mnet_remote_user($row) &&
                 login_is_lockedout($row);
         }));
@@ -334,10 +329,14 @@ class users extends system_report {
             [],
             false,
             new lang_string('denyaccess', 'mnet'),
-        ))->add_callback(static function(\stdclass $row) use ($DB, $contextsystem): bool {
-            if (!$accessctrl = $DB->get_field(table: 'mnet_sso_access_control', return: 'accessctrl',
-                conditions: ['username' => $row->username, 'mnet_host_id' => $row->mnethostid]
-            )) {
+        ))->add_callback(static function (\stdclass $row) use ($DB, $contextsystem): bool {
+            if (
+                !$accessctrl = $DB->get_field(
+                    table: 'mnet_sso_access_control',
+                    return: 'accessctrl',
+                    conditions: ['username' => $row->username, 'mnet_host_id' => $row->mnethostid]
+                )
+            ) {
                 $accessctrl = 'allow';
             }
 
@@ -352,10 +351,14 @@ class users extends system_report {
             [],
             false,
             new lang_string('allowaccess', 'mnet'),
-        ))->add_callback(static function(\stdclass $row) use ($DB, $contextsystem): bool {
-            if (!$accessctrl = $DB->get_field(table: 'mnet_sso_access_control', return: 'accessctrl',
-                conditions: ['username' => $row->username, 'mnet_host_id' => $row->mnethostid]
-            )) {
+        ))->add_callback(static function (\stdclass $row) use ($DB, $contextsystem): bool {
+            if (
+                !$accessctrl = $DB->get_field(
+                    table: 'mnet_sso_access_control',
+                    return: 'accessctrl',
+                    conditions: ['username' => $row->username, 'mnet_host_id' => $row->mnethostid]
+                )
+            ) {
                 $accessctrl = 'allow';
             }
 
@@ -378,7 +381,7 @@ class users extends system_report {
             ],
             false,
             new lang_string('delete', 'moodle'),
-        ))->add_callback(static function(\stdclass $row) use ($USER, $contextsystem): bool {
+        ))->add_callback(static function (\stdclass $row) use ($USER, $contextsystem): bool {
 
             // Populate deletion modal attributes.
             $row->deletestr = json_encode([
@@ -406,7 +409,7 @@ class users extends system_report {
             [],
             false,
             new lang_string('confirmaccount', 'moodle'),
-        ))->add_callback(static function(\stdclass $row) use ($contextsystem): bool {
+        ))->add_callback(static function (\stdclass $row) use ($contextsystem): bool {
             return has_capability('moodle/user:update', $contextsystem) && !$row->confirmed;
         }));
 
@@ -417,7 +420,7 @@ class users extends system_report {
             [],
             false,
             new lang_string('resendemail', 'moodle'),
-        ))->add_callback(static function(\stdclass $row): bool {
+        ))->add_callback(static function (\stdclass $row): bool {
             return !$row->confirmed && !is_mnet_remote_user($row);
         }));
     }

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\table;
 
@@ -29,10 +29,9 @@ require_once("{$CFG->libdir}/tablelib.php");
  *
  * @package    core_admin
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class hook_list_table extends flexible_table {
-
     /** @var \core\plugininfo\base[] The plugin list */
     protected array $plugins = [];
 
@@ -247,7 +246,7 @@ class hook_list_table extends flexible_table {
     protected function get_tags_for_row(stdClass $row): string {
         if (!array_key_exists($row->classname, $this->emitters)) {
             // This hook has been defined in the db/hooks.php file
-            // but does not refer to a hook in this version of Moodle.
+            // But does not refer to a hook in this version of Moodle.
             return $this->get_tag(
                 get_string('hookunknown', 'core_admin'),
                 'warning',
@@ -265,7 +264,7 @@ class hook_list_table extends flexible_table {
         }
 
         $tags = $this->emitters[$row->classname]['tags'] ?? [];
-        $taglist = array_map(function($tag): string {
+        $taglist = array_map(function ($tag): string {
             if (is_array($tag)) {
                 return $this->get_tag(...$tag);
             }

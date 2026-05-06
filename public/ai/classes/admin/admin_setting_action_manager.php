@@ -16,7 +16,7 @@
 
 namespace core_ai\admin;
 
-use \core\exception\coding_exception;
+use core\exception\coding_exception;
 
 /**
  * Admin setting plugin manager.

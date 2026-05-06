@@ -24,29 +24,28 @@ namespace core\plugininfo;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class auth extends base {
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
+    #[\Override]
     public function is_uninstall_allowed() {
         global $DB;
 
-        if (in_array($this->name, array('manual', 'nologin', 'webservice', 'mnet'))) {
+        if (in_array($this->name, ['manual', 'nologin', 'webservice', 'mnet'])) {
             return false;
         }
 
-        return !$DB->record_exists('user', array('auth'=>$this->name));
+        return !$DB->record_exists('user', ['auth' => $this->name]);
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $CFG;
 
         // These two are always enabled and can't be disabled.
-        $enabled = array('nologin'=>'nologin', 'manual'=>'manual');
+        $enabled = ['nologin' => 'nologin', 'manual' => 'manual'];
         foreach (explode(',', $CFG->auth) as $auth) {
             $enabled[$auth] = $auth;
         }
@@ -54,6 +53,7 @@ class auth extends base {
         return $enabled;
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         global $CFG;
 
@@ -89,10 +89,12 @@ class auth extends base {
         return $haschanged;
     }
 
+    #[\Override]
     public function get_settings_section_name() {
         return 'authsetting' . $this->name;
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -116,9 +118,12 @@ class auth extends base {
 
         $settings = null;
         if (file_exists($this->full_path('settings.php'))) {
-            // TODO: finish implementation of common settings - locking, etc.
-            $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname,
-                'moodle/site:config', $this->is_enabled() === false);
+            $settings = new \core_admin\setting\settingpage\settingpage(
+                $section,
+                $this->displayname,
+                'moodle/site:config',
+                $this->is_enabled() === false
+            );
             include($this->full_path('settings.php')); // This may also set $settings to null.
         }
 
@@ -127,22 +132,12 @@ class auth extends base {
         }
     }
 
-    /**
-     * Return URL used for management of plugins of this type.
-     * @return \core\url
-     */
+    #[\Override]
     public static function get_manage_url() {
-        return new \core\url('/admin/settings.php', array('section'=>'manageauths'));
+        return new \core\url('/admin/settings.php', ['section' => 'manageauths']);
     }
 
-    /**
-     * Pre-uninstall hook.
-     *
-     * This is intended for disabling of plugin, some DB table purging, etc.
-     *
-     * NOTE: to be called from uninstall_plugin() only.
-     * @private
-     */
+    #[\Override]
     public function uninstall_cleanup() {
         global $CFG;
 
@@ -150,7 +145,7 @@ class auth extends base {
             $auths = explode(',', $CFG->auth);
             $auths = array_unique($auths);
         } else {
-            $auths = array();
+            $auths = [];
         }
         if (($key = array_search($this->name, $auths)) !== false) {
             unset($auths[$key]);
@@ -160,7 +155,7 @@ class auth extends base {
             \core\session\manager::destroy_by_auth_plugin($this->name);
         }
 
-        if (!empty($CFG->registerauth) and $CFG->registerauth === $this->name) {
+        if (!empty($CFG->registerauth) && $CFG->registerauth === $this->name) {
             unset_config('registerauth');
         }
 

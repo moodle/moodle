@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,21 +12,29 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Special control for selecting days to backup
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Day selection control for automated backups.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class special_backupdays extends \core_admin\setting\setting\configmulticheckbox2 {
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
-        parent::__construct('backup_auto_weekdays', get_string('automatedbackupschedule','backup'), get_string('automatedbackupschedulehelp','backup'), array(), NULL);
+        parent::__construct(
+            'backup_auto_weekdays',
+            get_string('automatedbackupschedule', 'backup'),
+            get_string('automatedbackupschedulehelp', 'backup'),
+            [],
+            null,
+        );
         $this->plugin = 'backup';
     }
 
@@ -39,8 +47,8 @@ class special_backupdays extends \core_admin\setting\setting\configmulticheckbox
         if (is_array($this->choices)) {
             return true;
         }
-        $this->choices = array();
-        $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+        $this->choices = [];
+        $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         foreach ($days as $day) {
             $this->choices[$day] = get_string($day, 'calendar');
         }

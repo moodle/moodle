@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,14 +12,14 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Auto complete admin setting.
  *
  * @package    core_admin
  * @copyright  2020 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace core_admin\local\settings;
@@ -30,11 +30,11 @@ require_once($CFG->libdir . '/adminlib.php');
 /**
  * Auto complete setting class.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2020 The Open University
  */
 class autocomplete extends \admin_setting_configmultiselect {
-    /** @var boolean Should we allow typing new entries to the field? */
+    /** @var bool Should we allow typing new entries to the field? */
     protected $tags = false;
     /** @var string Name of an AMD module to send/process ajax requests. */
     protected $ajax = '';
@@ -84,7 +84,7 @@ class autocomplete extends \admin_setting_configmultiselect {
                 'delimiter',
                 'multiple',
                 'manageurl',
-                'managetext'
+                'managetext',
         ];
 
         foreach ($defaultattributes as $attributename) {
@@ -148,7 +148,7 @@ class autocomplete extends \admin_setting_configmultiselect {
     public function output_html($data, $query = '') {
         global $OUTPUT;
 
-        if (!$this->load_choices() or empty($this->choices)) {
+        if (!$this->load_choices() || empty($this->choices)) {
             return '';
         }
 
@@ -163,7 +163,7 @@ class autocomplete extends \admin_setting_configmultiselect {
 
         $context = [
                 'id' => $this->get_id(),
-                'name' => $this->get_full_name()
+                'name' => $this->get_full_name(),
         ];
 
         $defaults = [];
@@ -178,7 +178,7 @@ class autocomplete extends \admin_setting_configmultiselect {
                     'value' => $value,
                     'text' => $name,
                     'selected' => in_array($value, $data),
-                    'disabled' => false
+                    'disabled' => false,
             ];
         }
 

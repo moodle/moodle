@@ -21,23 +21,21 @@ namespace core\plugininfo;
  *
  * @package    core
  * @copyright  2011 David Mudrak <david@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class message extends base {
-
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $DB;
-        return $DB->get_records_menu('message_processors', array('enabled'=>1), 'name ASC', 'name, name AS val');
+        return $DB->get_records_menu('message_processors', ['enabled' => 1], 'name ASC', 'name, name AS val');
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         global $DB;
 
@@ -62,10 +60,12 @@ class message extends base {
         return $haschanged;
     }
 
+    #[\Override]
     public function get_settings_section_name() {
         return 'messagesetting' . $this->name;
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -90,8 +90,12 @@ class message extends base {
         if (isset($processors[$this->name])) {
             $processor = $processors[$this->name];
             if ($processor->available && $processor->hassettings) {
-                $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname,
-                    'moodle/site:config', $this->is_enabled() === false);
+                $settings = new \core_admin\setting\settingpage\settingpage(
+                    $section,
+                    $this->displayname,
+                    'moodle/site:config',
+                    $this->is_enabled() === false
+                );
                 include($this->full_path('settings.php')); // This may also set $settings to null.
             }
         }
@@ -100,30 +104,21 @@ class message extends base {
         }
     }
 
-    /**
-     * Return URL used for management of plugins of this type.
-     * @return \core\url
-     */
+    #[\Override]
     public static function get_manage_url() {
         return new \core\url('/admin/message.php');
     }
 
+    #[\Override]
     public function is_uninstall_allowed() {
         return true;
     }
 
-    /**
-     * Pre-uninstall hook.
-     *
-     * This is intended for disabling of plugin, some DB table purging, etc.
-     *
-     * NOTE: to be called from uninstall_plugin() only.
-     * @private
-     */
+    #[\Override]
     public function uninstall_cleanup() {
         global $CFG;
 
-        require_once($CFG->libdir.'/messagelib.php');
+        require_once($CFG->libdir . '/messagelib.php');
         message_processor_uninstall($this->name);
 
         parent::uninstall_cleanup();

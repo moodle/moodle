@@ -24,10 +24,12 @@ namespace core\plugininfo;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filter extends base {
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
+    #[\Override]
     public function init_display_name() {
         if (!get_string_manager()->string_exists('filtername', $this->component)) {
             $this->displayname = '[filtername,' . $this->component . ']';
@@ -36,17 +38,14 @@ class filter extends base {
         }
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $DB, $CFG;
         require_once("$CFG->libdir/filterlib.php");
 
-        $enabled = array();
-        $filters = $DB->get_records_select('filter_active', "active <> :disabled AND contextid = :contextid", array(
-            'disabled' => TEXTFILTER_DISABLED, 'contextid' => \context_system::instance()->id), 'filter ASC', 'id, filter');
+        $enabled = [];
+        $filters = $DB->get_records_select('filter_active', "active <> :disabled AND contextid = :contextid", [
+            'disabled' => TEXTFILTER_DISABLED, 'contextid' => \context_system::instance()->id], 'filter ASC', 'id, filter');
         foreach ($filters as $filter) {
             $enabled[$filter->filter] = $filter->filter;
         }
@@ -64,6 +63,7 @@ class filter extends base {
      * @return bool It always return true because we don't know if the value has changed or not. That way, we guarantee any action
      * required if it's changed will be executed.
      */
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         global $CFG;
         require_once("$CFG->libdir/filterlib.php");
@@ -89,6 +89,7 @@ class filter extends base {
      * @param string $pluginname The plugin name to check.
      * @return int The current status (enabled, disabled...) of $pluginname.
      */
+    #[\Override]
     public static function get_enabled_plugin(string $pluginname): int {
         global $DB, $CFG;
         require_once("$CFG->libdir/filterlib.php");
@@ -99,10 +100,12 @@ class filter extends base {
         return $record ? (int) $record->active : TEXTFILTER_DISABLED;
     }
 
+    #[\Override]
     public function get_settings_section_name() {
         return 'filtersetting' . $this->name;
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -130,7 +133,12 @@ class filter extends base {
         }
 
         $section = $this->get_settings_section_name();
-        $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core_admin\setting\settingpage\settingpage(
+            $section,
+            $this->displayname,
+            'moodle/site:config',
+            $this->is_enabled() === false,
+        );
         include($fullpath); // This may also set $settings to null.
 
         if ($settings) {
@@ -138,39 +146,30 @@ class filter extends base {
         }
     }
 
+    #[\Override]
     public function is_uninstall_allowed() {
         return true;
     }
 
-    /**
-     * Return URL used for management of plugins of this type.
-     * @return \core\url
-     */
+    #[\Override]
     public static function get_manage_url() {
         return new \core\url('/admin/filters.php');
     }
 
-    /**
-     * Pre-uninstall hook.
-     *
-     * This is intended for disabling of plugin, some DB table purging, etc.
-     *
-     * NOTE: to be called from uninstall_plugin() only.
-     * @private
-     */
+    #[\Override]
     public function uninstall_cleanup() {
         global $DB, $CFG;
 
-        $DB->delete_records('filter_active', array('filter' => $this->name));
-        $DB->delete_records('filter_config', array('filter' => $this->name));
+        $DB->delete_records('filter_active', ['filter' => $this->name]);
+        $DB->delete_records('filter_config', ['filter' => $this->name]);
 
         if (empty($CFG->filterall)) {
-            $stringfilters = array();
+            $stringfilters = [];
         } else if (!empty($CFG->stringfilters)) {
             $stringfilters = explode(',', $CFG->stringfilters);
             $stringfilters = array_combine($stringfilters, $stringfilters);
         } else {
-            $stringfilters = array();
+            $stringfilters = [];
         }
 
         unset($stringfilters[$this->name]);

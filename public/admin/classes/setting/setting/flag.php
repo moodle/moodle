@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,19 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * An additional option that can be applied to an admin setting.
  *
  * The currently supported options are 'ADVANCED', 'LOCKED' and 'REQUIRED'.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class flag {
     /** @var bool Flag to indicate if this option can be toggled for this setting */
     private $enabled = false;
@@ -32,13 +34,15 @@ class flag {
     private $shortname = '';
     /** @var string String used as the label for this flag */
     private $displayname = '';
+
     /** @var bool Checkbox for this flag is displayed in admin page */
-    const ENABLED = true;
+    public const ENABLED = true;
+
     /** @var bool Checkbox for this flag is not displayed in admin page */
-    const DISABLED = false;
+    public const DISABLED = false;
 
     /**
-     * Constructor
+     * Constructor for the flag.
      *
      * @param bool $enabled Can this option can be toggled.
      *                      Should be one of self::ENABLED or self::DISABLED.
@@ -119,7 +123,6 @@ class flag {
         }
 
         return $result;
-
     }
 
     /**
@@ -147,4 +150,4 @@ class flag {
 // Alias this class to the old name.
 // This file will be autoloaded by the legacyclasses autoload system.
 // In future all uses of this class will be corrected and the legacy references will be removed.
-class_alias(flag::class, \self::class);
+class_alias(flag::class, \admin_setting_flag::class);

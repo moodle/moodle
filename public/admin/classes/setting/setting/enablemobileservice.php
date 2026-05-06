@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,18 +12,19 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Special checkbox for enable mobile web service
- * If enable then we store the service id of the mobile service into config table
- * If disable then we unstore the service id from the config table
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Checkbox for enabling the mobile web service.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
-
-    /** @var boolean True means that the capability 'webservice/rest:use' is set for authenticated user role */
+    /** @var bool True means that the capability 'webservice/rest:use' is set for authenticated user role */
     private $restuse;
 
     /**
@@ -35,8 +36,8 @@ class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
         global $DB, $CFG;
 
         // If the $this->restuse variable is not set, it needs to be set.
-        if (empty($this->restuse) and $this->restuse!==false) {
-            $params = array();
+        if (empty($this->restuse) && $this->restuse !== false) {
+            $params = [];
             $params['permission'] = CAP_ALLOW;
             $params['roleid'] = $CFG->defaultuserroleid;
             $params['capability'] = 'webservice/rest:use';
@@ -52,12 +53,12 @@ class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
      */
     private function set_protocol_cap($status) {
         global $CFG;
-        if ($status and !$this->is_protocol_cap_allowed()) {
-            //need to allow the cap
+        if ($status && !$this->is_protocol_cap_allowed()) {
+            // Need to allow the cap.
             $permission = CAP_ALLOW;
             $assign = true;
-        } else if (!$status and $this->is_protocol_cap_allowed()){
-            //need to disallow the cap
+        } else if (!$status && $this->is_protocol_cap_allowed()) {
+            // Need to disallow the cap.
             $permission = CAP_INHERIT;
             $assign = true;
         }
@@ -75,7 +76,7 @@ class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
      * @param string $query
      * @return string XHTML
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $OUTPUT;
         $html = parent::output_html($data, $query);
 
@@ -104,8 +105,8 @@ class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
             return null;
         }
 
-        // For install cli script, $CFG->defaultuserroleid is not set so return 0
-        // Or if web services aren't enabled this can't be,
+        // For install cli script, $CFG->defaultuserroleid is not set so return 0.
+        // Or if web services aren't enabled this can't be,.
         if (empty($CFG->defaultuserroleid) || empty($CFG->enablewebservices)) {
             return 0;
         }
@@ -113,7 +114,7 @@ class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
         require_once($CFG->dirroot . '/webservice/lib.php');
         $webservicemanager = new \webservice();
         $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
-        if ($mobileservice->enabled and $this->is_protocol_cap_allowed()) {
+        if ($mobileservice->enabled && $this->is_protocol_cap_allowed()) {
             return $result;
         } else {
             return 0;
@@ -129,7 +130,7 @@ class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
     public function write_setting($data) {
         global $DB, $CFG;
 
-        //for install cli script, $CFG->defaultuserroleid is not set so do nothing
+        // For install cli script, $CFG->defaultuserroleid is not set so do nothing.
         if (empty($CFG->defaultuserroleid)) {
             return '';
         }
@@ -141,35 +142,35 @@ class enablemobileservice extends \core_admin\setting\setting\configcheckbox {
 
         $updateprotocol = false;
         if ((string)$data === $this->yes) {
-             //code run when enable mobile web service
-             //enable web service systeme if necessary
+             // Code run when enable mobile web service
+             // Enable web service systeme if necessary.
              set_config('enablewebservices', true);
 
-             //enable mobile service
+             // Enable mobile service.
              $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
              $mobileservice->enabled = 1;
              $webservicemanager->update_external_service($mobileservice);
 
              // Enable REST server.
-             $activeprotocols = empty($CFG->webserviceprotocols) ? array() : \explode(',', $CFG->webserviceprotocols);
+             $activeprotocols = empty($CFG->webserviceprotocols) ? [] : \explode(',', $CFG->webserviceprotocols);
 
-             if (!in_array('rest', $activeprotocols)) {
-                 $activeprotocols[] = 'rest';
-                 $updateprotocol = true;
-             }
+            if (!in_array('rest', $activeprotocols)) {
+                $activeprotocols[] = 'rest';
+                $updateprotocol = true;
+            }
 
-             if ($updateprotocol) {
-                 set_config('webserviceprotocols', implode(',', $activeprotocols));
-             }
+            if ($updateprotocol) {
+                set_config('webserviceprotocols', implode(',', $activeprotocols));
+            }
 
              // Allow rest:use capability for authenticated user.
              $this->set_protocol_cap(true);
-         } else {
-             // Disable the mobile service.
-             $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
-             $mobileservice->enabled = 0;
-             $webservicemanager->update_external_service($mobileservice);
-         }
+        } else {
+            // Disable the mobile service.
+            $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
+            $mobileservice->enabled = 0;
+            $webservicemanager->update_external_service($mobileservice);
+        }
 
         return (parent::write_setting($data));
     }

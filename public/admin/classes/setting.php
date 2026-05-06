@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,29 +12,32 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin;
 
 /**
  * Admin settings class. Only exists on setting pages.
+ *
  * Read & write happens at this level; no authentication.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin;
-
 abstract class setting {
     /** @var string unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins. */
     public $name;
-    /** @var lang_string|string localised name */
+    /** @var \lang_string|string localised name */
     public $visiblename;
     /** @var string localised long description in Markdown format */
     public $description;
-    /** @var mixed Can be string or array of string */
+    /** @var string|string[] Can be string or array of string */
     public $defaultsetting;
     /** @var ?callable */
     public $updatedcallback;
-    /** @var mixed can be String or Null.  Null means main config table */
-    public $plugin; // null means main config table
+    /** @var string|null The plugin name, or `null` for core */
+    public $plugin; // Null means main config table.
     /** @var bool true indicates this setting does not actually save anything, just information */
     public $nosave = false;
     /** @var bool if set, indicates that a change to this setting requires rebuild course cache */
@@ -43,22 +46,22 @@ abstract class setting {
     private $flags = [];
     /** @var bool Whether this field must be forced LTR. */
     private $forceltr = null;
-    /** @var array list of other settings that may cause this setting to be hidden */
+    /** @var string[] list of other settings that may cause this setting to be hidden */
     private $dependenton = [];
     /** @var bool Whether this setting uses a custom form control */
     protected $customcontrol = false;
-    /** @var mixed int means PARAM_XXX type, string is a allowed format in regex */
+    /** @var int|string int means PARAM_XXX type, string is a allowed format in regex */
     public $paramtype;
     /** @var string Capture the type of search matched from the query. */
     public $searchmatchtype;
 
     /**
      * Constructor
-     * @param string $name unique ascii name, either 'mysetting' for settings that in config,
-     *                     or 'myplugin/mysetting' for ones in config_plugins.
-     * @param string $visiblename localised name
+     * @param string $name A unique ascii name for the setting.
+     *      Either 'mysetting' for core settings, or 'myplugin/mysetting' for those belonging to a plugin.
+     * @param \lang_string|string $visiblename localised name
      * @param string $description localised long description
-     * @param mixed $defaultsetting string or array depending on implementation
+     * @param string|string[] $defaultsetting string or array depending on implementation
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         $this->parse_setting_name($name);
@@ -137,8 +140,10 @@ abstract class setting {
                 return true;
             }
         } else {
-            if (array_key_exists($this->plugin, $CFG->forced_plugin_settings)
-                and array_key_exists($this->name, $CFG->forced_plugin_settings[$this->plugin])) {
+            if (
+                array_key_exists($this->plugin, $CFG->forced_plugin_settings)
+                && array_key_exists($this->name, $CFG->forced_plugin_settings[$this->plugin])
+            ) {
                 return true;
             }
         }
@@ -163,9 +168,9 @@ abstract class setting {
     /**
      * Get the list of defaults for the flags on this setting.
      *
-     * @param array of strings describing the defaults for this setting. This is appended to by this function.
+     * @param array $defaults Strings describing the defaults for this setting. This is appended to by this function.
      */
-    public function get_setting_flag_defaults(& $defaults) {
+    public function get_setting_flag_defaults(&$defaults) {
         foreach ($this->flags as $flag) {
             if ($flag->is_enabled() && $flag->get_default()) {
                 $defaults[] = $flag->get_displayname();
@@ -176,8 +181,6 @@ abstract class setting {
     /**
      * Output the input fields for the advanced and locked flags on this setting.
      *
-     * @param bool $adv - The current value of the advanced flag.
-     * @param bool $locked - The current value of the locked flag.
      * @return string $output - The html for the flags.
      */
     public function output_setting_flags() {
@@ -190,7 +193,7 @@ abstract class setting {
         }
 
         if (!empty($output)) {
-            return \html_writer::tag('span', $output, array('class' => 'adminsettingsflags'));
+            return \html_writer::tag('span', $output, ['class' => 'adminsettingsflags']);
         }
         return $output;
     }
@@ -234,7 +237,7 @@ abstract class setting {
                 $this->plugin = null;
             } else if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->plugin)) {
                     throw new \moodle_exception('invalidadminsettingname', '', '', $name);
-                }
+            }
         }
     }
 
@@ -243,7 +246,7 @@ abstract class setting {
      * @return string
      */
     public function get_full_name() {
-        return 's_'.$this->plugin.'_'.$this->name;
+        return 's_' . $this->plugin . '_' . $this->name;
     }
 
     /**
@@ -251,12 +254,13 @@ abstract class setting {
      * @return string
      */
     public function get_id() {
-        return 'id_s_'.$this->plugin.'_'.$this->name;
+        return 'id_s_' . $this->plugin . '_' . $this->name;
     }
 
     /**
-     * @param bool $affectsmodinfo If true, changes to this setting will
-     *   cause the course cache to be rebuilt
+     * Set whether changes to this setting should cause the course cache to be rebuilt.
+     *
+     * @param bool $affectsmodinfo If true, changes to this setting will cause the course cache to be rebuilt
      */
     public function set_affects_modinfo($affectsmodinfo) {
         $this->affectsmodinfo = $affectsmodinfo;
@@ -265,19 +269,19 @@ abstract class setting {
     /**
      * Returns the config if possible
      *
+     * @param string $name the name of the config setting to read
      * @return mixed returns config if successful else null
      */
     public function config_read($name) {
         global $CFG;
         if (!empty($this->plugin)) {
             $value = get_config($this->plugin, $name);
-            return $value === false ? NULL : $value;
-
+            return $value === false ? null : $value;
         } else {
             if (isset($CFG->$name)) {
                 return $CFG->$name;
             } else {
-                return NULL;
+                return null;
             }
         }
     }
@@ -296,27 +300,27 @@ abstract class setting {
             return true;
         }
 
-        // make sure it is a real change
+        // Make sure it is a real change.
         $oldvalue = get_config($this->plugin, $name);
-        $oldvalue = ($oldvalue === false) ? null : $oldvalue; // normalise
+        $oldvalue = ($oldvalue === false) ? null : $oldvalue; // Normalise.
         $value = is_null($value) ? null : (string)$value;
 
         if ($oldvalue === $value) {
             return true;
         }
 
-        // store change
+        // Store change.
         set_config($name, $value, $this->plugin);
 
-        // Some admin settings affect course modinfo
+        // Some admin settings affect course modinfo.
         if ($this->affectsmodinfo) {
-            // Clear course cache for all courses
+            // Clear course cache for all courses.
             rebuild_course_cache(0, true);
         }
 
         $this->add_to_config_log($name, $oldvalue, $value);
 
-        return true; // BC only
+        return true; // BC only.
     }
 
     /**
@@ -340,11 +344,11 @@ abstract class setting {
      * @return mixed array or string depending on instance; NULL means no default, user must supply
      */
     public function get_defaultsetting() {
-        $adminroot =  admin_get_root(false, false);
+        $adminroot = admin_get_root(false, false);
         if (!empty($adminroot->custom_defaults)) {
             $plugin = is_null($this->plugin) ? 'moodle' : $this->plugin;
             if (isset($adminroot->custom_defaults[$plugin])) {
-                if (array_key_exists($this->name, $adminroot->custom_defaults[$plugin])) { // null is valid value here ;-)
+                if (array_key_exists($this->name, $adminroot->custom_defaults[$plugin])) { // Null is valid value here.
                     return $adminroot->custom_defaults[$plugin][$this->name];
                 }
             }
@@ -361,15 +365,16 @@ abstract class setting {
     abstract public function write_setting($data);
 
     /**
-     * Return part of form with setting
-     * This function should always be overwritten
+     * Return part of form with setting.
+     *
+     * This function should always be overwritten.
      *
      * @param mixed $data array or string depending on setting
      * @param string $query
      * @return string
      */
-    public function output_html($data, $query='') {
-    // should be overridden
+    public function output_html($data, $query = '') {
+        // Should be overridden.
         return;
     }
 
@@ -394,7 +399,7 @@ abstract class setting {
         }
 
         $callbackfunction = $this->updatedcallback;
-        if (!empty($callbackfunction) and is_callable($callbackfunction)) {
+        if (!empty($callbackfunction) && is_callable($callbackfunction)) {
             $callbackfunction($this->get_full_name());
         }
         return true;

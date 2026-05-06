@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\output;
 
@@ -30,7 +30,6 @@ use templatable;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class theme_selector implements renderable, templatable {
-
     /** @var array $themedata Theme data to pass to the template. */
     private $themedata = null;
 
@@ -61,8 +60,12 @@ class theme_selector implements renderable, templatable {
         $data->themes = $this->themedata;
         // Reset theme caches button.
         $reseturl = new moodle_url('/admin/themeselector.php', ['sesskey' => sesskey(), 'reset' => 1]);
-        $resetbutton = new \single_button($reseturl, get_string('themeresetcaches', 'admin'), 'post',
-            \single_button::BUTTON_SECONDARY);
+        $resetbutton = new \single_button(
+            $reseturl,
+            get_string('themeresetcaches', 'admin'),
+            'post',
+            \single_button::BUTTON_SECONDARY
+        );
         $data->resetbutton = $resetbutton->export_for_template($output);
         $data->definedinconfig = $this->definedinconfig;
 

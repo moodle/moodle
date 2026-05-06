@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,19 +12,20 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * A setting for setting the maximum grade value. Must be an integer between 1 and 10000.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class special_gradepointmax extends \core_admin\setting\setting\configtext {
-
     /**
-     * Config gradepointmax constructor
+     * Config gradepointmax constructor.
      *
      * @param string $name Overidden by "gradepointmax"
      * @param string $visiblename Overridden by "gradepointmax" language string.
@@ -33,7 +34,14 @@ class special_gradepointmax extends \core_admin\setting\setting\configtext {
      * @param mixed $paramtype Overridden by PARAM_INT.
      * @param int $size Overridden by 5.
      */
-    public function __construct($name = '', $visiblename = '', $description = '', $defaultsetting = '', $paramtype = PARAM_INT, $size = 5) {
+    public function __construct(
+        $name = '',
+        $visiblename = '',
+        $description = '',
+        $defaultsetting = '',
+        $paramtype = PARAM_INT,
+        $size = 5,
+    ) {
         $name = 'gradepointmax';
         $visiblename = get_string('gradepointmax', 'grades');
         $description = get_string('gradepointmax_help', 'grades');
@@ -43,12 +51,7 @@ class special_gradepointmax extends \core_admin\setting\setting\configtext {
         parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $size);
     }
 
-    /**
-     * Save the selected setting
-     *
-     * @param string $data The selected site
-     * @return string empty string or error message
-     */
+    #[\Override]
     public function write_setting($data) {
         if ($data === '') {
             $data = (int)$this->defaultsetting;
@@ -58,11 +61,7 @@ class special_gradepointmax extends \core_admin\setting\setting\configtext {
         return parent::write_setting($data);
     }
 
-    /**
-     * Validate data before storage
-     * @param string $data The submitted data
-     * @return bool|string true if ok, string if error found
-     */
+    #[\Override]
     public function validate($data) {
         if (((string)(int)$data === (string)$data && $data > 0 && $data <= 10000)) {
             return true;
@@ -71,12 +70,7 @@ class special_gradepointmax extends \core_admin\setting\setting\configtext {
         }
     }
 
-    /**
-     * Return an XHTML string for the setting
-     * @param array $data Associative array of value=>xx, forced=>xx, adv=>xx
-     * @param string $query search query to be highlighted
-     * @return string XHTML to display control
-     */
+    #[\Override]
     public function output_html($data, $query = '') {
         global $OUTPUT;
 
@@ -87,9 +81,9 @@ class special_gradepointmax extends \core_admin\setting\setting\configtext {
             'name' => $this->get_full_name(),
             'value' => $data,
             'attributes' => [
-                'maxlength' => 5
+                'maxlength' => 5,
             ],
-            'forceltr' => $this->get_force_ltr()
+            'forceltr' => $this->get_force_ltr(),
         ];
         $element = $OUTPUT->render_from_template('core_admin/setting_configtext', $context);
 

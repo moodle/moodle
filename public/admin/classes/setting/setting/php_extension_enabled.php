@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,23 +12,28 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Admin setting to show if a php extension is enabled or not.
  *
- * @copyright 2013 Damyon Wiese
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class php_extension_enabled extends \core_admin\setting {
-
     /** @var string The name of the extension to check for */
     private $extension;
 
     /**
      * Calls parent::__construct with specific arguments
+     *
+     * @param string $name The name of the setting
+     * @param string $visiblename The visible name of the setting
+     * @param string $description The description of the setting
+     * @param string $extension The name of the extension to check for
      */
     public function __construct($name, $visiblename, $description, $extension) {
         $this->extension = $extension;
@@ -36,39 +41,24 @@ class php_extension_enabled extends \core_admin\setting {
         parent::__construct($name, $visiblename, $description, '');
     }
 
-    /**
-     * Always returns true, does nothing
-     *
-     * @return true
-     */
+    #[\Override]
     public function get_setting() {
         return true;
     }
 
-    /**
-     * Always returns true, does nothing
-     *
-     * @return true
-     */
+    #[\Override]
     public function get_defaultsetting() {
         return true;
     }
 
-    /**
-     * Always returns '', does not write anything
-     *
-     * @return string Always returns ''
-     */
+    #[\Override]
     public function write_setting($data) {
         // Do not write any setting.
         return '';
     }
 
-    /**
-     * Outputs the html for this setting.
-     * @return string Returns an XHTML string
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $o = '';

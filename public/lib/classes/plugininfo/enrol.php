@@ -17,27 +17,23 @@
 namespace core\plugininfo;
 
 /**
- * Defines classes used for plugin info. 
+ * Defines classes used for plugin info.
  *
  * @package    core
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol extends base {
-
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
-    /**
-     *
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $CFG;
 
-        $enabled = array();
+        $enabled = [];
         foreach (explode(',', $CFG->enrol_plugins_enabled) as $enrol) {
             $enabled[$enrol] = $enrol;
         }
@@ -45,6 +41,7 @@ class enrol extends base {
         return $enabled;
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         global $CFG;
 
@@ -76,6 +73,7 @@ class enrol extends base {
         return $haschanged;
     }
 
+    #[\Override]
     public function get_settings_section_name() {
         if (file_exists($this->full_path('settings.php'))) {
             return 'enrolsettings' . $this->name;
@@ -84,13 +82,14 @@ class enrol extends base {
         }
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
         $hassiteconfig,
     ) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
-        /** @var \admin_root $ADMIN */
+        /** @var \core_admin\setting\tree\root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
         $enrol = $this;      // Also can be used inside settings.php.
@@ -99,13 +98,18 @@ class enrol extends base {
             return;
         }
 
-        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
             return;
         }
 
         $section = $this->get_settings_section_name();
 
-        $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core_admin\setting\settingpage\settingpage(
+            $section,
+            $this->displayname,
+            'moodle/site:config',
+            $this->is_enabled() === false,
+        );
 
         include($this->full_path('settings.php')); // This may also set $settings to null!
 
@@ -114,6 +118,7 @@ class enrol extends base {
         }
     }
 
+    #[\Override]
     public function is_uninstall_allowed() {
         if ($this->name === 'manual') {
             return false;
@@ -121,19 +126,12 @@ class enrol extends base {
         return true;
     }
 
-    /**
-     * Return URL used for management of plugins of this type.
-     * @return \core\url
-     */
+    #[\Override]
     public static function get_manage_url() {
-        return new \core\url('/admin/settings.php', array('section'=>'manageenrols'));
+        return new \core\url('/admin/settings.php', ['section' => 'manageenrols']);
     }
 
-    /**
-     * Return warning with number of activities and number of affected courses.
-     *
-     * @return string
-     */
+    #[\Override]
     public function get_uninstall_extra_warning() {
         global $DB, $OUTPUT;
 
@@ -141,43 +139,36 @@ class enrol extends base {
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON e.id = ue.enrolid
                  WHERE e.enrol = :plugin";
-        $count = $DB->count_records_sql($sql, array('plugin'=>$this->name));
+        $count = $DB->count_records_sql($sql, ['plugin' => $this->name]);
 
         if (!$count) {
             return '';
         }
 
-        $migrateurl = new \core\url('/admin/enrol.php', array('action'=>'migrate', 'enrol'=>$this->name, 'sesskey'=>sesskey()));
+        $migrateurl = new \core\url('/admin/enrol.php', ['action' => 'migrate', 'enrol' => $this->name, 'sesskey' => sesskey()]);
         $migrate = new \single_button($migrateurl, get_string('migratetomanual', 'core_enrol'));
         $button = $OUTPUT->render($migrate);
 
-        $result = '<p>'.get_string('uninstallextraconfirmenrol', 'core_plugin', array('enrolments'=>$count)).'</p>';
+        $result = '<p>' . get_string('uninstallextraconfirmenrol', 'core_plugin', ['enrolments' => $count]) . '</p>';
         $result .= $button;
 
         return $result;
     }
 
-    /**
-     * Pre-uninstall hook.
-     *
-     * This is intended for disabling of plugin, some DB table purging, etc.
-     *
-     * NOTE: to be called from uninstall_plugin() only.
-     * @private
-     */
+    #[\Override]
     public function uninstall_cleanup() {
         global $DB, $CFG;
 
         // NOTE: this is a bit brute force way - it will not trigger events and hooks properly.
 
         // Nuke all role assignments.
-        role_unassign_all(array('component'=>'enrol_'.$this->name));
+        role_unassign_all(['component' => 'enrol_' . $this->name]);
 
         // Purge participants.
-        $DB->delete_records_select('user_enrolments', "enrolid IN (SELECT id FROM {enrol} WHERE enrol = ?)", array($this->name));
+        $DB->delete_records_select('user_enrolments', "enrolid IN (SELECT id FROM {enrol} WHERE enrol = ?)", [$this->name]);
 
         // Purge enrol instances.
-        $DB->delete_records('enrol', array('enrol'=>$this->name));
+        $DB->delete_records('enrol', ['enrol' => $this->name]);
 
         // Tweak enrol settings.
         if (!empty($CFG->enrol_plugins_enabled)) {

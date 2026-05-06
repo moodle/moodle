@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,25 +12,26 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Password field, allows unmasking of password, with an advanced checkbox that controls an additional $name.'_adv' setting.
  *
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright 2018 Paul Holden (pholden@greenhead.ac.uk)
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class configpasswordunmask_with_advanced extends \core_admin\setting\setting\configpasswordunmask {
-
     /**
      * Constructor
      *
-     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $name A unique ascii name for the setting.
+     *      Either 'mysetting' for core settings, or 'myplugin/mysetting' for plugin settings.
      * @param string $visiblename localised
      * @param string $description long localised info
-     * @param array $defaultsetting ('value'=>string, 'adv'=>bool)
+     * @param array $defaultsetting ('value' => string, 'adv' => bool)
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         parent::__construct($name, $visiblename, $description, $defaultsetting['value']);

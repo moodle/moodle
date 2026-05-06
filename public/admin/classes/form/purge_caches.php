@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,21 +12,21 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Form for selective purging of caches.
  *
  * @package    core
  * @copyright  2018 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace core_admin\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Form for selecting which caches to purge on admin/purgecaches.php
@@ -34,7 +34,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @package   core
  * @copyright 2018 The Open University
  * @author    Mark Johnson <mark.johnson@open.ac.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class purge_caches extends \moodleform {
     /**
@@ -54,7 +54,7 @@ class purge_caches extends \moodleform {
             $mform->createElement('advcheckbox', 'template', '', get_string('purgetemplates', 'admin')),
             $mform->createElement('advcheckbox', 'filter', '', get_string('purgefiltercache', 'admin')),
             $mform->createElement('advcheckbox', 'muc', '', get_string('purgemuc', 'admin')),
-            $mform->createElement('advcheckbox', 'other', '', get_string('purgeothercaches', 'admin'))
+            $mform->createElement('advcheckbox', 'other', '', get_string('purgeothercaches', 'admin')),
         ];
         $mform->addGroup($checkboxes, 'purgeselectedoptions');
         $mform->addElement('submit', 'purgeselectedcaches', get_string('purgeselectedcaches', 'admin'));

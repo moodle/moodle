@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Special select - lists on the frontpage - hacky
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Frontpage course list display settings.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class courselist_frontpage extends \core_admin\setting {
-
     /** @var array Array of choices value=>label. */
     public $choices;
 
@@ -33,11 +34,11 @@ class courselist_frontpage extends \core_admin\setting {
      */
     public function __construct($loggedin) {
         global $CFG;
-        require_once($CFG->dirroot.'/course/lib.php');
-        $name        = 'frontpage'.($loggedin ? 'loggedin' : '');
-        $visiblename = get_string('frontpage'.($loggedin ? 'loggedin' : ''),'admin');
-        $description = get_string('configfrontpage'.($loggedin ? 'loggedin' : ''),'admin');
-        $defaults    = array(FRONTPAGEALLCOURSELIST);
+        require_once($CFG->dirroot . '/course/lib.php');
+        $name        = 'frontpage' . ($loggedin ? 'loggedin' : '');
+        $visiblename = get_string('frontpage' . ($loggedin ? 'loggedin' : ''), 'admin');
+        $description = get_string('configfrontpage' . ($loggedin ? 'loggedin' : ''), 'admin');
+        $defaults    = [FRONTPAGEALLCOURSELIST];
         parent::__construct($name, $visiblename, $description, $defaults);
     }
 
@@ -50,71 +51,56 @@ class courselist_frontpage extends \core_admin\setting {
         if (is_array($this->choices)) {
             return true;
         }
-        $this->choices = array(FRONTPAGENEWS          => get_string('frontpagenews'),
+        $this->choices = [FRONTPAGENEWS          => get_string('frontpagenews'),
             FRONTPAGEALLCOURSELIST => get_string('frontpagecourselist'),
             FRONTPAGEENROLLEDCOURSELIST => get_string('frontpageenrolledcourselist'),
             FRONTPAGECATEGORYNAMES => get_string('frontpagecategorynames'),
             FRONTPAGECATEGORYCOMBO => get_string('frontpagecategorycombo'),
             FRONTPAGECOURSESEARCH  => get_string('frontpagecoursesearch'),
-            'none'                 => get_string('none'));
+            'none'                 => get_string('none')];
         if ($this->name === 'frontpage') {
             unset($this->choices[FRONTPAGEENROLLEDCOURSELIST]);
         }
         return true;
     }
 
-    /**
-     * Returns the selected settings
-     *
-     * @param mixed array or setting or null
-     */
+    #[\Override]
     public function get_setting() {
         $result = $this->config_read($this->name);
         if (is_null($result)) {
-            return NULL;
+            return null;
         }
         if ($result === '') {
-            return array();
+            return [];
         }
         return explode(',', $result);
     }
 
-    /**
-     * Save the selected options
-     *
-     * @param array $data
-     * @return mixed empty string (data is not an array) or bool true=success false=failure
-     */
+    #[\Override]
     public function write_setting($data) {
         if (!is_array($data)) {
             return '';
         }
         $this->load_choices();
-        $save = array();
-        foreach($data as $datum) {
-            if ($datum == 'none' or !array_key_exists($datum, $this->choices)) {
+        $save = [];
+        foreach ($data as $datum) {
+            if ($datum == 'none' || !array_key_exists($datum, $this->choices)) {
                 continue;
             }
-            $save[$datum] = $datum; // no duplicates
+            $save[$datum] = $datum; // No duplicates.
         }
         return ($this->config_write($this->name, implode(',', $save)) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    /**
-     * Return XHTML select field and wrapping div
-     *
-     * @todo Add vartype handling to make sure $data is an array
-     * @param array $data Array of elements to select by default
-     * @return string XHTML select field and wrapping div
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $this->load_choices();
-        $currentsetting = array();
+        $currentsetting = [];
         foreach ($data as $key) {
-            if ($key != 'none' and array_key_exists($key, $this->choices)) {
-                $currentsetting[] = $key; // already selected first
+            if ($key != 'none' && array_key_exists($key, $this->choices)) {
+                $currentsetting[] = $key; // Already selected first.
             }
         }
 
@@ -131,13 +117,13 @@ class courselist_frontpage extends \core_admin\setting {
             }
             $selects[] = [
                 'key' => $i,
-                'options' => array_map(function($option) use ($options, $currentsetting, $i) {
+                'options' => array_map(function ($option) use ($options, $currentsetting, $i) {
                     return [
                         'name' => $options[$option],
                         'value' => $option,
-                        'selected' => $currentsetting[$i] == $option
+                        'selected' => $currentsetting[$i] == $option,
                     ];
-                }, array_keys($options))
+                }, array_keys($options)),
             ];
         }
         $context->selects = $selects;

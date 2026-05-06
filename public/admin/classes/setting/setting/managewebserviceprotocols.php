@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,19 +12,20 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\setting;
 
 use core_admin\admin_search;
 
 /**
- * Special class for web service protocol administration.
+ * Web service protocol administration.
  *
- * @author Petr Skoda (skodak)
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class managewebserviceprotocols extends \core_admin\setting {
-
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -33,31 +34,19 @@ class managewebserviceprotocols extends \core_admin\setting {
         parent::__construct('webservicesui', get_string('manageprotocols', 'webservice'), '', '');
     }
 
-    /**
-     * Always returns true, does nothing
-     *
-     * @return true
-     */
+    #[\Override]
     public function get_setting() {
         return true;
     }
 
-    /**
-     * Always returns true, does nothing
-     *
-     * @return true
-     */
+    #[\Override]
     public function get_defaultsetting() {
         return true;
     }
 
-    /**
-     * Always returns '', does not write anything
-     *
-     * @return string Always returns ''
-     */
+    #[\Override]
     public function write_setting($data) {
-    // do not write any setting
+        // Do not write any setting.
         return '';
     }
 
@@ -73,12 +62,12 @@ class managewebserviceprotocols extends \core_admin\setting {
         }
 
         $protocols = \core_component::get_plugin_list('webservice');
-        foreach ($protocols as $protocol=>$location) {
+        foreach ($protocols as $protocol => $location) {
             if (strpos($protocol, $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_SHORT_NAME;
                 return true;
             }
-            $protocolstr = get_string('pluginname', 'webservice_'.$protocol);
+            $protocolstr = get_string('pluginname', 'webservice_' . $protocol);
             if (strpos(\core_text::strtolower($protocolstr), $query) !== false) {
                 $this->searchmatchtype = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 return true;
@@ -87,17 +76,11 @@ class managewebserviceprotocols extends \core_admin\setting {
         return false;
     }
 
-    /**
-     * Builds the XHTML to display the control
-     *
-     * @param string $data Unused
-     * @param string $query
-     * @return string
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $CFG, $OUTPUT;
 
-        // display strings
+        // Display strings.
         $stradministration = get_string('administration');
         $strsettings = get_string('settings');
         $stredit = get_string('edit');
@@ -106,43 +89,45 @@ class managewebserviceprotocols extends \core_admin\setting {
         $strdisable = get_string('disable');
         $strversion = get_string('version');
 
-        $protocols_available = \core_component::get_plugin_list('webservice');
-        $activeprotocols = empty($CFG->webserviceprotocols) ? array() : \explode(',', $CFG->webserviceprotocols);
-        ksort($protocols_available);
+        $protocolsavailable = \core_component::get_plugin_list('webservice');
+        $activeprotocols = empty($CFG->webserviceprotocols) ? [] : \explode(',', $CFG->webserviceprotocols);
+        ksort($protocolsavailable);
 
         foreach ($activeprotocols as $key => $protocol) {
-            if (empty($protocols_available[$protocol])) {
+            if (empty($protocolsavailable[$protocol])) {
                 unset($activeprotocols[$key]);
             }
         }
 
         $return = $OUTPUT->heading(get_string('actwebserviceshhdr', 'webservice'), 3, 'main');
         if (in_array('xmlrpc', $activeprotocols)) {
-            $notify = new \core\output\notification(get_string('xmlrpcwebserviceenabled', 'admin'),
-                \core\output\notification::NOTIFY_WARNING);
+            $notify = new \core\output\notification(
+                get_string('xmlrpcwebserviceenabled', 'admin'),
+                \core\output\notification::NOTIFY_WARNING
+            );
             $return .= $OUTPUT->render($notify);
         }
         $return .= $OUTPUT->box_start('generalbox webservicesui');
 
         $table = new \html_table();
-        $table->head  = array($strprotocol, $strversion, $strenable, $strsettings);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = [$strprotocol, $strversion, $strenable, $strsettings];
+        $table->colclasses = ['leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign'];
         $table->id = 'webserviceprotocols';
         $table->attributes['class'] = 'admintable table generaltable table-hover';
-        $table->data  = array();
+        $table->data  = [];
 
-        // iterate through auth plugins and add to the display table
+        // Iterate through auth plugins and add to the display table.
         $url = "$CFG->wwwroot/$CFG->admin/webservice/protocols.php?sesskey=" . sesskey();
-        foreach ($protocols_available as $protocol => $location) {
-            $name = get_string('pluginname', 'webservice_'.$protocol);
+        foreach ($protocolsavailable as $protocol => $location) {
+            $name = get_string('pluginname', 'webservice_' . $protocol);
 
             $plugin = new \stdClass();
-            if (file_exists($CFG->dirroot.'/webservice/'.$protocol.'/version.php')) {
-                include($CFG->dirroot.'/webservice/'.$protocol.'/version.php');
+            if (file_exists($CFG->dirroot . '/webservice/' . $protocol . '/version.php')) {
+                include($CFG->dirroot . '/webservice/' . $protocol . '/version.php');
             }
             $version = isset($plugin->version) ? $plugin->version : '';
 
-            // hide/show link
+            // Hide/show link.
             if (in_array($protocol, $activeprotocols)) {
                 $hideshow = "<a href=\"$url&amp;action=disable&amp;webservice=$protocol\">";
                 $hideshow .= $OUTPUT->pix_icon('t/hide', $strdisable) . '</a>';
@@ -153,15 +138,15 @@ class managewebserviceprotocols extends \core_admin\setting {
                 $displayname = "<span class=\"dimmed_text\">$name</span>";
             }
 
-            // settings link
-            if (file_exists($CFG->dirroot.'/webservice/'.$protocol.'/settings.php')) {
+            // Settings link.
+            if (file_exists($CFG->dirroot . '/webservice/' . $protocol . '/settings.php')) {
                 $settings = "<a href=\"settings.php?section=webservicesetting$protocol\">$strsettings</a>";
             } else {
                 $settings = '';
             }
 
-            // add a row to the table
-            $table->data[] = array($displayname, $version, $hideshow, $settings);
+            // Add a row to the table.
+            $table->data[] = [$displayname, $version, $hideshow, $settings];
         }
         $return .= \html_writer::table($table);
         $return .= get_string('configwebserviceplugins', 'webservice');

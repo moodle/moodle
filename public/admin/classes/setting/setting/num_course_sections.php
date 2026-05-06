@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,18 +12,17 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * A config select for the default number of sections in a course, simply so we can lazy-load the choices.
  *
- * @deprecated since Moodle 5.2.
- * @todo Remove this class in Moodle 6.0 (MDL-85272).
- * @copyright 2011 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class num_course_sections extends \core_admin\setting\setting\configselect {
     /**
      * Constructor.
@@ -42,10 +41,10 @@ class num_course_sections extends \core_admin\setting\setting\configselect {
     )]
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         \core\deprecation::emit_deprecation(__FUNCTION__);
-        parent::__construct($name, $visiblename, $description, $defaultsetting, array());
+        parent::__construct($name, $visiblename, $description, $defaultsetting, []);
     }
 
-    /** Lazy-load the available choices for the select box */
+    #[\Override]
     public function load_choices() {
         $max = get_config('moodlecourse', 'maxsections');
         if (!isset($max) || !is_numeric($max)) {

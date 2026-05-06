@@ -79,7 +79,7 @@ if ($hassiteconfig) {
         name: 'tiny_premium_plugin_settings',
         visiblename: get_string('premiumplugins_settings', 'tiny_premium'),
         url: new moodle_url('/lib/editor/tiny/plugins/premium/extrasettings.php'),
-        req_capability: 'moodle/site:config',
+        requiredcapability: 'moodle/site:config',
         hidden: true,
     );
     $ADMIN->add('editortiny', $page);

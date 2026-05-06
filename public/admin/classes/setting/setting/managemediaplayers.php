@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\setting;
 
 use core_admin\admin_search;
 
 /**
- * Special class for media player plugins management.
+ * Media player plugin administration.
  *
- * @copyright 2016 Marina Glancy
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class managemediaplayers extends \core_admin\setting {
     /**
@@ -105,7 +106,7 @@ class managemediaplayers extends \core_admin\setting {
         $order = array_values($enabledplugins);
         $order = array_merge($order, array_diff(array_reverse(array_keys($plugins)), $order));
 
-        $sortedplugins = array();
+        $sortedplugins = [];
         foreach ($order as $name) {
             $sortedplugins[$name] = $plugins[$name];
         }
@@ -120,7 +121,7 @@ class managemediaplayers extends \core_admin\setting {
      * @param string $query
      * @return string
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $CFG, $OUTPUT, $DB, $PAGE;
 
         // Display strings.
@@ -142,25 +143,25 @@ class managemediaplayers extends \core_admin\setting {
         $return = $OUTPUT->box_start('generalbox mediaplayersui');
 
         $table = new \html_table();
-        $table->head  = array($strname, $strsupports, $strversion,
-            $strenable, $strup.'/'.$strdown, $strsettings, $struninstall);
-        $table->colclasses = array('leftalign', 'leftalign', 'centeralign',
-            'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = [$strname, $strsupports, $strversion,
+            $strenable, $strup . '/' . $strdown, $strsettings, $struninstall];
+        $table->colclasses = ['leftalign', 'leftalign', 'centeralign',
+            'centeralign', 'centeralign', 'centeralign', 'centeralign'];
         $table->id = 'mediaplayerplugins';
         $table->attributes['class'] = 'admintable table generaltable table-hover';
-        $table->data  = array();
+        $table->data  = [];
 
         // Iterate through media plugins and add to the display table.
         $updowncount = 1;
-        $url = new \moodle_url('/admin/media.php', array('sesskey' => sesskey()));
-        $printed = array();
-        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
+        $url = new \moodle_url('/admin/media.php', ['sesskey' => sesskey()]);
+        $printed = [];
+        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', ['class' => 'iconsmall']);
 
         $usedextensions = [];
         foreach ($plugins as $name => $plugin) {
             $url->param('media', $name);
             /** @var \core\plugininfo\media $plugininfo */
-            $plugininfo = $pluginmanager->get_plugin_info('media_'.$name);
+            $plugininfo = $pluginmanager->get_plugin_info('media_' . $name);
             $version = $plugininfo->versiondb;
             $supports = $plugininfo->supports($usedextensions);
 
@@ -169,15 +170,19 @@ class managemediaplayers extends \core_admin\setting {
             if (!$plugininfo->is_installed_and_upgraded()) {
                 $hideshow = '';
                 $enabled = false;
-                $displayname = '<span class="notifyproblem">'.$name.'</span>';
+                $displayname = '<span class="notifyproblem">' . $name . '</span>';
             } else {
                 $enabled = $plugininfo->is_enabled();
                 if ($enabled) {
-                    $hideshow = \html_writer::link(new \moodle_url($url, array('action' => 'disable')),
-                        $OUTPUT->pix_icon('t/hide', $strdisable, 'moodle', array('class' => 'iconsmall')));
+                    $hideshow = \html_writer::link(
+                        new \moodle_url($url, ['action' => 'disable']),
+                        $OUTPUT->pix_icon('t/hide', $strdisable, 'moodle', ['class' => 'iconsmall'])
+                    );
                 } else {
-                    $hideshow = \html_writer::link(new \moodle_url($url, array('action' => 'enable')),
-                        $OUTPUT->pix_icon('t/show', $strenable, 'moodle', array('class' => 'iconsmall')));
+                    $hideshow = \html_writer::link(
+                        new \moodle_url($url, ['action' => 'enable']),
+                        $OUTPUT->pix_icon('t/show', $strenable, 'moodle', ['class' => 'iconsmall'])
+                    );
                     $class = 'dimmed_text';
                 }
                 $displayname = $plugin->displayname;
@@ -186,23 +191,27 @@ class managemediaplayers extends \core_admin\setting {
                 }
             }
             if ($PAGE->theme->resolve_image_location('icon', 'media_' . $name, false)) {
-                $icon = $OUTPUT->pix_icon('icon', '', 'media_' . $name, array('class' => 'icon pluginicon'));
+                $icon = $OUTPUT->pix_icon('icon', '', 'media_' . $name, ['class' => 'icon pluginicon']);
             } else {
-                $icon = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'icon pluginicon noicon'));
+                $icon = $OUTPUT->pix_icon('spacer', '', 'moodle', ['class' => 'icon pluginicon noicon']);
             }
 
             // Up/down link (only if enrol is enabled).
             $updown = '';
             if ($enabled) {
                 if ($updowncount > 1) {
-                    $updown = \html_writer::link(new \moodle_url($url, array('action' => 'up')),
-                        $OUTPUT->pix_icon('t/up', $strup, 'moodle', array('class' => 'iconsmall')));
+                    $updown = \html_writer::link(
+                        new \moodle_url($url, ['action' => 'up']),
+                        $OUTPUT->pix_icon('t/up', $strup, 'moodle', ['class' => 'iconsmall'])
+                    );
                 } else {
                     $updown = $spacer;
                 }
                 if ($updowncount < count($enabledplugins)) {
-                    $updown .= \html_writer::link(new \moodle_url($url, array('action' => 'down')),
-                        $OUTPUT->pix_icon('t/down', $strdown, 'moodle', array('class' => 'iconsmall')));
+                    $updown .= \html_writer::link(
+                        new \moodle_url($url, ['action' => 'down']),
+                        $OUTPUT->pix_icon('t/down', $strdown, 'moodle', ['class' => 'iconsmall'])
+                    );
                 } else {
                     $updown .= $spacer;
                 }
@@ -216,7 +225,7 @@ class managemediaplayers extends \core_admin\setting {
             }
             if ($status === \core_plugin_manager::PLUGIN_STATUS_NEW) {
                 $uninstall = get_string('status_new', 'core_plugin');
-            } else if ($uninstallurl = $pluginmanager->get_uninstall_url('media_'.$name, 'manage')) {
+            } else if ($uninstallurl = $pluginmanager->get_uninstall_url('media_' . $name, 'manage')) {
                 $uninstall .= \html_writer::link($uninstallurl, $struninstall);
             }
 
@@ -226,7 +235,7 @@ class managemediaplayers extends \core_admin\setting {
             }
 
             // Add a row to the table.
-            $row = new \html_table_row(array($icon.$displayname, $supports, $version, $hideshow, $updown, $settings, $uninstall));
+            $row = new \html_table_row([$icon . $displayname, $supports, $version, $hideshow, $updown, $settings, $uninstall]);
             if ($class) {
                 $row->attributes['class'] = $class;
             }

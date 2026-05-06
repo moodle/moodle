@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,20 +12,26 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\settingpage;
 
 use core_admin\admin_search;
-use core_admin\local\settings\linkable_settings_page;
+
+// phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameUnderscore
+// phpcs:disable moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
 
 /**
- * Used to group a number of admin_setting objects into a page and add them to the admin tree.
+ * Groups admin_setting objects into a page within the admin tree.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class settingpage implements \core_admin\setting\tree\part_of_admin_tree, linkable_settings_page {
-
+class settingpage implements
+    \core_admin\local\settings\linkable_settings_page,
+    \core_admin\setting\tree\part_of_admin_tree
+{
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
 
@@ -35,7 +41,7 @@ class settingpage implements \core_admin\setting\tree\part_of_admin_tree, linkab
     /** @var \core_admin\setting[] An array of setting objects that are part of this setting page. */
     public $settings;
 
-    /** @var admin_settingdependency[] list of settings to hide when certain conditions are met */
+    /** @var \core_admin\setting\settingpage\dependency[] list of settings to hide when certain conditions are met */
     protected $dependencies = [];
 
     /** @var array The role capability/permission a user must have to access this external page. */
@@ -58,19 +64,19 @@ class settingpage implements \core_admin\setting\tree\part_of_admin_tree, linkab
      *
      * @param string $name The internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects.
      * @param string $visiblename The displayed name for this external page. Usually obtained through get_string().
-     * @param mixed $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
+     * @param array|string $req_capability The role capability/permission a user must have to access this external page.
      * @param boolean $hidden Is this external page hidden in admin tree block? Default false.
-     * @param stdClass $context The context the page relates to. Not sure what happens
+     * @param \stdClass $context The context the page relates to. Not sure what happens
      *      if you specify something other than system or front page. Defaults to system.
      */
-    public function __construct($name, $visiblename, $req_capability='moodle/site:config', $hidden=false, $context=NULL) {
+    public function __construct($name, $visiblename, $req_capability = 'moodle/site:config', $hidden = false, $context = null) {
         $this->settings    = new \stdClass();
         $this->name        = $name;
         $this->visiblename = $visiblename;
         if (is_array($req_capability)) {
             $this->req_capability = $req_capability;
         } else {
-            $this->req_capability = array($req_capability);
+            $this->req_capability = [$req_capability];
         }
         $this->hidden      = $hidden;
         $this->context     = $context;
@@ -79,7 +85,7 @@ class settingpage implements \core_admin\setting\tree\part_of_admin_tree, linkab
     /**
      * Get the URL to view this page.
      *
-     * @return moodle_url
+     * @return \moodle_url
      */
     public function get_settings_page_url(): \moodle_url {
         return new \moodle_url(
@@ -97,15 +103,15 @@ class settingpage implements \core_admin\setting\tree\part_of_admin_tree, linkab
      * @param bool $findpath
      * @return mixed Object (this) if name ==  this->name, else returns null
      */
-    public function locate($name, $findpath=false) {
+    public function locate($name, $findpath = false) {
         if ($this->name == $name) {
             if ($findpath) {
-                $this->visiblepath = array($this->visiblename);
-                $this->path        = array($this->name);
+                $this->visiblepath = [$this->visiblename];
+                $this->path        = [$this->name];
             }
             return $this;
         } else {
-            $return = NULL;
+            $return = null;
             return $return;
         }
     }
@@ -238,14 +244,14 @@ class settingpage implements \core_admin\setting\tree\part_of_admin_tree, linkab
      */
     public function output_html() {
         $adminroot = admin_get_root();
-        $return = '<fieldset>'."\n".'<div class="clearer"><!-- --></div>'."\n";
-        foreach($this->settings as $setting) {
+        $return = '<fieldset>' . "\n" . '<div class="clearer"><!-- --></div>' . "\n";
+        foreach ($this->settings as $setting) {
             $fullname = $setting->get_full_name();
             if (array_key_exists($fullname, $adminroot->errors)) {
                 $data = $adminroot->errors[$fullname]->data;
             } else {
                 $data = $setting->get_setting();
-                // do not use defaults if settings not available - upgrade settings handles the defaults!
+                // Do not use defaults if settings not available - upgrade settings handles the defaults!
             }
             $return .= $setting->output_html($data);
         }
@@ -267,7 +273,7 @@ class settingpage implements \core_admin\setting\tree\part_of_admin_tree, linkab
      * @return bool
      */
     public function show_save() {
-        foreach($this->settings as $setting) {
+        foreach ($this->settings as $setting) {
             if (empty($setting->nosave)) {
                 return true;
             }

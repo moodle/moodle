@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,15 +12,17 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Special admin control
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Weekend days selection for the calendar.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class special_calendar_weekend extends \core_admin\setting {
     /**
      * Calls parent::__construct with specific arguments
@@ -29,7 +31,7 @@ class special_calendar_weekend extends \core_admin\setting {
         $name = 'calendar_weekend';
         $visiblename = get_string('calendar_weekend', 'admin');
         $description = get_string('helpweekenddays', 'admin');
-        $default = array ('0', '6'); // Saturdays and Sundays
+        $default = ['0', '6']; // Saturdays and Sundays.
         parent::__construct($name, $visiblename, $description, $default);
     }
 
@@ -41,13 +43,13 @@ class special_calendar_weekend extends \core_admin\setting {
     public function get_setting() {
         $result = $this->config_read($this->name);
         if (is_null($result)) {
-            return NULL;
+            return null;
         }
         if ($result === '') {
-            return array();
+            return [];
         }
-        $settings = array();
-        for ($i=0; $i<7; $i++) {
+        $settings = [];
+        for ($i = 0; $i < 7; $i++) {
             if ($result & (1 << $i)) {
                 $settings[] = $i;
             }
@@ -67,7 +69,7 @@ class special_calendar_weekend extends \core_admin\setting {
         }
         unset($data['xxxxx']);
         $result = 0;
-        foreach($data as $index) {
+        foreach ($data as $index) {
             $result |= 1 << $index;
         }
         return ($this->config_write($this->name, $result) ? '' : get_string('errorsetting', 'admin'));
@@ -80,27 +82,26 @@ class special_calendar_weekend extends \core_admin\setting {
      * @param string $query
      * @return string XHTML for display (field + wrapping div(s)
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         // The order matters very much because of the implied numeric keys.
-        $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+        $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         $context = (object) [
             'name' => $this->get_full_name(),
             'id' => $this->get_id(),
-            'days' => array_map(function($index) use ($days, $data) {
+            'days' => array_map(function ($index) use ($days, $data) {
                 return [
                     'index' => $index,
                     'label' => get_string($days[$index], 'calendar'),
-                    'checked' => in_array($index, $data)
+                    'checked' => in_array($index, $data),
                 ];
-            }, array_keys($days))
+            }, array_keys($days)),
         ];
 
         $element = $OUTPUT->render_from_template('core_admin/setting_special_calendar_weekend', $context);
 
-        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', NULL, $query);
-
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', null, $query);
     }
 }
 

@@ -27,28 +27,25 @@ namespace core\plugininfo;
  * Class for question types
  */
 class qtype extends base {
-
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $DB;
 
         $plugins = \core\plugin_manager::instance()->get_installed_plugins('qtype');
         if (!$plugins) {
-            return array();
+            return [];
         }
-        $installed = array();
+        $installed = [];
         foreach ($plugins as $plugin => $version) {
-            $installed[] = $plugin.'_disabled';
+            $installed[] = $plugin . '_disabled';
         }
 
-        list($installed, $params) = $DB->get_in_or_equal($installed, SQL_PARAMS_NAMED);
+        [$installed, $params] = $DB->get_in_or_equal($installed, SQL_PARAMS_NAMED);
         $disabled = $DB->get_records_select('config_plugins', "name $installed AND plugin = 'question'", $params, 'plugin ASC');
         foreach ($disabled as $conf) {
             if (empty($conf->value)) {
@@ -58,7 +55,7 @@ class qtype extends base {
             unset($plugins[$name]);
         }
 
-        $enabled = array();
+        $enabled = [];
         foreach ($plugins as $plugin => $version) {
             $enabled[$plugin] = $plugin;
         }
@@ -66,6 +63,7 @@ class qtype extends base {
         return $enabled;
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         $haschanged = false;
 
@@ -89,33 +87,24 @@ class qtype extends base {
         return $haschanged;
     }
 
+    #[\Override]
     public function is_uninstall_allowed() {
         global $DB;
 
         if ($this->name === 'missingtype') {
-            // qtype_missingtype is used by the system. It cannot be uninstalled.
+            // We use `qtype_missingtype` internally. It cannot be uninstalled.
             return false;
         }
 
-        return !$DB->record_exists('question', array('qtype' => $this->name));
+        return !$DB->record_exists('question', ['qtype' => $this->name]);
     }
 
-    /**
-     * Return URL used for management of plugins of this type.
-     * @return \core\url
-     */
+    #[\Override]
     public static function get_manage_url() {
         return new \core\url('/admin/qtypes.php');
     }
 
-    /**
-     * Pre-uninstall hook.
-     *
-     * This is intended for disabling of plugin, some DB table purging, etc.
-     *
-     * NOTE: to be called from uninstall_plugin() only.
-     * @private
-     */
+    #[\Override]
     public function uninstall_cleanup() {
         // Delete any question configuration records mentioning this plugin.
         unset_config($this->name . '_disabled', 'question');
@@ -124,10 +113,12 @@ class qtype extends base {
         parent::uninstall_cleanup();
     }
 
+    #[\Override]
     public function get_settings_section_name() {
         return 'qtypesetting' . $this->name;
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -147,8 +138,10 @@ class qtype extends base {
 
         $settings = null;
         $systemcontext = \context_system::instance();
-        if (($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) &&
-            file_exists($this->full_path('settings.php'))) {
+        if (
+            ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) &&
+            file_exists($this->full_path('settings.php'))
+        ) {
             $settings = new \core_admin\setting\settingpage\settingpage(
                 $section,
                 $this->displayname,

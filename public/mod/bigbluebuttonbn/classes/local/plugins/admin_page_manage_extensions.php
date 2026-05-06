@@ -36,7 +36,7 @@ class admin_page_manage_extensions extends \core_admin\setting\tree\externalpage
     /**
      * Global URL for page.
      */
-    const ADMIN_PAGE_URL = '/mod/bigbluebuttonbn/adminmanageplugins.php';
+    public const ADMIN_PAGE_URL = '/mod/bigbluebuttonbn/adminmanageplugins.php';
 
     /**
      * The constructor - calls parent constructor
@@ -48,7 +48,7 @@ class admin_page_manage_extensions extends \core_admin\setting\tree\externalpage
         parent::__construct(
             $managepagename,
             get_string($managepagename, 'mod_bigbluebuttonbn'),
-            $url
+            $url,
         );
     }
 
@@ -62,7 +62,7 @@ class admin_page_manage_extensions extends \core_admin\setting\tree\externalpage
         if ($result = parent::search($query)) {
             return $result;
         }
-        foreach (\core\component::get_plugin_list(extension::BBB_EXTENSION_PLUGIN_NAME ) as $name => $notused) {
+        foreach (\core\component::get_plugin_list(extension::BBB_EXTENSION_PLUGIN_NAME) as $name => $notused) {
             $pluginname = core_text::strtolower(
                 get_string('pluginname', extension::BBB_EXTENSION_PLUGIN_NAME . '_' . $name)
             );

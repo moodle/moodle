@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,18 +12,19 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Special text for frontpage - stores data in course table.
  * Empty string means not set here. Manual setting is required.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class sitesettext extends \core_admin\setting\setting\configtext {
-
     /**
      * Constructor.
      */
@@ -39,7 +40,7 @@ class sitesettext extends \core_admin\setting\setting\configtext {
      */
     public function get_setting() {
         $site = course_get_format(get_site())->get_course();
-        return $site->{$this->name} != '' ? $site->{$this->name} : NULL;
+        return $site->{$this->name} != '' ? $site->{$this->name} : null;
     }
 
     /**
@@ -54,11 +55,13 @@ class sitesettext extends \core_admin\setting\setting\configtext {
         if ($cleaned === '') {
             return get_string('required');
         }
-        if ($this->name ==='shortname' &&
-                $DB->record_exists_sql('SELECT id from {course} WHERE shortname = ? AND id <> ?', array($data, $SITE->id))) {
+        if (
+            $this->name === 'shortname' &&
+                $DB->record_exists_sql('SELECT id from {course} WHERE shortname = ? AND id <> ?', [$data, $SITE->id])
+        ) {
             return get_string('shortnametaken', 'error', $data);
         }
-        if ("$data" == "$cleaned") { // implicit conversion to string is needed to do exact comparison
+        if ("$data" == "$cleaned") { // Implicit conversion to string is needed to do exact comparison.
             return true;
         } else {
             return get_string('validateerror', 'admin');
@@ -88,7 +91,7 @@ class sitesettext extends \core_admin\setting\setting\configtext {
         $DB->update_record('course', $record);
 
         // Reset caches.
-        $SITE = $DB->get_record('course', array('id'=>$SITE->id), '*', MUST_EXIST);
+        $SITE = $DB->get_record('course', ['id' => $SITE->id], '*', MUST_EXIST);
         if ($SITE->id == $COURSE->id) {
             $COURSE = $SITE;
         }

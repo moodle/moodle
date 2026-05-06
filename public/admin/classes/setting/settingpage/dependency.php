@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,18 +12,19 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\settingpage;
 
 use core\exception\coding_exception;
 
 /**
  * Used to store details of the dependency between two settings elements.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright 2017 Davo Smith, Synergy Learning
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\settingpage;
-
 class dependency {
     /** @var string the name of the setting to be shown/hidden */
     public $settingname;
@@ -72,7 +73,7 @@ class dependency {
                 $plugin = '';
             }
         }
-        return 's_'.$plugin.'_'.$name;
+        return 's_' . $plugin . '_' . $name;
     }
 
     /**

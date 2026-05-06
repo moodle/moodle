@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\tree;
 
@@ -20,14 +20,15 @@ use core_admin\admin_search;
 use core_admin\local\settings\linkable_settings_page;
 
 /**
- * Links external PHP pages into the admin tree.
+ * Links an external PHP page into the admin tree.
  *
  * See detailed usage example at the top of this document (adminlib.php)
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class externalpage implements \core_admin\setting\tree\part_of_admin_tree, linkable_settings_page {
-
     /** @var string An internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
 
@@ -38,7 +39,7 @@ class externalpage implements \core_admin\setting\tree\part_of_admin_tree, linka
     public $url;
 
     /** @var array The role capability/permission a user must have to access this external page. */
-    public $req_capability;
+    public $req_capability; // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
 
     /** @var object The context in which capability/permission should be checked, default is site context. */
     public $context;
@@ -61,19 +62,27 @@ class externalpage implements \core_admin\setting\tree\part_of_admin_tree, linka
      * @param string $name The internal name for this external page. Must be unique amongst ALL part_of_admin_tree objects.
      * @param string $visiblename The displayed name for this external page. Usually obtained through get_string().
      * @param string $url The external URL that we should link to when someone requests this external page.
-     * @param mixed $req_capability The role capability/permission a user must have to access this external page. Defaults to 'moodle/site:config'.
+     * @param string|string[] $requiredcapability The role capability/permission a user must have to access this external page.
+     *      Defaults to 'moodle/site:config'.
      * @param boolean $hidden Is this external page hidden in admin tree block? Default false.
-     * @param stdClass $context The context the page relates to. Not sure what happens
+     * @param \stdClass $context The context the page relates to. Not sure what happens
      *      if you specify something other than system or front page. Defaults to system.
      */
-    public function __construct($name, $visiblename, $url, $req_capability='moodle/site:config', $hidden=false, $context=NULL) {
+    public function __construct(
+        $name,
+        $visiblename,
+        $url,
+        $requiredcapability = 'moodle/site:config',
+        $hidden = false,
+        $context = null,
+    ) {
         $this->name        = $name;
         $this->visiblename = $visiblename;
         $this->url         = $url;
-        if (is_array($req_capability)) {
-            $this->req_capability = $req_capability;
+        if (is_array($requiredcapability)) {
+            $this->req_capability = $requiredcapability;
         } else {
-            $this->req_capability = array($req_capability);
+            $this->req_capability = [$requiredcapability];
         }
         $this->hidden = $hidden;
         $this->context = $context;
@@ -95,15 +104,15 @@ class externalpage implements \core_admin\setting\tree\part_of_admin_tree, linka
      * @param bool $findpath defaults to false
      * @return mixed A reference to the object with internal name $name if found, otherwise a reference to NULL.
      */
-    public function locate($name, $findpath=false) {
+    public function locate($name, $findpath = false) {
         if ($this->name == $name) {
             if ($findpath) {
-                $this->visiblepath = array($this->visiblename);
-                $this->path        = array($this->name);
+                $this->visiblepath = [$this->visiblename];
+                $this->path        = [$this->name];
             }
             return $this;
         } else {
-            $return = NULL;
+            $return = null;
             return $return;
         }
     }
@@ -150,9 +159,8 @@ class externalpage implements \core_admin\setting\tree\part_of_admin_tree, linka
      * @return bool True if user has access, false otherwise.
      */
     public function check_access() {
-        global $CFG;
         $context = empty($this->context) ? \context_system::instance() : $this->context;
-        foreach($this->req_capability as $cap) {
+        foreach ($this->req_capability as $cap) {
             if (has_capability($cap, $context)) {
                 return true;
             }

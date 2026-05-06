@@ -24,23 +24,20 @@ namespace core\plugininfo;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class antivirus extends base {
-
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $CFG;
 
         if (empty($CFG->antiviruses)) {
-            return array();
+            return [];
         }
 
-        $enabled = array();
+        $enabled = [];
         foreach (explode(',', $CFG->antiviruses) as $antivirus) {
             $enabled[$antivirus] = $antivirus;
         }
@@ -48,6 +45,7 @@ class antivirus extends base {
         return $enabled;
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         global $CFG;
 
@@ -76,25 +74,12 @@ class antivirus extends base {
         return $haschanged;
     }
 
-    /**
-     * Return the node name to use in admin settings menu for this plugin.
-     *
-     * @return string node name
-     */
+    #[\Override]
     public function get_settings_section_name() {
         return 'antivirussettings' . $this->name;
     }
 
-    /**
-     * Loads plugin settings to the settings tree
-     *
-     * This function usually includes settings.php file in plugins folder.
-     * Alternatively it can create a link to some settings page (instance of admin_externalpage)
-     *
-     * @param \part_of_admin_tree $adminroot
-     * @param string $parentnodename
-     * @param bool $hassiteconfig whether the current user has moodle/site:config capability
-     */
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -110,13 +95,18 @@ class antivirus extends base {
             return;
         }
 
-        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
             return;
         }
 
         $section = $this->get_settings_section_name();
 
-        $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core_admin\setting\settingpage\settingpage(
+            $section,
+            $this->displayname,
+            'moodle/site:config',
+            $this->is_enabled() === false,
+        );
         include($this->full_path('settings.php')); // This may also set $settings to null.
 
         if ($settings) {
@@ -127,6 +117,7 @@ class antivirus extends base {
     /**
      * Clamav antivirus can not be uninstalled.
      */
+    #[\Override]
     public function is_uninstall_allowed() {
         if ($this->name === 'clamav') {
             return false;
@@ -135,17 +126,12 @@ class antivirus extends base {
         }
     }
 
-    /**
-     * Return URL used for management of plugins of this type.
-     * @return \core\url
-     */
+    #[\Override]
     public static function get_manage_url() {
-        return new \core\url('/admin/settings.php', array('section' => 'manageantiviruses'));
+        return new \core\url('/admin/settings.php', ['section' => 'manageantiviruses']);
     }
 
-    /**
-     * Pre-uninstall hook.
-     */
+    #[\Override]
     public function uninstall_cleanup() {
         global $CFG;
 
@@ -153,7 +139,7 @@ class antivirus extends base {
             $antiviruses = explode(',', $CFG->antiviruses);
             $antiviruses = array_unique($antiviruses);
         } else {
-            $antiviruses = array();
+            $antiviruses = [];
         }
         if (($key = array_search($this->name, $antiviruses)) !== false) {
             unset($antiviruses[$key]);

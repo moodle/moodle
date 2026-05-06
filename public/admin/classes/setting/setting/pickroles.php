@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,20 +12,24 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Admin setting that allows a user to pick appropriate roles for something.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class pickroles extends \core_admin\setting\setting\configmulticheckbox {
     /** @var array Array of capabilities which identify roles */
     private $types;
 
     /**
+     * Constructor for the pick roles setting.
+     *
      * @param string $name Name of config variable
      * @param string $visiblename Display name
      * @param string $description Description
@@ -33,15 +37,11 @@ class pickroles extends \core_admin\setting\setting\configmulticheckbox {
      *              roles that will be enabled by default.
      */
     public function __construct($name, $visiblename, $description, $types) {
-        parent::__construct($name, $visiblename, $description, NULL, NULL);
+        parent::__construct($name, $visiblename, $description, null, null);
         $this->types = $types;
     }
 
-    /**
-     * Load roles as choices
-     *
-     * @return bool true=>success, false=>error
-     */
+    #[\Override]
     public function load_choices() {
         global $CFG, $DB;
         if (during_initial_install()) {
@@ -58,19 +58,15 @@ class pickroles extends \core_admin\setting\setting\configmulticheckbox {
         }
     }
 
-    /**
-     * Return the default setting for this control
-     *
-     * @return ?array Array of default settings
-     */
+    #[\Override]
     public function get_defaultsetting() {
         global $CFG;
 
         if (during_initial_install()) {
             return null;
         }
-        $result = array();
-        foreach($this->types as $archetype) {
+        $result = [];
+        foreach ($this->types as $archetype) {
             if ($caproles = get_archetype_roles($archetype)) {
                 foreach ($caproles as $caprole) {
                     $result[$caprole->id] = 1;

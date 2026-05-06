@@ -21,6 +21,7 @@ use core_admin\admin_search;
 /**
  * Manage question banks page.
  *
+ * @package    core_question
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,23 +32,31 @@ class manage_qbank_plugins_page extends \core_admin\setting {
      */
     public function __construct() {
         $this->nosave = true;
-        parent::__construct('manageqbanks',
-                new \lang_string('manageqbanks', 'admin'), '', '');
+        parent::__construct(
+            'manageqbanks',
+            new \lang_string('manageqbanks', 'admin'),
+            '',
+            ''
+        );
     }
 
+    #[\Override]
     public function get_setting(): bool {
         return true;
     }
 
+    #[\Override]
     public function get_defaultsetting(): bool {
         return true;
     }
 
+    #[\Override]
     public function write_setting($data): string {
         // Do not write any setting.
         return '';
     }
 
+    #[\Override]
     public function is_related($query): bool {
         if (parent::is_related($query)) {
             return true;
@@ -66,6 +75,7 @@ class manage_qbank_plugins_page extends \core_admin\setting {
         return false;
     }
 
+    #[\Override]
     public function output_html($data, $query = ''): string {
         global $CFG, $OUTPUT;
         $return = '';
@@ -96,20 +106,26 @@ class manage_qbank_plugins_page extends \core_admin\setting {
             $url = new \moodle_url('/admin/qbankplugins.php', ['sesskey' => sesskey(), 'name' => $type->name]);
 
             $class = '';
-            if ($pluginmanager->get_plugin_info('qbank_'.$type->name)->get_status() ===
-                    \core_plugin_manager::PLUGIN_STATUS_MISSING) {
-                $strtypename = $type->displayname.' ('.get_string('missingfromdisk').')';
+            if (
+                $pluginmanager->get_plugin_info('qbank_' . $type->name)->get_status() ===
+                    \core_plugin_manager::PLUGIN_STATUS_MISSING
+            ) {
+                $strtypename = $type->displayname . ' (' . get_string('missingfromdisk') . ')';
             } else {
                 $strtypename = $type->displayname;
             }
 
             if ($type->is_enabled()) {
-                $hideshow = \html_writer::link($url->out(false, ['action' => 'disable']),
-                        $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', ['class' => 'iconsmall']));
+                $hideshow = \html_writer::link(
+                    $url->out(false, ['action' => 'disable']),
+                    $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', ['class' => 'iconsmall'])
+                );
             } else {
                 $class = 'dimmed_text';
-                $hideshow = \html_writer::link($url->out(false, ['action' => 'enable']),
-                        $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', ['class' => 'iconsmall']));
+                $hideshow = \html_writer::link(
+                    $url->out(false, ['action' => 'enable']),
+                    $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', ['class' => 'iconsmall'])
+                );
             }
 
             $settings = '';
@@ -118,8 +134,12 @@ class manage_qbank_plugins_page extends \core_admin\setting {
             }
 
             $uninstall = '';
-            if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url(
-                    'qbank_'.$type->name, 'manage')) {
+            if (
+                $uninstallurl = \core_plugin_manager::instance()->get_uninstall_url(
+                    'qbank_' . $type->name,
+                    'manage'
+                )
+            ) {
                 $uninstall = \html_writer::link($uninstallurl, $txt->uninstall);
             }
 
@@ -132,7 +152,7 @@ class manage_qbank_plugins_page extends \core_admin\setting {
         }
 
         // Sort table data.
-        usort($table->data, function($a, $b) {
+        usort($table->data, function ($a, $b) {
             $aid = $a->cells[0]->text;
             $bid = $b->cells[0]->text;
 

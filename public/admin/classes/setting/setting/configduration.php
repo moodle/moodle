@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,18 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Seconds duration setting.
  *
- * @copyright 2012 Petr Skoda (http://skodak.org)
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class configduration extends \core_admin\setting {
-
     /** @var int default duration unit */
     protected $defaultunit;
     /** @var callable|null Validation function */
@@ -125,24 +125,23 @@ class configduration extends \core_admin\setting {
 
     /**
      * Returns selectable units.
-     * @static
      * @return array
      */
     protected static function get_units() {
-        return array(
+        return [
             604800 => get_string('weeks'),
             86400 => get_string('days'),
             3600 => get_string('hours'),
             60 => get_string('minutes'),
             1 => get_string('seconds'),
-        );
+        ];
     }
 
     /**
      * Converts seconds to some more user friendly string.
-     * @static
+     *
      * @param int $seconds
-     * @param null|string The value to use when the duration is empty. If not specified, a "None" value is used.
+     * @param null|string $emptyvalue The value to use when the duration is empty. If not specified, a "None" value is used.
      * @return string
      */
     protected static function get_duration_text(int $seconds, ?string $emptyvalue = null): string {
@@ -154,32 +153,31 @@ class configduration extends \core_admin\setting {
         }
         $data = self::parse_seconds($seconds);
         switch ($data['u']) {
-            case (60*60*24*7):
+            case (60 * 60 * 24 * 7):
                 return get_string('numweeks', '', $data['v']);
-            case (60*60*24):
+            case (60 * 60 * 24):
                 return get_string('numdays', '', $data['v']);
-            case (60*60):
+            case (60 * 60):
                 return get_string('numhours', '', $data['v']);
             case (60):
                 return get_string('numminutes', '', $data['v']);
             default:
-                return get_string('numseconds', '', $data['v']*$data['u']);
+                return get_string('numseconds', '', $data['v'] * $data['u']);
         }
     }
 
     /**
      * Finds suitable units for given duration.
-     * @static
      * @param int $seconds
      * @return array
      */
     protected static function parse_seconds($seconds) {
         foreach (self::get_units() as $unit => $unused) {
             if ($seconds % $unit === 0) {
-                return array('v'=>(int)($seconds/$unit), 'u'=>$unit);
+                return ['v' => (int)($seconds / $unit), 'u' => $unit];
             }
         }
-        return array('v'=>(int)$seconds, 'u'=>1);
+        return ['v' => (int)$seconds, 'u' => 1];
     }
 
     /**
@@ -228,20 +226,20 @@ class configduration extends \core_admin\setting {
      * @param string $query
      * @return string duration text+select fields and wrapping div(s)
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $default = $this->get_defaultsetting();
         if (is_number($default)) {
             $defaultinfo = self::get_duration_text($default);
         } else if (is_array($default)) {
-            $defaultinfo = self::get_duration_text($default['v']*$default['u']);
+            $defaultinfo = self::get_duration_text($default['v'] * $default['u']);
         } else {
             $defaultinfo = null;
         }
 
         $inputid = $this->get_id() . 'v';
-        $units = array_filter(self::get_units(), function($unit): bool {
+        $units = array_filter(self::get_units(), function ($unit): bool {
             if (!$this->maxduration) {
                 // No duration limit. All units are valid.
                 return true;
@@ -257,13 +255,13 @@ class configduration extends \core_admin\setting {
             'name' => $this->get_full_name(),
             'value' => $data['v'] ?? '',
             'readonly' => $this->is_readonly(),
-            'options' => array_map(function($unit) use ($units, $data, $defaultunit) {
+            'options' => array_map(function ($unit) use ($units, $data, $defaultunit) {
                 return [
                     'value' => $unit,
                     'name' => $units[$unit],
-                    'selected' => isset($data) && (($data['v'] == 0 && $unit == $defaultunit) || $unit == $data['u'])
+                    'selected' => isset($data) && (($data['v'] == 0 && $unit == $defaultunit) || $unit == $data['u']),
                 ];
-            }, array_keys($units))
+            }, array_keys($units)),
         ];
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configduration', $context);

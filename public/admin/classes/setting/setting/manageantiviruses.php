@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\setting;
 
 use core_admin\admin_search;
 
 /**
- * Special class for antiviruses administration.
+ * Antivirus plugin administration.
  *
- * @copyright  2015 Ruslan Kabalin, Lancaster University.
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manageantiviruses extends \core_admin\setting {
     /**
@@ -94,12 +95,12 @@ class manageantiviruses extends \core_admin\setting {
      * @param string $query
      * @return string
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $CFG, $OUTPUT;
 
         // Display strings.
-        $txt = get_strings(array('administration', 'settings', 'edit', 'name', 'enable', 'disable',
-            'up', 'down', 'none'));
+        $txt = get_strings(['administration', 'settings', 'edit', 'name', 'enable', 'disable',
+            'up', 'down', 'none']);
         $struninstall = get_string('uninstallplugin', 'core_admin');
 
         $txt->updown = "$txt->up/$txt->down";
@@ -122,29 +123,29 @@ class manageantiviruses extends \core_admin\setting {
         $return .= $OUTPUT->box_start('generalbox antivirusesui');
 
         $table = new \html_table();
-        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings, $struninstall);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = [$txt->name, $txt->enable, $txt->updown, $txt->settings, $struninstall];
+        $table->colclasses = ['leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign'];
         $table->id = 'antivirusmanagement';
         $table->attributes['class'] = 'admintable table generaltable table-hover';
-        $table->data  = array();
+        $table->data  = [];
 
         // Iterate through auth plugins and add to the display table.
         $updowncount = 1;
         $antiviruscount = count($activeantiviruses);
-        $baseurl = new \moodle_url('/admin/antiviruses.php', array('sesskey' => sesskey()));
+        $baseurl = new \moodle_url('/admin/antiviruses.php', ['sesskey' => sesskey()]);
         foreach ($antivirusesavailable as $antivirus => $name) {
             // Hide/show link.
             $class = '';
             if (in_array($antivirus, $activeantiviruses)) {
                 $hideshowurl = $baseurl;
-                $hideshowurl->params(array('action' => 'disable', 'antivirus' => $antivirus));
+                $hideshowurl->params(['action' => 'disable', 'antivirus' => $antivirus]);
                 $hideshowimg = $OUTPUT->pix_icon('t/hide', get_string('disable'));
                 $hideshow = \html_writer::link($hideshowurl, $hideshowimg);
                 $enabled = true;
                 $displayname = $name;
             } else {
                 $hideshowurl = $baseurl;
-                $hideshowurl->params(array('action' => 'enable', 'antivirus' => $antivirus));
+                $hideshowurl->params(['action' => 'enable', 'antivirus' => $antivirus]);
                 $hideshowimg = $OUTPUT->pix_icon('t/show', get_string('enable'));
                 $hideshow = \html_writer::link($hideshowurl, $hideshowimg);
                 $enabled = false;
@@ -157,7 +158,7 @@ class manageantiviruses extends \core_admin\setting {
             if ($enabled) {
                 if ($updowncount > 1) {
                     $updownurl = $baseurl;
-                    $updownurl->params(array('action' => 'up', 'antivirus' => $antivirus));
+                    $updownurl->params(['action' => 'up', 'antivirus' => $antivirus]);
                     $updownimg = $OUTPUT->pix_icon('t/up', get_string('moveup'));
                     $updown = \html_writer::link($updownurl, $updownimg);
                 } else {
@@ -165,37 +166,39 @@ class manageantiviruses extends \core_admin\setting {
                 }
                 if ($updowncount < $antiviruscount) {
                     $updownurl = $baseurl;
-                    $updownurl->params(array('action' => 'down', 'antivirus' => $antivirus));
+                    $updownurl->params(['action' => 'down', 'antivirus' => $antivirus]);
                     $updownimg = $OUTPUT->pix_icon('t/down', get_string('movedown'));
                     $updown = \html_writer::link($updownurl, $updownimg);
                 } else {
                     $updownimg = $OUTPUT->spacer();
                 }
-                ++ $updowncount;
+                ++$updowncount;
             }
 
             // Settings link.
-            if (file_exists($CFG->dirroot.'/lib/antivirus/'.$antivirus.'/settings.php')) {
-                $eurl = new \moodle_url('/admin/settings.php', array('section' => 'antivirussettings'.$antivirus));
+            if (file_exists($CFG->dirroot . '/lib/antivirus/' . $antivirus . '/settings.php')) {
+                $eurl = new \moodle_url('/admin/settings.php', ['section' => 'antivirussettings' . $antivirus]);
                 $settings = \html_writer::link($eurl, $txt->settings);
             } else {
                 $settings = '';
             }
 
             $uninstall = '';
-            if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url('antivirus_'.$antivirus, 'manage')) {
+            if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url('antivirus_' . $antivirus, 'manage')) {
                 $uninstall = \html_writer::link($uninstallurl, $struninstall);
             }
 
             // Add a row to the table.
-            $row = new \html_table_row(array($displayname, $hideshow, $updown, $settings, $uninstall));
+            $row = new \html_table_row([$displayname, $hideshow, $updown, $settings, $uninstall]);
             if ($class) {
                 $row->attributes['class'] = $class;
             }
             $table->data[] = $row;
         }
         $return .= \html_writer::table($table);
-        $return .= get_string('configantivirusplugins', 'antivirus') . \html_writer::empty_tag('br') . get_string('tablenosave', 'admin');
+        $return .= get_string('configantivirusplugins', 'antivirus');
+        $return .= \html_writer::empty_tag('br');
+        $return .= get_string('tablenosave', 'admin');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }

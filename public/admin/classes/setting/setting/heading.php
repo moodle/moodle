@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,58 +12,57 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * No setting - just heading and text.
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Non-interactive heading and text display.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class heading extends \core_admin\setting {
-
     /**
-     * not a setting, just text
-     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
-     * @param string $heading heading
-     * @param string $information text in box
+     * Constructor for a heading.
+     *
+     * This is not a setting, just text.
+     *
+     * @param string $name A unique ascii name for the setting.
+     *      Either 'mysetting' for core settings, or 'myplugin/mysetting' for those belonging to a plugin.
+     * @param string $heading The heading text.
+     * @param string $information The information text to display in the box.
      */
     public function __construct($name, $heading, $information) {
         $this->nosave = true;
         parent::__construct($name, $heading, $information, '');
     }
 
-    /**
-     * Always returns true
-     * @return bool Always returns true
-     */
+    #[\Override]
     public function get_setting() {
         return true;
     }
 
-    /**
-     * Always returns true
-     * @return bool Always returns true
-     */
+    #[\Override]
     public function get_defaultsetting() {
         return true;
     }
 
     /**
-     * Never write settings
+     * Never write settings.
+     *
+     * @param mixed $data Unused
      * @return string Always returns an empty string
      */
+    #[\Override]
     public function write_setting($data) {
-    // do not write any setting
+        // Do not write any setting.
         return '';
     }
 
-    /**
-     * Returns an HTML string
-     * @return string Returns an HTML string
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $OUTPUT;
         $context = new \stdClass();
         $context->title = $this->visiblename;

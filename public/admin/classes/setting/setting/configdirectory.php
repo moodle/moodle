@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Path to directory
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Path to a directory.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class configdirectory extends \core_admin\setting\setting\configfile {
-
     /**
      * Returns an XHTML field
      *
@@ -30,7 +31,7 @@ class configdirectory extends \core_admin\setting\setting\configfile {
      * @param string $query
      * @return string XHTML
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $CFG, $OUTPUT;
         $default = $this->get_defaultsetting();
 
@@ -42,11 +43,11 @@ class configdirectory extends \core_admin\setting\setting\configfile {
             'showvalidity' => !empty($data),
             'valid' => $data && file_exists($data) && is_dir($data),
             'readonly' => !empty($CFG->preventexecpath),
-            'forceltr' => $this->get_force_ltr()
+            'forceltr' => $this->get_force_ltr(),
         ];
 
         if (!empty($CFG->preventexecpath)) {
-            $this->visiblename .= '<div class="alert alert-info">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $this->visiblename .= '<div class="alert alert-info">' . get_string('execpathnotallowed', 'admin') . '</div>';
         }
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configdirectory', $context);

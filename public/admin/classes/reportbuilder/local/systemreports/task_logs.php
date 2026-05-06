@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\reportbuilder\local\systemreports;
 
@@ -32,10 +32,9 @@ use stdClass;
  *
  * @package    core_admin
  * @copyright  2021 David Matamoros <davidmc@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class task_logs extends system_report {
-
     /**
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
@@ -108,7 +107,7 @@ class task_logs extends system_report {
         // Wrap the task name in a link.
         $this->get_column('task_log:name')
             ->add_field("{$entitymainalias}.id")
-            ->add_callback(static function(string $output, stdClass $row): string {
+            ->add_callback(static function (string $output, stdClass $row): string {
                 return html_writer::link(new moodle_url('/admin/tasklogs.php', ['logid' => $row->id]), $output);
             });
 

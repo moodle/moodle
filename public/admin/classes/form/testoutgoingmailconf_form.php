@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,28 +12,28 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Testing outgoing mail configuration form
  *
  * @package    core
  * @copyright  2019 Victor Deniz <victor@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace core_admin\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Test mail form
  *
  * @package    core
  * @copyright 2019 Victor Deniz <victor@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testoutgoingmailconf_form extends \moodleform {
     /**
@@ -59,13 +59,12 @@ class testoutgoingmailconf_form extends \moodleform {
         $mform->addElement('text', 'additionalsubject', get_string('testoutgoingmailconf_subjectadditional', 'admin'), $options);
         $mform->setType('additionalsubject', PARAM_TEXT);
 
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = $mform->createElement('submit', 'send', get_string('testoutgoingmailconf_sendtest', 'admin'));
         $buttonarray[] = $mform->createElement('cancel');
 
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
-
     }
 
     /**

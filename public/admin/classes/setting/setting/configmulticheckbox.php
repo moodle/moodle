@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,16 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\setting;
 
 use core_admin\admin_search;
 
 /**
- * Multiple checkboxes, each represents different value, stored in csv format
+ * Multiple checkboxes, each representing a different value, stored in CSV format.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class configmulticheckbox extends \core_admin\setting {
     /** @var callable|null Loader function for choices */
@@ -37,7 +39,8 @@ class configmulticheckbox extends \core_admin\setting {
      * e.g. [1 => get_string('yes')], or a callback function which takes no parameters and
      * returns an array in that format.
      *
-     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $name A unique ascii name for the setting.
+     *      Either 'mysetting' for core settings, or 'myplugin/mysetting' for those belonging to a plugin.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param ?array $defaultsetting array of selected
@@ -77,7 +80,7 @@ class configmulticheckbox extends \core_admin\setting {
      * @return bool true on related, false on not or failure
      */
     public function is_related($query) {
-        if (!$this->load_choices() or empty($this->choices)) {
+        if (!$this->load_choices() || empty($this->choices)) {
             return false;
         }
         if (parent::is_related($query)) {
@@ -102,13 +105,13 @@ class configmulticheckbox extends \core_admin\setting {
         $result = $this->config_read($this->name);
 
         if (is_null($result)) {
-            return NULL;
+            return null;
         }
         if ($result === '') {
-            return array();
+            return [];
         }
         $enabled = explode(',', $result);
-        $setting = array();
+        $setting = [];
         foreach ($enabled as $option) {
             $setting[$option] = 1;
         }
@@ -123,15 +126,15 @@ class configmulticheckbox extends \core_admin\setting {
      */
     public function write_setting($data) {
         if (!is_array($data)) {
-            return ''; // ignore it
+            return ''; // Ignore it.
         }
-        if (!$this->load_choices() or empty($this->choices)) {
+        if (!$this->load_choices() || empty($this->choices)) {
             return '';
         }
         unset($data['xxxxx']);
-        $result = array();
+        $result = [];
         foreach ($data as $key => $value) {
-            if ($value and array_key_exists($key, $this->choices)) {
+            if ($value && array_key_exists($key, $this->choices)) {
                 $result[] = $key;
             }
         }
@@ -139,31 +142,29 @@ class configmulticheckbox extends \core_admin\setting {
     }
 
     /**
-     * Returns XHTML field(s) as required by choices
+     * Returns HTML value for the field(s) as required by choices
      *
      * Relies on data being an array should data ever be another valid vartype with
      * acceptable value this may cause a warning/error
      * if (!is_array($data)) would fix the problem
      *
-     * @todo Add vartype handling to ensure $data is an array
-     *
      * @param array $data An array of checked values
      * @param string $query
      * @return string XHTML field
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
-        if (!$this->load_choices() or empty($this->choices)) {
+        if (!$this->load_choices() || empty($this->choices)) {
             return '';
         }
 
         $default = $this->get_defaultsetting();
         if (is_null($default)) {
-            $default = array();
+            $default = [];
         }
         if (is_null($data)) {
-            $data = array();
+            $data = [];
         }
 
         $context = (object) [
@@ -172,8 +173,8 @@ class configmulticheckbox extends \core_admin\setting {
             'readonly' => $this->is_readonly(),
         ];
 
-        $options = array();
-        $defaults = array();
+        $options = [];
+        $defaults = [];
         foreach ($this->choices as $key => $description) {
             if (!empty($default[$key])) {
                 $defaults[] = $description;
@@ -182,7 +183,7 @@ class configmulticheckbox extends \core_admin\setting {
             $options[] = [
                 'key' => $key,
                 'checked' => !empty($data[$key]),
-                'label' => highlightfast($query, $description)
+                'label' => highlightfast($query, $description),
             ];
         }
 
@@ -200,7 +201,6 @@ class configmulticheckbox extends \core_admin\setting {
         $element = $OUTPUT->render_from_template('core_admin/setting_configmulticheckbox', $context);
 
         return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', $defaultinfo, $query);
-
     }
 }
 

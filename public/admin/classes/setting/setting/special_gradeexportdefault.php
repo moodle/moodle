@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,22 +12,29 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * A setting for the default grade export plugin.
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Default grade export plugin selection.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class special_gradeexportdefault extends \core_admin\setting\setting\configselect {
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
-        parent::__construct('gradeexport_default', get_string('gradeexportdefault', 'admin'),
-                get_string('configgradeexportdefault', 'admin'), null, null);
+        parent::__construct(
+            'gradeexport_default',
+            get_string('gradeexportdefault', 'admin'),
+            get_string('configgradeexportdefault', 'admin'),
+            null,
+            null
+        );
     }
 
     /**
@@ -58,7 +65,7 @@ class special_gradeexportdefault extends \core_admin\setting\setting\configselec
 
         if ($plugins = \core_component::get_plugin_list('gradeexport')) {
             foreach ($plugins as $plugin => $unused) {
-                $this->choices[$plugin] = get_string('pluginname', 'gradeexport_'.$plugin);
+                $this->choices[$plugin] = get_string('pluginname', 'gradeexport_' . $plugin);
             }
         }
         return true;

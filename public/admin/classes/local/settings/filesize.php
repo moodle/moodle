@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\local\settings;
 
@@ -21,20 +21,20 @@ namespace core_admin\local\settings;
  *
  * @package     core_admin
  * @copyright   2019 Shamim Rezaie <shamim@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filesize extends \core_admin\setting {
     /** @var int The byte unit. Number of bytes in a byte */
-    const UNIT_B = 1;
+    public const UNIT_B = 1;
 
     /** @var int The kilobyte unit (number of bytes in a kilobyte) */
-    const UNIT_KB = 1024;
+    public const UNIT_KB = 1024;
 
     /** @var int The megabyte unit (number of bytes in a megabyte) */
-    const UNIT_MB = 1048576;
+    public const UNIT_MB = 1048576;
 
     /** @var int The gigabyte unit (number of bytes in a gigabyte) */
-    const UNIT_GB = 1073741824;
+    public const UNIT_GB = 1073741824;
 
     /** @var int default size unit */
     protected $defaultunit;
@@ -49,9 +49,13 @@ class filesize extends \core_admin\setting {
      * @param int|null  $defaultvalue   Value of the settings in bytes
      * @param int|null  $defaultunit    GB, MB, etc. (in bytes)
      */
-    public function __construct(string $name, string $visiblename, string $description,
-            ?int $defaultvalue = null, ?int $defaultunit = null) {
-
+    public function __construct(
+        string $name,
+        string $visiblename,
+        string $description,
+        ?int $defaultvalue = null,
+        ?int $defaultunit = null
+    ) {
         $defaultsetting = self::parse_bytes($defaultvalue);
 
         if ($defaultunit && array_key_exists($defaultunit, self::get_units())) {
@@ -169,13 +173,13 @@ class filesize extends \core_admin\setting {
             'name' => $this->get_full_name(),
             'value' => $data['v'],
             'readonly' => $this->is_readonly(),
-            'options' => array_map(function($unit, $title) use ($data, $defaultunit) {
+            'options' => array_map(function ($unit, $title) use ($data, $defaultunit) {
                 return [
                     'value' => $unit,
                     'name' => $title,
-                    'selected' => ($data['v'] == 0 && $unit == $defaultunit) || $unit == $data['u']
+                    'selected' => ($data['v'] == 0 && $unit == $defaultunit) || $unit == $data['u'],
                 ];
-            }, array_keys($units), $units)
+            }, array_keys($units), $units),
         ];
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configfilesize', $context);

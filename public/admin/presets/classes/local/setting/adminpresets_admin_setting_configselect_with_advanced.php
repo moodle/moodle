@@ -28,6 +28,12 @@ class adminpresets_admin_setting_configselect_with_advanced extends adminpresets
     /** @var string Name of the advanced setting. **/
     protected $advancedkey;
 
+    /**
+     * Constructor for the admin presets config select with advanced.
+     *
+     * @param \core_admin\setting $settingdata
+     * @param mixed $dbsettingvalue
+     */
     public function __construct(\core_admin\setting $settingdata, $dbsettingvalue) {
         // Getting the advanced defaultsetting attribute name.
         if (is_array($settingdata->defaultsetting)) {
@@ -43,9 +49,7 @@ class adminpresets_admin_setting_configselect_with_advanced extends adminpresets
         parent::__construct($settingdata, $dbsettingvalue);
     }
 
-    /**
-     * Funcionality used by other _with_advanced settings
-     */
+    #[\Override]
     protected function set_visiblevalue() {
         parent::set_visiblevalue();
         if (!is_null($this->attributesvalues)) {

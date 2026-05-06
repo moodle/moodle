@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,19 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Autocomplete as you type form element.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class configselect_autocomplete extends \core_admin\setting\setting\configselect {
-    /** @var boolean $tags Should we allow typing new entries to the field? */
+    /** @var bool $tags Should we allow typing new entries to the field? */
     protected $tags = false;
     /** @var string $ajax Name of an AMD module to send/process ajax requests. */
     protected $ajax = '';
@@ -42,7 +44,7 @@ class configselect_autocomplete extends \core_admin\setting\setting\configselect
      * @param string $query
      * @return string XHTML field and wrapping div
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $PAGE;
 
         $html = parent::output_html($data, $query);
@@ -53,8 +55,8 @@ class configselect_autocomplete extends \core_admin\setting\setting\configselect
 
         $this->placeholder = get_string('search');
 
-        $params = array('#' . $this->get_id(), $this->tags, $this->ajax,
-            $this->placeholder, $this->casesensitive, $this->showsuggestions, $this->noselectionstring);
+        $params = ['#' . $this->get_id(), $this->tags, $this->ajax,
+            $this->placeholder, $this->casesensitive, $this->showsuggestions, $this->noselectionstring];
 
         // Load autocomplete wrapper for select2 library.
         $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params);

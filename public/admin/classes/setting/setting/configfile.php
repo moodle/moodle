@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,19 +12,22 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Path to directory
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Path to a file.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class configfile extends \core_admin\setting\setting\configtext {
     /**
      * Constructor
-     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $name A unique ascii name for the setting.
+     *      Either 'mysetting' for core settings, or 'myplugin/mysetting' for those belonging to a plugin.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string $defaultdirectory default directory location
@@ -33,17 +36,8 @@ class configfile extends \core_admin\setting\setting\configtext {
         parent::__construct($name, $visiblename, $description, $defaultdirectory, PARAM_RAW, 50);
     }
 
-    /**
-     * Returns XHTML for the field
-     *
-     * Returns XHTML for the field and also checks whether the file
-     * specified in $data exists using file_exists()
-     *
-     * @param string $data File name and path to use in value attr
-     * @param string $query
-     * @return string XHTML field
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $CFG, $OUTPUT;
 
         $default = $this->get_defaultsetting();
@@ -59,7 +53,7 @@ class configfile extends \core_admin\setting\setting\configtext {
         ];
 
         if ($context->readonly) {
-            $this->visiblename .= '<div class="alert alert-info">'.get_string('execpathnotallowed', 'admin').'</div>';
+            $this->visiblename .= '<div class="alert alert-info">' . get_string('execpathnotallowed', 'admin') . '</div>';
         }
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configfile', $context);
@@ -67,9 +61,7 @@ class configfile extends \core_admin\setting\setting\configtext {
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 
-    /**
-     * Checks if execpatch has been disabled in config.php
-     */
+    #[\Override]
     public function write_setting($data) {
         global $CFG;
         if (!empty($CFG->preventexecpath)) {
@@ -85,7 +77,6 @@ class configfile extends \core_admin\setting\setting\configtext {
         }
         return parent::write_setting($data);
     }
-
 }
 
 // Alias this class to the old name.

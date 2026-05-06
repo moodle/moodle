@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\page;
 
 use core_admin\admin_search;
 
 /**
- * Manage question behaviours page
+ * Question behaviour management admin page.
  *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manageqbehaviours extends \core_admin\setting\tree\externalpage {
     /**
@@ -30,8 +31,11 @@ class manageqbehaviours extends \core_admin\setting\tree\externalpage {
      */
     public function __construct() {
         global $CFG;
-        parent::__construct('manageqbehaviours', get_string('manageqbehaviours', 'admin'),
-                new \moodle_url('/admin/qbehaviours.php'));
+        parent::__construct(
+            'manageqbehaviours',
+            get_string('manageqbehaviours', 'admin'),
+            new \moodle_url('/admin/qbehaviours.php')
+        );
     }
 
     /**
@@ -49,8 +53,12 @@ class manageqbehaviours extends \core_admin\setting\tree\externalpage {
         $found = false;
         require_once($CFG->dirroot . '/question/engine/lib.php');
         foreach (\core_component::get_plugin_list('qbehaviour') as $behaviour => $notused) {
-            if (strpos(\core_text::strtolower(\question_engine::get_behaviour_name($behaviour)),
-                    $query) !== false) {
+            if (
+                strpos(
+                    \core_text::strtolower(\question_engine::get_behaviour_name($behaviour)),
+                    $query
+                ) !== false
+            ) {
                 $type = admin_search::SEARCH_MATCH_SETTING_DISPLAY_NAME;
                 $found = true;
                 break;
@@ -59,11 +67,11 @@ class manageqbehaviours extends \core_admin\setting\tree\externalpage {
         if ($found) {
             $result = new \stdClass();
             $result->page     = $this;
-            $result->settings = array();
+            $result->settings = [];
             $result->searchmatchtype = $type;
-            return array($this->name => $result);
+            return [$this->name => $result];
         } else {
-            return array();
+            return [];
         }
     }
 }

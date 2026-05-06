@@ -106,13 +106,18 @@ class editor extends base {
             return;
         }
 
-        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
             return;
         }
 
         $section = $this->get_settings_section_name();
 
-        $settings = new \core_admin\setting\settingpage\settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core_admin\setting\settingpage\settingpage(
+            $section,
+            $this->displayname,
+            'moodle/site:config',
+            $this->is_enabled() === false,
+        );
         include($this->full_path('settings.php')); // This may also set $settings to null.
 
         if ($settings) {
@@ -146,7 +151,7 @@ class editor extends base {
 
     #[\Override]
     public static function get_manage_url() {
-        return new \core\url('/admin/settings.php', array('section'=>'manageeditors'));
+        return new \core\url('/admin/settings.php', ['section' => 'manageeditors']);
     }
 
     #[\Override]

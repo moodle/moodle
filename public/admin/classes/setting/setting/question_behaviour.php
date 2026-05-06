@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,21 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Admin setting that allows a user to pick a behaviour.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class question_behaviour extends \core_admin\setting\setting\configselect {
     /**
+     * Constructor for the question behaviour setting.
+     *
      * @param string $name name of config variable
      * @param string $visiblename display name
      * @param string $description description
@@ -32,10 +36,7 @@ class question_behaviour extends \core_admin\setting\setting\configselect {
         parent::__construct($name, $visiblename, $description, $default, null);
     }
 
-    /**
-     * Load list of behaviours as choices
-     * @return bool true => success, false => error.
-     */
+    #[\Override]
     public function load_choices() {
         global $CFG;
         require_once($CFG->dirroot . '/question/engine/lib.php');

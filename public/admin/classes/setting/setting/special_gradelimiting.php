@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,39 +12,43 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Special setting to limit grade items in the grader report.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class special_gradelimiting extends \core_admin\setting\setting\configcheckbox {
     /**
-     * Calls parent::__construct with specific arguments
+     * Calls parent::__construct with specific arguments.
      */
     public function __construct() {
-        parent::__construct('unlimitedgrades', get_string('unlimitedgrades', 'grades'),
-            get_string('unlimitedgrades_help', 'grades'), '0', '1', '0');
+        parent::__construct(
+            'unlimitedgrades',
+            get_string('unlimitedgrades', 'grades'),
+            get_string('unlimitedgrades_help', 'grades'),
+            '0',
+            '1',
+            '0'
+        );
     }
 
     /**
      * Force site regrading
      */
-    function regrade_all() {
+    public function regrade_all() {
         global $CFG;
         require_once("$CFG->libdir/gradelib.php");
         grade_force_site_regrading();
     }
 
-    /**
-     * Saves the new settings
-     *
-     * @param mixed $data
-     * @return string empty string or error message
-     */
-    function write_setting($data) {
+    #[\Override]
+    public function write_setting($data) {
         $previous = $this->get_setting();
 
         if ($previous === null) {
@@ -58,7 +62,6 @@ class special_gradelimiting extends \core_admin\setting\setting\configcheckbox {
         }
         return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
     }
-
 }
 
 // Alias this class to the old name.

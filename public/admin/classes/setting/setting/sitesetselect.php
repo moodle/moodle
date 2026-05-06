@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,15 +12,17 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Special select for frontpage - stores data in course table
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class sitesetselect extends \core_admin\setting\setting\configselect {
     /**
      * Returns the site name for the selected site
@@ -36,7 +38,7 @@ class sitesetselect extends \core_admin\setting\setting\configselect {
     /**
      * Updates the database and save the setting
      *
-     * @param string data
+     * @param string $data
      * @return string empty or error message
      */
     public function write_setting($data) {
@@ -54,14 +56,13 @@ class sitesetselect extends \core_admin\setting\setting\configselect {
         $DB->update_record('course', $record);
 
         // Reset caches.
-        $SITE = $DB->get_record('course', array('id'=>$SITE->id), '*', MUST_EXIST);
+        $SITE = $DB->get_record('course', ['id' => $SITE->id], '*', MUST_EXIST);
         if ($SITE->id == $COURSE->id) {
             $COURSE = $SITE;
         }
         \core_courseformat\base::reset_course_cache($SITE->id);
 
         return '';
-
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,17 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Administration interface for emoticon_manager settings.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class emoticons extends \core_admin\setting {
-
     /**
      * Calls parent::__construct with specific args
      */
@@ -73,19 +74,14 @@ class emoticons extends \core_admin\setting {
         }
 
         if ($this->config_write($this->name, $manager->encode_stored_config($emoticons))) {
-            return ''; // success
+            return ''; // Success.
         } else {
             return get_string('errorsetting', 'admin') . $this->visiblename . \html_writer::empty_tag('br');
         }
     }
 
-    /**
-     * Return XHTML field(s) for options
-     *
-     * @param array $data Array of options to set in HTML
-     * @return string XHTML string for the fields and wrapping div(s)
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $context = (object) [
@@ -96,7 +92,6 @@ class emoticons extends \core_admin\setting {
 
         $i = 0;
         foreach ($data as $field => $value) {
-
             // When $i == 0: text.
             // When $i == 1: imagename.
             // When $i == 2: imagecomponent.
@@ -105,7 +100,7 @@ class emoticons extends \core_admin\setting {
             $fields[$i] = (object) [
                 'field' => $field,
                 'value' => $value,
-                'index' => $i
+                'index' => $i,
             ];
             $i++;
 
@@ -121,7 +116,7 @@ class emoticons extends \core_admin\setting {
                 }
                 $context->emoticons[] = [
                     'fields' => $fields,
-                    'icon' => $icon ? $icon->export_for_template($OUTPUT) : null
+                    'icon' => $icon ? $icon->export_for_template($OUTPUT) : null,
                 ];
                 $fields = [];
                 $i = 0;
@@ -130,7 +125,7 @@ class emoticons extends \core_admin\setting {
 
         $context->reseturl = new \moodle_url('/admin/resetemoticons.php');
         $element = $OUTPUT->render_from_template('core_admin/setting_emoticons', $context);
-        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', NULL, $query);
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', null, $query);
     }
 
     /**
@@ -142,22 +137,22 @@ class emoticons extends \core_admin\setting {
      */
     protected function prepare_form_data(array $emoticons) {
 
-        $form = array();
+        $form = [];
         $i = 0;
         foreach ($emoticons as $emoticon) {
-            $form['text'.$i]            = $emoticon->text;
-            $form['imagename'.$i]       = $emoticon->imagename;
-            $form['imagecomponent'.$i]  = $emoticon->imagecomponent;
-            $form['altidentifier'.$i]   = $emoticon->altidentifier;
-            $form['altcomponent'.$i]    = $emoticon->altcomponent;
+            $form['text' . $i]            = $emoticon->text;
+            $form['imagename' . $i]       = $emoticon->imagename;
+            $form['imagecomponent' . $i]  = $emoticon->imagecomponent;
+            $form['altidentifier' . $i]   = $emoticon->altidentifier;
+            $form['altcomponent' . $i]    = $emoticon->altcomponent;
             $i++;
         }
-        // add one more blank field set for new object
-        $form['text'.$i]            = '';
-        $form['imagename'.$i]       = '';
-        $form['imagecomponent'.$i]  = '';
-        $form['altidentifier'.$i]   = '';
-        $form['altcomponent'.$i]    = '';
+        // Add one more blank field set for new object.
+        $form['text' . $i]            = '';
+        $form['imagename' . $i]       = '';
+        $form['imagecomponent' . $i]  = '';
+        $form['altidentifier' . $i]   = '';
+        $form['altcomponent' . $i]    = '';
 
         return $form;
     }
@@ -166,50 +161,49 @@ class emoticons extends \core_admin\setting {
      * Converts the data from admin settings form into an array of emoticon objects
      *
      * @see self::prepare_form_data()
-     * @param array $data array of admin form fields and values
+     * @param array $form array of admin form fields and values
      * @return false|array of emoticon objects
      */
     protected function process_form_data(array $form) {
 
-        $count = count($form); // number of form field values
+        $count = count($form); // Number of form field values.
 
         if ($count % 5) {
-            // we must get five fields per emoticon object
+            // We must get five fields per emoticon object.
             return false;
         }
 
-        $emoticons = array();
+        $emoticons = [];
         for ($i = 0; $i < $count / 5; $i++) {
             $emoticon                   = new \stdClass();
-            $emoticon->text             = clean_param(trim($form['text'.$i]), PARAM_NOTAGS);
-            $emoticon->imagename        = clean_param(trim($form['imagename'.$i]), PARAM_PATH);
-            $emoticon->imagecomponent   = clean_param(trim($form['imagecomponent'.$i]), PARAM_COMPONENT);
-            $emoticon->altidentifier    = clean_param(trim($form['altidentifier'.$i]), PARAM_STRINGID);
-            $emoticon->altcomponent     = clean_param(trim($form['altcomponent'.$i]), PARAM_COMPONENT);
+            $emoticon->text             = clean_param(trim($form['text' . $i]), PARAM_NOTAGS);
+            $emoticon->imagename        = clean_param(trim($form['imagename' . $i]), PARAM_PATH);
+            $emoticon->imagecomponent   = clean_param(trim($form['imagecomponent' . $i]), PARAM_COMPONENT);
+            $emoticon->altidentifier    = clean_param(trim($form['altidentifier' . $i]), PARAM_STRINGID);
+            $emoticon->altcomponent     = clean_param(trim($form['altcomponent' . $i]), PARAM_COMPONENT);
 
-            if (strpos($emoticon->text, ':/') !== false or strpos($emoticon->text, '//') !== false) {
-                // prevent from breaking http://url.addresses by accident
+            if (strpos($emoticon->text, ':/') !== false || strpos($emoticon->text, '//') !== false) {
+                // Prevent from breaking http://url.addresses by accident.
                 $emoticon->text = '';
             }
 
             if (strlen($emoticon->text) < 2) {
-                // do not allow single character emoticons
+                // Do not allow single character emoticons.
                 $emoticon->text = '';
             }
 
             if (preg_match('/^[a-zA-Z]+[a-zA-Z0-9]*$/', $emoticon->text)) {
-                // emoticon text must contain some non-alphanumeric character to prevent
-                // breaking HTML tags
+                // Emoticon text must contain some non-alphanumeric character to prevent
+                // Breaking HTML tags.
                 $emoticon->text = '';
             }
 
-            if ($emoticon->text !== '' and $emoticon->imagename !== '' and $emoticon->imagecomponent !== '') {
+            if ($emoticon->text !== '' && $emoticon->imagename !== '' && $emoticon->imagecomponent !== '') {
                 $emoticons[] = $emoticon;
             }
         }
         return $emoticons;
     }
-
 }
 
 // Alias this class to the old name.

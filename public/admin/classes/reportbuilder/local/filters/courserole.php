@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 declare(strict_types=1);
 
@@ -31,10 +31,9 @@ use core_reportbuilder\local\helpers\database;
  *
  * @package     core_admin
  * @copyright   2023 Paul Holden <paulh@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class courserole extends base {
-
     /**
      * Setup form
      *
@@ -44,12 +43,20 @@ class courserole extends base {
         $elements = [];
 
         // Role.
-        $elements['role'] = $mform->createElement('select', "{$this->name}_role", get_string('rolefullname', 'core_role'),
-            [0 => get_string('anyrole', 'core_filters')] + get_default_enrol_roles(system::instance()));
+        $elements['role'] = $mform->createElement(
+            'select',
+            "{$this->name}_role",
+            get_string('rolefullname', 'core_role'),
+            [0 => get_string('anyrole', 'core_filters')] + get_default_enrol_roles(system::instance())
+        );
 
         // Category.
-        $elements['category'] = $mform->createElement('select', "{$this->name}_category", get_string('category'),
-            [0 => get_string('anycategory', 'core_filters')] + core_course_category::make_categories_list());
+        $elements['category'] = $mform->createElement(
+            'select',
+            "{$this->name}_category",
+            get_string('category'),
+            [0 => get_string('anycategory', 'core_filters')] + core_course_category::make_categories_list()
+        );
 
         // Course.
         $elements['course'] = $mform->createElement('text', "{$this->name}_course", get_string('shortnamecourse'));

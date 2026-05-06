@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,26 +12,24 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\local\settings;
+
+use core\url;
 
 /**
  * A settings page which can be viewed with a link directly.
  *
  * @package    core_admin
  * @copyright  2021 Andrew Lyons <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core_admin\local\settings;
-
-use moodle_url;
-
 interface linkable_settings_page {
-
     /**
      * Get the URL to view this settings page.
      *
-     * @return moodle_url
+     * @return url
      */
-    public function get_settings_page_url(): moodle_url;
+    public function get_settings_page_url(): url;
 }

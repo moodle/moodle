@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,23 +12,31 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace core_admin\setting\setting;
 
 use core_admin\admin_search;
 
 /**
- * Course formats manager. Allows to enable/disable formats and jump to settings
+ * Course format plugin management.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manageformats extends \core_admin\setting {
-
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
         $this->nosave = true;
-        parent::__construct('formatsui', new \lang_string('manageformats', 'core_admin'), '', '');
+        parent::__construct(
+            'formatsui',
+            new \lang_string('manageformats', 'core_admin'),
+            '',
+            '',
+        );
     }
 
     /**
@@ -56,7 +64,7 @@ class manageformats extends \core_admin\setting {
      * @return string Always returns ''
      */
     public function write_setting($data) {
-        // do not write any setting
+        // Do not write any setting.
         return '';
     }
 
@@ -91,7 +99,7 @@ class manageformats extends \core_admin\setting {
      * @param string $query
      * @return string highlight
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $CFG, $OUTPUT;
         $return = '';
         $return = $OUTPUT->heading(new \lang_string('courseformats'), 3, 'main');
@@ -99,23 +107,25 @@ class manageformats extends \core_admin\setting {
 
         $formats = \core_plugin_manager::instance()->get_plugins_of_type('format');
 
-        // display strings
-        $txt = get_strings(array('settings', 'name', 'enable', 'disable', 'up', 'down', 'default'));
+        // Display strings.
+        $txt = get_strings(['settings', 'name', 'enable', 'disable', 'up', 'down', 'default']);
         $txt->uninstall = get_string('uninstallplugin', 'core_admin');
         $txt->updown = "$txt->up/$txt->down";
 
         $table = new \html_table();
-        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings);
-        $table->align = array('left', 'center', 'center', 'center', 'center');
+        $table->head  = [$txt->name, $txt->enable, $txt->updown, $txt->uninstall, $txt->settings];
+        $table->align = ['left', 'center', 'center', 'center', 'center'];
         $table->attributes['class'] = 'manageformattable table generaltable admintable table-striped table-hover';
-        $table->data  = array();
+        $table->data  = [];
 
         $cnt = 0;
         $defaultformat = get_config('moodlecourse', 'format');
-        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'iconsmall'));
+        $spacer = $OUTPUT->pix_icon('spacer', '', 'moodle', ['class' => 'iconsmall']);
         foreach ($formats as $format) {
-            $url = new \moodle_url('/admin/courseformats.php',
-                    array('sesskey' => sesskey(), 'format' => $format->name));
+            $url = new \moodle_url(
+                '/admin/courseformats.php',
+                ['sesskey' => sesskey(), 'format' => $format->name]
+            );
             $isdefault = '';
             $class = '';
             if ($format->is_enabled()) {
@@ -123,25 +133,33 @@ class manageformats extends \core_admin\setting {
                 if ($defaultformat === $format->name) {
                     $hideshow = $txt->default;
                 } else {
-                    $hideshow = \html_writer::link($url->out(false, array('action' => 'disable')),
-                            $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', array('class' => 'iconsmall')));
+                    $hideshow = \html_writer::link(
+                        $url->out(false, ['action' => 'disable']),
+                        $OUTPUT->pix_icon('t/hide', $txt->disable, 'moodle', ['class' => 'iconsmall'])
+                    );
                 }
             } else {
                 $strformatname = $format->displayname;
                 $class = 'dimmed_text';
-                $hideshow = \html_writer::link($url->out(false, array('action' => 'enable')),
-                    $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', array('class' => 'iconsmall')));
+                $hideshow = \html_writer::link(
+                    $url->out(false, ['action' => 'enable']),
+                    $OUTPUT->pix_icon('t/show', $txt->enable, 'moodle', ['class' => 'iconsmall'])
+                );
             }
             $updown = '';
             if ($cnt) {
-                $updown .= \html_writer::link($url->out(false, array('action' => 'up')),
-                    $OUTPUT->pix_icon('t/up', $txt->up, 'moodle', array('class' => 'iconsmall'))). '';
+                $updown .= \html_writer::link(
+                    $url->out(false, ['action' => 'up']),
+                    $OUTPUT->pix_icon('t/up', $txt->up, 'moodle', ['class' => 'iconsmall'])
+                ) . '';
             } else {
                 $updown .= $spacer;
             }
             if ($cnt < count($formats) - 1) {
-                $updown .= '&nbsp;'.\html_writer::link($url->out(false, array('action' => 'down')),
-                    $OUTPUT->pix_icon('t/down', $txt->down, 'moodle', array('class' => 'iconsmall')));
+                $updown .= '&nbsp;' . \html_writer::link(
+                    $url->out(false, ['action' => 'down']),
+                    $OUTPUT->pix_icon('t/down', $txt->down, 'moodle', ['class' => 'iconsmall'])
+                );
             } else {
                 $updown .= $spacer;
             }
@@ -151,17 +169,29 @@ class manageformats extends \core_admin\setting {
                 $settings = \html_writer::link($format->get_settings_url(), $txt->settings);
             }
             $uninstall = '';
-            if ($uninstallurl = \core_plugin_manager::instance()->get_uninstall_url('format_'.$format->name, 'manage')) {
+            $uninstallurl = \core_plugin_manager::instance()->get_uninstall_url(
+                'format_' . $format->name,
+                'manage',
+            );
+            if ($uninstallurl) {
                 $uninstall = \html_writer::link($uninstallurl, $txt->uninstall);
             }
-            $row = new \html_table_row(array($strformatname, $hideshow, $updown, $uninstall, $settings));
+            $row = new \html_table_row([$strformatname, $hideshow, $updown, $uninstall, $settings]);
             if ($class) {
                 $row->attributes['class'] = $class;
             }
             $table->data[] = $row;
         }
         $return .= \html_writer::table($table);
-        $link = \html_writer::link(new \moodle_url('/admin/settings.php', array('section' => 'coursesettings')), new \lang_string('coursesettings'));
+        $link = \html_writer::link(
+            new \moodle_url(
+                '/admin/settings.php',
+                [
+                    'section' => 'coursesettings',
+                ]
+            ),
+            new \lang_string('coursesettings'),
+        );
         $return .= \html_writer::tag('p', get_string('manageformatsgotosettings', 'admin', $link));
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);

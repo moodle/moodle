@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,22 +12,24 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+namespace core_admin\setting\setting;
 
 /**
  * Grade category settings
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_admin\setting\setting;
-
 class gradecat_combo extends \core_admin\setting {
-
     /** @var array Array of choices value=>label. */
     public $choices;
 
     /**
-     * Sets choices and calls parent::__construct with passed arguments
+     * Sets choices and calls parent::__construct with passed arguments.
+     *
      * @param string $name
      * @param string $visiblename
      * @param string $description
@@ -39,35 +41,25 @@ class gradecat_combo extends \core_admin\setting {
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
-    /**
-     * Return the current setting(s) array
-     *
-     * @return ?array Array of value=>xx, forced=>xx
-     */
+    #[\Override]
     public function get_setting() {
         global $CFG;
 
         $value = $this->config_read($this->name);
-        $flag  = $this->config_read($this->name.'_flag');
+        $flag  = $this->config_read($this->name . '_flag');
 
-        if (is_null($value) or is_null($flag)) {
-            return NULL;
+        if (is_null($value) || is_null($flag)) {
+            return null;
         }
 
         // Bitwise operation is still required, in cases where unused 'advanced' flag is still set.
         $flag   = (int)$flag;
         $forced = (bool)(1 & $flag); // First bit.
 
-        return array('value' => $value, 'forced' => $forced);
+        return ['value' => $value, 'forced' => $forced];
     }
 
-    /**
-     * Save the new settings passed in $data
-     *
-     * @todo Add vartype handling to ensure $data is array
-     * @param array $data Associative array of value=>xx, forced=>xx
-     * @return string empty or error message
-     */
+    #[\Override]
     public function write_setting($data) {
         global $CFG;
 
@@ -79,41 +71,34 @@ class gradecat_combo extends \core_admin\setting {
         }
 
         $oldvalue = $this->config_read($this->name);
-        $oldflag = (int)$this->config_read($this->name.'_flag');
-        $oldforced = (1 & $oldflag); // first bit
+        $oldflag = (int)$this->config_read($this->name . '_flag');
+        $oldforced = (1 & $oldflag); // First bit.
 
         $result1 = $this->config_write($this->name, $value);
-        $result2 = $this->config_write($this->name.'_flag', $forced);
+        $result2 = $this->config_write($this->name . '_flag', $forced);
 
-        // force regrade if needed
-        if ($oldforced != $forced or ($forced and $value != $oldvalue)) {
-            require_once($CFG->libdir.'/gradelib.php');
+        // Force regrade if needed.
+        if ($oldforced != $forced || ($forced && $value != $oldvalue)) {
+            require_once($CFG->libdir . '/gradelib.php');
             \grade_category::updated_forced_settings();
         }
 
-        if ($result1 and $result2) {
+        if ($result1 && $result2) {
             return '';
         } else {
             return get_string('errorsetting', 'admin');
         }
     }
 
-    /**
-     * Return XHTML to display the field and wrapping div
-     *
-     * @todo Add vartype handling to ensure $data is array
-     * @param array $data Associative array of value=>xx, forced=>xx, adv=>xx
-     * @param string $query
-     * @return string XHTML to display control
-     */
-    public function output_html($data, $query='') {
+    #[\Override]
+    public function output_html($data, $query = '') {
         global $OUTPUT;
 
         $value  = $data['value'];
 
         $default = $this->get_defaultsetting();
         if (!is_null($default)) {
-            $defaultinfo = array();
+            $defaultinfo = [];
             if (isset($this->choices[$default['value']])) {
                 $defaultinfo[] = $this->choices[$default['value']];
             }
@@ -121,9 +106,8 @@ class gradecat_combo extends \core_admin\setting {
                 $defaultinfo[] = get_string('force');
             }
             $defaultinfo = implode(', ', $defaultinfo);
-
         } else {
-            $defaultinfo = NULL;
+            $defaultinfo = null;
         }
 
         $options = $this->choices;
@@ -131,11 +115,11 @@ class gradecat_combo extends \core_admin\setting {
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
             'forced' => !empty($data['forced']),
-            'options' => array_map(function($option) use ($options, $value) {
+            'options' => array_map(function ($option) use ($options, $value) {
                 return [
                     'value' => $option,
                     'name' => $options[$option],
-                    'selected' => $option == $value
+                    'selected' => $option == $value,
                 ];
             }, array_keys($options)),
         ];

@@ -26,7 +26,7 @@ use core_admin\setting\setting\configtext;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 /**
  * Provides the unit tests for admin tree functionality.
@@ -36,12 +36,13 @@ require_once($CFG->libdir.'/adminlib.php');
  * @copyright   2013 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(admin_root::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(category::class)]
 final class admintree_test extends \advanced_testcase {
     /**
      * Adding nodes into the admin tree.
      */
     public function test_add_nodes(): void {
-
         $tree = new admin_root(true);
         $tree->add('root', $one = new category('one', 'One'));
         $tree->add('root', new category('three', 'Three'));
@@ -49,38 +50,38 @@ final class admintree_test extends \advanced_testcase {
         $tree->add('one', new category('one-three', 'One-three'));
 
         // Check the order of nodes in the root.
-        $map = array();
+        $map = [];
         foreach ($tree->children as $child) {
             $map[] = $child->name;
         }
-        $this->assertEquals(array('one', 'three'), $map);
+        $this->assertEquals(['one', 'three'], $map);
 
         // Insert a node into the middle.
         $tree->add('root', new category('two', 'Two'), 'three');
-        $map = array();
+        $map = [];
         foreach ($tree->children as $child) {
             $map[] = $child->name;
         }
-        $this->assertEquals(array('one', 'two', 'three'), $map);
+        $this->assertEquals(['one', 'two', 'three'], $map);
 
         // Non-existing sibling.
         $tree->add('root', new category('four', 'Four'), 'five');
         $this->assertDebuggingCalled('Sibling five not found', DEBUG_DEVELOPER);
 
         $tree->add('root', new category('five', 'Five'));
-        $map = array();
+        $map = [];
         foreach ($tree->children as $child) {
             $map[] = $child->name;
         }
-        $this->assertEquals(array('one', 'two', 'three', 'four', 'five'), $map);
+        $this->assertEquals(['one', 'two', 'three', 'four', 'five'], $map);
 
         // Insert a node into the middle of the subcategory.
         $tree->add('one', new category('one-two', 'One-two'), 'one-three');
-        $map = array();
+        $map = [];
         foreach ($one->children as $child) {
             $map[] = $child->name;
         }
-        $this->assertEquals(array('one-one', 'one-two', 'one-three'), $map);
+        $this->assertEquals(['one-one', 'one-two', 'one-three'], $map);
 
         // Check just siblings, not parents or children.
         $tree->add('one', new category('one-four', 'One-four'), 'one');
@@ -91,17 +92,17 @@ final class admintree_test extends \advanced_testcase {
 
         // Me! Me! I wanna be first!
         $tree->add('root', new externalpage('zero', 'Zero', 'http://foo.bar'), 'one');
-        $map = array();
+        $map = [];
         foreach ($tree->children as $child) {
             $map[] = $child->name;
         }
-        $this->assertEquals(array('zero', 'one', 'two', 'three', 'four', 'five', 'six'), $map);
+        $this->assertEquals(['zero', 'one', 'two', 'three', 'four', 'five', 'six'], $map);
     }
 
     public function test_add_nodes_before_invalid1(): void {
         $tree = new admin_root(true);
         $this->expectException(\coding_exception::class);
-        $tree->add('root', new externalpage('foo', 'Foo', 'http://foo.bar'), array('moodle:site/config'));
+        $tree->add('root', new externalpage('foo', 'Foo', 'http://foo.bar'), ['moodle:site/config']);
     }
 
     public function test_add_nodes_before_invalid2(): void {
@@ -126,7 +127,7 @@ final class admintree_test extends \advanced_testcase {
         $adminroot->add('one', $page);
 
         $sink = $this->redirectEvents();
-        $data = array('s__text1' => 'sometext', 's__pass1' => '');
+        $data = ['s__text1' => 'sometext', 's__pass1' => ''];
         $this->save_config_data($adminroot, $data);
 
         $events = $sink->get_events();
@@ -135,7 +136,7 @@ final class admintree_test extends \advanced_testcase {
         $this->assertInstanceOf('\core\event\config_log_created', $event);
 
         $sink = $this->redirectEvents();
-        $data = array('s__text1'=>'other', 's__pass1'=>'nice password');
+        $data = ['s__text1' => 'other', 's__pass1' => 'nice password'];
         $count = $this->save_config_data($adminroot, $data);
 
         $events = $sink->get_events();
@@ -144,7 +145,6 @@ final class admintree_test extends \advanced_testcase {
         $this->assertInstanceOf('\core\event\config_log_created', $event);
         // Verify password was nuked.
         $this->assertNotEquals($event->other['value'], 'nice password');
-
     }
 
     /**
@@ -155,7 +155,7 @@ final class admintree_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
-        $DB->delete_records('config_log', array());
+        $DB->delete_records('config_log', []);
 
         $adminroot = new admin_root(true);
         $adminroot->add('root', $one = new category('one', 'One'));
@@ -165,11 +165,11 @@ final class admintree_test extends \advanced_testcase {
         $adminroot->add('one', $page);
 
         $this->assertEmpty($DB->get_records('config_log'));
-        $data = array('s__text1'=>'sometext', 's__pass1'=>'');
+        $data = ['s__text1' => 'sometext', 's__pass1' => ''];
         $count = $this->save_config_data($adminroot, $data);
 
         $this->assertEquals(2, $count);
-        $records = $DB->get_records('config_log', array(), 'id asc');
+        $records = $DB->get_records('config_log', [], 'id asc');
         $this->assertCount(2, $records);
         reset($records);
         $record = array_shift($records);
@@ -183,12 +183,12 @@ final class admintree_test extends \advanced_testcase {
         $this->assertNull($record->oldvalue);
         $this->assertSame('', $record->value);
 
-        $DB->delete_records('config_log', array());
-        $data = array('s__text1'=>'other', 's__pass1'=>'nice password');
+        $DB->delete_records('config_log', []);
+        $data = ['s__text1' => 'other', 's__pass1' => 'nice password'];
         $count = $this->save_config_data($adminroot, $data);
 
         $this->assertEquals(2, $count);
-        $records = $DB->get_records('config_log', array(), 'id asc');
+        $records = $DB->get_records('config_log', [], 'id asc');
         $this->assertCount(2, $records);
         reset($records);
         $record = array_shift($records);
@@ -202,12 +202,12 @@ final class admintree_test extends \advanced_testcase {
         $this->assertSame('', $record->oldvalue);
         $this->assertSame('********', $record->value);
 
-        $DB->delete_records('config_log', array());
-        $data = array('s__text1'=>'', 's__pass1'=>'');
+        $DB->delete_records('config_log', []);
+        $data = ['s__text1' => '', 's__pass1' => ''];
         $count = $this->save_config_data($adminroot, $data);
 
         $this->assertEquals(2, $count);
-        $records = $DB->get_records('config_log', array(), 'id asc');
+        $records = $DB->get_records('config_log', [], 'id asc');
         $this->assertCount(2, $records);
         reset($records);
         $record = array_shift($records);
@@ -222,14 +222,21 @@ final class admintree_test extends \advanced_testcase {
         $this->assertSame('', $record->value);
     }
 
-    protected function save_config_data(admin_root $adminroot, array $data) {
-        $adminroot->errors = array();
+    /**
+     * Helper to save configuration data.
+     *
+     * @param admin_root $adminroot
+     * @param array $data
+     * @return int
+     */
+    protected function save_config_data(admin_root $adminroot, array $data): int {
+        $adminroot->errors = [];
 
         $settings = admin_find_write_settings($adminroot, $data);
 
         $count = 0;
-        foreach ($settings as $fullname=>$setting) {
-            /** @var $setting admin_setting */
+        /** @var \core_admin\setting $setting */
+        foreach ($settings as $fullname => $setting) {
             $original = $setting->get_setting();
             $error = $setting->write_setting($data[$fullname]);
             if ($error !== '') {
@@ -257,7 +264,7 @@ final class admintree_test extends \advanced_testcase {
         // Current user is a manager at site context, which won't have access to the 'debugging' section of the admin tree.
         $manageruser = $this->getDataGenerator()->create_user();
         $context = \context_system::instance();
-        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
         role_assign($managerrole->id, $manageruser->id, $context->id);
         $this->setUser($manageruser);
         $adminroot = admin_get_root();

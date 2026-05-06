@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,24 +12,29 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Which roles to show on course description page
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core_admin\setting\setting;
 
+/**
+ * Roles to display on the course description page.
+ *
+ * @package    core_admin
+ * @copyright  2024 onwards Moodle Pty Ltd {@link https://moodle.com}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class special_coursecontact extends \core_admin\setting\setting\pickroles {
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
-        parent::__construct('coursecontact', get_string('coursecontact', 'admin'),
+        parent::__construct(
+            'coursecontact',
+            get_string('coursecontact', 'admin'),
             get_string('coursecontact_desc', 'admin'),
-            array('editingteacher'));
-        $this->set_updatedcallback(function (){
+            ['editingteacher']
+        );
+        $this->set_updatedcallback(function () {
             \cache::make('core', 'coursecontacts')->purge();
         });
     }

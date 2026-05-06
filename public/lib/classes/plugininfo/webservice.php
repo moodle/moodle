@@ -14,36 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines classes used for plugin info.
- *
- * @package    core
- * @copyright  2011 David Mudrak <david@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace core\plugininfo;
 
 /**
  * Class for webservice protocols
+ *
+ * @package    core
+ * @copyright  2011 David Mudrak <david@moodle.com>
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class webservice extends base {
-
+    #[\Override]
     public static function plugintype_supports_disabling(): bool {
         return true;
     }
 
-    /**
-     * Finds all enabled plugins, the result may include missing plugins.
-     * @return array of enabled plugins $pluginname => $pluginname
-     */
+    #[\Override]
     public static function get_enabled_plugins() {
         global $CFG;
 
-        if (empty($CFG->enablewebservices) or empty($CFG->webserviceprotocols)) {
-            return array();
+        if (empty($CFG->enablewebservices) || empty($CFG->webserviceprotocols)) {
+            return [];
         }
 
-        $enabled = array();
+        $enabled = [];
         foreach (explode(',', $CFG->webserviceprotocols) as $protocol) {
             $enabled[$protocol] = $protocol;
         }
@@ -51,6 +45,7 @@ class webservice extends base {
         return $enabled;
     }
 
+    #[\Override]
     public static function enable_plugin(string $pluginname, int $enabled): bool {
         global $CFG;
 
@@ -88,10 +83,12 @@ class webservice extends base {
         return $haschanged;
     }
 
+    #[\Override]
     public function get_settings_section_name() {
         return 'webservicesetting' . $this->name;
     }
 
+    #[\Override]
     public function load_settings(
         \core_admin\setting\tree\part_of_admin_tree $adminroot,
         $parentnodename,
@@ -107,7 +104,7 @@ class webservice extends base {
             return;
         }
 
-        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
             return;
         }
 
@@ -126,6 +123,7 @@ class webservice extends base {
         }
     }
 
+    #[\Override]
     public function is_uninstall_allowed() {
         return true;
     }
