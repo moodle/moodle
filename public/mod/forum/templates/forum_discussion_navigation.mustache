@@ -1,0 +1,80 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_forum/forum_discussion_navigation
+
+    Template for displaying discussion navigation buttons (previous/next).
+
+    Context variables:
+    * prev - Previous discussion navigation context
+      * url - Link URL
+      * title - Discussion title
+      * arialabel - Accessible label for the button
+      * buttonicon - Icon identifier
+    * next - Next discussion navigation context
+      * url - Link URL
+      * title - Discussion title
+      * arialabel - Accessible label for the button
+      * buttonicon - Icon identifier
+
+    Example context (json):
+    {
+        "navbuttons": [
+            {
+                "url": "http://example.com/mod/forum/discuss.php?d=2",
+                "title": "Previous Discussion Title",
+                "arialabel": "Previous discussion: Previous Discussion Title",
+                "buttonicon": "i/previous",
+                "type": "prev",
+                "disabled": false
+            },
+            {
+                "url": "http://example.com/mod/forum/discuss.php?d=4",
+                "title": "Next Discussion Title",
+                "arialabel": "Next discussion: Next Discussion Title",
+                "buttonicon": "i/next",
+                "type": "next",
+                "disabled": true
+            }
+        ]
+    }
+}}
+
+<nav class="discussion-nav d-flex" aria-label="{{#str}}browsediscussions, mod_forum{{/str}}">
+    <div class="d-flex gap-2 align-items-center ms-auto">
+        {{#navbuttons}}
+            <a
+               class="btn btn-icon btn-outline-secondary{{#disabled}} disabled{{/disabled}} forum-navigation-button"
+               {{^disabled}}
+               href="{{url}}"
+               data-bs-toggle="tooltip"
+               data-bs-placement="top"
+               {{/disabled}}
+               {{#disabled}}
+               tabindex="-1"
+               aria-disabled="true"
+               {{/disabled}}
+               title="{{title}}"
+               aria-label="{{arialabel}}"
+               data-type="{{type}}"
+            >
+                {{#pix}}{{buttonicon}}, core{{/pix}}
+                <span class="visually-hidden">{{title}}</span>
+            </a>
+        {{/navbuttons}}
+    </div>
+</nav>

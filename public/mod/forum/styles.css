@@ -303,6 +303,10 @@ span.unread {
     border-left: 1px solid #ddd;
 }
 
+.path-mod-forum .forum-navigation-button.disabled {
+    opacity: var(--bs-focus-ring-opacity);
+}
+
 .privatereplyinfo {
     font-size: 80%;
 }

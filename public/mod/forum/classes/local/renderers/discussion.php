@@ -214,11 +214,18 @@ class discussion {
                 'subscribe' => null,
                 'movediscussion' => null,
                 'pindiscussion' => null,
-                'neighbourlinks' => $this->get_neighbour_links_html(),
-                'exportdiscussion' => !empty($CFG->enableportfolios) ? $this->get_export_discussion_html($user) : null
+                'exportdiscussion' => !empty($CFG->enableportfolios) ? $this->get_export_discussion_html($user) : null,
             ],
             'settingsselector' => true,
         ]);
+
+        $navbuttons = $this->get_discussion_navigation_buttons();
+        if ($navbuttons !== null) {
+            $exporteddiscussion['navigationbuttons'] = $navbuttons;
+        } else {
+            $exporteddiscussion['navigationbuttons'] = false;
+            $exporteddiscussion['html']['neighbourlinks'] = $this->get_neighbour_links_html();
+        }
 
         $capabilities = (array) $exporteddiscussion['capabilities'];
 
@@ -457,5 +464,46 @@ class discussion {
         $coursemodule = $forum->get_course_module_record();
         $neighbours = forum_get_discussion_neighbours($coursemodule, $this->discussionrecord, $this->forumrecord);
         return $this->renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
+    }
+
+    /**
+     * Get the discussion navigation element.
+     *
+     * Returns an array of data for the discussion navigation template.
+     * This includes the previous and next discussion links if they exist.
+     * If the display mode is nested v2, this function returns null as the navigation is not compatible with that display mode.
+     *
+     * @return array|null context for the discussion navigation template
+     */
+    private function get_discussion_navigation_buttons(): ?array {
+        // Back to the legacy renderer if we're in nested v2 mode as the navigation is not compatible with this display mode.
+        if ($this->displaymode === FORUM_MODE_NESTED_V2) {
+            return null;
+        }
+        $forum = $this->forum;
+        $coursemodule = $forum->get_course_module_record();
+        $neighbours = forum_get_discussion_neighbours($coursemodule, $this->discussionrecord, $this->forumrecord);
+
+        $buttons = [];
+        foreach ($neighbours as $key => $neighbour) {
+            $button = [
+                'type' => $key,
+                'buttonicon' => $key === 'prev' ? 'i/previous' : 'i/next',
+                'url' => '#',
+                'title' => get_string('no' . $key . 'discussion', 'mod_forum'),
+                'arialabel' => get_string('no' . $key . 'discussion', 'mod_forum'),
+                'disabled' => true,
+            ];
+            if ($neighbour) {
+                $url = new moodle_url('/mod/forum/discuss.php', ['d' => $neighbour->id]);
+                $name = format_string($neighbour->name);
+                $button['url'] = $url->out(false);
+                $button['title'] = get_string($key . 'discussiona', 'mod_forum', $name);
+                $button['arialabel'] = get_string($key . 'discussiona', 'mod_forum', $name);
+                $button['disabled'] = false;
+            }
+            $buttons[] = $button;
+        }
+        return ['navbuttons' => $buttons];
     }
 }
