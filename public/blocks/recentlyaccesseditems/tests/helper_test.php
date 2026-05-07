@@ -16,6 +16,8 @@
 
 namespace block_recentlyaccesseditems;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+
 /**
  * Block Recently accessed helper class tests.
  *
@@ -24,6 +26,7 @@ namespace block_recentlyaccesseditems;
  * @author     Neill Magill <neill.magill@nottingham.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversClass(helper::class)]
 final class helper_test extends \advanced_testcase {
     /**
      * Tests that the get recent items method can handle getting records when courses have been deleted.
@@ -56,5 +59,34 @@ final class helper_test extends \advanced_testcase {
         // There should be no errors if a course has been deleted.
         $recent2 = helper::get_recent_items();
         self::assertCount(1, $recent2);
+    }
+
+    /**
+     * Tests that missing course modules in recent items are ignored.
+     */
+    public function test_get_recent_items_skips_missing_course_modules(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $course = self::getDataGenerator()->create_course();
+        $user = self::getDataGenerator()->create_and_enrol($course, 'student');
+        $forum = self::getDataGenerator()->create_module('forum', ['course' => $course]);
+        self::setUser($user);
+
+        $eventparams = ['context' => \context_module::instance($forum->cmid), 'objectid' => $forum->id];
+        $event = \mod_forum\event\course_module_viewed::create($eventparams);
+        $event->trigger();
+
+        $missingcmid = (int) $DB->get_field_sql('SELECT MAX(id) FROM {course_modules}') + 1;
+        $staleitemid = $DB->insert_record('block_recentlyaccesseditems', (object) [
+            'courseid' => $course->id,
+            'cmid' => $missingcmid,
+            'userid' => $user->id,
+            'timeaccess' => $event->timecreated + 1,
+        ]);
+
+        $recentitems = helper::get_recent_items(1);
+        self::assertEquals($forum->cmid, reset($recentitems)->cmid);
+        self::assertFalse($DB->record_exists('block_recentlyaccesseditems', ['id' => $staleitemid]));
     }
 }
