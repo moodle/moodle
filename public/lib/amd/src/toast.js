@@ -57,6 +57,8 @@ export const addToastRegion = async(parent) => {
  * @param {Boolean} [configuration.autohide=true]
  * @param {Boolean} [configuration.closeButton=false]
  * @param {Number} [configuration.delay=4000]
+ * @param {Boolean} [configuration.visuallyHidden=false] Whether the toast should be visually hidden. This is intended for cases
+ *                                                       where we want to announce ARIA live updates for screen reader users only.
  *
  * @example
  * import {add as addToast} from 'core/toast';
@@ -73,6 +75,10 @@ export const addToastRegion = async(parent) => {
  *     autohide: false,
  *     closeButton: true,
  * });
+ *
+ * addToast('A string to be rendered visually hidden', {
+ *     visuallyHidden: true,
+ * });
  */
 export const add = async(message, configuration) => {
     const pendingPromise = new Pending('addToastRegion');
@@ -81,8 +87,15 @@ export const add = async(message, configuration) => {
         closeButton: false,
         autohide: true,
         delay: 4000,
+        visuallyHidden: false,
         ...configuration,
     };
+
+    // Ensure that visually hidden toasts are always autohidden and do not have a close button that can receive keyboard focus.
+    if (configuration.visuallyHidden) {
+        configuration.autohide = true;
+        configuration.closeButton = false;
+    }
 
     const templateName = `core/local/toast/message`;
     try {
@@ -90,6 +103,7 @@ export const add = async(message, configuration) => {
             message: await message,
             ...configuration
         });
+
         const targetNode = await getTargetNode();
         Templates.prependNodeContents(targetNode, html, js);
     } catch (e) {

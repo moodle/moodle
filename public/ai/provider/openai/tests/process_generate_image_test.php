@@ -119,7 +119,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertEquals('dall-e-3', $requestdata->model);
         $this->assertEquals('1', $requestdata->n);
         $this->assertEquals('hd', $requestdata->quality);
-        $this->assertEquals('url', $requestdata->response_format);
+        $this->assertEquals('b64_json', $requestdata->response_format);
         $this->assertEquals('1024x1024', $requestdata->size);
     }
 
@@ -214,8 +214,8 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $result = $method->invoke($processor, $response);
 
-        $this->stringContains('An image that represents the concept of a \'test\'.', $result['revisedprompt']);
-        $this->stringContains('oaidalleapiprodscus.blob.core.windows.net', $result['sourceurl']);
+        $this->assertStringContainsString('An image that represents the concept of a \'test\'.', $result['revisedprompt']);
+        $this->assertNotEmpty($result['b64json']);
         $this->assertEquals('dall-e-3', $result['model']);
     }
 
@@ -233,23 +233,14 @@ final class process_generate_image_test extends \advanced_testcase {
             $this->responsebodyjson,
         ));
 
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(
-                self::get_fixture_path('aiprovider_openai', 'test.jpg'),
-                'r',
-            )),
-        ));
-
         $this->setAdminUser();
 
         $processor = new process_generate_image($this->provider, $this->action);
         $method = new \ReflectionMethod($processor, 'query_ai_api');
         $result = $method->invoke($processor);
 
-        $this->stringContains('An image that represents the concept of a \'test\'.', $result['revisedprompt']);
-        $this->stringContains('oaidalleapiprodscus.blob.core.windows.net', $result['sourceurl']);
+        $this->assertStringContainsString('An image that represents the concept of a \'test\'.', $result['revisedprompt']);
+        $this->assertInstanceOf(\stored_file::class, $result['draftfile']);
         $this->assertEquals('dall-e-3', $result['model']);
     }
 
@@ -305,21 +296,25 @@ final class process_generate_image_test extends \advanced_testcase {
     }
 
     /**
-     * Test url_to_file.
+     * Test create_file_from_response.
      */
-    public function test_url_to_file(): void {
+    public function test_create_file_from_response(): void {
         // Log in user.
-        $this->setUser($this->getDataGenerator()->create_user());
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
 
         $processor = new process_generate_image($this->provider, $this->action);
         // We're working with a private method here, so we need to use reflection.
-        $method = new \ReflectionMethod($processor, 'url_to_file');
+        $method = new \ReflectionMethod($processor, 'create_file_from_response');
 
-        $contextid = 1;
-        $url = $this->getExternalTestFileUrl('/test.jpg', false);
-        $filenobj = $method->invoke($processor, $contextid, $url);
+        $userid = $user->id;
+        $response = [
+            'b64json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
+            'output_format' => 'jpg',
+        ];
+        $fileobj = $method->invoke($processor, $userid, $response);
 
-        $this->assertEquals('test.jpg', $filenobj->get_filename());
+        $this->assertMatchesRegularExpression('/^[a-f0-9]{16}\.jpg$/', $fileobj->get_filename());
     }
 
     /**
@@ -332,8 +327,6 @@ final class process_generate_image_test extends \advanced_testcase {
         // Mock the http client to return a successful response.
         ['mock' => $mock] = $this->get_mocked_http_client();
 
-        $url = 'https://example.com/test.jpg';
-
         // The response from OpenAI.
         $mock->append(new Response(
             200,
@@ -343,17 +336,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
 
         // Create a request object.
@@ -381,7 +367,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertTrue($result->get_success());
         $this->assertEquals('generate_image', $result->get_actionname());
         $this->assertEquals('An image that represents the concept of a \'test\'.', $result->get_response_data()['revisedprompt']);
-        $this->assertEquals($url, $result->get_response_data()['sourceurl']);
+        $this->assertInstanceOf(\stored_file::class, $result->get_response_data()['draftfile']);
     }
 
     /**
@@ -445,7 +431,6 @@ final class process_generate_image_test extends \advanced_testcase {
 
         // Mock the http client to return a successful response.
         ['mock' => $mock] = $this->get_mocked_http_client();
-        $url = 'https://example.com/test.jpg';
 
         // Case 1: User rate limit has not been reached.
         $this->create_action($user1->id);
@@ -458,16 +443,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
         $processor = new process_generate_image($provider, $this->action);
         $result = $processor->process();
@@ -484,16 +463,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
         $this->create_action($user1->id);
         $processor = new process_generate_image($provider, $this->action);
@@ -518,16 +491,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
         $processor = new process_generate_image($this->provider, $this->action);
         $result = $processor->process();
@@ -546,16 +513,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
         $this->create_action($user1->id);
         $processor = new process_generate_image($provider, $this->action);
@@ -597,7 +558,6 @@ final class process_generate_image_test extends \advanced_testcase {
 
         // Mock the http client to return a successful response.
         ['mock' => $mock] = $this->get_mocked_http_client();
-        $url = 'https://example.com/test.jpg';
 
         // Case 1: Global rate limit has not been reached.
         $this->create_action($user1->id);
@@ -610,16 +570,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
         $processor = new process_generate_image($provider, $this->action);
         $result = $processor->process();
@@ -636,16 +590,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
         $this->provider = $this->create_provider(\core_ai\aiactions\generate_image::class);
         $this->create_action($user1->id);
@@ -672,16 +620,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
         $processor = new process_generate_image($provider, $this->action);
         $result = $processor->process();
@@ -700,16 +642,10 @@ final class process_generate_image_test extends \advanced_testcase {
                 'data' => [
                     (object) [
                         'revised_prompt' => 'An image that represents the concept of a \'test\'.',
-                        'url' => $url,
+                        'b64_json' => base64_encode(file_get_contents(self::get_fixture_path('aiprovider_openai', 'test.jpg'))),
                     ],
                 ],
             ]),
-        ));
-        // The image downloaded from the server successfully.
-        $mock->append(new Response(
-            200,
-            ['Content-Type' => 'image/jpeg'],
-            \GuzzleHttp\Psr7\Utils::streamFor(fopen(self::get_fixture_path('aiprovider_openai', 'test.jpg'), 'r')),
         ));
         $this->provider = $this->create_provider(\core_ai\aiactions\generate_image::class);
         $this->create_action($user1->id);

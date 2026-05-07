@@ -33,7 +33,7 @@ $string['cannotcreatedboninstall'] = '<p>No es pot crear la base de dades.</p> <
 <p>L\'administrador del lloc hauria de verificar la configuració de la base de dades.</p>';
 $string['cannotcreatelangdir'] = 'No s\'ha pogut crear el directori d\'idiomes';
 $string['cannotcreatetempdir'] = 'No s\'ha pogut crear el directori temporal';
-$string['cannotdownloadcomponents'] = 'No s\'han pogut baixar components';
+$string['cannotdownloadcomponents'] = 'No s\'han pogut descarregar els components';
 $string['cannotdownloadzipfile'] = 'No s\'ha pogut baixar el fitxer ZIP';
 $string['cannotfindcomponent'] = 'No s\'ha pogut trobar el component';
 $string['cannotsavemd5file'] = 'No s\'ha pogut desar el fitxer md5';
@@ -46,6 +46,6 @@ $string['invalidmd5'] = 'L\'md5 no és vàlid. Torneu a provar-ho';
 $string['missingrequiredfield'] = 'Falta algun camp necessari';
 $string['remotedownloaderror'] = '<p>No s\'ha pogut baixar el component al vostre servidor. Verifiqueu els paràmetres del servidor intermediari. Es recomana vivament l\'extensió cURL de PHP.</p>
 <p>Haureu de baixar manualment el fitxer <a href="{$a->url}">{$a->url}</a>, copiar-lo a la ubicació «{$a->dest}» del vostre servidor i descomprimir-lo allà.</p>';
-$string['wrongdestpath'] = 'El camí de destinació és erroni';
-$string['wrongsourcebase'] = 'L\'adreça (URL) base de la font és errònia';
+$string['wrongdestpath'] = 'El camí de destinació és incorrecte';
+$string['wrongsourcebase'] = 'L\'URL base de la font és errònia';
 $string['wrongzipfilename'] = 'El nom del fitxer ZIP és erroni';

@@ -144,11 +144,13 @@ echo $OUTPUT->heading(get_string('manageqbehaviours', 'admin'));
 // Set up the table.
 $table = new flexible_table('qbehaviouradmintable');
 $table->define_baseurl($thispageurl);
-$table->define_columns(array('behaviour', 'numqas', 'version', 'requires',
-        'available', 'uninstall'));
-$table->define_headers(array(get_string('behaviour', 'question'), get_string('numqas', 'question'),
+$table->define_columns(['behaviour', 'version', 'requires', 'numqas',
+    'available', 'settings', 'uninstall']);
+$table->define_headers([get_string('behaviour', 'question'),
         get_string('version'), get_string('requires', 'admin'),
-        get_string('availableq', 'question'), get_string('uninstallplugin', 'core_admin')));
+        get_string('numqas', 'question'),
+        get_string('availableq', 'question'), get_string('settings'),
+        get_string('uninstallplugin', 'core_admin')]);
 $table->set_attribute('id', 'qbehaviours');
 $table->set_attribute('class', 'table generaltable admintable');
 $table->setup();
@@ -159,9 +161,6 @@ foreach ($sortedbehaviours as $behaviour => $behaviourname) {
 
     // Question icon and name.
     $row[] = $behaviourname;
-
-    // Count
-    $row[] = $counts[$behaviour];
 
     // Question version number.
     $version = get_config('qbehaviour_' . $behaviour, 'version');
@@ -184,6 +183,9 @@ foreach ($sortedbehaviours as $behaviour => $behaviourname) {
         $row[] = '';
     }
 
+    // Count.
+    $row[] = $counts[$behaviour];
+
     // Are people allowed to select this behaviour?
     $rowclass = '';
     if ($archetypal[$behaviour]) {
@@ -200,6 +202,14 @@ foreach ($sortedbehaviours as $behaviour => $behaviourname) {
     $icons .= question_behaviour_icon_html('up', $behaviour, 't/up', get_string('up'), null);
     $icons .= question_behaviour_icon_html('down', $behaviour, 't/down', get_string('down'), null);
     $row[] = $icons;
+
+    // Settings link, if available.
+    $settings = admin_get_root()->locate('qbehavioursetting_' . $behaviour);
+    if ($settings instanceof \core_admin\local\settings\linkable_settings_page) {
+        $row[] = html_writer::link($settings->get_settings_page_url(), get_string('settings'));
+    } else {
+        $row[] = '';
+    }
 
     // Delete link, if available.
     if ($needed[$behaviour]) {

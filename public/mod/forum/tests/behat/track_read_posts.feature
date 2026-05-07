@@ -6,16 +6,18 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email | trackforums |
-      | student1 | Student | 1 | student1@example.com | 1 |
-      | student2 | Student | 2 | student2@example.com | 0 |
+      | username | firstname | lastname | email                | trackforums |
+      | student1 | Student   | 1        | student1@example.com | 1           |
+      | student2 | Student   | 2        | student2@example.com | 0           |
+      | teacher1 | Teacher   | 1        | teacher1@example.com | 1           |
     And the following "courses" exist:
       | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | student1 | C1 | student |
-      | student2 | C1 | student |
+      | user     | course | role           |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | teacher1 | C1     | editingteacher |
 
   Scenario: Tracking forum posts off
     Given the following "activity" exists:
@@ -185,3 +187,44 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     Then I should not see "1 unread post"
     And I follow "Test forum name"
     And I should not see "Track unread posts"
+
+  @javascript
+  Scenario: Forum grader panel marks posts as read
+    Given the following "activity" exists:
+      | course      | C1              |
+      | activity    | forum           |
+      | name        | Test forum name |
+      | idnumber    | forum           |
+      | grade_forum | 100             |
+      | scale       | 100             |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum | name         | subject      | message          |
+      | student1 | forum | Discussion 1 | Discussion 1 | student1's topic |
+      | student2 | forum | Discussion 2 | Discussion 2 | student2's topic |
+    And the following "mod_forum > posts" exist:
+      | user     | parentsubject | subject               | message          |
+      | student2 | Discussion 1  | Reply to discussion 1 | student2's reply |
+      | student1 | Discussion 2  | Reply to discussion 2 | student1's reply |
+    When I am on the "Course 1" course page logged in as teacher1
+    # We have a discussion created by each student, and each has replied to the other.
+    Then I should see "4 unread posts"
+    And I am on the "Test forum name" "forum activity" page
+    And I press "Grade users"
+    And I press "Close grader"
+    And I am on the "Course 1" course page
+    # 4 posts minus the 2 viewed in the grader.
+    And I should see "2 unread posts"
+    And I am on the "Test forum name" "forum activity" page
+    And I press "Grade users"
+    # Let's look at a discussion in student1's grader that features a post from student2.
+    And I press "View discussion"
+    And I click on "Cancel" "button" in the "Discussion 1" "dialogue"
+    And I am on the "Course 1" course page
+    # Remaining 2 unread posts minus the 1 viewed in the discussion context.
+    And I should see "1 unread post"
+    And I am on the "Test forum name" "forum activity" page
+    And I press "Grade users"
+    # Let's look at the parent post that student1 replied to.
+    And I press "View parent post"
+    And I am on the "Course 1" course page
+    And I should not see "1 unread post"

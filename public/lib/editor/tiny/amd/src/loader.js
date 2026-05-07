@@ -46,7 +46,7 @@ export const getTinyMCE = () => {
 
         script = document.createElement('script');
         script.dataset.tinymce = 'tinymce';
-        script.src = `${baseUrl}/tinymce.js`;
+        script.src = `${baseUrl}/tinymce.min.js`;
         script.async = true;
 
         script.addEventListener('load', () => {

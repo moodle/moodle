@@ -154,15 +154,15 @@ class recording_proxy extends proxy_base {
             return;
         }
 
-        $currentfetchcache = cache::make('mod_bigbluebuttonbn', 'currentfetch');
-        if ($currentfetchcache->has($recordingid)) {
-            // This item was fetched in the current request.
-            return;
-        }
-
         if (array_key_exists('protected', $recording) && $recording['protected'] === 'true') {
             // This item is protected. Purge it from the cache.
             $cache->delete($recordingid);
+            return;
+        }
+
+        $currentfetchcache = cache::make('mod_bigbluebuttonbn', 'currentfetch');
+        if ($currentfetchcache->has($recordingid)) {
+            // This item was fetched in the current request.
             return;
         }
     }

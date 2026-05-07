@@ -178,15 +178,72 @@ const submitSendMessage = (modal, users, text) => {
             text,
         };
     });
-
     return Repository.sendMessagesToUsers(messages)
     .then(messageIds => {
-        if (messageIds.length == 1) {
-            return Str.get_string('sendbulkmessagesentsingle', 'core_message');
-        } else {
-            return Str.get_string('sendbulkmessagesent', 'core_message', messageIds.length);
+        // To help teachers know which users could not be sent to, let's build a notification.
+        const cantSendToUsers = messageIds.filter(msg => msg.cantsendtouser && msg.cantsendtouser !== '');
+        if (cantSendToUsers.length > 1) {
+            // If there are multiple users who can't be sent to, extract their names and build an error message.
+            const users = cantSendToUsers.map(user => user.cantsendtouser).join(', ');
+            const stringPromise = Str.get_string('usercantbemessagedbulk', 'core_message', users);
+            stringPromise.done(msg => {
+                Notification.addNotification({
+                    message: msg,
+                    type: 'error',
+                });
+            });
+        } else if (cantSendToUsers.length === 1) {
+            // If there was only one error, just notify with the singular 'usercantbemessaged' string (already built in PHP).
+            Notification.addNotification({
+                message: cantSendToUsers[0].errormessage,
+                type: 'error',
+            });
         }
+        // Always handle other errors independently.
+        const otherErrors = messageIds.filter(msg => msg.errormessage && (!msg.cantsendtouser || msg.cantsendtouser === ''));
+        otherErrors.forEach(error => {
+            Notification.addNotification({
+                message: error.errormessage,
+                type: 'error',
+            });
+        });
+
+        // Determine appropriate success/error toast message based on send results.
+        let toastMessage = '';
+        const errorMessages = messageIds.filter(msg => msg.errormessage);
+        const successCount = messageIds.length - errorMessages.length;
+        if (successCount == 1 && errorMessages.length == 0) {
+            toastMessage = Str.get_string('sendbulkmessagesentsingle', 'core_message');
+        } else if (successCount > 1 && errorMessages.length == 0) {
+            toastMessage = Str.get_string('sendbulkmessagesent', 'core_message', messageIds.length);
+        } else {
+            toastMessage = Str.get_string(
+                'sendbulkmessagesentwitherrors',
+                'core_message',
+                {
+                    sent: successCount,
+                    total: messageIds.length
+                }
+            );
+        }
+        return {
+            message: toastMessage,
+            errors: errorMessages.length,
+        };
     })
-    .then(msg => notifyUser(msg))
+    .then(({message, errors}) => {
+        if (errors > 0) {
+            // Customise the toast message to indicate there was an issue with sending.
+            const config = {
+                type: 'warning',
+                closeButton: true,
+                autohide: false,
+            };
+            notifyUser(message, config);
+        } else {
+            notifyUser(message);
+        }
+        return;
+    })
     .catch(Notification.exception);
 };

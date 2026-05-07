@@ -120,12 +120,11 @@ class delegatedcontrolmenu extends basecontrolmenu {
             return null;
         }
 
+        $sectionreturn = $this->format->get_sectionnum();
+        $returnparams = !is_null($sectionreturn) ? ['sr' => $sectionreturn] : [];
         $url = new url(
             '/course/editsection.php',
-            [
-                'id' => $this->section->id,
-                'sr' => $this->section->sectionnum,
-            ]
+            array_merge(['id' => $this->section->id], $returnparams)
         );
 
         return new link_secondary(

@@ -187,7 +187,7 @@ class action_bar {
             $rsstemplatelink->out(false) => get_string('rsstemplate', 'mod_data'),
         ];
 
-        $selectmenu = new \core\output\select_menu('presetsactions', $menu, $this->currenturl->out(false));
+        $selectmenu = new \core\output\select_menu('presetsactions', $menu, $this->currenturl->out(false), true);
         $selectmenu->set_label(get_string('templatesnavigation', 'mod_data'), ['class' => 'visually-hidden']);
 
         $renderer = $PAGE->get_renderer('mod_data');

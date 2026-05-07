@@ -257,6 +257,8 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, use
             e.preventDefault();
 
             graderLayout.close();
+            // Keep the underlying forum page up-to-date by forcing a refresh.
+            window.location.reload();
 
             return;
         }

@@ -239,7 +239,7 @@
             "rubric"
         ],
         "h5plib": [
-            "v127"
+            "v128"
         ],
         "local": [],
         "logstore": [
@@ -612,7 +612,8 @@
         ],
         "h5plib": [
             "v124",
-            "v126"
+            "v126",
+            "v127"
         ],
         "logstore": [
             "legacy"

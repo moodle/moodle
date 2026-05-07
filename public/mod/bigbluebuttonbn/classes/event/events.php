@@ -40,6 +40,7 @@ class events {
         'meeting_join' => 'meeting_joined',
         'meeting_left' => 'meeting_left',
         'recording_delete' => 'recording_deleted',
+        'recording_link_delete' => 'recording_link_deleted',
         'recording_import' => 'recording_imported',
         'recording_protect' => 'recording_protected',
         'recording_publish' => 'recording_published',

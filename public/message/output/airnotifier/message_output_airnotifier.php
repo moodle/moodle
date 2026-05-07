@@ -160,6 +160,14 @@ class message_output_airnotifier extends message_output {
 
             // JSON POST raw body request.
             $resp = $curl->post($serverurl, json_encode($params));
+
+            // Check if the device token is no longer registered.
+            if ($curl->info['http_code'] === 404) {
+                $json = json_decode($resp, true);
+                if (($json['error'] ?? null) === 'Unregistered token') {
+                    user_remove_user_device($devicetoken->uuid, $devicetoken->appid, $devicetoken->userid);
+                }
+            }
         }
 
         return true;

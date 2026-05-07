@@ -20,6 +20,7 @@ final class MetricsBuilder
     const S3_TRANSFER = "G";
     const S3_CRYPTO_V1N = "H";
     const S3_CRYPTO_V2 = "I";
+    const S3_CRYPTO_V3 = "AE";
     const S3_EXPRESS_BUCKET = "J";
     const GZIP_REQUEST_COMPRESSION = "L";
     const ENDPOINT_OVERRIDE = "N";

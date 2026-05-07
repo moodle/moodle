@@ -565,7 +565,7 @@ class behat_mod_quiz extends behat_question_base {
      */
     protected function get_xpath_page_break_icon_after_question($addorremoves, $questionname) {
         return "//li[contains(@class, 'slot') and contains(., '" . $this->escape($questionname) .
-                "')]//a[contains(@class, 'page_split_join') and @title = '" . $addorremoves . " page break']";
+                "')]//a[contains(@class, 'page_split_join') and contains(@aria-label, '$addorremoves page break')]";
     }
 
     /**

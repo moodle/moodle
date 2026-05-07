@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['acknowledgement'] = 'Acknowledgement';
 $string['acknowledgementtext'] = 'I understand that it is my responsibility to have full backups of this site prior to installing additional plugins. I accept and understand that plugins (especially but not only those originating in unofficial sources) may contain security holes, can make the site unavailable, or cause private data leaks or loss.';
+$string['activitychooserfootertext'] = 'Browse more activities on';
 $string['featuredisabled'] = 'The plugin installer is disabled on this site.';
 $string['installaddon'] = 'Install plugin!';
 $string['installaddons'] = 'Install plugins';
@@ -44,6 +45,8 @@ $string['installfromzipsubmit'] = 'Install plugin from the ZIP file';
 $string['installfromziptype'] = 'Plugin type';
 $string['installfromziptype_help'] = 'For plugins that correctly declare their component name, the installer is able to detect the plugin type automatically. If the auto-detection fails, choose the correct type of plugin manually. Warning: The installation procedure can fail badly if an incorrect plugin type is specified.';
 $string['installfromziptype_link'] = 'Development:Plugins';
+$string['marketplaceadminlinktext'] = 'Browse new plugins';
+$string['marketplacelink'] = 'Moodle Marketplace';
 $string['permcheck'] = 'Make sure the plugin type root location is writable by the web server process.';
 $string['permcheckerror'] = 'Error while checking for write permission';
 $string['permcheckprogress'] = 'Checking for write permission ...';

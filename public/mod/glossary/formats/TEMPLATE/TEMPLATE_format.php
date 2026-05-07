@@ -1,21 +1,46 @@
 <?php
 
-function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $aliases=true) {
-    global $CFG, $USER, $DB, $OUTPUT;
-
-
-    $user = $DB->get_record('user', array('id'=>$entry->userid));
-    $strby = get_string('writtenby', 'glossary');
+/**
+ * Template function that can be used for displaying glossary entries on a different format.
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The course module object.
+ * @param stdClass $glossary The glossary object.
+ * @param stdClass $entry The glossary entry object.
+ * @param string $mode The mode in which the entry is being displayed.
+ * @param string $hook
+ * @param int $printicons Whether to print editing icons.
+ * @param bool $aliases Whether to show aliases popup.
+ * @param int $conceptheadinglevel The heading level to use for rendering the concept within the heading element.
+ * @return void
+ * @package mod_glossary
+ */
+function glossary_show_entry_TEMPLATE(
+    $course,
+    $cm,
+    $glossary,
+    $entry,
+    $mode = '',
+    $hook = '',
+    $printicons = 1,
+    $aliases = true,
+    $conceptheadinglevel = 3,
+) {
+    global $CFG, $DB, $OUTPUT;
 
     if ($entry) {
+        $user = $DB->get_record('user', ['id' => $entry->userid]);
 
-        echo '<table class="glossarypost TEMPLATE">';
+        echo '<table class="glossarypost TEMPLATE" role="presentation">';
         echo '<tr>';
         echo '<td class="entryheader">';
 
         //Use this function to show author's image
         //Comments: Configuration not supported
-        echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
+        echo $OUTPUT->user_picture($user, [
+            'courseid' => $course->id,
+            'link' => false,
+        ]);
 
         //Line separator to show this template fine. :-)
         echo '<br />';
@@ -26,7 +51,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         $by = new stdClass();
         $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
         $by->date = userdate($entry->timemodified);
-        echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>' . '<br />';
+        echo '<span class="author">' . get_string('bynameondate', 'glossary', $by) . '</span>' . '<br />';
 
         //Use this code to show modification date
         //Comments: Configuration not supported
@@ -58,7 +83,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
 
         //Use this function to print the concept in a heading <h3>
         //Comments: Configuration not supported
-        glossary_print_entry_concept($entry);
+        glossary_print_entry_concept($entry, headinglevel: $conceptheadinglevel);
 
         //Line separator not normally needed now.
         //echo "<br />\n";
@@ -87,23 +112,39 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         echo '</tr>';
         echo "</table>\n";
     } else {
-        echo '<div style="text-align:center">';
-        print_string('noentry', 'glossary');
-        echo '</div>';
+        echo html_writer::div(get_string('noentry', 'glossary'), 'text-center');
     }
 }
 
-function glossary_print_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1) {
+/**
+ * Template function that can be used for displaying glossary entries for printing.
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The course module object.
+ * @param stdClass $glossary The glossary object.
+ * @param stdClass $entry The glossary entry object.
+ * @param string $mode The mode in which the entry is being displayed.
+ * @param string $hook
+ * @param int $printicons Whether to print editing icons.
+ * @param int $conceptheadinglevel The heading level to use for rendering the concept within the heading element.
+ * @package mod_glossary
+ */
+function glossary_print_entry_TEMPLATE(
+    $course,
+    $cm,
+    $glossary,
+    $entry,
+    $mode = '',
+    $hook = '',
+    $printicons = 1,
+    $conceptheadinglevel = 3
+) {
+    // The print view for this format is exactly the normal view, so we use it.
+    // Anyway, you can modify this to use your own print format!!
 
-    //The print view for this format is exactly the normal view, so we use it
-    //Anyway, you can modify this to use your own print format!!
+    // Take out auto-linking in definitions in print view.
+    $entry->definition = '<span class="nolink">' . $entry->definition . '</span>';
 
-    //Take out autolinking in definitions in print view
-    $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
-
-    //Call to view function (without icons, ratings and aliases) and return its result
-    return glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
-
+    // Call to view function (without icons, ratings and aliases) and return its result.
+    glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode, $hook, false, false, $conceptheadinglevel);
 }
-
-

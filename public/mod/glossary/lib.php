@@ -1043,10 +1043,10 @@ function glossary_get_entries_search($concept, $courseid) {
 }
 
 /**
- * @global object
- * @global object
+ * Print the glossary entry.
+ *
  * @param object $course
- * @param object $course
+ * @param stdClass $cm
  * @param object $glossary
  * @param object $entry
  * @param string $mode
@@ -1054,9 +1054,22 @@ function glossary_get_entries_search($concept, $courseid) {
  * @param int $printicons
  * @param int $displayformat
  * @param bool $printview
+ * @param int $conceptheadinglevel The heading level to use for rendering the concept within the heading element.
  * @return mixed
+ * @package mod_glossary
  */
-function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons = 1, $displayformat  = -1, $printview = false) {
+function glossary_print_entry(
+    $course,
+    $cm,
+    $glossary,
+    $entry,
+    $mode = '',
+    $hook = '',
+    $printicons = 1,
+    $displayformat = -1,
+    $printview = false,
+    $conceptheadinglevel = 3,
+) {
     global $USER, $CFG;
     $return = false;
     if ( $displayformat < 0 ) {
@@ -1073,7 +1086,16 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook=''
         if (file_exists($formatfile)) {
             include_once($formatfile);
             if (function_exists($functionname)) {
-                $return = $functionname($course, $cm, $glossary, $entry,$mode,$hook,$printicons);
+                $return = $functionname(
+                    $course,
+                    $cm,
+                    $glossary,
+                    $entry,
+                    $mode,
+                    $hook,
+                    $printicons,
+                    conceptheadinglevel: $conceptheadinglevel,
+                );
             } else if ($printview) {
                 //If the glossary_print_entry_XXXX function doesn't exist, print default (old) print format
                 $return = glossary_print_entry_default($entry, $glossary, $cm);
@@ -1116,13 +1138,17 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
 }
 
 /**
- * Print glossary concept/term as a heading &lt;h4>
- * @param object $entry
+ * Print glossary concept/term as a heading.
+ *
+ * @param object $entry The glossary entry object.
+ * @param bool $return Whether to return the text instead of echoing it.
+ * @param int $headinglevel What heading level to use.
+ * @return string|void
+ * @package mod_glossary
  */
-function  glossary_print_entry_concept($entry, $return=false) {
+function glossary_print_entry_concept($entry, $return = false, int $headinglevel = 3) {
     global $OUTPUT;
-
-    $text = $OUTPUT->heading(format_string($entry->concept), 4);
+    $text = $OUTPUT->heading(format_string($entry->concept), $headinglevel);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
@@ -1359,7 +1385,7 @@ function glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mo
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
     if ($aliases || $icons || !empty($entry->rating)) {
-        echo '<table class="table-reboot">';
+        echo '<table class="table-reboot" role="presentation">';
         if ( $aliases ) {
             $id = "keyword-{$entry->id}";
             echo '<tr valign="top"><td class="aliases hstack gap-2">' .
@@ -1420,7 +1446,8 @@ function  glossary_print_entry_approval($cm, $entry, $mode, $align="right", $ins
 
     if ($mode == 'approval' and !$entry->approved) {
         if ($insidetable) {
-            echo '<table class="glossaryapproval table-reboot" align="' . $align . '"><tr><td align="' . $align . '">';
+            echo '<table class="glossaryapproval table-reboot" align="' . $align . '" role="presentation">';
+            echo '<tr><td align="' . $align . '">';
         }
         echo $OUTPUT->action_icon(
             new moodle_url('approve.php', array('eid' => $entry->id, 'mode' => $mode, 'sesskey' => sesskey())),
@@ -3506,10 +3533,21 @@ function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $li
         $filteredentries = $entries;
     }
 
-    // Now sort the array in regard to the current language.
-    usort($filteredentries, function($a, $b) {
-        return format_string($a->concept) <=> format_string($b->concept);
-    });
+    // Build an auxiliary array mapping keys to formatted concepts for locale-aware sorting.
+    $sortkeys = [];
+    foreach ($filteredentries as $key => $entry) {
+        $sortkeys[$key] = format_string($entry->concept);
+    }
+
+    // Sort the auxiliary array using the collator for locale-aware, case-insensitive sorting.
+    core_collator::asort($sortkeys, core_collator::SORT_STRING);
+
+    // Reorder the original array based on the sorted keys.
+    $sortedentries = [];
+    foreach (array_keys($sortkeys) as $key) {
+        $sortedentries[$key] = $filteredentries[$key];
+    }
+    $filteredentries = $sortedentries;
 
     // Size of the overall array.
     $count = count($entries);
@@ -3994,10 +4032,21 @@ function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit,
     $entries = $filteredentries;
     // Check whether concept or alias match the term.
 
-    // Now sort the array in regard to the current language.
-    usort($filteredentries, function($a, $b) {
-        return format_string($a->concept) <=> format_string($b->concept);
-    });
+    // Build an auxiliary array mapping keys to formatted concepts for locale-aware sorting.
+    $sortkeys = [];
+    foreach ($filteredentries as $key => $entry) {
+        $sortkeys[$key] = format_string($entry->concept);
+    }
+
+    // Sort the auxiliary array using the collator for locale-aware, case-insensitive sorting.
+    core_collator::asort($sortkeys, core_collator::SORT_STRING);
+
+    // Reorder the original array based on the sorted keys.
+    $sortedentries = [];
+    foreach (array_keys($sortkeys) as $key) {
+        $sortedentries[$key] = $filteredentries[$key];
+    }
+    $filteredentries = $sortedentries;
 
     // Size of the overall array.
     $count = count($entries);
@@ -4068,7 +4117,6 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
         $filteredentries = $entries;
     }
 
-    // Now sort the array in regard to the current language.
     if ($order == 'CREATION') {
         if (strcasecmp($sort, 'DESC') === 0) {
             usort($filteredentries, function($a, $b) {
@@ -4090,15 +4138,24 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
             });
         }
     } else {
-        // This means CONCEPT.
+        // Build an auxiliary array mapping keys to formatted concepts for locale-aware sorting.
+        $sortkeys = [];
+        foreach ($filteredentries as $key => $entry) {
+            $sortkeys[$key] = format_string($entry->concept);
+        }
+
+        // Sort the auxiliary array using the collator for locale-aware, case-insensitive sorting.
+        core_collator::asort($sortkeys, core_collator::SORT_STRING);
+
+        // Reorder the original array based on the sorted keys.
+        $sortedentries = [];
+        foreach (array_keys($sortkeys) as $key) {
+            $sortedentries[$key] = $filteredentries[$key];
+        }
+        $filteredentries = $sortedentries;
+
         if (strcasecmp($sort, 'DESC') === 0) {
-            usort($filteredentries, function($a, $b) {
-                return format_string($b->concept) <=> format_string($a->concept);
-            });
-        } else {
-            usort($filteredentries, function($a, $b) {
-                return format_string($a->concept) <=> format_string($b->concept);
-            });
+            $filteredentries = array_reverse($filteredentries);
         }
     }
 

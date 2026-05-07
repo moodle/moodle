@@ -1,5 +1,13 @@
 # tool_behat Upgrade notes
 
+## 5.1.4
+
+### Added
+
+- The `behat_session_trait::ensure_element_[does_not_]exists(...)` methods now accept optional `$container` parameter to define the parent node to look within
+
+  For more information see [MDL-75067](https://tracker.moodle.org/browse/MDL-75067)
+
 ## 5.0
 
 ### Added

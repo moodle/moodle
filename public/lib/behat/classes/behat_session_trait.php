@@ -581,9 +581,9 @@ trait behat_session_trait {
      * @throws ExpectationException
      * @param string $locator
      * @param string $selectortype
-     * @return void
+     * @param NodeElement $container Restrict the search to just children of the specified container
      */
-    protected function ensure_element_exists($locator, $selectortype) {
+    protected function ensure_element_exists($locator, $selectortype, $container = false) {
         // Exception if it timesout and the element is still there.
         $msg = "The '{$locator}' element does not exist and should";
         $exception = new ExpectationException($msg, $this->getSession());
@@ -593,7 +593,7 @@ trait behat_session_trait {
             'selector' => $selector,
             'locator' => $locator,
             'container' => $container,
-        ] = $this->normalise_selector($selectortype, $locator, $this->getSession()->getPage());
+        ] = $this->normalise_selector($selectortype, $locator, $container ?: $this->getSession()->getPage());
 
         // It will stop spinning once the find() method returns true.
         $this->spin(
@@ -616,9 +616,9 @@ trait behat_session_trait {
      * @throws ExpectationException
      * @param string $locator
      * @param string $selectortype
-     * @return void
+     * @param NodeElement $container Restrict the search to just children of the specified container
      */
-    protected function ensure_element_does_not_exist($locator, $selectortype) {
+    protected function ensure_element_does_not_exist($locator, $selectortype, $container = false) {
         // Exception if it timesout and the element is still there.
         $msg = "The '{$locator}' element exists and should not exist";
         $exception = new ExpectationException($msg, $this->getSession());
@@ -628,7 +628,7 @@ trait behat_session_trait {
             'selector' => $selector,
             'locator' => $locator,
             'container' => $container,
-        ] = $this->normalise_selector($selectortype, $locator, $this->getSession()->getPage());
+        ] = $this->normalise_selector($selectortype, $locator, $container ?: $this->getSession()->getPage());
 
         // It will stop spinning once the find() method returns false.
         $this->spin(

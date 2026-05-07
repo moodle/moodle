@@ -14,30 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
+require_once(__DIR__ . '/behat_base.php');
+
+use Behat\Mink\Exception\ExpectationException;
+use Behat\Mink\Element\NodeElement;
+
 /**
  * Files interactions with behat.
  *
  * Note that steps definitions files can not extend other steps definitions files, so steps definitions which makes use
  * of file attachments or filepicker should use this behat_file_helper trait.
- *
- * @package    core
- * @category   test
- * @copyright  2013 David Monllaó
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-// NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
-
-require_once(__DIR__ . '/behat_base.php');
-
-use Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Mink\Element\NodeElement as NodeElement;
-
-/**
- * Files-related actions.
- *
- * Steps definitions related with filepicker or repositories should extend use this trait as it provides useful methods
- * to deal with the common filepicker issues.
  *
  * @package    core
  * @category   test
@@ -174,10 +161,8 @@ trait core_behat_file_helper {
      * @throws ExpectationException Thrown by behat_base::find
      * @param NodeElement $filemanagernode The filemanager or filepicker form element DOM node.
      * @param mixed $repositoryname The repo name.
-     * @return void
      */
     protected function open_add_file_window($filemanagernode, $repositoryname) {
-        $exception = new ExpectationException('No files can be added to the specified filemanager', $this->getSession());
 
         // We should deal with single-file and multiple-file filemanagers,
         // catching the exception thrown by behat_base::find() in case is not multiple
@@ -186,13 +171,17 @@ trait core_behat_file_helper {
             $filemanagernode, 'NodeElement'
         ]);
 
+        $filepickerdialogue = $this->find('dialogue', get_string('filepicker', 'core_repository'));
+
         // Wait for the default repository (if any) to load. This checks that
         // the relevant div exists and that it does not include the loading image.
         $this->ensure_element_exists(
-                "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
-                "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
-                "[not(descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content-loading ')])]",
-                'xpath_element');
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
+            "[not(descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content-loading ')])]",
+            'xpath_element',
+            $filepickerdialogue,
+        );
 
         // Getting the repository link and opening it.
         $repoexception = new ExpectationException('The "' . $repositoryname . '" repository has not been found', $this->getSession());
@@ -200,13 +189,14 @@ trait core_behat_file_helper {
         // Avoid problems with both double and single quotes in the same string.
         $repositoryname = behat_context_helper::escape($repositoryname);
 
-        // Here we don't need to look inside the selected element because there can only be one modal window.
+        // Select the repository link from inside the current filepicker dialogue.
         $repositorylink = $this->find(
             'xpath',
             "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-area ')]" .
                 "//descendant::span[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-name ')]" .
                 "[normalize-space(.)=$repositoryname]",
-            $repoexception
+            $repoexception,
+            $filepickerdialogue,
         );
 
         // Selecting the repo.

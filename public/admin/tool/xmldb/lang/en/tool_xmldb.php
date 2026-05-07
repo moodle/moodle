@@ -34,32 +34,32 @@ $string['confirmdeleteindex'] = 'Are you absolutely sure that you want to delete
 $string['confirmdeletekey'] = 'Are you absolutely sure that you want to delete the key:';
 $string['confirmdeletetable'] = 'Are you absolutely sure that you want to delete the table:';
 $string['confirmdeletexmlfile'] = 'Are you absolutely sure that you want to delete the file:';
-$string['confirmcheckbigints'] = 'This functionality will search for <a href="https://tracker.moodle.org/browse/MDL-11038">potential wrong integer fields</a> in your Moodle server, generating (but not executing!) automatically the needed SQL statements to have all the integers in your DB properly defined.
+$string['confirmcheckbigints'] = 'This functionality searches for <a href="https://tracker.moodle.org/browse/MDL-11038">potentially incorrect integer fields</a> in your Moodle server, generating (but not executing!) the necessary SQL statements to have all integers in your database correctly defined.
 
-Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).
+Once generated you can copy the statements and execute them safely in your favourite SQL interface (remembering to back up your data first).
 
-It\'s highly recommended to be running the latest (+ version) available of your Moodle release before executing the search of wrong integers.
+It\'s highly recommended to be running the latest (+ version) available of your Moodle release before executing the search of incorrect integers.
 
-This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
-$string['confirmcheckdefaults'] = 'This functionality will search for inconsistent default values in your Moodle server, generating (but not executing!) the needed SQL statements to have all the default values properly defined.
+This functionality doesn\'t perform any action against the database (it just reads from it), so can be safely executed at any moment.';
+$string['confirmcheckdefaults'] = 'This functionality searches for inconsistent default values in your Moodle server, generating (but not executing!) the necessary SQL statements to have all default values properly defined.
 
-Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).
+Once generated you can copy the statements and execute them safely in your favourite SQL interface (remembering to back up your data first).
 
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release before executing the search of inconsistent default values.
 
-This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
-$string['confirmcheckforeignkeys'] = 'This functionality will search for potential violations of the foreign keys defined in the install.xml definitions. (Moodle does not currently generate actual foreign key constraints in the database, which is why invalid data may be present.)
+This functionality doesn\'t perform any action against the database (it just reads from it), so can be safely executed at any moment.';
+$string['confirmcheckforeignkeys'] = 'This functionality searches for potential violations of foreign keys defined in the install.xml definitions. (Moodle does not currently generate actual foreign key constraints in the database, which is why invalid data may be present.)
 
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release before executing the search for potential violations of the foreign keys.
 
-This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
-$string['confirmcheckindexes'] = 'This functionality will search for potential missing indexes in your Moodle server, generating (but not executing!) automatically the needed SQL statements to keep everything updated.
+This functionality doesn\'t perform any action against the database (it just reads from it), so can be safely executed at any moment.';
+$string['confirmcheckindexes'] = 'This functionality will search for potential missing indexes in your Moodle server, generating (but not executing!) the needed SQL statements to keep everything updated.
 
-Once generated you can copy such statements and execute them safely with your favourite SQL interface (don\'t forget to backup your data before doing that).
+Once generated you can copy the statements and execute them safely in your favourite SQL interface (remembering to back up your data first).
 
 It\'s highly recommended to be running the latest (+ version) available of your Moodle release before executing the search of missing indexes.
 
-This functionality doesn\'t perform any action against the DB (just reads from it), so can be safely executed at any moment.';
+This functionality doesn\'t perform any action against the database (it just reads from it), so can be safely executed at any moment.';
 $string['confirmrevertchanges'] = 'Are you absolutely sure that you want to revert changes performed over:';
 $string['create'] = 'Create';
 $string['createtable'] = 'Create table:';
@@ -113,13 +113,13 @@ $string['gotolastused'] = 'Go to last used file';
 $string['change'] = 'Change';
 $string['charincorrectlength'] = 'Incorrect length for char field';
 $string['checkbigints'] = 'Check integers';
-$string['check_bigints'] = 'Look for incorrect DB integers';
+$string['check_bigints'] = 'Look for incorrect database integers';
 $string['checkdefaults'] = 'Check defaults';
 $string['check_defaults'] = 'Look for inconsistent default values';
 $string['checkforeignkeys'] = 'Check foreign keys';
 $string['check_foreign_keys'] = 'Look for foreign key violations';
 $string['checkindexes'] = 'Check indexes';
-$string['check_indexes'] = 'Look for missing DB indexes';
+$string['check_indexes'] = 'Look for missing database indexes';
 $string['duplicateindexname'] = 'Duplicate index name';
 $string['incorrectfieldname'] = 'Incorrect name';
 $string['index'] = 'Index';
@@ -153,8 +153,8 @@ $string['nomissingorextraindexesfound'] = 'No missing or extra indexes have been
 $string['noreffieldsspecified'] = 'No reference fields specified';
 $string['noreftablespecified'] = 'Specified reference table not found';
 $string['noviolatedforeignkeysfound'] = 'No violated foreign keys found';
-$string['nowrongdefaultsfound'] = 'No inconsistent default values have been found, your DB does not need further actions.';
-$string['nowrongintsfound'] = 'No wrong integers have been found, your DB doesn\'t need further actions.';
+$string['nowrongdefaultsfound'] = 'No inconsistent default values have been found. Your database doesn\'t need any further action.';
+$string['nowrongintsfound'] = 'No incorrect integers have been found. Your database doesn\'t need any further action.';
 $string['numberincorrectdecimals'] = 'Incorrect number of decimals for number field';
 $string['numberincorrectlength'] = 'Incorrect length for number field';
 $string['numberincorrectwholepart'] = 'Too big whole number part for number field';
@@ -213,10 +213,10 @@ $string['wronglengthforenum'] = 'Incorrect length for enum field';
 $string['wrongnumberofreffields'] = 'Wrong number of reference fields';
 $string['wrongreservedwords'] = 'Currently used reserved words<br />(note that table names aren\'t important if using $CFG->prefix)';
 $string['yesextraindexesfound'] = 'The following additional indexes were found.';
-$string['yesmissingindexesfound'] = '<p>Some missing indexes have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all of them. Remember to backup your data first!</p>
-<p>After doing that, it\'s highly recommended to execute this utility again to check that no more missing indexes are found.</p>';
-$string['yeswrongdefaultsfound'] = '<p>Some inconsistent defaults have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them all. Remember to backup your data first!</p>
-<p>After doing that, it\'s highly recommended to execute this utility again to check that no more inconsistent defaults are found.</p>';
-$string['yeswrongintsfound'] = '<p>Some wrong integers have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them. Remember to backup your data first!</p>
-<p>After fixing them, it is highly recommended to execute this utility again to check that no more wrong integers are found.</p>';
+$string['yesmissingindexesfound'] = '<p>Some missing indexes have been found in your database. Here are their details and the needed SQL statements to be executed in your favourite SQL interface to create them. Remember to back up your data first!</p>
+<p>It\'s highly recommended to execute this utility again to check that no more missing indexes are found.</p>';
+$string['yeswrongdefaultsfound'] = '<p>Some inconsistent defaults have been found in your database. Here are their details and the needed SQL statements to be executed in your favourite SQL interface to fix them. Remember to backup your data first!</p>
+<p>It\'s highly recommended to execute this utility again to check that no more inconsistent defaults are found.</p>';
+$string['yeswrongintsfound'] = '<p>Some incorrect integers have been found in your database. Here are their details and the needed SQL statements to be executed in your favourite SQL interface to fix them. Remember to backup your data first!</p>
+<p>It is highly recommended to execute this utility again to check that no more incorrect integers are found.</p>';
 $string['privacy:metadata'] = 'The XMLDB editor plugin does not store any personal data.';

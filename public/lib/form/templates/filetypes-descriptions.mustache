@@ -30,6 +30,7 @@
     * descriptions (array)
         * description (string)
         * extensions (string)
+    * allowedextensions (string) comma-separated list of allowed extensions.
 
     Example context (json):
     {
@@ -43,10 +44,11 @@
                 "description": "Image (GIF)",
                 "extensions": ".gif"
             }
-        ]
+        ],
+        "allowedextensions": ".jpeg,.jpe,.jpg,.gif"
     }
 }}
-<div class="form-filetypes-descriptions w-100">
+<div class="form-filetypes-descriptions w-100" data-all-allowed-extensions="{{allowedextensions}}">
 {{#hasdescriptions}}
     <ul class="list-unstyled unstyled">
         {{#descriptions}}

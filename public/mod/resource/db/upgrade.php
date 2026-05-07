@@ -61,8 +61,10 @@ function xmldb_resource_upgrade($oldversion) {
     // Automatically generated Moodle v5.0.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2025041401) {
+    // Automatically generated Moodle v5.1.0 release upgrade line.
+    // Put any upgrade step following this.
 
+    if ($oldversion < 2025100601) {
         // Changing precision of field name on table resource to (1333).
         $table = new xmldb_table('resource');
         $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null, 'course');
@@ -71,11 +73,8 @@ function xmldb_resource_upgrade($oldversion) {
         $dbman->change_field_precision($table, $field);
 
         // Resource savepoint reached.
-        upgrade_mod_savepoint(true, 2025041401, 'resource');
+        upgrade_mod_savepoint(true, 2025100601, 'resource');
     }
-
-    // Automatically generated Moodle v5.1.0 release upgrade line.
-    // Put any upgrade step following this.
 
     return true;
 }

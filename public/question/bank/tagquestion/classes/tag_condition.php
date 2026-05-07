@@ -18,6 +18,9 @@ namespace qbank_tagquestion;
 
 use core\output\datafilter;
 use core_question\local\bank\condition;
+use core_tag_tag;
+use restore_questions_activity_structure_step;
+use stdClass;
 
 /**
  * Question bank search class to allow searching/filtering by tags on a question.
@@ -157,5 +160,37 @@ class tag_condition extends condition {
             ];
         }
         return $values;
+    }
+
+    #[\Override]
+    public function restore_filtercondition(
+        array $filtercondition,
+        stdClass $setreference,
+        restore_questions_activity_structure_step $restorestep,
+        bool $originalbankinbackup = false,
+    ): array {
+        if (isset($filtercondition['filter']['qtagids'])) {
+            $newtagids = [];
+            foreach ($filtercondition['filter']['qtagids']['values'] as $tagid) {
+                $tag = core_tag_tag::get($tagid, 'id, name');
+                if ($restorestep->get_task()->is_samesite() && $tag) {
+                    $newtagids[] = $tagid;
+                } else {
+                    // If we're on a different site, or the tag id doesn't exist anymore, look for a mapped tag ID.
+                    $newtagid = $restorestep->get_mappingid('tag', $tagid);
+                    if ($newtagid) {
+                        // Include the new tag. If it wasn't found, we leave it out of the filter.
+                        $newtagids[] = $newtagid;
+                    }
+                }
+            }
+            // Set the filter to the new list of tags. If there were no matching tags found, remove the tags filter.
+            if (!empty($newtagids)) {
+                $filtercondition['filter']['qtagids']['values'] = $newtagids;
+            } else {
+                unset($filtercondition['filter']['qtagids']);
+            }
+        }
+        return $filtercondition;
     }
 }

@@ -80,7 +80,12 @@ export const configure = (params) => {
     config.locale = params.lang;
 
     mathJaxUrl = params.mathjaxurl;
-    window.MathJax = config;
+
+    // Only set window.MathJax if MathJax has not started loading yet.
+    // configure() may be called more than once when AJAX fragments are loaded (e.g., block edit forms).
+    if (!mathJaxLoaded) {
+        window.MathJax = config;
+    }
 
     // Listen for events triggered when new text is added to a page that needs
     // processing by a filter.

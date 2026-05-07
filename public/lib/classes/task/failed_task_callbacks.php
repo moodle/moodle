@@ -43,6 +43,7 @@ class failed_task_callbacks {
         foreach ($admins as $admin) {
             $tasklogslink = new url('/admin/tasklogs.php', ['filter' => get_class($task)]);
 
+            force_current_language($admin->lang);
             $a = new stdClass();
             $a->firstname = $admin->firstname;
             $a->taskname = $task->get_name();
@@ -65,5 +66,6 @@ class failed_task_callbacks {
             // Actually send the message.
             message_send($message);
         }
+        force_current_language(null);
     }
 }

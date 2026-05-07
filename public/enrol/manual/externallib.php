@@ -164,7 +164,6 @@ class enrol_manual_external extends external_api {
                     array(
                         'userid' => new external_value(PARAM_INT, 'The user that is going to be unenrolled'),
                         'courseid' => new external_value(PARAM_INT, 'The course to unenrol the user from'),
-                        'roleid' => new external_value(PARAM_INT, 'The user role', VALUE_OPTIONAL),
                     )
                 )
             )
@@ -174,7 +173,7 @@ class enrol_manual_external extends external_api {
     /**
      * Unenrolment of users.
      *
-     * @param array $enrolments an array of course user and role ids
+     * @param array $enrolments an array of course users
      * @throws coding_exception
      * @throws dml_transaction_exception
      * @throws invalid_parameter_exception

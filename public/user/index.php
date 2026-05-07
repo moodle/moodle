@@ -280,7 +280,11 @@ $selectactionparams = array(
 $label = html_writer::tag('label', get_string("withselectedusers"),
         ['for' => 'formactionid', 'class' => 'col-form-label d-inline']);
 $select = html_writer::select($displaylist, 'formaction', '', ['' => 'choosedots'], $selectactionparams);
-echo html_writer::tag('div', $label . $select);
+echo html_writer::tag(
+    'div',
+    $label . $select,
+    ['class' => 'd-flex flex-wrap align-items-md-center gap-2 mb-3'],
+);
 
 echo '<input type="hidden" name="id" value="' . $course->id . '" />';
 echo '<div class="d-none" data-region="state-help-icon">' . $OUTPUT->help_icon('publishstate', 'notes') . '</div>';

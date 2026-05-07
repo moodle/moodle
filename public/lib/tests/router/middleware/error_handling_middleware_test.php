@@ -55,7 +55,7 @@ final class error_handling_middleware_test extends route_testcase {
     }
 
     /**
-     * When no errors, the error handle is not called.
+     * When errors occur, the error handler is called.
      */
     public function test_error_handling(): void {
         $responsehandler = $this->getMockBuilder(response_handler::class)

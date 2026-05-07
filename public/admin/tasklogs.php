@@ -29,7 +29,14 @@ require_once("tool/task/lib.php");
 use core_admin\reportbuilder\local\systemreports\task_logs;
 use core_reportbuilder\system_report_factory;
 
-$PAGE->set_url(new \moodle_url('/admin/tasklogs.php'));
+$logid = optional_param('logid', null, PARAM_INT);
+$download = optional_param('download', false, PARAM_BOOL);
+$filter = optional_param('filter', null, PARAM_TEXT);
+
+$PAGE->set_url(new \moodle_url('/admin/tasklogs.php', array_filter([
+    'logid' => $logid,
+    'filter' => $filter,
+])));
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('admin');
 $strheading = get_string('tasklogs', 'admin');
@@ -37,10 +44,6 @@ $PAGE->set_title($strheading);
 $PAGE->set_heading($strheading);
 
 admin_externalpage_setup('tasklogs');
-
-$logid = optional_param('logid', null, PARAM_INT);
-$download = optional_param('download', false, PARAM_BOOL);
-$filter = optional_param('filter', null, PARAM_TEXT);
 
 if (null !== $logid) {
     // Raise memory limit in case the log is large.

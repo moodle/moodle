@@ -23,7 +23,7 @@
 
 import Notification from 'core/notification';
 import {getString} from 'core/str';
-import SRLogger from 'core/local/reactive/srlogger';
+import {add as addToast} from 'core/toast';
 import Repository from 'mod_forum/repository';
 
 /**
@@ -69,7 +69,7 @@ async function subscriptionToggleClickHandler(toggleElement) {
             'mod_forum',
             forumName,
         );
-        new SRLogger().add({feedbackMessage});
+        addToast(feedbackMessage, {visuallyHidden: true});
     } catch (error) {
         Notification.exception(error);
     }
@@ -103,7 +103,7 @@ async function trackToggleClickHanldler(toggleElement) {
             'mod_forum',
             forumName,
         );
-        new SRLogger().add({feedbackMessage});
+        addToast(feedbackMessage, {visuallyHidden: true});
     } catch (error) {
         Notification.exception(error);
     }

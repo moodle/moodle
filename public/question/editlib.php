@@ -81,22 +81,28 @@ function get_questions_category(object $category, bool $noparent, bool $recurse 
     list($usql, $params) = $DB->get_in_or_equal($categorylist);
 
     // Get the latest version of a question.
-    $version = '';
-    if ($latestversion) {
-        $version = 'AND (qv.version = (SELECT MAX(v.version)
-                                         FROM {question_versions} v
-                                         JOIN {question_bank_entries} be
-                                           ON be.id = v.questionbankentryid
-                                        WHERE be.id = qbe.id) OR qv.version is null)';
-    }
-    $questions = $DB->get_records_sql("SELECT q.*, qv.status, qc.id AS category
-                                         FROM {question} q
-                                         JOIN {question_versions} qv ON qv.questionid = q.id
-                                         JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                                         JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
-                                        WHERE qc.id {$usql} {$npsql} {$version}
-                                     ORDER BY qc.id, q.qtype, q.name", $params);
+    $sql = "SELECT q.*, qv.status, qc.id AS category
+              FROM {question} q
+              JOIN {question_versions} qv ON qv.questionid = q.id";
 
+    if ($latestversion) {
+        $sql .= " LEFT JOIN {question_versions} qv2 ON (   qv2.questionbankentryid = qv.questionbankentryid
+                                                       AND qv2.version > qv.version
+                                                       )";
+    }
+
+    $sql .= " JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+              JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+             WHERE qc.id {$usql} {$npsql}";
+
+    if ($latestversion) {
+        $sql .= " AND (qv2.questionbankentryid IS NULL
+                       OR qv.version IS NULL)";
+    }
+
+    $sql .= " ORDER BY qc.id, q.qtype, q.name";
+
+    $questions = $DB->get_records_sql($sql, $params);
     // Iterate through questions, getting stuff we need.
     $qresults = [];
     foreach ($questions as $question) {
@@ -315,7 +321,12 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (false !== array_search($catparts[1], $contextlistarr)) ||
                 !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
-            throw new \moodle_exception('invalidcategory', 'question');
+            $exception = 'invalidcategory';
+            if ($edittab === 'editq') {
+                // If this might be due to MDL-86691, return a message including fix instructions.
+                $exception = 'invalidcategoryeditq';
+            }
+            throw new \moodle_exception($exception, 'question');
         }
     } else {
         $category = $defaultcategory;

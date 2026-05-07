@@ -2431,5 +2431,99 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2025100601.10);
     }
 
+    if ($oldversion < 2025100603.01) {
+        $table = new xmldb_table('customfield_data');
+
+        // Define index fieldid-decvalue (not unique) to be dropped form customfield_data.
+        $index = new xmldb_index('fieldid-decvalue', XMLDB_INDEX_NOTUNIQUE, ['fieldid', 'decvalue']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Changing precision of field decvalue on table customfield_data to (15, 5).
+        $field = new xmldb_field('decvalue', XMLDB_TYPE_NUMBER, '15, 5', null, null, null, null, 'intvalue');
+        $dbman->change_field_precision($table, $field);
+
+        // Conditionally launch add index fieldid-decvalue.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025100603.01);
+    }
+
+    if ($oldversion < 2025100603.05) {
+        $orphanedquestions = core_question\category_manager::cleanup_questions_without_categories();
+        if ($orphanedquestions > 0) {
+            upgrade_log(UPGRADE_LOG_NORMAL, null, "Cleaned up {$orphanedquestions} questions left over from restores.");
+        }
+
+        upgrade_main_savepoint(true, 2025100603.05);
+    }
+
+    if ($oldversion < 2025100603.07) {
+        // Clean up tool_moodlenet configurations unless pointing to a custom installation.
+        $moodleneturl = get_config('tool_moodlenet', 'defaultmoodlenet');
+
+        $shouldcleanup = true;
+
+        // Check if pointing to a custom MoodleNet installation.
+        if (!empty($moodleneturl)) {
+            $parsed = parse_url(strtolower(trim($moodleneturl)));
+            $host = $parsed['host'] ?? '';
+
+            // Don't cleanup if it's a custom installation (not moodle.net).
+            if ($host !== 'moodle.net' && $host !== 'www.moodle.net') {
+                $shouldcleanup = false;
+            }
+        }
+
+        if ($shouldcleanup) {
+            // Reset configs to defaults.
+            set_config('defaultmoodlenet', '', 'tool_moodlenet');
+            set_config('enablemoodlenet', 0, 'tool_moodlenet');
+
+            // Hide activity chooser footer if set to MoodleNet.
+            $footer = get_config('core', 'activitychooseractivefooter');
+            if ($footer === 'tool_moodlenet') {
+                set_config('activitychooseractivefooter', 'hidden');
+            }
+
+            // Remove the enablesharingtomoodlenet config setting.
+            unset_config('enablesharingtomoodlenet');
+
+            // Remove MoodleNet outbound OAuth2 configuration.
+            unset_config('oauthservice', 'moodlenet');
+            $issuerids = $DB->get_fieldset_select('oauth2_issuer', 'id', "servicetype = ?", ['moodlenet']);
+            if (!empty($issuerids)) {
+                $DB->delete_records_list('oauth2_endpoint', 'issuerid', $issuerids);
+                $DB->delete_records_list('oauth2_access_token', 'issuerid', $issuerids);
+                $DB->delete_records_list('oauth2_refresh_token', 'issuerid', $issuerids);
+                $DB->delete_records_list('oauth2_system_account', 'issuerid', $issuerids);
+                $DB->delete_records_list('oauth2_user_field_mapping', 'issuerid', $issuerids);
+                $DB->delete_records_list('oauth2_issuer', 'id', $issuerids);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2025100603.07);
+    }
+
+    if ($oldversion < 2025100603.10) {
+        // If h5plib_v127 is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/h5p/h5plib/v127/version.php')) {
+            // Clean config.
+            uninstall_plugin('h5plib', 'v127');
+        }
+
+        // If h5plib_v128 is present, set it as the default one.
+        if (file_exists($CFG->dirroot . '/h5p/h5plib/v128/version.php')) {
+            set_config('h5plibraryhandler', 'h5plib_v128');
+        }
+
+        upgrade_main_savepoint(true, 2025100603.10);
+    }
+
     return true;
 }

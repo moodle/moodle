@@ -27,6 +27,7 @@
     * labelattributes - Label attributes.
     * selectedoption - Text of the selected option
     * options - Array of options for the select with value, name, selected, isgroup and id properites.
+    * disableactive - A flag indicating whether the active state should be disabled in the dropdown.
 
     Example context (json):
     {
@@ -82,7 +83,8 @@
                 "id": "select-menu-option5",
                 "selected": false
             }
-        ]
+        ],
+        "disableactive": false
     }
 }}
 <div class="dropdown select-menu" id="{{baseid}}">
@@ -141,7 +143,9 @@
                                 <li role="separator" class="dropdown-divider"></li>
                             {{/isdivider}}
                             {{^isdivider}}
-                                <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
+                                <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}"
+                                {{#disableactive}}data-disableactive="true"{{/disableactive}}
+                                {{#selected}}aria-selected="true"{{/selected}}>
                                     {{name}}
                                 </li>
                             {{/isdivider}}
@@ -154,7 +158,9 @@
                     <li role="separator" class="dropdown-divider"></li>
                 {{/isdivider}}
                 {{^isdivider}}
-                    <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}" {{#selected}}aria-selected="true"{{/selected}}>
+                    <li class="dropdown-item" role="option" id="{{id}}" data-value="{{value}}"
+                    {{#disableactive}}data-disableactive="true"{{/disableactive}}
+                    {{#selected}}aria-selected="true"{{/selected}}>
                         {{name}}
                     </li>
                 {{/isdivider}}

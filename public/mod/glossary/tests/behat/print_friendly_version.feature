@@ -18,20 +18,32 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
       | student1 | C1 | student |
 
   @javascript
-  Scenario: Printer-friendly glossary view enabled
+  Scenario Outline: Printer-friendly glossary view enabled
     Given the following "activity" exists:
       | course         | C1                        |
       | activity       | glossary                  |
       | name           | Test glossary name        |
+      | idnumber       | glossary1                 |
       | intro          | Test glossary description |
       | allowprintview | 1                         |
+      | displayformat  | <format>                  |
+    When the following "mod_glossary > entries" exist:
+      | glossary  | user     | concept              | definition          | approved |
+      | glossary1 | student1 | Just a test concept  | Concept definition  | 1        |
     And I am on the "Test glossary name" "glossary activity" page logged in as student1
-    When I add a glossary entry with the following data:
-      | Concept | Just a test concept |
-      | Definition | Concept definition |
-    And I click on "Export entries" "button"
-    And I click on "Print" "link"
+    And I press "Export entries"
+    And I click on "Printer-friendly version" "link"
     Then I should see "Just a test concept"
+
+    Examples:
+      | format            |
+      | continuous        |
+      | dictionary        |
+      | encyclopedia      |
+      | entrylist         |
+      | faq               |
+      | fullwithauthor    |
+      | fullwithoutauthor |
 
   @javascript
   Scenario: Printer-friendly glossary view disabled

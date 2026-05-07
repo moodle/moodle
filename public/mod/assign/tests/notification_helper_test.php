@@ -17,7 +17,11 @@
 namespace mod_assign;
 
 use core\task\task_trait;
-use mod_assign\task\queue_assignment_due_digest_notification_tasks_for_users;
+use mod_assign\task\queue_assignment_due_soon_notification_tasks_for_users;
+use mod_assign\task\queue_assignment_overdue_notification_tasks_for_users;
+use mod_assign\task\send_assignment_due_digest_notification_to_user;
+use mod_assign\task\send_assignment_due_soon_notification_to_user;
+use mod_assign\task\send_assignment_overdue_notification_to_user;
 
 /**
  * Test class for the assignment notification_helper.
@@ -40,18 +44,26 @@ final class notification_helper_test extends \advanced_testcase {
         $task->execute();
         $clock = \core\di::get(\core\clock::class);
 
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            queue_assignment_due_soon_notification_tasks_for_users::class
+        );
         if ($adhoctask) {
-            $this->assertInstanceOf(\mod_assign\task\queue_assignment_due_soon_notification_tasks_for_users::class, $adhoctask);
             $adhoctask->execute();
             \core\task\manager::adhoc_task_complete($adhoctask);
+            \core\task\manager::reset_state();
         }
 
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            send_assignment_due_soon_notification_to_user::class
+        );
         if ($adhoctask) {
-            $this->assertInstanceOf(\mod_assign\task\send_assignment_due_soon_notification_to_user::class, $adhoctask);
             $adhoctask->execute();
             \core\task\manager::adhoc_task_complete($adhoctask);
+            \core\task\manager::reset_state();
         }
     }
 
@@ -356,27 +368,40 @@ final class notification_helper_test extends \advanced_testcase {
         $task->execute();
 
         $clock->bump(5);
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
-        $this->assertInstanceOf(\mod_assign\task\queue_assignment_due_soon_notification_tasks_for_users::class, $adhoctask);
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            queue_assignment_due_soon_notification_tasks_for_users::class,
+        );
         $adhoctask->execute();
         \core\task\manager::adhoc_task_complete($adhoctask);
+        \core\task\manager::reset_state();
 
         // Delete the assignment.
         $DB->delete_records('assign', ['id' => $assignment->id]);
 
         // Try to run the ad-hoc task to send the notifications.
         $clock->bump(5);
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
-        $this->assertInstanceOf(\mod_assign\task\send_assignment_due_soon_notification_to_user::class, $adhoctask);
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            send_assignment_due_soon_notification_to_user::class,
+        );
 
         ob_start();
         $adhoctask->execute();
         $output = ob_get_clean();
 
         \core\task\manager::adhoc_task_complete($adhoctask);
+        \core\task\manager::reset_state();
 
         // The ad-hoc task should be deleted.
-        $this->assertNull(\core\task\manager::get_next_adhoc_task($clock->time()));
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            send_assignment_due_soon_notification_to_user::class,
+        );
+        $this->assertNull($adhoctask);
         $this->assertStringContainsString(
             needle: "No notification send as the assignment $assignment->id can no longer be found in the database.",
             haystack: $output
@@ -391,18 +416,26 @@ final class notification_helper_test extends \advanced_testcase {
         $task->execute();
         $clock = \core\di::get(\core\clock::class);
 
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            queue_assignment_overdue_notification_tasks_for_users::class,
+        );
         if ($adhoctask) {
-            $this->assertInstanceOf(\mod_assign\task\queue_assignment_overdue_notification_tasks_for_users::class, $adhoctask);
             $adhoctask->execute();
             \core\task\manager::adhoc_task_complete($adhoctask);
+            \core\task\manager::reset_state();
         }
 
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            send_assignment_overdue_notification_to_user::class,
+        );
         if ($adhoctask) {
-            $this->assertInstanceOf(\mod_assign\task\send_assignment_overdue_notification_to_user::class, $adhoctask);
             $adhoctask->execute();
             \core\task\manager::adhoc_task_complete($adhoctask);
+            \core\task\manager::reset_state();
         }
     }
 
@@ -741,27 +774,40 @@ final class notification_helper_test extends \advanced_testcase {
         $task->execute();
 
         $clock->bump(5);
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
-        $this->assertInstanceOf(\mod_assign\task\queue_assignment_overdue_notification_tasks_for_users::class, $adhoctask);
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            queue_assignment_overdue_notification_tasks_for_users::class,
+        );
         $adhoctask->execute();
         \core\task\manager::adhoc_task_complete($adhoctask);
+        \core\task\manager::reset_state();
 
         // Delete the assignment.
         $DB->delete_records('assign', ['id' => $assignment->id]);
 
         // Try to run the ad-hoc task to send the notifications.
         $clock->bump(5);
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
-        $this->assertInstanceOf(\mod_assign\task\send_assignment_overdue_notification_to_user::class, $adhoctask);
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            send_assignment_overdue_notification_to_user::class,
+        );
 
         ob_start();
         $adhoctask->execute();
         $output = ob_get_clean();
 
         \core\task\manager::adhoc_task_complete($adhoctask);
+        \core\task\manager::reset_state();
 
         // The ad-hoc task should be deleted.
-        $this->assertNull(\core\task\manager::get_next_adhoc_task($clock->time()));
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            send_assignment_overdue_notification_to_user::class,
+        );
+        $this->assertNull($adhoctask);
         $this->assertStringContainsString(
             needle: "No notification send as the assignment $assignment->id can no longer be found in the database.",
             haystack: $output
@@ -776,11 +822,15 @@ final class notification_helper_test extends \advanced_testcase {
         $task->execute();
         $clock = \core\di::get(\core\clock::class);
 
-        $adhoctask = \core\task\manager::get_next_adhoc_task($clock->time());
+        $adhoctask = \core\task\manager::get_next_adhoc_task(
+            $clock->time(),
+            true,
+            send_assignment_due_digest_notification_to_user::class,
+        );
         if ($adhoctask) {
-            $this->assertInstanceOf(\mod_assign\task\send_assignment_due_digest_notification_to_user::class, $adhoctask);
             $adhoctask->execute();
             \core\task\manager::adhoc_task_complete($adhoctask);
+            \core\task\manager::reset_state();
         }
     }
 

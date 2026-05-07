@@ -3880,6 +3880,72 @@ final class api_test extends \advanced_testcase {
     }
 
     /**
+     * Test verifying the behaviour of the can_send_message_to_conversation method when a user is deleted.
+     */
+    public function test_can_send_message_to_conversation_when_deleted(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        // Enrol the users into the same course.
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+
+        // Create an individual conversation between user1 and user2.
+        $ic1 = api::create_conversation(
+            type: api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            userids: [
+                $user1->id,
+                $user2->id,
+            ],
+        );
+
+        // Create an individual conversation between user1 and user3.
+        $ic2 = api::create_conversation(
+            type: api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            userids: [
+                $user1->id,
+                $user3->id,
+            ],
+        );
+
+        // Create an individual conversation between user2 and user3.
+        $ic3 = api::create_conversation(
+            type: api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL,
+            userids: [
+                $user2->id,
+                $user3->id,
+            ],
+        );
+
+        // Check that user1 can send user2 a message in their individual conversation.
+        $this->assertTrue(api::can_send_message_to_conversation($user1->id, $ic1->id));
+        // Check that user1 can send user3 a message in their individual conversation.
+        $this->assertTrue(api::can_send_message_to_conversation($user1->id, $ic2->id));
+        // Check that user3 can send user2 a message in their individual conversation.
+        $this->assertTrue(api::can_send_message_to_conversation($user3->id, $ic3->id));
+
+        // Delete user2.
+        $userid = $user2->id;
+        delete_user($user2);
+        // We also want to delete the record of that user too.
+        $DB->delete_records('user', ['id' => $userid]);
+
+        // Check that user1 can not send user2 a message in their individual conversation anymore.
+        $this->assertFalse(api::can_send_message_to_conversation($user1->id, $ic1->id));
+        // Check that user3 can not send user2 a message in their individual conversation anymore.
+        $this->assertFalse(api::can_send_message_to_conversation($user3->id, $ic3->id));
+        // Check that user1 can send user3 a message in their individual conversation.
+        $this->assertTrue(api::can_send_message_to_conversation($user1->id, $ic2->id));
+    }
+
+    /**
      * Tests get_user_privacy_messaging_preference method.
      */
     public function test_get_user_privacy_messaging_preference(): void {

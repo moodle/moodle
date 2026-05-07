@@ -331,6 +331,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->forgotten_password_url_warning($invalidforgottenpasswordurl);
         $output .= $this->mnet_deprecation_warning($xmlrpcwarning);
         $output .= $this->moodlenet_removal_warning();
+        $output .= $this->marketplace_integration_notice();
         $output .= $this->userfeedback_encouragement($showfeedbackencouragement);
         $output .= $this->services_and_support_content($showservicesandsupport);
         $output .= $this->campaign_content($showcampaigncontent);
@@ -2357,6 +2358,18 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         return '';
+    }
+
+    /**
+     * Display a notice about Moodle Marketplace integration.
+     *
+     * @return string HTML to output.
+     */
+    protected function marketplace_integration_notice(): string {
+        $installer = tool_installaddon_installer::instance();
+        $url = $installer->get_marketplace_url();
+        $notice = get_string('marketplaceavailablenotice', 'admin', $url->out());
+        return $this->warning($notice, 'info');
     }
 
     /**

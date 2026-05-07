@@ -44,12 +44,10 @@ final class curl_security_helper_test extends \advanced_testcase {
             ->getMock();
 
         // Override the get host list method to return hard coded values based on a mapping provided by $dns.
-        $helper->method('get_host_list_by_name')->will(
-            $this->returnCallback(
-                function($host) use ($dns) {
-                    return isset($dns[$host]) ? $dns[$host] : [];
-                }
-            )
+        $helper->method('get_host_list_by_name')->willReturnCallback(
+            function($host) use ($dns) {
+                return isset($dns[$host]) ? $dns[$host] : [];
+            }
         );
 
         set_config('curlsecurityblockedhosts', $blockedhosts);
@@ -292,5 +290,36 @@ final class curl_security_helper_test extends \advanced_testcase {
     public function test_curl_security_helper_get_blocked_url_string(): void {
         $helper = new \core\files\curl_security_helper();
         $this->assertEquals(get_string('curlsecurityurlblocked', 'admin'), $helper->get_blocked_url_string());
+    }
+
+    /**
+     * Test for \core\files\curl_security_helper::get_resolve_info().
+     *
+     * @covers \core\files\curl_security_helper::get_resolve_info
+     */
+    public function test_curl_security_helper_get_resolve_info(): void {
+        $helper = new \core\files\curl_security_helper();
+
+        // Throw an exception if url_is_blocked() has not been called yet.
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage(
+            'In the curl_security_helper class, url_is_blocked() must be called before get_resolve_info() is called.'
+        );
+        $helper->get_resolve_info();
+    }
+
+    /**
+     * Test that get_resolve_info() returns an empty array (no DNS pinning) when cURL security is not configured.
+     *
+     * @covers \core\files\curl_security_helper::get_resolve_info
+     */
+    public function test_curl_security_helper_get_resolve_info_security_disabled(): void {
+        $helper = new \core\files\curl_security_helper();
+
+        // With security not configured, url_is_blocked() returns false immediately without resolving IPs.
+        $helper->url_is_blocked('http://example.com');
+
+        // No exception — security was checked, just nothing to pin.
+        $this->assertSame([], $helper->get_resolve_info());
     }
 }

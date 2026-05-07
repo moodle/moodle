@@ -70,7 +70,6 @@ final class db_test extends \advanced_testcase {
             case 'mysql':
                 set_config('type', 'mysqli', 'auth_db');
                 set_config('setupsql', "SET NAMES 'UTF-8'", 'auth_db');
-                set_config('sybasequoting', '0', 'auth_db');
                 if (!empty($CFG->dboptions['dbsocket'])) {
                     $dbsocket = $CFG->dboptions['dbsocket'];
                     if ((strpos($dbsocket, '/') === false and strpos($dbsocket, '\\') === false)) {
@@ -87,7 +86,6 @@ final class db_test extends \advanced_testcase {
                     $setupsql .= "; SET search_path = '".$CFG->dboptions['dbschema']."'";
                 }
                 set_config('setupsql', $setupsql, 'auth_db');
-                set_config('sybasequoting', '0', 'auth_db');
                 if (!empty($CFG->dboptions['dbsocket']) and ($CFG->dbhost === 'localhost' or $CFG->dbhost === '127.0.0.1')) {
                     if (strpos($CFG->dboptions['dbsocket'], '/') !== false) {
                         $socket = $CFG->dboptions['dbsocket'];
@@ -103,7 +101,6 @@ final class db_test extends \advanced_testcase {
 
             case 'mssql':
                 set_config('type', 'mssqlnative', 'auth_db');
-                set_config('sybasequoting', '1', 'auth_db');
 
                 // The native sqlsrv driver uses a comma as separator between host and port.
                 $dbhost = $CFG->dbhost;

@@ -87,24 +87,51 @@ class mod_forum_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('form', $formattributes);
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
 
-        $existingcell = new html_table_cell();
-        $existingcell->text = $existinguc->display(true);
-        $existingcell->attributes['class'] = 'existing';
-        $actioncell = new html_table_cell();
-        $actioncell->text  = html_writer::start_tag('div', array());
-        $actioncell->text .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'subscribe', 'value'=>$this->page->theme->larrow.' '.get_string('add'), 'class'=>'actionbutton'));
-        $actioncell->text .= html_writer::empty_tag('br', array());
-        $actioncell->text .= html_writer::empty_tag('input', array('type'=>'submit', 'name'=>'unsubscribe', 'value'=>$this->page->theme->rarrow.' '.get_string('remove'), 'class'=>'actionbutton'));
-        $actioncell->text .= html_writer::end_tag('div', array());
-        $actioncell->attributes['class'] = 'actions';
-        $potentialcell = new html_table_cell();
-        $potentialcell->text = $potentialuc->display(true);
-        $potentialcell->attributes['class'] = 'potential';
+        // Existing subscribers column.
+        $existingsubslabel = html_writer::label(
+            get_string('existingsubscribers', 'forum'),
+            'existingsubscribers',
+            false,
+            ['class' => 'visually-hidden']
+        );
+        $existingsubscol = html_writer::div($existingsubslabel . $existinguc->display(true), 'col-sm-5 px-0 existing');
 
-        $table = new html_table();
-        $table->attributes['class'] = 'subscribertable boxaligncenter';
-        $table->data = array(new html_table_row(array($existingcell, $actioncell, $potentialcell)));
-        $output .= html_writer::table($table);
+        // Actions column.
+        $subscribeaction = html_writer::tag(
+            'button',
+            html_writer::span($this->page->theme->larrow, '', ['aria-hidden' => 'true']) . ' ' . get_string('add'),
+            [
+                'type' => 'submit',
+                'name' => 'subscribe',
+                'class' => 'actionbutton btn btn-secondary w-100 my-1 py-2',
+                'value' => 'subscribe',
+            ]
+        );
+        $subscribeaction = html_writer::div($subscribeaction);
+        $unsubscribeaction = html_writer::tag(
+            'button',
+            get_string('remove') . ' ' . html_writer::span($this->page->theme->rarrow, '', ['aria-hidden' => 'true']),
+            [
+                'type' => 'submit',
+                'name' => 'unsubscribe',
+                'class' => 'actionbutton btn btn-secondary w-100 my-1 py-2',
+                'value' => 'unsubscribe',
+            ]
+        );
+        $unsubscribeaction = html_writer::div($unsubscribeaction);
+        $actionscol = html_writer::div($subscribeaction . $unsubscribeaction, 'col-sm-2 actions py-6');
+
+        // Potential subscribers column.
+        $potentialsubslabel = html_writer::label(
+            get_string('potentialsubscribers', 'forum'),
+            'potentialsubscribers',
+            false,
+            ['class' => 'visually-hidden']
+        );
+        $potentialsubscol = html_writer::div($potentialsubslabel . $potentialuc->display(true), 'col-sm-5 px-0 potential');
+
+        $row = html_writer::div($existingsubscol . $actionscol . $potentialsubscol, 'row');
+        $output .= html_writer::div($row, 'container-fluid');
 
         $output .= html_writer::end_tag('form');
         return $output;

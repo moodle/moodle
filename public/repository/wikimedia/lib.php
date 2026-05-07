@@ -26,6 +26,11 @@
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once(__DIR__ . '/wikimedia.php');
 
+use core\di;
+use core\http_client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\RequestOptions;
+
 /**
  * repository_wikimedia class
  * This is a class used to browse images from wikimedia
@@ -188,6 +193,58 @@ EOD;
      */
     public function get_file_source_info($url) {
         return $url;
+    }
+
+    /**
+     * Downloads a file from external repository and saves it in temp dir
+     *
+     * Overrides the base implementation to handle HTTP 429 rate limiting errors
+     * from Wikimedia servers with a user-friendly error message.
+     *
+     * @param string $url the URL of file to download
+     * @param string $filename filename (without path) to save the downloaded file in the
+     *     temporary directory, if omitted or file already exists the new filename will be generated
+     * @return array with elements:
+     *   path: internal location of the file
+     *   url: URL to the source (from parameters)
+     * @throws \repository_exception if rate limited by the Wikimedia server
+     * @throws \moodle_exception if download fails
+     */
+    #[\Override]
+    public function get_file($url, $filename = '') {
+        global $CFG;
+
+        $path = $this->prepare_file($filename);
+        $client = di::get(http_client::class);
+
+        try {
+            $response = $client->get($url, [
+                RequestOptions::SINK => $path,
+                RequestOptions::TIMEOUT => $CFG->repositorygetfiletimeout,
+                RequestOptions::HTTP_ERRORS => false,
+            ]);
+        } catch (RequestException $e) {
+            if (file_exists($path)) {
+                unlink($path);
+            }
+            throw new \moodle_exception('errorwhiledownload', 'repository', '', $e->getMessage());
+        }
+
+        if ($response->getStatusCode() === 429) {
+            if (file_exists($path)) {
+                unlink($path);
+            }
+            throw new \repository_exception('ratelimited', 'repository_wikimedia');
+        }
+
+        if ($response->getStatusCode() !== 200) {
+            if (file_exists($path)) {
+                unlink($path);
+            }
+            throw new \moodle_exception('errorwhiledownload', 'repository', '', $response->getReasonPhrase());
+        }
+
+        return ['path' => $path, 'url' => $url];
     }
 
     /**

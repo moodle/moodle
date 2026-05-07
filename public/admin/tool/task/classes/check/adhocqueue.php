@@ -22,7 +22,11 @@ use core\check\result;
 use moodle_url;
 
 /**
- * Ad hoc queue checks
+ * Adhoc queue check.
+ *
+ * This alerts when the queue has old tasks in it which indicates that tasks
+ * are not being processed fast enough and more processess need to be added
+ * to manage the load. A large queue by itself is fine.
  *
  * @package    tool_task
  * @copyright  2020 Brendan Heywood (brendan@catalyst-au.net)
@@ -40,7 +44,10 @@ class adhocqueue extends check {
         $stats = $DB->get_record_sql('
             SELECT count(*) cnt,
                    MAX(? - nextruntime) age
-              FROM {task_adhoc}', [time()]);
+              FROM {task_adhoc}
+             WHERE attemptsavailable > 0 OR attemptsavailable IS NULL',
+            [time()]
+        );
 
         $status = result::OK;
         $summary = get_string('adhocempty', 'tool_task');

@@ -129,6 +129,9 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
         $this->fileman->itemid   = 0;
         $this->fileman->migrate_file('course_files/'.$data['reference']);
 
+        // Fix reference (the file area doesn't allow directories), so it can be extracted upon completion.
+        $data['reference'] = basename($data['reference']);
+
         // start writing scorm.xml
         $this->open_xml_writer("activities/scorm_{$this->moduleid}/scorm.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,

@@ -98,6 +98,39 @@ class util {
     }
 
     /**
+     * Throw a specialized HTTP exception based on the response status code.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param string|null $message
+     * @param \Throwable|null $previous
+     */
+    public static function throw_specialized_exception(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        ?string $message = null,
+        ?\Throwable $previous = null,
+    ): void {
+        $exceptionclass = match ($response->getStatusCode()) {
+            400 => \Slim\Exception\HttpBadRequestException::class,
+            401 => \Slim\Exception\HttpUnauthorizedException::class,
+            403 => \Slim\Exception\HttpForbiddenException::class,
+            404 => \Slim\Exception\HttpNotFoundException::class,
+            405 => \Slim\Exception\HttpMethodNotAllowedException::class,
+            410 => \Slim\Exception\HttpGoneException::class,
+            429 => \Slim\Exception\HttpTooManyRequestsException::class,
+            500 => \Slim\Exception\HttpInternalServerErrorException::class,
+            501 => \Slim\Exception\HttpNotImplementedException::class,
+
+            default => null,
+        };
+
+        if ($exceptionclass !== null) {
+            throw new $exceptionclass($request, $message, $previous);
+        }
+    }
+
+    /**
      * Generate a Page Not Found result.
      *
      * @param ServerRequestInterface $request
@@ -113,7 +146,7 @@ class util {
         ?string $message = null,
         ?\Throwable $previous = null,
     ): ResponseInterface {
-        throw new \Slim\Exception\HttpNotFoundException($request, $message, $previous);
+        self::throw_specialized_exception($request, $response->withStatus(404), $message, $previous);
     }
 
     /**
@@ -127,9 +160,10 @@ class util {
         ResponseInterface $response,
         string|url $url,
     ): ResponseInterface {
+        $location = ($url instanceof url) ? $url->out(false) : $url;
         return $response
             ->withStatus(302)
-            ->withHeader('Location', (string) $url);
+            ->withHeader('Location', $location);
     }
 
     /**
@@ -142,6 +176,16 @@ class util {
     public static function get_route_name_for_callable(
         callable|array|string $callable,
     ): string {
+        if (is_string($callable) && str_contains($callable, '::')) {
+            $callable = explode('::', $callable, 2);
+        }
+
+        if (is_array($callable) && count($callable) === 2) {
+            if (class_exists($callable[0]) && method_exists($callable[0], $callable[1])) {
+                return $callable[0] . '::' . $callable[1];
+            }
+        }
+
         $resolver = \core\di::get(\Invoker\CallableResolver::class);
         $callable = $resolver->resolve($callable);
 

@@ -363,7 +363,7 @@ function cohort_can_view_cohort($cohortorid, $currentcontext) {
         $cohort = $cohortorid;
     }
 
-    if ($cohort && in_array($cohort->contextid, $currentcontext->get_parent_context_ids())) {
+    if ($cohort && in_array($cohort->contextid, $currentcontext->get_parent_context_ids(true))) {
         if ($cohort->visible) {
             return true;
         }

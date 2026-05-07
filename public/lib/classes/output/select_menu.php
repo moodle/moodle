@@ -45,6 +45,9 @@ class select_menu implements renderable, templatable {
     /** @var string Name of the combobox element */
     protected $name;
 
+    /** @var bool A flag indicating whether the active state should be disabled in the dropdown. */
+    protected $disableactive;
+
     /**
      * select_menu constructor.
      *
@@ -52,11 +55,19 @@ class select_menu implements renderable, templatable {
      * @param array $options List of options in an associative array format like ['val' => 'Option'].
      *                       Supports grouped options as well. Empty string or null values will be rendered as dividers.
      * @param string|null $selected The value of the preselected option.
+     * @param bool $disableactive A flag that indicates whether the active state should be disabled in the dropdown.
+     *                            This is useful when the dropdown items result in navigation to another page,
+     *                            as it makes it unnecessary to mark the selected item as active. If the flag
+     *                            is set to true, the checkmark indicating the active menu item will not be displayed,
+     *                            as the user is redirected. However, in cases where no redirection occurs and
+     *                            it is valid to display the active state, this flag should remain false,
+     *                            allowing the checkmark to appear beside the active item.
      */
-    public function __construct(string $name, array $options, ?string $selected = null) {
+    public function __construct(string $name, array $options, ?string $selected = null, bool $disableactive = false) {
         $this->name = $name;
         $this->options = $options;
         $this->selected = $selected;
+        $this->disableactive = $disableactive;
     }
 
     /**
@@ -100,6 +111,7 @@ class select_menu implements renderable, templatable {
                                 'value' => $optvalue,
                                 'selected' => $this->selected == $optvalue,
                                 'id' => \html_writer::random_id('select-menu-option'),
+                                'disableactive' => $this->disableactive,
                             ];
                         }
                     }
@@ -113,6 +125,7 @@ class select_menu implements renderable, templatable {
                         'value' => $value,
                         'selected' => $this->selected == $value,
                         'id' => \html_writer::random_id('select-menu-option'),
+                        'disableactive' => $this->disableactive,
                     ];
                 }
             }
@@ -171,6 +184,7 @@ class select_menu implements renderable, templatable {
         $data->selectedoption = $this->get_selected_option();
         $data->name = $this->name;
         $data->value = $this->selected;
+        $data->disableactive = $this->disableactive;
 
         // Label attributes.
         $data->labelattributes = [];

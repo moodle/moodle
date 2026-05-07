@@ -1,30 +1,56 @@
 <?php
 
-function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons=1, $aliases=true) {
-    global $CFG, $USER, $DB, $OUTPUT;
-
-
-    $user = $DB->get_record('user', array('id'=>$entry->userid));
-    $strby = get_string('writtenby', 'glossary');
+/**
+ * Displays a glossary entry in encyclopedia format.
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The course module object.
+ * @param stdClass $glossary The glossary object.
+ * @param stdClass $entry The glossary entry object.
+ * @param string $mode The mode in which the entry is being displayed.
+ * @param string $hook
+ * @param int $printicons Whether to print editing icons.
+ * @param bool $aliases Whether to show aliases popup.
+ * @param int $conceptheadinglevel The heading level to use for rendering the concept within the heading element.
+ * @return void
+ * @package mod_glossary
+ */
+function glossary_show_entry_encyclopedia(
+    $course,
+    $cm,
+    $glossary,
+    $entry,
+    $mode = '',
+    $hook = '',
+    $printicons = 1,
+    $aliases = true,
+    $conceptheadinglevel = 3,
+) {
+    global $CFG, $DB, $OUTPUT;
 
     if ($entry) {
-        echo '<table class="glossarypost encyclopedia table-reboot" cellspacing="0">';
+        $user = $DB->get_record('user', ['id' => $entry->userid]);
+
+        echo '<table class="glossarypost encyclopedia table-reboot" cellspacing="0" role="presentation">';
         echo '<tr valign="top">';
         echo '<td class="left picture">';
 
-        echo $OUTPUT->user_picture($user, array('courseid'=>$course->id));
+        echo $OUTPUT->user_picture($user, [
+            'courseid' => $course->id,
+            'link' => false,
+        ]);
 
         echo '</td>';
         echo '<th class="entryheader">';
         echo '<div class="concept">';
-        glossary_print_entry_concept($entry);
+        glossary_print_entry_concept($entry, headinglevel: $conceptheadinglevel);
         echo '</div>';
 
         $fullname = fullname($user);
         $by = new stdClass();
         $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
         $by->date = userdate($entry->timemodified);
-        echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
+        echo '<span class="author">' . get_string('bynameondate', 'glossary', $by) . '</span>';
 
         echo '</th>';
 
@@ -35,7 +61,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo '</tr>';
 
         echo '<tr valign="top">';
-        echo '<td class="left side" rowspan="2">&nbsp;</td>';
+        echo '<td class="left side" rowspan="2" aria-hidden="true">&nbsp;</td>';
         echo '<td colspan="2" class="entry">';
 
         glossary_print_entry_definition($entry, $glossary, $cm);
@@ -57,23 +83,38 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo "</table>\n";
 
     } else {
-        echo '<div style="text-align:center">';
-        print_string('noentry', 'glossary');
-        echo '</div>';
+        echo html_writer::div(get_string('noentry', 'glossary'), 'text-center');
     }
 }
 
-function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1) {
+/**
+ * Display entries in the encyclopedia glossary format for printing.
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The course module object.
+ * @param stdClass $glossary The glossary object.
+ * @param stdClass $entry The glossary entry object.
+ * @param string $mode The mode in which the entry is being displayed.
+ * @param string $hook
+ * @param int $printicons Whether to print editing icons.
+ * @param int $conceptheadinglevel The heading level to use for rendering the concept within the heading element.
+ * @package mod_glossary
+ */
+function glossary_print_entry_encyclopedia(
+    $course,
+    $cm,
+    $glossary,
+    $entry,
+    $mode = '',
+    $hook = '',
+    $printicons = 1,
+    $conceptheadinglevel = 3
+) {
+    // The print view for this format is exactly the normal view, so we use it.
 
-    //The print view for this format is exactly the normal view, so we use it
+    // Take out auto-linking in definitions in print view.
+    $entry->definition = '<span class="nolink">' . $entry->definition . '</span>';
 
-    //Take out autolinking in definitions un print view
-    $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
-
-    //Call to view function (without icons, ratings and aliases) and return its result
-
-    return glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode, $hook, false, false);
-
+    // Call to view function (without icons, ratings and aliases) and return its result.
+    glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode, $hook, false, false, $conceptheadinglevel);
 }
-
-

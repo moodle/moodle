@@ -43,6 +43,9 @@ use Slim\Routing\RouteContext;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class route_testcase extends \advanced_testcase {
+    /** @var string|null The basepath for test requests. Set to null to use the default. */
+    protected ?string $basepath = null;
+
     /**
      * Update the test route loader using the supplied callback.
      *
@@ -54,6 +57,16 @@ abstract class route_testcase extends \advanced_testcase {
         $routeloader = \core\di::get(mocking_route_loader::class);
         $modifier($routeloader);
         \core\di::set(route_loader_interface::class, $routeloader);
+    }
+
+    /**
+     * Reset the basepath before each test to ensure a clean state.
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\Before]
+    public function reset_basepath(): void {
+        $this->basepath = null;
     }
 
     /**
@@ -145,8 +158,8 @@ abstract class route_testcase extends \advanced_testcase {
      *
      * @return App
      */
-    protected function get_app(): App {
-        $router = $this->get_router();
+    protected function get_app(?string $basepath = null): App {
+        $router = $this->get_router($basepath);
 
         return $router->get_app();
     }
@@ -154,16 +167,43 @@ abstract class route_testcase extends \advanced_testcase {
     /**
      * Get a fully-configured instance of the Moodle Routing Application.
      *
-     * @param string $basepath The basepath for the router
+     * @param ?string $basepath The basepath for the router
      * @return router
      */
-    protected function get_router(string $basepath = ''): router {
+    protected function get_router(?string $basepath = null): router {
+        if ($basepath === null) {
+            $basepath = $this->get_basepath();
+        }
+
         \core\di::set(
             router::class,
             \DI\autowire(router::class)->constructorParameter('basepath', $basepath),
         );
 
         return \core\di::get(router::class);
+    }
+
+    /**
+     * Get the basepath for test requests.
+     *
+     * @return string
+     */
+    protected function get_basepath(): string {
+        if ($this->basepath === null) {
+            $this->basepath = rtrim((new \moodle_url('/'))->get_path(), '/');
+        }
+
+        return $this->basepath;
+    }
+
+    /**
+     * Override the basepath for test requests.
+     *
+     * @param string $basepath
+     * @return void
+     */
+    protected function set_basepath(string $basepath): void {
+        $this->basepath = $basepath;
     }
 
     /**
@@ -230,7 +270,7 @@ abstract class route_testcase extends \advanced_testcase {
         array $serverparams = [],
         ?\core\router\route $route = null,
     ): ServerRequestInterface {
-        $uri = new Uri($prefix . $path);
+        $uri = new Uri($this->get_basepath() . $prefix . $path);
 
         $request = new ServerRequest(
             method: $method,

@@ -826,6 +826,7 @@ M.util.add_spinner = function(Y, node) {
 
     var spinner = Y.Node.create('<img />')
         .setAttribute('src', M.util.image_url(WAITICON.pix, WAITICON.component))
+        .setAttribute('alt', M.util.get_string('loading', 'core'))
         .addClass('spinner icon')
         .hide();
 

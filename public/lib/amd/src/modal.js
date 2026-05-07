@@ -916,7 +916,11 @@ export default class Modal {
     hideIfNotForm() {
         const formElement = this.modal.find(SELECTORS.FORM);
         if (formElement.length == 0) {
-            this.hide();
+            if (this.removeOnClose) {
+                this.destroy();
+            } else {
+                this.hide();
+            }
         }
     }
 

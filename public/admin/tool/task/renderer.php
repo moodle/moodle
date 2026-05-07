@@ -58,7 +58,7 @@ class tool_task_renderer extends plugin_renderer_base {
             get_string('nextruntime', 'tool_task'),
         ];
 
-        $table->attributes['class'] = 'admintable table generaltable table-hover';
+        $table->attributes['class'] = 'admintable table generaltable table-striped table-hover';
         $table->colclasses = [];
 
         // For each task entry (row) show action buttons/logs link depending on the user permissions.
@@ -388,7 +388,7 @@ class tool_task_renderer extends plugin_renderer_base {
             get_string('default', 'tool_task'),
         ];
 
-        $table->attributes['class'] = 'admintable table generaltable table-hover';
+        $table->attributes['class'] = 'admintable table generaltable table-striped table-hover';
         $table->colclasses = [];
 
         if (!$showloglink) {

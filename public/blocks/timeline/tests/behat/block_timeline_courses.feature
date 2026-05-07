@@ -37,8 +37,10 @@ Feature: The timeline block allows users to see upcoming courses
       | student1 | C3 | student |
       | student1 | C4 | student |
 
+  @accessibility
   Scenario: Next 30 days in course view
     Given I log in as "student1"
+    And the "Timeline" "block" should meet accessibility standards with "best-practice" extra tests
     And I click on "Filter timeline by date" "button" in the "Timeline" "block"
     And I click on "Next 30 days" "link" in the "Timeline" "block"
     And I click on "Sort timeline items" "button" in the "Timeline" "block"
@@ -61,6 +63,7 @@ Feature: The timeline block allows users to see upcoming courses
     And "Test feedback 2" "link" should not exist in the "Timeline" "block"
     And "Test feedback 3" "link" should not exist in the "Timeline" "block"
     And "Test assign 1" "link" should not exist in the "Timeline" "block"
+    And the "Timeline" "block" should meet accessibility standards with "best-practice" extra tests
 
   Scenario: All in course view
     Given I log in as "student1"

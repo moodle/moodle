@@ -53,8 +53,87 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
      * @return void
      */
     public function i_should_see_is_active_in_secondary_navigation($element) {
-        $this->execute("behat_general::assert_element_contains_text",
-            [$element, '.secondary-navigation .nav-link.active', 'css_element']);
+        $page = $this->getSession()->getPage();
+
+        $expectedexception = new ExpectationException(
+            "\"{$element}\" is not active in secondary navigation",
+            $this->getSession(),
+        );
+
+        $this->spin(
+            function () use ($page, $element) {
+                $secondarynav = $page->find('css', '.secondary-navigation');
+                if (!$secondarynav) {
+                    return false;
+                }
+
+                // Special case: if the active item is inside the secondary navigation 'More' menu, then the 'More'
+                // toggle itself is the only visible active element.
+                $moretoggle = $page->find('css', '.secondary-navigation [data-region="morebutton"] > .dropdown-toggle');
+                if ($moretoggle && trim($moretoggle->getText()) === $element) {
+                    $ariacurrent = $moretoggle->getAttribute('aria-current');
+                    return $moretoggle->hasClass('active') || $ariacurrent === 'true' || $ariacurrent === 'page';
+                }
+
+                // First, check the visible secondary navigation items (excluding the 'More' toggle).
+                $selectors = [
+                    '.nav-item:not(.dropdownmoremenu) .nav-link.active',
+                    '.nav-item:not(.dropdownmoremenu) .nav-link[aria-current="true"]',
+                    '.nav-item:not(.dropdownmoremenu) .nav-link[aria-current="page"]',
+                ];
+                foreach ($selectors as $selector) {
+                    if ($this->node_list_contains_text($secondarynav->findAll('css', $selector), $element)) {
+                        return true;
+                    }
+                }
+
+                // If not found, the active item may be inside the secondary navigation 'More' menu.
+                if (!$moretoggle) {
+                    return false;
+                }
+
+                // Ensure the dropdown is open so its items are visible.
+                if ($moretoggle->getAttribute('aria-expanded') !== 'true') {
+                    $moretoggle->click();
+                }
+
+                $selectors = [
+                    '.dropdownmoremenu .dropdown-item.active',
+                    '.dropdownmoremenu .dropdown-item[aria-current="true"]',
+                    '.dropdownmoremenu .dropdown-item[aria-current="page"]',
+                ];
+                foreach ($selectors as $selector) {
+                    if ($this->node_list_contains_text($secondarynav->findAll('css', $selector), $element)) {
+                        // Close the menu to avoid it obscuring subsequent steps.
+                        if ($moretoggle->getAttribute('aria-expanded') === 'true') {
+                            $moretoggle->click();
+                        }
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            false,
+            behat_base::get_reduced_timeout(),
+            $expectedexception,
+        );
+    }
+
+    /**
+     * Check whether any of the provided nodes contains the given text and is visible.
+     *
+     * @param array $nodes
+     * @param string $text
+     * @return bool
+     */
+    protected function node_list_contains_text(array $nodes, string $text): bool {
+        foreach ($nodes as $node) {
+            if ($node->isVisible() && strpos($node->getText(), $text) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

@@ -18,7 +18,7 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 
 import { createNote } from './note.mjs';
-import { getInitialValues } from './helpers.mjs';
+import { getInitialValues, getIssueNumberFromBranchName } from './helpers.mjs';
 import * as Prompts from './prompts.mjs';
 import logger from './logger.mjs';
 
@@ -29,7 +29,7 @@ export default async (options) => {
     // Fetch information.
     const messages = [];
     const { issueNumber } = await inquirer.prompt([
-        Prompts.getIssuePrompt(),
+        Prompts.getIssuePrompt(getIssueNumberFromBranchName()),
     ], initialValues);
 
     let selection = {};

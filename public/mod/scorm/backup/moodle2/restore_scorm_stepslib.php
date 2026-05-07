@@ -189,7 +189,9 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
     }
 
     protected function after_execute() {
-        global $DB;
+        global $DB, $CFG;
+
+        require_once("{$CFG->dirroot}/mod/scorm/locallib.php");
 
         // Add scorm related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_scorm', 'intro', null);
@@ -223,5 +225,8 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
         if (!empty($scorm->launch)) {
             $DB->update_record('scorm', $scorm);
         }
+
+        // Finish setting up restored SCORM, extracting content, etc.
+        scorm_parse($scorm, false);
     }
 }

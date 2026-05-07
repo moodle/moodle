@@ -941,6 +941,7 @@ ORDER BY
         $record = new stdClass();
         $record->id = $qa->get_database_id();
         $record->slot = $qa->get_slot();
+        $record->behaviour = $qa->get_behaviour_name();
         $record->questionid = $qa->get_question(false)->id;
         $record->variant = $qa->get_variant();
         $record->maxmark = $qa->get_max_mark();

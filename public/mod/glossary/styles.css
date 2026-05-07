@@ -85,18 +85,9 @@
     margin: 5px 0;
 }
 
-#page-mod-glossary-view table.glossarycategoryheader,
 #page-mod-glossary-import table.glossaryimportexport {
     margin-left: auto;
     margin-right: auto;
-}
-
-#page-mod-glossary-view table.glossarycategoryheader {
-    margin-bottom: 0;
-}
-
-#page-mod-glossary-view table.glossarycategoryheader th {
-    padding: 0;
 }
 
 #page-mod-glossary-view td.glossarysearchbox label {

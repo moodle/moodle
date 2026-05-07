@@ -3342,6 +3342,33 @@ class curl {
     }
 
     /**
+     * Remove options previously set with setopt.
+     *
+     * @param array $options List of options to remove.
+     */
+    public function removeopt(
+        array $options = [],
+    ): void {
+        foreach ($options as $name) {
+            if (!is_string($name)) {
+                throw new coding_exception('Curl options should be defined using strings, not constant values.');
+            }
+            if (!str_contains(strtoupper($name), 'CURLOPT_')) {
+                // Only prefix with CURLOPT_ if the option doesn't contain CURLINFO_,
+                // which is a valid prefix for at least one option CURLINFO_HEADER_OUT.
+                if (!str_contains(strtoupper($name), 'CURLINFO_')) {
+                    $name = strtoupper('CURLOPT_' . $name);
+                }
+            } else {
+                $name = strtoupper($name);
+            }
+            if (isset($this->options[$name])) {
+                unset($this->options[$name]);
+            }
+        }
+    }
+
+    /**
      * Reset http method
      */
     public function cleanopt() {
@@ -4135,10 +4162,9 @@ class curl {
      * @param string $url
      * @param array $params
      * @param array $options
-     * @param bool $includeuserpwd Whether to include CURLOPT_USERPWD if not already set
      * @return ?string
      */
-    public function put($url, $params = [], $options = [], $includeuserpwd = true) {
+    public function put($url, $params = [], $options = []) {
         $file = '';
         $fp = false;
         if (isset($params['file'])) {
@@ -4152,8 +4178,12 @@ class curl {
             } else {
                 return null;
             }
-            if (!isset($this->options['CURLOPT_USERPWD']) && $includeuserpwd) {
+            if (!isset($options['CURLOPT_USERPWD']) && !isset($this->options['CURLOPT_USERPWD'])) {
                 $this->setopt(array('CURLOPT_USERPWD' => 'anonymous: noreply@moodle.org'));
+            }
+            if (isset($options['CURLOPT_USERPWD']) && $options['CURLOPT_USERPWD'] === false) {
+                $this->removeopt(['CURLOPT_USERPWD']);
+                unset($options['CURLOPT_USERPWD']);
             }
         } else {
             $options['CURLOPT_CUSTOMREQUEST'] = 'PUT';

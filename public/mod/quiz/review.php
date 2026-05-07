@@ -109,11 +109,12 @@ if ($attemptobj->is_own_preview()) {
     }
 }
 
+$attemptobj->setup_attempt_layout();
+
 // Set up the page header.
 $headtags = $attemptobj->get_html_head_contributions($page, $showall);
 $PAGE->set_title($attemptobj->review_page_title($page, $showall));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
-$PAGE->activityheader->disable();
 
 $summarydata = attempt_summary_information::create_for_attempt($attemptobj, $options, $page, $showall);
 

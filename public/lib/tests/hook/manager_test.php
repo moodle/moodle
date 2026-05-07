@@ -529,6 +529,141 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Data provider for test_get_cache.
+     *
+     * @return array
+     */
+    public static function get_cache_provider(): array {
+        $data = ['callbacks' => ['foo' => []], 'deprecations' => [], 'overrideshash' => 'abc'];
+        $localdata = array_merge($data, ['overrideshash' => 'local']);
+        $shareddata = array_merge($data, ['overrideshash' => 'shared']);
+        return [
+            'no files exist returns null' => [
+                'localdata'         => null,
+                'shareddata'        => null,
+                'expectedresult'    => null,
+                'expectlocalexists' => false,
+            ],
+            'local cache is read' => [
+                'localdata'         => $data,
+                'shareddata'        => null,
+                'expectedresult'    => $data,
+                'expectlocalexists' => true,
+            ],
+            'shared cache is cloned to local when local is missing' => [
+                'localdata'         => null,
+                'shareddata'        => $shareddata,
+                'expectedresult'    => $shareddata,
+                'expectlocalexists' => true,
+            ],
+            'local cache wins when both exist' => [
+                'localdata'         => $localdata,
+                'shareddata'        => $shareddata,
+                'expectedresult'    => $localdata,
+                'expectlocalexists' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Test get_cache behaviour across scenarios.
+     *
+     * @dataProvider get_cache_provider
+     * @param array|null $localdata content to pre-write to the local cache file, or null for no file
+     * @param array|null $shareddata content to pre-write to the shared cache file, or null for no file
+     * @param array|null $expectedresult expected return value of get_cache()
+     * @param bool $expectlocalexists whether the local cache file should exist after the call
+     */
+    public function test_get_cache(
+        ?array $localdata,
+        ?array $shareddata,
+        ?array $expectedresult,
+        bool $expectlocalexists,
+    ): void {
+        $this->resetAfterTest();
+        $manager = $this->create_manager_for_cache_tests();
+
+        $localpath = $this->call_protected_method($manager, 'get_local_cache_path');
+        $sharedpath = $this->call_protected_method($manager, 'get_shared_cache_path');
+
+        @unlink($localpath);
+        @unlink($sharedpath);
+
+        if ($localdata !== null) {
+            file_put_contents($localpath, json_encode($localdata));
+        }
+        if ($shareddata !== null) {
+            file_put_contents($sharedpath, json_encode($shareddata));
+        }
+
+        $result = $this->call_protected_method($manager, 'get_cache');
+
+        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectlocalexists, file_exists($localpath));
+
+        @unlink($localpath);
+        @unlink($sharedpath);
+    }
+
+    /**
+     * Test that set_cache writes to both shared and local files and can be read back.
+     */
+    public function test_set_cache(): void {
+        $this->resetAfterTest();
+        $manager = $this->create_manager_for_cache_tests();
+
+        $localpath = $this->call_protected_method($manager, 'get_local_cache_path');
+        $sharedpath = $this->call_protected_method($manager, 'get_shared_cache_path');
+
+        $callbacks = ['some\\hook' => [
+            ['callback' => 'some\\class::method', 'component' => 'core', 'disabled' => false, 'priority' => 100],
+        ]];
+        $deprecations = ['old_cb' => ['some\\hook']];
+        $hash = sha1('test');
+
+        $this->call_protected_method($manager, 'set_cache', [$callbacks, $deprecations, $hash]);
+
+        $expected = ['callbacks' => $callbacks, 'deprecations' => $deprecations, 'overrideshash' => $hash];
+        $this->assertFileExists($sharedpath);
+        $this->assertFileExists($localpath);
+        $this->assertEquals($expected, json_decode(file_get_contents($sharedpath), true));
+        $this->assertEquals($expected, json_decode(file_get_contents($localpath), true));
+
+        // Verify get_cache reads it back correctly.
+        $this->assertEquals($expected, $this->call_protected_method($manager, 'get_cache'));
+
+        unlink($localpath);
+        unlink($sharedpath);
+    }
+
+    /**
+     * Create a manager instance suitable for cache tests using reflection.
+     * Since manager is a final class, we bypass the private constructor.
+     *
+     * @return manager
+     */
+    private function create_manager_for_cache_tests(): manager {
+        $rc = new \ReflectionClass(manager::class);
+        $instance = $rc->newInstanceWithoutConstructor();
+        $rp = $rc->getProperty('phpunit');
+        $rp->setValue($instance, false);
+        return $instance;
+    }
+
+    /**
+     * Invoke a private method on a manager instance via reflection.
+     *
+     * @param manager $manager
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    private function call_protected_method(manager $manager, string $method, array $args = []): mixed {
+        $rm = new \ReflectionMethod(manager::class, $method);
+        return $rm->invoke($manager, ...$args);
+    }
+
+    /**
      * Normalise the sort order of callbacks to help with asserts.
      *
      * @param array $callbacks

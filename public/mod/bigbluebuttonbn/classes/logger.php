@@ -342,8 +342,96 @@ EOF;
             [
                 'meetingid' => $instance->get_meeting_id(),
             ],
-            json_encode(['recordingid' => $rid])
+            json_encode((object) ['recordingid' => $rid])
         );
+    }
+
+    /**
+     * Log the relevant events for when a recording has been imported.
+     *
+     * @param instance $instance
+     * @param int $rid RecordID
+     */
+    public static function log_recording_imported_event(instance $instance, int $rid): void {
+        // Moodle event logger: Create an event for recording imported.
+        self::log_moodle_event($instance, events::$events['recording_import'], ['other' => $rid]);
+    }
+
+    /**
+     * Log the relevant events for when a recording has been protected.
+     *
+     * @param instance $instance
+     * @param int $rid RecordID
+     */
+    public static function log_recording_protected_event(instance $instance, int $rid): void {
+        // Moodle event logger: Create an event for recording protected.
+        self::log_moodle_event($instance, events::$events['recording_protect'], ['other' => $rid]);
+    }
+
+    /**
+     * Log the relevant events for when a recording has been unprotected.
+     *
+     * @param instance $instance
+     * @param int $rid RecordID
+     */
+    public static function log_recording_unprotected_event(instance $instance, int $rid): void {
+        // Moodle event logger: Create an event for recording unprotected.
+        self::log_moodle_event($instance, events::$events['recording_unprotect'], ['other' => $rid]);
+    }
+
+    /**
+     * Log the relevant events for when a recording has been published.
+     *
+     * @param instance $instance
+     * @param int $rid RecordID
+     */
+    public static function log_recording_published_event(instance $instance, int $rid): void {
+        // Moodle event logger: Create an event for recording published.
+        self::log_moodle_event($instance, events::$events['recording_publish'], ['other' => $rid]);
+    }
+
+    /**
+     * Log the relevant events for when a recording has been unpublished.
+     *
+     * @param instance $instance
+     * @param int $rid RecordID
+     */
+    public static function log_recording_unpublished_event(instance $instance, int $rid): void {
+        // Moodle event logger: Create an event for recording unpublished.
+        self::log_moodle_event($instance, events::$events['recording_unpublish'], ['other' => $rid]);
+    }
+
+    /**
+     * Log the relevant events for when a recording has been edited.
+     *
+     * @param instance $instance
+     * @param int $rid RecordID
+     */
+    public static function log_recording_edited_event(instance $instance, int $rid): void {
+        // Moodle event logger: Create an event for recording edited.
+        self::log_moodle_event($instance, events::$events['recording_edit'], ['other' => $rid]);
+    }
+
+    /**
+     * Log the relevant events for when an imported recording link has been deleted.
+     *
+     * @param instance $instance
+     * @param int $rid RecordID
+     */
+    public static function log_recording_link_deleted_event(instance $instance, int $rid): void {
+        // Moodle event logger: Create an event for recording link deleted.
+        self::log_moodle_event($instance, events::$events['recording_link_delete'], ['other' => $rid]);
+    }
+
+    /**
+     * Log the relevant events for when a recording has been deleted.
+     *
+     * @param instance $instance
+     * @param int $rid RecordID
+     */
+    public static function log_recording_deleted_event(instance $instance, int $rid): void {
+        // Moodle event logger: Create an event for recording deleted.
+        self::log_moodle_event($instance, events::$events['recording_delete'], ['other' => $rid]);
     }
 
     /**

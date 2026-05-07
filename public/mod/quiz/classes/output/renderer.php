@@ -534,6 +534,10 @@ class renderer extends plugin_renderer_base {
      */
     public function during_attempt_tertiary_nav($quizviewurl): string {
         $output = '';
+        if ($this->page->pagelayout === 'secure') {
+            // Do not show the back button in the secure layout on quiz pages.
+            return $output;
+        }
         $output .= html_writer::start_div('tertiary-navigation');
         $output .= html_writer::start_div('row');
         $output .= html_writer::start_div('navitem');

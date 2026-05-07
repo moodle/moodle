@@ -144,30 +144,9 @@
 }
 
 /** Styles for subscribers.php */
-#page-mod-forum-subscribers .subscriberdiv,
-#page-mod-forum-subscribers .subscribertable {
+#page-mod-forum-subscribers .subscriberdiv {
     width: 100%;
     vertical-align: top;
-}
-
-#page-mod-forum-subscribers .subscribertable tr td {
-    vertical-align: top;
-}
-
-#page-mod-forum-subscribers .subscribertable tr td.actions {
-    width: 16%;
-    padding-top: 3em;
-}
-
-#page-mod-forum-subscribers .subscribertable tr td.actions .actionbutton {
-    margin: 0.3em 0;
-    padding: 0.5em 0;
-    width: 100%;
-}
-
-#page-mod-forum-subscribers .subscribertable tr td.existing,
-#page-mod-forum-subscribers .subscribertable tr td.potential {
-    width: 42%;
 }
 
 /** Styles for discuss.php **/

@@ -2054,6 +2054,11 @@ $footer-link-color: $bg-inverse-link-color !default;
     .popover-body {
         padding: 0;
         .footer-section {
+            // Add a bottom padding to the direct child divs of the footer-section container so the links within will meet SC 2.5.8.
+            > div {
+                padding-bottom: 0.2rem;
+            }
+
             a {
                 color: $body-color;
                 text-decoration: underline;
@@ -2070,6 +2075,13 @@ $footer-link-color: $bg-inverse-link-color !default;
 
 .footer-support-link {
     padding-bottom: 5px;
+}
+
+.footer-content-popover {
+    // Ensure that the footer links when rendered out of the popover will also have sufficient spacing and meet SC 2.5.8.
+    .footer-section > div {
+        padding-bottom: 0.1rem;
+    }
 }
 
 @include media-breakpoint-up(sm) {

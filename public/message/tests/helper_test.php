@@ -221,6 +221,13 @@ final class helper_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $html = \core_message\helper::prevent_unclosed_html_tags($message, $removebody);
+
+        // Libxml2 >= 2.14.0 closes unclosed comments instead of removing them.
+        // Check if we're testing the unclosed comment case and adjust expectation based on libxml version.
+        if ($message === '<h1>Title</h1><p>Paragraph</p><!-- Comments' && LIBXML_VERSION >= 21400) {
+            $goodhtml = '<h1>Title</h1><p>Paragraph</p><!-- Comments-->';
+        }
+
         $this->assertSame($goodhtml, $html);
     }
 
@@ -247,6 +254,12 @@ final class helper_test extends \advanced_testcase {
             ],
             'Check encoding UTF-8 is working' => [
                 '<body><h1>Title</h1><p>السلام عليكم</p></body>', '<body><h1>Title</h1><p>السلام عليكم</p></body>', false
+            ],
+            'Script tag only returns empty' => [
+                '<script>alert("test")</script>', '', true,
+            ],
+            'Script tag with text' => [
+                '<script>alert("test")</script>Some text', '<p>Some text</p>', true,
             ],
         ];
     }

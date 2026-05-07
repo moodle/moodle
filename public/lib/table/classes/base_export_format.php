@@ -80,7 +80,11 @@ class base_export_format {
      * @param null|int $courseid
      */
     public function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseid = null) {
-        return html_entity_decode(strip_tags($text), ENT_COMPAT);
+        // Decode all HTML entities first (e.g. &amp; -> &).
+        $text = html_entity_decode($text, ENT_COMPAT);
+        // Detect and remove HTML tags. Unlike strip_tags, this will allow things like '2 > 1' through.
+        $text = preg_replace('/<\/?[A-Za-z][^>\r\n]*>/', '', $text);
+        return $text;
     }
 
     /**

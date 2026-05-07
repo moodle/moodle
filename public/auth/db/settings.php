@@ -54,14 +54,10 @@ if ($ADMIN->fulltree) {
         new lang_string('auth_dbtype_key', 'auth_db'),
         new lang_string('auth_dbtype', 'auth_db'), 'mysqli', $dboptions));
 
-    // Sybase quotes.
     $yesno = array(
         new lang_string('no'),
         new lang_string('yes'),
     );
-
-    $settings->add(new admin_setting_configselect('auth_db/sybasequoting',
-        new lang_string('auth_dbsybasequoting', 'auth_db'), new lang_string('auth_dbsybasequotinghelp', 'auth_db'), 0, $yesno));
 
     // DB Name.
     $settings->add(new admin_setting_configtext('auth_db/name', get_string('auth_dbname_key', 'auth_db'),

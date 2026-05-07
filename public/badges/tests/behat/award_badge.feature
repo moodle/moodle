@@ -11,11 +11,13 @@ Feature: Award badges
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+      | teacher2 | C1     | editingteacher |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And the following "activity" exists:
@@ -371,14 +373,24 @@ Feature: Award badges
     And I am on "Course 1" course homepage
     And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
-    Then I should see "Recipients (2)"
     And I select "Recipients (2)" from the "jump" singleselect
     And I press "Award badge"
     And I set the field "existingrecipients[]" to "Student 2 (student2@example.com)"
     And I press "Revoke badge"
-    And I set the field "existingrecipients[]" to "Student 1 (student1@example.com)"
-    When I press "Revoke badge"
     And I am on "Course 1" course homepage
     And I navigate to "Badges" in current page administration
     And I follow "Course Badge"
-    Then I should see "Recipients (0)"
+    Then I should see "Recipients (1)"
+    And I log out
+    # Now attempt to revoke a badge as another teacher.
+    And I am on the "Course 1" "course" page logged in as "teacher2"
+    And I navigate to "Badges" in current page administration
+    And I follow "Course Badge"
+    And I select "Recipients (1)" from the "jump" singleselect
+    And I press "Award badge"
+    And I set the field "existingrecipients[]" to "Student 1 (student1@example.com)"
+    And I press "Revoke badge"
+    And I am on "Course 1" course homepage
+    And I navigate to "Badges" in current page administration
+    And I follow "Course Badge"
+    And I should see "Recipients (0)"
