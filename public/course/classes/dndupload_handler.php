@@ -56,6 +56,8 @@ class dndupload_handler {
     public function __construct($course, $modnames = null) {
         global $CFG, $PAGE;
 
+        require_once("{$CFG->dirroot}/course/lib.php");
+
         // Add some default types to handle.
         // Note: 'Files' type is hard-coded into the Javascript as this needs to be ...
         // ... treated a little differently.

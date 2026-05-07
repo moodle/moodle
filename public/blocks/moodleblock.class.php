@@ -240,9 +240,8 @@ class block_base {
             $bc->title = $this->title;
         }
 
-        if (empty($bc->title)) {
-            $bc->arialabel = new lang_string('pluginname', get_class($this));
-            $this->arialabel = $bc->arialabel;
+        if ((string) $bc->title === '') {
+            $this->arialabel = $bc->arialabel = get_string('pluginname', get_class($this));
         }
 
         if ($this->page->user_is_editing() && $this->instance_can_be_edited()) {

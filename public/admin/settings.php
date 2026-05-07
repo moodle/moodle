@@ -72,6 +72,7 @@ if ($data = data_submitted() and confirm_sesskey() and isset($data->action) and 
     } else {
         $errormsg = get_string('errorwithsettings', 'admin');
         $firsterror = reset($adminroot->errors);
+        $PAGE->set_focuscontrol($firsterror->id);
     }
     $settingspage = $adminroot->locate($section, true);
 }

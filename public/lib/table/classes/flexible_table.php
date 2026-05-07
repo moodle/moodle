@@ -1247,7 +1247,7 @@ class flexible_table {
 
         if (!empty($this->prefs['collapse'][$column])) {
             $linkattributes = [
-                'title' => get_string('show') . ' ' . strip_tags($this->headers[$index]),
+                'title' => get_string('showx', 'core', strip_tags($this->headers[$index])),
                 'aria-expanded' => 'false',
                 'aria-controls' => $ariacontrols,
                 'data-action' => 'show',
@@ -1261,7 +1261,7 @@ class flexible_table {
             );
         } else if ($this->headers[$index] !== null) {
             $linkattributes = [
-                'title' => get_string('hide') . ' ' . strip_tags($this->headers[$index]),
+                'title' => get_string('hidex', 'core', strip_tags($this->headers[$index])),
                 'aria-expanded' => 'true',
                 'aria-controls' => $ariacontrols,
                 'data-action' => 'hide',

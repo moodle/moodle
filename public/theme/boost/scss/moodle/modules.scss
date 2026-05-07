@@ -85,6 +85,12 @@ select {
     }
 }
 
+.path-mod-choice {
+    .responseaction select.singleselect {
+        display: inline-block;
+    }
+}
+
 // Forum module
 
 .path-mod-forum .forumsearch {

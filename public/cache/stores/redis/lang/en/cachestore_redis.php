@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['ca_file'] = 'CA file path';
+$string['ca_file'] = 'Certificate Authority (CA) file path';
 $string['ca_file_help'] = 'Location of Certificate Authority file on local filesystem';
 $string['clustermode'] = 'Cluster mode';
 $string['clustermode_help'] = 'Enabling cluster mode will run the Redis Cluster function, allowing your server to serve multiple servers to handle concurrent requests simultaneously.';
@@ -34,8 +34,8 @@ $string['compressor_php_gzip'] = 'Use gzip compression.';
 $string['compressor_php_zstd'] = 'Use Zstandard compression.';
 $string['connectiontimeout'] = 'Connection timeout';
 $string['connectiontimeout_help'] = 'This sets the timeout when attempting to connect to the Redis server.';
-$string['encrypt_connection'] = 'Use TLS encryption.';
-$string['encrypt_connection_help'] = 'Use TLS to connect to Redis. Do not use \'tls://\' in the hostname for Redis, use this option instead.';
+$string['encrypt_connection'] = 'Use Transport Layer Security (TLS) encryption';
+$string['encrypt_connection_help'] = 'Use Transport Layer Security (TLS) to connect to Redis. Do not use \'tls://\' in the hostname for Redis; use this option instead.';
 $string['password'] = 'Password';
 $string['password_help'] = 'This sets the password of the Redis server.';
 $string['pluginname'] = 'Redis';
@@ -91,7 +91,7 @@ If cluster mode is enabled, specify servers separated by a new line, for example
   172.23.0.13<br>
 
 For further information, see <a href="https://redis.io/docs/reference/clients/#accepting-client-connections">Accepting Client Connections</a> and <a href="https://redis.io/resources/clients/#php">Redis PHP clients</a>.';
-$string['test_ttl'] = 'Testing TTL';
+$string['test_ttl'] = 'Testing Time-to-Live (TTL)';
 $string['test_ttl_desc'] = 'Run the performance test using a cache that requires TTL (slower sets).';
 $string['usecompressor'] = 'Use compressor';
 $string['usecompressor_help'] = 'Specifies the compressor to use after serializing. It is done at Moodle Cache API level, not at php-redis level.';

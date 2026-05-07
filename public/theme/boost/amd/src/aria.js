@@ -369,6 +369,18 @@ const comboboxFix = () => {
     });
 
     const selectOption = (combobox, option) => {
+        if (combobox.dataset.inputElement) {
+            const inputElement = document.getElementById(combobox.dataset.inputElement);
+            if (inputElement && (inputElement.value != option.dataset.value)) {
+                inputElement.value = option.dataset.value;
+                inputElement.dispatchEvent(new Event('change', {bubbles: true}));
+            }
+        }
+
+        if (option.dataset.disableactive) {
+            return;
+        }
+
         const listbox = option.closest('[role="listbox"]');
         const oldSelectedOption = listbox.querySelector('[role="option"][aria-selected="true"]');
 
@@ -387,14 +399,6 @@ const comboboxFix = () => {
                 selectedOptionContainer.textContent = option.dataset.shortText || option.textContent;
             } else {
                 combobox.textContent = option.dataset.shortText || option.textContent;
-            }
-        }
-
-        if (combobox.dataset.inputElement) {
-            const inputElement = document.getElementById(combobox.dataset.inputElement);
-            if (inputElement && (inputElement.value != option.dataset.value)) {
-                inputElement.value = option.dataset.value;
-                inputElement.dispatchEvent(new Event('change', {bubbles: true}));
             }
         }
     };

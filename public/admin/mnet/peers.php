@@ -37,12 +37,6 @@ require_once($CFG->dirroot.'/'.$CFG->admin.'/mnet/peer_forms.php');
 $hostid = optional_param('hostid', 0, PARAM_INT);
 $updra = optional_param('updateregisterall', 0, PARAM_INT);
 
-// first process the register all hosts setting if required
-if (!empty($updra)) {
-    set_config('mnet_register_allhosts', optional_param('registerallhosts', 0, PARAM_INT));
-    redirect(new moodle_url('/admin/mnet/peers.php'), get_string('changessaved'));
-}
-
 $adminsection = 'mnetpeers';
 if ($hostid && $DB->get_field('mnet_host', 'deleted', array('id' => $hostid)) != 1) {
     $adminsection = 'mnetpeer' . $hostid;
@@ -50,6 +44,11 @@ if ($hostid && $DB->get_field('mnet_host', 'deleted', array('id' => $hostid)) !=
 
 $PAGE->set_url('/admin/mnet/peers.php');
 admin_externalpage_setup($adminsection);
+
+if (!empty($updra) && confirm_sesskey()) {
+    set_config('mnet_register_allhosts', optional_param('registerallhosts', 0, PARAM_INT));
+    redirect(new moodle_url('/admin/mnet/peers.php'), get_string('changessaved'));
+}
 
 if (!extension_loaded('openssl')) {
     throw new \moodle_exception('requiresopenssl', 'mnet');
@@ -189,7 +188,7 @@ $table->head = array(get_string('registerallhosts', 'mnet'));
 
 $registerrow = '';
 $registerstr = '';
-$registerurl = new moodle_url('/admin/mnet/peers.php', array('updateregisterall' => 1));
+$registerurl = new moodle_url('/admin/mnet/peers.php', array('updateregisterall' => 1, 'sesskey' => sesskey()));
 if (!empty($CFG->mnet_register_allhosts)) {
     $registerrow = get_string('registerhostson', 'mnet');
     $registerurl->param('registerallhosts', 0);

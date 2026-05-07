@@ -582,6 +582,14 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         /** @var \core\plugininfo\qtype $plugin */
         $plugin->load_settings($ADMIN, 'qtypesettings', $hassiteconfig);
     }
+
+    // Settings for particular question behaviours.
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('qbehaviour');
+    core_collator::asort_objects_by_property($plugins, 'displayname');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\qtype $plugin */
+        $plugin->load_settings($ADMIN, 'qbehavioursettings', $hassiteconfig);
+    }
 }
 
 // Plagiarism plugin settings

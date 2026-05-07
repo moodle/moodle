@@ -103,7 +103,7 @@ $string['testscenario'] = 'Create testing scenarios';
 $string['testscenario_description'] = 'Creating testing scenarios uses a limited feature files syntax to create all necessary elements to run a manual test.';
 $string['testscenario_filedesc'] = 'The upload feature files can only contain scenarios with core_data_generator steps or some specific steps that do not require selenium. All scenarios will be executed at once except the ones with @cleanup tag.';
 $string['testscenario_filedesc_cleanup'] = 'Scenarios with @cleanup tag will be executed only if the "Execute" setting
-is set to "Cleanup". To execute the cleanup via CLI, you can use the --cleanup option.';
+is set to "Cleanup". To execute the cleanup via Command Line Interface (CLI), use the --cleanup option.';
 $string['testscenario_filedesc_list'] = 'This is the list of steps that can be used in the test scenario feature file:';
 $string['testscenario_errorparsing'] = 'Error parsing feature file: {$a}';
 $string['testscenario_file'] = 'Feature file';

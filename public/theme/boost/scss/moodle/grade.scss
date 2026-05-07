@@ -215,32 +215,6 @@
                 }
             }
         }
-
-        .addlevel {
-            vertical-align: top;
-            padding-top: 6px;
-
-            input {
-                height: 30px;
-                line-height: 1rem;
-            }
-        }
-    }
-
-    .addcriterion {
-        margin-left: 5px;
-        padding: 0;
-
-        input {
-            margin: 0;
-            color: inherit;
-            text-shadow: inherit;
-            border: 0 none;
-            line-height: inherit;
-            background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
-            padding-left: 26px;
-        }
-        margin-bottom: 1em;
     }
 
     .options {

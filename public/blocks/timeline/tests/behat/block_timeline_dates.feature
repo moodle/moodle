@@ -50,9 +50,11 @@ Feature: The timeline block allows users to see upcoming activities
     And "Test assign 1" "link" should not exist in the "Timeline" "block"
     And I should not see "Assignment is due · Course 1" in the "Timeline" "block"
 
+  @accessibility
   Scenario: Overdue in date view
     Given I log in as "student1"
     And I click on "Filter timeline by date" "button" in the "Timeline" "block"
+    And the "Timeline" "block" should meet accessibility standards with "best-practice" extra tests
     When I click on "Overdue" "link" in the "Timeline" "block"
     Then "Test assign 1" "link" should exist in the "Timeline" "block"
     And I should see "Assignment is due · Course 1" in the "Timeline" "block"
@@ -63,6 +65,7 @@ Feature: The timeline block allows users to see upcoming activities
     And "Test choice 3" "link" should not exist in the "Timeline" "block"
     And "Test feedback 3" "link" should not exist in the "Timeline" "block"
     And "Test feedback 4" "link" should not exist in the "Timeline" "block"
+    And the "Timeline" "block" should meet accessibility standards with "best-practice" extra tests
 
   Scenario: All in date view
     Given I log in as "student1"

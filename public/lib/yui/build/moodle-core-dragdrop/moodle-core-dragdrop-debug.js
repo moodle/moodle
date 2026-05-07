@@ -183,6 +183,7 @@ Y.extend(DRAGDROP, Y.Base, {
         var dragelement = Y.Node.create('<span></span>')
             .addClass(classname)
             .setAttribute('title', title)
+            .setAttribute('aria-label', title)
             .setAttribute('tabIndex', 0)
             .setAttribute('data-draggroups', this.groups)
             .setAttribute('role', 'button');

@@ -19,6 +19,7 @@ namespace qbank_tagquestion;
 use core\output\datafilter;
 use core_question\local\bank\question_edit_contexts;
 use context_module;
+use core_question\test\mock_restore_test_trait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -35,6 +36,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 #[CoversMethod(\qbank_tagquestion\tag_condition::class, 'build_query_from_filter')]
 #[CoversMethod(\qbank_tagquestion\tag_condition::class, 'get_condition_key')]
 final class tag_condition_test extends \advanced_testcase {
+    use mock_restore_test_trait;
+
     /**
      * Create test environment with questions and tags.
      *
@@ -350,5 +353,205 @@ final class tag_condition_test extends \advanced_testcase {
 
         $this->assertSame('', $where);
         $this->assertSame([], $params);
+    }
+
+    /**
+     * Restore a filter to the same site, where the tags still exist. The tag IDs remain the same.
+     */
+    public function test_restore_filtercondition(): void {
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $tag1 = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+        $filtercondition = [
+            'filter' => [
+                'qtagids' => [
+                    'values' => [
+                        $tag1->id,
+                        $tag2->id,
+                    ],
+                ],
+            ],
+        ];
+        $setreference = (object) [
+            'questionscontextid' => $category->contextid,
+            'usingcontextid' => $category->contextid,
+        ];
+        $mockstep = $this->get_mock_step($this->get_samesite_task());
+        $mockstep->method('get_mappingid')->willReturn($tag2->id + 1);
+
+        $condition = new tag_condition();
+
+        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep);
+
+        $this->assertEquals([$tag1->id, $tag2->id], $filtercondition['filter']['qtagids']['values']);
+    }
+
+    /**
+     * Restore a filter to a different site, tags should be replaced with mapped IDs.
+     */
+    public function test_restore_filtercondition_different_site(): void {
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $tag1 = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+        $filtercondition = [
+            'filter' => [
+                'qtagids' => [
+                    'values' => [
+                        $tag1->id,
+                        $tag2->id,
+                    ],
+                ],
+            ],
+        ];
+        $setreference = (object) [
+            'questionscontextid' => $category->contextid,
+            'usingcontextid' => $category->contextid,
+        ];
+        $mockstep = $this->get_mock_step($this->get_not_samesite_task());
+        $mockstep->method('get_mappingid')->willReturn($tag2->id + 1, $tag2->id + 2);
+
+        $condition = new tag_condition();
+
+        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep);
+
+        $this->assertEquals([$tag2->id + 1, $tag2->id + 2], $filtercondition['filter']['qtagids']['values']);
+    }
+
+    /**
+     * Restore to the same site where the tag has been deleted, and it's not being restored. It should be removed from the filter.
+     */
+    public function test_restore_filtercondition_deleted_tag(): void {
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $tag1 = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+        $filtercondition = [
+            'filter' => [
+                'qtagids' => [
+                    'values' => [
+                        $tag1->id,
+                        $tag2->id,
+                    ],
+                ],
+            ],
+        ];
+        $setreference = (object) [
+            'questionscontextid' => $category->contextid,
+            'usingcontextid' => $category->contextid,
+        ];
+        $mockstep = $this->get_mock_step($this->get_samesite_task());
+
+        \core_tag_tag::delete_tags($tag2->id);
+
+        $condition = new tag_condition();
+
+        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep);
+
+        $this->assertEquals([$tag1->id], $filtercondition['filter']['qtagids']['values']);
+    }
+
+    /**
+     * Restore to the same site where the tag has been deleted, and it is being restored. It should be mapped in the filter.
+     */
+    public function test_restore_filtercondition_restored_tag(): void {
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $tag1 = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+        $filtercondition = [
+            'filter' => [
+                'qtagids' => [
+                    'values' => [
+                        $tag1->id,
+                        $tag2->id,
+                    ],
+                ],
+            ],
+        ];
+        $setreference = (object) [
+            'questionscontextid' => $category->contextid,
+            'usingcontextid' => $category->contextid,
+        ];
+        $mockstep = $this->get_mock_step($this->get_samesite_task());
+        $mockstep->method('get_mappingid')->willReturn($tag2->id + 1);
+
+        \core_tag_tag::delete_tags($tag2->id);
+
+        $condition = new tag_condition();
+
+        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep);
+
+        $this->assertEquals([$tag1->id, $tag2->id + 1], $filtercondition['filter']['qtagids']['values']);
+    }
+
+    /**
+     * Restore to a different site, with no mappings to new IDs. The whole filter should be removed from the filtercondition.
+     */
+    public function test_restore_filtercondition_no_mappings(): void {
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $tag1 = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+        $filtercondition = [
+            'filter' => [
+                'qtagids' => [
+                    'values' => [
+                        $tag1->id,
+                        $tag2->id,
+                    ],
+                ],
+            ],
+        ];
+        $setreference = (object) [
+            'questionscontextid' => $category->contextid,
+            'usingcontextid' => $category->contextid,
+        ];
+        $mockstep = $this->get_mock_step($this->get_not_samesite_task());
+
+        $condition = new tag_condition();
+
+        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep);
+
+        $this->assertArrayNotHasKey('qtagids', $filtercondition['filter']);
+    }
+
+    /**
+     * Restoring the filter when the original question bank was in the backup doesn't change the behaviour.
+     */
+    public function test_restore_filtercondition_originalbankinbackup(): void {
+        $this->resetAfterTest();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $tag1 = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+        $filtercondition = [
+            'filter' => [
+                'qtagids' => [
+                    'values' => [
+                        $tag1->id,
+                        $tag2->id,
+                    ],
+                ],
+            ],
+        ];
+        $setreference = (object) [
+            'questionscontextid' => $category->contextid,
+            'usingcontextid' => $category->contextid,
+        ];
+        $mockstep = $this->get_mock_step($this->get_samesite_task());
+        $mockstep->method('get_mappingid')->willReturn($tag2->id + 1);
+
+        $condition = new tag_condition();
+
+        $filtercondition = $condition->restore_filtercondition($filtercondition, $setreference, $mockstep, true);
+
+        $this->assertEquals([$tag1->id, $tag2->id], $filtercondition['filter']['qtagids']['values']);
     }
 }

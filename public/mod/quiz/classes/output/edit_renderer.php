@@ -101,8 +101,11 @@ class edit_renderer extends \plugin_renderer_base {
 
             if ($structure->is_last_section($section)) {
                 $output .= \html_writer::start_div('last-add-menu');
-                $output .= html_writer::tag('span', $this->add_menu_actions($structure, 0,
-                        $pageurl, $contexts, $pagevars), ['class' => 'add-menu-outer']);
+                $output .= html_writer::tag(
+                    'span',
+                    $this->add_menu_actions($structure, 0, $pageurl, $contexts, $pagevars),
+                    ['class' => 'add-menu-outer pe-3']
+                );
                 $output .= \html_writer::end_div();
             }
 
@@ -588,9 +591,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         if ($structure->is_first_slot_on_page($slot)) {
             // Add the add-menu at the page level.
-            $addmenu = html_writer::tag('span', $this->add_menu_actions($structure,
-                    $pagenumber, $pageurl, $contexts, $pagevars),
-                    ['class' => 'add-menu-outer']);
+            $addmenu = html_writer::tag(
+                'span',
+                $this->add_menu_actions($structure, $pagenumber, $pageurl, $contexts, $pagevars),
+                ['class' => 'add-menu-outer pe-2']
+            );
 
             $addquestionform = $this->add_question_form($structure,
                     $pagenumber, $pageurl, $pagevars);
@@ -889,9 +894,15 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string The markup for the move action.
      */
     public function question_move_icon(structure $structure, $slot) {
-        return html_writer::link(new \moodle_url('#'),
-            $this->pix_icon('i/dragdrop', get_string('move'), 'moodle', ['class' => 'iconsmall', 'title' => '']),
-            ['class' => 'editing_move', 'data-action' => 'move']
+        $slotnumber = $structure->get_displayed_number_for_slot($slot);
+        return html_writer::link(
+            new \moodle_url('#'),
+            $this->pix_icon('i/dragdrop', '', 'moodle', ['class' => 'iconsmall']),
+            [
+                'class' => 'editing_move',
+                'data-action' => 'move',
+                'aria-label' => get_string('movequestionnumber', 'quiz', $slotnumber),
+            ]
         );
     }
 
@@ -983,13 +994,14 @@ class edit_renderer extends \plugin_renderer_base {
         $url = new \moodle_url('repaginate.php', ['quizid' => $structure->get_quizid(),
                 'slot' => $slot, 'repag' => $insertpagebreak ? 2 : 1, 'sesskey' => sesskey()]);
 
+        $slotname = $structure->get_displayed_number_for_slot($slot);
         if ($insertpagebreak) {
-            $title = get_string('addpagebreak', 'quiz');
-            $image = $this->image_icon('e/insert_page_break', $title);
+            $title = get_string('addpagebreakafter', 'quiz', $slotname);
+            $image = $this->image_icon('e/insert_page_break', '');
             $action = 'addpagebreak';
         } else {
-            $title = get_string('removepagebreak', 'quiz');
-            $image = $this->image_icon('e/remove_page_break', $title);
+            $title = get_string('removepagebreakafter', 'quiz', $slotname);
+            $image = $this->image_icon('e/remove_page_break', '');
             $action = 'removepagebreak';
         }
 
@@ -998,9 +1010,22 @@ class edit_renderer extends \plugin_renderer_base {
         if (!$structure->can_be_edited()) {
             $disabled = 'disabled';
         }
-        return html_writer::span($this->action_link($url, $image, null, ['title' => $title,
-                    'class' => 'page_split_join cm-edit-action', 'disabled' => $disabled, 'data-action' => $action]),
-                'page_split_join_wrapper');
+        return html_writer::span(
+            $this->action_link(
+                $url,
+                $image,
+                null,
+                [
+                    'title' => $title,
+                    'aria-label' => $title,
+                    'class' => 'page_split_join cm-edit-action btn btn-sm icon-no-margin',
+                    'disabled' => $disabled,
+                    'data-action' => $action,
+                    'role' => 'button',
+                ]
+            ),
+            'page_split_join_wrapper'
+        );
     }
 
     /**
@@ -1018,13 +1043,11 @@ class edit_renderer extends \plugin_renderer_base {
         ];
         if ($structure->is_question_dependent_on_previous_slot($slot)) {
             $title = get_string('questiondependencyremove', 'quiz', $a);
-            $image = $this->pix_icon('t/locked', get_string('questiondependsonprevious', 'quiz'),
-                    'moodle', ['title' => '']);
+            $image = $this->pix_icon('t/locked', '');
             $action = 'removedependency';
         } else {
             $title = get_string('questiondependencyadd', 'quiz', $a);
-            $image = $this->pix_icon('t/unlocked', get_string('questiondependencyfree', 'quiz'),
-                    'moodle', ['title' => '']);
+            $image = $this->pix_icon('t/unlocked', '');
             $action = 'adddependency';
         }
 
@@ -1037,9 +1060,22 @@ class edit_renderer extends \plugin_renderer_base {
         if (!$structure->can_question_depend_on_previous_slot($slot)) {
             $extraclass = ' question_dependency_cannot_depend';
         }
-        return html_writer::span($this->action_link('#', $image, null, ['title' => $title,
-                'class' => 'cm-edit-action', 'disabled' => $disabled, 'data-action' => $action]),
-                'question_dependency_wrapper' . $extraclass);
+        return html_writer::span(
+            $this->action_link(
+                '#',
+                $image,
+                null,
+                [
+                    'title' => $title,
+                    'aria-label' => $title,
+                    'class' => 'cm-edit-action btn btn-link btn-sm icon-no-margin',
+                    'disabled' => $disabled,
+                    'data-action' => $action,
+                    'role' => 'button',
+                ]
+            ),
+            'question_dependency_wrapper' . $extraclass
+        );
     }
 
     /**
@@ -1303,7 +1339,7 @@ class edit_renderer extends \plugin_renderer_base {
         ], 'moodle');
 
         $this->page->requires->strings_for_js([
-                'addpagebreak',
+                'addpagebreakafter',
                 'cannotremoveallsectionslots',
                 'cannotremoveslots',
                 'confirmremovesectionheading',
@@ -1314,7 +1350,7 @@ class edit_renderer extends \plugin_renderer_base {
                 'sectionheadingedit',
                 'sectionheadingremove',
                 'sectionnoname',
-                'removepagebreak',
+                'removepagebreakafter',
                 'questiondependencyadd',
                 'questiondependencyfree',
                 'questiondependencyremove',

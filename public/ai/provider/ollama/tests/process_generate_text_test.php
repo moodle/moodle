@@ -153,17 +153,17 @@ final class process_generate_text_test extends \advanced_testcase {
             401 => new Response(
                 401,
                 ['Content-Type' => 'application/json'],
-                json_encode(['error' => ['message' => 'Invalid Authentication']]),
+                json_encode(['error' => 'Invalid Authentication']),
             ),
             404 => new Response(
                 404,
                 ['Content-Type' => 'application/json'],
-                json_encode(['error' => ['message' => 'You must be a member of an organization to use the API']]),
+                json_encode(['error' => 'You must be a member of an organization to use the API']),
             ),
             429 => new Response(
                 429,
                 ['Content-Type' => 'application/json'],
-                json_encode(['error' => ['message' => 'Rate limit reached for requests']]),
+                json_encode(['error' => 'Rate limit reached for requests']),
             ),
         ];
 
@@ -326,7 +326,7 @@ final class process_generate_text_test extends \advanced_testcase {
         $mock->append(new Response(
             401,
             ['Content-Type' => 'application/json'],
-            json_encode(['error' => ['message' => 'Invalid Authentication']]),
+            json_encode(['error' => 'Invalid Authentication']),
         ));
 
         $processor = new process_generate_text($this->provider, $this->action);

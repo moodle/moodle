@@ -70,6 +70,11 @@ class curl_security_helper extends curl_security_helper_base {
     protected $allowedport;
 
     /**
+     * @var bool Whether url_is_blocked() has been called on this instance.
+     */
+    protected $urlblockchecked = false;
+
+    /**
      * Checks whether the given URL is blocked by checking its address and port number against the allow/block lists.
      * The behaviour of this function can be classified as strict, as it returns true for URLs which are invalid or
      * could not be parsed, as well as those valid URLs which were found in the blocklist.
@@ -86,6 +91,7 @@ class curl_security_helper extends curl_security_helper_base {
 
         // If no config data is present, then all hosts/ports are allowed.
         if (!$this->is_enabled()) {
+            $this->urlblockchecked = true;
             return false;
         }
 
@@ -107,6 +113,7 @@ class curl_security_helper extends curl_security_helper_base {
             $parsed['port'] = $this->transportschemes[$parsed['scheme']];
         }
 
+        $this->urlblockchecked = true;
         if ($parsed['port'] && $parsed['host']) {
             // Check the host and port against the allow/block entries.
             return $this->host_is_blocked($parsed['host']) || $this->port_is_blocked($parsed['port']);
@@ -333,9 +340,17 @@ class curl_security_helper extends curl_security_helper_base {
      * @throws \coding_exception
      */
     public function get_resolve_info(): array {
-        if (empty($this->host || empty($this->allowedips) || empty($this->allowedport))) {
-            $exception = 'In the curl_security_helper class, url_is_blocked() must be called before get_resolve_info() is called.';
-            throw new \core\exception\coding_exception($exception);
+        if (!$this->urlblockchecked) {
+            throw new \core\exception\coding_exception(
+                'In the curl_security_helper class, url_is_blocked() must be called before get_resolve_info() is called.'
+            );
+        }
+
+        // Security may be disabled (no blocked hosts or allowed ports configured)
+        // or the URL may be an IP address, meaning there is nothing to pin.
+        // Return an empty array (no DNS pinning applied).
+        if (empty($this->host) || empty($this->allowedips) || empty($this->allowedport)) {
+            return [];
         }
 
         return array_map(fn($ip) => "$this->host:$this->allowedport:$ip", $this->allowedips);

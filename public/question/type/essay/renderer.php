@@ -175,7 +175,11 @@ class qtype_essay_renderer extends qtype_renderer {
 
         $text = '';
         if (!empty($qa->get_question()->filetypeslist)) {
-            $text = html_writer::tag('p', get_string('acceptedfiletypes', 'qtype_essay'));
+            $text = html_writer::tag(
+                'div',
+                get_string('acceptedfiletypes', 'qtype_essay'),
+                ['class' => 'filetypes-descriptions-intro mt-1'],
+            );
             $filetypesutil = new \core_form\filetypes_util();
             $filetypes = $qa->get_question()->filetypeslist;
             $filetypedescriptions = $filetypesutil->describe_file_types($filetypes);

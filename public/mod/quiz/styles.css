@@ -615,7 +615,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.section {
     margin: 0;
-    padding: 0 20px;
+    padding: 0 38px;
 }
 
 #page-mod-quiz-edit ul.slots {
@@ -688,8 +688,11 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots li.section li.activity .page_split_join_wrapper {
     position: absolute;
-    left: -20px;
-    bottom: -11px;
+    left: -38px;
+    bottom: -18px;
+    .icon {
+        width: auto;
+    }
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmark.decimalplaces_0 {
@@ -742,8 +745,8 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper {
     position: absolute;
-    top: -1em;
-    right: -20px;
+    top: -1.25em;
+    right: -38px;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper.question_dependency_cannot_depend {

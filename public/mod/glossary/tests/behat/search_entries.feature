@@ -44,7 +44,7 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
     And I press "Search"
     And I should see "Sour eggplants"
     And I should see "Search: aubergine"
-    And I should see "E" in the ".glossarycategoryheader" "css_element"
+    And "E" "heading" should be visible
     And I click on "E" "link" in the ".entrybox" "css_element"
     And I should see "Sour eggplants"
     And I should not see "Sweet cucumber"

@@ -91,6 +91,11 @@
 	path = public/local/replacementapipanorama
 	url = https://github.com/ucsf-education/moodle-local_replacementapipanorama
 	branch = UCSFCLE_405_STABLE
+[submodule "public/local/staticpage"]
+	path = public/local/staticpage
+	url = https://github.com/moodle-an-hochschulen/moodle-local_staticpage
+	branch = MOODLE_501_STABLE
+	tag = v5.1-r1
 [submodule "public/mod/attendance"]
 	path = public/mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
@@ -109,6 +114,11 @@
 	url = https://github.com/davosmith/moodle-checklist
 	branch = MOODLE_500_STABLE
 	tag = 4.1.0.8
+[submodule "public/mod/choicegroup"]
+	path = public/mod/choicegroup
+	url = https://github.com/ndunand/moodle-mod_choicegroup
+	branch = master
+	tag = 2026013100
 [submodule "public/mod/customcert"]
 	path = public/mod/customcert
 	url = https://github.com/mdjnelson/moodle-mod_customcert

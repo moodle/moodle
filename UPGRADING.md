@@ -6,6 +6,100 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 5.1.4
+
+### core
+
+#### Added
+
+- "grunt watch" now accepts a force flag. Run "grunt watch -f" or "grunt watch --force" to prevent grunt from cancelling builds when errors occur. This is especially useful during development, because js build files will be built even if, for example, jslint errors are still present in the files.
+
+  For more information see [MDL-86839](https://tracker.moodle.org/browse/MDL-86839)
+- When creating upgrade notes, the issue number will be inferred from the current Git branch name by default
+
+  For more information see [MDL-87100](https://tracker.moodle.org/browse/MDL-87100)
+- The `core/toast` JS module now accepts a `visuallyHidden` configuration parameter to render visually hidden toast messages for screen reader users.
+
+  For more information see [MDL-87993](https://tracker.moodle.org/browse/MDL-87993)
+
+### core_files
+
+#### Added
+
+- A new method called `removeopt()` has been created in the `curl` class to allow users to remove options previously set with `setopt()`.
+
+  For more information see [MDL-87822](https://tracker.moodle.org/browse/MDL-87822)
+- User can pass `'CURLOPT_USERPWD' => false` to the `$options` array for the `put()` method of `curl` to remove the `CURLOPT_USERPWD` option from the request.
+
+  For more information see [MDL-87822](https://tracker.moodle.org/browse/MDL-87822)
+
+### core_question
+
+#### Added
+
+- During restore of a question_set_reference, mapping of IDs in the filtercondition is now delegated to qbank plugins. If your qbank plugin defines a filter condition that uses database IDs, add an override of `restore_filtercondition()` to the `condition` class, which checks the condition's data and replaces the IDs with mapped values if required. See  `qbank_managecategories\category_condition` for an example.
+
+  For more information see [MDL-86524](https://tracker.moodle.org/browse/MDL-86524)
+
+### core_user
+
+#### Added
+
+- Added new optional parameter `userid` to the `user_remove_user_device` function.
+
+  For more information see [MDL-87795](https://tracker.moodle.org/browse/MDL-87795)
+
+### aiprovider_openai
+
+#### Added
+
+- A new `aiprovider_openai\aimodel\openai_image_base` interface has been added. Image generation model classes must now implement this interface to declare their `response_format`, `output_format`, size, and quality mappings. Existing custom model classes that handle image generation should implement this interface to ensure correct API parameters are sent.
+
+  For more information see [MDL-85352](https://tracker.moodle.org/browse/MDL-85352)
+- A new `gptimage1` model class has been added to support gpt-image-1.5.
+  This model uses `output_format=png` instead of `response_format`, and maps Moodle quality values to the values expected by the API: 'standard' maps to 'medium' and 'hd' maps to 'high'.
+
+  For more information see [MDL-85352](https://tracker.moodle.org/browse/MDL-85352)
+
+#### Changed
+
+- The `dalle3` model class now implements `openai_image_base` and switches from returning a URL to returning `response_format=b64_json`.
+  The image is now decoded directly from the API response instead of being downloaded via a second HTTP request. Size and quality logic has been moved into the model class.
+
+  For more information see [MDL-85352](https://tracker.moodle.org/browse/MDL-85352)
+
+### auth_db
+
+#### Deprecated
+
+- The `ext_addslashes()` method has been deprecated from `auth_plugin_db`, because external database queries now using parameterized statements instead. As a result, the `sybasequoting` setting has also been removed, since it was only ever used by that method.
+
+  For more information see [MDL-88138](https://tracker.moodle.org/browse/MDL-88138)
+
+### block_html
+
+#### Changed
+
+- Treat Dashboard (pagetype 'my-index') as trusted in web services so get_content_for_external preserves embedded HTML (e.g. iframes) on user Dashboard.
+
+  For more information see [MDL-85322](https://tracker.moodle.org/browse/MDL-85322)
+
+### enrol_manual
+
+#### Removed
+
+- The unused parameter 'roleid' has been removed from the external function `unenrol_users()`
+
+  For more information see [MDL-51152](https://tracker.moodle.org/browse/MDL-51152)
+
+### tool_behat
+
+#### Added
+
+- The `behat_session_trait::ensure_element_[does_not_]exists(...)` methods now accept optional `$container` parameter to define the parent node to look within
+
+  For more information see [MDL-75067](https://tracker.moodle.org/browse/MDL-75067)
+
 ## 5.1.2
 
 ### core

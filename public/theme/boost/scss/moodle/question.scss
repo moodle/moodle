@@ -346,9 +346,9 @@ body.path-question-type {
 }
 .que .outcome,
 .que .comment {
-    color: shift-color($warning, $alert-color-scale - 9%);
+    color: shift-color($warning, $alert-color-scale);
     border-color: shift-color($warning, $alert-border-scale);
-    @include gradient-bg(shift-color($warning, $alert-bg-scale));
+    @include gradient-bg(shift-color($warning, $alert-bg-scale - 5%));
     // Darken link colour inside comments for better colour contrast against regular text.
     a {
         color: darken($link-color, 30%);
@@ -358,7 +358,7 @@ body.path-question-type {
 .que .formulation {
     color: shift-color($info, $alert-color-scale + 40%);
     border-color: shift-color($info, $alert-border-scale);
-    @include gradient-bg(shift-color($info, $alert-bg-scale));
+    @include gradient-bg(shift-color($info, $alert-bg-scale - 10%));
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,

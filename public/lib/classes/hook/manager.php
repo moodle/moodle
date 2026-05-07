@@ -673,12 +673,23 @@ final class manager implements
     }
 
     /**
-     * Get the path to the hook cache.
+     * Get the path to the local hook cache.
      *
-     * @return string
+     * @return string file path
      */
-    protected function get_cache_path(): string {
-        return make_localcache_directory('') . '/hookcallbacks.json';
+    protected function get_local_cache_path(): string {
+        global $CFG;
+        return $CFG->localcachedir . '/hookcallbacks.php';
+    }
+
+    /**
+     * Get the path to the shared hook cache.
+     *
+     * @return string file path
+     */
+    protected function get_shared_cache_path(): string {
+        global $CFG;
+        return $CFG->cachedir . '/hookcallbacks.php';
     }
 
     /**
@@ -711,11 +722,20 @@ final class manager implements
      * @return array|null
      */
     protected function get_cache(): ?array {
-        $cachepath = $this->get_cache_path();
-        if (!file_exists($cachepath)) {
-            return null;
+        $hookcallbacklocalfile = $this->get_local_cache_path();
+        $hookcallbacksharedfile = $this->get_shared_cache_path();
+        if (!is_readable($hookcallbacklocalfile) && is_readable($hookcallbacksharedfile)) {
+            // If we don't have a local cache but do have a shared cache then clone it,
+            // for example when scaling up new front ends.
+            $tmppath = $hookcallbacklocalfile . '.' . uniqid('tmp', true);
+            copy($hookcallbacksharedfile, $tmppath);
+            rename($tmppath, $hookcallbacklocalfile);
+            clearstatcache(true, $hookcallbacklocalfile);
         }
-        return json_decode(file_get_contents($cachepath), true) ?? [];
+        if (is_readable($hookcallbacklocalfile)) {
+            return json_decode(file_get_contents($hookcallbacklocalfile), true) ?? null;
+        }
+        return null;
     }
 
     /**
@@ -738,12 +758,22 @@ final class manager implements
 
         // Write to a temp file and rename it to ensure atomicity of reads.
         // If we write directly to the cache file, another process may read it during the write and get corrupted data.
-        $cachepath = $this->get_cache_path();
-        $tmppath = "{$cachepath}." . uniqid('tmp', true);
 
+        // Create the local cache first, in case the shared cache is not
+        // working then each local cache still works independently.
+        $hookcallbacklocalfile = $this->get_local_cache_path();
+        make_localcache_directory('', true);
+        $tmppath = $hookcallbacklocalfile . '.' . uniqid('tmp', true);
         file_put_contents($tmppath, json_encode($cachedata));
-        rename($tmppath, $cachepath);
-        clearstatcache(true, $cachepath);
+        rename($tmppath, $hookcallbacklocalfile);
+        clearstatcache(true, $hookcallbacklocalfile);
+
+        // Create the shared backup cache.
+        $hookcallbacksharedfile = $this->get_shared_cache_path();
+        $tmppath = $hookcallbacksharedfile . '.' . uniqid('tmp', true);
+        file_put_contents($tmppath, json_encode($cachedata));
+        rename($tmppath, $hookcallbacksharedfile);
+        clearstatcache(true, $hookcallbacksharedfile);
     }
 
     /**

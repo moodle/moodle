@@ -18,12 +18,14 @@
 namespace tool_installaddon;
 
 use testable_tool_installaddon_installer;
+use testable_tool_installaddon_installer_without_site_info;
 use tool_installaddon_installer;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(__DIR__.'/fixtures/testable_installer.php');
+require_once(__DIR__ . '/fixtures/testable_installer.php');
+require_once(__DIR__ . '/fixtures/testable_installer_without_site_info.php');
 
 /**
  * Unit tests for the {@link tool_installaddon_installer} class
@@ -32,21 +34,47 @@ require_once(__DIR__.'/fixtures/testable_installer.php');
  * @category    test
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \tool_installaddon_installer
  */
 final class installer_test extends \advanced_testcase {
 
     public function test_get_addons_repository_url(): void {
         $installer = testable_tool_installaddon_installer::instance();
         $url = $installer->get_addons_repository_url();
-        $query = parse_url($url, PHP_URL_QUERY);
-        $this->assertEquals(1, preg_match('~^site=(.+)$~', $query, $matches));
-        $site = rawurldecode($matches[1]);
-        $site = json_decode(base64_decode($site), true);
+        $site = $this->decode_site_info_from_url($url);
         $this->assertIsArray($site);
         $this->assertEquals(3, count($site));
         $this->assertSame('Nasty site', $site['fullname']);
         $this->assertSame('file:///etc/passwd', $site['url']);
         $this->assertSame("2.5'; DROP TABLE mdl_user; --", $site['majorversion']);
+    }
+
+    /**
+     * Tests that marketplace URL includes expected host, scheme and site payload.
+     */
+    public function test_get_marketplace_url(): void {
+        $installer = testable_tool_installaddon_installer::instance();
+        $addonsurl = $installer->get_addons_repository_url();
+        $marketplaceurl = $installer->get_marketplace_url();
+
+        $this->assertSame('marketplace.moodle.com', parse_url($marketplaceurl, PHP_URL_HOST));
+        $this->assertSame('https', parse_url($marketplaceurl, PHP_URL_SCHEME));
+        $this->assertSame(
+            $this->decode_site_info_from_url($addonsurl),
+            $this->decode_site_info_from_url($marketplaceurl),
+        );
+    }
+
+    /**
+     * Tests that marketplace URL has no query string when site info is unavailable.
+     */
+    public function test_get_marketplace_url_without_site_info(): void {
+        $installer = testable_tool_installaddon_installer_without_site_info::instance();
+        $marketplaceurl = $installer->get_marketplace_url();
+
+        $this->assertSame('marketplace.moodle.com', parse_url($marketplaceurl, PHP_URL_HOST));
+        $this->assertSame('https', parse_url($marketplaceurl, PHP_URL_SCHEME));
+        $this->assertEmpty(parse_url($marketplaceurl, PHP_URL_QUERY));
     }
 
     public function test_decode_remote_request(): void {
@@ -132,7 +160,7 @@ $plugin->version  = 2014121300;
         $versionphp = file_get_contents($fixtures.'/github/moodle-repository_mahara-master/version.php');
         $this->assertEquals('repository_mahara', $installer->testable_detect_plugin_component_from_versionphp($versionphp));
 
-        $versionphp = file_get_contents($fixtures.'/nocomponent/baz/version.php');
+        $versionphp = file_get_contents($fixtures . '/nocomponent/baz/version.php');
         $this->assertFalse($installer->testable_detect_plugin_component_from_versionphp($versionphp));
     }
 
@@ -143,15 +171,28 @@ $plugin->version  = 2014121300;
         $storage1 = $installer->make_installfromzip_storage();
         $this->assertTrue(is_dir($storage1));
         $this->assertTrue(is_writable($storage1));
-        file_put_contents($storage1.'/hello.txt', 'Find me if you can!');
+        file_put_contents($storage1 . '/hello.txt', 'Find me if you can!');
 
         // Check we get unique directory on each call.
         $storage2 = $installer->make_installfromzip_storage();
         $this->assertTrue(is_dir($storage2));
         $this->assertTrue(is_writable($storage2));
-        $this->assertFalse(file_exists($storage2.'/hello.txt'));
+        $this->assertFalse(file_exists($storage2 . '/hello.txt'));
 
         // Check both are in the same parent directory.
         $this->assertEquals(dirname($storage1), dirname($storage2));
+    }
+
+    /**
+     * Decodes the encoded 'site' URL query parameter.
+     *
+     * @param moodle_url $url
+     * @return array
+     */
+    private function decode_site_info_from_url(\moodle_url $url): array {
+        $query = parse_url($url, PHP_URL_QUERY);
+        $this->assertEquals(1, preg_match('~^site=(.+)$~', $query, $matches));
+        $site = rawurldecode($matches[1]);
+        return json_decode(base64_decode($site), true);
     }
 }

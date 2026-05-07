@@ -850,13 +850,13 @@ class enrol_database_plugin extends enrol_plugin {
                 $template->newsitems      = $courseconfig->newsitems;
                 $template->showgrades     = $courseconfig->showgrades;
                 $template->showreports    = $courseconfig->showreports;
+                $template->showactivitydates = $courseconfig->showactivitydates;
                 $template->maxbytes       = $courseconfig->maxbytes;
                 $template->groupmode      = $courseconfig->groupmode;
                 $template->groupmodeforce = $courseconfig->groupmodeforce;
                 $template->visible        = $courseconfig->visible;
                 $template->lang           = $courseconfig->lang;
                 $template->enablecompletion = $courseconfig->enablecompletion;
-                $template->groupmodeforce = $courseconfig->groupmodeforce;
                 $template->startdate      = usergetmidnight(time());
                 if ($courseconfig->courseenddateenabled) {
                     $template->enddate    = usergetmidnight(time()) + $courseconfig->courseduration;

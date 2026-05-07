@@ -143,7 +143,7 @@ abstract class abstract_processor extends process_base {
             $errormessage = $response->getReasonPhrase();
         } else {
             $bodyobj = json_decode($response->getBody()->getContents());
-            $errormessage = $bodyobj->error->message;
+            $errormessage = $bodyobj->error;
         }
 
         return \core_ai\error\factory::create($status, $errormessage)->get_error_details();

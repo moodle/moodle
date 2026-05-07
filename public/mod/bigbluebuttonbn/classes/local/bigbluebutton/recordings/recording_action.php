@@ -17,6 +17,7 @@
 namespace mod_bigbluebuttonbn\local\bigbluebutton\recordings;
 
 use mod_bigbluebuttonbn\instance;
+use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\recording;
 use mod_bigbluebuttonbn\local\config;
 
@@ -37,7 +38,11 @@ class recording_action {
      * @param instance $targetinstance
      */
     public static function import(recording $recording, instance $targetinstance): void {
+        $recordingid = $recording->get('id');
+        // Create the imported recording link.
         $recording->create_imported_recording($targetinstance);
+        // Log the recording imported event.
+        logger::log_recording_imported_event($targetinstance, $recordingid);
     }
 
     /**
@@ -46,14 +51,30 @@ class recording_action {
      * @param recording $recording
      */
     public static function delete(recording $recording): void {
+        $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
+        $recordingid = $recording->get('id');
+        if ($recording->get('imported')) {
+            // Delete the recording link.
+            $recording->delete();
+            // Log the recording link deleted event.
+            logger::log_recording_link_deleted_event($instance, $recordingid);
+            return;
+        }
         // As the recordingid was not identified as imported recording link, execute delete on a real recording.
-        // Step 1, delete imported links associated to the recording.
+        // Delete imported recording links associated to the recording.
         $recordingstodelete = recording::get_records(['recordingid' => $recording->get('recordingid'),
             'imported' => true]);
         foreach ($recordingstodelete as $rec) {
+            $recid = $rec->get('id');
+            // Delete the recording link.
             $rec->delete();
+            // Log the recording link deleted event.
+            logger::log_recording_link_deleted_event($instance, $recid);
         }
+        // Delete the recording itself.
         $recording->delete();
+        // Log the recording deleted event.
+        logger::log_recording_deleted_event($instance, $recordingid);
     }
 
     /**
@@ -62,7 +83,12 @@ class recording_action {
      * @param recording $recording
      */
     public static function edit(recording $recording): void {
+        $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
+        $recordingid = $recording->get('id');
+        // Update the recording.
         $recording->update();
+        // Log the recording edited event.
+        logger::log_recording_edited_event($instance, $recordingid);
     }
 
     /**
@@ -71,6 +97,8 @@ class recording_action {
      * @param recording $recording
      */
     public static function unprotect(recording $recording): void {
+        $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
+        $recordingid = $recording->get('id');
         if (!(boolean) config::get('recording_protect_editable')) {
             // Recording protect action through UI is disabled, there is no need to do anything else.
             throw new \moodle_exception('cannotperformaction', 'mod_bigblubuebuttobn', '', 'unprotect');
@@ -80,7 +108,10 @@ class recording_action {
             throw new \moodle_exception('cannotperformaction', 'mod_bigblubuebuttobn', '', 'unprotect');
         }
         $recording->set('protected', false);
+        // Update the recording.
         $recording->update();
+        // Log the recording unprotected event.
+        logger::log_recording_unprotected_event($instance, $recordingid);
     }
 
     /**
@@ -89,6 +120,8 @@ class recording_action {
      * @param recording $recording
      */
     public static function protect(recording $recording): void {
+        $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
+        $recordingid = $recording->get('id');
         if (!(boolean) config::get('recording_protect_editable')) {
             // Recording protect action through UI is disabled, there is no need to do anything else.
             throw new \moodle_exception('cannotperformaction', 'mod_bigblubuebuttobn', '', 'protect');
@@ -98,7 +131,10 @@ class recording_action {
             throw new \moodle_exception('cannotperformaction', 'mod_bigblubuebuttobn', '', 'protect');
         }
         $recording->set('protected', true);
+        // Update the recording.
         $recording->update();
+        // Log the recording protected event.
+        logger::log_recording_protected_event($instance, $recordingid);
     }
 
     /**
@@ -107,6 +143,8 @@ class recording_action {
      * @param recording $recording
      */
     public static function unpublish(recording $recording): void {
+        $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
+        $recordingid = $recording->get('id');
         if ($recording->get('imported')) {
             /* Since the recording link is the one fetched from the BBB server, imported recordings can not be
              * unpublished. There is no need to do anything else.
@@ -114,7 +152,10 @@ class recording_action {
             throw new \moodle_exception('cannotperformaction', 'mod_bigblubuebuttobn', '', 'unpublish');
         }
         $recording->set('published', false);
+        // Update the recording.
         $recording->update();
+        // Log the recording unpublished event.
+        logger::log_recording_unpublished_event($instance, $recordingid);
     }
 
     /**
@@ -123,6 +164,8 @@ class recording_action {
      * @param recording $recording
      */
     public static function publish(recording $recording): void {
+        $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
+        $recordingid = $recording->get('id');
         if ($recording->get('imported')) {
             /* Since the recording link is the one fetched from the BBB server, imported recordings can not be
              * unpublished. There is no need to do anything else.
@@ -131,5 +174,7 @@ class recording_action {
         }
         $recording->set('published', true);
         $recording->update();
+        // Log the recording published event.
+        logger::log_recording_published_event($instance, $recordingid);
     }
 }

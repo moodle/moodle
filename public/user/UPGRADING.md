@@ -1,5 +1,13 @@
 # core_user (subsystem) Upgrade notes
 
+## 5.1.4
+
+### Added
+
+- Added new optional parameter `userid` to the `user_remove_user_device` function.
+
+  For more information see [MDL-87795](https://tracker.moodle.org/browse/MDL-87795)
+
 ## 5.1
 
 ### Added

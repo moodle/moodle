@@ -56,7 +56,7 @@
             "id": "url_select_test",
             "action": "#",
             "options": [
-                {"name": "Jump to...", "value": "#0"},
+                {"name": "Jump to activity", "value": "#0"},
                 {"name": "Activity A", "value": "#1"},
                 {"name": "Activity B", "value": "#2"},
                 {"name": "Activity C", "value": "#3"}
@@ -64,7 +64,7 @@
         }
     }
 }}
-<div class="mt-5 mb-1 activity-navigation container-fluid">
+<nav class="mt-5 mb-1 activity-navigation container-fluid" aria-label="{{#str}}activitynavigation, course{{/str}}">
 {{< core/columns-1to1to1}}
     {{$column1}}
         <div class="float-start">
@@ -82,4 +82,4 @@
         </div>
     {{/column3}}
 {{/ core/columns-1to1to1}}
-</div>
+</nav>

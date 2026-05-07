@@ -1,5 +1,16 @@
 # core_files (subsystem) Upgrade notes
 
+## 5.1.4
+
+### Added
+
+- A new method called `removeopt()` has been created in the `curl` class to allow users to remove options previously set with `setopt()`.
+
+  For more information see [MDL-87822](https://tracker.moodle.org/browse/MDL-87822)
+- User can pass `'CURLOPT_USERPWD' => false` to the `$options` array for the `put()` method of `curl` to remove the `CURLOPT_USERPWD` option from the request.
+
+  For more information see [MDL-87822](https://tracker.moodle.org/browse/MDL-87822)
+
 ## 5.0
 
 ### Added

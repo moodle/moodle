@@ -361,16 +361,13 @@ class assign_submission_onlinetext extends assign_submission_plugin {
       * Display onlinetext word count in the submission status table
       *
       * @param stdClass $submission
-      * @param bool $showviewlink - If the summary has been truncated set this to true
+      * @param bool $showviewlink - If the summary has been truncated, this should be set to true
       * @return string
       */
     public function view_summary(stdClass $submission, & $showviewlink) {
         global $CFG;
 
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
-        // Always show the view link.
-        $showviewlink = true;
-
         if ($onlinetextsubmission) {
             // This contains the shortened version of the text plus an optional 'Export to portfolio' button.
             $text = $this->assignment->render_editor_content(ASSIGNSUBMISSION_ONLINETEXT_FILEAREA,
@@ -395,8 +392,10 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                     'course' => $this->assignment->get_course()->id,
                     'assignment' => $submission->assignment));
             }
-            // We compare the actual text submission and the shortened version. If they are not equal, we show the word count.
-            if ($onlinetext != $shorttext) {
+
+            // Compare the actual text submission and the shortened version. If not equal, we show the word count/view more link.
+            $showviewlink = $onlinetext != $shorttext;
+            if ($showviewlink) {
                 $wordcount = get_string('numwords', 'assignsubmission_onlinetext', count_words($onlinetext));
 
                 return $plagiarismlinks . $wordcount . $text;

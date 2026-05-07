@@ -110,25 +110,33 @@ class custom_category_condition_helper extends \qbank_managecategories\helper {
             'status' => question_version_status::QUESTION_STATUS_READY,
             'substatus' => question_version_status::QUESTION_STATUS_HIDDEN,
         ];
+
+        $additionaljoins = "";
+        $additionalwhere = "";
+
+        if ($showallversions === 0) {
+            $additionaljoin = "                      LEFT JOIN {question_versions} qv2
+                                                               ON (   qv2.questionbankentryid = qv.questionbankentryid
+                                                                  AND qv2.version > qv.version
+                                                                  AND qv2.status <> :substatus
+                                                                  )";
+            $additionalwhere = "                            AND qv2.questionbankentryid IS NULL";
+        }
+
         $sql = "SELECT c.*,
-                    (SELECT COUNT(1)
-                       FROM {question} q
-                       JOIN {question_versions} qv ON qv.questionid = q.id
-                       JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                      WHERE q.parent = '0'
-                        $statuscondition
+                        (SELECT COUNT(1)
+                           FROM {question} q
+                           JOIN {question_versions} qv ON qv.questionid = q.id
+                                $additionaljoin
+                           JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                          WHERE q.parent = '0'
+                                $statuscondition
                             AND c.id = qbe.questioncategoryid
-                            AND ($showallversions = 1
-                                OR (qv.version = (SELECT MAX(v.version)
-                                                    FROM {question_versions} v
-                                                    JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
-                                                   WHERE be.id = qbe.id AND v.status <> :substatus)
-                                   )
-                                )
-                            ) AS questioncount
-                  FROM {question_categories} c
-                 WHERE c.contextid IN ($contexts) $topwhere
-              ORDER BY $sortorder";
+                                $additionalwhere
+                        ) AS questioncount
+                      FROM {question_categories} c
+                     WHERE c.contextid IN ($contexts) $topwhere
+                     ORDER BY $sortorder";
 
         return $DB->get_records_sql($sql, $params);
     }

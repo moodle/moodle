@@ -1,0 +1,38 @@
+.h5p-tooltip {
+  display: none;
+  position: absolute;
+
+  z-index: 110;
+
+  font-size: 0.8rem;
+  line-height: 1.2;
+  text-align: left;
+
+  padding: 0.25rem 0.5rem;
+  white-space: normal;
+  word-break: break-all;
+  width: max-content;
+  max-width: min(300px, 90%);
+
+  background: #000;
+  color: #FFF;
+
+  cursor: default;
+}
+.h5p-tooltip-narrow {
+  max-width: min(300px, 70%);
+}
+.h5p-tooltip-visible {
+  display: block;
+}
+
+.h5p-iframe:has(.h5p-theme) .h5p-tooltip  {
+  background-color: var(--h5p-theme-text-secondary);
+  color: var(--h5p-theme-ui-base);
+  font-size: var(--h5p-theme-font-size-m);
+  max-width: min(400px, 90%);
+  line-height: 1;
+  /*border: solid 1px var(--h5p-theme-stroke-1);
+  box-shadow: 0 0 0.5em #2c2c2c;*/
+  border-radius: var(--h5p-theme-border-radius-medium);
+} 

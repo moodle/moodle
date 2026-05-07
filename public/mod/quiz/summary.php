@@ -94,10 +94,12 @@ $navbc = $attemptobj->get_navigation_panel($output, navigation_panel_attempt::cl
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
 
+$attemptobj->setup_attempt_layout();
+
 $PAGE->navbar->add(get_string('summaryofattempt', 'quiz'));
 $PAGE->set_title($attemptobj->summary_page_title());
 $PAGE->set_heading($attemptobj->get_course()->fullname);
-$PAGE->activityheader->disable();
+
 // Display the page.
 echo $output->summary_page($attemptobj, $displayoptions);
 

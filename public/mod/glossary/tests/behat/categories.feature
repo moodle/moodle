@@ -77,11 +77,11 @@ Feature: Glossary entries can be organised in categories
     And I press "Save changes"
 # Make sure entries appear in their categories
     And I select "Browse by category" from the "Browse the glossary using this index" singleselect
-    And "//h3[contains(.,'CATEGORYAUTOLINKS')]" "xpath_element" should appear before "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
-    And "//h4[contains(.,'EntryCategoryAL')]" "xpath_element" should appear before "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
-    And "(//h4[contains(.,'EntryCategoryBoth')])[1]" "xpath_element" should appear before "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
-    And "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element" should appear before "(//h4[contains(.,'EntryCategoryBoth')])[2]" "xpath_element"
-    And "//h4[contains(.,'EntryCategoryNL')]" "xpath_element" should appear after "//h3[contains(.,'CATEGORYNOLINKS')]" "xpath_element"
+    And "CATEGORYAUTOLINKS" "heading" should appear before "CATEGORYNOLINKS" "heading"
+    And "EntryCategoryAL" "heading" should appear before "CATEGORYNOLINKS" "heading"
+    And "(//*[self::h3 or self::h4][contains(.,'EntryCategoryBoth')])[1]" "xpath_element" should appear before "CATEGORYNOLINKS" "heading"
+    And "CATEGORYNOLINKS" "heading" should appear before "(//*[self::h3 or self::h4][contains(.,'EntryCategoryBoth')])[2]" "xpath_element"
+    And "EntryCategoryNL" "heading" should appear after "CATEGORYNOLINKS" "heading"
     And I should not see "EntryNoCategory"
     And I set the field "hook" to "Not categorised"
     And I set the field "Categories" to "Not categorised"

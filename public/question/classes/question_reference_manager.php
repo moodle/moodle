@@ -83,9 +83,11 @@ class question_reference_manager {
      * pre-4.3 filter condition structure to the new one.
      *
      * @param array $filtercondition Pre-4.3 filter condition.
+     * @param bool $maptags Map tags to tags with the same name, creating them if necessary. If not, just convert existing IDs to
+     *     the new structure.
      * @return array Post-4.3 filter condition.
      */
-    public static function convert_legacy_set_reference_filter_condition(array $filtercondition): array {
+    public static function convert_legacy_set_reference_filter_condition(array $filtercondition, bool $maptags = true): array {
         global $DB;
         if (!isset($filtercondition['filter'])) {
             $filtercondition['filter'] = [];
@@ -103,10 +105,14 @@ class question_reference_manager {
             if (isset($filtercondition['tags'])) {
                 // Get the names of the tags in the condition. Find or create corresponding tags,
                 // and set their ids in the new condition.
-                $oldtags = array_map(fn($oldtag) => explode(',', $oldtag)[1], $filtercondition['tags']);
-                $questiontagcollid = \core_tag_area::get_collection('core_question', 'question');
-                $newtags = \core_tag_tag::create_if_missing($questiontagcollid, $oldtags);
-                $newtagids = array_map(fn($newtag) => $newtag->id, $newtags);
+                if ($maptags) {
+                    $oldtags = array_map(fn($oldtag) => explode(',', $oldtag)[1], $filtercondition['tags']);
+                    $questiontagcollid = \core_tag_area::get_collection('core_question', 'question');
+                    $newtags = \core_tag_tag::create_if_missing($questiontagcollid, $oldtags);
+                    $newtagids = array_map(fn($newtag) => $newtag->id, $newtags);
+                } else {
+                    $newtagids = array_map(fn($oldtag) => explode(',', $oldtag)[0], $filtercondition['tags']);
+                }
 
                 $filtercondition['filter']['qtagids'] = [
                     'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
@@ -135,5 +141,34 @@ class question_reference_manager {
             unset($filtercondition['filter']['category']['includesubcategories']);
         }
         return $filtercondition;
+    }
+
+    /**
+     * Ensure consistency of filter 'cat' parameter and questioncontextid in all set references.
+     *
+     * Some set references may have been moved to a different context, but the filter condition not updated with the context ID.
+     * Since the filter condition is JSON-encoded, we have to check each set reference record for inconsistencies.
+     *
+     * This is used in a CLI script to fix bad data due to MDL-86691.
+     *
+     * @return int The number of records that were updated.
+     * @todo Deprecate in Moodle 6.0 (MDL-87844) for removal in 7.0 (MDL-87845).
+     */
+    public static function fix_set_references_category_context(): int {
+        global $DB;
+        $updates = 0;
+        $sets = $DB->get_recordset('question_set_references');
+        foreach ($sets as $set) {
+            $filtercondition = json_decode($set->filtercondition, true);
+            [$catid, $catcontext] = explode(',', $filtercondition['cat']);
+            if ($catcontext != $set->questionscontextid) {
+                $filtercondition['cat'] = implode(',', [$catid, $set->questionscontextid]);
+                $set->filtercondition = json_encode($filtercondition);
+                $DB->update_record('question_set_references', $set);
+                $updates++;
+            }
+        }
+        $sets->close();
+        return $updates;
     }
 }

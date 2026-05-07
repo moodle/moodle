@@ -29,11 +29,11 @@ export default class AIHelper {
      * @returns {String}
      */
     static replaceLineBreaks(text) {
-        // Replace double line breaks with </p><p> for paragraphs
-        const textWithParagraphs = text.replace(/\n{2,}|\r\n/g, '<br/><br/>');
+        // Normalise double line breaks
+        const textWithParagraphs = text.replace(/(\r\n|\n|<br\s*\/?>){2,}/g, '\n');
 
         // Replace remaining single line breaks with <br> tags
-        const textWithBreaks = textWithParagraphs.replace(/\n/g, '<br/>');
+        const textWithBreaks = textWithParagraphs.replace(/\n/g, '<br/><br/>');
 
         // Add opening and closing <p> tags to wrap the entire content
         return `<p>${textWithBreaks}</p>`;

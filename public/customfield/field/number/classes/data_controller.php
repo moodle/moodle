@@ -66,9 +66,23 @@ class data_controller extends \core_customfield\data_controller {
             return;
         }
 
+        // Required for subsequent input field comparison rule.
+        $mform->addElement('hidden', "{$elementname}_maximum", SQL_INT_MAX + 1);
+        $mform->setType("{$elementname}_maximum", PARAM_INT);
+
+        // Number input field.
         $mform->addElement('float', $elementname, $this->get_field()->get_formatted_name());
+        $mform->addRule(
+            [$elementname, "{$elementname}_maximum"],
+            get_string('maximumvalueerror', 'customfield_number', SQL_INT_MAX),
+            'compare',
+            'lt',
+        );
         if (!$this->get('id')) {
             $mform->setDefault($elementname, $this->get_default_value());
+        }
+        if ($field->get_configdata_property('required')) {
+            $mform->addRule($elementname, null, 'required', null, 'client');
         }
     }
 

@@ -39,7 +39,7 @@ Feature: The student can navigate to their grades page and user grade report.
     Then "//img[contains(@class, 'userpicture')]" "xpath_element" should exist
     And I should see "Student 1" in the "h1" "css_element"
     # Confirm that there is a subheader text - "Courses I am taking".
-    And "//h3[normalize-space(.)='Courses I am taking']" "xpath_element" should exist
+    And "Courses I am taking" "heading" should exist
     # Confirm that the overview-grade table has the correct data.
     And the following should exist in the "overview-grade" table:
       | Course name | Grade  |

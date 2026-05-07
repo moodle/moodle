@@ -622,10 +622,10 @@ class enrol_flatfile_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns a mapping of ims roles to role ids.
+     * Returns a mapping of role name aliases to role IDs
      *
      * @param progress_trace $trace
-     * @return array imsrolename=>roleid
+     * @return int[] role name alias => role ID
      */
     protected function get_role_map(progress_trace $trace) {
         global $DB;
@@ -634,7 +634,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
         $rolemap = array();
         $roles = $DB->get_records('role', null, '', 'id, name, shortname');
         foreach ($roles as $id=>$role) {
-            $alias = $this->get_config('map_'.$id, $role->shortname, '');
+            $alias = $this->get_config('map_' . $id, $role->shortname);
             $alias = trim(core_text::strtolower($alias));
             if ($alias === '') {
                 // Either not configured yet or somebody wants to skip these intentionally.

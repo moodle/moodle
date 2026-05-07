@@ -63,7 +63,7 @@ class backup_bigbluebuttonbn_activity_structure_step extends backup_activity_str
 
         $recording = new backup_nested_element('recording', ['id'], [
             'courseid', 'bigbluebuttonbnid', 'groupid', 'recordingid', 'headlesss', 'imported', 'status', 'importeddata',
-            'timecreated']);
+            'timecreated', 'timemodified']);
 
         // Build the tree.
         $bigbluebuttonbn->add_child($logs);

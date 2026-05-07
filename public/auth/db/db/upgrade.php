@@ -46,5 +46,12 @@ function xmldb_auth_db_upgrade($oldversion) {
     // Automatically generated Moodle v5.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2025100601) {
+        // Remove the sybasequoting setting since all queries now use parameterized statements.
+        unset_config('sybasequoting', 'auth_db');
+
+        upgrade_plugin_savepoint(true, 2025100601, 'auth', 'db');
+    }
+
     return true;
 }

@@ -125,7 +125,7 @@ $string['qrcodeformobileapploginabout'] = 'Scan the QR code with your mobile app
 $string['qrcodeformobileappurlabout'] = 'Scan the QR code with your mobile app to fill in the site URL in your app.';
 $string['qrsiteadminsnotallowed'] = 'For security reasons login via QR code is not allowed for site administrators or if you are logged in as another user.';
 $string['qrcodetype'] = 'QR code access';
-$string['qrcodetype_desc'] = 'A QR code can be provided for mobile app users to scan. This can be used to fill in the site URL, or where the site is secured using HTTPS, to automatically log the user in without having to enter their username and password.';
+$string['qrcodetype_desc'] = 'Mobile users can scan a QR code to fill in the site URL. For secure (HTTPS) sites, the code also enables automatic login without the user having to enter their username and password.';
 $string['qrcodetypeurl'] = 'QR code with site URL';
 $string['qrcodetypelogin'] = 'QR code with automatic login';
 $string['qrkeyttl'] = 'QR authentication key duration';
@@ -149,7 +149,7 @@ $string['subscriptionlimitsurpassed'] = 'Subscription limit exceeded';
 $string['subscriptionregister'] = 'For details of the various app plans, and to access Moodle app usage statistics, please visit the <a href="{$a}" target="_blank">Moodle Apps Portal</a>.';
 $string['subscriptionsseemore'] = 'Note: The information displayed is not updated in real time. You may need to log out and log in again to see updates. For information on upgrading your app plan, please log in to the <a href="{$a}" target="_blank">Moodle Apps Portal</a>.';
 $string['typeoflogin'] = 'Type of login';
-$string['typeoflogin_desc'] = 'If the site uses a SSO authentication method, then select via a browser window or via an embedded browser. An embedded browser provides a better user experience, though it doesn\'t work with all SSO plugins.';
+$string['typeoflogin_desc'] = 'If the site uses a Single Sign-On (SSO) authentication method, then select via a browser window or via an embedded browser. An embedded browser provides a better user experience, though it doesn\'t work with all SSO plugins.';
 $string['getmoodleonyourmobile'] = 'Get the mobile app';
 $string['privacy:metadata:preference:tool_mobile_autologin_request_last'] = 'The date of the last auto-login key request. Between each request 6 minutes are required.';
 $string['privacy:metadata:core_userkey'] = 'User\'s keys used to create auto-login key for the current user.';

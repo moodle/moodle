@@ -52,6 +52,11 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         $username   = $s;
     }
 
+    // Read auth_email_wantsurl before user_confirm() cleans it up, so we can
+    // restore it into the session after complete_user_login() regenerates the session.
+    $earlyuser = get_complete_user_data('username', $username);
+    $emailwantsurl = $earlyuser ? get_user_preferences('auth_email_wantsurl', false, $earlyuser) : false;
+
     $confirmed = $authplugin->user_confirm($username, $usersecret);
 
     if ($confirmed == AUTH_CONFIRM_ALREADY) {
@@ -80,6 +85,14 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
 
             \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
 
+            // Restore the originally requested URL saved at signup time.
+            // This must happen after complete_user_login() because session regeneration during login
+            // destroys any $SESSION data set before that point. The preference was already cleaned
+            // up by user_confirm(), so we use the value read before calling it.
+            if ($emailwantsurl) {
+                $SESSION->wantsurl = $emailwantsurl;
+            }
+
             // Check where to go, $redirect has a higher preference.
             if (!empty($redirect)) {
                 if (!empty($SESSION->wantsurl)) {
@@ -96,7 +109,15 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         echo $OUTPUT->box_start('generalbox centerpara boxwidthnormal boxaligncenter');
         echo "<h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
         echo "<p>".get_string("confirmed")."</p>\n";
-        echo $OUTPUT->single_button(core_login_get_return_url(), get_string('continue'));
+        // Calling core_login_get_return_url() consumes $SESSION->wantsurl; restore it so
+        // that MFA intercepting the next page load can still redirect the user correctly.
+        // Skip restore when profile completion is required — core_login_get_return_url()
+        // intentionally preserves $SESSION->wantsurl in that case so it survives past user/edit.php.
+        $returnurl = core_login_get_return_url();
+        if (!user_not_fully_set_up($USER, true)) {
+            $SESSION->wantsurl = $returnurl;
+        }
+        echo $OUTPUT->single_button($returnurl, get_string('continue'));
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
         exit;

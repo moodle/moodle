@@ -35,7 +35,7 @@ class behat_mod_assign_generator extends behat_generator_base {
                 'singular' => 'submission',
                 'datagenerator' => 'submission',
                 'required' => ['assign', 'user'],
-                'switchids' => ['assign' => 'assignid', 'user' => 'userid'],
+                'switchids' => ['assign' => 'cmid', 'user' => 'userid'],
             ],
             'extensions' => [
                 'singular' => 'extension',

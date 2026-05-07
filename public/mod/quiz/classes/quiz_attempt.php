@@ -1343,6 +1343,30 @@ class quiz_attempt {
     }
 
     /**
+     * Set up the page layout for an attempt, summary or review page.
+     */
+    public function setup_attempt_layout(): void {
+        global $PAGE;
+
+        $PAGE->add_body_class('limitedwidth');
+
+        if (empty($this->get_quiz()->showblocks) && !$this->is_preview_user()) {
+            $PAGE->blocks->show_only_fake_blocks();
+        }
+
+        if ($PAGE->pagelayout === 'secure') {
+            // Show the activity header (but only the name) in the secure layout on quiz pages.
+            // Don't show the completion info which would include the activitydates to reduce clutter.
+            $PAGE->activityheader->set_attrs([
+                'description' => '',
+                'hidecompletion' => true,
+            ]);
+        } else {
+            $PAGE->activityheader->disable();
+        }
+    }
+
+    /**
      * Generate the HTML that displays the question in its current state, with
      * the appropriate display options.
      *
@@ -1618,6 +1642,7 @@ class quiz_attempt {
      * @param bool $studentisonline is the student currently interacting with Moodle?
      */
     public function handle_if_time_expired($timestamp, $studentisonline) {
+        global $DB;
 
         $timeclose = $this->get_access_manager($timestamp)->get_end_time($this->attempt);
 
@@ -1652,8 +1677,10 @@ class quiz_attempt {
         // Transition to the appropriate state.
         switch ($this->quizobj->get_quiz()->overduehandling) {
             case 'autosubmit':
+                $transaction = $DB->start_delegated_transaction();
                 $this->process_submit($timestamp, false, $studentisonline ? $timestamp : $timeclose, $studentisonline);
                 $this->process_grade_submission($studentisonline ? $timestamp : $timeclose);
+                $transaction->allow_commit();
                 return;
 
             case 'graceperiod':

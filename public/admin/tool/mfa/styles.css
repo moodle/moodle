@@ -38,3 +38,8 @@ input.tool-mfa-verification-code,
 .mfa-verify-form .form-group.fitem > span > input {
     width: 100%;
 }
+
+#mfalist .icon-circle .icon {
+    width: 64px;
+    height: 64px;
+}

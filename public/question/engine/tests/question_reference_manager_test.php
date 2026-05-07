@@ -120,4 +120,82 @@ final class question_reference_manager_test extends advanced_testcase {
                 question_reference_manager::questions_with_references([-1]));
 
     }
+
+    /**
+     * Any question set references where questioncategoryid does not match filtercondition['cat'] should have the cat updated.
+     *
+     * @todo Deprecate in Moodle 6.0 (MDL-87844) for removal in 7.0 (MDL-87845).
+     */
+    public function test_fix_set_references_category_context(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $correctreference = (object) [
+            'usingcontextid' => 1,
+            'component' => 'core_question',
+            'questionarea' => 'test',
+            'itemid' => 1,
+            'questionscontextid' => 2,
+            'filtercondition' => json_encode(
+                [
+                    'filter' => [
+                        'category' => [
+                            'name' => 'category',
+                            'jointype' => 1,
+                            'values' => [1],
+                            'filteroptions' => [
+                                'includesubcategories' => 0,
+                            ],
+                        ],
+                    ],
+                    'cmid' => 1,
+                    'courseid' => 1,
+                    'cat' => '1,2',
+                ],
+            ),
+        ];
+        $correctreference->id = $DB->insert_record('question_set_references', $correctreference);
+
+        $incorrectreference = (object) [
+            'usingcontextid' => 1,
+            'component' => 'core_question',
+            'questionarea' => 'test',
+            'itemid' => 2,
+            'questionscontextid' => 4,
+            'filtercondition' => json_encode(
+                [
+                    'filter' => [
+                        'category' => [
+                            'name' => 'category',
+                            'jointype' => 1,
+                            'values' => [6],
+                            'filteroptions' => [
+                                'includesubcategories' => 0,
+                            ],
+                        ],
+                    ],
+                    'cmid' => 1,
+                    'courseid' => 1,
+                    'cat' => '6,3',
+                ],
+            ),
+        ];
+        $incorrectreference->id = $DB->insert_record('question_set_references', $incorrectreference);
+
+        $fixedcount = question_reference_manager::fix_set_references_category_context();
+
+        $this->assertEquals(1, $fixedcount);
+
+        $updatedcorrectrefrence = $DB->get_record('question_set_references', ['id' => $correctreference->id]);
+        $this->assertEquals($correctreference, $updatedcorrectrefrence);
+
+        $updatedincorrectrefrence = $DB->get_record('question_set_references', ['id' => $incorrectreference->id]);
+        $this->assertEquals($incorrectreference->usingcontextid, $updatedincorrectrefrence->usingcontextid);
+        $this->assertEquals($incorrectreference->questionscontextid, $updatedincorrectrefrence->questionscontextid);
+        $filtercondition = json_decode($updatedincorrectrefrence->filtercondition, true);
+        $this->assertEquals(
+            implode(',', [$filtercondition['filter']['category']['values'][0], $updatedincorrectrefrence->questionscontextid]),
+            $filtercondition['cat'],
+        );
+    }
 }

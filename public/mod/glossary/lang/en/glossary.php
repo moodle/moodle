@@ -57,6 +57,7 @@ $string['attachment_help'] = 'You can optionally attach one or more files to a g
 $string['author'] = 'author';
 $string['authorview'] = 'Browse by Author';
 $string['back'] = 'Back';
+$string['bynameondate'] = 'by {$a->name} - {$a->date}';
 $string['cachedef_concepts'] = 'Concept linking';
 $string['cantinsertcat'] = 'Can\'t insert category';
 $string['cantinsertrec'] = 'Can\'t insert record';

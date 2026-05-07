@@ -20,8 +20,15 @@
  * @copyright  2019 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/custom_interaction_events', 'core_message/message_drawer_helper', 'core/templates'],
-    function($, CustomEvents, MessageDrawerHelper, Templates) {
+define([
+        'jquery',
+        'core/custom_interaction_events',
+        'core_message/message_drawer_helper',
+        'core/templates',
+        'core/pubsub',
+        'core_message/message_drawer_events'
+    ],
+    function($, CustomEvents, MessageDrawerHelper, Templates, PubSub, MessageDrawerEvents) {
 
 
         var SELECTORS = {
@@ -93,11 +100,16 @@ define(['jquery', 'core/custom_interaction_events', 'core_message/message_drawer
                     } else {
                         MessageDrawerHelper.createConversationWithUser(args);
                     }
+                    element.addClass('active');
                 }
-                $(e.target).focus();
-                $(e.target).toggleClass('active');
+                element.focus();
                 e.preventDefault();
                 data.originalEvent.preventDefault();
+            });
+
+            // Remove the active class when the drawer is hidden.
+            PubSub.subscribe(MessageDrawerEvents.HIDE, function() {
+                element.removeClass('active');
             });
         };
 

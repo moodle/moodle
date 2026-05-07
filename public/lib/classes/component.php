@@ -526,7 +526,7 @@ class component {
         global $CFG;
 
         if (!isset($cache['version'])) {
-            // Something is very wrong.
+            error_log('Resetting core_component cache as version is missing.');
             return false;
         }
 
@@ -537,8 +537,7 @@ class component {
         }
 
         if ($cache['plugintypes']['mod'] !== "$CFG->dirroot/mod") {
-            // phpcs:ignore moodle.Commenting.InlineComment.NotCapital
-            // $CFG->dirroot was changed.
+            error_log('Resetting core_component cache as $CFG->dirroot was changed to ' . $CFG->dirroot . '.');
             return false;
         }
 
@@ -548,14 +547,13 @@ class component {
         // Always keep moodle_exception in place.
         $keyclasses = [
             \core\exception\moodle_exception::class,
-            \core\navigation\navbar::class,
-            \core\navigation\navigation_node::class,
+            \core\router\middleware\api_validation_middleware::class,
         ];
         foreach ($keyclasses as $classname) {
             if (!array_key_exists($classname, $cache['classmap'])) {
                 // The cache is missing some key classes. This is likely before the upgrade has run.
                 error_log(
-                    "The '{$classname}' class was not found in the component class cache. Resetting the classmap.",
+                    "Resetting core_component cache as '{$classname}' class was not found in the cache.",
                 );
                 return false;
             }
@@ -2074,7 +2072,7 @@ $cache = ' . var_export($cache, true) . ';
             return rtrim($root, '/');
         }
 
-        return rtrim($root, '/') . '/' . ltrim($path, '/');
+        return rtrim($root, '/') . DIRECTORY_SEPARATOR . ltrim($path, '/');
     }
 }
 

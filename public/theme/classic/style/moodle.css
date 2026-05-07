@@ -27611,6 +27611,9 @@ dd:after {
 .popover.footer .popover-body {
   padding: 0;
 }
+.popover.footer .popover-body .footer-section > div {
+  padding-bottom: 0.2rem;
+}
 .popover.footer .popover-body .footer-section a {
   color: #1d2125;
   text-decoration: underline;
@@ -27624,6 +27627,10 @@ dd:after {
 
 .footer-support-link {
   padding-bottom: 5px;
+}
+
+.footer-content-popover .footer-section > div {
+  padding-bottom: 0.1rem;
 }
 
 @media (min-width: 576px) {
@@ -28730,6 +28737,8 @@ img.icon {
 .icon-circle .icon {
   margin: 0;
   text-align: center;
+  width: unset;
+  height: unset;
   max-width: unset;
   max-height: unset;
   color: #000;
@@ -34178,9 +34187,9 @@ body.path-question-type .fitem .col-form-label.visually-hidden:not(legend):not([
 
 .que .outcome,
 .que .comment {
-  color: #a67736;
+  color: #90682f;
   border-color: #fbe6ca;
-  background-color: #fcefdc;
+  background-color: #fdf3e4;
 }
 .que .outcome a,
 .que .comment a {
@@ -34190,7 +34199,7 @@ body.path-question-type .fitem .col-form-label.visually-hidden:not(legend):not([
 .que .formulation {
   color: #001a1e;
   border-color: #b3d9e0;
-  background-color: #cce6ea;
+  background-color: #e6f2f5;
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,
@@ -35516,6 +35525,10 @@ select {
 
 .path-mod-choice .choices .option label {
   vertical-align: top;
+}
+
+.path-mod-choice .responseaction select.singleselect {
+  display: inline-block;
 }
 
 .path-mod-forum .forumsearch input,
@@ -37847,28 +37860,6 @@ p.arrow_button {
 .gradingform_rubric .criterion .scorevalue input.hiddenelement, .gradingform_rubric .criterion .scorevalue input.pseudotablink {
   width: 0;
 }
-.gradingform_rubric .criterion .addlevel {
-  vertical-align: top;
-  padding-top: 6px;
-}
-.gradingform_rubric .criterion .addlevel input {
-  height: 30px;
-  line-height: 1rem;
-}
-.gradingform_rubric .addcriterion {
-  margin-left: 5px;
-  padding: 0;
-  margin-bottom: 1em;
-}
-.gradingform_rubric .addcriterion input {
-  margin: 0;
-  color: inherit;
-  text-shadow: inherit;
-  border: 0 none;
-  line-height: inherit;
-  background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
-  padding-left: 26px;
-}
 .gradingform_rubric .options {
   clear: both;
 }
@@ -38484,7 +38475,7 @@ body {
   height: max(80px, 0.9375rem * 3);
   bottom: calc(max(80px, 0.9375rem * 3) * -1);
   transition: bottom 0.5s;
-  z-index: 1020;
+  z-index: 3;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
   font-size: calc(0.9375rem * 1.10);
 }
@@ -39323,7 +39314,6 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   .hasstickyfooter .drawer-left,
   .hasstickyfooter .drawer-right {
     top: 50px;
-    height: calc(100vh - 50px - max(80px, 0.9375rem * 3));
   }
   #page.drawers {
     position: relative;
@@ -40541,10 +40531,8 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-item.dimmed .courseindex-chevron {
   color: #6a737b;
 }
-.courseindex .courseindex-item.dimmed.pageitem {
-  color: #fff;
-}
-.courseindex .courseindex-item.dimmed.pageitem a {
+.courseindex .courseindex-item.dimmed .pageitem .courseindex-link,
+.courseindex .courseindex-item.dimmed .pageitem .courseindex-chevron {
   color: #fff;
 }
 .courseindex .courseindex-item .courseindex-locked {
@@ -40552,6 +40540,12 @@ div.editor_atto_toolbar button .icon {
 }
 .courseindex .courseindex-item.restrictions .courseindex-locked {
   display: block;
+}
+.courseindex .courseindex-item.restrictions.pageitem {
+  color: #fff;
+}
+.courseindex .courseindex-item.restrictions.pageitem a {
+  color: #fff;
 }
 .courseindex .courseindex-item.pageitem {
   background-color: #0f6cbf;

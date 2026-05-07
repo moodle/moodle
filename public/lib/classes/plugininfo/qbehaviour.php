@@ -140,4 +140,38 @@ class qbehaviour extends base {
     public static function get_manage_url() {
         return new moodle_url('/admin/qbehaviours.php');
     }
+
+    #[\Override]
+    public function get_settings_section_name() {
+        return 'qbehavioursetting_' . $this->name;
+    }
+
+    #[\Override]
+    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        $ADMIN = $adminroot; // May be used in settings.php.
+
+        if (!$this->is_installed_and_upgraded()) {
+            return;
+        }
+
+        $section = $this->get_settings_section_name();
+
+        $settings = null;
+        $systemcontext = \context_system::instance();
+        if (
+            ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) &&
+            file_exists($this->full_path('settings.php'))
+        ) {
+            $settings = new \admin_settingpage(
+                $section,
+                $this->displayname,
+                'moodle/question:config',
+                $this->is_enabled() === false
+            );
+            include($this->full_path('settings.php')); // This may also set $settings to null.
+        }
+        if ($settings) {
+            $ADMIN->add($parentnodename, $settings);
+        }
+    }
 }

@@ -109,7 +109,10 @@ final class data_controller_test extends advanced_testcase {
         $category = $generator->create_category();
         $field = $generator->create_field(['categoryid' => $category->get('id'), 'type' => 'number']);
 
-        $formdata = array_merge((array) $course, ['customfield_' . $field->get('shortname') => 42]);
+        $formdata = array_merge((array) $course, [
+            'customfield_' . $field->get('shortname') => 42,
+            'customfield_' . $field->get('shortname') . '_maximum' => SQL_INT_MAX + 1,
+        ]);
         core_customfield_test_instance_form::mock_submit($formdata);
 
         $form = new core_customfield_test_instance_form('POST', ['handler' => $category->get_handler(), 'instance' => $course]);

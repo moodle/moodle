@@ -160,7 +160,7 @@ Feature: Scorm multi-sco review mode.
     And I should see "Play of the game"
 
   @javascript
-  Scenario: Test force completed set to when previous complete/passed/failed.
+  Scenario: Test force new attempt when previous complete/passed/failed.
     When the following "activities" exist:
       | activity | course | name                          | packagefilepath                                               | forcenewattempt |
       | scorm    | C1     | Basic Multi-sco SCORM package | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip | 1               |
@@ -244,7 +244,7 @@ Feature: Scorm multi-sco review mode.
     And I should see "Play of the game"
 
   @javascript
-  Scenario: Test force completed set to when previous complete/passed/failed.
+  Scenario: Test force new attempt when previous complete/passed/failed and student skipview.
     When the following "activities" exist:
       | activity | course | name                          | packagefilepath                                               | forcenewattempt | skipview |
       | scorm    | C1     | Basic Multi-sco SCORM package | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip | 1               | 2        |

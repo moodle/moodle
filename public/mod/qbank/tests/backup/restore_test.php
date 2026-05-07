@@ -17,6 +17,11 @@
 namespace mod_qbank\backup;
 
 use core\context\module;
+use core_question\local\bank\condition;
+use mod_quiz\external\add_random_questions;
+use mod_quiz\question\bank\filter\custom_category_condition;
+use mod_quiz\quiz_settings;
+use mod_quiz\structure;
 
 /**
  * Tests to cover restoring or import a question bank and its questions multiple times to the same course.
@@ -232,5 +237,98 @@ final class restore_test extends \advanced_testcase {
             // It also contains 2 children of the multianswer question.
             $this->assertCount(2, array_filter($qbankquestions, fn($question) => $question->parent == $qbankmaq->id));
         }
+    }
+
+    public function test_update_set_reference_on_restore(): void {
+        global $DB, $CFG, $USER;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        [, $course, $qcat, , $qbank] = $questiongenerator->setup_course_and_questions();
+        $qbankcontext = module::instance($qbank->cmid);
+        $filtercondition = [
+            'cat' => "{$qcat->id},{$qbankcontext->id}",
+            'sortdata' => [],
+            'filter' => [
+                'category' => [
+                    'jointype' => condition::JOINTYPE_DEFAULT,
+                    'values' => [$qcat->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+        $settings = quiz_settings::create_for_cmid($quiz->cmid);
+        $structure = structure::create_for_quiz($settings);
+        $structure->add_random_questions(1, 1, $filtercondition);
+
+        $setreference = $DB->get_record(
+            'question_set_references',
+            [
+                'component' => 'mod_quiz',
+                'questionarea' => 'slot',
+                'usingcontextid' => $settings->get_context()->id,
+                'questionscontextid' => $qbankcontext->id,
+            ],
+        );
+        $this->assertNotFalse($setreference);
+
+        // Backup qbank.
+        $bc = new \backup_controller(
+            \backup::TYPE_1COURSE,
+            $course->id,
+            \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_IMPORT,
+            $USER->id,
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        $course2 = $this->getDataGenerator()->create_course();
+        // Restore the backup into another course twice.
+        $rc = new \restore_controller(
+            $backupid,
+            $course2->id,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_IMPORT,
+            $USER->id,
+            \backup::TARGET_CURRENT_ADDING,
+        );
+        $rc->execute_precheck(droptemptablesafter: true); // Dropping temp tables simulates an asynchronous restore.
+        $rc->execute_plan();
+        $rc->destroy();
+
+        $modinfo = get_fast_modinfo($course2->id);
+        $newquizzes = $modinfo->get_instances_of('quiz');
+        $newquiz = reset($newquizzes);
+        $newqbanks = $modinfo->get_instances_of('qbank');
+        $newqbank = reset($newqbanks);
+        $newqcat = $DB->get_record('question_categories', ['contextid' => $newqbank->context->id, 'stamp' => $qcat->stamp]);
+
+        $newsetreference = $DB->get_record(
+            'question_set_references',
+            [
+                'component' => 'mod_quiz',
+                'questionarea' => 'slot',
+                'usingcontextid' => $newquiz->context->id,
+                'questionscontextid' => $newqbank->context->id,
+            ],
+        );
+        $this->assertNotFalse($newsetreference);
+        $newfiltercondition = json_decode($newsetreference->filtercondition, true);
+        $this->assertEquals($newfiltercondition['cat'], "{$newqcat->id},{$newqbank->context->id}");
+        $this->assertEquals($newfiltercondition['filter']['category']['values'][0], $newqcat->id);
+
+        $newsettings = quiz_settings::create_for_cmid($newquiz->id);
+        $newstructure = structure::create_for_quiz($newsettings);
+        $randomslot = $newstructure->get_slot_by_number(1);
+        $this->assertEquals($randomslot->id, $newsetreference->itemid);
     }
 }

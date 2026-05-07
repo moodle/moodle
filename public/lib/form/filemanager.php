@@ -14,19 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
-/**
- * FileManager form element
- *
- * Contains HTML class for a filemanager form element
- *
- * @package   core_form
- * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+use core\context\user;
 
 global $CFG;
-
 require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/repository/lib.php');
@@ -35,7 +25,8 @@ require_once('templatable_form_element.php');
 /**
  * Filemanager form element
  *
- * FilemaneManager lets user to upload/manage multiple files
+ * Contains HTML class for a filemanager form element
+ *
  * @package   core_form
  * @category  form
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
@@ -299,7 +290,13 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
         $html .= html_writer::empty_tag('input', array('value' => $draftitemid, 'name' => $elname, 'type' => 'hidden', 'id' => $id));
 
         if (!empty($options->accepted_types) && $options->accepted_types != '*') {
-            $html .= html_writer::tag('p', get_string('filesofthesetypes', 'form'));
+            $html .= html_writer::tag(
+                'div',
+                get_string('filesofthesetypes', 'form'),
+                [
+                    'class' => 'filetypes-descriptions-intro mt-1',
+                ],
+            );
             $util = new \core_form\filetypes_util();
             $filetypes = $options->accepted_types;
             $filetypedescriptions = $util->describe_file_types($filetypes);
@@ -307,6 +304,29 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
         }
 
         return $html;
+    }
+
+    /**
+     * What to display when element is frozen
+     *
+     * @return string
+     */
+    public function getFrozenHtml(): string {
+        global $USER;
+
+        $filelist = [];
+
+        // List all of the current draft files.
+        $usercontext = user::instance($USER->id);
+        $files = get_file_storage()->get_area_files($usercontext->id, 'user', 'draft', $this->getValue(), 'id', false);
+        foreach ($files as $file) {
+            $filelist[] = html_writer::link(
+                moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename(), true),
+                $file->get_filename(),
+            );
+        }
+
+        return html_writer::alist($filelist) . $this->_getPersistantData();
     }
 
     public function export_for_template(renderer_base $output) {
@@ -429,7 +449,7 @@ class form_filemanager implements renderable {
         $this->options = file_get_drafarea_files($options->itemid, '/');
 
         // calculate file count
-        $usercontext = context_user::instance($USER->id);
+        $usercontext = user::instance($USER->id);
         $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $options->itemid, 'id', false);
         $filecount = count($files);
         $this->options->filecount = $filecount;

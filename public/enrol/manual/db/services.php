@@ -39,7 +39,7 @@ $functions = array(
         'classname'   => 'enrol_manual_external',
         'methodname'  => 'unenrol_users',
         'classpath'   => 'enrol/manual/externallib.php',
-        'description' => 'Manual unenrol users',
+        'description' => 'Removes the manual enrolment of users in a course',
         'capabilities'=> 'enrol/manual:unenrol',
         'type'        => 'write',
     ),

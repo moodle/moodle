@@ -1653,6 +1653,10 @@ function course_allowed_module($course, $modname, ?\stdClass $user = null) {
                 supports numeric module ids. Please update your code to pass the module name.');
     }
 
+    if (!\core\plugininfo\mod::get_enabled_plugin($modname)) {
+        return false;
+    }
+
     $capability = 'mod/' . $modname . ':addinstance';
     if (!get_capability_info($capability)) {
         // Debug warning that the capability does not exist, but no more than once per page.

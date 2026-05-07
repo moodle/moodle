@@ -1134,6 +1134,12 @@ function(
             return false;
         }
 
+        if (newState.type == Constants.CONVERSATION_TYPES.PUBLIC) {
+            // For group conversations, use the conversation-level send permission
+            // rather than per-member private messaging flags.
+            return newState.canSendMessageToConversation === false;
+        }
+
         const oldOtherUser = getOtherUserFromState(state);
         const newOtherUser = getOtherUserFromState(newState);
 

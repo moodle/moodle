@@ -103,8 +103,8 @@ final class session_redis_cluster_test extends \advanced_testcase {
             $actual = $e->getMessage();
         }
 
-        $expected = "Failed to connect (try 5 out of 5) to Redis at";
-        $this->assertDebuggingCalledCount(5);
+        $expected = "Failed to connect (try 3 out of 3) to Redis at";
+        $this->assertDebuggingCalledCount(3);
         $this->assertStringContainsString($expected, $actual);
     }
 }

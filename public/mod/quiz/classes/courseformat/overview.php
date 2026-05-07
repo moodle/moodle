@@ -92,7 +92,7 @@ class overview extends \core_courseformat\activityoverviewbase {
                 ['id' => $this->cm->id, 'mode' => 'responses'],
             ),
             text: get_string('view'),
-            attributes: ['class' => button::SECONDARY_OUTLINE->classes()],
+            attributes: ['class' => button::BODY_OUTLINE->classes()],
         );
         return new overviewitem(
             name: get_string('actions'),
@@ -155,7 +155,7 @@ class overview extends \core_courseformat\activityoverviewbase {
         $overviewdialog = new overviewdialog(
             buttoncontent: $total,
             description: get_string('totalattempts', 'mod_quiz'),
-            definition: ['buttonclasses' => button::SECONDARY_OUTLINE->classes() . ' dropdown-toggle'],
+            definition: ['buttonclasses' => button::BODY_OUTLINE->classes() . ' dropdown-toggle'],
         );
 
         $allowedattempts = $this->quizsettings->get_quiz()->attempts;

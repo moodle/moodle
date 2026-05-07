@@ -89,7 +89,7 @@ const templates = {
 
 module.exports = {
     opts: {
-        destination: "./jsdoc/",
+        destination: "./public/jsdoc/",
         template: "node_modules/docdash",
     },
     plugins,

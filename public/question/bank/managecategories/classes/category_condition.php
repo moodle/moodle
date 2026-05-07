@@ -16,9 +16,12 @@
 
 namespace qbank_managecategories;
 
+use core\context;
 use core\output\datafilter;
 use core_question\local\bank\condition;
 use core_question\local\bank\view;
+use restore_questions_activity_structure_step;
+use stdClass;
 
 /**
  * This class controls from which category questions are listed.
@@ -301,6 +304,45 @@ class category_condition extends condition {
 
         return $filterconditions;
 
+    }
+
+    #[\Override]
+    public function restore_filtercondition(
+        array $filtercondition,
+        stdClass $setreference,
+        restore_questions_activity_structure_step $restorestep,
+        bool $originalbankinbackup = false,
+    ): array {
+        global $DB;
+        // Map category id used for category filter condition and corresponding context id.
+        $oldcategoryid = $filtercondition['filter']['category']['values'][0];
+        // Decide if we're going to refer back to the original category, or to the new category.
+        // Are we restoring to a different site?
+        // Has the original context or category been deleted?
+        // Did the old category belong to the same context as the original set reference?
+        // Are we allowed to use its questions?
+        $questionscontext = context::instance_by_id($setreference->questionscontextid, IGNORE_MISSING);
+        if (
+            !$restorestep->get_task()->is_samesite()
+            || !$questionscontext
+            || !$DB->record_exists('question_categories', ['id' => $oldcategoryid])
+            || $originalbankinbackup
+            || $setreference->usingcontextid == $setreference->questionscontextid
+            || !has_capability('moodle/question:useall', $questionscontext)
+        ) {
+            $newcategoryid = $restorestep->get_mappingid('question_category', $oldcategoryid);
+            $filtercondition['filter']['category']['values'][0] = $newcategoryid;
+        }
+
+        $filtercondition['cat'] = implode(
+            ',',
+            [
+                $filtercondition['filter']['category']['values'][0],
+                $setreference->questionscontextid,
+            ],
+        );
+
+        return $filtercondition;
     }
 
 }
