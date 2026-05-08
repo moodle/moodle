@@ -65,20 +65,12 @@ Feature: Lesson group override
     And I should not see "Group 1"
 
   Scenario: Duplicate a user override
-    Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    When I navigate to "Overrides" in current page administration
+    Given the following "mod_lesson > group overrides" exist:
+      | lesson           | group | deadline             |
+      | Test lesson name | G1    | ##1 Jan 2020 08:00## |
+    When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
     And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group      | Group 1 |
-      | id_deadline_enabled | 1 |
-      | deadline[day]       | 1 |
-      | deadline[month]     | January |
-      | deadline[year]      | 2020 |
-      | deadline[hour]      | 08 |
-      | deadline[minute]    | 00 |
-    And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00"
     Then I click on "copy" "link"
     And I set the following fields to these values:
       | Override group | Group 2  |
@@ -88,19 +80,14 @@ Feature: Lesson group override
     And I should see "Group 2"
 
   Scenario: Allow a single group to have re-take the lesson
-    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    Given the following "mod_lesson > group overrides" exist:
+      | lesson           | group | retake |
+      | Test lesson name | G1    | 1      |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group   | Group 1 |
-      | Re-takes allowed | 1 |
-    And I press "Save"
-    And I should see "Re-takes allowed"
-    Given I am on the "Test lesson name" "lesson activity" page logged in as student1
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
@@ -110,7 +97,7 @@ Feature: Lesson group override
     And I am on the "Test lesson name" "lesson activity" page
     Then I should not see "You are not allowed to retake this lesson."
     And I should see "Cat is an amphibian"
-    Given I am on the "Test lesson name" "lesson activity" page logged in as student2
+    And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |
@@ -121,19 +108,14 @@ Feature: Lesson group override
     And I should see "You are not allowed to retake this lesson."
 
   Scenario: Allow a single group to have a different password
-    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    Given the following "mod_lesson > group overrides" exist:
+      | lesson           | group | password |
+      | Test lesson name | G1    | 12345    |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Password protected lesson | Yes |
       | id_password               | moodle_rules |
     And I press "Save and display"
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group            | Group 1 |
-      | Password protected lesson | 12345 |
-    And I press "Save"
-    And I should see "Password protected lesson"
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Test lesson name is a password protected lesson"
     And I should not see "Cat is an amphibian"
@@ -160,7 +142,10 @@ Feature: Lesson group override
     And I press "Continue"
 
   Scenario: Allow a group to have a different due date
-    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    Given the following "mod_lesson > group overrides" exist:
+      | lesson           | group | deadline             |
+      | Test lesson name | G1    | ##1 Jan 2030 08:00## |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | id_deadline_enabled | 1 |
       | deadline[day]       | 1 |
@@ -169,19 +154,6 @@ Feature: Lesson group override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group      | Group 1 |
-      | id_deadline_enabled | 1 |
-      | deadline[day]       | 1 |
-      | deadline[month]     | January |
-      | deadline[year]      | 2030 |
-      | deadline[hour]      | 08 |
-      | deadline[minute]    | 00 |
-    And I press "Save"
-    And I should see "Lesson closes"
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     Then the activity date in "Test lesson name" should contain "Closed: Saturday, 1 January 2000, 8:00"
     And I should not see "Cat is an amphibian"
@@ -189,7 +161,10 @@ Feature: Lesson group override
     And I should see "Cat is an amphibian"
 
   Scenario: Allow a group to have a different start date
-    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    Given the following "mod_lesson > group overrides" exist:
+      | lesson           | group | available            |
+      | Test lesson name | G1    | ##1 Jan 2015 08:00## |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | id_available_enabled | 1 |
       | available[day]       | 1 |
@@ -198,19 +173,6 @@ Feature: Lesson group override
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group       | Group 1 |
-      | id_available_enabled | 1 |
-      | available[day]       | 1 |
-      | available[month]     | January |
-      | available[year]      | 2015 |
-      | available[hour]      | 08 |
-      | available[minute]    | 00 |
-    And I press "Save"
-    And I should see "Lesson opens"
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     Then the activity date in "Test lesson name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
     And I should not see "Cat is an amphibian"
@@ -218,18 +180,13 @@ Feature: Lesson group override
     And I should see "Cat is an amphibian"
 
   Scenario: Allow a single group to have multiple attempts at each question
-    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    Given the following "mod_lesson > group overrides" exist:
+      | lesson           | group | maxattempts |
+      | Test lesson name | G1    | 2           |
+    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Re-takes allowed | 1 |
     And I press "Save and display"
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group             | Group 1 |
-      | Maximum number of attempts per question | 2 |
-    And I press "Save"
-    And I should see "Maximum number of attempts per question"
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
@@ -335,28 +292,10 @@ Feature: Lesson group override
     And the following "group members" exist:
       | user     | group |
       | teacher1 | G1    |
-    And I am on the "Lesson 2" "lesson activity" page logged in as admin
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group       | Group 1 |
-      | id_available_enabled | 1       |
-      | available[day]       | 1       |
-      | available[month]     | January |
-      | available[year]      | 2020    |
-      | available[hour]      | 08      |
-      | available[minute]    | 00      |
-    And I press "Save and enter another override"
-    And I set the following fields to these values:
-      | Override group       | Group 2 |
-      | id_available_enabled | 1       |
-      | available[day]       | 1       |
-      | available[month]     | January |
-      | available[year]      | 2020    |
-      | available[hour]      | 08      |
-      | available[minute]    | 00      |
-    And I press "Save"
+    And the following "mod_lesson > group overrides" exist:
+      | lesson   | group | available            |
+      | Lesson 2 | G1    | ##1 Jan 2020 08:00## |
+      | Lesson 2 | G2    | ##1 Jan 2020 08:00## |
     When I am on the "Lesson 2" "lesson activity" page logged in as teacher1
     And I navigate to "Overrides" in current page administration
     And I select "Group overrides" from the "jump" singleselect
@@ -397,27 +336,15 @@ Feature: Lesson group override
     And I press "Save and display"
     When I log in as "student1"
     Then I should see "##tomorrow##%A, %d %B %Y##" in the "Timeline" "block"
-    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group | Group 1            |
-      | Available from | ##tomorrow##       |
-      | Deadline       | ##tomorrow +1day## |
-    And I press "Save"
-    And I log in as "student1"
+    And the following "mod_lesson > group overrides" exist:
+      | lesson           | group | available    | deadline           |
+      | Test lesson name | G1    | ##tomorrow## | ##tomorrow +1day## |
+    And I reload the page
     And I should see "##tomorrow +1day##%A, %d %B %Y##" in the "Timeline" "block"
-    And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group | Group 2             |
-      | Available from | ##tomorrow +1day##  |
-      | Deadline       | ##tomorrow +3days## |
-    And I press "Save"
-    And I log in as "student1"
+    And the following "mod_lesson > group overrides" exist:
+      | lesson           | group | available       | deadline           |
+      | Test lesson name | G1    | ##tomorrow +1## | ##tomorrow +3day## |
+    And I reload the page
     And I should see "##tomorrow +3days##%A, %d %B %Y##" in the "Timeline" "block"
 
   @javascript
@@ -432,26 +359,13 @@ Feature: Lesson group override
       | available          | ##today##    |
       | deadline           | ##tomorrow## |
     And I press "Save and display"
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group | Group 1            |
-      | Available from | ##tomorrow##       |
-      | Deadline       | ##tomorrow +1day## |
-    And I press "Save"
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group | Group 2             |
-      | Available from | ##tomorrow +1day##  |
-      | Deadline       | ##tomorrow +3days## |
-    And I navigate to "Overrides" in current page administration
-    And I follow "Add user override"
-    And I set the following fields to these values:
-      | Override user  | Sam1 Student1     |
-      | Available from | ##tomorrow##      |
-      | Deadline       | ##tomorrow noon## |
-    And I press "Save"
+    And the following "mod_lesson > group overrides" exist:
+      | lesson           | group | available       | deadline           |
+      | Test lesson name | G1    | ##tomorrow##    | ##tomorrow +1day## |
+      | Test lesson name | G2    | ##tomorrow +1## | ##tomorrow +3day## |
+    And the following "mod_lesson > user overrides" exist:
+      | lesson           | user     | available    | deadline          |
+      | Test lesson name | student1 | ##tomorrow## | ##tomorrow noon## |
     When I log in as "student1"
     Then I should see "##tomorrow noon##%A, %d %B %Y##" in the "Timeline" "block"
 
@@ -460,22 +374,13 @@ Feature: Lesson group override
     Given the following "group members" exist:
       | user     | group |
       | student1 | G2    |
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-      | Override group | Group 2             |
-      | Available from | ##tomorrow +1day##  |
-      | Deadline       | ##tomorrow +3days## |
-    And I navigate to "Overrides" in current page administration
-    And I follow "Add user override"
-    And I set the following fields to these values:
-      | Override user  | Sam1 Student1     |
-      | Available from | ##tomorrow##      |
-      | Deadline       | ##tomorrow noon## |
-    And I press "Save"
-    And I am on "Course 1" course homepage
+    And the following "mod_lesson > group overrides" exist:
+      | lesson           | group | available       | deadline           |
+      | Test lesson name | G2    | ##tomorrow +1## | ##tomorrow +3day## |
+    And the following "mod_lesson > user overrides" exist:
+      | lesson           | user     | available    | deadline          |
+      | Test lesson name | student1 | ##tomorrow## | ##tomorrow noon## |
+    And I am on the "C1" "Course" page logged in as teacher1
     And I navigate to course participants
     And I click on "Unenrol" "icon" in the "student1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
