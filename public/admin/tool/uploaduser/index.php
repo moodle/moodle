@@ -104,11 +104,6 @@ if ($formdata = $mform2->is_cancelled()) {
     die;
 }
 
-// Print the header.
-echo $OUTPUT->header();
-
-echo $OUTPUT->heading(get_string('uploaduserspreview', 'tool_uploaduser'));
-
 // NOTE: this is JUST csv processing preview, we must not prevent import from here if there is something in the file!!
 // this was intended for validation of csv formatting and encoding, not filtering the data!!!!
 // we definitely must not process the whole file!
@@ -116,11 +111,16 @@ echo $OUTPUT->heading(get_string('uploaduserspreview', 'tool_uploaduser'));
 // Preview table data.
 $table = new \tool_uploaduser\preview($cir, $filecolumns, $previewrows);
 
+// Print the header.
+echo $OUTPUT->header();
+
+// Display preview table and show warning if CSV contains errors.
+if (!$table->get_no_error()) {
+    echo $OUTPUT->notification(get_string('csvcontainserrors', 'tool_uploaduser'), 'warning');
+}
+echo $OUTPUT->heading(get_string('uploaduserspreview', 'tool_uploaduser'));
 echo html_writer::tag('div', html_writer::table($table), ['class' => 'flexible-wrap']);
 
-// Print the form if valid values are available.
-if ($table->get_no_error()) {
-    $mform2->display();
-}
+$mform2->display();
 echo $OUTPUT->footer();
 die;

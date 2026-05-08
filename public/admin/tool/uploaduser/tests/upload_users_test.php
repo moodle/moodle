@@ -239,4 +239,93 @@ EOF;
 
         return $output;
     }
+
+    /**
+     * Test that uploading users respects unique custom profile field constraints:
+     * - Users with different unique values are all created.
+     * - Duplicate values within the same CSV are rejected (only first is created).
+     * - Values that already exist in the database are rejected.
+     * - Updating a user with their own existing unique value is not rejected as a duplicate.
+     *
+     * @covers \tool_uploaduser\process::process_line
+     */
+    public function test_upload_users_unique_profile_field_no_duplicates(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        set_config('passwordpolicy', 0);
+        $this->setAdminUser();
+
+        // Create a unique custom profile field.
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'uniquecode',
+            'name' => 'Unique Code',
+            'datatype' => 'text',
+            'forceunique' => 1,
+        ]);
+
+        // 1. Upload users with different unique values — all should be created.
+        $csv = <<<EOF
+username,firstname,lastname,email,profile_field_uniquecode
+user1,First,User,user1@example.com,CODE001
+user2,Second,User,user2@example.com,CODE002
+EOF;
+
+        $output = $this->process_csv_upload($csv, ['--uutype=' . UU_USER_ADDNEW]);
+
+        $user1 = $DB->get_record('user', ['username' => 'user1']);
+        $this->assertNotEmpty($user1, 'User1 should be created');
+        $this->assertEquals('CODE001', profile_user_record($user1->id)->uniquecode);
+
+        $user2 = $DB->get_record('user', ['username' => 'user2']);
+        $this->assertNotEmpty($user2, 'User2 should be created');
+        $this->assertEquals('CODE002', profile_user_record($user2->id)->uniquecode);
+
+        // 2. Upload users where two rows share the same unique value — only the first should be created.
+        $csv = <<<EOF
+username,firstname,lastname,email,profile_field_uniquecode
+user3,Third,User,user3@example.com,CODE003
+user4,Fourth,User,user4@example.com,CODE003
+EOF;
+
+        $output = $this->process_csv_upload($csv, ['--uutype=' . UU_USER_ADDNEW]);
+
+        $user3 = $DB->get_record('user', ['username' => 'user3']);
+        $this->assertNotEmpty($user3, 'User3 should be created (first with CODE003)');
+        $this->assertEquals('CODE003', profile_user_record($user3->id)->uniquecode);
+
+        $user4 = $DB->get_record('user', ['username' => 'user4']);
+        $this->assertEmpty($user4, 'User4 should not be created (duplicate CODE003 in CSV)');
+        $this->assertStringContainsString('This value has already been used in the uploaded users file.', $output);
+        $this->assertStringContainsString('This value has already been used.', $output);
+
+        // 3. Upload a new user with a value that already exists in the database — should be rejected.
+        $csv = <<<EOF
+username,firstname,lastname,email,profile_field_uniquecode
+user5,Fifth,User,user5@example.com,CODE001
+EOF;
+
+        $output = $this->process_csv_upload($csv, ['--uutype=' . UU_USER_ADDNEW]);
+
+        $user5 = $DB->get_record('user', ['username' => 'user5']);
+        $this->assertEmpty($user5, 'User5 should not be created (CODE001 already exists in DB)');
+        $this->assertStringContainsString('This value has already been used.', $output);
+
+        // 4. Update an existing user re-supplying their own unique value — must not be rejected as a duplicate.
+        $csv = <<<EOF
+username,firstname,lastname,email,profile_field_uniquecode
+user1,First,Updated,user1@example.com,CODE001
+EOF;
+
+        $output = $this->process_csv_upload($csv, ['--uutype=' . UU_USER_UPDATE, '--uuupdatetype=' . UU_UPDATE_FILEOVERRIDE]);
+
+        $user1 = $DB->get_record('user', ['username' => 'user1']);
+        $this->assertEquals('Updated', $user1->lastname, 'User1 lastname should be updated');
+        $this->assertEquals('CODE001', profile_user_record($user1->id)->uniquecode);
+        $this->assertStringNotContainsString(
+            'This value has already been used.',
+            $output,
+            'Updating a user with their own unique value must not produce a duplicate error'
+        );
+    }
 }
