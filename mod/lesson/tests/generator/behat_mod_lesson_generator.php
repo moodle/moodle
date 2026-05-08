@@ -49,6 +49,18 @@ class behat_mod_lesson_generator extends behat_generator_base {
                 'datagenerator' => 'answer',
                 'required' => ['page'],
             ],
+            'user overrides' => [
+                'singular' => 'user override',
+                'datagenerator' => 'override',
+                'required' => ['lesson', 'user'],
+                'switchids' => ['lesson' => 'lessonid', 'user' => 'userid'],
+            ],
+            'group overrides' => [
+                'singular' => 'group override',
+                'datagenerator' => 'override',
+                'required' => ['lesson', 'group'],
+                'switchids' => ['lesson' => 'lessonid', 'group' => 'groupid'],
+            ],
         ];
     }
 
