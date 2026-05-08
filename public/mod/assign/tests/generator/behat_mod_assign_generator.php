@@ -49,6 +49,18 @@ class behat_mod_assign_generator extends behat_generator_base {
                 'required' => ['assign', 'user', 'marker'],
                 'switchids' => ['assign' => 'cmid', 'user' => 'userid', 'marker' => 'markerid'],
             ],
+            'user overrides' => [
+                'singular' => 'user override',
+                'datagenerator' => 'override',
+                'required' => ['assignment', 'user'],
+                'switchids' => ['assignment' => 'assignid', 'user' => 'userid'],
+            ],
+            'group overrides' => [
+                'singular' => 'group override',
+                'datagenerator' => 'override',
+                'required' => ['assignment', 'group'],
+                'switchids' => ['assignment' => 'assignid', 'group' => 'groupid'],
+            ],
         ];
     }
 
@@ -72,4 +84,13 @@ class behat_mod_assign_generator extends behat_generator_base {
         return $this->get_user_id($username);
     }
 
+    /**
+     * Get the assignment instance ID using an activity name or idnumber.
+     *
+     * @param string $identifier activity name or idnumber
+     * @return int The assignment instance ID
+     */
+    protected function get_assignment_id(string $identifier): int {
+        return $this->get_cm_by_activity_name('assign', $identifier)->instance;
+    }
 }

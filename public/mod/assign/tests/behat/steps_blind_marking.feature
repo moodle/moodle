@@ -92,14 +92,9 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
 
   @javascript
   Scenario: Submissions table visible with overrides and blind marking
+    Given the following "mod_assign > user overrides" exist:
+      | assignment            | user     | duedate              |
+      | Test assignment name  | student1 | ##2030-01-01 08:00## |
     When I am on the "Test assignment name" "assign activity" page
-    And I navigate to "Overrides" in current page administration
-    And I press "Add user override"
-    And I set the following fields to these values:
-      | Override user | Student              |
-      | Due date      | ##2030-01-01 08:00## |
-    And I press "Save"
-    And I should see "Tuesday, 1 January 2030, 8:00"
-    And I am on the "Test assignment name" "assign activity" page
     And I navigate to "Submissions" in current page administration
-    And I should see "In review" in the "I'm the student's first submission" "table_row"
+    Then I should see "In review" in the "I'm the student's first submission" "table_row"
