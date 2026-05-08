@@ -1118,6 +1118,10 @@ div#dock {
     .fitem .felement .form-select {
         align-self: flex-start;
     }
+    .mediaplugin,
+    .mediaplugin video {
+        min-width: 200px;
+    }
 }
 .path-mod-lesson .table td {
     vertical-align: middle;
