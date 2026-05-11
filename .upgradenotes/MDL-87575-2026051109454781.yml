@@ -1,0 +1,7 @@
+issueNumber: MDL-87575
+notes:
+  core_courseformat:
+    - message: >-
+        Two new steps have been added to simplify testing of linear navigation:
+        the course linear navigation should/should not be visible
+      type: improved
