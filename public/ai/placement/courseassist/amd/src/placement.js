@@ -332,11 +332,15 @@ const AICourseAssist = class {
             case 'summarise_text':
                 params.method = 'aiplacement_courseassist_summarise_text';
                 params.heading = await getString('aisummary', 'aiplacement_courseassist');
+                params.copylabel = await getString('copyaisummary', 'aiplacement_courseassist');
+                params.regeneratelabel = await getString('regenerateaisummary', 'aiplacement_courseassist');
                 break;
 
             case 'explain_text':
                 params.method = 'aiplacement_courseassist_explain_text';
                 params.heading = await getString('aiexplain', 'aiplacement_courseassist');
+                params.copylabel = await getString('copyaiexplanation', 'aiplacement_courseassist');
+                params.regeneratelabel = await getString('regenerateaiexplanation', 'aiplacement_courseassist');
                 break;
         }
 
@@ -486,6 +490,8 @@ const AICourseAssist = class {
             content: content,
             heading: params.heading,
             action: action,
+            copylabel: params.copylabel,
+            regeneratelabel: params.regeneratelabel,
         };
         Templates.render('aiplacement_courseassist/response', args).then((html) => {
             this.addResponseToStack(action, html);
