@@ -1077,22 +1077,13 @@ class page_requirements_manager {
      * @return string Returns the script html to include the react auto init code
      */
     public function react_mustache_autoinit(): string {
-        $path = \core\router\util::get_path_for_callable(
-            [\core\route\controller\esm_controller::class, 'serve'],
-            [
-                'revision' => $this->get_jsrev(),
-                'scriptpath' => '@moodle/lms/core/react_autoinit',
-            ]
-        );
-        $scripthtml = html_writer::tag(
+        return html_writer::tag(
             tagname: 'script',
-            contents: '',
+            contents: 'import "@moodle/lms/core/react_autoinit";',
             attributes: [
                 'type' => 'module',
-                'src' => $path->out(),
             ],
-        ) . "\n";
-        return $scripthtml;
+        );
     }
 
     /**
