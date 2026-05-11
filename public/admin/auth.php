@@ -21,14 +21,13 @@ $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $auth   = optional_param('auth', '', PARAM_PLUGIN);
 
 // Fix the list of enabled auths.
-\core\di::get(\core\authentication::class)->get_enabled_plugins(true);
+$authhelper = \core\di::get(\core\authentication::class);
+$authhelper->get_enabled_plugins(true);
 if (empty($CFG->auth)) {
     $authsenabled = [];
 } else {
     $authsenabled = explode(',', $CFG->auth);
 }
-
-$authhelper = \core\di::get(\core\authentication::class);
 
 if (!empty($auth) && !$authhelper->plugin_exists($auth)) {
     throw new \moodle_exception('pluginnotinstalled', 'auth', $returnurl, $auth);

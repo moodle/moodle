@@ -150,7 +150,7 @@ if ($frm && isset($frm->username)) {
     if ($user) {
         // The auth plugin has already provided the user via the loginpage_hook() called above.
     } else if (($frm->username == 'guest') && empty($CFG->guestloginbutton)) {
-        // Can't log in as guest if guest button is disabled
+        // Can't log in as guest if guest button is disabled.
         $user = false;
         $frm = false;
     } else {

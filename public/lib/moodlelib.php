@@ -3794,13 +3794,47 @@ function authenticate_user_login(
     global $CFG, $DB, $PAGE, $SESSION;
     require_once("$CFG->libdir/authlib.php");
 
-    if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
-        // we have found the user
+    $logerror = function (
+        string $warning,
+    ): void {
+        global $CFG;
 
+        // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
+        error_log(sprintf(
+            '[client %s]  %s  %s  %s',
+            getremoteaddr(),
+            $CFG->wwwroot,
+            $warning,
+            $_SERVER['HTTP_USER_AGENT'],
+        ));
+    };
+
+    $triggerloginfailed = function (
+        string $username,
+        int $failurereason,
+        ?int $userid = null,
+    ): void {
+        $data = [
+            'other' => [
+                'username' => $username,
+                'reason' => $failurereason,
+            ],
+        ];
+
+        if ($userid !== null) {
+            $data['userid'] = $userid;
+        }
+
+        \core\event\user_login_failed::create($data)->trigger();
+    };
+
+    // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
+    if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
+        // We have found the user.
     } else if (!empty($CFG->authloginviaemail)) {
         if ($email = clean_param($username, PARAM_EMAIL)) {
             $select = "mnethostid = :mnethostid AND LOWER(email) = LOWER(:email) AND deleted = 0";
-            $params = array('mnethostid' => $CFG->mnet_localhost_id, 'email' => $email);
+            $params = ['mnethostid' => $CFG->mnet_localhost_id, 'email' => $email];
             $users = $DB->get_records_select('user', $select, $params, 'id', 'id', 0, 2);
             if (count($users) === 1) {
                 // Use email for login only if unique.
@@ -3817,15 +3851,9 @@ function authenticate_user_login(
         $failurereason = AUTH_LOGIN_FAILED;
 
         // Trigger login failed event (specifying the ID of the found user, if available).
-        \core\event\user_login_failed::create([
-            'userid' => ($user->id ?? 0),
-            'other' => [
-                'username' => $username,
-                'reason' => $failurereason,
-            ],
-        ])->trigger();
+        $triggerloginfailed($username, $failurereason, $user->id ?? 0);
 
-        error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Invalid Login Token:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+        $logerror("Invalid Login Token:  {$username}");
         return false;
     }
 
@@ -3833,17 +3861,11 @@ function authenticate_user_login(
     if (login_captcha_enabled() && !validate_login_captcha($loginrecaptcha)) {
         $failurereason = AUTH_LOGIN_FAILED_RECAPTCHA;
         // Trigger login failed event (specifying the ID of the found user, if available).
-        \core\event\user_login_failed::create([
-            'userid' => ($user->id ?? 0),
-            'other' => [
-                'username' => $username,
-                'reason' => $failurereason,
-            ],
-        ])->trigger();
+        $triggerloginfailed($username, $failurereason, $user->id ?? 0);
         return false;
     }
 
-    $authentication = \core\di::get(\core\authentication::class);
+    $authentication = di::get(\core\authentication::class);
     $authsenabled = $authentication->get_enabled_plugins();
     $uservalidator = di::get(\core_auth\validate_user::class);
 
@@ -3856,52 +3878,40 @@ function authenticate_user_login(
             $authplugin->pre_user_login_hook($user);
         }
 
-        $validationfailureparams = [
-            'userid' => $user->id,
-            'other' => [
-                'username' => $username,
-            ],
-        ];
-
         try {
             $uservalidator->validate_before_web_login($user);
         } catch (\core_auth\exception\user_suspended_exception $e) {
             $failurereason = AUTH_LOGIN_SUSPENDED;
-            $validationfailureparams['other']['reason'] = $failurereason;
-            \core\event\user_login_failed::create($validationfailureparams)->trigger();
-            error_log('[client '.getremoteaddr()."]  {$CFG->wwwroot}  Suspended Login:  {$username}  {$_SERVER['HTTP_USER_AGENT']}");
+            $triggerloginfailed($username, $failurereason);
+            $logerror("Suspended Login:  {$username}");
 
             return false;
         } catch (\core_auth\exception\auth_disabled_exception $e) {
             $failurereason = AUTH_LOGIN_SUSPENDED;
-            $validationfailureparams['other']['reason'] = $failurereason;
-            \core\event\user_login_failed::create($validationfailureparams)->trigger();
-            error_log('[client '.getremoteaddr()."]  {$CFG->wwwroot}  Disabled Login:  {$username}  {$_SERVER['HTTP_USER_AGENT']}");
+            $triggerloginfailed($username, $failurereason);
+            $logerror("Disabled Login:  {$username}");
 
             return false;
         }
 
-        $auths = array($auth);
-
+        $auths = [$auth];
     } else {
         // Check if there's a deleted record (cheaply), this should not happen because we mangle usernames in delete_user().
-        if ($DB->get_field('user', 'id', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id,  'deleted' => 1))) {
+        if ($DB->get_field('user', 'id', ['username' => $username, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 1])) {
             $failurereason = AUTH_LOGIN_NOUSER;
-
-            // Trigger login failed event.
-            $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
-                    'reason' => $failurereason)));
-            $event->trigger();
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $triggerloginfailed($username, $failurereason);
+            $logerror("Deleted Login:  {$username}");
             return false;
         }
 
         // User does not exist.
         $auths = $authsenabled;
-        $user = new stdClass();
-        $user->id = 0;
+        $user = (object) [
+            'id' => 0,
+        ];
     }
 
+    // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
     if ($ignorelockout) {
         // Some other mechanism protects against brute force password guessing, for example login form might include reCAPTCHA
         // or this function is called from a SSO script.
@@ -3909,18 +3919,14 @@ function authenticate_user_login(
         // Verify login lockout after other ways that may prevent user login.
         if (login_is_lockedout($user)) {
             $failurereason = AUTH_LOGIN_LOCKOUT;
+            $triggerloginfailed($username, $failurereason);
 
-            // Trigger login failed event.
-            $event = \core\event\user_login_failed::create(array('userid' => $user->id,
-                    'other' => array('username' => $username, 'reason' => $failurereason)));
-            $event->trigger();
-
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Login lockout:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $logerror("Login lockout:  {$username}");
             $SESSION->loginerrormsg = get_string('accountlocked', 'admin');
 
             return false;
         }
-    } else {
+    } else { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedElse
         // We can not lockout non-existing accounts.
     }
 
@@ -3973,13 +3979,13 @@ function authenticate_user_login(
             // User already exists in database.
             if (empty($user->auth)) {
                 // For some reason auth isn't set yet.
-                $DB->set_field('user', 'auth', $auth, array('id' => $user->id));
+                $DB->set_field('user', 'auth', $auth, ['id' => $user->id]);
                 $user->auth = $auth;
             }
 
             // If the existing hash is using an out-of-date algorithm (or the legacy md5 algorithm), then we should update to
             // the current hash algorithm while we have access to the user's password.
-            \core\di::get(\core\authentication\password::class)->update($user, $password);
+            di::get(\core\authentication\password::class)->update($user, $password);
 
             if ($authplugin->is_synchronised_with_external()) {
                 // Update user record from external DB.
@@ -3989,14 +3995,9 @@ function authenticate_user_login(
             // The user is authenticated but user creation may be disabled.
             if (!empty($CFG->authpreventaccountcreation)) {
                 $failurereason = AUTH_LOGIN_UNAUTHORISED;
+                $triggerloginfailed($username, $failurereason);
+                $logerror("Unknown user, can not create new accounts:  {$username}");
 
-                // Trigger login failed event.
-                $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
-                        'reason' => $failurereason)));
-                $event->trigger();
-
-                error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".
-                        $_SERVER['HTTP_USER_AGENT']);
                 return false;
             } else {
                 $user = create_user_record($username, $password, $auth);
@@ -4012,10 +4013,7 @@ function authenticate_user_login(
 
         if (empty($user->id)) {
             $failurereason = AUTH_LOGIN_NOUSER;
-            // Trigger login failed event.
-            $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
-                    'reason' => $failurereason)));
-            $event->trigger();
+            $triggerloginfailed($username, $failurereason);
             return false;
         }
 
@@ -4023,9 +4021,8 @@ function authenticate_user_login(
             $uservalidator->validate_is_not_suspended($user);
         } catch (\core_auth\exception\user_suspended_exception $e) {
             $failurereason = AUTH_LOGIN_SUSPENDED;
-            $validationfailureparams['other']['reason'] = $failurereason;
-            \core\event\user_login_failed::create($validationfailureparams)->trigger();
-            error_log('[client '.getremoteaddr()."]  {$CFG->wwwroot}  Suspended Login:  {$username}  {$_SERVER['HTTP_USER_AGENT']}");
+            $triggerloginfailed($username, $failurereason);
+            $logerror("Suspended Login:  {$username}");
 
             return false;
         }
@@ -4037,22 +4034,16 @@ function authenticate_user_login(
 
     // Failed if all the plugins have failed.
     if (debugging('', DEBUG_ALL)) {
-        error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+        $logerror("Failed login:  {$username}");
     }
 
     if ($user->id) {
         login_attempt_failed($user);
         $failurereason = AUTH_LOGIN_FAILED;
-        // Trigger login failed event.
-        $event = \core\event\user_login_failed::create(array('userid' => $user->id,
-                'other' => array('username' => $username, 'reason' => $failurereason)));
-        $event->trigger();
+        $triggerloginfailed($username, $failurereason);
     } else {
         $failurereason = AUTH_LOGIN_NOUSER;
-        // Trigger login failed event.
-        $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
-                'reason' => $failurereason)));
-        $event->trigger();
+        $triggerloginfailed($username, $failurereason);
     }
 
     return false;
