@@ -48,7 +48,6 @@ class manager {
             'adminpresets_admin_setting_configduration_with_advanced' => 'adminpresets_admin_setting_configtext_with_advanced',
             'adminpresets_admin_setting_configduration' => 'adminpresets_admin_setting_configtext',
             'adminpresets_admin_setting_configempty' => 'adminpresets_admin_setting_configtext',
-            'adminpresets_admin_setting_configexecutable' => 'adminpresets_admin_setting_configtext',
             'adminpresets_admin_setting_configfile' => 'adminpresets_admin_setting_configtext',
             'adminpresets_admin_setting_confightmleditor' => 'adminpresets_admin_setting_configtext',
             'adminpresets_admin_setting_configmixedhostiplist' => 'adminpresets_admin_setting_configtext',
@@ -620,7 +619,7 @@ class manager {
      *               to define if any setting has been found and another boolean to specify if any plugin has been found.
      */
     public function import_preset(string $xmlcontent, ?string $presetname = null): array {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
         $settingsfound = false;
         $pluginsfound = false;
@@ -681,6 +680,13 @@ class manager {
                     // Cleaning the setting value.
                     if (!$presetsetting = $this->get_setting($sitesettings[$plugin][$name]->get_settingdata(), $value)) {
                         debugging('Setting ' . $plugin . '/' . $name . ' not implemented', DEBUG_DEVELOPER);
+                        continue;
+                    }
+
+                    // When $CFG->preventexecpath is set, executable paths are managed through
+                    // config.php and cannot be changed via presets.
+                    $settingdata = $sitesettings[$plugin][$name]->get_settingdata();
+                    if ($settingdata instanceof \admin_setting_configfile && !empty($CFG->preventexecpath)) {
                         continue;
                     }
 
@@ -987,7 +993,7 @@ class manager {
      * @return array List with an array with the applied settings, another with the skipped ones and the adminpresetapplyid.
      */
     protected function apply_settings(int $presetid, bool $simulate = false, ?int $adminpresetapplyid = null): array {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
 
         $applied = [];
         $skipped = [];
@@ -1046,6 +1052,25 @@ class manager {
 
                 // Saving data.
                 if ($updatesetting) {
+                    // Do not overwrite executable/directory paths when $CFG->preventexecpath is enabled.
+                    $settingdata = $presetsetting->get_settingdata();
+                    if ($settingdata instanceof \admin_setting_configfile && !empty($CFG->preventexecpath)) {
+                        $skipped[] = $data;
+                        continue;
+                    }
+
+                    // Ensure executable-path settings point to a valid executable file before saving.
+                    if ($settingdata instanceof \admin_setting_configexecutable) {
+                        $execpath = $presetsetting->get_value();
+                        if (!empty($execpath)) {
+                            require_once($CFG->libdir . '/filelib.php');
+                            if (!file_exists($execpath) || is_dir($execpath) || !file_is_executable($execpath)) {
+                                $skipped[] = $data;
+                                continue;
+                            }
+                        }
+                    }
+
                     // The preset application it's only saved when differences (in their values) are found.
                     if (empty($applieditem)) {
                         // Save the preset application and store the preset applied id.
