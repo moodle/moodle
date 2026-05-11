@@ -124,6 +124,10 @@
 	url = https://github.com/mdjnelson/moodle-mod_customcert
 	branch = MOODLE_500_STABLE
 	tag = v5.0.3
+[submodule "public/mod/oublog"]
+	path = public/mod/oublog
+	url = https://github.com/moodleou/moodle-mod_oublog
+	branch = MOODLE_500_STABLE
 [submodule "public/mod/questionnaire"]
 	path = public/mod/questionnaire
 	url = https://github.com/PoetOS/moodle-mod_questionnaire
