@@ -768,7 +768,8 @@ class quiz_attempt {
             if (is_null($this->reviewoptions)) {
                 $this->reviewoptions = quiz_get_review_options($this->get_quiz(),
                         $this->attempt, $this->quizobj->get_context());
-                if ($this->is_own_preview()) {
+        // @brainite
+        if ($this->is_own_preview() && !($this->reviewoptions->never_preview ?? FALSE)) {
                     // It should  always be possible for a teacher to review their
                     // own preview irrespective of the review options settings.
                     $this->reviewoptions->attempt = true;

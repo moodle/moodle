@@ -508,6 +508,12 @@ class quiz_settings {
      * @return string an appropraite message.
      */
     public function cannot_review_message($when, $short = false, ?int $attemptsubmittime = null) {
+    // @brainite
+    if ($short) {
+      return 'Review is currently unavailable.';
+    }
+    return 'You cannot currently review this quiz. Complete the requirements and/or come back later.';
+
 
         if ($attemptsubmittime === null) {
             debugging('It is recommended that you pass $attemptsubmittime to cannot_review_message', DEBUG_DEVELOPER);

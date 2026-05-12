@@ -672,8 +672,9 @@ class mod_quiz_mod_form extends moodleform_mod {
             ['group' => 'cattempts', 'parentclass' => 'ms-4']
         );
         $completionpassgradeel = 'completionpassgrade' . $suffix;
-        $mform->hideIf($completionattemptsexhaustedel, $completionpassgradeel, 'notchecked');
-        $mform->hideIf($completionattemptsexhaustedel, $completionpassgradeel, 'notchecked');
+        // @brainite
+        // $mform->hideIf($completionattemptsexhaustedel, $completionpassgradeel, 'notchecked');
+        // $mform->hideIf($completionattemptsexhaustedel, $completionpassgradeel, 'notchecked');
 
         return [$completionattemptsexhaustedel];
     }

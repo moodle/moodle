@@ -322,6 +322,16 @@ class feedback_item_multichoice extends feedback_item_base {
         $separator = !empty($info->horizontal) ? ' ' : \html_writer::div('', 'w-100');
         $tmpvalue = $form->get_item_value($item) ?? 0; // Used for element defaults, so must be a valid value (not null).
 
+        // @brainite
+        foreach ($options as $k => $v) {
+            if ($v[0] === '*') {
+                $options[$k] = substr($v, 1);
+                if ($tmpvalue === 0) {
+                    $tmpvalue = $k;
+                }
+            }
+        }
+
         // Subtypes:
         // r = radio
         // c = checkbox

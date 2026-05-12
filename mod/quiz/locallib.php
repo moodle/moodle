@@ -1228,8 +1228,29 @@ function quiz_get_review_options($quiz, $attempt, $context) {
         $options->userinfoinhistory = $attempt->userid;
 
     }
+    else {
+        // @brainite
+        //
+        // If they are not complete, then disallow the preview.
+        if (!$quiz->timeclose || time() < $quiz->timeclose) {
+            global $CFG;
+            require_once($CFG->libdir . '/modinfolib.php');
+            $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+            $cm_info = \cm_info::create($cm);
+            if (isset($cm_info->customdata['customcompletionrules'])
+                && isset($cm_info->customdata['customcompletionrules']['completionpassorattemptsexhausted'])
+                && !empty($cm_info->customdata['customcompletionrules']['completionpassorattemptsexhausted'])) {
+                $completioninfo = new \completion_info($cm_info->get_course());
+                $customcompletion = new \mod_quiz\completion\custom_completion($cm_info, $attempt->userid, $completioninfo->get_core_completion_state($cm_info, $attempt->userid));
+                if ($customcompletion->get_state('completionpassorattemptsexhausted') === COMPLETION_INCOMPLETE) {
+                    $options->attempt = question_display_options::HIDDEN;
+                    $options->never_preview = TRUE;
+                }
+            }
+        }
+  }
 
-    return $options;
+  return $options;
 }
 
 /**

@@ -555,7 +555,8 @@ class access_manager {
         $reviewoptions = display_options::make_from_quiz(
                 $this->quizobj->get_quiz(), $when);
 
-        if (!$reviewoptions->attempt) {
+        // @brainite
+        if (!$reviewoptions->attempt || !$nolongerused->attempt) {
             return $output->no_review_message($this->quizobj->cannot_review_message($when, true, $attempt->timefinish));
 
         } else {

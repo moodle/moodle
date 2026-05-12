@@ -71,6 +71,9 @@ class feedback_multichoice_form extends feedback_item_form {
 
         $mform->addElement('static', 'hint', '', get_string('use_one_line_for_each_value', 'feedback'));
 
+        // @brainite
+        $mform->addElement('static', 'hint', '', 'Mark default choice with * at the start of the line.');
+
         parent::definition();
         $this->set_data($item);
 

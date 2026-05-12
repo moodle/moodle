@@ -1060,9 +1060,10 @@ function quiz_process_options($quiz) {
         if (empty($quiz->completionusegrade)) {
             $quiz->completionpassgrade = 0;
         }
-        if (empty($quiz->completionpassgrade)) {
-            $quiz->completionattemptsexhausted = 0;
-        }
+        // @brainite
+        // if (empty($quiz->completionpassgrade)) {
+        //     $quiz->completionattemptsexhausted = 0;
+        // }
         if (empty($quiz->completionminattemptsenabled)) {
             $quiz->completionminattempts = 0;
         }
@@ -2054,8 +2055,9 @@ function quiz_get_coursemodule_info($coursemodule) {
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         if ($quiz->completionattemptsexhausted) {
             $result->customdata['customcompletionrules']['completionpassorattemptsexhausted'] = [
-                'completionpassgrade' => $coursemodule->completionpassgrade,
-                'completionattemptsexhausted' => $quiz->completionattemptsexhausted,
+                // @brainite
+                'completionpassgrade' => 1, // $coursemodule->completionpassgrade,
+                'completionattemptsexhausted' => 1, // $quiz->completionattemptsexhausted,
             ];
         } else {
             $result->customdata['customcompletionrules']['completionpassorattemptsexhausted'] = [];
