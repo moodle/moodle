@@ -55,8 +55,37 @@ const completeStack: string[] = [];
 (globalThis as any).completeStack = completeStack;
 
 // Provide the global M object with cfg defaults and tracked js_pending/js_complete mocks.
+const defaultCfg = {
+    wwwroot: 'https://example.com',
+    apibase: 'https://example.com',
+    homeurl: '/',
+    sesskey: 'test-sesskey',
+    sessiontimeout: 7200,
+    sessiontimeoutwarning: 1200,
+    themerev: 1,
+    slasharguments: 1,
+    theme: 'boost',
+    iconsystemmodule: 'core/icon_system_fontawesome',
+    jsrev: -1,
+    admin: 'admin',
+    svgicons: true,
+    usertimezone: 'Australia/Perth',
+    language: 'en',
+    courseId: 0,
+    courseContextId: 0,
+    contextid: 1,
+    contextInstanceId: 0,
+    langrev: 1,
+    templaterev: 1,
+    siteId: 1,
+    userId: 2,
+    deprecationignorelist: [],
+    traceId: 'test-trace-id',
+    developerdebug: true,
+};
+
 (globalThis as any).M = {
-    cfg: {},
+    cfg: {...defaultCfg},
     util: {
         js_pending: jest.fn((key: string) => {
             pendingStack.push(key);
@@ -74,6 +103,7 @@ jest.mock('@moodle/lms/core/amd');
 beforeEach(() => {
     pendingStack.length = 0;
     completeStack.length = 0;
+    Object.assign((globalThis as any).M.cfg, defaultCfg);
 
     resetStringCache();
 
