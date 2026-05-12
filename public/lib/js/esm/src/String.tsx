@@ -67,6 +67,8 @@ export const getString = (
     return stringPromiseCache.get(key)!;
 };
 
+export const resetStringCache = () => stringPromiseCache.clear();
+
 export const cacheStrings = async (
     requests: Array<{key: string; component: string; param?: stringParams; lang?: string}>,
 ): Promise<void> => {

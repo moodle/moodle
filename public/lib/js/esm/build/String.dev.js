@@ -19,12 +19,14 @@ const getString = /* @__PURE__ */ __name((identifier, component = "core", params
   }
   return stringPromiseCache.get(key);
 }, "getString");
+const resetStringCache = /* @__PURE__ */ __name(() => stringPromiseCache.clear(), "resetStringCache");
 const cacheStrings = /* @__PURE__ */ __name(async (requests) => {
   const str = await requireAsync("core/str");
   str.cache_strings(requests);
 }, "cacheStrings");
 export {
   cacheStrings,
-  getString
+  getString,
+  resetStringCache
 };
 //# sourceMappingURL=String.dev.js.map
