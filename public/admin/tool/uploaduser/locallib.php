@@ -508,7 +508,7 @@ function uu_check_custom_profile_data(&$data, array &$profilefieldvalues = []) {
                     if ($formfieldunique && array_key_exists($shortname, $profilefieldvalues) &&
                             (array_search($value, $profilefieldvalues[$shortname]) !== false)) {
 
-                        $data['status'][] = get_string('valuealreadyused') . " ({$key})";
+                        $data['status'][] = get_string('duplicatevalueupload', 'tool_uploaduser') . " ({$key})";
                         $noerror = false;
                     }
 
