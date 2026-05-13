@@ -1,4 +1,3 @@
-var e=M.cfg,n=e,r=e.jsrev!==-1;export{n as default,r as isJSCachingEnabled};
 /**
  * Typed access to the Moodle page configuration (`M.cfg`).
  *
@@ -13,5 +12,4 @@ var e=M.cfg,n=e,r=e.jsrev!==-1;export{n as default,r as isJSCachingEnabled};
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
- */
-//# sourceMappingURL=config.js.map
+ */const e=M.cfg;var n=e;const r=e.jsrev!==-1;export{n as default,r as isJSCachingEnabled};
