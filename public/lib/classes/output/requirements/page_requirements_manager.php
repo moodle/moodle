@@ -1537,6 +1537,11 @@ class page_requirements_manager {
             $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.js'));
         }
 
+        $requirejshook = new \core\hook\output\before_requirejs_config();
+        \core\di::get(\core\hook\manager::class)->dispatch($requirejshook);
+
+        $output .= $this->get_requirejs_static_esm_map($requirejshook);
+
         // First include must be to a module with no dependencies, this prevents multiple requests.
         $prefix = <<<EOF
 M.util.js_pending("core/first");
@@ -1559,6 +1564,29 @@ EOF;
 
         $output .= html_writer::script($prefix . $prefetch . implode(";\n", $this->amdjscode) . $suffix);
         return $output;
+    }
+
+    /**
+     * Get additional RequireJS configuration to support loading ESM modules directly.
+     *
+     * @param \core\hook\output\before_requirejs_config $requirejshook
+     * @return string
+     */
+    protected function get_requirejs_static_esm_map(
+        \core\hook\output\before_requirejs_config $requirejshook,
+    ): string {
+        $requirejshook->add_requirejs_esm_map_entries([
+        ]);
+
+        $maps = $requirejshook->get_requirejs_map();
+
+        foreach ($maps as $from => $staticmaps) {
+            $maps[$from] = array_map(fn ($to) => "core/esm!{$to}", $staticmaps);
+        }
+
+        $map = json_encode($maps, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
+
+        return html_writer::script("requirejs.config({map: {$map}});");
     }
 
     /**
