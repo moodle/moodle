@@ -253,3 +253,23 @@ Feature: Assign user override
     And I navigate to "Submissions" in current page administration
     And "Sam1 Student1" row "Grade" column of "submissions" table should contain "90.00"
     And "Sam1 Student1" row "Final grade" column of "submissions" table should contain "90.00"
+
+  @javascript
+  Scenario: Users with non-current enrolments are not listed in the user override selector
+    Given the following "course enrolments" exist:
+      | user     | course | role    | timeend       |
+      | student2 | C1     | student | ##yesterday## |
+    And I am on the "Test assignment name" Activity page logged in as teacher1
+    When I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I click on "Override user" "field"
+    And I type "Student2"
+    Then I should see "No suggestions"
+    And I set the field "Override user" to ""
+    And I click on "Override user" "field"
+    And I type "Student1"
+    And I should see "Sam1 Student1"
+    And I set the field "Override user" to ""
+    And I click on "Override user" "field"
+    And I type "Teacher1"
+    And I should see "No suggestions"
