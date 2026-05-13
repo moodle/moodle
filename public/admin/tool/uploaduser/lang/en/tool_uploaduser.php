@@ -40,6 +40,7 @@ $string['csvdelimiter'] = 'CSV separator';
 $string['defaultvalues'] = 'Default values';
 $string['deleteerrors'] = 'Delete errors';
 $string['duplicateemail'] = 'Multiple users with email {$a} detected';
+$string['duplicatevalueupload'] = 'This value has already been used in the uploaded users file.';
 $string['encoding'] = 'Encoding';
 $string['errormnetadd'] = 'Can not add remote users';
 $string['errorprefix'] = 'Error:';
