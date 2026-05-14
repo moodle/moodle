@@ -35,7 +35,7 @@ class backup_bigbluebuttonbn_activity_structure_step extends backup_activity_str
     /**
      * Define the complete bigbluebuttonbn structure for backup, with file and id annotations.
      *
-     * @return object
+     * @return backup_nested_element
      */
     protected function define_structure() {
 
@@ -85,6 +85,7 @@ class backup_bigbluebuttonbn_activity_structure_step extends backup_activity_str
 
         // Define file annotations.
         $bigbluebuttonbn->annotate_files('mod_bigbluebuttonbn', 'intro', null);
+        $bigbluebuttonbn->annotate_files('mod_bigbluebuttonbn', 'presentation', null);
 
         $this->add_subplugin_structure('bbbext', $bigbluebuttonbn, true);
         // Return the root element (bigbluebuttonbn), wrapped into standard activity structure.
