@@ -103,7 +103,7 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I should see "Question 1 v1" in the "Delete questions?" "dialogue"
     And I should see "Question 2 v1" in the "Delete questions?" "dialogue"
     # Delete selected questions.
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete questions?" "dialogue"
     # Confirm that selected questions are deleted while unselected questions still exist.
     And I should not see "Question 1"
     And I should not see "Question 2"
@@ -132,6 +132,35 @@ Feature: Use the qbank plugin manager page for deletequestion
     And "v3" "table_row" should exist
 
   @javascript
+  Scenario: Specific question versions can be deleted in bulk
+    Given the following "core_question > updated questions" exist:
+      | questioncategory | question   | name         |
+      | Test questions   | Question 1 | Question 1 A |
+      | Test questions   | Question 1 | Question 1 B |
+      | Test questions   | Question 1 | Question 1 C |
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions"
+    And I should see "v4" in the "Question 1" "table_row"
+    When I choose "History" action for "Question 1" in the question bank
+    And "Question 1" "heading" should exist
+    And I click on "Question 1 A" "checkbox"
+    And I click on "Question 1 C" "checkbox"
+    And I click on "With selected" "button"
+    When I press "Delete"
+    And I should see "This will delete selected versions of the following question" in the "Delete selected versions?" "dialogue"
+    And I should see "Question 1 A v2" in the "Delete selected versions?" "dialogue"
+    And I should see "Question 1 C v4" in the "Delete selected versions?" "dialogue"
+    And I should not see "Question 1 v1" in the "Delete selected versions?" "dialogue"
+    And I should not see "Question 1 B v3" in the "Delete selected versions?" "dialogue"
+    And I click on "Delete" "button" in the "Delete selected versions?" "dialogue"
+    Then I should see "v3" in the "Question 1" "table_row"
+    And I choose "History" action for "Question 1" in the question bank
+    And "v2" "table_row" should not exist
+    And "v4" "table_row" should not exist
+    And "v1" "table_row" should exist
+    And "v3" "table_row" should exist
+
+  @javascript
   Scenario: In-use questions are indicated in the confirmation dialogue and hidden when deleted.
     Given quiz "Test quiz" contains the following questions:
       | question   | page |
@@ -150,6 +179,31 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I should see "Question 1"
     And I should see "Question 2"
     And I should see "Question 3"
+
+  @javascript
+  Scenario: In-use questions are indicated in the bulk confirmation dialogue and hidden when deleted.
+    Given quiz "Test quiz" contains the following questions:
+      | question   | page |
+      | Question 2 | 1    |
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions"
+    And I click on "Question 2" "checkbox"
+    And I click on "Question 3" "checkbox"
+    And I click on "With selected" "button"
+    When I press "Delete"
+    And I should see "This will delete the following questions and all their versions:" in the "Delete questions?" "dialogue"
+    And I should see "* Denotes questions which can't be deleted because they are in use" in the "Delete questions?" "dialogue"
+    And I should see "* Question 2" in the "Delete questions?" "dialogue"
+    And I should see "Question 3" in the "Delete questions?" "dialogue"
+    And I should not see "* Question 3" in the "Delete questions?" "dialogue"
+    And I click on "Delete" "button" in the "Delete questions?" "dialogue"
+    Then I should see "Question 1"
+    And I should not see "Question 2"
+    And I should not see "Question 3"
+    And I apply question bank filter "Show hidden questions" with value "Yes"
+    And I should see "Question 1"
+    And I should see "Question 2"
+    And I should not see "Question 3"
 
   @javascript
   Scenario: In-use versions are indicated in the confirmation dialogue and hidden when deleted.
@@ -174,3 +228,34 @@ Feature: Use the qbank plugin manager page for deletequestion
     And I choose "History" action for "Question 1" in the question bank
     And I should see "Hidden" in the "v2" "table_row"
     And "v1" "table_row" should exist
+
+  @javascript
+  Scenario: In-use versions are indicated in the bulk confirmation dialogue and hidden when deleted.
+    Given the following "core_question > updated questions" exist:
+      | questioncategory | question   | name         |
+      | Test questions   | Question 1 | Question 1 A |
+      | Test questions   | Question 1 | Question 1 B |
+    And quiz "Test quiz" contains the following questions:
+      | question   | page |
+      | Question 1 | 1    |
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions"
+    And I choose "History" action for "Question 1" in the question bank
+    And I click on "Question 1 A" "checkbox"
+    And I click on "Question 1 B" "checkbox"
+    And I click on "With selected" "button"
+    When I press "Delete"
+    And I should see "This will delete selected versions of the following question" in the "Delete selected versions?" "dialogue"
+    And I should see "* Denotes questions which can't be deleted because they are in use" in the "Delete selected versions?" "dialogue"
+    And I should see "* Question 1 B v3" in the "Delete selected versions?" "dialogue"
+    And I should see "Question 1 A v2" in the "Delete selected versions?" "dialogue"
+    And I should not see "* Question 1 A v2" in the "Delete selected versions?" "dialogue"
+    And I click on "Delete" "button" in the "Delete selected versions?" "dialogue"
+    Then "v1" "table_row" should exist
+    And "v2" "table_row" should not exist
+    And "v3" "table_row" should not exist
+    And I apply question bank filter "Show hidden questions" with value "Yes"
+    And I choose "History" action for "Question 1" in the question bank
+    And I should see "Hidden" in the "v3" "table_row"
+    And "v1" "table_row" should exist
+    And "v2" "table_row" should not exist
