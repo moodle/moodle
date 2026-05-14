@@ -25,7 +25,7 @@ Feature: Unenrol action to disable course enrolment
       | user       | course | role           | timestart       |
       | teacher001 | C001   | editingteacher | ##1 month ago## |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Removing the user from the cohort will suspend the enrolment but keep the role
     When I log in as "teacher001"
     And I am on the "Course 001" "enrolment methods" page
@@ -57,7 +57,7 @@ Feature: Unenrol action to disable course enrolment
     And I should see "Active" in the "Student 003" "table_row"
     And I should see "Active" in the "Student 004" "table_row"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Deleting non-empty cohort will suspend the enrolment but keep the role
     When I log in as "teacher001"
     And I am on the "Course 001" "enrolment methods" page

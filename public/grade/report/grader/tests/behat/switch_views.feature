@@ -69,7 +69,7 @@ Feature: We can change what we are viewing on the grader report
       | -1-                | -2-                  | -3-       | -4-       | -5-       |
       | Student 1          | student1@example.com | 80        | 90        | 30        |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Minimise the grader report containing hidden activities without the 'moodle/grade:viewhidden' capability
     Given I am on "Course 1" course homepage with editing mode on
     And I open "Test assignment name 2" actions menu
