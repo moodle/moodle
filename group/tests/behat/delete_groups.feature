@@ -43,7 +43,7 @@ Feature: Automatic deletion of groups and groupings
     And I press "Yes"
     And I should not see "Grouping (with ID)"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Delete groups and groupings with and without ID numbers without the 'moodle/course:changeidnumber' capability
     Given the following "role capability" exists:
       | role                         | editingteacher |

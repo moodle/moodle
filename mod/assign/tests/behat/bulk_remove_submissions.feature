@@ -24,7 +24,7 @@ Feature: Bulk remove submissions
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Bulk remove submissions should remove the data that was submitted
     Given the following "activity" exists:
       | activity                            | assign                  |
@@ -80,7 +80,7 @@ Feature: Bulk remove submissions
     And I set the field "selectall" to "1"
     Then I should not see "Delete" in the "sticky-footer" "region"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Bulk remove submission when shared group users are added to the bulk
     removing submissions process in separate group mode without access all groups capability
     Given the following "group members" exist:
@@ -117,7 +117,7 @@ Feature: Bulk remove submissions
     Then I should not see "I'm the student1 submission"
     Then I should not see "I'm the student2 submission"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Bulk remove submission when group users and non-group users are added to the bulk
     removing submissions process in separate group mode with access all groups capability
     Given the following "group members" exist:
