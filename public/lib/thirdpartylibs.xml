@@ -309,17 +309,6 @@ All rights reserved.</copyright>
     <customised/>
   </library>
   <library>
-    <location>amd/src/loglevel.js</location>
-    <name>loglevel.js</name>
-    <description>Minimal lightweight simple logging for JavaScript.</description>
-    <version>1.9.2</version>
-    <license>MIT</license>
-    <repository>https://github.com/pimterry/loglevel/</repository>
-    <copyrights>
-      <copyright>2019 Tim Perry</copyright>
-    </copyrights>
-  </library>
-  <library>
     <location>mustache</location>
     <name>Mustache</name>
     <description>PHP library for displaying mustache templates.</description>
