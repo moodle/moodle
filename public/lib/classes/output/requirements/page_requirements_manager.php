@@ -1584,6 +1584,7 @@ EOF;
             'core/pending' => '@moodle/lms/core/pending:default',
             'core/sessionstorage' => '@moodle/lms/core/Storage:sessionStore',
             'core/storagewrapper' => '@moodle/lms/core/Storage:default',
+            'core/utils' => '@moodle/lms/core/utils',
         ]);
 
         $maps = $requirejshook->get_requirejs_map();
