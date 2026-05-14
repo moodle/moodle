@@ -193,7 +193,8 @@ class enrol_form extends dynamic_form {
             require_once($CFG->dirroot . '/course/lib.php');
             $destination = course_get_url($this->get_instance()->courseid);
         }
-        return $destination;
+
+        return (string) $destination;
     }
 
     #[\Override]
