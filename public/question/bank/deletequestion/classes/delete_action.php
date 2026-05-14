@@ -24,6 +24,7 @@
 
 namespace qbank_deletequestion;
 
+use core\url;
 use core_question\local\bank\question_version_status;
 use core_question\local\bank\question_action_base;
 
@@ -109,7 +110,16 @@ class delete_action extends question_action_base {
     public function get_action_menu_link(\stdClass $question): ?\action_menu_link {
         $deletelink = parent::get_action_menu_link($question);
         if ($deletelink !== null) {
+            $confirmurl = new url($deletelink->url, ['sesskey' => sesskey(), 'confirm' => true]);
             $deletelink->add_class('text-danger');
+            $deleteallversions = $confirmurl->param('deleteall') ?? false;
+            [$confirmtitle, $confirmessage] = helper::get_delete_confirmation_message([$question->id], $deleteallversions);
+            $deletelink->attributes['data-confirmation'] = 'modal';
+            $deletelink->attributes['data-confirmation-type'] = 'delete';
+            $deletelink->attributes['data-confirmation-title'] = $confirmtitle['confirmtitle'];
+            $deletelink->attributes['data-confirmation-content'] = $confirmessage;
+            $deletelink->attributes['data-confirmation-destination'] = $confirmurl->out(false);
+            $deletelink->attributes['data-confirmation-yes-button-str'] = json_encode(['delete', 'core']);
         }
         return $deletelink;
     }
