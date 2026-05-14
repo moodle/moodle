@@ -43,7 +43,8 @@ if ( $mode == 'visible' and confirm_sesskey()) {
     $displayformat->sortorder   = $form->sortorder;
 
     // Extract visible tabs from array into comma separated list.
-    $visibletabs = implode(',', $form->visibletabs);
+    $visibletabs = implode(',', $form->visibletabs ?? []);
+
     // Include 'standard' tab by default along with other tabs.
     // This way we don't run into the risk of users not selecting any tab for displayformat.
     $displayformat->showtabs = GLOSSARY_STANDARD.','.$visibletabs;
