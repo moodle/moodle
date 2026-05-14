@@ -81,6 +81,8 @@ export interface MoodleConfig {
     siteId: number;
     /** The current user's ID. */
     userId: number;
+    /** Timestamp of the user's current login session. Null for guests. */
+    currentlogin: number | null;
     /** List of JS deprecation warnings to suppress. */
     deprecationignorelist: string[];
     /** OpenTelemetry trace parent ID. */

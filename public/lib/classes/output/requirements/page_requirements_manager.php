@@ -337,6 +337,7 @@ class page_requirements_manager {
                 'templaterev'           => $this->get_templaterev(),
                 'siteId'                => (int) SITEID,
                 'userId'                => (int) $USER->id,
+                'currentlogin'          => !empty($USER->currentlogin) ? (int) $USER->currentlogin : null,
                 'deprecationignorelist'       => !empty($CFG->jsdeprecationignorelist) ? $CFG->jsdeprecationignorelist : [],
                 'traceId'               => \core\telemetry::get_trace_parent_id(),
             ];
@@ -1862,9 +1863,6 @@ EOF;
         // Add any global JS that needs to run on all pages.
         $this->js_call_amd('core/page_global', 'init');
         $this->js_call_amd('core/utility');
-        $this->js_call_amd('core/storage_validation', 'init', [
-            !empty($USER->currentlogin) ? (int) $USER->currentlogin : null
-        ]);
 
         // Call amd init functions.
         $output .= $this->get_amd_footercode();

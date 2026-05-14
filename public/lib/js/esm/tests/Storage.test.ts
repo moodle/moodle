@@ -20,19 +20,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Storage from '@moodle/lms/core/Storage';
+import Storage, {type StorageInterface} from '@moodle/lms/core/Storage';
 
 declare const M: {
     cfg: {
         wwwroot: string;
         jsrev: number;
+        currentlogin: number | null;
     };
 };
 
 /**
  * Create an in-memory mock of the Storage interface.
  */
-function createMockStorage(): Storage {
+function createMockStorage(): StorageInterface {
     const store = new Map<string, string>();
     return {
         get length() {
@@ -149,6 +150,84 @@ describe('Storage', () => {
             wrapper.set('b', '2');
             wrapper.clean();
             expect(storage.length).toBe(0);
+        });
+    });
+
+    describe('login validation', () => {
+        beforeEach(() => {
+            M.cfg.jsrev = 12345;
+        });
+
+        it('stores currentlogin on first use', () => {
+            M.cfg.currentlogin = 1000;
+            const storage = createMockStorage();
+            new Storage(storage);
+
+            const loginKey = `${Storage.hashString(M.cfg.wwwroot)}/currentlogin`;
+            expect(storage.getItem(loginKey)).toBe('1000');
+        });
+
+        it('clears storage when currentlogin changes', () => {
+            M.cfg.currentlogin = 1000;
+            const storage = createMockStorage();
+
+            const wrapper1 = new Storage(storage);
+            wrapper1.set('mydata', 'value');
+            expect(wrapper1.get('mydata')).toBe('value');
+
+            // User re-logs in (new login timestamp).
+            M.cfg.currentlogin = 2000;
+            const wrapper2 = new Storage(storage);
+            // Old data should be gone.
+            expect(wrapper2.get('mydata')).toBeNull();
+        });
+
+        it('preserves storage when currentlogin is unchanged', () => {
+            M.cfg.currentlogin = 1000;
+            const storage = createMockStorage();
+
+            const wrapper1 = new Storage(storage);
+            wrapper1.set('mydata', 'value');
+
+            // Same login, same jsrev.
+            const wrapper2 = new Storage(storage);
+            expect(wrapper2.get('mydata')).toBe('value');
+        });
+
+        it('does not write login key when currentlogin is null (guest)', () => {
+            M.cfg.currentlogin = null;
+            const storage = createMockStorage();
+            new Storage(storage);
+
+            const loginKey = `${Storage.hashString(M.cfg.wwwroot)}/currentlogin`;
+            expect(storage.getItem(loginKey)).toBeNull();
+        });
+
+        it('clears storage when both jsrev and currentlogin change', () => {
+            M.cfg.currentlogin = 1000;
+            const storage = createMockStorage();
+
+            const wrapper1 = new Storage(storage);
+            wrapper1.set('mydata', 'value');
+
+            M.cfg.jsrev = 99999;
+            M.cfg.currentlogin = 2000;
+            const wrapper2 = new Storage(storage);
+            expect(wrapper2.get('mydata')).toBeNull();
+        });
+
+        it('re-writes jsrev sentinel after login-triggered clear', () => {
+            M.cfg.currentlogin = 1000;
+            const storage = createMockStorage();
+            new Storage(storage);
+
+            // Change login only (not jsrev).
+            M.cfg.currentlogin = 2000;
+            new Storage(storage);
+
+            // The jsrev sentinel should still be present after the clear.
+            const jsrevKey = `${Storage.hashString(M.cfg.wwwroot)}/jsrev`;
+            expect(storage.getItem(jsrevKey)).toBe('12345');
         });
     });
 
