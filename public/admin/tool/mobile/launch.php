@@ -57,7 +57,7 @@ $expires = time() + (15 * MINSECS); // 15 minutes for authentication should be e
 setcookie('tool_mobile_launch', $ldata, $expires, $CFG->sessioncookiepath, $CFG->sessioncookiedomain);
 
 // We have been requested to start a SSO process via OpenID.
-if (!empty($oauthsso) && is_enabled_auth('oauth2')) {
+if (!empty($oauthsso) && \core\di::get(\core\authentication::class)->is_enabled('oauth2')) {
     $wantsurl = new moodle_url('/admin/tool/mobile/launch.php',
         array('service' => $serviceshortname, 'passport' => $passport, 'urlscheme' => $urlscheme, 'confirmed' => $confirmed));
     $oauthurl = new moodle_url('/auth/oauth2/login.php',
@@ -69,7 +69,7 @@ if (!empty($oauthsso) && is_enabled_auth('oauth2')) {
 // Check if the plugin is properly configured.
 $typeoflogin = get_config('tool_mobile', 'typeoflogin');
 if (empty($SESSION->justloggedin) &&
-        !is_enabled_auth('oauth2') &&
+        !\core\di::get(\core\authentication::class)->is_enabled('oauth2') &&
         $typeoflogin != tool_mobile\api::LOGIN_VIA_BROWSER &&
         $typeoflogin != tool_mobile\api::LOGIN_VIA_EMBEDDED_BROWSER) {
     throw new moodle_exception('pluginnotenabledorconfigured', 'tool_mobile');

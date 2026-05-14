@@ -45,7 +45,7 @@ require_once($CFG->libdir . '/filelib.php');
 $idtoken = optional_param('id_token', null, PARAM_RAW);
 $launchid = optional_param('launchid', null, PARAM_RAW);
 
-if (!is_enabled_auth('lti')) {
+if (!\core\di::get(\core\authentication::class)->is_enabled('lti')) {
     throw new moodle_exception('pluginnotenabled', 'auth', '', get_string('pluginname', 'auth_lti'));
 }
 if (!enrol_is_enabled('lti')) {
@@ -73,7 +73,7 @@ if (empty($messagelaunch)) {
 
 // Authenticate the instructor.
 // Deep linking cannot use resource-specific provisioning modes, so it just uses a sensible 'existing accounts only' mode.
-$auth = get_auth_plugin('lti');
+$auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
 $auth->complete_login(
     $messagelaunch->getLaunchData(),
     new moodle_url('/enrol/lti/launch_deeplink.php', ['launchid' => $messagelaunch->getLaunchId()]),

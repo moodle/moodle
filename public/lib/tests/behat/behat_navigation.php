@@ -527,7 +527,7 @@ class behat_navigation extends behat_base {
             } else if (has_capability('moodle/user:editownprofile', $systemcontext)) {
                 $userauthplugin = false;
                 if (!empty($user->auth)) {
-                    $userauthplugin = get_auth_plugin($user->auth);
+                    $userauthplugin = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
                 }
                 if ($userauthplugin && $userauthplugin->can_edit_profile()) {
                     $url = $userauthplugin->edit_profile_url();

@@ -71,7 +71,7 @@ if ($newaccount) {
         redirect(new moodle_url('/login/index.php'));
     } else {
         // Create a new account and link it, logging the user in.
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
         $newuser = $auth->find_or_create_user_from_launch($launchdata);
         complete_user_login($newuser);
         $auth->update_user_account($newuser, $launchdata, $launchdata['iss']);
@@ -97,7 +97,7 @@ if ($newaccount) {
     unset($SESSION->auth_lti);
 
     global $USER;
-    $auth = get_auth_plugin('lti');
+    $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
     $auth->create_user_binding($launchdata['iss'], $launchdata['sub'], $USER->id);
 
     $PAGE->set_context(context_system::instance());

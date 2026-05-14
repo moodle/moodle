@@ -826,7 +826,7 @@ class process {
             }
 
             try {
-                $auth = get_auth_plugin($existinguser->auth);
+                $auth = \core\di::get(\core\authentication::class)->get_plugin($existinguser->auth);
             } catch (\Exception $e) {
                 $this->upt->track('auth', get_string('userautherror', 'error', s($existinguser->auth)), 'error');
                 $this->upt->track('status', get_string('usernotupdatederror', 'error'), 'error');
@@ -870,7 +870,7 @@ class process {
                     // Check for passwords that we want to force users to reset next
                     // time they log in.
                     $errmsg = null;
-                    $weak = !check_password_policy($user->password, $errmsg, $user);
+                    $weak = !\core\di::get(\core\authentication\password::class)->check_policy($user->password, $errmsg, $user);
                     if ($this->get_reset_passwords() == UU_PWRESET_ALL or
                             ($this->get_reset_passwords() == UU_PWRESET_WEAK and $weak)) {
                         if ($weak) {
@@ -887,7 +887,7 @@ class process {
                     // hashing would be slow when uploading lots of users. Hashes
                     // will be automatically updated to a higher cost factor the first
                     // time the user logs in.
-                    $existinguser->password = hash_internal_user_password($user->password, true);
+                    $existinguser->password = \core\di::get(\core\authentication\password::class)->hash($user->password, true);
                     $this->upt->track('password', $user->password, 'normal', false);
                 } else {
                     // Do not print password when not changed.
@@ -955,7 +955,7 @@ class process {
 
             // Do not insert record if new auth plugin does not exist!
             try {
-                $auth = get_auth_plugin($user->auth);
+                $auth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
             } catch (\Exception $e) {
                 $this->upt->track('auth', get_string('userautherror', 'error', s($user->auth)), 'error');
                 $this->upt->track('status', get_string('usernotaddederror', 'error'), 'error');
@@ -1012,7 +1012,7 @@ class process {
                     }
                 } else {
                     $errmsg = null;
-                    $weak = !check_password_policy($user->password, $errmsg, $user);
+                    $weak = !\core\di::get(\core\authentication\password::class)->check_policy($user->password, $errmsg, $user);
                     if ($this->get_reset_passwords() == UU_PWRESET_ALL or
                             ($this->get_reset_passwords() == UU_PWRESET_WEAK and $weak)) {
                         if ($weak) {
@@ -1025,7 +1025,7 @@ class process {
                     // hashing would be slow when uploading lots of users. Hashes
                     // will be automatically updated to a higher cost factor the first
                     // time the user logs in.
-                    $user->password = hash_internal_user_password($user->password, true);
+                    $user->password = \core\di::get(\core\authentication\password::class)->hash($user->password, true);
                 }
             } else {
                 $user->password = AUTH_PASSWORD_NOT_CACHED;

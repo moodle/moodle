@@ -119,7 +119,7 @@ class login_set_password_form extends moodleform {
         }
 
         $errmsg = ''; // Prevents eclipse warnings.
-        if (!check_password_policy($data['password'], $errmsg, $user)) {
+        if (!\core\di::get(\core\authentication\password::class)->check_policy($data['password'], $errmsg, $user)) {
             $errors['password'] = $errmsg;
             $errors['password2'] = $errmsg;
             return $errors;

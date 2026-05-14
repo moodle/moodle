@@ -264,9 +264,10 @@ class manager {
      * @return void
      */
     public static function mfa_logout(): void {
-        $authsequence = get_enabled_auth_plugins();
+        $authentication = \core\di::get(\core\authentication::class);
+        $authsequence = $authentication->get_enabled_plugins();
         foreach ($authsequence as $authname) {
-            $authplugin = get_auth_plugin($authname);
+            $authplugin = $authentication->get_plugin($authname);
             $authplugin->logoutpage_hook();
         }
         require_logout();

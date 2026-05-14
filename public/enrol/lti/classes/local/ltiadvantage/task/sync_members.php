@@ -153,7 +153,7 @@ class sync_members extends scheduled_task {
      * Performs the synchronisation of members.
      */
     public function execute() {
-        if (!is_enabled_auth('lti')) {
+        if (!\core\di::get(\core\authentication::class)->is_enabled('lti')) {
             mtrace('Skipping task - ' . get_string('pluginnotenabled', 'auth', get_string('pluginname', 'auth_lti')));
             return;
         }
@@ -376,7 +376,7 @@ class sync_members extends scheduled_task {
         $legacyconsumerkey = $deployment->get_legacy_consumer_key() ?? '';
 
         foreach ($members as $member) {
-            $auth = get_auth_plugin('lti');
+            $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
             if ($auth->get_user_binding($appregistration->get_platformid()->out(false), $member['user_id'])) {
                 // Use is bound already, so we can update them.
                 $user = $auth->find_or_create_user_from_membership($member, $appregistration->get_platformid()->out(false));

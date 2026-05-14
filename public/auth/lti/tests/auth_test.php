@@ -220,7 +220,7 @@ final class auth_test extends \advanced_testcase {
     public function test_find_or_create_user_from_launch(?array $legacydata, array $launchdata, array $expected = []): void {
         $this->resetAfterTest();
         global $DB;
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
 
         // When testing platform users who have authenticated before, make that first auth call.
         if (!empty($launchdata['has_authenticated_before'])) {
@@ -723,7 +723,7 @@ final class auth_test extends \advanced_testcase {
 
         $this->resetAfterTest();
         global $DB;
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
 
         // When testing platform users who have authenticated before, make that first auth call.
         if (!empty($memberdata['has_authenticated_before'])) {
@@ -1057,7 +1057,7 @@ final class auth_test extends \advanced_testcase {
     public function test_create_user_binding(): void {
         $this->resetAfterTest();
         global $DB;
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
         $user = $this->getDataGenerator()->create_user();
         $mockiss = self::$issuer;
         $mocksub = '1';
@@ -1093,7 +1093,7 @@ final class auth_test extends \advanced_testcase {
      */
     public function test_update_user_account(array $firstlaunchdata, array $launchdata, array $expected): void {
         $this->resetAfterTest();
-        $auth = get_auth_plugin('lti');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');
 
         // Mock the first authentication of the user.
         $firstmockjwtdata = $this->get_mock_launchdata_for_user($firstlaunchdata['user']);

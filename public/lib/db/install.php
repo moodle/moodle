@@ -204,7 +204,7 @@ function xmldb_main_install() {
     $guest = new stdClass();
     $guest->auth        = 'manual';
     $guest->username    = 'guest';
-    $guest->password    = hash_internal_user_password('guest');
+    $guest->password    = \core\di::get(\core\authentication\password::class)->hash('guest');
     $guest->firstname   = get_string('guestuser');
     $guest->lastname    = ' ';
     $guest->email       = 'root@localhost';

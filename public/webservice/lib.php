@@ -199,7 +199,7 @@ class webservice {
         }
 
         //Check if the user password is expired
-        $auth = get_auth_plugin($user->auth);
+        $auth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
         if (!empty($auth->config->expiration) and $auth->config->expiration == 1) {
             $days2expire = $auth->password_expire($user->username);
             if (intval($days2expire) < 0) {
@@ -1021,11 +1021,11 @@ abstract class webservice_server implements webservice_server_interface {
 
             //we check that authentication plugin is enabled
             //it is only required by simple authentication
-            if (!is_enabled_auth('webservice')) {
+            if (!\core\di::get(\core\authentication::class)->is_enabled('webservice')) {
                 throw new webservice_access_exception('The web service authentication plugin is disabled.');
             }
 
-            if (!$auth = get_auth_plugin('webservice')) {
+            if (!$auth = \core\di::get(\core\authentication::class)->get_plugin('webservice')) {
                 throw new webservice_access_exception('The web service authentication plugin is missing.');
             }
 
@@ -1059,71 +1059,54 @@ abstract class webservice_server implements webservice_server_interface {
             $user = $this->authenticate_by_token(EXTERNAL_TOKEN_EMBEDDED);
         }
 
-        // Cannot authenticate unless maintenance access is granted.
-        $hasmaintenanceaccess = has_capability('moodle/site:maintenanceaccess', context_system::instance(), $user);
-        if (!empty($CFG->maintenance_enabled) and !$hasmaintenanceaccess) {
-            throw new moodle_exception('sitemaintenance', 'admin');
-        }
-
-        //only confirmed user should be able to call web service
-        if (!empty($user->deleted)) {
+        $validator = \core\di::get(\core_auth\validate_user::class);
+        try {
+            $validator->validate_before_external_login($user);
+        } catch (\core_auth\exception\user_deleted_exception $e) {
             $params = $loginfaileddefaultparams;
             $params['other']['reason'] = 'user_deleted';
             $params['other']['username'] = $user->username;
-            $event = \core\event\webservice_login_failed::create($params);
-            $event->trigger();
-            throw new moodle_exception('wsaccessuserdeleted', 'webservice', '', $user->username);
-        }
+            \core\event\webservice_login_failed::create($params)->trigger();
 
-        //only confirmed user should be able to call web service
-        if (empty($user->confirmed)) {
+            throw new moodle_exception('wsaccessuserdeleted', 'webservice', '', $user->username, previous: $e);
+        } catch (\core_auth\exception\user_not_confirmed_exception $e) {
             $params = $loginfaileddefaultparams;
             $params['other']['reason'] = 'user_unconfirmed';
             $params['other']['username'] = $user->username;
-            $event = \core\event\webservice_login_failed::create($params);
-            $event->trigger();
-            throw new moodle_exception('wsaccessuserunconfirmed', 'webservice', '', $user->username);
-        }
+            \core\event\webservice_login_failed::create($params)->trigger();
 
-        //check the user is suspended
-        if (!empty($user->suspended)) {
+            throw new moodle_exception('wsaccessuserunconfirmed', 'webservice', '', $user->username, previous: $e);
+        } catch (\core_auth\exception\user_suspended_exception $e) {
             $params = $loginfaileddefaultparams;
-            $params['other']['reason'] = 'user_unconfirmed';
+            $params['other']['reason'] = 'user_suspended';
             $params['other']['username'] = $user->username;
-            $event = \core\event\webservice_login_failed::create($params);
-            $event->trigger();
-            throw new moodle_exception('wsaccessusersuspended', 'webservice', '', $user->username);
-        }
+            \core\event\webservice_login_failed::create($params)->trigger();
 
-        //retrieve the authentication plugin if no previously done
-        if (empty($auth)) {
-          $auth  = get_auth_plugin($user->auth);
-        }
-
-        // check if credentials have expired
-        if (!empty($auth->config->expiration) and $auth->config->expiration == 1) {
-            $days2expire = $auth->password_expire($user->username);
-            if (intval($days2expire) < 0 ) {
-                $params = $loginfaileddefaultparams;
-                $params['other']['reason'] = 'password_expired';
-                $params['other']['username'] = $user->username;
-                $event = \core\event\webservice_login_failed::create($params);
-                $event->trigger();
-                throw new moodle_exception('wsaccessuserexpired', 'webservice', '', $user->username);
-            }
-        }
-
-        //check if the auth method is nologin (in this case refuse connection)
-        if ($user->auth=='nologin') {
+            throw new moodle_exception('wsaccessusersuspended', 'webservice', '', $user->username, previous: $e);
+        } catch (\core_auth\exception\auth_disabled_exception $e) {
             $params = $loginfaileddefaultparams;
             $params['other']['reason'] = 'login';
             $params['other']['username'] = $user->username;
-            $event = \core\event\webservice_login_failed::create($params);
-            $event->trigger();
-            throw new moodle_exception('wsaccessusernologin', 'webservice', '', $user->username);
+            \core\event\webservice_login_failed::create($params)->trigger();
+
+            throw new moodle_exception('wsaccessusernologin', 'webservice', '', $user->username, previous: $e);
+        } catch (\core_auth\exception\credentials_expired_exception $e) {
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'password_expired';
+            $params['other']['username'] = $user->username;
+            \core\event\webservice_login_failed::create($params)->trigger();
+
+            throw new moodle_exception('wsaccessuserexpired', 'webservice', '', $user->username, previous: $e);
+        } catch (\core_auth\exception\maintenance_mode_enabled_exception $e) {
+            throw new moodle_exception('sitemaintenance', 'admin', previous: $e);
         }
 
-        // now fake user login, the session is completely empty too
+        // Retrieve the authentication plugin if no previously done.
+        if (empty($auth)) {
+            $auth  = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
+        }
+
+        // Now fake user login, the session is completely empty too.
         enrol_check_plugins($user, false);
         \core\session\manager::set_user($user);
         set_login_session_preferences();

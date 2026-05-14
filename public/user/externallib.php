@@ -184,7 +184,7 @@ class core_user_external extends \core_external\external_api {
             }
 
             // Make sure we have a password or have to create one.
-            $authplugin = get_auth_plugin($user['auth']);
+            $authplugin = \core\di::get(\core\authentication::class)->get_plugin($user['auth']);
             if ($authplugin->is_internal() && empty($user['password']) && empty($user['createpassword'])) {
                 throw new invalid_parameter_exception('Invalid password: you must provide a password, or set createpassword.');
             }
@@ -1749,7 +1749,7 @@ class core_user_external extends \core_external\external_api {
         }
 
         // Load the appropriate auth plugin.
-        $userauth = get_auth_plugin($user->auth);
+        $userauth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
         if (is_mnet_remote_user($user) or !$userauth->can_edit_profile() or $userauth->edit_profile_url()) {
             throw new moodle_exception('noprofileedit', 'auth');
         }

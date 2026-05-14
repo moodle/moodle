@@ -178,10 +178,10 @@ if ($userform->is_cancelled()) {
 
     if (empty($usernew->auth)) {
         // User editing self.
-        $authplugin = get_auth_plugin($user->auth);
+        $authplugin = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
         unset($usernew->auth); // Can not change/remove.
     } else {
-        $authplugin = get_auth_plugin($usernew->auth);
+        $authplugin = \core\di::get(\core\authentication::class)->get_plugin($usernew->auth);
     }
 
     $usernew->timemodified = time();
@@ -199,7 +199,7 @@ if ($userform->is_cancelled()) {
             if ($createpassword or empty($usernew->newpassword)) {
                 $usernew->password = '';
             } else {
-                $usernew->password = hash_internal_user_password($usernew->newpassword);
+                $usernew->password = \core\di::get(\core\authentication\password::class)->hash($usernew->newpassword);
             }
         } else {
             $usernew->password = AUTH_PASSWORD_NOT_CACHED;

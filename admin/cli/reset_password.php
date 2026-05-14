@@ -99,7 +99,7 @@ if (!$options['ignore-password-policy'] ) {
     }
 }
 
-$hashedpassword = hash_internal_user_password($password);
+$hashedpassword = \core\di::get(\core\authentication\password::class)->hash($password);
 
 $DB->set_field('user', 'password', $hashedpassword, array('id'=>$user->id));
 

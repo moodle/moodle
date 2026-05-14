@@ -34,7 +34,7 @@ $settings = new admin_settingpage($section, "User default values", 'moodle/site:
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('enrol_lti_settings', '', get_string('pluginname_desc', 'enrol_lti')));
 
-    if (!is_enabled_auth('lti')) {
+    if (!\core\di::get(\core\authentication::class)->is_enabled('lti')) {
         $notify = new \core\output\notification(get_string('authltimustbeenabled', 'enrol_lti'),
             \core\output\notification::NOTIFY_WARNING);
         $settings->add(new admin_setting_heading('enrol_lti_enable_auth_lti', '', $OUTPUT->render($notify)));

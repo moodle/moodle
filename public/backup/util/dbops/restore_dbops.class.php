@@ -1256,14 +1256,15 @@ abstract class restore_dbops {
             // We need to analyse the AUTH field to recode it:
             //   - if the auth isn't enabled in target site, $CFG->registerauth will decide
             //   - finally, if the auth resulting isn't enabled, default to 'manual'
-            if (!is_enabled_auth($user->auth)) {
+            if (!\core\di::get(\core\authentication::class)->is_enabled($user->auth)) {
                 if ($CFG->registerauth == 'email') {
                     $user->auth = 'email';
                 } else {
                     $user->auth = 'manual';
                 }
             }
-            if (!is_enabled_auth($user->auth)) { // Final auth check verify, default to manual if not enabled
+            if (!\core\di::get(\core\authentication::class)->is_enabled($user->auth)) {
+                // Final auth check verify, default to manual if not enabled.
                 $user->auth = 'manual';
             }
 
@@ -1275,7 +1276,7 @@ abstract class restore_dbops {
             if (empty($user->password)) { // Only if restore comes without password
                 if (!array_key_exists($user->auth, $authcache)) { // Not in cache
                     $userauth = new stdClass();
-                    $authplugin = get_auth_plugin($user->auth);
+                    $authplugin = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
                     $userauth->preventpassindb = $authplugin->prevent_local_passwords();
                     $userauth->isinternal      = $authplugin->is_internal();
                     $userauth->canresetpwd     = $authplugin->can_reset_password();
@@ -1295,7 +1296,7 @@ abstract class restore_dbops {
             } else if (self::password_should_be_discarded($user->password)) {
                 // Password is not empty and it is MD5 hashed. Generate a new random password for the user.
                 // We don't want MD5 hashes in the database and users won't be able to log in with the associated password anyway.
-                $user->password = hash_internal_user_password(base64_encode(random_bytes(24)));
+                $user->password = \core\di::get(\core\authentication\password::class)->hash(base64_encode(random_bytes(24)));
             }
 
             // Creating new user, we must reset the policyagreed always

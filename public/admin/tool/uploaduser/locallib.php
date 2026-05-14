@@ -360,10 +360,11 @@ function uu_process_template_callback($username, $firstname, $lastname, $block) 
  */
 function uu_supported_auths() {
     // Get all the enabled plugins.
-    $plugins = get_enabled_auth_plugins();
+    $authentication = \core\di::get(\core\authentication::class);
+    $plugins = $authentication->get_enabled_plugins();
     $choices = array();
     foreach ($plugins as $plugin) {
-        $objplugin = get_auth_plugin($plugin);
+        $objplugin = $authentication->get_plugin($plugin);
         // If the plugin can not be manually set skip it.
         if (!$objplugin->can_be_manually_set()) {
             continue;

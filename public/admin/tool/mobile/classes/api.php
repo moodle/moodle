@@ -192,7 +192,7 @@ class api {
             'registerauth' => $CFG->registerauth,
             'forgottenpasswordurl' => clean_param($CFG->forgottenpasswordurl, PARAM_URL), // We may expect a mailto: here.
             'authinstructions' => $authinstructions,
-            'authnoneenabled' => (int) is_enabled_auth('none'),
+            'authnoneenabled' => (int) \core\di::get(\core\authentication::class)->is_enabled('none'),
             'enablewebservices' => $CFG->enablewebservices,
             'enablemobilewebservice' => $CFG->enablemobilewebservice,
             'maintenanceenabled' => $CFG->maintenance_enabled,
@@ -241,7 +241,7 @@ class api {
         }
 
         // Identity providers.
-        $authsequence = get_enabled_auth_plugins();
+        $authsequence = \core\di::get(\core\authentication::class)->get_enabled_plugins();
         $identityproviders = \auth_plugin_base::get_identity_providers($authsequence);
         $identityprovidersdata = \auth_plugin_base::prepare_identity_providers_for_output($identityproviders, $OUTPUT);
         if (!empty($identityprovidersdata)) {
@@ -658,7 +658,7 @@ class api {
         }
 
         // Display OAuth 2 identity providers.
-        if (is_enabled_auth('oauth2')) {
+        if (\core\di::get(\core\authentication::class)->is_enabled('oauth2')) {
             $identityproviderslist = [];
             $idps = \auth_plugin_base::get_identity_providers(['oauth2']);
 

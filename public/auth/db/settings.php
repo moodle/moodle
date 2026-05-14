@@ -131,7 +131,7 @@ if ($ADMIN->fulltree) {
         new lang_string('auth_dbupdateusers_description', 'auth_db'), 0, $yesno));
 
     // Display locking / mapping of profile fields.
-    $authplugin = get_auth_plugin('db');
+    $authplugin = \core\di::get(\core\authentication::class)->get_plugin('db');
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
             get_string('auth_dbextrafields', 'auth_db'),
             true, true, $authplugin->get_custom_user_profile_fields());

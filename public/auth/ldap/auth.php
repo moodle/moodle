@@ -552,7 +552,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // This will also update the stored hash to the latest algorithm
         // if the existing hash is using an out-of-date algorithm (or the
         // legacy md5 algorithm).
-        update_internal_user_password($user, $plainslashedpassword);
+        \core\di::get(\core\authentication\password::class)->update($user, $plainslashedpassword);
 
         $user = $DB->get_record('user', array('id'=>$user->id));
 

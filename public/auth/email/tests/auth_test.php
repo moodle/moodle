@@ -48,7 +48,7 @@ final class auth_test extends \advanced_testcase {
             'Preference should exist in DB before confirmation.'
         );
 
-        $auth = get_auth_plugin('email');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('email');
         $result = $auth->user_confirm($user->username, $secret);
 
         $this->assertEquals(AUTH_CONFIRM_OK, $result);
@@ -84,7 +84,7 @@ final class auth_test extends \advanced_testcase {
             'Preference should exist in DB before re-confirmation.'
         );
 
-        $auth = get_auth_plugin('email');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('email');
         $result = $auth->user_confirm($user->username, $secret);
 
         $this->assertEquals(AUTH_CONFIRM_ALREADY, $result);

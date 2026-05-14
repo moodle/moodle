@@ -1157,7 +1157,7 @@ class settings_navigation extends navigation_node {
 
         $userauthplugin = false;
         if (!empty($user->auth)) {
-            $userauthplugin = get_auth_plugin($user->auth);
+            $userauthplugin = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
         }
 
         $useraccount = $usersetting->add(get_string('useraccount'), null, self::TYPE_CONTAINER, null, 'useraccount');

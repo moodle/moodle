@@ -346,7 +346,7 @@ class auth_email_external extends external_api {
             // Save the user.
             $user = signup_setup_new_user((object) $data);
 
-            $authplugin = get_auth_plugin('email');
+            $authplugin = \core\di::get(\core\authentication::class)->get_plugin('email');
 
             // Check if we should redirect the user once the user is confirmed.
             $confirmationurl = null;

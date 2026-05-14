@@ -68,7 +68,7 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     if ($updatepassword && isset($user->password)) {
 
         // Check password toward the password policy.
-        if (!check_password_policy($user->password, $errmsg, $user)) {
+        if (!\core\di::get(\core\authentication\password::class)->check_policy($user->password, $errmsg, $user)) {
             throw new moodle_exception($errmsg);
         }
 
@@ -128,7 +128,7 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     if (isset($userpassword)) {
         // Get full database user row, in case auth is default.
         $newuser = $DB->get_record('user', array('id' => $newuserid));
-        $authplugin = get_auth_plugin($newuser->auth);
+        $authplugin = \core\di::get(\core\authentication::class)->get_plugin($newuser->auth);
         $authplugin->user_update_password($newuser, $userpassword);
     }
 
@@ -185,7 +185,7 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
     if ($updatepassword && isset($user->password)) {
 
         // Check password toward the password policy.
-        if (!check_password_policy($user->password, $errmsg, $user)) {
+        if (!\core\di::get(\core\authentication\password::class)->check_policy($user->password, $errmsg, $user)) {
             throw new moodle_exception($errmsg);
         }
 
@@ -242,7 +242,7 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
 
         // If password was set, then update its hash.
         if (isset($passwd)) {
-            $authplugin = get_auth_plugin($currentrecord->auth);
+            $authplugin = \core\di::get(\core\authentication::class)->get_plugin($currentrecord->auth);
             if ($authplugin->can_change_password()) {
                 $authplugin->user_update_password($currentrecord, $passwd);
             }

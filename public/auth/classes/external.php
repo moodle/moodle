@@ -396,7 +396,7 @@ class core_auth_external extends external_api {
             throw new moodle_exception('alreadyconfirmed');
         }
 
-        if (is_restored_user($username)) {
+        if (\core\di::get(\core\authentication::class)->is_restored_user($username)) {
             if (!empty($CFG->protectusernames)) {
                 throw new moodle_exception('invalidlogin');
             }

@@ -32,7 +32,7 @@ $redirect = optional_param('redirect', '', PARAM_LOCALURL);    // Where to redir
 $PAGE->set_url('/auth/oauth2/confirm-account.php');
 $PAGE->set_context(context_system::instance());
 
-$auth = get_auth_plugin('oauth2');
+$auth = \core\di::get(\core\authentication::class)->get_plugin('oauth2');
 
 if (!\auth_oauth2\api::is_enabled()) {
     throw new \moodle_exception('notenabled', 'auth_oauth2');

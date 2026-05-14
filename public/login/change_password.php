@@ -90,7 +90,7 @@ if (is_mnet_remote_user($USER)) {
 }
 
 // load the appropriate auth plugin
-$userauth = get_auth_plugin($USER->auth);
+$userauth = \core\di::get(\core\authentication::class)->get_plugin($USER->auth);
 
 if (!$userauth->can_change_password()) {
     throw new \moodle_exception('nopasswordchange', 'auth');

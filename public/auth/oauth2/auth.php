@@ -41,7 +41,7 @@ class auth_plugin_oauth2 extends \auth_oauth2\auth {
     public function test_settings() {
         global $OUTPUT;
 
-        $authplugin = get_auth_plugin('oauth2');
+        $authplugin = \core\di::get(\core\authentication::class)->get_plugin('oauth2');
         $idps = $authplugin->loginpage_idp_list('');
         $templateidps = [];
 
@@ -60,5 +60,3 @@ class auth_plugin_oauth2 extends \auth_oauth2\auth {
         }
     }
 }
-
-

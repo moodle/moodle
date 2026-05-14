@@ -38,12 +38,12 @@ class sync_users extends \core\task\scheduled_task {
      * Run task for synchronising users.
      */
     public function execute() {
-        if (!is_enabled_auth('db')) {
+        if (!\core\di::get(\core\authentication::class)->is_enabled('db')) {
             mtrace('auth_db plugin is disabled, synchronisation stopped');
             return;
         }
 
-        $dbauth = get_auth_plugin('db');
+        $dbauth = \core\di::get(\core\authentication::class)->get_plugin('db');
         $config = get_config('auth_db');
         $trace = new \text_progress_trace();
         $update = !empty($config->updateusers);

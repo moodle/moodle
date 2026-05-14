@@ -42,10 +42,11 @@ if ($ADMIN->fulltree) {
         new lang_string('settings:weight', 'tool_mfa'),
         new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
-    $authtypes = get_enabled_auth_plugins(true);
+    $authentication = \core\di::get(\core\authentication::class);
+    $authtypes = $authentication->get_enabled_plugins();
     $authselect = [];
     foreach ($authtypes as $type) {
-        $auth = get_auth_plugin($type);
+        $auth = $authentication->get_plugin($type);
         $authselect[$type] = $auth->get_title();
     }
 

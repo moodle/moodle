@@ -66,7 +66,7 @@ class auth_plugin_manual extends auth_plugin_base {
         if (!$user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             return false;
         }
-        if (!validate_internal_user_password($user, $password)) {
+        if (!\core\di::get(\core\authentication\password::class)->validate($user, $password)) {
             return false;
         }
         if ($password === 'changeme') {
@@ -93,7 +93,7 @@ class auth_plugin_manual extends auth_plugin_base {
         // This will also update the stored hash to the latest algorithm
         // if the existing hash is using an out-of-date algorithm (or the
         // legacy md5 algorithm).
-        return update_internal_user_password($user, $newpassword);
+        return \core\di::get(\core\authentication\password::class)->update($user, $newpassword);
     }
 
     function prevent_local_passwords() {

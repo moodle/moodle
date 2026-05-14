@@ -180,7 +180,7 @@ final class db_test extends \advanced_testcase {
         $this->init_auth_database();
 
         /** @var auth_plugin_db $auth */
-        $auth = get_auth_plugin('db');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('db');
 
         $authdb = $auth->db_init();
 
@@ -460,7 +460,7 @@ final class db_test extends \advanced_testcase {
         $this->resetAfterTest(false);
         $this->preventResetByRollback();
         $this->init_auth_database();
-        $auth = get_auth_plugin('db');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('db');
         $auth->db_init();
 
         // Create users on external table.
@@ -504,7 +504,7 @@ final class db_test extends \advanced_testcase {
         $this->resetAfterTest(true);
         $this->preventResetByRollback();
         $this->init_auth_database();
-        $auth = get_auth_plugin('db');
+        $auth = \core\di::get(\core\authentication::class)->get_plugin('db');
         $auth->db_init();
 
         // Set to delete from moodle when missing from DB.

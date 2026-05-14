@@ -134,7 +134,7 @@ class login_change_password_form extends moodleform {
         }
 
         $errmsg = '';//prevents eclipse warnings
-        if (!check_password_policy($data['newpassword1'], $errmsg, $USER)) {
+        if (!\core\di::get(\core\authentication\password::class)->check_policy($data['newpassword1'], $errmsg, $USER)) {
             $errors['newpassword1'] = $errmsg;
             $errors['newpassword2'] = $errmsg;
             return $errors;

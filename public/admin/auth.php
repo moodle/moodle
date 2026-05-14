@@ -20,19 +20,20 @@ $PAGE->set_url($returnurl);
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $auth   = optional_param('auth', '', PARAM_PLUGIN);
 
-get_enabled_auth_plugins(true); // fix the list of enabled auths
+// Fix the list of enabled auths.
+$authhelper = \core\di::get(\core\authentication::class);
+$authhelper->get_enabled_plugins(true);
 if (empty($CFG->auth)) {
-    $authsenabled = array();
+    $authsenabled = [];
 } else {
     $authsenabled = explode(',', $CFG->auth);
 }
 
-if (!empty($auth) and !exists_auth_plugin($auth)) {
+if (!empty($auth) && !$authhelper->plugin_exists($auth)) {
     throw new \moodle_exception('pluginnotinstalled', 'auth', $returnurl, $auth);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// process actions
+// Process the actions.
 
 if (!confirm_sesskey()) {
     redirect($returnurl);

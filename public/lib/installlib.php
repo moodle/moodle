@@ -451,7 +451,12 @@ function install_cli_database(array $options, $interactive) {
     upgrade_noncore(true);
 
     // set up admin user password
-    $DB->set_field('user', 'password', hash_internal_user_password($options['adminpass']), array('username' => 'admin'));
+    $DB->set_field(
+        'user',
+        'password',
+        \core\di::get(\core\authentication\password::class)->hash($options['adminpass']),
+        ['username' => 'admin'],
+    );
 
     // Set the admin email address if specified.
     if (isset($options['adminemail'])) {

@@ -391,7 +391,7 @@ class renderer extends \plugin_renderer_base {
         $factorsusedinfo = $DB->get_records_sql_menu($factorsusedsql, [$lookback, $lookback]);
 
         // Auth rows.
-        $authtypes = get_enabled_auth_plugins(true);
+        $authtypes = \core\di::get(\core\authentication::class)->get_enabled_plugins();
         foreach ($authtypes as $authtype) {
             $row = [];
             $row[] = \html_writer::tag('b', $authtype);

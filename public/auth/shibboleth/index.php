@@ -29,7 +29,7 @@
     }
 
     $pluginconfig   = get_config('auth_shibboleth');
-    $shibbolethauth = get_auth_plugin('shibboleth');
+    $shibbolethauth = \core\di::get(\core\authentication::class)->get_plugin('shibboleth');
 
     // Check whether Shibboleth is configured properly
     $readmeurl = (new moodle_url('/auth/shibboleth/README.txt'))->out();
@@ -43,11 +43,11 @@
         $frm->username = strtolower($_SERVER[$pluginconfig->user_attribute]);
         // The password is never actually used, but needs to be passed to the functions 'user_login' and
         // 'authenticate_user_login'. Shibboleth returns true for the function 'prevent_local_password', which is
-        // used when setting the password in 'update_internal_user_password'. When 'prevent_local_password'
+        // used when setting the password in '\core\authentication\password::update()'. When 'prevent_local_password'
         // returns true, the password is set to 'not cached' (AUTH_PASSWORD_NOT_CACHED) in the Moodle DB. However,
         // rather than setting the password to a hard-coded value, we will generate one each time, in case there are
         // changes to the Shibboleth plugin and it is actually used.
-        $frm->password = generate_password(8);
+        $frm->password = \core\di::get(\core\authentication\password::class)->generate(8);
 
     /// Check if the user has actually submitted login data to us
         $reason = null;

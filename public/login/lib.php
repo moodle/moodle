@@ -129,9 +129,12 @@ function core_login_process_password_reset($username, $email) {
     if ($user and !empty($user->confirmed)) {
         $systemcontext = context_system::instance();
 
-        $userauth = get_auth_plugin($user->auth);
-        if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)
-          or !has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
+        $userauth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
+        if (
+            !$userauth->can_reset_password()
+            || !\core\di::get(\core\authentication::class)->is_enabled($user->auth)
+            || !has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)
+        ) {
             if (send_password_change_info($user)) {
                 $pwresetstatus = PWRESET_STATUS_OTHEREMAILSENT;
             } else {
@@ -250,7 +253,10 @@ function core_login_process_password_set($token) {
         die; // Never reached.
     }
 
-    if ($user->auth === 'nologin' or !is_enabled_auth($user->auth)) {
+    if (
+        $user->auth === 'nologin'
+        || !\core\di::get(\core\authentication::class)->is_enabled($user->auth)
+    ) {
         // Bad luck - user is not able to login, do not let them set password.
         echo $OUTPUT->header();
         throw new \moodle_exception('forgotteninvalidurl');
@@ -282,7 +288,7 @@ function core_login_process_password_set($token) {
         // User has submitted form.
         // Delete this token so it can't be used again.
         $DB->delete_records('user_password_resets', array('id' => $user->tokenid));
-        $userauth = get_auth_plugin($user->auth);
+        $userauth = \core\di::get(\core\authentication::class)->get_plugin($user->auth);
         if (!$userauth->user_update_password($user, $data->password)) {
             throw new \moodle_exception('errorpasswordupdate', 'auth');
         }

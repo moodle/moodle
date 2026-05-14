@@ -205,7 +205,7 @@ final class userlib_test extends \advanced_testcase {
         $this->assertEquals(\context_user::instance($user->id), $event->get_context());
 
         // Update user with no password update.
-        $password = $user->password = hash_internal_user_password('M00dLe@T');
+        $password = $user->password = \core\di::get(\core\authentication\password::class)->hash('M00dLe@T');
         user_update_user($user, false);
         $dbuser = $DB->get_record('user', array('id' => $user->id));
         $this->assertSame($password, $dbuser->password);

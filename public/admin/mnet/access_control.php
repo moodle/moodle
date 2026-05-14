@@ -126,7 +126,7 @@ if (empty($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode !== 'strict'
     $warn = '<p>' . get_string('mnetdisabled','mnet') .'</p>';
 }
 
-if (!is_enabled_auth('mnet')) {
+if (!\core\di::get(\core\authentication::class)->is_enabled('mnet')) {
     $warn .= '<p>' .  get_string('authmnetdisabled','mnet').'</p>';
 }
 

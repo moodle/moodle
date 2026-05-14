@@ -174,6 +174,8 @@ class group_form extends moodleform {
 
         $errors = parent::validation($data, $files);
 
+        $passwordmanager = \core\di::get(\core\authentication\password::class);
+
         $name = trim($data['name']);
         if (isset($data['idnumber'])) {
             $idnumber = trim($data['idnumber']);
@@ -194,8 +196,11 @@ class group_form extends moodleform {
 
             if ($data['enrolmentkey'] != '') {
                 $errmsg = '';
-                if (!empty($CFG->groupenrolmentkeypolicy) && $group->enrolmentkey !== $data['enrolmentkey']
-                        && !check_password_policy($data['enrolmentkey'], $errmsg)) {
+                if (
+                    !empty($CFG->groupenrolmentkeypolicy)
+                    && $group->enrolmentkey !== $data['enrolmentkey']
+                    && !$passwordmanager->check_policy($data['enrolmentkey'], $errmsg)
+                ) {
                     // Enforce password policy when the password is changed.
                     $errors['enrolmentkey'] = $errmsg;
                 } else {
@@ -214,7 +219,10 @@ class group_form extends moodleform {
             $errors['idnumber']= get_string('idnumbertaken');
         } else if ($data['enrolmentkey'] != '') {
             $errmsg = '';
-            if (!empty($CFG->groupenrolmentkeypolicy) && !check_password_policy($data['enrolmentkey'], $errmsg)) {
+            if (
+                !empty($CFG->groupenrolmentkeypolicy)
+                && !$passwordmanager->check_policy($data['enrolmentkey'], $errmsg)
+            ) {
                 // Enforce password policy.
                 $errors['enrolmentkey'] = $errmsg;
             } else if ($DB->record_exists('groups', array('courseid' => $COURSE->id, 'enrolmentkey' => $data['enrolmentkey']))) {
