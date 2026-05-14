@@ -48,7 +48,7 @@ define(['jquery', 'tool_lp/competencypicker', 'core/ajax', 'core/notification', 
             }
         }
 
-        $.when.apply($, Ajax.call(requests, false)).then(function() {
+        $.when.apply($, Ajax.call(requests)).then(function() {
             var i = 0,
                 competencies = [];
 

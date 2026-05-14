@@ -22,7 +22,7 @@
 
 import {render, screen, act} from '@testing-library/react';
 import String, {getString, getStrings, getRequestedStrings, cacheStrings} from '@moodle/lms/core/String';
-import {requireAsync} from '@moodle/lms/core/amd';
+import * as Ajax from '@moodle/lms/core/ajax';
 
 describe('@moodle/lms/core/String', () => {
     describe('getString', () => {
@@ -59,21 +59,17 @@ describe('@moodle/lms/core/String', () => {
     describe('getRequestedStrings', () => {
         beforeEach(() => {
             // Restore original implementation to test the actual batching logic, which is mocked in globalSetup.
-            getRequestedStrings.mockRestore();
+            (getRequestedStrings as jest.Mock).mockRestore();
 
-            requireAsync.mockImplementation((moduleName) => {
-                if (moduleName === 'core/ajax') {
-                    return Promise.resolve({
-                        call: (
-                            requests,
-                        ) => {
-                            return requests.map(({args}) => {
-                                return Promise.resolve(`[${args.stringid}, ${args.component || 'core'}]`);
-                            });
-                        },
-                    });
-                }
-                return Promise.reject(new Error(`Module not found: ${moduleName}`));
+            (Ajax.fetchMany as jest.Mock).mockImplementation((requests) => {
+                // Simulate successful fetch responses for requested strings.
+                const responses = requests.map(({args}: { args: { stringid: string, component?: string } }) => {
+                    const stringid = args.stringid;
+                    const component = args.component || 'core';
+                    const value = `[${stringid}, ${component}]`; // Default response format.
+                    return Promise.resolve(value); // Simulate AJAX response structure.
+                });
+                return Promise.all(responses);
             });
         });
 
@@ -152,7 +148,7 @@ describe('@moodle/lms/core/String', () => {
     describe('cacheStrings', () => {
         beforeEach(() => {
             // Restore original implementation to test the actual batching logic, which is mocked in globalSetup.
-            getRequestedStrings.mockRestore();
+            (getRequestedStrings as jest.Mock).mockRestore();
         });
 
         it('makes subsequent getString calls resolve from cache', async() => {

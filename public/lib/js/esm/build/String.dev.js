@@ -2,7 +2,9 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
 import { Suspense, use } from "react";
-import { requireAsync } from "@moodle/lms/core/amd";
+import {
+  fetchMany
+} from "@moodle/lms/core/ajax";
 import config from "./config";
 import { localStore } from "./Storage";
 const promiseCache = /* @__PURE__ */ new Map();
@@ -60,29 +62,19 @@ const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
   }
   if (pendingFetches.length > 0) {
     const ajaxRequests = pendingFetches.map((pf) => pf.request);
-    requireAsync("core/ajax").then(
-      (ajax) => {
-        const jqPromises = ajax.call(
-          ajaxRequests,
-          true,
-          false,
-          false,
-          0,
-          config.langrev
-        );
-        jqPromises.forEach((jqp, j) => {
-          jqp.then(
-            // eslint-disable-line promise/no-nesting
-            (str) => pendingFetches[j].resolve(str),
-            (err) => pendingFetches[j].reject(err)
-          );
-        });
-        return ajax;
-      },
-      (err) => {
-        pendingFetches.forEach((pf) => pf.reject(err));
-      }
-    );
+    fetchMany(ajaxRequests, {
+      loginrequired: true,
+      nosessionupdate: false,
+      timeout: 0,
+      cachekey: config.langrev
+    }).then((results) => {
+      results.forEach((result, index) => {
+        pendingFetches[index].resolve(result);
+      });
+      return results;
+    }).catch((err) => {
+      pendingFetches.forEach((pf) => pf.reject(err));
+    });
   }
   return stringPromises;
 }, "getRequestedStrings");
@@ -119,7 +111,7 @@ const resetStringCache = /* @__PURE__ */ __name(() => {
 function StringInner({ identifier, component, params }) {
   return /* @__PURE__ */ jsxDEV(Fragment, { children: use(getString(identifier, component, params)) }, void 0, false, {
     fileName: "public/lib/js/esm/src/String.tsx",
-    lineNumber: 273,
+    lineNumber: 256,
     columnNumber: 12
   }, this);
 }
@@ -127,11 +119,11 @@ __name(StringInner, "StringInner");
 function String({ children, identifier, component = "core", params }) {
   return /* @__PURE__ */ jsxDEV(Suspense, { fallback: children ?? `${identifier}, ${component}`, children: /* @__PURE__ */ jsxDEV(StringInner, { identifier, component, params }, void 0, false, {
     fileName: "public/lib/js/esm/src/String.tsx",
-    lineNumber: 279,
+    lineNumber: 262,
     columnNumber: 13
   }, this) }, void 0, false, {
     fileName: "public/lib/js/esm/src/String.tsx",
-    lineNumber: 278,
+    lineNumber: 261,
     columnNumber: 9
   }, this);
 }

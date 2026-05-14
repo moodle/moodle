@@ -29,6 +29,7 @@ module.exports = {
     setupFilesAfterEnv: [
         '@testing-library/jest-dom',
         '<rootDir>/.jest/globalSetup.ts',
+        '<rootDir>/.jest/mockRedirect.ts',
     ],
     collectCoverageFrom: [
         '**/esm/src/**/*.{ts,tsx}',

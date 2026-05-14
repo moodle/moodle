@@ -23,11 +23,18 @@
 import {requireAsync, requireManyAsync} from '@moodle/lms/core/amd';
 import {resetStringCache} from '@moodle/lms/core/String';
 import * as String from '@moodle/lms/core/String';
+import * as Ajax from '@moodle/lms/core/ajax';
+import { AjaxOptions, AjaxRequest } from '@moodle/lms/core/ajax';
+
+type expectRedirectArgs =
+| { url: string; urlContains?: never }
+| { url?: never; urlContains: string };
 
 declare global {
     function mockAmdModule(moduleName: string, module: object): void;
     function mockString(identifier: string, component: string, resolved: string): void;
     function mockPendingString(identifier: string, component: string): void;
+    function expectRedirect(args: expectRedirectArgs): void;
     /** Keys passed to `M.util.js_pending()` since the last reset. */
     var pendingStack: string[];
     /** Keys passed to `M.util.js_complete()` since the last reset. */
@@ -232,6 +239,28 @@ beforeEach(() => {
     (globalThis as any).mockPendingString = (identifier: string, component: string): void => {
         pendingStringSet.add(`${component}:${identifier}`);
     };
+
+    const performFetchSpy = jest.spyOn(Ajax, 'performFetch');
+    performFetchSpy.mockImplementation((requests: AjaxRequest[], options?: AjaxOptions|undefined) => {
+        // Reject all requests.
+        // Tests can override this with more specific implementations if they want to allow certain requests to succeed.
+        return requests.map((request) => Promise.reject(new Error(
+            `Unexpected fetch request for method ${request.methodname} with options: ${JSON.stringify(options)}`
+        )));
+    });
+
+    const fetchManySpy = jest.spyOn(Ajax, 'fetchMany');
+    fetchManySpy.mockImplementation((requests: AjaxRequest[], options?: AjaxOptions|undefined) => {
+        // Reject all requests.
+        return Promise.all(requests.map((request) => Promise.reject(new Error(
+            `Unexpected fetch request for method ${request.methodname} with options: ${JSON.stringify(options)}`
+        ))));
+    });
+
+    const fetchOneSpy = jest.spyOn(Ajax, 'fetchOne');
+    fetchOneSpy.mockImplementation((request: AjaxRequest, options?: AjaxOptions|undefined) => {
+        return Promise.reject(new Error(`Unexpected fetch request to method: ${request.methodname} with options: ${JSON.stringify(options)}`));
+    });
 });
 
 afterEach(() => {

@@ -14,7 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import {Suspense, use, type ReactNode} from 'react';
-import {requireAsync} from '@moodle/lms/core/amd';
+import {
+    fetchMany,
+} from '@moodle/lms/core/ajax';
 import config from './config';
 import {localStore} from './Storage';
 
@@ -70,23 +72,6 @@ const stringPromiseCache = new Map<string, Promise<string>>();
 
 const getCacheKey = (key: string, component: string, lang: string): string =>
     `core_str/${key}/${component}/${lang}`;
-
-// --- AMD Ajax type (for lazy loading) ---
-
-type AmdAjaxThenable = {
-    then: (resolve: (v: unknown) => void, reject: (e: unknown) => void) => void;
-};
-
-type AmdAjax = {
-    call: (
-        requests: Record<string, unknown>[],
-        async_?: boolean,
-        loginrequired?: boolean,
-        nosessionupdate?: boolean,
-        timeout?: number,
-        cachekey?: number,
-    ) => AmdAjaxThenable[];
-};
 
 // --- Core string API ---
 
@@ -171,24 +156,22 @@ export const getRequestedStrings = (requests: StringRequest[]): Promise<string>[
     if (pendingFetches.length > 0) {
         const ajaxRequests = pendingFetches.map((pf) => pf.request);
 
-        requireAsync<AmdAjax>('core/ajax').then(
-            (ajax) => {
-                const jqPromises = ajax.call(
-                    ajaxRequests, true, false, false, 0, config.langrev,
-                );
-                jqPromises.forEach((jqp, j) => {
-                    jqp.then( // eslint-disable-line promise/no-nesting
-                        (str: unknown) => pendingFetches[j].resolve(str as string),
-                        (err: unknown) => pendingFetches[j].reject(err),
-                    );
-                });
+        fetchMany<string>(ajaxRequests, {
+            loginrequired: true,
+            nosessionupdate: false,
+            timeout: 0,
+            cachekey: config.langrev,
+        })
+        .then((results) => {
+            results.forEach((result, index) => {
+                pendingFetches[index].resolve(result);
+            });
 
-                return ajax;
-            },
-            (err) => {
-                pendingFetches.forEach((pf) => pf.reject(err));
-            },
-        );
+            return results;
+        })
+        .catch((err) => {
+            pendingFetches.forEach((pf) => pf.reject(err));
+        });
     }
 
     return stringPromises;
