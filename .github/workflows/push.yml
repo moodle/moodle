@@ -45,6 +45,24 @@ jobs:
           git reset -- npm-shrinkwrap.json
           git diff --cached --exit-code
 
+  Jest:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checking out code
+        uses: actions/checkout@v4
+
+      - name: Configuring node & npm
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Installing node stuff
+        run: npm install
+
+      - name: Running Jest tests
+        run: npm test
+
   PHPUnit:
     runs-on: ${{ matrix.os }}
     services:

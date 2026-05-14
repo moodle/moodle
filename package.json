@@ -7,7 +7,9 @@
     "update-packages": "npm run update-design-system && npm run update-react",
     "update-react": "node scripts/update-react-bundle.mjs",
     "update-design-system": "node scripts/update-design-system.mjs",
-    "upgradenote": "node .grunt/upgradenotes.mjs create"
+    "upgradenote": "node .grunt/upgradenotes.mjs create",
+    "pretest": "grunt jsconfig",
+    "test": "jest"
   },
   "dependencies": {
     "@moodlehq/design-system": "^2.1",
@@ -19,6 +21,9 @@
     "@babel/eslint-parser": "^7.21.3",
     "@babel/eslint-plugin": "7.19.1",
     "@babel/preset-env": "7.16.11",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
     "@types/jquery": "^4.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -54,7 +59,11 @@
     "hugo-lunr-indexer": "^1.1.3",
     "inquirer": "^9.2.15",
     "inquirer-search-list": "^1.2.6",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.0.0",
     "jsdoc": "^4.0.2",
+    "ts-jest": "^29.4.9",
+    "typescript": "^5.7.3",
     "jsdoc-to-markdown": "^8.0.0",
     "jshint": "^2.13.4",
     "jstoxml": "^3.2.3",
@@ -69,15 +78,22 @@
     "winston": "^3.13.0",
     "xpath": "0.0.32"
   },
+  "overrides": {
+    "@babel/generator": "7.17.9",
+    "@babel/helper-compilation-targets": "7.16.7",
+    "@babel/helper-module-transforms": "7.22.20",
+    "@babel/helpers": "7.20.1",
+    "@babel/traverse": "7.21.3"
+  },
   "engines": {
     "node": ">=22.11.0 <23"
   },
   "browserslist": [
-    ">0.3%",
-    "last 2 versions",
-    "not ie >= 0",
-    "not op_mini all",
-    "not Opera > 0",
-    "not dead"
+    "chrome >= 93",
+    "edge >= 96",
+    "firefox >= 95",
+    "safari >= 13.1",
+    "ios_saf >= 12.2",
+    "samsung >= 15"
   ]
 }

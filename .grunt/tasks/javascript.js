@@ -161,7 +161,20 @@ module.exports = grunt => {
                         presets: [
                             ['@babel/preset-env', {
                                 modules: false,
-                                useBuiltIns: false
+                                useBuiltIns: false,
+                                // Explicit targets prevent browserslist query resolution from
+                                // affecting compiled output as browser release schedules change.
+                                // These values match the minimum browser versions from the
+                                // browserslist query at the time this was pinned (early 2022 data).
+                                ignoreBrowserslistConfig: true,
+                                targets: {
+                                    chrome: '93',
+                                    edge: '96',
+                                    firefox: '95',
+                                    safari: '13.1',
+                                    ios: '12.2',
+                                    samsung: '15',
+                                },
                             }]
                         ]
                     }),
