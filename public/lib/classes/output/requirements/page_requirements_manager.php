@@ -1579,7 +1579,10 @@ EOF;
             'core/config' => '@moodle/lms/core/config:default',
             'core/deprecated' => '@moodle/lms/core/deprecated:default',
             'core/fetch' => '@moodle/lms/core/fetch:default',
+            'core/localstorage' => '@moodle/lms/core/Storage:localStore',
             'core/pending' => '@moodle/lms/core/pending:default',
+            'core/sessionstorage' => '@moodle/lms/core/Storage:sessionStore',
+            'core/storagewrapper' => '@moodle/lms/core/Storage:default',
         ]);
 
         $maps = $requirejshook->get_requirejs_map();
