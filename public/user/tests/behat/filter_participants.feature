@@ -750,7 +750,7 @@ Feature: Course participants can be filtered
 
     Then I should see "Nothing to display"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Filter by user identity fields when cannot see the field data
     Given the following "role capability" exists:
       | role                         | editingteacher |

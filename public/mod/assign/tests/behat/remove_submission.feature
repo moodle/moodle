@@ -31,7 +31,7 @@ Feature: Remove a submission
       | student1 | G1 |
       | student2 | G1 |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Remove a submission should remove the data that was submitted
     Given the following "activity" exists:
       | activity                             | assign                |
@@ -58,7 +58,7 @@ Feature: Remove a submission
     And I should not see "I'm the student submission"
     And I should see "No submissions have been made yet" in the "Submission status" "table_row"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Remove a group submission should remove the data from all group members
     Given the following "activity" exists:
       | activity                             | assign                |
@@ -86,7 +86,7 @@ Feature: Remove a submission
     And I should not see "I'm the student submission"
     And I should see "Nothing has been submitted for this assignment" in the "Submission status" "table_row"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: A student can remove their own submission
     Given the following "activity" exists:
       | activity                             | assign                |
@@ -115,7 +115,7 @@ Feature: Remove a submission
     And I should not see "I'm the student submission"
     And I should see "No submissions have been made yet" in the "Submission status" "table_row"
 
-  @javascript @skip_chrome_zerosize @_file_upload
+  @javascript @_file_upload
   Scenario: Submission removal with time limit setting
     Given the following "activity" exists:
       | activity                            | assign                          |
