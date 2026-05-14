@@ -22,6 +22,7 @@
 
 import {requireAsync, requireManyAsync} from '@moodle/lms/core/amd';
 import {resetStringCache} from '@moodle/lms/core/String';
+import * as String from '@moodle/lms/core/String';
 
 declare global {
     function mockAmdModule(moduleName: string, module: object): void;
@@ -33,7 +34,14 @@ declare global {
     var completeStack: string[];
 }
 
-const mockedModules = new Map<string, unknown>();
+/**
+ * @var mockedModules - A map to store mocked AMD modules by their name.
+ */
+const mockedModules = new Map<string, any>();
+
+/**
+ * @var stringMap - A map to store mocked strings with keys in the format 'component:identifier'.
+ */
 const stringMap = new Map<string, string>();
 
 /**
@@ -55,6 +63,9 @@ const completeStack: string[] = [];
 (globalThis as any).completeStack = completeStack;
 
 // Provide the global M object with cfg defaults and tracked js_pending/js_complete mocks.
+// NOTE: The `M` global is initially created in `.jest/globalM.ts` (via `setupFiles`)
+// so that `M.cfg` is available when hoisted `jest.mock()` factories trigger `requireActual`.
+// Here we store the default cfg snapshot and replace the util functions with jest.fn() mocks.
 const defaultCfg = {
     wwwroot: 'https://example.com',
     apibase: 'https://example.com',
@@ -85,16 +96,46 @@ const defaultCfg = {
     developerdebug: true,
 };
 
-(globalThis as any).M = {
-    cfg: {...defaultCfg},
-    util: {
-        js_pending: jest.fn((key: string) => {
-            pendingStack.push(key);
-        }),
-        js_complete: jest.fn((key: string) => {
-            completeStack.push(key);
-        }),
-    },
+// Replace the placeholder util functions with proper jest.fn() mocks.
+(globalThis as any).M.util = {
+    js_pending: jest.fn((key: string) => {
+        pendingStack.push(key);
+    }),
+    js_complete: jest.fn((key: string) => {
+        completeStack.push(key);
+    }),
+    get_string: jest.fn((key: string, component: string, params?: Record<string, unknown>) => {
+        if (!(globalThis as any).M.str[component] || !(globalThis as any).M.str[component][key]) {
+            return `[${key}, ${component}]`;
+        }
+
+        const stringValue = (globalThis as any).M.str[component][key];
+
+        if (!params) {
+            return stringValue;
+        }
+
+        const normaliseParameter = (param: unknown): string => {
+            if (typeof param === 'string') {
+                return param;
+            }
+            if (typeof param === 'number' || typeof param === 'boolean') {
+                return globalThis.String(param);
+            }
+            return JSON.stringify(param);
+        };
+
+        if (['string', 'number'].includes(typeof params)) {
+            return (stringValue as string).replace(/{\$a}/g, normaliseParameter(params));
+        }
+
+        let result = stringValue;
+        Object.entries(params).forEach(([placeholder, value]) => {
+            result = (result as string).replace(new RegExp(`{\\$a->${placeholder}}`, 'g'), normaliseParameter(value));
+        });
+
+        return result;
+    }),
 };
 
 // Mock the global functions for mocking AMD modules and strings, making them available in all test files.
@@ -105,6 +146,8 @@ beforeEach(() => {
     pendingStack.length = 0;
     completeStack.length = 0;
     Object.assign((globalThis as any).M.cfg, defaultCfg);
+
+    (globalThis as any).M.str = {};
 
     resetStringCache();
 
@@ -127,12 +170,12 @@ beforeEach(() => {
         return Promise.resolve(modules);
     });
 
-    (global as any).mockAmdModule = (moduleName: string, module: object) => {
+    (globalThis as any).mockAmdModule = (moduleName: string, module: object) => {
         mockedModules.set(moduleName, module);
     };
 
     // Register a default core/str mock. Returns '[identifier, component]' for unmocked strings.
-    (global as any).mockAmdModule('core/str', {
+    (globalThis as any).mockAmdModule('core/str', {
         // eslint-disable-next-line camelcase
         get_string: jest.fn((identifier: string, component?: string) => {
             const key = `${component}:${identifier}`;
@@ -143,12 +186,56 @@ beforeEach(() => {
         }),
     });
 
-    (global as any).mockString = (identifier: string, component: string, resolved: string): void => {
+    const getRequestedStringsSpy = jest.spyOn(String, 'getRequestedStrings');
+    (getRequestedStringsSpy as jest.SpyInstance).mockImplementation((requests: {key: string; component: string; param?: unknown}[]) => {
+        return requests.map(({key, component}) => {
+            const mapKey = `${component}:${key}`;
+            if (pendingStringSet.has(mapKey)) {
+                // Return a promise that never resolves to simulate a permanently pending string.
+                return new Promise<string>(() => {});
+            }
+            if (stringMap.has(mapKey)) {
+                return Promise.resolve(stringMap.get(mapKey)!);
+            }
+            return Promise.resolve(`[${key}, ${component}]`);
+        });
+    });
+
+    /**
+     * Provide a value for a mocked string.
+     *
+     * Populates M.str for the ESM String module, and stringMap for the AMD core/str mock.
+     *
+     * @param identifier The string identifier (key) to mock.
+     * @param component The component the string belongs to.
+     * @param resolved The value that should be returned when the string is requested.
+     */
+    (globalThis as any).mockString = (identifier: string, component: string, resolved: string): void => {
+        // For ESM String module (reads M.str directly).
+        const mStr = (globalThis as any).M.str;
+        if (!mStr[component]) {
+            mStr[component] = {};
+        }
+        mStr[component][identifier] = resolved;
+
+        // For AMD core/str mock (reads stringMap).
         stringMap.set(`${component}:${identifier}`, resolved);
+    };
+
+    /**
+     * Mock a string so that it remains permanently pending (never resolves).
+     * Useful for testing Suspense fallback rendering.
+     *
+     * @param identifier The string identifier (key) to mock.
+     * @param component The component the string belongs to.
+     */
+    (globalThis as any).mockPendingString = (identifier: string, component: string): void => {
+        pendingStringSet.add(`${component}:${identifier}`);
     };
 });
 
 afterEach(() => {
     mockedModules.clear();
     stringMap.clear();
+    pendingStringSet.clear();
 });
