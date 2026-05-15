@@ -476,6 +476,7 @@ class question_bank_helper {
             $categories,
             $isshared,
             $isrecent,
+            $cminfo->id == $currentbankid,
         );
     }
 
@@ -751,6 +752,8 @@ class question_bank_helper {
      * @param module|null $modulecontext If set, use this instead of $coursecontext when applying text filters on bank names.
      * @param bool $includeshared Include banks with shared questions.
      * @param bool $includerecent Include banks recently viewed by the user.
+     * @param bool $includeprivate Include banks with private questions. If $modulecontext is set, only the current module's bank
+     *     will be included.
      * @return formatted_bank[]
      */
     public static function get_banks_for_course(
@@ -758,6 +761,7 @@ class question_bank_helper {
         ?module $modulecontext = null,
         bool $includeshared = true,
         bool $includerecent = false,
+        bool $includeprivate = false,
     ): array {
         global $USER;
         if ($modulecontext) {
@@ -782,6 +786,19 @@ class question_bank_helper {
                 havingcap: $capabilities,
             );
             $banks = array_merge($banks, $recentbanks);
+        }
+        if ($includeprivate) {
+            $privatebanks = self::get_activity_instances_with_private_questions(
+                incourseids: [$coursecontext->instanceid],
+                havingcap: $capabilities,
+                currentbankid: $modulecontext ? $modulecontext->instanceid : 0,
+                filtercontext: $context,
+            );
+            if ($modulecontext) {
+                // We're in a module context, don't include private banks from other modules.
+                $privatebanks = array_filter($privatebanks, fn($bank) => $bank->current);
+            }
+            $banks = array_merge($banks, $privatebanks);
         }
         return $banks;
     }

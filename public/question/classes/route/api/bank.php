@@ -142,6 +142,7 @@ class bank {
             new query_coursemodule('currentmodule'),
             new query_parameter(name: 'includeshared', type: param::BOOL, default: true),
             new query_parameter(name: 'includerecent', type: param::BOOL, default: false),
+            new query_parameter(name: 'includeprivate', type: param::BOOL, default: false),
         ],
         responses: [
             new response(
@@ -173,6 +174,7 @@ class bank {
             $currentmodulecontext,
             $params['includeshared'],
             $params['includerecent'],
+            $params['includeprivate'],
         );
         return new payload_response(
             request: $request,
