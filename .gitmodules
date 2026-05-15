@@ -64,6 +64,11 @@
 	url = https://github.com/bfh/moodle-tiny_fontcolor
 	branch = main
 	tag = V1.3
+[submodule "public/local/coursearchivingnotification"]
+	path = public/local/coursearchivingnotification
+	url = https://github.com/ucsf-education/moodle-local_coursearchivingnotification
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
 [submodule "public/local/maintenance_livecheck"]
 	path = public/local/maintenance_livecheck
 	url = https://github.com/moodle-an-hochschulen/moodle-local_maintenance_livecheck
