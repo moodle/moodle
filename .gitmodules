@@ -12,6 +12,10 @@
 	path = public/availability/condition/mobileapp
 	url = https://github.com/ucsf-education/moodle-availability_mobileapp
 	branch = UCSFCLE_501_STABLE
+[submodule "public/admin/tool/sentry"]
+	path = public/admin/tool/sentry
+	url = https://github.com/ucsf-education/moodle-tool_sentry
+	branch = UCSFCLE_501_STABLE
 [submodule "public/admin/tool/ucsfsomapi"]
 	path = public/admin/tool/ucsfsomapi
 	url = https://github.com/ucsf-education/tool_ucsfsomapi
