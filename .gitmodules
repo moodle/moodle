@@ -69,6 +69,11 @@
 	url = https://github.com/ucsf-education/moodle-local_coursearchivingnotification
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/local/bulkenrol"]
+	path = public/local/bulkenrol
+	url = https://github.com/moodle-an-hochschulen/moodle-local_bulkenrol
+	branch = MOODLE_501_STABLE
+	tag = v5.1-r1
 [submodule "public/local/maintenance_livecheck"]
 	path = public/local/maintenance_livecheck
 	url = https://github.com/moodle-an-hochschulen/moodle-local_maintenance_livecheck
@@ -108,8 +113,8 @@
 [submodule "public/mod/diary"]
 	path = public/mod/diary
 	url = https://github.com/drachels/moodle-mod_diary
-	branch = MOODLE_501_STABLE
-	tag = v5.0.0
+	branch = master
+	tag = v5.1.0
 [submodule "public/mod/chat"]
 	path = public/mod/chat
 	url = https://github.com/ucsf-education/moodle-mod_chat
@@ -171,6 +176,11 @@
 	url = https://github.com/marcusgreen/moodle-qtype_wordselect
 	branch = main
 	tag = v2.56
+[submodule "public/report/benchmark"]
+	path = public/report/benchmark
+	url = https://github.com/mikasmart/moodle-report_benchmark
+	branch = master
+	tag = v1.5.4
 [submodule "public/repository/boxnet"]
 	path = public/repository/boxnet
 	url = https://github.com/ucsf-education/moodle-repository_boxnet
