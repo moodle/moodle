@@ -108,8 +108,8 @@
 [submodule "public/mod/diary"]
 	path = public/mod/diary
 	url = https://github.com/drachels/moodle-mod_diary
-	branch = MOODLE_501_STABLE
-	tag = v5.0.0
+	branch = master
+	tag = v5.1.0
 [submodule "public/mod/chat"]
 	path = public/mod/chat
 	url = https://github.com/ucsf-education/moodle-mod_chat
