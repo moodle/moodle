@@ -36,7 +36,7 @@ final class manager_test extends \advanced_testcase {
 
         // Check all Tiny Premium plugins are returned.
         $premiumplugins = manager::get_plugins();
-        $this->assertCount(17, $premiumplugins);
+        $this->assertCount(18, $premiumplugins);
     }
 
     /**

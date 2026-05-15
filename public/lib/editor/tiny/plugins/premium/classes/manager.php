@@ -54,6 +54,7 @@ class manager {
             'footnotes',
             'formatpainter',
             'linkchecker',
+            'markdown',
             'math',
             'pageembed',
             'permanentpen',

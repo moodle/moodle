@@ -57,4 +57,28 @@ final class plugininfo_test extends advanced_testcase {
         $this->assertArrayHasKey('serviceurls', $configs);
         $this->assertEquals(implode(',', \tiny_premium\manager::get_plugins()), $configs['premiumplugins']);
     }
+
+    /**
+     * Test that capability filtering removes prohibited plugins from the external configuration.
+     *
+     * advtable is used as the "still present" anchor because it has no per-plugin capability
+     * restriction and is alphabetically first in the plugin list, making it a stable reference
+     * for asserting that non-prohibited plugins are unaffected by the filtering.
+     *
+     * @return void
+     */
+    public function test_get_plugin_configuration_filters_by_user_capability(): void {
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $roleid = $generator->create_role();
+        assign_capability('tiny/premium:usemarkdown', CAP_PROHIBIT, $roleid, \context_system::instance()->id);
+        role_assign($roleid, $user->id, \context_system::instance()->id);
+
+        $context = \context_system::instance();
+        $this->setUser($user);
+
+        $configs = plugininfo::get_plugin_configuration_for_external($context);
+        $this->assertContains('advtable', explode(',', $configs['premiumplugins']));
+        $this->assertNotContains('markdown', explode(',', $configs['premiumplugins']));
+    }
 }

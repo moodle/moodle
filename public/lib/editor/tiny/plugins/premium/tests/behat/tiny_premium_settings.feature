@@ -23,6 +23,12 @@ Feature: Check the features of the TinyMCE Premium settings
     And I should not see "Enabled TinyMCE Premium plugins will not be available until an API key is added."
 
   @javascript
+  Scenario: The Markdown plugin can be enabled without extra service settings
+    Given "Settings" "link" should not exist in the "Markdown" "table_row"
+    When I click on "Enable Markdown" "link"
+    Then I should see "Markdown enabled."
+
+  @javascript
   Scenario: I see a notification when I have both the premium and default accessibility checkers enabled
     When I click on "Enable Accessibility Checker" "link"
     Then I should see "Accessibility Checker enabled."
