@@ -166,6 +166,11 @@
 	url = https://github.com/marcusgreen/moodle-qtype_wordselect
 	branch = main
 	tag = v2.56
+[submodule "public/report/benchmark"]
+	path = public/report/benchmark
+	url = https://github.com/mikasmart/moodle-report_benchmark
+	branch = master
+	tag = v1.5.4
 [submodule "public/repository/boxnet"]
 	path = public/repository/boxnet
 	url = https://github.com/ucsf-education/moodle-repository_boxnet
