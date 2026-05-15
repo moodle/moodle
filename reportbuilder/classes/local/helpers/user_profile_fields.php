@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\helpers;
 
+use core\context\system;
 use core\lang_string;
 use core_text;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
@@ -56,7 +57,8 @@ class user_profile_fields {
         /** @var string The entity name used when adding columns and filters */
         private readonly string $entityname,
     ) {
-        $this->userprofilefields = profile_get_user_fields_with_data(0);
+        // Specify a "non-empty" userid here, that won't match a real user account.
+        $this->userprofilefields = profile_get_user_fields_with_data(\core\user::SUPPORT_USER);
     }
 
     /**
@@ -150,7 +152,7 @@ class user_profile_fields {
 
                     return $field->display_data();
                 }, $profilefield)
-                ->set_is_available($profilefield->is_visible());
+                ->set_is_available($profilefield->is_visible(system::instance()));
         }
 
         return array_values($columns);
@@ -222,7 +224,7 @@ class user_profile_fields {
             ))
                 ->add_joins($this->get_joins())
                 ->add_join($this->get_table_join($profilefield))
-                ->set_is_available($profilefield->is_visible());
+                ->set_is_available($profilefield->is_visible(system::instance()));
 
             // If using a select filter, then populate the options.
             if ($filter->get_filter_class() === select::class) {
