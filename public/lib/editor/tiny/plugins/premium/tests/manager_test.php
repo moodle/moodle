@@ -25,7 +25,6 @@ namespace tiny_premium;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class manager_test extends \advanced_testcase {
-
     /**
      * Test the getting of all available Tiny Premium plugins.
      *

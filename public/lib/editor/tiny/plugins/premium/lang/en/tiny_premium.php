@@ -29,8 +29,8 @@ $string['accessibilitycheckerinfo'] = 'The TinyMCE Premium Accessibility Checker
 $string['apikey'] = 'API key';
 $string['apikey_desc'] = 'Your API key is available on your <a href="https://www.tiny.cloud">Tiny Cloud</a> account page if you have purchased a subscription, or if you are on a free trial.';
 $string['emptyapikeywarning'] = 'Enabled TinyMCE Premium plugins will not be available until an API key is added.';
-$string['invalidurl'] = 'Wrong URL';
 $string['invalidpath'] = 'You have not provided a valid path to the TinyMCE standalone package. Please check the <a href="{$a}">TinyMCE General settings</a> page.';
+$string['invalidurl'] = 'Wrong URL';
 $string['pluginname'] = 'TinyMCE Premium';
 $string['pluginnotfound'] = 'Tiny Premium plugin {$a} not found.';
 $string['pluginsource'] = 'Plugin source';

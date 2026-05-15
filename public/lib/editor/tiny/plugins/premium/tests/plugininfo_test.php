@@ -29,7 +29,6 @@ use advanced_testcase;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class plugininfo_test extends advanced_testcase {
-
     /**
      * Basic setup for tests.
      */
@@ -48,8 +47,6 @@ final class plugininfo_test extends advanced_testcase {
      * @return void
      */
     public function test_get_plugin_configuration_for_external(): void {
-        global $CFG;
-
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $context = \context_system::instance();
