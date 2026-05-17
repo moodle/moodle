@@ -1705,3 +1705,45 @@ function require_phpunit_isolation(): void {
             'See the PHPUnit @runInSeparateProcess and @runTestsInSeparateProcesses annotations.'
     );
 }
+
+/**
+ * Returns true if a Vary: Accept-Language header should be sent for this request.
+ *
+ * This is true when more than one language pack is installed, meaning the
+ * response content may differ based on the browser's Accept-Language header.
+ * File-serving endpoints are excluded as they serve binary content that does
+ * not vary by language.
+ *
+ * @return bool
+ */
+function should_vary_by_accept_language(): bool {
+    if (count(get_string_manager()->get_list_of_translations()) <= 1) {
+        return false;
+    }
+
+    // File-serving scripts return binary content that does not vary by language.
+    $fileservingscripts = [
+        'pluginfile.php',
+        'draftfile.php',
+        'tokenpluginfile.php',
+        'file.php',
+    ];
+    $script = basename($_SERVER['SCRIPT_NAME'] ?? '');
+    if (in_array($script, $fileservingscripts)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Sends Vary response headers based on the current site configuration.
+ *
+ * Note: If additional Vary headers are needed in future they should be added
+ * here and combined into a single header call.
+ */
+function setup_vary_headers(): void {
+    if (should_vary_by_accept_language()) {
+        header('Vary: Accept-Language');
+    }
+}

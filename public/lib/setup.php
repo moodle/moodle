@@ -1023,6 +1023,7 @@ if ($forcelang = optional_param('forcelang', '', PARAM_SAFEDIR)) {
 unset($forcelang);
 
 setup_lang_from_browser();
+setup_vary_headers();
 
 if (empty($CFG->lang)) {
     if (empty($SESSION->lang)) {
