@@ -23,12 +23,16 @@
     * content - Content to display
     * heading - The heading to display
     * action - The action being performed
+    * copylabel - Accessibility label for the copy button
+    * regeneratelabel - Accessibility label for the regenerate button
 
     Example context (json):
     {
         "content": "<p>Content to display</p>",
         "heading": "AI Explain",
-        "action": "explain_text"
+        "action": "explain_text",
+        "copylabel": "Copy AI-generated explanation",
+        "regeneratelabel": "Regenerate AI-generated explanation"
     }
 }}
 <section class="course-assist-response card mb-3" data-action-performed="{{action}}">
@@ -52,11 +56,11 @@
                 </small>
             </div>
             <div class="course-assist-controls d-block pt-3">
-                <button class="btn btn-sm btn-outline-secondary" data-action="regenerate">
+                <button class="btn btn-sm btn-outline-secondary" data-action="regenerate" aria-label="{{regeneratelabel}}">
                     {{#pix}} a/refresh, core {{/pix}}
                     {{#str}} regenerate, aiplacement_courseassist {{/str}}
                 </button>
-                <button class="btn btn-sm btn-outline-secondary" data-action="copytoclipboard" data-clipboard-target="#course-assist-response-content-{{uniqid}}">
+                <button class="btn btn-sm btn-outline-secondary" data-action="copytoclipboard" data-clipboard-target="#course-assist-response-content-{{uniqid}}" aria-label="{{copylabel}}">
                     {{#pix}} e/copy, core {{/pix}}
                     {{#str}} copy, aiplacement_courseassist {{/str}}
                 </button>
