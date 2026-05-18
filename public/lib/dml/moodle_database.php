@@ -883,7 +883,7 @@ abstract class moodle_database {
      */
     protected function detect_objects($value) {
         if (is_object($value)) {
-            throw new coding_exception('Invalid database query parameter value', 'Objects are are not allowed: '.get_class($value));
+            throw new coding_exception('Invalid database query parameter value', 'Objects are not allowed: ' . get_class($value));
         }
     }
 
