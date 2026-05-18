@@ -35,8 +35,10 @@ class customfields implements renderable, templatable {
      *
      * @param \core_contentbank\content $content The content object.
      */
-    public function __construct(content $content) {
-        $this->content = $content;
+    public function __construct(
+        /** @var content $content The content object. */
+        protected content $content,
+    ) {
     }
 
     /**
