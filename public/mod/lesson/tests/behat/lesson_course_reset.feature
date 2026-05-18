@@ -53,44 +53,31 @@ Feature: Lesson reset
     And I navigate to "Reports" in current page administration
     Then I should see "No attempts have been made on this lesson"
 
-  @javascript
   Scenario: Use course reset to remove user overrides
+    Given the following "mod_lesson > user overrides" exist:
+      | lesson           | user     | retake |
+      | Test lesson name | student1 | 1      |
     When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I navigate to "Overrides" in current page administration
-    And I follow "Add user override"
-    And I set the following fields to these values:
-        | Override user           | Student1  |
-        | Allow multiple attempts | 1 |
-    And I press "Save"
-    And I should see "Sam1 Student1"
     And I am on the "Course 1" "reset" page
     And I press "Deselect all"
     And I set the following fields to these values:
         | All user overrides | 1  |
     And I press "Reset course"
-    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     And I am on the "Test lesson name" "lesson activity" page
     And I navigate to "Overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
-  @javascript
   Scenario: Use course reset to remove group overrides
+    Given the following "mod_lesson > group overrides" exist:
+      | lesson           | group     | retake |
+      | Test lesson name | G1 | 1      |
     When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I follow "Add group override"
-    And I set the following fields to these values:
-        | Override group          | Group 1  |
-        | Allow multiple attempts | 1 |
-    And I press "Save"
-    And I should see "Group 1"
     And I am on the "Course 1" "reset" page
     And I press "Deselect all"
     And I set the following fields to these values:
         | All group overrides | 1  |
     And I press "Reset course"
-    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     And I am on the "Test lesson name" "lesson activity" page
     And I navigate to "Overrides" in current page administration
