@@ -216,6 +216,10 @@ class core_renderer extends renderer_base {
             );
         }
 
+        $lang = optional_param('lang', '', PARAM_LANG);
+        $languages = \get_string_manager()->get_list_of_translations();
+        $hook->add_html($this->language_header_links($languages, $lang));
+
         $output = $hook->get_output();
 
         // Set up help link popups for all links with the helptooltip class
@@ -289,6 +293,77 @@ class core_renderer extends renderer_base {
         }
 
         return $output;
+    }
+
+    /**
+     * Any language related header links to help crawlers index pages in the correct languages.
+     *
+     * @param string[] $languages that are installed
+     * @param string $langparam what is the optional lang param
+     * @return string HTML fragment.
+     */
+    public function language_header_links($languages, $langparam = '') {
+        global $CFG;
+
+        $html = '';
+
+        // First find what languages are crawlable.
+        $crawlable = [];
+        $langcodes = array_map('trim', explode(',', $CFG->langscrawlable ?? ''));
+        foreach ($langcodes as $langcode) {
+            // If the langcode contains optional mapping use it instead.
+            $parts = explode('|', $langcode);
+            $crawlable[$parts[0]] = end($parts);
+        }
+        $crawlable = array_filter($crawlable);
+
+        // Only include languages that are actually installed on this site.
+        $crawlable = array_filter($crawlable, fn($langpack) => isset($languages[$langpack]), ARRAY_FILTER_USE_KEY);
+
+        // If we have no lang param, or we see a language param that isn't allowed
+        // then point the crawler back to the canonical page.
+        if (empty($langparam) || !array_key_exists($langparam, $crawlable)) {
+            $html .= html_writer::empty_tag('link', [
+                'rel' => 'canonical',
+                'href' => $this->page->url->out(false),
+            ]);
+            $html .= "\n";
+        }
+
+        // If we see a language param that is allowed to be crawled then this page
+        // is also canonical as well as the original one without any language param.
+        if (!empty($langparam) && array_key_exists($langparam, $crawlable)) {
+            $html .= html_writer::empty_tag('link', [
+                'rel' => 'canonical',
+                'href' => $this->page->url->out(false, ['lang' => $langparam]),
+            ]);
+            $html .= "\n";
+        }
+
+        // If we allow crawling of more than one language then each page should
+        // link to all the language variants of the same page.
+        if (!empty($crawlable)) {
+            $html .= html_writer::empty_tag('link', [
+                'rel' => 'alternate',
+                'hreflang' => $CFG->lang,
+                'href' => $this->page->url->out(false),
+            ]);
+            $html .= "\n";
+
+            foreach ($crawlable as $langpack => $langcode) {
+                // Skip the default language — it's already emitted as the first alternate above.
+                if ($langpack === $CFG->lang) {
+                    continue;
+                }
+                $html .= html_writer::empty_tag('link', [
+                    'rel' => 'alternate',
+                    'hreflang' => $langcode,
+                    'href' => $this->page->url->out(false, ['lang' => $langpack]),
+                ]);
+                $html .= "\n";
+            }
+        }
+        return $html;
     }
 
     /**

@@ -29,6 +29,252 @@ use moodle_page;
  * @covers \core_renderer
  */
 final class core_renderer_test extends \advanced_testcase {
+
+    /**
+     * Data provider for testing language crawling headers
+     *
+     * @return  array
+     */
+    public static function language_header_links_provider(): array {
+        return [
+            'Default' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                ],
+                'langscrawlable' => '',
+                'param' => '',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+
+EOF
+,
+            ],
+            'Single language french' => [
+                'lang' => 'fr',
+                'languages' => [
+                    'fr' => 'French (fr)',
+                ],
+                'langscrawlable' => '',
+                'param' => '',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+
+EOF
+,
+            ],
+            'Dual language en and fr, no crawling, no param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                ],
+                'langscrawlable' => '',
+                'param' => '',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+
+EOF
+,
+            ],
+            'Dual language en and fr, no crawling, fr param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                ],
+                'langscrawlable' => '',
+                'param' => 'fr',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+
+EOF
+,
+            ],
+            'Dual language en and fr, dual crawling, no param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                ],
+                'langscrawlable' => 'fr',
+                'param' => '',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="fr" href="https://www.example.com/moodle/page.php?lang=fr" />
+
+EOF
+,
+            ],
+            'Dual language en and fr, dual crawling, fr param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                ],
+                'langscrawlable' => 'fr',
+                'param' => 'fr',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php?lang=fr" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="fr" href="https://www.example.com/moodle/page.php?lang=fr" />
+
+EOF
+,
+            ],
+            'Triple language en, fr, de, dual crawling, no param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                    'de' => 'German (de)',
+                ],
+                'langscrawlable' => 'fr',
+                'param' => '',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="fr" href="https://www.example.com/moodle/page.php?lang=fr" />
+
+EOF
+,
+            ],
+            'Triple language en, fr, de, dual crawling, fr param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                    'de' => 'German (de)',
+                ],
+                'langscrawlable' => 'fr',
+                'param' => 'fr',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php?lang=fr" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="fr" href="https://www.example.com/moodle/page.php?lang=fr" />
+
+EOF
+,
+            ],
+            'Triple language en, fr, de, dual crawling, de param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                    'de' => 'German (de)',
+                ],
+                'langscrawlable' => 'fr',
+                'param' => 'de',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="fr" href="https://www.example.com/moodle/page.php?lang=fr" />
+
+EOF
+,
+            ],
+
+            'Non standard language en, de_kids mapped to de, dual crawling, no param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'de_kids' => 'German for kids (de)',
+                ],
+                'langscrawlable' => 'de_kids|de',
+                'param' => '',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="de" href="https://www.example.com/moodle/page.php?lang=de_kids" />
+
+EOF
+,
+            ],
+
+            'Non standard language en, de_kids mapped to de, dual crawling, de_kids param' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'de_kids' => 'German for kids (de)',
+                ],
+                'langscrawlable' => 'de_kids|de',
+                'param' => 'de_kids',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php?lang=de_kids" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="de" href="https://www.example.com/moodle/page.php?lang=de_kids" />
+
+EOF
+,
+            ],
+
+            'Crawlable language not installed is silently ignored' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                ],
+                'langscrawlable' => 'fr,de',
+                'param' => '',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="fr" href="https://www.example.com/moodle/page.php?lang=fr" />
+
+EOF
+,
+            ],
+
+            'Default language listed in langscrawlable does not produce duplicate hreflang' => [
+                'lang' => 'en',
+                'languages' => [
+                    'en' => 'English (en)',
+                    'fr' => 'French (fr)',
+                ],
+                'langscrawlable' => 'en,fr',
+                'param' => '',
+                'expected' => <<<EOF
+<link rel="canonical" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="en" href="https://www.example.com/moodle/page.php" />
+<link rel="alternate" hreflang="fr" href="https://www.example.com/moodle/page.php?lang=fr" />
+
+EOF
+,
+            ],
+
+        ];
+    }
+
+    /**
+     * Tests the various SEO headers for language links
+     *
+     * @covers \core\output\core_renderer::language_header_links
+     * @dataProvider language_header_links_provider
+     * @param string $lang what is the default language
+     * @param string[] $languages what are all the languages installed
+     * @param string $langscrawlable what languages are ok to be crawled
+     * @param string $param what is the optional param lang param
+     * @param string $expected header links
+     */
+    public function test_language_header_links($lang, $languages, $langscrawlable, $param, $expected): void {
+        global $CFG;
+        $beforelang = $CFG->lang;
+        $beforelangscrawlable = $CFG->langscrawlable ?? '';
+
+        $CFG->lang = $lang;
+        $CFG->langscrawlable = $langscrawlable;
+
+        $page = new moodle_page();
+        $page->set_url('/page.php');
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+        $links = $renderer->language_header_links($languages, $param);
+        $this->assertEquals($expected, $links);
+
+        $CFG->lang = $beforelang;
+        $CFG->langscrawlable = $beforelangscrawlable;
+    }
+
     /**
      * @covers \core\hook\output\before_standard_top_of_body_html_generation
      */

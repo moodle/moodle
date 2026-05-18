@@ -5303,9 +5303,10 @@ class admin_setting_emoticons extends admin_setting {
 class admin_setting_langlist extends admin_setting_configtext {
     /**
      * Calls parent::__construct with specific arguments
+     * @param string $name Name of the admin setting
      */
-    public function __construct() {
-        parent::__construct('langlist', get_string('langlist', 'admin'), get_string('configlanglist', 'admin'), '', PARAM_NOTAGS);
+    public function __construct($name = 'langlist') {
+        parent::__construct($name, get_string($name, 'admin'), get_string('config' . $name, 'admin'), '', PARAM_NOTAGS);
     }
 
     /**
