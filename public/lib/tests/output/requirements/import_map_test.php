@@ -100,4 +100,153 @@ final class import_map_test extends \advanced_testcase {
 
         $this->assertEquals('https://example.com/esm/12345/some/specifier', $data['imports']['some/specifier']);
     }
+
+    /**
+     * get_path_for_script() appends the default suffix when the path does not already end with an allowed suffix.
+     */
+    public function test_resolve_appends_suffix_when_not_present(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $tempdir = make_request_directory();
+        mkdir("{$tempdir}/testpath", 0777, true);
+        file_put_contents("{$tempdir}/testpath/module.js", '// test');
+
+        $CFG->root = $tempdir;
+
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('test/', path: 'testpath');
+
+        $result = $map->get_path_for_script(1, 'test/module');
+        $this->assertEquals("{$tempdir}/testpath/module.js", $result);
+    }
+
+    /**
+     * get_path_for_script() does not append suffix when path already ends with an allowed suffix and file exists.
+     */
+    public function test_resolve_skips_suffix_when_already_present(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $tempdir = make_request_directory();
+        mkdir("{$tempdir}/testpath", 0777, true);
+        file_put_contents("{$tempdir}/testpath/module.js", '// test');
+
+        $CFG->root = $tempdir;
+
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('test/', path: 'testpath');
+
+        $result = $map->get_path_for_script(1, 'test/module.js');
+        $this->assertEquals("{$tempdir}/testpath/module.js", $result);
+    }
+
+    /**
+     * get_path_for_script() resolves a .js.map suffix without appending the default .js suffix.
+     */
+    public function test_resolve_skips_suffix_for_map_file(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $tempdir = make_request_directory();
+        mkdir("{$tempdir}/testpath", 0777, true);
+        file_put_contents("{$tempdir}/testpath/module.js.map", '{}');
+
+        $CFG->root = $tempdir;
+
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('test/', path: 'testpath');
+
+        $result = $map->get_path_for_script(1, 'test/module.js.map');
+        $this->assertEquals("{$tempdir}/testpath/module.js.map", $result);
+    }
+
+    /**
+     * add_import() automatically includes the default suffix in the allowedsuffixes array.
+     */
+    public function test_add_import_includes_default_suffix_in_allowedsuffixes(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $tempdir = make_request_directory();
+        mkdir("{$tempdir}/testpath", 0777, true);
+        file_put_contents("{$tempdir}/testpath/module.js", '// test');
+
+        $CFG->root = $tempdir;
+
+        // Pass allowedsuffixes without .js — it should be auto-included because suffix defaults to .js.
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('test/', path: 'testpath', allowedsuffixes: ['.js.map']);
+
+        // Request with .js suffix — should still detect it and not double-append.
+        $result = $map->get_path_for_script(1, 'test/module.js');
+        $this->assertEquals("{$tempdir}/testpath/module.js", $result);
+    }
+
+    /**
+     * get_path_for_script() still appends suffix when path ends with an allowed suffix but file does not exist.
+     */
+    public function test_resolve_appends_suffix_when_suffix_present_but_file_missing(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $tempdir = make_request_directory();
+        mkdir("{$tempdir}/testpath", 0777, true);
+        // Create module.js.js (the double-suffixed file) but NOT module.js.
+        file_put_contents("{$tempdir}/testpath/module.js.js", '// test');
+
+        $CFG->root = $tempdir;
+
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('test/', path: 'testpath');
+
+        // The file `module.js` does not exist on disk, so even though path ends with .js, suffix is still appended.
+        $result = $map->get_path_for_script(1, 'test/module.js');
+        $this->assertEquals("{$tempdir}/testpath/module.js.js", $result);
+    }
+
+    /**
+     * resolve_module_identifier() resolves a component module without suffix in the request.
+     */
+    public function test_component_resolve_appends_suffix(): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+
+        $dir = \core\component::get_component_directory('core');
+        $result = $map->get_path_for_script(1, '@moodle/lms/core/ajax');
+        $this->assertEquals("{$dir}/js/esm/build/ajax.js", $result);
+    }
+
+    /**
+     * resolve_module_identifier() returns early when suffix is already present in the request and file exists.
+     */
+    public function test_component_resolve_skips_suffix_when_present(): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+
+        $dir = \core\component::get_component_directory('core');
+        $result = $map->get_path_for_script(1, '@moodle/lms/core/ajax.js');
+        $this->assertEquals("{$dir}/js/esm/build/ajax.js", $result);
+    }
+
+    /**
+     * resolve_module_identifier() throws not_found_exception when the module file does not exist.
+     */
+    public function test_component_resolve_throws_when_not_found(): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+
+        $this->expectException(\core\exception\not_found_exception::class);
+        $map->get_path_for_script(1, '@moodle/lms/core/nonexistent_module_xyz_12345');
+    }
 }
