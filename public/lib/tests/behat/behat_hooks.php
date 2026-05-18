@@ -601,7 +601,7 @@ EOF;
 
         // If step is undefined then throw exception, to get failed exit code.
         if ($scope->getTestResult()->getResultCode() === Behat\Behat\Tester\Result\StepResult::UNDEFINED) {
-            throw new coding_exception("Step '" . $scope->getStep()->getText() . "'' is undefined.");
+            throw new coding_exception("Step '" . $scope->getStep()->getText() . "' is undefined.");
         }
 
         $isfailed = $scope->getTestResult()->getResultCode() === Behat\Testwork\Tester\Result\TestResult::FAILED;
