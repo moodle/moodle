@@ -75,5 +75,19 @@ function xmldb_quizaccess_seb_upgrade($oldversion) {
     // Automatically generated Moodle v5.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2026042001) {
+        // Define field allowscreencapture to be added to quizaccess_seb_quizsettings.
+        $table = new xmldb_table('quizaccess_seb_quizsettings');
+        $field = new xmldb_field('allowscreencapture', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'allowcapturemicrophone');
+
+        // Conditionally launch add field allowscreencapture.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Seb savepoint reached.
+        upgrade_plugin_savepoint(true, 2026042001, 'quizaccess', 'seb');
+    }
+
     return true;
 }

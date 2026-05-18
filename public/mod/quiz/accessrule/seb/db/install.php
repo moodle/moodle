@@ -66,6 +66,7 @@ function xmldb_quizaccess_seb_install() {
                 $sebsettings->muteonstartup = null;
                 $sebsettings->allowcapturecamera = null;
                 $sebsettings->allowcapturemicrophone = null;
+                $sebsettings->allowscreencapture = null;
                 $sebsettings->allowspellchecking = null;
                 $sebsettings->allowreloadinexam = null;
                 $sebsettings->activateurlfiltering = null;
