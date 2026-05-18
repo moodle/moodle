@@ -2262,13 +2262,33 @@ class core_admin_renderer extends plugin_renderer_base {
      *
      * @param moodle_url|string $url
      * @return string
+     *
+     * @deprecated Since Moodle 5.2 - please use upgradekey_form_page_with_validation
      */
+    #[\core\attribute\deprecated('::upgradekey_form_page_with_validation', since: '5.2', mdl: 'MDL-87896')]
     public function upgradekey_form_page($url) {
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+        return $this->upgradekey_form_page_with_validation($url, false);
+    }
 
+    /**
+     * Render a simple page for providing the upgrade key, providing validation for failed attempts
+     *
+     * @param moodle_url $url
+     * @param bool $upgradekeyerror
+     * @return string
+     */
+    public function upgradekey_form_page_with_validation(moodle_url $url, bool $upgradekeyerror): string {
         $output = '';
         $output .= $this->header();
         $output .= $this->heading(get_string('upgradekeyreq', 'core_admin'));
         $output .= $this->container_start('upgradekeyreq w-25');
+
+        // Inform user if they got it wrong.
+        if ($upgradekeyerror) {
+            $output .= $this->warning(get_string('upgradekeyerror', 'core_admin'), 'danger');
+        }
+
         $output .= html_writer::start_tag('form', array('method' => 'POST', 'action' => $url));
         $output .= html_writer::empty_tag('input', [
             'id' => 'upgradekey',
