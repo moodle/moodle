@@ -1,0 +1,28 @@
+name: UCSFCLE Moodle Staging Deployment
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - 'UCSFCLE_501_STABLE'
+
+jobs:
+  dispatch-staging-deployment:
+    if: github.repository == 'ucsf-education/moodle' && github.event.pull_request.merged == true
+    name: Dispatch Moodle Deploy to Staging Environment
+    runs-on: ubuntu-latest
+    
+    steps:   
+      - name: Send Repository Dispatch
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.DEPLOYMENT_AUTOMATION_PAT }}
+          repository: ucsf-education/cle-devops
+          event-type: moodle-stage-deploy
+          client-payload: >            
+            {       
+                "deploy_ref": "${{ github.event.pull_request.base.ref }}",
+                "destination": "${{ github.event.pull_request.base.ref == github.event.repository.default_branch && 'moodle-stage' || 'moodle-ng-stage' }}", 
+                "merged_pr": "${{ github.event.pull_request.number }}", 
+                "merged_by": "${{ github.event.pull_request.merged_by.login }}"
+            }
