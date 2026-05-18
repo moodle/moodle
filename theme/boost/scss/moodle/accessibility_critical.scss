@@ -1,0 +1,169 @@
+// =============================================================================
+// Moodle Accessibility Critical Fixes — CISC 3650 Group 5
+// File: theme/boost/scss/moodle/accessibility_critical.scss
+//
+// Issue addressed:
+//   Issue #7 | CRITICAL | WCAG 2.4.7 (AA) — Focus indicator not visible on
+//   sidebar navigation links and other interactive elements.
+//
+// HOW TO INCLUDE:
+//   Add this line at the bottom of theme/boost/scss/moodle.scss:
+//     @import "moodle/accessibility_critical";
+//   Then run: grunt css
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// WCAG 2.4.7 (AA) — Focus Visible
+//
+// PROBLEM:
+//   Keyboard navigation testing found that the focus indicator (the visible
+//   outline showing which element is currently focused) disappeared completely
+//   on multiple elements, including:
+//     • Sidebar (#nav-drawer) navigation links
+//     • Navbar buttons (messaging toggle, grid/search icons)
+//     • User avatar dropdown trigger
+//
+//   Bootstrap 4 sets `outline: 0` on .btn and several other components,
+//   and Boost's own SCSS removes outlines in some contexts too.
+//   The result: keyboard users have no visual cue about where focus is.
+//
+// WCAG REQUIREMENT:
+//   Success Criterion 2.4.7 (AA): "Any keyboard operable user interface
+//   has a mode of operation where the keyboard focus indicator is visible."
+//
+// FIX:
+//   Restore a clearly visible 2px solid focus ring on ALL interactive elements.
+//   The !important overrides Bootstrap's outline: 0 declarations.
+//   We use :focus-visible (modern) with :focus fallback (older browsers/AT).
+//
+//   Color chosen: #005fcc — high contrast on both white and the dark navbar.
+//   Passes 3:1 contrast ratio against white (WCAG 1.4.11 non-text contrast).
+// -----------------------------------------------------------------------------
+
+
+// --- Global focus ring — all interactive elements ---------------------------
+//
+// Targets every element a keyboard user can Tab to.
+// :focus-visible fires only on keyboard focus (not mouse click), keeping the
+// UI clean for mouse users while serving keyboard users.
+// :focus is the fallback for older browsers and screen readers that don't
+// support :focus-visible.
+
+a:focus,
+a:focus-visible,
+button:focus,
+button:focus-visible,
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[role="menuitem"]:focus,
+[role="menuitem"]:focus-visible,
+[role="option"]:focus,
+[role="option"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+    // 2px solid ring — clearly visible without being obtrusive
+    outline: 2px solid #005fcc !important;
+    // Offset so the ring sits outside the element bounds
+    outline-offset: 2px !important;
+    // Remove any box-shadow that might hide the outline
+    // (Bootstrap sets box-shadow on :focus for form controls)
+    // We keep Bootstrap's shadow but add our ring on top
+}
+
+
+// --- Sidebar / nav-drawer navigation links ----------------------------------
+//
+// The drawer nav links use .list-group-item which Bootstrap styles with
+// outline: 0 and a custom focus box-shadow. Override both.
+
+#nav-drawer .list-group-item:focus,
+#nav-drawer .list-group-item:focus-visible,
+.list-group .list-group-item:focus,
+.list-group .list-group-item:focus-visible {
+    outline: 2px solid #005fcc !important;
+    outline-offset: 2px !important;
+    // Also add box-shadow as belt-and-braces for high-contrast mode
+    box-shadow: 0 0 0 3px rgba(0, 95, 204, 0.35) !important;
+}
+
+
+// --- Navbar icon buttons (messaging, search, grid, etc.) --------------------
+//
+// These buttons show as bare icons with no visible text. Focus is
+// especially critical here since there is no other visual affordance.
+
+.navbar .btn:focus,
+.navbar .btn:focus-visible,
+.navbar .nav-link:focus,
+.navbar .nav-link:focus-visible,
+.navbar button:focus,
+.navbar button:focus-visible {
+    outline: 2px solid #005fcc !important;
+    outline-offset: 2px !important;
+}
+
+
+// --- User avatar dropdown trigger -------------------------------------------
+//
+// The avatar button is a rounded image — use a circular ring to match.
+
+.usermenu button:focus,
+.usermenu button:focus-visible,
+.usermenu [data-toggle="dropdown"]:focus,
+.usermenu [data-toggle="dropdown"]:focus-visible {
+    outline: 2px solid #005fcc !important;
+    outline-offset: 3px !important; // slightly more offset for the circular avatar
+    border-radius: 50%;             // match the rounded avatar shape
+}
+
+
+// --- Form controls ----------------------------------------------------------
+//
+// Bootstrap 4 replaces the native outline with a coloured box-shadow on
+// :focus for inputs. Keep the shadow (it helps sighted users identify the
+// active field) but add our ring too for maximum visibility.
+
+.form-control:focus {
+    outline: 2px solid #005fcc !important;
+    outline-offset: 0 !important;
+    // Bootstrap's default blue shadow — keep it:
+    box-shadow: 0 0 0 0.2rem rgba(0, 95, 204, 0.25) !important;
+}
+
+
+// --- Dropdown menu items ----------------------------------------------------
+
+.dropdown-menu .dropdown-item:focus,
+.dropdown-menu .dropdown-item:focus-visible,
+.dropdown-menu [role="menuitem"]:focus,
+.dropdown-menu [role="menuitem"]:focus-visible {
+    outline: 2px solid #005fcc !important;
+    outline-offset: -2px !important; // inset so it doesn't overflow the menu panel
+    background-color: #e8f0fe;       // subtle tint — non-color cue for active item
+}
+
+
+// --- High-contrast mode support ---------------------------------------------
+//
+// Windows High Contrast Mode (forced-colors) overrides colour styles.
+// The outline keyword is honoured in forced-colors; box-shadow is not.
+// Our outline: 2px solid approach works correctly in this mode.
+
+@media (forced-colors: active) {
+    a:focus,
+    button:focus,
+    input:focus,
+    select:focus,
+    textarea:focus,
+    [role="button"]:focus,
+    [tabindex]:not([tabindex="-1"]):focus {
+        outline: 2px solid ButtonText !important;
+    }
+}

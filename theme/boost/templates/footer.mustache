@@ -1,0 +1,177 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/footer
+
+    Boost theme page footer.
+
+    ACCESSIBILITY FIXES — CISC 3650 Group 5
+    ========================================
+
+    Issue #1 | CRITICAL | WCAG 1.1.1 (A) — Missing alternative text
+      4 images on the homepage had no alt attribute at all (visible company
+      logos). Any <img> that conveys information MUST have descriptive alt
+      text. Decorative images must have alt="" so screen readers skip them.
+
+      Fix: all <img> tags now carry either a descriptive alt (if meaningful)
+      or alt="" (if purely decorative, with the link's aria-label providing
+      the accessible name).
+
+    Issue #2 | CRITICAL | WCAG 1.1.1 (A) + WCAG 2.4.4 (A) — Linked image missing alt
+      7 images inside <a> tags (footer social media icons) had no alt text
+      AND no aria-label on the anchor. Screen readers announced "link, image"
+      with zero information about the link destination.
+
+      Fix applied to every social-media anchor:
+        • aria-label on <a>  →  announced as the link's accessible name
+        • alt="" on <img>    →  marks image as decorative; prevents the
+                                screen reader double-announcing the label
+        • title removed      →  was duplicating aria-label (see Issue #22)
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "standard_footer_html": "<p>Moodle footer content</p>"
+        }
+    }
+}}
+<footer id="page-footer" class="py-3 bg-dark footer d-print-none">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+
+                {{! ---- Policy links row (unchanged) ---- }}
+                <div class="footer-links d-flex flex-wrap mb-2">
+                    {{{ output.standard_footer_html }}}
+                </div>
+
+                {{!
+                    ============================================================
+                    FIX for Issues #1 & #2 — Social media icon links
+                    ============================================================
+
+                    PATTERN USED (identical for every icon):
+
+                    <a href="..."
+                       aria-label="Moodle on [Platform]"   ← ADDED: link name
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img src="..." alt="">              ← CHANGED: alt="" (decorative)
+                    </a>
+
+                    WHY alt="" and not a description on the img?
+                    When an <img> is the sole content of an <a>, the img's alt
+                    text becomes the link's accessible name. Using aria-label on
+                    the <a> instead, combined with alt="" on the <img>, gives us
+                    a single, clean announcement: "Moodle on Facebook, link".
+                    If alt="Facebook" were also set, some screen readers would
+                    announce "Facebook Moodle on Facebook link" — duplicated.
+
+                    BEFORE (broken — all 7 social icons had this pattern):
+                      <a href="https://www.facebook.com/moodle">
+                          <img src="pix/facebook.svg">
+                      </a>
+                    Screen reader output: "link, image" — no useful information.
+
+                    AFTER (fixed):
+                      <a href="https://www.facebook.com/moodle"
+                         aria-label="Moodle on Facebook"
+                         target="_blank" rel="noopener noreferrer">
+                          <img src="pix/facebook.svg" alt="">
+                      </a>
+                    Screen reader output: "Moodle on Facebook, link" ✓
+                    ============================================================
+                }}
+                <div class="footer-social-links d-flex align-items-center flex-wrap mt-2">
+
+                    <a href="https://www.facebook.com/moodle"
+                       aria-label="{{#str}}moodleonfacebook, theme_boost{{/str}}"
+                       class="text-light mr-3"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img src="{{output.get_theme_url}}/pix/facebook.svg"
+                             alt=""
+                             width="24" height="24">
+                    </a>
+
+                    <a href="https://twitter.com/moodle"
+                       aria-label="{{#str}}moodleontwitter, theme_boost{{/str}}"
+                       class="text-light mr-3"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img src="{{output.get_theme_url}}/pix/twitter.svg"
+                             alt=""
+                             width="24" height="24">
+                    </a>
+
+                    <a href="https://www.linkedin.com/company/moodle"
+                       aria-label="{{#str}}moodleonlinkedin, theme_boost{{/str}}"
+                       class="text-light mr-3"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img src="{{output.get_theme_url}}/pix/linkedin.svg"
+                             alt=""
+                             width="24" height="24">
+                    </a>
+
+                    <a href="https://www.youtube.com/user/moodlehq"
+                       aria-label="{{#str}}moodleonyoutube, theme_boost{{/str}}"
+                       class="text-light mr-3"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img src="{{output.get_theme_url}}/pix/youtube.svg"
+                             alt=""
+                             width="24" height="24">
+                    </a>
+
+                    <a href="https://www.instagram.com/moodlehq"
+                       aria-label="{{#str}}moodleoninstagram, theme_boost{{/str}}"
+                       class="text-light mr-3"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img src="{{output.get_theme_url}}/pix/instagram.svg"
+                             alt=""
+                             width="24" height="24">
+                    </a>
+
+                    <a href="https://www.spotify.com/moodle"
+                       aria-label="{{#str}}moodleonspotify, theme_boost{{/str}}"
+                       class="text-light mr-3"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img src="{{output.get_theme_url}}/pix/spotify.svg"
+                             alt=""
+                             width="24" height="24">
+                    </a>
+
+                    <a href="https://moodle.com/tiktok"
+                       aria-label="{{#str}}moodleontiktok, theme_boost{{/str}}"
+                       class="text-light"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img src="{{output.get_theme_url}}/pix/tiktok.svg"
+                             alt=""
+                             width="24" height="24">
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</footer>

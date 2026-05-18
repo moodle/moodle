@@ -1,0 +1,191 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/loginform
+
+    Moodle login form template.
+
+    ACCESSIBILITY FIX — CISC 3650 Group 5
+    ======================================
+
+    Issue #3 | CRITICAL | WCAG 1.3.1 (A) — Login form inputs lack proper labels
+      Both username and password inputs relied on placeholder text as the only
+      visible label. Placeholders:
+        • Disappear as soon as the user starts typing — the field becomes
+          unlabelled mid-entry, confusing screen reader and cognitive-disability
+          users
+        • Have ~2.6:1 contrast ratio on white (WCAG minimum: 4.5:1)
+        • Are not announced as labels by all screen readers
+
+      Fix: added explicit visible <label> elements associated with each input
+      via matching for/id pairs. The placeholder is kept as a hint but is no
+      longer the sole labelling mechanism.
+
+    Example context (json):
+    {
+        "autofocusform": false,
+        "canloginasguest": true,
+        "canloginbyemail": false,
+        "cookieshelpiconformatted": "",
+        "error": "",
+        "forgotpasswordurl": "http://example.com/login/forgot_password.php",
+        "hasidentityproviders": false,
+        "hasinstructions": true,
+        "instructions": "For full access to this site, you need to log in as a registered user.",
+        "instructionsformat": 1,
+        "logintoken": "randomtokenvalue",
+        "loginguest": true,
+        "rememberusername": 1,
+        "significanturl": "/login/index.php",
+        "sitename": "Moodle Demo",
+        "identityproviders": []
+    }
+}}
+<div class="login-form-container">
+    {{#error}}
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="{{#str}}closebuttontitle, core{{/str}}">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {{error}}
+    </div>
+    {{/error}}
+
+    <form class="login-form mt-3" action="{{loginurl}}" method="post" id="login">
+        <input id="anchor" type="hidden" name="anchor" value="">
+        <input type="hidden" name="logintoken" value="{{logintoken}}">
+
+        {{!
+            ============================================================
+            FIX for Issue #3 — Explicit <label> elements for each input
+
+            BEFORE:
+              <input ... placeholder="Username or email">
+              (label was sr-only — invisible, or absent entirely)
+
+            AFTER:
+              <label for="username">Username</label>  ← visible label
+              <input id="username" ... placeholder="Username or email">
+
+            The <label for="username"> is programmatically associated
+            with <input id="username"> — screen readers announce
+            "Username, edit text" when the field gains focus.
+            Sighted keyboard users can also click the label to focus
+            the field, which improves usability for all users.
+            ============================================================
+        }}
+
+        <div class="form-group">
+            {{! CHANGED: label is now visible (no sr-only class) }}
+            <label for="username" class="form-label font-weight-bold">
+                {{^canloginbyemail}}{{#str}}username{{/str}}{{/canloginbyemail}}
+                {{#canloginbyemail}}{{#str}}usernameemail{{/str}}{{/canloginbyemail}}
+            </label>
+            <input type="text"
+                   name="username"
+                   id="username"
+                   class="form-control"
+                   value="{{username}}"
+                   {{#canloginbyemail}}
+                   placeholder="{{#str}}usernameemail{{/str}}"
+                   {{/canloginbyemail}}
+                   {{^canloginbyemail}}
+                   placeholder="{{#str}}username{{/str}}"
+                   {{/canloginbyemail}}
+                   autocomplete="username"
+                   {{#autofocusform}}autofocus{{/autofocusform}}>
+        </div>
+
+        <div class="form-group">
+            {{! CHANGED: label is now visible (no sr-only class) }}
+            <label for="password" class="form-label font-weight-bold">
+                {{#str}}password{{/str}}
+            </label>
+            <input type="password"
+                   name="password"
+                   id="password"
+                   class="form-control"
+                   placeholder="{{#str}}password{{/str}}"
+                   autocomplete="current-password">
+        </div>
+
+        {{#rememberusername}}
+        <div class="form-check mb-3">
+            <input type="checkbox"
+                   name="rememberusername"
+                   id="rememberusername"
+                   class="form-check-input"
+                   value="1"
+                   {{#username}}checked{{/username}}>
+            {{! label is properly associated via for="rememberusername" }}
+            <label class="form-check-label" for="rememberusername">
+                {{#str}}rememberusername, admin{{/str}}
+            </label>
+        </div>
+        {{/rememberusername}}
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block" id="loginbtn">
+                {{#str}}login{{/str}}
+            </button>
+        </div>
+
+        {{#cookieshelpiconformatted}}
+        <div class="form-group">
+            {{{cookieshelpiconformatted}}}
+        </div>
+        {{/cookieshelpiconformatted}}
+
+    </form>
+
+    <div class="login-option-links mt-3">
+        {{#forgotpasswordurl}}
+        <a href="{{forgotpasswordurl}}" class="d-block mb-1">{{#str}}forgotten{{/str}}</a>
+        {{/forgotpasswordurl}}
+
+        {{#canloginasguest}}
+        <a href="{{loginguest_url}}" class="d-block mb-1">{{#str}}loginguest{{/str}}</a>
+        {{/canloginasguest}}
+    </div>
+
+    {{#hasinstructions}}
+    <div class="login-instructions mt-3">
+        <h2 class="h5">{{#str}}firsttime{{/str}}</h2>
+        {{{instructions}}}
+    </div>
+    {{/hasinstructions}}
+
+    {{#hasidentityproviders}}
+    <div class="login-identityproviders mt-3">
+        <h2 class="h5">{{#str}}potentialidps, auth{{/str}}</h2>
+        {{#identityproviders}}
+        <div class="potentialidp mb-2">
+            <a href="{{url}}"
+               class="btn btn-secondary d-flex align-items-center"
+               title="{{name}}">
+                {{#iconurl}}
+                {{! decorative — the link text provides the accessible name }}
+                <img src="{{iconurl}}" alt="" class="mr-2" width="24" height="24">
+                {{/iconurl}}
+                {{name}}
+            </a>
+        </div>
+        {{/identityproviders}}
+    </div>
+    {{/hasidentityproviders}}
+
+</div>

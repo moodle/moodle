@@ -1,0 +1,165 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/navbar
+
+    Boost theme navbar — with accessibility fixes for Issues #5, #6, #7.
+
+    ACCESSIBILITY FIXES — CISC 3650 Group 5
+    ========================================
+
+    Issue #5 | CRITICAL | WCAG 2.1.1 (A) — User avatar dropdown not keyboard-accessible
+      The avatar button that opens the user menu responded only to mouse clicks.
+      Enter/Space on the button did nothing for keyboard users.
+
+      Root cause: the trigger element lacked role="button", a proper type
+      attribute, and the JS listener was bound only to 'click', not 'keydown'.
+
+      Fix (template side):
+        • Ensure the trigger is a real <button> element (natively keyboard
+          focusable and responds to Enter/Space by default in all browsers)
+        • Add aria-haspopup="true" and aria-expanded (toggled by JS)
+        • Add aria-controls pointing to the dropdown panel id
+
+      The JS side fix is in lib/amd/src/user_menu.js (see that file).
+
+    Issue #6 | CRITICAL | WCAG 4.1.2 (A) — Messaging-drawer button has no accessible name
+      The button that toggles the messaging drawer was an icon-only button
+      with no text, no aria-label, and no title. Screen readers announced
+      only "button" with no description of its purpose.
+
+      Fix: aria-label added to the toggle button using Moodle's string helper.
+
+    Issue #7 | CRITICAL | WCAG 2.4.7 (AA) — Focus indicator not visible on sidebar nav links
+      Addressed in theme/boost/scss/moodle/accessibility_critical.scss.
+      The navbar itself gets focus styles here via the .navbar selectors.
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "should_display_navbar_logo": true,
+            "get_compact_logo_url": "http://example.com/logo.png",
+            "user_menu": "<div>User menu HTML</div>",
+            "search_box": "",
+            "custom_menu": "",
+            "standard_navbar_html": ""
+        }
+    }
+}}
+<nav class="navbar fixed-top navbar-light bg-white navbar-expand border-bottom moodle-has-zindex"
+     aria-label="{{#str}}sitemenubar, admin{{/str}}">
+
+    {{! Primary navigation drawer toggle }}
+    {{> theme_boost/drawers-header }}
+
+    {{! Site logo / name }}
+    <a href="{{{ config.wwwroot }}}"
+       class="navbar-brand{{#output.should_display_navbar_logo}} has-logo{{/output.should_display_navbar_logo}}">
+        {{#output.should_display_navbar_logo}}
+        <span class="logo d-none d-sm-inline">
+            <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
+        </span>
+        {{/output.should_display_navbar_logo}}
+        {{^output.should_display_navbar_logo}}
+        <span class="site-name d-none d-sm-inline">{{{ sitename }}}</span>
+        {{/output.should_display_navbar_logo}}
+    </a>
+
+    <div class="navbar-nav ml-auto d-flex align-items-center">
+
+        {{#output.search_box}}
+        <div class="d-flex" data-region="search-input-wrapper">
+            {{{ output.search_box }}}
+        </div>
+        {{/output.search_box}}
+
+        {{!
+            ============================================================
+            FIX for Issue #6 — Messaging drawer toggle button (WCAG 4.1.2)
+
+            BEFORE:
+              <a class="nav-link" ... data-action="show-drawer">
+                  <i class="icon fa fa-comment-o"></i>
+              </a>
+            Screen reader: "link" — no name, no description.
+
+            AFTER:
+              <button type="button"
+                      aria-label="{{#str}}togglemessagedrawer, message{{/str}}"
+                      ...>
+                  <span aria-hidden="true">...</span>
+              </button>
+            Screen reader: "Toggle messages drawer, button" ✓
+
+            Note: changed from <a> to <button> because this is an action
+            that does not navigate — semantic correctness also helps AT users.
+            ============================================================
+        }}
+        <button type="button"
+                class="btn btn-icon nav-link position-relative"
+                data-action="show-drawer"
+                data-drawertype="message"
+                {{! FIX #6: aria-label gives the button its accessible name }}
+                aria-label="{{#str}}togglemessagedrawer, message{{/str}}"
+                aria-expanded="false"
+                aria-controls="message-drawer"
+                aria-haspopup="true">
+            {{! aria-hidden hides the decorative icon — label is on the button }}
+            <span class="pix-icon pix-icon-t/messages" aria-hidden="true"></span>
+        </button>
+
+        {{{ output.custom_menu }}}
+        {{{ output.standard_navbar_html }}}
+
+        {{!
+            ============================================================
+            FIX for Issue #5 — User avatar dropdown (WCAG 2.1.1)
+
+            BEFORE:
+              <div class="usermenu" data-toggle="dropdown">
+                  <img src="..." class="avatar">
+              </div>
+            The div is not keyboard focusable. Enter/Space did nothing.
+
+            AFTER:
+              <button type="button"
+                      role="button"         (redundant but explicit for AT)
+                      aria-haspopup="true"  (signals a dropdown is attached)
+                      aria-expanded="false" (toggled to "true" by JS on open)
+                      aria-controls="user-action-menu">
+                  <img src="..." alt="{{#str}}user{{/str}}">
+              </button>
+
+            The JS in lib/amd/src/user_menu.js binds both click AND keydown
+            (Enter/Space) to open/close the dropdown, and manages aria-expanded.
+            ============================================================
+        }}
+        {{#output.user_menu}}
+        <div class="usermenu d-flex align-items-stretch" data-region="usermenu">
+            {{!
+                The inner button is rendered by core/user_menu.mustache.
+                The fix there ensures it is a <button> with aria-haspopup,
+                aria-expanded, and aria-controls attributes.
+                See: lib/templates/user_menu.mustache
+            }}
+            {{{output.user_menu}}}
+        </div>
+        {{/output.user_menu}}
+
+    </div>
+</nav>

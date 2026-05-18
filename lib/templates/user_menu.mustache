@@ -1,0 +1,163 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/user_menu
+
+    User menu template.
+
+    ACCESSIBILITY FIX — CISC 3650 Group 5
+    ======================================
+
+    Issue #5 | CRITICAL | WCAG 2.1.1 (A) — User avatar dropdown not keyboard-accessible
+
+    PROBLEM:
+      The avatar trigger was a <div> with data-toggle="dropdown". A <div>
+      is not natively focusable and does not respond to Enter/Space.
+      Keyboard testing confirmed: Enter/Space on the avatar did nothing.
+
+    FIX (template side):
+      • Changed the trigger from a generic element to a <button type="button">
+        — natively keyboard focusable, activates on Enter/Space in all browsers
+      • Added aria-haspopup="true" to signal a popup menu is attached
+      • Added aria-expanded="false" (JS toggles this to "true" on open)
+      • Added aria-controls pointing to the dropdown panel id
+      • The avatar <img> has a meaningful alt (user's full name) so screen
+        readers announce who is logged in when the button is focused
+
+    FIX (JS side):
+      lib/amd/src/user_menu.js must bind 'keydown' in addition to 'click',
+      treating Enter (keyCode 13) and Space (keyCode 32) as activation.
+      It must also toggle aria-expanded on the button on open/close.
+
+    Example context (json):
+    {
+        "usermenudata": {
+            "avatarurl": "http://example.com/avatar.jpg",
+            "fullname": "Jane Smith",
+            "metadata": [
+                {
+                    "title": "Email address",
+                    "value": "jane@example.com"
+                }
+            ],
+            "items": [
+                {
+                    "itemtype": "link",
+                    "url": "http://example.com/profile",
+                    "title": "Profile",
+                    "pix": "i/user"
+                }
+            ]
+        }
+    }
+}}
+<div data-region="usermenu" class="usermenu">
+
+    {{!
+        ============================================================
+        FIX: Changed trigger to <button> for keyboard accessibility
+
+        BEFORE (broken):
+          <a href="#" class="dropdown-toggle d-flex align-items-center"
+             data-toggle="dropdown" ...>
+            <img src="..." class="avatar">
+          </a>
+
+        The <a> without href="#" or with href="#" and data-toggle is not
+        reliably keyboard-activatable across all screen reader / browser
+        combinations. Enter works on <a href> but Space does not (Space
+        scrolls the page on anchor elements).
+
+        AFTER (fixed):
+          <button type="button" ... aria-haspopup="true" aria-expanded="false">
+            <img src="..." alt="{{fullname}}">  ← meaningful alt for SR users
+          </button>
+
+        <button> elements respond to BOTH Enter and Space natively.
+        ============================================================
+    }}
+    <button type="button"
+            class="btn btn-icon dropdown-toggle d-flex align-items-center p-0"
+            id="user-menu-toggle"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="user-action-menu"
+            aria-label="{{#str}}usermenu{{/str}}">
+        {{#usermenudata}}
+        {{#avatarurl}}
+        {{!
+            alt="{{fullname}}" tells screen reader users which account
+            is active without needing to open the dropdown.
+        }}
+        <img src="{{avatarurl}}"
+             alt="{{fullname}}"
+             class="avatar rounded-circle"
+             width="35" height="35">
+        {{/avatarurl}}
+        {{/usermenudata}}
+    </button>
+
+    {{! Dropdown panel }}
+    <div class="dropdown-menu dropdown-menu-right"
+         id="user-action-menu"
+         role="menu"
+         aria-labelledby="user-menu-toggle">
+
+        {{#usermenudata}}
+
+        {{! User info header }}
+        <div class="dropdown-item-text" role="none">
+            <div class="d-flex align-items-center">
+                {{#avatarurl}}
+                {{! Decorative — same avatar shown above; skip in SR }}
+                <img src="{{avatarurl}}" alt="" class="avatar rounded-circle mr-2"
+                     width="48" height="48" aria-hidden="true">
+                {{/avatarurl}}
+                <div>
+                    <strong>{{fullname}}</strong>
+                    {{#metadata}}
+                    <div class="text-muted small">{{value}}</div>
+                    {{/metadata}}
+                </div>
+            </div>
+        </div>
+
+        <div role="separator" class="dropdown-divider"></div>
+
+        {{! Menu items }}
+        {{#items}}
+        {{#itemtype}}
+        {{#link}}
+        <a class="dropdown-item"
+           href="{{url}}"
+           role="menuitem"
+           {{#title}}aria-label="{{title}}"{{/title}}>
+            {{#pix}}
+            <span class="pix-icon pix-icon-{{pix}}" aria-hidden="true"></span>
+            {{/pix}}
+            {{title}}
+        </a>
+        {{/link}}
+        {{/itemtype}}
+        {{/items}}
+
+        {{/usermenudata}}
+
+    </div>
+
+</div>
