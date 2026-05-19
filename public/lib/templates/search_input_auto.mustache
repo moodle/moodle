@@ -37,8 +37,8 @@
     }
 }}
 <div id="searchform-auto-{{uniqid}}" class="d-flex flex-wrap align-items-center simplesearchform">
-    <div class="input-group searchbar w-100" role="search">
-        <label for="searchinput-{{uniqid}}">
+    <div class="input-group searchbar w-100" role="search" aria-labelledby="searchinput-label-{{uniqid}}">
+        <label for="searchinput-{{uniqid}}" id="searchinput-label-{{uniqid}}">
             <span class="visually-hidden">{{$label}}{{#str}} search, core {{/str}}{{/label}}</span>
         </label>
         <input
