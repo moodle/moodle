@@ -100,6 +100,7 @@ $string['attemptgradeddelay_desc'] = 'A delay is applied before sending attempt 
 $string['attemptincomplete'] = 'That attempt (by {$a}) is not yet completed.';
 $string['attemptlast'] = 'Last attempt';
 $string['attemptnumber'] = 'Attempt';
+$string['attemptsubmitted'] = 'Attempt submitted.';
 $string['attemptquiznow'] = 'Attempt quiz now';
 $string['attemptquiz'] = 'Attempt quiz';
 $string['attemptreviewtitle'] = '{$a}: Attempt review';
