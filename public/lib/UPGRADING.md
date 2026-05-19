@@ -40,6 +40,24 @@
 - The `moodle_exception` class now accepts a `$previous` Throwable.
 
   For more information see [MDL-88579](https://tracker.moodle.org/browse/MDL-88579)
+- The internal password management functions and authentication plugin registry functions now delegate to new DI-resolvable classes `\core\authentication\password` and `\core\authentication` respectively. The global functions remain available as backward-compatible wrappers.
+
+  | Global function | New method |
+  |---|---|
+  | `validate_internal_user_password()` | `\core\authentication\password::validate()` |
+  | `hash_internal_user_password()` | `\core\authentication\password::hash()` |
+  | `update_internal_user_password()` | `\core\authentication\password::update()` |
+  | `password_is_legacy_hash()` | `\core\authentication\password::is_legacy_hash()` |
+  | `get_password_peppers()` | `\core\authentication\password::get_peppers()` |
+  | `exceeds_password_length()` | `\core\authentication\password::exceeds_max_length()` |
+  | `exists_auth_plugin()` | `\core\authentication::plugin_exists()` |
+  | `is_enabled_auth()` | `\core\authentication::is_enabled()` |
+  | `get_auth_plugin()` | `\core\authentication::get_plugin()` |
+  | `get_enabled_auth_plugins()` | `\core\authentication::get_enabled_plugins()` |
+  | `is_internal_auth()` | `\core\authentication::is_internal()` |
+  | `is_restored_user()` | `\core\authentication::is_restored_user()` |
+
+  For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
 
 ### Deprecated
 

@@ -1,5 +1,28 @@
 # core_auth (subsystem / plugintype) Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- A new `\core_auth\validate_user` class has been introduced to centralise user validation checks for authentication flows. It is available via DI and provides the following validation methods:
+
+  | Method | Purpose |
+  |---|---|
+  | `validate_before_external_login()` | Runs all pre-login checks for external services |
+  | `validate_before_token_login()` | Runs all pre-login checks for token-based login |
+  | `validate_before_web_login()` | Runs all pre-login checks for web login |
+  | `validate_maintenance_mode_access()` | Checks maintenance mode access |
+  | `validate_not_deleted()` | Ensures user is not deleted |
+  | `validate_is_confirmed()` | Ensures user is confirmed |
+  | `validate_is_not_suspended()` | Ensures user is not suspended |
+  | `validate_auth_not_disabled()` | Ensures auth plugin is enabled |
+  | `validate_credentials_not_expired()` | Checks password expiry |
+  | `validate_user_is_not_guest_user()` | Ensures user is not a guest |
+
+  Each method throws a specific exception from `\core_auth\exception` on failure.
+
+  For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
+
 ## 5.1
 
 ### Added

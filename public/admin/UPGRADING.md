@@ -1,5 +1,13 @@
 # core_admin (subsystem) Upgrade notes
 
+## 5.3dev
+
+### Deprecated
+
+- The `core_admin_renderer::upgradekey_form_page(...)` method has been deprecated, existing callers and/or overrides of this method should instead use replacement `core_admin_renderer::upgradekey_form_page_with_validation(...)`
+
+  For more information see [MDL-87896](https://tracker.moodle.org/browse/MDL-87896)
+
 ## 5.1
 
 ### Added

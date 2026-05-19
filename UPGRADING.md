@@ -48,12 +48,61 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `moodle_exception` class now accepts a `$previous` Throwable.
 
   For more information see [MDL-88579](https://tracker.moodle.org/browse/MDL-88579)
+- The internal password management functions and authentication plugin registry functions now delegate to new DI-resolvable classes `\core\authentication\password` and `\core\authentication` respectively. The global functions remain available as backward-compatible wrappers.
+
+  | Global function | New method |
+  |---|---|
+  | `validate_internal_user_password()` | `\core\authentication\password::validate()` |
+  | `hash_internal_user_password()` | `\core\authentication\password::hash()` |
+  | `update_internal_user_password()` | `\core\authentication\password::update()` |
+  | `password_is_legacy_hash()` | `\core\authentication\password::is_legacy_hash()` |
+  | `get_password_peppers()` | `\core\authentication\password::get_peppers()` |
+  | `exceeds_password_length()` | `\core\authentication\password::exceeds_max_length()` |
+  | `exists_auth_plugin()` | `\core\authentication::plugin_exists()` |
+  | `is_enabled_auth()` | `\core\authentication::is_enabled()` |
+  | `get_auth_plugin()` | `\core\authentication::get_plugin()` |
+  | `get_enabled_auth_plugins()` | `\core\authentication::get_enabled_plugins()` |
+  | `is_internal_auth()` | `\core\authentication::is_internal()` |
+  | `is_restored_user()` | `\core\authentication::is_restored_user()` |
+
+  For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
 
 #### Deprecated
 
 - The `FEATURE_GROUPMEMBERSONLY` constant has been deprecated and is no longer supported. It should be removed from any plugin code.
 
   For more information see [MDL-83231](https://tracker.moodle.org/browse/MDL-83231)
+
+### core_admin
+
+#### Deprecated
+
+- The `core_admin_renderer::upgradekey_form_page(...)` method has been deprecated, existing callers and/or overrides of this method should instead use replacement `core_admin_renderer::upgradekey_form_page_with_validation(...)`
+
+  For more information see [MDL-87896](https://tracker.moodle.org/browse/MDL-87896)
+
+### core_auth
+
+#### Added
+
+- A new `\core_auth\validate_user` class has been introduced to centralise user validation checks for authentication flows. It is available via DI and provides the following validation methods:
+
+  | Method | Purpose |
+  |---|---|
+  | `validate_before_external_login()` | Runs all pre-login checks for external services |
+  | `validate_before_token_login()` | Runs all pre-login checks for token-based login |
+  | `validate_before_web_login()` | Runs all pre-login checks for web login |
+  | `validate_maintenance_mode_access()` | Checks maintenance mode access |
+  | `validate_not_deleted()` | Ensures user is not deleted |
+  | `validate_is_confirmed()` | Ensures user is confirmed |
+  | `validate_is_not_suspended()` | Ensures user is not suspended |
+  | `validate_auth_not_disabled()` | Ensures auth plugin is enabled |
+  | `validate_credentials_not_expired()` | Checks password expiry |
+  | `validate_user_is_not_guest_user()` | Ensures user is not a guest |
+
+  Each method throws a specific exception from `\core_auth\exception` on failure.
+
+  For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
 
 ### core_external
 
