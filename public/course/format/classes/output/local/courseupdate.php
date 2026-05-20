@@ -184,7 +184,7 @@ class courseupdate {
                 'core_courseformat',
                 (object) [
                     'type' => get_string('pluginname', 'mod_' . $cm->modname),
-                    'name' => $cm->name,
+                    'name' => $cm->get_formatted_name(),
                 ],
             );
         } else {
