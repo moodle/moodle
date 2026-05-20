@@ -2028,17 +2028,22 @@ final class framework_test extends \advanced_testcase {
         $h5pcontentid3 = $generator->create_h5p_record($library2->id);
         // Create h5p content with 'Library3' as a main library.
         $h5pcontentid4 = $generator->create_h5p_record($library3->id);
+        // Create h5p content with 'Library2' as a main library that uses Library1 as a dependency.
+        $h5pcontentid5 = $generator->create_h5p_record($library2->id);
+        $generator->create_contents_libraries_record($h5pcontentid5, $library1->id);
 
         $h5pcontent1 = $DB->get_record('h5p', ['id' => $h5pcontentid1]);
         $h5pcontent2 = $DB->get_record('h5p', ['id' => $h5pcontentid2]);
         $h5pcontent3 = $DB->get_record('h5p', ['id' => $h5pcontentid3]);
         $h5pcontent4 = $DB->get_record('h5p', ['id' => $h5pcontentid4]);
+        $h5pcontent5 = $DB->get_record('h5p', ['id' => $h5pcontentid5]);
 
         // The filtered parameters should be present in each h5p content.
         $this->assertNotEmpty($h5pcontent1->filtered);
         $this->assertNotEmpty($h5pcontent2->filtered);
         $this->assertNotEmpty($h5pcontent3->filtered);
         $this->assertNotEmpty($h5pcontent4->filtered);
+        $this->assertNotEmpty($h5pcontent5->filtered);
 
         // Clear the filtered parameters for contents that have library1 and library3 as
         // their main library.
@@ -2048,13 +2053,15 @@ final class framework_test extends \advanced_testcase {
         $h5pcontent2 = $DB->get_record('h5p', ['id' => $h5pcontentid2]);
         $h5pcontent3 = $DB->get_record('h5p', ['id' => $h5pcontentid3]);
         $h5pcontent4 = $DB->get_record('h5p', ['id' => $h5pcontentid4]);
+        $h5pcontent5 = $DB->get_record('h5p', ['id' => $h5pcontentid5]);
 
         // The filtered parameters should be still present only for the content that has
-        // library 2 as a main library.
+        // library 2 as a main library and does not use one of the cleared libraries as a dependency.
         $this->assertEmpty($h5pcontent1->filtered);
         $this->assertEmpty($h5pcontent2->filtered);
         $this->assertNotEmpty($h5pcontent3->filtered);
         $this->assertEmpty($h5pcontent4->filtered);
+        $this->assertEmpty($h5pcontent5->filtered);
     }
 
     /**
@@ -2080,26 +2087,32 @@ final class framework_test extends \advanced_testcase {
         $h5pcontentid3 = $generator->create_h5p_record($library2->id);
         // Create h5p content with library3 as a main library.
         $h5pcontentid4 = $generator->create_h5p_record($library3->id);
+        // Create h5p content with 'Library2' as a main library that uses Library1 as a dependency.
+        $h5pcontentid5 = $generator->create_h5p_record($library2->id);
+        $generator->create_contents_libraries_record($h5pcontentid5, $library1->id);
 
         $h5pcontent1 = $DB->get_record('h5p', ['id' => $h5pcontentid1]);
         $h5pcontent2 = $DB->get_record('h5p', ['id' => $h5pcontentid2]);
         $h5pcontent3 = $DB->get_record('h5p', ['id' => $h5pcontentid3]);
         $h5pcontent4 = $DB->get_record('h5p', ['id' => $h5pcontentid4]);
+        $h5pcontent5 = $DB->get_record('h5p', ['id' => $h5pcontentid5]);
 
         // The filtered parameters should be present in each h5p content.
         $this->assertNotEmpty($h5pcontent1->filtered);
         $this->assertNotEmpty($h5pcontent2->filtered);
         $this->assertNotEmpty($h5pcontent3->filtered);
         $this->assertNotEmpty($h5pcontent4->filtered);
+        $this->assertNotEmpty($h5pcontent5->filtered);
 
-        // Clear the filtered parameters for contents that have library1 and library3 as
-        // their main library.
+        // Clear the filtered parameters for contents that have library1 and library3 as their main library
+        // or use them as a dependency.
         $this->framework->clearFilteredParameters([$library1->id, $library3->id]);
 
         $countnotfiltered = $this->framework->getNumNotFiltered();
 
-        // 3 contents don't have their parameters filtered.
-        $this->assertEquals(3, $countnotfiltered);
+        // 4 contents don't have their parameters filtered
+        // (2 with library1 as main, 1 with library3 as main, and 1 with library2 as main but library1 as a dependency).
+        $this->assertEquals(4, $countnotfiltered);
     }
 
     /**
