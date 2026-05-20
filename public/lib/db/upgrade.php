@@ -1868,5 +1868,12 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v5.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2026051900.01) {
+        // Force H5P content dependencies to be rebuilt lazily after the h5plib_v128 library update.
+        $DB->set_field_select('h5p', 'filtered', null, $DB->sql_compare_text('filtered') . ' IS NOT NULL');
+
+        upgrade_main_savepoint(true, 2026051900.01);
+    }
+
     return true;
 }
