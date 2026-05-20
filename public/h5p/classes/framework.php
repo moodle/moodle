@@ -1484,7 +1484,7 @@ class framework implements H5PFrameworkInterface {
     }
 
     /**
-     * Will clear filtered params for all the content that uses the specified.
+     * Will clear filtered params for all the content that uses the specified
      * libraries. This means that the content dependencies will have to be rebuilt and the parameters re-filtered.
      * Implements clearFilteredParameters().
      *
@@ -1497,10 +1497,17 @@ class framework implements H5PFrameworkInterface {
             return;
         }
 
-        list($insql, $inparams) = $DB->get_in_or_equal($libraryids);
+        [$maininsql, $maininparams] = $DB->get_in_or_equal($libraryids, SQL_PARAMS_NAMED, 'mainlib');
+        [$depinsql, $depinparams] = $DB->get_in_or_equal($libraryids, SQL_PARAMS_NAMED, 'deplib');
 
-        $DB->set_field_select('h5p', 'filtered', null,
-            "mainlibraryid $insql", $inparams);
+        $select = "mainlibraryid {$maininsql}
+            OR id IN (
+                SELECT h5pid
+                  FROM {h5p_contents_libraries}
+                 WHERE libraryid {$depinsql}
+            )";
+
+        $DB->set_field_select('h5p', 'filtered', null, $select, $maininparams + $depinparams);
     }
 
     /**
