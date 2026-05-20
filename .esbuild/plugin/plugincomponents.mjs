@@ -179,6 +179,49 @@ async function runParallelBuilds(entryPoints, buildConfig) {
 }
 
 /**
+ * An esbuild plugin that externalizes relative imports within the same esm/src/ directory.
+ *
+ * This prevents sibling modules from being inlined into each output bundle, so that
+ * a change to a dependency (e.g. StorageWrapper) does not alter the built output of
+ * its consumers (e.g. LocalStorage, SessionStorage).
+ *
+ * Relative imports are rewritten from their source extension (.ts/.tsx) to .js in the output.
+ *
+ * @returns {import('esbuild').Plugin}
+ */
+function externalRelativeImports() {
+    return {
+        name: 'external-relative-imports',
+        setup(build) {
+            // Match relative imports (starting with ./ or ../) that are NOT .css/.scss files.
+            build.onResolve({ filter: /^\.\.?\// }, (args) => {
+                // Only externalize imports within esm/src trees.
+                if (!args.importer || !args.importer.includes(path.join('esm', 'src'))) {
+                    return null;
+                }
+
+                // Resolve the full path to determine if it's within the same esm/src tree.
+                const resolved = path.resolve(path.dirname(args.importer), args.path);
+                if (!resolved.includes(path.join('esm', 'src'))) {
+                    return null;
+                }
+
+                // Rewrite the extension to .js for the built output.
+                let externalPath = args.path;
+                if (/\.(ts|tsx)$/.test(externalPath)) {
+                    externalPath = externalPath.replace(/\.(ts|tsx)$/, '.js');
+                } else if (!/\.[a-z]+$/i.test(externalPath)) {
+                    // No extension — append .js (esbuild resolves .ts but output needs .js).
+                    externalPath += '.js';
+                }
+
+                return { path: externalPath, external: true };
+            });
+        },
+    };
+}
+
+/**
  * Create the shared esbuild build configuration.
  *
  * @param {boolean} isDev Whether development mode is enabled.
@@ -194,7 +237,8 @@ export function createBuildConfig(isDev) {
         sourcemap: isDev ? 'inline' : false,
         jsxDev: isDev,
         keepNames: isDev,
-        treeShaking: !isDev,
+        treeShaking: true,
+        plugins: [externalRelativeImports()],
         define: { 'process.env.NODE_ENV': isDev ? '"development"' : '"production"' },
     };
 }
@@ -316,7 +360,7 @@ export async function watchComponents(isDev, onRebuild) {
         entryPoints: entryPairs,
         outdir: projectRoot,
         metafile: true,
-        plugins: [watchReporter],
+        plugins: [...(buildConfig.plugins || []), watchReporter],
     });
 
     await ctx.watch();
