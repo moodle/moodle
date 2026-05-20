@@ -49,7 +49,7 @@ $string['paths'] = 'Slighean';
 $string['pathserrcreatedataroot'] = 'Chan urrainn an iùl-lann dàta ({$a->dataroot}) a chruthachadh leis an stàlaichear.';
 $string['pathshead'] = 'Dearbh slighean';
 $string['pathsrodataroot'] = 'Chan eil an iùl-lann freumh-dàta so-sgrìobhte.';
-$string['pathsroparentdataroot'] = 'Chan eil an iùl-lann tuisteach ({$a->parent}) so-sgrìobhte.  Chan urrainn an iùl-lann dàta ({$a->dataroot}) a chruthachadh leis an stàlaichear.';
+$string['pathsroparentdataroot'] = 'Chan eil an iùl-lann thuisteach ({$a->parent}) so-sgrìobhte.  Chan urrainn an iùl-lann dàta ({$a->dataroot}) a chruthachadh leis an stàlaichear.';
 $string['pathssubadmindir'] = 'Tha àireamh glè bheag de dh’òstairean-lìn a’ cleachdadh /rianachd mar URL sònraichte às am faod thu pannal riaghlaidh no a leithid a ruigheachd.  Gu mì-fhortanach, tha seo a’ dol an aghaidh àite àbhaisteach duilleagan rianachd Moodle.  ’S urrainn dhut seo a chur ceart le ainm ùr a thoirt air an iùl-lann rianachd anns a’ chur an sàs agad, agus an t-ainm ùr sin a chur an seo.  Mar eisimpleir: <em>moodlerianachd</em>. Cuiridh seo ceangalan rianachd ceart ann am Moodle.';
 $string['pathssubdataroot'] = '<p>Iùl-lann anns an tèid an t-susbaint fhaidhlichean uile a chaidh a luchdachadh a-nìos le luchd-cleachdaidh a stòradh le Moodle.</p>
 <p>Bu chòir don iùl-lann seo a bhith so-leughte agus so-sgrìobhte le neach-cleachdaidh an fhrithealaiche-lìn (mar as trice ‘www-data’. ‘nobody’, no ‘apache’).</p>
