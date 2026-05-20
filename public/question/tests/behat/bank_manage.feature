@@ -49,12 +49,19 @@ Feature: Manage question banks
 
   @javascript
   Scenario: Delete a question bank
-    Given I am on the "C1" "Course" page logged in as "teacher1"
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "C1" "Course" page logged in as "teacher1"
     When I navigate to "Question banks" in current page administration
-    And I open the action menu in "bank1" "list_item"
-    And I choose "Delete" in the open action menu
+    And I choose the "Edit settings" item in the "Edit" action menu of the "bank1" "list_item"
+    And I set the following fields to these values:
+      | Question bank name | <span lang="en" class="multilang">Bank</span><span lang="fr" class="multilang">Banque</span> 1 |
+    And I press "Save and return to question bank list"
+    Then I should see "Bank 1"
+    And I choose the "Delete" item in the "Edit" action menu of the "Bank 1" "list_item"
+    And I should see "This will delete Bank 1 and any user data it contains"
     And I click on "Delete" "button"
-    Then I should not see "bank1"
+    And I should not see "Bank 1"
     But I should see "bank2"
 
   Scenario: A student without permissions to access a bank cannot access the question banks page
