@@ -194,6 +194,10 @@ class import_map implements \JsonSerializable {
             ],
             themable: false,
         );
+        $this->add_import(
+            '@popperjs/core',
+            path: 'lib/bundles/@popperjs/core/core.js',
+        );
     }
 
     /**

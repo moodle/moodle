@@ -29,4 +29,15 @@
       <copyright>Moodle HQ</copyright>
     </copyrights>
   </library>
+  <library>
+    <location>bundles/@popperjs</location>
+    <name>Popper.js</name>
+    <description>A kickass library used to created Poppers in web applications.</description>
+    <version>2.11.8</version>
+    <license>MIT</license>
+    <repository>https://github.com/floating-ui/floating-ui</repository>
+    <copyrights>
+      <copyright>2016 Federico Zivolo and contributors</copyright>
+    </copyrights>
+  </library>
 </libraries>

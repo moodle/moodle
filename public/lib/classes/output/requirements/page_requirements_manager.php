@@ -1588,6 +1588,11 @@ EOF;
             'core/storagewrapper' => '@moodle/lms/core/Storage:default',
             'core/url' => '@moodle/lms/core/url',
             'core/utils' => '@moodle/lms/core/utils',
+
+            // Map core/popper2 to the standard name loaded by ESM.
+            'core/popper2' => '@popperjs/core',
+            // Map the @popperjs/core module when loaded via AMD to load via ESM.
+            '@popperjs/core' => '@popperjs/core',
         ]);
 
         $maps = $requirejshook->get_requirejs_map();

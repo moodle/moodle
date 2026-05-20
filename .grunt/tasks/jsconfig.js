@@ -28,6 +28,9 @@ const configuration = {
             'core/esm!@moodle/lms/theme_boost/bootstrap': [
                 'node_modules/@types/bootstrap/index.d.ts',
             ],
+            'core/popper2': [
+                'node_modules/@types/popperjs/core/index.d.ts',
+            ]
         },
         target: "es2015",
         allowSyntheticDefaultImports: false,
@@ -38,6 +41,7 @@ const configuration = {
     include: [
         'lib/bundles/**/*',
         'node_modules/@types/**/*.d.ts',
+        'node_modules/@popperjs/**/*.d.ts',
     ],
 };
 
