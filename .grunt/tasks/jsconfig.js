@@ -25,6 +25,9 @@ const configuration = {
     compilerOptions: {
         baseUrl: ".",
         paths: {
+            'theme_boost/index': [
+                'node_modules/@types/bootstrap/index.d.ts',
+            ],
             'core/esm!@moodle/lms/theme_boost/bootstrap': [
                 'node_modules/@types/bootstrap/index.d.ts',
             ],
