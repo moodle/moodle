@@ -198,25 +198,26 @@ final class overview_test extends \advanced_testcase {
         $this->create_lesson_pages($lesson, 2);
 
         if ($hasentries) {
-            $lessongenerator->create_submission([
+            $lessongenerator->create_attempt([
                 'lessonid' => $lesson->id,
                 'userid' => $student1->id,
                 'grade' => 50,
             ]);
             if ($hasretakes) {
                 // If we can retake, create another attempt for student1.
-                $lessongenerator->create_submission([
+                $lessongenerator->create_attempt([
                     'lessonid' => $lesson->id,
                     'userid' => $student1->id,
                     'grade' => 100,
+                    'retry' => 1,
                 ]);
             }
-            $lessongenerator->create_submission([
+            $lessongenerator->create_attempt([
                 'lessonid' => $lesson->id,
                 'userid' => $student2->id,
                 'grade' => 100,
             ]);
-            $lessongenerator->create_submission([
+            $lessongenerator->create_attempt([
                 'lessonid' => $lesson->id,
                 'userid' => $currentuser->id,
                 'grade' => 100,
@@ -388,17 +389,17 @@ final class overview_test extends \advanced_testcase {
         $this->create_lesson_pages($lesson, 2);
 
         if ($hasentries) {
-            $lessongenerator->create_submission([
+            $lessongenerator->create_attempt([
                 'lessonid' => $lesson->id,
                 'userid' => $student1->id,
                 'grade' => 100,
             ]);
-            $lessongenerator->create_submission([
+            $lessongenerator->create_attempt([
                 'lessonid' => $lesson->id,
                 'userid' => $student2->id,
                 'grade' => 100,
             ]);
-            $lessongenerator->create_submission([
+            $lessongenerator->create_attempt([
                 'lessonid' => $lesson->id,
                 'userid' => $currentuser->id,
                 'grade' => 100,
