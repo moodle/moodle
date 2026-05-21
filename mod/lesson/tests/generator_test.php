@@ -749,4 +749,56 @@ final class generator_test extends \advanced_testcase {
         $lessongenerator->finish_generate_answer();
     }
 
+    /**
+     * Test create an attempt and the related grade.
+     *
+     * @covers ::create_attempt
+     */
+    public function test_create_attempt(): void {
+        $db = \core\di::get(\moodle_database::class);
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $lesson = $this->getDataGenerator()->create_module('lesson', ['course' => $course]);
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        /** @var \mod_lesson_generator $lessongenerator */
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+
+        // Create pages and answers.
+        $lessongenerator->create_page([
+            'title' => 'Multichoice question 1',
+            'content' => 'What animal is an amphibian?',
+            'qtype' => 'multichoice',
+            'lessonid' => $lesson->id,
+        ]);
+        $lessongenerator->create_answer(['page' => 'Multichoice question 1', 'answer' => 'Frog', 'score' => 1]);
+        $lessongenerator->create_answer(['page' => 'Multichoice question 1', 'answer' => 'Cat']);
+        $lessongenerator->create_page([
+            'title' => 'Multichoice question 2',
+            'content' => 'What animal is an mammal?',
+            'qtype' => 'multichoice',
+            'lessonid' => $lesson->id,
+        ]);
+        $lessongenerator->create_answer(['page' => 'Multichoice question 2', 'answer' => 'Dog', 'score' => 1]);
+        $lessongenerator->create_answer(['page' => 'Multichoice question 2', 'answer' => 'spider']);
+        $lessongenerator->finish_generate_answer();
+
+        // Create an attempt.
+        $attempt = $lessongenerator->create_attempt([
+            'lessonid' => $lesson->id,
+            'userid' => $student1->id,
+            'grade' => 100,
+        ]);
+
+        // Check that the grade was successfully auto-created.
+        $grade = $db->get_record('lesson_grades', ['lessonid' => $lesson->id, 'userid' => $student1->id]);
+        $this->assertNotEmpty($grade);
+        $this->assertEquals(100, $grade->grade);
+
+        // Check that the attempts were created.
+        $attempts = $db->get_records('lesson_attempts', ['lessonid' => $lesson->id, 'userid' => $student1->id]);
+        $this->assertCount(1, $attempts);
+    }
 }

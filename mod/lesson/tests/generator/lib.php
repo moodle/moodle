@@ -804,4 +804,116 @@ class mod_lesson_generator extends testing_module_generator {
 
         return $jumptolist;
     }
+
+    /**
+     * Create a lesson attempt.
+     *
+     * Inserts a lesson_attempts record and keeps the corresponding lesson_grades record and
+     * gradebook in sync, without requiring a separate 'submissions' generator.
+     *
+     * The 'retry' value (0-indexed, defaulting to 0) identifies which attempt/retake this record
+     * belongs to. All attempt rows created for the same lessonid/userid/retry combination are
+     * treated as belonging to the same retake and are aggregated into a single lesson_grades
+     * record for that retake, mirroring how lesson::process_page() maintains one lesson_grades
+     * row per retake (see mod/lesson/locallib.php). Retry values for a given user should be
+     * created in increasing order (0, 1, 2, ...), matching how retakes are actually generated,
+     * so that grade records line up with the correct retake.
+     *
+     * If 'grade' is not supplied, the grade for the retake is derived as the percentage of
+     * 'correct' attempts recorded so far for that lessonid/userid/retry, recalculated on every
+     * call so that multi-page attempts within the same retake average correctly instead of the
+     * final page silently overwriting earlier results.
+     *
+     * @param array|stdClass $record data for the attempt.
+     * @return stdClass attempt record.
+     * @throws coding_exception
+     */
+    public function create_attempt($record) {
+        global $CFG;
+        $db = \core\di::get(\moodle_database::class);
+
+        $data = (array)$record;
+
+        if (!isset($data['lessonid'])) {
+            throw new coding_exception('Must specify lessonid when creating a lesson attempt.');
+        }
+
+        if (!isset($data['userid'])) {
+            throw new coding_exception('Must specify userid when creating a lesson attempt.');
+        }
+
+        $attempt = new stdClass();
+        $attempt->lessonid = (int)$data['lessonid'];
+        $attempt->userid = (int)$data['userid'];
+        $attempt->pageid = isset($data['pageid']) ? (int)$data['pageid'] : 0;
+        $attempt->answerid = isset($data['answerid']) ? (int)$data['answerid'] : 0;
+        $attempt->retry = isset($data['retry']) ? (int)$data['retry'] : 0;
+        $attempt->correct = isset($data['correct']) ? (int)$data['correct'] : 0;
+        $attempt->useranswer = isset($data['useranswer']) ? $data['useranswer'] : '';
+        $attempt->timeseen = isset($data['timeseen']) ? (int)$data['timeseen'] : time();
+
+        $attempt->id = $db->insert_record('lesson_attempts', $attempt);
+
+        $lesson = $db->get_record('lesson', ['id' => $attempt->lessonid], '*', MUST_EXIST);
+
+        // Fetch all attempt rows recorded so far for this retake (including the one just
+        // inserted above), so we can both derive an automatic grade and detect whether this
+        // retake already has a lesson_grades record.
+        $retryattempts = $db->get_records('lesson_attempts', [
+            'lessonid' => $attempt->lessonid,
+            'userid' => $attempt->userid,
+            'retry' => $attempt->retry,
+        ]);
+
+        // Determine the grade for this retake. Use the explicit value if supplied, otherwise
+        // derive it from the percentage of correct attempts recorded so far for this retake.
+        if (isset($data['grade'])) {
+            $gradeval = (float)$data['grade'];
+        } else {
+            $total = count($retryattempts);
+            $correct = 0;
+            foreach ($retryattempts as $retryattempt) {
+                if ($retryattempt->correct) {
+                    $correct++;
+                }
+            }
+            $gradeval = $total > 0 ? ($correct / $total) * 100 : 0;
+        }
+
+        // Was this retake already graded by an earlier call (i.e. do other attempt rows already
+        // exist for this lessonid/userid/retry)? If so, update the existing lesson_grades record
+        // for this user's most recent retake, mirroring how core updates the last grade record
+        // when continuing an in-progress attempt. Otherwise, this is a new retake and needs its
+        // own lesson_grades record.
+        $othersinretry = count($retryattempts) - 1;
+
+        if ($othersinretry > 0) {
+            $lastgrade = $db->get_records('lesson_grades', [
+                'lessonid' => $attempt->lessonid,
+                'userid' => $attempt->userid,
+            ], 'id DESC', '*', 0, 1);
+            $graderecord = reset($lastgrade);
+        } else {
+            $graderecord = false;
+        }
+
+        if ($graderecord) {
+            $graderecord->grade = $gradeval;
+            $db->update_record('lesson_grades', $graderecord);
+        } else {
+            $newgrade = new stdClass();
+            $newgrade->lessonid = $attempt->lessonid;
+            $newgrade->userid = $attempt->userid;
+            $newgrade->grade = $gradeval;
+            $newgrade->late = 0;
+            $newgrade->completed = time();
+            $db->insert_record('lesson_grades', $newgrade);
+        }
+
+        // Trigger Moodle core API to update the official gradebook.
+        require_once($CFG->dirroot . '/mod/lesson/lib.php');
+        lesson_update_grades($lesson, $attempt->userid);
+
+        return $db->get_record('lesson_attempts', ['id' => $attempt->id], '*', MUST_EXIST);
+    }
 }
