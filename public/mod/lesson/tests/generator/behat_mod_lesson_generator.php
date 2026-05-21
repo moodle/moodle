@@ -49,9 +49,9 @@ class behat_mod_lesson_generator extends behat_generator_base {
                 'datagenerator' => 'answer',
                 'required' => ['page'],
             ],
-            'submissions' => [
-                'singular' => 'submission',
-                'datagenerator' => 'submission',
+            'attempts' => [
+                'singular' => 'attempt',
+                'datagenerator' => 'attempt',
                 'required' => ['lesson', 'user'],
                 'switchids' => ['lesson' => 'lessonid', 'user' => 'userid'],
             ],
@@ -80,4 +80,47 @@ class behat_mod_lesson_generator extends behat_generator_base {
         return $this->get_cm_by_activity_name('lesson', $idnumberorname)->instance;
     }
 
+    /**
+     * Preprocess attempt data.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function preprocess_attempt(array $data): array {
+        global $DB;
+
+        if (isset($data['user'])) {
+            $data['userid'] = $DB->get_field('user', 'id', ['username' => $data['user']], MUST_EXIST);
+            unset($data['user']);
+        }
+
+        if (isset($data['lesson'])) {
+            $data['lessonid'] = $this->get_lesson_id($data['lesson']);
+            unset($data['lesson']);
+        }
+
+        if (isset($data['page']) && isset($data['lessonid'])) {
+            $data['pageid'] = $DB->get_field(
+                'lesson_pages',
+                'id',
+                ['title' => $data['page'], 'lessonid' => $data['lessonid']],
+                MUST_EXIST
+            );
+            unset($data['page']);
+        }
+
+        if (isset($data['answer']) && isset($data['pageid'])) {
+            // The 'answer' field is a TEXT column, so we must use sql_compare_text to query it.
+            $select = $DB->sql_compare_text('answer') . ' = ' . $DB->sql_compare_text(':answer') .
+                ' AND pageid = :pageid';
+            $params = [
+                'answer' => $data['answer'],
+                'pageid' => $data['pageid'],
+            ];
+            $data['answerid'] = $DB->get_field_select('lesson_answers', 'id', $select, $params, MUST_EXIST);
+            unset($data['answer']);
+        }
+
+        return $data;
+    }
 }
