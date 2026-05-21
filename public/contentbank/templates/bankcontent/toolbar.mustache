@@ -72,7 +72,8 @@
         </div>
     {{/checkbox}}
 {{/tools}}
-<button class="icon-no-margin btn btn-secondary {{^viewlist}}active{{/viewlist}} ms-2"
+<div class="btn-group ms-1" role="group" aria-label="{{#str}} ariadisplaytype, contentbank {{/str}}">
+<button class="icon-no-margin btn btn-secondary {{^viewlist}}active{{/viewlist}}"
 title="{{#str}}  displayicons, contentbank  {{/str}}"
 data-action="viewgrid">
     {{#pix}}a/view_icon_active, core, {{#str}} displayicons, contentbank {{/str}} {{/pix}}
@@ -82,3 +83,4 @@ title="{{#str}} displaydetails, contentbank {{/str}}"
 data-action="viewlist">
     {{#pix}}a/view_list_active, core, {{#str}} displaydetails, contentbank {{/str}} {{/pix}}
 </button>
+</div>
