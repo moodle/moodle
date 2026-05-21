@@ -385,7 +385,7 @@ class qtype_multianswer_multichoice_inline_renderer
 
         $feedbackimg = '';
         if ($options->correctness) {
-            $inputattributes['class'] = $this->feedback_class($matchinganswer->fraction);
+            $inputattributes['class'] .= $this->feedback_class($matchinganswer->fraction);
             $feedbackimg = $this->feedback_image($matchinganswer->fraction);
         }
         $select = html_writer::select($choices, $qa->get_qt_field_name($fieldname),
