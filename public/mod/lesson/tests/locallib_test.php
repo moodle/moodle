@@ -295,15 +295,16 @@ final class locallib_test extends \advanced_testcase {
      * @param int $userid The user ID for whom the attempts are created.
      * @param int $count The number of attempts to create.
      */
-    private function create_user_submissions(lesson $lesson, int $userid, int $count): void {
+    private function create_user_attempts(lesson $lesson, int $userid, int $count): void {
         /** @var \mod_lesson_generator $lessongenerator */
         $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
 
         for ($i = 0; $i < $count; $i++) {
-            $lessongenerator->create_submission([
+            $lessongenerator->create_attempt([
                 'lessonid' => $lesson->id,
                 'userid' => $userid,
                 'grade' => 100,
+                'retry' => $i,
             ]);
         }
     }
@@ -359,9 +360,9 @@ final class locallib_test extends \advanced_testcase {
 
         $lesson = new lesson($lessonrecord);
         $this->create_lesson_pages($lesson, 2);
-        $this->create_user_submissions($lesson, $student1->id, 1);
-        $this->create_user_submissions($lesson, $student2->id, 2);
-        $this->create_user_submissions($lesson, $student3->id, 2);
+        $this->create_user_attempts($lesson, $student1->id, 1);
+        $this->create_user_attempts($lesson, $student2->id, 2);
+        $this->create_user_attempts($lesson, $student3->id, 2);
 
         $this->setUser($teacher->id);
 
@@ -414,9 +415,9 @@ final class locallib_test extends \advanced_testcase {
 
         $lesson = new lesson($lessonrecord);
         $this->create_lesson_pages($lesson, 2);
-        $this->create_user_submissions($lesson, $student1->id, 1);
-        $this->create_user_submissions($lesson, $student2->id, 2);
-        $this->create_user_submissions($lesson, $student3->id, 2);
+        $this->create_user_attempts($lesson, $student1->id, 1);
+        $this->create_user_attempts($lesson, $student2->id, 2);
+        $this->create_user_attempts($lesson, $student3->id, 2);
 
         $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
         $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);

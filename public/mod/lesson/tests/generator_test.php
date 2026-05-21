@@ -750,11 +750,11 @@ final class generator_test extends \advanced_testcase {
     }
 
     /**
-     * Test create a submission and the related attempts.
+     * Test create an attempt and the related grade.
      *
-     * @covers ::create_submission
+     * @covers ::create_attempt
      */
-    public function test_create_submission(): void {
+    public function test_create_attempt(): void {
         $db = \core\di::get(\moodle_database::class);
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -785,20 +785,20 @@ final class generator_test extends \advanced_testcase {
         $lessongenerator->create_answer(['page' => 'Multichoice question 2', 'answer' => 'spider']);
         $lessongenerator->finish_generate_answer();
 
-        // Create a submission.
-        $submissionid = $lessongenerator->create_submission([
+        // Create an attempt.
+        $attempt = $lessongenerator->create_attempt([
             'lessonid' => $lesson->id,
             'userid' => $student1->id,
             'grade' => 100,
         ]);
 
-        // Check that the submission was created.
-        $submission = $db->get_record('lesson_grades', ['lessonid' => $lesson->id, 'userid' => $student1->id]);
-        $this->assertNotEmpty($submission);
-        $this->assertEquals($submissionid, $submission->id);
+        // Check that the grade was successfully auto-created.
+        $grade = $db->get_record('lesson_grades', ['lessonid' => $lesson->id, 'userid' => $student1->id]);
+        $this->assertNotEmpty($grade);
+        $this->assertEquals(100, $grade->grade);
 
         // Check that the attempts were created.
         $attempts = $db->get_records('lesson_attempts', ['lessonid' => $lesson->id, 'userid' => $student1->id]);
-        $this->assertCount(2, $attempts);
+        $this->assertCount(1, $attempts);
     }
 }
