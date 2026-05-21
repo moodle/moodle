@@ -19,3 +19,4 @@ import{isProfilerEnabled as f}from"@moodle/lms/core/profiler";import{mountReactA
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+//# sourceMappingURL=react_autoinit.js.map

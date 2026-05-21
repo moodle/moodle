@@ -6,3 +6,4 @@ import{createElement as d,Profiler as m}from"react";var t=()=>window.M?.cfg?.jsr
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+//# sourceMappingURL=profiler.js.map
