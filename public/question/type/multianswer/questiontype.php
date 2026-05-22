@@ -325,7 +325,7 @@ define('ANSWER_ALTERNATIVE_FRACTION_REGEX',
        '=|%(-?[0-9]+(?:[.,][0-9]*)?)%');
 // For the syntax '(?<!' see http://www.perl.com/doc/manual/html/pod/perlre.html#item_C.
 define('ANSWER_ALTERNATIVE_ANSWER_REGEX',
-        '.+?(?<!\\\\|&|&amp;)(?=[~#}]|$)');
+        '.+?(?<!\\\\)(?=[~#}]|$)');
 define('ANSWER_ALTERNATIVE_FEEDBACK_REGEX',
         '.*?(?<!\\\\)(?=[~}]|$)');
 define('ANSWER_ALTERNATIVE_REGEX',
