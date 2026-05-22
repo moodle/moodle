@@ -21,8 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import 'theme_boost/popover';
-import Popover from 'theme_boost/bootstrap/popover';
+import {Popover} from 'bootstrap';
 
 /** @property {object} Contains the list of selectors for this module. */
 const SELECTORS = {

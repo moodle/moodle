@@ -35,8 +35,8 @@ import {
     hide,
     unhide,
 } from 'core/aria';
-import EventHandler from 'theme_boost/bootstrap/dom/event-handler';
-import * as Popper from 'core/popper2';
+import EventHandler from 'bootstrap/dom/event-handler';
+import * as Popper from '@popperjs/core';
 
 const Selectors = {
     mainMenu: '[role="menu"]',

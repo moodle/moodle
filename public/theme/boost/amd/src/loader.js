@@ -23,12 +23,12 @@
  */
 
 import * as Aria from './aria';
-import * as Bootstrap from './index';
+import * as Bootstrap from 'bootstrap';
 import Pending from 'core/pending';
 import {eventTypes} from 'core_filters/events';
-import {DefaultAllowlist} from './bootstrap/util/sanitizer';
+import {DefaultAllowlist} from 'bootstrap/util/sanitizer';
 import setupBootstrapPendingChecks from './pending';
-import EventHandler from './bootstrap/dom/event-handler';
+import EventHandler from 'bootstrap/dom/event-handler';
 
 /**
  * Rember the last visited tabs.

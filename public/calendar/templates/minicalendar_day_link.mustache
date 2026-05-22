@@ -48,23 +48,21 @@
     {{$content}}{{/content}}
 </div>
 {{#js}}
-require(['jquery'], function($) {
-    require(['theme_boost/bootstrap/popover'], function() {
-        const target = document.getElementById("calendar-day-popover-link-{{courseid}}-{{year}}-{{yday}}-{{uniqid}}");
-        new Popover(target, {
-            content: function() {
-                var source = target.next().find("> *:not('.hidden')");
-                var content = $('<div>');
+require(['jquery', 'bootstrap'], function($, {Popover}) {
+    const target = document.getElementById("calendar-day-popover-link-{{courseid}}-{{year}}-{{yday}}-{{uniqid}}");
+    new Popover(target, {
+        content: function() {
+            var source = target.next().find("> *:not('.hidden')");
+            var content = $('<div>');
 
-                if (source.length) {
-                    content.html(source.clone(false));
-                } else {
-                    content.html(target.data('alternate'));
-                }
-
-                return content.html();
+            if (source.length) {
+                content.html(source.clone(false));
+            } else {
+                content.html(target.data('alternate'));
             }
-        });
+
+            return content.html();
+        }
     });
 });
 {{/js}}

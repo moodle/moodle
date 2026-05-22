@@ -21,8 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Toast from './bootstrap/toast';
+export {Toast} from 'bootstrap';
+import emitDeprecation from 'core/deprecation';
 
-export {
-    Toast
-};
+emitDeprecation('theme_boost/toast', {
+    replacement: 'import {Toast} from "bootstrap"',
+});

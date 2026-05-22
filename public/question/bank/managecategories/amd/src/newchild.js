@@ -24,7 +24,7 @@
 
 import {BaseComponent, DragDrop} from 'core/reactive';
 import {categorymanager} from 'qbank_managecategories/categorymanager';
-import Tooltip from 'theme_boost/bootstrap/tooltip';
+import {Tooltip} from 'bootstrap';
 
 export default class extends BaseComponent {
     create(descriptor) {

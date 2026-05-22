@@ -24,7 +24,7 @@ import * as Repository from 'gradereport_grader/collapse/repository';
 import search_combobox from 'core/comboboxsearch/search_combobox';
 import {renderForPromise, replaceNodeContents, replaceNode} from 'core/templates';
 import {debounce} from 'core/utils';
-import Dropdown from 'theme_boost/bootstrap/dropdown';
+import {Dropdown} from 'bootstrap';
 import {getStrings} from 'core/str';
 import CustomEvents from "core/custom_interaction_events";
 import storage from 'core/localstorage';

@@ -31,7 +31,7 @@ define([
     'core/aria',
     'core_form/changechecker',
     'core/popper2',
-    'theme_boost/bootstrap/dom/event-handler',
+    'bootstrap/dom/event-handler',
 ], function(
     $,
     log,

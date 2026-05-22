@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Tab from 'theme_boost/bootstrap/tab';
+import {Tab} from 'bootstrap';
 import Pending from 'core/pending';
 import * as FocusLockManager from 'core/local/aria/focuslock';
 

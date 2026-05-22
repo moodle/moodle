@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import $ from 'jquery';
-import Dropdown from 'theme_boost/bootstrap/dropdown';
+import {Dropdown} from 'bootstrap';
 import {debounce} from 'core/utils';
 import Pending from 'core/pending';
 import {get_string as getString} from 'core/str';

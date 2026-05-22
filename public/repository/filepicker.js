@@ -1243,7 +1243,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             // Load popover for the filepicker content.
             var filepickerContent = Y.one('.file-picker.fp-select');
-            require(['theme_boost/bootstrap/popover'], function(Popover) {
+            require(['bootstrap'], function({Popover}) {
                 var popoverTriggerList = filepickerContent.getDOMNode().querySelectorAll('[data-bs-toggle="popover"]');
                 popoverTriggerList.forEach((popoverTriggerEl) => {
                     new Popover(popoverTriggerEl);
@@ -1798,7 +1798,7 @@ M.core_filepicker.init = function(Y, options) {
             var filepickerContent = Y.one('.file-picker .fp-repo-items');
             filepickerContent.focus();
             // Load popover for the filepicker content.
-            require(['theme_boost/bootstrap/popover'], function(Popover) {
+            require(['bootstrap'], function({Popover}) {
                 var popoverTriggerList = filepickerContent.getDOMNode().querySelectorAll('[data-bs-toggle="popover"]');
                 popoverTriggerList.forEach((popoverTriggerEl) => {
                     new Popover(popoverTriggerEl);
