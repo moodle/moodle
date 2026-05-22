@@ -9,7 +9,7 @@
       "dependencies": {
         "@moodlehq/design-system": "^5.0.0",
         "@popperjs/core": "^2.11.8",
-        "bootstrap": "^5.3.3",
+        "bootstrap": "^5.3.8",
         "react": "^19.1",
         "react-dom": "^19.1"
       },
@@ -3670,25 +3670,6 @@
         "react-dom": "^19.2.4"
       }
     },
-    "node_modules/@moodlehq/design-system/node_modules/bootstrap": {
-      "version": "5.3.8",
-      "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-5.3.8.tgz",
-      "integrity": "sha512-HP1SZDqaLDPwsNiqRqi5NcP0SSXciX2s9E+RyqJIIqGo+vJeN5AJVM98CXmW/Wux0nQ5L7jeWUdplCEf0Ee+tg==",
-      "funding": [
-        {
-          "type": "github",
-          "url": "https://github.com/sponsors/twbs"
-        },
-        {
-          "type": "opencollective",
-          "url": "https://opencollective.com/bootstrap"
-        }
-      ],
-      "license": "MIT",
-      "peerDependencies": {
-        "@popperjs/core": "^2.11.8"
-      }
-    },
     "node_modules/@napi-rs/wasm-runtime": {
       "version": "0.2.12",
       "resolved": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz",
@@ -5604,9 +5585,9 @@
       }
     },
     "node_modules/bootstrap": {
-      "version": "5.3.3",
-      "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-5.3.3.tgz",
-      "integrity": "sha512-8HLCdWgyoMguSO9o+aH+iuZ+aht+mzW0u3HIMzVu7Srrpv7EBBxTnrFlSCskwdY1+EOFQSm7uMJhNQHkdPcmjg==",
+      "version": "5.3.8",
+      "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-5.3.8.tgz",
+      "integrity": "sha512-HP1SZDqaLDPwsNiqRqi5NcP0SSXciX2s9E+RyqJIIqGo+vJeN5AJVM98CXmW/Wux0nQ5L7jeWUdplCEf0Ee+tg==",
       "funding": [
         {
           "type": "github",

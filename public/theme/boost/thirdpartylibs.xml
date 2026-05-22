@@ -4,7 +4,7 @@
     <location>scss/bootstrap</location>
     <name>Twitter Bootstrap</name>
     <description>HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects on the web.</description>
-    <version>5.3.3</version>
+    <version>5.3.8</version>
     <license>MIT</license>
     <repository>https://github.com/twbs/bootstrap</repository>
     <copyrights>
@@ -17,7 +17,7 @@
     <location>js/bundles/bootstrap</location>
     <name>Twitter Bootstrap</name>
     <description>HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects on the web.</description>
-    <version>5.3.3</version>
+    <version>5.3.8</version>
     <license>MIT</license>
     <repository>https://github.com/twbs/bootstrap</repository>
     <copyrights>
