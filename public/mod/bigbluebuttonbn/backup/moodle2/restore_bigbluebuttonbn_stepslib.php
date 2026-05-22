@@ -58,6 +58,12 @@ class restore_bigbluebuttonbn_activity_structure_step extends restore_activity_s
         global $DB;
         $data = (object) $data;
         $data->course = $this->get_courseid();
+
+        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+        // See MDL-9367.
+        $data->openingtime = $this->apply_date_offset($data->openingtime);
+        $data->closingtime = $this->apply_date_offset($data->closingtime);
+
         // Check if we are in backup::MODE_IMPORT (we set a new meetingid) or backup::MODE_GENERAL (we keep the same meetingid).
         if ($this->get_task()->get_info()->mode == backup::MODE_IMPORT || empty($data->meetingid)) {
             // We are in backup::MODE_IMPORT, we need to renew the meetingid.
