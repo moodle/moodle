@@ -463,30 +463,56 @@ final class lib_test extends \advanced_testcase {
      */
     public function test_bigbluebuttonbn_reset_userdata(): void {
         global $DB;
-        $this->resetAfterTest();
-        $data = new stdClass();
-        $user = $this->getDataGenerator()->create_user();
 
-        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $now = time();
+
+        $user = $this->getDataGenerator()->create_user();
+        [$bbactivitycontext, $bbactivitycm, $bbactivity] = $this->create_instance(null, [
+            'openingtime' => $now + HOURSECS,
+            'closingtime' => $now + DAYSECS,
+        ]);
         $this->getDataGenerator()->enrol_user($user->id, $this->course->id);
         $this->setUser($user);
 
         logger::log_meeting_joined_event(instance::get_from_instanceid($bbactivity->id), 0);
+
+        $data = new stdClass();
         $data->courseid = $this->get_course()->id;
         $data->reset_bigbluebuttonbn_tags = true;
         $data->reset_bigbluebuttonbn_logs = true;
         $data->course = $bbactivity->course;
+        $data->timeshift = DAYSECS * 2;
+
         // Add and Join.
         $this->assertCount(2, $DB->get_records('bigbluebuttonbn_logs', ['bigbluebuttonbnid' => $bbactivity->id]));
         $results = bigbluebuttonbn_reset_userdata($data);
         $this->assertCount(0, $DB->get_records('bigbluebuttonbn_logs', ['bigbluebuttonbnid' => $bbactivity->id]));
         $this->assertEquals([
-            'component' => 'BigBlueButton',
-            'item' => 'Deleted tags',
-            'error' => false
-        ],
-            $results[0]
-        );
+            [
+                'component' => 'BigBlueButton',
+                'item' => 'Date',
+                'error' => false,
+            ],
+            [
+                'component' => 'BigBlueButton',
+                'item' => 'Deleted tags',
+                'error' => false,
+            ],
+            [
+                'component' => 'BigBlueButton',
+                'item' => 'Deleted custom logs',
+                'error' => false,
+            ],
+        ], $results);
+
+        // Reload the instance data.
+        $instance = $DB->get_record('bigbluebuttonbn', ['id' => $bbactivity->id]);
+
+        $this->assertEquals($bbactivity->openingtime + (DAYSECS * 2), $instance->openingtime);
+        $this->assertEquals($bbactivity->closingtime + (DAYSECS * 2), $instance->closingtime);
     }
 
     /**
