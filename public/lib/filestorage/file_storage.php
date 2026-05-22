@@ -414,7 +414,7 @@ class file_storage {
 
         $mimetype = $file->get_mimetype();
 
-        if ($mimetype === 'image/gif' or $mimetype === 'image/jpeg' or $mimetype === 'image/png') {
+        if (in_array($mimetype, ['image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
             // make a preview of the image
             $data = $this->create_imagefile_preview($file, $mode);
         } else if ($mimetype === 'image/svg+xml') {
@@ -1746,7 +1746,7 @@ class file_storage {
         $newimg = imagecreatetruecolor($newwidth, $newheight);
 
         // Determine if the file supports transparency.
-        $hasalpha = $filerecord['mimetype'] == 'image/png' || $filerecord['mimetype'] == 'image/gif';
+        $hasalpha = in_array($filerecord['mimetype'], ['image/png', 'image/gif', 'image/webp']);
 
         // Maintain transparency.
         if ($hasalpha) {
@@ -1812,8 +1812,16 @@ class file_storage {
                 imagepng($img, null, $quality, PNG_NO_FILTER);
                 break;
 
+            case 'image/webp':
+                if (is_null($quality)) {
+                    imagewebp($img);
+                } else {
+                    imagewebp($img, null, $quality);
+                }
+                break;
+
             default:
-                throw new file_exception('storedfileproblem', 'Unsupported mime type');
+                throw new file_exception('storedfileproblem', 'Unsupported mime type', $filerecord['mimetype']);
         }
 
         $content = ob_get_contents();
