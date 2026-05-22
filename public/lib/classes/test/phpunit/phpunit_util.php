@@ -508,6 +508,29 @@ class phpunit_util extends \core\test\testing_util {
     }
 
     /**
+     * Upgrade the test site and upgrade/install any new plugins that were added.
+     *
+     * @return void may terminate execution with exit code
+     */
+    public static function upgrade_site() {
+
+        if (!self::is_test_site()) {
+            phpunit_bootstrap_error(PHPUNIT_EXITCODE_CONFIGERROR, 'Can not upgrade non-test site!!');
+        }
+
+        if (self::is_test_data_updated()) {
+            echo "No database changes detected, skipping upgrade.\n";
+            return;
+        }
+
+        initialise_cfg();
+        upgrade_noncore(true);
+        set_config('upgraderunning', 0);
+        self::store_versions_hash();
+        self::store_database_state();
+    }
+
+    /**
      * Builds root/phpunit.xml file using defaults from /phpunit.xml.dist
      *
      * @return bool true means main config file created, false means only dataroot file created

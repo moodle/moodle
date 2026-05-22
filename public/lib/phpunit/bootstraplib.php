@@ -65,12 +65,14 @@ function phpunit_bootstrap_error($errorcode, $text = '') {
             $text = "Moodle PHPUnit environment configuration warning:\n".$text;
             break;
         case PHPUNIT_EXITCODE_INSTALL:
-            $path = testing_cli_argument_path('/public/admin/tool/phpunit/cli/init.php');
-            $text = "Moodle PHPUnit environment is not initialised, please use:\n php $path";
+            $initpath = testing_cli_argument_path('/public/admin/tool/phpunit/cli/init.php');
+            $text = "Moodle PHPUnit environment is not initialised, please use:\n php $initpath";
             break;
         case PHPUNIT_EXITCODE_REINSTALL:
-            $path = testing_cli_argument_path('/public/admin/tool/phpunit/cli/init.php');
-            $text = "Moodle PHPUnit environment was initialised for different version, please use:\n php $path";
+            $initpath = testing_cli_argument_path('/public/admin/tool/phpunit/cli/init.php');
+            $utilpath = testing_cli_argument_path('/public/admin/tool/phpunit/cli/util.php');
+            $text = "Moodle PHPUnit environment was initialised for different version, please use:\n"
+                . " php $initpath\n or php $utilpath --upgrade";
             break;
         default:
             $text = empty($text) ? '' : ': '.$text;

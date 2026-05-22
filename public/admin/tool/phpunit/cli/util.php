@@ -49,6 +49,7 @@ list($options, $unrecognized) = cli_get_params(
         'buildcomponentconfigs' => false,
         'diag'                  => false,
         'run'                   => false,
+        'upgrade'               => false,
         'help'                  => false,
     ],
     [
@@ -74,7 +75,7 @@ foreach ($requiredclasses as $requiredclass) {
     }
 }
 
-if ($options['install'] || $options['drop']) {
+if ($options['install'] || $options['drop'] || $options['upgrade']) {
     define('CACHE_DISABLE_ALL', true);
 }
 
@@ -115,8 +116,14 @@ $drop = $options['drop'];
 $install = $options['install'];
 $buildconfig = $options['buildconfig'];
 $buildcomponentconfigs = $options['buildcomponentconfigs'];
+$upgrade = $options['upgrade'];
 
-if ($options['help'] || (!$drop && !$install && !$buildconfig && !$buildcomponentconfigs && !$diag)) {
+if (
+    $options['help'] || (
+    !$drop && !$install && !$buildconfig && !$buildcomponentconfigs
+    && !$diag && !$upgrade
+                )
+) {
     $help = "Various PHPUnit utility functions
 
 Options:
@@ -127,6 +134,7 @@ Options:
 --buildconfig  Build /phpunit.xml from /phpunit.xml.dist that runs all tests
 --buildcomponentconfigs
                Build distributed phpunit.xml files for each component
+--upgrade      Upgrade test site to latest version
 
 -h, --help     Print out this help
 
@@ -168,4 +176,8 @@ if ($diag) {
 } else if ($install) {
     phpunit_util::install_site();
     exit(0);
+} else if ($upgrade) {
+    phpunit_util::upgrade_site();
+    exit(0);
+}
 }
