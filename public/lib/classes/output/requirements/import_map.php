@@ -63,9 +63,13 @@ class import_map implements \JsonSerializable {
 
     /**
      * Initialise the import_map requirement by setting the standard import list.
+     *
+     * @param \core\hook\manager $hookmanager The hook manager to dispatch the before_import_map_config event.
      */
-    public function __construct() {
+    public function __construct(\core\hook\manager $hookmanager) {
         $this->add_standard_imports();
+
+        $hookmanager->dispatch(new \core\hook\output\before_import_map_config($this));
     }
 
     /**

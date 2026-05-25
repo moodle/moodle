@@ -1048,6 +1048,7 @@ class page_requirements_manager {
      */
     public function get_import_map(moodle_page $page): string {
         $importmap = \core\di::get(import_map::class);
+
         $importmap->set_default_loader(
             \core\router\util::get_path_for_callable(
                 [\core\route\controller\esm_controller::class, 'serve'],
