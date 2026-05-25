@@ -43,6 +43,17 @@
     <customised/>
   </library>
   <library>
+    <location>bundles/fontawesome</location>
+    <name>Font Awesome Free</name>
+    <description>Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
+    <version>6.7.2</version>
+    <license>(MIT)</license>
+    <repository>https://github.com/FortAwesome/Font-Awesome</repository>
+    <copyrights>
+      <copyright>2023 Fonticons, Inc</copyright>
+    </copyrights>
+  </library>
+  <library>
     <location>bundles/@popperjs</location>
     <name>Popper.js</name>
     <description>A kickass library used to created Poppers in web applications.</description>

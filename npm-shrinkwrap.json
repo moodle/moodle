@@ -7,6 +7,7 @@
       "name": "Moodle",
       "hasInstallScript": true,
       "dependencies": {
+        "@fortawesome/fontawesome-free": "^6.7.2",
         "@moodlehq/design-system": "^5.0.0",
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3.8",
@@ -2585,6 +2586,15 @@
       "license": "MIT",
       "engines": {
         "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
+      }
+    },
+    "node_modules/@fortawesome/fontawesome-free": {
+      "version": "6.7.2",
+      "resolved": "https://registry.npmjs.org/@fortawesome/fontawesome-free/-/fontawesome-free-6.7.2.tgz",
+      "integrity": "sha512-JUOtgFW6k9u4Y+xeIaEiLr3+cjoUPiAuLXoyKOJSia6Duzb7pq+A76P9ZdPDoAoxHdHzq6gE9/jKBGXlZT8FbA==",
+      "license": "(CC-BY-4.0 AND OFL-1.1 AND MIT)",
+      "engines": {
+        "node": ">=6"
       }
     },
     "node_modules/@humanwhocodes/config-array": {

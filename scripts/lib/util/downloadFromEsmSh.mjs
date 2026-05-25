@@ -54,12 +54,15 @@ const DEFAULT_TARGET = 'es2022';
  *   write readme_moodle.txt into, each paired with the package name for the readme content
  * @param {Array<{componentPath: string, packageLocation: string, packageName: string, version: string}>}
  *   [options.thirdpartylibs] - entries to update in thirdpartylibs.xml files
+ * @param {Function} [options.postCopy] - optional async/sync callback invoked after all downloads,
+ *   readmes, and thirdpartylibs updates, but before the final "Done!" footer.
  */
 export const downloadFromEsmSh = async ({
     bundles,
     outputDir,
     readmePaths = [],
     thirdpartylibs = [],
+    postCopy,
 }) => {
     const resolvedBundles = bundles.map((bundle) => ({
         ...bundle,
@@ -110,6 +113,10 @@ export const downloadFromEsmSh = async ({
             updateThirdPartyLibsXml(componentPath, packageLocation, packageName, version);
         }
         console.log(chalk.green('→ thirdpartylibs.xml files ✓'));
+    }
+
+    if (postCopy) {
+        await postCopy();
     }
 
     console.log('\nAll bundles saved' + chalk.green(' ✓'));

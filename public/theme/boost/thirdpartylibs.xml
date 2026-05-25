@@ -1,17 +1,6 @@
 <?xml version="1.0"?>
 <libraries>
   <library>
-    <location>scss/fontawesome</location>
-    <name>Font Awesome - http://fontawesome.com</name>
-    <description>Font Awesome CSS, LESS, and Sass files. Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
-    <version>6.7.2</version>
-    <license>(MIT)</license>
-    <repository>https://github.com/FortAwesome/Font-Awesome</repository>
-    <copyrights>
-      <copyright>2023 Fonticons, Inc</copyright>
-    </copyrights>
-  </library>
-  <library>
     <location>fonts/noto-sans</location>
     <name>Noto Sans</name>
     <description>Noto Sans is a global font family by Google, designed to support all languages with harmonious visual quality.</description>
