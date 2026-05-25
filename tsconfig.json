@@ -11,5 +11,7 @@
   "include": [
     "public/**/esm/src/**/*",
     "node_modules/@types/**/*.d.ts"
-  ]
+  ],
+  "exclude": ["public/**/esm/tests/**/*"],
+  "references": [{"path": "./tsconfig.jest.json"}]
 }
