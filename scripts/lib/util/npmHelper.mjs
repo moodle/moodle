@@ -20,7 +20,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import chalk from 'chalk';
 import fs from "fs-extra";
 import path from "path";
 import { getRootDir } from './fs.mjs';
@@ -42,9 +41,10 @@ export const getPackageVersion = (packageName) => {
     const version = pkg.packages[`node_modules/${packageName}`]?.version;
 
     if (!version) {
-        console.log(chalk.red('→') + ` The package ${packageName} has not been added as a dependency in package.json` + chalk.red(' ✗'));
-        console.log('→ Please add it with the required version as a dependency in package.json');
-        process.exit(1);
+        throw new Error(
+            `The package ${packageName} has not been added as a dependency in package.json.\n` +
+            `Please add it with the required version as a dependency in package.json.`
+        );
     }
     return version;
 };

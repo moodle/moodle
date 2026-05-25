@@ -4,9 +4,7 @@
   "description": "Moodle",
   "scripts": {
     "postinstall": "npm run update-packages",
-    "update-packages": "npm run update-design-system && npm run update-react",
-    "update-react": "node scripts/update-react-bundle.mjs",
-    "update-design-system": "node scripts/update-design-system.mjs",
+    "update-packages": "node scripts/update-packages.mjs",
     "upgradenote": "node .grunt/upgradenotes.mjs create",
     "pretest": "grunt jsconfig",
     "test": "jest"

@@ -20,8 +20,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+export { copyFromNodeModules } from './util/copyFromNodeModules.mjs';
 export { createPackageReadme } from './util/readme.mjs';
 export { download } from './util/download.mjs';
+export { downloadFromEsmSh } from './util/downloadFromEsmSh.mjs';
 export { getPackageVersion } from './util/npmHelper.mjs';
 export { getRootDir } from './util/fs.mjs';
 export { updateThirdPartyLibsXml } from './util/thirdpartylibs.mjs';
