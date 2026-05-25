@@ -16,7 +16,6 @@
 
 namespace theme_boost;
 
-use core\hook\output\before_import_map_config;
 use core\hook\output\before_requirejs_config;
 
 /**
@@ -28,28 +27,6 @@ use core\hook\output\before_requirejs_config;
  */
 class hook_listener {
     /**
-     * Add Bootstrap as a bare specifier in the ES module import map.
-     *
-     * This allows ESM modules to import Bootstrap via `import { Modal } from 'bootstrap'`.
-     *
-     * @param before_import_map_config $hook The hook object.
-     */
-    public static function before_import_map_config_listener(before_import_map_config $hook): void {
-        // Register the main Bootstrap bundle as a bare specifier, and the internal util and dom modules as subpath specifiers.
-        $hook->add_import(
-            specifier: 'bootstrap',
-            path: 'public/theme/boost/js/bundles/bootstrap',
-            urlsuffix: '/bootstrap.esm.min.js',
-            allowedsuffixes: ['.js', '.js.map'],
-        );
-        $hook->add_import(
-            specifier: 'bootstrap/',
-            path: 'public/theme/boost/js/bundles/bootstrap',
-            allowedsuffixes: ['.js', '.js.map'],
-        );
-    }
-
-    /**
      * Add imports for Bootstrap JS to the RequireJS map.
      *
      * @param before_requirejs_config $hook The hook object.
@@ -57,23 +34,7 @@ class hook_listener {
     public static function before_requirejs_config_listener(before_requirejs_config $hook): void {
         $hook->add_requirejs_esm_map_entries(
             entries: [
-                'bootstrap' => 'bootstrap',
-                'bootstrap/dom/data' => 'bootstrap/dom/data',
-                'bootstrap/dom/event-handler' => 'bootstrap/dom/event-handler:default',
-                'bootstrap/dom/manipulator' => 'bootstrap/dom/manipulator:default',
-                'bootstrap/dom/selector-engine' => 'bootstrap/dom/selector-engine:default',
-                'bootstrap/util/backdrop' => 'bootstrap/util/backdrop:default',
-                'bootstrap/util/component-functions' => 'bootstrap/util/component-functions:default',
-                'bootstrap/util/config' => 'bootstrap/util/config:default',
-                'bootstrap/util/focustrap' => 'bootstrap/util/focustrap:default',
-                'bootstrap/util/index' => 'bootstrap/util/index:default',
-                'bootstrap/util/sanitizer' => 'bootstrap/util/sanitizer.js',
-                'bootstrap/util/scrollbar' => 'bootstrap/util/scrollbar:default',
-                'bootstrap/util/swipe' => 'bootstrap/util/swipe:default',
-                'bootstrap/util/template-factory' => 'bootstrap/util/template-factory:default',
-
                 // To be deprecated removed from 7.0 onwards.
-
                 'theme_boost/index' => 'bootstrap',
                 'theme_boost/bootstrap' => 'bootstrap',
                 'theme_boost/bootstrap/index' => 'bootstrap',

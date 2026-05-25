@@ -2,7 +2,7 @@
 $code-color: #db1a74 !default;
 
 /* Give editor access to all of bootstrap. */
-@import "bootstrap/bootstrap";
+@import "../../../../lib/bundles/bootstrap/scss/bootstrap.scss";
 
 /**
  * Reset the Bootstrap _reboot.scss styles for tables.

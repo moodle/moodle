@@ -8,9 +8,9 @@
 
 // Load Bootstrap variables and mixins
 
-@import "theme/boost/scss/bootstrap/functions";
-@import "theme/boost/scss/bootstrap/variables";
-@import "theme/boost/scss/bootstrap/mixins";
+@import "../lib/bundles/bootstrap/scss/functions";
+@import "../lib/bundles/bootstrap/scss/variables";
+@import "../lib/bundles/bootstrap/scss/mixins";
 
 // Load docs components
 @import "variables";

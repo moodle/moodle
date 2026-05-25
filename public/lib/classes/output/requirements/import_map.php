@@ -198,6 +198,19 @@ class import_map implements \JsonSerializable {
             '@popperjs/core',
             path: 'lib/bundles/@popperjs/core/core.js',
         );
+
+        // Register the main Bootstrap bundle as a bare specifier, and the internal util and dom modules as subpath specifiers.
+        $this->add_import(
+            specifier: 'bootstrap',
+            path: 'lib/bundles/bootstrap/js',
+            urlsuffix: '/bootstrap.esm.min.js',
+            allowedsuffixes: ['.js', '.js.map'],
+        );
+        $this->add_import(
+            specifier: 'bootstrap/',
+            path: 'lib/bundles/bootstrap/js',
+            allowedsuffixes: ['.js', '.js.map'],
+        );
     }
 
     /**
