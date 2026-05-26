@@ -214,7 +214,7 @@ class registration {
         $siteinfo['aiusage'] = !empty($aiusagedata) ? json_encode($aiusagedata) : '';
 
         // Disk usage size.
-        $siteinfo['diskusage'] = self::get_dataroot_size() ?? 0;
+        $siteinfo['diskusage'] = self::get_filepool_usage();
 
         // Default homepage.
         $siteinfo['defaulthomepage'] = get_config('moodle', 'defaulthomepage');
@@ -963,13 +963,53 @@ class registration {
      * Measure the size of the dataroot directory.
      *
      * @return float MB to 3 decimal places.
+     * @deprecated since Moodle 5.3.
+     * @todo Final deprecation in Moodle 7.0. See MDL-88818.
      */
+    #[\core\attribute\deprecated(
+        replacement: 'get_filepool_usage',
+        since: '5.3',
+        mdl: 'MDL-88805',
+    )]
     public static function get_dataroot_size(): float {
-        global $CFG;
-        $size = get_directory_size($CFG->dataroot);
-        // Convert bytes to megabytes.
-        $size = $size / (1024 * 1024);
-        return round($size, 3);
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+        return self::get_filepool_usage();
+    }
+
+    /**
+     * Measure file pool usage by summing unique file sizes from the database.
+     *
+     * Files are deduplicated by contenthash, as Moodle's content-addressable file store only
+     * keeps one physical copy per unique file. The result is approximate and preferred over
+     * scanning the dataroot directory for performance reasons. This excludes caches, sessions,
+     * temporary files, and other non-filepool storage.
+     *
+     * @return float MB to 3 decimal places.
+     */
+    public static function get_filepool_usage(): float {
+        global $DB;
+
+        // Check cache first.
+        $cache = \cache::make('core', 'hub_filepoolusage');
+        $cached = $cache->get('filepoolusage');
+        if ($cached !== false) {
+            return $cached;
+        }
+
+        $sql = "SELECT SUM(filesize) AS sizebytes
+                  FROM (SELECT contenthash, MAX(filesize) AS filesize
+                          FROM {files}
+                      GROUP BY contenthash
+                  ) f";
+        $result = $DB->get_record_sql($sql);
+        $size = 0;
+        if ($result && isset($result->sizebytes)) {
+            // Convert bytes to megabytes.
+            $size = $result->sizebytes / (1024 * 1024);
+        }
+        $size = round($size, 3);
+        $cache->set('filepoolusage', $size);
+        return $size;
     }
 
     /**
@@ -977,6 +1017,7 @@ class registration {
      */
     public static function reset_caches(): void {
         self::$registration = null;
+        \cache::make('core', 'hub_filepoolusage')->purge();
     }
 
     /**

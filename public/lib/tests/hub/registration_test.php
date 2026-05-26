@@ -40,6 +40,17 @@ final class registration_test extends \advanced_testcase {
 
         $generator->create_course(); // Course with no end date.
 
+        // Upload a file to ensure 'diskusage' contains a value > 0.
+        $fs = get_file_storage();
+        $fs->create_file_from_string([
+            'contextid' => \context_system::instance()->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => 'testfile.txt',
+        ], 'test file content');
+
         $siteinfo = registration::get_site_info();
 
         $this->assertNull($siteinfo['policyagreed']);
@@ -236,5 +247,42 @@ final class registration_test extends \advanced_testcase {
         // Test unknown URL.
         $result = registration::get_defaulthomepage_name('/unknown/page');
         $this->assertEquals('/unknown/page', $result);
+    }
+
+    /**
+     * Test get_filepool_usage returns 0 on an empty files table and counts each unique
+     * contenthash only once, not once per file record.
+     */
+    public function test_get_filepool_usage(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $DB->delete_records('files', []);
+        registration::reset_caches();
+        $this->assertEquals(0, registration::get_filepool_usage());
+
+        $fs = get_file_storage();
+        $content = str_repeat('a', 1048576);
+        $context = \context_system::instance();
+        $record = [
+            'contextid' => $context->id,
+            'component' => 'core',
+            'filearea'  => 'unittest',
+            'filepath'  => '/',
+        ];
+
+        // Create two file records with identical content (same contenthash) in different locations.
+        $fs->create_file_from_string($record + ['itemid' => 1, 'filename' => 'dup1.txt'], $content);
+        $fs->create_file_from_string($record + ['itemid' => 2, 'filename' => 'dup2.txt'], $content);
+
+        // Disk usage should reflect only one physical copy of the content, not two.
+        registration::reset_caches();
+        $expectedsize = round(strlen($content) / (1024 * 1024), 3);
+        $this->assertEquals($expectedsize, registration::get_filepool_usage());
+
+        // Add another file and ensure the cache is being used and not recalculated.
+        $content = str_repeat('ab', 1048576);
+        $fs->create_file_from_string($record + ['itemid' => 3, 'filename' => 'anotherfile.txt'], $content);
+        $this->assertEquals($expectedsize, registration::get_filepool_usage());
     }
 }

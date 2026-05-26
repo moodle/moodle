@@ -1,0 +1,9 @@
+issueNumber: MDL-88805
+notes:
+  core:
+    - message: >-
+        `get_dataroot_size` in `\core\hub\registration` has been deprecated in
+        favour of `get_filepool_usage`, which approximates disk usage from the database
+        rather than scanning the dataroot directory, making it significantly more
+        performant on large sites.
+      type: deprecated
