@@ -151,7 +151,7 @@ if (!is_writable($CFG->phpunit_dataroot)) {
 if (!file_exists("$CFG->phpunit_dataroot/phpunittestdir.txt")) {
     if ($dh = opendir($CFG->phpunit_dataroot)) {
         while (($file = readdir($dh)) !== false) {
-            if ($file === 'phpunit' || $file === '.' || $file === '..' || $file === '.DS_Store') {
+            if ($file === 'phpunit' || $file === '.' || $file === '..' || $file === '.DS_Store' || $file === 'snapshots') {
                 continue;
             }
             phpunit_bootstrap_error(

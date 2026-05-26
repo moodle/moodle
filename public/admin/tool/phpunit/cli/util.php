@@ -50,6 +50,9 @@ list($options, $unrecognized) = cli_get_params(
         'diag'                  => false,
         'run'                   => false,
         'upgrade'               => false,
+        'snapshot'              => '',
+        'restore'               => '',
+        'list'                  => false,
         'help'                  => false,
     ],
     [
@@ -116,25 +119,34 @@ $drop = $options['drop'];
 $install = $options['install'];
 $buildconfig = $options['buildconfig'];
 $buildcomponentconfigs = $options['buildcomponentconfigs'];
+$snapshot = $options['snapshot'];
+$restore = $options['restore'];
 $upgrade = $options['upgrade'];
+$list = $options['list'];
 
 if (
     $options['help'] || (
     !$drop && !$install && !$buildconfig && !$buildcomponentconfigs
-    && !$diag && !$upgrade
-                )
+    && !$diag && !$upgrade && !$snapshot && !$restore && !$list
+    )
 ) {
     $help = "Various PHPUnit utility functions
 
 Options:
---drop         Drop database and dataroot
---install      Install database
---diag         Diagnose installation and return error code only
---run          Execute PHPUnit tests (alternative for standard phpunit binary)
 --buildconfig  Build /phpunit.xml from /phpunit.xml.dist that runs all tests
 --buildcomponentconfigs
                Build distributed phpunit.xml files for each component
---upgrade      Upgrade test site to latest version
+--diag         Diagnose installation and return error code only
+--drop         Drop database and dataroot
+--install      Install database
+--restore=NAME Restore snapshot of test site. NAME must be the exact name shown by --snapshot --list
+               (not the short name passed to --snapshot=NAME).
+--run          Execute PHPUnit tests (alternative for standard phpunit binary)
+--snapshot     Create snapshot of the current test site. Optionally specify name of the snapshot with
+               --snapshot=NAME.
+--snapshot --list
+               List all the available snapshots. Names are printed in the form expected by --restore=NAME.
+--upgrade      Upgrade installed plugins in the test site.
 
 -h, --help     Print out this help
 
@@ -177,7 +189,18 @@ if ($diag) {
     phpunit_util::install_site();
     exit(0);
 } else if ($upgrade) {
+    test_lock::acquire('phpunit');
     phpunit_util::upgrade_site();
     exit(0);
-}
+} else if ($list) {
+    phpunit_util::list_snapshots();
+    exit(0);
+} else if ($snapshot) {
+    test_lock::acquire('phpunit');
+    phpunit_util::snapshot_site(is_string($snapshot) ? $snapshot : '');
+    exit(0);
+} else if ($restore) {
+    test_lock::acquire('phpunit');
+    phpunit_util::restore_site(is_string($restore) ? $restore : '');
+    exit(0);
 }
