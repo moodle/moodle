@@ -38,7 +38,14 @@
         <div class="d-flex flex-wrap gap-1 align-items-center w-100">
             {{> block_myoverview/nav-grouping-selector }}
 
-            {{> block_myoverview/nav-search-widget }}
+            {{!
+                Override the `searchrole` block with an empty string to remove the `role="search"` landmark in
+                `core/search_input_auto` used by the `block_myoverview/nav-search-widget` template.
+                It is not necessary for the Course overview block that already has its own search landmark.
+            }}
+            {{< block_myoverview/nav-search-widget }}
+                {{$searchrole}}{{/searchrole}}
+            {{/ block_myoverview/nav-search-widget }}
 
             {{> block_myoverview/nav-sort-selector }}
 
