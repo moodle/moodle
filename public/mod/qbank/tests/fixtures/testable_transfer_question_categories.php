@@ -40,8 +40,7 @@ class testable_transfer_question_categories extends transfer_question_categories
     #[\Override]
     protected function move_question_category(\stdClass $oldtopcategory, module $newcontext): array {
         if ($this->testcounter >= 1) {
-            // We simulate a failure after successfully transferring two question categories
-            // and creating two corresponding transfer_questions tasks.
+            // Simulate a failure after one successful top-level category transfer.
             throw new moodle_exception('This is a mocked exception for testing purposes.');
         }
         $this->testcounter++;
