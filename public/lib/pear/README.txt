@@ -17,28 +17,28 @@ In detail, the libraries added here are:
 - PEAR HTML_Quickform:
     - Current version: 3.2.6
     - by Bertrand Mansion, Adam Daniel, Alexey Borzov
-    - License: PHP (Permission given to Moodle to redistribute under GPL)
+    - License: PHP 2.02 or PHP v4 (BSD-3-Clause)
     - http://pear.php.net/package/HTML_Quickform
 - PEAR HTML_Quickform_Renderer_Tableless:
     - Current version: 0.3.4
     - by Mark Wiesemann
-    - License: PHP (Permission given to Moodle to redistribute under GPL)
+    - License: PHP 3.01 or PHP v4 (BSD-3-Clause)
     - http://pear.php.net/package/HTML_QuickForm_Renderer_Tableless
 - PEAR HTML_QuickForm_DHTMLRulesTableless:
     - Current version: 0.1.2
     - by Alexey Borzov, Adam Daniel, Bertrand Mansion, Justin Patrin, Mark Wiesemann
-    - License: PHP (Permission given to Moodle to redistribute under GPL)
+    - License: PHP 3.01 or PHP v4 (BSD-3-Clause)
     - http://pear.php.net/package/HTML_QuickForm_DHTMLRulesTableless
 - PEAR HTML_Common:
     - Current version: 1.2.2
     - by Adam Daniel, Bertrand Mansion, Klaus Guenther, Alexey Borzov,
-    - License: PHP  (Permission given to Moodle to redistribute under GPL)
-    - http://pear.php.net/package/HTML
+    - License: PHP 2.02 or PHP v4 (BSD-3-Clause)
+    - http://pear.php.net/package/HTML_Common
 - PEAR main class:
     - Current version: 1.4.5
     - by Stig Bakken, Thomas V.V.Cox, Pierre-Alain Joye,
       Greg Beaver and Martin Jansen
-    - License: PHP
+    - License: BSD-3-Clause
     - http://pear.php.net/package/PEAR
 - PEAR HTML_AJAX:
     - Current version: 0.5.6
@@ -69,32 +69,23 @@ Eloy Lafuente, 2005-12-17 :-)
 A NOTE ON THE PHP LICENSE AND MOODLE
 ================================================================
 
-Everything in Moodle in pure GPL.  This pear directory is the only
-part of the distribution that is not.
+Some bundled PEAR libraries use older PHP License versions. The PHP
+Group's license page states that PHP software distributed under PHP
+License versions 2.01, 2.02, 3.0, and 3.01 may, at the user's option,
+be used under the PHP License version 4:
 
-There is some question about how PHP-licensed software can be
-included within a GPL-licensed distribution like Moodle, specifically
-the clause that annoyingly says no derivative of the software can
-include the name PHP.
+    https://www.php.net/license/
 
-We don't intend to rename Moodle to anything of the sort, obviously,
-but to help people downstream who could possibly want to do so,
-we have sought special permission from the authors of these classes
-to allow us an exemption on this point so that we don't need to
-change our nice clean GPL license.
+PHP License version 4 is the Modified BSD License, has SPDX identifier
+BSD-3-Clause, and is compatible with the GNU General Public License
+(GPL). Moodle distributes these PHP-licensed PEAR libraries on that
+compatibility path while retaining the original upstream headers as
+provenance.
 
-Several authors have given Moodle explicit permission to distribute
-their PHP-licensed PEAR classes in the Moodle distribution, allowing
-anybody using these classes ONLY as part of the Moodle distribution
-exemption from clauses of the PHP license that could cause
-conflict with the main GNU Public License that Moodle uses.
-
-We are still waiting to hear back from the others but we assume
-for now that it will likewise be OK.
+Earlier versions of this file described author-specific permissions
+that were sought in 2006. The PHP License version 4 compatibility path
+is the current basis documented here.
 
 If you are at all worried about this situation you can simply delete
 this directory from Moodle and it will use your installed PEAR
 libraries instead.
-
-Cheers,
-Martin Dougiamas, 2 April 2006

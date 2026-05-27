@@ -128,7 +128,7 @@
     <description>Class with many common HTML functions (used by HTML Quickform)</description>
     <version>1.7</version>
     <license>PHP</license>
-    <licenseversion>2.0</licenseversion>
+    <licenseversion>2.02 or v4 (BSD-3-Clause)</licenseversion>
     <repository>http://pear.php.net/package/HTML_Common</repository>
     <copyrights>
       <copyright>2004 Adam Daniel, Bertrand Mansion, Klaus Guenther, Alexey Borzov</copyright>
@@ -142,7 +142,7 @@
     <description>Class to write forms</description>
     <version>2.0</version>
     <license>PHP</license>
-    <licenseversion>2.0</licenseversion>
+    <licenseversion>2.02 or v4 (BSD-3-Clause)</licenseversion>
     <repository>https://pear.php.net/package/HTML_Quickform</repository>
     <copyrights>
       <copyright>2004 Bertrand Mansion, Adam Daniel, Alexey Borzov</copyright>
@@ -156,7 +156,7 @@
     <description>Class to write forms</description>
     <version>2.0</version>
     <license>PHP</license>
-    <licenseversion>2.0</licenseversion>
+    <licenseversion>2.02/3.01 or v4 (BSD-3-Clause)</licenseversion>
     <repository>https://pear.php.net/package/HTML_Quickform</repository>
     <copyrights>
       <copyright>2004 Bertrand Mansion, Adam Daniel, Alexey Borzov</copyright>
@@ -169,8 +169,8 @@
     <name>Pear.php</name>
     <description>Base class for other PEAR classes.</description>
     <version>1.4.5</version>
-    <license>PHP</license>
-    <licenseversion>3.0</licenseversion>
+    <license>BSD</license>
+    <licenseversion>3-Clause</licenseversion>
     <repository>https://pear.php.net/package/PEAR</repository>
     <copyrights>
       <copyright>2001-2006 The PHP Group. All rights reserved</copyright>
