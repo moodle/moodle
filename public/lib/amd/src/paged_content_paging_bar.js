@@ -406,13 +406,11 @@ function(
         var activePageAriaLabelComponents = getActivePageAriaLabelComponents(root);
         var activePageNumber = getActivePageNumber(root);
         var pageItems = root.find(SELECTORS.PAGE_ITEM);
+        var numberedPageItems = pageItems.filter(SELECTORS.PAGE);
         // We want to request all of the strings at once rather than
         // one at a time.
-        var stringRequests = pageItems.toArray().map(function(page) {
+        var stringRequests = numberedPageItems.toArray().map(function(page) {
             page = $(page);
-            if (page.attr('data-page') == undefined) {
-                return {};
-            }
             var pageNumber = getPageNumber(root, page);
 
             if (pageNumber === activePageNumber) {
@@ -428,10 +426,14 @@ function(
                     param: pageNumber
                 };
             }
-        }).filter(Boolean);
+        });
+
+        if (!stringRequests.length) {
+            return;
+        }
 
         Str.get_strings(stringRequests).then(function(strings) {
-            pageItems.each(function(index, page) {
+            numberedPageItems.each(function(index, page) {
                 page = $(page);
                 var string = strings[index];
                 page.attr('aria-label', string);
