@@ -206,13 +206,10 @@ function externalRelativeImports() {
                     return null;
                 }
 
-                // Rewrite the extension to .js for the built output.
+                // Rewrite the extension to remove any extension.
                 let externalPath = args.path;
-                if (/\.(ts|tsx)$/.test(externalPath)) {
-                    externalPath = externalPath.replace(/\.(ts|tsx)$/, '.js');
-                } else if (!/\.[a-z]+$/i.test(externalPath)) {
-                    // No extension — append .js (esbuild resolves .ts but output needs .js).
-                    externalPath += '.js';
+                if (/\.(ts|tsx|js|jsx)$/.test(externalPath)) {
+                    externalPath = externalPath.replace(/\.(ts|tsx|js|jsx)$/, '');
                 }
 
                 return { path: externalPath, external: true };
