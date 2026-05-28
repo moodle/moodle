@@ -27,26 +27,25 @@ import { copyFromNodeModules, getPackageVersion, getRootDir } from '../lib/util.
 export async function init() {
     const rootDir = getRootDir();
     const version = getPackageVersion('@moodlehq/design-system');
-    const themeRoot = path.join(rootDir, 'public', 'theme', 'boost');
-    const bundleRoot = path.join(rootDir, 'lib', 'js', 'bundles', 'design-system');
-    const themeDesignSystemRoot = path.join(themeRoot, 'scss', 'design-system');
+    const bundleRoot = path.join(rootDir, 'lib', 'bundles', 'design-system');
+    const bundleJsRoot = path.join(bundleRoot, 'js');
+    const bundleScssRoot = path.join(bundleRoot, 'scss');
 
     copyFromNodeModules({
         packageName: '@moodlehq/design-system',
         version,
-        cleanDirs: [bundleRoot, themeDesignSystemRoot],
+        cleanDirs: [bundleRoot],
         copies: [
-            { src: 'dist', dest: bundleRoot, label: '@moodlehq/design-system JS bundles' },
+            { src: 'dist', dest: bundleJsRoot, label: '@moodlehq/design-system JS bundles' },
             {
                 src: path.join('tokens', 'scss'),
-                dest: path.join(themeDesignSystemRoot, 'tokens', 'scss'),
+                dest: path.join(bundleScssRoot, 'tokens', 'scss'),
                 label: '@moodlehq/design-system tokens',
             },
         ],
-        readmePaths: [bundleRoot, themeDesignSystemRoot],
+        readmePaths: [bundleRoot],
         thirdpartylibs: [
-            { componentPath: path.join(rootDir, 'lib'), packageLocation: 'js/bundles/design-system' },
-            { componentPath: themeRoot, packageLocation: 'scss/design-system' },
+            { componentPath: path.join(rootDir, 'lib'), packageLocation: 'bundles/design-system' },
         ],
     });
 }

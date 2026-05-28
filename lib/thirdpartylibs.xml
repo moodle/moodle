@@ -19,7 +19,7 @@
       <repository>https://github.com/facebook/react</repository>
   </library>
   <library>
-    <location>js/bundles/design-system</location>
+    <location>bundles/design-system</location>
     <name>@moodlehq/design-system</name>
     <description>The Moodle HQ design system based on React</description>
     <version>2.1.1</version>

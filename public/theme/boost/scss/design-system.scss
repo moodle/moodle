@@ -1,4 +1,4 @@
 // Import Design System.
 // Do NOT import _index.scss - it uses @forward (incompatible with @import).
 
-@import "design-system/tokens/scss/_index.legacy";
+@import "../../../../lib/bundles/design-system/scss/tokens/scss/_index.legacy";

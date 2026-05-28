@@ -198,10 +198,17 @@ class core_scss extends \ScssPhp\ScssPhp\Compiler {
         $themedirectory = $CFG->dirroot . "/theme";
         $realroot = realpath($themedirectory);
 
+        // Bundles directory.
+        $bundledirectory = realpath($CFG->root . '/lib/bundles');
+
         // File should end in .scss and must be in sites theme directory, else ignore it.
         $pathvalid = $realpath !== false;
         $pathvalid = $pathvalid && (substr($path, -5) === '.scss');
-        $pathvalid = $pathvalid && (strpos($realpath, $realroot) === 0 || strpos($realpath, $addrealroot) === 0);
+        $pathvalid = $pathvalid && (
+            str_starts_with($realpath, $realroot)
+            || str_starts_with($realpath, $addrealroot)
+            || str_starts_with($realpath, $bundledirectory)
+        );
         return $pathvalid;
     }
 }

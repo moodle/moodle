@@ -104,7 +104,7 @@ class import_map implements \JsonSerializable {
         );
         $this->add_import(
             '@moodlehq/design-system',
-            path: 'lib/js/bundles/design-system/index.js',
+            path: 'lib/bundles/design-system/js/index.js',
         );
         $this->add_import(
             'react',
