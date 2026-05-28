@@ -29,17 +29,20 @@ module.exports = grunt => {
      *
      * Modes:
      *   grunt react          — production build
-     *   grunt react:dev      — development build (sourcemaps, no minification)
-     *   grunt react:watch    — esbuild native watch (dev mode, incremental context)
+     *   grunt react:dev      — deprecated (behaves like grunt react)
+     *   grunt react:watch    — esbuild native watch (incremental context)
      *
      * Note: react:watch uses esbuild's own context.watch() and is intentionally
      * separate from grunt-contrib-watch. This keeps esbuild's incremental build
-     * graph alive between rebuilds rather than restarting from scratch on each change.
+     * graph alive between rebuilds rather than starting from scratch on each change.
      */
     grunt.registerTask('react', 'Build all React components', function(mode) {
         const done = this.async();
         const isWatch = mode === 'watch';
-        const isDev = isWatch || mode === 'dev';
+
+        if (mode === 'dev') {
+            grunt.log.warn('react:dev is deprecated. Output is always production-mode. Use "grunt react" instead.');
+        }
 
         if (isWatch) {
             const path = require('path');
@@ -60,13 +63,11 @@ module.exports = grunt => {
             (async() => {
                 try {
                     const {watchComponents} = await import('../../.esbuild/plugin/plugincomponents.mjs');
-                    const { generateAliases } = await import('../../.esbuild/generate-aliases.mjs');
-                    const { buildPluginComponents } = await import('../../.esbuild/plugin/plugincomponents.mjs');
+                    const {generateAliases} = await import('../../.esbuild/generate-aliases.mjs');
 
                     generateAliases();
-                    await buildPluginComponents(isDev);
 
-                    const ctx = await watchComponents(true, onRebuild);
+                    const ctx = await watchComponents(onRebuild);
 
                     if (!ctx) {
                         grunt.log.warn('No React source files found. Nothing to watch.');
@@ -91,7 +92,7 @@ module.exports = grunt => {
             return;
         }
 
-        grunt.log.writeln(`Building React components in ${isDev ? 'DEVELOPMENT' : 'PRODUCTION'} mode...`);
+        grunt.log.writeln('Building React components...');
 
         (async() => {
             try {
@@ -99,7 +100,7 @@ module.exports = grunt => {
                 const {buildPluginComponents} = await import('../../.esbuild/plugin/plugincomponents.mjs');
 
                 generateAliases();
-                await buildPluginComponents(isDev);
+                await buildPluginComponents();
                 done();
             } catch (err) {
                 grunt.log.error(err.message);
