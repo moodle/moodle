@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@moodlehq/design-system": "^2.1",
+    "@moodlehq/design-system": "^4.1.0",
     "react": "^19.1",
     "react-dom": "^19.1"
   },
@@ -60,8 +60,6 @@
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.0.0",
     "jsdoc": "^4.0.2",
-    "ts-jest": "^29.4.9",
-    "typescript": "^5.7.3",
     "jsdoc-to-markdown": "^8.0.0",
     "jshint": "^2.13.4",
     "jstoxml": "^3.2.3",
@@ -73,6 +71,8 @@
     "shifter": "https://github.com/andrewnicols/shifter/archive/v1.2.0_moodle-0.tar.gz",
     "stylelint": "^15.11.0",
     "stylelint-csstree-validator": "^3.0.0",
+    "ts-jest": "^29.4.9",
+    "typescript": "^5.7.3",
     "winston": "^3.13.0",
     "xpath": "0.0.32"
   },
