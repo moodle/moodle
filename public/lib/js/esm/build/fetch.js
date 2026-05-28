@@ -6,3 +6,4 @@ import{requireAsync as e}from"@moodle/lms/core/amd";var t=await e("core/fetch");
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+//# sourceMappingURL=fetch.js.map
