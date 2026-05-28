@@ -149,11 +149,11 @@ class hook_listener {
         }
 
         // Add the sticky footer with the linear navigation content.
-        $linearnavigationcontent = new output\local\linearnavigation\footer_content($page->cm->course);
+        $linearnavigationcontent = new output\local\linearnavigation\footer_content($page->cm->id);
         $stickyfootercontent = $hook->renderer->render($linearnavigationcontent);
         $footer = new supplementary_sticky_footer(
             $stickyfootercontent,
-            'course-linear-navigation justify-content-end',
+            'course-linear-navigation',
         );
         $hook->add_html($hook->renderer->render($footer));
     }

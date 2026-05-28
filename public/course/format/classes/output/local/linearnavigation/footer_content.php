@@ -19,6 +19,8 @@ namespace core_courseformat\output\local\linearnavigation;
 use core\output\named_templatable;
 use core\output\renderable;
 use core\output\renderer_base;
+use core\router\util;
+use core_course\route\controller\course_navigation;
 
 /**
  * Sticky footer class for linear navigation in course format.
@@ -31,23 +33,28 @@ class footer_content implements named_templatable, renderable {
     /**
      * Constructor.
      *
-     * @param int $courseid The course ID.
+     * @param int $cmid The course module ID.
      */
     public function __construct(
-        /** @var int The course ID. */
-        private int $courseid
+        /** @var int The course module ID. */
+        private int $cmid
     ) {
     }
 
     #[\Override]
     public function export_for_template(renderer_base $output) {
-        $returnbutton = new \single_button(
-            new \moodle_url('/course/view.php', ['id' => $this->courseid]),
-            get_string('back'),
-            'get'
+        $previousurl = util::get_path_for_callable(
+            [course_navigation::class, 'cm_previous_element'],
+            ['cm' => $this->cmid],
         );
+        $nexturl = util::get_path_for_callable(
+            [course_navigation::class, 'cm_next_element'],
+            ['cm' => $this->cmid],
+        );
+
         return [
-            'returnbutton' => $returnbutton->export_for_template($output),
+            'previousurl' => $previousurl->out(false),
+            'nexturl' => $nexturl->out(false),
         ];
     }
 

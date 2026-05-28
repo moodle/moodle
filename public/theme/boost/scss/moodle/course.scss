@@ -960,6 +960,22 @@ $divider-hover-color: $primary !default;
     }
 }
 
+/* Course linear navigation footer. */
+
+.course-linear-navigation-footer-content {
+    .course-linear-navigation-link {
+        font-size: $font-size-base;
+        padding: $spacer * .25 0;
+
+        &:hover,
+        &:focus {
+            span {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
 /* Old indentation styles */
 
 .mod-indent-outer {
