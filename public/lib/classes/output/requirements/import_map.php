@@ -108,19 +108,19 @@ class import_map implements \JsonSerializable {
         );
         $this->add_import(
             'react',
-            path: 'lib/js/bundles/react/react',
+            path: 'lib/bundles/react/react',
         );
         $this->add_import(
             'react/',
-            path: 'lib/js/bundles/react',
+            path: 'lib/bundles/react',
         );
         $this->add_import(
             'react-dom',
-            path: 'lib/js/bundles/react-dom/react-dom',
+            path: 'lib/bundles/react-dom/react-dom',
         );
         $this->add_import(
             'react-dom/',
-            path: 'lib/js/bundles/react-dom',
+            path: 'lib/bundles/react-dom',
             modifier: $this->resolve_react_dev_path(...),
         );
     }

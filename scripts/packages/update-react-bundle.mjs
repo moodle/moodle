@@ -28,7 +28,7 @@ export async function init() {
     const rootDir = getRootDir();
     const reactVersion = getPackageVersion('react');
     const reactDomVersion = getPackageVersion('react-dom');
-    const outputDir = path.resolve(rootDir, 'lib', 'js', 'bundles');
+    const outputDir = path.resolve(rootDir, 'lib', 'bundles');
 
     await downloadFromEsmSh({
         bundles: [
@@ -52,13 +52,13 @@ export async function init() {
         thirdpartylibs: [
             {
                 componentPath: path.join(rootDir, 'lib'),
-                packageLocation: 'js/bundles/react',
+                packageLocation: 'bundles/react',
                 packageName: 'react',
                 version: reactVersion,
             },
             {
                 componentPath: path.join(rootDir, 'lib'),
-                packageLocation: 'js/bundles/react-dom',
+                packageLocation: 'bundles/react-dom',
                 packageName: 'react-dom',
                 version: reactDomVersion,
             },

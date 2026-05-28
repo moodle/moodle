@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <libraries>
   <library>
-      <location>js/bundles/react</location>
+      <location>bundles/react</location>
       <name>react</name>
       <description>Core library for building user interfaces with components</description>
       <version>19.2.4</version>
@@ -10,7 +10,7 @@
       <repository>https://github.com/facebook/react</repository>
   </library>
   <library>
-      <location>js/bundles/react-dom</location>
+      <location>bundles/react-dom</location>
       <name>react-dom</name>
       <description>React renderer for web browsers</description>
       <version>19.2.4</version>
