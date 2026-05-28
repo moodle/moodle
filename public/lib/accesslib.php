@@ -2499,9 +2499,9 @@ function get_all_risks() {
         'riskmanagetrust' => RISK_MANAGETRUST,
         'riskconfig'      => RISK_CONFIG,
         'riskxss'         => RISK_XSS,
+        'riskdataloss'    => RISK_DATALOSS,
         'riskpersonal'    => RISK_PERSONAL,
         'riskspam'        => RISK_SPAM,
-        'riskdataloss'    => RISK_DATALOSS,
     );
 }
 
@@ -3000,6 +3000,75 @@ function get_all_roles(?context $context = null) {
     } else {
         return $DB->get_records('role', array(), 'sortorder ASC');
     }
+}
+
+/**
+ * Returns all site roles in correct sort order with counts
+ *
+ * Note the count may contain the same user more than once in different
+ * contexts, this is intentional to be fast and is an indicative number
+ * purely to see how much the role is used for auditing purposes.
+ *
+ * Note: this method does not localise role names or descriptions,
+ *       use role_get_names() if you need role names.
+ *
+ * @return array of role records with optional coursealias property
+ */
+function get_all_roles_with_counts() {
+    global $DB;
+    $sql = "SELECT r.*,
+                   COALESCE(racounts.count, 0) AS count
+              FROM {role} r
+         LEFT JOIN (
+                    SELECT ra.roleid, COUNT(ra.userid) AS count
+                      FROM {role_assignments} ra
+                  GROUP BY ra.roleid
+                   ) racounts ON racounts.roleid = r.id
+          ORDER BY r.sortorder ASC";
+    return $DB->get_records_sql($sql);
+}
+
+/**
+ * Returns a per-role count of risky capabilities explicitly allowed at system context.
+ *
+ * @param int[] $roleids
+ * @return array
+ */
+function get_roles_risk_counts(array $roleids): array {
+    global $DB;
+
+    $allrisks = get_all_risks();
+    $riskcounts = [];
+    foreach ($roleids as $roleid) {
+        $riskcounts[$roleid] = array_fill_keys(array_keys($allrisks), 0);
+    }
+
+    if (empty($roleids)) {
+        return $riskcounts;
+    }
+
+    [$insql, $params] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'roleid');
+    $params['contextid'] = context_system::instance()->id;
+    $params['allow'] = CAP_ALLOW;
+
+    $sql = "SELECT rc.roleid, cap.riskbitmask
+              FROM {role_capabilities} rc
+              JOIN {capabilities} cap ON cap.name = rc.capability
+             WHERE rc.roleid $insql
+               AND rc.contextid = :contextid
+               AND rc.permission = :allow
+               AND cap.riskbitmask <> 0";
+    $records = $DB->get_recordset_sql($sql, $params);
+    foreach ($records as $record) {
+        foreach ($allrisks as $type => $risk) {
+            if ($risk & (int)$record->riskbitmask) {
+                $riskcounts[$record->roleid][$type]++;
+            }
+        }
+    }
+    $records->close();
+
+    return $riskcounts;
 }
 
 /**

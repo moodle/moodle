@@ -53,7 +53,7 @@ $systemcontext = context_system::instance();
 require_capability('moodle/role:manage', $systemcontext);
 
 // Get some basic data we are going to need.
-$roles = role_fix_names(get_all_roles(), $systemcontext, ROLENAME_ORIGINAL);
+$roles = role_fix_names(get_all_roles_with_counts(), $systemcontext, ROLENAME_ORIGINAL);
 
 $undeletableroles = array();
 $undeletableroles[$CFG->notloggedinroleid] = 1;
@@ -151,15 +151,24 @@ require('managetabs.php');
 
 // Initialise table.
 $table = new html_table();
-$table->colclasses = array('leftalign', 'leftalign', 'leftalign', 'leftalign');
+$table->colclasses = [
+    'leftalign',
+    'leftalign',
+    'leftalign',
+    'rightalign',
+    'leftalign',
+    'leftalign',
+];
 $table->id = 'roles';
 $table->attributes['class'] = 'admintable table generaltable table-hover';
-$table->head = array(
+$table->head = [
+    get_string('risks', 'role'),
     get_string('role') . ' ' . $OUTPUT->help_icon('roles', 'core_role'),
     get_string('description'),
+    get_string('roleassignments'),
     get_string('roleshortname', 'core_role'),
-    get_string('edit')
-);
+    get_string('edit'),
+];
 
 // Get some strings outside the loop.
 $stredit = get_string('edit');
@@ -168,41 +177,87 @@ $strmoveup = get_string('moveup');
 $strmovedown = get_string('movedown');
 
 // Print a list of roles with edit/copy/delete/reorder icons.
-$table->data = array();
+$table->data = [];
+$allrisks = get_all_risks();
+$roleriskcounts = get_roles_risk_counts(array_keys($roles));
 $firstrole = reset($roles);
 $lastrole = end($roles);
 foreach ($roles as $role) {
-    // Basic data.
-    $row = array(
-        '<a href="' . $defineurl . '?action=view&amp;roleid=' . $role->id . '">' . $role->localname . '</a>',
-        role_get_description($role),
-        s($role->shortname),
-        '',
-    );
+
+    $row = [];
+    $risks = $roleriskcounts[$role->id] ?? array_fill_keys(array_keys($allrisks), 0);
+    $riskicons = '';
+    foreach ($allrisks as $type => $risk) {
+        if ($risks[$type] > 0) {
+            $filterurl = new moodle_url('/admin/roles/define.php', [
+                'action' => 'view',
+                'roleid' => $role->id,
+                'risk' => $type,
+            ]);
+
+            $icon = '/i/' . str_replace('risk', 'risk_', $type);
+            $alt = get_string($type . 'short', 'admin');
+            $riskicons .= get_action_icon(
+                $filterurl,
+                $icon,
+                $alt,
+                ''
+            );
+        } else {
+            $riskicons .= get_spacer();
+        }
+    }
+
+    $row[] = html_writer::tag('nobr', $riskicons);
+    $row[] = '<a href="' . $defineurl . '?action=view&amp;roleid=' . $role->id . '">' . $role->localname . '</a>';
+    $row[] = role_get_description($role);
+    $row[] = $role->count;
+    $row[] = s($role->shortname);
+
+    $actions = '';
 
     // Move up.
     if ($role->sortorder != $firstrole->sortorder) {
-        $row[3] .= get_action_icon($baseurl . '?action=moveup&amp;roleid=' . $role->id . '&amp;sesskey=' . sesskey(), 'up', $strmoveup, $strmoveup);
+        $actions .= get_action_icon(
+            $baseurl . '?action=moveup&amp;roleid=' . $role->id . '&amp;sesskey=' . sesskey(),
+            'i/up',
+            $strmoveup,
+            $strmoveup
+        );
     } else {
-        $row[3] .= get_spacer();
+        $actions .= get_spacer();
     }
     // Move down.
     if ($role->sortorder != $lastrole->sortorder) {
-        $row[3] .= get_action_icon($baseurl . '?action=movedown&amp;roleid=' . $role->id . '&amp;sesskey=' . sesskey(), 'down', $strmovedown, $strmovedown);
+        $actions .= get_action_icon(
+            $baseurl . '?action=movedown&amp;roleid=' . $role->id . '&amp;sesskey=' . sesskey(),
+            'i/down',
+            $strmovedown,
+            $strmovedown
+        );
     } else {
-        $row[3] .= get_spacer();
+        $actions .= get_spacer();
     }
     // Edit.
-    $row[3] .= get_action_icon($defineurl . '?action=edit&amp;roleid=' . $role->id,
-            'edit', $stredit, get_string('editxrole', 'core_role', $role->localname));
+    $actions .= get_action_icon(
+        $defineurl . '?action=edit&amp;roleid=' . $role->id,
+        'i/edit',
+        $stredit,
+        get_string('editxrole', 'core_role', $role->localname)
+    );
     // Delete.
     if (isset($undeletableroles[$role->id])) {
-        $row[3] .= get_spacer();
+        $actions .= get_spacer();
     } else {
-        $row[3] .= get_action_icon($baseurl . '?action=delete&amp;roleid=' . $role->id,
-              'delete', $strdelete, get_string('deletexrole', 'core_role', $role->localname));
+        $actions .= get_action_icon(
+            $baseurl . '?action=delete&amp;roleid=' . $role->id,
+            'i/delete',
+            $strdelete,
+            get_string('deletexrole', 'core_role', $role->localname)
+        );
     }
 
+    $row[] = html_writer::tag('nobr', $actions);
     $table->data[] = $row;
 }
 echo html_writer::table($table);
@@ -217,9 +272,9 @@ die;
 function get_action_icon($url, $icon, $alt, $tooltip) {
     global $OUTPUT;
     return '<a title="' . $tooltip . '" href="'. $url . '">' .
-            $OUTPUT->pix_icon('t/' . $icon, $alt) . '</a> ';
+            $OUTPUT->pix_icon($icon, $alt) . '</a>';
 }
 function get_spacer() {
     global $OUTPUT;
-    return $OUTPUT->spacer();
+    return $OUTPUT->pix_icon('spacer', '', 'moodle');
 }
