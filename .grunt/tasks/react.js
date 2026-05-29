@@ -67,9 +67,9 @@ module.exports = grunt => {
 
                     generateAliases();
 
-                    const ctx = await watchComponents(onRebuild);
+                    const [productionContext, developmentContext] = await watchComponents(onRebuild);
 
-                    if (!ctx) {
+                    if (!productionContext || !developmentContext) {
                         grunt.log.warn('No React source files found. Nothing to watch.');
                         done();
                         return;
@@ -80,7 +80,8 @@ module.exports = grunt => {
                     // Keep the process alive until the user interrupts. done() is intentionally
                     // not called here — grunt's async mechanism holds the process open.
                     process.on('SIGINT', async() => {
-                        await ctx.dispose();
+                        await productionContext.dispose();
+                        await developmentContext.dispose();
                         done();
                     });
                 } catch (err) {

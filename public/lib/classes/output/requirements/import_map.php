@@ -121,32 +121,11 @@ class import_map implements \JsonSerializable {
         $this->add_import(
             'react-dom/',
             path: 'lib/bundles/react-dom',
-            modifier: $this->resolve_react_dev_path(...),
+            devreplacements: [
+                '/\.js$/' => '.development.js',
+                '/\.js.map$/' => '.development.js.map',
+            ],
         );
-    }
-
-    /**
-     * Modifier for React imports that resolves to the unminified development build when in developer mode.
-     *
-     * When the JS revision is -1 (developer mode / cachejs disabled), this substitutes the
-     * `.development.js` variant of a React bundle if it exists on disk, giving better stack
-     * traces and warnings during development.
-     *
-     * @param int $revision The JS revision number (-1 signals developer mode).
-     * @param string $requestedpath The bare specifier path that was requested.
-     * @param string $resolvedpath The resolved absolute filesystem path.
-     * @return string The (possibly substituted) absolute filesystem path to serve.
-     */
-    protected function resolve_react_dev_path(int $revision, string $requestedpath, string $resolvedpath): string {
-        if ($revision === -1) {
-            // During development, resolve to the unminified version of React for better debugging.
-            $unminifiedpath = str_replace('.js', '.development.js', $resolvedpath);
-            if (file_exists($unminifiedpath)) {
-                return $unminifiedpath;
-            }
-        }
-
-        return $resolvedpath;
     }
 
     /**
@@ -172,17 +151,24 @@ class import_map implements \JsonSerializable {
         ?string $path = null,
         bool $loadfromcomponent = false,
         string $suffix = '.js',
+        ?array $devreplacements = null,
         ?callable $modifier = null,
         array $allowedsuffixes = ['.js', '.js.map'],
     ): void {
         if (!in_array($suffix, $allowedsuffixes, true)) {
             $allowedsuffixes[] = $suffix;
         }
+
+        $devreplacements = $devreplacements ?? [
+            '/\.js$/' => '.dev.js',
+            '/\.js.map$/' => '.dev.js.map',
+        ];
         $this->imports[$specifier] = (object) [
             'loader' => $loader,
             'path' => $path,
             'loadfromcomponent' => $loadfromcomponent,
             'suffix' => $suffix,
+            'devreplacements' => $devreplacements,
             'allowedsuffixes' => $allowedsuffixes,
             'modifier' => $modifier,
         ];
@@ -224,7 +210,7 @@ class import_map implements \JsonSerializable {
 
             if ($importdata->loadfromcomponent) {
                 $subpath = substr($requestedpath, strlen($specifier));
-                $resolved = $this->resolve_module_identifier($importdata, $subpath);
+                $resolved = $this->resolve_module_identifier($importdata, $subpath, $revision);
                 if ($importdata->modifier !== null) {
                     $resolved = ($importdata->modifier)($revision, $requestedpath, $resolved);
                 }
@@ -261,6 +247,18 @@ class import_map implements \JsonSerializable {
                 $resolved = ($importdata->modifier)($revision, $requestedpath, $resolved);
             }
 
+            if ($revision === -1) {
+                // During development, check if the unminified version of the module exists for better debugging.
+                $devfile = preg_replace(
+                    array_keys($importdata->devreplacements),
+                    array_values($importdata->devreplacements),
+                    $resolved,
+                );
+                if (file_exists($devfile)) {
+                    return $devfile;
+                }
+            }
+
             return $resolved;
         }
 
@@ -275,11 +273,16 @@ class import_map implements \JsonSerializable {
      *
      * @param object $importdata The import entry containing the path and loadfromcomponent flag.
      * @param string $subpath The subpath after the specifier prefix (e.g. `mod_book/viewer`).
+     * @param int $revision The JS revision number, used for modifier callables to determine if in developer mode.
      * @return string Absolute path to the JS file.
      * @throws \core\exception\not_found_exception If the subpath is missing a slash, contains `..`,
      *   the component is unknown, or the resolved file does not exist.
      */
-    protected function resolve_module_identifier(object $importdata, string $subpath): string {
+    protected function resolve_module_identifier(
+        object $importdata,
+        string $subpath,
+        int $revision,
+    ): string {
         if (!str_contains($subpath, '/')) {
             throw new \core\exception\not_found_exception('component', $subpath);
         }
@@ -296,13 +299,31 @@ class import_map implements \JsonSerializable {
         $dir = \core\component::get_component_directory($component);
         $file = "{$dir}/{$importdata->path}/{$modulerest}";
 
+        $suffixpresent = false;
         foreach ($importdata->allowedsuffixes as $allowedsuffix) {
             if (str_ends_with($file, $allowedsuffix) && file_exists($file)) {
-                return $file;
+                $suffixpresent = true;
             }
         }
 
-        $file .= $importdata->suffix;
+        if (!$suffixpresent) {
+            // If the requested path already ends with an accepted suffix, don't try appending it again.
+            // This allows specifiers to include the suffix if needed.
+            $file .= $importdata->suffix;
+        }
+
+        if ($revision === -1) {
+            // During development, check if the unminified version of the module exists for better debugging.
+            $devfile = preg_replace(
+                array_keys($importdata->devreplacements),
+                array_values($importdata->devreplacements),
+                $file,
+            );
+            if (file_exists($devfile)) {
+                return $devfile;
+            }
+        }
+
         if (file_exists($file)) {
             return $file;
         }

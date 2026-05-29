@@ -38,6 +38,7 @@ import { glob } from "glob";
 import chalk from "chalk";
 import path from "path";
 import fs from "fs";
+import { getOwningComponentDirectory } from "../../.grunt/components.js";
 
 const projectRoot = process.cwd();
 
@@ -99,17 +100,68 @@ async function buildComponent(entry, buildConfig) {
     fs.mkdirSync(path.dirname(output), { recursive: true });
 
     try {
-        await esbuild.build({
+        const prodBuild = esbuild.build({
             ...buildConfig,
             entryPoints: [entry],
             outfile: output,
+            define: {
+                'process.env.NODE_ENV': '"production"',
+            },
         });
+
+        const devBuild = esbuild.build({
+            ...buildConfig,
+            entryPoints: [entry],
+            outfile: output.replace(/\.js$/, '.dev.js'),
+            define: {
+                'process.env.NODE_ENV': '"development"',
+            },
+        });
+
+        await Promise.all([
+            prodBuild,
+            devBuild,
+        ]);
 
         return { file, output, error: null };
     } catch (error) {
         return { file, error: error instanceof Error ? error : new Error(String(error)) };
     }
 }
+
+const configPlugin = () => ({
+    name: 'moodle-build-config',
+    setup(build) {
+        const options = build.initialOptions
+        options.define = options.define || {}
+
+        if (options.define['process.env.NODE_ENV'] === '"development"') {
+            const getOwnerDirectory = (entry) => {
+                if (options.outdir) {
+                    return getOwningComponentDirectory(entry.in);
+                } else {
+                    return getOwningComponentDirectory(entry);
+                }
+            };
+            const owningComponent = getOwnerDirectory(options.entryPoints?.[0] ?? '');
+
+            options.jsxDev = true;
+            options.keepNames = true;
+            options.minify = false;
+            options.sourcemap = 'linked';
+            // This path is relative to `/core/esm/[revision]/[component]/js/esm/build` because that's where the output files are written.
+            // By specifying the sourceRoot it is possible to link the source files via a workspace in the browser for in-browser editing of code.
+            options.sourceRoot = `../../../../../../sources/${owningComponent}/js/esm/build`;
+            options.treeShaking = false;
+        } else {
+            options.jsxDev = false;
+            options.keepNames = false;
+            options.minify = true;
+            options.sourcemap = false;
+            options.treeShaking = true;
+        }
+    },
+});
 
 /**
  * Resolve source and output paths for a component entry.
@@ -141,7 +193,7 @@ function resolveComponentPaths(entry) {
  * @returns {Promise<{errors: {file: string, output?: string, error: Error|null}[]}>}
  */
 async function runParallelBuilds(entryPoints, buildConfig) {
-    const total = entryPoints.length;
+    const total = entryPoints.length * 3;
     /** @type {{file: string, output?: string, error: Error|null}[]} */
     const errors = [];
     const startTime = Date.now();
@@ -154,6 +206,8 @@ async function runParallelBuilds(entryPoints, buildConfig) {
         if (result.error) {
             errors.push(result);
         }
+        progress.tick();
+        progress.tick();
         progress.tick();
     }));
 
@@ -222,12 +276,8 @@ function createBuildConfig() {
         bundle: false,
         format: "esm",
         jsx: "automatic",
-        jsxDev: true,
-        keepNames: true,
-        minify: true,
-        sourcemap: 'linked',
         treeShaking: true,
-        plugins: [externalRelativeImports()],
+        plugins: [configPlugin(), externalRelativeImports()],
         define: { 'process.env.NODE_ENV': '"production"' },
     };
 }
@@ -258,6 +308,99 @@ export async function buildPluginComponents() {
     }
 }
 
+const getProductionBuild = (entryPoints, buildConfig, watchReporter) => {
+    const entryPairs = entryPoints.flatMap(entry => {
+        const resolved = resolveComponentPaths(entry);
+        if (!resolved) {
+            return [];
+        }
+        fs.mkdirSync(path.dirname(resolved.output), { recursive: true });
+        return [{ in: entry, out: path.relative(projectRoot, resolved.output).replace(/\.js$/, '') }];
+    });
+
+    return esbuild.context({
+        ...buildConfig,
+        entryPoints: entryPairs,
+        outdir: projectRoot,
+        metafile: true,
+        plugins: [...(buildConfig.plugins || []), watchReporter],
+        define: {
+            'process.env.NODE_ENV': '"production"',
+        },
+    });
+};
+
+const getDevelopmentBuild = (entryPoints, buildConfig, watchReporter) => {
+    // Map each source file to an {in, out} pair so esbuild can write each
+    // component to its custom output directory while sharing a single context.
+    // The 'out' path is relative to outdir (projectRoot) and has no extension —
+    // esbuild appends the appropriate extension automatically.
+    // Build entry pairs and ensure output directories exist in a single pass.
+    const entryPairs = entryPoints.flatMap(entry => {
+        const resolved = resolveComponentPaths(entry);
+        if (!resolved) {
+            return [];
+        }
+        fs.mkdirSync(path.dirname(resolved.output), { recursive: true });
+        return [{ in: entry, out: path.relative(projectRoot, resolved.output).replace(/\.js$/, '.dev') }];
+    });
+
+    return esbuild.context({
+        ...buildConfig,
+        entryPoints: entryPairs,
+        outdir: projectRoot,
+        metafile: true,
+
+        plugins: [...(buildConfig.plugins || []), watchReporter],
+        define: {
+            'process.env.NODE_ENV': '"development"',
+        },
+    });
+};
+// Report build results to the terminal after every build (initial and on each change).
+// metafile: true populates result.metafile.outputs so we know which files were written.
+// On a rebuild only the affected outputs appear, so it effectively names the changed file.
+/** @type {import('esbuild').Plugin} */
+const getWatchReporter = (onRebuild) => ({
+    name: 'watch-reporter',
+    setup(build) {
+        let isInitial = true;
+        let startTime = 0;
+
+        build.onStart(() => {
+            startTime = Date.now();
+        });
+
+        build.onEnd((result) => {
+            const now = new Date().toLocaleTimeString();
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+            const isDev = build.initialOptions.jsxDev;
+            const buildType = isDev ? 'development' : 'production';
+
+            if (result.errors.length > 0) {
+                console.error(chalk.red(`[${now}] ✗ ${buildType} build failed (${result.errors.length} error(s))`) + chalk.dim(` · ${elapsed}s`));
+                return;
+            }
+
+            const outputs = Object.keys(result.metafile?.outputs ?? {});
+
+            console.log(chalk.green(`[${now}] ✓ ${outputs.length} ${buildType} component(s) built`) + chalk.dim(` · ${elapsed}s`));
+
+            if (isInitial) {
+                isInitial = false;
+            } else if (onRebuild) {
+                // entryPoint is the source file (relative to projectRoot) that triggered
+                // this rebuild. Pass it to the caller so they can run follow-up tasks
+                // (e.g. linting) without this module needing to know about them.
+                const srcFiles = Object.values(result.metafile?.outputs ?? {})
+                    .map(output => output.entryPoint)
+                    .filter(/** @param {string|undefined} f */ f => !!f);
+                onRebuild(/** @type {string[]} */(srcFiles));
+            }
+        });
+    },
+});
+
 /**
  * Start esbuild in native watch mode over all React components.
  *
@@ -286,70 +429,22 @@ export async function watchComponents(onRebuild) {
 
     const buildConfig = createBuildConfig();
 
-    // Map each source file to an {in, out} pair so esbuild can write each
-    // component to its custom output directory while sharing a single context.
-    // The 'out' path is relative to outdir (projectRoot) and has no extension —
-    // esbuild appends the appropriate extension automatically.
-    // Build entry pairs and ensure output directories exist in a single pass.
-    const entryPairs = entryPoints.flatMap(entry => {
-        const resolved = resolveComponentPaths(entry);
-        if (!resolved) {
-            return [];
-        }
-        fs.mkdirSync(path.dirname(resolved.output), { recursive: true });
-        return [{ in: entry, out: path.relative(projectRoot, resolved.output).replace(/\.js$/, '') }];
-    });
+    const [
+        productionContext,
+        developmentContext,
+    ] = await Promise.all([
+        getProductionBuild(entryPoints, buildConfig, getWatchReporter(onRebuild)),
+        // Do not pass a callback for dev builds - we only need to perform the callbacks once.
+        getDevelopmentBuild(entryPoints, buildConfig, getWatchReporter()),
+    ]);
 
-    // Report build results to the terminal after every build (initial and on each change).
-    // metafile: true populates result.metafile.outputs so we know which files were written.
-    // On a rebuild only the affected outputs appear, so it effectively names the changed file.
-    /** @type {import('esbuild').Plugin} */
-    const watchReporter = {
-        name: 'watch-reporter',
-        setup(build) {
-            let isInitial = true;
-            let startTime = 0;
+    await Promise.all([
+        productionContext.watch(),
+        developmentContext.watch(),
+    ]);
 
-            build.onStart(() => {
-                startTime = Date.now();
-            });
-
-            build.onEnd(result => {
-                const now = new Date().toLocaleTimeString();
-                const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-
-                if (result.errors.length > 0) {
-                    console.error(chalk.red(`[${now}] ✗ Build failed (${result.errors.length} error(s))`) + chalk.dim(` · ${elapsed}s`));
-                    return;
-                }
-
-                const outputs = Object.keys(result.metafile?.outputs ?? {});
-
-                console.log(chalk.green(`[${now}] ✓ ${outputs.length} component(s) built`) + chalk.dim(` · ${elapsed}s`));
-
-                if (isInitial) {
-                    isInitial = false;
-                } else if (onRebuild) {
-                    // entryPoint is the source file (relative to projectRoot) that triggered
-                    // this rebuild. Pass it to the caller so they can run follow-up tasks
-                    // (e.g. linting) without this module needing to know about them.
-                    const srcFiles = Object.values(result.metafile?.outputs ?? {})
-                        .map(output => output.entryPoint)
-                        .filter(/** @param {string|undefined} f */ f => !!f);
-                    onRebuild(/** @type {string[]} */ (srcFiles));
-                }
-            });
-        },
-    };
-
-    const ctx = await esbuild.context({
-        ...buildConfig,
-        entryPoints: entryPairs,
-        outdir: projectRoot,
-        metafile: true,
-        plugins: [...(buildConfig.plugins || []), watchReporter],
-    });
-
-    await ctx.watch();
-    return ctx;
+    return [
+        productionContext,
+        developmentContext,
+    ];
 }
