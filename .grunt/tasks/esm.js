@@ -17,7 +17,7 @@
 // @ts-nocheck
 
 /**
- * Grunt tasks for building React components.
+ * Grunt tasks for building ESM components.
  *
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,23 +25,23 @@
 
 module.exports = grunt => {
     /**
-     * Register react task — build or watch React components.
+     * Register ESM task — build or watch ESM components.
      *
      * Modes:
-     *   grunt react          — production build
-     *   grunt react:dev      — deprecated (behaves like grunt react)
-     *   grunt react:watch    — esbuild native watch (incremental context)
+     *   grunt esm          — production build
+     *   grunt esm:dev      — deprecated (behaves like grunt esm)
+     *   grunt esm:watch    — esbuild native watch (incremental context)
      *
-     * Note: react:watch uses esbuild's own context.watch() and is intentionally
+     * Note: esm:watch uses esbuild's own context.watch() and is intentionally
      * separate from grunt-contrib-watch. This keeps esbuild's incremental build
      * graph alive between rebuilds rather than starting from scratch on each change.
      */
-    grunt.registerTask('react', 'Build all React components', function(mode) {
+    grunt.registerTask('esm', 'Build all ESM components', function(mode) {
         const done = this.async();
         const isWatch = mode === 'watch';
 
         if (mode === 'dev') {
-            grunt.log.warn('react:dev is deprecated. Output is always production-mode. Use "grunt react" instead.');
+            grunt.log.warn('esm:dev is deprecated. Output is always production-mode. Use "grunt esm" instead.');
         }
 
         if (isWatch) {
@@ -70,12 +70,12 @@ module.exports = grunt => {
                     const [productionContext, developmentContext] = await watchComponents(onRebuild);
 
                     if (!productionContext || !developmentContext) {
-                        grunt.log.warn('No React source files found. Nothing to watch.');
+                        grunt.log.warn('No ESM source files found. Nothing to watch.');
                         done();
                         return;
                     }
 
-                    grunt.log.ok('esbuild is watching for React changes. Press Ctrl+C to stop.');
+                    grunt.log.ok('esbuild is watching for ESM changes. Press Ctrl+C to stop.');
 
                     // Keep the process alive until the user interrupts. done() is intentionally
                     // not called here — grunt's async mechanism holds the process open.
@@ -93,7 +93,7 @@ module.exports = grunt => {
             return;
         }
 
-        grunt.log.writeln('Building React components...');
+        grunt.log.writeln('Building ESM components...');
 
         (async() => {
             try {
@@ -110,4 +110,6 @@ module.exports = grunt => {
         })();
     });
 
+    grunt.registerTask('react', ['esm']);
+    grunt.registerTask('react:watch', ['esm:watch']);
 };
