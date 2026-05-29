@@ -22,21 +22,21 @@
 
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { downloadFromEsmSh, getPackageVersion, getRootDir } from '../lib/util.mjs';
+import { buildBundle, copyFromNodeModules, getPackageVersion, getRootDir } from '../lib/util.mjs';
 
 export async function init() {
     const rootDir = getRootDir();
     const version = getPackageVersion('@popperjs/core');
     const outputDir = path.resolve(rootDir, 'lib', 'bundles');
+    const coreDir = path.join(outputDir, '@popperjs');
+    const popperDir = path.join(rootDir, 'node_modules', '@popperjs', 'core');
 
-    await downloadFromEsmSh({
-        bundles: [
-            { packageName: '@popperjs/core', version, fileName: 'core' },
-        ],
-        outputDir,
-        readmePaths: [
-            { dir: path.join(outputDir, '@popperjs'), packageName: '@popperjs/core' },
-        ],
+    await copyFromNodeModules({
+        packageName: '@popperjs/core',
+        version,
+        cleanDirs: [coreDir],
+        copies: [],
+        readmePaths: [path.join(outputDir, '@popperjs')],
         thirdpartylibs: [
             {
                 componentPath: path.join(rootDir, 'lib'),
@@ -45,6 +45,13 @@ export async function init() {
                 version,
             },
         ],
+        postCopy: async () => {
+            await buildBundle({
+                entryPoint: path.join(popperDir, 'lib', 'index.js'),
+                outDir: coreDir,
+                outFile: 'core.js',
+            });
+        },
     });
 }
 

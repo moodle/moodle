@@ -22,7 +22,49 @@
 
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { copyFromNodeModules, getPackageVersion, getRootDir } from '../lib/util.mjs';
+import { buildBundle, buildDirectory, copyFromNodeModules, getPackageVersion, getRootDir } from '../lib/util.mjs';
+
+/**
+ * esbuild plugin that externalises Bootstrap's dom/ and util/ source modules
+ * when building the main bundle.
+ *
+ * When esbuild encounters any import that resolves to a file inside Bootstrap's
+ * js/src/dom/ or js/src/util/ directories it marks it as external and rewrites
+ * the import path to the sibling ./dom/<file> or ./util/<file> form that the
+ * output bundle will actually use.  This keeps dom and util as live, shared
+ * module instances so that code importing e.g. `bootstrap/dom/event-handler`
+ * via the import map receives the same singleton that Bootstrap's components use
+ * internally.
+ *
+ * @param {string} bootstrapDir Absolute path to the Bootstrap package root.
+ * @returns {import('esbuild').Plugin}
+ */
+function externalBootstrapInternals(bootstrapDir) {
+    const srcDir = path.join(bootstrapDir, 'js', 'src');
+    const domDir = path.join(srcDir, 'dom');
+    const utilDir = path.join(srcDir, 'util');
+
+    return {
+        name: 'external-bootstrap-dom-util',
+        setup(build) {
+            build.onResolve({filter: /\.js$/}, (args) => {
+                if (!args.importer) {
+                    return null;
+                }
+                const resolved = path.resolve(path.dirname(args.importer), args.path);
+                if (resolved.startsWith(domDir + path.sep) || resolved === domDir) {
+                    const rel = path.relative(srcDir, resolved);
+                    return {path: `./${rel}`, external: true};
+                }
+                if (resolved.startsWith(utilDir + path.sep) || resolved === utilDir) {
+                    const rel = path.relative(srcDir, resolved);
+                    return {path: `./${rel}`, external: true};
+                }
+                return null;
+            });
+        },
+    };
+}
 
 export async function init() {
     const rootDir = getRootDir();
@@ -31,30 +73,38 @@ export async function init() {
     const bundleRoot = path.join(libDir, 'bundles', 'bootstrap');
     const bundleJsRoot = path.join(bundleRoot, 'js');
     const bundleScssRoot = path.join(bundleRoot, 'scss');
+    const bootstrapDir = path.join(rootDir, 'node_modules', 'bootstrap');
 
-    copyFromNodeModules({
+    await copyFromNodeModules({
         packageName: 'bootstrap',
         version,
         cleanDirs: [bundleRoot],
         copies: [
-            { src: path.join('js', 'src', 'dom'), dest: path.join(bundleJsRoot, 'dom'), label: 'bootstrap JS dom' },
-            { src: path.join('js', 'src', 'util'), dest: path.join(bundleJsRoot, 'util'), label: 'bootstrap JS util' },
-            {
-                src: path.join('dist', 'js', 'bootstrap.esm.min.js'),
-                dest: path.join(bundleJsRoot, 'bootstrap.esm.min.js'),
-                label: 'bootstrap.esm.min.js',
-            },
-            {
-                src: path.join('dist', 'js', 'bootstrap.esm.min.js.map'),
-                dest: path.join(bundleJsRoot, 'bootstrap.esm.min.js.map'),
-                label: 'bootstrap.esm.min.js.map',
-            },
-            { src: 'scss', dest: bundleScssRoot, label: 'bootstrap SCSS' },
+            {src: 'scss', dest: bundleScssRoot, label: 'bootstrap SCSS'},
         ],
         readmePaths: [bundleRoot],
         thirdpartylibs: [
-            { componentPath: libDir, packageLocation: 'bundles/bootstrap' },
+            {componentPath: libDir, packageLocation: 'bundles/bootstrap'},
         ],
+        postCopy: async () => {
+            await buildBundle({
+                entryPoint: path.join(bootstrapDir, 'js', 'index.esm.js'),
+                outDir: bundleJsRoot,
+                outFile: 'bootstrap.js',
+                external: ['@popperjs/core'],
+                plugins: [externalBootstrapInternals(bootstrapDir)],
+            });
+
+            await buildDirectory({
+                srcDir: path.join(bootstrapDir, 'js', 'src', 'dom'),
+                outDir: path.join(bundleJsRoot, 'dom'),
+            });
+
+            await buildDirectory({
+                srcDir: path.join(bootstrapDir, 'js', 'src', 'util'),
+                outDir: path.join(bundleJsRoot, 'util'),
+            });
+        },
     });
 }
 

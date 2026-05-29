@@ -195,15 +195,15 @@ class import_map implements \JsonSerializable {
             themable: false,
         );
         $this->add_import(
-            '@popperjs/core',
-            path: 'lib/bundles/@popperjs/core/core.js',
+            '@popperjs/',
+            path: 'lib/bundles/@popperjs',
         );
 
         // Register the main Bootstrap bundle as a bare specifier, and the internal util and dom modules as subpath specifiers.
         $this->add_import(
             specifier: 'bootstrap',
             path: 'lib/bundles/bootstrap/js',
-            urlsuffix: '/bootstrap.esm.min.js',
+            urlsuffix: '/bootstrap.js',
             allowedsuffixes: ['.js', '.js.map'],
         );
         $this->add_import(
@@ -299,6 +299,7 @@ class import_map implements \JsonSerializable {
         string $requestedpath,
     ): ?string {
         global $CFG;
+
         // Sort longest-key-first once so a more-specific prefix always wins over a shorter one.
         if (!$this->importssorted) {
             uksort($this->imports, fn ($a, $b) => strlen($b) <=> strlen($a));
