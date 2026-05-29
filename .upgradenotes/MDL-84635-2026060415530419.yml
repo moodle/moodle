@@ -1,0 +1,9 @@
+issueNumber: MDL-84635
+notes:
+  core_reportbuilder:
+    - message: >-
+        There are three new date-related aggregation types for `TYPE_TIMESTAMP`
+        columns: `week`, `month` and `year`. An abstract `datebase` aggregation
+        class, upon which all date-related types should extend has also been
+        created
+      type: improved

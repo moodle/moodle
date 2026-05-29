@@ -18,39 +18,45 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\aggregation;
 
-use core\{clock, di};
 use core\lang_string;
 use core_reportbuilder\local\helpers\format;
 
 /**
- * Column date aggregation type
+ * Column week aggregation type
  *
  * @package     core_reportbuilder
- * @copyright   2024 Paul Holden <paulh@moodle.com>
+ * @copyright   2026 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class date extends datebase {
+class week extends datebase {
     /**
      * Return aggregation name
      *
      * @return lang_string
      */
     public static function get_name(): lang_string {
-        return new lang_string('aggregationdate', 'core_reportbuilder');
+        return new lang_string('aggregationweek', 'core_reportbuilder');
     }
 
     /**
      * Return the aggregated field SQL
+     *
+     * The Unix epoch (Jan 1, 1970) was a Thursday. We calculate the offset needed to align week
+     * boundaries to the configured start day of the week
      *
      * @param string $field
      * @param int $columntype
      * @return string
      */
     public static function get_field_sql(string $field, int $columntype): string {
-        $datenow = di::get(clock::class)->now();
+        $weeksecs = WEEKSECS;
 
-        // Apply timezone offset for current user.
-        return "(FLOOR({$field} / " . DAYSECS . ") * " . DAYSECS . ") + " . $datenow->getOffset();
+        // Determine the day-of-week shift to align week boundaries. The epoch started on Thursday (day 4 in
+        // the 0=Sunday system). We compute how many days from the configured start day to Thursday.
+        $startday = \core_calendar\type_factory::get_calendar_instance()->get_starting_weekday();
+        $epochshift = ((4 - $startday + 7) % 7) * DAYSECS;
+
+        return "FLOOR(({$field} + {$epochshift}) / {$weeksecs}) * {$weeksecs} - {$epochshift}";
     }
 
     /**

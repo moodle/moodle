@@ -188,6 +188,7 @@ $string['strftimedaytime'] = '%a, %H:%M';
 $string['strftimemonth'] = '%B';
 $string['strftimemonthyear'] = '%B %Y';
 $string['strftimerecent'] = '%d %b, %H:%M';
+$string['strftimeyear'] = '%Y';
 $string['strftimerecentfull'] = '%a, %d %b %Y, %I:%M %p';
 $string['strftimetime'] = '%I:%M %p';
 $string['strftimetime12'] = '%I:%M %p';

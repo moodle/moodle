@@ -30,7 +30,6 @@ use core_reportbuilder\local\aggregation\base;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class aggregation {
-
     /**
      * Helper method to convert aggregation class name into fully qualified namespaced class
      *
@@ -49,7 +48,8 @@ class aggregation {
      * @return bool
      */
     public static function valid(string $aggregationclass): bool {
-        return class_exists($aggregationclass) && is_subclass_of($aggregationclass, base::class);
+        return class_exists($aggregationclass) && is_subclass_of($aggregationclass, base::class) &&
+            !(new \ReflectionClass($aggregationclass))->isAbstract();
     }
 
     /**
@@ -60,9 +60,10 @@ class aggregation {
     public static function get_aggregations(): array {
         $classes = core_component::get_component_classes_in_namespace('core_reportbuilder', 'local\\aggregation');
 
-        return array_filter(array_keys($classes), static function(string $class): bool {
-            return static::valid($class);
-        });
+        return array_filter(
+            array_keys($classes),
+            [static::class, 'valid'],
+        );
     }
 
     /**

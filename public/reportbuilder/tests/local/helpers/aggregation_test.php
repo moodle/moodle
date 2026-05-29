@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\helpers;
 
 use advanced_testcase;
-use core_reportbuilder\local\aggregation\{base, groupconcat, max};
+use core_reportbuilder\local\aggregation\{base, datebase, groupconcat, max};
 use core_reportbuilder\local\report\column;
 use core\url;
 
@@ -49,6 +49,7 @@ final class aggregation_test extends advanced_testcase {
         return [
             [max::class, true],
             [base::class, false],
+            [datebase::class, false],
             [url::class, false],
             ['invalid', false],
         ];
@@ -71,11 +72,14 @@ final class aggregation_test extends advanced_testcase {
      */
     public function test_get_aggregations(): void {
         $aggregations = aggregation::get_aggregations();
-        $this->assertCount(10, $aggregations);
+        $this->assertCount(13, $aggregations);
 
         // Just assert single item from returned structure.
         $this->assertContains(max::class, $aggregations);
         $this->assertNotContains(base::class, $aggregations);
+
+        // Abstract classes should not be included.
+        $this->assertNotContains(datebase::class, $aggregations);
     }
 
     /**
@@ -83,7 +87,7 @@ final class aggregation_test extends advanced_testcase {
      */
     public function test_get_column_aggregations(): void {
         $aggregations = aggregation::get_column_aggregations(column::TYPE_TIMESTAMP);
-        $this->assertCount(5, $aggregations);
+        $this->assertCount(8, $aggregations);
 
         // Just assert single item from returned structure.
         $this->assertArrayHasKey(max::get_class_name(), $aggregations);
@@ -94,7 +98,7 @@ final class aggregation_test extends advanced_testcase {
 
         // Now exclude some aggregation types.
         $aggregations = aggregation::get_column_aggregations(column::TYPE_TIMESTAMP, [max::get_class_name()]);
-        $this->assertCount(4, $aggregations);
+        $this->assertCount(7, $aggregations);
         $this->assertArrayNotHasKey(max::get_class_name(), $aggregations);
     }
 }

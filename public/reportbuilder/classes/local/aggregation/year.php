@@ -18,39 +18,38 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\aggregation;
 
-use core\{clock, di};
 use core\lang_string;
 use core_reportbuilder\local\helpers\format;
 
 /**
- * Column date aggregation type
+ * Column year aggregation type
  *
  * @package     core_reportbuilder
- * @copyright   2024 Paul Holden <paulh@moodle.com>
+ * @copyright   2026 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class date extends datebase {
+class year extends datebase {
     /**
      * Return aggregation name
      *
      * @return lang_string
      */
     public static function get_name(): lang_string {
-        return new lang_string('aggregationdate', 'core_reportbuilder');
+        return new lang_string('aggregationyear', 'core_reportbuilder');
     }
 
     /**
      * Return the aggregated field SQL
+     *
+     * Uses DB-specific date functions to truncate timestamps to the start of the year, since years have
+     * variable lengths (leap years) and cannot be handled with simple integer arithmetic
      *
      * @param string $field
      * @param int $columntype
      * @return string
      */
     public static function get_field_sql(string $field, int $columntype): string {
-        $datenow = di::get(clock::class)->now();
-
-        // Apply timezone offset for current user.
-        return "(FLOOR({$field} / " . DAYSECS . ") * " . DAYSECS . ") + " . $datenow->getOffset();
+        return static::get_date_field_sql($field, 'year');
     }
 
     /**
@@ -63,6 +62,6 @@ class date extends datebase {
      * @return string
      */
     public function format_value($value, array $values, array $callbacks, int $columntype): string {
-        return format::userdate($value, (object) [], get_string('strftimedaydate', 'core_langconfig'));
+        return format::userdate($value, (object) [], get_string('strftimeyear', 'core_langconfig'));
     }
 }
