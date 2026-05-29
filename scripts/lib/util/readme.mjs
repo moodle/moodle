@@ -32,5 +32,6 @@ import path from "path";
 export const createPackageReadme = (packagePath, packageName) => {
     const readmeContent = `The content of this directory is automatically managed by the \`npm install\` and \`npm update\` commands.`;
     const readmePath = path.join(packagePath, 'readme_moodle.txt');
+    fs.mkdirSync(packagePath, {recursive: true});
     fs.writeFileSync(readmePath, readmeContent, 'utf-8');
 };
