@@ -347,4 +347,40 @@ final class generator_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Tests for create_instance() correctly applies a preset and creates the expected data fields.
+     *
+     * @covers \mod_data_generator::create_instance
+     */
+    public function test_create_instance_with_preset(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Get the mod_data generator.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Create a data activity using the journal preset.
+        $instance = $generator->create_instance([
+            'course' => $course->id,
+            'preset' => 'journal',
+        ]);
+
+        // Fetch the fields created by the preset.
+        $fields = $DB->get_records('data_fields', ['dataid' => $instance->id]);
+
+        // Journal preset should create exactly 2 fields.
+        $this->assertCount(2, $fields);
+
+        // Extract field names.
+        $fieldnames = array_column($fields, 'name');
+
+        // Verify expected fields exist.
+        $this->assertContains('Title', $fieldnames);
+        $this->assertContains('Content', $fieldnames);
+    }
 }
