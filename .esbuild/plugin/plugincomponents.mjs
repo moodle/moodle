@@ -24,13 +24,10 @@
  *   <component>/js/esm/src/**\/*.{ts,tsx}  →  <component>/js/esm/build/**\/*.js
  *
  * Exports:
- *   createBuildConfig()                esbuild config object (always production).
  *   buildPluginComponents()            Glob for every js/esm/src tree across
  *                                      core and plugins, compile all in parallel.
  *   watchComponents(onRebuild)         Start esbuild's native watch mode so the
  *                                      compiler rebuilds affected files on save.
- *   resolveComponentPaths(entry)       Map an absolute source path to its
- *                                      relative input path and output path.
  *
  * @copyright  2026 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -120,7 +117,7 @@ async function buildComponent(entry, buildConfig) {
  * @param {string} entry Absolute component source path.
  * @returns {{file: string, output: string} | null} Relative file info and output path, or null for unsupported paths.
  */
-export function resolveComponentPaths(entry) {
+function resolveComponentPaths(entry) {
     const rel = path.relative(projectRoot, entry);
 
     if (rel.includes(path.join('esm', 'src'))) {
@@ -220,7 +217,7 @@ function externalRelativeImports() {
  *
  * @returns {import('esbuild').BuildOptions} esbuild configuration object.
  */
-export function createBuildConfig() {
+function createBuildConfig() {
     return {
         bundle: false,
         format: "esm",
