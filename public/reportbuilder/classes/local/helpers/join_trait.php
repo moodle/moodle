@@ -26,7 +26,6 @@ namespace core_reportbuilder\local\helpers;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait join_trait {
-
     /** @var string[] SQL table joins */
     private array $joins = [];
 
@@ -50,6 +49,30 @@ trait join_trait {
     final public function add_joins(array $joins): static {
         foreach ($joins as $join) {
             $this->add_join($join);
+        }
+        return $this;
+    }
+
+    /**
+     * Prepend single SQL table join before any existing joins
+     *
+     * @param string $join
+     * @return static
+     */
+    final public function prepend_join(string $join): static {
+        $this->joins = [trim($join) => trim($join)] + $this->joins;
+        return $this;
+    }
+
+    /**
+     * Prepend multiple SQL table joins before any existing joins
+     *
+     * @param string[] $joins
+     * @return static
+     */
+    final public function prepend_joins(array $joins): static {
+        foreach (array_reverse($joins) as $join) {
+            $this->prepend_join($join);
         }
         return $this;
     }
