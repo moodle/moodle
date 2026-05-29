@@ -222,9 +222,8 @@ function externalRelativeImports() {
  */
 export function createBuildConfig() {
     return {
-        bundle: true,
+        bundle: false,
         format: "esm",
-        external: ["react", "react/*", "react-dom", "react-dom/*", "@moodlehq/design-system", "@moodlehq/design-system/*", "@moodle/lms", "@moodle/lms/*"],
         jsx: "automatic",
         jsxDev: true,
         keepNames: true,
