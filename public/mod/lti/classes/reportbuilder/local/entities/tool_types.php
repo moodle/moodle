@@ -69,7 +69,6 @@ class tool_types extends base {
             new lang_string('name', 'core'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.icon")
             ->set_is_sortable(true)
@@ -92,7 +91,6 @@ class tool_types extends base {
             new lang_string('description', 'core'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.description")
             ->set_is_sortable(true);
@@ -103,7 +101,6 @@ class tool_types extends base {
             new lang_string('course', 'core'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
             ->add_field("{$tablealias}.course")
             ->set_is_sortable(true);
@@ -114,7 +111,6 @@ class tool_types extends base {
             new lang_string('version'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.ltiversion")
             ->set_is_sortable(true);
@@ -138,8 +134,7 @@ class tool_types extends base {
                 new lang_string('name'),
                 $this->get_entity_name(),
                 "{$tablealias}.name"
-            ))
-                ->add_joins($this->get_joins()),
+            )),
 
             // Description filter.
             (new filter(
@@ -148,8 +143,7 @@ class tool_types extends base {
                 new lang_string('description'),
                 $this->get_entity_name(),
                 "{$tablealias}.description"
-            ))
-                ->add_joins($this->get_joins()),
+            )),
 
             // LTI Version filter.
             (new filter(
@@ -159,7 +153,6 @@ class tool_types extends base {
                 $this->get_entity_name(),
                 "{$tablealias}.ltiversion"
             ))
-                ->add_joins($this->get_joins())
                 ->set_options_callback(static function(): array {
                     return ['LTI-1p0' => 'Legacy LTI', '1.3.0' => "LTI Advantage"];
                 })

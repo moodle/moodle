@@ -140,7 +140,6 @@ class custom_fields {
                     new lang_string('customfieldcolumn', 'core_reportbuilder', $field->get_formatted_name(false)),
                     $this->entityname
                 ))
-                    ->add_joins($this->get_joins())
                     ->add_join($this->get_table_join($field))
                     ->set_type($columntype)
                     ->add_field($customdatasql, $datafield)
@@ -243,7 +242,6 @@ class custom_fields {
                     $customdatasql,
                     $customdataparams,
                 ))
-                    ->add_joins($this->get_joins())
                     ->add_join($this->get_table_join($field))
                     ->set_is_available($this->handler->can_view($field, 0));
 

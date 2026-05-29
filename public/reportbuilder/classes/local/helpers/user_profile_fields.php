@@ -127,7 +127,6 @@ class user_profile_fields {
                 new lang_string('customfieldcolumn', 'core_reportbuilder', $profilefield->display_name(false)),
                 $this->entityname
             ))
-                ->add_joins($this->get_joins())
                 ->add_join($this->get_table_join($profilefield))
                 ->set_type($columntype)
                 ->add_field($userinfosql, 'data')
@@ -207,7 +206,6 @@ class user_profile_fields {
                 $userinfosql,
                 $userinfoparams,
             ))
-                ->add_joins($this->get_joins())
                 ->add_join($this->get_table_join($profilefield))
                 ->set_is_available($profilefield->is_visible());
 

@@ -71,7 +71,6 @@ class framework extends base {
             new lang_string('name'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$frameworkalias}.shortname")
             ->set_is_sortable(true);
 
@@ -81,7 +80,6 @@ class framework extends base {
             new lang_string('description'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$frameworkalias}.description, {$frameworkalias}.descriptionformat")
@@ -104,7 +102,6 @@ class framework extends base {
             new lang_string('idnumber'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$frameworkalias}.idnumber")
             ->set_is_sortable(true);
 
@@ -114,7 +111,6 @@ class framework extends base {
             new lang_string('scale'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$frameworkalias}.scaleid")
             ->add_callback(static function(?string $scaleid): string {
                 $scales = get_scales_menu();
@@ -127,7 +123,6 @@ class framework extends base {
             new lang_string('visible'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_field("{$frameworkalias}.visible")
             ->set_is_sortable(true)
@@ -139,7 +134,6 @@ class framework extends base {
             new lang_string('timecreated', 'core_reportbuilder'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$frameworkalias}.timecreated")
             ->set_is_sortable(true)
@@ -151,7 +145,6 @@ class framework extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$frameworkalias}.timemodified")
             ->set_is_sortable(true)
@@ -175,8 +168,7 @@ class framework extends base {
             new lang_string('name'),
             $this->get_entity_name(),
             "{$frameworkalias}.shortname",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // ID number.
         $filters[] = (new filter(
@@ -185,8 +177,7 @@ class framework extends base {
             new lang_string('idnumber'),
             $this->get_entity_name(),
             "{$frameworkalias}.idnumber",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Scale.
         $filters[] = (new filter(
@@ -196,7 +187,6 @@ class framework extends base {
             $this->get_entity_name(),
             "{$frameworkalias}.scaleid",
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback('get_scales_menu');
 
         // Visible.
@@ -206,8 +196,7 @@ class framework extends base {
             new lang_string('visible'),
             $this->get_entity_name(),
             "{$frameworkalias}.visible",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Time created.
         $filters[] = (new filter(
@@ -216,8 +205,7 @@ class framework extends base {
             new lang_string('timecreated', 'core_reportbuilder'),
             $this->get_entity_name(),
             "{$frameworkalias}.timecreated",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Time modified.
         $filters[] = (new filter(
@@ -226,8 +214,7 @@ class framework extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name(),
             "{$frameworkalias}.timemodified",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

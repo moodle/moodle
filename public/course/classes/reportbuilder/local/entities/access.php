@@ -71,7 +71,6 @@ class access extends base {
             new lang_string('lastcourseaccess', 'moodle'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$tablealias}.timeaccess")
             ->add_field("{$user}.id", 'userid')
@@ -104,7 +103,6 @@ class access extends base {
             $this->get_entity_name(),
             "{$tablealias}.timeaccess"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_NOT_EMPTY,

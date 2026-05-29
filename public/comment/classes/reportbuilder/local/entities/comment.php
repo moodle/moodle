@@ -71,7 +71,6 @@ class comment extends base {
             new lang_string('content'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_join($this->get_context_join())
             ->add_fields("{$commentalias}.content, {$commentalias}.format")
@@ -94,7 +93,6 @@ class comment extends base {
             new lang_string('plugin'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$commentalias}.component")
             ->set_is_sortable(true);
 
@@ -104,7 +102,6 @@ class comment extends base {
             new lang_string('pluginarea'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$commentalias}.commentarea")
             ->set_is_sortable(true);
 
@@ -114,7 +111,6 @@ class comment extends base {
             new lang_string('pluginitemid'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$commentalias}.itemid")
             ->set_is_sortable(true);
 
@@ -124,7 +120,6 @@ class comment extends base {
             new lang_string('timecreated', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$commentalias}.timecreated")
             ->set_is_sortable(true)
@@ -148,8 +143,7 @@ class comment extends base {
             new lang_string('content'),
             $this->get_entity_name(),
             "{$commentalias}.content"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Time created.
         $filters[] = (new filter(
@@ -159,7 +153,6 @@ class comment extends base {
             $this->get_entity_name(),
             "{$commentalias}.timecreated"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_RANGE,

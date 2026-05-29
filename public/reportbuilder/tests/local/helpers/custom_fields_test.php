@@ -164,7 +164,7 @@ final class custom_fields_test extends core_reportbuilder_testcase {
     }
 
     /**
-     * Test that joins added to the custom fields helper are present in its columns/filters
+     * Test that element-specific joins are present in columns/filters
      */
     public function test_add_join(): void {
         $this->resetAfterTest();
@@ -179,19 +179,6 @@ final class custom_fields_test extends core_reportbuilder_testcase {
         $filterjoins = $customfields->get_filters()[0]->get_joins();
         $this->assertCount(1, $filterjoins);
         $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $filterjoins[0]);
-
-        // Add additional join.
-        $customfields->add_join('JOIN {test} t ON t.id = id');
-
-        $columnjoins = $customfields->get_columns()[0]->get_joins();
-        $this->assertCount(2, $columnjoins);
-        $this->assertEquals('JOIN {test} t ON t.id = id', $columnjoins[0]);
-        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $columnjoins[1]);
-
-        $filterjoins = $customfields->get_filters()[0]->get_joins();
-        $this->assertCount(2, $filterjoins);
-        $this->assertEquals('JOIN {test} t ON t.id = id', $filterjoins[0]);
-        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $filterjoins[1]);
     }
 
     /**

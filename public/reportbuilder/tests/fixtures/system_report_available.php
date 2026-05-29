@@ -47,7 +47,6 @@ class system_report_available extends system_report {
             new lang_string('username'),
             'user'
         ))
-            ->add_joins($this->get_joins())
             ->add_field('u.firstname')
         );
 
@@ -60,7 +59,6 @@ class system_report_available extends system_report {
                 'user',
                 'u.username'
             ))
-                ->add_joins($this->get_joins())
             );
         }
 

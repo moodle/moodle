@@ -69,7 +69,6 @@ class usercompetency extends base {
             new lang_string('status'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$usercompetencyalias}.status")
             ->set_is_sortable(true)
@@ -87,7 +86,6 @@ class usercompetency extends base {
             new lang_string('proficient', 'core_competency'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_field("{$usercompetencyalias}.proficiency")
             ->set_is_sortable(true)
@@ -99,7 +97,6 @@ class usercompetency extends base {
             new lang_string('rating', 'core_competency'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$usercompetencyalias}.grade, {$usercompetencyalias}.competencyid")
             ->add_callback(static function(?string $grade, stdClass $row): string {
                 if ($grade === null) {
@@ -131,7 +128,6 @@ class usercompetency extends base {
             $this->get_entity_name(),
             "{$usercompetencyalias}.status",
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback([user_competency::class, 'get_status_list']);
 
         // Proficient.
@@ -141,8 +137,7 @@ class usercompetency extends base {
             new lang_string('proficient', 'core_competency'),
             $this->get_entity_name(),
             "{$usercompetencyalias}.proficiency",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

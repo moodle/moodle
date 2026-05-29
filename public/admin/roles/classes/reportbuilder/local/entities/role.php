@@ -70,7 +70,6 @@ class role extends base {
             new lang_string('rolefullname', 'core_role'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$rolealias}.name, {$rolealias}.shortname, {$rolealias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             // The sorting is on name, unless empty then we use shortname.
@@ -97,7 +96,6 @@ class role extends base {
             new lang_string('roleoriginalname', 'core_role'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$rolealias}.name, {$rolealias}.shortname")
             // The sorting is on name, unless empty then we use shortname.
             ->set_is_sortable(true, [
@@ -117,7 +115,6 @@ class role extends base {
             new lang_string('roleshortname', 'core_role'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$rolealias}.shortname")
             ->set_is_sortable(true);
 
@@ -127,7 +124,6 @@ class role extends base {
             new lang_string('archetype', 'core_role'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$rolealias}.archetype")
             ->add_callback(fn(?string $archetype) => match ($archetype) {
                 null => '',
@@ -142,7 +138,6 @@ class role extends base {
             new lang_string('description'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$rolealias}.description, {$rolealias}.shortname")
             ->set_is_sortable(true)
@@ -170,7 +165,6 @@ class role extends base {
             $this->get_entity_name(),
             "{$rolealias}.id"
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 return role_get_names(null, ROLENAME_ORIGINAL, true);
             });
@@ -183,7 +177,6 @@ class role extends base {
             $this->get_entity_name(),
             "{$rolealias}.archetype",
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 return array_map(
                     fn(string $archetype) => get_string("archetype{$archetype}", 'core_role'),

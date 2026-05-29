@@ -67,7 +67,6 @@ class role_assignment extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$raalias}.timemodified")
             ->set_is_sortable(true)
@@ -79,7 +78,6 @@ class role_assignment extends base {
             new lang_string('plugin'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$raalias}.component")
             ->set_is_sortable(true);
 
@@ -89,7 +87,6 @@ class role_assignment extends base {
             new lang_string('pluginitemid'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$raalias}.itemid")
             ->set_is_sortable(true);
 
@@ -111,8 +108,7 @@ class role_assignment extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name(),
             "{$raalias}.timemodified"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

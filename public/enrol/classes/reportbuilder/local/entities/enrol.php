@@ -69,7 +69,6 @@ class enrol extends base {
             new lang_string('plugin'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$enrolalias}.enrol")
             ->set_is_sortable(true)
@@ -87,7 +86,6 @@ class enrol extends base {
             new lang_string('name'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$enrolalias}.enrol, {$enrolalias}.name, {$enrolalias}.courseid, " .
                 "{$enrolalias}.roleid, {$enrolalias}.customint1")
@@ -106,7 +104,6 @@ class enrol extends base {
             new lang_string('enabled', 'core_admin'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             // For accurate aggregation, we need to return boolean enabled = true by xor'ing the field value.
             ->add_field($DB->sql_bitxor("{$enrolalias}.status", 1), 'status')
@@ -119,7 +116,6 @@ class enrol extends base {
             new lang_string('enrolperiod', 'core_enrol'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$enrolalias}.enrolperiod")
             ->set_is_sortable(true)
@@ -136,7 +132,6 @@ class enrol extends base {
             new lang_string('enroltimestart', 'core_enrol'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$enrolalias}.enrolstartdate")
             ->set_is_sortable(true)
@@ -148,7 +143,6 @@ class enrol extends base {
             new lang_string('enroltimeend', 'core_enrol'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$enrolalias}.enrolenddate")
             ->set_is_sortable(true)
@@ -175,7 +169,6 @@ class enrol extends base {
             $this->get_entity_name(),
             "{$enrolalias}.enrol"
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 return array_map(static function(enrol_plugin $plugin): string {
                     return $plugin->get_instance_name(null);
@@ -189,8 +182,7 @@ class enrol extends base {
             new lang_string('custominstancename', 'core_enrol'),
             $this->get_entity_name(),
             "{$enrolalias}.name"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Enabled filter.
         $filters[] = (new filter(
@@ -199,8 +191,7 @@ class enrol extends base {
             new lang_string('enabled', 'core_admin'),
             $this->get_entity_name(),
             $DB->sql_bitxor("{$enrolalias}.status", 1)
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Period filter.
         $filters[] = (new filter(
@@ -209,8 +200,7 @@ class enrol extends base {
             new lang_string('enrolperiod', 'core_enrol'),
             $this->get_entity_name(),
             "{$enrolalias}.enrolperiod"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Start date filter.
         $filters[] = (new filter(
@@ -219,8 +209,7 @@ class enrol extends base {
             new lang_string('enroltimestart', 'core_enrol'),
             $this->get_entity_name(),
             "{$enrolalias}.enrolstartdate"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // End date filter.
         $filters[] = (new filter(
@@ -229,8 +218,7 @@ class enrol extends base {
             new lang_string('enroltimeend', 'core_enrol'),
             $this->get_entity_name(),
             "{$enrolalias}.enrolenddate"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

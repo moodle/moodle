@@ -72,7 +72,6 @@ class discussion extends base {
             new lang_string('name'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$discussionalias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             ->set_is_sortable(true)
@@ -93,7 +92,6 @@ class discussion extends base {
             new lang_string('displaystart', 'mod_forum'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$discussionalias}.timestart")
             ->set_is_sortable(true)
@@ -105,7 +103,6 @@ class discussion extends base {
             new lang_string('displayend', 'mod_forum'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$discussionalias}.timeend")
             ->set_is_sortable(true)
@@ -117,7 +114,6 @@ class discussion extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$discussionalias}.timemodified")
             ->set_is_sortable(true)
@@ -141,8 +137,7 @@ class discussion extends base {
             new lang_string('name'),
             $this->get_entity_name(),
             "{$discussionalias}.name",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Time start.
         $filters[] = (new filter(
@@ -151,8 +146,7 @@ class discussion extends base {
             new lang_string('displaystart', 'mod_forum'),
             $this->get_entity_name(),
             "{$discussionalias}.timestart",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Time end.
         $filters[] = (new filter(
@@ -161,8 +155,7 @@ class discussion extends base {
             new lang_string('displayend', 'mod_forum'),
             $this->get_entity_name(),
             "{$discussionalias}.timeend",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Time modified.
         $filters[] = (new filter(
@@ -171,8 +164,7 @@ class discussion extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name(),
             "{$discussionalias}.timemodified",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

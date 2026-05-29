@@ -68,7 +68,6 @@ class enrolment extends base {
             new lang_string('timecreated', 'moodle'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$userenrolments}.timecreated")
             ->set_is_sortable(true)
@@ -80,7 +79,6 @@ class enrolment extends base {
             new lang_string('timestarted', 'enrol'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("
                 CASE WHEN {$userenrolments}.timestart = 0
@@ -96,7 +94,6 @@ class enrolment extends base {
             new lang_string('timeended', 'enrol'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$userenrolments}.timeend")
             ->set_is_sortable(true)
@@ -108,7 +105,6 @@ class enrolment extends base {
             new lang_string('status', 'moodle'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_field($this->get_status_field_sql(), 'status')
             ->set_is_sortable(true)
             ->add_callback(static function (?string $status): string {
@@ -166,7 +162,6 @@ class enrolment extends base {
             $this->get_entity_name(),
             "{$userenrolments}.timecreated"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_NOT_EMPTY,
@@ -187,7 +182,6 @@ class enrolment extends base {
                           ELSE {$userenrolments}.timestart
                       END"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_NOT_EMPTY,
@@ -205,7 +199,6 @@ class enrolment extends base {
             $this->get_entity_name(),
             "{$userenrolments}.timeend"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_NOT_EMPTY,
@@ -223,7 +216,6 @@ class enrolment extends base {
             $this->get_entity_name(),
             $this->get_status_field_sql()
         ))
-            ->add_joins($this->get_joins())
             ->set_options([
                 status_field::STATUS_ACTIVE => new lang_string('participationactive', 'core_enrol'),
                 status_field::STATUS_SUSPENDED => new lang_string('participationsuspended', 'core_enrol'),
