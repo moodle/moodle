@@ -17,16 +17,12 @@ Feature: Users can use the Resources preset
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And the following "activities" exist:
-      | activity | name                | intro          | course | idnumber |
-      | data     | Student resources    | Database intro | C1     | data1    |
-    And I am on the "Student resources" "data activity" page logged in as teacher1
-    And I follow "Presets"
-    And I click on "fullname" "radio" in the "Resources" "table_row"
-    And I click on "Use this preset" "button"
+      | activity | name              | intro          | course | idnumber | preset    |
+      | data     | Student resources | Database intro | C1     | data1    | resources |
     And the following "mod_data > entries" exist:
-      | database | user     | Title                | Description    | Type  | Author             | Web link                      | Cover      |
-      | data1    | student1 | My favourite book    | Book content   | Type1 | The book author    | http://myfavouritebook.cat    | first.png  |
-      | data1    | teacher1 | My favourite podcast | Podcast content| Type2 | The podcast author | http://myfavouritepodcast.cat | second.png |
+      | database | user     | Title                | Description     | Type  | Author             | Web link                      | Cover      |
+      | data1    | student1 | My favourite book    | Book content    | Type1 | The book author    | http://myfavouritebook.cat    | first.png  |
+      | data1    | teacher1 | My favourite podcast | Podcast content | Type2 | The podcast author | http://myfavouritepodcast.cat | second.png |
 
   @javascript
   Scenario: Resources. Users view entries
