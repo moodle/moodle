@@ -163,6 +163,15 @@ class cachestore_file extends store implements
     protected $serializer = self::SERIALIZER_PHP;
 
     /**
+     * Controls the allowed_classes option passed to unserialize() when using the PHP serializer.
+     * Set to false to disallow all object unserialization (safest for caches that only hold
+     * scalar/array values), or an array of fully-qualified class names to restrict which PHP
+     * objects may be instantiated. Defaults to true (allow all) for backwards compatibility.
+     * @var bool|array
+     */
+    protected $allowedclasses = true;
+
+    /**
      * Determine if igbinary functions are available for use.
      *
      * @return boolean
@@ -1118,6 +1127,11 @@ class cachestore_file extends store implements
     protected function unserialize($value) {
         switch ($this->serializer) {
             case self::SERIALIZER_PHP:
+                // Use allowed_classes when specified to restrict PHP Object Injection
+                // via a compromised or attacker-influenced cache backend.
+                if ($this->allowedclasses !== true) {
+                    return unserialize($value, ['allowed_classes' => $this->allowedclasses]);
+                }
                 return unserialize($value);
             case self::SERIALIZER_IGBINARY:
                 if (self::igbinary_available()) {
@@ -1125,6 +1139,9 @@ class cachestore_file extends store implements
                 }
         }
         debugging("Unknown or unavailable serializer: {$this->serializer}");
+        if ($this->allowedclasses !== true) {
+            return unserialize($value, ['allowed_classes' => $this->allowedclasses]);
+        }
         return unserialize($value);
     }
 }

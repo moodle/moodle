@@ -114,6 +114,15 @@ class cachestore_redis extends store implements
     protected $serializer = Redis::SERIALIZER_PHP;
 
     /**
+     * Controls the allowed_classes option passed to unserialize() when using Redis::SERIALIZER_PHP.
+     * Set to false to disallow all object unserialization, or an array of fully-qualified class
+     * names to restrict which PHP objects may be instantiated. Defaults to true (allow all classes)
+     * for backwards compatibility.
+     * @var bool|array
+     */
+    protected $allowedclasses = true;
+
+    /**
      * Compressor for this store.
      *
      * @var int
@@ -1154,6 +1163,11 @@ class cachestore_redis extends store implements
             case Redis::SERIALIZER_NONE:
                 return $value;
             case Redis::SERIALIZER_PHP:
+                // Restrict deserialization to prevent PHP Object Injection via
+                // a compromised or attacker-influenced Redis cache backend.
+                if ($this->allowedclasses !== true) {
+                    return unserialize($value, ['allowed_classes' => $this->allowedclasses]);
+                }
                 return unserialize($value);
             case defined('Redis::SERIALIZER_IGBINARY') && Redis::SERIALIZER_IGBINARY:
                 return igbinary_unserialize($value);
