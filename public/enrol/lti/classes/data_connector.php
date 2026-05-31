@@ -346,7 +346,7 @@ class data_connector extends DataConnector {
             $context->setConsumerId($row->consumerid);
             $context->ltiContextId = $row->lticontextkey;
             $context->type = $row->type;
-            $settings = unserialize($row->settings);
+            $settings = unserialize($row->settings, ['allowed_classes' => false]);
             if (!is_array($settings)) {
                 $settings = array();
             }
@@ -502,7 +502,7 @@ class data_connector extends DataConnector {
                 $resourcelink->setConsumerId(null);
             }
             $resourcelink->ltiResourceLinkId = $row->ltiresourcelinkkey;
-            $settings = unserialize($row->settings);
+            $settings = unserialize($row->settings, ['allowed_classes' => false]);
             if (!is_array($settings)) {
                 $settings = array();
             }
@@ -1001,7 +1001,7 @@ class data_connector extends DataConnector {
         $consumer->consumerGuid = $record->consumerguid;
         $consumer->profile = json_decode($record->profile ?? '');
         $consumer->toolProxy = $record->toolproxy;
-        $settings = unserialize($record->settings);
+        $settings = unserialize($record->settings, ['allowed_classes' => false]);
         if (!is_array($settings)) {
             $settings = array();
         }
