@@ -12,6 +12,10 @@
 	path = public/admin/tool/ldapsync
 	url = https://github.com/ucsf-education/moodle-admin-tool-ldapsync
 	branch = main
+[submodule "public/admin/tool/sentry"]
+	path = public/admin/tool/sentry
+	url = https://github.com/EsdrasCaleb/moodle-tool_sentry
+	branch = main
 [submodule "public/availability/condition/mobileapp"]
 	path = public/availability/condition/mobileapp
 	url = https://github.com/ucsf-education/moodle-availability_mobileapp
@@ -194,7 +198,3 @@
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_501_STABLE
 	tag = v5.1.2
-[submodule "public/admin/tool/sentry"]
-	path = public/admin/tool/sentry
-	url = https://github.com/EsdrasCaleb/moodle-tool_sentry
-	branch = main
