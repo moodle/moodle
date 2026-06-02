@@ -223,8 +223,8 @@ final class import_map_test extends \advanced_testcase {
         $map->set_default_loader(new \core\url('https://example.com/'));
 
         $dir = \core\component::get_component_directory('core');
-        $result = $map->get_path_for_script(1, '@moodle/lms/core/ajax');
-        $this->assertEquals("{$dir}/js/esm/build/ajax.js", $result);
+        $result = $map->get_path_for_script(1, '@moodle/lms/core/react_autoinit');
+        $this->assertEquals("{$dir}/js/esm/build/react_autoinit.js", $result);
     }
 
     /**
@@ -235,8 +235,8 @@ final class import_map_test extends \advanced_testcase {
         $map->set_default_loader(new \core\url('https://example.com/'));
 
         $dir = \core\component::get_component_directory('core');
-        $result = $map->get_path_for_script(1, '@moodle/lms/core/ajax.js');
-        $this->assertEquals("{$dir}/js/esm/build/ajax.js", $result);
+        $result = $map->get_path_for_script(1, '@moodle/lms/core/react_autoinit.js');
+        $this->assertEquals("{$dir}/js/esm/build/react_autoinit.js", $result);
     }
 
     /**
