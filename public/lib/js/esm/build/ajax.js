@@ -1,9 +1,7 @@
-var i=Object.defineProperty;var r=(e,n)=>i(e,"name",{value:n,configurable:!0});import{requireAsync as l}from"@moodle/lms/core/amd";function x(e){return typeof e=="object"&&e!==null&&"message"in e&&"errorcode"in e}r(x,"isMoodleAjaxError");var s=await l("core/ajax");function u(e){return new Promise((n,o)=>{e.then(n,o)})}r(u,"toNativePromise");function d(e,n=!0,o=!0,t=!1){let[a]=s.call([e],n,o,t);return u(a)}r(d,"fetchOne");function j(e,n=!0,o=!0,t=!1){return Promise.all(s.call(e,n,o,t).map(a=>u(a)))}r(j,"fetchMany");export{j as fetchMany,d as fetchOne,x as isMoodleAjaxError};
-/**
+import{requireAsync as u}from"@moodle/lms/core/amd";/**
  * ESM wrapper for the core/ajax AMD module.
  *
  * @module     core/ajax
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-//# sourceMappingURL=ajax.js.map
+ */function l(e){return typeof e=="object"&&e!==null&&"message"in e&&"errorcode"in e}const a=await u("core/ajax");function s(e){return new Promise((n,o)=>{e.then(n,o)})}function c(e,n=!0,o=!0,r=!1){const[t]=a.call([e],n,o,r);return s(t)}function m(e,n=!0,o=!0,r=!1){return Promise.all(a.call(e,n,o,r).map(t=>s(t)))}export{m as fetchMany,c as fetchOne,l as isMoodleAjaxError};
