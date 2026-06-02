@@ -8502,6 +8502,17 @@ function address_in_subnet($addr, $subnetstr, $checkallzeros = false) {
     $subnets = explode(',', $subnetstr);
     $found = false;
     $addr = trim($addr);
+
+    // Convert IPv4-mapped IPv6 (::ffff:x.x.x.x) to IPv4 so IPv4 subnet rules apply.
+    $packed = @inet_pton($addr);
+    if ($packed !== false && strlen($packed) === 16
+            && substr($packed, 0, 12) === "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff") {
+        $unwrapped = inet_ntop(substr($packed, 12));
+        if ($unwrapped !== false) {
+            $addr = $unwrapped;
+        }
+    }
+
     $addr = cleanremoteaddr($addr, false); // Normalise.
     if ($addr === null) {
         return false;
