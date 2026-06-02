@@ -93,7 +93,13 @@ final class moodlelib_test extends \advanced_testcase {
 
         // Fixed input.
         $this->assertTrue(address_in_subnet('123.121.23.1   ', ' 123.121.23.0 / 24'));
-        $this->assertTrue(address_in_subnet('::ffff:10.1.1.1', ' 0:0:0:000:0:ffff:a1:10 / 126'));
+
+        // IPv4-mapped IPv6 addresses (::ffff:x.x.x.x) must match IPv4 subnet rules.
+        $this->assertTrue(address_in_subnet('::ffff:10.1.1.1', '10.1.1.0/30'));
+        $this->assertTrue(address_in_subnet('::ffff:127.0.0.1', '127.0.0.0/8'));
+        $this->assertTrue(address_in_subnet('::ffff:192.168.0.50', '192.168.0.0/16'));
+        $this->assertTrue(address_in_subnet('::ffff:169.254.169.254', '169.254.169.254'));
+        $this->assertTrue(address_in_subnet('::ffff:10.0.0.5', '10.0.0.1-10'));
 
         // Incorrect input.
         $this->assertFalse(address_in_subnet('123.121.234.1', '123.121.234.1/-2'));
