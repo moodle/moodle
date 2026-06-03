@@ -40,14 +40,15 @@ export const download = (
     modifier,
 ) => {
     return new Promise((resolve, reject) => {
-        https.get(url, (response) => {
+        https.get(url, { agent: false}, (response) => {
             // Handle redirect.
             if (
                 response.statusCode >= 300 &&
                 response.statusCode < 400 &&
                 response.headers.location
             ) {
-                return download(response.headers.location, filePath)
+                response.resume();
+                return download(response.headers.location, filePath, modifier)
                     .then(resolve)
                     .catch(reject);
             }

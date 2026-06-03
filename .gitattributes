@@ -6,4 +6,4 @@
 
 # Remove composer lock file changes from standard diff views.
 /composer.lock -diff
-/lib/js/bundles/*/*.js -diff
+/lib/bundles/**/*.js -diff

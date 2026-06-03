@@ -50,15 +50,4 @@
       <copyright>2023 Fonticons, Inc</copyright>
     </copyrights>
   </library>
-  <library>
-    <location>scss/design-system</location>
-    <name>@moodlehq/design-system</name>
-    <description>The Moodle HQ design system based on React</description>
-    <version>2.1.1</version>
-    <license>GNU</license>
-    <repository>https://github.com/moodlehq/design-system</repository>
-    <copyrights>
-      <copyright>Moodle HQ</copyright>
-    </copyrights>
-  </library>
 </libraries>

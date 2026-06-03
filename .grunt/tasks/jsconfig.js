@@ -32,7 +32,10 @@ const configuration = {
     exclude: [
         "node_modules",
     ],
-    include: [],
+    include: [
+        'lib/bundles/**/*',
+        'node_modules/@types/**/*.d.ts',
+    ],
 };
 
 /**
