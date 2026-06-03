@@ -26,13 +26,13 @@ require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
+require_login();
+
 $userid = optional_param('userid', $USER->id, PARAM_INT);    // User id.
 $url = new moodle_url('/message/notificationpreferences.php');
 $url->param('userid', $userid);
 
 $PAGE->set_url($url);
-
-require_login();
 
 if (isguestuser()) {
     throw new \moodle_exception('guestnoeditmessage', 'message');
