@@ -23,10 +23,10 @@ jobs:
 
     steps:
       - name: Checking out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configuring node & npm
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
 
@@ -50,10 +50,10 @@ jobs:
 
     steps:
       - name: Checking out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configuring node & npm
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
 
@@ -113,7 +113,7 @@ jobs:
               --collation-server=utf8mb4_bin
 
       - name: Configuring git vars
-        uses: rlespinasse/github-slug-action@v4
+        uses: rlespinasse/github-slug-action@v5
 
       - name: Setting up PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
@@ -124,7 +124,7 @@ jobs:
           coverage: none
 
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setting up PHPUnit
         env:
