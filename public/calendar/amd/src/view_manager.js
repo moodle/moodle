@@ -321,16 +321,21 @@ export const changeMonth = (root, url, year, month, courseId, categoryId, day = 
  * @return {promise}
  */
 export const reloadCurrentMonth = (root, courseId = 0, categoryId = 0) => {
-    const year = root.find(CalendarSelectors.wrapper).data('year');
-    const month = root.find(CalendarSelectors.wrapper).data('month');
-    const day = root.find(CalendarSelectors.wrapper).data('day');
+    const wrapperData = root.find(CalendarSelectors.wrapper).data();
+    const {
+        year,
+        month,
+        day,
+        courseid: wrapperCourseId = 0,
+        categoryid: wrapperCategoryId = 0
+    } = wrapperData;
 
-    courseId = courseId || root.find(CalendarSelectors.wrapper).data('courseid');
-    categoryId = categoryId || root.find(CalendarSelectors.wrapper).data('categoryid');
+    const finalCourseId = (courseId === 0) ? wrapperCourseId : courseId;
+    const finalCategoryId = (categoryId === 0) ? wrapperCategoryId : categoryId;
 
-    return refreshMonthContent(root, year, month, courseId, categoryId, null, '', day).
+    return refreshMonthContent(root, year, month, finalCourseId, finalCategoryId, null, '', day).
         then((...args) => {
-            $('body').trigger(CalendarEvents.courseChanged, [year, month, courseId, categoryId]);
+            $('body').trigger(CalendarEvents.courseChanged, [year, month, finalCourseId, finalCategoryId]);
             return args;
         });
 };
@@ -396,10 +401,10 @@ export const reloadCurrentDay = (root, courseId = 0, categoryId = 0) => {
     const month = wrapper.data('month');
     const day = wrapper.data('day');
 
-    courseId = courseId || root.find(CalendarSelectors.wrapper).data('courseid');
-    categoryId = categoryId || root.find(CalendarSelectors.wrapper).data('categoryid');
+    const finalCourseId = (courseId === 0) ? wrapper.data('courseid') : courseId;
+    const finalCategoryId = (categoryId === 0) ? wrapper.data('categoryid') : categoryId;
 
-    return refreshDayContent(root, year, month, day, courseId, categoryId);
+    return refreshDayContent(root, year, month, day, finalCourseId, finalCategoryId);
 };
 
 /**
@@ -482,10 +487,11 @@ export const reloadCurrentUpcoming = (root, courseId = 0, categoryId = 0, target
 
     target = target || root.find(CalendarSelectors.wrapper);
     template = template || root.attr('data-template');
-    courseId = courseId || root.find(CalendarSelectors.wrapper).data('courseid');
-    categoryId = categoryId || root.find(CalendarSelectors.wrapper).data('categoryid');
 
-    return CalendarRepository.getCalendarUpcomingData(courseId, categoryId)
+    const finalCourseId = (courseId === 0) ? root.find(CalendarSelectors.wrapper).data('courseid') : courseId;
+    const finalCategoryId = (categoryId === 0) ? root.find(CalendarSelectors.wrapper).data('categoryid') : categoryId;
+
+    return CalendarRepository.getCalendarUpcomingData(finalCourseId, finalCategoryId)
         .then((context) => {
             context.viewingupcoming = true;
             context.showviewselector = true;

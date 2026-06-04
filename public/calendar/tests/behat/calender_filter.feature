@@ -15,9 +15,11 @@ Feature: Perform calendar filter actions
     And the following "courses" exist:
       | fullname | shortname | format | category      |
       | Course 1 | C1        | topics | department-c1 |
+      | Course 2 | C2        | topics | 0             |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+      | teacher1 | C2     | editingteacher |
     And the following "groups" exist:
       | name    | course | idnumber |
       | Group 1 | C1     | G1       |
@@ -73,3 +75,27 @@ Feature: Perform calendar filter actions
     Then I should see "C1 event"
     And I should see "Dep1a event"
     And I should see "Group1 event"
+
+  Scenario Outline: Course filter shows all events when switching from a course to all courses in <view> view
+    Given I log in as "teacher1"
+    And I follow "Calendar" in the user menu
+    And I click on "Month" "button"
+    And I click on "<view_link>" "link"
+    And I should see "All courses" in the "course" "select"
+    And I should see "C1 event"
+    And I should see "Dep1a event"
+    And I should see "Group1 event"
+    And I set the field "course" to "<test_course>"
+    And I should not see "C1 event"
+    And I should not see "Dep1a event"
+    And I should not see "Group1 event"
+    When I set the field "course" to "All courses"
+    Then I should see "C1 event"
+    And I should see "Dep1a event"
+    And I should see "Group1 event"
+
+    Examples:
+      | view            | view_link       | test_course |
+      | month           | Month           | Course 2    |
+      | day             | Day             | Course 2    |
+      | upcoming events | Upcoming events | Course 2    |
