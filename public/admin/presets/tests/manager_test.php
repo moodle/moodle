@@ -934,6 +934,13 @@ final class manager_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        $pathtophp = '';
+        $isdefined = false;
+        if ($CFG->pathtophp != '') {
+            $pathtophp = $CFG->pathtophp;
+            $isdefined = true;
+        }
+
         if ($preventexecpath) {
             $CFG->preventexecpath = true;
         } else {
@@ -944,8 +951,6 @@ final class manager_test extends \advanced_testcase {
         $presetid = $generator->create_preset();
         helper::add_item($presetid, 'pathtophp', $presetpath);
 
-        set_config('pathtophp', '/original/path');
-
         [$applied, $skipped] = (new manager())->apply_preset($presetid);
 
         $phpvisiblename = get_string('pathtophp', 'admin');
@@ -955,11 +960,15 @@ final class manager_test extends \advanced_testcase {
         if ($expectedapplied) {
             $this->assertContains($phpvisiblename, $appliednames);
             $this->assertNotContains($phpvisiblename, $skippednames);
-            $this->assertEquals($presetpath, get_config('core', 'pathtophp'));
+            if (!$isdefined) {
+                $this->assertEquals($presetpath, get_config('core', 'pathtophp'));
+            } else {
+                $this->assertEquals($pathtophp, get_config('core', 'pathtophp'));
+            }
         } else {
             $this->assertContains($phpvisiblename, $skippednames);
             $this->assertNotContains($phpvisiblename, $appliednames);
-            $this->assertEquals('/original/path', get_config('core', 'pathtophp'));
+            $this->assertEquals($pathtophp, get_config('core', 'pathtophp'));
         }
     }
 
