@@ -1045,7 +1045,7 @@ class page_requirements_manager {
      *
      * @return string
      */
-    public function get_import_map(): string {
+    public function get_import_map(moodle_page $page): string {
         $importmap = \core\di::get(import_map::class);
         $importmap->set_default_loader(
             \core\router\util::get_path_for_callable(
@@ -1056,6 +1056,10 @@ class page_requirements_manager {
                 ]
             ),
         );
+        $importmap->set_current_theme($page->theme->name);
+
+        $themes = core_component::get_all_plugins_list('theme');
+        $importmap->set_available_themes(array_keys($themes));
 
         return html_writer::tag(
             'script',
@@ -1750,7 +1754,7 @@ EOF;
         }
 
         // Inject the ES module import map for bare specifier resolution.
-        $output .= $this->get_import_map();
+        $output .= $this->get_import_map($page);
 
         // Mark head sending done, it is not possible to anything there.
         $this->headdone = true;

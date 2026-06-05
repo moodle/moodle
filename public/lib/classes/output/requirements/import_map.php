@@ -38,6 +38,9 @@ namespace core\output\requirements;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class import_map implements \JsonSerializable {
+    /** @var string The name of the default theme */
+    private const string DEFAULT_THEME_PLACEHOLDER = 'original';
+
     /** @var array The list of imports */
     protected array $imports = [];
 
@@ -51,6 +54,12 @@ class import_map implements \JsonSerializable {
 
     /** @var \core\url The default loader URL to use */
     protected \core\url $loader;
+
+    /** @var string|null The current theme name, used for resolving theme overrides in component-based imports. */
+    protected ?string $currenttheme = null;
+
+    /** @var string[] List of available themes, used to validate theme overrides in component-based imports. */
+    protected array $availablethemes = [];
 
     /**
      * Initialise the import_map requirement by setting the standard import list.
@@ -73,14 +82,50 @@ class import_map implements \JsonSerializable {
             throw new \core\exception\coding_exception('Default loader URL must be set before serializing the import map.');
         }
 
+        $themes = array_map(
+            fn(string $theme): string => "theme-{$theme}",
+            [self::DEFAULT_THEME_PLACEHOLDER, ...$this->availablethemes]
+        );
+
         foreach ($this->imports as $specifier => $importdata) {
-            $loader = $importdata->loader instanceof \core\url
-                ? $importdata->loader
-                : new \core\url($this->loader->out(false) . $specifier . $importdata->urlsuffix);
-            $importmap['imports'][$specifier] = $loader->out(false);
+            if ($importdata->themable) {
+                // This import is themable.
+                // If we are aware of the current theme, we include it in the import map entry's path.
+                // This allows the loader to check for a theme-specific override before falling back to the default path.
+                $currenttheme = $this->currenttheme ? "/theme-{$this->currenttheme}" : '';
+
+                // Ensure that we handle trailing slashes correctly by preserving them in the generated import map keys and URLs.
+                $endswith = str_ends_with($specifier, '/') ? '/' : '';
+                $specifier = rtrim($specifier, '/');
+
+                // For the default entry (without an explicit theme) we resolve to the _current_ theme (if set).
+                // That is `@moodle/lms` resolves to `@moodle/lms/theme-boost` when the current theme is boost.
+                $themespecifier = "{$specifier}{$currenttheme}{$endswith}";
+                $importmap['imports']["{$specifier}{$endswith}"] = $this->loader_url_for($importdata, $themespecifier);
+
+                foreach ($themes as $theme) {
+                    // Add an entry for each available theme, so that any theme-specific overrides are usable.
+                    // This allows a theme-override to include another theme's override, or the default version when
+                    // wrapping a component with a theme-specific version.
+                    $themespecifier = "{$specifier}/{$theme}{$endswith}";
+                    $importmap['imports'][$themespecifier] = $this->loader_url_for($importdata, $themespecifier);
+                }
+            } else {
+                // This import is not themable, so we generate a single entry without any theme prefix.
+                $importmap['imports'][$specifier] = $this->loader_url_for($importdata, $specifier);
+            }
         }
 
         return $importmap;
+    }
+
+    /**
+     * Set the list of available themes by name.
+     *
+     * @param string[] $themes
+     */
+    public function set_available_themes(array $themes): void {
+        $this->availablethemes = $themes;
     }
 
     /**
@@ -88,8 +133,19 @@ class import_map implements \JsonSerializable {
      *
      * @param \core\url $loader The default loader URL.
      */
-    public function set_default_loader(\core\url $loader): void {
+    public function set_default_loader(
+        \core\url $loader,
+    ): void {
         $this->loader = $loader;
+    }
+
+    /**
+     * Specify the theme in use by the current user in the current context.
+     *
+     * @param string|null $currenttheme The current theme name.
+     */
+    public function set_current_theme(?string $currenttheme): void {
+        $this->currenttheme = $currenttheme;
     }
 
     /**
@@ -101,23 +157,29 @@ class import_map implements \JsonSerializable {
             '@moodle/lms/',
             path: 'js/esm/build',
             loadfromcomponent: true,
+            themable: true,
         );
         $this->add_import(
             '@moodlehq/design-system',
             path: 'lib/bundles/design-system/js/',
             urlsuffix: '/index.js',
+            // Allow theme designers to override the design system components.
+            themable: true,
         );
         $this->add_import(
             'react',
             path: 'lib/bundles/react/react',
+            themable: false,
         );
         $this->add_import(
             'react/',
             path: 'lib/bundles/react',
+            themable: false,
         );
         $this->add_import(
             'react-dom',
             path: 'lib/bundles/react-dom/react-dom',
+            themable: false,
         );
         $this->add_import(
             'react-dom/',
@@ -126,6 +188,7 @@ class import_map implements \JsonSerializable {
                 '/\.js$/' => '.development.js',
                 '/\.js.map$/' => '.development.js.map',
             ],
+            themable: false,
         );
     }
 
@@ -148,6 +211,7 @@ class import_map implements \JsonSerializable {
      * @param string $urlsuffix Extra path appended to the specifier in the import map URL.
      *   Use this when the entry resolves to a directory's index file so that relative imports
      *   within the module resolve correctly (e.g. '/index.js' for a package-style module).
+     * @param bool $themable Whether the import is themable.
      */
     public function add_import(
         string $specifier,
@@ -159,6 +223,7 @@ class import_map implements \JsonSerializable {
         ?callable $modifier = null,
         array $allowedsuffixes = ['.js', '.js.map'],
         string $urlsuffix = '',
+        bool $themable = false,
     ): void {
         if (!in_array($suffix, $allowedsuffixes, true)) {
             $allowedsuffixes[] = $suffix;
@@ -177,8 +242,25 @@ class import_map implements \JsonSerializable {
             'allowedsuffixes' => $allowedsuffixes,
             'modifier' => $modifier,
             'urlsuffix' => $urlsuffix,
+            'themable' => $themable,
         ];
         $this->importssorted = false;
+    }
+
+    /**
+     * Return the URL string for an import map entry.
+     *
+     * When the import was registered with an explicit \core\url loader that URL is returned
+     * verbatim; otherwise $specifier is appended to the default loader base URL.
+     *
+     * @param \stdClass $importdata The import entry metadata.
+     * @param string $specifier The fully-qualified specifier string to append to the base URL.
+     * @return string
+     */
+    private function loader_url_for(\stdClass $importdata, string $specifier): string {
+        return $importdata->loader instanceof \core\url
+            ? $importdata->loader->out(false)
+            : $this->loader->out(false) . $specifier . $importdata->urlsuffix;
     }
 
     /**
@@ -203,7 +285,9 @@ class import_map implements \JsonSerializable {
         }
 
         foreach ($this->imports as $specifier => $importdata) {
-            if (!str_starts_with($requestedpath, $specifier)) {
+            $matches = [];
+            $expression = "#^(?<specifier>{$specifier}(/?theme-(?<theme>[^/]*)/)?)#";
+            if (!preg_match($expression, $requestedpath, $matches)) {
                 continue;
             }
 
@@ -214,60 +298,95 @@ class import_map implements \JsonSerializable {
             }
 
             if ($importdata->loadfromcomponent) {
-                $subpath = substr($requestedpath, strlen($specifier));
-                $resolved = $this->resolve_module_identifier($importdata, $subpath, $revision);
+                $subpath = substr($requestedpath, strlen($matches['specifier']));
+                $resolved = $this->resolve_module_identifier(
+                    $importdata,
+                    $subpath,
+                    $revision,
+                    theme: $matches['theme'] ?? null,
+                );
                 if ($importdata->modifier !== null) {
                     $resolved = ($importdata->modifier)($revision, $requestedpath, $resolved);
                 }
                 return $resolved;
             }
 
-            $pathremainder = ltrim(substr($requestedpath, strlen($specifier)), '/');
+            $pathremainder = substr($requestedpath, strlen($matches['specifier']));
             // Reject '..' as a path segment to prevent directory traversal. A single dot in a
             // filename (e.g. 'button.small') is allowed because it is not a segment on its own.
             if (in_array('..', explode('/', $pathremainder), true)) {
                 return null;
             }
 
-            $resolved = implode('/', array_filter([
+            // Get possible paths, including any theme override.
+            $paths = $this->get_possible_paths(
                 $CFG->root,
-                $importdata->path,
+                $importdata,
+                $matches['theme'] ?? null,
+                $specifier,
                 $pathremainder,
-            ]));
+            );
 
-            $suffixpresent = false;
-            foreach ($importdata->allowedsuffixes as $allowedsuffix) {
-                if (str_ends_with($resolved, $allowedsuffix) && file_exists($resolved)) {
-                    $suffixpresent = true;
+            foreach ($paths as $resolved) {
+                $result = $this->resolve_candidate_path($resolved, $importdata, $revision, $requestedpath);
+                if ($result !== null) {
+                    return $result;
                 }
             }
-
-            if (!$suffixpresent) {
-                // If the requested path already ends with an accepted suffix, don't try appending it again.
-                // This allows specifiers to include the suffix if needed.
-                $resolved .= $importdata->suffix;
-            }
-
-            if ($importdata->modifier !== null) {
-                $resolved = ($importdata->modifier)($revision, $requestedpath, $resolved);
-            }
-
-            if ($revision === -1) {
-                // During development, check if the unminified version of the module exists for better debugging.
-                $devfile = preg_replace(
-                    array_keys($importdata->devreplacements),
-                    array_values($importdata->devreplacements),
-                    $resolved,
-                );
-                if (file_exists($devfile)) {
-                    return $devfile;
-                }
-            }
-
-            return $resolved;
         }
 
         return null;
+    }
+
+    /**
+     * Resolve a single candidate filesystem path to the best matching file.
+     *
+     * Appends the default suffix when the path does not already end with a recognised suffix
+     * that corresponds to an existing file, applies the optional modifier callable, then returns
+     * the dev variant (when revision is -1 and it exists) or the production file if it exists on
+     * disk. Returns null when neither file is found.
+     *
+     * @param string $path Candidate path to resolve (may or may not already carry a suffix).
+     * @param \stdClass $importdata The import entry metadata.
+     * @param int $revision The JS revision number; -1 triggers dev-file lookup.
+     * @param string|null $requestedpath When non-null, passed to the modifier callable (if any).
+     * @return string|null Absolute path to the file, or null if not found.
+     */
+    protected function resolve_candidate_path(
+        string $path,
+        \stdClass $importdata,
+        int $revision,
+        ?string $requestedpath = null,
+    ): ?string {
+        $suffixpresent = false;
+        foreach ($importdata->allowedsuffixes as $allowedsuffix) {
+            if (str_ends_with($path, $allowedsuffix) && file_exists($path)) {
+                $suffixpresent = true;
+            }
+        }
+
+        if (!$suffixpresent) {
+            // If the path does not already end with a recognised suffix, append the default one.
+            $path .= $importdata->suffix;
+        }
+
+        if ($requestedpath !== null && $importdata->modifier !== null) {
+            $path = ($importdata->modifier)($revision, $requestedpath, $path);
+        }
+
+        if ($revision === -1) {
+            // During development, check if the unminified version of the module exists for better debugging.
+            $devfile = preg_replace(
+                array_keys($importdata->devreplacements),
+                array_values($importdata->devreplacements),
+                $path,
+            );
+            if (file_exists($devfile)) {
+                return $devfile;
+            }
+        }
+
+        return file_exists($path) ? $path : null;
     }
 
     /**
@@ -276,17 +395,19 @@ class import_map implements \JsonSerializable {
      * For example, `mod_book/viewer` resolves to
      * `<dirroot>/mod/book/js/esm/build/viewer.js`.
      *
-     * @param object $importdata The import entry containing the path and loadfromcomponent flag.
+     * @param \stdClass $importdata The import entry containing the path and loadfromcomponent flag.
      * @param string $subpath The subpath after the specifier prefix (e.g. `mod_book/viewer`).
      * @param int $revision The JS revision number, used for modifier callables to determine if in developer mode.
+     * @param string|null $theme The theme name if the specifier includes a theme prefix (e.g. `@moodle/lms/`).
      * @return string Absolute path to the JS file.
      * @throws \core\exception\not_found_exception If the subpath is missing a slash, contains `..`,
      *   the component is unknown, or the resolved file does not exist.
      */
     protected function resolve_module_identifier(
-        object $importdata,
+        \stdClass $importdata,
         string $subpath,
         int $revision,
+        ?string $theme = null,
     ): string {
         if (!str_contains($subpath, '/')) {
             throw new \core\exception\not_found_exception('component', $subpath);
@@ -301,38 +422,62 @@ class import_map implements \JsonSerializable {
         }
 
         // Resolve the component directory; an unknown component name returns null.
-        $dir = \core\component::get_component_directory($component);
-        $file = "{$dir}/{$importdata->path}/{$modulerest}";
+        $paths = $this->get_possible_paths(
+            \core\component::get_component_directory($component),
+            $importdata,
+            $theme,
+            $component,
+            $modulerest,
+        );
 
-        $suffixpresent = false;
-        foreach ($importdata->allowedsuffixes as $allowedsuffix) {
-            if (str_ends_with($file, $allowedsuffix) && file_exists($file)) {
-                $suffixpresent = true;
+        foreach ($paths as $file) {
+            $result = $this->resolve_candidate_path($file, $importdata, $revision);
+            if ($result !== null) {
+                return $result;
             }
-        }
-
-        if (!$suffixpresent) {
-            // If the requested path already ends with an accepted suffix, don't try appending it again.
-            // This allows specifiers to include the suffix if needed.
-            $file .= $importdata->suffix;
-        }
-
-        if ($revision === -1) {
-            // During development, check if the unminified version of the module exists for better debugging.
-            $devfile = preg_replace(
-                array_keys($importdata->devreplacements),
-                array_values($importdata->devreplacements),
-                $file,
-            );
-            if (file_exists($devfile)) {
-                return $devfile;
-            }
-        }
-
-        if (file_exists($file)) {
-            return $file;
         }
 
         throw new \core\exception\not_found_exception('script', $subpath);
+    }
+
+    /**
+     * Get the possible paths to the file on disk.
+     *
+     * @param string $rootdir
+     * @param \stdClass $importdata
+     * @param string|null $theme
+     * @param string $component
+     * @param string $modulerest
+     * @return string[]
+     */
+    protected function get_possible_paths(
+        string $rootdir,
+        \stdClass $importdata,
+        ?string $theme,
+        string $component,
+        string $modulerest,
+    ): array {
+        $options = [];
+
+        // First check the specified theme (if any) for an override.
+        if ($theme && $theme !== self::DEFAULT_THEME_PLACEHOLDER) {
+            $themedir = \core\component::get_component_directory("theme_{$theme}");
+            if ($themedir) {
+                $options[] = implode(
+                    "/",
+                    array_filter(
+                        [$themedir, 'js', 'esm', 'build', 'overrides', $component, $modulerest],
+                    ),
+                );
+            }
+        }
+
+        $options[] = implode("/", array_filter([
+            $rootdir,
+            $importdata->path,
+            $modulerest,
+        ]));
+
+        return $options;
     }
 }

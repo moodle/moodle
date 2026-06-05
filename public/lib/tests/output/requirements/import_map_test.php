@@ -262,4 +262,438 @@ final class import_map_test extends \advanced_testcase {
 
         $this->assertEquals('https://example.com/esm/12345/mypkg/index.js', $data['imports']['mypkg']);
     }
+
+    /**
+     * A non-themable import produces exactly one entry in the import map with no theme-variant keys.
+     */
+    public function test_non_themable_import_generates_single_entry(): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->set_available_themes(['boost', 'classic']);
+        $map->add_import('mylib', path: 'lib/mylib/index', themable: false);
+
+        $data = $map->jsonSerialize();
+
+        $this->assertArrayHasKey('mylib', $data['imports']);
+        $this->assertArrayNotHasKey('mylib/theme-original', $data['imports']);
+        $this->assertArrayNotHasKey('mylib/theme-boost', $data['imports']);
+        $this->assertArrayNotHasKey('mylib/theme-classic', $data['imports']);
+    }
+
+    /**
+     * Data provider for test_themable_default_specifier_url_reflects_current_theme.
+     *
+     * @return array[]
+     */
+    public static function themable_current_theme_provider(): array {
+        return [
+            'no current theme uses plain specifier in URL' => [null, 'mymod/'],
+            'current theme boost redirects default to theme-boost sub-path' => ['boost', 'mymod/theme-boost/'],
+            'current theme classic redirects default to theme-classic sub-path' => ['classic', 'mymod/theme-classic/'],
+        ];
+    }
+
+    /**
+     * The default specifier URL for a themable import redirects to the current-theme sub-path
+     * when a theme is active, or to the plain specifier when no theme is set.
+     *
+     * @param string|null $currenttheme
+     * @param string $expectedurlsuffix
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('themable_current_theme_provider')]
+    public function test_themable_default_specifier_url_reflects_current_theme(
+        ?string $currenttheme,
+        string $expectedurlsuffix,
+    ): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->set_current_theme($currenttheme);
+        $map->add_import('mymod/', path: 'mod/mymod/js/esm/build', themable: true);
+
+        $data = $map->jsonSerialize();
+
+        $this->assertEquals("https://example.com/{$expectedurlsuffix}", $data['imports']['mymod/']);
+    }
+
+    /**
+     * Data provider for test_available_themes_generate_dedicated_import_map_entries.
+     *
+     * @return array[]
+     */
+    public static function available_themes_import_entries_provider(): array {
+        return [
+            'no available themes still produces theme-original entry' => [
+                'availablethemes' => [],
+                'expectedkeys' => ['mymod/', 'mymod/theme-original/'],
+                'absentkeys' => ['mymod/theme-boost/'],
+            ],
+            'single available theme generates its own entry alongside original' => [
+                'availablethemes' => ['boost'],
+                'expectedkeys' => ['mymod/', 'mymod/theme-original/', 'mymod/theme-boost/'],
+                'absentkeys' => ['mymod/theme-classic/'],
+            ],
+            'multiple available themes generate all entries' => [
+                'availablethemes' => ['boost', 'classic'],
+                'expectedkeys' => ['mymod/', 'mymod/theme-original/', 'mymod/theme-boost/', 'mymod/theme-classic/'],
+                'absentkeys' => [],
+            ],
+        ];
+    }
+
+    /**
+     * set_available_themes() generates a dedicated import map entry for each theme,
+     * and always includes a theme-original entry regardless of the available-theme list.
+     *
+     * @param string[] $availablethemes
+     * @param string[] $expectedkeys
+     * @param string[] $absentkeys
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('available_themes_import_entries_provider')]
+    public function test_available_themes_generate_dedicated_import_map_entries(
+        array $availablethemes,
+        array $expectedkeys,
+        array $absentkeys,
+    ): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->set_available_themes($availablethemes);
+        $map->add_import('mymod/', path: 'mod/mymod/js/esm/build', themable: true);
+
+        $data = $map->jsonSerialize();
+
+        foreach ($expectedkeys as $key) {
+            $this->assertArrayHasKey($key, $data['imports'], "Expected key '{$key}' not found in import map.");
+        }
+        foreach ($absentkeys as $key) {
+            $this->assertArrayNotHasKey($key, $data['imports'], "Unexpected key '{$key}' found in import map.");
+        }
+    }
+
+    /**
+     * Each per-theme entry in the import map uses the theme-specific sub-path as its URL.
+     */
+    public function test_available_theme_entry_urls_contain_theme_subpath(): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->set_available_themes(['boost']);
+        $map->add_import('mymod/', path: 'mod/mymod/js/esm/build', themable: true);
+
+        $data = $map->jsonSerialize();
+
+        $this->assertEquals('https://example.com/mymod/theme-boost/', $data['imports']['mymod/theme-boost/']);
+        $this->assertEquals('https://example.com/mymod/theme-original/', $data['imports']['mymod/theme-original/']);
+    }
+
+    /**
+     * Trailing slashes are preserved on both the default specifier key and all per-theme keys
+     * generated for a themable import registered with a trailing slash.
+     */
+    public function test_themable_import_with_trailing_slash_preserves_slash_in_all_entries(): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->set_available_themes(['boost']);
+        $map->add_import('mymod/', path: 'mod/mymod/js/esm/build', themable: true);
+
+        $data = $map->jsonSerialize();
+
+        $mymodkeys = array_filter(array_keys($data['imports']), fn(string $k) => str_starts_with($k, 'mymod'));
+        foreach ($mymodkeys as $key) {
+            $this->assertStringEndsWith('/', $key, "Import map key '{$key}' should preserve the trailing slash.");
+        }
+    }
+
+    /**
+     * Data provider for test_get_path_for_script_resolves_theme_prefixed_path.
+     *
+     * @return array[]
+     */
+    public static function get_path_for_script_theme_prefix_provider(): array {
+        $coredir = \core\component::get_component_directory('core');
+
+        return [
+            'theme-original bypasses theme override and uses standard path' => [
+                'requestedpath' => '@moodle/lms/theme-original/core/fetch',
+                'expectedpath' => "{$coredir}/js/esm/build/fetch.js",
+            ],
+            'unknown theme falls back to standard path when no override exists' => [
+                'requestedpath' => '@moodle/lms/theme-nonexistent_xyz_abc/core/fetch',
+                'expectedpath' => "{$coredir}/js/esm/build/fetch.js",
+            ],
+        ];
+    }
+
+    /**
+     * get_path_for_script() resolves a theme-prefixed specifier to the theme's override file when
+     * one exists, skips the override for the special "original" theme, and falls back to the
+     * standard component path when the requested theme has no override.
+     *
+     * @param string $requestedpath
+     * @param string $expectedpath
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_path_for_script_theme_prefix_provider')]
+    public function test_get_path_for_script_resolves_theme_prefixed_path(
+        string $requestedpath,
+        string $expectedpath,
+    ): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+
+        $this->assertEquals($expectedpath, $map->get_path_for_script(1, $requestedpath));
+    }
+
+    /**
+     * Data provider for test_explicit_url_loader_is_used_verbatim_regardless_of_themable.
+     *
+     * @return array[]
+     */
+    public static function explicit_url_themable_provider(): array {
+        return [
+            'themable import with explicit URL uses loader verbatim' => [true],
+            'non-themable import with explicit URL uses loader verbatim' => [false],
+        ];
+    }
+
+    /**
+     * An import registered with an explicit \core\url uses that URL verbatim in the import map
+     * regardless of whether the import is marked as themable or not.
+     *
+     * @param bool $themable
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('explicit_url_themable_provider')]
+    public function test_explicit_url_loader_is_used_verbatim_regardless_of_themable(bool $themable): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('mylib', loader: new \core\url('https://cdn.example.com/mylib.js'), themable: $themable);
+
+        $data = $map->jsonSerialize();
+
+        $this->assertEquals('https://cdn.example.com/mylib.js', $data['imports']['mylib']);
+    }
+
+    /**
+     * get_path_for_script() throws a coding_exception when the matched specifier was registered
+     * with an explicit \core\url loader (filesystem resolution is not possible in that case).
+     */
+    public function test_get_path_for_script_throws_for_explicit_loader_specifier(): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('cdn-lib', loader: new \core\url('https://cdn.example.com/lib.js'));
+
+        $this->expectException(\core\exception\coding_exception::class);
+        $map->get_path_for_script(1, 'cdn-lib');
+    }
+
+    /**
+     * Data provider for test_get_path_for_script_returns_null.
+     *
+     * @return array[]
+     */
+    public static function get_path_for_script_returns_null_provider(): array {
+        return [
+            'directory traversal in non-component path returns null' => ['test/../../etc/passwd'],
+            'completely unregistered specifier returns null' => ['completely-unregistered/module'],
+        ];
+    }
+
+    /**
+     * get_path_for_script() returns null when a directory traversal is attempted on a
+     * non-component specifier, or when the requested path matches no registered specifier.
+     *
+     * @param string $requestedpath
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_path_for_script_returns_null_provider')]
+    public function test_get_path_for_script_returns_null(string $requestedpath): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $tempdir = make_request_directory();
+        $CFG->root = $tempdir;
+
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('test/', path: 'testpath');
+
+        $this->assertNull($map->get_path_for_script(1, $requestedpath));
+    }
+
+    /**
+     * Data provider for test_get_path_for_script_invokes_modifier.
+     *
+     * @return array[]
+     */
+    public static function modifier_invocation_provider(): array {
+        return [
+            'modifier is invoked for non-component path' => [
+                'specifier' => 'test/',
+                'path' => 'testpath',
+                'loadfromcomponent' => false,
+                'request' => 'test/module',
+            ],
+            'modifier is invoked for component (loadfromcomponent) path' => [
+                'specifier' => '@moodle/lms/',
+                'path' => 'js/esm/build',
+                'loadfromcomponent' => true,
+                'request' => '@moodle/lms/core/ajax',
+            ],
+        ];
+    }
+
+    /**
+     * get_path_for_script() invokes the registered modifier callable and returns the path
+     * it produces, regardless of whether the specifier is a plain path or a loadfromcomponent entry.
+     *
+     * @param string $specifier
+     * @param string $path
+     * @param bool $loadfromcomponent
+     * @param string $request
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('modifier_invocation_provider')]
+    public function test_get_path_for_script_invokes_modifier(
+        string $specifier,
+        string $path,
+        bool $loadfromcomponent,
+        string $request,
+    ): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $tempdir = make_request_directory();
+        mkdir("{$tempdir}/testpath", 0777, true);
+        file_put_contents("{$tempdir}/testpath/module.js", '// test');
+        $CFG->root = $tempdir;
+
+        $modifiercalled = false;
+        $modifier = function (int $revision, string $requestedpath, string $resolved) use (&$modifiercalled): string {
+            $modifiercalled = true;
+            return $resolved;
+        };
+
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import($specifier, path: $path, loadfromcomponent: $loadfromcomponent, modifier: $modifier);
+
+        $map->get_path_for_script(1, $request);
+
+        $this->assertTrue($modifiercalled, "Modifier callable was not invoked for specifier '{$specifier}'.");
+    }
+
+    /**
+     * Data provider for test_get_path_for_script_dev_revision_resolves_correct_file.
+     *
+     * @return array[]
+     */
+    public static function get_path_for_script_dev_revision_provider(): array {
+        return [
+            'dev file exists: revision -1 returns the .dev.js file' => [
+                'createdevfile' => true,
+                'expectedsuffix' => 'module.dev.js',
+            ],
+            'dev file absent: revision -1 falls back to production file' => [
+                'createdevfile' => false,
+                'expectedsuffix' => 'module.js',
+            ],
+        ];
+    }
+
+    /**
+     * When revision is -1, get_path_for_script() returns the .dev.js file when it exists on disk,
+     * and falls back to the production .js file when the dev variant is absent.
+     *
+     * @param bool $createdevfile
+     * @param string $expectedsuffix
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_path_for_script_dev_revision_provider')]
+    public function test_get_path_for_script_dev_revision_resolves_correct_file(
+        bool $createdevfile,
+        string $expectedsuffix,
+    ): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $tempdir = make_request_directory();
+        mkdir("{$tempdir}/testpath", 0777, true);
+        file_put_contents("{$tempdir}/testpath/module.js", '// production');
+        if ($createdevfile) {
+            file_put_contents("{$tempdir}/testpath/module.dev.js", '// development');
+        }
+
+        $CFG->root = $tempdir;
+
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+        $map->add_import('test/', path: 'testpath');
+
+        $result = $map->get_path_for_script(-1, 'test/module');
+
+        $this->assertEquals("{$tempdir}/testpath/{$expectedsuffix}", $result);
+    }
+
+    /**
+     * Data provider for test_component_resolve_throws_for_bad_subpath.
+     *
+     * @return array[]
+     */
+    public static function resolve_module_identifier_bad_subpath_provider(): array {
+        return [
+            'subpath with no slash throws not_found_exception' => [
+                '@moodle/lms/coremodule',
+            ],
+            'double-dot traversal in module rest throws not_found_exception' => [
+                '@moodle/lms/core/../config',
+            ],
+        ];
+    }
+
+    /**
+     * resolve_module_identifier() throws a not_found_exception when the subpath has no
+     * component/module separator slash, or when the module rest contains a traversal segment.
+     *
+     * @param string $requestedpath
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('resolve_module_identifier_bad_subpath_provider')]
+    public function test_component_resolve_throws_for_bad_subpath(string $requestedpath): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+
+        $this->expectException(\core\exception\not_found_exception::class);
+        $map->get_path_for_script(1, $requestedpath);
+    }
+
+    /**
+     * Data provider for test_component_resolve_dev_revision_returns_dev_file.
+     *
+     * @return array[]
+     */
+    public static function component_resolve_dev_revision_provider(): array {
+        $coredir = \core\component::get_component_directory('core');
+        $boostdir = \core\component::get_component_directory('theme_boost');
+
+        return [
+            'standard component module: revision -1 returns .dev.js' => [
+                'requestedpath' => '@moodle/lms/core/fetch',
+                'expectedpath' => "{$coredir}/js/esm/build/fetch.dev.js",
+            ],
+        ];
+    }
+
+    /**
+     * When revision is -1, resolve_module_identifier() returns the .dev.js variant of the
+     * resolved component module file, including theme-override paths when a theme is specified.
+     *
+     * @param string $requestedpath
+     * @param string $expectedpath
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('component_resolve_dev_revision_provider')]
+    public function test_component_resolve_dev_revision_returns_dev_file(
+        string $requestedpath,
+        string $expectedpath,
+    ): void {
+        $map = new import_map();
+        $map->set_default_loader(new \core\url('https://example.com/'));
+
+        $this->assertEquals($expectedpath, $map->get_path_for_script(-1, $requestedpath));
+    }
 }

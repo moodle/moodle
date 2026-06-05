@@ -42,6 +42,7 @@ const fetchComponentData = () => {
         componentData.pathList = [];
         componentData.components = {};
         componentData.standardComponents = {};
+        componentData.byPluginType = {};
 
         // Fetch the component definiitions from the distributed JSON file.
         const components = JSON.parse(fs.readFileSync(`${gruntFilePath}/lib/components.json`));
@@ -80,6 +81,9 @@ const fetchComponentData = () => {
 
                 componentData.components[`${subpluginTypePath}/${componentName}`] = frankenstyleName;
                 componentData.pathList.push(componentPath);
+
+                componentData.byPluginType[subpluginType] = componentData.byPluginType[subpluginType] || {};
+                componentData.byPluginType[subpluginType][componentName] = `${subpluginTypePath}/${componentName}`;
             });
         };
 
@@ -92,6 +96,8 @@ const fetchComponentData = () => {
                 const frankenstyleName = `${pluginType}_${componentName}`;
                 componentData.components[`${pluginTypePath}/${componentName}`] = frankenstyleName;
                 componentData.pathList.push(componentPath);
+                componentData.byPluginType[pluginType] = componentData.byPluginType[pluginType] || {};
+                componentData.byPluginType[pluginType][componentName] = `${pluginTypePath}/${componentName}`;
 
                 // Look for any subplugins.
                 const subPluginConfigurationFile = `${componentPath}/db/subplugins.json`;

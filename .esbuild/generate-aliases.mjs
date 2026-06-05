@@ -37,7 +37,8 @@
 
 import fs from "fs";
 import path from "path";
-import { createRequire } from "module";
+import {createRequire} from "module";
+import {fetchComponentData} from "../.grunt/components.js";
 
 const rootDir = process.cwd();
 
@@ -144,13 +145,26 @@ export function generateAliases() {
         "@moodle/lms/core/*": ["./public/lib/js/esm/src/*"],
     };
 
+    const themePaths = fetchComponentData().byPluginType['theme'];
+
     for (const [componentPath, componentName] of Object.entries(componentPathMap)) {
         const runtimeAliasKey = `@moodle/lms/${componentName}/*`;
+        const themeOriginalAliasKey = `@moodle/lms/theme-original/${componentName}/*`;
         const targetPattern = `./${path
             .join(componentPath, "js", "esm", "src", "*")
             .replace(/\\/g, "/")}`;
 
         tsPaths[runtimeAliasKey] = [targetPattern];
+        tsPaths[themeOriginalAliasKey] = [targetPattern];
+
+        for (const [themeName, themePath] of Object.entries(themePaths)) {
+            const themeAliasKey = `@moodle/lms/theme-${themeName}/${componentName}/*`;
+            const themeTargetPattern = `./${path
+                .join(themePath, "js", "esm", "src", "overrides", componentName, "*")
+                .replace(/\\/g, "/")}`;
+
+            tsPaths[themeAliasKey] = [themeTargetPattern];
+        }
     }
 
     const tsconfig = {
