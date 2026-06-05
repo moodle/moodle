@@ -42,13 +42,18 @@ final class adminpresets_admin_setting_configexecutable_test extends \advanced_t
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        $pathtophp = '';
+        $isdefined = false;
+        if ($CFG->pathtophp != '') {
+            $pathtophp = $CFG->pathtophp;
+            $isdefined = true;
+        }
+
         if ($preventexecpath) {
             $CFG->preventexecpath = true;
         } else {
             unset($CFG->preventexecpath);
         }
-
-        set_config('pathtophp', '/original/path');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $setting = $generator->get_admin_preset_setting('systempaths', 'pathtophp');
@@ -58,10 +63,16 @@ final class adminpresets_admin_setting_configexecutable_test extends \advanced_t
         if ($expectedsaved) {
             $this->assertIsInt($result);
             $this->assertCount(1, $DB->get_records('config_log', ['id' => $result]));
-            $this->assertEquals($newpath, get_config('core', 'pathtophp'));
+            $configlog = $DB->get_record('config_log', ['id' => $result]);
+            $this->assertEquals($newpath, $configlog->value);
+            if (!$isdefined) {
+                $this->assertEquals($newpath, get_config('core', 'pathtophp'));
+            } else {
+                $this->assertEquals($pathtophp, get_config('core', 'pathtophp'));
+            }
         } else {
             $this->assertFalse($result);
-            $this->assertEquals('/original/path', get_config('core', 'pathtophp'));
+            $this->assertEquals($pathtophp, get_config('core', 'pathtophp'));
         }
     }
 
@@ -71,6 +82,7 @@ final class adminpresets_admin_setting_configexecutable_test extends \advanced_t
      * @return array
      */
     public static function save_value_provider(): array {
+        global $CFG;
         return [
             'preventexecpath set: save_value returns false without writing' => [
                 'preventexecpath' => true,
@@ -85,7 +97,7 @@ final class adminpresets_admin_setting_configexecutable_test extends \advanced_t
             'preventexecpath not set, valid executable: value is saved' => [
                 'preventexecpath' => false,
                 'newpath'         => PHP_BINARY,
-                'expectedsaved'   => true,
+                'expectedsaved'   => PHP_BINARY !== $CFG->pathtophp, // Only expect saved if the new path is different from existing.
             ],
         ];
     }
@@ -101,14 +113,17 @@ final class adminpresets_admin_setting_configexecutable_test extends \advanced_t
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        $pathtophp = '';
+        if ($CFG->pathtophp != '') {
+            $pathtophp = $CFG->pathtophp;
+        }
+
         unset($CFG->preventexecpath);
 
         // Create a temporary file and remove executable permission.
         $tempfile = tempnam(sys_get_temp_dir(), 'moodle_test_');
         $this->assertNotFalse($tempfile);
         chmod($tempfile, 0644);
-
-        set_config('pathtophp', '/original/path');
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_adminpresets');
         $setting = $generator->get_admin_preset_setting('systempaths', 'pathtophp');
@@ -120,6 +135,6 @@ final class adminpresets_admin_setting_configexecutable_test extends \advanced_t
         }
 
         $this->assertFalse($result);
-        $this->assertEquals('/original/path', get_config('core', 'pathtophp'));
+        $this->assertEquals($pathtophp, get_config('core', 'pathtophp'));
     }
 }
