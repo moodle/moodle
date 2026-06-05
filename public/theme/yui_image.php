@@ -135,11 +135,14 @@ function yui_image_cached($imagepath, $imagename, $mimetype, $etag) {
 
     // no need to gzip already compressed images ;-)
 
-    readfile($imagepath);
+    if (readfile($imagepath) === false) {
+        yui_image_not_found();
+    }
     die;
 }
 
 function yui_image_not_found() {
+    header_remove();
     header('HTTP/1.0 404 not found');
     die('Image was not found, sorry.');
 }

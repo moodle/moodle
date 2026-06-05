@@ -74,27 +74,31 @@ class notification_helper {
         // Get quiz data.
         $quizobj = quiz_settings::create($quizid);
         $quiz = $quizobj->get_quiz();
+        $coursemodule = $quizobj->get_cm();
 
         // Get our users.
         $users = get_enrolled_users(
-            context: \context_module::instance($quizobj->get_cm()->id),
+            context: \context_module::instance($coursemodule->id),
             withcapability: 'mod/quiz:attempt',
             userfields: 'u.id, u.firstname, u.suspended, u.auth',
             onlyactive: true,
         );
 
         // Filter a list of users who meet the availability conditions.
-        $info = new \core_availability\info_module($quizobj->get_cm());
+        $info = new \core_availability\info_module($coursemodule);
         $users = $info->filter_user_list($users);
 
         // Check for any override dates.
         $overrides = $quizobj->get_override_manager()->get_all_overrides();
 
         foreach ($users as $key => $user) {
-            if ($user->suspended || ($user->auth == 'nologin')) {
+            // Skip users who are suspended, use nologin auth, or cannot access the quiz.
+            $isuservisible = \core_availability\info_module::is_user_visible($coursemodule, $user->id, false);
+            if ($user->suspended || $user->auth == 'nologin' || !$isuservisible) {
                 unset($users[$key]);
                 continue;
             }
+
             // Time open and time close dates can be user specific with an override.
             // We begin by assuming it is the same as recorded in the quiz.
             $user->timeopen = $quiz->timeopen;

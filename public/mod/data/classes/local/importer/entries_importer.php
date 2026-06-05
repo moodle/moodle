@@ -119,6 +119,7 @@ abstract class entries_importer {
         if (!str_ends_with($zipsubdir, '/')) {
             $zipsubdir .= '/';
         }
+        $filename = clean_param($filename, PARAM_FILE);
         $filepathinextractedzip = $this->extracteddir . $zipsubdir . $filename;
         return file_exists($filepathinextractedzip) ? file_get_contents($filepathinextractedzip) : false;
     }

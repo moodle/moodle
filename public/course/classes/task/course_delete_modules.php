@@ -89,11 +89,13 @@ class course_delete_modules extends \core\task\adhoc_task {
     }
 
     /**
-     * Sets attemptsavailable to false.
+     * Explicitly set attemptsavailable to true as their are valid
+     * reasons why a delete may fail intermittently and then work
+     * when allowed to retry. See MDL-88162 for more details.
      *
      * @return boolean
      */
     public function retry_until_success(): bool {
-        return false;
+        return true;
     }
 }

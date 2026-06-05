@@ -123,3 +123,24 @@ Feature: Create conversations for course's groups
     And I open the "Group" conversations list
     Then "Messaging group" "core_message > Message" should exist
     Then "No messaging group" "core_message > Message" should not exist
+
+  Scenario: Group conversation names with special characters are rendered correctly
+    Given the following "courses" exist:
+      | fullname         | shortname          | category | groupmode |
+      | Course " ' & < > | Course " ' & < >   | 0        | 1         |
+    And the following "course enrolments" exist:
+      | user     | course           | role    |
+      | student1 | Course " ' & < > | student |
+      | student2 | Course " ' & < > | student |
+    And the following "groups" exist:
+      | name            | course           | idnumber | enablemessaging |
+      | Group " ' & < > | Course " ' & < > | G4       | 1               |
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | G4    |
+      | student2 | G4    |
+    And I log in as "student1"
+    And I open messaging
+    When I open the "Group" conversations list
+    Then "Group \" ' & < >" "core_message > Message" should exist
+    And I should see "Course \" ' & < >" in the "[data-region='message-drawer']" "css_element"

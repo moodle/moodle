@@ -107,8 +107,13 @@ M.form.dateselector = {
             showNextMonth: true,
             firstdayofweek: parseInt(config.firstdayofweek, 10),
             headerRenderer: function(date) {
-                // We fetch the current language's preferred time format from the language pack.
                 var calendar = this;
+                var headerNode = calendar.get('contentBox')
+                    .one('#' + calendar._calendarId + '_header');
+                var currentHeader = headerNode ? headerNode.getContent() : '';
+                var placeholder = M.util.get_string('loading', 'moodle');
+
+                // We fetch the current language's preferred time format from the language pack.
                 require(['core/user_date', 'core/notification'], function(UserDate, Notification) {
                     UserDate.get([{
                         timestamp: Math.floor(date.getTime() / 1000),
@@ -122,7 +127,7 @@ M.form.dateselector = {
                         return dateStrs[0];
                     }).catch(Notification.exception);
                 });
-                return '';
+                return currentHeader || placeholder;
             },
 
             WEEKDAYS_MEDIUM: [

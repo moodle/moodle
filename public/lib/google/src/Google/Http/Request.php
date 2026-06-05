@@ -44,7 +44,7 @@ class Google_Http_Request
   protected $baseComponent = null;
   protected $path;
   protected $postBody;
-  protected $userAgent;
+  protected $userAgent = '';
   protected $canGzip = null;
 
   protected $responseHttpCode;

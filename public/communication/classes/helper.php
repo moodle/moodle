@@ -178,7 +178,7 @@ class helper {
                     groupid: $coursegroup->id,
                     context: $coursecontext,
                 );
-                $instanceusers = $communication->get_processor()->get_all_userids_for_instance();
+                $instanceusers = $communication->get_processor()?->get_all_userids_for_instance() ?? [];
 
                 // The difference between the instance users and the group members are the ones we want to check.
                 $roomuserstocheck = array_diff(

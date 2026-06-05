@@ -1716,8 +1716,8 @@ abstract class base {
         // but there is some available info text which explains the reason & should display,
         // OR it is hidden but the course has a setting to display hidden sections as unavailable.
         return $section->uservisible ||
-            ($section->visible && !$section->available && !empty($section->availableinfo)) ||
-            (!$section->visible && !$hidesections);
+            ($section->visible || !$hidesections)
+            && ($section->available || !empty($section->availableinfo));
     }
 
     /**

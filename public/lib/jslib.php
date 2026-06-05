@@ -54,7 +54,9 @@ function js_send_cached($jspath, $etag, $filename = 'javascript.php') {
         header('Content-Length: '.filesize($jspath));
     }
 
-    readfile($jspath);
+    if (readfile($jspath) === false) {
+        js_send_css_not_found();
+    }
     die;
 }
 
@@ -128,6 +130,7 @@ function js_write_cache_file_content($file, $content) {
  * Sends a 404 message about CSS not being found.
  */
 function js_send_css_not_found() {
+    header_remove();
     header('HTTP/1.0 404 not found');
     die('JS was not found, sorry.');
 }

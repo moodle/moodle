@@ -255,7 +255,9 @@ function send_cached_image($imagepath, $etag) {
         header('Content-Length: '.filesize($imagepath));
     }
 
-    readfile($imagepath);
+    if (readfile($imagepath) === false) {
+        image_not_found();
+    }
     die;
 }
 
@@ -273,11 +275,14 @@ function send_uncached_image($imagepath) {
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($imagepath));
 
-    readfile($imagepath);
+    if (readfile($imagepath) === false) {
+        image_not_found();
+    }
     die;
 }
 
 function image_not_found() {
+    header_remove();
     header('HTTP/1.0 404 not found');
     die('Image was not found, sorry.');
 }

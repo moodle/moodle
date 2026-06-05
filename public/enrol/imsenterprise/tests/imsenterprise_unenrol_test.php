@@ -521,6 +521,106 @@ final class imsenterprise_unenrol_test extends \advanced_testcase {
     }
 
     /**
+     * Re-enroling a user with a suspended enrolment re-actives that enrolment.
+     */
+    public function test_reenable_suspended_enrolment(): void {
+
+        global $DB;
+
+        $this->imsplugin->set_config('imsunenrol', 1);
+        $this->imsplugin->set_config('unenrolaction', ENROL_EXT_REMOVED_SUSPEND);
+
+        $courses = $this->generate_test_course_records(1);
+        $users = $this->generate_test_user_records(1);
+
+        // Add a new enrolment for the same user via IMS file.
+        $coursemembership = $this->link_users_with_courses(
+            $users,
+            $courses,
+            // Role types: 01=Learner, 02=Instructor, 03=Content Dev, 04=Member, 05=Manager, 06=Mentor, 07=Admin, 08=TA.
+            // Role statuses: 0=Inactive, 1=Active.
+            // Role recstatus:  1=Add, 2=Update, 3=Delete.
+            // Format of matrix elements: <roletype>:<role status>:<role recstatus>.
+            [
+                ['01:1:1'], // Course 1.
+            ]
+        );
+
+        $this->set_xml_file($users, $courses, $coursemembership);
+        $this->imsplugin->cron();
+
+        // Capture DB ids.
+        $dbuser = $DB->get_record('user', ['idnumber' => $users[0]->idnumber], '*', MUST_EXIST);
+
+        $dbenrolment = $DB->get_record(
+            'user_enrolments',
+            [
+                'userid' => $dbuser->id,
+                'status' => ENROL_USER_ACTIVE,
+            ],
+            '*',
+            MUST_EXIST,
+        );
+
+        // Unenrol the user, check that the enrolment is suspended.
+        $coursemembership = $this->link_users_with_courses(
+            $users,
+            $courses,
+            // Role types: 01=Learner, 02=Instructor, 03=Content Dev, 04=Member, 05=Manager, 06=Mentor, 07=Admin, 08=TA.
+            // Role statuses: 0=Inactive, 1=Active.
+            // Role recstatus:  1=Add, 2=Update, 3=Delete.
+            // Format of matrix elements: <roletype>:<role status>:<role recstatus>.
+            [
+                ['01:0:3'], // Course 1.
+            ]
+        );
+
+        $this->set_xml_file($users, $courses, $coursemembership);
+        $this->imsplugin->cron();
+
+        $this->assertEquals(
+            1,
+            $DB->count_records(
+                'user_enrolments',
+                [
+                    'userid' => $dbuser->id,
+                    'id' => $dbenrolment->id,
+                    'status' => ENROL_USER_SUSPENDED,
+                ]
+            ),
+        );
+
+        // Re-import the original enrolment.
+        $coursemembership = $this->link_users_with_courses(
+            $users,
+            $courses,
+            // Role types: 01=Learner, 02=Instructor, 03=Content Dev, 04=Member, 05=Manager, 06=Mentor, 07=Admin, 08=TA.
+            // Role statuses: 0=Inactive, 1=Active.
+            // Role recstatus:  1=Add, 2=Update, 3=Delete.
+            // Format of matrix elements: <roletype>:<role status>:<role recstatus>.
+            [
+                ['01:1:1'], // Course 1.
+            ]
+        );
+
+        $this->set_xml_file($users, $courses, $coursemembership);
+        $this->imsplugin->cron();
+
+        // The user's original enrolment should be active again.
+        $this->assertEquals(
+            1,
+            $DB->count_records(
+                'user_enrolments',
+                [
+                    'userid' => $dbuser->id,
+                    'id' => $dbenrolment->id,
+                    'status' => ENROL_USER_ACTIVE,
+                ],
+            ),
+        );
+    }
+
+    /**
      * Enrolments are disabled but retained) and roles removed
      */
     public function test_disable_enrolments_and_remove_roles(): void {

@@ -646,6 +646,8 @@ class mod_lesson_generator extends testing_module_generator {
         }
 
         $DB->insert_record('lesson_overrides', (object) $data);
+
+        lesson_update_events($DB->get_record('lesson', ['id' => $data['lessonid']], '*', MUST_EXIST));
     }
 
     /**

@@ -545,7 +545,7 @@ class user extends grade_report {
                     if (!$cm->uservisible) {
                         // If there is 'availableinfo' text then it is only greyed
                         // out and not entirely hidden.
-                        if (!$cm->availableinfo) {
+                        if (!$cm->visible || !$cm->availableinfo) {
                             $hide = true;
                         }
                     }

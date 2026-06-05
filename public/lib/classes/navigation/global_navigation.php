@@ -1213,11 +1213,15 @@ class global_navigation extends navigation_node {
             return $activitynodes;
         }
 
+        $format = course_get_format($section->course);
         foreach ($section->get_sequence_cm_infos() as $cm) {
             $activitydata = $activitiesdata[$cm->id];
 
             // If activity is a delegated section, load a section node instead of the activity one.
             if ($activitydata->delegatedsection) {
+                if (!$format->is_section_visible($activitydata->delegatedsection)) {
+                    continue;
+                }
                 $activitynodes[$activitydata->id] = $this->load_section_navigation(
                     parentnode: $sectionnode,
                     section: $activitydata->delegatedsection,

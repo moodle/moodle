@@ -493,4 +493,63 @@ final class question_type_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('question', ['id' => $originalsubq2->id]));
         $this->assertTrue($DB->record_exists('qtype_multichoice_options', ['questionid' => $originalsubq2->id]));
     }
+
+    /**
+     * Test saving numerical cloze questions with various syntaxes do not throw errors.
+     */
+    public function test_numerical_cloze_questions_save_cleanly(): void {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        /** @var \core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category([]);
+
+        // Questions with cloze syntax mixed in.
+        $testcases = [
+            'Valid numerical with wildcard feedback' =>
+                'What is 2+2? {1:NUMERICAL:=4:0~*#Try again}',
+            'Nonsensical but accepted syntax' =>
+                'What is 2+2? {1:NUMERICAL:*#Nonsense~=4:0#Correct}',
+        ];
+
+        foreach ($testcases as $label => $questiontext) {
+            $fromform = (object)[
+                'category' => $cat->id . ',' . $cat->contextid,
+                'name' => 'Test cloze question',
+                'questiontext' => [
+                    'text' => $questiontext,
+                    'format' => FORMAT_HTML,
+                ],
+                'defaultmark' => 1,
+            ];
+            $question = new stdClass();
+            $question->qtype = 'multianswer';
+
+            // Capture errors during save (warnings and deprecations only).
+            $capturedwarnings = [];
+            set_error_handler(function($errno, $errstr) use (&$capturedwarnings) {
+                if ($errno === E_WARNING || $errno === E_DEPRECATED) {
+                    $capturedwarnings[] = $errstr;
+                }
+                return true;
+            }, E_WARNING | E_DEPRECATED);
+
+            try {
+                $savedquestion = $this->qtype->save_question($question, $fromform);
+            } finally {
+                restore_error_handler();
+            }
+
+            $this->assertEmpty(
+                $capturedwarnings,
+                "PHP error triggered for case '{$label}'"
+            );
+
+            $this->assertNotEmpty(
+                $savedquestion->id,
+                "Question not saved for case '{$label}'"
+            );
+        }
+    }
 }

@@ -387,9 +387,11 @@ class manager {
             'httponly' => $CFG->cookiehttponly,
         ];
 
-        if (self::should_use_samesite_none()) {
-            // If $samesite is empty, we don't want there to be any SameSite attribute.
+        if (\core_useragent::is_moodle_app()) {
+            // Moodle Mobile app for Android requires SameSite=None to allow embedding content such as H5P and SCORM.
             $sessionoptions['samesite'] = 'None';
+        } else {
+            $sessionoptions['samesite'] = 'Lax';
         }
 
         session_set_cookie_params($sessionoptions);
@@ -641,27 +643,6 @@ class manager {
 
         // Setup $USER object.
         self::set_user($user);
-    }
-
-    /**
-     * Returns a valid setting for the SameSite cookie attribute.
-     *
-     * @return string The desired setting for the SameSite attribute on the cookie. Empty string indicates the SameSite attribute
-     * should not be set at all.
-     */
-    private static function should_use_samesite_none(): bool {
-        // We only want None or no attribute at this point. When we have cookie handling compatible with Lax,
-        // we can look at checking a setting.
-
-        // Browser support for none is not consistent yet. There are known issues with Safari, and IE11.
-        // Things are stablising, however as they're not stable yet we will deal specifically with the version of chrome
-        // that introduces a default of lax, setting it to none for the current version of chrome (2 releases before the change).
-        // We also check you are using secure cookies and HTTPS because if you are not running over HTTPS
-        // then setting SameSite=None will cause your session cookie to be rejected.
-        if (\core_useragent::is_chrome() && \core_useragent::check_chrome_version('78') && is_moodle_cookie_secure()) {
-            return true;
-        }
-        return false;
     }
 
     /**

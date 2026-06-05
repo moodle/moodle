@@ -16,6 +16,8 @@
 
 namespace core_ai\aiactions\responses;
 
+use core_ai\helper;
+
 /**
  * Generate text action response class.
  *
@@ -71,7 +73,10 @@ class response_generate_text extends response_base {
     public function set_response_data(array $response): void {
         $this->id = $response['id'] ?? null;
         $this->fingerprint = $response['fingerprint'] ?? null;
-        $this->generatedcontent = $response['generatedcontent'] ?? null;
+        $generatedcontent = $response['generatedcontent'] ?? null;
+        $this->generatedcontent = $generatedcontent !== null
+            ? helper::strip_reasoning_tags($generatedcontent)
+            : null;
         $this->finishreason = $response['finishreason'] ?? null;
         $this->prompttokens = $response['prompttokens'] ?? null;
         $this->completiontokens = $response['completiontokens'] ?? null;

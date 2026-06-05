@@ -124,7 +124,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
-if ($addsectionatpage = optional_param('addsectionatpage', false, PARAM_INT)) {
+if (($addsectionatpage = optional_param('addsectionatpage', false, PARAM_INT)) && confirm_sesskey()) {
     // Add a section to the quiz.
     $structure->check_can_be_edited();
     $structure->add_section_heading($addsectionatpage);

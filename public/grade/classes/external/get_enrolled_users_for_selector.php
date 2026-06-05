@@ -84,6 +84,11 @@ class get_enrolled_users_for_selector extends external_api {
         require_capability('moodle/course:viewparticipants', $coursecontext);
 
         $course = $DB->get_record('course', ['id' => $params['courseid']]);
+
+        if ($params['groupid'] && !groups_group_visible($params['groupid'], $course)) {
+            throw new \moodle_exception('cannotaccessgroup', 'core_grades');
+        }
+
         // Create a graded_users_iterator because it will properly check the groups etc.
         $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
         $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);

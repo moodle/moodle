@@ -45,11 +45,12 @@ if (isset($CFG->calendar_maxevents)) {
 // Create form.
 $calendarform = new core_user\form\calendar_form(null, array('userid' => $user->id));
 
-$user->timeformat = get_user_preferences('calendar_timeformat', '');
-$user->startwday  = calendar_get_starting_weekday();
-$user->maxevents  = get_user_preferences('calendar_maxevents', $defaultmaxevents);
-$user->lookahead  = get_user_preferences('calendar_lookahead', $defaultlookahead);
-$user->persistflt = get_user_preferences('calendar_persistflt', 0);
+$user->timeformat = get_user_preferences('calendar_timeformat', '', $user);
+$user->startwday  = get_user_preferences('calendar_startwday', calendar_get_starting_weekday(), $user);
+$user->maxevents  = get_user_preferences('calendar_maxevents', $defaultmaxevents, $user);
+$user->lookahead  = get_user_preferences('calendar_lookahead', $defaultlookahead, $user);
+$user->persistflt = get_user_preferences('calendar_persistflt', 0, $user);
+
 $calendarform->set_data($user);
 
 $redirect = new moodle_url("/user/preferences.php", array('userid' => $user->id));
@@ -58,14 +59,14 @@ if ($calendarform->is_cancelled()) {
 } else if ($calendarform->is_submitted() && $calendarform->is_validated() && confirm_sesskey()) {
     $data = $calendarform->get_data();
 
-    $usernew = ['id' => $USER->id,
+    useredit_update_user_preference([
+        'id' => $user->id,
         'preference_calendar_timeformat' => $data->timeformat,
         'preference_calendar_startwday' => $data->startwday,
         'preference_calendar_maxevents' => $data->maxevents,
         'preference_calendar_lookahead' => $data->lookahead,
-        'preference_calendar_persistflt' => $data->persistflt
-    ];
-    useredit_update_user_preference($usernew);
+        'preference_calendar_persistflt' => $data->persistflt,
+    ]);
 
     // Calendar type.
     $calendartype = $data->calendartype;

@@ -152,7 +152,7 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         // Check the installed pip package version.
-        $cmd = "{$this->pathtopython} -m moodlemlbackend.version";
+        $cmd = escapeshellarg($this->pathtopython) . ' -m moodlemlbackend.version';
 
         $output = null;
         $exitcode = null;
@@ -568,7 +568,7 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
      */
     protected function exec_command(string $modulename, array $params, string $errorlangstr) {
 
-        $cmd = $this->pathtopython . ' -m moodlemlbackend.' . $modulename . ' ';
+        $cmd = escapeshellarg($this->pathtopython) . ' -m moodlemlbackend.' . $modulename . ' ';
         foreach ($params as $param) {
             $cmd .= escapeshellarg($param) . ' ';
         }
@@ -707,7 +707,7 @@ class processor implements  \core_analytics\classifier, \core_analytics\regresso
         }
 
         if (!$this->useserver) {
-            $cmd = "{$this->pathtopython} -m moodlemlbackend.version";
+            $cmd = escapeshellarg($this->pathtopython) . ' -m moodlemlbackend.version';
         } else {
             // We can't not know which is the python bin in the python ML server, the most likely
             // value is 'python'.

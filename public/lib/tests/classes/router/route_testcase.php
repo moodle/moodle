@@ -431,7 +431,7 @@ abstract class route_testcase extends \advanced_testcase {
         ResponseInterface $response,
         ?int $statuscode = 200,
     ): void {
-        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(
             $statuscode,
             $response->getStatusCode(),
@@ -449,7 +449,7 @@ abstract class route_testcase extends \advanced_testcase {
         ResponseInterface $response,
         ?int $responsecode = null,
     ): void {
-        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertNotEquals(
             200,
             $response->getStatusCode(),

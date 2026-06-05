@@ -156,12 +156,14 @@ switch ($action) {
         break;
 
     case 'enablemessaging':
+        require_sesskey();
         set_groups_messaging($groupids, true);
         redirect($returnurl, get_string('messagingenabled', 'group', count($groupids)), null,
             \core\output\notification::NOTIFY_SUCCESS);
         break;
 
     case 'disablemessaging':
+        require_sesskey();
         set_groups_messaging($groupids, false);
         redirect($returnurl, get_string('messagingdisabled', 'group', count($groupids)), null,
             \core\output\notification::NOTIFY_SUCCESS);

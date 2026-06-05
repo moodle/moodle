@@ -241,6 +241,9 @@ abstract class backup_plan_dbops extends backup_dbops {
             }
             $shortname = str_replace(' ', '_', $shortname);
             $shortname = core_text::strtolower(trim(clean_filename($shortname), '_'));
+            // Truncate by bytes to keep total filename within the 255-byte OS limit.
+            // Use 170 bytes as a conservative budget for the shortname.
+            $shortname = core_text::str_max_bytes($shortname, 170);
         }
 
         // The name will always contain the ID, but we append the course short name if requested.

@@ -42,7 +42,7 @@ class action_generate_image_form extends action_settings_form {
             get_string("action:{$actionname}:deployment", 'aiprovider_azureai'),
             'maxlength="255" size="20"',
         );
-        $mform->setType('deployment', PARAM_ALPHANUMEXT);
+        $mform->setType('deployment', PARAM_TEXT);
         $mform->addRule('deployment', null, 'required', null, 'client');
         $mform->setDefault('deployment', $actionconfig['deployment'] ?? '');
         $mform->addHelpButton('deployment', "action:{$actionname}:deployment", 'aiprovider_azureai');
@@ -54,7 +54,7 @@ class action_generate_image_form extends action_settings_form {
             get_string("action:{$actionname}:apiversion", 'aiprovider_azureai'),
             'maxlength="255" size="30"',
         );
-        $mform->setType('apiversion', PARAM_ALPHANUMEXT);
+        $mform->setType('apiversion', PARAM_TEXT);
         $mform->addRule('apiversion', null, 'required', null, 'client');
         $mform->setDefault('apiversion', $actionconfig['apiversion'] ?? '2024-06-01');
 

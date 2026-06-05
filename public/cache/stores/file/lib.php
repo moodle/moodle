@@ -469,7 +469,7 @@ class cachestore_file extends store implements
             return false;
         }
         // Open ensuring the file for reading in binary format.
-        if (!$handle = fopen($file, 'rb')) {
+        if (!$handle = @fopen($file, 'rb')) {
             return false;
         }
 
@@ -482,7 +482,7 @@ class cachestore_file extends store implements
         // Read the data in 1Mb chunks. Small caches will not loop more than once.  We don't use filesize as it may
         // be cached with a different value than what we need to read from the file.
         do {
-            $data .= fread($handle, 1048576);
+            $data .= @fread($handle, 1048576);
         } while (!feof($handle));
         $this->lastiobytes = strlen($data);
 

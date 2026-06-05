@@ -16,6 +16,7 @@ Our changes:  Look for "moodle" in code (commit #3 - always mimic from current m
  * xhprof_html/typeahead.php -|
  * xhprof_html/css/xhprof.css: Minor tweaks to report styles
  * xhprof_lib/utils/callgraph_utils.php: Modified to use $CFG->pathtodot
+ * xhprof_lib/utils/xhprof_lib.php: fix PHP 8.1 stripos() null deprecation in xhprof_parse_parent_child()
 
 TODO:
  * improvements to the listing mode: various commodity details like:
@@ -43,3 +44,4 @@ TODO:
 20211209 - MDL-71705 - Ilya Tregubov (ilyatregubov): Upgrade to 2.3.5 release;
 20221214 - MDL-76397 - Stevani Andolo (stevandoMoodle): Upgrade to 2.3.9 release;
 20251024 - MDL-86235 - Andi Permana (andimendunia): Add table-hover class to profiling table
+20260424 - MDL-88424 - Andi Permana (andimendunia): Fix PHP 8.1 stripos() null deprecation in xhprof_parse_parent_child()

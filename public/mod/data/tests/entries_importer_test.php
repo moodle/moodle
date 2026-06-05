@@ -202,4 +202,32 @@ final class entries_importer_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test file paths passed to get_file_content_from_zip are cleaned.
+     *
+     * @covers \mod_data\local\importer\entries_importer::get_file_content_from_zip
+     */
+    public function test_get_file_content_from_zip_paths_are_cleaned(): void {
+        $zipfilepath = self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_files.zip');
+        $files = [
+            'Valid file path (no cleaning required)' => [
+                'filename' => 'samplefile.png',
+                'expectedcontent' => true,
+            ],
+            'Invalid file path (cleaning will be performed)' => [
+                'filename' => '../../../samplefile.png',
+                'expectedcontent' => false,
+            ],
+        ];
+        $importer = new csv_entries_importer($zipfilepath, 'testzip.zip');
+        foreach ($files as $file) {
+            $result = $importer->get_file_content_from_zip($file['filename']);
+            if ($file['expectedcontent']) {
+                $this->assertNotEmpty($result);
+            } else {
+                $this->assertFalse($result);
+            }
+        }
+    }
 }

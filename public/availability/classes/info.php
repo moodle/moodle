@@ -208,15 +208,7 @@ abstract class info {
             $this->modinfo = null;
             return true;
         } else {
-            // If the item is marked as 'not visible' then we don't change the available
-            // flag (visible/available are treated distinctly), but we remove any
-            // availability info. If the item is hidden with the eye icon, it doesn't
-            // make sense to show 'Available from <date>' or similar, because even
-            // when that date arrives it will still not be available unless somebody
-            // toggles the eye icon.
-            if ($this->visible) {
-                $information = $tree->get_result_information($this, $result);
-            }
+            $information = $tree->get_result_information($this, $result);
 
             $this->modinfo = null;
             return false;

@@ -27388,6 +27388,13 @@ body.lockscroll {
   display: inline-block;
 }
 
+.yui3-calendar-weekday {
+  max-width: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 dd:before,
 dd:after {
   display: block;
@@ -36298,6 +36305,10 @@ div#dock {
 }
 #page-mod-lesson-view .fitem .felement .form-select {
   align-self: flex-start;
+}
+#page-mod-lesson-view .mediaplugin,
+#page-mod-lesson-view .mediaplugin video {
+  min-width: 200px;
 }
 
 .path-mod-lesson .table td {

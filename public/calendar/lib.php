@@ -2682,7 +2682,10 @@ function calendar_can_edit_subscription($subscriptionorid) {
     $category = null;
 
     if (!empty($categoryid)) {
-        $category = \core_course_category::get($categoryid);
+        $category = \core_course_category::get($categoryid, IGNORE_MISSING, true);
+        if (!$category) {
+            return false;
+        }
     }
     calendar_get_allowed_types($allowed, $courseid, null, $category);
     switch ($subscription->eventtype) {
@@ -2690,13 +2693,13 @@ function calendar_can_edit_subscription($subscriptionorid) {
             return ($USER->id == $subscription->userid && $allowed->user);
         case 'course':
             if (isset($allowed->courses[$courseid])) {
-                return $allowed->courses[$courseid];
+                return (bool)$allowed->courses[$courseid];
             } else {
                 return false;
             }
         case 'category':
             if (isset($allowed->categories[$categoryid])) {
-                return $allowed->categories[$categoryid];
+                return (bool)$allowed->categories[$categoryid];
             } else {
                 return false;
             }
@@ -2704,7 +2707,7 @@ function calendar_can_edit_subscription($subscriptionorid) {
             return $allowed->site;
         case 'group':
             if (isset($allowed->groups[$groupid])) {
-                return $allowed->groups[$groupid];
+                return (bool)$allowed->groups[$groupid];
             } else {
                 return false;
             }

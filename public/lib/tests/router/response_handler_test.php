@@ -24,6 +24,7 @@ use core\router\schema\response\view_response;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Tests for \core\router\response_handler.
@@ -41,7 +42,7 @@ final class response_handler_test extends \advanced_testcase {
         $handler = di::get(response_handler::class);
 
         $result = $handler->standardise_response($response);
-        $this->assertEquals($response, $result);
+        $this->assertSame($response, $result);
     }
 
     public function test_standardise_response_from_payload_response(): void {
@@ -51,7 +52,7 @@ final class response_handler_test extends \advanced_testcase {
         $handler = di::get(response_handler::class);
 
         $result = $handler->standardise_response($payload);
-        $this->assertInstanceOf(Response::class, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
 
         // The body should be json and contain the same data.
         $value = json_decode($result->getBody());
@@ -80,7 +81,7 @@ final class response_handler_test extends \advanced_testcase {
         $handler = di::get(response_handler::class);
 
         $result = $handler->standardise_response($payload);
-        $this->assertInstanceOf(Response::class, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
 
         // The body should be json and contain the same data.
         $value = json_decode($result->getBody());
@@ -121,7 +122,7 @@ final class response_handler_test extends \advanced_testcase {
         $handler = di::get(response_handler::class);
 
         $result = $handler->standardise_response($response);
-        $this->assertInstanceOf(Response::class, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
 
         // The content type should be application/json and the text/plain header should have been replaced.
         $this->assertStringContainsString('text/html', $result->getHeaderLine('Content-Type'));
@@ -150,7 +151,7 @@ final class response_handler_test extends \advanced_testcase {
         $handler = di::get(response_handler::class);
 
         $result = $handler->get_response_from_exception($request, $exception);
-        $this->assertInstanceOf(Response::class, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
 
         // The body should be json and contain the exception message.
         $value = json_decode($result->getBody(), true);
@@ -179,7 +180,7 @@ final class response_handler_test extends \advanced_testcase {
         $handler = di::get(response_handler::class);
 
         $result = $handler->get_response_from_exception($request, $exception);
-        $this->assertInstanceOf(Response::class, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
 
         // The body should be json and contain the exception message.
         $value = json_decode($result->getBody(), true);

@@ -1022,7 +1022,7 @@ class stateactions {
 
             foreach ($modinfo->sections[$sectioninfo->section] as $modnumber) {
                 $mod = $modinfo->cms[$modnumber];
-                if ($mod->is_visible_on_course_page()) {
+                if ($mod->is_visible_on_course_page() && $mod->is_of_type_that_can_display()) {
                     $cmids[$mod->id] = true;
                 }
             }

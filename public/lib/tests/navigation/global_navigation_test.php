@@ -54,4 +54,65 @@ final class global_navigation_test extends navigation_testcase {
         $this->assertTrue($node->exposed_module_extends_navigation('data'));
         $this->assertFalse($node->exposed_module_extends_navigation('test1'));
     }
+
+    /**
+     * Test that subsections with hidden restrictions (eye closed) are not shown in the navigation
+     * block, and that subsections with visible restrictions (eye open) still appear.
+     */
+    public function test_load_section_activities_navigation_hidden_subsection_visibility(): void {
+        global $PAGE, $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('enableavailability', 1);
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['numsections' => 1]);
+
+        $student = $generator->create_user();
+        $generator->enrol_user($student->id, $course->id, 'student');
+
+        // Profile condition that can never be met: no test user is assigned this reserved address.
+        $nevermatchemail = '{"type":"profile","sf":"email","op":"isequalto","v":"nomail@moodle.invalid"}';
+        // Flag showc:[false] = eye closed (restriction hidden from students).
+        $eyeclosed = '{"op":"&","c":[' . $nevermatchemail . '],"showc":[false]}';
+        // Flag showc:[true] = eye open (restriction visible to students, MDL-87671 scenario).
+        $eyeopen = '{"op":"&","c":[' . $nevermatchemail . '],"showc":[true]}';
+
+        $hiddensubsection = $generator->create_module('subsection', [
+            'course' => $course->id,
+            'section' => 1,
+            'availability' => $eyeclosed,
+        ]);
+        $visiblesubsection = $generator->create_module('subsection', [
+            'course' => $course->id,
+            'section' => 1,
+            'availability' => $eyeopen,
+        ]);
+
+        rebuild_course_cache($course->id, true);
+        $this->setUser($student);
+        $PAGE->set_url('/course/view.php', ['id' => $course->id]);
+        $PAGE->set_course($course);
+        $PAGE->set_context(\core\context\course::instance($course->id));
+
+        $modinfo = get_fast_modinfo($course);
+        $section1 = $modinfo->get_section_info(1);
+        $hiddeninfo = $modinfo->get_section_info_by_component('mod_subsection', $hiddensubsection->id);
+        $visibleinfo = $modinfo->get_section_info_by_component('mod_subsection', $visiblesubsection->id);
+
+        $nav = new exposed_global_navigation($PAGE);
+        $nav->set_initialised();
+
+        [, $activities] = $nav->exposed_generate_sections_and_activities($course);
+
+        $sectionnode = $nav->add('Section 1', null, navigation_node::TYPE_SECTION, null, $section1->id);
+        $nav->exposed_load_section_activities_navigation($sectionnode, $section1, $activities);
+
+        // Eye-closed restricted subsection must NOT appear in the navigation block.
+        $this->assertFalse($sectionnode->find($hiddeninfo->id, navigation_node::TYPE_SECTION));
+        // Eye-open restricted subsection MUST appear in navigation (MDL-87671 behaviour).
+        $this->assertNotFalse($sectionnode->find($visibleinfo->id, navigation_node::TYPE_SECTION));
+    }
 }

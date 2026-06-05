@@ -210,7 +210,7 @@ class repository_local extends repository {
         global $OUTPUT;
         $encodedpath = base64_encode(json_encode($fileinfo->get_params()));
         $node = array(
-            'title' => $fileinfo->get_visible_name(),
+            'title' => html_entity_decode($fileinfo->get_visible_name()),
             'datemodified' => $fileinfo->get_timemodified(),
             'datecreated' => $fileinfo->get_timecreated()
         );
@@ -251,7 +251,7 @@ class repository_local extends repository {
         $encodedpath = base64_encode(json_encode($fileinfo->get_params()));
         return array(
             'path' => $encodedpath,
-            'name' => $fileinfo->get_visible_name()
+            'name' => html_entity_decode($fileinfo->get_visible_name()),
         );
     }
 

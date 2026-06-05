@@ -10,15 +10,17 @@ Feature: Scorm display options
       | teacher1 | Teacher   | One      | teacher1@example.com |
       | student1 | Student   | One      | student1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | format         | activitytype |
-      | Course 1 | C1        | topics         |              |
-      | Course 2 | C2        | singleactivity | scorm        |
+      | fullname | shortname | format         | activitytype | coursedisplay |
+      | Course 1 | C1        | topics         |              | 0             |
+      | Course 2 | C2        | singleactivity | scorm        | 0             |
+      | Course 3 | C3        | topics         |              | 1             |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
       | teacher1 | C2     | editingteacher |
       | student1 | C2     | student        |
+      | student1 | C3     | student        |
 
   @javascript
   Scenario Outline: Teacher can change to various Scorm package display options
@@ -56,3 +58,27 @@ Feature: Scorm display options
     And "Enter" "button" should exist
     And "Exit activity" "link" should not exist
     And I should not see "Golf Explained - Minimum Run-time Calls"
+
+  Scenario: Student returns to the correct section after exiting Scorm activity (one section per page)
+    Given the following "activities" exist:
+      | activity | course | name       | packagefilepath                                          | section |
+      | scorm    | C3     | C3 Scorm 1 | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip | 1       |
+      | scorm    | C3     | C3 Scorm 2 | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip | 2       |
+    And I am on the "C3 Scorm 1" "scorm activity" page logged in as student1
+    And I press "Enter"
+    When I click on "Exit activity" "link"
+    # Student should be returned to the section they were in, and not the course overview.
+    Then I should see "C3 Scorm 1"
+    And I should not see "C3 Scorm 2"
+
+  Scenario: Student returns to the course overview after exiting Scorm activity (all sections on one page)
+    Given the following "activities" exist:
+      | activity | course | name       | packagefilepath                                          | section |
+      | scorm    | C1     | C1 Scorm 1 | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip | 1       |
+      | scorm    | C1     | C1 Scorm 2 | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip | 2       |
+    And I am on the "C1 Scorm 1" "scorm activity" page logged in as student1
+    And I press "Enter"
+    When I click on "Exit activity" "link"
+    # Student should be returned to the course overview page displaying both activities.
+    Then I should see "C1 Scorm 1"
+    And I should see "C1 Scorm 2"

@@ -143,13 +143,16 @@ if ($mimetype === 'text/css' or $mimetype === 'application/javascript') {
     header('Content-Length: '.filesize($file));
 }
 
-readfile($file);
+if (readfile($file) === false) {
+    jquery_file_not_found();
+}
 die;
 
 
 
 function jquery_file_not_found() {
     // Note: we can not disclose the exact file path here, sorry.
+    header_remove();
     header('HTTP/1.0 404 not found');
     die('File was not found, sorry.');
 }

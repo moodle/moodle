@@ -90,8 +90,14 @@ switch ($action) {
         }
         break;
     case 'delete':
-        $comment = $DB->get_record('comments', ['id' => $commentid]);
-        if ($manager->can_delete($comment)) {
+        $comment = $DB->get_record('comments', [
+            'id' => $commentid,
+            'contextid' => $context->id,
+            'component' => $component,
+            'commentarea' => $area,
+            'itemid' => $itemid,
+        ]);
+        if (!empty($comment) && $manager->can_delete($comment)) {
             if ($manager->delete($commentid)) {
                 $result = array(
                     'client_id' => $client_id,

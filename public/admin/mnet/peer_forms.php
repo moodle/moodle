@@ -58,6 +58,10 @@ class mnet_simple_host_form extends moodleform {
         if (strtolower(substr($wwwroot, 0, 4)) != 'http') {
             $wwwroot = 'http://'.$wwwroot;
         }
+        $securityhelper = new \core\files\curl_security_helper();
+        if ($securityhelper->url_is_blocked($wwwroot)) {
+            return ['wwwroot' => $securityhelper->get_blocked_url_string()];
+        }
         if ($host = $DB->get_record('mnet_host', array('wwwroot' => $wwwroot))) {
             $str = get_string('hostexists', 'mnet', (new moodle_url('/admin/mnet/peers.php', ['hostid' => $host->id]))->out());
             return array('wwwroot' => $str);

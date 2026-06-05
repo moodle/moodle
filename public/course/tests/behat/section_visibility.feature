@@ -104,3 +104,128 @@ Feature: Show/hide course sections
     And I click on "Section 3" "link" in the "region-main" "region"
     And I should not see "Section 2" in the "region-main" "region"
     And I should see "Section 1" in the "region-main" "region"
+
+  @javascript
+  Scenario Outline: Check if students can see sections: hidden and fully restricted
+    # Set visibility status: fully hidden or partly hidden
+    Given I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
+      | Course layout   | Show all sections on one page |
+      | Hidden sections | <hiddensectionssetting>       |
+    And I press "Save and display"
+    And I am on "Course 1" course homepage with editing mode on
+    And I hide section "2"
+    # Set availability status: fully restricted
+    And I edit the section "2"
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    And I set the following fields to these values:
+      | direction | <availability> |
+      | x[year]   | 2000           |
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
+    And I press "Save changes"
+    And I log out
+    # Check if students can see the section
+    When I am on the "Course 1" course page logged in as student1
+    Then I <seename> see "Section 2" in the "region-main" "region"
+    And I <seecontent> see "Test hidden forum 22 name" in the "region-main" "region"
+
+    # For these tests, visibility is hidden, and unavailable sections are fully restricted.
+    Examples:
+      | hiddensectionssetting   | availability | seename    | seecontent |
+      | Hide completely         | until        | should not | should not |
+      | Show section names only | until        | should not | should not |
+
+  @javascript
+  Scenario Outline: Check if students can see sections: hidden and not fully restricted
+    # Set visibility status: fully hidden or partly hidden
+    Given I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
+      | Course layout   | Show all sections on one page |
+      | Hidden sections | <hiddensectionssetting>       |
+    And I press "Save and display"
+    And I am on "Course 1" course homepage with editing mode on
+    And I hide section "2"
+    # Set availability status: partly restricted or unrestricted
+    And I edit the section "2"
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    And I set the following fields to these values:
+      | direction | <availability> |
+      | x[year]   | 2000           |
+    And I press "Save changes"
+    And I log out
+    # Check if students can see the section
+    When I am on the "Course 1" course page logged in as student1
+    Then I <seename> see "Section 2" in the "region-main" "region"
+    And I <seecontent> see "Test hidden forum 22 name" in the "region-main" "region"
+
+    # For these tests, visibility is hidden, and unavailable sections are partly restricted.
+    Examples:
+      | hiddensectionssetting   | availability | seename    | seecontent |
+      | Hide completely         | until        | should not | should not |
+      | Hide completely         | from         | should not | should not |
+      | Show section names only | until        | should     | should not |
+      | Show section names only | from         | should     | should not |
+
+  @javascript
+  Scenario Outline: Check if students can see sections: shown and fully restricted
+    # Set visibility status: shown
+    Given I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
+      | Course layout   | Show all sections on one page |
+      | Hidden sections | <hiddensectionssetting>       |
+    And I press "Save and display"
+    And I am on "Course 1" course homepage with editing mode on
+    # Set availability status: fully restricted
+    And I edit the section "2"
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    And I set the following fields to these values:
+      | direction | <availability> |
+      | x[year]   | 2000           |
+    And I click on "Item name displayed with access restriction information if student doesn't meet this condition • Click to hide" "link"
+    And I press "Save changes"
+    And I log out
+    # Check if students can see the section
+    When I am on the "Course 1" course page logged in as student1
+    Then I <seename> see "Section 2" in the "region-main" "region"
+    And I <seecontent> see "Test hidden forum 22 name" in the "region-main" "region"
+
+    # For this test, visibility is shown, and unavailable sections are fully restricted.
+    Examples:
+      | hiddensectionssetting   | availability | seename    | seecontent |
+      | Show section names only | until        | should not | should not |
+
+  @javascript
+  Scenario Outline: Check if students can see sections: shown and not fully restricted
+    # Set visibility status: shown
+    Given I navigate to "Settings" in current page administration
+    And I set the following fields to these values:
+      | Course layout   | Show all sections on one page |
+      | Hidden sections | <hiddensectionssetting>       |
+    And I press "Save and display"
+    And I am on "Course 1" course homepage with editing mode on
+    # Set availability status: partly restricted or unrestricted
+    And I edit the section "2"
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    And I set the following fields to these values:
+      | direction | <availability> |
+      | x[year]   | 2000           |
+    And I press "Save changes"
+    And I log out
+    # Check if students can see the section
+    When I am on the "Course 1" course page logged in as student1
+    Then I <seename> see "Section 2" in the "region-main" "region"
+    And I <seecontent> see "Test hidden forum 22 name" in the "region-main" "region"
+
+    # For these tests, visibility is shown, and unavailable sections are partly restricted.
+    Examples:
+      | hiddensectionssetting   | availability | seename    | seecontent |
+      | Show section names only | until        | should     | should not |
+      | Show section names only | from         | should     | should     |

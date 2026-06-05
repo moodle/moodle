@@ -1661,6 +1661,44 @@ final class locallib_test extends \advanced_testcase {
         ));
     }
 
+    /**
+     * Tests that unenrolled users are not included in the count of submissions with status and groups.
+     *
+     * @covers \assign::count_submissions_with_status_and_groups
+     */
+    public function test_count_submissions_with_status_and_groups_unenrolled_users(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+        ]);
+
+        $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        // Create 3 students and have them all submit.
+        $students = [];
+        for ($i = 0; $i < 3; $i++) {
+            $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+            $this->add_submission($student, $assign);
+            $this->submit_for_grading($student, $assign);
+            $students[] = $student;
+        }
+
+        // All 3 enrolled students have submitted.
+        $this->assertEquals(3, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
+
+        // Unenrol one student.
+        $manualenrol = enrol_get_plugin('manual');
+        $enrolinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $manualenrol->unenrol_user($enrolinstance, $students[0]->id);
+
+        // Only 2 submissions should be counted now because the unenrolled user's submission must be excluded.
+        $this->assertEquals(2, $assign->count_submissions_with_status_and_groups(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
+    }
+
     public function test_count_submissions_need_grading_with_groups(): void {
         $this->resetAfterTest();
 

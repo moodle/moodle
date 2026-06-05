@@ -323,7 +323,7 @@ class core_course_renderer extends plugin_renderer_base {
         if ($cm->uservisible) {
             return null;
         }
-        if (!$cm->availableinfo) {
+        if (!$cm->visible || !$cm->availableinfo) {
             return get_string('activityiscurrentlyhidden');
         }
 

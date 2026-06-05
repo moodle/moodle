@@ -489,3 +489,30 @@ function useredit_get_disabled_name_fields($enabledadditionalusernames = null) {
     }
     return $result;
 }
+
+/**
+ * Validate the length of the user profile description field.
+ *
+ * Shared by user_edit_form and user_editadvanced_form to ensure consistent
+ * validation of the description_editor field length.
+ *
+ * The limit can be overridden in config.php by setting USER_DESCRIPTION_MAX_LENGTH constant.
+ *
+ * @param array $data Form data submitted by the user.
+ * @return array Validation errors, keyed by field name. Empty if valid.
+ */
+function useredit_validate_description_length(array $data): array {
+    if (defined('USER_DESCRIPTION_MAX_LENGTH')) {
+        $maxlength = USER_DESCRIPTION_MAX_LENGTH;
+    } else {
+        // Default maximum character length for a user profile description.
+        $maxlength = 50000;
+    }
+    $errors = [];
+    if (!empty($data['description_editor']['text'])) {
+        if (core_text::strlen($data['description_editor']['text']) > $maxlength) {
+            $errors['description_editor'] = get_string('maximumchars', '', $maxlength);
+        }
+    }
+    return $errors;
+}

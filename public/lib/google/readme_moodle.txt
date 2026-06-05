@@ -57,6 +57,8 @@ Local changes (to reapply until upstream upgrades contain them):
       - Converted use of `get_class()` to `static::class`
     * MDL-81634 - PHP 8.4 compliance
       - Implicitly defined nullables
+    * MDL-86733 - PHP 8.2 compliance
+      - Initialise $userAgent to empty string to prevent null being passed to str_replace()
 
 Information
 -----------

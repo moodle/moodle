@@ -202,7 +202,9 @@ function send_cached_font($fontpath, $etag, $font, $mimetype) {
 
     // No need to gzip already compressed fonts.
 
-    readfile($fontpath);
+    if (readfile($fontpath) === false) {
+        font_not_found();
+    }
     die;
 }
 
@@ -215,11 +217,14 @@ function send_uncached_font($fontpath, $font, $mimetype) {
     header('Content-Type: '.$mimetype);
     header('Content-Length: '.filesize($fontpath));
 
-    readfile($fontpath);
+    if (readfile($fontpath) === false) {
+        font_not_found();
+    }
     die;
 }
 
 function font_not_found() {
+    header_remove();
     header('HTTP/1.0 404 not found');
     die('font was not found, sorry.');
 }

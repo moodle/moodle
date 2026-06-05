@@ -89,6 +89,11 @@ class get_gradable_users extends external_api {
         require_capability('moodle/course:viewparticipants', $coursecontext);
 
         $course = $DB->get_record('course', ['id' => $params['courseid']]);
+
+        if ($params['groupid'] && !groups_group_visible($params['groupid'], $course)) {
+            throw new \moodle_exception('cannotaccessgroup', 'core_grades');
+        }
+
         $onlyactive = $onlyactive || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
 
         $users = get_gradable_users($course->id, $params['groupid'], $onlyactive);
