@@ -276,6 +276,13 @@ $viewobj->showbacktocourse = ($viewobj->buttontext === '' &&
 
 echo $OUTPUT->header();
 
+// Fetch gradebook info to display any grading errors (e.g. broken scales).
+// $gradinginfo may not have been set earlier, so we initialize it safely here.
+$gradinginfo = null;
+if ($gradeitem) {
+    $gradinginfo = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
+}
+
 if (!empty($gradinginfo->errors)) {
     foreach ($gradinginfo->errors as $error) {
         $errortext = new notification($error, notification::NOTIFY_ERROR);
