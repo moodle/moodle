@@ -33,7 +33,7 @@ $string['pathssubdataroot'] = '<p>A directory where Moodle will store all file c
 <p>This directory should be both readable and writeable by the web server user (usually \'www-data\', \'nobody\', or \'apache\').</p>
 <p>It must not be directly accessible over the web.</p>
 <p>If the directory does not currently exist, the installation process will attempt to create it.</p>';
-$string['pathssubdirroot'] = '<p>The full path to the directory containing the Moodle code.</p>';
+$string['pathssubdirroot'] = '<p>Moodle ကုဒ်များ တည်ရှိရာ စာညွှန်းလမ်းကြောင်း အပြည့်အစုံဖြစ်သည်။</p>';
 $string['pathssubwwwroot'] = '<p>The full address where Moodle will be accessed i.e. the address that users will enter into the address bar of their browser to access Moodle.</p>
 <p>It is not possible to access Moodle using multiple addresses. If your site is accessible via multiple addresses then choose the easiest one and set up a permanent redirect for each of the other addresses.</p>
 <p>If your site is accessible both from the Internet, and from an internal network (sometimes called an Intranet), then use the public address here.</p>
