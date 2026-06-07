@@ -6,3 +6,12 @@ notes:
         support and can now go, as all browsers now support the features each of
         the polyfills provided.
       type: removed
+    - message: >-
+        A new Behat step `I drop file "<path>" on "<element>" "<selectortype>"`
+        has been added to `behat_general`. It dispatches a real HTML5
+        `DragEvent` sequence with a populated `DataTransfer`, allowing scenarios
+        to exercise drop zones backed by `dndupload.js` and similar HTML5
+        file-drop code paths. The legacy
+        `behat_general::i_drag_and_i_drop_it_in` simulates pointer events via
+        jQuery-UI and cannot trigger HTML5 file drops.
+      type: improved
