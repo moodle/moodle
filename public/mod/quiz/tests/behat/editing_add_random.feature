@@ -45,6 +45,17 @@ Feature: Adding random questions to a quiz based on category and tags
     Then "foo" "autocomplete_suggestions" should exist
     And "bar" "autocomplete_suggestions" should exist
 
+  Scenario: A single-join filter collapses its join selector but still filters
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    When I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I apply question bank filter "Category" with value "Questions Category 1"
+    And I wait until the page is ready
+    Then "[data-filterregion=\"filter\"][data-filter-type=\"category\"] [data-filterfield=\"join\"]" "css_element" should not be visible
+    And I should see "question 1 name"
+    And I should see "question 2 name"
+    And I should not see "question 3 name"
+
   Scenario: Questions can be filtered by tags
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
