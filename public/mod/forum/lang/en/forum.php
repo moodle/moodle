@@ -356,6 +356,7 @@ $string['forum:viewrating'] = 'View the total rating you received';
 $string['forum:viewsubscribers'] = 'View subscribers';
 $string['generalforum'] = 'Standard forum for general use';
 $string['generalforums'] = 'General forums';
+$string['gotoalldiscussions'] = 'Go to all discussions';
 $string['gradeitem:forum'] = 'Forum';
 $string['hiddenforumpost'] = 'Hidden forum post';
 $string['hidegraderpanel'] = 'Hide grader panel';
