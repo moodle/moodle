@@ -75,16 +75,22 @@ final class process_generate_text_test extends \advanced_testcase {
      * Test create_request_object
      */
     public function test_create_request_object(): void {
+        $this->resetAfterTest();
+        set_config('action_generate_text_model', 'my/custom-gpt', 'aiprovider_openai');
+
         $processor = new process_generate_text($this->provider, $this->action);
 
         // We're working with a private method here, so we need to use reflection.
         $method = new \ReflectionMethod($processor, 'create_request_object');
         $request = $method->invoke($processor, 1);
 
-        $body = (object) json_decode($request->getBody()->getContents());
+        $rawbody = $request->getBody()->getContents();
+        $body = (object) json_decode($rawbody);
 
+        $this->assertEquals('my/custom-gpt', $body->model);
         $this->assertEquals('This is a test prompt', $body->messages[1]->content);
         $this->assertEquals('user', $body->messages[1]->role);
+        $this->assertStringNotContainsString('\/', $rawbody); // Slashes must not be escaped.
     }
 
     /**
