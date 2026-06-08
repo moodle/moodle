@@ -31271,6 +31271,15 @@ body:not(.editing) .activity.subsection:last-child .section-item .course-section
   margin-top: -1px;
 }
 
+/* Course linear navigation footer. */
+.course-linear-navigation-footer-content .course-linear-navigation-link {
+  font-size: 1rem;
+  padding: 0.25rem 0;
+}
+.course-linear-navigation-footer-content .course-linear-navigation-link:hover span, .course-linear-navigation-footer-content .course-linear-navigation-link:focus span {
+  text-decoration: underline;
+}
+
 /* Old indentation styles */
 .mod-indent-outer {
   display: table;

@@ -37,3 +37,48 @@ Feature: Display the course linear navigation
       | weeks          | 0         | t1   | should not be visible |
       | singleactivity | 1         | s1   | should not be visible |
       | singleactivity | 1         | t1   | should not be visible |
+
+  @javascript
+  Scenario Outline: Clicking Next navigates to the next activity
+    Given the following "courses" exist:
+      | fullname | shortname | format   | enablelinearnav | numsections |
+      | Course1  | C1        | <format> | 1               | 0           |
+    And the following "course enrolments" exist:
+      | user | course | role    |
+      | s1   | C1     | student |
+    And the following "activities" exist:
+      | activity | name  | course |
+      | page     | Page1 | C1     |
+      | page     | Page2 | C1     |
+    When I am on the "Page1" "page activity" page logged in as "s1"
+    And I click on "Next" "link" in the "sticky-footer" "region"
+    Then I should see "Page2" in the "page-header" "region"
+    # The last activity in the course should redirect to the course page.
+    And I click on "Next" "link" in the "sticky-footer" "region"
+    And I should see "Course1" in the "page-header" "region"
+
+    Examples:
+      | format |
+      | topics |
+      | weeks  |
+
+  @javascript
+  Scenario Outline: Clicking Previous navigates to the previous activity
+    Given the following "courses" exist:
+      | fullname | shortname | format   | enablelinearnav |
+      | Course1  | C1        | <format> | 1               |
+    And the following "course enrolments" exist:
+      | user | course | role    |
+      | s1   | C1     | student |
+    And the following "activities" exist:
+      | activity | name  | course |
+      | page     | Page1 | C1     |
+      | page     | Page2 | C1     |
+    When I am on the "Page2" "page activity" page logged in as "s1"
+    And I click on "Previous" "link" in the "sticky-footer" "region"
+    Then I should see "Page1" in the "page-header" "region"
+
+    Examples:
+      | format |
+      | topics |
+      | weeks  |

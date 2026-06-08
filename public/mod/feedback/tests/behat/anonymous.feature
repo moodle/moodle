@@ -14,8 +14,8 @@ Feature: Anonymous feedback
       | teacher  | Teacher   | 3        |
       | manager  | Manager   | 4        |
     And the following "courses" exist:
-      | fullname | shortname |
-      | Course 1 | C1        |
+      | fullname | shortname | enablelinearnav |
+      | Course 1 | C1        | 0               |
     And the following "course enrolments" exist:
       | user  | course | role    |
       | user1 | C1     | student |

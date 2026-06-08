@@ -79,5 +79,4 @@ Feature: Attempt a quiz in secure layout
     But I should not see "Quiz 1 description"
     And I should not see "Opened:"
     And I should not see "Closes:"
-    # TODO: In MDL-87737, restore Back button check once Next/Previous buttons replace temporary footer logic.
-    And "tertiary-navigation" "css_element" should not exist
+    And I should not see "Back"

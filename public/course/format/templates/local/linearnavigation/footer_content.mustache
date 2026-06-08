@@ -21,15 +21,23 @@
 
     Example context (json):
     {
-        "returnbutton": {
-            "id": "button1",
-            "method": "get",
-            "url": "http://moodle.com/course/view.php?id=2",
-            "label": "Back",
-            "actions": []
-        }
+        "previousurl": "http://moodle.com/course/cms/42/previous",
+        "nexturl": "http://moodle.com/course/cms/42/next"
     }
 }}
-<div class="course-linear-navigation-footer-content mt-3">
-    {{#returnbutton}}{{> core/single_button}}{{/returnbutton}}
+<div class="course-linear-navigation-footer-content d-flex w-100 align-items-center">
+    {{#previousurl}}
+    <a href="{{.}}" class="course-linear-navigation-link text-decoration-none d-inline-flex align-items-center gap-1">
+        <span class="dir-rtl-hide" aria-hidden="true">{{#pix}} e/backward, core {{/pix}}</span>
+        <span class="dir-ltr-hide" aria-hidden="true">{{#pix}} e/forward, core {{/pix}}</span>
+        <span>{{#str}} previous, core {{/str}}</span>
+    </a>
+    {{/previousurl}}
+    {{#nexturl}}
+    <a href="{{.}}" class="course-linear-navigation-link text-decoration-none d-inline-flex align-items-center gap-1 ms-auto">
+        <span>{{#str}} next, core {{/str}}</span>
+        <span class="dir-rtl-hide" aria-hidden="true">{{#pix}} e/forward, core {{/pix}}</span>
+        <span class="dir-ltr-hide" aria-hidden="true">{{#pix}} e/backward, core {{/pix}}</span>
+    </a>
+    {{/nexturl}}
 </div>
