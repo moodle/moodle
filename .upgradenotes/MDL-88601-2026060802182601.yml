@@ -1,0 +1,8 @@
+issueNumber: MDL-88601
+notes:
+  core:
+    - message: >-
+        The `moodle_page` class now includes `set_supplementary_content()` and
+        `get_supplementary_content()` methods to inject and retrieve secondary
+        content within the sticky footer.
+      type: improved
