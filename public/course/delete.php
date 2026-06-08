@@ -56,7 +56,7 @@ if ($delete === md5($course->timemodified)) {
     // We do - time to delete the course.
     require_sesskey();
 
-    $strdeletingcourse = get_string("deletingcourse", "", $courseshortname);
+    $strdeletingcourse = get_string('deletingcourse', '', $courseshortname);
 
     $PAGE->navbar->add($strdeletingcourse);
     $PAGE->set_title($strdeletingcourse);
@@ -75,15 +75,27 @@ if ($delete === md5($course->timemodified)) {
     navigation_cache::destroy_volatile_caches();
     \core\session\manager::write_close();
 
-    delete_course($course);
-    echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );
-    // Update course count in categories.
-    fix_course_sortorder();
+    $response = delete_course($course);
+
+    if ($response === false) {
+        echo get_string('deletingcourseasynchronously_error');
+        echo $OUTPUT->continue_button($categoryurl);
+        exit;
+    }
+
+    if (empty(get_config('moodlecourse', 'enablecourseasyncdeletion'))) {
+        // Update course count in categories.
+        fix_course_sortorder();
+        echo $OUTPUT->heading(get_string('deletedcourse', '', $courseshortname));
+    } else {
+        echo $OUTPUT->heading(get_string('deletingcourseasynchronously', '', $courseshortname));
+    }
+
     echo $OUTPUT->continue_button($categoryurl);
     exit; // We must exit here!!!
 }
 
-$strdeletecheck = get_string("deletecheck", "", $courseshortname);
+$strdeletecheck = get_string('deletecheck', '', $courseshortname);
 
 $PAGE->navbar->add($strdeletecheck);
 $PAGE->set_title($strdeletecheck);
@@ -92,7 +104,7 @@ echo $OUTPUT->header();
 
 // Only let user delete this course if there is not an async backup in progress.
 if (!async_helper::is_async_pending($id, 'course', 'backup')) {
-    $strdeletecoursecheck = get_string("deletecoursecheck");
+    $strdeletecoursecheck = get_string('deletecoursecheck');
     $message = "{$strdeletecoursecheck}<br /><br />{$coursefullname} ({$courseshortname})";
 
     $continueurl = new moodle_url('/course/delete.php', array('id' => $course->id, 'delete' => md5($course->timemodified)));

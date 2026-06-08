@@ -2278,6 +2278,11 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         } else {
             $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
         }
+
+        if (!empty($course->deletioninprogress)) {
+            throw new moodle_exception('deletingcourseasynchronously_exception', 'core');
+        }
+
         if ($cm) {
             if ($cm->course != $course->id) {
                 throw new coding_exception('course and cm parameters in require_login() call do not match!!');
@@ -4450,11 +4455,14 @@ function set_login_session_preferences() {
  *
  * @param mixed $courseorid The id of the course or course object to delete.
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
+ * @param bool $asyncpreferred Whether the course should be deleted asynchronously. Will only be asynchronous,
+ *                    if the admin setting for asynchronous course deletion is enabled as well.
+ *                    Set to false to force immediate course deletion within this function call.
  * @return bool true if all the removals succeeded. false if there were any failures. If this
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */
-function delete_course($courseorid, $showfeedback = true) {
+function delete_course($courseorid, $showfeedback = true, bool $asyncpreferred = true) {
     global $DB, $CFG;
 
     if (is_object($courseorid)) {
@@ -4473,6 +4481,14 @@ function delete_course($courseorid, $showfeedback = true) {
         return false;
     }
 
+    // Check if there are any pending backup or restore operations for this course.
+    // This prevents deletion of the course if any backup/restore is in progress or pending
+    // (course, section, or activity level). This will prevent database inconsistencies.
+    require_once($CFG->dirroot . '/backup/util/helper/backup_helper.class.php');
+    if (backup_helper::is_async_pending_for_course($courseid)) {
+        return false;
+    }
+
     // Allow plugins to use this course before we completely delete it.
     if ($pluginsfunction = get_plugins_with_function('pre_course_delete')) {
         foreach ($pluginsfunction as $plugintype => $plugins) {
@@ -4487,6 +4503,21 @@ function delete_course($courseorid, $showfeedback = true) {
         course: $course,
     );
     \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
+    // Mark a course for deletion, regardless of whether synchronous or asynchronous deletion takes place,
+    // to prevent interference between backup/restore processes.
+    \core_course\management\helper::action_course_mark_for_deletioninprogress($course);
+
+    // Eventually delete the course asynchronously.
+    if ($asyncpreferred && !empty(get_config('moodlecourse', 'enablecourseasyncdeletion'))) {
+        // Trigger an adhoc task to delete the course asynchronously .
+        $task = new \core_course\task\course_async_deletion();
+        $task->set_custom_data(['courseid' => (int) $courseid]);
+        \core\task\manager::queue_adhoc_task($task, true);
+
+        // Early exit, because the course will be deleted later.
+        return true;
+    }
 
     // Tell the search manager we are about to delete a course. This prevents us sending updates
     // for each individual context being deleted.

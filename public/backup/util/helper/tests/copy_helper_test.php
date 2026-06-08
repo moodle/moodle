@@ -533,7 +533,11 @@ final class copy_helper_test extends \advanced_testcase {
         $copydata = \copy_helper::process_formdata($formdata);
         \copy_helper::create_copy($copydata);
 
-        delete_course($this->course->id, false);
+        // We need to execute the backup, otherwise deletion of the course is prevented.
+        ob_start();
+        $this->run_all_adhoc_tasks();
+        ob_end_clean();
+        delete_course($this->course->id, false, false);
 
         // No copies match this course id as it has been deleted.
         $copies = \copy_helper::get_copies($USER->id, ($this->course->id));
