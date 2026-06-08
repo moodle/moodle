@@ -24,6 +24,30 @@ namespace core\output;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class supplementary_sticky_footer extends \core\output\sticky_footer {
+    /** @var action_link|null The link added as supplementary content or null if not defined. */
+    protected ?action_link $supplementarycontent = null;
+
+    /**
+     * Add supplementary content to the sticky footer.
+     *
+     * @param action_link $content The action link to be added as supplementary content.
+     */
+    public function add_supplementary_content(
+        action_link $content,
+    ): void {
+        $this->supplementarycontent = $content;
+        $this->supplementarycontent->add_class('fw-medium');
+    }
+
+    #[\Override]
+    public function export_for_template(renderer_base $output): array {
+        $data = parent::export_for_template($output);
+        if ($this->supplementarycontent !== null) {
+            $data['supplementary'] = $this->supplementarycontent->export_for_template($output);
+        }
+        return $data;
+    }
+
     #[\Override]
     public function get_template_name(\renderer_base $renderer): string {
         return 'core/supplementary_sticky_footer';
