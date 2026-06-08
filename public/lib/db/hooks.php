@@ -139,4 +139,12 @@ $callbacks = [
         'callback' => [\core_courseformat\hook_listener::class, 'before_course_viewed'],
         'priority' => 999,
     ],
+    [
+        'hook' => \core_course\hook\after_form_definition_after_data::class,
+        'callback' => [\core_courseformat\local\linearnavigationsettings::class, 'after_form_definition_after_data'],
+    ],
+    [
+        'hook' => \core\hook\output\before_footer_html_generation::class,
+        'callback' => [\core_courseformat\hook_listener::class, 'add_course_navigation_sticky_footer'],
+    ],
 ];

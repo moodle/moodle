@@ -929,6 +929,16 @@ final class moodle_page_test extends \advanced_testcase {
             'AI visibility hint should be true after being re-enabled.'
         );
     }
+
+    /**
+     * Test that sticky footer setting resets after calling reset_theme_and_output.
+     */
+    public function test_reset_theme_and_output_resets_sticky_footer_flag(): void {
+        $page = new moodle_page();
+        $page->set_has_sticky_footer(true);
+        $page->reset_theme_and_output();
+        $this->assertFalse($page->has_sticky_footer());
+    }
 }
 
 /**
