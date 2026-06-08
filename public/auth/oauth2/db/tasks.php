@@ -15,15 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Tasks definition for auth_oauth2
  *
- * @package    auth_oauth2
- * @copyright  2017 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   auth_oauth2
+ * @copyright 2026 eDaktik GmbH {@link https://www.edaktik.at/}
+ * @author    Christian Abila <christian.abila@edaktik.at>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026060400;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2026041000;        // Requires this Moodle version.
-$plugin->component = 'auth_oauth2';       // Full name of the plugin (used for diagnostics).
+$tasks = [
+    [
+        'classname' => '\auth_oauth2\task\delete_expired_confirmation_tokens',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];
