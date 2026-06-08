@@ -39051,10 +39051,6 @@ body {
   display: none;
 }
 
-.navbar-nav .popover-region .icon {
-  font-weight: bolder;
-}
-
 .navbar .popover-region.collapsed .popover-region-container {
   opacity: 0;
   visibility: hidden;
