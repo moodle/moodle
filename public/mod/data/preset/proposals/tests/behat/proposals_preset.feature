@@ -17,16 +17,12 @@ Feature: Users can use the Proposals preset
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And the following "activities" exist:
-      | activity | name                | intro          | course | idnumber |
-      | data     | Student projects    | Database intro | C1     | data1    |
-    And I am on the "Student projects" "data activity" page logged in as teacher1
-    And I follow "Presets"
-    And I click on "fullname" "radio" in the "Proposals" "table_row"
-    And I click on "Use this preset" "button"
+      | activity | name             | intro          | course | idnumber | preset    |
+      | data     | Student projects | Database intro | C1     | data1    | proposals |
     And the following "mod_data > entries" exist:
-      | database | user      | Title                           | Summary    | Content                  | Status    |
-      | data1    | student1  | Project created by student      | Summary 1  | Content for entry 1      | Pending   |
-      | data1    | teacher1  | Project created by teacher      | Summary 2  | And content for entry 2  | Rejected  |
+      | database | user     | Title                      | Summary   | Content                 | Status   |
+      | data1    | student1 | Project created by student | Summary 1 | Content for entry 1     | Pending  |
+      | data1    | teacher1 | Project created by teacher | Summary 2 | And content for entry 2 | Rejected |
 
   @javascript
   Scenario: Proposals. Users view entries
