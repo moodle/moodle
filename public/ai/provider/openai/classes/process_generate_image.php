@@ -139,7 +139,7 @@ class process_generate_image extends abstract_processor {
             headers: [
                 'Content-Type' => 'application/json',
             ],
-            body: json_encode($requestobj),
+            body: json_encode($requestobj, JSON_UNESCAPED_SLASHES),
         );
     }
 
