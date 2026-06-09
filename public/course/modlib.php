@@ -338,6 +338,12 @@ function edit_module_post_actions($moduleinfo, $course) {
             $elname = 'outcome_'.$outcome->id;
 
             if (property_exists($moduleinfo, $elname) and $moduleinfo->$elname) {
+                // Scale-less outcomes are informational only; they have no assessable
+                // grade to store, so no grade item is created.
+                if (empty($outcome->scaleid)) {
+                    continue;
+                }
+
                 // Check if this is a new outcome grade item.
                 $outcomeexists = false;
                 if ($items) {

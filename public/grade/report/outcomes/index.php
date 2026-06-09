@@ -122,6 +122,12 @@ $html .= '<th class="header c5" scope="col">' . get_string('numberofgrades', 'gr
 $row = 0;
 foreach ($report_info as $outcomeid => $outcomedata) {
     $rowspan = count($outcomedata['items']);
+
+    // Skip scale-less outcomes, as they are not displayed in the report.
+    if (empty($outcomedata['outcome']->scaleid)) {
+        continue;
+    }
+
     // If there are no items for this outcome, rowspan will equal 0, which is not good.
     if ($rowspan == 0) {
         $rowspan = 1;

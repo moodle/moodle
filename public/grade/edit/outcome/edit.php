@@ -167,11 +167,5 @@ $PAGE->navbar->add($heading, $url);
 
 print_grade_page_head($courseid ?: SITEID, 'outcome', 'edit', $heading, false, false, false);
 
-if (!grade_scale::fetch_all_local($courseid) && !grade_scale::fetch_all_global()) {
-    echo $OUTPUT->confirm(get_string('noscales', 'grades'), $CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid, $returnurl);
-    echo $OUTPUT->footer();
-    die();
-}
-
 $mform->display();
 echo $OUTPUT->footer();

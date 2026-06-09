@@ -214,7 +214,9 @@ class grade_outcome extends grade_object {
     public function load_scale() {
         if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
             $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
-            $this->scale->load_items();
+            if ($this->scale) {
+                $this->scale->load_items();
+            }
         }
         return $this->scale;
     }
