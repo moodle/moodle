@@ -325,6 +325,19 @@ jobs:
           fi
 
       # ------------------------------------------------------------
+      # Build release notes URL
+      # ------------------------------------------------------------
+      - name: Build release notes URL
+        id: release_notes
+        run: |
+          VERSION="${{ steps.latest_tag.outputs.latest_tag }}"
+          VERSION="${VERSION#v}"       # v4.5.12 -> 4.5.12
+
+          SERIES=$(echo "$VERSION" | cut -d. -f1,2)
+
+          echo "url=https://moodledev.io/general/releases/$SERIES/$VERSION" >> $GITHUB_OUTPUT
+
+      # ------------------------------------------------------------
       # Create Pull Request
       # ------------------------------------------------------------
       - name: Create Pull Request
@@ -344,6 +357,12 @@ jobs:
             **From:** `${{ steps.current_tag.outputs.current_tag }}`
             **To:** `${{ steps.latest_tag.outputs.latest_tag }}`
             **Upstream branch:** `${{ env.UPSTREAM_BRANCH }}`
+
+            ### Reviewer checklist
+
+            Please review the Moodle release notes for this version and assess whether any changes require local configuration updates, custom code changes, plugin updates, or additional testing.
+
+            **Release notes:** ${{ steps.release_notes.outputs.url }}
 
             ${{ steps.workflow_msg.outputs.message }}
 
