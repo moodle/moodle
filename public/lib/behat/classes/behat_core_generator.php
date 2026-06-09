@@ -188,7 +188,7 @@ class behat_core_generator extends behat_generator_base {
             'grade outcomes' => [
                 'singular' => 'grade outcome',
                 'datagenerator' => 'grade_outcome',
-                'required' => ['shortname', 'scale'],
+                'required' => ['shortname'],
                 'switchids' => ['course' => 'courseid', 'gradecategory' => 'categoryid', 'scale' => 'scaleid'],
             ],
             'scales' => [
