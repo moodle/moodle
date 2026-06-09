@@ -23,20 +23,19 @@ namespace core_adminpresets\local\setting;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_adminpresets\local\setting\adminpresets_admin_setting_sitesettext
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_adminpresets\local\setting\adminpresets_admin_setting_sitesettext::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_adminpresets\manager::class)]
 final class adminpresets_admin_setting_sitesettext_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of save_value() method.
      *
-     * @covers ::save_value
-     * @dataProvider save_value_provider
-     *
      * @param string $settingname Setting name to save.
      * @param string $settingvalue Setting value to be saved.
      * @param bool $expectedsaved Whether the setting will be saved or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('save_value_provider')]
     public function test_save_value(string $settingname, string $settingvalue, bool $expectedsaved): void {
         global $DB;
 

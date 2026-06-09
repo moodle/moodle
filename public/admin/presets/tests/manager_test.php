@@ -131,7 +131,8 @@ final class manager_test extends \advanced_testcase {
 
         // Check the mapped class is returned when no specific class exists and it exists in the mappings array.
         $settingpage = $adminroot->locate('h5psettings');
-        $settingdata = $settingpage->settings->h5plibraryhandler;;
+        $settingdata = $settingpage->settings->h5plibraryhandler;
+
         $result = $manager->get_setting($settingdata, '');
         $this->assertInstanceOf('\core_adminpresets\local\setting\adminpresets_admin_setting_configselect', $result);
         $this->assertNotEquals(

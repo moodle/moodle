@@ -25,7 +25,6 @@ namespace core_adminpresets\local\setting;
  * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class delegation {
-
     /**
      * Adds a piece of string to the $type setting
      *
