@@ -229,7 +229,7 @@ class qtype_numerical extends question_type {
             }
             $options->question = $question->id;
             $options->answer   = $answer->id;
-            if (trim($question->tolerance[$key]) == '') {
+            if (!array_key_exists($key, $question->tolerance) || trim($question->tolerance[$key]) == '') {
                 $options->tolerance = '';
             } else {
                 $options->tolerance = $this->apply_unit($question->tolerance[$key],

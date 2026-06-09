@@ -1344,8 +1344,9 @@ class block_manager {
 
         $controls = array();
         $actionurl = $this->page->url->out(false, array('sesskey'=> sesskey()));
-        $blocktitle = $block->title;
-        if (empty($blocktitle)) {
+
+        $blocktitle = (string) $block->title;
+        if ($blocktitle === '') {
             $blocktitle = $block->arialabel;
         }
 

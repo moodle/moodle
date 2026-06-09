@@ -382,6 +382,8 @@ final class admintree_test extends \advanced_testcase {
      *
      * For testing the admin settings element only. Test for blocked hosts functionality can be found
      * in lib/tests/curl_security_helper_test.php
+     *
+     * @covers \admin_setting_configmixedhostiplist
      */
     public function test_mixedhostiplist(): void {
         $this->resetAfterTest();
@@ -427,8 +429,36 @@ final class admintree_test extends \advanced_testcase {
         }
 
         // Invalid settings.
-        $this->assertEquals('These entries are invalid: nonvalid site name', $adminsetting->write_setting('nonvalid site name'));
+        $this->assertEquals('These entries are invalid: cat dog, fish horse', $adminsetting->write_setting("cat dog\nfish horse"));
         $this->assertEquals('Empty lines are not valid', $adminsetting->write_setting("localhost\n"));
+    }
+
+    /**
+     * Test settings for configportlist
+     *
+     * @covers \admin_setting_configportlist
+     */
+    public function test_portlist(): void {
+        $this->resetAfterTest();
+
+        $adminsetting = new \admin_setting_configportlist('abc_cde/portlist', 'some desc', '', '');
+
+        // Test valid settings.
+        $validsimplesettings = [
+            '443',
+            "80\n443",
+        ];
+
+        foreach ($validsimplesettings as $setting) {
+            $errormessage = $adminsetting->write_setting($setting);
+            $this->assertEmpty($errormessage, $errormessage);
+            $this->assertSame($setting, get_config('abc_cde', 'portlist'));
+            $this->assertSame($setting, $adminsetting->get_setting());
+        }
+
+        // Invalid settings.
+        $this->assertEquals('These entries are invalid: cat, dog', $adminsetting->write_setting("cat\ndog"));
+        $this->assertEquals('Empty lines are not valid', $adminsetting->write_setting("80\n"));
     }
 
     /**

@@ -46,6 +46,9 @@ $factor = \tool_mfa\plugininfo\factor::get_factor('email');
 // Require login to force $SESSION and user, and pass for that session.
 if (!empty($instance) && $pass != 0 && $secret != 0) {
     require_login();
+    if ((int)$instance->userid !== (int)$USER->id) {
+        throw new moodle_exception('error:parameters', 'factor_email');
+    }
     if ($factor->get_state() === \tool_mfa\plugininfo\factor::STATE_LOCKED) {
         // Redirect through to auth, this will bounce them to the next factor.
         redirect(new moodle_url('/admin/tool/mfa/auth.php'));

@@ -167,15 +167,24 @@ $SESSION->scorm->attempt = $attempt;
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-// Generate the exit button.
+// Generate the exit button URL depending on our course format and display options.
+$format = course_get_format($course);
+$formatoptions = $format->get_format_options();
+$coursedisplay = $formatoptions['coursedisplay'] ?? null;
 $exiturl = "";
 if (empty($scorm->popup) || $displaymode == 'popup') {
-    if ($course->format == 'singleactivity' && $scorm->skipview == SCORM_SKIPVIEW_ALWAYS
-        && !has_capability('mod/scorm:viewreport', context_module::instance($cm->id))) {
+    if (
+        $format->get_format() == 'singleactivity' &&
+        $scorm->skipview == SCORM_SKIPVIEW_ALWAYS &&
+        !has_capability('mod/scorm:viewreport', context_module::instance($cm->id))
+    ) {
         // Redirect students back to site home to avoid redirect loop.
         $exiturl = $CFG->wwwroot;
+    } else if ($coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+        // Redirect back to the current section if one section per page is being used.
+        $exiturl = course_get_url($course, $cm->sectionnum, ['sr' => $cm->sectionnum])->out();
     } else {
-        // Redirect back to the correct section if one section per page is being used.
+        // Redirect back to the current section anchor on the course page.
         $exiturl = course_get_url($course, $cm->sectionnum)->out();
     }
 }

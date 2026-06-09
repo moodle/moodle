@@ -92,6 +92,7 @@ if (!empty($action)) {
     if ($action == 'restore' || $action == 'delete') {
         $itemid = required_param('itemid', PARAM_INT);
         $item = $recyclebin->get_item($itemid);
+        $item->name = format_string($item->name, options: ['context' => $context]);
     }
 
     switch ($action) {
@@ -182,7 +183,7 @@ foreach ($items as $item) {
     $row = array();
 
     // Build item name.
-    $name = $item->name;
+    $name = format_string($item->name, options: ['context' => $context]);
     if ($context->contextlevel == CONTEXT_COURSE) {
         if (isset($modules[$item->module])) {
             $mod = $modules[$item->module];

@@ -377,11 +377,25 @@ class core extends H5PCore {
      */
     private function register_site(): ?string {
         $endpoint = $this->get_api_endpoint(null, 'site');
-        $siteuuid = download_file_content($endpoint, null, '');
+        $platform = $this->h5pF->getPlatformInfo();
+        $postdata = [
+            'uuid' => '', // UUID is empty because the site has not been registered with the H5P Hub yet.
+            'platform_name' => $platform['name'],
+            'platform_version' => $platform['version'],
+            'h5p_version' => $platform['h5pVersion'],
+            'disabled' => 0,
+            'local_id' => hash('crc32', $this->fullPluginPath),
+            'type' => $this->h5pF->getOption('site_type', 'local'),
+            'core_api_version' => H5PCore::$coreApi['majorVersion'] . '.' . H5PCore::$coreApi['minorVersion'],
+        ];
+        $response = download_file_content($endpoint, null, $postdata, true);
 
         // Successful UUID retrieval from H5P.
-        if ($siteuuid) {
-            $json = json_decode($siteuuid);
+        if (
+            is_object($response) && empty($response->error) && in_array($response->status, ['200', '201'], true)
+                && !empty($response->results)
+        ) {
+            $json = json_decode($response->results);
             if (isset($json->uuid)) {
                 set_config('site_uuid', $json->uuid, 'core_h5p');
                 return $json->uuid;

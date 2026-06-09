@@ -125,6 +125,32 @@ class csv_entries_importer extends entries_importer {
 
             $cir->init();
             while ($record = $cir->next()) {
+                // This dry-run avoids orphaned records in the case there is no valid child to link to the parent record.
+                // This can happen when attempting to import invalid files later in this method.
+                $hasvalidfile = false;
+                $onlyfilefields = true;
+                $filecache = [];
+                foreach ($fields as $field) {
+                    $fieldid = $fieldnames[$field->field->name];
+                    $value = $record[$fieldid] ?? '';
+
+                    if ($field->file_import_supported() && $this->importfiletype === 'zip') {
+                        $filecontent = $this->get_file_content_from_zip($value);
+                        if ($filecontent) {
+                            $hasvalidfile = true;
+                            // Store this file for later use.
+                            $filecache[$value] = $filecontent;
+                        }
+                    } else {
+                        $onlyfilefields = false;
+                    }
+                }
+
+                // Skip if there are only files and none were valid.
+                if ($onlyfilefields && !$hasvalidfile) {
+                    continue;
+                }
+
                 $authorid = null;
                 if ($userfieldid) {
                     if (!($author = core_user::get_user_by_username($record[$userfieldid], 'id'))) {
@@ -158,8 +184,10 @@ class csv_entries_importer extends entries_importer {
                             $content->content = $value;
                             $content->recordid = $recordid;
                             if ($field->file_import_supported() && $this->importfiletype === 'zip') {
-                                $filecontent = $this->get_file_content_from_zip($content->content);
-                                if (!$filecontent) {
+                                // Fetch the cached dry-run file from earlier.
+                                if (array_key_exists($value, $filecache)) {
+                                    $filecontent = $filecache[$value];
+                                } else {
                                     // No corresponding file in zip archive, so no record for this field being added at all.
                                     continue;
                                 }

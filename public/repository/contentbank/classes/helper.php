@@ -129,7 +129,7 @@ class helper {
     public static function create_navigation_node(\context $context): array {
         return [
             'path' => base64_encode(json_encode(['contextid' => $context->id])),
-            'name' => $context->get_context_name(false)
+            'name' => $context->get_context_name(false, false, false),
         ];
     }
 }

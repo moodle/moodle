@@ -202,5 +202,10 @@ class mod_assign_generator extends testing_module_generator {
         }
 
         $DB->insert_record('assign_overrides', (object) $data);
+
+        $cm = get_coursemodule_from_instance('assign', $data['assignid'], 0, false, MUST_EXIST);
+        $assign = new \assign(context_module::instance($cm->id), $cm, null);
+
+        assign_update_events($assign);
     }
 }

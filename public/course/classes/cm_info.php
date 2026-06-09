@@ -1599,7 +1599,7 @@ class cm_info implements IteratorAggregate {
             ($this->visibleoncoursepage || has_any_capability($capabilities, $this->get_context(), $userid));
         // Activity that is not available, not hidden from course page and has availability
         // info is actually visible on the course page (with availability info and without a link).
-        if (!$this->uservisible && $this->visibleoncoursepage && $this->availableinfo) {
+        if ($this->visibleoncoursepage && $this->visible && $this->availableinfo) {
             $this->uservisibleoncoursepage = true;
         }
     }

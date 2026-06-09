@@ -136,7 +136,7 @@ abstract class contentbank_browser {
         return array_reduce($children, function ($list, $child) {
             $browser = \repository_contentbank\helper::get_contentbank_browser($child);
             if ($browser->can_access_content()) {
-                $name = $child->get_context_name(false);
+                $name = $child->get_context_name(false, false, false);
                 $path = base64_encode(json_encode(['contextid' => $child->id]));
                 $list[] = \repository_contentbank\helper::create_context_folder_node($name, $path);
             }

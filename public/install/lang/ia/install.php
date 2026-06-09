@@ -30,13 +30,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Directorio de admin';
-$string['availablelangs'] = 'Paccos de linguage disponibile';
+$string['availablelangs'] = 'Pacchettos de linguage disponibile';
 $string['chooselanguagehead'] = 'Selige un linguage';
 $string['chooselanguagesub'] = 'Per favor, selige un linguage pro le installation. Iste linguage essera anque usate como le linguage predefinite pro le sito, ben que illo pote esser cambiate plus tarde.';
 $string['clialreadyconfigured'] = 'Le file de configuration config.php existe ja. Per favor usa admin/cli/install_database.php pro installar Moodle pro iste sito.';
 $string['clialreadyinstalled'] = 'Le file de configuration config.php existe ja. Per favor usa admin/cli/install_database.php pro actualisar Moodle pro iste sito.';
 $string['cliinstallheader'] = 'Programma de installation de linea de commando  (CLI) de Moodle {$a}';
-$string['clitablesexist'] = 'Tabellas de base de datos jam presente; le installation CLI non pote continuar.';
+$string['clitablesexist'] = 'Tabellas de base de datos jam presente; le installation de Command Line Interface (CLI), i.e de linea de commando, non pote continuar.';
 $string['databasehost'] = 'Hospite de base de datos';
 $string['databasename'] = 'Nomine d ebase de datos';
 $string['databasetypehead'] = 'Selige driver de base de datos';

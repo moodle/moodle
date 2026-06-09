@@ -69,6 +69,8 @@ $string['pathsunsecuredataroot'] = 'Datamappen er ikke sikret';
 $string['pathswrongadmindir'] = 'Adminmappe eksisterer ikke';
 $string['phpextension'] = '{$a} PHP-extension';
 $string['phpversion'] = 'PHP-version';
+$string['webserverconfigproblemdescription'] = 'Din webserver er ikke konfigureret til at forhindre adgang til filer uden for /public-mappen. Se dokumentationen <a href="https://docs.moodle.org/en/Upgrading#Code_directories_restructure">Opgradering – Omstrukturering af kodemapper</a> for detaljer om, hvordan du konfigurerer din webserver korrekt. Når konfigurationen er opdateret, <a href="{$a}">besøg webroden igen</a>';
+$string['webservernotconfigured'] = 'Web server not configured';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Du ser denne side fordi du har installeret og åbnet pakken <strong>{$a->packname} {$a->packversion}</strong> på din computer.
 Tillykke med det!';

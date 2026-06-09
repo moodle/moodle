@@ -542,6 +542,45 @@ final class adhoc_task_test extends \advanced_testcase {
     }
 
     /**
+     * Ensure that the reschedule_or_queue_adhoc_task function will schedule a new task if no tasks exist.
+     */
+    public function test_reschedule_or_queue_adhoc_task_after_failure(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $clock = $this->mock_clock_with_frozen();
+
+        // Schedule adhoc task.
+        $task = new adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $task->set_next_run_time($clock->time()); // Not realistic. Normally in the future but does not matter.
+        manager::reschedule_or_queue_adhoc_task($task);
+        $this->assertEquals(1, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+        $taskrecord1 = manager::get_queued_adhoc_task_record($task);
+        $this->assertObjectHasProperty('id', $taskrecord1);
+        $this->assertEquals($clock->time(), $taskrecord1->nextruntime);
+
+        // Now mark the task permanently failed.
+        $DB->update_record('task_adhoc', (object) [
+            'id' => $taskrecord1->id,
+            'faildelay' => 86400,
+            'attemptsavailable' => 0,
+        ]);
+
+        // Now, schedule the task again. Should create a new task.
+        $task = new adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $task->set_next_run_time($clock->time() + HOURSECS);
+        manager::reschedule_or_queue_adhoc_task($task);
+        $this->assertEquals(2, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+        $taskrecord2 = manager::get_queued_adhoc_task_record($task);
+        $this->assertNotEquals($taskrecord1->id, $taskrecord2->id);
+        $this->assertEquals($clock->time() + HOURSECS, $taskrecord2->nextruntime);
+        $this->assertEquals(0, $taskrecord2->faildelay);
+        $this->assertEquals(12, $taskrecord2->attemptsavailable);
+    }
+
+    /**
      * Ensure that the reschedule_or_queue_adhoc_task function will schedule a new task if a task for the same user does
      * not exist.
      */
@@ -704,6 +743,47 @@ final class adhoc_task_test extends \advanced_testcase {
         $task6->set_userid($user->id);
         $this->assertEmpty(manager::queue_adhoc_task($task6, true));
         $this->assertEquals(6, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+    }
+
+    /**
+     * Test that, after a permanent failure, queue_adhoc_task(..., checkforexisting: true) works.
+     */
+    public function test_queue_adhoc_task_if_not_scheduled_after_failure(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Schedule adhoc task.
+        $task = new adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $this->assertNotEmpty(manager::queue_adhoc_task($task, true));
+        $this->assertEquals(1, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+        $taskrecord1 = manager::get_queued_adhoc_task_record($task);
+        $this->assertObjectHasProperty('id', $taskrecord1);
+
+        // Verify again that re-scheduling the same task does nothing.
+        $task = new adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $this->assertFalse(manager::queue_adhoc_task($task, true));
+        $this->assertEquals(1, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+        $taskrecord2 = manager::get_queued_adhoc_task_record($task);
+        $this->assertEquals($taskrecord1->id, $taskrecord2->id);
+
+        // Now mark the task permanently failed.
+        $DB->update_record('task_adhoc', (object) [
+            'id' => $taskrecord1->id,
+            'faildelay' => 86400,
+            'attemptsavailable' => 0,
+        ]);
+
+        // Now, schedule the task again. Should create a new task.
+        $task = new adhoc_test_task();
+        $task->set_custom_data(['courseid' => 10]);
+        $this->assertNotEmpty(manager::queue_adhoc_task($task, true));
+        $this->assertEquals(2, count(manager::get_adhoc_tasks('core\task\adhoc_test_task')));
+        $taskrecord3 = manager::get_queued_adhoc_task_record($task);
+        $this->assertNotEquals($taskrecord1->id, $taskrecord3->id);
+        $this->assertEquals(0, $taskrecord3->faildelay);
+        $this->assertEquals(12, $taskrecord3->attemptsavailable);
     }
 
     /**

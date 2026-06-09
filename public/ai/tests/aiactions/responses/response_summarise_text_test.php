@@ -75,4 +75,17 @@ final class response_summarise_text_test extends \advanced_testcase {
         $this->assertEquals($body['prompttokens'], $actionresponse->get_response_data()['prompttokens']);
         $this->assertEquals($body['completiontokens'], $actionresponse->get_response_data()['completiontokens']);
     }
+
+    /**
+     * Test that reasoning tags are stripped from generated content.
+     */
+    public function test_set_response_data_strips_reasoning_tags(): void {
+        $actionresponse = new response_summarise_text(success: true);
+        $actionresponse->set_response_data([
+            'generatedcontent' => '<think>Internal reasoning.</think>The actual response.',
+            'finishreason' => 'stop',
+        ]);
+
+        $this->assertEquals('The actual response.', $actionresponse->get_response_data()['generatedcontent']);
+    }
 }

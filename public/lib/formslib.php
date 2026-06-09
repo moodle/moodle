@@ -111,6 +111,7 @@ function form_init_date_js() {
         ));
         $PAGE->requires->yui_module($module, $function, $config);
         $PAGE->requires->string_for_js('strftimemonthyear', 'langconfig');
+        $PAGE->requires->string_for_js('loading', 'moodle');
     }
 }
 

@@ -26,6 +26,7 @@ require('../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $swaggerversion = '5.17.14';
+$swaggeruipluginversion = '1.0.4';
 
 $PAGE->set_url('/admin/swaggerui.php');
 
@@ -48,7 +49,7 @@ echo html_writer::tag(
     tagname: 'script',
     contents: '',
     attributes: [
-        'src' => new moodle_url("https://unpkg.com/swagger-ui-plugin-hierarchical-tags"),
+        'src' => new moodle_url("https://unpkg.com/swagger-ui-plugin-hierarchical-tags@{$swaggeruipluginversion}/build/index.js"),
         'crossorigin' => 'crossorigin',
     ],
 );

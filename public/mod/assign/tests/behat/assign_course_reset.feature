@@ -42,7 +42,6 @@ Feature: Assign reset
     And I should see "I'm the student first submission"
     And I should see "Not graded"
     And I log out
-
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Submissions" in current page administration
     And I should see "Submitted for grading"
@@ -55,27 +54,15 @@ Feature: Assign reset
     And I navigate to "Submissions" in current page administration
     Then I should not see "Submitted for grading"
 
-  @javascript
   Scenario: Use course reset to remove user overrides
-    And I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Overrides" in current page administration
-    And I press "Add user override"
-    And I set the following fields to these values:
-        | Override user    | Student1  |
-        | id_duedate_enabled | 1 |
-        | duedate[day]       | 1 |
-        | duedate[month]     | January |
-        | duedate[year]      | 2020 |
-        | duedate[hour]      | 08 |
-        | duedate[minute]    | 00 |
-    And I press "Save"
-    And I should see "Sam1 Student1"
-    When I am on the "Course 1" "reset" page
+    Given the following "mod_assign > user overrides" exist:
+      | assignment            | user     | duedate              |
+      | Test assignment name  | student1 | ##1 Jan 2020 08:00## |
+    When I am on the "Course 1" "reset" page logged in as "teacher1"
     And I press "Deselect all"
     And I set the following fields to these values:
         | All user overrides | 1  |
     And I press "Reset course"
-    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     And I am on "Course 1" course homepage
     And I click on "Test assignment name" "link" in the "region-main" "region"
@@ -83,21 +70,10 @@ Feature: Assign reset
     Then I should not see "Sam1 Student1"
 
   Scenario: Use course reset to remove group overrides.
-    When I am on the "Test assignment name" Activity page logged in as teacher1
-    And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
-    And I press "Add group override"
-    And I set the following fields to these values:
-        | Override group   | Group 1  |
-        | id_duedate_enabled | 1 |
-        | duedate[day]       | 1 |
-        | duedate[month]     | January |
-        | duedate[year]      | 2020 |
-        | duedate[hour]      | 08 |
-        | duedate[minute]    | 00 |
-    And I press "Save"
-    And I should see "Group 1"
-    And I am on the "Course 1" "reset" page
+    Given the following "mod_assign > group overrides" exist:
+      | assignment            | group | duedate              |
+      | Test assignment name  | G1    | ##1 Jan 2020 08:00## |
+    When I am on the "Course 1" "reset" page logged in as "teacher1"
     And I set the following fields to these values:
         | All group overrides | 1  |
     And I press "Reset course"

@@ -95,7 +95,10 @@ class cm implements renderable {
 
         // Check the user access type to this cm.
         $info = new info_module($cm);
-        $data->accessvisible = ($data->visible && $info->is_available_for_all());
+        $information = '';
+        $data->accessvisible = $data->visible && (
+            ($info->is_available_for_all() || $info->is_available($information, true, $USER->id))
+        );
 
         // Add url if the activity is compatible.
         $url = $cm->url;

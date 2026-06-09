@@ -2803,7 +2803,6 @@ class assign {
 
         if ($this->get_instance()->teamsubmission) {
             // Team submission will filter by groupid.
-            $gsql = '';
             $select .= " AND userid = 0 ";
             if (!empty($groupids)) {
                 // If there are groups, we need to filter by them.
@@ -2814,21 +2813,20 @@ class assign {
 
             return $DB->count_records_select('assign_submission', $select, $params, 'COUNT(userid)');
         } else {
-            // Individual submission will filter using groups_members.
-            if (empty($groupids)) {
-                return $DB->count_records_select('assign_submission', $select, $params, 'COUNT(userid)');
-            }
+            // Individual submission: only count submissions from users currently enrolled in the course.
+            // When $groupids is non-empty, it also filters by group membership.
+            [$esql, $eparams] = get_enrolled_sql($this->get_context(), '', $groupids, false);
+            $params += $eparams;
+            $sql = "SELECT COUNT(DISTINCT s.userid)
+                      FROM {assign_submission} s
+                      JOIN ($esql) e ON e.id = s.userid
+                     WHERE s.assignment = :assignid
+                       AND s.status = :submissionstatus
+                       AND s.latest = 1
+                       AND s.timemodified IS NOT NULL";
 
-            // If there are groups, we need to filter by them.
-            [$gsql, $gparams] = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED);
-            $sql = "SELECT COUNT(s.userid)
-                      FROM {assign_submission} s, {groups_members} gm
-                     WHERE $select AND
-                           s.userid = gm.userid AND (gm.groupid $gsql OR gm.groupid = 0)";
-            $params = array_merge($params, $gparams);
+            return $DB->count_records_sql($sql, $params);
         }
-
-        return $DB->count_records_sql($sql, $params);
     }
 
     /**
@@ -5291,6 +5289,9 @@ class assign {
     public function view_batch_markingallocation() {
         global $CFG, $DB;
 
+        require_capability('mod/assign:manageallocations', $this->context);
+
+        // Include batch marking allocation form.
         require_once($CFG->dirroot . '/mod/assign/batchsetallocatedmarkerform.php');
 
         $o = '';
@@ -8650,6 +8651,8 @@ class assign {
      */
     protected function process_set_batch_marking_allocation() {
         global $CFG, $DB;
+
+        require_capability('mod/assign:manageallocations', $this->context);
 
         // Include batch marking allocation form.
         require_once($CFG->dirroot . '/mod/assign/batchsetallocatedmarkerform.php');

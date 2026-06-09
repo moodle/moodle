@@ -23,6 +23,7 @@ namespace core_calendar;
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('calendar_can_edit_subscription')]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -1252,5 +1253,145 @@ final class lib_test extends \advanced_testcase {
 
         $event = create_event(['location' => $location]);
         $this->assertMatchesRegularExpression("|^({$expectedpattern})$|", calendar_format_event_location($event));
+    }
+
+    /**
+     * Test that a user with the correct capability can edit a calendar subscription.
+     *
+     * @return void
+     */
+    public function test_calendar_can_edit_subscription(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create a user and a course.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+
+        $categorya = $generator->create_category();
+        $categoryb = $generator->create_category();
+        $categorycontext = \core\context\coursecat::instance($categorya->id);
+
+        $course = $generator->create_course(['groupmode' => SEPARATEGROUPS]);
+        $coursecontext = \core\context\course::instance($course->id);
+
+        // Enrol the users in the course.
+        $generator->enrol_user($user1->id, $course->id, 'teacher');
+        $generator->enrol_user($user2->id, $course->id, 'student');
+        $generator->enrol_user($user3->id, $course->id, 'student');
+
+        // Generate a group and add user2 and user3 to it.
+        $group = $generator->create_group(['courseid' => $course->id]);
+        groups_add_member($group, $user2);
+        groups_add_member($group, $user3);
+
+        // Create a role with the capability to manage calendar subscriptions in the course category A and assign it to the user.
+        $roleid = $generator->create_role();
+        assign_capability('moodle/calendar:manageentries', CAP_ALLOW, $roleid, $categorycontext->id, true);
+        assign_capability(
+            'moodle/category:manage',
+            CAP_ALLOW,
+            $roleid,
+            \core\context\coursecat::instance($categorya->id)->id,
+            true
+        );
+        role_assign($roleid, $user1->id, $categorycontext->id);
+
+        // Create a role with the capability to manage calendar subscriptions of groups.
+        $groupmanagerroleid = $generator->create_role();
+        assign_capability('moodle/calendar:managegroupentries', CAP_ALLOW, $groupmanagerroleid, $coursecontext->id, true);
+        role_assign($groupmanagerroleid, $user2->id, $coursecontext->id);
+
+        // Set the current user to the one we just created.
+        $this->setUser($user1);
+
+        $subscription = new \stdClass();
+        $subscription->eventtype = 'user';
+        $subscription->name = 'test user subscription user1';
+        $subscription->userid = $user1->id;
+        $usersubscriptionid = calendar_add_subscription($subscription);
+
+        // The user should be able to edit own subscriptions.
+        $this->assertTrue(calendar_can_edit_subscription($usersubscriptionid));
+
+        $this->setUser($user2);
+        // The user should not be able to edit other user's subscriptions.
+        $this->assertFalse(calendar_can_edit_subscription($usersubscriptionid));
+
+        $this->setAdminUser();
+        $subscription = new \stdClass();
+        $subscription->name = 'test site subscription';
+        $subscription->eventtype = 'site';
+        $sitesubscriptionid = calendar_add_subscription($subscription);
+
+        // Admin should be able to edit site subscriptions.
+        $this->assertTrue(calendar_can_edit_subscription($sitesubscriptionid));
+
+        $this->setUser($user1);
+        // The user should not be able to edit site subscriptions.
+        $this->assertFalse(calendar_can_edit_subscription($sitesubscriptionid));
+
+        $subscription = new \stdClass();
+        $subscription->name = 'test category A subscription';
+        $subscription->eventtype = 'category';
+        $subscription->categoryid = $categorya->id;
+        $categoryasubscriptionid = calendar_add_subscription($subscription);
+
+        $this->setAdminUser();
+        $subscription = new \stdClass();
+        $subscription->name = 'test category B subscription';
+        $subscription->eventtype = 'category';
+        $subscription->categoryid = $categoryb->id;
+        $categorybsubscriptionid = calendar_add_subscription($subscription);
+
+        $this->setUser($user1);
+        // The user should not be able to edit category subscriptions in category B.
+        $this->assertFalse(calendar_can_edit_subscription($categorybsubscriptionid));
+
+        // The user should be able to edit category subscriptions in category A.
+        $this->assertTrue(calendar_can_edit_subscription($categoryasubscriptionid));
+
+        $this->setUser($user2);
+        // The user should not be able to edit category subscriptions in category A.
+        $this->assertFalse(calendar_can_edit_subscription($categoryasubscriptionid));
+
+        $this->setUser($user1);
+        $subscription = new \stdClass();
+        $subscription->name = 'test course subscription';
+        $subscription->eventtype = 'course';
+        $subscription->courseid = $course->id;
+        $coursesubscriptionid = calendar_add_subscription($subscription);
+
+        // The user should be able to edit course subscriptions in the course.
+        $this->assertTrue(calendar_can_edit_subscription($coursesubscriptionid));
+
+        $this->setUser($user2);
+        // The user should not be able to edit course subscriptions in the course.
+        $this->assertFalse(calendar_can_edit_subscription($coursesubscriptionid));
+
+        $this->setUser($user2);
+        $subscription = new \stdClass();
+        $subscription->name = 'test group subscription';
+        $subscription->eventtype = 'group';
+        $subscription->courseid = $course->id;
+        $subscription->groupid = $group->id;
+        $groupsubscriptionid = calendar_add_subscription($subscription);
+
+        // The user should be able to edit group subscriptions.
+        $this->assertTrue(calendar_can_edit_subscription($groupsubscriptionid));
+
+        $this->setUser($user3);
+        // The user should not be able to edit group subscriptions.
+        $this->assertFalse(calendar_can_edit_subscription($groupsubscriptionid));
+
+        // This additional test covers a case where a category with a subscription is hidden from the user.
+        // This should just return false instead of throwing an exception.
+        $this->setAdminUser();
+        $coursecat = \core_course_category::get($categoryb->id);
+        $coursecat->hide();
+
+        $this->setUser($user1);
+        $this->assertFalse(calendar_can_edit_subscription($categorybsubscriptionid));
     }
 }

@@ -443,4 +443,182 @@ final class locallib_test extends \advanced_testcase {
         $this->getDataGenerator()->create_group_member(['userid' => $teacher->id, 'groupid' => $group1->id]);
         $this->assertEquals(2, $lesson->count_all_participants([$group1->id]));
     }
+
+    /**
+     * Data provider for test_get_last_page_seen_with_this_page_jumpto.
+     *
+     * Each case defines:
+     *  - maxattempts:   Lesson setting (0 = unlimited).
+     *  - attemptcount:  Number of wrong attempts on the question page.
+     *  - expectnextpage Whether we expect get_last_page_seen() to return the next page.
+     *
+     * @return array
+     */
+    public static function get_last_page_seen_dataprovider(): array {
+        return [
+            // Unlimited attempts: even with multiple wrong attempts, we should stay on the same page.
+            'unlimited_attempts_one_attempt' => [0, 1, false],
+            'unlimited_attempts_two_attempts' => [0, 2, false],
+
+            // Maxattempts = 1, with one wrong attempt: attempts are exhausted, move to next page.
+            'single_attempt_limit_reached' => [1, 1, true],
+
+            // Maxattempts = 2, with one wrong attempt: not exhausted yet, stay on same page.
+            'two_attempt_limit_not_reached' => [2, 1, false],
+
+            // Maxattempts = 2, with two wrong attempts: exhausted, move to next page.
+            'two_attempt_limit_reached' => [2, 2, true],
+        ];
+    }
+
+    /**
+     * Helper to create a lesson with a question page followed by a content page,
+     * where the wrong answer on the question jumps to "This page".
+     *
+     * Returns:
+     *  - course       => course record
+     *  - lesson       => lesson object
+     *  - questionpage => question page record
+     *  - nextpage     => next page record
+     *  - wronganswer  => wrong answer record (jumpto = LESSON_THISPAGE)
+     *
+     * @param int $maxattempts The lesson maxattempts setting (0 = unlimited).
+     * @return array
+     */
+    private function create_lesson_with_this_page_wrong_answer(int $maxattempts): array {
+        global $DB;
+
+        // Course and lesson.
+        $course = $this->getDataGenerator()->create_course();
+        $lessonrecord = $this->getDataGenerator()->create_module('lesson', [
+            'course' => $course->id,
+            'maxattempts' => $maxattempts,
+        ]);
+        $lesson = new lesson($lessonrecord);
+
+        /** @var \mod_lesson_generator $lessongenerator */
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+
+        // Create a multichoice question page followed by a content page.
+        $questionpage = [
+            'title' => 'Question page',
+            'content' => 'What animal is an amphibian?',
+            'qtype' => 'multichoice',
+            'lessonid' => $lesson->id,
+        ];
+        $nextpage = [
+            'title' => 'Next content page',
+            'content' => 'This is the next page.',
+            'qtype' => 'content',
+            'lessonid' => $lesson->id,
+        ];
+
+        $lessongenerator->create_page($questionpage);
+        $lessongenerator->create_page($nextpage);
+
+        // Add a correct answer (Next page) and an incorrect answer (This page).
+        $lessongenerator->create_answer([
+            'page' => $questionpage['title'],
+            'answer' => 'Frog',
+            'response' => 'Correct',
+            'jumpto' => 'Next page',
+            'score' => 1,
+        ]);
+        $lessongenerator->create_answer([
+            'page' => $questionpage['title'],
+            'answer' => 'Cat',
+            'response' => 'Incorrect',
+            'jumpto' => 'This page',
+            'score' => 0,
+        ]);
+
+        $lessongenerator->finish_generate_answer();
+
+        $questionpagedb = $DB->get_record('lesson_pages', [
+            'lessonid' => $lesson->id,
+            'qtype' => LESSON_PAGE_MULTICHOICE,
+        ], '*', MUST_EXIST);
+
+        $nextpagedb = $DB->get_record('lesson_pages', [
+            'lessonid' => $lesson->id,
+            'qtype' => LESSON_PAGE_BRANCHTABLE,
+        ], '*', MUST_EXIST);
+
+        // Fetch the wrong answer record.
+        $wronganswerdb = $DB->get_record('lesson_answers', [
+            'lessonid' => $lesson->id,
+            'pageid' => $questionpagedb->id,
+            'score' => 0,
+        ], '*', MUST_EXIST);
+
+        return [
+            'course' => $course,
+            'lesson' => $lesson,
+            'questionpage' => $questionpagedb,
+            'nextpage' => $nextpagedb,
+            'wronganswer' => $wronganswerdb,
+        ];
+    }
+
+    /**
+     * Test get_last_page_seen() when the last attempts were wrong answers with a
+     * "This page" jump, for different maxattempts and attempt counts.
+     *
+     * Scenario:
+     *  - Lesson with a multichoice question followed by a content page.
+     *  - Wrong answer on the question jumps to "This page".
+     *  - We record wrong attempts on that question.
+     *  - We call get_last_page_seen(0) to determine where resuming should start.
+     *
+     * For unlimited attempts (maxattempts = 0) we should always stay on the question page.
+     * For limited attempts, once count(attempts) >= maxattempts, we should go to the next page.
+     *
+     * @dataProvider get_last_page_seen_dataprovider
+     * @param int $maxattempts Lesson setting (0 = unlimited).
+     * @param int $attemptcount Number of wrong attempts to create on the question page.
+     * @param bool $expectnextpage Whether we expect the next page to be returned.
+     * @covers ::get_last_page_seen
+     */
+    public function test_get_last_page_seen_with_this_page_jumpto(int $maxattempts, int $attemptcount, bool $expectnextpage): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Build the lesson scenario.
+        [
+            'course' => $course,
+            'lesson' => $lesson,
+            'questionpage' => $questionpage,
+            'nextpage' => $nextpage,
+            'wronganswer' => $wronganswer,
+        ] = $this->create_lesson_with_this_page_wrong_answer($maxattempts);
+        // Create and enrol a student.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Act as the student.
+        $this->setUser($student);
+
+        // Create the required number of wrong attempts on the question page.
+        for ($i = 0; $i < $attemptcount; $i++) {
+            $attempt = (object) [
+                'lessonid' => $lesson->id,
+                'pageid' => $questionpage->id,
+                'userid' => $student->id,
+                'answerid' => $wronganswer->id,
+                'retry' => 0,
+                'correct' => 0,
+                'useranswer' => 'Cat', // Cat is the incorrect answer.
+                'timeseen' => time(),
+            ];
+            $DB->insert_record('lesson_attempts', $attempt);
+        }
+
+        // Call the method under test.
+        $lastpageid = $lesson->get_last_page_seen(0);
+
+        // Decide which page we expect based on the data provider.
+        $expectedpageid = $expectnextpage ? $nextpage->id : $questionpage->id;
+        $this->assertEquals($expectedpageid, $lastpageid);
+    }
 }

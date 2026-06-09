@@ -17,6 +17,7 @@
 namespace customfield_number\task;
 
 use core\task\adhoc_task;
+use core_customfield\customfield\shared_handler;
 use core_customfield\field_controller;
 use customfield_number\provider_base;
 
@@ -78,10 +79,15 @@ class recalculate extends adhoc_task {
      */
     protected function field_is_scheduled(field_controller $field): bool {
         $customdata = $this->get_custom_data();
-        if (!empty($customdata->component) && $field->get_handler()->get_component() !== $customdata->component) {
+        $handler = $field->get_handler();
+        // Shared custom fields can be enabled for any component/area, so they should not be filtered out.
+        if ($handler instanceof shared_handler) {
+            return true;
+        }
+        if (!empty($customdata->component) && $handler->get_component() !== $customdata->component) {
             return false;
         }
-        if (!empty($customdata->area) && $field->get_handler()->get_area() !== $customdata->area) {
+        if (!empty($customdata->area) && $handler->get_area() !== $customdata->area) {
             return false;
         }
         return true;

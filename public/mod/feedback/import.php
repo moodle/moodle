@@ -170,8 +170,9 @@ function feedback_import_loaded_data(&$data, $feedbackid) {
     $itembackup = [];
     foreach ($data as $item) {
         $position++;
+
         //check the typ
-        $typ = $item['@']['TYPE'];
+        $typ = clean_param($item['@']['TYPE'], PARAM_ALPHA);
 
         //check oldtypes first
         switch($typ) {

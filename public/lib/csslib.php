@@ -104,7 +104,9 @@ function css_send_cached_css($csspath, $etag) {
         header('Content-Length: '.filesize($csspath));
     }
 
-    readfile($csspath);
+    if (readfile($csspath) === false) {
+        css_send_css_not_found();
+    }
     die;
 }
 
@@ -204,6 +206,7 @@ function css_send_unmodified($lastmodified, $etag) {
  * Sends a 404 message about CSS not being found.
  */
 function css_send_css_not_found() {
+    header_remove();
     header('HTTP/1.0 404 not found');
     die('CSS was not found, sorry.');
 }

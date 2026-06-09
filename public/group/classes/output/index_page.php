@@ -100,6 +100,8 @@ class index_page implements renderable, templatable {
         // Variables that will be passed to the JS helper.
         $data->courseid = $this->courseid;
         $data->wwwroot = $CFG->wwwroot;
+        $data->sesskey = sesskey();
+
         // To be passed to the JS init script in the template. Encode as a JSON string.
         $data->undeletablegroups = json_encode($this->undeletablegroups);
 

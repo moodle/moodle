@@ -20,6 +20,7 @@ use core\router\response_handler;
 use core\tests\router\route_testcase;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Tests for the payload response.
@@ -76,6 +77,6 @@ final class payload_response_test extends route_testcase {
 
         // Note: The standardisation itself is tested elsewhere.
         $response = $handler->standardise_response($payload);
-        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
     }
 }

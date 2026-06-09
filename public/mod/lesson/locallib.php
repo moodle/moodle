@@ -2979,11 +2979,12 @@ class lesson extends lesson_base {
             $attempt = end($allattempts);
             $attemptpage = $this->load_page($attempt->pageid);
             $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
+            $maxattempts = $this->properties->maxattempts;
             // Convert the jumpto to a proper page id.
             if ($jumpto == 0) {
                 // Check if a question has been incorrectly answered AND no more attempts at it are left.
                 $nattempts = $this->get_attempts($attempt->retry, false, $attempt->pageid, $USER->id);
-                if (count($nattempts) >= $this->properties->maxattempts) {
+                if (count($nattempts) >= $maxattempts && $maxattempts > 0) { // If maxattempts is 0, unlimited attempts are allowed.
                     $lastpageseen = $this->get_next_page($attemptpage->nextpageid);
                 } else {
                     $lastpageseen = $attempt->pageid;

@@ -155,7 +155,10 @@ function xhprof_parse_parent_child($parent_child) {
     return $ret;
   }
 
-  return array(null, $ret[0]);
+  // Start moodle modification: fix PHP 8.1 stripos() null deprecation.
+  // return array(null, $ret[0]);
+  return array('', $ret[0]);
+  // End moodle modification.
 }
 
 /**

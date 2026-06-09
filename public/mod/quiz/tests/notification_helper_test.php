@@ -200,6 +200,62 @@ final class notification_helper_test extends \advanced_testcase {
     }
 
     /**
+     * Test users failing a grade condition are excluded from open-soon notifications.
+     */
+    public function test_get_users_within_quiz_with_grade_restriction(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $clock = $this->mock_clock_with_frozen();
+
+        $course = $generator->create_course();
+        $user1 = $generator->create_user(); // Scores 90% — should NOT receive notification.
+        $user2 = $generator->create_user(); // Scores 50% — SHOULD receive notification.
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $generator->enrol_user($user2->id, $course->id, 'student');
+
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+
+        // Create a graded quiz and assign scores: user1 passes (>=60%), user2 fails (<60%).
+        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'grade' => 100]);
+        grade_update('mod/quiz', $course->id, 'mod', 'quiz', $quiz->id, 0, ['userid' => $user1->id, 'rawgrade' => 90]);
+        grade_update('mod/quiz', $course->id, 'mod', 'quiz', $quiz->id, 0, ['userid' => $user2->id, 'rawgrade' => 50]);
+        $gradeitem = \grade_item::fetch(
+            [
+                'itemtype' => 'mod',
+                'itemmodule' => 'quiz',
+                'iteminstance' => $quiz->id,
+                'courseid' => $course->id,
+                'itemnumber' => 0,
+            ]
+        );
+
+        // Create a remedial quiz opening within 48 hours, restricted to students who scored <60%.
+        $remedialquiz = $quizgenerator->create_instance(['course' => $course->id, 'timeopen' => $clock->time() + DAYSECS]);
+        $cm = get_coursemodule_from_instance('quiz', $remedialquiz->id, $course->id);
+        $DB->set_field('course_modules', 'availability', json_encode([
+            'op' => '&',
+            'showc' => [true],
+            'c' => [
+                [
+                    'type' => 'grade',
+                    'id' => (int) $gradeitem->id,
+                    'max' => 60.0,
+                ],
+            ],
+        ]), ['id' => $cm->id]);
+
+        rebuild_course_cache($course->id, true);
+
+        $users = notification_helper::get_users_within_quiz($remedialquiz->id);
+
+        // Only user2 should be returned because user1 does not meet the grade condition.
+        $this->assertCount(1, $users);
+        $this->assertArrayHasKey($user2->id, $users);
+    }
+
+    /**
      * Test sending the quiz open soon notification to a user.
      */
     public function test_send_notification_to_user(): void {

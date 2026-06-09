@@ -200,4 +200,56 @@ final class restore_stepslib_test extends \advanced_testcase {
         $rc->execute_plan();
         $rc->destroy();
     }
+
+    /**
+     * Data provider for contenthash values - invalid hashes are skipped, valid hashes proceed to processing.
+     *
+     * @return array
+     */
+    public static function contenthash_provider(): array {
+        return [
+            'Invalid - path traversal' => ['../../../../../../../../../../../../etc/passwd', false],
+            'Invalid - uppercase hex'  => ['DA39A3EE5E6B4B0D3255BFEF95601890AFD80709', false],
+            'Invalid - too short'      => ['da39a3ee5e6b4b0d3255bfef95601890afd807', false],
+            'Invalid - non-hex chars'  => ['zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz', false],
+            'Valid - lowercase sha1'   => ['da39a3ee5e6b4b0d3255bfef95601890afd80709', true],
+            'Empty - directory entry'  => ['', true],
+        ];
+    }
+
+    /**
+     * Test contenthash validation when restoring files.
+     *
+     * - Invalid contenthash values are rejected with a warning logged and processing stopped.
+     * - Valid contenthash values allow processing to continue.
+     *
+     * @param string $hash The contenthash value to validate.
+     * @param bool $isvalid Whether the hash is expected to pass validation.
+     * @dataProvider contenthash_provider
+     * @covers \restore_load_included_files::process_file
+     */
+    public function test_process_file_contenthash_validation(string $hash, bool $isvalid): void {
+        $step = $this->getMockBuilder(\restore_load_included_files::class)
+            ->setConstructorArgs(['test', null])
+            ->onlyMethods(['log'])
+            ->getMock();
+
+        if ($isvalid) {
+            // Valid hash: validation is skipped — no warning log should be emitted.
+            // Processing may throw due to the missing restore context; absorb it since
+            // only the log() assertion matters here.
+            $step->expects($this->never())->method('log');
+            try {
+                $step->process_file(['contenthash' => $hash]);
+            } catch (\Throwable $e) {
+                // Absorb any exception caused by missing restore context after validation passes.
+            }
+        } else {
+            // Invalid hash: a LOG_WARNING must be emitted before the early return.
+            $step->expects($this->once())
+                ->method('log')
+                ->with($this->stringContains('Skipping file with invalid contenthash during restore'), backup::LOG_WARNING);
+            $step->process_file(['contenthash' => $hash]);
+        }
+    }
 }

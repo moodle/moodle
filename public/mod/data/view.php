@@ -93,6 +93,11 @@ if (!is_null(optional_param('resetadv', null, PARAM_RAW))) {
 }
 
 $advanced = optional_param('advanced', -1, PARAM_INT);
+if (optional_param('reset', 0, PARAM_BOOL)) {
+    unset($SESSION->dataprefs[$data->id]);
+    // We need the redirect to cleanup the form state properly.
+    redirect("view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=$advanced");
+}
 if ($advanced == -1) {
     $advanced = $SESSION->dataprefs[$data->id]['advanced'];
 } else {
@@ -454,7 +459,7 @@ if ($showactivity) {
                 $a = new stdClass();
                 $a->num = $totalcount;
                 $a->max = $maxcount;
-                $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
+                $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;reset=1&amp;advanced=$advanced";
                 echo $OUTPUT->box_start();
                 echo get_string('foundrecords', 'data', $a);
                 echo $OUTPUT->box_end();

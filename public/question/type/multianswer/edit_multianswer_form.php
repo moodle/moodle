@@ -390,7 +390,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                         foreach ($subquestion->answer as $key => $answer) {
                             if ($subquestion->qtype == 'numerical' && $key == 0) {
                                 $defaultvalues[$prefix.'tolerance['.$key.']'] =
-                                        $subquestion->tolerance[0];
+                                    $subquestion->tolerance[0] ?? 0;
                             }
                             if (is_array($answer)) {
                                 $answer = $answer['text'];

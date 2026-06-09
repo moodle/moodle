@@ -462,6 +462,7 @@ class lesson_display_answer_form_shortanswer extends moodleform {
             $placeholder = $matches[0];
             $contentsparts = explode( $placeholder, $contents, 2);
             $attrs['size'] = round(strlen($placeholder) * 1.1);
+            $attrs['class'] = 'd-inline-block w-auto';
         }
 
         // Disable shortforms.
@@ -476,9 +477,9 @@ class lesson_display_answer_form_shortanswer extends moodleform {
 
         if ($placeholder) {
             $contentsgroup = array();
-            $contentsgroup[] = $mform->createElement('static', '', '', $contentsparts[0]);
+            $contentsgroup[] = $mform->createElement('static', '', '', str_replace(['<p>'], '', $contentsparts[0]));
             $contentsgroup[] = $mform->createElement('text', 'answer', '', $attrs);
-            $contentsgroup[] = $mform->createElement('static', '', '', $contentsparts[1]);
+            $contentsgroup[] = $mform->createElement('static', '', '', str_replace(['</p>'], '', $contentsparts[1]));
             $mform->addGroup($contentsgroup, '', '', '', false);
         } else {
             $mform->addElement('html', $OUTPUT->container($contents, 'contents'));

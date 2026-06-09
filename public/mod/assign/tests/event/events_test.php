@@ -1073,6 +1073,7 @@ final class events_test extends \advanced_testcase {
      */
     public function test_batch_set_marker_allocation_viewed(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
