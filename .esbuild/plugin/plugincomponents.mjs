@@ -38,6 +38,7 @@ import { glob } from "glob";
 import chalk from "chalk";
 import path from "path";
 import fs from "fs";
+import fsPromises from "fs/promises";
 import { getOwningComponentDirectory } from "../../.grunt/components.js";
 
 const projectRoot = process.cwd();
@@ -167,7 +168,7 @@ const configPlugin = () => ({
  * Resolve source and output paths for a component entry.
  *
  * @param {string} entry Absolute component source path.
- * @returns {{file: string, output: string} | null} Relative file info and output path, or null for unsupported paths.
+ * @returns {{file: string, buildDir: string, output: string} | null} Relative file info, build directory, and output path, or null for unsupported paths.
  */
 function resolveComponentPaths(entry) {
     const rel = path.relative(projectRoot, entry);
@@ -176,10 +177,12 @@ function resolveComponentPaths(entry) {
 
         const [part, rawFile] = rel.split(path.join('esm', 'src'));
         const file = rawFile.replace(/^[\/\\]/, '');
+        const buildDir = fromRoot(part, 'esm', 'build');
 
         return {
             file,
-            output: fromRoot(part, 'esm', 'build', file.replace(/\.(ts|tsx)$/, '.js')),
+            buildDir,
+            output: path.join(buildDir, file.replace(/\.(ts|tsx)$/, '.js')),
         };
     }
     return null;
@@ -298,6 +301,12 @@ export async function buildPluginComponents() {
             `${process.cwd()}/vendor/**`,
         ],
     });
+
+    // Remove each component's build/ directory before rebuilding so no stale artefacts survive.
+    const buildDirs = [...new Set(
+        entryPoints.map(entry => resolveComponentPaths(entry)?.buildDir).filter(d => d !== undefined)
+    )];
+    await Promise.all(buildDirs.map(dir => fsPromises.rm(dir, { recursive: true, force: true })));
 
     const buildConfig = createBuildConfig();
 
