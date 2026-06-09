@@ -58,6 +58,7 @@ $canshare   = has_capability('moodle/grade:sharegradingforms', context_system::i
 $canmanage  = has_capability('moodle/grade:managesharedforms', context_system::instance());
 
 // setup the page
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url(new moodle_url('/grade/grading/pick.php', array('targetid' => $targetid)));
 navigation_node::override_active_url($targetmanager->get_management_url());
 $PAGE->set_title(get_string('gradingmanagement', 'core_grading'));
@@ -254,4 +255,3 @@ echo $output->single_button(
     get_string('back'), 'get');
 
 echo $output->footer();
-

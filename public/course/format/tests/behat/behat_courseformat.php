@@ -19,6 +19,8 @@ declare(strict_types=1);
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
+use Behat\Mink\Exception\ExpectationException;
+
 /**
  * Behat step definitions for Course format
  *
@@ -54,5 +56,39 @@ class behat_courseformat extends behat_base {
                 ".//*[@data-sectionname=%locator%]//*[@data-for='section_title']//*[@data-region='sectionactionsmmenu']",
             ]),
         ];
+    }
+
+    /**
+     * Checks that the course linear navigation is visible.
+     *
+     * @Then /^the course linear navigation should be visible$/
+     * @throws ExpectationException
+     */
+    public function the_course_linear_navigation_should_be_visible(): void {
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        $node = $this->get_selected_node('css', '.course-linear-navigation');
+        if (!$node->isVisible()) {
+            throw new ExpectationException('The course linear navigation is not visible', $this->getSession());
+        }
+    }
+
+    /**
+     * Checks that the course linear navigation is not visible.
+     *
+     * @Then /^the course linear navigation should not be visible$/
+     * @throws ExpectationException
+     */
+    public function the_course_linear_navigation_should_not_be_visible(): void {
+        try {
+            $this->the_course_linear_navigation_should_be_visible();
+        } catch (ExpectationException $e) {
+            // All as expected.
+            return;
+        }
+
+        throw new ExpectationException('The course linear navigation is visible', $this->getSession());
     }
 }

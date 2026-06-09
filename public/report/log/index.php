@@ -98,6 +98,7 @@ if ($origin !== '') {
 }
 $url = new moodle_url("/report/log/index.php", $params);
 
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url('/report/log/index.php', array('id' => $id));
 $PAGE->set_pagelayout('report');
 

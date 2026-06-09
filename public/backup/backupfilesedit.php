@@ -46,6 +46,7 @@ if ($filearea == 'automated' && !can_download_from_backup_filearea($filearea, $c
     throw new required_capability_exception($context, 'moodle/backup:downloadfile', 'nopermissions', '');
 }
 
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 

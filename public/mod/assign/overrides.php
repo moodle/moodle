@@ -65,6 +65,7 @@ $groupmode = ($mode == "group");
 
 $url = new moodle_url('/mod/assign/overrides.php', array('cmid' => $cm->id, 'mode' => $mode));
 
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url($url);
 navigation_node::override_active_url(new moodle_url('/mod/assign/overrides.php', ['cmid' => $cmid]));
 

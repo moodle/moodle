@@ -78,6 +78,7 @@ if (!empty($returnurl)) {
     $returnurl = null;
 }
 
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url($manager->get_management_url($returnurl));
 navigation_node::override_active_url($manager->get_management_url());
 $PAGE->set_title(get_string('gradingmanagement', 'core_grading'));

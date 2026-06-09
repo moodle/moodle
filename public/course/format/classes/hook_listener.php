@@ -135,6 +135,10 @@ class hook_listener {
             // If there is already a sticky footer, do not add another one.
             return;
         }
+        if (!$page->should_show_navigation_footer()) {
+            // If the page should not show the navigation footer, do not add the sticky footer.
+            return;
+        }
 
         $format = \course_get_format($page->course);
         if (!$format->uses_linear_navigation()) {

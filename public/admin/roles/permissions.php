@@ -57,6 +57,7 @@ if ($course) {
 require_login($course, false, $cm);
 require_capability('moodle/role:review', $context);
 
+$PAGE->set_show_navigation_footer(false);
 navigation_node::override_active_url($url);
 $pageurl = new moodle_url($url);
 if ($returnurl) {

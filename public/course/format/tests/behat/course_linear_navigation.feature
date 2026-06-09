@@ -23,7 +23,7 @@ Feature: Display the course linear navigation
       | activity | name   | course |
       | page     | Page1  | C1     |
     When I am on the "Page1" "page activity" page logged in as "<user>"
-    Then ".course-linear-navigation" "css" <shouldbevisible>
+    Then the course linear navigation <shouldbevisible>
 
     Examples:
       | format         | linearnav | user | shouldbevisible       |

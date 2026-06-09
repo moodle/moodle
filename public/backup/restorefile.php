@@ -48,6 +48,7 @@ if (!empty($filecontextid)) {
 
 $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$contextid));
 
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 
