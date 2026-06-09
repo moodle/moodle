@@ -12,19 +12,19 @@
 	path = public/admin/tool/ldapsync
 	url = https://github.com/ucsf-education/moodle-admin-tool-ldapsync
 	branch = main
-[submodule "public/availability/condition/mobileapp"]
-	path = public/availability/condition/mobileapp
-	url = https://github.com/ucsf-education/moodle-availability_mobileapp
-	branch = UCSFCLE_501_STABLE
 [submodule "public/admin/tool/sentry"]
 	path = public/admin/tool/sentry
-	url = https://github.com/ucsf-education/moodle-tool_sentry
-	branch = UCSFCLE_501_STABLE
+	url = https://github.com/EsdrasCaleb/moodle-tool_sentry
+	branch = main
 [submodule "public/admin/tool/ucsfsomapi"]
 	path = public/admin/tool/ucsfsomapi
 	url = https://github.com/ucsf-education/tool_ucsfsomapi
 	branch = MOODLE_501_STABLE
 	tag = v5.1.0
+[submodule "public/availability/condition/mobileapp"]
+	path = public/availability/condition/mobileapp
+	url = https://github.com/ucsf-education/moodle-availability_mobileapp
+	branch = UCSFCLE_501_STABLE
 [submodule "public/blocks/attendance"]
 	path = public/blocks/attendance
 	url = https://github.com/danmarsden/moodle-block_attendance
@@ -72,16 +72,16 @@
 	url = https://github.com/bfh/moodle-tiny_fontcolor
 	branch = main
 	tag = V1.3
-[submodule "public/local/coursearchivingnotification"]
-	path = public/local/coursearchivingnotification
-	url = https://github.com/ucsf-education/moodle-local_coursearchivingnotification
-	branch = MOODLE_501_STABLE
-	tag = v5.1.0
 [submodule "public/local/bulkenrol"]
 	path = public/local/bulkenrol
 	url = https://github.com/moodle-an-hochschulen/moodle-local_bulkenrol
 	branch = MOODLE_501_STABLE
 	tag = v5.1-r1
+[submodule "public/local/coursearchivingnotification"]
+	path = public/local/coursearchivingnotification
+	url = https://github.com/ucsf-education/moodle-local_coursearchivingnotification
+	branch = MOODLE_501_STABLE
+	tag = v5.1.0
 [submodule "public/local/maintenance_livecheck"]
 	path = public/local/maintenance_livecheck
 	url = https://github.com/moodle-an-hochschulen/moodle-local_maintenance_livecheck
@@ -118,11 +118,6 @@
 	path = public/mod/attendance
 	url = https://github.com/danmarsden/moodle-mod_attendance
 	branch = MOODLE_501_STABLE
-[submodule "public/mod/diary"]
-	path = public/mod/diary
-	url = https://github.com/drachels/moodle-mod_diary
-	branch = master
-	tag = v5.1.0
 [submodule "public/mod/chat"]
 	path = public/mod/chat
 	url = https://github.com/ucsf-education/moodle-mod_chat
@@ -142,6 +137,11 @@
 	url = https://github.com/mdjnelson/moodle-mod_customcert
 	branch = MOODLE_500_STABLE
 	tag = v5.0.3
+[submodule "public/mod/diary"]
+	path = public/mod/diary
+	url = https://github.com/drachels/moodle-mod_diary
+	branch = master
+	tag = v5.1.0
 [submodule "public/mod/oublog"]
 	path = public/mod/oublog
 	url = https://github.com/moodleou/moodle-mod_oublog
