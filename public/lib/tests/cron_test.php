@@ -16,6 +16,8 @@
 
 namespace core;
 
+use core\task\manager;
+
 /**
  * Tests for core\cron.
  *
@@ -25,6 +27,11 @@ namespace core;
  * @covers     \core\cron
  */
 final class cron_test extends \advanced_testcase {
+    public static function setUpBeforeClass(): void {
+        parent::setUpBeforeClass();
+        require_once(__DIR__ . '/fixtures/task_fixtures.php');
+    }
+
     /**
      * Reset relevant caches between tests.
      */
@@ -153,5 +160,137 @@ final class cron_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         // phpcs:enable
+    }
+
+    /**
+     * Test that run_inner_adhoc_task() routes to adhoc_task_delayed() when the task
+     * calls set_soft_retry_delay() from within execute(), and that the task remains
+     * in the DB (not deleted), with fail_delay reset to 0, attemptsavailable decremented,
+     * and nextruntime advanced by the requested delay.
+     *
+     * @covers \core\cron::run_inner_adhoc_task
+     * @covers \core\task\manager::adhoc_task_delayed
+     * @dataProvider run_inner_adhoc_task_delayed_provider
+     * @param int|null $softretrydelay Soft retry delay, or null for exponential backoff.
+     * @param int $now Frozen clock value.
+     * @param int $expectednextruntime Expected nextruntime stored in the DB after the delay.
+     */
+    public function test_run_inner_adhoc_task_routes_to_delayed_when_soft_retry_set(
+        ?int $softretrydelay,
+        int $now,
+        int $expectednextruntime,
+    ): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        cron::reset_user_cache();
+
+        $CFG->task_logtostdout = true;
+
+        // Freeze the clock.
+        $clock = $this->mock_clock_with_frozen($now);
+
+        // Queue a task that will call set_soft_retry_delay() during execute().
+        $task = new \core\task\soft_retry_adhoc_test_task();
+        if ($softretrydelay !== null) {
+            $task->set_custom_data(['delay' => $softretrydelay]);
+        }
+        $taskid = manager::queue_adhoc_task($task);
+
+        // Retrieve the task as the cron runner would.
+        $task = manager::get_next_adhoc_task($clock->time());
+        $this->assertNotNull($task, 'Task should be retrievable from the queue.');
+
+        $initialattempts = $task->get_attempts_available();
+
+        // Run it through the full cron runner path.
+        ob_start();
+        cron::run_inner_adhoc_task($task);
+        $output = ob_get_clean();
+
+        // The task must NOT have been deleted. It is delayed, not complete.
+        $record = $DB->get_record('task_adhoc', ['id' => $taskid]);
+        $this->assertNotFalse($record);
+
+        // Nextruntime must be the expected future time.
+        $this->assertEquals($expectednextruntime, (int) $record->nextruntime);
+
+        // Fail_delay must be 0, a soft retry is not a failure.
+        $this->assertEquals(0, (int) $record->faildelay);
+
+        // Attemptsavailable must have been decremented by one.
+        $this->assertEquals($initialattempts - 1, (int) $record->attemptsavailable);
+
+        // The cron log should contain the "delayed" message, not the "complete" message.
+        $this->assertStringContainsString('Adhoc task delayed:', $output);
+        $this->assertStringNotContainsString('Adhoc task complete:', $output);
+
+        // Metadata (timestarted, hostname, pid) must be cleared.
+        $this->assertEmpty($record->timestarted);
+        $this->assertEmpty($record->hostname);
+        $this->assertEmpty($record->pid);
+    }
+
+    /**
+     * Data provider for test_run_inner_adhoc_task_routes_to_delayed_when_soft_retry_set.
+     *
+     * @return array
+     */
+    public static function run_inner_adhoc_task_delayed_provider(): array {
+        return [
+            // Explicit delay: nextruntime = now(1000) + 120 = 1120.
+            'explicit_delay' => [
+                'softretrydelay'      => 120,
+                'now'                 => 1000,
+                'expectednextruntime' => 1120,
+            ],
+            // Exponential backoff: retrycount = max(0, 12 - attemptsavailable(12)) = 0,
+            // delay = min(86400, 60 * pow(2, 0)) = 60, nextruntime = 1000 + 60 = 1060.
+            'exponential_backoff' => [
+                'softretrydelay'      => null,
+                'now'                 => 1000,
+                'expectednextruntime' => 1060,
+            ],
+        ];
+    }
+
+    /**
+     * Test that run_inner_adhoc_task() routes to adhoc_task_complete() when the task
+     * executes successfully WITHOUT calling set_soft_retry_delay(), and that the task
+     * is deleted from the DB (not kept for retry).
+     *
+     * @covers \core\cron::run_inner_adhoc_task
+     * @covers \core\task\manager::adhoc_task_complete
+     */
+    public function test_run_inner_adhoc_task_routes_to_complete_when_no_soft_retry(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        // See test_run_inner_adhoc_task_routes_to_delayed_when_soft_retry_set for explanation.
+        $this->preventResetByRollback();
+        cron::reset_user_cache();
+
+        $CFG->task_logtostdout = true;
+
+        $clock = $this->mock_clock_with_frozen(1000);
+
+        // A plain task whose execute() does nothing, no set_soft_retry_delay() call.
+        $task = new \core\task\adhoc_test_task();
+        $taskid = manager::queue_adhoc_task($task);
+
+        $task = manager::get_next_adhoc_task($clock->time());
+        $this->assertNotNull($task);
+
+        ob_start();
+        cron::run_inner_adhoc_task($task);
+        $output = ob_get_clean();
+
+        // Task must have been deleted after successful completion.
+        $this->assertFalse($DB->record_exists('task_adhoc', ['id' => $taskid]));
+
+        // The cron log must contain "complete" and NOT "delayed".
+        $this->assertStringContainsString('Adhoc task complete:', $output);
+        $this->assertStringNotContainsString('Adhoc task delayed:', $output);
     }
 }
