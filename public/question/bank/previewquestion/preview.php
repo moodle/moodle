@@ -73,6 +73,7 @@ if ($cmid = optional_param('cmid', 0, PARAM_INT)) {
 }
 question_require_capability_on($question, 'use');
 $PAGE->set_pagelayout('popup');
+$PAGE->set_show_navigation_footer(false);
 
 // Get and validate display options.
 $maxvariant = min($question->get_num_variants(), QUESTION_PREVIEW_MAX_VARIANTS);

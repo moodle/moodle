@@ -68,6 +68,7 @@ $stroverride = get_string('override', 'quiz');
 $title = get_string('deletecheck', null, $stroverride);
 
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_pagelayout('admin');
 $PAGE->add_body_class('limitedwidth');
 $PAGE->navbar->add($title);

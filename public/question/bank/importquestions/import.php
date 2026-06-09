@@ -69,6 +69,7 @@ if ($importform->is_cancelled()) {
 $PAGE->set_title($txt->importquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 
 echo $OUTPUT->header();
 

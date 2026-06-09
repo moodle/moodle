@@ -62,6 +62,7 @@ $PAGE->set_url($url);
 
 // Activate the secondary nav tab.
 $PAGE->set_secondary_active_tab("mod_quiz_useroverrides");
+$PAGE->set_show_navigation_footer(false);
 
 require_login($course, false, $cm);
 

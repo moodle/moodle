@@ -47,6 +47,7 @@ $PAGE->set_url($thispageurl);
 $PAGE->set_title($strexportquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 
 echo $OUTPUT->header();
 

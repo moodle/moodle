@@ -52,6 +52,7 @@ $PAGE->set_url($url);
 require_login($course, false, $cm);
 $PAGE->set_pagelayout('report');
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 $reportlist = quiz_report_list($quizobj->get_context());
 if (empty($reportlist)) {
     throw new \moodle_exception('erroraccessingreport', 'quiz');
