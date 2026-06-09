@@ -64,22 +64,28 @@ $PAGE->navbar->add(s($task->get_name()));
 echo $OUTPUT->header();
 echo $OUTPUT->heading($task->get_name());
 
-// The initial request just shows the confirmation page; we don't do anything further unless
-// they confirm.
-if (!optional_param('confirm', 0, PARAM_INT)) {
-    echo $OUTPUT->confirm(get_string('runnow_confirm', 'tool_task', $task->get_name()),
-            new single_button(new moodle_url('/admin/tool/task/schedule_task.php',
-                    ['task' => $taskname, 'confirm' => 1, 'sesskey' => sesskey()]),
-            get_string('runnow', 'tool_task')),
-            new single_button(new moodle_url('/admin/tool/task/scheduledtasks.php',
-                    ['lastchanged' => get_class($task)]),
-            get_string('cancel'), false));
+// Action requires session key.
+$action = optional_param('action', '', PARAM_ALPHA);
+require_sesskey();
+$output = $PAGE->get_renderer('tool_task');
+
+if ($action == 'asap') {
+    if ($task->get_disabled()) {
+        throw new moodle_exception(
+            'nopermissions',
+            'error',
+            new moodle_url('/admin/tool/task/scheduledtasks.php'),
+            get_string('runasap', 'tool_task'),
+            $task->get_name()
+        );
+    }
+    // Set nextruntime to the past so cron picks it up on its very next run.
+    \core\task\manager::set_scheduled_task_nextruntime($task, time() - HOURSECS);
+    echo $OUTPUT->notification(get_string('runasapsuccess', 'tool_task', $task->get_name()), 'success');
+    echo $output->link_back(get_class($task));
     echo $OUTPUT->footer();
     exit;
 }
-
-// Action requires session key.
-require_sesskey();
 
 \core\session\manager::write_close();
 
@@ -95,8 +101,6 @@ $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 // Run the specified task (this will output an error if it doesn't exist).
 \core\task\manager::run_from_cli($task);
 echo html_writer::end_tag('pre');
-
-$output = $PAGE->get_renderer('tool_task');
 
 // Re-run the specified task (this will output an error if it doesn't exist).
 echo $OUTPUT->single_button(new moodle_url('/admin/tool/task/schedule_task.php',

@@ -1318,6 +1318,24 @@ class manager {
     }
 
     /**
+     * Sets the next run time for a scheduled task.
+     *
+     * @param scheduled_task $task Task to modify
+     * @param int $nextruntime timestamp
+     * @throws \dml_exception If there is a database error
+     * @since Moodle 5.3
+     */
+    public static function set_scheduled_task_nextruntime(scheduled_task $task, int $nextruntime): void {
+        global $DB;
+        $DB->set_field(
+            'task_scheduled',
+            'nextruntime',
+            $nextruntime,
+            ['classname' => self::get_canonical_class_name($task)]
+        );
+    }
+
+    /**
      * Records that a scheduled task is starting to run.
      *
      * @param scheduled_task $task Task that is starting
@@ -1630,6 +1648,11 @@ class manager {
 
             // Build the CLI command.
             $command = "{$phpbinary} {$scriptpath} {$taskarg}";
+
+            // Ensure subprocesses started from Behat web requests run against the Behat site.
+            if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
+                $command = 'BEHAT_CLI=1 ' . $command;
+            }
 
             // Execute it.
             self::passthru_via_mtrace($command);
