@@ -57,6 +57,7 @@ if ($returnurl) {
     $pageurl->param('returnurl', $returnurl);
 }
 $PAGE->set_url($pageurl);
+$PAGE->set_show_navigation_footer(false);
 
 if ($context->contextlevel == CONTEXT_USER and $USER->id != $context->instanceid) {
     $PAGE->navbar->includesettingsbase = true;
@@ -198,4 +199,3 @@ if (!$PAGE->has_secondary_navigation() && $context->contextlevel > CONTEXT_USER)
 }
 
 echo $OUTPUT->footer();
-
