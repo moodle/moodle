@@ -49,6 +49,12 @@ abstract class adhoc_task extends task_base {
     /** @var int $attemptsavailable - The remaining attempts of the task. */
     private $attemptsavailable = 12;
 
+    /** @var bool $isdelayed - Whether the task has requested a soft retry delay */
+    private bool $isdelayed = false;
+
+    /** @var int|null $softretrydelay - A soft retry delay for adhoc tasks, null means use exponential backoff */
+    private ?int $softretrydelay = null;
+
     /**
      * Provide default implementation of the task name for backward compatibility. Extending classes are expected to implement
      * this method to provide a descriptive name for the task (shown to admins)
@@ -125,6 +131,43 @@ abstract class adhoc_task extends task_base {
      */
     public function set_userid($userid) {
         $this->userid = $userid;
+    }
+
+    /**
+     * If a task is waiting on an external event then you can set a retry delay, 
+     * which behaves very similar to throwing an exception and retrying with a
+     * fail delay except it will not be treated as an error. 
+     * 
+     * The number of attempts is still decremented so it cannot be retried indefinitely. 
+     * You can specify a delay in seconds, or if not set it will default to an 
+     * exponential delay similar to the faildelay.
+     *
+     * @param int|null $softretrydelay Delay in seconds, or null to use exponential backoff.
+     */
+    public function set_soft_retry_delay(?int $softretrydelay = null): void {
+        if ($softretrydelay !== null && $softretrydelay <= 0) {
+            throw new \coding_exception('Soft retry delay must be a positive integer or null.');
+        }
+        $this->isdelayed = true;
+        $this->softretrydelay = $softretrydelay;
+    }
+
+    /**
+     * Getter for $softretrydelay
+     *
+     * @return int|null $softretrydelay
+     */
+    public function get_soft_retry_delay(): ?int {
+        return $this->softretrydelay;
+    }
+
+    /**
+     * Is the adhoc task delayed?
+     *
+     * @return bool true if the task is delayed, false otherwise.
+     */
+    public function is_adhoc_task_delayed(): bool {
+        return $this->isdelayed;
     }
 
     /**

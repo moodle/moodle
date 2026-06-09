@@ -1109,4 +1109,62 @@ final class adhoc_task_test extends \advanced_testcase {
         // Close sink.
         $messagesink->close();
     }
+
+    /**
+     * Test that is_adhoc_task_delayed() returns false by default and true after set_soft_retry_delay().
+     *
+     * @covers \core\task\adhoc_task::is_adhoc_task_delayed
+     */
+    public function test_is_adhoc_task_delayed(): void {
+        $task = new adhoc_test_task();
+        $this->assertFalse($task->is_adhoc_task_delayed());
+
+        $task->set_soft_retry_delay();
+        $this->assertTrue($task->is_adhoc_task_delayed());
+    }
+
+    /**
+     * Test that set_soft_retry_delay() accepts null and positive integers.
+     *
+     * @covers \core\task\adhoc_task::set_soft_retry_delay
+     */
+    public function test_set_soft_retry_delay_accepts_valid_values(): void {
+        $task = new adhoc_test_task();
+
+        // Null triggers exponential backoff.
+        $task->set_soft_retry_delay(null);
+        $this->assertNull($task->get_soft_retry_delay());
+        $this->assertTrue($task->is_adhoc_task_delayed());
+
+        // Positive integer sets an explicit delay.
+        $task2 = new adhoc_test_task();
+        $task2->set_soft_retry_delay(300);
+        $this->assertEquals(300, $task2->get_soft_retry_delay());
+        $this->assertTrue($task2->is_adhoc_task_delayed());
+    }
+
+    /**
+     * Test that set_soft_retry_delay() rejects zero and negative values.
+     *
+     * @covers \core\task\adhoc_task::set_soft_retry_delay
+     * @dataProvider invalid_soft_retry_delay_provider
+     * @param int $value The invalid delay value to test.
+     */
+    public function test_set_soft_retry_delay_rejects_invalid_values(int $value): void {
+        $task = new adhoc_test_task();
+        $this->expectException(\coding_exception::class);
+        $task->set_soft_retry_delay($value);
+    }
+
+    /**
+     * Data provider for test_set_soft_retry_delay_rejects_invalid_values.
+     *
+     * @return array
+     */
+    public static function invalid_soft_retry_delay_provider(): array {
+        return [
+            'zero'     => [0],
+            'negative' => [-1],
+        ];
+    }
 }

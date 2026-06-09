@@ -1141,6 +1141,68 @@ class manager {
     }
 
     /**
+     * If a task is waiting on an external event then you can set a retry delay, 
+     * which behaves very similar to throwing an exception and retrying with a
+     * fail delay except it will not be treated as an error. 
+     * 
+     * The number of attempts is still decremented so it cannot be retried indefinitely. 
+     * You can specify a delay in seconds, or if not set it will default to an 
+     * exponential delay similar to the faildelay.
+     *
+     * @param \core\task\adhoc_task $task
+     */
+    public static function adhoc_task_delayed(\core\task\adhoc_task $task): void {
+        global $DB;
+
+        // The time now.
+        $clock = \core\di::get(\core\clock::class);
+        $now = $clock->time();
+
+        // Is there a custom delay?
+        $delay = $task->get_soft_retry_delay();
+
+        // Exponential delay.
+        if ($delay === null) {
+            $retrycount = max(0, 12 - $task->get_attempts_available()); 
+            // Cap exponent to 11 as this will exceed 24 hours.
+            $delay = min(86400, 60 * (int) pow(2, min($retrycount, 11)));
+        }
+
+        // Schedule next adhoc task run.
+        $task->set_next_run_time($now + $delay);
+
+        mtrace(
+            "Adhoc task delayed: " . get_class($task) .
+            " until " . ($now + $delay) .
+            " (delay {$delay}s)"
+        );
+
+        // Finalise log. Not failed.
+        logmanager::finalise_log();
+
+        // Reset adhoc task metadata.
+        $task->set_timestarted();
+        $task->set_hostname();
+        $task->set_pid();
+
+        // Subtract one from the available adhoc task attempts. 
+        if ($task->get_attempts_available() > 0) {
+            $task->set_attempts_available($task->get_attempts_available() - 1);
+        }
+
+        // Persist modified adhoc task to DB.
+        // Reset fail delay — this is not a failure.
+        $task->set_fail_delay(0);
+        $record = self::record_from_adhoc_task($task);
+        $DB->update_record('task_adhoc', $record);
+
+        // Release lock, prevent fail delay and adhoc task failure.
+        $task->release_concurrency_lock();
+        $task->get_lock()->release();
+        self::$runningtask = null;
+    }    
+
+    /**
      * This function indicates that an adhoc task was not completed successfully and should be retried.
      *
      * @param \core\task\adhoc_task $task
@@ -1772,13 +1834,13 @@ class manager {
                 $overriddenrecord->disabled = $taskconfig['disabled'];
             }
             if (isset($taskconfig['schedule'])) {
-                list (
+                [
                     $overriddenrecord->minute,
                     $overriddenrecord->hour,
                     $overriddenrecord->day,
                     $overriddenrecord->month,
                     $overriddenrecord->dayofweek
-                ) = explode(' ', $taskconfig['schedule']);
+                ] = explode(' ', $taskconfig['schedule']);
             }
         }
 
