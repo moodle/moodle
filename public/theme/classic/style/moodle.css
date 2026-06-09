@@ -40305,6 +40305,12 @@ div.editor_atto_toolbar button .icon {
   height: 100%;
   display: flex;
 }
+.navbar.fixed-top .editmode-switch-form .input-group {
+  flex-wrap: nowrap;
+}
+.navbar.fixed-top .editmode-switch-form .input-group > label {
+  white-space: nowrap;
+}
 
 .dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after {
   font: var(--fa-font-solid);
@@ -40331,6 +40337,29 @@ div.editor_atto_toolbar button .icon {
 
 :root {
   --navbar-height: 50px;
+}
+
+.navbar.fixed-top #usernavigation .search-input-inline {
+  display: none;
+}
+@media (min-width: 768px) {
+  .navbar.fixed-top #usernavigation .search-input-inline {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 0.5rem;
+  }
+}
+.navbar.fixed-top #usernavigation .search-input-inline .searchform-navbar .input-group {
+  width: 256px;
+}
+.navbar.fixed-top #usernavigation .search-input-inline .searchform-navbar .input-group-text,
+.navbar.fixed-top #usernavigation .search-input-inline .searchform-navbar .form-control {
+  background-color: #e9ecef;
+}
+.navbar.fixed-top #usernavigation .search-input-inline .searchform-navbar .input-group-text,
+.navbar.fixed-top #usernavigation .search-input-inline .searchform-navbar .form-control::placeholder {
+  color: #495057;
 }
 
 /**

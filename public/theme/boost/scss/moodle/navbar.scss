@@ -137,6 +137,14 @@
         height: 100%;
         display: flex;
     }
+    .editmode-switch-form {
+        .input-group {
+            flex-wrap: nowrap;
+        }
+        .input-group > label {
+            white-space: nowrap;
+        }
+    }
 }
 .dir-rtl .navbar.fixed-top {
     .usermenu {
@@ -171,4 +179,30 @@
 // Make navbar height available for non-sass use.
 :root {
     --navbar-height: #{$navbar-height};
+}
+
+// Inline search form.
+.navbar.fixed-top #usernavigation .search-input-inline {
+    display: none;
+
+    @include media-breakpoint-up(md) {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding: 0 $primary-nav-padding-x;
+    }
+
+    .searchform-navbar {
+        .input-group {
+            width: 256px;
+        }
+        .input-group-text,
+        .form-control {
+            background-color: $gray-200;
+        }
+        .input-group-text,
+        .form-control::placeholder {
+            color: $gray-700;
+        }
+    }
 }
