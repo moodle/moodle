@@ -58,6 +58,32 @@ define([
             }
         });
 
+        PubSub.subscribe(ForumEvents.ALL_SUBSCRIPTION_TOGGLED, function(data) {
+            var subscribed = data.subscriptionState;
+            var discussionListItems = root.find(Selectors.discussion.item + '[data-discussionid]');
+            discussionListItems.each(function() {
+                var discussionListItem = $(this);
+                var subscribedLabel = discussionListItem.find(Selectors.discussion.subscribedLabel);
+                if (subscribed) {
+                    discussionListItem.addClass('subscribed');
+                    subscribedLabel.removeAttr('hidden');
+                } else {
+                    discussionListItem.removeClass('subscribed');
+                    subscribedLabel.attr('hidden', true);
+                }
+                var toggleElement = discussionListItem.find(Selectors.discussion.subscriptionToggle);
+                toggleElement.prop('checked', subscribed);
+                // Keep target state in sync so subsequent clicks send the correct next action.
+                toggleElement.data('targetstate', subscribed ? 0 : 1);
+                toggleElement.attr('data-targetstate', subscribed ? 0 : 1);
+                var toggleId = toggleElement.attr('id');
+                var toggleLabel = toggleElement.next('label[for="' + toggleId + '"]').find('span');
+                if (toggleLabel.length) {
+                    toggleLabel.text(data.newLabel);
+                }
+            });
+        });
+
         root.on('click', Selectors.post.inpageCancelButton, function(e) {
             // Tell formchangechecker to reset the form state.
             FormChangeChecker.resetFormDirtyState(e.currentTarget);

@@ -42,26 +42,26 @@ Feature: A user can control their own subscription preferences for a forum
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject" "table_row"
 
+  @javascript
   Scenario: An optional forum can be subscribed to
     Given I set the following fields to these values:
       | Subscription mode | Optional subscription |
     And I press "Save and return to course"
     When I am on the "Test forum name" "forum activity" page logged in as student1
     Then I should see "Subscribe to forum"
-    And I should not see "Unsubscribe from forum"
-    And I follow "Subscribe to forum"
-    And I should see "You will be notified of new posts in the forum 'Test forum name'"
-    And I should see "Unsubscribe from forum"
-    And I should not see "Subscribe to forum"
+    And I click on "Subscribe to forum" "field"
+    And the field "Subscribe to forum" matches value "1"
+    And I am on the "Course 1" "course > activities > forum" page
+    And "Unsubscribe from forum" "field" should exist in the "Test forum name" "table_row"
 
+  @javascript
   Scenario: An Automatic forum can be unsubscribed from
     Given I set the following fields to these values:
       | Subscription mode | Auto subscription |
     And I press "Save and return to course"
     When I am on the "Test forum name" "forum activity" page logged in as student1
-    Then I should see "Unsubscribe from forum"
-    And I should not see "Subscribe to forum"
-    And I follow "Unsubscribe from forum"
-    And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
     And I should see "Subscribe to forum"
-    And I should not see "Unsubscribe from forum"
+    And I click on "Subscribe to forum" "field"
+    And the field "Subscribe to forum" matches value "0"
+    And I am on the "Course 1" "course > activities > forum" page
+    And "Subscribe to forum" "field" should exist in the "Test forum name" "table_row"

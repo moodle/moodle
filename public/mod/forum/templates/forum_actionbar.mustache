@@ -58,12 +58,16 @@
             {{{newdiscussionbtn}}}
         </div>
         <div class="ms-sm-auto navitem">
-            {{#subscribetoforum}}
-                <a class="btn btn-secondary" href="{{ subscribetoforum }}">{{#str}}subscribe, mod_forum {{/str}}</a>
-            {{/subscribetoforum}}
-            {{#unsubscribefromforum}}
-                <a class="btn btn-secondary" href="{{ unsubscribefromforum }}">{{#str}}unsubscribe, mod_forum {{/str}}</a>
-            {{/unsubscribefromforum}}
+            {{#subscribetoggle}}
+                {{>core/toggle}}
+            {{/subscribetoggle}}
         </div>
     </div>
 </div>
+{{#js}}
+    require(['mod_forum/forum_overview_toggle'], function(ForumSubscriptionToggle) {
+        {{#subscribetoggle}}
+            ForumSubscriptionToggle.init('#{{id}}', false);
+        {{/subscribetoggle}}
+    });
+{{/js}}
