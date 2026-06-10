@@ -47,8 +47,8 @@ Feature: Enable course linear navigation setting
     And the following config values are set as admin:
       | enablelinearnav | <defaultweeks>  | format_weeks  |
     And the following "courses" exist:
-      | fullname | shortname | format |
-      | Course1  | c1        | topics |
+      | fullname | shortname | format | enablelinearnav |
+      | Course1  | c1        | topics | <defaulttopics> |
     When I am on the "Course1" "course" page logged in as admin
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
