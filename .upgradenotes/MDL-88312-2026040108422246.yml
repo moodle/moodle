@@ -1,0 +1,7 @@
+issueNumber: MDL-88312
+notes:
+  core:
+    - message: >-
+        Added new 'url' optional parameter to `core\output\action_menu\subpanel`
+        so subpanel menu elements can have their own link.
+      type: improved

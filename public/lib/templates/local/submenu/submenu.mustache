@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/submenu/submenu
+
+    Generic submenu content — a list of action menu items (links and nested subpanels).
+    Intended to be used as the subpanelcontent of a core/local/action_menu/subpanel.
+
+    Example context (json):
+    {
+        "items": [
+            {
+                "actionmenulink": {
+                    "url": "/course/index.php?categoryid=2",
+                    "text": "Business",
+                    "classes": "dropdown-item text-truncate",
+                    "attributes": [{"name": "data-item-type", "value": "category"}],
+                    "disabled": false,
+                    "actions": [],
+                    "hasactions": false
+                }
+            },
+            {
+                "subpanel": {
+                    "id": "action_menu_submenu_2",
+                    "text": "Science",
+                    "subpanelcontent": "<a class=\"dropdown-item\" href=\"#\">Physics</a>",
+                    "url": "",
+                    "attributes": [],
+                    "instance": 2,
+                    "disabled": false
+                }
+            }
+        ]
+    }
+}}
+{{#items}}
+    {{#subpanel}}
+        {{> core/local/action_menu/subpanel}}
+    {{/subpanel}}
+    {{#actionmenulink}}
+        {{> core/action_menu_link}}
+    {{/actionmenulink}}
+    {{#rawhtml}}
+        {{{rawhtml}}}
+    {{/rawhtml}}
+{{/items}}

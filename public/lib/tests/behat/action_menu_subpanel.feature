@@ -247,3 +247,194 @@ Feature: Navigate action menu subpanels
     And the focused element is "Subpanel example" "menuitem" in the "regularscenario" "region"
     And I should not see "Status A" in the "regularscenario" "region"
     And I should not see "Status B" in the "regularscenario" "region"
+
+  Scenario: Navigate submenu items with mouse
+    Given I click on "Actions menu" "button" in the "basicsubmenuexample" "region"
+    When I click on "Item 2 with submenu" "menuitem" in the "basicsubmenuexample" "region"
+    Then I should see "Alpha" in the "basicsubmenuexample" "region"
+    And I should see "Beta" in the "basicsubmenuexample" "region"
+    And I should see "Gamma" in the "basicsubmenuexample" "region"
+
+  Scenario: Navigate left-aligned submenu with mouse
+    Given I click on "Actions menu" "button" in the "leftsubmenuexample" "region"
+    When I click on "Item 2 with submenu" "menuitem" in the "leftsubmenuexample" "region"
+    Then I should see "Alpha" in the "leftsubmenuexample" "region"
+    And I should see "Beta" in the "leftsubmenuexample" "region"
+    And I should see "Gamma" in the "leftsubmenuexample" "region"
+
+  Scenario: Navigate submenu items with keyboard arrow keys
+    Given I click on "Actions menu" "button" in the "basicsubmenuexample" "region"
+    # Navigate down to "Item 2 with submenu".
+    And I press the down key
+    And I press the down key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "basicsubmenuexample" "region"
+    And I should see "Alpha" in the "basicsubmenuexample" "region"
+    And I should see "Beta" in the "basicsubmenuexample" "region"
+    And I should see "Gamma" in the "basicsubmenuexample" "region"
+    # Enter the submenu content.
+    When I press the right key
+    Then the focused element is "Alpha" "link" in the "basicsubmenuexample" "region"
+    And I press the down key
+    And the focused element is "Beta" "link" in the "basicsubmenuexample" "region"
+    And I press the down key
+    And the focused element is "Gamma" "link" in the "basicsubmenuexample" "region"
+    # Loop back to the first item.
+    And I press the down key
+    And the focused element is "Alpha" "link" in the "basicsubmenuexample" "region"
+    # Navigate backwards.
+    And I press the up key
+    And the focused element is "Gamma" "link" in the "basicsubmenuexample" "region"
+    # Exit submenu back to the parent menu item.
+    And I press the left key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "basicsubmenuexample" "region"
+
+  Scenario: Navigate nested submenu containing a subpanel with mouse
+    Given I click on "Actions menu" "button" in the "nestedsubmenuexample" "region"
+    When I click on "Item 2 with submenu" "menuitem" in the "nestedsubmenuexample" "region"
+    Then I should see "Alpha" in the "nestedsubmenuexample" "region"
+    And I should see "Beta" in the "nestedsubmenuexample" "region"
+    And I should see "More options" in the "nestedsubmenuexample" "region"
+    # Open the nested subpanel within the submenu (subpanel without link).
+    And I click on "More options" "menuitem" in the "nestedsubmenuexample" "region"
+    And I should see "Option 1" in the "nestedsubmenuexample" "region"
+    And I should see "Option 2" in the "nestedsubmenuexample" "region"
+    And I click on "Actions menu" "button" in the "nestedsubmenuwithlinkexample" "region"
+    And I click on "Item 2 with submenu" "menuitem" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Alpha" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Beta" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Gamma" in the "nestedsubmenuwithlinkexample" "region"
+    # Subpanel with link just follows the URL.
+    And I click on "Gamma" "menuitem" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Dashboard" in the "page-header" "region"
+
+  Scenario: Navigate nested submenu containing a choice list with keyboard
+    Given I click on "Actions menu" "button" in the "nestedsubmenuexample" "region"
+    # Navigate to "Item 2 with submenu".
+    And I press the down key
+    And I press the down key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuexample" "region"
+    # Enter the submenu.
+    When I press the right key
+    Then the focused element is "Alpha" "link" in the "nestedsubmenuexample" "region"
+    And I press the down key
+    And the focused element is "Beta" "link" in the "nestedsubmenuexample" "region"
+    And I press the down key
+    And the focused element is "More options" "menuitem" in the "nestedsubmenuexample" "region"
+    # Enter the nested choicelist.
+    And I press the left key
+    And the focused element is "Option 1" "link" in the "nestedsubmenuexample" "region"
+    And I press the down key
+    And the focused element is "Option 2" "link" in the "nestedsubmenuexample" "region"
+    And I press the right key
+    And the focused element is "More options" "menuitem" in the "nestedsubmenuexample" "region"
+    And I press the up key
+    And the focused element is "Beta" "link" in the "nestedsubmenuexample" "region"
+    And I press the right key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuexample" "region"
+    And I press the right key
+    # Exit the submenu back to the parent menu item.
+    And I press the left key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuexample" "region"
+
+  Scenario: Navigate nested submenu containing a second level submenu with keyboard
+    Given I click on "Actions menu" "button" in the "nestedsubmenuwithlinkexample" "region"
+    # Navigate to "Item 2 with submenu".
+    And I press the down key
+    And I press the down key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuwithlinkexample" "region"
+    # Enter the submenu using enter key (subpanel without link).
+    When I press the enter key
+    Then the focused element is "Alpha" "link" in the "nestedsubmenuwithlinkexample" "region"
+    And I press the down key
+    And the focused element is "Beta" "link" in the "nestedsubmenuwithlinkexample" "region"
+    And I press the down key
+    And the focused element is "Gamma" "menuitem" in the "nestedsubmenuwithlinkexample" "region"
+    # Enter the nested submenu using directional arrow key.
+    And I press the right key
+    And the focused element is "Yota" "link" in the "nestedsubmenuwithlinkexample" "region"
+    And I press the down key
+    And the focused element is "Zeta" "link" in the "nestedsubmenuwithlinkexample" "region"
+    And I press the down key
+    And the focused element is "Omega" "link" in the "nestedsubmenuwithlinkexample" "region"
+    And I press the left key
+    And the focused element is "Gamma" "menuitem" in the "nestedsubmenuwithlinkexample" "region"
+    # Enter the nested submenu using space key.
+    And I press the space key
+    And the focused element is "Yota" "link" in the "nestedsubmenuwithlinkexample" "region"
+    And I press the escape key
+    And the focused element is "Gamma" "link" in the "nestedsubmenuwithlinkexample" "region"
+    # Subpanel with link just follows the URL on enter.
+    And I press the enter key
+    And I should see "Dashboard" in the "page-header" "region"
+
+  Scenario: Submenu items display icons and data attributes when configured
+    Given I click on "Actions menu" "button" in the "submenuicons" "region"
+    When I click on "Item 2 with submenu" "menuitem" in the "submenuicons" "region"
+    Then I should see "Edit" in the "submenuicons" "region"
+    And "Edit icon" "icon" should exist in the "submenuicons" "region"
+    And I should see "Hide" in the "submenuicons" "region"
+    And "Hide icon" "icon" should exist in the "submenuicons" "region"
+    And I should see "Delete" in the "submenuicons" "region"
+    And "Delete icon" "icon" should exist in the "submenuicons" "region"
+    And "[data-foo='bar']" "css_element" should exist in the "submenuicons" "region"
+
+  Scenario: Navigate submenu using WCAG compound keyboard navigation
+    Given I click on "Actions menu" "button" in the "nestedsubmenuwithlinkexample" "region"
+    And I press the down key
+    And I press the down key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuwithlinkexample" "region"
+    # Tab enters the subpanel content.
+    When I press the tab key
+    Then the focused element is "Alpha" "link" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Alpha" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Beta" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Gamma" in the "nestedsubmenuwithlinkexample" "region"
+    And I press the down key
+    And I press the down key
+    # Tab enters the sub-subpanel content.
+    And I press the tab key
+    And the focused element is "Yota" "link" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Yota" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Zeta" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Omega" in the "nestedsubmenuwithlinkexample" "region"
+    # Shift-Tab returns to the main subpanel item and closes the sub-subpanel.
+    And I press the shift tab key
+    And the focused element is "Gamma" "menuitem" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Alpha" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Beta" in the "nestedsubmenuwithlinkexample" "region"
+    And I should see "Gamma" in the "nestedsubmenuwithlinkexample" "region"
+    And I should not see "Yota" in the "nestedsubmenuwithlinkexample" "region"
+    And I should not see "Zeta" in the "nestedsubmenuwithlinkexample" "region"
+    And I should not see "Omega" in the "nestedsubmenuwithlinkexample" "region"
+    # Shift-Tab again returns to the main menu item and closes the subpanel.
+    And I press the shift tab key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuwithlinkexample" "region"
+    And I should not see "Alpha" in the "nestedsubmenuwithlinkexample" "region"
+    And I should not see "Beta" in the "nestedsubmenuwithlinkexample" "region"
+    And I should not see "Gamma" in the "nestedsubmenuwithlinkexample" "region"
+
+  @accessibility
+  Scenario: Submenu meets accessibility standards
+    Given I click on "Actions menu" "button" in the "basicsubmenuexample" "region"
+    # Navigate to the submenu and open it.
+    And I press the down key
+    And I press the down key
+    And the focused element is "Item 2 with submenu" "menuitem" in the "basicsubmenuexample" "region"
+    And I should see "Alpha" in the "basicsubmenuexample" "region"
+    Then the page should meet accessibility standards with "wcag143" extra tests
+
+  Scenario: Navigate submenu in mobile viewport
+    Given I change the viewport size to "mobile"
+    And I click on "Actions menu" "button" in the "basicsubmenuexample" "region"
+    And I should not see "Alpha" in the "basicsubmenuexample" "region"
+    And I should not see "Beta" in the "basicsubmenuexample" "region"
+    And I should not see "Gamma" in the "basicsubmenuexample" "region"
+    When I click on "Item 2 with submenu" "menuitem" in the "basicsubmenuexample" "region"
+    Then I should see "Alpha" in the "basicsubmenuexample" "region"
+    And I should see "Beta" in the "basicsubmenuexample" "region"
+    And I should see "Gamma" in the "basicsubmenuexample" "region"
+    # In mobile, clicking the menu item again toggles the subpanel closed.
+    When I click on "Item 2 with submenu" "menuitem" in the "basicsubmenuexample" "region"
+    Then I should not see "Alpha" in the "basicsubmenuexample" "region"
+    And I should not see "Beta" in the "basicsubmenuexample" "region"
+    And I should not see "Gamma" in the "basicsubmenuexample" "region"
