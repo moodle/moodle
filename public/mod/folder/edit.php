@@ -48,6 +48,7 @@ $PAGE->activityheader->set_attrs([
     'description' => ''
 ]);
 $PAGE->add_body_class('limitedwidth');
+$PAGE->set_show_navigation_footer(false);
 
 $data = new stdClass();
 $data->id = $cm->id;
