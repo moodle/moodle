@@ -26,12 +26,14 @@ class MockRequest {
     method: string;
     headers: Headers;
     body: any;
+    signal: AbortSignal | null;
 
     constructor(input: string | URL, init: RequestInit = {}) {
         this.url = String(input);
         this.method = init.method ?? 'GET';
         this.headers = new Headers(init.headers as Record<string, string>);
         this.body = init.body ?? null;
+        this.signal = (init.signal as AbortSignal | null | undefined) ?? null;
     }
 }
 
@@ -56,6 +58,7 @@ const mockFetch = jest.fn();
 (globalThis as any).fetch = mockFetch;
 
 import Fetch from '@moodle/lms/core/fetch';
+import getGlobalAbortSignal, {abortGlobalFetches, resetGlobalAbortController} from '../src/abort';
 
 /**
  * Helper: create a successful mock response.
@@ -302,6 +305,39 @@ describe('@moodle/lms/core/fetch', () => {
 
             const req = mockFetch.mock.calls[0][0];
             expect(req.body).toBe(JSON.stringify({reason: 'test'}));
+        });
+    });
+
+    describe('globalAbortController', () => {
+        beforeEach(() => {
+            resetGlobalAbortController();
+        });
+
+        afterEach(() => {
+            resetGlobalAbortController();
+        });
+
+        it('passes the globalAbortController signal to fetch calls', async() => {
+            await Fetch.request('mod_example', 'get_items');
+
+            const req: MockRequest = mockFetch.mock.calls[0][0];
+            expect(req.signal).toBeDefined();
+            expect(req.signal).toBe(getGlobalAbortSignal());
+        });
+
+        it('aborts all in-flight requests when globalAbortController is aborted', async() => {
+            const abortError = new DOMException('The operation was aborted.', 'AbortError');
+            mockFetch.mockImplementation((req: MockRequest) => {
+                return new Promise((resolve, reject) => {
+                    req.signal?.addEventListener('abort', () => reject(abortError));
+                });
+            });
+
+            const requestPromise = Fetch.request('mod_example', 'get_items');
+
+            abortGlobalFetches();
+
+            await expect(requestPromise).rejects.toThrow('aborted');
         });
     });
 });

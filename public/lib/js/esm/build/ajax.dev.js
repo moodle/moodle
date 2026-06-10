@@ -18,6 +18,7 @@ import Pending from "@moodle/lms/core/pending";
 import log from "@moodle/lms/core/log";
 import { redirect } from "@moodle/lms/core/location";
 import { relativeUrl } from "@moodle/lms/core/url";
+import { getGlobalAbortSignal } from "./abort";
 function isMoodleAjaxError(err) {
   return typeof err === "object" && err !== null && "message" in err && "errorcode" in err;
 }
@@ -71,7 +72,8 @@ function buildRequest(requestData, options) {
   const init = {
     method,
     headers,
-    credentials: "same-origin"
+    credentials: "same-origin",
+    signal: getGlobalAbortSignal()
   };
   if (body) {
     init.body = body;
@@ -149,6 +151,9 @@ function performFetch(requests, options = {}) {
     controller = new AbortController();
     init.signal = controller.signal;
     timeoutId = setTimeout(() => controller.abort(), timeout);
+    getGlobalAbortSignal().addEventListener("abort", () => {
+      controller.abort();
+    });
   }
   fetch(url, init).then((response) => {
     if (!response.ok) {

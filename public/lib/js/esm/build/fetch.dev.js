@@ -21,6 +21,7 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  */
 import config from "@moodle/lms/core/config";
 import Pending from "@moodle/lms/core/pending";
+import { getGlobalAbortSignal } from "./abort";
 class RequestWrapper {
   static {
     __name(this, "RequestWrapper");
@@ -174,7 +175,8 @@ class Fetch {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "pageparent": config.traceId || ""
-      }
+      },
+      signal: getGlobalAbortSignal()
     };
     Object.entries(params).forEach(([key, value]) => {
       url.searchParams.append(key, value);

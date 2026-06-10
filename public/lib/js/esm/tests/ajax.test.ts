@@ -23,6 +23,7 @@
 import {performFetch, fetchOne, fetchMany, isMoodleAjaxError} from '@moodle/lms/core/ajax';
 import type {AjaxRequest} from '@moodle/lms/core/ajax';
 import {redirect} from '@moodle/lms/core/location';
+import getGlobalAbortSignal, {abortGlobalFetches, resetGlobalAbortController} from '../src/abort';
 
 // The global M.cfg is set up by .jest/globalM.ts with:
 //   wwwroot: 'https://example.com'
@@ -264,13 +265,52 @@ describe('core/ajax', () => {
             await expect(promise).rejects.toBeInstanceOf(TypeError);
         });
 
+        describe('globalAbortController', () => {
+            beforeEach(() => {
+                resetGlobalAbortController();
+            });
+
+            afterEach(() => {
+                resetGlobalAbortController();
+            });
+
+            it('passes the globalAbortController signal to fetch calls', async() => {
+                fetchMock.mockResolvedValue(mockFetchResponse([
+                    {error: false, data: null},
+                ]));
+
+                performFetch([{methodname: 'test', args: {}}]);
+
+                const [, init] = fetchMock.mock.calls[0];
+                expect(init.signal).toBeDefined();
+                expect(init.signal).toBe(getGlobalAbortSignal());
+            });
+
+            it('aborts all in-flight requests when globalAbortController is aborted', async() => {
+                const abortError = new DOMException('The operation was aborted.', 'AbortError');
+                fetchMock.mockImplementation((_url: string, init: RequestInit) => {
+                    return new Promise((resolve, reject) => {
+                        init.signal?.addEventListener('abort', () => reject(abortError));
+                    });
+                });
+
+                const [promise] = performFetch([{methodname: 'test', args: {}}]);
+
+                abortGlobalFetches();
+
+                await expect(promise).rejects.toThrow('aborted');
+            });
+        });
+
         describe('timeout handling', () => {
             beforeEach(() => {
                 jest.useFakeTimers();
+                resetGlobalAbortController();
             });
 
             afterEach(() => {
                 jest.useRealTimers();
+                resetGlobalAbortController();
             });
 
             it('aborts the request after timeout', async() => {
@@ -287,6 +327,25 @@ describe('core/ajax', () => {
                 );
 
                 jest.advanceTimersByTime(5000);
+
+                await expect(promise).rejects.toThrow('aborted');
+            });
+
+            it('aborts a timed request when globalAbortController is aborted before the timeout fires', async() => {
+                const abortError = new DOMException('The operation was aborted.', 'AbortError');
+                fetchMock.mockImplementation((_url: string, init: RequestInit) => {
+                    return new Promise((resolve, reject) => {
+                        init.signal?.addEventListener('abort', () => reject(abortError));
+                    });
+                });
+
+                const [promise] = performFetch(
+                    [{methodname: 'slow', args: {}}],
+                    {timeout: 5000},
+                );
+
+                // Abort the global controller before the timeout fires.
+                abortGlobalFetches();
 
                 await expect(promise).rejects.toThrow('aborted');
             });

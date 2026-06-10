@@ -35,6 +35,7 @@
 
 import config from '@moodle/lms/core/config';
 import Pending from '@moodle/lms/core/pending';
+import {getGlobalAbortSignal} from './abort';
 
 /** The body types accepted by write-method requests. */
 type RequestBody = string | object | FormData;
@@ -284,6 +285,7 @@ export default class Fetch {
                 'Content-Type': 'application/json',
                 'pageparent': config.traceId || '',
             },
+            signal: getGlobalAbortSignal(),
         };
 
         Object.entries(params).forEach(([key, value]) => {

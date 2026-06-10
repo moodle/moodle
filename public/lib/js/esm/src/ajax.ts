@@ -32,6 +32,7 @@ import Pending from '@moodle/lms/core/pending';
 import log from '@moodle/lms/core/log';
 import {redirect} from '@moodle/lms/core/location';
 import {relativeUrl} from '@moodle/lms/core/url';
+import {getGlobalAbortSignal} from './abort';
 
 /** A single web service request descriptor. */
 export interface AjaxRequest {
@@ -178,6 +179,7 @@ function buildRequest(
         method,
         headers,
         credentials: 'same-origin',
+        signal: getGlobalAbortSignal(),
     };
 
     if (body) {
@@ -290,6 +292,11 @@ export function performFetch(
         controller = new AbortController();
         init.signal = controller.signal;
         timeoutId = setTimeout(() => controller!.abort(), timeout);
+
+        // Also abort if the global abort controller is triggered (e.g. on page unload) to avoid hanging requests.
+        getGlobalAbortSignal().addEventListener('abort', () => {
+            controller!.abort();
+        });
     }
 
     fetch(url, init)
