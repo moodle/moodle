@@ -183,6 +183,7 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($pagetitle);
+$PAGE->set_show_navigation_footer(false);
 $PAGE->activityheader->disable();
 
 echo $OUTPUT->header();

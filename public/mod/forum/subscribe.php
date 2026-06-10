@@ -59,6 +59,7 @@ if (!is_null($discussionid)) {
     }
 }
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 
 $forum   = $DB->get_record('forum', array('id' => $id), '*', MUST_EXIST);
 $course  = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);

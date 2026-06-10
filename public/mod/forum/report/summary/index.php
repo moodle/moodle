@@ -107,6 +107,7 @@ $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 $PAGE->activityheader->disable();
 $PAGE->navbar->add(get_string('nodetitle', 'forumreport_summary'));
 
