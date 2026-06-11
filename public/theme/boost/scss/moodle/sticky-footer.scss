@@ -16,7 +16,6 @@ body {
     transition: bottom .5s;
     // Sticky footer overlays the main content, but not the page layout.
     z-index: map-get($zindex-levels, 3);
-    box-shadow: 0 0 1rem rgba($black, .15);
     font-size: calc(#{$font-size-base} * 1.10);
     // Adjust sticky footer width to the main content area.
     .sticky-footer-content {
