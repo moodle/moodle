@@ -199,7 +199,7 @@ export const init = async(
     };
 
     // Add listeners for the sorting, paging and clear actions.
-    document.querySelector('.questionbankwindow').addEventListener('click', e => {
+    document.querySelector('.questionbankwindow').addEventListener('click', async(e) => {
         const sortableLink = e.target.closest(SELECTORS.SORT_LINK);
         const paginationLink = e.target.closest(SELECTORS.PAGINATION_LINK);
         const clearLink = e.target.closest(Selectors.filterset.actions.resetFilters);
@@ -282,7 +282,7 @@ export const init = async(
                 filteroptions: initialFilters[urlFilter].filteroptions,
                 rownum: rowcount
             };
-            coreFilter.addFilterRow(filterdata);
+            await coreFilter.addFilterRow(filterdata);
         }
         coreFilter.filterSet.dataset.filterverb = jointype;
 
