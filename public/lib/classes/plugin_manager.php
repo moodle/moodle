@@ -1525,6 +1525,7 @@ class plugin_manager {
     public function uninstall_plugin($component, progress_trace $progress) {
         global $CFG;
         require_once($CFG->libdir . '/upgradelib.php');
+        require_once($CFG->libdir . '/adminlib.php');
 
         $pluginfo = $this->get_plugin_info($component);
 
