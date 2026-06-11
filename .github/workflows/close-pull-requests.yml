@@ -12,7 +12,7 @@ jobs:
     name: Close Pull Requests
     runs-on: ubuntu-latest
     steps:
-      - uses: dessant/repo-lockdown@v4
+      - uses: dessant/repo-lockdown@v5
         with:
           process-only: prs
           close-pr: true
