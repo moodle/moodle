@@ -76,7 +76,7 @@ class import_map implements \JsonSerializable {
         foreach ($this->imports as $specifier => $importdata) {
             $loader = $importdata->loader instanceof \core\url
                 ? $importdata->loader
-                : new \core\url($this->loader->out(false) . $specifier);
+                : new \core\url($this->loader->out(false) . $specifier . $importdata->urlsuffix);
             $importmap['imports'][$specifier] = $loader->out(false);
         }
 
@@ -104,7 +104,8 @@ class import_map implements \JsonSerializable {
         );
         $this->add_import(
             '@moodlehq/design-system',
-            path: 'lib/bundles/design-system/js/index.js',
+            path: 'lib/bundles/design-system/js/',
+            urlsuffix: '/index.js',
         );
         $this->add_import(
             'react',
@@ -144,6 +145,9 @@ class import_map implements \JsonSerializable {
      * @param string[] $allowedsuffixes List of allowed suffixes for the resolved file.
      *   If the resolved path already ends with one of these suffixes, the default suffix will not be appended.
      *   Defaults to ['.js', '.js.map'] so that source maps are served without double-suffix mangling.
+     * @param string $urlsuffix Extra path appended to the specifier in the import map URL.
+     *   Use this when the entry resolves to a directory's index file so that relative imports
+     *   within the module resolve correctly (e.g. '/index.js' for a package-style module).
      */
     public function add_import(
         string $specifier,
@@ -154,6 +158,7 @@ class import_map implements \JsonSerializable {
         ?array $devreplacements = null,
         ?callable $modifier = null,
         array $allowedsuffixes = ['.js', '.js.map'],
+        string $urlsuffix = '',
     ): void {
         if (!in_array($suffix, $allowedsuffixes, true)) {
             $allowedsuffixes[] = $suffix;
@@ -171,6 +176,7 @@ class import_map implements \JsonSerializable {
             'devreplacements' => $devreplacements,
             'allowedsuffixes' => $allowedsuffixes,
             'modifier' => $modifier,
+            'urlsuffix' => $urlsuffix,
         ];
         $this->importssorted = false;
     }
@@ -190,7 +196,6 @@ class import_map implements \JsonSerializable {
         string $requestedpath,
     ): ?string {
         global $CFG;
-
         // Sort longest-key-first once so a more-specific prefix always wins over a shorter one.
         if (!$this->importssorted) {
             uksort($this->imports, fn ($a, $b) => strlen($b) <=> strlen($a));
@@ -217,7 +222,7 @@ class import_map implements \JsonSerializable {
                 return $resolved;
             }
 
-            $pathremainder = substr($requestedpath, strlen($specifier));
+            $pathremainder = ltrim(substr($requestedpath, strlen($specifier)), '/');
             // Reject '..' as a path segment to prevent directory traversal. A single dot in a
             // filename (e.g. 'button.small') is allowed because it is not a segment on its own.
             if (in_array('..', explode('/', $pathremainder), true)) {

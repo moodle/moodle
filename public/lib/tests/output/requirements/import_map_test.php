@@ -30,7 +30,7 @@ final class import_map_test extends \advanced_testcase {
      * The constructor pre-populates the standard ESM specifiers.
      */
     public function test_constructor_adds_standard_imports(): void {
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
 
         $data = $map->jsonSerialize();
@@ -45,14 +45,14 @@ final class import_map_test extends \advanced_testcase {
      */
     public function test_jsonserialize_throws_without_loader(): void {
         $this->expectException(\core\exception\coding_exception::class);
-        (new import_map())->jsonSerialize();
+        (\core\di::get(import_map::class))->jsonSerialize();
     }
 
     /**
      * jsonSerialize() returns an array with an 'imports' key.
      */
     public function test_jsonserialize_returns_imports_structure(): void {
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
 
         $data = $map->jsonSerialize();
@@ -66,7 +66,7 @@ final class import_map_test extends \advanced_testcase {
      * set_default_loader() is used as the base URL when no explicit loader or path is given.
      */
     public function test_set_default_loader_is_used_as_base_url(): void {
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/esm/12345/'));
         $map->add_import('my-module');
 
@@ -79,7 +79,7 @@ final class import_map_test extends \advanced_testcase {
      * add_import() with an explicit \core\url uses that URL verbatim, ignoring the default loader.
      */
     public function test_add_import_with_explicit_url(): void {
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
         $map->add_import('my-module', loader: new \core\url('https://cdn.example.com/my-module.js'));
 
@@ -92,7 +92,7 @@ final class import_map_test extends \advanced_testcase {
      * add_import() with no $path and no explicit $loader appends the specifier to the loader URL.
      */
     public function test_add_import_without_path_uses_specifier(): void {
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/esm/12345/'));
         $map->add_import('some/specifier');
 
@@ -115,7 +115,7 @@ final class import_map_test extends \advanced_testcase {
 
         $CFG->root = $tempdir;
 
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
         $map->add_import('test/', path: 'testpath');
 
@@ -137,7 +137,7 @@ final class import_map_test extends \advanced_testcase {
 
         $CFG->root = $tempdir;
 
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
         $map->add_import('test/', path: 'testpath');
 
@@ -159,7 +159,7 @@ final class import_map_test extends \advanced_testcase {
 
         $CFG->root = $tempdir;
 
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
         $map->add_import('test/', path: 'testpath');
 
@@ -182,7 +182,7 @@ final class import_map_test extends \advanced_testcase {
         $CFG->root = $tempdir;
 
         // Pass allowedsuffixes without .js — it should be auto-included because suffix defaults to .js.
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
         $map->add_import('test/', path: 'testpath', allowedsuffixes: ['.js.map']);
 
@@ -206,7 +206,7 @@ final class import_map_test extends \advanced_testcase {
 
         $CFG->root = $tempdir;
 
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
         $map->add_import('test/', path: 'testpath');
 
@@ -219,7 +219,7 @@ final class import_map_test extends \advanced_testcase {
      * resolve_module_identifier() resolves a component module without suffix in the request.
      */
     public function test_component_resolve_appends_suffix(): void {
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
 
         $dir = \core\component::get_component_directory('core');
@@ -231,7 +231,7 @@ final class import_map_test extends \advanced_testcase {
      * resolve_module_identifier() returns early when suffix is already present in the request and file exists.
      */
     public function test_component_resolve_skips_suffix_when_present(): void {
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
 
         $dir = \core\component::get_component_directory('core');
@@ -243,10 +243,23 @@ final class import_map_test extends \advanced_testcase {
      * resolve_module_identifier() throws not_found_exception when the module file does not exist.
      */
     public function test_component_resolve_throws_when_not_found(): void {
-        $map = new import_map();
+        $map = \core\di::get(import_map::class);
         $map->set_default_loader(new \core\url('https://example.com/'));
 
         $this->expectException(\core\exception\not_found_exception::class);
         $map->get_path_for_script(1, '@moodle/lms/core/nonexistent_module_xyz_12345');
+    }
+
+    /**
+     * add_import() with urlsuffix appends it to the URL in the import map for correct relative resolution.
+     */
+    public function test_add_import_with_urlsuffix(): void {
+        $map = \core\di::get(import_map::class);
+        $map->set_default_loader(new \core\url('https://example.com/esm/12345/'));
+        $map->add_import('mypkg', path: 'some/dir', urlsuffix: '/index.js');
+
+        $data = $map->jsonSerialize();
+
+        $this->assertEquals('https://example.com/esm/12345/mypkg/index.js', $data['imports']['mypkg']);
     }
 }

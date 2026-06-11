@@ -22,7 +22,7 @@
     <location>bundles/design-system</location>
     <name>@moodlehq/design-system</name>
     <description>The Moodle HQ design system based on React</description>
-    <version>2.1.1</version>
+    <version>4.1.0</version>
     <license>GNU</license>
     <repository>https://github.com/moodlehq/design-system</repository>
     <copyrights>
