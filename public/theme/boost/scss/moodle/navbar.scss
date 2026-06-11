@@ -52,6 +52,13 @@
                 height: 100%;
             }
         }
+        .userfirstname {
+            margin-inline: $spacer * 0.5;
+            max-width: 20ch;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
         .dropdown-menu {
             min-width: 235px;
             .carousel-navigation-link {

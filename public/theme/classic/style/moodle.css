@@ -40225,6 +40225,13 @@ div.editor_atto_toolbar button .icon {
   align-items: center;
   height: 100%;
 }
+.navbar.fixed-top .usermenu .userfirstname {
+  margin-inline: 0.5rem;
+  max-width: 20ch;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .navbar.fixed-top .usermenu .dropdown-menu {
   min-width: 235px;
 }
