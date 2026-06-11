@@ -22,18 +22,13 @@ Feature: Browsing tagged items
       | Course 5  | c5        | Cat      |
       | Course 6  | c6        | Cat      |
       | Course 7  | c7        | Cat      |
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
     And the following "permission overrides" exist:
       | capability              | permission | role | contextlevel | reference |
       | moodle/user:viewdetails | Allow      | user | System       |           |
 
   Scenario: Browse tag index with javascript disabled
     When I log in as "user1"
-    And I turn editing mode on
-    # TODO MDL-57120 "Tags" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I click on "Tags" "link" in the "Navigation" "block"
+    And I visit "/tag/search.php"
     And I follow "Cat"
     Then I should see "Courses" in the ".tag-index-items h3" "css_element"
     And I should see "User 1" in the "#tagarea-core-user" "css_element"
@@ -77,11 +72,7 @@ Feature: Browsing tagged items
   @javascript
   Scenario: Browse tag index with javascript enabled
     When I log in as "user1"
-    And I turn editing mode on
-    # TODO MDL-57120 "Tags" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Tags" "link" in the "Navigation" "block"
+    And I visit "/tag/search.php"
     And I follow "Cat"
     Then I should see "Courses" in the "#tagarea-core-course" "css_element"
     And I should see "User interests" in the "#tagarea-core-user" "css_element"
@@ -121,13 +112,10 @@ Feature: Browsing tagged items
 
   Scenario Outline: Browse tag index and view other profiles
     Given I log in as "user1"
-    And I turn editing mode on
     And the following "permission overrides" exist:
       | capability              | permission   | role | contextlevel | reference |
       | moodle/user:viewdetails | <permission> | user | System       |           |
-    # TODO MDL-57120 "Tags" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    When I click on "Tags" "link" in the "Navigation" "block"
+    When I visit "/tag/search.php"
     And I follow "Zebra"
     Then I should <action1> "User 2"
     And I should <action1> "User 3"

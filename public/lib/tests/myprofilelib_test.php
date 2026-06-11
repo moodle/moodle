@@ -305,4 +305,42 @@ final class myprofilelib_test extends \advanced_testcase {
         $this->assertArrayNotHasKey('lastaccess', $nodes->getValue($this->tree));
         $this->assertArrayNotHasKey('lastip', $nodes->getValue($this->tree));
     }
+
+    /**
+     * Tests the Tags link is present in the profile navigation when tags are enabled.
+     *
+     * @covers ::core_myprofile_navigation
+     */
+    public function test_core_myprofile_navigation_tags_link_enabled(): void {
+        set_config('usetags', 1);
+        $this->setUser($this->user);
+        $iscurrentuser = true;
+
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, null);
+        $reflector = new \ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $allnodes = $nodes->getValue($this->tree);
+        $this->assertArrayHasKey('tags', $allnodes);
+
+        $tagsnode = $allnodes['tags'];
+        $this->assertEquals('miscellaneous', $tagsnode->parentcat);
+        $this->assertNotNull($tagsnode->url);
+        $this->assertStringContainsString('/tag/search.php', $tagsnode->url->out(false));
+    }
+
+    /**
+     * Tests the Tags link is not present in the profile navigation when tags are disabled.
+     *
+     * @covers ::core_myprofile_navigation
+     */
+    public function test_core_myprofile_navigation_tags_link_disabled(): void {
+        set_config('usetags', 0);
+        $this->setUser($this->user);
+        $iscurrentuser = true;
+
+        core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, null);
+        $reflector = new \ReflectionObject($this->tree);
+        $nodes = $reflector->getProperty('nodes');
+        $this->assertArrayNotHasKey('tags', $nodes->getValue($this->tree));
+    }
 }

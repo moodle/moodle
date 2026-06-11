@@ -22,25 +22,13 @@ Feature: Users can flag tags and manager can reset flags
       | moodle/site:viewparticipants | allow |
       | moodle/user:viewdetails      | allow |
     And I log in as "user2"
-    And I turn editing mode on
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    # TODO MDL-57120 site "Tags" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Tags" "link" in the "Navigation" "block"
+    And I visit "/tag/search.php"
     And I follow "Nicetag"
     And I follow "User 1"
     And I follow "Badtag"
     And I follow "Flag as inappropriate"
     And I should see "The person responsible will be notified"
-    And I am on homepage
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    # TODO MDL-57120 site "Tags" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Tags" "link" in the "Navigation" "block"
+    And I visit "/tag/search.php"
     And I follow "Nicetag"
     And I follow "User 1"
     And I follow "Sweartag"
@@ -48,13 +36,7 @@ Feature: Users can flag tags and manager can reset flags
     And I should see "The person responsible will be notified"
     And I log out
     And I log in as "user3"
-    And I turn editing mode on
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    # TODO MDL-57120 site "Tags" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Tags" "link" in the "Navigation" "block"
+    And I visit "/tag/search.php"
     And I follow "Nicetag"
     And I follow "User 1"
     And I follow "Sweartag"

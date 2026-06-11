@@ -11,16 +11,11 @@ Feature: Adding and configuring Flickr block
       | student1 | Cats      |
     And I log in as "admin"
     And I turn editing mode on
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
     And the following "blocks" exist:
       | blockname  | contextlevel | reference | pagetypepattern | defaultregion |
       | tag_flickr | System       | 1         | tag-search      | side-post     |
       | tag_flickr | System       | 1         | tag-index       | side-post     |
-    # TODO MDL-57120 site "Tags" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Tags" "link" in the "Navigation" "block"
+    And I visit "/tag/search.php"
 
   @javascript
   Scenario: Adding Flickr block to the tags site page
