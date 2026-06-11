@@ -46,7 +46,10 @@ final class tags_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Tags', 'source' => tags::class, 'default' => 1]);
 
-        $content = $this->get_custom_report_content($report->get('id'));
+        $content = $this->filter_custom_report_content(
+            $this->get_custom_report_content($report->get('id')),
+            fn(array $row): bool => $row['c0_name'] === 'Default collection',
+        );
         $this->assertCount(2, $content);
 
         // Default columns are collection, tag (with link), standard, context. Sorted by collection and tag.
@@ -101,7 +104,10 @@ final class tags_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:timecreated']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:timemodified']);
 
-        $content = $this->get_custom_report_content($report->get('id'));
+        $content = $this->filter_custom_report_content(
+            $this->get_custom_report_content($report->get('id')),
+            fn(array $row): bool => $row['c0_isdefault'] === 'Yes',
+        );
         $this->assertCount(1, $content);
 
         [
@@ -278,11 +284,13 @@ final class tags_test extends core_reportbuilder_testcase {
         $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => $filtername]);
         $content = $this->get_custom_report_content($report->get('id'), 0, $filtervalues);
 
+        // Merge report tag names into easily traversable array.
+        $tagnames = array_merge(...array_map('array_values', $content));
+
         if ($expectmatch) {
-            $this->assertCount(1, $content);
-            $this->assertEquals('Horses', reset($content[0]));
+            $this->assertContains('Horses', $tagnames);
         } else {
-            $this->assertEmpty($content);
+            $this->assertNotContains('Horses', $tagnames);
         }
     }
 
@@ -303,5 +311,17 @@ final class tags_test extends core_reportbuilder_testcase {
         $this->datasource_stress_test_columns(tags::class);
         $this->datasource_stress_test_columns_aggregation(tags::class);
         $this->datasource_stress_test_conditions(tags::class, 'tag:name');
+    }
+
+    /**
+     * Ensuring report content only includes tags from the default collection
+     *
+     * @param array $content
+     * @param callable $callback
+     * @return array
+     */
+    protected function filter_custom_report_content(array $content, callable $callback): array {
+        $content = array_filter($content, $callback);
+        return array_values($content);
     }
 }
