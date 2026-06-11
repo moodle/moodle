@@ -70,7 +70,7 @@ Feature: Navigate action menu subpanels
     And I press the down key
     And I press the down key
     # Move in the subpanel with arrow keys and loop the links with up and down.
-    When I press the right key
+    When I press the left key
     And the focused element is "Status A" "link" in the "regularscenario" "region"
     And I press the down key
     And the focused element is "Status B" "link" in the "regularscenario" "region"
@@ -78,20 +78,16 @@ Feature: Navigate action menu subpanels
     And the focused element is "Status A" "link" in the "regularscenario" "region"
     And I press the up key
     And the focused element is "Status B" "link" in the "regularscenario" "region"
-    # Leave the subpanel with right and left key.
+    # Leave the subpanel with left key.
     Then I press the right key
     And the focused element is "Subpanel example" "menuitem" in the "regularscenario" "region"
+    And I press the left key
+    And the focused element is "Status A" "link" in the "regularscenario" "region"
     And I press the right key
-    And the focused element is "Status A" "link" in the "regularscenario" "region"
-    And I press the left key
-    And the focused element is "Subpanel example" "menuitem" in the "regularscenario" "region"
-    And I press the left key
-    And the focused element is "Status A" "link" in the "regularscenario" "region"
-    And I press the left key
     And the focused element is "Subpanel example" "menuitem" in the "regularscenario" "region"
     # Move to the next subpanel with enter.
     And I press the down key
-    And I press the right key
+    And I press the left key
     And the focused element is "Status C" "link" in the "regularscenario" "region"
     And I press the down key
     And the focused element is "Status D" "link" in the "regularscenario" "region"
@@ -272,7 +268,7 @@ Feature: Navigate action menu subpanels
     And I should see "Beta" in the "basicsubmenuexample" "region"
     And I should see "Gamma" in the "basicsubmenuexample" "region"
     # Enter the submenu content.
-    When I press the right key
+    When I press the left key
     Then the focused element is "Alpha" "link" in the "basicsubmenuexample" "region"
     And I press the down key
     And the focused element is "Beta" "link" in the "basicsubmenuexample" "region"
@@ -285,7 +281,7 @@ Feature: Navigate action menu subpanels
     And I press the up key
     And the focused element is "Gamma" "link" in the "basicsubmenuexample" "region"
     # Exit submenu back to the parent menu item.
-    And I press the left key
+    And I press the right key
     And the focused element is "Item 2 with submenu" "menuitem" in the "basicsubmenuexample" "region"
 
   Scenario: Navigate nested submenu containing a subpanel with mouse
@@ -314,7 +310,7 @@ Feature: Navigate action menu subpanels
     And I press the down key
     And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuexample" "region"
     # Enter the submenu.
-    When I press the right key
+    When I press the left key
     Then the focused element is "Alpha" "link" in the "nestedsubmenuexample" "region"
     And I press the down key
     And the focused element is "Beta" "link" in the "nestedsubmenuexample" "region"
@@ -331,9 +327,9 @@ Feature: Navigate action menu subpanels
     And the focused element is "Beta" "link" in the "nestedsubmenuexample" "region"
     And I press the right key
     And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuexample" "region"
-    And I press the right key
-    # Exit the submenu back to the parent menu item.
     And I press the left key
+    # Exit the submenu back to the parent menu item.
+    And I press the right key
     And the focused element is "Item 2 with submenu" "menuitem" in the "nestedsubmenuexample" "region"
 
   Scenario: Navigate nested submenu containing a second level submenu with keyboard
