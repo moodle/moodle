@@ -94,6 +94,11 @@ define('ASSIGN_MULTIMARKING_AVERAGE_ROUND_NATURAL', 1);
 define('ASSIGN_MULTIMARKING_AVERAGE_ROUND_DOWN', 2);
 define('ASSIGN_MULTIMARKING_AVERAGE_ROUND_UP', 3);
 
+define('ASSIGN_MULTIMARKING_ACTION_NONE', 'none');
+define('ASSIGN_MULTIMARKING_ACTION_CALCULATE_MISSING', 'missing');
+define('ASSIGN_MULTIMARKING_ACTION_RECALCULATE', 'recalculate');
+define('ASSIGN_MULTIMARKING_ACTION_CLEAR', 'clear');
+
 /**
  * @deprecated since Moodle 5.3 MDL-87709
  * @todo MDL-89401 Final deprecation in Moodle 7.0.
@@ -1644,16 +1649,25 @@ class assign {
                 $update->multimarkmethod = $formdata->multimarkmethod;
                 $update->multimarkrounding = $formdata->multimarkrounding ?? null;
             }
+
+            // Multi marking may need to update agreed grades based on selected action or changes in settings.
+            $multimarkupdate = $this->resolve_multiple_marking_action(
+                $formdata->multimarkupdate ?? '',
+                $update->markercount,
+                $update->optionalmarkercount,
+            );
         } else {
             // If we don't specify a markercount, or we switched the grading type, return to defaults.
             $update->markercount = 1;
             $update->optionalmarkercount = 0;
             $update->multimarkmethod = null;
             $update->multimarkrounding = null;
+            $multimarkupdate = ASSIGN_MULTIMARKING_ACTION_NONE;
         }
 
         $result = $DB->update_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$update->id), '*', MUST_EXIST);
+        $this->userinstances = [];
 
         $this->save_intro_draft_files($formdata);
 
@@ -1684,6 +1698,10 @@ class assign {
         $update->nosubmissions = (!$this->is_any_submission_plugin_enabled()) ? 1: 0;
         $DB->update_record('assign', $update);
 
+        if ($multimarkupdate !== ASSIGN_MULTIMARKING_ACTION_NONE) {
+            $this->recalculate_agreed_grades($multimarkupdate);
+        }
+
         // Check if we need to recalculate penalty for existing grades.
         if (!empty($formdata->recalculatepenalty) && $formdata->recalculatepenalty === 'yes') {
             $assign = clone $this->get_instance();
@@ -1692,6 +1710,32 @@ class assign {
         }
 
         return $result;
+    }
+
+    /**
+     * Resolves the multiple marking update action.
+     *
+     * @param string $action The selected update action.
+     * @param int $markercount The updated required marker count.
+     * @param int $optionalmarkercount The updated option marker count.
+     * @return string The resolved action.
+     */
+    protected function resolve_multiple_marking_action(string $action, int $markercount, int $optionalmarkercount): string {
+        if ($action === '') {
+            $action = ASSIGN_MULTIMARKING_ACTION_NONE;
+        }
+
+        // Changes to settings can also trigger actions.
+        if ($action === ASSIGN_MULTIMARKING_ACTION_NONE) {
+            // When the marker count is reduced we need to calculate agreed grades that can now be determined.
+            $requiredmarkersreduced = $markercount < $this->required_marker_count();
+            $optionalmarkersreduced = $optionalmarkercount < $this->optional_marker_count();
+            if ($requiredmarkersreduced || $optionalmarkersreduced) {
+                $action = ASSIGN_MULTIMARKING_ACTION_CALCULATE_MISSING;
+            }
+        }
+
+        return $action;
     }
 
     /**
@@ -11360,10 +11404,15 @@ class assign {
      * Do any agreed grades exist for the latest attempt?
      *
      * @param int[] $userids Limit the search to specific userids. If not provided, all participants will checked.
+     * @param bool $requiremultimarking Only search for grades when mutliple markers are being used.
      * @return bool
      */
-    public function has_agreed_grade(array $userids = []): bool {
-        if (!$this->has_instance() || !$this->is_using_multiple_marking()) {
+    public function has_agreed_grade(array $userids = [], bool $requiremultimarking = true): bool {
+        if (!$this->has_instance()) {
+            return false;
+        }
+
+        if ($requiremultimarking && !$this->is_using_multiple_marking()) {
             return false;
         }
 
@@ -11405,6 +11454,130 @@ class assign {
             'markingcomplete' => ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW,
         ];
         return $DB->record_exists_sql($sql, $params);
+    }
+
+    /**
+     * Returns whether the marker count of the specified type can be updated to the provided value.
+     *
+     * @param int $newmarkercount The new marker count.
+     * @param bool $optional True for optional marker count, false for required marker count.
+     * @return bool True if the marker count can be updated.
+     */
+    public function can_change_marker_count(int $newmarkercount, bool $optional): bool {
+        global $DB;
+
+        if (!$this->has_instance()) {
+            return true;
+        }
+
+        // Can always increase the marker count.
+        $currentmarkercount = $optional ? $this->optional_marker_count() : $this->required_marker_count();
+        if ($newmarkercount >= $currentmarkercount) {
+            return true;
+        }
+
+        // We can only reduce the marker count when all students have enough empty marker allocations.
+        $sql = "SELECT 1
+                  FROM {assign_allocated_marker}
+                 WHERE assignment = :assignment AND optional = :optional
+              GROUP BY student
+                HAVING COUNT(1) > :newmarkercount";
+        $params = [
+            'assignment' => $this->get_instance()->id,
+            'optional' => $optional,
+            'newmarkercount' => $newmarkercount,
+        ];
+
+        return !$DB->record_exists_sql($sql, $params);
+    }
+
+    /**
+     * Updates agreed grades for the latest attempt based on the provided action.
+     *
+     * @param string $action The update action.
+     */
+    public function recalculate_agreed_grades(string $action): void {
+        switch ($action) {
+            case ASSIGN_MULTIMARKING_ACTION_RECALCULATE:
+                if ($this->get_instance()->multimarkmethod === ASSIGN_MULTIMARKING_METHOD_MANUAL) {
+                    $this->clear_all_agreed_grades();
+                } else {
+                    $this->update_all_agreed_grades();
+                }
+                break;
+            case ASSIGN_MULTIMARKING_ACTION_CLEAR:
+                $this->clear_all_agreed_grades();
+                break;
+            case ASSIGN_MULTIMARKING_ACTION_CALCULATE_MISSING:
+                $this->calculate_missing_agreed_grades();
+                break;
+            case ASSIGN_MULTIMARKING_ACTION_NONE:
+                break;
+        }
+    }
+
+    /**
+     * Gets the current agreed grades for all participants.
+     *
+     * @return stdClass[] Agreed grades objects from latest attempts.
+     */
+    protected function get_agreed_grades(): array {
+        $grades = [];
+
+        if (!$this->has_instance() || !$this->is_using_multiple_marking()) {
+            return $grades;
+        }
+
+        // Gets a list of possible users and look for grades based upon that.
+        $participants = $this->list_participants(0, true, false, false);
+        foreach (array_keys($participants) as $userid) {
+            // Marker allocation isn't stored per attempt, so only the latest attempt can be actioned.
+            $grade = $this->get_user_grade($userid, false);
+            if ($grade) {
+                $grades[] = $grade;
+            }
+        }
+
+        return $grades;
+    }
+
+    /**
+     * Updates all agreed grades from marks.
+     */
+    protected function update_all_agreed_grades(): void {
+        foreach ($this->get_agreed_grades() as $grade) {
+            $this->calculate_and_save_agreed_grade($grade, true);
+        }
+    }
+
+    /**
+     * Calculates all missing agreed grades that can be determined from marks.
+     */
+    protected function calculate_missing_agreed_grades(): void {
+        foreach ($this->get_agreed_grades() as $grade) {
+            // Ignore agreed grades that are already determined.
+            if (isset($grade->grade) && $grade->grade != -1) {
+                continue;
+            }
+
+            // Calculate missing agreed grades that can now be determined.
+            if ($this->can_determine_agreed_grade($grade->id, $grade->userid)) {
+                $this->calculate_and_save_agreed_grade($grade, false);
+            }
+        }
+    }
+
+    /**
+     * Clears all agreed grades.
+     */
+    protected function clear_all_agreed_grades(): void {
+        foreach ($this->get_agreed_grades() as $grade) {
+            if (!isset($grade->grade) || $grade->grade == -1) {
+                continue;
+            }
+
+            $this->clear_agreed_grade($grade);
+        }
     }
 }
 
