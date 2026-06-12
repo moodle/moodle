@@ -53,7 +53,7 @@ export default class extends GenericFilter {
 
     async addSubcategoryCheckbox(checked = null) {
         const filterValueNode = this.getFilterValueNode();
-        if (checked === null || checked === undefined) {
+        if (checked === null || checked === undefined || checked === "") {
             checked = await getUserPreference('qbank_managecategories_includesubcategories_filter_default');
         } else {
             setUserPreference('qbank_managecategories_includesubcategories_filter_default', checked);

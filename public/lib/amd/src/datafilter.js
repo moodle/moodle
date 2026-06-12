@@ -184,6 +184,9 @@ export default class {
         filterRow.dataset.filterType = filterType;
 
         const filterDataNode = this.getFilterDataSource(filterType);
+        if (!filterDataNode) {
+            return;
+        }
 
         // Instantiate the Filter class.
         let Filter = GenericFilter;
