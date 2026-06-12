@@ -94,8 +94,15 @@ define('ASSIGN_MULTIMARKING_AVERAGE_ROUND_NATURAL', 1);
 define('ASSIGN_MULTIMARKING_AVERAGE_ROUND_DOWN', 2);
 define('ASSIGN_MULTIMARKING_AVERAGE_ROUND_UP', 3);
 
+/**
+ * @deprecated since Moodle 5.3 MDL-87709
+ * @todo MDL-89401 Final deprecation in Moodle 7.0.
+ * Replaced with ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS
+ */
 define('ASSIGN_MULTIMARKING_MAX_MARKERS', 10);
+define('ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS', 10);
 define('ASSIGN_MULTIMARKING_DEFAULT_MARKERS', 2);
+define('ASSIGN_MULTIMARKING_DEFAULT_OPTIONAL_MARKERS', 0);
 
 require_once($CFG->libdir . '/accesslib.php');
 require_once($CFG->libdir . '/formslib.php');
@@ -847,7 +854,8 @@ class assign {
         // If we are using simple grading and we specify a markercount, update the multi marking values.
         if (property_exists($formdata, 'markercount') && property_exists($formdata, 'multimarkmethod')) {
             $update->markercount = $formdata->markercount;
-            if ($formdata->markercount > 1) {
+            $update->optionalmarkercount = $formdata->optionalmarkercount ?? 0;
+            if (($update->markercount + $update->optionalmarkercount) > 1) {
                 $update->multimarkmethod = $formdata->multimarkmethod;
                 if (property_exists($formdata, 'multimarkrounding')) {
                     $update->multimarkrounding = $formdata->multimarkrounding;
@@ -855,6 +863,7 @@ class assign {
             }
         } else {
             $update->markercount = 1;
+            $update->optionalmarkercount = 0;
         }
 
         $returnid = $DB->insert_record('assign', $update);
@@ -1630,13 +1639,15 @@ class assign {
             && $formdata->advancedgradingmethod_submissions === ''
         ) {
             $update->markercount = $formdata->markercount;
-            if ($formdata->markercount > 1) {
+            $update->optionalmarkercount = $formdata->optionalmarkercount ?? 0;
+            if ($update->markercount + $update->optionalmarkercount > 1) {
                 $update->multimarkmethod = $formdata->multimarkmethod;
                 $update->multimarkrounding = $formdata->multimarkrounding ?? null;
             }
         } else {
             // If we don't specify a markercount, or we switched the grading type, return to defaults.
             $update->markercount = 1;
+            $update->optionalmarkercount = 0;
             $update->multimarkmethod = null;
             $update->multimarkrounding = null;
         }
@@ -10623,7 +10634,7 @@ class assign {
     public function is_using_multiple_marking(): bool {
         return ($this->get_instance()->markingworkflow
             && $this->get_instance()->markingallocation
-            && $this->get_instance()->markercount > 1
+            && $this->total_marker_count() > 1
         );
     }
 
@@ -10684,6 +10695,34 @@ class assign {
             return \core_user::get_user($markers[$number]);
         }
         return null;
+    }
+
+    /**
+     * Gets the minimum required marker count for the assignment.
+     *
+     * @return int The minimum required marker count.
+     */
+    public function required_marker_count(): int {
+        return $this->get_instance()->markercount;
+    }
+
+    /**
+     * Gets the optional marker count for the assignment.
+     *
+     * @return int The optional marker count.
+     */
+    public function optional_marker_count(): int {
+        return $this->get_instance()->optionalmarkercount;
+    }
+
+    /**
+     * Gets the total marker marker count for the assignment.
+     * This includes minimum required markers and all optional markers.
+     *
+     * @return int The total marker count.
+     */
+    public function total_marker_count(): int {
+        return $this->required_marker_count() + $this->optional_marker_count();
     }
 }
 

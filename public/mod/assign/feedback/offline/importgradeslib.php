@@ -122,7 +122,7 @@ class assignfeedback_offline_grade_importer {
 
             // Are there any additional marker columns for this plugin?
             if ($this->assignment->is_using_multiple_marking() && $plugin->has_marker_columns()) {
-                for ($i = 1; $i <= $this->assignment->get_instance()->markercount; $i++) {
+                for ($i = 1; $i <= $this->assignment->total_marker_count(); $i++) {
                     foreach ($plugin->get_marker_columns($i) as $col => $header) {
                         $this->feedbackcolumnindexes[$header] = [
                             'plugin' => $plugin,

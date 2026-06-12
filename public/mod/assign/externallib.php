@@ -359,6 +359,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                      'm.markingworkflow, ' .
                      'm.markingallocation, ' .
                      'm.markercount, ' .
+                     'm.optionalmarkercount, ' .
                      'm.multimarkmethod, ' .
                      'm.multimarkrounding, ' .
                      'm.markinganonymous, ' .
@@ -442,6 +443,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                         'markingworkflow' => $module->markingworkflow,
                         'markingallocation' => $module->markingallocation,
                         'markercount' => $module->markercount,
+                        'optionalmarkercount' => $module->optionalmarkercount,
                         'multimarkmethod' => $module->multimarkmethod,
                         'multimarkrounding' => $module->multimarkrounding,
                         'markinganonymous' => $module->markinganonymous,
@@ -564,7 +566,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
                 'maxattempts' => new external_value(PARAM_INT, 'maximum number of attempts allowed'),
                 'markingworkflow' => new external_value(PARAM_INT, 'enable marking workflow'),
                 'markingallocation' => new external_value(PARAM_INT, 'enable marking allocation'),
-                'markercount' => new external_value(PARAM_INT, 'number of markers'),
+                'markercount' => new external_value(PARAM_INT, 'number of required markers'),
+                'optionalmarkercount' => new external_value(PARAM_INT, 'number of optional markers', VALUE_OPTIONAL),
                 'multimarkmethod' => new external_value(PARAM_TEXT, 'method to use when combining marks to a final grade'),
                 'multimarkrounding' => new external_value(PARAM_INT, 'rounding direction to use when handling decimal marks'),
                 'markinganonymous' => new external_value(PARAM_INT, 'enable marking anonymous'),

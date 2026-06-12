@@ -118,6 +118,8 @@ class provider implements
             'assignment' => 'privacy:metadata:assignmentid',
             'studentid' => 'privacy:metadata:userid',
             'marker' => 'privacy:metadata:userid',
+            'optional' => 'privacy:metadata:markeroptional',
+            'enabled' => 'privacy:metadata:markerenabled',
         ];
         $collection->add_database_table('assign_grades', $assigngrades, 'privacy:metadata:assigngrades');
         $collection->add_database_table('assign_overrides', $assignoverrides, 'privacy:metadata:assignoverrides');

@@ -76,6 +76,7 @@ final class markerallocation_test extends \advanced_testcase {
             'markingworkflow'                   => 1,
             'markingallocation'                 => 1,
             'markercount'                       => ($args['markercount']) ?? ASSIGN_MULTIMARKING_DEFAULT_MARKERS,
+            'optionalmarkercount'               => ($args['optionalmarkercount']) ?? ASSIGN_MULTIMARKING_DEFAULT_OPTIONAL_MARKERS,
             'multimarkmethod'                   => ($args['multimarkmethod']) ?? ASSIGN_MULTIMARKING_METHOD_MANUAL,
             'multimarkrounding'                 => ($args['multimarkrounding']) ?? null,
         ];

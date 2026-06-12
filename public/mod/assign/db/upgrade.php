@@ -242,5 +242,37 @@ function xmldb_assign_upgrade($oldversion) {
     // Automatically generated Moodle v5.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2026042009) {
+        // Define field optionalmarkercount to be added to assign.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('optionalmarkercount', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'markercount');
+
+        // Conditionally launch add field optionalmarkercount.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field optional to be added to assign_allocated_marker.
+        $table = new xmldb_table('assign_allocated_marker');
+        $field = new xmldb_field('optional', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'marker');
+
+        // Conditionally launch add field optional.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field enabled to be added to assign_allocated_marker.
+        $table = new xmldb_table('assign_allocated_marker');
+        $field = new xmldb_field('enabled', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'optional');
+
+        // Conditionally launch add field enabled.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2026042009, 'assign');
+    }
+
     return true;
 }

@@ -1,0 +1,7 @@
+issueNumber: MDL-87709
+notes:
+  mod_assign:
+    - message: >-
+        The ASSIGN_MULTIMARKING_MAX_MARKERS constant has been deprecated.
+        Use ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS instead.
+      type: deprecated

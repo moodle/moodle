@@ -60,6 +60,7 @@ class mod_assign_generator extends testing_module_generator {
             'markingworkflow'                   => 0,
             'markingallocation'                 => 0,
             'markercount'                       => 0,
+            'optionalmarkercount'               => 0,
             'multimarkmethod'                   => null,
             'multimarkrounding'                 => null,
             'markinganonymous'                  => 0,

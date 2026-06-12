@@ -128,6 +128,7 @@ final class restore_date_test extends \restore_date_testcase {
             'submissionattachments' => 1,
             'gradepenalty' => 1,
             'markercount' => 5,
+            'optionalmarkercount' => 0,
             'multimarkmethod' => 'average',
             'multimarkrounding' => 0,
         ];

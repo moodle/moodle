@@ -42,7 +42,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $COURSE, $OUTPUT;;
+        global $CFG, $COURSE, $OUTPUT, $PAGE;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -243,14 +243,33 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addHelpButton('markingallocation', 'markingallocation', 'assign');
         $mform->hideIf('markingallocation', 'markingworkflow', 'eq', 0);
 
+        // Add hidden total marker count field for multiple marking conditions.
+        $mform->addElement('hidden', 'totalmarkercount');
+        $mform->setType('totalmarkercount', PARAM_INT);
+        $mform->setDefault('totalmarkercount', $assignment->has_instance() ? $assignment->total_marker_count() : 1);
+
         $name = get_string('markercount', 'assign');
-        $markercount = range(1, ASSIGN_MULTIMARKING_MAX_MARKERS);
+        $configmaxmarkers = get_config('assign', 'maxmarkercount');
+        if ($configmaxmarkers === false) {
+            $configmaxmarkers = ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS;
+        }
+        // Existing values should always remain selectable if the global limit changes.
+        $maxmarkers = max($configmaxmarkers, $this->current->markercount ?? 1, 1);
+        $markercount = range(1, $maxmarkers);
         $mform->addElement('select', 'markercount', $name, array_combine($markercount, $markercount));
         $mform->addHelpButton('markercount', 'markercount', 'assign');
-        $mform->disabledIf('markercount', 'advancedgradingmethod_submissions', 'neq', '');
-        $mform->hideIf('markercount', 'advancedgradingmethod_submissions', 'neq', '');
-        $mform->hideIf('markercount', 'markingallocation', 'neq', '1');
-        $mform->hideIf('markercount', 'markingworkflow', 'neq', '1');
+        $this->apply_multimark_conditions('markercount');
+
+        $name = get_string('optionalmarkercount', 'assign');
+        $configmaxoptionalmarkers = get_config('assign', 'maxoptionalmarkercount');
+        if ($configmaxoptionalmarkers === false) {
+            $configmaxoptionalmarkers = $configmaxmarkers - 1;
+        }
+        $maxoptionalmarkers = max($configmaxoptionalmarkers, $this->current->optionalmarkercount ?? 0);
+        $optionalmarkercount = range(0, $maxoptionalmarkers);
+        $mform->addElement('select', 'optionalmarkercount', $name, array_combine($optionalmarkercount, $optionalmarkercount));
+        $mform->addHelpButton('optionalmarkercount', 'optionalmarkercount', 'assign');
+        $this->apply_multimark_conditions('optionalmarkercount');
 
         $name = get_string('multimarkmethod', 'assign');
         $options = new core\output\choicelist();
@@ -276,10 +295,7 @@ class mod_assign_mod_form extends moodleform_mod {
             ]
         );
         $mform->addElement('choicedropdown', 'multimarkmethod', $name, $options);
-        $mform->hideIf('multimarkmethod', 'markingallocation', 'eq', '0');
-        $mform->hideIf('multimarkmethod', 'markercount', 'eq', '1');
-        $mform->disabledIf('multimarkmethod', 'advancedgradingmethod_submissions', 'neq', '');
-        $mform->hideIf('multimarkmethod', 'advancedgradingmethod_submissions', 'neq', '');
+        $this->apply_multimark_conditions('multimarkmethod', true);
 
         $name = get_string('multimarkrounding', 'assign');
         $options = new core\output\choicelist();
@@ -312,12 +328,8 @@ class mod_assign_mod_form extends moodleform_mod {
             ]
         );
         $mform->addElement('choicedropdown', 'multimarkrounding', $name, $options);
-        $mform->hideIf('multimarkrounding', 'markingallocation', 'eq', '0');
-        $mform->hideIf('multimarkrounding', 'markercount', 'eq', '1');
+        $this->apply_multimark_conditions('multimarkrounding', true);
         $mform->hideIf('multimarkrounding', 'multimarkmethod', 'neq', 'average');
-        $mform->disabledIf('multimarkrounding', 'multimarkmethod', 'neq', 'average');
-        $mform->disabledIf('multimarkrounding', 'advancedgradingmethod_submissions', 'neq', '');
-        $mform->hideIf('multimarkrounding', 'advancedgradingmethod_submissions', 'neq', '');
 
         $name = get_string('markinganonymous', 'assign');
         $mform->addElement('selectyesno', 'markinganonymous', $name);
@@ -351,6 +363,26 @@ class mod_assign_mod_form extends moodleform_mod {
         $this->apply_admin_defaults();
 
         $this->add_action_buttons();
+
+        $PAGE->requires->js_call_amd('mod_assign/mod_form', 'init');
+    }
+
+    /**
+     * Applies multiple marking hide and disabled conditions.
+     *
+     * @param string $elementname The element to apply the condition to.
+     * @param bool $markercount Apply marker count conditions.
+     */
+    private function apply_multimark_conditions(string $elementname, bool $markercount = false): void {
+        $mform = $this->_form;
+        $mform->hideIf($elementname, 'markingworkflow', 'neq', '1');
+        $mform->hideIf($elementname, 'markingallocation', 'neq', '1');
+        $mform->disabledIf($elementname, 'markingallocation', 'neq', '1');
+        $mform->hideIf($elementname, 'advancedgradingmethod_submissions', 'neq', '');
+
+        if ($markercount) {
+            $mform->hideIf($elementname, 'totalmarkercount', 'eq', '1');
+        }
     }
 
     /**
