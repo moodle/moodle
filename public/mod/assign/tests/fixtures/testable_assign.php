@@ -75,7 +75,7 @@ class mod_assign_testable_assign extends assign {
         $data = array();
         $data['id'] = $this->get_course_module()->id;
         $data['selectedusers'] = $selectedusers;
-        $data['allocatedmarker1'] = $markerid;
+        $data['allocatedmarker[1]'] = $markerid;
         $data['action'] = 'setbatchmarkingallocation';
         mod_assign_batch_set_allocatedmarker_form::mock_submit($data);
 

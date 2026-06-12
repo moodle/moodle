@@ -44,6 +44,9 @@ Feature: In an assignment, teachers can update grades, marks and feedback plugin
   @javascript @_file_upload
   Scenario: Upload grading worksheet with grades
     Given I am on the "A1" "assign activity" page logged in as teacher1
+    And the following "role capability" exists:
+      | role                              | teacher |
+      | mod/assign:managerestrictedgrades | allow   |
     And I navigate to "Submissions" in current page administration
     And I choose the "Upload grading worksheet" item in the "Actions" action menu
     And I upload "mod/assign/feedback/offline/tests/fixtures/assignfeedback_offline_test_worksheet_1.csv" file to "Upload a file" filemanager
@@ -55,6 +58,16 @@ Feature: In an assignment, teachers can update grades, marks and feedback plugin
     And I navigate to "Submissions" in current page administration
     And "Student 1" row "Grade" column of "generaltable" table should contain "50.00"
     And "Student 2" row "Grade" column of "generaltable" table should contain "75.00"
+
+  @javascript @_file_upload
+  Scenario: Upload grading worksheet with grades with grading restricted
+    Given I am on the "A1" "assign activity" page logged in as teacher1
+    And I navigate to "Submissions" in current page administration
+    And I choose the "Upload grading worksheet" item in the "Actions" action menu
+    And I upload "mod/assign/feedback/offline/tests/fixtures/assignfeedback_offline_test_worksheet_1.csv" file to "Upload a file" filemanager
+    When I click on "Upload grading worksheet" "button" in the "#fgroup_id_buttonar" "css_element"
+    Then I should not see "Set grade for Student 1 to 50"
+    And I should not see "Set grade for Student 2 to 75"
 
   @javascript @_file_upload
   Scenario: Upload grading worksheet with marks
@@ -89,6 +102,9 @@ Feature: In an assignment, teachers can update grades, marks and feedback plugin
   @javascript @_file_upload
   Scenario: Upload grading worksheet with grades, marks and feedback plugin values (comments)
     Given I am on the "A1" "assign activity" page logged in as teacher1
+    And the following "role capability" exists:
+      | role                              | teacher |
+      | mod/assign:managerestrictedgrades | allow   |
     And I navigate to "Submissions" in current page administration
     And I choose the "Upload grading worksheet" item in the "Actions" action menu
     And I upload "mod/assign/feedback/offline/tests/fixtures/assignfeedback_offline_test_worksheet_4.csv" file to "Upload a file" filemanager

@@ -213,7 +213,7 @@ final class provider_test extends provider_testcase {
                 'assignfeedback_comments_enabled' => true,
                 'markingworkflow' => 1,
                 'markingallocation' => 1,
-                'markercount' => 2,
+                'markercount' => 1,
             ]);
 
         $context = $assign->get_context();
@@ -232,6 +232,14 @@ final class provider_test extends provider_testcase {
         $overridedata->reason = 'This is a reason';
         $overridedata->reasonformat = FORMAT_MOODLE;
         $DB->insert_record('assign_overrides', $overridedata);
+
+        // Allocate the teacher as a marker on the assignment.
+        $assign->update_marker_allocations($user->id, [1 => [$teacher->id]]);
+
+        // Give the submission a mark.
+        $gradeobject = $assign->get_user_grade($user->id, true);
+        $gradeobject->grader = $teacher->id;
+        $assign->update_mark($gradeobject, 99.9);
 
         $grade1 = '67.00';
         $teachercommenttext = 'Please try again.';
@@ -257,14 +265,6 @@ final class provider_test extends provider_testcase {
 
         // Give the submission a grade.
         $assign->save_grade($user->id, $data);
-
-        // Allocate the teacher as a marker on the assignment.
-        $assign->update_allocated_markers($user->id, [$teacher->id]);
-
-        // Give the submission a mark.
-        $gradeobject = $assign->get_user_grade($user->id, true);
-        $gradeobject->grader = $teacher->id;
-        $assign->update_mark($gradeobject, 99.9);
 
         /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
@@ -332,7 +332,7 @@ final class provider_test extends provider_testcase {
                 'assignfeedback_comments_enabled' => true,
                 'markingworkflow' => 1,
                 'markingallocation' => 1,
-                'markercount' => 2,
+                'markercount' => 1,
             ]);
 
         $context = $assign->get_context();
@@ -342,6 +342,14 @@ final class provider_test extends provider_testcase {
         $submission = $this->create_submission($assign, $user1, $submissiontext);
 
         $this->setUser($teacher);
+
+        // Allocate the teacher as a marker.
+        $assign->update_marker_allocations($user1->id, [1 => [$teacher->id]]);
+
+        // Give the submission a mark.
+        $gradeobject = $assign->get_user_grade($user1->id, true);
+        $gradeobject->grader = $teacher->id;
+        $assign->update_mark($gradeobject, 11.1);
 
         $grade1 = '54.00';
         $teachercommenttext = 'Comment on user 1 attempt 1.';
@@ -358,6 +366,14 @@ final class provider_test extends provider_testcase {
         $submission = $this->create_submission($assign, $user2, $submissiontext2);
 
         $this->setUser($teacher);
+
+        // Allocate the teacher as a marker on the assignment.
+        $assign->update_marker_allocations($user2->id, [1 => [$teacher->id]]);
+
+        // Give the submission a mark.
+        $gradeobject = $assign->get_user_grade($user2->id, true);
+        $gradeobject->grader = $teacher->id;
+        $assign->update_mark($gradeobject, 88.8);
 
         $grade2 = '56.00';
         $teachercommenttext2 = 'Comment on user 2 first attempt.';
@@ -391,18 +407,6 @@ final class provider_test extends provider_testcase {
         $flagdata->mailed = 1;
         $flagdata->extensionduedate = $duedate;
         $assign->update_user_flags($flagdata);
-
-        // Allocate the teacher as a marker on the assignment for both users.
-        $assign->update_allocated_markers($user1->id, [$teacher->id]);
-        $assign->update_allocated_markers($user2->id, [$teacher->id]);
-
-        // Give the submission a mark for both users.
-        $gradeobject = $assign->get_user_grade($user1->id, true);
-        $gradeobject->grader = $teacher->id;
-        $assign->update_mark($gradeobject, 11.1);
-        $gradeobject = $assign->get_user_grade($user2->id, true);
-        $gradeobject->grader = $teacher->id;
-        $assign->update_mark($gradeobject, 88.8);
 
         /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
@@ -528,8 +532,8 @@ final class provider_test extends provider_testcase {
         $assign->save_grade($user2->id, $data);
 
         // Allocate the teacher as a marker on the assignment for both users.
-        $assign->update_allocated_markers($user1->id, [$teacher->id]);
-        $assign->update_allocated_markers($user2->id, [$teacher->id]);
+        $assign->update_marker_allocations($user1->id, [1 => [$teacher->id]]);
+        $assign->update_marker_allocations($user2->id, [1 => [$teacher->id]]);
 
         // Give the submission a mark for both users.
         $gradeobject = $assign->get_user_grade($user1->id, true);
@@ -652,8 +656,8 @@ final class provider_test extends provider_testcase {
         $assign->save_grade($user2->id, $data);
 
         // Allocate the teacher as a marker on the assignment for both users.
-        $assign->update_allocated_markers($user1->id, [$teacher->id]);
-        $assign->update_allocated_markers($user2->id, [$teacher->id]);
+        $assign->update_marker_allocations($user1->id, [1 => [$teacher->id]]);
+        $assign->update_marker_allocations($user2->id, [1 => [$teacher->id]]);
 
         // Give the submission a mark for both users.
         $gradeobject = $assign->get_user_grade($user1->id, true);
@@ -741,10 +745,18 @@ final class provider_test extends provider_testcase {
 
         $assign1 = $this->create_instance(['course' => $course,
                 'assignsubmission_onlinetext_enabled' => true,
-                'assignfeedback_comments_enabled' => true]);
+                'assignfeedback_comments_enabled' => true,
+                'markingworkflow' => 1,
+                'markingallocation' => 1,
+                'markercount' => 2,
+            ]);
         $assign2 = $this->create_instance(['course' => $course,
                 'assignsubmission_onlinetext_enabled' => true,
-                'assignfeedback_comments_enabled' => true]);
+                'assignfeedback_comments_enabled' => true,
+                'markingworkflow' => 1,
+                'markingallocation' => 1,
+                'markercount' => 2,
+            ]);
 
         $context = $assign1->get_context();
 
@@ -805,12 +817,12 @@ final class provider_test extends provider_testcase {
         $assign2->save_grade($user6->id, $data);
 
         // Allocate the teacher as a marker on both assignments for some of the users.
-        $assign1->update_allocated_markers($user1->id, [$user5->id]);
-        $assign1->update_allocated_markers($user2->id, [$user5->id]);
-        $assign1->update_allocated_markers($user6->id, [$user5->id]);
-        $assign2->update_allocated_markers($user1->id, [$user5->id]);
-        $assign2->update_allocated_markers($user2->id, [$user5->id]);
-        $assign2->update_allocated_markers($user6->id, [$user5->id]);
+        $assign1->update_marker_allocations($user1->id, [1 => [$user5->id]]);
+        $assign1->update_marker_allocations($user2->id, [1 => [$user5->id]]);
+        $assign1->update_marker_allocations($user6->id, [1 => [$user5->id]]);
+        $assign2->update_marker_allocations($user1->id, [1 => [$user5->id]]);
+        $assign2->update_marker_allocations($user2->id, [1 => [$user5->id]]);
+        $assign2->update_marker_allocations($user6->id, [1 => [$user5->id]]);
 
         // Give the submission a mark for some users on both assignments.
         $gradeobject = $assign1->get_user_grade($user3->id, true);
@@ -825,19 +837,15 @@ final class provider_test extends provider_testcase {
 
         // Check data is in place.
         $data = $DB->get_records('assign_submission');
-        // We should have one entry for user 3 and two entries each for user 4 and 6.
-        $this->assertCount(5, $data);
-        $usercounts = [
-            $user3->id => 0,
-            $user4->id => 0,
-            $user6->id => 0
-        ];
-        foreach ($data as $datum) {
-            $usercounts[$datum->userid]++;
-        }
+        // Submission records are created by submissions, grading, allocating markers and marking.
+        $this->assertCount(10, $data);
+
+        $usercounts = array_count_values(array_column($data, 'userid'));
+        $this->assertEquals(2, $usercounts[$user1->id]);
+        $this->assertEquals(2, $usercounts[$user2->id]);
         $this->assertEquals(1, $usercounts[$user3->id]);
         $this->assertEquals(2, $usercounts[$user4->id]);
-        $this->assertEquals(2, $usercounts[$user6->id]);
+        $this->assertEquals(3, $usercounts[$user6->id]);
 
         $data = $DB->get_records('assign_grades');
         // Three entries in assign_grades, for grades given and grade items created for setting marks.
@@ -865,8 +873,8 @@ final class provider_test extends provider_testcase {
         $this->assertEmpty($data);
 
         $data = $DB->get_records('assign_submission');
-        // No change here.
-        $this->assertCount(5, $data);
+        // Only the record for user 1 and 2 on assign 1 has been deleted.
+        $this->assertCount(8, $data);
 
         // Should be 4 records left - user6 on assign1, and everyone on assign2.
         $data = $DB->get_records('assign_allocated_marker');
@@ -881,7 +889,7 @@ final class provider_test extends provider_testcase {
 
         $data = $DB->get_records('assign_submission');
         // Only the record for user 3 has been deleted.
-        $this->assertCount(4, $data);
+        $this->assertCount(7, $data);
 
         $data = $DB->get_records('assign_grades');
         // Grades should be unchanged.
