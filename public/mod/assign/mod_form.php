@@ -73,7 +73,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'submissionattachments', get_string('submissionattachments', 'assign'));
         $mform->addHelpButton('submissionattachments', 'submissionattachments', 'assign');
 
-        [$assignment] = $this->get_assign();
+        [$assignment, $ctx] = $this->get_assign();
 
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
         $mform->setExpanded('availability', true);
@@ -270,6 +270,9 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('select', 'optionalmarkercount', $name, array_combine($optionalmarkercount, $optionalmarkercount));
         $mform->addHelpButton('optionalmarkercount', 'optionalmarkercount', 'assign');
         $this->apply_multimark_conditions('optionalmarkercount');
+        if (!has_capability('mod/assign:manageoptionalallocations', $ctx)) {
+            $mform->freeze('optionalmarkercount');
+        }
 
         $name = get_string('multimarkmethod', 'assign');
         $options = new core\output\choicelist();

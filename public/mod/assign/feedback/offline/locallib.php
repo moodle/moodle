@@ -230,7 +230,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                     if (isset($feedback['markernumber'])) {
                         $ismarkercol = true;
                         // Get the mark record or create it if it doesn't exist.
-                        $marker = $this->assignment->get_marker_number($user->id, $feedback['markernumber'] - 1);
+                        $marker = $this->assignment->get_marker_number($user->id, $feedback['markernumber']);
                         if ($marker && $marker->id == $USER->id) {
                             $isourmarkercol = true;
                         }

@@ -7873,17 +7873,84 @@ class assign {
     }
 
     /**
-     * Update the markers allocated to a student's assignment
+     * Get marker allocations that have been modified in the submission.
+     *
+     * @param int $studentid ID of the student user record.
+     * @param array $markerids The allocated markers in the submission, keyed by position.
+     * @param array $enabledstatus The enabled status for optional markers in the submission, keyed by position.
+     * @return array Modified marker allocations keyed by position, with values [markerid, enabled].
+     */
+    public function get_modified_marker_allocation(int $studentid, array $markerids, array $enabledstatus): array {
+        if (!$this->get_instance()->markingworkflow || !$this->get_instance()->markingallocation) {
+            return [];
+        }
+
+        $currentmarkers = $this->get_marker_allocations($studentid);
+        $changed = [];
+
+        $positions = array_unique(array_merge(
+            array_keys($currentmarkers),
+            array_keys($markerids),
+            array_keys($enabledstatus)
+        ));
+        sort($positions);
+
+        foreach ($positions as $pos) {
+            $markerid = isset($markerids[$pos]) ? (int)$markerids[$pos] : 0;
+            $enabled = isset($enabledstatus[$pos]) ? (int)$enabledstatus[$pos] : null;
+
+            $current = $currentmarkers[$pos] ?? null;
+            $currentmarkerid = $current->marker ?? 0;
+            $currentenabled = $current->enabled ?? null;
+
+            // Empty values for markerid and enabled are functionally equivalent.
+            if ($markerid != $currentmarkerid || $enabled != $currentenabled) {
+                $optional = $this->is_marker_optional($pos) ? (int)$enabled : null;
+                $changed[$pos] = [$markerid, $optional];
+            }
+        }
+
+        return $changed;
+    }
+
+    /**
+     * Update the markers allocated to a student's assignment.
+     *
+     * @deprecated since Moodle 5.3 MDL-87709
+     * @todo MDL-89401 Final deprecation in Moodle 7.0.
      * @param int $studentid ID of the student user record
      * @param array $markerids Array of user IDs for the markers
      * @return void
      */
+    #[\core\attribute\deprecated(
+        replacement: 'assign::update_marker_allocations()',
+        since: '5.3',
+        reason: 'Use update_marker_allocations() instead.',
+        mdl: 'MDL-87709'
+    )]
     public function update_allocated_markers(int $studentid, array $markerids): void {
         global $DB;
 
-        // First, remove all markers allocated to this student and assignment.
+        deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
+        // We cannot process this if any of the markerids are already allocated as optional markers.
+        $optionalmarkers = $DB->get_records('assign_allocated_marker', [
+            'student' => $studentid,
+            'assignment' => $this->get_instance()->id,
+            'optional' => 1,
+        ]);
+        $optionalmarkerids = array_filter(array_column($optionalmarkers, 'marker'));
+        if (array_intersect($markerids, $optionalmarkerids)) {
+            return;
+        }
+
+        // First, remove all required markers allocated to this student and assignment.
         // This leaves the marks in place orphaned, so they can be brought back if the marker is re-allocated.
-        $DB->delete_records('assign_allocated_marker', ['student' => $studentid, 'assignment' => $this->get_instance()->id]);
+        $DB->delete_records('assign_allocated_marker', [
+            'student' => $studentid,
+            'assignment' => $this->get_instance()->id,
+            'optional' => 0,
+        ]);
 
         // Store array of markers to make sure we don't try to add the same marker twice.
         $markers = [];
@@ -7892,9 +7959,16 @@ class assign {
         $markerids = array_filter($markerids);
 
         // Then loop through the requested markers and assign them to the student/assignment.
+        $markercount = 0;
         foreach ($markerids as $markerid) {
             if (in_array($markerid, $markers)) {
                 continue;
+            }
+
+            $markercount++;
+            if ($markercount > $this->required_marker_count()) {
+                // Optional markers are not supported.
+                return;
             }
 
             $markers[] = $markerid;
@@ -7907,6 +7981,135 @@ class assign {
             $student = $DB->get_record('user', ['id' => $studentid], '*', MUST_EXIST);
             $marker = $DB->get_record('user', ['id' => $markerid], '*', MUST_EXIST);
             \mod_assign\event\marker_updated::create_from_marker($this, $student, $marker)->trigger();
+        }
+    }
+
+    /**
+     * Update the markers allocated to a student's assignment.
+     *
+     * @param int $studentid ID of the student user record.
+     * @param array $modifiedallocations Modified marker allocations keyed by position, with values [markerid, enabled].
+     * @return void
+     */
+    public function update_marker_allocations(int $studentid, array $modifiedallocations): void {
+        global $DB;
+
+        $student = $DB->get_record('user', ['id' => $studentid], '*', MUST_EXIST);
+        $flags = $this->get_user_flags($studentid, true);
+        $workflowstate = $flags->workflowstate ?? '';
+        $previousmarkers = $this->get_marker_allocations($studentid);
+
+        // Determine the required updates.
+        $markers = [];
+        $updates = [];
+        for ($pos = 1; $pos <= $this->total_marker_count(); $pos++) {
+            $modifiedallocation = $modifiedallocations[$pos] ?? null;
+            $previousmarker = $previousmarkers[$pos] ?? null;
+            $optional = $this->is_marker_optional($pos);
+            if (!$modifiedallocation || !$this->can_allocate_marker($studentid, $pos, $workflowstate, $previousmarker)) {
+                $previousmarkerid = $previousmarker->marker ?? null;
+                if ($previousmarkerid && isset($markers[$previousmarkerid])) {
+                    // If this is a duplicate marker the position is changing and the marker needs to be cleared.
+                    // The marker is being kept, so we only need to check the capability to manage optional markers.
+                    if ($optional && !has_capability('mod/assign:manageoptionalallocations', $this->get_context())) {
+                        // The allocation is invalid, do not update anything.
+                        return;
+                    } else {
+                        // Clear the previous allocation.
+                        $updates[$pos] = [0, $previousmarker->enabled];
+                    }
+                } else if ($previousmarkerid) {
+                    $markers[$previousmarkerid] = $pos;
+                }
+                continue;
+            }
+
+            $markerid = (int)$modifiedallocation[0];
+            $enabled = $optional ? ($modifiedallocation[1] ?? 0) : null;
+
+            // We don't want to store disabled optional markers.
+            if ($markerid && $optional && !$enabled) {
+                $markerid = 0;
+            }
+
+            // Ignore duplicate markers.
+            if ($markerid && isset($markers[$markerid])) {
+                $markerid = 0;
+            }
+
+            if ($markerid) {
+                $markers[$markerid] = $pos;
+            }
+
+            $updates[$pos] = [$markerid, $enabled];
+        }
+
+        // Apply the required updates.
+        foreach ($updates as $pos => [$markerid, $enabled]) {
+            $this->update_allocated_marker($student, $pos, $previousmarkers[$pos] ?? null, $markerid, $enabled);
+        }
+    }
+
+    /**
+     * Update a marker allocation for a student's assignment.
+     *
+     * This method should only be called from update_marker_allocations().
+     *
+     * @param stdClass $student Student record.
+     * @param int $position Marker number.
+     * @param stdClass|null $previousmarker Previous allocated marker record.
+     * @param int $markerid Allocated marker ID.
+     * @param bool|null $enabled Allocated marker enabled status.
+     * @return void
+     */
+    private function update_allocated_marker(
+        stdClass $student,
+        int $position,
+        ?stdClass $previousmarker,
+        int $markerid,
+        ?bool $enabled
+    ): void {
+        global $DB;
+
+        $optional = $this->is_marker_optional($position);
+        if ($previousmarker && !$markerid && !$enabled) {
+            // Remove empty allocations.
+            $DB->delete_records('assign_allocated_marker', ['id' => $previousmarker->id]);
+            $record = clone $previousmarker;
+            $record->marker = 0;
+            $record->enabled = 0;
+        } else if ($previousmarker) {
+            // Update allocated marker.
+            $record = clone $previousmarker;
+            $record->marker = $markerid;
+            $record->optional = $optional;
+            $record->enabled = $enabled;
+            $DB->update_record('assign_allocated_marker', $record);
+        } else if ($markerid || $enabled) {
+            $record = new stdClass();
+            $record->student = $student->id;
+            $record->assignment = $this->get_instance()->id;
+            $record->marker = $markerid;
+            $record->optional = $optional;
+            $record->enabled = $enabled;
+            $record->id = $DB->insert_record('assign_allocated_marker', $record);
+        }
+
+        // Trigger events.
+        if (isset($enabled) && $enabled != ($previousmarker->enabled ?? 0)) {
+            \mod_assign\event\marker_enabled_updated::create_from_allocated_marker($this, $student, $record, $position)->trigger();
+        }
+
+        if ($markerid != ($previousmarker->marker ?? 0)) {
+            if ($previousmarker && $previousmarker->marker) {
+                $marker = $DB->get_record('user', ['id' => $previousmarker->marker], '*', MUST_EXIST);
+                \mod_assign\event\marker_removed::create_from_marker($this, $student, $marker, $previousmarker)->trigger();
+            }
+
+            if ($markerid) {
+                $marker = $DB->get_record('user', ['id' => $markerid], '*', MUST_EXIST);
+                \mod_assign\event\marker_added::create_from_marker($this, $student, $marker, $record)->trigger();
+            }
         }
     }
 
@@ -9285,7 +9488,7 @@ class assign {
         // Old marks can still be stored in the database if markers have changed. So we specifically want to
         // only get marks from currently allocated markers.
         $marks = [];
-        $markers = $this->get_allocated_markers($studentid);
+        $markers = $this->get_marker_allocations($studentid, false);
         foreach ($markers as $marker) {
             $value = $DB->get_field(
                 'assign_mark',
@@ -9315,7 +9518,7 @@ class assign {
         // Old marks can still be stored in the database if markers have changed. So we specifically want to
         // only get marks from currently allocated markers.
         $marks = [];
-        $markers = $this->get_allocated_markers($studentid);
+        $markers = $this->get_marker_allocations($studentid, false);
         foreach ($markers as $marker) {
             $value = $DB->get_record('assign_mark', ['gradeid' => $gradeid, 'marker' => $marker->marker]);
             if ($value !== false) {
@@ -9363,10 +9566,16 @@ class assign {
             $overall = ASSIGN_MARKING_WORKFLOW_STATE_INMARKING;
         } else {
             // Otherwise, every marker must still be in Not marked. So that's what we set.
-            $overall = ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED;
+            // This is most commonly represented by an empty string.
+            $overall = '';
         }
 
         $flags->workflowstate = $overall;
+
+        // If there's only one marker, only update overall state if mark workflow state is being used.
+        if (!$this->is_using_multiple_marking() && empty($overall)) {
+            return;
+        }
 
         if (
             $this->update_user_flags($flags) &&
@@ -9390,7 +9599,7 @@ class assign {
         // If we are using marker allocation, are we allocated to this student? If not, we should not be able to update
         // their marks, even if they are in the same group as a student we are allocated to.
         if (isset($formdata->mark) && $this->get_instance()->markingworkflow && $this->get_instance()->markingallocation) {
-            $markerids = array_column($this->get_allocated_markers($userid), 'marker');
+            $markerids = array_column($this->get_marker_allocations($userid, false), 'marker');
             if (!in_array($USER->id, $markerids)) {
                 return;
             }
@@ -10141,6 +10350,29 @@ class assign {
     }
 
     /**
+     * Get a list of marking workflow states where marker allocation should be locked.
+     * This locked states differ for minimum required markers and optional markers.
+     *
+     * @param int $position Marker position
+     * @return string[] Array of workflow states.
+     */
+    public function marker_allocation_locked_states(int $position): array {
+        if ($this->is_marker_optional($position)) {
+            return [
+                ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE,
+                ASSIGN_MARKING_WORKFLOW_STATE_RELEASED,
+            ];
+        } else {
+            return [
+                ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW,
+                ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW,
+                ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE,
+                ASSIGN_MARKING_WORKFLOW_STATE_RELEASED,
+            ];
+        }
+    }
+
+    /**
      * Check is only active users in course should be shown.
      *
      * @return bool true if only active users should be shown.
@@ -10667,15 +10899,129 @@ class assign {
     /**
      * Get the markers allocated to the specified student on this assignment.
      *
+     * @deprecated since Moodle 5.3 MDL-87709
+     * @todo MDL-89401 Final deprecation in Moodle 7.0.
      * @param int $studentid ID of the student.
      * @return array Array of allocated_marker records for this student.
      */
+    #[\core\attribute\deprecated(
+        replacement: 'assign::get_marker_allocations()',
+        since: '5.3',
+        reason: 'Use get_marker_allocations() instead.',
+        mdl: 'MDL-87709'
+    )]
     public function get_allocated_markers(int $studentid): array {
         global $DB;
-        return $DB->get_records('assign_allocated_marker', [
-            'student' => $studentid,
-            'assignment' => $this->get_instance()->id,
-        ], 'id');
+
+        deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
+        $allocatedmarkers = $this->get_marker_allocations($studentid, false);
+        return array_column($allocatedmarkers, null, 'id');
+    }
+
+    /**
+     * Get the markers allocated to the specified student on this assignment.
+     *
+     * @param int $studentid ID of the student.
+     * @param bool $includeplaceholders Includes optional markers that are enabled but not allocated.
+     * @return array Array of allocated_marker records for this student, keyed by marker position.
+     */
+    public function get_marker_allocations(int $studentid, bool $includeplaceholders = true): array {
+        global $DB;
+
+        $markers = $DB->get_records(
+            'assign_allocated_marker',
+            [
+                'student' => $studentid,
+                'assignment' => $this->get_instance()->id,
+            ],
+            'optional ASC, id ASC',
+        );
+
+        if (!$includeplaceholders) {
+            $markers = array_filter($markers, fn($marker) => !empty($marker->marker) && (!$marker->optional || $marker->enabled));
+        }
+
+        // Key by marker positions.
+        $result = [];
+        $pos = 1;
+        $requiredcount = $this->required_marker_count();
+
+        foreach ($markers as $marker) {
+            // Increase position number when reaching the optional marker boundary.
+            if ($marker->optional && $pos <= $requiredcount) {
+                $pos = $requiredcount + 1;
+            }
+            $result[$pos] = $marker;
+            $pos++;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Can the current user allocate a marker in the given position?
+     *
+     * @param int $studentid ID of the student.
+     * @param int $position The marker position.
+     * @param string|null $workflowstate The current workflow state. Null can be used to skip the state check.
+     * @param stdClass|null $currentmarker The current allocated marker object.
+     * @return bool
+     */
+    public function can_allocate_marker(int $studentid, int $position, ?string $workflowstate, ?stdClass $currentmarker): bool {
+        if (!has_capability('mod/assign:manageallocations', $this->get_context())) {
+            return false;
+        }
+
+        // Can only allocated when the marking workflow is in certain states.
+        if (isset($workflowstate) && in_array($workflowstate, $this->marker_allocation_locked_states($position))) {
+            return false;
+        }
+
+        // Optional markers have a separate capability.
+        $optional = $this->is_marker_optional($position);
+        if ($optional && !has_capability('mod/assign:manageoptionalallocations', $this->get_context())) {
+            return false;
+        }
+
+        // Can allocate when there is no current marker.
+        if (!$currentmarker || !$currentmarker->marker || ($optional && !$currentmarker->enabled)) {
+            return true;
+        }
+
+        // Can only allocate marker when the current marker hasn't started marking the latest attempt.
+        if (!has_capability('mod/assign:managemarkedallocations', $this->get_context())) {
+            $grade = $this->get_user_grade($studentid, false);
+            if ($grade && $this->has_started_marking($grade->id, $currentmarker->marker)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get whether the marker has started marking assignment that corresponds to the specified grade.
+     *
+     * @param int $gradeid The assignment grade ID.
+     * @param int $markerid The marker's user ID.
+     * @return bool Whether the marker has started marking.
+     */
+    protected function has_started_marking(int $gradeid, int $markerid): bool {
+        if (!$gradeid || !$markerid) {
+            return false;
+        }
+
+        $mark = $this->get_mark($gradeid, $markerid);
+        if (!$mark) {
+            return false;
+        }
+
+        if (isset($mark->mark) && $mark->mark >= 0) {
+            return true;
+        }
+
+        return !empty($mark->workflowstate) && $mark->workflowstate !== ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED;
     }
 
     /**
@@ -10687,14 +11033,23 @@ class assign {
      */
     public function get_marker_number(int $studentid, int $number): ?stdClass {
         global $DB;
-        $markers = $DB->get_fieldset('assign_allocated_marker', 'marker', [
-            'student' => $studentid, 'assignment' => $this->get_instance()->id,
-        ]);
-        if (!empty($markers) && count($markers) >= ($number + 1)) {
+
+        $allocatedmarkers = $this->get_marker_allocations($studentid, false);
+        if (array_key_exists($number, $allocatedmarkers) && $allocatedmarkers[$number]->marker) {
             // Then get the name of the one at the column position requested, e.g. marker1, marker2, etc...
-            return \core_user::get_user($markers[$number]);
+            return \core_user::get_user($allocatedmarkers[$number]->marker);
         }
         return null;
+    }
+
+    /**
+     * Is this marker position optional?
+     *
+     * @param int $position Marker position.
+     * @return bool
+     */
+    public function is_marker_optional(int $position): bool {
+        return $position > $this->required_marker_count();
     }
 
     /**

@@ -184,7 +184,7 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
                     if (isset($feedback['markernumber'])) {
                         $ismarkercol = true;
                         // Get the mark record or create it if it doesn't exist.
-                        $marker = $assignment->get_marker_number($user->id, $feedback['markernumber'] - 1);
+                        $marker = $assignment->get_marker_number($user->id, $feedback['markernumber']);
                         if ($marker && $marker->id == $USER->id) {
                             $isourmarkercol = true;
                             if ($usermark) {

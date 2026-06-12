@@ -1891,7 +1891,7 @@ class assign_grading_table extends table_sql implements renderable {
         // Work out the mark ID based on the marker number for this student.
         preg_match('/\d+$/', $colname, $matches);
         $markernumber = $matches[0];
-        $allocatedmarker = $assignment->get_marker_number($grade->userid, $markernumber - 1);
+        $allocatedmarker = $assignment->get_marker_number($grade->userid, $markernumber);
         if ($allocatedmarker) {
             return $assignment->get_mark($grade->id, $allocatedmarker->id);
         }
@@ -1914,7 +1914,7 @@ class assign_grading_table extends table_sql implements renderable {
         // Work out the mark ID based on the marker number for this student.
         preg_match('/\d+$/', $colname, $matches);
         $markernumber = $matches[0];
-        return $assignment->get_marker_number($userid, $markernumber - 1);
+        return $assignment->get_marker_number($userid, $markernumber);
     }
 
     /**
