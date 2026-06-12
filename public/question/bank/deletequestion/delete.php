@@ -53,6 +53,7 @@ $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
 $PAGE->set_secondary_active_tab("questionbank");
+$PAGE->set_show_navigation_footer(false);
 
 // Unhide a question.
 if (($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {

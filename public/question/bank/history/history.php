@@ -59,6 +59,7 @@ $context = $contexts->lowest();
 $PAGE->set_context($context);
 $PAGE->navbar->add(get_string('question'), new moodle_url($returnurl));
 $PAGE->navbar->add($streditingquestions, $url);
+$PAGE->set_show_navigation_footer(false);
 
 echo $OUTPUT->header();
 // Print the question area.

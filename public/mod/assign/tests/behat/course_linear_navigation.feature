@@ -85,6 +85,10 @@ Feature: Display the course linear navigation in the assignment pages
     And I set the field "Advanced role override" to "Student"
     And the course linear navigation should not be visible
     And I press "Cancel"
+    And I set the field "Participants tertiary navigation" to "Check permissions"
+    And the course linear navigation should not be visible
+    And I set the field "Participants tertiary navigation" to "Locally assigned roles"
+    And the course linear navigation should not be visible
     And I navigate to "Logs" in current page administration
     And the course linear navigation should not be visible
     And I navigate to "Backup" in current page administration

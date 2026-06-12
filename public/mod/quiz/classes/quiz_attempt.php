@@ -1349,6 +1349,7 @@ class quiz_attempt {
         global $PAGE;
 
         $PAGE->add_body_class('limitedwidth');
+        $PAGE->set_show_navigation_footer(false);
 
         if (empty($this->get_quiz()->showblocks) && !$this->is_preview_user()) {
             $PAGE->blocks->show_only_fake_blocks();

@@ -67,6 +67,7 @@ $streditingquestions = get_string('editquestions', 'question');
 $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 
 echo $OUTPUT->header();
 if (!\core_question\local\bank\question_bank_helper::has_bank_migration_task_completed_successfully()) {

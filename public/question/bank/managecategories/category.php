@@ -94,6 +94,7 @@ if ((!empty($todelete) && (!$questionstomove) && confirm_sesskey())) {
 $PAGE->set_title(get_string('editcategories', 'question'));
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 
 // Print horizontal nav if needed.
 $renderer = $PAGE->get_renderer('core_question', 'bank');

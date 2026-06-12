@@ -62,6 +62,7 @@ if ($returnurl) {
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 
 $contextname = $context->get_context_name();
 $courseid = $course->id;

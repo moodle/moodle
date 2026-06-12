@@ -95,6 +95,7 @@ $thiscontext = context_module::instance($cmid);
 
 $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
 $PAGE->set_pagelayout('admin');
+$PAGE->set_show_navigation_footer(false);
 
 if (optional_param('addcancel', false, PARAM_BOOL)) {
     redirect($returnurl);

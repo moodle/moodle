@@ -33,6 +33,7 @@ $slot = required_param('slot', PARAM_INT); // The question number in the attempt
 $cmid = optional_param('cmid', null, PARAM_INT);
 
 $PAGE->set_url('/mod/quiz/comment.php', ['attempt' => $attemptid, 'slot' => $slot]);
+$PAGE->set_show_navigation_footer(false);
 
 $attemptobj = quiz_create_attempt_handling_errors($attemptid, $cmid);
 $attemptobj->preload_all_attempt_step_users();
