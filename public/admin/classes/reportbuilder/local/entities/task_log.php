@@ -66,6 +66,27 @@ class task_log extends base {
     }
 
     /**
+     * Formats a task name with its classname
+     *
+     * @param string $classname
+     * @return string html formatted name
+     */
+    public static function format_classname(string $classname): string {
+        $output = '';
+        if (class_exists($classname)) {
+            $task = new $classname();
+            if ($task instanceof \core\task\task_base) {
+                $output = $task->get_name();
+            }
+        }
+
+        $output .= \html_writer::tag('div', "\\{$classname}", [
+            'class' => 'small text-muted',
+        ]);
+        return $output;
+    }
+
+    /**
      * Returns list of all available columns
      *
      * @return column[]
@@ -85,19 +106,7 @@ class task_log extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.classname")
             ->set_is_sortable(true)
-            ->add_callback(static function(string $classname): string {
-                $output = '';
-                if (class_exists($classname)) {
-                    $task = new $classname;
-                    if ($task instanceof \core\task\task_base) {
-                        $output = $task->get_name();
-                    }
-                }
-                $output .= \html_writer::tag('div', "\\{$classname}", [
-                    'class' => 'small text-muted',
-                ]);
-                return $output;
-            });
+            ->add_callback([self::class, 'format_classname']);
 
         // Component column.
         $columns[] = (new column(
@@ -266,10 +275,8 @@ class task_log extends base {
 
                 $options = [];
                 foreach ($classnames as $classname) {
-                    if (class_exists($classname)) {
-                        $task = new $classname;
-                        $options[$classname] = $task->get_name();
-                    }
+                    // Until the autocomplete element supports html we need to convert this to text.
+                    $options[$classname] = html_to_text(self::format_classname($classname));
                 }
 
                 core_collator::asort($options);
