@@ -1,1 +1,3 @@
 tagsdeleted,mod_book
+navnext,mod_book
+navprev,mod_book
