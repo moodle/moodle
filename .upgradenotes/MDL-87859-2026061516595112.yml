@@ -1,0 +1,8 @@
+issueNumber: MDL-87859
+notes:
+  core_badges:
+    - message: >-
+        The `badge_message_from_template()` method accepts an additional `$user`
+        argument, if specified then additional user name placeholders will also
+        be interpolated in the returned message content
+      type: changed

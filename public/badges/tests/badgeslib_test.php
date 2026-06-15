@@ -387,6 +387,25 @@ final class badgeslib_test extends badges_testcase {
     }
 
     /**
+     * Test user specific variables are interpolated in badge message from template
+     *
+     * @covers ::badge_message_from_template
+     */
+    public function test_badge_message_from_template_with_user(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $result = badge_message_from_template(
+            'Hi %firstname%, %middlename%! You successfully completed "%badgename%"',
+            ['badgename' => 'Test badge'],
+            $user,
+        );
+
+        $this->assertEquals("Hi {$user->firstname}, {$user->middlename}! You successfully completed \"Test badge\"", $result);
+    }
+
+    /**
      * Test for working around the 61 tables join limit of mysql in award_criteria_activity in combination with the scheduled task.
      *
      * @covers \core_badges\badge::review_all_criteria
