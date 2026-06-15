@@ -23,6 +23,7 @@
     {
         "previousurl": "http://moodle.com/course/cms/42/previous",
         "nexturl": "http://moodle.com/course/cms/42/next",
+        "backtocourseurl": "http://moodle.com/course/cms/42/next",
         "completion": "<span class=\"completion-status text-success\"><i class=\"fa fa-check\"></i> <span>Done</span></span>"
     }
 }}
@@ -50,5 +51,10 @@
             <span class="dir-ltr-hide" aria-hidden="true">{{#pix}} e/backward, core {{/pix}}</span>
         </a>
         {{/nexturl}}
+        {{#backtocourseurl}}
+        <a href="{{.}}" class="course-linear-navigation-link text-decoration-none d-inline-flex align-items-center gap-1 ms-auto">
+            <span>{{#str}} backtocourse, core {{/str}}</span>
+        </a>
+        {{/backtocourseurl}}
     </div>
 </div>

@@ -47,21 +47,33 @@ class footer_content implements named_templatable, renderable {
 
     #[\Override]
     public function export_for_template(renderer_base $output) {
-        // Get previous and next URLs for the current course module.
+        $data = ['completion' => $this->export_completion($output)];
+        $navigation = new course_navigation();
+        $modinfo = $this->cminfo->get_modinfo();
+        $section = $navigation->get_section($this->cminfo);
+        $allsectioncms = $navigation->get_all_section_cms($modinfo, $section);
+
+        $isfirst = $navigation->is_first_navigable($this->cminfo, $modinfo, $allsectioncms);
         $previousurl = util::get_path_for_callable(
             [course_navigation::class, 'cm_previous_element'],
             ['cm' => $this->cminfo->id],
         );
+        if (!$isfirst) {
+            $data['previousurl'] = $previousurl->out(false);
+        }
+
+        $islast = $navigation->is_last_navigable($this->cminfo, $modinfo, $allsectioncms);
         $nexturl = util::get_path_for_callable(
             [course_navigation::class, 'cm_next_element'],
             ['cm' => $this->cminfo->id],
         );
+        if ($islast) {
+            $data['backtocourseurl'] = $nexturl->out(false);
+        } else {
+            $data['nexturl'] = $nexturl->out(false);
+        }
 
-        return [
-            'previousurl' => $previousurl->out(false),
-            'nexturl' => $nexturl->out(false),
-            'completion' => $this->export_completion($output),
-        ];
+        return $data;
     }
 
     /**
