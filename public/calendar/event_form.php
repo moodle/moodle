@@ -125,13 +125,7 @@ class event_form extends moodleform {
                 get_string('durationminutes', 'calendar'), 'maxlength="7" size="7"');
 
         $mform->addGroup($group, 'durationgroup', '', '<br />', false);
-
         $mform->disabledIf('timedurationuntil',         'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[day]',    'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[month]',  'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[year]',   'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[hour]',   'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[minute]', 'duration', 'noteq', 1);
 
         $mform->setType('timedurationminutes', PARAM_INT);
         $mform->disabledIf('timedurationminutes','duration','noteq', 2);
