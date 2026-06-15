@@ -55,7 +55,7 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
     // Automatically generated Moodle v5.1.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2026051100) {
+    if ($oldversion < 2025100601) {
         // The cleanup task may have failed before due to MDL-86281.
         $task = new \qtype_multianswer\task\cleanup_duplicate_subquestions();
         $queuedtask = \core\task\manager::get_queued_adhoc_task_record($task);
@@ -63,7 +63,7 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
             mtrace('Subquestion cleanup task failed before. Re-queueing.');
             \core\task\manager::queue_adhoc_task($task);
         }
-        upgrade_plugin_savepoint(true, 2026051100, 'qtype', 'multianswer');
+        upgrade_plugin_savepoint(true, 2025100601, 'qtype', 'multianswer');
     }
 
     return true;
