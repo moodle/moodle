@@ -218,13 +218,7 @@ class create extends \moodleform {
 
         $mform->addGroup($group, 'durationgroup', get_string('eventduration', 'calendar'), '<br />', false);
         $mform->setAdvanced('durationgroup');
-
         $mform->disabledIf('timedurationuntil',         'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[day]',    'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[month]',  'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[year]',   'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[hour]',   'duration', 'noteq', 1);
-        $mform->disabledIf('timedurationuntil[minute]', 'duration', 'noteq', 1);
 
         $mform->setType('timedurationminutes', PARAM_INT);
         $mform->disabledIf('timedurationminutes', 'duration', 'noteq', 2);
