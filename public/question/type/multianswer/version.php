@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_multianswer';
-$plugin->version   = 2025100600;
+$plugin->version   = 2026051100;
 
 $plugin->requires  = 2025092600;
 $plugin->dependencies = [
