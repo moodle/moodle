@@ -1130,6 +1130,13 @@ final class transfer_question_categories_test extends \advanced_testcase {
         $this->resetAfterTest();
         $this->setup_pre_install_data();
 
+        $sitecontext = context_system::instance();
+        $expectedcategoryids = [
+            $DB->get_field('question_categories', 'id', ['contextid' => $sitecontext->id, 'name' => 'Site Parent Cat'], MUST_EXIST),
+            $DB->get_field('question_categories', 'id', ['contextid' => $sitecontext->id, 'name' => 'Site Child Cat'], MUST_EXIST),
+        ];
+        sort($expectedcategoryids);
+
         require_once(__DIR__ . '/../fixtures/testable_transfer_question_categories.php');
         $task = new testable_transfer_question_categories();
         try {
@@ -1139,8 +1146,19 @@ final class transfer_question_categories_test extends \advanced_testcase {
             $this->assertStringContainsString('This is a mocked exception for testing purposes.', $e->getMessage());
         }
         // We want to verify a failure does not prevent the creation of tasks with hitherto transferred categories and their data.
-        // We should have a transfer_questions task for two of the categories that were moved.
         $questiontasks = manager::get_adhoc_tasks(transfer_questions::class);
-        $this->assertCount(2, $questiontasks);
+        $this->assertCount(count($expectedcategoryids), $questiontasks);
+
+        // Check the queued tasks are for the categories moved before the simulated failure.
+        $actualcategoryids = array_map(
+            static fn(transfer_questions $task): int => $task->get_custom_data()->categoryid,
+            $questiontasks,
+        );
+        sort($actualcategoryids);
+        $this->assertEquals($expectedcategoryids, $actualcategoryids);
+
+        foreach ($questiontasks as $questiontask) {
+            $this->assertEquals($sitecontext->id, $questiontask->get_custom_data()->contextid);
+        }
     }
 }

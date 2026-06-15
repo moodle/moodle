@@ -64,7 +64,7 @@ class transfer_question_categories extends adhoc_task {
 
         $this->fix_wrong_parents();
 
-        $recordset = $DB->get_recordset('question_categories', ['parent' => 0]);
+        $recordset = $DB->get_recordset('question_categories', ['parent' => 0], 'id ASC');
 
         foreach ($recordset as $oldtopcategory) {
 
