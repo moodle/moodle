@@ -102,6 +102,8 @@ class process {
     protected $manualcache    = [];
     /** @var array officially supported plugins that are enabled */
     protected $supportedauths = [];
+    /** @var array Track unique profile field values within the current import */
+    protected $profilefieldvaluesinfile = [];
 
     /**
      * process constructor.
@@ -611,6 +613,21 @@ class process {
         }
         // We do not need the deleted flag anymore.
         unset($user->deleted);
+
+        // Validate custom profile fields data before processing.
+        $rowcols = (array) $user;
+        $rowcols['status'] = [];
+        unset($rowcols['id']); // Prevent CSV-supplied id from leaking in.
+        if ($existinguser) {
+            $rowcols['id'] = $existinguser->id;
+        }
+        if (!uu_check_custom_profile_data($rowcols, $this->profilefieldvaluesinfile)) {
+            foreach ($rowcols['status'] as $status) {
+                $this->upt->track('status', $status, 'error');
+            }
+            $this->userserrors++;
+            return;
+        }
 
         $matchonemailallowrename = $this->get_match_on_email() && $this->get_allow_renames();
         if ($matchonemailallowrename && $user->username && ($user->username !== $existinguser->username)) {
