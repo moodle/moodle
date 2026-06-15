@@ -120,14 +120,16 @@ if ($section && $section > 0) {
 
     // Get section details and check it exists.
     $modinfo = get_fast_modinfo($course);
-    $coursesections = $modinfo->get_section_info($section, MUST_EXIST);
+    $pagesection = $sectionid ?
+        $modinfo->get_section_info_by_id($sectionid, MUST_EXIST)
+        : $modinfo->get_section_info($section, MUST_EXIST);
 
     // Check user is allowed to see it.
-    if (!$coursesections->uservisible) {
+    if (!$pagesection->uservisible) {
         // Check if coursesection has conditions affecting availability and if
         // so, output availability info.
-        if ($coursesections->visible && $coursesections->availableinfo) {
-            $sectionname = get_section_name($course, $coursesections);
+        if ($pagesection->visible && $pagesection->availableinfo) {
+            $sectionname = get_section_name($course, $pagesection);
             $message = get_string('notavailablecourse', '', $sectionname);
             redirect(course_get_url($course), $message, null, \core\output\notification::NOTIFY_ERROR);
         } else {
@@ -251,14 +253,14 @@ if ($PAGE->user_allowed_editing()) {
 
     // TODO remove this if as part of MDL-83530.
     if (
-        !empty($section) && !empty($coursesections) && !empty($duplicatesection)
+        !empty($section) && !empty($pagesection) && !empty($duplicatesection)
         && has_capability('moodle/course:update', $context) && confirm_sesskey()
     ) {
         debugging(
             'The duplicatesection param is deprecated. Please use course/format/update.php instead.',
             DEBUG_DEVELOPER
         );
-        $newsection = $format->duplicate_section($coursesections);
+        $newsection = $format->duplicate_section($pagesection);
         redirect(course_get_url($course, $newsection->section));
     }
 
@@ -322,7 +324,7 @@ if ($PAGE->user_is_editing()) {
 // If viewing a section, make the title more specific.
 if ($section && $section > 0 && course_format_uses_sections($course->format)) {
     $sectionname = $format->get_generic_section_name();
-    $sectiontitle = $format->get_section_name($section);
+    $sectiontitle = $format->get_section_name($pagesection);
     $PAGE->set_title(
         get_string(
             'coursesectiontitle' . $editingtitle,

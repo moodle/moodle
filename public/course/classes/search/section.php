@@ -133,7 +133,7 @@ class section extends \core_search\base {
         } catch (\moodle_exception $e) {
             return \core_search\manager::ACCESS_DELETED;
         }
-        $section = $modinfo->get_section_info($sectionrec->section, IGNORE_MISSING);
+        $section = $modinfo->get_section_info_by_id($sectionrec->id, IGNORE_MISSING);
         if (!$section) {
             return \core_search\manager::ACCESS_DELETED;
         }
