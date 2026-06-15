@@ -23,6 +23,8 @@
  */
 
 
+use mod_assign\override_manager;
+
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/mod/assign/lib.php');
 require_once($CFG->dirroot.'/mod/assign/locallib.php');
@@ -42,7 +44,7 @@ $override = null;
 if ($overrideid) {
 
     if (! $override = $DB->get_record('assign_overrides', array('id' => $overrideid))) {
-        throw new \moodle_exception('invalidoverrideid', 'assign');
+        throw new moodle_exception('invalidoverrideid', 'assign');
     }
 
     list($course, $cm) = get_course_and_cm_from_instance($override->assignid, 'assign');
@@ -51,7 +53,7 @@ if ($overrideid) {
     list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'assign');
 
 } else {
-    throw new \moodle_exception('invalidcoursemodule');
+    throw new moodle_exception('invalidcoursemodule');
 }
 
 $url = new moodle_url('/mod/assign/overrideedit.php');
@@ -76,7 +78,8 @@ $shouldadduserid = $userid && !empty($course->relativedatesmode);
 $shouldresetform = optional_param('resetbutton', 0, PARAM_ALPHA) || ($userchange && $action !== 'duplicate');
 
 // Add or edit an override.
-require_capability('mod/assign:manageoverrides', $context);
+$manager = new override_manager($assign->get_instance(), $context);
+$manager->require_manage_capability();
 
 if ($overrideid) {
     // Editing an override.
@@ -84,11 +87,11 @@ if ($overrideid) {
 
     if ($override->groupid) {
         if (!groups_group_visible($override->groupid, $course, $cm)) {
-            throw new \moodle_exception('invalidoverrideid', 'assign');
+            throw new moodle_exception('invalidoverrideid', 'assign');
         }
     } else {
         if (!groups_user_groups_visible($course, $override->userid, $cm)) {
-            throw new \moodle_exception('invalidoverrideid', 'assign');
+            throw new moodle_exception('invalidoverrideid', 'assign');
         }
     }
 } else {
@@ -148,9 +151,6 @@ if ($mform->is_cancelled()) {
     redirect($url);
 
 } else if (!$userchange && $fromform = $mform->get_data()) {
-    // Process the data.
-    $fromform->assignid = $assigninstance->id;
-
     // Extract reason and reasonformat from editor field.
     if (isset($fromform->reason_editor)) {
         $fromform->reason = $fromform->reason_editor['text'] ?? '';
@@ -158,119 +158,31 @@ if ($mform->is_cancelled()) {
         unset($fromform->reason_editor);
     }
 
-    // Replace unchanged values with null.
-    foreach ($keys as $key) {
-        if (!isset($fromform->{$key}) || $fromform->{$key} == $assigninstance->{$key}) {
-            $fromform->{$key} = null;
-        }
-    }
+    // Prepare data for the manager.
+    $overridedata = [
+        'assignid' => $assigninstance->id,
+        'userid' => !empty($fromform->userid) ? $fromform->userid : null,
+        'groupid' => !empty($fromform->groupid) ? $fromform->groupid : null,
+        'duedate' => $fromform->duedate ?? null,
+        'cutoffdate' => $fromform->cutoffdate ?? null,
+        'allowsubmissionsfromdate' => $fromform->allowsubmissionsfromdate ?? null,
+        'timelimit' => $fromform->timelimit ?? null,
+        'reason' => $fromform->reason ?? null,
+        'reasonformat' => $fromform->reasonformat ?? FORMAT_MOODLE,
+    ];
 
-    // See if we are replacing an existing override.
-    $userorgroupchanged = false;
-    if (empty($override->id)) {
-        $userorgroupchanged = true;
-    } else if (!empty($fromform->userid)) {
-        $userorgroupchanged = $fromform->userid !== $override->userid;
-    } else {
-        $userorgroupchanged = $fromform->groupid !== $override->groupid;
-    }
-
-    if ($userorgroupchanged) {
-        $conditions = array(
-                'assignid' => $assigninstance->id,
-                'userid' => empty($fromform->userid) ? null : $fromform->userid,
-                'groupid' => empty($fromform->groupid) ? null : $fromform->groupid);
-        if ($oldoverride = $DB->get_record('assign_overrides', $conditions)) {
-            // There is an old override, so we merge any new settings on top of
-            // the older override.
-            foreach ($keys as $key) {
-                if (is_null($fromform->{$key})) {
-                    $fromform->{$key} = $oldoverride->{$key};
-                }
-            }
-
-            $assign->delete_override($oldoverride->id);
-        }
-    }
-
-    // Set the common parameters for one of the events we may be triggering.
-    $params = array(
-        'context' => $context,
-        'other' => array(
-            'assignid' => $assigninstance->id
-        )
-    );
+    // If updating an existing override, include the ID.
     if (!empty($override->id)) {
-        $fromform->id = $override->id;
-        $DB->update_record('assign_overrides', $fromform);
-        $cachekey = $groupmode ? "{$fromform->assignid}_g_{$fromform->groupid}" : "{$fromform->assignid}_u_{$fromform->userid}";
-        cache::make('mod_assign', 'overrides')->delete($cachekey);
-
-        // Determine which override updated event to fire.
-        $params['objectid'] = $override->id;
-        if (!$groupmode) {
-            $params['relateduserid'] = $fromform->userid;
-            $event = \mod_assign\event\user_override_updated::create($params);
-        } else {
-            $params['other']['groupid'] = $fromform->groupid;
-            $event = \mod_assign\event\group_override_updated::create($params);
-        }
-
-        // Trigger the override updated event.
-        $event->trigger();
-    } else {
-        unset($fromform->id);
-        $fromform->id = $DB->insert_record('assign_overrides', $fromform);
-        if ($groupmode) {
-            $fromform->sortorder = 1;
-
-            $overridecountgroup = $DB->count_records('assign_overrides',
-                array('userid' => null, 'assignid' => $assigninstance->id));
-            $overridecountall = $DB->count_records('assign_overrides', array('assignid' => $assigninstance->id));
-            if ((!$overridecountgroup) && ($overridecountall)) { // No group overrides and there are user overrides.
-                $fromform->sortorder = 1;
-            } else {
-                $fromform->sortorder = $overridecountgroup;
-
-            }
-
-            $DB->update_record('assign_overrides', $fromform);
-            reorder_group_overrides($assigninstance->id);
-        }
-        $cachekey = $groupmode ? "{$fromform->assignid}_g_{$fromform->groupid}" : "{$fromform->assignid}_u_{$fromform->userid}";
-        cache::make('mod_assign', 'overrides')->delete($cachekey);
-
-        // Determine which override created event to fire.
-        $params['objectid'] = $fromform->id;
-        if (!$groupmode) {
-            $params['relateduserid'] = $fromform->userid;
-            $event = \mod_assign\event\user_override_created::create($params);
-        } else {
-            $params['other']['groupid'] = $fromform->groupid;
-            $event = \mod_assign\event\group_override_created::create($params);
-        }
-
-        // Trigger the override created event.
-        $event->trigger();
+        $overridedata['id'] = $override->id;
     }
 
-    // Check if we need to recalculate penalty for existing grades.
-    if (!empty($fromform->recalculatepenalty) && $fromform->recalculatepenalty === 'yes') {
-        $assignintance = clone $assign->get_instance();
-        $assignintance->cmidnumber = $assign->get_course_module()->idnumber;
-        // If it is user mode.
-        if (!$groupmode) {
-            assign_update_grades($assignintance, $fromform->userid);
-        } else {
-            // If it is group mode.
-            $groupmembers = groups_get_members($fromform->groupid);
-            foreach ($groupmembers as $groupmember) {
-                assign_update_grades($assignintance, $groupmember->id);
-            }
-        }
-    }
+    // Determine if we need to recalculate grades.
+    $recalculate = !empty($fromform->recalculatepenalty) && $fromform->recalculatepenalty === 'yes';
 
-    assign_update_events($assign, $fromform);
+    // Save the override using the manager (handles recalculation internally).
+    $ids = $manager->save_overrides([$overridedata], $recalculate);
+    // There will be only one ID returned.
+    $overrideid = $ids[0];
 
     if (!empty($fromform->submitbutton)) {
         redirect($overridelisturl);
@@ -279,7 +191,7 @@ if ($mform->is_cancelled()) {
     // The user pressed the 'again' button, so redirect back to this page.
     $url->remove_params('cmid');
     $url->param('action', 'duplicate');
-    $url->param('id', $fromform->id);
+    $url->param('id', $overrideid);
     redirect($url);
 
 }
