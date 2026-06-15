@@ -1447,6 +1447,7 @@ $string['taskbadgesmessagecron'] = 'Background processing for sending badges not
 $string['taskblogcron'] = 'Sync external blogs';
 $string['taskcachecleanup'] = 'Remove expired cache entries';
 $string['taskcachecron'] = 'Background processing for caches';
+$string['taskcachefilepoolusage'] = 'Cache file pool disk usage';
 $string['taskcalendarcron'] = 'Send calendar notifications';
 $string['taskcheckforupdates'] = 'Check for updates';
 $string['taskcompletionregular'] = 'Calculate regular completion data';
