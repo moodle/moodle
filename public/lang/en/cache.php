@@ -72,6 +72,7 @@ $string['cachedef_h5p_content_type_translations'] = 'H5P content-type libraries 
 $string['cachedef_h5p_libraries'] = 'H5P libraries';
 $string['cachedef_h5p_library_files'] = 'H5P library files';
 $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
+$string['cachedef_hub_filepoolusage'] = 'Hub registration file pool disk usage';
 $string['cachedef_langmenu'] = 'List of available languages';
 $string['cachedef_license'] = 'List of licences';
 $string['cachedef_message_time_last_message_between_users'] = 'Time created for most recent message in a conversation';
