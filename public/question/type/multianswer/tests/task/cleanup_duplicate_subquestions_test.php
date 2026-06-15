@@ -16,6 +16,9 @@
 
 namespace qtype_multianswer\task;
 
+use dml_exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 /**
  * Unit tests for cleanup_duplicate_subquestions
  *
@@ -31,7 +34,7 @@ final class cleanup_duplicate_subquestions_test extends \advanced_testcase {
      * Create a multianswer question and duplicate its subquestions.
      *
      * @return array
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     protected function generate_duplicated_subquestions(): array {
         global $DB;
@@ -305,6 +308,85 @@ final class cleanup_duplicate_subquestions_test extends \advanced_testcase {
                     ['id' => $duplicatedsubquestions2[$key]->duplicate->questionbankentry->id],
                 ),
             );
+        }
+    }
+
+    /**
+     * Handle the case where the `sequence` field is "corrupted" for whatever reason and contains no actual IDs.
+     *
+     * When that happens, no subquestions are referenced by the parent, so all instances ("originals" and duplicates) found by
+     * {@see cleanup_duplicate_subquestions::find_duplicated_subquestions} are considered obsolete and should be deleted.
+     *
+     * @link https://moodle.atlassian.net/browse/MDL-86281 MDL-86281
+     *
+     * @param string $sequence Corrupted `sequence` field value to set on the parent question.
+     * @throws dml_exception
+     */
+    #[DataProvider('provider_test_execute_with_empty_sequence_elements')]
+    public function test_execute_with_empty_sequence_elements(string $sequence): void {
+        global $DB;
+        $this->resetAfterTest();
+        $task = new cleanup_duplicate_subquestions();
+        // Create duplicated subquestions, then "corrupt" the parent's `sequence` to the provided string.
+        $subquestions = $this->generate_duplicated_subquestions();
+        $firstsubquestion = reset($subquestions);
+        $DB->set_field('question_multianswer', 'sequence', $sequence, ['question' => $firstsubquestion->parent]);
+        $this->expectOutputRegex('~Found 2 subquestions with duplicates~');
+        $task->execute();
+        // Ensure all those subquestions have been deleted.
+        foreach ($subquestions as $subq) {
+            $this->assertTrue($DB->record_exists('question', ['id' => $subq->parent]));
+            $this->assertFalse($DB->record_exists('question', ['id' => $subq->id]));
+            $this->assertFalse($DB->record_exists('question', ['id' => $subq->duplicate->question->id]));
+            $this->assertFalse($DB->record_exists('question_versions', ['id' => $subq->duplicate->version->id]));
+            $this->assertFalse($DB->record_exists('question_bank_entries', ['id' => $subq->duplicate->questionbankentry->id]));
+        }
+    }
+
+    /**
+     * Provides test data for the {@see test_execute_with_empty_sequence_elements} method.
+     *
+     * @return array[] Arguments for the test method.
+     */
+    public static function provider_test_execute_with_empty_sequence_elements(): array {
+        return [
+            'Empty string' => ['sequence' => ''],
+            'Single comma' => ['sequence' => ','],
+            'Multiple consecutive commas' => ['sequence' => ',,,'],
+        ];
+    }
+
+    /**
+     * Handle the case where the `sequence` field contains valid IDs mixed with empty elements.
+     *
+     * When the sequence contains some valid IDs among empty elements, only the subquestions not referenced
+     * in the sequence should be deleted. The ones whose IDs appear in the sequence should be kept.
+     *
+     * @link https://moodle.atlassian.net/browse/MDL-86281 MDL-86281
+     *
+     * @throws dml_exception
+     */
+    public function test_execute_with_partially_empty_sequence(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $task = new cleanup_duplicate_subquestions();
+        // Create duplicated subquestions.
+        $subquestions = $this->generate_duplicated_subquestions();
+        $firstsubquestion = reset($subquestions);
+        $secondsubquestion = next($subquestions);
+        // Build a corrupted sequence that references only the original subquestion IDs, but with empty elements mixed in.
+        $sequence = ',' . $firstsubquestion->id . ',,,' . $secondsubquestion->id . ',';
+        $DB->set_field('question_multianswer', 'sequence', $sequence, ['question' => $firstsubquestion->parent]);
+        $this->expectOutputRegex('~Found 2 subquestions with duplicates~');
+        $task->execute();
+        // The original subquestions are referenced in the sequence and should be kept.
+        foreach ($subquestions as $subq) {
+            $this->assertTrue($DB->record_exists('question', ['id' => $subq->parent]));
+            $this->assertTrue($DB->record_exists('question', ['id' => $subq->id]));
+            // The duplicates are not in the sequence and should be deleted.
+            $this->assertFalse($DB->record_exists('question', ['id' => $subq->duplicate->question->id]));
+            $this->assertFalse($DB->record_exists('question_versions', ['id' => $subq->duplicate->version->id]));
+            $this->assertFalse($DB->record_exists('question_bank_entries', ['id' => $subq->duplicate->questionbankentry->id]));
         }
     }
 }
