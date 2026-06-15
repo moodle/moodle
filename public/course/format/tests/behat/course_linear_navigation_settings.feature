@@ -4,6 +4,20 @@ Feature: Enable course linear navigation setting
   As a course creator
   I need some course formats to support course linear navigation
 
+  Scenario Outline: The help message for Enable Linear navigation is displayed inline instead of in the help popup.
+    Given the following "courses" exist:
+      | fullname | shortname | format   |
+      | Course1  | c1        | <format> |
+    When I am on the "Course1" "Course" page logged in as "admin"
+    And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And I should see "Display 'Previous' and 'Next' buttons on activity pages to help learners"
+
+    Examples:
+      | format         |
+      | topics         |
+      | weeks          |
+
   @format_singleactivity
   Scenario Outline: The option to enable course linear navigation is shown or hidden based on course format
     Given the following "courses" exist:
@@ -13,6 +27,7 @@ Feature: Enable course linear navigation setting
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And <shouldsee> "Enable linear navigation"
+    And <shouldsee> "Display 'Previous' and 'Next' buttons on activity pages to help learners"
 
     Examples:
       | format         | shouldsee        |

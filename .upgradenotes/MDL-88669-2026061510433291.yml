@@ -1,0 +1,8 @@
+issueNumber: MDL-88669
+notes:
+  core_courseformat:
+    - message: >-
+        Add a inline_help flag for course format setting elements. 
+        When this flag is present in the setting definition, or set to true, 
+        the help text is displayed as static text beneath the setting.
+      type: improved
