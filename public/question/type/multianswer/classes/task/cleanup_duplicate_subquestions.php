@@ -83,10 +83,24 @@ class cleanup_duplicate_subquestions extends \core\task\adhoc_task {
         $this->start_stored_progress();
         $progress = $this->get_progress();
         foreach ($duplicatedsubquestions as $subquestion) {
+            $where = "parent = :parent AND stamp = :stamp";
+            $params = ['parent' => $subquestion->parent, 'stamp' => $subquestion->stamp];
             // Find instances of the subquestion that do not appear in the sequence of the parent.
-            [$insql, $inparams] = $DB->get_in_or_equal(explode(',', $subquestion->sequence), equal: false);
-            $params = array_merge([$subquestion->parent, $subquestion->stamp], $inparams);
-            $duplicates = $DB->get_records_select('question', "parent = ? AND stamp = ? AND id {$insql}", $params);
+            // Make sure to filter out empty elements in the sequence.
+            // If the parent's sequence ends up empty for whatever reason, there are no "original" subquestions anymore and
+            // all that match the stamp and parent are fair game for deletion.
+            $sequence = array_filter(explode(',', $subquestion->sequence));
+            if (!empty($sequence)) {
+                [$insql, $inparams] = $DB->get_in_or_equal(
+                    items: $sequence,
+                    type: SQL_PARAMS_NAMED,
+                    prefix: 'id',
+                    equal: false,
+                );
+                $where .= " AND id $insql";
+                $params = array_merge($params, $inparams);
+            }
+            $duplicates = $DB->get_records_select('question', $where, $params);
             $duplicatecount = count($duplicates);
             // Delete each duplicate, with a progress bar.
             mtrace("");
