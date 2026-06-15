@@ -158,12 +158,11 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $issuedlink = html_writer::link($badgeurl, $badge->name);
     $userto = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
+    // Parameters to use for the event subject/message template.
     $params = new stdClass();
     $params->badgename = $badge->name;
     $params->username = fullname($userto);
     $params->badgelink = $issuedlink;
-    $message = badge_message_from_template($badge->message, $params);
-    $plaintext = html_to_text($message);
 
     // Notify recipient.
     $eventdata = new \core\message\message();
@@ -175,10 +174,11 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $eventdata->notification      = 1;
     $eventdata->contexturl        = $badgeurl;
     $eventdata->contexturlname    = $badge->name;
-    $eventdata->subject           = $badge->messagesubject;
-    $eventdata->fullmessage       = $plaintext;
+    $eventdata->subject           = badge_message_from_template($badge->messagesubject, $params);
+    $eventdata->fullmessagehtml   = badge_message_from_template($badge->message, $params);
+    $eventdata->fullmessage       = html_to_text($eventdata->fullmessagehtml);
     $eventdata->fullmessageformat = FORMAT_HTML;
-    $eventdata->fullmessagehtml   = $message;
+
     $eventdata->smallmessage      = '';
     $eventdata->customdata        = [
         'notificationiconurl' => moodle_url::make_pluginfile_url(
