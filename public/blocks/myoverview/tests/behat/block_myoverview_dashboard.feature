@@ -56,15 +56,17 @@ Feature: The my overview block allows users to easily access their courses
     And I should not see "Course 1" in the "Course overview" "block"
     And I should not see "Course 5" in the "Course overview" "block"
 
+  @accessibility
   Scenario: View all (except removed) courses
     Given I am on the "My courses" page logged in as "student1"
     And I click on "All" "button" in the "Course overview" "block"
     When I click on "All" "link" in the "Course overview" "block"
     Then I should see "Course 1" in the "Course overview" "block"
-    Then I should see "Course 2" in the "Course overview" "block"
-    Then I should see "Course 3" in the "Course overview" "block"
-    Then I should see "Course 4" in the "Course overview" "block"
-    Then I should see "Course 5" in the "Course overview" "block"
+    And I should see "Course 2" in the "Course overview" "block"
+    And I should see "Course 3" in the "Course overview" "block"
+    And I should see "Course 4" in the "Course overview" "block"
+    And I should see "Course 5" in the "Course overview" "block"
+    And the "Course overview" "block" should meet accessibility standards with "best-practice" extra tests
 
   Scenario: View all (including removed from view) courses
     Given the following config values are set as admin:
