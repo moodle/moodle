@@ -33,7 +33,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cron {
-
     /** @var ?stdClass A copy of the standard cron 'user' */
     protected static ?stdClass $cronuser = null;
 
@@ -274,7 +273,6 @@ class cron {
             !\core\local\cli\shutdown::should_gracefully_exit() &&
             !\core\task\manager::static_caches_cleared_since($startprocesstime)
         ) {
-
             if ($checklimits && (time() - $startruntime) >= $maxruntime) {
                 if ($waiting) {
                     $waiting = false;
