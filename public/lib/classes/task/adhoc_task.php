@@ -33,14 +33,13 @@ namespace core\task;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class adhoc_task extends task_base {
-
     /** @var string $customdata - Custom data required for when this task is executed. */
     private $customdata = '';
 
-    /** @var integer|null $id - Adhoc tasks each have their own database record id. */
+    /** @var int|null $id - Adhoc tasks each have their own database record id. */
     private $id = null;
 
-    /** @var integer|null $userid - Adhoc tasks may choose to run as a specific user. */
+    /** @var int|null $userid - Adhoc tasks may choose to run as a specific user. */
     private $userid = null;
 
     /** @var \core\lock\lock The concurrency task lock for this task. */
@@ -134,12 +133,12 @@ abstract class adhoc_task extends task_base {
     }
 
     /**
-     * If a task is waiting on an external event then you can set a retry delay, 
+     * If a task is waiting on an external event then you can set a retry delay,
      * which behaves very similar to throwing an exception and retrying with a
-     * fail delay except it will not be treated as an error. 
-     * 
-     * The number of attempts is still decremented so it cannot be retried indefinitely. 
-     * You can specify a delay in seconds, or if not set it will default to an 
+     * fail delay except it will not be treated as an error.
+     *
+     * The number of attempts is still decremented so it cannot be retried indefinitely.
+     * You can specify a delay in seconds, or if not set it will default to an
      * exponential delay similar to the faildelay.
      *
      * @param int|null $softretrydelay Delay in seconds, or null to use exponential backoff.
@@ -149,6 +148,7 @@ abstract class adhoc_task extends task_base {
             throw new \coding_exception('Soft retry delay must be a positive integer or null.');
         }
         $this->isdelayed = true;
+
         $this->softretrydelay = $softretrydelay;
     }
 
