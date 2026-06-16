@@ -2657,7 +2657,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         $PAGE->set_course($course);
         $renderer = $PAGE->get_renderer('course');
         $message = $renderer->course_section_cm_unavailable_error_message($cm);
-        redirect(course_get_url($course), $message, null, \core\output\notification::NOTIFY_ERROR);
+        redirect(course_get_url($course), $message, null, \core\output\notification::NOTIFY_INFO);
     }
 
     if ($cm && !$cm->uservisible) {
