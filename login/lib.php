@@ -270,7 +270,7 @@ function core_login_process_password_set($token) {
         // Next, display the form.
         $setdata = new stdClass();
         $setdata->username = $user->username;
-        $setdata->username2 = $user->username;
+        $setdata->username2 = s($user->username);
         $setdata->token = $user->token;
         $mform->set_data($setdata);
         echo $OUTPUT->header();
