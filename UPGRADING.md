@@ -45,6 +45,18 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Note: disabling cookie support after it has been enabled is not recommended. If doing so you will need to determine whether to terminate the current session, or close it.
 
   For more information see [MDL-87174](https://tracker.moodle.org/browse/MDL-87174)
+- The `moodle_page` class now includes `set_has_sticky_footer()` and `has_sticky_footer()` to track sticky footer presence and prevent redundant renders.
+
+  For more information see [MDL-87302](https://tracker.moodle.org/browse/MDL-87302)
+- Added `moodle_page::set_show_navigation_footer(bool $show)` to control whether the sticky navigation footer is rendered. Use $PAGE->set_show_navigation_footer(false); to suppress the footer on pages where it is not required.
+
+  For more information see [MDL-87575](https://tracker.moodle.org/browse/MDL-87575)
+- Added new 'url' optional parameter to `core\output\action_menu\subpanel` so subpanel menu elements can have their own link.
+
+  For more information see [MDL-88312](https://tracker.moodle.org/browse/MDL-88312)
+- Added new `core\output\submenu` renderable, that can be added to a `core\output\action_menu\subpanel` to create menu sub-levels.
+
+  For more information see [MDL-88312](https://tracker.moodle.org/browse/MDL-88312)
 - Two new AMD modules are now available. `core/import` lets AMD code do a native ESM dynamic import without Babel rewriting it. `core/component` provides `appendToDom` and `prependToDom` to mount React components into the DOM, which are then picked up automatically by `react_autoinit`.
 
   For more information see [MDL-88505](https://tracker.moodle.org/browse/MDL-88505)
@@ -75,6 +87,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `FEATURE_GROUPMEMBERSONLY` constant has been deprecated and is no longer supported. It should be removed from any plugin code.
 
   For more information see [MDL-83231](https://tracker.moodle.org/browse/MDL-83231)
+- `get_dataroot_size` in `\core\hub\registration` has been deprecated in favour of `get_filepool_usage`, which approximates disk usage from the database rather than scanning the dataroot directory, making it significantly more performant on large sites.
+
+  For more information see [MDL-88805](https://tracker.moodle.org/browse/MDL-88805)
 
 ### core_admin
 
@@ -106,6 +121,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Each method throws a specific exception from `\core_auth\exception` on failure.
 
   For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
+
+### core_courseformat
+
+#### Added
+
+- The `\core_courseformat\base::uses_linear_navigation()` method has been introduced to determine if a format supports linear navigation. Formats should override this to return true (optionally via a format setting) to enable the feature; it remains disabled by default.
+
+  For more information see [MDL-87302](https://tracker.moodle.org/browse/MDL-87302)
+- Two new steps have been added to simplify testing of linear navigation: the course linear navigation should/should not be visible
+
+  For more information see [MDL-87575](https://tracker.moodle.org/browse/MDL-87575)
 
 ### core_external
 
@@ -156,6 +182,36 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The base report `get_main_table()` method has been deprecated, calling code should instead call `get_main_table_sql()`
 
   For more information see [MDL-88397](https://tracker.moodle.org/browse/MDL-88397)
+
+### format_topics
+
+#### Added
+
+- The `enablelinearnav` setting has been introduced to control course linear navigation at the course level. A corresponding site-wide admin setting is also available to define the default value for newly created courses.
+
+  For more information see [MDL-87302](https://tracker.moodle.org/browse/MDL-87302)
+
+### format_weeks
+
+#### Added
+
+- The `enablelinearnav` setting has been introduced to control course linear navigation at the course level. A corresponding site-wide admin setting is also available to define the default value for newly created courses.
+
+  For more information see [MDL-87302](https://tracker.moodle.org/browse/MDL-87302)
+
+### mod_assign
+
+#### Added
+
+- Assignment override logic has been refactored and put in a new override_manager class. There are 3 new web services for managing assignment overrides: - mod_assign_save_overrides - mod_assign_get_overrides - mod_assign_delete_overrides
+
+  For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
+
+#### Deprecated
+
+- The delete_override, delete_all_overrides, move_group_override, reorder_group_overrides are now deprecated. Use the corresponding methods in the override_manager class instead: - override_manager::delete_override - override_manager::delete_all_overrides - override_manager::move_group_override - override_manager::reorder_group_overrides
+
+  For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
 
 ## 5.2
 

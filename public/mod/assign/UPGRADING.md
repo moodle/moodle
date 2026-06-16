@@ -1,5 +1,19 @@
 # mod_assign Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- Assignment override logic has been refactored and put in a new override_manager class. There are 3 new web services for managing assignment overrides: - mod_assign_save_overrides - mod_assign_get_overrides - mod_assign_delete_overrides
+
+  For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
+
+### Deprecated
+
+- The delete_override, delete_all_overrides, move_group_override, reorder_group_overrides are now deprecated. Use the corresponding methods in the override_manager class instead: - override_manager::delete_override - override_manager::delete_all_overrides - override_manager::move_group_override - override_manager::reorder_group_overrides
+
+  For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
+
 ## 5.2
 
 ### Removed

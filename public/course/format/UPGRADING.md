@@ -1,5 +1,16 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- The `\core_courseformat\base::uses_linear_navigation()` method has been introduced to determine if a format supports linear navigation. Formats should override this to return true (optionally via a format setting) to enable the feature; it remains disabled by default.
+
+  For more information see [MDL-87302](https://tracker.moodle.org/browse/MDL-87302)
+- Two new steps have been added to simplify testing of linear navigation: the course linear navigation should/should not be visible
+
+  For more information see [MDL-87575](https://tracker.moodle.org/browse/MDL-87575)
+
 ## 5.2
 
 ### Added
