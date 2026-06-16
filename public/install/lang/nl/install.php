@@ -69,6 +69,8 @@ $string['pathsunsecuredataroot'] = 'De plaats van de datamap is niet veilig.';
 $string['pathswrongadmindir'] = 'De adminmap bestaat niet';
 $string['phpextension'] = '{$a} PHP-extentie';
 $string['phpversion'] = 'PHP-versie';
+$string['webserverconfigproblemdescription'] = 'De webserver is niet geconfigureerd om toegang te beperken buiten de /public-map. Voor details over hoe je je webserver correct moet configureren raadpleeg je de documentatie op <a href="https://docs.moodle.org/en/Upgrading#Code_directories_restructure">Upgrading - Code directories restructure</a>. Als die geherconfigureerd is, <a href="{$a}">bezoek dan de root van de webserver</a>.';
+$string['webservernotconfigured'] = 'Webserver niet geconfigureerd';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Je krijgt deze pagina te zien omdat je met succes het <strong>{$a->packname} {$a->packversion}</strong> packet op je computer gezet en gestart hebt. Proficiat!';
 $string['welcomep30'] = 'Deze uitgave van <strong>{$a->installername}</strong> bevat de software die nodig is om een omgeving te creëren waarin <strong>Moodle</strong> zal werken, namelijk:';
