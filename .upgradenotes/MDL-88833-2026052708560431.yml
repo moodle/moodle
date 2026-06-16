@@ -1,0 +1,9 @@
+issueNumber: MDL-88833
+notes:
+  core:
+    - message: >-
+        The `search` landmark role in the `core/search_input_auto` template is
+        enclosed within a `searchrole` Mustache block so that templates that use
+        this template can override and remove the `search` landmark role when
+        deemed unnecessary.
+      type: changed
