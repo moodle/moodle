@@ -17,6 +17,7 @@
         $url->param('action', $action);
     }
     $PAGE->set_url($url);
+    $PAGE->set_show_navigation_footer(false);
 
     if (! $cm = get_coursemodule_from_id('choice', $id)) {
         throw new \moodle_exception("invalidcoursemodule");
