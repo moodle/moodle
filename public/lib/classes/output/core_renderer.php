@@ -3330,10 +3330,12 @@ EOD;
                         $am->add($divider);
                         break;
 
-                    case 'invalid':
-                        // Silently skip invalid entries (should we post a notification?).
+                    case 'header':
+                        $am->add($this->render_from_template('core/user_action_menu_item_header', $value));
                         break;
-
+                    case 'text':
+                        $am->add($this->render_from_template('core/user_action_menu_item_text', $value));
+                        break;
                     case 'link':
                         // Process this as a link item.
                         $pix = null;

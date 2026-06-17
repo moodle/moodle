@@ -59,7 +59,9 @@
                     pointer-events: none;
                 }
             }
-            .dropdown-item {
+            .dropdown-header,
+            .dropdown-item,
+            .dropdown-item-text {
                 padding: .25rem 1.75rem .25rem .75rem;
                 &.carousel-navigation-link::after {
                     font: var(--fa-font-solid);

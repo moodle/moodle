@@ -40297,10 +40297,14 @@ div.editor_atto_toolbar button .icon {
 .navbar.fixed-top .usermenu .dropdown-menu .carousel-navigation-link > * {
   pointer-events: none;
 }
-.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item {
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-header,
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item,
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item-text {
   padding: 0.25rem 1.75rem 0.25rem 0.75rem;
 }
-.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after {
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-header.carousel-navigation-link::after,
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
+.navbar.fixed-top .usermenu .dropdown-menu .dropdown-item-text.carousel-navigation-link::after {
   font: var(--fa-font-solid);
   content: "\f0da";
   font-size: 1rem;
