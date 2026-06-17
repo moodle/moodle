@@ -33,6 +33,11 @@
         "stickycontent": "<a href=\"#\">Moodle</a>",
         "stickyclasses": "justify-content-end",
         "disable": false,
+        "supplementary": {
+            "disabled": false,
+            "url": "#",
+            "text": "Supplementary content"
+        },
         "extras": [
             {
                 "attribute" : "data-example",
@@ -53,17 +58,25 @@
         {{/extras}}
     {{/ extradata }}
 >
-    <div class="sticky-footer-content-wrapper h-100 d-flex justify-content-center">
-        <div class="sticky-footer-content w-100 d-flex align-items-center px-3 py-2 {{!
+    {{# supplementary }}
+    <div class="sticky-footer-supplementary-wrapper">
+        <div class="sticky-footer-supplementary d-flex justify-content-center align-items-center" >
+            {{> core/action_link}}
+        </div>
+    </div>
+    {{/ supplementary }}
+
+    {{# stickycontent }}
+    <div class="sticky-footer-content-wrapper h-100 d-flex justify-content-center align-items-center">
+        <div class="sticky-footer-content w-100 {{!
             }} {{$ stickyclasses }}{{!
                 }}{{# stickyclasses }}{{ stickyclasses }}{{/ stickyclasses }}{{!
                 }}{{^ stickyclasses }}justify-content-end{{/ stickyclasses }}{{!
             }}{{/ stickyclasses }}"
         >
-            {{$ stickycontent }}
-                {{{stickycontent}}}
-            {{/ stickycontent }}
+            {{{stickycontent}}}
         </div>
+    {{/ stickycontent }}
     </div>
 </div>
 {{#js}}

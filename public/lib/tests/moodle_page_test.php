@@ -25,6 +25,7 @@
 
 namespace core;
 
+use action_link;
 use moodle_page;
 
 defined('MOODLE_INTERNAL') || die();
@@ -928,6 +929,17 @@ final class moodle_page_test extends \advanced_testcase {
             $page->get_ai_visibility_hint(),
             'AI visibility hint should be true after being re-enabled.'
         );
+    }
+
+    /**
+     * Test that supplementary content resets after calling reset_theme_and_output.
+     */
+    public function test_reset_theme_and_output_resets_supplementarycontent(): void {
+        $page = new moodle_page();
+        $page->set_supplementary_content(new action_link(new \moodle_url('/'), 'link'));
+        $this->assertNotNull($page->get_supplementary_content());
+        $page->reset_theme_and_output();
+        $this->assertNull($page->get_supplementary_content());
     }
 
     /**

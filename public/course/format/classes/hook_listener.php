@@ -141,24 +141,32 @@ class hook_listener {
         }
 
         $format = \course_get_format($page->course);
-        if (!$format->uses_linear_navigation()) {
-            // Only add the sticky footer for course formats using linear navigation.
+        $supplementarycontent = $page->get_supplementary_content();
+        if (!$format->uses_linear_navigation() && $supplementarycontent === null) {
+            // Only add the sticky footer for course formats using linear navigation or
+            // if there is supplementary content to be added.
             return;
         }
         $formatoptions = $format->get_format_options();
         $linearnavigationenabled = ($formatoptions[linearnavigationsettings::SETTING_ENABLE_LINEAR_NAV] ?? false);
-        if (!$linearnavigationenabled) {
-            // Linear navigation is not enabled, do not add the sticky footer.
+        if (!$linearnavigationenabled && $supplementarycontent === null) {
+            // Linear navigation is not enabled and there is no supplementary content, do not add the sticky footer.
             return;
         }
 
-        // Add the sticky footer with the linear navigation content.
-        $linearnavigationcontent = new output\local\linearnavigation\footer_content($page->cm->id);
-        $stickyfootercontent = $hook->renderer->render($linearnavigationcontent);
+        $stickyfootercontent = '';
+        if ($linearnavigationenabled) {
+            // Add the sticky footer with the linear navigation content.
+            $linearnavigationcontent = new output\local\linearnavigation\footer_content($page->cm->id);
+            $stickyfootercontent = $hook->renderer->render($linearnavigationcontent);
+        }
         $footer = new supplementary_sticky_footer(
             $stickyfootercontent,
             'course-linear-navigation',
         );
+        if ($supplementarycontent !== null) {
+            $footer->add_supplementary_content($supplementarycontent);
+        }
         $hook->add_html($hook->renderer->render($footer));
     }
 }
