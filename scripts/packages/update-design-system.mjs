@@ -36,11 +36,18 @@ export async function init() {
         version,
         cleanDirs: [bundleRoot],
         copies: [
-            { src: 'dist', dest: bundleJsRoot, label: '@moodlehq/design-system JS bundles' },
             {
-                src: path.join('tokens', 'scss'),
-                dest: path.join(bundleScssRoot, 'tokens', 'scss'),
-                label: '@moodlehq/design-system tokens',
+                src: path.join('dist', 'components'),
+                dest: path.join(bundleJsRoot, 'components'),
+                label: '@moodlehq/design-system JS component bundles',
+            },
+            { src: path.join('dist', 'index.js'), dest: path.join(bundleJsRoot, 'index.js'), label: '@moodlehq/design-system JS index' },
+            { src: path.join('dist', 'index.css'), dest: path.join(bundleJsRoot, 'index.css'), label: '@moodlehq/design-system CSS index' },
+            { src: path.join('dist', 'index.d.ts'), dest: path.join(bundleJsRoot, 'index.d.ts'), label: '@moodlehq/design-system TypeScript definitions' },
+            {
+                src: path.join('dist', 'tokens', 'scss'),
+                dest: path.join(bundleScssRoot, 'tokens'),
+                label: '@moodlehq/design-system SCSS tokens',
             },
         ],
         readmePaths: [bundleRoot],
@@ -48,6 +55,7 @@ export async function init() {
             { componentPath: path.join(rootDir, 'lib'), packageLocation: 'bundles/design-system' },
         ],
     });
+
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
