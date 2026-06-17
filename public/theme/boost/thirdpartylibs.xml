@@ -50,4 +50,16 @@
       <copyright>2023 Fonticons, Inc</copyright>
     </copyrights>
   </library>
+  <library>
+    <location>fonts/noto-sans</location>
+    <name>Noto Sans</name>
+    <description>Noto Sans is a global font family by Google, designed to support all languages with harmonious visual quality.</description>
+    <version>2.015</version>
+    <license>OFL</license>
+    <licenseversion>1.1</licenseversion>
+    <repository>https://github.com/notofonts/latin-greek-cyrillic</repository>
+    <copyrights>
+      <copyright>2022 The Noto Project Authors</copyright>
+    </copyrights>
+  </library>
 </libraries>
