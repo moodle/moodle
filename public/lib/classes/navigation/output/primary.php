@@ -319,16 +319,6 @@ class primary implements renderable, templatable {
             }
         }
 
-        $modifiedarray = array_map(function($value) {
-            $value->divider = $value->itemtype == 'divider';
-            $value->link = $value->itemtype == 'link';
-            if (isset($value->pix) && !empty($value->pix)) {
-                $value->pixicon = $value->pix;
-                unset($value->pix);
-            }
-            return $value;
-        }, $info->navitems);
-
         // Include the language menu as a submenu within the user menu.
         $languagemenu = new \core\output\language_menu($this->page);
         $langmenu = $languagemenu->export_for_template($output);
@@ -348,11 +338,11 @@ class primary implements renderable, templatable {
 
                 // Place the link before the 'Log out' menu item which is either the last item in the menu or
                 // second to last when 'Switch roles' is available.
-                $menuposition = count($modifiedarray) - 1;
+                $menuposition = count($info->navitems) - 1;
                 if (has_capability('moodle/role:switchroles', $PAGE->context)) {
-                    $menuposition = count($modifiedarray) - 2;
+                    $menuposition = count($info->navitems) - 2;
                 }
-                array_splice($modifiedarray, $menuposition, 0, [$language]);
+                array_splice($info->navitems, $menuposition, 0, [$language]);
 
                 // Generate the data for the language selector submenu.
                 $submenusdata[] = (object)[
@@ -364,8 +354,8 @@ class primary implements renderable, templatable {
         }
 
         // Add divider before the last item.
-        $modifiedarray[count($modifiedarray) - 2]->divider = true;
-        $usermenudata['items'] = $modifiedarray;
+        $info->navitems[count($info->navitems) - 2]->divider = true;
+        $usermenudata['items'] = $info->navitems;
         $usermenudata['submenus'] = array_values($submenusdata);
 
         return $usermenudata;

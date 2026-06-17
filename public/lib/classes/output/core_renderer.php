@@ -3348,7 +3348,7 @@ EOD;
                         }
 
                         $al = new action_menu\link_secondary(
-                            $value->url,
+                            new \moodle_url($value->url),
                             $pix,
                             $value->title,
                             ['class' => 'icon']
