@@ -39,7 +39,6 @@ class customfields implements renderable, templatable {
         /** @var content $content The content object. */
         protected content $content,
     ) {
-        $this->content = $content;
     }
 
     /**
