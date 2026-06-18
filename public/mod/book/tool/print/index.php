@@ -57,6 +57,7 @@ $PAGE->set_url('/mod/book/print.php', array('id' => $id, 'chapterid' => $chapter
 
 $PAGE->activityheader->disable();
 $PAGE->set_pagelayout("embedded");
+$PAGE->set_show_navigation_footer(false);
 
 unset($id);
 unset($chapterid);
