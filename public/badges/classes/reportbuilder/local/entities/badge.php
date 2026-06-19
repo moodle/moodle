@@ -18,10 +18,11 @@ declare(strict_types=1);
 
 namespace core_badges\reportbuilder\local\entities;
 
+use core_badges\reportbuilder\local\filters\criteria;
 use core\{context, context_helper};
 use core\context\system;
+use core\lang_string;
 use html_writer;
-use lang_string;
 use moodle_url;
 use stdClass;
 use core_reportbuilder\local\entities\base;
@@ -284,6 +285,16 @@ class badge extends base {
             new lang_string('name'),
             $this->get_entity_name(),
             "{$badgealias}.name"
+        ))
+            ->add_joins($this->get_joins());
+
+        // Criteria.
+        $filters[] = (new filter(
+            criteria::class,
+            'criteria',
+            new lang_string('bcriteria', 'core_badges'),
+            $this->get_entity_name(),
+            "{$badgealias}.id",
         ))
             ->add_joins($this->get_joins());
 
