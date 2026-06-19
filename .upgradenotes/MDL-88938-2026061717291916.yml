@@ -1,0 +1,17 @@
+issueNumber: MDL-88938
+notes:
+  core_user:
+    - message: >-
+        The `user_convert_text_to_menu_items()` method now returns a typed array
+        of `\core_user\output\user_action_menu\base` items
+      type: changed
+    - message: >-
+        Consumers of the `\core_user\hook\extend_user_menu` hook class for
+        extending the user menu should now call `add_menu_item()` on the hook
+        instance, which accepts only a parameter of type
+        `\core_user\output\user_action_menu\base`
+
+
+        The previous `add_navitem` method of the hook class has been deprecated
+        in favour of the above
+      type: deprecated

@@ -19,20 +19,6 @@
 
     Template for user action menu items.
 
-    Context variables required for this template:
-    * items - The different items to be rendered
-        * link - If a link is provided render it.
-          * title - The text to be shown for the link.
-          * url - The href for the link.
-          * pixicon - (Optional) The Moodle icon to use
-          * imgsrc - (Optional) If provided, uses this as source for an image tag. Note: pixicon is preferred.
-        * submenulink - If a submenu link is provided render it.
-          * submenuid - The id of the targeted submenu.
-          * title - The text to be shown for the link.
-          * pixicon - (Optional) The Moodle icon to use.
-          * imgsrc - (Optional) If provided, uses this as source for an image tag. Note: pixicon is preferred.
-        * divider - Whether a divider is to be displayed or not
-
     Example context (json):
     {
         "items": [
@@ -40,7 +26,11 @@
                 "link": {
                     "title": "Github user",
                     "url": "https://raw.githubusercontent.com/",
-                    "pixicon": "t/dashboard",
+                    "pixicon": [{
+                        "key": "t/dashboard",
+                        "component": "moodle",
+                        "title": "The dashboard icon"
+                    }],
                     "imgsrc": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"
                 },
                 "divider": 1
@@ -58,17 +48,6 @@
     }
 }}
 {{#items}}
-    {{#link}}
-        <a href="{{{url}}}" class="dropdown-item" role="menuitem" tabindex="-1">
-            {{#pixicon}}
-                {{#pix}}{{pixicon}}{{/pix}}
-            {{/pixicon}}
-            {{^pixicon}}
-                {{#imgsrc}}<img aria-hidden="true" src="{{imgsrc}}" alt="{{title}}"/>{{/imgsrc}}
-            {{/pixicon}}
-            {{title}}
-        </a>
-    {{/link}}
     {{#submenulink}}
         <a href="#" class="carousel-navigation-link dropdown-item" role="menuitem" tabindex="-1" data-carousel-target-id="carousel-item-{{submenuid}}">
             {{#pixicon}}
@@ -80,5 +59,16 @@
             {{title}}
         </a>
     {{/submenulink}}
-    {{#divider}}<div class="dropdown-divider"></div>{{/divider}}
+    {{#header}}
+        {{> core/user_action_menu_item_header}}
+    {{/header}}
+    {{#text}}
+        {{> core/user_action_menu_item_text}}
+    {{/text}}
+    {{#link}}
+        {{> core/user_action_menu_item_link}}
+    {{/link}}
+    {{#divider}}
+        {{> core/user_action_menu_item_divider}}
+    {{/divider}}
 {{/items}}
