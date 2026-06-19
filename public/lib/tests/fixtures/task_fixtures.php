@@ -126,6 +126,27 @@ class no_retry_adhoc_task extends adhoc_test_task {
 
 }
 
+/**
+ * Test class for a soft-retry (delayed) adhoc task.
+ *
+ * When executed, this task calls set_soft_retry_delay() with the delay
+ * stored in its custom data, simulating a task that requests a soft retry.
+ *
+ * @package    core
+ * @copyright  2026 Alex Damsted <alexdamsted@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class soft_retry_adhoc_test_task extends adhoc_test_task {
+    /**
+     * Execute the task, requesting a soft retry using the delay from custom data.
+     */
+    public function execute() {
+        $data = $this->get_custom_data();
+        $delay = isset($data->delay) ? (int) $data->delay : null;
+        $this->set_soft_retry_delay($delay);
+    }
+}
+
 class scheduled_test_task extends \core\task\scheduled_task {
     public function get_name() {
         return "Test task";

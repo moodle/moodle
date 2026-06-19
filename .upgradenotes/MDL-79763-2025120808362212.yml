@@ -1,0 +1,18 @@
+issueNumber: MDL-79763
+notes:
+  core\task\manager:
+    - message: >-
+        Added adhoc_task_delayed() method to allow an adhoc task to be retried
+        after a delay without marking it as failed. The delay uses exponential
+        backoff based on elapsed time since the task first started, capped at 24
+        hours.
+      type: added
+  core\task\adhoc_task:
+    - message: >-
+        Added set_soft_retry_delay(), get_soft_retry_delay() and
+        is_adhoc_task_delayed() methods. Call set_soft_retry_delay() from within
+        an adhoc task's execute() method to request a soft retry via
+        manager::adhoc_task_delayed() without marking the task as failed. Pass
+        null for automatic exponential backoff or a positive integer for an
+        explicit delay in seconds.
+      type: added

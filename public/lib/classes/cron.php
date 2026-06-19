@@ -33,7 +33,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cron {
-
     /** @var ?stdClass A copy of the standard cron 'user' */
     protected static ?stdClass $cronuser = null;
 
@@ -274,7 +273,6 @@ class cron {
             !\core\local\cli\shutdown::should_gracefully_exit() &&
             !\core\task\manager::static_caches_cleared_since($startprocesstime)
         ) {
-
             if ($checklimits && (time() - $startruntime) >= $maxruntime) {
                 if ($waiting) {
                     $waiting = false;
@@ -527,8 +525,12 @@ class cron {
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
             mtrace('... used ' . display_size(memory_get_peak_usage()) . ' peak memory');
-            mtrace("Adhoc task complete: " . get_class($task));
-            \core\task\manager::adhoc_task_complete($task);
+            if ($task->is_adhoc_task_delayed()) {
+                \core\task\manager::adhoc_task_delayed($task);
+            } else {
+                mtrace("Adhoc task complete: " . get_class($task));
+                \core\task\manager::adhoc_task_complete($task);
+            }
         } catch (\Throwable $e) {
             if ($DB && $DB->is_transaction_started()) {
                 error_log('Database transaction aborted automatically in ' . get_class($task));
