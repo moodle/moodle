@@ -20,6 +20,9 @@
  * @copyright  2024 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+const courseAssistControls = '.course-assist-controls';
+
 export default {
     ELEMENTS: {
         AIDRAWER: '#ai-drawer',
@@ -28,16 +31,17 @@ export default {
         MAIN_REGION: '[role="main"]',
         AIDRAWER_CLOSE: '#ai-drawer-close',
         RESPONSE: '.course-assist-response',
-        JUMPTO: '.course-assist-controls [data-region="jumpto"]',
-        ACTION: '.course-assist-controls [data-input-type="action"]',
+        COURSE_ASSIST_CONTROLS: courseAssistControls,
+        JUMPTO: `${courseAssistControls} [data-region="jumpto"]`,
+        ACTION: `${courseAssistControls} [data-input-type="action"]`,
     },
     ACTIONS: {
-        SUMMARY: '.course-assist-controls [data-action="summarise_text"]',
-        EXPLAIN: '.course-assist-controls [data-action="explain_text"]',
-        RETRY: '.course-assist-controls [data-action="retry"]',
+        SUMMARY: `${courseAssistControls} [data-action="summarise_text"]`,
+        EXPLAIN: `${courseAssistControls} [data-action="explain_text"]`,
+        RETRY: `${courseAssistControls} [data-action="retry"]`,
         DECLINE: '.ai-policy-block [data-action="decline"]',
         ACCEPT: '.ai-policy-block [data-action="accept"]',
-        REGENERATE: '.course-assist-controls [data-action="regenerate"]',
-        CANCEL: '.course-assist-controls [data-action="cancel"]',
+        REGENERATE: `${courseAssistControls} [data-action="regenerate"]`,
+        CANCEL: `${courseAssistControls} [data-action="cancel"]`,
     }
 };
