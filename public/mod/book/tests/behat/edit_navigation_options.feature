@@ -38,6 +38,6 @@ Feature: In a book, change the navigation options
     And I should see "Test book"
     And I should see "2. Test chapter 2"
     And I click on "1. Test chapter 1" "link" in the "Table of contents" "block"
-    And "Next" "link" should exist
+    And "Next: Test chapter 2" "link" should exist
     And I click on "2. Test chapter 2" "link" in the "Table of contents" "block"
-    And "Previous" "link" should exist
+    And "Previous: Test chapter 1" "link" should exist
