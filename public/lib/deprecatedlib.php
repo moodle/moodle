@@ -720,3 +720,392 @@ function badges_get_default_issuer() {
     $issuer['type'] = OPEN_BADGES_V2_TYPE_ISSUER;
     return $issuer;
 }
+
+/**
+ * Creates a user.
+ *
+ * @throws moodle_exception
+ * @param stdClass|array $user user to create
+ * @param bool $updatepassword if true, authentication plugin will update password.
+ * @param bool $triggerevent set false if user_created event should not be triggered.
+ * @return int id of the newly created user
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::create_user() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::create_user()', since: '5.3', mdl: 'MDL-82650')]
+function user_create_user($user, $updatepassword = true, $triggerevent = true) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::create_user((object) $user, $updatepassword, $triggerevent);
+}
+
+/**
+ * Update a user with a user object (will compare against the ID).
+ *
+ * @throws moodle_exception
+ * @param stdClass|array $user the user to update
+ * @param bool $updatepassword if true, authentication plugin will update password.
+ * @param bool $triggerevent set false if user_updated event should not be triggered.
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::update_user() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::update_user()', since: '5.3', mdl: 'MDL-82650')]
+function user_update_user($user, $updatepassword = true, $triggerevent = true) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\user::update_user($user, $updatepassword, $triggerevent);
+}
+
+/**
+ * Marks user deleted in internal user database and notifies the auth plugin.
+ *
+ * @param object $user Userobject before delete (without system magic quotes)
+ * @return boolean success
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::delete_user() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::delete_user()', since: '5.3', mdl: 'MDL-82650')]
+function user_delete_user($user) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::delete_user($user);
+}
+
+/**
+ * Get users by id.
+ *
+ * @param array $userids id of users to retrieve
+ * @return array
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_users_by_id() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_users_by_id()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_users_by_id($userids) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_users_by_id($userids);
+}
+
+/**
+ * Returns the list of default displayable fields.
+ *
+ * @return array of user fields
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_default_fields() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_default_fields()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_default_fields() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_default_fields();
+}
+
+/**
+ * Give user record from mdl_user, build an array contains all user details.
+ *
+ * @throws moodle_exception
+ * @param stdClass $user user record from mdl_user
+ * @param stdClass $course moodle course
+ * @param array $userfields required fields
+ * @return array|null
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_user_details() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_user_details()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_user_details($user, $course = null, array $userfields = array()) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_user_details($user, $course, $userfields);
+}
+
+/**
+ * Tries to obtain user details, either from system profile or course profile.
+ *
+ * @param stdClass $user The user.
+ * @param array $userfields An array of userfields to be returned (optional)
+ * @return array|null
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_user_details_courses() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_user_details_courses()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_user_details_courses($user, array $userfields = []) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_user_details_courses($user, $userfields);
+}
+
+/**
+ * Check if $USER have the necessary capabilities to obtain user details.
+ *
+ * @param stdClass $user
+ * @param stdClass $course if null then only consider system profile otherwise also consider the course's profile.
+ * @return bool true if $USER can view user details.
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::can_view_user_details_cap() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::can_view_user_details_cap()', since: '5.3', mdl: 'MDL-82650')]
+function can_view_user_details_cap($user, $course = null) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::can_view_user_details_cap($user, $course);
+}
+
+/**
+ * Count the number of failed login attempts for the given user, since last successful login.
+ *
+ * @param int|stdclass $user user id or object.
+ * @param bool $reset Resets failed login count, if set to true.
+ * @return int number of failed login attempts since the last successful login.
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::count_login_failures() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::count_login_failures()', since: '5.3', mdl: 'MDL-82650')]
+function user_count_login_failures($user, $reset = true) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::count_login_failures($user, $reset);
+}
+
+/**
+ * Converts a string into a flat array of menu items.
+ *
+ * @param string $text the menu items definition
+ * @param moodle_page $page the current page
+ * @return array
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::convert_text_to_menu_items() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::convert_text_to_menu_items()', since: '5.3', mdl: 'MDL-82650')]
+function user_convert_text_to_menu_items($text, $page) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::convert_text_to_menu_items($text, $page);
+}
+
+/**
+ * Returns available default homepage options for user preferences.
+ *
+ * @return array
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_default_homepage_options() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_default_homepage_options()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_default_homepage_options(): array {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_default_homepage_options();
+}
+
+/**
+ * Get a list of essential user navigation items.
+ *
+ * @param stdclass $user user object.
+ * @param moodle_page $page page object.
+ * @param array $options associative array.
+ * @return stdClass navigation information object
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_user_navigation_info() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_user_navigation_info()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_user_navigation_info($user, $page, $options = array()) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_user_navigation_info($user, $page, $options);
+}
+
+/**
+ * Add password to the list of used hashes for this user.
+ *
+ * @param int $userid user id
+ * @param string $password plaintext password
+ * @return void
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::add_password_history() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::add_password_history()', since: '5.3', mdl: 'MDL-82650')]
+function user_add_password_history(int $userid, #[\SensitiveParameter] string $password): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\user::add_password_history($userid, $password);
+}
+
+/**
+ * Was this password used before on change or reset password page?
+ *
+ * @param int $userid user id
+ * @param string $password plaintext password
+ * @return bool true if password reused
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::is_previously_used_password() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::is_previously_used_password()', since: '5.3', mdl: 'MDL-82650')]
+function user_is_previously_used_password($userid, $password) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::is_previously_used_password($userid, $password);
+}
+
+/**
+ * Remove a user device from the Moodle database (for PUSH notifications usually).
+ *
+ * @param string $uuid The device UUID.
+ * @param string $appid The app id. If empty all the devices matching the UUID for the user will be removed.
+ * @param int|null $userid The user id. If null, the current user will be used.
+ * @return bool true if removed, false if the device didn't exists in the database
+ * @since Moodle 2.9
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::remove_user_device() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::remove_user_device()', since: '5.3', mdl: 'MDL-82650')]
+function user_remove_user_device($uuid, $appid = "", $userid = null) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::remove_user_device($uuid, $appid, $userid);
+}
+
+/**
+ * Trigger user_list_viewed event.
+ *
+ * @param stdClass  $course course  object
+ * @param stdClass  $context course context object
+ * @since Moodle 2.9
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::list_view() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::list_view()', since: '5.3', mdl: 'MDL-82650')]
+function user_list_view($course, $context) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    \core\user::list_view($course, $context);
+}
+
+/**
+ * Returns the url to use for the "Grades" link in the user navigation.
+ *
+ * @param int $userid The user's ID.
+ * @param int $courseid The course ID if available.
+ * @return mixed A URL to be directed to for "Grades".
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::mygrades_url() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::mygrades_url()', since: '5.3', mdl: 'MDL-82650')]
+function user_mygrades_url($userid = null, $courseid = SITEID) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::mygrades_url($userid, $courseid);
+}
+
+/**
+ * Check if the current user has permission to view details of the supplied user.
+ *
+ * @param object $user The other user's details.
+ * @param object $course if provided, only check permissions in this course.
+ * @param context $usercontext The user context if available.
+ * @return bool true for ability to view this user, else false.
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::can_view_profile() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::can_view_profile()', since: '5.3', mdl: 'MDL-82650')]
+function user_can_view_profile($user, $course = null, $usercontext = null) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::can_view_profile($user, $course, $usercontext);
+}
+
+/**
+ * Process plugin callbacks for profile visibility.
+ *
+ * @param stdClass $user The user whose profile is being checked.
+ * @param stdClass|null $course The course context, if applicable.
+ * @param stdClass|null $usercontext The user context, if applicable.
+ * @return int One of the core_user::VIEWPROFILE_* constants.
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::process_profile_callbacks() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::process_profile_callbacks()', since: '5.3', mdl: 'MDL-82650')]
+function user_process_profile_callbacks(stdClass $user, ?stdClass $course = null, ?stdClass $usercontext = null): int {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::process_profile_callbacks($user, $course, $usercontext);
+}
+
+/**
+ * Returns users tagged with a specified tag.
+ *
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode
+ * @param int $fromctx context id where the link was displayed
+ * @param int $ctx context id where to search for records
+ * @param bool $rec search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return \core_tag\output\tagindex
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_tagged_users() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_tagged_users()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_tagged_users($tag, $exclusivemode = false, $fromctx = 0, $ctx = 0, $rec = 1, $page = 0) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_tagged_users($tag, $exclusivemode, $fromctx, $ctx, $rec, $page);
+}
+
+/**
+ * Returns SQL that can be used to limit a query to a period where the user last accessed / did not access a course.
+ *
+ * @param int $accesssince The unix timestamp to compare to users' last access
+ * @param string $tableprefix
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
+ * @return string
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_course_lastaccess_sql() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_course_lastaccess_sql()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_course_lastaccess_sql($accesssince = null, $tableprefix = 'ul', $haveaccessed = false) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_course_lastaccess_sql($accesssince, $tableprefix, $haveaccessed);
+}
+
+/**
+ * Returns SQL that can be used to limit a query to a period where the user last accessed / did not access the system.
+ *
+ * @param int $accesssince The unix timestamp to compare to users' last access
+ * @param string $tableprefix
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
+ * @return string
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_user_lastaccess_sql() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_user_lastaccess_sql()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_user_lastaccess_sql($accesssince = null, $tableprefix = 'u', $haveaccessed = false) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_user_lastaccess_sql($accesssince, $tableprefix, $haveaccessed);
+}
+
+/**
+ * Returns SQL that can be used to limit a query to a period where the user last accessed or did not access something.
+ *
+ * @param string $columnname The name of the access column to check against
+ * @param int $accesssince The unix timestamp to compare to users' last access
+ * @param string $tableprefix The query prefix of the table to check
+ * @param bool $haveaccessed Whether to match against users who HAVE accessed since $accesssince (optional)
+ * @return string
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::get_lastaccess_sql() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::get_lastaccess_sql()', since: '5.3', mdl: 'MDL-82650')]
+function user_get_lastaccess_sql($columnname, $accesssince, $tableprefix, $haveaccessed = false) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::get_lastaccess_sql($columnname, $accesssince, $tableprefix, $haveaccessed);
+}
+
+/**
+ * Map an internal field name to a valid purpose from: "https://www.w3.org/TR/WCAG21/#input-purposes"
+ *
+ * @param integer $userid
+ * @param string $fieldname
+ * @return string $purpose (empty string if there is no mapping).
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::edit_map_field_purpose() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core\user::edit_map_field_purpose()', since: '5.3', mdl: 'MDL-82650')]
+function user_edit_map_field_purpose($userid, $fieldname) {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core\user::edit_map_field_purpose($userid, $fieldname);
+}
+
+/**
+ * Update the users public key for the specified device and app.
+ *
+ * @param string $uuid The device UUID.
+ * @param string $appid The app id, usually something like com.moodle.moodlemobile.
+ * @param string $publickey The app generated public key.
+ * @return bool
+ * @since Moodle 4.2
+ * @deprecated since Moodle 5.3 MDL-82650 - use \core_user\devicekey::update_device_public_key() instead.
+ * @todo MDL-89001 Final deprecation in Moodle 6.0.
+ */
+#[\core\attribute\deprecated('\core_user\devicekey::update_device_public_key()', since: '5.3', mdl: 'MDL-82650')]
+function user_update_device_public_key(string $uuid, string $appid, string $publickey): bool {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    return \core_user\devicekey::update_device_public_key($uuid, $appid, $publickey);
+}
