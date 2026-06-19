@@ -639,4 +639,37 @@ final class manager_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test that scheduled tasks can have their next run time set.
+     */
+    public function test_set_scheduled_task_nextruntime(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        $clock = $this->mock_clock_with_frozen();
+
+        // Disable all the tasks, so we can insert our own and be sure it's the only one being run.
+        $DB->set_field('task_scheduled', 'disabled', 1);
+
+        $task = new scheduled_test_task();
+        $task->set_month('*');
+        $task->set_hour('0');
+        $task->set_next_run_time($clock->time() - HOURSECS);
+        $DB->insert_record('task_scheduled', manager::record_from_scheduled_task($task));
+
+        $first = \core\task\manager::get_next_scheduled_task($clock->time());
+        $this->assertNotNull($first);
+        manager::scheduled_task_complete($first);
+
+        $next = \core\task\manager::get_next_scheduled_task($clock->time() + 10);
+        $this->assertNull($next);
+
+        manager::set_scheduled_task_nextruntime($first, $clock->time() + 20);
+
+        $next = \core\task\manager::get_next_scheduled_task($clock->time() + 30);
+        $this->assertNotNull($next);
+        manager::scheduled_task_complete($next);
+    }
 }

@@ -133,4 +133,19 @@ class behat_admin extends behat_base {
             $this->getSession()->wait($timeout, $javascript);
         }
     }
+
+    /**
+     * Sets pathtophp to the PHP binary.
+     *
+     * @Given /^the PHP CLI path is set to the system PHP binary$/
+     */
+    public function the_php_cli_path_is_set_to_the_system_php_binary(): void {
+        $pathtophp = realpath(PHP_BINARY);
+
+        if (!$pathtophp || !is_file($pathtophp)) {
+            throw new Exception('PHP CLI binary could not be resolved.');
+        }
+
+        set_config('pathtophp', $pathtophp);
+    }
 }
