@@ -21,7 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import ForumEvents from 'mod_forum/forum_events';
 import Notification from 'core/notification';
+import {publish} from 'core/pubsub';
 import {getString} from 'core/str';
 import {add as addToast} from 'core/toast';
 import Repository from 'mod_forum/repository';
@@ -29,11 +31,12 @@ import Repository from 'mod_forum/repository';
 /**
  * Register event listeners for the subscription/tracking toggles in the overview.
  * @param {HTMLElement} toggleElement The toggle root element
+ * @param {Boolean} changeLabel Whether to update the visible label text
  */
-function registerEventListeners(toggleElement) {
+function registerEventListeners(toggleElement, changeLabel = true) {
     toggleElement.addEventListener('change', () => {
         if (toggleElement.dataset.type === 'forum-subscription-toggle') {
-            subscriptionToggleClickHandler(toggleElement);
+            subscriptionToggleClickHandler(toggleElement, changeLabel);
         }
         if (toggleElement.dataset.type === 'forum-track-toggle') {
             trackToggleClickHanldler(toggleElement);
@@ -45,11 +48,13 @@ function registerEventListeners(toggleElement) {
  * Toggle subscription element click handler.
  *
  * @param {HTMLElement} toggleElement The toggle element that was clicked
+ * @param {Boolean} changeLabel Whether to update the visible label text
  * @return {Promise<void>}
  */
-async function subscriptionToggleClickHandler(toggleElement) {
+async function subscriptionToggleClickHandler(toggleElement, changeLabel = true) {
     const forumId = toggleElement.dataset.forumid;
     const forumName = toggleElement.dataset.forumname;
+    const userName = toggleElement.dataset.username;
     const newState = toggleElement.dataset.targetstate;
     if (!forumId || !newState) {
         return;
@@ -58,18 +63,32 @@ async function subscriptionToggleClickHandler(toggleElement) {
         const context = await Repository.setForumSubscriptionState(forumId, newState);
         const newTargetState = !!context.userstate.subscribed;
 
+        let labelKey = '';
+        if (changeLabel) {
+            labelKey = newTargetState ? 'unsubscribe' : 'subscribe';
+        }
+
         await updateSwitchState(
             toggleElement,
             newTargetState,
-            newTargetState ? 'subscribe' : 'unsubscribe',
+            labelKey,
+            newTargetState ? 'unsubscribefromforum' : 'subscribetoforum',
+            forumName,
         );
 
         const feedbackMessage = await getString(
-            newTargetState ? 'subscribedtoforum' : 'unsubscribedfromforum',
+            newTargetState ? 'nowsubscribed' : 'nownotsubscribed',
             'mod_forum',
-            forumName,
+            newTargetState ? {forum: forumName} : {name: userName, forum: forumName},
         );
-        addToast(feedbackMessage, {visuallyHidden: true});
+        addToast(feedbackMessage);
+
+        const newLabel = await getString(newTargetState ? 'unsubscribediscussion' : 'subscribediscussion', 'mod_forum');
+        publish(ForumEvents.ALL_SUBSCRIPTION_TOGGLED, {
+            forumId: forumId,
+            subscriptionState: newTargetState,
+            newLabel: newLabel,
+        });
     } catch (error) {
         Notification.exception(error);
     }
@@ -96,6 +115,8 @@ async function trackToggleClickHanldler(toggleElement) {
             toggleElement,
             newTargetState,
             newTargetState ? 'trackingon' : 'trackingoff',
+            newTargetState ? 'trackforforum' : 'untrackforforum',
+            forumName,
         );
 
         const feedbackMessage = await getString(
@@ -115,26 +136,39 @@ async function trackToggleClickHanldler(toggleElement) {
  * @param {HTMLElement} toggleElement The toggle element to update
  * @param {Boolean} newTargetState The new target state to set (true for subscribed, false for unsubscribed)
  * @param {string} stringKey The string key to retrieve the label text
+ * @param {string} ariaLabelStringKey The string key to retrieve the aria-label text
+ * @param {string} forumName The forum name for aria-label interpolation
  * @return {Promise<void>}
  */
-async function updateSwitchState(toggleElement, newTargetState, stringKey) {
+async function updateSwitchState(toggleElement, newTargetState, stringKey, ariaLabelStringKey, forumName) {
     toggleElement.dataset.targetstate = newTargetState ? 0 : 1;
-    const string = await getString(stringKey, 'mod_forum');
-    const label = toggleElement.closest('td').querySelector(`label[for="${toggleElement.id}"] span`);
-    label.textContent = string;
+    if (stringKey) {
+        const string = await getString(stringKey, 'mod_forum');
+        const labelSelector = `label[for="${toggleElement.id}"] span`;
+        const label = toggleElement.closest('td')?.querySelector(labelSelector) || document.querySelector(labelSelector);
+        if (label) {
+            label.textContent = string;
+        }
+    }
+
+    if (ariaLabelStringKey && forumName) {
+        const ariaLabelString = await getString(ariaLabelStringKey, 'mod_forum', forumName);
+        toggleElement.setAttribute('aria-label', ariaLabelString);
+    }
 }
 
 /**
  * Initialize the forum overview toggle functionality.
  *
  * @param {string} toggleSelector The CSS selector for the toggle element to initialize
+ * @param {Boolean} changeLabel Whether to update the visible label text
  * @throws {Error} If no elements are found with the provided selector
  */
-export const init = (toggleSelector) => {
+export const init = (toggleSelector, changeLabel = true) => {
     const toggleElement = document.querySelector(toggleSelector);
     if (!toggleElement) {
         // If the user cannot track/subscribe to any course forum, the toggle will not be present.
         return;
     }
-    registerEventListeners(toggleElement);
+    registerEventListeners(toggleElement, changeLabel);
 };

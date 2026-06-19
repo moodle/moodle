@@ -116,19 +116,30 @@ class forum_actionbar implements renderable, templatable {
         $cansubscribe = $activeenrolled && !($this->forum->get_subscription_mode() === FORUM_FORCESUBSCRIBE) &&
             (!($this->forum->get_subscription_mode() === FORUM_DISALLOWSUBSCRIBE) || $canmanage);
         if ($cansubscribe) {
-            $returnurl =
-                (new moodle_url('/mod/forum/view.php', ['id' => $this->forum->get_course_module_record()->id]))->out(false);
-            if (!\mod_forum\subscriptions::is_subscribed($USER->id, $forumobject, null, $this->forum->get_course_module_record())) {
-                $data['subscribetoforum'] = (new moodle_url(
-                    '/mod/forum/subscribe.php',
-                    ['id' => $forumobject->id, 'sesskey' => sesskey(), 'returnurl' => $returnurl]
-                    ))->out(false);
+            $subscribed = \mod_forum\subscriptions::is_subscribed($USER->id, $forumobject);
+            $label = get_string('subscribe', 'mod_forum');
+            if ($subscribed) {
+                $arialabel = get_string('unsubscribefromforum', 'mod_forum', $forumobject->name);
             } else {
-                $data['unsubscribefromforum'] = (new moodle_url(
-                    '/mod/forum/subscribe.php',
-                    ['id' => $forumobject->id, 'sesskey' => sesskey(), 'returnurl' => $returnurl]
-                ))->out(false);
+                $arialabel = get_string('subscribetoforum', 'mod_forum', $forumobject->name);
             }
+            $extraattributes = [
+                ['name' => 'data-type', 'value' => 'forum-subscription-toggle'],
+                ['name' => 'data-action', 'value' => 'toggle'],
+                ['name' => 'data-forumid', 'value' => $forumobject->id],
+                ['name' => 'data-forumname', 'value' => $forumobject->name],
+                ['name' => 'data-username', 'value' => fullname($USER)],
+                ['name' => 'data-targetstate', 'value' => !$subscribed],
+                ['name' => 'aria-label', 'value' => $arialabel],
+            ];
+
+            $data['subscribetoggle'] = [
+                'id' => 'forum-subscription-toggle-' . $forumobject->id,
+                'checked' => $subscribed,
+                'extraattributes' => $extraattributes,
+                'label' => $label,
+                'extraclasses' => 'd-flex flex-row-reverse align-items-center gap-6',
+            ];
         }
         return $data;
     }

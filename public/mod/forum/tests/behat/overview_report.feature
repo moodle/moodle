@@ -63,7 +63,7 @@ Feature: Testing overview integration in mod_forum
     And I am on the "Course 1" "course > activities > forum" page
     And I click on "input[data-type=forum-subscription-toggle]" "css_element" in the "No discussions" "table_row"
     And I follow "No discussions"
-    And I should see "Unsubscribe from forum"
+    And the field "Subscribe to forum" matches value "1"
     # Check Tracking toggle works.
     And I am on the "Course 1" "course > activities > forum" page
     And I click on "input[data-type=forum-track-toggle]" "css_element" in the "Unread posts" "table_row"
@@ -93,7 +93,7 @@ Feature: Testing overview integration in mod_forum
     And I am on the "Course 1" "course > activities > forum" page
     And I click on "input[data-type=forum-subscription-toggle]" "css_element" in the "No discussions" "table_row"
     And I follow "No discussions"
-    And I should see "Unsubscribe from forum"
+    And the field "Subscribe to forum" matches value "1"
     # Check Tracking toggle works.
     And I am on the "Course 1" "course > activities > forum" page
     And I click on "input[data-type=forum-track-toggle]" "css_element" in the "Unread posts" "table_row"
