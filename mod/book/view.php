@@ -92,10 +92,13 @@ if ($chapterid == '0') { // Go to first chapter if no given.
 }
 
 // Prepare header.
-$pagetitle = $book->name;
+$titleparts = [];
 if ($chapter = $DB->get_record('book_chapters', ['id' => $chapterid, 'bookid' => $book->id])) {
-    $pagetitle .= ": {$chapter->title}";
+    $chaptertitle = book_get_chapter_title($chapterid, $chapters, $book, $context);
+    $titleparts[] = $chaptertitle;
 }
+$titleparts[] = format_string($book->name, true, ['context' => $context]);
+$pagetitle = implode(moodle_page::TITLE_SEPARATOR, $titleparts);
 
 $PAGE->set_other_editing_capability('mod/book:edit');
 $PAGE->set_title($pagetitle);
@@ -130,14 +133,15 @@ if (!$chapterid) {
     echo $OUTPUT->box_start('generalbox book_content' . $hidden, 'mod_book-chapter');
 
     if (!$book->customtitles) {
+        $headinglevel = $PAGE->activityheader->get_heading_level();
         if (!$chapter->subchapter) {
             $currtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
-            echo $OUTPUT->heading($currtitle, 3);
+            echo $OUTPUT->heading($currtitle, $headinglevel);
         } else {
             $currtitle = book_get_chapter_title($chapters[$chapter->id]->parent, $chapters, $book, $context);
             $currsubtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
-            echo $OUTPUT->heading($currtitle, 3);
-            echo $OUTPUT->heading($currsubtitle, 4);
+            echo $OUTPUT->heading($currtitle, $headinglevel);
+            echo $OUTPUT->heading($currsubtitle, ++$headinglevel);
         }
     }
     $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book',
