@@ -161,9 +161,25 @@ class restore_plan extends base_plan implements loggable {
      * Function responsible for executing the tasks of any plan
      */
     public function execute() {
+        global $DB;
+
         if ($this->controller->get_status() != backup::STATUS_AWAITING) {
             throw new restore_controller_exception('restore_not_executable_awaiting_required', $this->controller->get_status());
         }
+
+        // If restoring to an existing course, check if the course is marked for deletion.
+        // If so, abort the restore and set the status to finished to prevent restoring into a course scheduled for deletion.
+        if ($this->controller->get_target() != backup::TARGET_NEW_COURSE) {
+            $course = $DB->get_record('course', ['id' => $this->controller->get_courseid()]);
+            if (!empty($course->deletioninprogress)) {
+                $this->controller->set_status(backup::STATUS_FINISHED_OK);
+                throw new restore_controller_exception(
+                    'restore_not_executable_course_to_be_deleted',
+                    $this->controller->get_status()
+                );
+            }
+        }
+
         $this->controller->set_status(backup::STATUS_EXECUTING);
         parent::execute();
         $this->controller->set_status(backup::STATUS_FINISHED_OK);

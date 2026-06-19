@@ -107,6 +107,7 @@
         <FIELD NAME="showcompletionconditions" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to display completion conditions to user. 0 = do not display, 1 = display conditions"/>
         <FIELD NAME="pdfexportfont" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="enableaitools" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to allow the use of AI tools in this course. 1 = enabled, 0 = disabled."/>
+        <FIELD NAME="deletioninprogress" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether the course is marked for asynchronous deletion"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -72,10 +72,13 @@ $string['coursecontentnotifupdate'] = '{$a->coursename} content change';
 $string['coursecontentnotifupdatebody'] = '<p>{$a->moduletypename} <a href="{$a->link}">{$a->modulename}</a> has been changed in the course <a href="{$a->courselink}">{$a->coursename}</a>.</p><p><a href="{$a->notificationpreferenceslink}">Change your notification preferences</a></p>';
 $string['coursecontentnotification_help'] = 'Tick the box to notify course participants about this new or changed activity or resource. Only users who can access the activity or resource will receive the notification.';
 $string['coursecount'] = 'Course count';
+$string['coursedeletionasynctask'] = 'Delete a course asynchronously task';
+$string['coursedeletionsettings'] = 'Delete Course';
 $string['coursemodule'] = 'Course module';
 $string['coursenotyetstarted'] = 'The course has not yet started';
 $string['coursenotyetfinished'] = 'The course has not yet finished';
 $string['courseparticipants'] = 'Course participants';
+$string['coursetobedeleted'] = 'Queued for deletion';
 $string['coursetoolong'] = 'The course is too long';
 $string['courseurl'] = 'Course URL';
 $string['customfield_islocked'] = 'Locked';
@@ -94,6 +97,8 @@ $string['downloadcontent'] = 'Include in course content download';
 $string['downloadcontent_help'] = 'Should this activity or resource be included in the zip file of course content available for download? File, Folder, Page and Label can be fully downloaded. For all other activities and resources, only the name and description are downloaded. This option requires download course content to be enabled in the course settings.
 
 The setting has no effect on mobile app content download for offline usage.';
+$string['enablecourseasyncdeletion'] = 'Delete courses asynchronously';
+$string['enablecourseasyncdeletion_help'] = 'If enabled, courses are deleted in the background as asynchronous ad-hoc tasks, preventing timeouts when deleting large courses.';
 $string['enabledownloadcoursecontent'] = 'Enable download course content';
 $string['error:sitehomeisdisabled'] = 'Home has been disabled by an administrator.';
 $string['errorendbeforestart'] = 'The end date ({$a}) is before the course start date.';

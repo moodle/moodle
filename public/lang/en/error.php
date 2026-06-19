@@ -529,6 +529,7 @@ $string['remotedownloadnotallowed'] = 'Download of components to your server isn
 $string['reportnotavailable'] = 'This type of report is only available for the site course';
 $string['requirecorrectaccess'] = 'Invalid url or port.';
 $string['requireloginerror'] = 'Course or activity not accessible.';
+$string['restore_not_executable_course_to_be_deleted'] = 'Cannot restore into this course because it is scheduled for deletion.';
 $string['restorechecksumfailed'] = 'There was a problem with the restore information stored in your session. Please check your PHP memory/database package size limits. Restore stopped.';
 $string['restore_path_element_missingmethod'] = 'Restore method {$a} is missing. It must be defined by a developer.';
 $string['restore_path_element_noobject'] = 'Restore object {$a} is not an object.';

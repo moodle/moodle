@@ -24,6 +24,8 @@
 
 namespace core_course\management;
 
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/course/lib.php');
@@ -49,6 +51,9 @@ class helper {
      * @var null|array
      */
     protected static $expandedcategories = null;
+
+    /** @var int Constant declaring that a course has been scheduled for deletion. */
+    const COURSE_DELETION_IN_PROGRESS = 1;
 
     /**
      * Returns course details in an array ready to be printed.
@@ -420,6 +425,12 @@ class helper {
             array('courseid' => $course->id, 'categoryid' => $course->category, 'sesskey' => \sesskey())
         );
         $actions = array();
+
+        // If the course is marked for deletion, no more actions should be possible.
+        if ($course->deletioninprogress == self::COURSE_DELETION_IN_PROGRESS) {
+            return $actions;
+        }
+
         // Edit.
         if ($course->can_edit()) {
             $actions[] = array(
@@ -680,6 +691,36 @@ class helper {
         }
         $course = new \core_course_list_element($courserecordorid);
         return self::action_course_hide($course);
+    }
+
+    /**
+     * Marks a course as 'to be deleted' and set it invisible.
+     *
+     * @param int|\stdClass $courserecordorid
+     * @return void
+     */
+    public static function action_course_mark_for_deletioninprogress(int|\stdClass $courserecordorid): void {
+        global $DB;
+        // Early exit if trying to delete the site course.
+        if (is_int($courserecordorid) && $courserecordorid == SITEID) {
+            return;
+        }
+        $course = is_int($courserecordorid) ? get_course($courserecordorid) : $courserecordorid;
+
+        if (empty($course) || $course->id === SITEID) {
+            return;
+        }
+
+        // Use set_field to update specific fields without overwriting cacherev.
+        $DB->set_field('course', 'visible', 0, ['id' => $course->id]);
+        $DB->set_field('course', 'deletioninprogress', self::COURSE_DELETION_IN_PROGRESS, ['id' => $course->id]);
+
+        // Purge the course modinfo cache after DB updates to avoid race conditions.
+        \course_modinfo::purge_course_cache($course->id);
+
+        // Clear the static instance cache to ensure the next get_fast_modinfo() call
+        // triggers a rebuild with the updated cacherev.
+        \course_modinfo::clear_instance_cache($course->id);
     }
 
     /**
