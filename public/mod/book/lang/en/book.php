@@ -99,9 +99,7 @@ $string['previouschapter'] = 'Previous chapter';
 $string['confchapterdelete'] = 'Do you really want to delete this chapter?';
 $string['confchapterdeleteall'] = 'Do you really want to delete this chapter and all its subchapters?';
 $string['top'] = 'top';
-$string['navprev'] = 'Previous';
 $string['navprevtitle'] = 'Previous: {$a}';
-$string['navnext'] = 'Next';
 $string['navnexttitle'] = 'Next: {$a}';
 $string['navexit'] = 'Exit book';
 $string['book:addinstance'] = 'Add a new book';
@@ -120,3 +118,7 @@ $string['tagarea_book_chapters'] = 'Book chapters';
 
 // Deprecated since Moodle 4.5.
 $string['tagsdeleted'] = 'Book tags have been deleted';
+
+// Deprecated since Moodle 5.3.
+$string['navnext'] = 'Next';
+$string['navprev'] = 'Previous';

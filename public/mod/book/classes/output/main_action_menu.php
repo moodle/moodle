@@ -134,15 +134,17 @@ class main_action_menu implements templatable, renderable {
         $data = [];
 
         if ($next) {
+            $nextchaptertitle = format_string($next->title, options: ['context' => $context, 'escape' => false]);
             $nextdata = [
-                'title' => get_string('navnext', 'mod_book'),
+                'title' => get_string('navnexttitle', 'book', $nextchaptertitle),
                 'url' => (new moodle_url('/mod/book/view.php', ['id' => $this->cmid, 'chapterid' => $next->id]))->out(false)
             ];
             $data['next'] = $nextdata;
         }
         if ($previous) {
+            $previouschaptertitle = format_string($previous->title, options: ['context' => $context, 'escape' => false]);
             $previousdata = [
-                'title' => get_string('navprev', 'mod_book'),
+                'title' => get_string('navprevtitle', 'book', $previouschaptertitle),
                 'url' => (new moodle_url('/mod/book/view.php', ['id' => $this->cmid, 'chapterid' => $previous->id]))->out(false)
             ];
             $data['previous'] = $previousdata;
