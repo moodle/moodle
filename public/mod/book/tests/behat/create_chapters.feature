@@ -49,19 +49,19 @@ Feature: In a book, create chapters and sub chapters
     And I should see "1.1. Dummy first subchapter" in the "Table of contents" "block"
     And I should see "1. Dummy first chapter" in the ".book_content" "css_element"
     And I should see "1.1. Dummy first subchapter" in the ".book_content" "css_element"
-    And I click on "Next" "link"
+    And I follow "Next: Dummy second chapter"
     And I should see "2. Dummy second chapter" in the ".book_content" "css_element"
     And I should see "2. Dummy second chapter" in the "strong" "css_element"
-    And I should not see "Next" in the ".book_content" "css_element"
+    And "Next:" "link" should not exist
     And I am on "Course 1" course homepage
     And I should see "Test book" in the "New section" "section"
     And I click on "Test book" "link" in the "New section" "section"
-    And I should not see "Previous" in the ".book_content" "css_element"
+    And "Previous:" "link" should not exist
     And I should see "1. Dummy first chapter" in the "strong" "css_element"
-    When I click on "Next" "link"
+    When I follow "Next: Dummy first subchapter"
     Then I should see "1.1. Dummy first subchapter" in the ".book_content" "css_element"
     And I should see "1.1. Dummy first subchapter" in the "strong" "css_element"
-    And I click on "Previous" "link"
+    And I follow "Previous: Dummy first chapter"
     And I should see "1. Dummy first chapter" in the ".book_content" "css_element"
     And I should see "1. Dummy first chapter" in the "strong" "css_element"
 
