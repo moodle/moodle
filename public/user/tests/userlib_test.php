@@ -55,21 +55,21 @@ final class userlib_test extends \advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         // Get user2 details as a user with super system capabilities.
-        $result = user_get_user_details_courses($user2);
+        $result = \core\user::get_user_details_courses($user2);
         $this->assertEquals($user2->id, $result['id']);
         $this->assertEquals(fullname($user2), $result['fullname']);
         $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
 
         $this->setUser($user1);
         // Get user2 details as a user who can only see this user in a course.
-        $result = user_get_user_details_courses($user2);
+        $result = \core\user::get_user_details_courses($user2);
         $this->assertEquals($user2->id, $result['id']);
         $this->assertEquals(fullname($user2), $result['fullname']);
         $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
 
         // Get user2 details as a user who doesn't share any course with user2.
         $this->setUser($user3);
-        $result = user_get_user_details_courses($user2);
+        $result = \core\user::get_user_details_courses($user2);
         $this->assertNull($result);
     }
 
@@ -88,7 +88,7 @@ final class userlib_test extends \advanced_testcase {
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
 
         $this->setUser($user1);
-        $userdetails = user_get_user_details_courses($user2);
+        $userdetails = \core\user::get_user_details_courses($user2);
         $this->assertIsArray($userdetails);
         $this->assertEquals($user2->id, $userdetails['id']);
     }
@@ -108,7 +108,7 @@ final class userlib_test extends \advanced_testcase {
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
 
         $this->setUser($user1);
-        $this->assertNull(user_get_user_details_courses($user2));
+        $this->assertNull(\core\user::get_user_details_courses($user2));
     }
 
     /**
@@ -126,7 +126,7 @@ final class userlib_test extends \advanced_testcase {
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
 
         $this->setUser($user1);
-        $userdetails = user_get_user_details_courses($user2);
+        $userdetails = \core\user::get_user_details_courses($user2);
         $this->assertIsArray($userdetails);
         $this->assertEquals($user2->id, $userdetails['id']);
     }
@@ -148,7 +148,7 @@ final class userlib_test extends \advanced_testcase {
 
         // Calculate the minimum fields that can be returned.
         $namefields = \core_user\fields::for_name()->get_required_fields();
-        $fields = array_intersect($namefields, user_get_default_fields());
+        $fields = array_intersect($namefields, \core\user::get_default_fields());
 
         $minimaluser = (object) [
             'id' => $user2->id,
@@ -160,8 +160,8 @@ final class userlib_test extends \advanced_testcase {
         }
 
         $this->setUser($user1);
-        $fulldetails = user_get_user_details_courses($user2);
-        $limiteddetails = user_get_user_details_courses($minimaluser, $fields);
+        $fulldetails = \core\user::get_user_details_courses($user2);
+        $limiteddetails = \core\user::get_user_details_courses($minimaluser, $fields);
         $this->assertIsArray($fulldetails);
         $this->assertIsArray($limiteddetails);
         $this->assertEquals($user2->id, $fulldetails['id']);
@@ -189,7 +189,7 @@ final class userlib_test extends \advanced_testcase {
 
         // Update user and capture event.
         $sink = $this->redirectEvents();
-        user_update_user($user);
+        \core\user::update_user($user);
         $events = $sink->get_events();
         $sink->close();
         $event = array_pop($events);
@@ -206,20 +206,20 @@ final class userlib_test extends \advanced_testcase {
 
         // Update user with no password update.
         $password = $user->password = \core\di::get(\core\authentication\password::class)->hash('M00dLe@T');
-        user_update_user($user, false);
+        \core\user::update_user($user, false);
         $dbuser = $DB->get_record('user', array('id' => $user->id));
         $this->assertSame($password, $dbuser->password);
 
         // Verify event is not triggred by user_update_user when needed.
         $sink = $this->redirectEvents();
-        user_update_user($user, false, false);
+        \core\user::update_user($user, false, false);
         $events = $sink->get_events();
         $sink->close();
         $this->assertCount(0, $events);
 
         // With password, there should be 1 event.
         $sink = $this->redirectEvents();
-        user_update_user($user, true, false);
+        \core\user::update_user($user, true, false);
         $events = $sink->get_events();
         $sink->close();
         $this->assertCount(1, $events);
@@ -234,7 +234,7 @@ final class userlib_test extends \advanced_testcase {
         $user->theme = 'somewrongthemename';
         $user->timezone = '30.5';
         $debugmessages = $this->getDebuggingMessages();
-        user_update_user($user, true, false);
+        \core\user::update_user($user, true, false);
         $this->assertDebuggingCalledCount(5, $debugmessages);
 
         // Now, with valid user data.
@@ -244,7 +244,7 @@ final class userlib_test extends \advanced_testcase {
         $user->lang = 'en';
         $user->theme = 'classic';
         $user->timezone = 'Australia/Perth';
-        user_update_user($user, true, false);
+        \core\user::update_user($user, true, false);
         $this->assertDebuggingNotCalled();
     }
 
@@ -274,7 +274,7 @@ final class userlib_test extends \advanced_testcase {
 
         // Create user and capture event.
         $sink = $this->redirectEvents();
-        $user['id'] = user_create_user($user);
+        $user['id'] = \core\user::create_user((object) $user);
         $events = $sink->get_events();
         $sink->close();
         $event = array_pop($events);
@@ -298,7 +298,7 @@ final class userlib_test extends \advanced_testcase {
         // Verify event is not triggred by user_create_user when needed.
         $user = array('username' => 'usernametest2'); // Create another user.
         $sink = $this->redirectEvents();
-        user_create_user($user, true, false);
+        \core\user::create_user((object) $user, true, false);
         $events = $sink->get_events();
         $sink->close();
         $this->assertCount(0, $events);
@@ -311,7 +311,7 @@ final class userlib_test extends \advanced_testcase {
         $user['theme'] = 'somewrongthemename';
         $user['timezone'] = '-30.5';
         $debugmessages = $this->getDebuggingMessages();
-        $user['id'] = user_create_user($user, true, false);
+        $user['id'] = \core\user::create_user((object) $user, true, false);
         $this->assertDebuggingCalledCount(5, $debugmessages);
         $dbuser = $DB->get_record('user', array('id' => $user['id']));
         $this->assertEquals($dbuser->country, 0);
@@ -325,7 +325,7 @@ final class userlib_test extends \advanced_testcase {
         $user['lang'] = 'en';
         $user['theme'] = 'classic';
         $user['timezone'] = 'Australia/Perth';
-        user_create_user($user, true, false);
+        \core\user::create_user((object) $user, true, false);
         $this->assertDebuggingNotCalled();
     }
 
@@ -343,7 +343,7 @@ final class userlib_test extends \advanced_testcase {
         set_config('defaultcity', 'Nadi');
         set_config('country', 'FJ');
 
-        $userid = user_create_user((object) [
+        $userid = \core\user::create_user((object) [
             'username' => 'newuser',
         ], false, false);
 
@@ -360,7 +360,7 @@ final class userlib_test extends \advanced_testcase {
     }
 
     /**
-     * Test that {@link user_create_user()} throws exception when invalid username is provided.
+     * Test that {@see \core\user::create_user()} throws exception when invalid username is provided.
      *
      * @dataProvider data_create_user_invalid_username
      * @param string $username Invalid username
@@ -379,7 +379,7 @@ final class userlib_test extends \advanced_testcase {
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage($expectmessage);
 
-        user_create_user($user);
+        \core\user::create_user((object) $user);
     }
 
     /**
@@ -409,7 +409,7 @@ final class userlib_test extends \advanced_testcase {
     }
 
     /**
-     * Test function user_count_login_failures().
+     * Test function \core\user::count_login_failures().
      */
     public function test_user_count_login_failures(): void {
         $this->resetAfterTest();
@@ -419,7 +419,7 @@ final class userlib_test extends \advanced_testcase {
             login_attempt_failed($user);
         }
         $this->assertEquals(10, get_user_preferences('login_failed_count_since_success', 0, $user));
-        $count = user_count_login_failures($user); // Reset count.
+        $count = \core\user::count_login_failures($user); // Reset count.
         $this->assertEquals(10, $count);
         $this->assertEquals(0, get_user_preferences('login_failed_count_since_success', 0, $user));
 
@@ -427,13 +427,13 @@ final class userlib_test extends \advanced_testcase {
             login_attempt_failed($user);
         }
         $this->assertEquals(10, get_user_preferences('login_failed_count_since_success', 0, $user));
-        $count = user_count_login_failures($user, false); // Do not reset count.
+        $count = \core\user::count_login_failures($user, false); // Do not reset count.
         $this->assertEquals(10, $count);
         $this->assertEquals(10, get_user_preferences('login_failed_count_since_success', 0, $user));
     }
 
     /**
-     * Test function user_add_password_history().
+     * Test function \core\user::add_password_history().
      */
     public function test_user_add_password_history(): void {
         global $DB;
@@ -447,34 +447,34 @@ final class userlib_test extends \advanced_testcase {
 
         set_config('passwordreuselimit', 0);
 
-        user_add_password_history($user1->id, 'pokus');
+        \core\user::add_password_history($user1->id, 'pokus');
         $this->assertEquals(0, $DB->count_records('user_password_history'));
 
         // Test adding and discarding of old.
 
         set_config('passwordreuselimit', 3);
 
-        user_add_password_history($user1->id, 'pokus');
+        \core\user::add_password_history($user1->id, 'pokus');
         $this->assertEquals(1, $DB->count_records('user_password_history'));
         $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user1->id)));
 
-        user_add_password_history($user1->id, 'pokus2');
-        user_add_password_history($user1->id, 'pokus3');
-        user_add_password_history($user1->id, 'pokus4');
+        \core\user::add_password_history($user1->id, 'pokus2');
+        \core\user::add_password_history($user1->id, 'pokus3');
+        \core\user::add_password_history($user1->id, 'pokus4');
         $this->assertEquals(3, $DB->count_records('user_password_history'));
         $this->assertEquals(3, $DB->count_records('user_password_history', array('userid' => $user1->id)));
 
-        user_add_password_history($user2->id, 'pokus1');
+        \core\user::add_password_history($user2->id, 'pokus1');
         $this->assertEquals(4, $DB->count_records('user_password_history'));
         $this->assertEquals(3, $DB->count_records('user_password_history', array('userid' => $user1->id)));
         $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user2->id)));
 
-        user_add_password_history($user2->id, 'pokus2');
-        user_add_password_history($user2->id, 'pokus3');
+        \core\user::add_password_history($user2->id, 'pokus2');
+        \core\user::add_password_history($user2->id, 'pokus3');
         $this->assertEquals(3, $DB->count_records('user_password_history', array('userid' => $user2->id)));
 
         $ids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
-        user_add_password_history($user2->id, 'pokus4');
+        \core\user::add_password_history($user2->id, 'pokus4');
         $this->assertEquals(3, $DB->count_records('user_password_history', array('userid' => $user2->id)));
         $newids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
 
@@ -490,8 +490,8 @@ final class userlib_test extends \advanced_testcase {
         $this->assertEquals(6, $DB->count_records('user_password_history'));
 
         $ids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
-        user_add_password_history($user2->id, 'pokus5');
-        user_add_password_history($user3->id, 'pokus1');
+        \core\user::add_password_history($user2->id, 'pokus5');
+        \core\user::add_password_history($user3->id, 'pokus1');
         $newids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
         $this->assertSame($ids, $newids);
         $this->assertEquals(6, $DB->count_records('user_password_history'));
@@ -499,15 +499,15 @@ final class userlib_test extends \advanced_testcase {
         set_config('passwordreuselimit', -1);
 
         $ids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
-        user_add_password_history($user2->id, 'pokus6');
-        user_add_password_history($user3->id, 'pokus6');
+        \core\user::add_password_history($user2->id, 'pokus6');
+        \core\user::add_password_history($user3->id, 'pokus6');
         $newids = array_keys($DB->get_records('user_password_history', array('userid' => $user2->id), 'timecreated ASC, id ASC'));
         $this->assertSame($ids, $newids);
         $this->assertEquals(6, $DB->count_records('user_password_history'));
     }
 
     /**
-     * Test function user_add_password_history().
+     * Test function \core\user::add_password_history().
      */
     public function test_user_is_previously_used_password(): void {
         global $DB;
@@ -520,58 +520,58 @@ final class userlib_test extends \advanced_testcase {
 
         set_config('passwordreuselimit', 0);
 
-        user_add_password_history($user1->id, 'pokus');
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus'));
+        \core\user::add_password_history($user1->id, 'pokus');
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus'));
 
         set_config('passwordreuselimit', 3);
 
-        user_add_password_history($user2->id, 'pokus1');
-        user_add_password_history($user2->id, 'pokus2');
+        \core\user::add_password_history($user2->id, 'pokus1');
+        \core\user::add_password_history($user2->id, 'pokus2');
 
-        user_add_password_history($user1->id, 'pokus1');
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus1'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus2'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus3'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus4'));
+        \core\user::add_password_history($user1->id, 'pokus1');
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus4'));
 
-        user_add_password_history($user1->id, 'pokus2');
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus1'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus2'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus3'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus4'));
+        \core\user::add_password_history($user1->id, 'pokus2');
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus4'));
 
-        user_add_password_history($user1->id, 'pokus3');
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus1'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus2'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus3'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus4'));
+        \core\user::add_password_history($user1->id, 'pokus3');
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus4'));
 
-        user_add_password_history($user1->id, 'pokus4');
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus1'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus2'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus3'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus4'));
+        \core\user::add_password_history($user1->id, 'pokus4');
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus4'));
 
         set_config('passwordreuselimit', 2);
 
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus1'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus2'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus3'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus4'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus4'));
 
         set_config('passwordreuselimit', 3);
 
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus1'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus2'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus3'));
-        $this->assertTrue(user_is_previously_used_password($user1->id, 'pokus4'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertTrue(\core\user::is_previously_used_password($user1->id, 'pokus4'));
 
         set_config('passwordreuselimit', 0);
 
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus1'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus2'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus3'));
-        $this->assertFalse(user_is_previously_used_password($user1->id, 'pokus4'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus1'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus2'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus3'));
+        $this->assertFalse(\core\user::is_previously_used_password($user1->id, 'pokus4'));
     }
 
     /**
@@ -588,9 +588,9 @@ final class userlib_test extends \advanced_testcase {
 
         set_config('passwordreuselimit', 3);
 
-        user_add_password_history($user1->id, 'pokus');
-        user_add_password_history($user2->id, 'pokus1');
-        user_add_password_history($user2->id, 'pokus2');
+        \core\user::add_password_history($user1->id, 'pokus');
+        \core\user::add_password_history($user2->id, 'pokus1');
+        \core\user::add_password_history($user2->id, 'pokus2');
 
         $this->assertEquals(3, $DB->count_records('user_password_history'));
         $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user1->id)));
@@ -618,7 +618,7 @@ final class userlib_test extends \advanced_testcase {
         // Redirect events to the sink, so we can recover them later.
         $sink = $this->redirectEvents();
 
-        user_list_view($course, $context);
+        \core\user::list_view($course, $context);
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = reset($events);
@@ -643,7 +643,7 @@ final class userlib_test extends \advanced_testcase {
         $PAGE->set_url('/');
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
-        $opts = user_get_user_navigation_info($user, $PAGE, array('avatarsize' => $testsize));
+        $opts = \core\user::get_user_navigation_info($user, $PAGE, array('avatarsize' => $testsize));
         $avatarhtml = $opts->metadata['useravatar'];
 
         $matches = [];
@@ -717,39 +717,39 @@ final class userlib_test extends \advanced_testcase {
 
         // User 3 should not be able to see user 1, either by passing their own course (course 2) or user 1's course (course 1).
         $this->setUser($user3);
-        $this->assertFalse(user_can_view_profile($user1, $course2));
-        $this->assertFalse(user_can_view_profile($user1, $course1));
+        $this->assertFalse(\core\user::can_view_profile($user1, $course2));
+        $this->assertFalse(\core\user::can_view_profile($user1, $course1));
 
         // Remove capability moodle/user:viewdetails in course 2.
         assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $studentrole->id, $coursecontext);
         // Set current user to user 1.
         $this->setUser($user1);
         // User 1 can see User 1's profile.
-        $this->assertTrue(user_can_view_profile($user1));
+        $this->assertTrue(\core\user::can_view_profile($user1));
 
         $tempcfg = $CFG->forceloginforprofiles;
         $CFG->forceloginforprofiles = 0;
         // Not forced to log in to view profiles, should be able to see all profiles besides user 6.
         $users = array($user1, $user2, $user3, $user4, $user5, $user7);
         foreach ($users as $user) {
-            $this->assertTrue(user_can_view_profile($user));
+            $this->assertTrue(\core\user::can_view_profile($user));
         }
         // Restore setting.
         $CFG->forceloginforprofiles = $tempcfg;
 
         // User 1 can not see user 6 as they have been deleted.
-        $this->assertFalse(user_can_view_profile($user6));
+        $this->assertFalse(\core\user::can_view_profile($user6));
         // User 1 can see User 7 as they are a course contact.
-        $this->assertTrue(user_can_view_profile($user7));
+        $this->assertTrue(\core\user::can_view_profile($user7));
         // User 1 is in a course with user 2 and has the right capability - return true.
-        $this->assertTrue(user_can_view_profile($user2));
+        $this->assertTrue(\core\user::can_view_profile($user2));
         // User 1 is not in a course with user 3 - return false.
-        $this->assertFalse(user_can_view_profile($user3));
+        $this->assertFalse(\core\user::can_view_profile($user3));
 
         // Set current user to user 2.
         $this->setUser($user2);
         // User 2 is in a course with user 3 but does not have the right capability - return false.
-        $this->assertFalse(user_can_view_profile($user3));
+        $this->assertFalse(\core\user::can_view_profile($user3));
 
         // Set user 1 in one group and users 4 and 5 in another group.
         $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course3->id));
@@ -759,17 +759,17 @@ final class userlib_test extends \advanced_testcase {
         groups_add_member($group2->id, $user5->id);
         $this->setUser($user1);
         // Check that user 1 can not see user 4.
-        $this->assertFalse(user_can_view_profile($user4));
+        $this->assertFalse(\core\user::can_view_profile($user4));
         // Check that user 5 can see user 4.
         $this->setUser($user5);
-        $this->assertTrue(user_can_view_profile($user4));
+        $this->assertTrue(\core\user::can_view_profile($user4));
 
         // Test the user:viewalldetails cap check using the course creator role which, by default, can't see student profiles.
         $this->setUser($user7);
-        $this->assertFalse(user_can_view_profile($user4));
+        $this->assertFalse(\core\user::can_view_profile($user4));
         assign_capability('moodle/user:viewalldetails', CAP_ALLOW, $coursecreatorrole->id, \context_system::instance()->id, true);
         reload_all_capabilities();
-        $this->assertTrue(user_can_view_profile($user4));
+        $this->assertTrue(\core\user::can_view_profile($user4));
         unassign_capability('moodle/user:viewalldetails', $coursecreatorrole->id, $coursecontext->id);
         reload_all_capabilities();
 
@@ -778,13 +778,13 @@ final class userlib_test extends \advanced_testcase {
         // Visitor (Not a guest user, userid=0).
         $CFG->forceloginforprofiles = 1;
         $this->setUser($user8);
-        $this->assertFalse(user_can_view_profile($user1));
+        $this->assertFalse(\core\user::can_view_profile($user1));
 
         // Let us test with guest user.
         $this->setGuestUser();
         $CFG->forceloginforprofiles = 1;
         foreach ($users as $user) {
-            $this->assertFalse(user_can_view_profile($user));
+            $this->assertFalse(\core\user::can_view_profile($user));
         }
 
         // Even with cap, still guests should not be allowed in.
@@ -792,24 +792,24 @@ final class userlib_test extends \advanced_testcase {
         assign_capability('moodle/user:viewdetails', CAP_ALLOW, $guestrole['guest'], \context_system::instance()->id, true);
         reload_all_capabilities();
         foreach ($users as $user) {
-            $this->assertFalse(user_can_view_profile($user));
+            $this->assertFalse(\core\user::can_view_profile($user));
         }
 
         $CFG->forceloginforprofiles = 0;
         foreach ($users as $user) {
-            $this->assertTrue(user_can_view_profile($user));
+            $this->assertTrue(\core\user::can_view_profile($user));
         }
 
         // Let us test with Visitor user.
         $this->setUser($user8);
         $CFG->forceloginforprofiles = 1;
         foreach ($users as $user) {
-            $this->assertFalse(user_can_view_profile($user));
+            $this->assertFalse(\core\user::can_view_profile($user));
         }
 
         $CFG->forceloginforprofiles = 0;
         foreach ($users as $user) {
-            $this->assertTrue(user_can_view_profile($user));
+            $this->assertTrue(\core\user::can_view_profile($user));
         }
 
         // Testing non-shared courses where capabilities are met, using system role overrides.
@@ -838,11 +838,11 @@ final class userlib_test extends \advanced_testcase {
         $this->assertFalse(has_capability('moodle/user:viewdetails', $systemcontext));
         $this->assertFalse(has_capability('moodle/user:viewdetails', $user1context));
 
-        // Confirm that user_can_view_profile() returns true for $user1 when called without $course param. It should find $course1.
-        $this->assertTrue(user_can_view_profile($user1));
+        // Confirm that \core\user::can_view_profile() returns true for $user1 when called without $course param. It should find $course1.
+        $this->assertTrue(\core\user::can_view_profile($user1));
 
         // Confirm this also works when restricting scope to just that course.
-        $this->assertTrue(user_can_view_profile($user1, $course4));
+        $this->assertTrue(\core\user::can_view_profile($user1, $course4));
     }
 
     /**
@@ -871,7 +871,7 @@ final class userlib_test extends \advanced_testcase {
 
         // Get student details as a user with super system capabilities.
         $this->setAdminUser();
-        $result = user_get_user_details($student, $course1);
+        $result = \core\user::get_user_details($student, $course1);
         $this->assertEquals($student->id, $result['id']);
         $this->assertEquals($studentfullname, $result['fullname']);
         $this->assertEquals($student->firstname, $result['firstname']);
@@ -880,7 +880,7 @@ final class userlib_test extends \advanced_testcase {
 
         // Get student details as a user who can only see this user in a course.
         $this->setUser($teacher);
-        $result = user_get_user_details($student, $course1);
+        $result = \core\user::get_user_details($student, $course1);
         $this->assertEquals($student->id, $result['id']);
         $this->assertEquals($studentfullname, $result['fullname']);
         $this->assertEquals($student->firstname, $result['firstname']);
@@ -888,7 +888,7 @@ final class userlib_test extends \advanced_testcase {
         $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
 
         // Get student details with required fields.
-        $result = user_get_user_details($student, $course1, array('id', 'fullname'));
+        $result = \core\user::get_user_details($student, $course1, array('id', 'fullname'));
         $this->assertCount(2, $result);
         $this->assertEquals($student->id, $result['id']);
         $this->assertEquals($studentfullname, $result['fullname']);
@@ -898,28 +898,28 @@ final class userlib_test extends \advanced_testcase {
 
         // Change fullname display format for a user with viewfullnames capability.
         set_config('fullnamedisplay', 'firstname');
-        $result = user_get_user_details($student, $course1);
+        $result = \core\user::get_user_details($student, $course1);
         $this->assertEquals($studentfullname, $result['fullname']);
         $this->assertEquals($student->firstname, $result['firstname']);
         $this->assertEquals($student->lastname, $result['lastname']);
 
         // Now check for a user without viewfullnames capability.
         $this->setUser($student);
-        $result = user_get_user_details($teacher, $course1);
+        $result = \core\user::get_user_details($teacher, $course1);
         $this->assertEquals($teacher->firstname, $result['fullname']);
         $this->assertEquals($teacher->firstname, $result['firstname']);
         $this->assertArrayNotHasKey('lastname', $result);
 
         // Get exception for invalid required fields.
         $this->expectException('moodle_exception');
-        $result = user_get_user_details($student, $course1, array('wrongrequiredfield'));
+        $result = \core\user::get_user_details($student, $course1, array('wrongrequiredfield'));
     }
 
     /**
      * Regression test for MDL-57840.
      *
      * Ensure the fields "auth, confirmed, idnumber, lang, theme, timezone and mailformat" are present when
-     * calling user_get_user_details() function.
+     * calling \core\user::get_user_details() function.
      */
     public function test_user_get_user_details_missing_fields(): void {
         global $CFG;
@@ -938,7 +938,7 @@ final class userlib_test extends \advanced_testcase {
                                                       ]);
 
         // Fields that should get by default.
-        $got = user_get_user_details($user);
+        $got = \core\user::get_user_details($user);
         self::assertSame('email', $got['auth']);
         self::assertSame('0', $got['confirmed']);
         self::assertSame('someidnumber', $got['idnumber']);
@@ -977,7 +977,7 @@ final class userlib_test extends \advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         // Get student details as a user with super system capabilities.
-        $result = user_get_user_details($student1, $course);
+        $result = \core\user::get_user_details($student1, $course);
         $this->assertEquals($student1->id, $result['id']);
         $this->assertEquals($student1fullname, $result['fullname']);
         $this->assertEquals($course->id, $result['enrolledcourses'][0]['id']);
@@ -985,7 +985,7 @@ final class userlib_test extends \advanced_testcase {
         $this->setUser($student2);
 
         // Get student details with required fields.
-        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
+        $result = \core\user::get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
         $this->assertCount(5, $result); // Ensure idnumber (identity field) is not returned here.
         $this->assertEquals($student1->id, $result['id']);
         $this->assertEquals($student1fullname, $result['fullname']);
@@ -996,7 +996,7 @@ final class userlib_test extends \advanced_testcase {
         // Set new identity fields and hidden fields and try to retrieve them without permission.
         $CFG->showuseridentity = $CFG->showuseridentity . ',idnumber';
         $CFG->hiddenuserfields = 'city';
-        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
+        $result = \core\user::get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
         $this->assertCount(4, $result); // Ensure city and idnumber are not returned here.
         $this->assertEquals($student1->id, $result['id']);
         $this->assertEquals($student1fullname, $result['fullname']);
@@ -1005,7 +1005,7 @@ final class userlib_test extends \advanced_testcase {
 
         // Now, teacher should have permission to see the idnumber and city fields.
         $this->setUser($teacher);
-        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
+        $result = \core\user::get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
         $this->assertCount(6, $result);
         $this->assertEquals($student1->id, $result['id']);
         $this->assertEquals($student1fullname, $result['fullname']);
@@ -1016,7 +1016,7 @@ final class userlib_test extends \advanced_testcase {
 
         // And admins can see anything.
         $this->setAdminUser();
-        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
+        $result = \core\user::get_user_details($student1, $course, array('id', 'fullname', 'timezone', 'city', 'address', 'idnumber'));
         $this->assertCount(6, $result);
         $this->assertEquals($student1->id, $result['id']);
         $this->assertEquals($student1fullname, $result['fullname']);
@@ -1062,12 +1062,12 @@ final class userlib_test extends \advanced_testcase {
         $this->setUser($student2);
 
         // Get student details with groups.
-        $result = user_get_user_details($student1, $course, array('id', 'fullname', 'groups'));
+        $result = \core\user::get_user_details($student1, $course, array('id', 'fullname', 'groups'));
         $this->assertCount(3, $result);
         $this->assertEquals($group1->id, $result['groups'][0]['id']);
 
         // Teacher is in two different groups.
-        $result = user_get_user_details($teacher, $course, array('id', 'fullname', 'groups'));
+        $result = \core\user::get_user_details($teacher, $course, array('id', 'fullname', 'groups'));
 
         // Order by group id.
         usort($result['groups'], function($a, $b) {
@@ -1085,7 +1085,7 @@ final class userlib_test extends \advanced_testcase {
         update_course($course);
 
         // Teacher is in two groups but I can only see the one shared with me.
-        $result = user_get_user_details($teacher, $course, array('id', 'fullname', 'groups'));
+        $result = \core\user::get_user_details($teacher, $course, array('id', 'fullname', 'groups'));
 
         $this->assertCount(3, $result);
         $this->assertCount(1, $result['groups']);

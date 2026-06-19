@@ -860,7 +860,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
         $userdeleted = self::getDataGenerator()->create_user();
         $user4['id'] = $userdeleted->id;
-        user_delete_user($userdeleted);
+        \core\user::delete_user($userdeleted);
 
         $user5 = self::getDataGenerator()->create_user();
         $user5 = array('id' => $user5->id, 'email' => $user5->email);
@@ -944,7 +944,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
         // Updating a remote user.
         $user1['mnethostid'] = 5;
-        user_update_user($user1); // Update user not using webservice.
+        \core\user::update_user((object) $user1); // Update user not using webservice.
         unset($user1['mnethostid']); // The mnet host ID field is not in the allowed field list for the webservice.
         $returnvalue = core_user_external::update_users(array($user1));
         $returnvalue = external_api::clean_returnvalue(core_user_external::update_users_returns(), $returnvalue);

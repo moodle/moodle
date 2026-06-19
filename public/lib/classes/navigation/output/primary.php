@@ -273,7 +273,7 @@ class primary implements renderable, templatable {
 
         $usermenudata = [];
         $submenusdata = [];
-        $info = user_get_user_navigation_info($USER, $PAGE);
+        $info = \core\user::get_user_navigation_info($USER, $PAGE);
         if (isset($info->unauthenticateduser)) {
             $info->unauthenticateduser['content'] = get_string($info->unauthenticateduser['content']);
             $info->unauthenticateduser['url'] = get_login_url();

@@ -101,7 +101,7 @@ class block_online_users extends block_base {
             require_once($CFG->dirroot . '/user/lib.php');
             $initialcount = count($users);
             foreach ($users as $user) {
-                if (!user_can_view_profile($user)) {
+                if (!\core\user::can_view_profile($user)) {
                     unset($users[$user->id]);
                     continue;
                 }

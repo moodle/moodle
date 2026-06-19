@@ -139,7 +139,7 @@ switch ($mode) {
         if ($USER->id == $user->id) {
             require_once($CFG->dirroot . '/user/lib.php');
             // Get the correct 'Grades' url to point to.
-            $activeurl = user_mygrades_url();
+            $activeurl = \core\user::mygrades_url();
             $navbar = $PAGE->navbar->add(get_string('grades', 'grades'), $activeurl, navigation_node::TYPE_SETTING, null, 'grades');
             $activenode = $navbar->add($course->shortname);
             $activenode->make_active();

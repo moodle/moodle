@@ -212,7 +212,7 @@ class helper {
 
         require_once($CFG->dirroot . '/user/lib.php');
 
-        if ($lastaccess = user_get_user_details($user, null, array('lastaccess'))) {
+        if ($lastaccess = \core\user::get_user_details($user, null, ['lastaccess'])) {
             if (isset($lastaccess['lastaccess'])) {
                 return true;
             }
@@ -658,13 +658,14 @@ class helper {
         require_once($CFG->dirroot . '/user/lib.php');
 
         if ($CFG->messagingallusers || $user->id == $USER->id) {
-            return \user_get_user_details_courses($user, $userfields) ?? []; // This checks visibility of site and course profiles.
+            // This checks visibility of site and course profiles.
+            return \core\user::get_user_details_courses($user, $userfields) ?? [];
         } else {
             // Messaging specific: user must share a course with the searching user AND have a visible profile there.
             $sharedcourses = enrol_get_shared_courses($USER, $user);
             foreach ($sharedcourses as $course) {
-                if (user_can_view_profile($user, $course)) {
-                    $userdetails = user_get_user_details($user, $course, $userfields);
+                if (\core\user::can_view_profile($user, $course)) {
+                    $userdetails = \core\user::get_user_details($user, $course, $userfields);
                     if (!is_null($userdetails)) {
                         return $userdetails;
                     }

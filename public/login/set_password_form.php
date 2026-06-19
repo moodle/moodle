@@ -125,7 +125,7 @@ class login_set_password_form extends moodleform {
             return $errors;
         }
 
-        if (user_is_previously_used_password($user->id, $data['password'])) {
+        if (\core\user::is_previously_used_password($user->id, $data['password'])) {
             $errors['password'] = get_string('errorpasswordreused', 'core_auth');
             $errors['password2'] = get_string('errorpasswordreused', 'core_auth');
         }

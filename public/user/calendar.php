@@ -77,7 +77,7 @@ if ($calendarform->is_cancelled()) {
 
     $user->calendartype = $calendartype;
     // Update user with new calendar type.
-    user_update_user($user, false, false);
+    \core\user::update_user($user, false, false);
 
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();

@@ -914,7 +914,7 @@ class process {
 
             if ($doupdate or $existinguser->password !== $oldpw) {
                 // We want only users that were really updated.
-                user_update_user($existinguser, false, false);
+                \core\user::update_user($existinguser, false, false);
 
                 $this->upt->track('status', get_string('useraccountupdated', 'tool_uploaduser'));
                 $this->usersupdated++;
@@ -1049,7 +1049,7 @@ class process {
                 $this->upt->track('password', '-', 'normal', false);
             }
 
-            $user->id = user_create_user($user, false, false);
+            $user->id = \core\user::create_user($user, false, false);
             $this->upt->track('username', \html_writer::link(
                 new \moodle_url('/user/profile.php', ['id' => $user->id]), s($user->username)), 'normal', false);
 

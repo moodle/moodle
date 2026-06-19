@@ -539,9 +539,9 @@ class auth_plugin_ldap extends auth_plugin_base {
             throw new \moodle_exception('auth_ldap_create_error', 'auth_ldap');
         }
 
-        $user->id = user_create_user($user, false, false);
+        $user->id = \core\user::create_user($user, false, false);
 
-        user_add_password_history($user->id, $plainslashedpassword);
+        \core\user::add_password_history($user->id, $plainslashedpassword);
 
         // Save any custom profile field information
         profile_save_data($user);
@@ -607,7 +607,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     return AUTH_CONFIRM_FAIL;
                 }
                 $user->confirmed = 1;
-                user_update_user($user, false);
+                \core\user::update_user($user, false);
                 return AUTH_CONFIRM_OK;
             }
         } else {
@@ -826,7 +826,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $updateuser = new stdClass();
                     $updateuser->id = $user->id;
                     $updateuser->suspended = 1;
-                    user_update_user($updateuser, false);
+                    \core\user::update_user($updateuser, false);
                     echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                     \core\session\manager::destroy_user_sessions($user->id);
                 }
@@ -853,7 +853,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $updateuser->id = $user->id;
                     $updateuser->auth = $this->authtype;
                     $updateuser->suspended = 0;
-                    user_update_user($updateuser, false);
+                    \core\user::update_user($updateuser, false);
                     echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
                 }
             } else {
@@ -921,9 +921,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $user->calendartype = $CFG->calendartype;
                 }
 
-                // $id = user_create_user($user, false);
                 try {
-                    $id = user_create_user($user, false);
+                    $id = \core\user::create_user($user, false);
                 } catch (Exception $e) {
                     print_string('invaliduserexception', 'auth_ldap', print_r($user, true) .  $e->getMessage());
                     $errors++;

@@ -224,7 +224,7 @@ class core_user_external extends \core_external\external_api {
             }
 
             // Create the user data now!
-            $user['id'] = user_create_user($user, $updatepassword, false);
+            $user['id'] = \core\user::create_user((object) $user, $updatepassword, false);
 
             $userobject = (object)$user;
 
@@ -341,7 +341,7 @@ class core_user_external extends \core_external\external_api {
             if ($USER->id == $user->id) {
                 throw new moodle_exception('usernotdeletederror', 'error');
             }
-            user_delete_user($user);
+            \core\user::delete_user($user);
         }
 
         $transaction->allow_commit();
@@ -431,7 +431,7 @@ class core_user_external extends \core_external\external_api {
                 $user = new stdClass();
                 $user->id = $userid;
                 $user->emailstop = $emailstop;
-                user_update_user($user);
+                \core\user::update_user($user);
 
                 // Update the $USER if we should.
                 if ($userid == $USER->id) {
@@ -618,7 +618,7 @@ class core_user_external extends \core_external\external_api {
                     }
                 }
 
-                user_update_user($user, true, false);
+                \core\user::update_user((object) $user, true, false);
 
                 $userobject = (object)$user;
 
@@ -781,7 +781,7 @@ class core_user_external extends \core_external\external_api {
         // Finally retrieve each users information.
         $returnedusers = array();
         foreach ($users as $user) {
-            $userdetails = user_get_user_details_courses($user);
+            $userdetails = \core\user::get_user_details_courses($user);
 
             // Return the user only if the searched field is returned.
             // Otherwise it means that the $USER was not allowed to search the returned user.
@@ -943,7 +943,7 @@ class core_user_external extends \core_external\external_api {
         // Finally retrieve each users information.
         $returnedusers = array();
         foreach ($users as $user) {
-            $userdetails = user_get_user_details_courses($user);
+            $userdetails = \core\user::get_user_details_courses($user);
 
             // Return the user only if all the searched fields are returned.
             // Otherwise it means that the $USER was not allowed to search the returned user.
@@ -1057,7 +1057,7 @@ class core_user_external extends \core_external\external_api {
             $course = $courses[$courseids[$user->id]];
             $context = context_course::instance($courseids[$user->id], IGNORE_MISSING);
             self::validate_context($context);
-            if ($userarray = user_get_user_details($user, $course)) {
+            if ($userarray = \core\user::get_user_details($user, $course)) {
                 $userarray['initials'] = core_user::get_initials($user);
                 $result[] = $userarray;
             }
@@ -1393,7 +1393,7 @@ class core_user_external extends \core_external\external_api {
         // Warnings array, it can be empty at the end but is mandatory.
         $warnings = array();
 
-        $removed = user_remove_user_device($params['uuid'], $params['appid']);
+        $removed = \core\user::remove_user_device($params['uuid'], $params['appid']);
 
         if (!$removed) {
             $warnings[] = array(
@@ -1475,7 +1475,7 @@ class core_user_external extends \core_external\external_api {
 
         course_require_view_participants($context);
 
-        user_list_view($course, $context);
+        \core\user::list_view($course, $context);
 
         $result = array();
         $result['status'] = true;

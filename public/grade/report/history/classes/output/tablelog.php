@@ -165,7 +165,7 @@ class tablelog extends \table_sql implements \renderable {
             $this->users = array_filter(
                 $DB->get_records_select('user', "id {$userselect}", $userparams, $usersort),
                 static function(\stdClass $user) use ($course): bool {
-                    return user_can_view_profile($user, $course);
+                    return \core\user::can_view_profile($user, $course);
                 }
             );
 

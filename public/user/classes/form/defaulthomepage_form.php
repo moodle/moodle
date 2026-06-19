@@ -42,7 +42,7 @@ class defaulthomepage_form extends \moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        $options = user_get_default_homepage_options();
+        $options = \core\user::get_default_homepage_options();
 
         $mform->addElement('select', 'defaulthomepage', get_string('defaulthomepageuser'), $options);
         $mform->addHelpButton('defaulthomepage', 'defaulthomepageuser');

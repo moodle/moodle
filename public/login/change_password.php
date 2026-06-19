@@ -115,7 +115,7 @@ if ($mform->is_cancelled()) {
         throw new \moodle_exception('errorpasswordupdate', 'auth');
     }
 
-    user_add_password_history($USER->id, $data->newpassword1);
+    \core\user::add_password_history($USER->id, $data->newpassword1);
 
     // Log out all other sessions if mandated by admin, or if set by the user.
     if (!empty($CFG->passwordchangelogout) || !empty($data->logoutothersessions)) {

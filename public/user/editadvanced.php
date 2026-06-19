@@ -204,7 +204,7 @@ if ($userform->is_cancelled()) {
         } else {
             $usernew->password = AUTH_PASSWORD_NOT_CACHED;
         }
-        $usernew->id = user_create_user($usernew, false, false);
+        $usernew->id = \core\user::create_user($usernew, false, false);
 
         if (!$authplugin->is_internal() and $authplugin->can_change_password() and !empty($usernew->newpassword)) {
             if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
@@ -220,7 +220,7 @@ if ($userform->is_cancelled()) {
             // Auth update failed.
             throw new \moodle_exception('cannotupdateuseronexauth', '', '', $user->auth);
         }
-        user_update_user($usernew, false, false);
+        \core\user::update_user($usernew, false, false);
 
         // Set new password if specified.
         if (!empty($usernew->newpassword)) {

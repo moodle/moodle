@@ -227,7 +227,7 @@ EOD;
         $tobedeleted = !empty($record['deleted']);
         unset($record['deleted']);
 
-        $userid = user_create_user($record, false, false);
+        $userid = \core\user::create_user((object) $record, false, false);
 
         if ($extrafields = array_intersect_key($record, ['password' => 1, 'timecreated' => 1])) {
             $DB->update_record('user', ['id' => $userid] + $extrafields);

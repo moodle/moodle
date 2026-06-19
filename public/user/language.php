@@ -51,7 +51,7 @@ if ($languageform->is_cancelled()) {
 
     $user->lang = $lang;
     // Update user with new language.
-    user_update_user($user, false, false);
+    \core\user::update_user($user, false, false);
 
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();

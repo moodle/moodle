@@ -241,7 +241,7 @@ class sync_members extends scheduled_task {
                 }
 
                 $user->id = $dbuser->id;
-                user_update_user($user);
+                \core\user::update_user($user);
 
                 // Add the information to the necessary arrays.
                 $users[$user->id] = $user;
@@ -255,7 +255,7 @@ class sync_members extends scheduled_task {
                     }
 
                     $user->auth = 'lti';
-                    $user->id = user_create_user($user);
+                    $user->id = \core\user::create_user($user);
 
                     // Add the information to the necessary arrays.
                     $users[$user->id] = $user;

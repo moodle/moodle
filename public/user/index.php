@@ -82,7 +82,7 @@ if ($isfrontpage) {
 }
 
 // Trigger events.
-user_list_view($course, $context);
+\core\user::list_view($course, $context);
 
 $PAGE->set_title("$course->shortname: ".get_string('participants'));
 $PAGE->set_heading($course->fullname);

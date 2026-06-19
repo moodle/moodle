@@ -710,7 +710,7 @@ class auth_plugin_base {
             }
 
             if ($needsupdate) {
-                user_update_user($newuser, false, $triggerevent);
+                \core\user::update_user($newuser, false, $triggerevent);
                 profile_save_custom_fields($newuser->id, $newprofilefields);
                 return $DB->get_record('user', array('id' => $userid, 'deleted' => 0));
             }

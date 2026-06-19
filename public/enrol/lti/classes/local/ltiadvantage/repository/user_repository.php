@@ -169,7 +169,7 @@ class user_repository {
                 (array) $userrecord
             );
             if (!empty(array_diff((array) $userrecord, $userfieldstocompare))) {
-                \user_update_user($userrecord);
+                \core\user::update_user($userrecord);
             }
             unset($userrecord->id);
 
@@ -190,7 +190,7 @@ class user_repository {
                 (array) $userrecord
             );
             if (!empty(array_diff((array) $userrecord, $userfieldstocompare))) {
-                \user_update_user($userrecord);
+                \core\user::update_user($userrecord);
             }
             unset($userrecord->id);
 

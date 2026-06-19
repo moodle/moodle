@@ -209,7 +209,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             [ 'name' => 'sitepolicy', 'value' => $mysitepolicy ],
             [ 'name' => 'sitepolicyhandler', 'value' => '' ],
             [ 'name' => 'disableuserimages', 'value' => $CFG->disableuserimages ],
-            [ 'name' => 'mygradesurl', 'value' => user_mygrades_url()->out(false) ],
+            [ 'name' => 'mygradesurl', 'value' => \core\user::mygrades_url()->out(false) ],
             [ 'name' => 'tool_mobile_forcelogout', 'value' => 0 ],
             [ 'name' => 'tool_mobile_customlangstrings', 'value' => '' ],
             [ 'name' => 'tool_mobile_disabledfeatures', 'value' => '' ],

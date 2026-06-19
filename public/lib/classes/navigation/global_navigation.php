@@ -1509,11 +1509,14 @@ class global_navigation extends navigation_node {
             require_once($CFG->dirroot . '/user/lib.php');
             if ($this->page->context->contextlevel == CONTEXT_USER && !has_capability('moodle/user:viewdetails', $usercontext)) {
                 $viewprofile = false;
-            } else if ($this->page->context->contextlevel != CONTEXT_USER && !user_can_view_profile($user, $course, $usercontext)) {
+            } else if (
+                $this->page->context->contextlevel != CONTEXT_USER &&
+                !\core\user::can_view_profile($user, $course, $usercontext)
+            ) {
                 $viewprofile = false;
             }
             if (!$viewprofile) {
-                $viewprofile = user_can_view_profile($user, null, $usercontext);
+                $viewprofile = \core\user::can_view_profile($user, null, $usercontext);
             }
         }
 
@@ -1609,7 +1612,7 @@ class global_navigation extends navigation_node {
                 require_once($CFG->dirroot . '/user/lib.php');
                 // Set the grades node to link to the "Grades" page.
                 if ($course->id == SITEID) {
-                    $url = user_mygrades_url($user->id, $course->id);
+                    $url = \core\user::mygrades_url($user->id, $course->id);
                 } else { // Otherwise we are in a course and should redirect to the user grade report (Activity report version).
                     $url = new url('/course/user.php', ['mode' => 'grade', 'id' => $course->id, 'user' => $user->id]);
                 }

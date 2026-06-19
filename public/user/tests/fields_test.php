@@ -607,7 +607,7 @@ final class fields_test extends \advanced_testcase {
 
         // Set alternatename field to null, ensure we still get result in later assertion.
         $user->alternatename = null;
-        user_update_user($user, false);
+        \core\user::update_user($user, false);
 
         [$sqlfullname, $params] = fields::get_sql_fullname('u');
         $fullname = $DB->get_field_sql("SELECT {$sqlfullname} FROM {user} u WHERE u.id = :id", $params + [

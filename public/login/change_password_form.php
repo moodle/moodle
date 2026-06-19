@@ -53,7 +53,7 @@ class login_change_password_form extends moodleform {
         if ($policies) {
             $mform->addElement('static', 'passwordpolicyinfo', '', implode('<br />', $policies));
         }
-        $purpose = user_edit_map_field_purpose($USER->id, 'password');
+        $purpose = \core\user::edit_map_field_purpose($USER->id, 'password');
         $mform->addElement('password', 'password', get_string('oldpassword'), $purpose);
         $mform->addRule('password', get_string('required'), 'required', null, 'client');
         $mform->setType('password', PARAM_RAW);
@@ -128,7 +128,7 @@ class login_change_password_form extends moodleform {
             return $errors;
         }
 
-        if (user_is_previously_used_password($USER->id, $data['newpassword1'])) {
+        if (\core\user::is_previously_used_password($USER->id, $data['newpassword1'])) {
             $errors['newpassword1'] = get_string('errorpasswordreused', 'core_auth');
             $errors['newpassword2'] = get_string('errorpasswordreused', 'core_auth');
         }

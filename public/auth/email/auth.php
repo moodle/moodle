@@ -112,9 +112,9 @@ class auth_plugin_email extends auth_plugin_base {
             $user->calendartype = $CFG->calendartype;
         }
 
-        $user->id = user_create_user($user, false, false);
+        $user->id = \core\user::create_user($user, false, false);
 
-        user_add_password_history($user->id, $plainpassword);
+        \core\user::add_password_history($user->id, $plainpassword);
 
         // Save any custom profile field information.
         profile_save_data($user);

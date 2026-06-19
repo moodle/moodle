@@ -577,7 +577,7 @@ final class hook_listener_test extends \advanced_testcase {
         $this->assertEquals($user->id, $courseusers);
 
         $user->suspended = 1;
-        user_update_user($user, false);
+        \core\user::update_user($user, false);
 
         $coursecommunication->reload();
         $courseusers = $coursecommunication->get_processor()->get_all_delete_flagged_userids();

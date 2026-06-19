@@ -230,7 +230,7 @@ if ($userform->is_cancelled()) {
     }
 
     // Update user with new profile data.
-    user_update_user($usernew, false, false);
+    \core\user::update_user($usernew, false, false);
 
     // Update preferences.
     useredit_update_user_preference($usernew);

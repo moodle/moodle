@@ -135,10 +135,10 @@ class search extends \moodleform {
                 'valuehtmlcallback' => function($value) {
                     global $DB, $OUTPUT;
                     $user = $DB->get_record('user', ['id' => (int)$value], '*', IGNORE_MISSING);
-                    if (!$user || !user_can_view_profile($user)) {
+                    if (!$user || !\core\user::can_view_profile($user)) {
                         return false;
                     }
-                    $details = user_get_user_details($user);
+                    $details = \core\user::get_user_details($user);
                     return $OUTPUT->render_from_template(
                             'core_search/form-user-selector-suggestion', $details);
                 }

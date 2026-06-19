@@ -774,7 +774,7 @@ class core_renderer extends renderer_base {
             if (!isguestuser()) {
                 // Include this file only when required.
                 require_once($CFG->dirroot . '/user/lib.php');
-                if (($count = user_count_login_failures($USER)) && !empty($CFG->displayloginfailures)) {
+                if (($count = \core\user::count_login_failures($USER)) && !empty($CFG->displayloginfailures)) {
                     $loggedinas .= '<div class="loginfailures">';
                     $a = new stdClass();
                     $a->attempts = $count;
@@ -929,7 +929,7 @@ class core_renderer extends renderer_base {
         if (isset($SESSION->justloggedin) && !empty($CFG->displayloginfailures)) {
             require_once($CFG->dirroot . '/user/lib.php');
             // Set second parameter to false as we do not want reset the counter, the same message appears on footer.
-            if ($count = user_count_login_failures($USER, false)) {
+            if ($count = \core\user::count_login_failures($USER, false)) {
                 $this->page->add_body_class('loginfailures');
             }
         }
@@ -3234,7 +3234,7 @@ EOD;
         $loginurl = get_login_url();
 
         // Get some navigation opts.
-        $opts = user_get_user_navigation_info($user, $this->page);
+        $opts = \core\user::get_user_navigation_info($user, $this->page);
 
         if (!empty($opts->unauthenticateduser)) {
             $returnstr = get_string($opts->unauthenticateduser['content'], 'moodle');
@@ -4248,12 +4248,12 @@ EOD;
             }
 
             // Only provide user information if the user is the current user, or a user which the current user can view.
-            // When checking user_can_view_profile(), either:
+            // When checking \core\user::can_view_profile(), either:
             // If the page context is course, check the course context (from the page object) or;
             // If page context is NOT course, then check across all courses.
             $course = ($this->page->context->contextlevel == CONTEXT_COURSE) ? $this->page->course : null;
 
-            if (user_can_view_profile($user, $course)) {
+            if (\core\user::can_view_profile($user, $course)) {
                 // Use the user's full name if the heading isn't set.
                 if (empty($heading)) {
                     $heading = fullname($user);

@@ -3023,7 +3023,7 @@ function update_user_login_times() {
     $SESSION->userpreviousip = $USER->lastip;
     $USER->lastip = $user->lastip = getremoteaddr();
 
-    // Note: do not call user_update_user() here because this is part of the login process,
+    // Note: do not call \core\user::update_user() here because this is part of the login process,
     //       the login event means that these fields were updated.
     $DB->update_record('user', $user);
     return true;
@@ -3409,7 +3409,7 @@ function create_user_record($username, $password, $auth = 'manual') {
     $newuser->timemodified = $newuser->timecreated;
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
-    $newuser->id = user_create_user($newuser, false, false);
+    $newuser->id = \core\user::create_user($newuser, false, false);
 
     // Save user profile data.
     profile_save_data($newuser);
@@ -3496,7 +3496,7 @@ function update_user_record_by_id($id) {
         if ($newuser) {
             $newuser['id'] = $oldinfo->id;
             $newuser['timemodified'] = time();
-            user_update_user((object) $newuser, false, false);
+            \core\user::update_user((object) $newuser, false, false);
 
             // Save user profile data.
             profile_save_data((object) $newuser);
@@ -3710,7 +3710,7 @@ function delete_user(stdClass $user) {
     $updateuser->timemodified = $deltime;
 
     // Don't trigger update event, as user is being deleted.
-    user_update_user($updateuser, false, false);
+    \core\user::update_user($updateuser, false, false);
 
     // Delete all content associated with the user context, but not the context itself.
     $usercontext->delete_content();

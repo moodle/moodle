@@ -103,7 +103,7 @@ class behat_util extends \core\test\testing_util {
         $user->lastname = 'User';
         $user->city = 'Perth';
         $user->country = 'AU';
-        user_update_user($user, false);
+        \core\user::update_user($user, false);
 
         // Disable email message processor.
         $DB->set_field('message_processors', 'enabled', '0', array('name' => 'email'));

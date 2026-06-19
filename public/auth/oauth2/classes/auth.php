@@ -289,7 +289,7 @@ class auth extends \auth_plugin_base {
         $updateuser->id = $userid;
         $updateuser->picture = $newpicture;
         $USER->picture = $newpicture;
-        user_update_user($updateuser);
+        \core\user::update_user($updateuser);
         return true;
     }
 
@@ -352,7 +352,7 @@ class auth extends \auth_plugin_base {
             }
         }
         // Update the user data.
-        user_update_user($user, false);
+        \core\user::update_user($user, false);
 
         // Save user profile data.
         profile_save_data($user);

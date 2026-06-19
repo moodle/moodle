@@ -1113,7 +1113,7 @@ class settings_navigation extends navigation_node {
                 require_once($CFG->dirroot . '/user/lib.php');
                 // Set the grades node to link to the "Grades" page.
                 if ($course->id == SITEID) {
-                    $url = user_mygrades_url($user->id, $course->id);
+                    $url = \core\user::mygrades_url($user->id, $course->id);
                 } else { // Otherwise we are in a course and should redirect to the user grade report (Activity report version).
                     $url = new url('/course/user.php', ['mode' => 'grade', 'id' => $course->id, 'user' => $user->id]);
                 }
@@ -1200,7 +1200,7 @@ class settings_navigation extends navigation_node {
         $defaulthomepageuser = (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
         if (isloggedin() && !isguestuser($user) && $defaulthomepageuser) {
             require_once($CFG->dirroot . '/user/lib.php');
-            $options = user_get_default_homepage_options();
+            $options = \core\user::get_default_homepage_options();
             if (
                 !empty($options) &&
                     ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||

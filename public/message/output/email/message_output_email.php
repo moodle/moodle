@@ -196,7 +196,7 @@ class message_output_email extends message_output {
 
             $user = core_user::get_user($form->userid, '*', MUST_EXIST);
             $user->mailformat = clean_param($form->mailformat, PARAM_INT);
-            user_update_user($user, false, false);
+            \core\user::update_user($user, false, false);
         }
     }
 

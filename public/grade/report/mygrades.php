@@ -30,6 +30,6 @@ if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
 // Get the url to redirect to.
-$url = user_mygrades_url();
+$url = \core\user::mygrades_url();
 // Redirect to that page.
 redirect($url);

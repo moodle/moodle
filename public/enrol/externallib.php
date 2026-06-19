@@ -195,7 +195,7 @@ class core_enrol_external extends external_api {
                 $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
                 $users = array();
                 foreach ($enrolledusers as $courseuser) {
-                    if ($userdetails = user_get_user_details($courseuser, $course, $userfields)) {
+                    if ($userdetails = \core\user::get_user_details($courseuser, $course, $userfields)) {
                         if ($includeinitials) {
                             $userdetails['initials'] = core_user::get_initials($courseuser);
                         }
@@ -469,7 +469,7 @@ class core_enrol_external extends external_api {
             }
 
             // If viewing details of another user, then we must be able to view participants as well as profile of that user.
-            if (!$sameuser && (!course_can_view_participants($context) || !user_can_view_profile($user, $course))) {
+            if (!$sameuser && (!course_can_view_participants($context) || !\core\user::can_view_profile($user, $course))) {
                 continue;
             }
 
@@ -713,7 +713,7 @@ class core_enrol_external extends external_api {
             // The user we are looking at is not in this course yet though - but we only fetch the minimal set of
             // user records, and the user has been validated to have course:enrolreview in this course. Otherwise
             // there is no way to find users who aren't in the course in order to enrol them.
-            if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {
+            if ($userdetails = \core\user::get_user_details($user, $course, $requiredfields)) {
                 // For custom fields, only return the ones we actually need.
                 if ($customprofilefields && array_key_exists('customfields', $userdetails)) {
                     foreach ($userdetails['customfields'] as $key => $data) {
@@ -823,7 +823,7 @@ class core_enrol_external extends external_api {
                 \core_user\fields::get_identity_fields($context, false)
         );
         foreach ($users['users'] as $user) {
-            if ($userdetails = user_get_user_details($user, $course, $requiredfields)) {
+            if ($userdetails = \core\user::get_user_details($user, $course, $requiredfields)) {
                 $userdetails['initials'] = core_user::get_initials($user);
                 $results[] = $userdetails;
             }
@@ -1044,7 +1044,7 @@ class core_enrol_external extends external_api {
         $users = [];
         foreach ($enrolledusers as $user) {
             context_helper::preload_from_record($user);
-            $userdetails = user_get_user_details($user, $course, $userfields);
+            $userdetails = \core\user::get_user_details($user, $course, $userfields);
             if (!$userdetails) {
                 $userdetails = [
                     'id' => $user->id,

@@ -56,7 +56,7 @@ function block_html_pluginfile($course, $birecord_or_cm, $context, $filearea, $a
         } else if ($parentcontext->contextlevel === CONTEXT_USER) {
             $user = core_user::get_user($parentcontext->instanceid, '*', MUST_EXIST);
             $extracaps = block_method_result('html', 'get_extra_capabilities');
-            if (!user_can_view_profile($user, null, $parentcontext) || !has_any_capability($extracaps, $context)) {
+            if (!\core\user::can_view_profile($user, null, $parentcontext) || !has_any_capability($extracaps, $context)) {
                 send_file_not_found();
             }
         }

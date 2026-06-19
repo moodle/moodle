@@ -135,7 +135,7 @@ if (empty($result->posts)) {
     // In either case we need to decide whether we can show personal information
     // about the requested user to the current user so we will execute some checks
 
-    $canviewuser = user_can_view_profile($user, null, $usercontext);
+    $canviewuser = \core\user::can_view_profile($user, null, $usercontext);
 
     // Prepare the page title
     $pagetitle = get_string('noposts', 'mod_forum');

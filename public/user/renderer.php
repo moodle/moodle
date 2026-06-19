@@ -134,7 +134,7 @@ class core_user_renderer extends plugin_renderer_base {
         foreach ($userlist as $user) {
             $userpicture = $this->output->user_picture($user, array('size' => $exclusivemode ? 100 : 35));
             $fullname = fullname($user);
-            if (user_can_view_profile($user)) {
+            if (\core\user::can_view_profile($user)) {
                 $profilelink = new moodle_url('/user/view.php', array('id' => $user->id));
                 $fullname = html_writer::link($profilelink, $fullname);
             }

@@ -58,7 +58,7 @@ class user_edit_language_form extends moodleform {
         $mform->addElement('hidden', 'course', $COURSE->id);
         $mform->setType('course', PARAM_INT);
 
-        $purpose = user_edit_map_field_purpose($userid, 'lang');
+        $purpose = \core\user::edit_map_field_purpose($userid, 'lang');
         $translations = get_string_manager()->get_list_of_translations();
         $mform->addElement('select', 'lang', get_string('preferredlanguage'), $translations, $purpose);
         $mform->setDefault('lang', core_user::get_property_default('lang'));

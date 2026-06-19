@@ -59,7 +59,7 @@ if ($forumform->is_cancelled()) {
     unset($user->markasreadonnotification);
 
     useredit_update_user_preference($user);
-    user_update_user($user, false, false);
+    \core\user::update_user($user, false, false);
 
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();
