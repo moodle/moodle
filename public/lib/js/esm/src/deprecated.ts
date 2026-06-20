@@ -197,7 +197,7 @@ export default function emitDeprecation(thing: string, {
         if (final || (emit && !isIgnored(thing))) {
             const htmlMessage = getHTMLMessage(thing, alternativeNotice, replacement, since, reason, mdl);
             // The core/notification module is still AMD — load it dynamically.
-            requireAsync('core/notification')
+            requireAsync<typeof import('core/notification')>('core/notification')
             .then((notification) => {
                 return notification.alert('Deprecation Warning', htmlMessage, getString('ok'));
             });
