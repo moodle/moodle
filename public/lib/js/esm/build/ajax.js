@@ -1,7 +1,13 @@
-import{requireAsync as u}from"@moodle/lms/core/amd";/**
- * ESM wrapper for the core/ajax AMD module.
+import h from"@moodle/lms/core/config";import y from"@moodle/lms/core/pending";import R from"@moodle/lms/core/log";import{redirect as E}from"@moodle/lms/core/location";import{relativeUrl as T}from"@moodle/lms/core/url";import{getGlobalAbortSignal as w}from"./abort";/**
+ * Standard Ajax wrapper for Moodle web service calls.
+ *
+ * Calls the central Ajax script which can invoke any existing web service
+ * using the current session. Supports batching multiple requests into a
+ * single HTTP call.
  *
  * @module     core/ajax
- * @copyright  Meirza <meirza.arson@moodle.com>
+ * @copyright  2015 Damyon Wiese <damyon@moodle.com>
+ * @copyright  2025 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */function l(e){return typeof e=="object"&&e!==null&&"message"in e&&"errorcode"in e}const a=await u("core/ajax");function s(e){return new Promise((n,o)=>{e.then(n,o)})}function c(e,n=!0,o=!0,r=!1){const[t]=a.call([e],n,o,r);return s(t)}function m(e,n=!0,o=!0,r=!1){return Promise.all(a.call(e,n,o,r).map(t=>s(t)))}export{m as fetchMany,c as fetchOne,l as isMoodleAjaxError};
+ * @since      2.9
+ */function S(e){return typeof e=="object"&&e!==null&&"message"in e&&"errorcode"in e}const q=2e3;let j=!1;typeof window<"u"&&window.addEventListener("beforeunload",()=>{j=!0});function P(e,t){const{loginrequired:m,nosessionupdate:c,cachekey:n}=t,o=e.map(l=>l.methodname),i=o.length<=5?o.sort().join():`${o.length}-method-calls`,g=JSON.stringify(e);let a,s,d="POST";m?(a="service.php",s=`${h.wwwroot}/lib/ajax/${a}?sesskey=${h.sesskey}&info=${i}`):(a="service-nologin.php",s=`${h.wwwroot}/lib/ajax/${a}?info=${i}`,n&&(s+=`&cachekey=${n}`,d="GET")),c&&(s+="&nosessionupdate=true");const x={"Content-Type":"application/json",Accept:"application/json",pageparent:h.traceId||""};let p;if(d==="POST")p=g;else{const l=`${s}&args=${encodeURIComponent(g)}`;l.length>q?(d="POST",p=g):s=l}const u={method:d,headers:x,credentials:"same-origin",signal:w()};return p&&(u.body=p),{url:s,init:u}}function $(e,t,m){if("error"in e&&e.error&&!Array.isArray(e)){for(const{reject:o}of t)o(e);return}const c=e;let n=null;for(let o=0;o<t.length;o++){const i=c[o];if(typeof i>"u"){n=new Error("missing response");break}if(i.error===!1)t[o].resolve(i.data);else{n=i.exception||new Error("Unknown error");break}}if(n!==null)if(S(n)&&n.errorcode==="servicerequireslogin"&&!m)E(T("/login/index.php"));else for(const{reject:o}of t)o(n)}function v(e,t={}){const{loginrequired:m=!0,nosessionupdate:c=!1,timeout:n=0,cachekey:o=null}=t,i={loginrequired:m,nosessionupdate:c,timeout:n,cachekey:o&&Number(o)>0?Number(o):null},g=e.map((r,f)=>({index:f,methodname:r.methodname,args:r.args})),a=[],s=e.map(()=>{let r,f;const k=new Promise((A,b)=>{r=A,f=b});return a.push({resolve:r,reject:f}),k}),{url:d,init:x}=P(g,i),p=new y("core/ajax:call");let u,l;return n>0&&(u=new AbortController,x.signal=u.signal,l=setTimeout(()=>u.abort(),n),w().addEventListener("abort",()=>{u.abort()})),fetch(d,x).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}: ${r.statusText}`);return r.json()}).then(r=>($(r,a,c),r)).catch(r=>{if(j)R.error("Page unloaded."),R.error(r);else for(const{reject:f}of a)f(r)}).finally(()=>{l&&clearTimeout(l),p.resolve()}),s}function N(e,t={}){return v([e],t)[0]}function U(e,t={}){return Promise.all(v(e,t))}export{U as fetchMany,N as fetchOne,S as isMoodleAjaxError,v as performFetch};

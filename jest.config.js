@@ -23,9 +23,13 @@ module.exports = {
             tsconfig: './tsconfig.jest.json',
         }],
     },
+    setupFiles: [
+        '<rootDir>/.jest/globalM.ts',
+    ],
     setupFilesAfterEnv: [
         '@testing-library/jest-dom',
         '<rootDir>/.jest/globalSetup.ts',
+        '<rootDir>/.jest/mockRedirect.ts',
     ],
     collectCoverageFrom: [
         '**/esm/src/**/*.{ts,tsx}',

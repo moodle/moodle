@@ -13,63 +13,255 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * ESM wrapper around the AMD core/str module for loading Moodle language strings.
- *
- * @module     core/String
- * @copyright  Meirza <meirza.arson@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+import {Suspense, use, type ReactNode} from 'react';
+import {
+    fetchMany,
+} from '@moodle/lms/core/ajax';
+import config from './config';
+import {localStore} from './Storage';
 
-import {requireAsync} from '@moodle/lms/core/amd';
+/* eslint-disable no-restricted-properties */
 
-type stringParams = Record<string, string | number> | string | number | null;
+// --- Global type declarations ---
 
-type stringRequest = {
-    key: string;
-    component: string;
-    lang: string;
-    param: stringParams;
+declare const M: {
+    str: Record<string, Record<string, string>>;
+    util: {
+        get_string: (key: string, component: string, param?: StringParams) => string;
+    };
 };
 
-interface stringModule {
-    // eslint-disable-next-line camelcase
-    get_string: (identifier: string, component?: string, params?: stringParams) => Promise<string>;
-    // eslint-disable-next-line camelcase
-    get_strings: (requests: stringRequest[]) => Promise<string>[];
-    // eslint-disable-next-line camelcase
-    cache_strings: (strings: stringRequest[]) => void;
-}
+// --- Public types ---
+
+/** Parameter types accepted for variable expansion in language strings. */
+export type StringParams = Record<string, string | number> | string | number | null;
+
+/** A request for a single language string. */
+export type StringRequest = {
+    /** The string identifier. */
+    key: string;
+    /** The component name (defaults to 'core'). */
+    component?: string;
+    /** Parameters for variable expansion. */
+    param?: StringParams;
+    /** The language code (defaults to current page language). */
+    lang?: string;
+};
+
+/** An entry for pre-caching a resolved string value. */
+export type CacheStringEntry = {
+    /** The string identifier. */
+    key: string;
+    /** The component name (defaults to 'core'). */
+    component?: string;
+    /** The resolved (untranslated) string value. */
+    value: string;
+    /** The language code (defaults to current page language). */
+    lang?: string;
+};
+
+// --- Internal state ---
+
+/** Cache of promises for string fetch operations, keyed by `core_str/key/component/lang`. */
+const promiseCache = new Map<string, Promise<string>>();
+
+/** Cache for React's `use()` hook — ensures stable promise references across renders. */
+const stringPromiseCache = new Map<string, Promise<string>>();
+
+// --- Cache key helper ---
+
+const getCacheKey = (key: string, component: string, lang: string): string =>
+    `core_str/${key}/${component}/${lang}`;
+
+// --- Core string API ---
+
+/**
+ * Request a batch of language strings, returning one Promise per request.
+ *
+ * Strings already cached in `M.str` or `localStore` resolve immediately.
+ * Uncached strings are fetched from the server in a single batched web-service call.
+ *
+ * @param requests List of string requests.
+ * @returns An array of Promises, one per request, each resolving to the formatted string.
+ */
+export const getRequestedStrings = (requests: StringRequest[]): Promise<string>[] => {
+    type PendingFetch = {
+        request: { methodname: string; args: Record<string, unknown> };
+        resolve: (value: string) => void;
+        reject: (reason: unknown) => void;
+    };
+
+    const stringPromises: Promise<string>[] = new Array(requests.length);
+    const pendingFetches: PendingFetch[] = [];
+
+    for (let i = 0; i < requests.length; i++) {
+        const {key, component: rawComponent = 'core', param = null, lang = config.language} = requests[i];
+        const component = rawComponent || 'core';
+        const cacheKey = getCacheKey(key, component, lang);
+
+        // 1. Check M.str in-memory cache.
+        if (M.str[component]?.[key] !== undefined) {
+            const promise = Promise.resolve(M.util.get_string(key, component, param));
+            promiseCache.set(cacheKey, promise);
+            stringPromises[i] = promise;
+            continue;
+        }
+
+        // 2. Check browser localStore.
+        const cached = localStore.get(cacheKey);
+        if (cached !== null) {
+            if (!M.str[component]) {
+                M.str[component] = {};
+            }
+            M.str[component][key] = cached;
+            const promise = Promise.resolve(M.util.get_string(key, component, param));
+            promiseCache.set(cacheKey, promise);
+            stringPromises[i] = promise;
+            continue;
+        }
+
+        // 3. Check promise cache (another request already triggered a fetch for this string).
+        if (promiseCache.has(cacheKey)) {
+            stringPromises[i] = promiseCache.get(cacheKey)!.then(
+                () => M.util.get_string(key, component, param),
+            );
+            continue;
+        }
+
+        // 4. Need to fetch from server — create a deferred promise.
+        const fetchPromise = new Promise<string>((resolve, reject) => {
+            pendingFetches.push({
+                request: {
+                    methodname: 'core_get_string',
+                    args: {stringid: key, stringparams: [], component, lang},
+                },
+                resolve,
+                reject,
+            });
+        });
+
+        // Store immediately so duplicate keys in the same batch reuse this promise.
+        promiseCache.set(cacheKey, fetchPromise);
+
+        stringPromises[i] = fetchPromise.then((str) => {
+            if (!M.str[component]) {
+                M.str[component] = {};
+            }
+            M.str[component][key] = str;
+            localStore.set(cacheKey, str);
+            return M.util.get_string(key, component, param);
+        });
+    }
+
+    if (pendingFetches.length > 0) {
+        const ajaxRequests = pendingFetches.map((pf) => pf.request);
+
+        fetchMany<string>(ajaxRequests, {
+            loginrequired: true,
+            nosessionupdate: false,
+            timeout: 0,
+            cachekey: config.langrev,
+        })
+        .then((results) => {
+            results.forEach((result, index) => {
+                pendingFetches[index].resolve(result);
+            });
+
+            return results;
+        })
+        .catch((err) => {
+            pendingFetches.forEach((pf) => pf.reject(err));
+        });
+    }
+
+    return stringPromises;
+};
+
+/**
+ * Fetch a batch of language strings, returning a single Promise for all results.
+ *
+ * @param requests List of string requests.
+ * @returns A Promise resolving to an array of formatted strings, in request order.
+ */
+export const getStrings = (requests: StringRequest[]): Promise<string[]> =>
+    Promise.all(getRequestedStrings(requests));
+
+/**
+ * Pre-populate the string caches with known values.
+ *
+ * This is typically called by core APIs (e.g. page bootstrap) to seed the cache
+ * so that subsequent `getString` / `getStrings` calls resolve immediately.
+ *
+ * @param strings List of string entries to cache.
+ */
+export const cacheStrings = (strings: CacheStringEntry[]): void => {
+    for (const {key, component = 'core', value, lang = config.language} of strings) {
+        const cacheKey = getCacheKey(key, component, lang);
+
+        if (!M.str[component]) {
+            M.str[component] = {};
+        }
+        if (!(key in M.str[component])) {
+            M.str[component][key] = value;
+        }
+
+        localStore.set(cacheKey, value);
+
+        if (!promiseCache.has(cacheKey)) {
+            promiseCache.set(cacheKey, Promise.resolve(value));
+        }
+    }
+};
+
+// --- React-facing API ---
 
 export interface StringProps {
     identifier: string;
     component?: string;
-    params?: string | number | Record<string, string | number>;
+    params?: StringParams;
 }
 
-// Ensures the same Promise instance is returned for the same string key across renders.
-// use() requires a stable reference — without this, a new Promise is created on every
-// render and the component suspends indefinitely.
-const stringPromiseCache = new Map<string, Promise<string>>();
-
+/**
+ * Fetch a single language string, with React-compatible promise caching.
+ *
+ * Returns a stable Promise reference for the same (identifier, component, params) tuple,
+ * making it safe to use with React's `use()` hook.
+ */
 export const getString = (
     identifier: string,
     component: string = 'core',
-    params?: string | number | Record<string, string | number>,
+    params?: StringParams,
 ): Promise<string> => {
     const key = `${component}::${identifier}::${JSON.stringify(params)}`;
     if (!stringPromiseCache.has(key)) {
         stringPromiseCache.set(
             key,
-            requireAsync<stringModule>('core/str').then(str => str.get_string(identifier, component, params)),
+            getRequestedStrings([{key: identifier, component, param: params}])[0],
         );
     }
     return stringPromiseCache.get(key)!;
 };
 
-export const cacheStrings = async (
-    requests: Array<{key: string; component: string; param?: stringParams; lang?: string}>,
-): Promise<void> => {
-    const str = await requireAsync<stringModule>('core/str');
-    str.cache_strings(requests as stringRequest[]);
+/**
+ * Clear all internal caches. Intended for use in tests.
+ */
+export const resetStringCache = (): void => {
+    stringPromiseCache.clear();
+    promiseCache.clear();
 };
+
+// --- React component ---
+
+function StringInner({identifier, component, params}: StringProps) {
+    return <>{use(getString(identifier, component, params))}</>;
+}
+
+function String({children, identifier, component = 'core', params}: StringProps & {children?: ReactNode}) {
+    return (
+        <Suspense fallback={children ?? `${identifier}, ${component}`}>
+            <StringInner identifier={identifier} component={component} params={params} />
+        </Suspense>
+    );
+}
+
+export default String;

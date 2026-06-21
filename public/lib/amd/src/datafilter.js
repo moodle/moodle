@@ -142,15 +142,15 @@ export default class {
 
                 return filterRow;
             })
-            .then(result => {
+            .then(async result => {
                 pendingPromise.resolve();
 
                 // If an existing filter is passed in, add it. Otherwise, leave the row empty.
                 if (filterdata.filtertype) {
-                    result.forEach(filter => {
-                        this.addFilter(filter, filterdata.filtertype, filterdata.values,
+                    await Promise.all(result.map(async filter => {
+                        await this.addFilter(filter, filterdata.filtertype, filterdata.values,
                             filterdata.jointype, filterdata.filteroptions);
-                    });
+                    }));
                 }
                 return result;
             })
@@ -184,6 +184,9 @@ export default class {
         filterRow.dataset.filterType = filterType;
 
         const filterDataNode = this.getFilterDataSource(filterType);
+        if (!filterDataNode) {
+            return;
+        }
 
         // Instantiate the Filter class.
         let Filter = GenericFilter;

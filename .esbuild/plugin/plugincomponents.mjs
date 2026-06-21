@@ -230,7 +230,7 @@ async function runParallelBuilds(entryPoints, buildConfig) {
  * An esbuild plugin that externalizes relative imports within the same esm/src/ directory.
  *
  * This prevents sibling modules from being inlined into each output bundle, so that
- * a change to a dependency (e.g. StorageWrapper) does not alter the built output of
+ * a change to a dependency (e.g. Storage) does not alter the built output of
  * its consumers (e.g. LocalStorage, SessionStorage).
  *
  * Relative imports are rewritten from their source extension (.ts/.tsx) to .js in the output.

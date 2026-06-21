@@ -25,6 +25,9 @@ const configuration = {
     compilerOptions: {
         baseUrl: ".",
         paths: {
+            'core/esm!@moodle/lms/theme_boost/bootstrap': [
+                'node_modules/@types/bootstrap/index.d.ts',
+            ],
         },
         target: "es2015",
         allowSyntheticDefaultImports: false,
@@ -52,7 +55,9 @@ const generateJsconfig = (grunt) => {
     const componentData = fetchComponentData().components;
     for (const [thisPath, component] of Object.entries(componentData)) {
         jsconfigData.compilerOptions.paths[`${component}/*`] = [`${thisPath}/amd/src/*`];
+        jsconfigData.compilerOptions.paths[`core/esm!@moodle/lms/${component}/*`] = [`${thisPath}/js/esm/src/*`];
         jsconfigData.include.push(`${thisPath}/amd/src/**/*`);
+        jsconfigData.include.push(`${thisPath}/js/esm/src/**/*`);
     }
 
     grunt.file.write('jsconfig.json', JSON.stringify(jsconfigData, null, "  ") + "\n");

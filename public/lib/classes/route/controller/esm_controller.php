@@ -60,6 +60,7 @@ class esm_controller {
             ),
         ],
         method: ['GET'],
+        cookies: false,
         abortafterconfig: true,
     )]
     /**

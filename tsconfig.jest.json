@@ -1,17 +1,25 @@
 {
   "extends": "./tsconfig.aliases.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM"],
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
     "jsx": "react-jsx",
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "isolatedModules": true,
     "composite": true,
-    "types": ["jest", "@testing-library/jest-dom"]
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ]
   },
-  "include": ["public/**/esm/src/**/*", "public/**/esm/tests/**/*"]
+  "include": [
+    "node_modules/@types/**/*.d.ts",
+    "public/**/esm/src/**/*",
+    "public/**/esm/tests/**/*",
+    ".jest/**/*"
+  ]
 }

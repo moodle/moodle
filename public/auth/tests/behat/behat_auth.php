@@ -47,6 +47,10 @@ class behat_auth extends behat_base {
      * @param moodle_url|null $wantsurl optional, URL to go to after logging in.
      */
     public function i_log_in_as(string $username, ?moodle_url $wantsurl = null) {
+        if ($this->running_javascript()) {
+            $this->execute_script("window.globalAbortController?.abort();");
+        }
+
         // In the mobile app the required tasks are different (does not support $wantsurl).
         if ($this->is_in_app()) {
             $this->execute('behat_app::login', [$username]);
