@@ -167,7 +167,9 @@ var QUICKCOMMENTLIST = function(editor) {
                 'action': 'loadquicklist',
                 'userid': this.editor.get('userid'),
                 'attemptnumber': this.editor.get('attemptnumber'),
-                'assignmentid': this.editor.get('assignmentid')
+                'assignmentid': this.editor.get('assignmentid'),
+                'graderid': this.editor.get('graderid'),
+                'ismarking': this.editor.get('ismarking') ? 1 : 0,
             },
             on: {
                 success: function(tid, response) {

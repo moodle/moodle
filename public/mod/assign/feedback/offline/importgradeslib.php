@@ -57,6 +57,11 @@ class assignfeedback_offline_grade_importer {
     /** @var array $feedbackcolumnindexes A lookup of column indexes for feedback plugin text import columns */
     private $feedbackcolumnindexes = array();
 
+    /**
+     * @var array $markindexes Array of indexes of the marker mark columns to process.
+     */
+    private array $markindexes = [];
+
     /** @var string $encoding Encoding to use when reading the csv file. Defaults to utf-8. */
     private $encoding;
 
@@ -104,6 +109,7 @@ class assignfeedback_offline_grade_importer {
         $strgrade = get_string('gradenoun');
         $strid = get_string('recordid', 'assign');
         $strmodified = get_string('lastmodifiedgrade', 'assign');
+        $strmarker = get_string('marker', 'mod_assign');
 
         foreach ($this->assignment->get_feedback_plugins() as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
@@ -113,21 +119,34 @@ class assignfeedback_offline_grade_importer {
                                                                        'description'=>$description);
                 }
             }
+
+            // Are there any additional marker columns for this plugin?
+            if ($this->assignment->is_using_multiple_marking() && $plugin->has_marker_columns()) {
+                for ($i = 1; $i <= $this->assignment->get_instance()->markercount; $i++) {
+                    foreach ($plugin->get_marker_columns($i) as $col => $header) {
+                        $this->feedbackcolumnindexes[$header] = [
+                            'plugin' => $plugin,
+                            'field' => $col,
+                            'description' => $header,
+                            'markernumber' => $i,
+                        ];
+                    }
+                }
+            }
         }
 
         if ($columns) {
             foreach ($columns as $index => $column) {
                 if (isset($this->feedbackcolumnindexes[$column])) {
                     $this->feedbackcolumnindexes[$column]['index'] = $index;
-                }
-                if ($column == $strgrade) {
+                } else if ($column == $strgrade) {
                     $this->gradeindex = $index;
-                }
-                if ($column == $strid) {
+                } else if ($column == $strid) {
                     $this->idindex = $index;
-                }
-                if ($column == $strmodified) {
+                } else if ($column == $strmodified) {
                     $this->modifiedindex = $index;
+                } else if (preg_match('/^' . $strmarker . ' \d+$/', $column, $matches)) {
+                    $this->markindexes[$matches[0]] = $index;
                 }
             }
         }
@@ -172,16 +191,29 @@ class assignfeedback_offline_grade_importer {
      * @return stdClass or false The stdClass is an object containing user, grade and lastmodified
      */
     public function next() {
-        global $DB;
+        global $USER, $DB;
         $result = new stdClass();
-
         while ($record = $this->csvreader->next()) {
             $idstr = $record[$this->idindex];
-            // Strip the integer from the end of the participant string.
-            $id = substr($idstr, strlen(get_string('hiddenuser', 'assign')));
-            if ($userid = $this->assignment->get_user_id_for_uniqueid($id)) {
+
+            // If we are running a behat test, this will be the username of the user.
+            if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
+                $userid = $DB->get_field('user', 'id', ['username' => $idstr]);
+            } else {
+                // Strip the integer from the end of the participant string.
+                $id = substr($idstr, strlen(get_string('hiddenuser', 'assign')));
+                $userid = $this->assignment->get_user_id_for_uniqueid($id);
+            }
+            if ($userid) {
                 if (array_key_exists($userid, $this->validusers)) {
                     $result->grade = $record[$this->gradeindex];
+                    foreach ($this->markindexes as $colname => $index) {
+                        $marker = assign_grading_table::extract_marker_from_marker_column($this->assignment, $userid, $colname);
+                        // Only use the mark column if we are this marker.
+                        if ($marker && $marker->id == $USER->id) {
+                            $result->mark = $record[$index];
+                        }
+                    }
                     $result->modified = strtotime($record[$this->modifiedindex]);
                     $result->user = $this->validusers[$userid];
                     $result->feedback = array();
@@ -191,7 +223,6 @@ class assignfeedback_offline_grade_importer {
                             $result->feedback[] = $details;
                         }
                     }
-
                     return $result;
                 }
             }

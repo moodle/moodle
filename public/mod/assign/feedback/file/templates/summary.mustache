@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template assignfeedback_file/summary
+
+    Summary table of all feedback filefeedback for a submission.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * filefeedback - Array of filefeedback containing {context, html}
+    * filefeedback[].context - A string to display the context of the comment, e.g. overall or marker
+    * filefeedback[].html - The HTML to render for the comment
+
+    Example context (json):
+    {
+        "filefeedback": [
+            {
+                "context": "Overall comment",
+                "html": "<p>The overall comment</p>"
+            },
+            {
+                "context": "Marker comment",
+                "html": "<p>Marker one's comment</p>"
+            },
+            {
+                "context": "Marker comment",
+                "html": "<p>Marker two's comment</p>"
+            }
+        ]
+    }
+}}
+<div class="assignfeedback_file-files">
+    {{#filefeedback}}
+        <div>
+            <strong>{{context}}</strong>
+            <div>{{{html}}}</div>
+            <hr>
+        </div>
+    {{/filefeedback}}
+</div>

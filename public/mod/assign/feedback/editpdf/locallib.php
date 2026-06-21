@@ -54,20 +54,28 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @param int $userid
      * @param stdClass $grade
      * @param bool $readonly
+     * @param int|null $graderid Grader user ID (Default: current user)
+     * @param int|null $markid ID of the mark record.
      * @return assignfeedback_editpdf_widget
      */
-    public function get_widget($userid, $grade, $readonly) {
+    public function get_widget($userid, $grade, $readonly, ?int $graderid = null, ?int $markid = null) {
+        global $USER;
+        if (is_null($graderid)) {
+            $graderid = $USER->id;
+        }
         $attempt = -1;
         if ($grade && isset($grade->attemptnumber)) {
             $attempt = $grade->attemptnumber;
         } else {
             $grade = $this->assignment->get_user_grade($userid, true);
         }
+        $ismarking = $this->assignment->is_marking();
 
         $feedbackfile = document_services::get_feedback_document(
             $this->assignment->get_instance()->id,
             $userid,
-            $attempt
+            $attempt,
+            $ismarking,
         );
 
         $stampfiles = array();
@@ -151,19 +159,20 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             array_push($stampfiles, $url->out());
         }
 
-        $url = false;
+        $url = null;
         $filename = '';
+        [$filearea, $fileitemid] = document_services::get_file_area_and_id($this->assignment, $grade);
         if ($feedbackfile) {
             $url = moodle_url::make_pluginfile_url(
                 $this->assignment->get_context()->id,
-                'assignfeedback_editpdf',
-                document_services::FINAL_PDF_FILEAREA,
-                $grade->id,
+                document_services::COMPONENT,
+                $filearea,
+                $fileitemid,
                 '/',
                 $feedbackfile->get_filename(),
-                false
+                false,
             );
-           $filename = $feedbackfile->get_filename();
+            $filename = $feedbackfile->get_filename();
         }
 
         $widget = new assignfeedback_editpdf_widget(
@@ -173,7 +182,10 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             $url,
             $filename,
             $stampfiles,
-            $readonly
+            $readonly,
+            $ismarking,
+            $graderid,
+            $markid,
         );
         return $widget;
     }
@@ -225,7 +237,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return bool true if elements were added to the form
      */
     public function get_form_elements_for_user($grade, MoodleQuickForm $mform, stdClass $data, $userid) {
-        global $PAGE;
+        global $PAGE, $USER;
 
         $attempt = -1;
         if ($grade) {
@@ -235,14 +247,23 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
         $renderer = $PAGE->get_renderer('assignfeedback_editpdf');
 
         // Links to download the generated pdf...
-        if ($attempt > -1 && page_editor::has_annotations_or_comments($grade->id, false)) {
-            $html = $this->assignment->render_area_files('assignfeedback_editpdf',
-                                                         document_services::FINAL_PDF_FILEAREA,
-                                                         $grade->id);
-            $mform->addElement('static', 'editpdf_files', get_string('downloadfeedback', 'assignfeedback_editpdf'), $html);
+        if ($attempt > -1) {
+            [$filearea, $fileitemid] = document_services::get_file_area_and_id($this->assignment, $grade);
+            $markid = null;
+            if ($this->assignment->is_marking()) {
+                $markid = $fileitemid;
+            }
+            if (page_editor::has_annotations_or_comments($grade->id, false, $markid)) {
+                $html = $this->assignment->render_area_files(
+                    'assignfeedback_editpdf',
+                    $filearea,
+                    $fileitemid,
+                );
+                $mform->addElement('static', 'editpdf_files', get_string('downloadfeedback', 'assignfeedback_editpdf'), $html);
+            }
         }
 
-        $widget = $this->get_widget($userid, $grade, false);
+        $widget = $this->get_widget($userid, $grade, false, $USER->id);
 
         $html = $renderer->render($widget);
         $mform->addElement('static', 'editpdf', get_string('editpdf', 'assignfeedback_editpdf'), $html);
@@ -260,6 +281,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return boolean True if the pdf has been modified, else false.
      */
     public function is_feedback_modified(stdClass $grade, stdClass $data) {
+        global $USER;
         // We only need to know if the source user's PDF has changed. If so then all
         // following users will have the same status. If it's only an individual annotation
         // then only one user will come through this method.
@@ -268,11 +290,20 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
             $sourceuserid = $data->editpdf_source_userid;
             // Retrieve the grade information for the source user.
             $sourcegrade = $this->assignment->get_user_grade($sourceuserid, true, $grade->attemptnumber);
+            // This is manually set in assign::apply_grade_to_user() for $grade so it needs to match here too.
+            $sourcegrade->grader = $USER->id;
             $pagenumbercount = document_services::page_number_for_attempt($this->assignment, $sourceuserid, $sourcegrade->attemptnumber);
+            $sourcemarkid = null;
+            $markid = null;
+            if ($this->assignment->is_marking()) {
+                $sourcemarkid = $this->assignment->get_mark($sourcegrade->id, $sourcegrade->grader)->id;
+                $markid = $this->assignment->get_mark($grade->id, $grade->grader)->id;
+            }
             for ($i = 0; $i < $pagenumbercount; $i++) {
                 // Select all annotations.
-                $draftannotations = page_editor::get_annotations($sourcegrade->id, $i, true);
-                $nondraftannotations = page_editor::get_annotations($grade->id, $i, false);
+                $draftannotations = page_editor::get_annotations($sourcegrade->id, $i, true, $sourcemarkid);
+                $nondraftannotations = page_editor::get_annotations($grade->id, $i, false, $markid);
+
                 // Check to see if the count is the same.
                 if (count($draftannotations) != count($nondraftannotations)) {
                     // The count is different so we have a modification.
@@ -298,8 +329,8 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                     }
                 }
                 // Select all comments.
-                $draftcomments = page_editor::get_comments($sourcegrade->id, $i, true);
-                $nondraftcomments = page_editor::get_comments($grade->id, $i, false);
+                $draftcomments = page_editor::get_comments($sourcegrade->id, $i, true, $sourcemarkid);
+                $nondraftcomments = page_editor::get_comments($grade->id, $i, false, $markid);
                 if (count($draftcomments) != count($nondraftcomments)) {
                     return true;
                 } else {
@@ -335,18 +366,24 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return bool
      */
     public function save(stdClass $grade, stdClass $data) {
+        global $USER;
         // Source user id is only added to the form if there was a pdf.
+        $markid = null;
+        if ($this->assignment->is_marking()) {
+            // It should have been created when adding the comments/annotations via ajax. So should always exist.
+            $mark = $this->assignment->get_mark($grade->id, $USER->id);
+            $markid = $mark->id;
+        }
         if (!empty($data->editpdf_source_userid)) {
             $sourceuserid = $data->editpdf_source_userid;
             // Copy drafts annotations and comments if current user is different to sourceuserid.
             if ($sourceuserid != $grade->userid) {
-                page_editor::copy_drafts_from_to($this->assignment, $grade, $sourceuserid);
+                page_editor::copy_drafts_from_to($this->assignment, $grade, $sourceuserid, $markid);
             }
         }
-        if (page_editor::has_annotations_or_comments($grade->id, true)) {
-            document_services::generate_feedback_document($this->assignment, $grade->userid, $grade->attemptnumber);
+        if (page_editor::has_annotations_or_comments($grade->id, true, $markid)) {
+            document_services::generate_feedback_document($this->assignment, $grade->userid, $grade->attemptnumber, $markid);
         }
-
         return true;
     }
 
@@ -355,34 +392,124 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      *
      * @param stdClass $grade
      * @param bool $showviewlink (Always set to false).
+     * @param bool $fromgradingtable Is this summary loaded from the grading table?
+     * @param int|null $markid ID of the mark record.
      * @return string
      */
-    public function view_summary(stdClass $grade, & $showviewlink) {
-        $showviewlink = false;
-        return $this->view($grade);
+    public function view_summary(stdClass $grade, &$showviewlink, bool $fromgradingtable = false, ?int $markid = null) {
+        if (!$fromgradingtable) {
+            return $this->view_all($grade);
+        }
+
+        return $this->view($grade, $markid);
+    }
+
+    /**
+     * Display all the editpdf feedback files, overall and marker.
+     * @param stdClass $grade Grade object
+     * @return string
+     */
+    public function view_all(stdClass $grade): string {
+        global $DB, $PAGE, $USER, $OUTPUT;
+
+        $data = ['overall' => [], 'marks' => []];
+
+        // Reset is_marking to false, because it re-uses the same assign object as it loops through all the plugins.
+        $this->assignment->set_is_marking(false);
+
+        if (page_editor::has_any_active_annotations_or_comments($grade->id)) {
+            // First the overall one.
+            if (page_editor::has_annotations_or_comments($grade->id, false)) {
+                $overalldata = [];
+                $area = document_services::FINAL_PDF_FILEAREA;
+                $item = $grade->id;
+
+                $overalldata['files'] = $this->assignment->render_area_files(
+                    'assignfeedback_editpdf',
+                    $area,
+                    $item,
+                );
+
+                // Also show the link to the read-only interface.
+                $renderer = $PAGE->get_renderer('assignfeedback_editpdf');
+                $widget = $this->get_widget($grade->userid, $grade, true, $USER->id);
+                $overalldata['widget'] = $renderer->render($widget);
+                $data['overall'] = $overalldata;
+            }
+
+            // Then the marker feedback.
+            $marks = $this->assignment->get_mark_records($grade->id, $grade->userid);
+            foreach ($marks as $mark) {
+                if (page_editor::has_annotations_or_comments($grade->id, false, $mark->id)) {
+                    $markdata = [];
+                    $area = document_services::FINAL_PDF_FILEAREA_MARKER;
+                    $item = $mark->id;
+                    $this->assignment->set_is_marking(true);
+
+                    // Render the files.
+                    $markdata['files'] = $this->assignment->render_area_files(
+                        'assignfeedback_editpdf',
+                        $area,
+                        $item,
+                    );
+
+                    // Also show the link to the read-only interface.
+                    $renderer = $PAGE->get_renderer('assignfeedback_editpdf');
+                    $widget = $this->get_widget($grade->userid, $grade, true, $USER->id, $mark->id);
+                    $markdata['widget'] = $renderer->render($widget);
+                    $markeruser = $DB->get_record('user', ['id' => $mark->marker]);
+                    $markdata['markerlabel'] = get_string('markerfeedback', 'assignfeedback_editpdf', fullname($markeruser));
+                    $data['marks'][] = $markdata;
+                }
+            }
+        }
+
+        // Reset is_marking to false, because it re-uses the same assign object as it loops through all the plugins.
+        $this->assignment->set_is_marking(false);
+        return $OUTPUT->render_from_template('assignfeedback_editpdf/view_all', $data);
     }
 
     /**
      * Display the list of files in the feedback status table.
      *
      * @param stdClass $grade
+     * @param int|null $markid ID of the mark record.
      * @return string
      */
-    public function view(stdClass $grade) {
-        global $PAGE;
+    public function view(stdClass $grade, ?int $markid = null) {
+        global $PAGE, $USER;
         $html = '';
+
+        // Reset is_marking to false, because it re-uses the same assign object as it loops through all the plugins.
+        $this->assignment->set_is_marking(false);
+
         // Show a link to download the pdf.
-        if (page_editor::has_annotations_or_comments($grade->id, false)) {
-            $html = $this->assignment->render_area_files('assignfeedback_editpdf',
-                                                         document_services::FINAL_PDF_FILEAREA,
-                                                         $grade->id);
+        if (page_editor::has_annotations_or_comments($grade->id, false, $markid)) {
+            $area = document_services::FINAL_PDF_FILEAREA;
+            $item = $grade->id;
+
+            if (!is_null($markid)) {
+                $area = document_services::FINAL_PDF_FILEAREA_MARKER;
+                $item = $markid;
+                $this->assignment->set_is_marking(true);
+            }
+
+            $html = $this->assignment->render_area_files(
+                'assignfeedback_editpdf',
+                $area,
+                $item,
+            );
 
             // Also show the link to the read-only interface.
             $renderer = $PAGE->get_renderer('assignfeedback_editpdf');
-            $widget = $this->get_widget($grade->userid, $grade, true);
+            $widget = $this->get_widget($grade->userid, $grade, true, $USER->id, $markid);
 
             $html .= $renderer->render($widget);
         }
+
+        // Reset is_marking to false, because it re-uses the same assign object as it loops through all the plugins.
+        $this->assignment->set_is_marking(false);
+
         return $html;
     }
 
@@ -443,6 +570,15 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      * @return array - An array of fileareas (keys) and descriptions (values)
      */
     public function get_file_areas() {
+        return $this->get_overall_file_areas() + $this->get_marker_file_areas();
+    }
+
+    /**
+     * Get file areas for overall files (not marker ones).
+     *
+     * @return array
+     */
+    public function get_overall_file_areas(): array {
         return [
             document_services::FINAL_PDF_FILEAREA => $this->get_name(),
             document_services::COMBINED_PDF_FILEAREA => $this->get_name(),
@@ -457,6 +593,20 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
     }
 
     /**
+     * Get file areas for marker files.
+     *
+     * @return array
+     */
+    public function get_marker_file_areas(): array {
+        return [
+            document_services::FINAL_PDF_FILEAREA_MARKER => $this->get_name(),
+            document_services::COMBINED_PDF_FILEAREA_MARKER => $this->get_name(),
+            document_services::PARTIAL_PDF_FILEAREA_MARKER => $this->get_name(),
+            document_services::IMPORT_HTML_FILEAREA_MARKER => $this->get_name(),
+        ];
+    }
+
+    /**
      * Get all file areas for user data related to this plugin.
      *
      * @return array - An array of user data fileareas (keys) and descriptions (values)
@@ -464,6 +614,7 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
     public function get_user_data_file_areas(): array {
         return [
             document_services::FINAL_PDF_FILEAREA => $this->get_name(),
+            document_services::FINAL_PDF_FILEAREA_MARKER => $this->get_name() . ' marker',
         ];
     }
 
@@ -483,5 +634,27 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      */
     public function get_config_for_external() {
         return (array) $this->get_config();
+    }
+
+    /**
+     * Yes, this plugin has the comments column which is required per marker.
+     *
+     * @return true
+     */
+    public function has_marker_columns(): bool {
+        return true;
+    }
+
+    /**
+     * Return the array of extra comment columns per marker.
+     *
+     * @param int $markernumber The marker number.
+     * @return array [headertitle => columntext]
+     */
+    public function get_marker_columns(int $markernumber): array {
+        $key = 'markerpdf' . $markernumber;
+        return [
+            $key => get_string('markernumberpdf', 'assignfeedback_editpdf', $markernumber),
+        ];
     }
 }

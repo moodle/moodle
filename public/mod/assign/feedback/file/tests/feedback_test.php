@@ -16,12 +16,14 @@
 
 namespace assignfeedback_file;
 
+use assignfeedback_file\feedback_helper_trait;
 use mod_assign_test_generator;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
+require(__DIR__ . '/feedback_helper_trait.php');
 
 /**
  * Unit tests for assignfeedback_file
@@ -29,10 +31,10 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @package    assignfeedback_file
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \assign_feedback_file
  */
 final class feedback_test extends \advanced_testcase {
-
-    // Use the generator helper.
+    use feedback_helper_trait;
     use mod_assign_test_generator;
 
     /**
@@ -172,5 +174,63 @@ final class feedback_test extends \advanced_testcase {
         $data->{'files_' . $student->id . '_filemanager'} = $draftitemid;
 
         $this->assertFalse($plugin->is_feedback_modified($grade, $data));
+    }
+
+    /**
+     * Test feedback is in the mark.
+     * @covers ::save
+     */
+    public function test_mark_feedback(): void {
+        $this->resetAfterTest();
+
+        // Create course and students.
+        $course  = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create assignment.
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'assignfeedback_file_enabled'         => 1,
+            'markingworkflow'                     => 1,
+            'markingallocation'                   => 1,
+            'markercount'                         => 1,
+            'multimarkmethod'                     => ASSIGN_MULTIMARKING_METHOD_MANUAL,
+            'multimarkrounding'                   => null,
+        ]);
+
+        // Allocate teacher as marker.
+        $assign->update_allocated_markers($student->id, [$teacher->id]);
+
+        // Create feedback as mark.
+        $commenttext = '<p>Comment for this test</p>';
+        [$plugin, $grade, $file] = $this->create_feedback(
+            $assign,
+            $student,
+            $teacher,
+            'Submission text',
+            $commenttext,
+            true,
+        );
+
+        // Fetch values created from submitting marking feedback.
+        $mark = $assign->get_mark($grade->id, $grade->grader);
+        $filerecord = $plugin->get_file_feedback($grade->id, $mark->id);
+        $fs = get_file_storage();
+        $markfeedbackfile = $fs->get_file(
+            $assign->get_context()->id,
+            'assignfeedback_file',
+            ASSIGNFEEDBACK_FILE_FILEAREA_MARKER,
+            $filerecord->mark,
+            $file->get_filepath(),
+            $file->get_filename(),
+        );
+
+        // Test feedback values.
+        $this->assertEquals($filerecord->numfiles, '1');
+        $this->assertEquals(
+            $markfeedbackfile->get_contenthash(),
+            $file->get_contenthash(),
+        );
     }
 }

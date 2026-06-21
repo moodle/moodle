@@ -16,6 +16,7 @@
 
 namespace assignfeedback_comments\privacy;
 
+use assignfeedback_comments\feedback_helper_trait;
 use mod_assign\tests\provider_testcase;
 
 /**
@@ -27,66 +28,7 @@ use mod_assign\tests\provider_testcase;
  * @covers    \assignfeedback_comments\privacy\provider
  */
 final class provider_test extends provider_testcase {
-    /**
-     * Convenience function for creating feedback data.
-     *
-     * @param  object   $assign         assign object
-     * @param  \stdClass $student        user object
-     * @param  \stdClass $teacher        user object
-     * @param  string   $submissiontext Submission text
-     * @param  string   $feedbacktext   Feedback text
-     * @return array   Feedback plugin object and the grade object.
-     */
-    protected function create_feedback($assign, $student, $teacher, $submissiontext, $feedbacktext) {
-        global $CFG;
-
-        $submission = new \stdClass();
-        $submission->assignment = $assign->get_instance()->id;
-        $submission->userid = $student->id;
-        $submission->timecreated = \core\di::get(\core\clock::class)->time();
-        $submission->onlinetext_editor = ['text' => $submissiontext,
-                                         'format' => FORMAT_MOODLE];
-
-        $this->setUser($student);
-        $notices = [];
-        $assign->save_submission($submission, $notices);
-
-        $grade = $assign->get_user_grade($student->id, true);
-
-        $this->setUser($teacher);
-
-        $context = \context_user::instance($teacher->id);
-
-        $draftitemid = file_get_unused_draft_itemid();
-        file_prepare_draft_area($draftitemid, $context->id, ASSIGNFEEDBACK_COMMENTS_COMPONENT,
-            ASSIGNFEEDBACK_COMMENTS_FILEAREA, $grade->id);
-
-        $dummy = array(
-            'contextid' => $context->id,
-            'component' => 'user',
-            'filearea' => 'draft',
-            'itemid' => $draftitemid,
-            'filepath' => '/',
-            'filename' => 'feedback1.txt'
-        );
-
-        $fs = get_file_storage();
-        $fs->create_file_from_string($dummy, $feedbacktext);
-
-        $feedbacktext = $feedbacktext .
-            " <img src='{$CFG->wwwroot}/draftfile.php/{$context->id}/user/draft/{$draftitemid}/feedback1.txt.png>";
-
-        $plugin = $assign->get_feedback_plugin_by_type('comments');
-        $feedbackdata = new \stdClass();
-        $feedbackdata->assignfeedbackcomments_editor = [
-            'text' => $feedbacktext,
-            'format' => FORMAT_HTML,
-            'itemid' => $draftitemid
-        ];
-
-        $plugin->save($grade, $feedbackdata);
-        return [$plugin, $grade];
-    }
+    use feedback_helper_trait;
 
     /**
      * Quick test to make sure that get_metadata returns something.
@@ -111,7 +53,12 @@ final class provider_test extends provider_testcase {
         $user2 = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
         $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'editingteacher');
-        $assign = $this->create_instance(['course' => $course]);
+        $assign = $this->create_instance([
+            'course' => $course,
+            'markingworkflow' => 1,
+            'markingallocation' => 1,
+            'markercount' => 2,
+        ]);
 
         $context = $assign->get_context();
 
@@ -142,6 +89,34 @@ final class provider_test extends provider_testcase {
 
         $this->assertInstanceOf('stored_file', $feedbackfile);
         $this->assertEquals('feedback1.txt', $feedbackfile->get_filename());
+
+        // Any allocated marker comments should also be visible in the data export.
+        // Allocate a marker to the student's submission.
+        $assign->update_allocated_markers($user1->id, [
+            $user2->id,
+        ]);
+
+        // Add a comment for that marker.
+        $feedbacktext = '<p>Allocated marker comment one</p>';
+        [$plugin, $grade] = $this->create_feedback(
+            $assign,
+            $user1,
+            $user2,
+            'Submission text',
+            $feedbacktext,
+            true
+        );
+
+        // Get the mark ID so we can look it up in the exported data.
+        $mark = $assign->get_mark($grade->id, $grade->grader);
+        $prop = 'commenttext_mark_' . $mark->id;
+
+        // Check that the student and teacher can see the comment.
+        foreach ([$user1, $user2] as $user) {
+            $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade, [], $user);
+            \assignfeedback_comments\privacy\provider::export_feedback_user_data($exportdata);
+            $this->assertStringContainsString($feedbacktext, $writer->get_data(['Feedback comments'])->$prop);
+        }
     }
 
     /**

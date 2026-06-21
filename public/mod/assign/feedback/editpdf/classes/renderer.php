@@ -233,23 +233,26 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
         $footer = '';
 
-        $editorparams = array(
-            array(
-                'header' => $header,
-                'body' => $body,
-                'footer' => $footer,
-                'linkid' => $linkid,
-                'assignmentid' => $widget->assignment,
-                'userid' => $widget->userid,
-                'attemptnumber' => $widget->attemptnumber,
-                'stampfiles' => $widget->stampfiles,
-                'readonly' => $widget->readonly,
-            )
-        );
+        $editorparams = [[
+            'header' => $header,
+            'body' => $body,
+            'footer' => $footer,
+            'linkid' => $linkid,
+            'assignmentid' => $widget->assignment,
+            'userid' => $widget->userid,
+            'attemptnumber' => $widget->attemptnumber,
+            'stampfiles' => $widget->stampfiles,
+            'readonly' => $widget->readonly,
+            'graderid' => $widget->graderid,
+            'ismarking' => $widget->ismarking,
+            'markid' => $widget->markid,
+        ]];
 
-        $this->page->requires->yui_module('moodle-assignfeedback_editpdf-editor',
-                                          'M.assignfeedback_editpdf.editor.init',
-                                          $editorparams);
+        $this->page->requires->yui_module(
+            'moodle-assignfeedback_editpdf-editor',
+            'M.assignfeedback_editpdf.editor.init',
+            $editorparams,
+        );
 
         $this->page->requires->strings_for_js(array(
             'yellow',

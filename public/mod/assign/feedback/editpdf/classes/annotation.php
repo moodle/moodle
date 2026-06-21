@@ -39,6 +39,9 @@ class annotation {
     /** @var int gradeid for this annotation */
     public $gradeid = 0;
 
+    /** @var int|null Mark ID for this annotation */
+    public ?int $markid = null;
+
     /** @var int page number for this annotation */
     public $pageno = 0;
 
@@ -72,10 +75,10 @@ class annotation {
      */
     public function __construct(?\stdClass $record = null) {
         if ($record) {
-            $intcols = array('endx', 'endy', 'x', 'y');
+            $intcols = ['endx', 'endy', 'x', 'y'];
             foreach ($this as $key => $value) {
                 if (isset($record->$key)) {
-                    if (in_array($key, $intcols)) {
+                    if (in_array($key, $intcols) || ($key === 'markid' && !is_null($record->$key))) {
                         $this->$key = intval($record->$key);
                     } else {
                         $this->$key = $record->$key;

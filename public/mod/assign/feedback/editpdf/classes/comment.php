@@ -58,6 +58,9 @@ class comment {
     /** @var int draft status, default 1 = true */
     public $draft = 1;
 
+    /** @var int|null ID of the mark record */
+    public ?int $markid = null;
+
     /**
      * Convert a compatible stdClass into an instance of a comment.
      * @param \stdClass $record

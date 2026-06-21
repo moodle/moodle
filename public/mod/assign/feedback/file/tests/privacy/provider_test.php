@@ -17,7 +17,7 @@
 namespace assignfeedback_file\privacy;
 
 use mod_assign\privacy\assign_plugin_request_data;
-
+use assignfeedback_file\feedback_helper_trait;
 /**
  * Unit tests for mod/assign/feedback/file/classes/privacy/provider.
  *
@@ -27,67 +27,14 @@ use mod_assign\privacy\assign_plugin_request_data;
  * @covers     \assignfeedback_file\privacy\provider
  */
 final class provider_test extends \mod_assign\tests\provider_testcase {
+    use feedback_helper_trait;
+
     #[\Override]
     public static function setUpBeforeClass(): void {
         global $CFG;
 
         parent::setUpBeforeClass();
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
-    }
-
-    /**
-     * Convenience function for creating feedback data.
-     *
-     * @param  object   $assign         assign object
-     * @param  \stdClass $student        user object
-     * @param  \stdClass $teacher        user object
-     * @param  string   $submissiontext Submission text
-     * @param  string   $feedbacktext   Feedback text
-     * @return array   Feedback plugin object and the grade object.
-     */
-    protected function create_feedback($assign, $student, $teacher, $submissiontext, $feedbacktext) {
-
-        $submission = new \stdClass();
-        $submission->assignment = $assign->get_instance()->id;
-        $submission->userid = $student->id;
-        $submission->timecreated = time();
-        $submission->onlinetext_editor = ['text' => $submissiontext,
-                                         'format' => FORMAT_MOODLE];
-
-        $this->setUser($student);
-        $notices = [];
-        $assign->save_submission($submission, $notices);
-
-        $grade = $assign->get_user_grade($student->id, true);
-
-        $this->setUser($teacher);
-
-        $context = \context_user::instance($teacher->id);
-
-        $draftitemid = file_get_unused_draft_itemid();
-        file_prepare_draft_area($draftitemid, $context->id, 'assignfeedback_file', 'feedback_files', 1);
-
-        $dummy = array(
-            'contextid' => $context->id,
-            'component' => 'user',
-            'filearea' => 'draft',
-            'itemid' => $draftitemid,
-            'filepath' => '/',
-            'filename' => 'feedback1.txt'
-        );
-
-        $fs = get_file_storage();
-        $file = $fs->create_file_from_string($dummy, $feedbacktext);
-
-        // Create formdata.
-        $data = new \stdClass();
-        $data->{'files_' . $teacher->id . '_filemanager'} = $draftitemid;
-
-        $plugin = $assign->get_feedback_plugin_by_type('file');
-        // Save the feedback.
-        $plugin->save($grade, $data);
-
-        return [$plugin, $grade];
     }
 
     /**

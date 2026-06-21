@@ -116,10 +116,11 @@ abstract class assign_feedback_plugin extends assign_plugin {
      * @param int $userid The user id in the table this quickgrading element relates to
      * @param mixed $grade grade or null - The grade data.
      *                     May be null if there are no grades for this user (yet)
+     * @param string $colname (Optional) The column name in case we need it to parse marker columns.
      * @return mixed - A html string containing the html form elements required for
      *                 quickgrading or false to indicate this plugin does not support quickgrading
      */
-    public function get_quickgrading_html($userid, $grade) {
+    public function get_quickgrading_html($userid, $grade, string $colname = '') {
         return false;
     }
 
@@ -226,5 +227,44 @@ abstract class assign_feedback_plugin extends assign_plugin {
      */
     public function grading_batch_operation($action, $users) {
         return '';
+    }
+
+    /**
+     * Given a field name, should return the text of an editor field that is part of
+     * this plugin. This is used when exporting to portfolio.
+     *
+     * This is an overridden method from assignmentplugin to add the $markid param.
+     *
+     * @param string $name Name of the field.
+     * @param int $submissionorgradeid The id of the submission or grade.
+     * @param int|null $markid The id of the mark record.
+     * @return string The text for the editor field.
+     */
+    public function get_editor_text($name, $submissionorgradeid, ?int $markid = null) {
+        return '';
+    }
+
+    /**
+     * Given a field name and value should update the text for this field in the plugins submission or grade.
+     *
+     * This is an overridden method from assignmentplugin to add the $markid param.
+     *
+     * @param string $name Name of the field.
+     * @param string $value Updated text.
+     * @param int $submissionorgradeid The id of the submission or grade.
+     * @param int|null $markid The id of the mark record.
+     * @return bool true if the value was updated
+     */
+    public function set_editor_text($name, $value, $submissionorgradeid, ?int $markid = null) {
+        return false;
+    }
+
+    /**
+     * Does this feedback plugin have marker columns which can be downloaded in the assignfeedback_offline spreadsheet?
+     *
+     * @return bool Default: false - To be overridden by plugins which support it.
+     */
+    public function has_downloadable_marker_columns(): bool {
+        return false;
     }
 }

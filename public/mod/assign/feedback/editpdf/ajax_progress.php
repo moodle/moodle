@@ -51,10 +51,10 @@ try {
 
     // No need to handle the readonly files here, the should be already generated.
     $component = 'assignfeedback_editpdf';
-    $filearea = document_services::PAGE_IMAGE_FILEAREA;
+    [$filearea, $fileitemid] = document_services::get_file_area_and_id($assignment, $grade, document_services::PAGE_IMAGE_FILEAREA);
     $filepath = '/';
     $fs = get_file_storage();
-    $files = $fs->get_directory_files($context->id, $component, $filearea, $grade->id, $filepath);
+    $files = $fs->get_directory_files($context->id, $component, $filearea, $fileitemid, $filepath);
 
     // The important security part: we ONLY RETURN the total NUMBER of generated images.
     echo $OUTPUT->header();

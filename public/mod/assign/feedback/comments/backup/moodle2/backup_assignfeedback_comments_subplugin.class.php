@@ -44,9 +44,11 @@ class backup_assignfeedback_comments_subplugin extends backup_subplugin {
         // Create XML elements.
         $subplugin = $this->get_subplugin_element();
         $subpluginwrapper = new backup_nested_element($this->get_recommended_name());
-        $subpluginelement = new backup_nested_element('feedback_comments',
-                                                      null,
-                                                      array('commenttext', 'commentformat', 'grade'));
+        $subpluginelement = new backup_nested_element(
+            'feedback_comments',
+            null,
+            ['commenttext', 'commentformat', 'grade', 'mark']
+        );
 
         // Connect XML elements into the tree.
         $subplugin->add_child($subpluginwrapper);
@@ -60,6 +62,12 @@ class backup_assignfeedback_comments_subplugin extends backup_subplugin {
             'assignfeedback_comments',
             'feedback',
             'grade'
+        );
+
+        $subpluginelement->annotate_files(
+            'assignfeedback_comments',
+            'feedback_marker',
+            'mark'
         );
 
         return $subplugin;

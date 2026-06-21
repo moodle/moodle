@@ -46,6 +46,7 @@ function assignfeedback_comments_pluginfile(
     global $CFG, $DB;
 
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
+    require_once($CFG->dirroot . '/mod/assign/feedback/comments/locallib.php');
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -53,8 +54,15 @@ function assignfeedback_comments_pluginfile(
 
     require_login($course, false, $cm);
     $itemid = (int)array_shift($args);
-    $record = $DB->get_record('assign_grades', array('id' => $itemid), 'userid,assignment', MUST_EXIST);
-    $userid = $record->userid;
+    // If the filearea is for a marker comment, the itemid will refer to a mark, not a grade.
+    if ($filearea === ASSIGNFEEDBACK_COMMENTS_FILEAREA_MARKER) {
+        $record = $DB->get_record('assign_mark', ['id' => $itemid], 'gradeid, assignment', MUST_EXIST);
+        $graderecord = $DB->get_record('assign_grades', ['id' => $record->gradeid], 'userid', MUST_EXIST);
+        $userid = $graderecord->userid;
+    } else {
+        $record = $DB->get_record('assign_grades', ['id' => $itemid], 'userid, assignment', MUST_EXIST);
+        $userid = $record->userid;
+    }
 
     $assign = new assign($context, $cm, $course);
     $instance = $assign->get_instance();

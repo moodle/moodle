@@ -21,7 +21,10 @@
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/constants.php');
 
 /**
  * Serves assignment feedback and other files.
@@ -51,8 +54,13 @@ function assignfeedback_file_pluginfile($course,
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     require_login($course, false, $cm);
-    $itemid = (int)array_shift($args);
-    $record = $DB->get_record('assign_grades', array('id' => $itemid), 'userid,assignment', MUST_EXIST);
+    $itemid = (int) array_shift($args);
+    $gradeid = $itemid;
+    if ($filearea === ASSIGNFEEDBACK_FILE_FILEAREA_MARKER) {
+        $gradeid = $DB->get_field('assignfeedback_file', 'grade', ['mark' => $itemid]);
+    }
+
+    $record = $DB->get_record('assign_grades', ['id' => $gradeid], 'userid, assignment', MUST_EXIST);
     $userid = $record->userid;
 
     $assign = new assign($context, $cm, $course);

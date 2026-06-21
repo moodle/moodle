@@ -544,6 +544,22 @@ class assign_grading_table extends table_sql implements renderable {
                 $columns[] = $index;
                 $headers[] = $plugin->get_name();
             }
+            // Does the feedback plugin have extra columns which are required per marker?
+            if (
+                $plugin->is_visible() &&
+                $plugin->is_enabled() &&
+                $this->assignment->is_using_multiple_marking() &&
+                $plugin->has_marker_columns() &&
+                (!$this->is_downloading() || $plugin->has_downloadable_marker_columns())
+            ) {
+                $index = 'plugin' . (count($this->plugincache) - 1);
+                for ($i = 1; $i <= $assignment->get_instance()->markercount; $i++) {
+                    foreach ($plugin->get_marker_columns($i) as $col => $header) {
+                        $columns[] = $index . '_' . $col;
+                        $headers[] = $header;
+                    }
+                }
+            }
         }
 
         // Exclude 'Final grade' column in downloaded grading worksheets.
@@ -585,16 +601,30 @@ class assign_grading_table extends table_sql implements renderable {
         }
 
         $plugincolumnindex = 0;
-        foreach ($this->assignment->get_submission_plugins() as $plugin) {
-            if ($plugin->is_visible() && $plugin->is_enabled() && $plugin->has_user_summary()) {
-                $submissionpluginindex = 'plugin' . $plugincolumnindex++;
-                $this->no_sorting($submissionpluginindex);
+        if ($assignment->is_any_submission_plugin_enabled()) {
+            foreach ($this->assignment->get_submission_plugins() as $plugin) {
+                if ($plugin->is_visible() && $plugin->is_enabled() && $plugin->has_user_summary()) {
+                    $submissionpluginindex = 'plugin' . $plugincolumnindex++;
+                    $this->no_sorting($submissionpluginindex);
+                }
             }
         }
+
         foreach ($this->assignment->get_feedback_plugins() as $plugin) {
-            if ($plugin->is_visible() && $plugin->is_enabled() && $plugin->has_user_summary()) {
-                $feedbackpluginindex = 'plugin' . $plugincolumnindex++;
-                $this->no_sorting($feedbackpluginindex);
+            if ($plugin->is_visible() && $plugin->is_enabled()) {
+                if ($plugin->has_user_summary()) {
+                    $feedbackpluginindex = 'plugin' . $plugincolumnindex;
+                    $this->no_sorting($feedbackpluginindex);
+                }
+                // No sorting on marker columns.
+                if ($plugin->has_marker_columns()) {
+                    for ($i = 1; $i <= $assignment->get_instance()->markercount; $i++) {
+                        foreach ($plugin->get_marker_columns($i) as $col => $header) {
+                            $this->no_sorting('plugin' . $plugincolumnindex . '_' . $col);
+                        }
+                    }
+                }
+                $plugincolumnindex++;
             }
         }
 
@@ -700,26 +730,6 @@ class assign_grading_table extends table_sql implements renderable {
     }
 
     /**
-     * Get the user object for the marker of a given student and marker number.
-     *
-     * @param int $studentid ID of the student.
-     * @param int $number Marker index number.
-     * @return stdClass|false User object or false if not found.
-     */
-    protected function get_marker_number(int $studentid, int $number): stdClass|false {
-        global $DB;
-        $multimarkers = $DB->get_fieldset('assign_allocated_marker', 'marker', [
-            'student' => $studentid, 'assignment' => $this->assignment->get_instance()->id,
-        ]);
-        if (!empty($multimarkers) && count($multimarkers) >= $number) {
-            // Then get the name of the one at the column position requested, e.g. marker1, marker2, etc...
-            $index = $number - 1;
-            return \core_user::get_user($multimarkers[$index]);
-        }
-        return false;
-    }
-
-    /**
      * list current marker
      *
      * @param stdClass $row - The row of data
@@ -731,8 +741,7 @@ class assign_grading_table extends table_sql implements renderable {
         static $markerlist = array();
 
         // Get the allocated markers that have been assigned to this student, if we are using multi-marking.
-        $allocatedmarker = $this->get_marker_number($row->userid, $markerpos);
-
+        $allocatedmarker = $this->assignment->get_marker_number($row->userid, $markerpos - 1);
         if ($this->is_downloading()) {
             if ($allocatedmarker) {
                 return fullname(
@@ -1136,7 +1145,7 @@ class assign_grading_table extends table_sql implements renderable {
         $gradingdisabled = $this->assignment->grading_disabled($row->id, true, $this->gradinginfo);
         $displaymark = "";
 
-        if (!$this->is_downloading() && $this->hasgrade) {
+        if ($this->hasgrade) {
             if (
                 $this->assignment->get_instance()->markingworkflow &&
                 $this->assignment->get_instance()->markingallocation
@@ -1154,7 +1163,7 @@ class assign_grading_table extends table_sql implements renderable {
                     $editable = (
                         ($this->quickgrading) &&
                         (!$gradingdisabled) &&
-                            ($USER->id == $markers[$index]->marker)
+                        ($USER->id == $markers[$index]->marker)
                     );
                     $displaymark = $this->display_grade(
                         $mark->mark ?? null,
@@ -1164,67 +1173,77 @@ class assign_grading_table extends table_sql implements renderable {
                         0,
                         $markers[$index]->marker,
                     );
-                    // Display the workflow state for this mark.
-                    if ($markers[$index]->marker > 0) {
-                        $displaymark .= html_writer::div(
-                            get_string('markingworkflowstate' . ($mark->workflowstate ?? 'notmarked'), 'assign'),
-                            'badge bg-info d-block'
-                        );
+
+                    if (!$this->is_downloading()) {
+                        // Display the workflow state for this mark.
+                        if ($markers[$index]->marker > 0) {
+                            $displaymark .= html_writer::div(
+                                get_string(
+                                    'markingworkflowstate' . ($mark->workflowstate ?? ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED),
+                                    'assign'
+                                ),
+                                'badge bg-info d-block'
+                            );
+                        }
                     }
                 }
             }
 
-            $urlparams = [
-                'id' => $this->assignment->get_course_module()->id,
-                'rownum' => 0,
-                'action' => 'marker',
-            ];
+            if (!$this->is_downloading() && $this->hasgrade) {
+                $urlparams = [
+                    'id' => $this->assignment->get_course_module()->id,
+                    'rownum' => 0,
+                    'action' => 'marker',
+                ];
 
-            if ($this->assignment->is_blind_marking()) {
-                if (empty($row->recordid)) {
-                    $row->recordid = $this->assignment->get_uniqueid_for_user($row->userid);
+                if ($this->assignment->is_blind_marking()) {
+                    if (empty($row->recordid)) {
+                        $row->recordid = $this->assignment->get_uniqueid_for_user($row->userid);
+                    }
+                    $urlparams['blindid'] = $row->recordid;
+                } else {
+                    $urlparams['userid'] = $row->userid;
                 }
-                $urlparams['blindid'] = $row->recordid;
-            } else {
-                $urlparams['userid'] = $row->userid;
-            }
-            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+                $url = new moodle_url('/mod/assign/view.php', $urlparams);
 
-            // The container with the grade information.
-            $gradecontainer = $this->output->container($displaymark, 'w-100');
+                // The container with the grade information.
+                $gradecontainer = $this->output->container($displaymark, 'w-100');
 
-            // Should this user get the 'Mark' action menu item?
-            $isallocatedmarker = false;
+                // Should this user get the 'Mark' action menu item?
+                $isallocatedmarker = false;
 
-            if (
-                $this->assignment->get_instance()->markingworkflow &&
-                $this->assignment->get_instance()->markingallocation
-            ) {
-                // If allocated marking is enabled is this user the marker for this column?
                 if (
-                    $markers = $DB->get_fieldset('assign_allocated_marker', 'marker', [
-                        'student' => $row->userid,
-                        'assignment' => $this->assignment->get_instance()->id,
-                    ])
+                    $this->assignment->get_instance()->markingworkflow &&
+                    $this->assignment->get_instance()->markingallocation
                 ) {
-                    $isallocatedmarker = (array_key_exists($index, $markers) && $markers[$index] == $USER->id);
+                    // If allocated marking is enabled is this user the marker for this column?
+                    // The student ID is the same for each marker column, so we specifically need to check
+                    // against the column index, not just if they exist for this student.
+                    if (
+                        $markers = $DB->get_fieldset('assign_allocated_marker', 'marker', [
+                            'student' => $row->userid,
+                            'assignment' => $this->assignment->get_instance()->id,
+                        ])
+                    ) {
+                        $isallocatedmarker = (array_key_exists($index, $markers) && $markers[$index] == $USER->id);
+                    }
                 }
-            }
 
-            if ($isallocatedmarker) {
-                $menu = new action_menu();
-                $menu->set_owner_selector('.gradingtable-actionmenu');
-                $menu->set_boundary('window');
-                $menu->set_kebab_trigger(get_string('markactions', 'assign'));
-                $menu->set_additional_classes('ps-2 ms-auto');
-                // Prioritise the menu ahead of all other actions.
-                $menu->prioritise = true;
-                // Add the 'Mark' action item to the contextual menu.
-                $menu->add(new action_menu_link_secondary($url, null, get_string('markverb', 'assign')));
-                // The contextual menu container.
-                $contextualmenucontainer = $this->output->container($this->output->render($menu), 'd-flex');
-                return $allocatedmarker .
-                    $this->output->container($gradecontainer . $contextualmenucontainer, ['class' => 'd-flex']);
+                if ($isallocatedmarker) {
+                    $menu = new action_menu();
+                    $menu->set_owner_selector('.gradingtable-actionmenu');
+                    $menu->set_boundary('window');
+                    $menu->set_kebab_trigger(get_string('markactions', 'assign'));
+                    $menu->set_additional_classes('ps-2 ms-auto');
+                    // Prioritise the menu ahead of all other actions.
+                    $menu->prioritise = true;
+                    // Add the 'Mark' action item to the contextual menu.
+                    $menu->add(new action_menu_link_secondary($url, null, get_string('markverb', 'assign')));
+                    // The contextual menu container.
+                    $contextualmenucontainer = $this->output->container($this->output->render($menu), 'd-flex');
+                    return $allocatedmarker .
+                        $this->output->container($gradecontainer . $contextualmenucontainer, ['class' => 'd-flex']);
+                }
             }
         }
         // The table data is being downloaded, or the user cannot grade; therefore, only the formatted grade for display
@@ -1794,16 +1813,29 @@ class assign_grading_table extends table_sql implements renderable {
      *                             view_submission page (the current page)
      * @param string $returnparams The return params to pass to the view_submission
      *                             page (the current page)
+     * @param string|null $colname Column name.
      * @return string The summary with an optional link
      */
-    private function format_plugin_summary_with_link(assign_plugin $plugin,
-                                                     stdClass $item,
-                                                     $returnaction,
-                                                     $returnparams) {
+    private function format_plugin_summary_with_link(
+        assign_plugin $plugin,
+        stdClass $item,
+        $returnaction,
+        $returnparams,
+        ?string $colname = '',
+    ) {
         $link = '';
         $showviewlink = false;
+        $markid = null;
 
-        $summary = $plugin->view_summary($item, $showviewlink);
+        // Is it a plugin marker column?
+        if (self::is_plugin_marker_column($colname)) {
+            $mark = self::extract_mark_from_marker_column($this->assignment, $item, $colname);
+            // Minus 1 means it's a marker column, but no mark exists. As null would be used for the non-marker column.
+            $markid = ($mark) ? $mark->id : -1;
+        }
+
+        $summary = $plugin->view_summary($item, $showviewlink, true, $markid);
+
         $separator = '';
         if ($showviewlink) {
             $viewstr = get_string('view' . substr($plugin->get_subtype(), strlen('assign')), 'assign');
@@ -1815,6 +1847,9 @@ class assign_grading_table extends table_sql implements renderable {
                                                      'action' => 'viewplugin' . $plugin->get_subtype(),
                                                      'returnaction' => $returnaction,
                                                      'returnparams' => http_build_query($returnparams));
+            if (self::is_plugin_marker_column($colname)) {
+                $urlparams['markid'] = $markid;
+            }
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $link = $this->output->action_link($url, $icon);
             $separator = $this->output->spacer(array(), true);
@@ -1823,6 +1858,57 @@ class assign_grading_table extends table_sql implements renderable {
         return $link . $separator . $summary;
     }
 
+    /**
+     * Check if a given column name is formatted like a marker column.
+     *
+     * @param string $colname The column name.
+     * @return bool
+     */
+    public static function is_plugin_marker_column(string $colname): bool {
+        return (preg_match('/^plugin\d+_\w+\d+$/', $colname));
+    }
+
+    /**
+     * Given a marker column name, extract the mark record for the assignment and that marker number.
+     *
+     * @param assign $assignment The assignment object
+     * @param stdClass $grade The grade object
+     * @param string $colname The column name
+     * @return stdClass|null The assign_mark record if it exists, or false if not.
+     */
+    public static function extract_mark_from_marker_column(
+        assign $assignment,
+        stdClass $grade,
+        string $colname
+    ): ?stdClass {
+        // Work out the mark ID based on the marker number for this student.
+        preg_match('/\d+$/', $colname, $matches);
+        $markernumber = $matches[0];
+        $allocatedmarker = $assignment->get_marker_number($grade->userid, $markernumber - 1);
+        if ($allocatedmarker) {
+            return $assignment->get_mark($grade->id, $allocatedmarker->id);
+        }
+        return null;
+    }
+
+    /**
+     * Given a marker column name, extract the marker's user record based on the assignment and marker number.
+     *
+     * @param assign $assignment The assignment object.
+     * @param int $userid The user ID of the student.
+     * @param string $colname The column name.
+     * @return stdClass|null The user record if it exists, or false if not.
+     */
+    public static function extract_marker_from_marker_column(
+        assign $assignment,
+        int $userid,
+        string $colname
+    ): ?stdClass {
+        // Work out the mark ID based on the marker number for this student.
+        preg_match('/\d+$/', $colname, $matches);
+        $markernumber = $matches[0];
+        return $assignment->get_marker_number($userid, $markernumber - 1);
+    }
 
     /**
      * Format the submission and feedback columns.
@@ -1838,6 +1924,16 @@ class assign_grading_table extends table_sql implements renderable {
             return $this->col_marker($row, $col);
         }
 
+        // If it's an extra marker column for a plugin, we need to check the correct plugincache.
+        // The columnnames will be in the format: plugin1_columnname2 where the 2 is the marker number and the 1 is
+        // the index of the plugin in the cache.
+        $ismarkercol = false;
+        $fullcolname = $colname;
+        if (self::is_plugin_marker_column($colname)) {
+            $colname = preg_replace('/_(.*+)/', '', $colname);
+            $ismarkercol = true;
+        }
+
         // For extra user fields the result is already in $row.
         if (empty($this->plugincache[$colname])) {
             return parent::other_cols($colname, $row);
@@ -1849,7 +1945,9 @@ class assign_grading_table extends table_sql implements renderable {
         $plugin = $plugincache[0];
 
         $field = null;
-        if (isset($plugincache[1])) {
+        // This cached field is the overall field, e.g. "comments" rather than the marker one we want.
+        // So only get it from the cache if we're not looking at a marker column.
+        if (isset($plugincache[1]) && !$ismarkercol) {
             $field = $plugincache[1];
         }
 
@@ -1913,12 +2011,14 @@ class assign_grading_table extends table_sql implements renderable {
                     $grade->attemptnumber = $row->attemptnumber;
                 }
                 if ($this->quickgrading && $plugin->supports_quickgrading()) {
-                    return $plugin->get_quickgrading_html($row->userid, $grade);
+                    return $plugin->get_quickgrading_html($row->userid, $grade, $fullcolname);
                 } else if ($grade) {
                     return $this->format_plugin_summary_with_link($plugin,
-                                                                  $grade,
-                                                                  'grading',
-                                                                  array());
+                        $grade,
+                        'grading',
+                        [],
+                        $fullcolname
+                    );
                 }
             }
         }

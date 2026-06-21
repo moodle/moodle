@@ -40,7 +40,7 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
      * Create this grade import form
      */
     public function definition() {
-        global $CFG, $PAGE, $DB;
+        global $USER, $PAGE, $DB;
 
         $mform = $this->_form;
         $params = $this->_customdata;
@@ -87,6 +87,7 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
         while ($record = $gradeimporter->next()) {
             $user = $record->user;
             $grade = $record->grade;
+            $mark = (isset($record->mark) && $record->mark && $record->mark !== '') ? $record->mark : null;
             $modified = $record->modified;
             $userdesc = fullname($user);
             if ($assignment->is_blind_marking()) {
@@ -94,6 +95,10 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
             }
 
             $usergrade = $assignment->get_user_grade($user->id, false);
+            $usermark = false;
+            if ($usergrade) {
+                $usermark = $assignment->get_mark($usergrade->id, $USER->id);
+            }
             // Note: we lose the seconds when converting to user date format - so must not count seconds in comparision.
             $skip = false;
 
@@ -102,20 +107,27 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
             if (!empty($scaleoptions)) {
                 // This is a scale - we need to convert any grades to indexes in the scale.
                 $scaleindex = array_search($grade, $scaleoptions);
-                if ($scaleindex !== false) {
-                    $grade = $scaleindex;
-                } else {
-                    $grade = '';
-                }
+                $markindex = array_search($mark, $scaleoptions);
+                $grade = ($scaleindex !== false) ? $scaleindex : '';
+                $mark = ($markindex !== false) ? $markindex : '';
             } else {
                 $grade = unformat_float($grade);
+                $mark = unformat_float($mark);
             }
 
-            if ($usergrade && $usergrade->grade == $grade) {
-                // Skip - grade not modified.
+            if (
+                $usergrade &&
+                $usergrade->grade == $grade &&
+                $usermark &&
+                $usermark->mark == $mark
+            ) {
+                // Skip - neither grade nor mark modified.
                 $skip = true;
-            } else if (!isset($grade) || $grade === '' || $grade < 0) {
-                // Skip - grade has no value.
+            } else if (
+                (!isset($grade) || $grade === '' || $grade < 0) &&
+                (!isset($mark) || $mark === '' || $mark < 0)
+            ) {
+                // Skip - grade and mark have no value.
                 $skip = true;
             } else if (!$ignoremodified && $stalemodificationdate) {
                 // Skip - grade has been modified.
@@ -129,27 +141,72 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
                 $skip = true;
             }
 
+            // Work out which (or both) of the changes to display - grade and/or mark.
+            $grademodified = ($grade && $grade !== '' && $grade >= 0);
+            if ($usergrade) {
+                $grademodified = ($grademodified && $grade != $usergrade->grade);
+            }
+            $markmodified = ($mark && $mark !== '' && $mark >= 0);
+            if ($usermark) {
+                $markmodified = ($markmodified && $mark != $usermark->mark);
+            }
+
             if (!$skip) {
                 $update = true;
                 if (!empty($scaleoptions)) {
-                    $formattedgrade = $scaleoptions[$grade];
+                    $formattedgrade = ($grade !== '') ? $scaleoptions[$grade] : $grade;
+                    $formattedmark = ($mark !== '') ? $scaleoptions[$mark] : $mark;
                 } else {
                     $gradeitem = $assignment->get_grade_item();
                     $formattedgrade = format_float($grade, $gradeitem->get_decimals());
+                    $formattedmark = format_float($mark, $gradeitem->get_decimals());
                 }
-                $updates[] = get_string('gradeupdate', 'assignfeedback_offline',
-                                            array('grade'=>$formattedgrade, 'student'=>$userdesc));
+
+                if ($grademodified) {
+                    $updates[] = get_string('gradeupdate', 'assignfeedback_offline', [
+                        'grade' => $formattedgrade, 'student' => $userdesc,
+                    ]);
+                }
+
+                if ($markmodified) {
+                    $updates[] = get_string('markupdate', 'assignfeedback_offline', [
+                        'mark' => $formattedmark, 'student' => $userdesc,
+                    ]);
+                }
             }
 
             if ($ignoremodified || !$stalemodificationdate) {
                 foreach ($record->feedback as $feedback) {
+                    $markid = null;
+                    $ismarkercol = false;
+                    $isourmarkercol = false;
+                    // Is it a marker column? And is this user one of the markers for the student?
+                    if (isset($feedback['markernumber'])) {
+                        $ismarkercol = true;
+                        // Get the mark record or create it if it doesn't exist.
+                        $marker = $assignment->get_marker_number($user->id, $feedback['markernumber'] - 1);
+                        if ($marker && $marker->id == $USER->id) {
+                            $isourmarkercol = true;
+                            if ($usermark) {
+                                $markid = $usermark->id;
+                            } else {
+                                // In this case it's our marker column, but there's no mark record to get an ID.
+                                // So we use -1 instead of null, as null will retrieve the overall value from the
+                                // feedback plugin, instead of a marker specific one.
+                                $markid = -1;
+                            }
+                        }
+                    }
                     $plugin = $feedback['plugin'];
                     $field = $feedback['field'];
                     $newvalue = $feedback['value'];
                     $description = $feedback['description'];
                     $oldvalue = '';
+                    if ($ismarkercol && !$isourmarkercol) {
+                        continue;
+                    }
                     if ($usergrade) {
-                        $oldvalue = $plugin->get_editor_text($field, $usergrade->id);
+                        $oldvalue = $plugin->get_editor_text($field, $usergrade->id, $markid);
                     }
                     if ($newvalue != $oldvalue) {
                         $update = true;

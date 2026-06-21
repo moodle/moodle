@@ -22,6 +22,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
+require(__DIR__ . '/feedback_helper_trait.php');
 
 /**
  * Unit tests for assignfeedback_comments
@@ -29,10 +30,10 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @package    assignfeedback_comments
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \assign_feedback_comments
  */
 final class feedback_test extends \advanced_testcase {
-
-    // Use the generator helper.
+    use feedback_helper_trait;
     use mod_assign_test_generator;
 
     /**
@@ -79,5 +80,50 @@ final class feedback_test extends \advanced_testcase {
                 'format' => 1,
             ];
         $this->assertTrue($plugin->is_feedback_modified($grade, $data));
+    }
+
+    /**
+     * Test feedback is in the mark.
+     * @covers ::save
+     */
+    public function test_mark_feedback(): void {
+        $this->resetAfterTest();
+
+        // Create course and students.
+        $course  = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+
+        // Create assignment.
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'assignfeedback_comments_enabled'     => 1,
+            'markingworkflow'                     => 1,
+            'markingallocation'                   => 1,
+            'markercount'                         => 1,
+            'multimarkmethod'                     => ASSIGN_MULTIMARKING_METHOD_MANUAL,
+            'multimarkrounding'                   => null,
+        ]);
+
+        // Allocate teacher as marker.
+        $assign->update_allocated_markers($student->id, [$teacher->id]);
+
+        // Create feedback as mark.
+        $commenttext = '<p>Comment for this test</p>';
+        [$plugin, $grade] = $this->create_feedback(
+            $assign,
+            $student,
+            $teacher,
+            'Submission text',
+            $commenttext,
+            true,
+        );
+        $mark = $assign->get_mark($grade->id, $grade->grader);
+
+        // Fetch feedback and test.
+        $comment = $plugin->get_feedback_comments($grade->id, $mark->id);
+        $this->assertEquals($mark->id, $comment->mark);
+        $this->assertEquals($grade->id, $comment->grade);
+        $this->assertTrue(str_starts_with($comment->commenttext, $commenttext));
     }
 }
