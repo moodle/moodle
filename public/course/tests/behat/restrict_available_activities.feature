@@ -27,7 +27,7 @@ Feature: Restrict activities availability
     Then I should see "Test glossary name"
     And I should see "Test assign name"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario Outline: Activities can not be added when the admin restricts the permissions
     Given the following "role capability" exists:
       | role           | editingteacher  |
