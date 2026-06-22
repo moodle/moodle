@@ -145,6 +145,10 @@ $callbacks = [
     ],
     [
         'hook' => \core\hook\output\before_footer_html_generation::class,
-        'callback' => [\core_courseformat\hook_listener::class, 'add_course_navigation_sticky_footer'],
+	'callback' => [\core_courseformat\hook_listener::class, 'add_course_navigation_sticky_footer'],
+    ],
+    [
+        'hook' => \core\hook\di_configuration::class,
+        'callback' => [\core\hook\composer\composer_di::class, 'configure'],
     ],
 ];
