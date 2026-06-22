@@ -19,6 +19,7 @@ namespace core;
 use core\context\user as context_user;
 use core\context\course as context_course;
 use core\context\system as context_system;
+use core\context_helper;
 use core_tag_tag;
 use core_tag\output\tagindex;
 use core_text;
@@ -26,9 +27,11 @@ use core_user\fields;
 use core\exception\invalid_parameter_exception;
 use core\exception\moodle_exception;
 use core\exception\coding_exception;
+use core\lang_string;
 use core\output\html_writer;
 use core\output\theme_config;
 use core\output\user_picture;
+use core\url;
 use core_date;
 use dml_exception;
 use stdClass;
@@ -1676,9 +1679,9 @@ class user {
             $userid1 = 'userid01';
             // Prevent users who hide their email address from being found by others
             // who aren't allowed to see hidden email addresses.
-            $email = "(". $email ." AND (" .
+            $email = "(" . $email . " AND (" .
                 "u.maildisplay <> :$maildisplay " .
-                "OR u.id = :$userid1". // Users can always find themselves.
+                "OR u.id = :$userid1" . // Users can always find themselves.
                 "))";
             $params[$maildisplay] = self::MAILDISPLAY_HIDE;
             $params[$userid1] = $USER->id;
@@ -1693,7 +1696,7 @@ class user {
             $userid2 = 'userid02';
             // Users who aren't allowed to see idnumbers should at most find themselves
             // when searching for an idnumber.
-            $idnumber = "(". $idnumber . " AND u.id = :$userid2)";
+            $idnumber = "(" . $idnumber . " AND u.id = :$userid2)";
             $params[$userid2] = $USER->id;
         }
 
@@ -1715,13 +1718,13 @@ class user {
             if (!in_array($extrasearchfield, $userfields)) {
                 // User cannot see this field, but allow match if their own account.
                 $userid3 = 'userid03_ident' . $fieldindex;
-                $condition = "(". $condition . " AND u.id = :$userid3)";
+                $condition = "(" . $condition . " AND u.id = :$userid3)";
                 $params[$userid3] = $USER->id;
             }
             $conditions[] = $condition;
         }
 
-        $where = "(". implode(" OR ", $conditions) .") ";
+        $where = "(" . implode(" OR ", $conditions) . ") ";
         $params[$searchkey1] = "%$usersearch%";
         $params[$searchkey2] = "%$usersearch%";
         $params[$searchkey3] = "%$usersearch%";
@@ -1844,17 +1847,13 @@ class user {
      * Update a user with a user object (will compare against the ID).
      *
      * @throws moodle_exception
-     * @param stdClass|array $user the user to update
+     * @param stdClass $user the user to update
      * @param bool $updatepassword if true, authentication plugin will update password.
      * @param bool $triggerevent set false if user_updated event should not be triggered.
      * @since Moodle 5.3
      */
-    public static function update_user($user, bool $updatepassword = true, bool $triggerevent = true): void {
+    public static function update_user(stdClass $user, bool $updatepassword = true, bool $triggerevent = true): void {
         global $DB;
-
-        if (!is_object($user)) {
-            $user = (object) $user;
-        }
 
         $currentrecord = $DB->get_record('user', ['id' => $user->id]);
 
@@ -1936,11 +1935,11 @@ class user {
     /**
      * Marks user deleted in internal user database and notifies the auth plugin.
      *
-     * @param object $user user object before delete
+     * @param stdClass $user user object before delete
      * @return bool success
      * @since Moodle 5.3
      */
-    public static function delete_user(object $user): bool {
+    public static function delete_user(stdClass $user): bool {
         return delete_user($user);
     }
 
@@ -2067,17 +2066,21 @@ class user {
         ];
 
         $dummyusername = static::get_dummy_fullname($context, ['override' => $canviewfullnames]);
-        if (in_array('firstname', $userfields) &&
-                ($canviewfullnames || core_text::strrpos($dummyusername, 'firstname') !== false)) {
+        if (
+            in_array('firstname', $userfields) &&
+                ($canviewfullnames || core_text::strrpos($dummyusername, 'firstname') !== false)
+        ) {
             $userdetails['firstname'] = $user->firstname;
         }
-        if (in_array('lastname', $userfields) &&
-                ($canviewfullnames || core_text::strrpos($dummyusername, 'lastname') !== false)) {
+        if (
+            in_array('lastname', $userfields) &&
+                ($canviewfullnames || core_text::strrpos($dummyusername, 'lastname') !== false)
+        ) {
             $userdetails['lastname'] = $user->lastname;
         }
 
         if (in_array('username', $userfields)) {
-            if ($currentuser or has_capability('moodle/user:viewalldetails', $context)) {
+            if ($currentuser || has_capability('moodle/user:viewalldetails', $context)) {
                 $userdetails['username'] = $user->username;
             }
         }
@@ -2121,61 +2124,80 @@ class user {
         if (!empty($user->address) && (in_array('address', $userfields) || $isadmin)) {
             $userdetails['address'] = $user->address;
         }
-        if (!empty($user->phone1) && (in_array('phone1', $userfields)
-                && in_array('phone1', $showuseridentityfields) || $isadmin)) {
+        if (
+            !empty($user->phone1) && (in_array('phone1', $userfields)
+                && in_array('phone1', $showuseridentityfields) || $isadmin)
+        ) {
             $userdetails['phone1'] = $user->phone1;
         }
-        if (!empty($user->phone2) && (in_array('phone2', $userfields)
-                && in_array('phone2', $showuseridentityfields) || $isadmin)) {
+        if (
+            !empty($user->phone2) && (in_array('phone2', $userfields)
+                && in_array('phone2', $showuseridentityfields) || $isadmin)
+        ) {
             $userdetails['phone2'] = $user->phone2;
         }
 
-        if (isset($user->description) &&
-            ((!isset($hiddenfields['description']) && !$cannotviewdescription) or $isadmin)) {
+        if (
+            isset($user->description) &&
+            ((!isset($hiddenfields['description']) && !$cannotviewdescription) || $isadmin)
+        ) {
             if (in_array('description', $userfields)) {
-                list($userdetails['description'], $userdetails['descriptionformat']) =
-                        \core_external\util::format_text($user->description, $user->descriptionformat,
-                                $usercontext, 'user', 'profile', null);
+                [$userdetails['description'], $userdetails['descriptionformat']] =
+                        \core_external\util::format_text(
+                            $user->description,
+                            $user->descriptionformat,
+                            $usercontext,
+                            'user',
+                            'profile',
+                            null
+                        );
             }
         }
 
-        if (in_array('country', $userfields) && (!isset($hiddenfields['country']) or $isadmin) && $user->country) {
+        if (in_array('country', $userfields) && (!isset($hiddenfields['country']) || $isadmin) && $user->country) {
             $userdetails['country'] = $user->country;
         }
-        if (in_array('city', $userfields) && (!isset($hiddenfields['city']) or $isadmin) && $user->city) {
+        if (in_array('city', $userfields) && (!isset($hiddenfields['city']) || $isadmin) && $user->city) {
             $userdetails['city'] = $user->city;
         }
         if (in_array('timezone', $userfields) && (!isset($hiddenfields['timezone']) || $isadmin) && $user->timezone) {
             $userdetails['timezone'] = $user->timezone;
         }
-        if (in_array('suspended', $userfields) && (!isset($hiddenfields['suspended']) or $isadmin)) {
+        if (in_array('suspended', $userfields) && (!isset($hiddenfields['suspended']) || $isadmin)) {
             $userdetails['suspended'] = (bool)$user->suspended;
         }
-        if (in_array('firstaccess', $userfields) && (!isset($hiddenfields['firstaccess']) or $isadmin)) {
+        if (in_array('firstaccess', $userfields) && (!isset($hiddenfields['firstaccess']) || $isadmin)) {
             $userdetails['firstaccess'] = $user->firstaccess ?: 0;
         }
-        if (in_array('lastaccess', $userfields) && (!isset($hiddenfields['lastaccess']) or $isadmin)) {
+        if (in_array('lastaccess', $userfields) && (!isset($hiddenfields['lastaccess']) || $isadmin)) {
             $userdetails['lastaccess'] = $user->lastaccess ?: 0;
         }
-        if (in_array('lastcourseaccess', $userfields) && (!isset($hiddenfields['lastaccess']) or $isadmin)) {
+        if (in_array('lastcourseaccess', $userfields) && (!isset($hiddenfields['lastaccess']) || $isadmin)) {
             $userdetails['lastcourseaccess'] = $user->lastcourseaccess ?? 0;
         }
 
-        if (in_array('email', $userfields) && (
+        if (
+            in_array('email', $userfields) && (
                 $currentuser
-                or (!isset($hiddenfields['email']) and (
+                || (!isset($hiddenfields['email']) && (
                     $user->maildisplay == static::MAILDISPLAY_EVERYONE
-                    or ($user->maildisplay == static::MAILDISPLAY_COURSE_MEMBERS_ONLY and enrol_sharing_course($user, $USER))
-                    or $canviewuseremail  // TODO: Deprecate/remove for MDL-37479.
+                    || ($user->maildisplay == static::MAILDISPLAY_COURSE_MEMBERS_ONLY && enrol_sharing_course($user, $USER))
+                    || $canviewuseremail  // TODO: Deprecate/remove for MDL-37479.
                 ))
-                or in_array('email', $showuseridentityfields)
-           )) {
+                || in_array('email', $showuseridentityfields)
+            )
+        ) {
             $userdetails['email'] = $user->email;
         }
 
         if (in_array('interests', $userfields)) {
             $interests = core_tag_tag::get_item_tags_array(
-                'core', 'user', $user->id, core_tag_tag::BOTH_STANDARD_AND_NOT, 0, false
+                'core',
+                'user',
+                $user->id,
+                core_tag_tag::BOTH_STANDARD_AND_NOT,
+                0,
+                false
             );
             if ($interests) {
                 $userdetails['interests'] = join(', ', $interests);
@@ -2183,20 +2205,26 @@ class user {
         }
 
         if (in_array('idnumber', $userfields) && $user->idnumber) {
-            if (in_array('idnumber', $showuseridentityfields) or $currentuser or
-                    has_capability('moodle/user:viewalldetails', $context)) {
+            if (
+                in_array('idnumber', $showuseridentityfields) || $currentuser ||
+                    has_capability('moodle/user:viewalldetails', $context)
+            ) {
                 $userdetails['idnumber'] = $user->idnumber;
             }
         }
         if (in_array('institution', $userfields) && $user->institution) {
-            if (in_array('institution', $showuseridentityfields) or $currentuser or
-                    has_capability('moodle/user:viewalldetails', $context)) {
+            if (
+                in_array('institution', $showuseridentityfields) || $currentuser ||
+                    has_capability('moodle/user:viewalldetails', $context)
+            ) {
                 $userdetails['institution'] = $user->institution;
             }
         }
         if (in_array('department', $userfields) && isset($user->department)) {
-            if (in_array('department', $showuseridentityfields) or $currentuser or
-                    has_capability('moodle/user:viewalldetails', $context)) {
+            if (
+                in_array('department', $showuseridentityfields) || $currentuser ||
+                    has_capability('moodle/user:viewalldetails', $context)
+            ) {
                 $userdetails['department'] = $user->department;
             }
         }
@@ -2224,7 +2252,12 @@ class user {
                         }
                     }
                     $groupdescription = file_rewrite_pluginfile_urls(
-                        $group->description, 'pluginfile.php', $context->id, 'group', 'description', $group->id
+                        $group->description,
+                        'pluginfile.php',
+                        $context->id,
+                        'group',
+                        'description',
+                        $group->id
                     );
                     $userdetails['groups'][] = [
                         'id' => $group->id,
@@ -2261,7 +2294,7 @@ class user {
             $userdetails['preferences'] = $preferences;
         }
 
-        if ($currentuser or has_capability('moodle/user:viewalldetails', $context)) {
+        if ($currentuser || has_capability('moodle/user:viewalldetails', $context)) {
             $extrafields = ['auth', 'confirmed', 'lang', 'theme', 'mailformat', 'trackforums'];
             foreach ($extrafields as $extrafield) {
                 if (in_array($extrafield, $userfields) && isset($user->$extrafield)) {
@@ -2332,17 +2365,12 @@ class user {
     /**
      * Count the number of failed login attempts for the given user, since last successful login.
      *
-     * @param int|stdClass $user user id or object.
+     * @param stdClass $user user object.
      * @param bool $reset Resets failed login count, if set to true.
      * @return int number of failed login attempts since the last successful login.
      * @since Moodle 5.3
      */
-    public static function count_login_failures($user, bool $reset = true): int {
-        global $DB;
-
-        if (!is_object($user)) {
-            $user = $DB->get_record('user', ['id' => $user], '*', MUST_EXIST);
-        }
+    public static function count_login_failures(stdClass $user, bool $reset = true): int {
         if ($user->deleted) {
             return 0;
         }
@@ -2370,7 +2398,7 @@ class user {
             $itemtype = 'link';
             if (preg_match("/^#+$/", $line)) {
                 $itemtype = 'divider';
-            } else if (!array_key_exists(0, $bits) or empty($bits[0])) {
+            } else if (!array_key_exists(0, $bits) || empty($bits[0])) {
                 continue;
             } else {
                 $bits[0] = ltrim($bits[0], '-');
@@ -2396,7 +2424,7 @@ class user {
                 $child->titleidentifier = str_replace(" ", "-", $bits[0]);
             }
 
-            if (!array_key_exists(1, $bits) or empty($bits[1])) {
+            if (!array_key_exists(1, $bits) || empty($bits[1])) {
                 $bits[1] = null;
                 $child->itemtype = "invalid";
             } else {
@@ -2442,12 +2470,12 @@ class user {
      * Get a list of essential user navigation items.
      *
      * @param stdClass $user user object.
-     * @param moodle_page $page page object.
+     * @param \moodle_page $page page object.
      * @param array $options associative array. Supported option: avatarsize (int, default 35).
      * @return stdClass navigation information object with navitems and metadata arrays.
      * @since Moodle 5.3
      */
-    public static function get_user_navigation_info(stdClass $user, $page, array $options = []): stdClass {
+    public static function get_user_navigation_info(stdClass $user, \moodle_page $page, array $options = []): stdClass {
         global $OUTPUT, $DB, $SESSION, $CFG;
 
         $returnobject = new stdClass();
@@ -2595,7 +2623,7 @@ class user {
     public static function add_password_history(int $userid, #[\SensitiveParameter] string $password): void {
         global $CFG, $DB;
 
-        if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
+        if (empty($CFG->passwordreuselimit) || $CFG->passwordreuselimit < 0) {
             return;
         }
 
@@ -2630,7 +2658,7 @@ class user {
     public static function is_previously_used_password(int $userid, string $password): bool {
         global $CFG, $DB;
 
-        if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
+        if (empty($CFG->passwordreuselimit) || $CFG->passwordreuselimit < 0) {
             return false;
         }
 
@@ -2717,8 +2745,10 @@ class user {
             return new url('/grade/report/' . $CFG->grade_mygrades_report . '/index.php');
         }
 
-        if (isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report == 'external'
-                && !empty($CFG->gradereport_mygradeurl)) {
+        if (
+            isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report == 'external'
+                && !empty($CFG->gradereport_mygradeurl)
+        ) {
             return $CFG->gradereport_mygradeurl;
         }
 
@@ -2733,13 +2763,13 @@ class user {
      * current user has permission in any of them, returning true if so.
      * If the $course param is provided, then this function checks permissions in ONLY that course.
      *
-     * @param object $user The other user's details.
-     * @param object|null $course if provided, only check permissions in this course.
+     * @param stdClass $user The other user's details.
+     * @param stdClass|null $course if provided, only check permissions in this course.
      * @param context|null $usercontext The user context if available.
      * @return bool true for ability to view this user, else false.
      * @since Moodle 5.3
      */
-    public static function can_view_profile(object $user, ?object $course = null, ?context $usercontext = null): bool {
+    public static function can_view_profile(stdClass $user, ?stdClass $course = null, ?context $usercontext = null): bool {
         global $USER, $CFG;
 
         if ($user->deleted) {
@@ -2777,8 +2807,10 @@ class user {
             if (empty($usercontext)) {
                 $usercontext = context_user::instance($user->id);
             }
-            if (has_capability('moodle/user:viewdetails', $usercontext) ||
-                    has_capability('moodle/user:viewalldetails', $usercontext)) {
+            if (
+                has_capability('moodle/user:viewdetails', $usercontext) ||
+                    has_capability('moodle/user:viewalldetails', $usercontext)
+            ) {
                 return true;
             }
             $userscourses = enrol_get_all_users_courses($user->id);
@@ -2791,8 +2823,10 @@ class user {
         foreach ($userscourses as $userscourse) {
             context_helper::preload_from_record($userscourse);
             $coursecontext = context_course::instance($userscourse->id);
-            if (has_capability('moodle/user:viewdetails', $coursecontext) ||
-                    has_capability('moodle/user:viewalldetails', $coursecontext)) {
+            if (
+                has_capability('moodle/user:viewdetails', $coursecontext) ||
+                    has_capability('moodle/user:viewalldetails', $coursecontext)
+            ) {
                 if (!groups_user_groups_visible($userscourse, $user->id)) {
                     continue;
                 }
@@ -2807,14 +2841,14 @@ class user {
      *
      * @param stdClass $user The user whose profile is being checked.
      * @param stdClass|null $course The course context, if applicable.
-     * @param stdClass|null $usercontext The user context, if applicable.
+     * @param context|null $usercontext The user context, if applicable.
      * @return int One of the core_user::VIEWPROFILE_* constants.
      * @since Moodle 5.3
      */
     public static function process_profile_callbacks(
         stdClass $user,
         ?stdClass $course = null,
-        ?stdClass $usercontext = null,
+        ?context $usercontext = null,
     ): int {
         $forceallow = false;
 
@@ -2886,7 +2920,6 @@ class user {
                 }
 
                 $batch++;
-
             } while (count($userlist) > 0);
         }
 
@@ -2900,8 +2933,18 @@ class user {
 
         $totalpages = ceil($usercount / $perpage);
 
-        return new tagindex($tag, 'core', 'user', $content,
-                $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
+        return new tagindex(
+            $tag,
+            'core',
+            'user',
+            $content,
+            $exclusivemode,
+            $fromctx,
+            $ctx,
+            $rec,
+            $page,
+            $totalpages
+        );
     }
 
     /**

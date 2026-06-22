@@ -751,7 +751,7 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
 #[\core\attribute\deprecated('\core\user::update_user()', since: '5.3', mdl: 'MDL-82650')]
 function user_update_user($user, $updatepassword = true, $triggerevent = true) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
-    \core\user::update_user($user, $updatepassword, $triggerevent);
+    \core\user::update_user((object) $user, $updatepassword, $triggerevent);
 }
 
 /**
@@ -807,7 +807,7 @@ function user_get_default_fields() {
  * @todo MDL-89001 Final deprecation in Moodle 6.0.
  */
 #[\core\attribute\deprecated('\core\user::get_user_details()', since: '5.3', mdl: 'MDL-82650')]
-function user_get_user_details($user, $course = null, array $userfields = array()) {
+function user_get_user_details($user, $course = null, array $userfields = []) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return \core\user::get_user_details($user, $course, $userfields);
 }
@@ -853,7 +853,11 @@ function can_view_user_details_cap($user, $course = null) {
  */
 #[\core\attribute\deprecated('\core\user::count_login_failures()', since: '5.3', mdl: 'MDL-82650')]
 function user_count_login_failures($user, $reset = true) {
+    global $DB;
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+    if (!is_object($user)) {
+        $user = $DB->get_record('user', ['id' => $user], '*', MUST_EXIST);
+    }
     return \core\user::count_login_failures($user, $reset);
 }
 
@@ -896,7 +900,7 @@ function user_get_default_homepage_options(): array {
  * @todo MDL-89001 Final deprecation in Moodle 6.0.
  */
 #[\core\attribute\deprecated('\core\user::get_user_navigation_info()', since: '5.3', mdl: 'MDL-82650')]
-function user_get_user_navigation_info($user, $page, $options = array()) {
+function user_get_user_navigation_info($user, $page, $options = []) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return \core\user::get_user_navigation_info($user, $page, $options);
 }
@@ -999,13 +1003,13 @@ function user_can_view_profile($user, $course = null, $usercontext = null) {
  *
  * @param stdClass $user The user whose profile is being checked.
  * @param stdClass|null $course The course context, if applicable.
- * @param stdClass|null $usercontext The user context, if applicable.
+ * @param context|null $usercontext The user context, if applicable.
  * @return int One of the core_user::VIEWPROFILE_* constants.
  * @deprecated since Moodle 5.3 MDL-82650 - use \core\user::process_profile_callbacks() instead.
  * @todo MDL-89001 Final deprecation in Moodle 6.0.
  */
 #[\core\attribute\deprecated('\core\user::process_profile_callbacks()', since: '5.3', mdl: 'MDL-82650')]
-function user_process_profile_callbacks(stdClass $user, ?stdClass $course = null, ?stdClass $usercontext = null): int {
+function user_process_profile_callbacks(stdClass $user, ?stdClass $course = null, ?context $usercontext = null): int {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     return \core\user::process_profile_callbacks($user, $course, $usercontext);
 }

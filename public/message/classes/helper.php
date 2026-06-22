@@ -650,7 +650,7 @@ class helper {
      *
      * @param stdClass $user
      * @param array $userfields An array of userfields to be returned, the values must be a
-     *                          subset of user_get_default_fields (optional)
+     *                          subset of \core\user::get_default_fields() (optional)
      * @return array the array of userdetails, if visible, or an empty array otherwise.
      */
     public static function search_get_user_details(stdClass $user, array $userfields = []): array {
