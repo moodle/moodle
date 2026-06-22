@@ -52,7 +52,7 @@ Feature: We can understand the gradebook user report
     And I click on "Move" "link" in the "Test assignment four" "table_row"
     And I click on "Move to here" "link" in the "//tbody//tr[position()=last()-3]" "xpath_element"
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Mean of grades aggregation
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Mean of grades |
@@ -69,7 +69,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five  | 33.33 %           | 70.00 | 5.83 %                       |
       | Test assignment six   | 33.33 %           | 30.00 | 2.50 %                       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Weighted mean of grades aggregation
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Weighted mean of grades |
@@ -94,7 +94,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five  | 33.33 %           | 70.00 | 4.67 %                       |
       | Test assignment six   | 33.33 %           | 30.00 | 2.00 %                       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Simple weighted mean of grades aggregation
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Simple weighted mean of grades |
@@ -115,7 +115,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five  | 33.33 %                 | 70.00 | 7.78 %                       |
       | Test assignment six   | 33.33 %                 | 30.00 | 3.33 %                       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Mean of grades (with extra credits) aggregation
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Mean of grades (with extra credits) |
@@ -134,7 +134,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five  | 33.33 %                 | 70.00 | 7.78 %                       |
       | Test assignment six   | 33.33 %                 | 30.00 | 3.33 %                       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Median of grades aggregation
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Median of grades |
@@ -151,7 +151,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five  | 33.33 %           | 70.00 | 11.67 %                      |
       | Test assignment six   | 33.33 %           | 30.00 | 5.00 %                       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Lowest grade aggregation
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Lowest grade |
@@ -168,7 +168,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five  | 33.33 %           | 70.00 | 0.00 %                       |
       | Test assignment six   | 33.33 %           | 30.00 | 0.00 %                       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Highest grade aggregation
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Highest grade |
@@ -185,7 +185,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five  | 33.33 %           | 70.00 | 0.00 %                       |
       | Test assignment six   | 33.33 %           | 30.00 | 0.00 %                       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: Mode of grades aggregation
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation | Mode of grades |
@@ -202,7 +202,7 @@ Feature: We can understand the gradebook user report
       | Test assignment five  | 33.33 %           | 70.00 | 0.00 %                       |
       | Test assignment six   | 33.33 %           | 30.00 | 0.00 %                       |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: View user report with mixed aggregation methods
     And I change window size to "large"
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
@@ -226,7 +226,7 @@ Feature: We can understand the gradebook user report
       | Sub category total                        | 33.33 %                 | 36.67  | -                            |
       | Course total                              | -                       | 156.67 | -                            |
 
-  @javascript @skip_chrome_zerosize
+  @javascript
   Scenario: View user report with natural aggregation
     And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
