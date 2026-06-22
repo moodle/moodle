@@ -133,7 +133,6 @@ class assign_grading_table extends table_sql implements renderable {
         $params['assignmentid3'] = (int)$this->assignment->get_instance()->id;
         $params['newstatus'] = ASSIGN_SUBMISSION_STATUS_NEW;
 
-        // TODO Does not support custom user profile fields (MDL-70456).
         $userfieldsapi = \core_user\fields::for_identity($this->assignment->get_context(), true)->with_userpic();
         $sql = $userfieldsapi->get_sql('u', true, '', '', false);
         $userfields = $sql->selects;
