@@ -73,21 +73,25 @@
         <h2>{{{title}}}</h2>
     {{/title}}
     </div>
-    {{^isautomatic}}
-        {{#showmanualcompletion}}
-            <div class="header-actions">
-                {{> core_course/completion_manual }}
-            </div>
-        {{/showmanualcompletion}}
-    {{/isautomatic}}
     {{#hascompletion}}
-        {{#isautomatic}}
+        {{#shownavigation}}
             <div class="header-actions">
                 {{> core_course/completion_status }}
             </div>
-        {{/isautomatic}}
+        {{/shownavigation}}
+        {{^shownavigation}}
+            {{#showmanualcompletion}}
+                <div class="header-actions">
+                    {{> core_course/completion_manual }}
+                </div>
+            {{/showmanualcompletion}}
+            {{#isautomatic}}
+                <div class="header-actions">
+                    {{> core_course/completion_status }}
+                </div>
+            {{/isautomatic}}
+        {{/shownavigation}}
     {{/hascompletion}}
-
 </div>
 
 {{#activitydates}}
