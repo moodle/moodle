@@ -21,12 +21,12 @@ Feature: Book activity chapter visibility management
       | activity | book                |
       | name     | Test book           |
     And the following "mod_book > chapters" exist:
-      | book      | title          | content        | pagenum |subchapter |
-      | Test book | First chapter  | First chapter  | 1       | 0         |
-      | Test book | Second chapter | Second chapter | 2       | 0         |
-      | Test book | Sub chapter    | Sub chapter    | 3       | 1         |
-      | Test book | Third chapter  | Third chapter  | 4       | 0         |
-      | Test book | Fourth chapter | Fourth chapter | 5       | 0         |
+      | book      | title          | content                                      | pagenum |subchapter |
+      | Test book | First chapter  | <p>First chapter</p> <p>Hello, world 1!</p>  | 1       | 0         |
+      | Test book | Second chapter | <p>Second chapter</p> <p>Hello, world 2!</p> | 2       | 0         |
+      | Test book | Sub chapter    | <p>Sub chapter</p> <p>Hello, world 3!</p>    | 3       | 1         |
+      | Test book | Third chapter  | <p>Third chapter</p> <p>Hello, world 4!</p>  | 4       | 0         |
+      | Test book | Fourth chapter | <p>Fourth chapter</p> <p>Hello, world 5!</p> | 5       | 0         |
     And I am on the "Course 1" course page logged in as teacher1
     And I turn editing mode on
     And I am on the "Test book" "book activity" page
