@@ -36154,6 +36154,38 @@ select {
 .path-mod-forum .discussion-list .topic {
   font-weight: inherit;
 }
+.path-mod-forum .forumpost .authorsubheading a {
+  text-decoration: underline;
+}
+.path-mod-forum .indent {
+  margin-left: 5rem;
+}
+@media (max-width: 767.98px) {
+  .path-mod-forum .indent {
+    margin-left: 3.5rem;
+  }
+}
+@media (max-width: 575.98px) {
+  .path-mod-forum .indent {
+    margin-left: 2rem;
+  }
+}
+.path-mod-forum :target > .forumpost::before {
+  content: "";
+  position: absolute;
+  top: calc(1rem/2);
+  bottom: calc(1rem/2);
+  left: 0;
+  width: 3px;
+  background: #0f6cbf;
+}
+.path-mod-forum .forum-navigation-button {
+  height: calc(16px + 1.25rem);
+  width: calc(16px + 1.25rem);
+}
+.path-mod-forum .forum-navigation-button.disabled .icon {
+  color: #dee2e6;
+}
 
 .discussion-settings-container .form-select {
   width: 100%;

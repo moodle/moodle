@@ -43,7 +43,7 @@
 
 <div id="discussion-container-{{uniqid}}" data-content="forum-discussion">
 {{#html}}
-    <div class="d-flex flex-column flex-sm-row mb-1">
+    <div class="d-flex flex-column flex-sm-row mb-5">
         <div>{{{exportdiscussion}}}</div>
         <div class="{{#exportdiscussion}}ms-2{{/exportdiscussion}}">{{{modeselectorform}}}</div>
         <div class="ms-2">{{{movediscussion}}}</div>
@@ -53,10 +53,6 @@
             </div>
         {{/hasanyactions}}
     </div>
-
-    {{#navigationbuttons}}
-        <div class="mb-2 me-auto">{{> mod_forum/forum_discussion_navigation}}</div>
-    {{/navigationbuttons}}
 {{/html}}
 
 {{#notifications}}

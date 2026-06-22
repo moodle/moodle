@@ -101,10 +101,6 @@
     text-align: right;
 }
 
-.path-mod-forum .indent {
-    margin-left: 3%;
-}
-
 .path-mod-forum .forumheaderlist {
     width: 100%;
     border-width: 1px;
@@ -232,18 +228,6 @@ span.unread {
     border-bottom: 1px solid #ddd;
 }
 
-/* Forumpost hash anchor target */
-.path-mod-forum :target > .forumpost:before {
-    display: block;
-    content: '';
-    width: 4px;
-    position: absolute;
-    background: #0070a8;
-    left: -1px;
-    top: -1px;
-    bottom: -1px;
-}
-
 /* Discussion navigation */
 .path-mod-forum .discussion-nav {
     margin: .5em 0;
@@ -301,10 +285,6 @@ span.unread {
 
 .path-mod-forum article .nav .nav-link + .nav-link {
     border-left: 1px solid #ddd;
-}
-
-.path-mod-forum .forum-navigation-button.disabled {
-    opacity: var(--bs-focus-ring-opacity);
 }
 
 .privatereplyinfo {

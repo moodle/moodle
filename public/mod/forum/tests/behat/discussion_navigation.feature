@@ -142,7 +142,7 @@ Feature: A user can navigate to previous and next discussions
       | forum1 | student1 | Third Discussion  | Third Discussion  | Content of third discussion  |
     And I am on the "Test Forum" "forum activity" page logged in as "student1"
     When I click on "Second Discussion" "link"
-    Then I should see "2" node occurrences of type "nav" in the "[data-content='forum-discussion']" "css_element"
+    Then I should see "2" node occurrences of type "nav" in the "#page-content" "css_element"
     And "Previous discussion: First Discussion" "mod_forum > Discussion navigation link" should exist
     And "Next discussion: Third Discussion" "mod_forum > Discussion navigation link" should exist
 

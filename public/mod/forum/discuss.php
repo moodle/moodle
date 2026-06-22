@@ -331,18 +331,27 @@ if ($isnestedv2displaymode) {
 }
 
 echo $OUTPUT->header();
-if (!$isnestedv2displaymode) {
-    if (!$PAGE->has_secondary_navigation()) {
-        echo $OUTPUT->heading(format_string($forum->get_name()), 2);
-    }
-    $headinglevel = $PAGE->activityheader->get_heading_level();
-    echo $OUTPUT->heading(format_string($discussion->get_name()), $headinglevel, 'discussionname');
-}
 
 $rendererfactory = mod_forum\local\container::get_renderer_factory();
 $discussionrenderer = $rendererfactory->get_discussion_renderer($forum, $discussion, $displaymode);
 $orderpostsby = $displaymode == FORUM_MODE_FLATNEWEST ? 'created DESC' : 'created ASC';
 $replies = $postvault->get_replies_to_post($USER, $post, $capabilitymanager->can_view_any_private_reply($USER), $orderpostsby);
+
+if (!$isnestedv2displaymode) {
+    if (!$PAGE->has_secondary_navigation()) {
+        echo $OUTPUT->heading(format_string($forum->get_name()), 2);
+    }
+    $headinglevel = $PAGE->activityheader->get_heading_level();
+
+    // Output discussion name and discussion navigation buttons.
+    echo $OUTPUT->container_start('discussionheader d-flex align-items-end pb-3 mb-5 border-bottom');
+    echo $OUTPUT->heading(format_string($discussion->get_name()), $headinglevel, 'discussionname me-auto');
+    echo $OUTPUT->render_from_template(
+        'mod_forum/forum_discussion_navigation',
+        $discussionrenderer->get_discussion_navigation_buttons(),
+    );
+    echo $OUTPUT->container_end();
+}
 
 if ($move == -1 and confirm_sesskey()) {
     $forumname = format_string($forum->get_name(), true);

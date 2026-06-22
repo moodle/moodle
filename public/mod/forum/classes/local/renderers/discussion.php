@@ -475,7 +475,7 @@ class discussion {
      *
      * @return array|null context for the discussion navigation template
      */
-    private function get_discussion_navigation_buttons(): ?array {
+    public function get_discussion_navigation_buttons(): ?array {
         // Back to the legacy renderer if we're in nested v2 mode as the navigation is not compatible with this display mode.
         if ($this->displaymode === FORUM_MODE_NESTED_V2) {
             return null;
