@@ -19,17 +19,21 @@
 
     Template for displaying the completion status.
 
+    The status is wrapped in a persistent container (always present in the DOM, even when the
+    activity is not yet complete) so it can be updated in place when the completion state changes,
+    for example when the manual completion button is toggled from the linear navigation footer.
+
     Example context (json):
     {
+        "cmid": 1,
         "istrackeduser": true,
         "overallcomplete": true,
         "overallincomplete": false
     }
 }}
-{{#istrackeduser}}
-    {{#overallcomplete}}
-        <span class="completion-status text-success">
-            <i class="fa fa-check"></i> <span>{{#str}} done, core_completion {{/str}}</span>
-        </span>
-    {{/overallcomplete}}
-{{/istrackeduser}}
+{{! Strip whitespace to avoid extra line breaks in the DOM. }}
+<span class="activity-completion-status" data-region="completion-status" data-cmid="{{cmid}}">{{!
+    }}{{#istrackeduser}}{{#overallcomplete}}<span class="completion-status text-success">{{!
+        }}<i class="fa fa-check"></i> <span>{{#str}} done, core_completion {{/str}}</span>{{!
+    }}</span>{{/overallcomplete}}{{/istrackeduser}}{{!
+}}</span>

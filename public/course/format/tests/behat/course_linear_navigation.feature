@@ -82,3 +82,56 @@ Feature: Display the course linear navigation
       | format |
       | topics |
       | weeks  |
+
+  @javascript
+  Scenario: The manual completion control is relocated to the sticky footer with linear navigation
+    Given the following "courses" exist:
+      | fullname | shortname | format | enablelinearnav | enablecompletion |
+      | Course1  | C1        | topics | 1               | 1                |
+    And the following "course enrolments" exist:
+      | user | course | role    |
+      | s1   | C1     | student |
+    And the following "activities" exist:
+      | activity | name  | course | completion |
+      | page     | Page1 | C1     | 1          |
+    When I am on the "Page1" "page activity" page logged in as "s1"
+    Then I should see "Mark as done" in the "sticky-footer" "region"
+    And I should not see "Mark as done" in the "page-header" "region"
+    And I should not see "Done" in the "page-header" "region"
+    But I toggle the manual completion state of "Page1"
+    And the manual completion button of "Page1" is displayed as "Done"
+    And I should see "Done" in the "page-header" "region"
+    And I toggle the manual completion state of "Page1"
+    And the manual completion button of "Page1" is displayed as "Mark as done"
+    # The header indicator is hidden again when the activity is marked as not complete.
+    And I should not see "Done" in the "page-header" "region"
+
+  @javascript
+  Scenario: The manual completion control stays in the header when linear navigation is disabled
+    Given the following "courses" exist:
+      | fullname | shortname | format | enablelinearnav | enablecompletion |
+      | Course1  | C1        | topics | 0               | 1                |
+    And the following "course enrolments" exist:
+      | user | course | role    |
+      | s1   | C1     | student |
+    And the following "activities" exist:
+      | activity | name  | course | completion |
+      | page     | Page1 | C1     | 1          |
+    When I am on the "Page1" "page activity" page logged in as "s1"
+    Then I should see "Mark as done" in the "page-header" "region"
+    And the course linear navigation should not be visible
+
+  @javascript
+  Scenario: The automatic completion status is shown in the sticky footer with linear navigation
+    Given the following "courses" exist:
+      | fullname | shortname | format | enablelinearnav | enablecompletion |
+      | Course1  | C1        | topics | 1               | 1                |
+    And the following "course enrolments" exist:
+      | user | course | role    |
+      | s1   | C1     | student |
+    And the following "activities" exist:
+      | activity | name  | course | completion | completionview |
+      | page     | Page1 | C1     | 2          | 1              |
+    When I am on the "Page1" "page activity" page logged in as "s1"
+    Then I should see "Done" in the "sticky-footer" "region"
+    And I should see "Done" in the "page-header" "region"

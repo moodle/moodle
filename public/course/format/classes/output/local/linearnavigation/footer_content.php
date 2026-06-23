@@ -21,6 +21,7 @@ use core\output\renderable;
 use core\output\renderer_base;
 use core\router\util;
 use core_course\route\controller\course_navigation;
+use cm_info;
 
 /**
  * Sticky footer class for linear navigation in course format.
@@ -33,29 +34,58 @@ class footer_content implements named_templatable, renderable {
     /**
      * Constructor.
      *
-     * @param int $cmid The course module ID.
+     * @param cm_info $cminfo The course module information.
+     * @param int|null $userid The user ID to use for the completion controls.
      */
     public function __construct(
-        /** @var int The course module ID. */
-        private int $cmid
+        /** @var cm_info The course module information. */
+        private cm_info $cminfo,
+        /** @var int|null The user ID to use for the completion controls. */
+        private ?int $userid = null,
     ) {
     }
 
     #[\Override]
     public function export_for_template(renderer_base $output) {
+        // Get previous and next URLs for the current course module.
         $previousurl = util::get_path_for_callable(
             [course_navigation::class, 'cm_previous_element'],
-            ['cm' => $this->cmid],
+            ['cm' => $this->cminfo->id],
         );
         $nexturl = util::get_path_for_callable(
             [course_navigation::class, 'cm_next_element'],
-            ['cm' => $this->cmid],
+            ['cm' => $this->cminfo->id],
         );
 
         return [
             'previousurl' => $previousurl->out(false),
             'nexturl' => $nexturl->out(false),
+            'completion' => $this->export_completion($output),
         ];
+    }
+
+    /**
+     * Export the activity completion control to display in the footer.
+     *
+     * @param renderer_base $output The renderer.
+     * @return string The rendered completion control, or an empty string when there is none to show.
+     */
+    private function export_completion(renderer_base $output): string {
+        global $USER;
+
+        $userid = $this->userid ?? $USER->id;
+        $details = \core_completion\cm_completion_details::get_instance($this->cminfo, $userid);
+        $data = (array) (new \core_course\output\activity_completion($this->cminfo, $details, smallbutton: false))
+            ->export_for_template($output);
+        if (empty($data['uservisible'])) {
+            return '';
+        }
+        if (!empty($data['showmanualcompletion'])) {
+            return $output->render_from_template('core_course/completion_manual', $data);
+        } else if (!empty($data['hascompletion']) && !empty($data['isautomatic'])) {
+            return $output->render_from_template('core_course/completion_status', $data);
+        }
+        return '';
     }
 
     #[\Override]
