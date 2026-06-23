@@ -39,9 +39,13 @@ function xmldb_assignfeedback_file_upgrade($oldversion) {
 
     // Automatically generated Moodle v5.1.0 release upgrade line.
     // Put any upgrade step following this.
+
+    // Automatically generated Moodle v5.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
     global $DB;
     $dbman = $DB->get_manager();
-    if ($oldversion < 2026042001) {
+    if ($oldversion < 2026062300) {
         // Define field mark to be added to assignfeedback_file.
         $table = new xmldb_table('assignfeedback_file');
         $field = new xmldb_field('mark', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'grade');
@@ -50,13 +54,12 @@ function xmldb_assignfeedback_file_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        $key = new xmldb_key('mark', XMLDB_KEY_FOREIGN, ['mark'], 'assign_mark', ['id']);
+        $dbman->add_key($table, $key);
 
         // Comments savepoint reached.
-        upgrade_plugin_savepoint(true, 2026042001, 'assignfeedback', 'file');
+        upgrade_plugin_savepoint(true, 2026062300, 'assignfeedback', 'file');
     }
-
-    // Automatically generated Moodle v5.2.0 release upgrade line.
-    // Put any upgrade step following this.
 
     return true;
 }
