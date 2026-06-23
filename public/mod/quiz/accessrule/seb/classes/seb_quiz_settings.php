@@ -149,6 +149,11 @@ class seb_quiz_settings extends persistent {
                 'default' => 0,
                 'null' => NULL_ALLOWED,
             ],
+            'alloweddisplaysmaxnumber' => [
+                'type' => PARAM_INT,
+                'default' => 1,
+                'null' => NULL_ALLOWED,
+            ],
             'allowspellchecking' => [
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -355,6 +360,22 @@ class seb_quiz_settings extends persistent {
     }
 
     /**
+     * Validate Maximum allowed displays.
+     *
+     * @param string $num Maximum allowed displays.
+     * @return true|lang_string If there is an error, an error string is returned.
+     */
+    protected function validate_alloweddisplaysmaxnumber($num) {
+        if ($this->raw_get('requiresafeexambrowser') != settings_provider::USE_SEB_CONFIG_MANUALLY) {
+            return true;
+        }
+        if ($num < 1 || $num > 3) {
+            return new lang_string('invaliddata', 'error');
+        }
+        return true;
+    }
+
+    /**
      * Hook to execute before an update.
      *
      * Please note that at this stage the data has already been validated and therefore
@@ -470,6 +491,7 @@ class seb_quiz_settings extends persistent {
         $this->process_bool_settings();
         $this->process_quit_password_settings();
         $this->process_quit_url_from_settings();
+        $this->process_allowed_displays_max_number_setting();
         $this->process_url_filters();
         $this->process_required_enforced_settings();
 
@@ -599,6 +621,16 @@ class seb_quiz_settings extends persistent {
         $quiturl = $this->plist->get_element_value('quitURL');
         if (!empty($quiturl)) {
             $this->set('linkquitseb', $quiturl);
+        }
+    }
+
+    /**
+     * Sets the allowedDisplaysMaxNumber if found in the seb_quiz_settings.
+     */
+    private function process_allowed_displays_max_number_setting() {
+        $settings = $this->to_record();
+        if (!empty($settings->alloweddisplaysmaxnumber) && is_numeric($settings->alloweddisplaysmaxnumber)) {
+            $this->plist->set_or_update_value('allowedDisplaysMaxNumber', new CFNumber($settings->alloweddisplaysmaxnumber));
         }
     }
 

@@ -89,5 +89,28 @@ function xmldb_quizaccess_seb_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026042001, 'quizaccess', 'seb');
     }
 
+    if ($oldversion < 2026042002) {
+        // Define field alloweddisplaysmaxnumber to be added to quizaccess_seb_quizsettings.
+        $table = new xmldb_table('quizaccess_seb_quizsettings');
+        $field = new xmldb_field(
+            'alloweddisplaysmaxnumber',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            null,
+            null,
+            null,
+            'allowscreencapture'
+        );
+
+        // Conditionally launch add field alloweddisplaysmaxnumber.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // SEB savepoint reached.
+        upgrade_plugin_savepoint(true, 2026042002, 'quizaccess', 'seb');
+    }
+
     return true;
 }
