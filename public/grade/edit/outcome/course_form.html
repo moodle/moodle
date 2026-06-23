@@ -16,9 +16,9 @@
                 }
                 echo '</optgroup>';
             }
-            if ($co_standard_used) {
+            if ($usedstandardoutcomes) {
                 echo '<optgroup label="'.get_string('outcomescourseused', 'grades').'">';
-                foreach ($co_standard_used as $outcome) {
+                foreach ($usedstandardoutcomes as $outcome) {
                     echo '<option value="'.$outcome->id.'">'.shorten_text($outcome->get_name(), $maxlength).'</option>';
                 }
                 echo '</optgroup>';

@@ -2178,5 +2178,31 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026080700.01);
     }
 
+    if ($oldversion < 2026081800.01) {
+        // Create grade_outcomes_modules table to track usage of scale-less outcomes
+        // by course modules. Scale-based outcomes continue to be tracked via
+        // grade_items; this table covers outcomes that have no scaleid (informational outcomes).
+
+        $table = new xmldb_table('grade_outcomes_modules');
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('outcomecourseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'outcomecourseid');
+        $table->add_field('usercreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'cmid');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'usercreated');
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('outcomecourseid', XMLDB_KEY_FOREIGN, ['outcomecourseid'], 'grade_outcomes_courses', ['id']);
+        $table->add_key('cmid', XMLDB_KEY_FOREIGN, ['cmid'], 'course_modules', ['id']);
+        $table->add_key('usercreated', XMLDB_KEY_FOREIGN, ['usercreated'], 'user', ['id']);
+
+        $table->add_index('outcomecourseid-cmid', XMLDB_INDEX_UNIQUE, ['outcomecourseid', 'cmid']);
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_main_savepoint(true, 2026081800.01);
+    }
+
     return true;
 }

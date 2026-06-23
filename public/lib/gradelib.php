@@ -1517,6 +1517,13 @@ function remove_course_grades($courseid, $showfeedback) {
             $outcome->delete('coursedelete');
         }
     }
+
+    $gocids = $DB->get_fieldset_select('grade_outcomes_courses', 'id', 'courseid = ?', [$courseid]);
+    if (!empty($gocids)) {
+        [$insql, $inparams] = $DB->get_in_or_equal($gocids);
+        $DB->delete_records_select('grade_outcomes_modules', "outcomecourseid $insql", $inparams);
+    }
+
     $DB->delete_records('grade_outcomes_courses', array('courseid'=>$courseid));
     if ($showfeedback) {
         echo $OUTPUT->notification($strdeleted.' - '.get_string('outcomes', 'grades'), 'notifysuccess');

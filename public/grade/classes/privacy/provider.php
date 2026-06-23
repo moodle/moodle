@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use context;
 use context_course;
+use context_module;
 use context_system;
 use grade_item;
 use grade_grade;
@@ -67,6 +68,11 @@ class provider implements
             'timemodified' => 'privacy:metadata:outcomes:timemodified',
             'usermodified' => 'privacy:metadata:outcomes:usermodified',
         ], 'privacy:metadata:outcomes');
+
+        $collection->add_database_table('grade_outcomes_modules', [
+            'usercreated' => 'privacy:metadata:outcomes_modules:usercreated',
+            'timecreated' => 'privacy:metadata:outcomes_modules:timecreated',
+        ], 'privacy:metadata:outcomes_modules');
 
         $collection->add_database_table('grade_outcomes_history', [
             'timemodified' => 'privacy:metadata:history:timemodified',
@@ -153,6 +159,16 @@ class provider implements
                 OR ((go.courseid IS NULL OR go.courseid < 1) AND ctx.id = :syscontextid)
              WHERE go.usermodified = :userid";
         $params = ['userid' => $userid, 'courselevel' => CONTEXT_COURSE, 'syscontextid' => SYSCONTEXTID];
+        $contextlist->add_from_sql($sql, $params);
+
+        // Add where we created scale-less outcome to activity associations.
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {grade_outcomes_modules} gom
+              JOIN {context} ctx
+                ON ctx.instanceid = gom.cmid AND ctx.contextlevel = :modlevel
+             WHERE gom.usercreated = :userid";
+        $params = ['userid' => $userid, 'modlevel' => CONTEXT_MODULE];
         $contextlist->add_from_sql($sql, $params);
 
         // Add where we modified scales.
@@ -404,6 +420,13 @@ class provider implements
                        AND ggh.userid = :contextinstanceid";
             $userlist->add_from_sql('userid', $sql, ['contextinstanceid' => $context->instanceid]);
         }
+
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            $sql = "SELECT usercreated
+                      FROM {grade_outcomes_modules}
+                     WHERE cmid = :contextinstanceid";
+            $userlist->add_from_sql('usercreated', $sql, ['contextinstanceid' => $context->instanceid]);
+        }
     }
 
     /**
@@ -436,6 +459,9 @@ class provider implements
 
         // Export the outcomes.
         static::export_user_data_outcomes_in_contexts($contextlist);
+
+        // Export the scale-less outcome to activity associations.
+        static::export_user_data_outcomes_modules_in_contexts($contextlist);
 
         // Export the scales.
         static::export_user_data_scales_in_contexts($contextlist);
@@ -759,6 +785,11 @@ class provider implements
                 $DB->delete_records_select('grade_grades', "itemid $insql", $inparams);
                 $DB->delete_records_select('grade_grades_history', "itemid $insql", $inparams);
                 break;
+
+            case CONTEXT_MODULE:
+                // Remove scale-less outcome associations for this activity.
+                $DB->delete_records('grade_outcomes_modules', ['cmid' => $context->instanceid]);
+                break;
         }
 
     }
@@ -773,6 +804,7 @@ class provider implements
         $userid = $contextlist->get_user()->id;
 
         $courseids = [];
+        $cmids = [];
         foreach ($contextlist->get_contexts() as $context) {
             if ($context->contextlevel == CONTEXT_USER && $userid == $context->instanceid) {
                 // User attempts to delete data in their own context.
@@ -781,7 +813,16 @@ class provider implements
             } else if ($context->contextlevel == CONTEXT_COURSE) {
                 // Log the list of course IDs.
                 $courseids[] = $context->instanceid;
+            } else if ($context->contextlevel == CONTEXT_MODULE) {
+                // Log the list of course module IDs.
+                $cmids[] = $context->instanceid;
             }
+        }
+
+        if (!empty($cmids)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
+            $params = array_merge($inparams, ['userid' => $userid]);
+            $DB->delete_records_select('grade_outcomes_modules', "cmid $insql AND usercreated = :userid", $params);
         }
 
         $itemids = static::get_item_ids_from_course_ids($courseids);
@@ -818,6 +859,13 @@ class provider implements
             if (array_search($context->instanceid, $userids) !== false) {
                 static::delete_orphan_historical_grades($context->instanceid);
             }
+            return;
+        }
+
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            $params = array_merge(['cmid' => $context->instanceid], $userparams);
+            $DB->delete_records_select('grade_outcomes_modules', "cmid = :cmid AND usercreated $usersql", $params);
             return;
         }
 
@@ -973,6 +1021,59 @@ class provider implements
             $context = $courseid ? context_course::instance($courseid) : context_system::instance();
             writer::with_context($context)->export_related_data($relatedtomepath, 'outcomes_history',
                 (object) ['modified_records' => $data]);
+        });
+    }
+
+    /**
+     * Export the user data related to scale-less outcome to activity associations.
+     *
+     * @param approved_contextlist $contextlist The approved contexts to export information for.
+     * @return void
+     */
+    protected static function export_user_data_outcomes_modules_in_contexts(approved_contextlist $contextlist): void {
+        global $DB;
+
+        $rootpath = [get_string('grades', 'core_grades')];
+        $relatedtomepath = array_merge($rootpath, [get_string('privacy:path:relatedtome', 'core_grades')]);
+        $userid = $contextlist->get_user()->id;
+
+        // Only CONTEXT_MODULE contexts are relevant here.
+        $cmids = [];
+        foreach ($contextlist->get_contexts() as $context) {
+            if ($context->contextlevel == CONTEXT_MODULE) {
+                $cmids[] = $context->instanceid;
+            }
+        }
+        if (empty($cmids)) {
+            return;
+        }
+
+        [$insql, $inparams] = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
+        $sql = "
+            SELECT gom.id, gom.cmid, go.shortname, go.fullname, gom.timecreated
+              FROM {grade_outcomes_modules} gom
+              JOIN {grade_outcomes_courses} goc ON goc.id = gom.outcomecourseid
+              JOIN {grade_outcomes} go ON go.id = goc.outcomeid
+             WHERE gom.cmid $insql
+               AND gom.usercreated = :userid
+          ORDER BY gom.cmid, gom.id";
+        $params = array_merge($inparams, ['userid' => $userid]);
+        $recordset = $DB->get_recordset_sql($sql, $params);
+        static::recordset_loop_and_export($recordset, 'cmid', [], function ($carry, $record) {
+            $carry[] = [
+                'shortname' => $record->shortname,
+                'fullname' => $record->fullname,
+                'timecreated' => transform::datetime($record->timecreated),
+                'created_by_you' => transform::yesno(true),
+            ];
+            return $carry;
+        }, function ($cmid, $data) use ($relatedtomepath) {
+            $context = context_module::instance($cmid);
+            writer::with_context($context)->export_related_data(
+                $relatedtomepath,
+                'outcomes_modules',
+                (object) ['outcomes' => $data],
+            );
         });
     }
 
