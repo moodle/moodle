@@ -126,13 +126,13 @@ class reports_list extends system_report {
         ))
             ->set_type(column::TYPE_TEXT)
             // We need enough fields to re-create the persistent and pass to the editable component.
-            ->add_fields(implode(', ', [
+            ->add_fields([
                 "{$tablealias}.id",
                 "{$tablealias}.name",
                 "{$tablealias}.contextid",
                 "{$tablealias}.type",
                 "{$tablealias}.usercreated",
-            ]))
+            ])
             ->set_is_sortable(true, ["{$tablealias}.name"])
             ->add_callback(static function(string $value, stdClass $report): string {
                 global $PAGE;

@@ -242,18 +242,22 @@ final class column_test extends advanced_testcase {
             ['t.foo bar', ['t.foo AS c1_bar']],
             ['t.foo AS bar', ['t.foo AS c1_bar']],
             ['t.foo1, t.foo2 bar, t.foo3 AS baz', ['t.foo1 AS c1_foo1', 't.foo2 AS c1_bar', 't.foo3 AS c1_baz']],
+            [['t.foo'], ['t.foo AS c1_foo']],
+            [['t.foo bar'], ['t.foo AS c1_bar']],
+            [['t.foo AS bar'], ['t.foo AS c1_bar']],
+            [['t.foo1', 't.foo2 bar', 't.foo3 AS baz'], ['t.foo1 AS c1_foo1', 't.foo2 AS c1_bar', 't.foo3 AS c1_baz']],
         ];
     }
 
     /**
      * Test adding fields to a column, and retrieving them
      *
-     * @param string $sql
+     * @param string|string[] $sql
      * @param array $expectedselect
      *
      * @dataProvider add_fields_provider
      */
-    public function test_add_fields(string $sql, array $expectedselect): void {
+    public function test_add_fields(string|array $sql, array $expectedselect): void {
         $column = $this->create_column('test')
             ->set_index(1)
             ->add_fields($sql);

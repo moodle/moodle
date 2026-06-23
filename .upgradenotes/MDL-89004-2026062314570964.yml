@@ -1,0 +1,7 @@
+issueNumber: MDL-89004
+notes:
+  core_reportbuilder:
+    - message: >-
+        The `add_fields()` method of the report class now accepts union type
+        parameter of string or array of strings to define the column fields
+      type: changed
