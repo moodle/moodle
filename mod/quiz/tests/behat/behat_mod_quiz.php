@@ -714,8 +714,11 @@ class behat_mod_quiz extends behat_question_base {
 
         $this->execute("behat_general::i_click_on", [$slotxpath . $deletexpath, "xpath_element"]);
 
+
+        $this->execute('behat_general::wait_until_exists', [".modal-content", "css_element"]);
+
         $this->execute('behat_general::i_click_on_in_the',
-            ['Yes', "button", "Confirm", "dialogue"]
+            ["Yes", "button", "Confirm", "dialogue"]
         );
     }
 
