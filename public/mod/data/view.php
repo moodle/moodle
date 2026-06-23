@@ -304,6 +304,7 @@ if ($delete && data_user_can_manage_entry($delete, $data, $context)) {
                                                         JOIN {user} u ON dr.userid = u.id
                                                   WHERE dr.id = ?", $dbparams, MUST_EXIST)) { // Need to check this is valid.
             if ($deleterecord->dataid == $data->id) {                       // Must be from this database
+                $PAGE->set_show_navigation_footer(false);
                 echo $OUTPUT->heading(get_string('deleteentry', 'mod_data'), 2, 'mb-4');
                 $deletebutton = new single_button(
                     new moodle_url('/mod/data/view.php?d=' . $data->id . '&delete=' . $delete . '&confirm=1'),

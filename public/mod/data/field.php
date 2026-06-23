@@ -95,6 +95,7 @@ $actionbar = new \mod_data\output\action_bar($data->id, $PAGE->url);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 
 // Fill in missing properties needed for updating of instance.
 $data->course     = $cm->course;

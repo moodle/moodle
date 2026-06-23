@@ -108,6 +108,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 $PAGE->force_settings_menu(true);
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 $PAGE->add_body_class('limitedwidth');
 
 echo $OUTPUT->header();

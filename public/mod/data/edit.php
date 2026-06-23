@@ -132,6 +132,7 @@ $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->force_settings_menu(true);
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 
 // Process incoming data for adding/updating records.
 

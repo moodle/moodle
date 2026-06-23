@@ -135,6 +135,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagename);
 
