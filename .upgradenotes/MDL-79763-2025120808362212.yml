@@ -6,7 +6,7 @@ notes:
         after a delay without marking it as failed. The delay uses exponential
         backoff based on elapsed time since the task first started, capped at 24
         hours.
-      type: added
+      type: improved
   core\task\adhoc_task:
     - message: >-
         Added set_soft_retry_delay(), get_soft_retry_delay() and
@@ -15,4 +15,4 @@ notes:
         manager::adhoc_task_delayed() without marking the task as failed. Pass
         null for automatic exponential backoff or a positive integer for an
         explicit delay in seconds.
-      type: added
+      type: improved
