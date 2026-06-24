@@ -76,6 +76,24 @@ abstract class activity_dates {
     }
 
     /**
+     * Returns the effective due date for the given module and user, when the module provides one.
+     *
+     * @param cm_info $cm The course module information.
+     * @param int $userid The user ID.
+     * @return int|null The due date timestamp, or null when the module has no due date.
+     */
+    public static function get_due_date_for_module(cm_info $cm, int $userid): ?int {
+        $cmdatesclassname = static::get_dates_classname($cm->modname);
+        if (!$cmdatesclassname || !method_exists($cmdatesclassname, 'get_due_date')) {
+            return null;
+        }
+
+        /** @var activity_dates $dates */
+        $dates = new $cmdatesclassname($cm, $userid);
+        return $dates->get_due_date();
+    }
+
+    /**
      * Fetches the module's dates class implementation if it's available.
      *
      * @param string $modname The activity module name. Usually from cm_info::modname.

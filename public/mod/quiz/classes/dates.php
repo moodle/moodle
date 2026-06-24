@@ -45,8 +45,38 @@ class dates extends activity_dates {
      * @return array
      */
     protected function get_dates(): array {
+        global $DB;
+
         $timeopen = $this->cm->customdata['timeopen'] ?? null;
         $timeclose = $this->cm->customdata['timeclose'] ?? null;
+
+        $useroverride = $DB->get_record('quiz_overrides', [
+            'quiz' => $this->cm->instance,
+            'userid' => $this->userid,
+        ]);
+        $overrides = $useroverride ? [$useroverride] : [];
+
+        $groups = groups_get_user_groups($this->cm->course, $this->userid);
+        if (!empty($groups[0])) {
+            [$groupidsql, $params] = $DB->get_in_or_equal(array_values($groups[0]), SQL_PARAMS_NAMED);
+            $params['quizid'] = $this->cm->instance;
+            $overrides = array_merge($overrides, $DB->get_records_select(
+                'quiz_overrides',
+                "quiz = :quizid AND groupid {$groupidsql}",
+                $params,
+            ));
+        }
+
+        foreach ($overrides as $override) {
+            if (isset($override->timeopen)) {
+                $timeopen = empty($timeopen) ? $override->timeopen : min($timeopen, $override->timeopen);
+            }
+            if (isset($override->timeclose)) {
+                $timeclose = empty($timeclose) || empty($override->timeclose) ? $override->timeclose :
+                    max($timeclose, $override->timeclose);
+            }
+        }
+
         $this->timeclose = $timeclose ? (int) $timeclose : null;
 
         $now = time();

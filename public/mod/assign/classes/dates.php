@@ -45,7 +45,7 @@ class dates extends activity_dates {
      * @return array
      */
     protected function get_dates(): array {
-        global $CFG;
+        global $CFG, $DB;
 
         require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
@@ -55,20 +55,40 @@ class dates extends activity_dates {
         $context = \context_module::instance($this->cm->id);
         $assign = new \assign($context, $this->cm, $course);
 
-        $timeopen = $this->cm->customdata['allowsubmissionsfromdate'] ?? null;
-        $timedue = $this->cm->customdata['duedate'] ?? null;
+        $instance = $assign->get_instance($this->userid);
+        $timeopen = $instance->allowsubmissionsfromdate ?? null;
+        $timedue = $instance->duedate ?? null;
 
-        $activitygroup = groups_get_activity_group($this->cm, true);
-        if ($activitygroup) {
-            if ($assign->can_view_grades()) {
-                $groupoverride = \cache::make('mod_assign', 'overrides')->get("{$this->cm->instance}_g_{$activitygroup}");
-                if (!empty($groupoverride->allowsubmissionsfromdate)) {
-                    $timeopen = $groupoverride->allowsubmissionsfromdate;
-                }
-                if (!empty($groupoverride->duedate)) {
-                    $timedue = $groupoverride->duedate;
-                }
+        $useroverride = $DB->get_record('assign_overrides', [
+            'assignid' => $this->cm->instance,
+            'userid' => $this->userid,
+        ]);
+        $overrides = $useroverride ? [$useroverride] : [];
+
+        $groups = groups_get_user_groups($this->cm->course, $this->userid);
+        if (!empty($groups[0])) {
+            [$groupidsql, $params] = $DB->get_in_or_equal(array_values($groups[0]), SQL_PARAMS_NAMED);
+            $params['assignid'] = $this->cm->instance;
+            $overrides = array_merge($overrides, $DB->get_records_select(
+                'assign_overrides',
+                "assignid = :assignid AND groupid {$groupidsql}",
+                $params,
+            ));
+        }
+
+        foreach ($overrides as $override) {
+            if (isset($override->allowsubmissionsfromdate)) {
+                $timeopen = empty($timeopen) ? $override->allowsubmissionsfromdate :
+                    min($timeopen, $override->allowsubmissionsfromdate);
             }
+            if (isset($override->duedate)) {
+                $timedue = empty($timedue) || empty($override->duedate) ? $override->duedate : max($timedue, $override->duedate);
+            }
+        }
+
+        $userflags = $assign->get_user_flags($this->userid, false);
+        if (!empty($userflags->extensionduedate)) {
+            $timedue = empty($timedue) ? $userflags->extensionduedate : max($timedue, $userflags->extensionduedate);
         }
 
         $now = \core\di::get(\core\clock::class)->time();

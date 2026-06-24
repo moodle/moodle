@@ -108,9 +108,9 @@ final class dates_test extends advanced_testcase {
             ],
             'with both user and group overrides' => [
                 $before, $after, $earlier, $later, $earlier - DAYSECS, $later + DAYSECS, [
-                    ['label' => get_string('activitydate:submissionsopened', 'mod_assign'), 'timestamp' => $earlier,
+                    ['label' => get_string('activitydate:submissionsopened', 'mod_assign'), 'timestamp' => $earlier - DAYSECS,
                         'dataid' => 'allowsubmissionsfromdate'],
-                    ['label' => get_string('activitydate:submissionsdue', 'mod_assign'), 'timestamp' => $later,
+                    ['label' => get_string('activitydate:submissionsdue', 'mod_assign'), 'timestamp' => $later + DAYSECS,
                         'dataid' => 'duedate'],
                 ]
             ],
@@ -185,5 +185,57 @@ final class dates_test extends advanced_testcase {
         $dates = activity_dates::get_dates_for_module($cm, (int) $user->id);
 
         $this->assertEquals($expected, $dates);
+    }
+
+    /**
+     * Test that the due date helper returns the most lenient assignment due date for the requested user.
+     */
+    public function test_get_due_date_for_module_uses_most_lenient_user_due_date(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        /** @var \mod_assign_generator $assigngenerator */
+        $assigngenerator = $generator->get_plugin_generator('mod_assign');
+
+        $course = $generator->create_course();
+        $student = $generator->create_and_enrol($course, 'student');
+        $otherstudent = $generator->create_and_enrol($course, 'student');
+        $group1 = $generator->create_group(['courseid' => $course->id]);
+        $group2 = $generator->create_group(['courseid' => $course->id]);
+        $generator->create_group_member(['groupid' => $group1->id, 'userid' => $student->id]);
+        $generator->create_group_member(['groupid' => $group2->id, 'userid' => $student->id]);
+
+        $now = time();
+        $assign = $assigngenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $now + DAYSECS,
+        ]);
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+
+        $assigngenerator->create_override([
+            'assignid' => $assign->id,
+            'groupid' => $group1->id,
+            'duedate' => $now + (2 * DAYSECS),
+        ]);
+        $assigngenerator->create_override([
+            'assignid' => $assign->id,
+            'groupid' => $group2->id,
+            'duedate' => $now + (3 * DAYSECS),
+        ]);
+        $assigngenerator->create_override([
+            'assignid' => $assign->id,
+            'userid' => $student->id,
+            'duedate' => $now + (4 * DAYSECS),
+        ]);
+        $assigngenerator->create_extension([
+            'cmid' => $cm->id,
+            'userid' => $student->id,
+            'extensionduedate' => $now + (5 * DAYSECS),
+        ]);
+
+        $this->setUser($otherstudent);
+        $cm = cm_info::create($cm);
+
+        $this->assertEquals($now + (5 * DAYSECS), activity_dates::get_due_date_for_module($cm, (int) $student->id));
+        $this->assertEquals($now + DAYSECS, activity_dates::get_due_date_for_module($cm, (int) $otherstudent->id));
     }
 }
