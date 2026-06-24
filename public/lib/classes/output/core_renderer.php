@@ -1248,6 +1248,7 @@ class core_renderer extends renderer_base {
         if ($blockid !== null) {
             $menu->set_owner_selector('#' . $blockid);
         }
+        $menu->set_kebab_trigger(get_string('actionsmenu'), extraclasses: 'ms-1');
         $menu->attributes['class'] .= ' block-control-actions commands';
         return $this->render($menu);
     }
