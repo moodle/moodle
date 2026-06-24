@@ -1,5 +1,21 @@
 # core_user (subsystem) Upgrade notes
 
+## 5.3dev
+
+### Changed
+
+- The `user_convert_text_to_menu_items()` method now returns a typed array of `\core_user\output\user_action_menu\base` items
+
+  For more information see [MDL-88938](https://tracker.moodle.org/browse/MDL-88938)
+
+### Deprecated
+
+- Consumers of the `\core_user\hook\extend_user_menu` hook class for extending the user menu should now call `add_menu_item()` on the hook instance, which accepts only a parameter of type `\core_user\output\user_action_menu\base`
+
+  The previous `add_navitem` method of the hook class has been deprecated in favour of the above
+
+  For more information see [MDL-88938](https://tracker.moodle.org/browse/MDL-88938)
+
 ## 5.2
 
 ### Added

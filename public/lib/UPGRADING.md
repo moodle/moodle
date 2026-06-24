@@ -73,6 +73,15 @@
   | `is_restored_user()` | `\core\authentication::is_restored_user()` |
 
   For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
+- The `moodle_page` class now includes `set_supplementary_content()` and `get_supplementary_content()` methods to inject and retrieve secondary content within the sticky footer.
+
+  For more information see [MDL-88601](https://tracker.moodle.org/browse/MDL-88601)
+
+### Changed
+
+- The `search` landmark role in the `core/search_input_auto` template is enclosed within a `searchrole` Mustache block so that templates that use this template can override and remove the `search` landmark role when deemed unnecessary.
+
+  For more information see [MDL-88833](https://tracker.moodle.org/browse/MDL-88833)
 
 ### Deprecated
 

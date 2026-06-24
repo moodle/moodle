@@ -81,6 +81,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   | `is_restored_user()` | `\core\authentication::is_restored_user()` |
 
   For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
+- The `moodle_page` class now includes `set_supplementary_content()` and `get_supplementary_content()` methods to inject and retrieve secondary content within the sticky footer.
+
+  For more information see [MDL-88601](https://tracker.moodle.org/browse/MDL-88601)
+
+#### Changed
+
+- The `search` landmark role in the `core/search_input_auto` template is enclosed within a `searchrole` Mustache block so that templates that use this template can override and remove the `search` landmark role when deemed unnecessary.
+
+  For more information see [MDL-88833](https://tracker.moodle.org/browse/MDL-88833)
 
 #### Deprecated
 
@@ -182,6 +191,38 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The base report `get_main_table()` method has been deprecated, calling code should instead call `get_main_table_sql()`
 
   For more information see [MDL-88397](https://tracker.moodle.org/browse/MDL-88397)
+
+### core_user
+
+#### Changed
+
+- The `user_convert_text_to_menu_items()` method now returns a typed array of `\core_user\output\user_action_menu\base` items
+
+  For more information see [MDL-88938](https://tracker.moodle.org/browse/MDL-88938)
+
+#### Deprecated
+
+- Consumers of the `\core_user\hook\extend_user_menu` hook class for extending the user menu should now call `add_menu_item()` on the hook instance, which accepts only a parameter of type `\core_user\output\user_action_menu\base`
+
+  The previous `add_navitem` method of the hook class has been deprecated in favour of the above
+
+  For more information see [MDL-88938](https://tracker.moodle.org/browse/MDL-88938)
+
+### core\task\adhoc_task
+
+#### Added
+
+- Added set_soft_retry_delay(), get_soft_retry_delay() and is_adhoc_task_delayed() methods. Call set_soft_retry_delay() from within an adhoc task's execute() method to request a soft retry via manager::adhoc_task_delayed() without marking the task as failed. Pass null for automatic exponential backoff or a positive integer for an explicit delay in seconds.
+
+  For more information see [MDL-79763](https://tracker.moodle.org/browse/MDL-79763)
+
+### core\task\manager
+
+#### Added
+
+- Added adhoc_task_delayed() method to allow an adhoc task to be retried after a delay without marking it as failed. The delay uses exponential backoff based on elapsed time since the task first started, capped at 24 hours.
+
+  For more information see [MDL-79763](https://tracker.moodle.org/browse/MDL-79763)
 
 ### format_topics
 
