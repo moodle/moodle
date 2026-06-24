@@ -21,6 +21,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Config from 'core/config';
 import {dispatchEvent} from 'core/event_dispatcher';
 import {loadFragment} from 'core/fragment';
 import Notification from 'core/notification';
@@ -54,9 +55,8 @@ const setFilterButtonCount = async(reportElement, filterCount) => {
  *
  * @method
  * @param {String} reportElementId
- * @param {Number} contextId
  */
-export const init = (reportElementId, contextId) => {
+export const init = reportElementId => {
     const reportElement = document.getElementById(reportElementId);
     const filterFormContainer = reportElement.querySelector(reportSelectors.regions.filtersForm);
 
@@ -91,7 +91,7 @@ export const init = (reportElementId, contextId) => {
         resetFilters(reportId, reportParameters)
             .then(() => getString('filtersreset', 'core_reportbuilder'))
             .then(addToast)
-            .then(() => loadFragment('core_reportbuilder', 'filters_form', contextId, {
+            .then(() => loadFragment('core_reportbuilder', 'filters_form', Config.contextid, {
                 reportid: reportId,
                 parameters: reportParameters,
             }))
