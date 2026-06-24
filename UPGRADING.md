@@ -10,11 +10,33 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core
 
+#### Changed
+
+- The `search` landmark role in the `core/search_input_auto` template is enclosed within a `searchrole` Mustache block so that templates that use this template can override and remove the `search` landmark role when deemed unnecessary.
+
+  For more information see [MDL-88833](https://tracker.moodle.org/browse/MDL-88833)
+
 #### Deprecated
 
 - `get_dataroot_size` in `\core\hub\registration` has been deprecated in favour of `get_filepool_usage`, which approximates disk usage from the database rather than scanning the dataroot directory, making it significantly more performant on large sites.
 
   For more information see [MDL-88805](https://tracker.moodle.org/browse/MDL-88805)
+
+### core\task\adhoc_task
+
+#### Added
+
+- Added set_soft_retry_delay(), get_soft_retry_delay() and is_adhoc_task_delayed() methods. Call set_soft_retry_delay() from within an adhoc task's execute() method to request a soft retry via manager::adhoc_task_delayed() without marking the task as failed. Pass null for automatic exponential backoff or a positive integer for an explicit delay in seconds.
+
+  For more information see [MDL-79763](https://tracker.moodle.org/browse/MDL-79763)
+
+### core\task\manager
+
+#### Added
+
+- Added adhoc_task_delayed() method to allow an adhoc task to be retried after a delay without marking it as failed. The delay uses exponential backoff based on elapsed time since the task first started, capped at 24 hours.
+
+  For more information see [MDL-79763](https://tracker.moodle.org/browse/MDL-79763)
 
 ## 5.2
 
