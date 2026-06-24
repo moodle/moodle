@@ -10,13 +10,7 @@ Feature: Add badges to the system
 
   @javascript
   Scenario: Accessing the badges
-    And I turn editing mode on
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-   # TODO MDL-57120 site "Badges" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    Given I click on "Site badges" "link" in the "Navigation" "block"
+    When I visit "/badges/index.php?type=1"
     Then I should see "There are no matching badges available for users to earn."
 
   @javascript @_file_upload
@@ -133,13 +127,7 @@ Feature: Add badges to the system
 
   @javascript @_file_upload
   Scenario: Add a badge from Site badges section
-    Given I turn editing mode on
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    # TODO MDL-57120 site "Badges" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    When I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Site badges" "link" in the "Navigation" "block"
+    When I visit "/badges/index.php?type=1"
     Then I should see "Add a new badge"
     # Add a badge.
     When I press "Add a new badge"
@@ -160,9 +148,7 @@ Feature: Add badges to the system
     And I navigate to "Badges > Manage badges" in site administration
     And I should not see "There are no matching badges available for users to earn."
     # See buttons from the "Site badges" page.
-    And I am on homepage
-    When I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Site badges" "link" in the "Navigation" "block"
+    And I visit "/badges/index.php?type=1"
     Then I should see "Add a new badge"
 
   @javascript @_file_upload
