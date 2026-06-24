@@ -1261,6 +1261,10 @@ class core_renderer extends renderer_base {
         if ($blockid !== null) {
             $menu->set_owner_selector('#' . $blockid);
         }
+        $label = get_string('actionsmenu');
+        $icon = $this->pix_icon('i/menu', '') . html_writer::span($label, 'sr-only');
+        $menu->triggerattributes += ['title' => $label];
+        $menu->set_menu_trigger($icon, 'btn btn-sm icon-no-margin ms-1 p-1');
         $menu->attributes['class'] .= ' block-control-actions commands';
         return $this->render($menu);
     }
