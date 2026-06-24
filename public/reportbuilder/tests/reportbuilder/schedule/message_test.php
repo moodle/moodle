@@ -164,7 +164,8 @@ final class message_test extends advanced_testcase {
             'reportid' => $report->get('id'),
             'name' => 'My schedule',
             'audiences' => json_encode([$audience->get_persistent()->get('id')]),
-            'configdata' => json_encode(['reportempty' => message::REPORT_EMPTY_DONT_SEND]),
+            // Cast to string to simulate how Moodle forms stores data.
+            'configdata' => json_encode(['reportempty' => (string) message::REPORT_EMPTY_DONT_SEND]),
         ]);
 
         $this->expectOutputString("Sending schedule: My schedule (Schedule an email)\n" .
