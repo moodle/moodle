@@ -75,7 +75,6 @@ class course_category extends base {
             new lang_string('categoryname'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
             ->add_field("{$tablealias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
@@ -97,7 +96,6 @@ class course_category extends base {
             new lang_string('namewithlink', 'core_course'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
             ->add_field("{$tablealias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
@@ -122,7 +120,6 @@ class course_category extends base {
             new lang_string('categorypath'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$tablealias}.name, {$tablealias}.id")
             ->add_callback(static function(?string $name, stdClass $category): string {
                 return empty($category->id) ? '' :
@@ -140,7 +137,6 @@ class course_category extends base {
             new lang_string('idnumbercoursecategory'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$tablealias}.idnumber")
             ->set_is_sortable(true);
 
@@ -150,7 +146,6 @@ class course_category extends base {
             new lang_string('description'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_join($this->get_context_join())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat")
@@ -179,7 +174,6 @@ class course_category extends base {
             new lang_string('theme'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$tablealias}.theme")
             ->set_is_sortable(true)
             ->add_callback(static function (?string $theme): string {
@@ -196,7 +190,6 @@ class course_category extends base {
             new lang_string('coursecount', 'core_course'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$tablealias}.coursecount")
             ->set_is_sortable(true);
@@ -220,7 +213,6 @@ class course_category extends base {
             $this->get_entity_name(),
             "{$tablealias}.id"
         ))
-            ->add_joins($this->get_joins())
             ->set_options([
                 'requiredcapabilities' => 'moodle/category:viewcourselist',
             ]);
@@ -232,8 +224,7 @@ class course_category extends base {
             new lang_string('categoryname'),
             $this->get_entity_name(),
             "{$tablealias}.name"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // ID number filter.
         $filters[] = (new filter(
@@ -242,8 +233,7 @@ class course_category extends base {
             new lang_string('idnumbercoursecategory'),
             $this->get_entity_name(),
             "{$tablealias}.idnumber"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Theme filter.
         $filters[] = (new filter(
@@ -258,8 +248,7 @@ class course_category extends base {
                     fn(theme_config $theme) => $theme->get_theme_name(),
                     get_list_of_themes(),
                 );
-            })
-            ->add_joins($this->get_joins());
+            });
 
         // Course count filter.
         $filters[] = (new filter(
@@ -268,8 +257,7 @@ class course_category extends base {
             new lang_string('coursecount', 'core_course'),
             $this->get_entity_name(),
             "{$tablealias}.coursecount",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

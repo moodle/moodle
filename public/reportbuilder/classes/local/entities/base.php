@@ -309,7 +309,7 @@ abstract class base {
      * @return self
      */
     final protected function add_column(column $column): self {
-        $this->columns[$column->get_name()] = $column;
+        $this->columns[$column->get_name()] = $column->prepend_joins($this->get_joins());
         return $this;
     }
 
@@ -353,7 +353,7 @@ abstract class base {
      * @return self
      */
     final protected function add_filter(filter $filter): self {
-        $this->filters[$filter->get_name()] = $filter;
+        $this->filters[$filter->get_name()] = $filter->prepend_joins($this->get_joins());
         return $this;
     }
 
@@ -399,7 +399,7 @@ abstract class base {
      * @return self
      */
     final protected function add_condition(filter $condition): self {
-        $this->conditions[$condition->get_name()] = $condition;
+        $this->conditions[$condition->get_name()] = $condition->prepend_joins($this->get_joins());
         return $this;
     }
 

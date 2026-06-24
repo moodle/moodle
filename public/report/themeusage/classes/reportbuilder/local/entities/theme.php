@@ -72,7 +72,6 @@ class theme extends base {
             new lang_string('forcetheme'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$themealias}.plugin")
             ->add_callback(static function(?string $theme): string {
@@ -86,7 +85,6 @@ class theme extends base {
             new lang_string('usagetype', 'report_themeusage'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_join("LEFT JOIN (
                            SELECT '{$courselabel}' AS usagetype, theme, COUNT(theme) AS themecount
                              FROM {course}

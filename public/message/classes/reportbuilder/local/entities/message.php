@@ -67,7 +67,6 @@ class message extends base {
             new lang_string('subject'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_field("{$messagealias}.subject")
             ->set_is_sortable(true)
             ->add_callback(static function (?string $subject): string {
@@ -83,7 +82,6 @@ class message extends base {
             new lang_string('message', 'core_message'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$messagealias}.fullmessage, {$messagealias}.fullmessageformat, {$messagealias}.fullmessagetrust")
             ->set_is_sortable(true)
             ->add_callback(static function (?string $fullmessage, stdClass $message): string {
@@ -99,7 +97,6 @@ class message extends base {
             new lang_string('timecreated', 'core_reportbuilder'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$messagealias}.timecreated")
             ->set_is_sortable(true)
@@ -123,8 +120,7 @@ class message extends base {
             new lang_string('subject'),
             $this->get_entity_name(),
             "{$messagealias}.subject",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Message.
         $filters[] = (new filter(
@@ -133,8 +129,7 @@ class message extends base {
             new lang_string('message', 'core_message'),
             $this->get_entity_name(),
             "{$messagealias}.fullmessage",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Time created.
         $filters[] = (new filter(
@@ -143,8 +138,7 @@ class message extends base {
             new lang_string('timecreated', 'core_reportbuilder'),
             $this->get_entity_name(),
             "{$messagealias}.timecreated",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

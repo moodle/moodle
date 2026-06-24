@@ -1,0 +1,12 @@
+issueNumber: MDL-87405
+notes:
+  core_reportbuilder:
+    - message: >-
+        The report `join` trait contains new `prepend_join[s]` methods, which
+        are called from the base entity to ensure entity joins are automatically
+        prepended to all entity columns, filters and conditions
+
+
+        Entity implementations no longer have to manually add boilerplace to add
+        the same joins to their own columns, filters and conditions
+      type: improved

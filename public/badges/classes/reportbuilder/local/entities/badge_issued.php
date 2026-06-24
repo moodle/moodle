@@ -67,7 +67,6 @@ class badge_issued extends base {
             new lang_string('dateawarded', 'core_badges'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$badgeissuedalias}.dateissued")
             ->set_is_sortable(true)
@@ -79,7 +78,6 @@ class badge_issued extends base {
             new lang_string('expirydate', 'core_badges'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$badgeissuedalias}.dateexpire")
             ->set_is_sortable(true)
@@ -91,7 +89,6 @@ class badge_issued extends base {
             new lang_string('visible', 'core_badges'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$badgeissuedalias}.visible")
             ->set_is_sortable(true)
@@ -115,8 +112,7 @@ class badge_issued extends base {
             new lang_string('dateawarded', 'core_badges'),
             $this->get_entity_name(),
             "{$badgealias}.dateissued"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Date expires.
         $filters[] = (new filter(
@@ -125,8 +121,7 @@ class badge_issued extends base {
             new lang_string('expirydate', 'core_badges'),
             $this->get_entity_name(),
             "{$badgealias}.dateexpire"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Visible.
         $filters[] = (new filter(
@@ -135,8 +130,7 @@ class badge_issued extends base {
             new lang_string('visible', 'core_badges'),
             $this->get_entity_name(),
             "{$badgealias}.visible"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

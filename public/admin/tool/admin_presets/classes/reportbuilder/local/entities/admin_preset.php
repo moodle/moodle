@@ -67,7 +67,6 @@ class admin_preset extends base {
             new lang_string('name'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$apalias}.id, {$apalias}.name, {$apalias}.iscore")
             ->set_is_sortable(true)
@@ -88,7 +87,6 @@ class admin_preset extends base {
             new lang_string('description'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_field("{$apalias}.comments")
             ->set_is_sortable(true)
@@ -114,8 +112,7 @@ class admin_preset extends base {
             new lang_string('name'),
             $this->get_entity_name(),
             "{$apalias}.name"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

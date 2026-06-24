@@ -75,7 +75,6 @@ class blog extends base {
             new lang_string('entrytitle', 'core_blog'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$postalias}.subject")
             ->set_is_sortable(true);
@@ -86,7 +85,6 @@ class blog extends base {
             new lang_string('entrytitlewithlink', 'core_blog'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$postalias}.subject, {$postalias}.id")
             ->set_is_sortable(true)
@@ -103,7 +101,6 @@ class blog extends base {
             new lang_string('entrybody', 'core_blog'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$postalias}.summary, {$postalias}.summaryformat, {$postalias}.id")
             ->set_is_sortable(true)
@@ -128,7 +125,6 @@ class blog extends base {
             new lang_string('attachment', 'core_repository'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$postalias}.attachment, {$postalias}.id")
             ->add_callback(static function(?bool $attachment, stdClass $post): string {
@@ -159,7 +155,6 @@ class blog extends base {
             new lang_string('published', 'core_blog'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$postalias}.publishstate")
             ->set_is_sortable(true)
@@ -183,7 +178,6 @@ class blog extends base {
             new lang_string('timecreated', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.created")
             ->set_is_sortable(true)
@@ -195,7 +189,6 @@ class blog extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.lastmodified")
             ->set_is_sortable(true)
@@ -221,8 +214,7 @@ class blog extends base {
             new lang_string('entrytitle', 'core_blog'),
             $this->get_entity_name(),
             "{$postalias}.subject"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Body.
         $filters[] = (new filter(
@@ -231,8 +223,7 @@ class blog extends base {
             new lang_string('entrybody', 'core_blog'),
             $this->get_entity_name(),
             "{$postalias}.summary"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Attachment.
         $filters[] = (new filter(
@@ -241,8 +232,7 @@ class blog extends base {
             new lang_string('attachment', 'core_repository'),
             $this->get_entity_name(),
             $DB->sql_cast_char2int("{$postalias}.attachment")
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Publish state.
         $filters[] = (new filter(
@@ -252,7 +242,6 @@ class blog extends base {
             $this->get_entity_name(),
             "{$postalias}.publishstate"
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 $states = [
                     'draft' => new lang_string('publishtodraft', 'core_blog'),
@@ -272,7 +261,6 @@ class blog extends base {
             $this->get_entity_name(),
             "{$postalias}.created"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_CURRENT,
@@ -288,7 +276,6 @@ class blog extends base {
             $this->get_entity_name(),
             "{$postalias}.lastmodified"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_CURRENT,

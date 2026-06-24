@@ -82,7 +82,6 @@ class instance extends base {
             $this->get_entity_name()
 
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$instancealias}.component, {$instancealias}.itemtype")
             ->set_is_sortable(true, ["{$instancealias}.component", "{$instancealias}.itemtype"])
@@ -99,7 +98,6 @@ class instance extends base {
             new lang_string('component', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$instancealias}.component")
             ->set_is_sortable(true);
@@ -110,7 +108,6 @@ class instance extends base {
             new lang_string('itemtype', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$instancealias}.itemtype")
             ->set_is_sortable(true);
@@ -121,7 +118,6 @@ class instance extends base {
             new lang_string('itemid', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$instancealias}.itemid")
             ->set_is_sortable(true);
 
@@ -131,7 +127,6 @@ class instance extends base {
             new lang_string('timecreated', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$instancealias}.timecreated")
             ->set_is_sortable(true)
@@ -143,7 +138,6 @@ class instance extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$instancealias}.timemodified")
             ->set_is_sortable(true)
@@ -170,7 +164,6 @@ class instance extends base {
             $this->get_entity_name(),
             $DB->sql_concat("{$instancealias}.component", "'/'", "{$instancealias}.itemtype")
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 $options = [];
                 foreach (core_tag_area::get_areas() as $areas) {
@@ -192,7 +185,6 @@ class instance extends base {
             $this->get_entity_name(),
             "{$instancealias}.timecreated"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_CURRENT,
@@ -208,7 +200,6 @@ class instance extends base {
             $this->get_entity_name(),
             "{$instancealias}.timemodified"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_CURRENT,

@@ -78,7 +78,6 @@ class note extends base {
             new lang_string('content', 'core_notes'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_join("LEFT JOIN {context} {$contextalias}
                     ON {$contextalias}.contextlevel = " . CONTEXT_COURSE . "
                    AND {$contextalias}.instanceid = {$postalias}.courseid")
@@ -108,7 +107,6 @@ class note extends base {
             new lang_string('publishstate', 'core_notes'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$postalias}.publishstate")
             ->set_is_sortable(true)
@@ -128,7 +126,6 @@ class note extends base {
             new lang_string('timecreated', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.created")
             ->set_is_sortable(true)
@@ -140,7 +137,6 @@ class note extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.lastmodified")
             ->set_is_sortable(true)
@@ -164,8 +160,7 @@ class note extends base {
             new lang_string('content', 'core_notes'),
             $this->get_entity_name(),
             "{$postalias}.content"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Publish state.
         $filters[] = (new filter(
@@ -175,7 +170,6 @@ class note extends base {
             $this->get_entity_name(),
             "{$postalias}.publishstate"
         ))
-            ->add_joins($this->get_joins())
             ->set_options([
                 NOTES_STATE_SITE => new lang_string('sitenotes', 'core_notes'),
                 NOTES_STATE_PUBLIC => new lang_string('coursenotes', 'core_notes'),
@@ -190,7 +184,6 @@ class note extends base {
             $this->get_entity_name(),
             "{$postalias}.created"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_CURRENT,
@@ -206,7 +199,6 @@ class note extends base {
             $this->get_entity_name(),
             "{$postalias}.lastmodified"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_CURRENT,

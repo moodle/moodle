@@ -118,7 +118,6 @@ class grade_items extends base {
             null,
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields($selectsql)
             ->add_callback(static function($value, $row): string {
@@ -149,7 +148,6 @@ class grade_items extends base {
             new lang_string('average', 'grades'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("$tablealias.id")
             ->add_callback(static function($value) use ($report): string {
@@ -222,7 +220,6 @@ class grade_items extends base {
             $this->get_entity_name(),
             "coalesce({$tablealias}.itemmodule,{$tablealias}.itemtype)"
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback([$this->report, 'item_types']);
 
         return $filters;

@@ -70,7 +70,6 @@ class ai_action_register extends base {
             new lang_string('action', 'core_ai'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$mainalias}.actionname")
             ->set_is_sortable(true)
@@ -84,7 +83,6 @@ class ai_action_register extends base {
             new lang_string('provider', 'core_ai'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$mainalias}.provider")
             ->set_is_sortable(true)
@@ -103,7 +101,6 @@ class ai_action_register extends base {
             new lang_string('success', 'moodle'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_field("{$mainalias}.success")
             ->set_is_sortable(true)
@@ -115,7 +112,6 @@ class ai_action_register extends base {
             new lang_string('timegenerated', 'core_ai'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$mainalias}.timecreated")
             ->set_is_sortable(true)
@@ -128,7 +124,6 @@ class ai_action_register extends base {
             new lang_string('prompttokens', 'core_ai'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_join("
                 LEFT JOIN {ai_action_generate_text} {$generatetextalias}
                        ON {$mainalias}.actionid = {$generatetextalias}.id
@@ -157,7 +152,6 @@ class ai_action_register extends base {
             new lang_string('completiontokens', 'core_ai'),
             $this->get_entity_name(),
         ))
-            ->add_joins($this->get_joins())
             ->add_join("
                 LEFT JOIN {ai_action_generate_text} {$generatetextalias}
                        ON {$mainalias}.actionid = {$generatetextalias}.id
@@ -201,7 +195,6 @@ class ai_action_register extends base {
             $this->get_entity_name(),
             "{$mainalias}.actionname",
         ))
-            ->add_joins($this->get_joins())
             ->set_options([
                 'explain_text' => new lang_string('action_explain_text', 'core_ai'),
                 'generate_image' => new lang_string('action_generate_image', 'core_ai'),
@@ -217,7 +210,6 @@ class ai_action_register extends base {
             $this->get_entity_name(),
             "{$mainalias}.provider",
         ))
-            ->add_joins($this->get_joins())
             ->set_options_callback(static function(): array {
                 $providers = [];
 
@@ -238,7 +230,6 @@ class ai_action_register extends base {
             $this->get_entity_name(),
             "{$mainalias}.timecreated",
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_RANGE,
@@ -254,8 +245,7 @@ class ai_action_register extends base {
             $this->get_entity_name(),
             "COALESCE({$generatetextalias}.prompttokens, {$summarisetextalias}.prompttokens,
                     {$explaintextalias}.prompttokens)",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Completion tokens filter.
         $filters[] = (new filter(
@@ -265,8 +255,7 @@ class ai_action_register extends base {
             $this->get_entity_name(),
             "COALESCE({$generatetextalias}.completiontoken, {$summarisetextalias}.completiontoken,
                     {$explaintextalias}.completiontoken)",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Success filter.
         $filters[] = (new filter(
@@ -275,8 +264,7 @@ class ai_action_register extends base {
             new lang_string('success', 'moodle'),
             $this->get_entity_name(),
            "{$mainalias}.success",
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         return $filters;
     }

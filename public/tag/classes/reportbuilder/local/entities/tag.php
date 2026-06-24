@@ -73,7 +73,6 @@ class tag extends base {
             new lang_string('name', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$tagalias}.rawname, {$tagalias}.name")
             ->set_is_sortable(true)
             ->add_callback(static function($rawname, stdClass $tag): string {
@@ -89,7 +88,6 @@ class tag extends base {
             new lang_string('namewithbadge', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$tagalias}.rawname, {$tagalias}.name, {$tagalias}.flag, {$tagalias}.isstandard")
             ->set_is_sortable(true)
             ->set_aggregation_options(groupconcat::get_class_name(), ['separator' => ' '])
@@ -118,7 +116,6 @@ class tag extends base {
             new lang_string('namewithlink', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->add_fields("{$tagalias}.rawname, {$tagalias}.name, {$tagalias}.tagcollid")
             ->set_is_sortable(true)
             ->add_callback(static function($rawname, stdClass $tag): string {
@@ -135,7 +132,6 @@ class tag extends base {
             new lang_string('tagdescription', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$tagalias}.description, {$tagalias}.descriptionformat, {$tagalias}.id")
             ->set_is_sortable(true)
@@ -160,7 +156,6 @@ class tag extends base {
             new lang_string('standardtag', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$tagalias}.isstandard")
             ->set_is_sortable(true)
@@ -172,7 +167,6 @@ class tag extends base {
             new lang_string('flagged', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_BOOLEAN)
             ->add_field("CASE WHEN {$tagalias}.flag > 0 THEN 1 ELSE {$tagalias}.flag END", 'flag')
             ->set_is_sortable(true)
@@ -184,7 +178,6 @@ class tag extends base {
             new lang_string('flagcount', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$tagalias}.flag")
             ->set_is_sortable(true);
@@ -195,7 +188,6 @@ class tag extends base {
             new lang_string('timemodified', 'core_reportbuilder'),
             $this->get_entity_name()
         ))
-            ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tagalias}.timemodified")
             ->set_is_sortable(true)
@@ -219,8 +211,7 @@ class tag extends base {
             new lang_string('name', 'core_tag'),
             $this->get_entity_name(),
             "{$tagalias}.id"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Standard.
         $filters[] = (new filter(
@@ -229,8 +220,7 @@ class tag extends base {
             new lang_string('standardtag', 'core_tag'),
             $this->get_entity_name(),
             "{$tagalias}.isstandard"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Flagged.
         $filters[] = (new filter(
@@ -239,8 +229,7 @@ class tag extends base {
             new lang_string('flagged', 'core_tag'),
             $this->get_entity_name(),
             "CASE WHEN {$tagalias}.flag > 0 THEN 1 ELSE {$tagalias}.flag END"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Flag count.
         $filters[] = (new filter(
@@ -249,8 +238,7 @@ class tag extends base {
             new lang_string('flagcount', 'core_tag'),
             $this->get_entity_name(),
             "{$tagalias}.flag"
-        ))
-            ->add_joins($this->get_joins());
+        ));
 
         // Time modified.
         $filters[] = (new filter(
@@ -260,7 +248,6 @@ class tag extends base {
             $this->get_entity_name(),
             "{$tagalias}.timemodified"
         ))
-            ->add_joins($this->get_joins())
             ->set_limited_operators([
                 date::DATE_ANY,
                 date::DATE_CURRENT,
