@@ -65,7 +65,7 @@ class dates extends activity_dates {
         ]);
         $overrides = $useroverride ? [$useroverride] : [];
 
-        $groups = groups_get_user_groups($this->cm->course, $this->userid);
+        $groups = groups_get_user_groups((int) $this->cm->course, $this->userid);
         if (!empty($groups[0])) {
             [$groupidsql, $params] = $DB->get_in_or_equal(array_values($groups[0]), SQL_PARAMS_NAMED);
             $params['assignid'] = $this->cm->instance;
