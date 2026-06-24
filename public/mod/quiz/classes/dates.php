@@ -68,12 +68,18 @@ class dates extends activity_dates {
         }
 
         foreach ($overrides as $override) {
-            if (isset($override->timeopen)) {
-                $timeopen = empty($timeopen) ? $override->timeopen : min($timeopen, $override->timeopen);
+            $overrideopen = $override->timeopen ?? $timeopen;
+            $overrideclose = $override->timeclose ?? $timeclose;
+
+            if (isset($override->timeclose) && empty($override->timeclose)) {
+                $timeopen = $overrideopen;
+                $timeclose = $override->timeclose;
+                break;
             }
-            if (isset($override->timeclose)) {
-                $timeclose = empty($timeclose) || empty($override->timeclose) ? $override->timeclose :
-                    max($timeclose, $override->timeclose);
+
+            if (!empty($overrideclose) && (empty($timeclose) || $overrideclose > $timeclose)) {
+                $timeopen = $overrideopen;
+                $timeclose = $overrideclose;
             }
         }
 

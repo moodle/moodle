@@ -77,12 +77,18 @@ class dates extends activity_dates {
         }
 
         foreach ($overrides as $override) {
-            if (isset($override->allowsubmissionsfromdate)) {
-                $timeopen = empty($timeopen) ? $override->allowsubmissionsfromdate :
-                    min($timeopen, $override->allowsubmissionsfromdate);
+            $overrideopen = $override->allowsubmissionsfromdate ?? $timeopen;
+            $overridedue = $override->duedate ?? $timedue;
+
+            if (isset($override->duedate) && empty($override->duedate)) {
+                $timeopen = $overrideopen;
+                $timedue = $override->duedate;
+                break;
             }
-            if (isset($override->duedate)) {
-                $timedue = empty($timedue) || empty($override->duedate) ? $override->duedate : max($timedue, $override->duedate);
+
+            if (!empty($overridedue) && (empty($timedue) || $overridedue > $timedue)) {
+                $timeopen = $overrideopen;
+                $timedue = $overridedue;
             }
         }
 
