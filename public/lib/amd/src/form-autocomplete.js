@@ -30,8 +30,7 @@ define([
     'core/loadingicon',
     'core/aria',
     'core_form/changechecker',
-    'core/popper2',
-    'bootstrap/dom/event-handler',
+    '@popperjs/core',
 ], function(
     $,
     log,
@@ -42,7 +41,6 @@ define([
     Aria,
     FormChangeChecker,
     Popper,
-    EventHandler,
 ) {
     // Private functions and variables.
     /** @var {Object} KEYS - List of keycode constants. */
@@ -821,20 +819,35 @@ define([
                     // We handled this event, so prevent it.
                     e.preventDefault();
                     return false;
-                case KEYS.ESCAPE:
-                    if (inputElement.attr('aria-expanded') === "true") {
-                        // If the suggestion list is open, close it.
-                        pendingJsPromise.resolve(closeSuggestions(state));
-                    } else {
-                        pendingJsPromise.resolve();
-                    }
-                    // We handled this event, so prevent it.
-                    e.preventDefault();
-                    return false;
             }
             pendingJsPromise.resolve();
             return true;
         });
+
+        // To prevent the escape key from being caught in the capture phase by any parent
+        // element, as happens with Bootstrap dropdowns, we listen for it in the capture
+        // phase here and stop propagation if the suggestions list is open.
+        // This is somewhat of a hack, but it is necessary to prevent conflicts with other
+        // components and still allow the escape key to function as expected to close the suggestions list.
+        window.addEventListener('keydown', function(e) {
+            if (e.target.id !== state.inputId) {
+                return;
+            }
+
+            if (e.code !== 'Escape') {
+                return;
+            }
+
+            if (inputElement.attr('aria-expanded') !== "true") {
+                return;
+            }
+            // If the suggestion list is open, close it.
+            closeSuggestions(state);
+
+            // We handled this event, so prevent it.
+            e.stopImmediatePropagation();
+        }, true);
+
         // Support multi lingual COMMA keycode (44).
         inputElement.on('keypress', function(e) {
 
@@ -1081,16 +1094,6 @@ define([
                 });
             }
         }
-
-        // Add a Bootstrap keydown handler to close the suggestions list preventing the whole Dropdown close.
-        EventHandler.on(document, 'keydown.bs.dropdown.data-api', '.dropdown-menu', (event) => {
-            const pendingPromise = addPendingJSPromise('addNavigation-' + state.inputId + '-' + event.key);
-            if (event.key === "Escape" && inputElement.attr('aria-expanded') === "true") {
-                event.stopImmediatePropagation();
-                return pendingPromise.resolve(closeSuggestions(state));
-            }
-            return pendingPromise.resolve();
-        });
     };
 
     /**
