@@ -1,5 +1,13 @@
 # core (subsystem) Upgrade notes
 
+## 5.1.5+
+
+### Changed
+
+- The `search` landmark role in the `core/search_input_auto` template is enclosed within a `searchrole` Mustache block so that templates that use this template can override and remove the `search` landmark role when deemed unnecessary.
+
+  For more information see [MDL-88833](https://tracker.moodle.org/browse/MDL-88833)
+
 ## 5.1.4
 
 ### Added
