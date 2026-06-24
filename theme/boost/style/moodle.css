@@ -39001,6 +39001,19 @@ div.editor_atto_toolbar button .icon {
   border-right: 0;
 }
 
+.drawer-primary .drawerheader [data-region=site-home-link] {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.drawer-primary .drawerheader .logo {
+  max-width: 100%;
+  max-height: 60px;
+  width: auto;
+  height: 60px;
+  object-fit: contain;
+}
+
 .secondary-navigation {
   padding-bottom: 15px;
 }

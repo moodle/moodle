@@ -35,3 +35,19 @@
         }
     }
 }
+
+.drawer-primary .drawerheader {
+    [data-region="site-home-link"] {
+        min-width: 0;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .logo {
+        max-width: 100%;
+        max-height: $navbar-height;
+        width: auto;
+        height: $navbar-height;
+        object-fit: contain;
+    }
+}
