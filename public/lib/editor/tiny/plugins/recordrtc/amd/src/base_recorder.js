@@ -873,9 +873,10 @@ export default class {
     handleDataAvailable(event) {
         if (this.isRecording() || this.isPaused()) {
             const newSize = this.data.blobSize + event.data.size;
+            // Max upload size is -1 mean there is no limit.
             // Recording stops when either the maximum upload size is reached, or the time limit expires.
             // The time limit is checked in the `updateButtonTime` function.
-            if (newSize >= this.getMaxUploadSize()) {
+            if (this.getMaxUploadSize() !== -1 && newSize >= this.getMaxUploadSize()) {
                 this.stopRecorder();
                 this.displayFileLimitHitMessage();
             } else {
