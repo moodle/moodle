@@ -38,7 +38,7 @@ Utilizzare admin/cli/install_database.php per installare Moodle.';
 $string['clialreadyinstalled'] = 'Il file config.php è già presente.
 Utilizzare admin/cli/install_database.php per aggiornare Moodle.';
 $string['cliinstallheader'] = 'Programma di installazione Moodle {$a} via linea di comando';
-$string['clitablesexist'] = 'Le tabelle del database sono già presenti, l\'installazione via linea di comando non può proseguire.';
+$string['clitablesexist'] = 'Le tabelle del database sono già presenti; l\'installazione da interfaccia a riga di comando (CLI) non può proseguire.';
 $string['databasehost'] = 'Host database';
 $string['databasename'] = 'Nome database';
 $string['databasetypehead'] = 'Scegli un database driver';
@@ -71,7 +71,7 @@ $string['pathsunsecuredataroot'] = 'La posizione della Cartella dati non è sicu
 $string['pathswrongadmindir'] = 'La cartella Admin non esiste';
 $string['phpextension'] = '{$a} estensioni PHP';
 $string['phpversion'] = 'Versione PHP';
-$string['webserverconfigproblemdescription'] = 'Il server web non è configurato per impedire l\'accesso ai file esterni alla cartella /public. Consultare <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a> per i dettagli su come configurare il tuo server web. Una volta riconfigurato, <a href="{$a}">visita nuovamente la cartella radice del sito web</a>.';
+$string['webserverconfigproblemdescription'] = 'Il server web non è configurato per impedire l\'accesso ai file al di fuori della directory /public. Per informazioni su come configurare correttamente il server web, consultare la documentazione <a href="https://docs.moodle.org/en/Upgrading#Code_directories_restructure">Aggiornamento - Ristrutturazione delle directory del codice</a>. Una volta riconfigurato, <a href="{$a}">torna alla directory principale del sito web</a>.';
 $string['webservernotconfigured'] = 'Web server non configurato';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Se vedi questa pagina hai installato correttamente e lanciato il pacchetto <strong>{$a->packname} {$a->packversion}</strong>. Complimenti!';
