@@ -16,15 +16,19 @@
 
 namespace mod_quiz;
 
-use basic_testcase;
+use advanced_testcase;
+use core\output\datafilter;
+use core_tag_area;
 use mod_quiz\question\display_options;
-use mod_quiz\quiz_settings;
+use mod_quiz\tests\question_helper_test_trait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/quiz/tests/classes/question_helper_test_trait.php');
 
 /**
  * Unit tests for the quiz class
@@ -34,7 +38,9 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \mod_quiz\quiz_settings
  */
-final class quizobj_test extends basic_testcase {
+final class quizobj_test extends advanced_testcase {
+    use question_helper_test_trait;
+
     /**
      * Test cases for {@see test_cannot_review_message()}.
      *
@@ -126,5 +132,89 @@ final class quizobj_test extends basic_testcase {
         // Test.
         $this->assertEquals($expectation,
             $quizobj->cannot_review_message($attemptstate, false, $submittime));
+    }
+
+    /**
+     * Data provider for testing the correct question types are returned.
+     *
+     * @return array[]
+     */
+    public static function question_types(): array {
+        return [
+            'only direct questions' => [
+                'potential' => false,
+                'types' => ['numerical', 'shortanswer'],
+            ],
+            'include potential questions' => [
+                'potential' => true,
+                'types' => ['essay', 'numerical', 'shortanswer', 'truefalse'],
+            ],
+        ];
+    }
+
+    /**
+     * Return the question types used by a quiz.
+     *
+     * @param bool $potential Include potential types from random questions.
+     * @param array $types List of types to expect, in alphabetical order.
+     */
+    #[DataProvider('question_types')]
+    public function test_get_all_question_types_used(bool $potential, array $types): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+        $quiz = $this->create_test_quiz($course);
+        [, $cm] = get_course_and_cm_from_cmid($quiz->cmid, 'quiz');
+        $quizobj = new quiz_settings($quiz, $cm, $course);
+        // Add shortanswer and numerical questions.
+        $this->add_two_regular_questions($questiongenerator, $quiz);
+        // Add truefalse and essay as potential random questions.
+        $this->add_one_random_question($questiongenerator, $quiz);
+        $quizobj->preload_questions();
+        $usedtypes = $quizobj->get_all_question_types_used($potential);
+        $this->assertEquals($types, $usedtypes);
+    }
+
+    /**
+     * Return the question types based on all filters in a random question.
+     */
+    public function test_get_all_question_types_used_with_tag(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+        $quiz = $this->create_test_quiz($course);
+        [, $cm] = get_course_and_cm_from_cmid($quiz->cmid, 'quiz');
+        $quizobj = new quiz_settings($quiz, $cm, $course);
+        // Add shortanswer and numerical questions.
+        $this->add_two_regular_questions($questiongenerator, $quiz);
+        // Add essay as a potential random question with a tag, and truefalse as another question in the category.
+        $randomcategory = $questiongenerator->create_question_category();
+        $questiongenerator->create_question('truefalse', null, ['category' => $randomcategory->id]);
+        $taggedquestion = $questiongenerator->create_question('essay', null, ['category' => $randomcategory->id]);
+        $questiongenerator->create_question_tag(['questionid' => $taggedquestion->id, 'tag' => 'test']);
+        $tagcollid = core_tag_area::get_collection('core_question', 'question');
+        $tag = \core_tag_tag::get_by_name($tagcollid, 'test');
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => datafilter::JOINTYPE_ALL,
+                    'values' => [$randomcategory->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+                'qtagids' => [
+                    'jointype' => datafilter::JOINTYPE_ALL,
+                    'values' => [$tag->id],
+                ],
+            ],
+        ];
+        $quizobj->get_structure()->add_random_questions(1, 1, $filtercondition);
+        $quizobj->preload_questions();
+        $usedtypes = $quizobj->get_all_question_types_used(true);
+        $this->assertCount(3, $usedtypes);
+        $this->assertEquals(['essay', 'numerical', 'shortanswer'], $usedtypes);
     }
 }
