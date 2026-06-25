@@ -119,17 +119,16 @@ M.form_filemanager.init = function(Y, options) {
             this.selectnode.setAttribute('role', 'dialog');
             this.selectnode.generateID();
 
-            var labelid = 'fm-dialog-label_'+ this.selectnode.get('id');
             this.selectui = new M.core.dialogue({
                 draggable    : true,
-                headerContent: '<h3 id="' + labelid +'">' + M.util.get_string('edit', 'moodle') + '</h3>',
+                headerContent: M.util.get_string('edit', 'moodle'),
                 bodyContent  : this.selectnode,
                 centered     : true,
                 width        : '480px',
                 modal        : true,
                 visible      : false
             });
-            Y.one('#'+this.selectnode.get('id')).setAttribute('aria-labelledby', labelid);
+            Y.one('#'+this.selectnode.get('id')).setAttribute('aria-labelledby', this.selectui.get('id') + '-wrap-header-text');
             this.selectui.hide();
             this.setup_select_file();
             // setup buttons onclick events
@@ -1272,14 +1271,11 @@ M.form_filemanager.init = function(Y, options) {
                     new Popover(popoverTriggerEl);
                 });
             });
+
             // update dialog header
-            var nodename = node.fullname;
-            // Limit the string length so it fits nicely on mobile devices
-            var namelength = 50;
-            if (nodename.length > namelength) {
-                nodename = nodename.substring(0, namelength) + '...';
-            }
-            Y.one('#fm-dialog-label_'+selectnode.get('id')).setContent(Y.Escape.html(M.util.get_string('edit', 'moodle')+' '+nodename));
+            Y.one('#' + this.selectui.get('id') + '-wrap-header-text')
+                .setContent(Y.Escape.html(M.util.get_string('edita', 'moodle', node.fullname)));
+
             // show panel
             this.selectui.show();
             Y.one('#'+selectnode.get('id')).focus();
