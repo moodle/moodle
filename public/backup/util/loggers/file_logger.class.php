@@ -31,19 +31,31 @@ class file_logger extends base_logger {
 
     protected $fullpath; // Full path to OS file where contents will be stored
     protected $fhandle;  // File handle where all write operations happen
+    /**
+     * @var string Store the relative path for serialization.
+     */
+    protected $relativepath;
 
     public function __construct($level, $showdate = false, $showlevel = false, $fullpath = null) {
         if (empty($fullpath)) {
             throw new base_logger_exception('missing_fullpath_parameter', $fullpath);
         }
-        if (!is_writable(dirname($fullpath))) {
-            throw new base_logger_exception('file_not_writable', $fullpath);
+
+        if (str_starts_with($fullpath, '/') || preg_match('/^[a-zA-Z]:[\/\\\\]/', $fullpath)) {
+            $this->fullpath = $fullpath;
+        } else {
+            $this->relativepath = $fullpath;
+            $backuptempdir = make_backup_temp_directory('');
+            $this->fullpath = $backuptempdir . '/' . $this->relativepath;
+        }
+
+        if (!is_writable(dirname($this->fullpath))) {
+            throw new base_logger_exception('file_not_writable', $this->fullpath);
         }
         // Open the OS file for writing (append)
-        $this->fullpath = $fullpath;
         if ($level > backup::LOG_NONE) { // Only create the file if we are going to log something
             if (! $this->fhandle = fopen($this->fullpath, 'a')) {
-                throw new base_logger_exception('error_opening_file', $fullpath);
+                throw new base_logger_exception('error_opening_file', $this->fullpath);
             }
         }
         parent::__construct($level, $showdate, $showlevel);
@@ -62,15 +74,28 @@ class file_logger extends base_logger {
             @fclose($this->fhandle);
             $this->fhandle = null;
         }
-        return array('level', 'showdate', 'showlevel', 'next', 'fullpath');
+        if ($this->relativepath !== null) {
+            return ['level', 'showdate', 'showlevel', 'next', 'relativepath'];
+        }
+        return ['level', 'showdate', 'showlevel', 'next', 'fullpath'];
     }
 
     public function __wakeup() {
-        // If the stored path no longer exists, reconstruct it using the current backup temp dir.
-        if (!empty($this->fullpath) && !file_exists(dirname($this->fullpath))) {
-            $filename = basename($this->fullpath);
+        // Reconstruct fullpath using current backup temp dir.
+        if ($this->relativepath !== null) {
             $backuptempdir = make_backup_temp_directory('');
-            $this->fullpath = $backuptempdir . '/' . $filename;
+            $this->fullpath = $backuptempdir . '/' . $this->relativepath;
+        } else if ($this->fullpath !== null) {
+            $isabsolute = (str_starts_with($this->fullpath, '/') || preg_match('/^[a-zA-Z]:[\/\\\\]/', $this->fullpath));
+
+            if ($isabsolute && !file_exists(dirname($this->fullpath))) {
+                $backuptempdir = make_backup_temp_directory('');
+                $this->fullpath = $backuptempdir . '/' . basename($this->fullpath);
+            } else if (!$isabsolute) {
+                // Relative path stored in fullpath, reconstruct against current backuptempdir.
+                $backuptempdir = make_backup_temp_directory('');
+                $this->fullpath = $backuptempdir . '/' . $this->fullpath;
+            }
         }
 
         if ($this->level > backup::LOG_NONE) { // Only create the file if we are going to log something
