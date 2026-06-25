@@ -1,0 +1,47 @@
+.mds-close-button.btn-close {
+  inline-size: var(--mds-icons-md);
+  block-size: var(--mds-icons-md);
+  padding: 0;
+  border-radius: var(--mds-border-radius-xs);
+  background-image: url('./close-button.svg');
+  background-size: var(--mds-icons-md) var(--mds-icons-md);
+  opacity: 0.6;
+}
+
+.mds-close-button.btn-close:hover {
+  opacity: 0.75;
+}
+
+.mds-close-button.btn-close:focus {
+  box-shadow: none;
+}
+
+.mds-close-button.btn-close:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: 0;
+  box-shadow: none;
+  opacity: 1;
+}
+
+.mds-close-button.btn-close:disabled,
+.mds-close-button.btn-close.disabled {
+  opacity: 0.25;
+}
+
+.mds-close-button.btn-close.mds-close-button--sm {
+  inline-size: var(--mds-icons-sm);
+  block-size: var(--mds-icons-sm);
+  background-size: var(--mds-icons-sm) var(--mds-icons-sm);
+}
+
+.mds-close-button.btn-close.mds-close-button--md {
+  inline-size: var(--mds-icons-md);
+  block-size: var(--mds-icons-md);
+  background-size: var(--mds-icons-md) var(--mds-icons-md);
+}
+
+.mds-close-button.btn-close.mds-close-button--lg {
+  inline-size: var(--mds-icons-lg);
+  block-size: var(--mds-icons-lg);
+  background-size: var(--mds-icons-lg) var(--mds-icons-lg);
+}

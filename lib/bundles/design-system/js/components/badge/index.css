@@ -1,0 +1,115 @@
+.mds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-sm);
+
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-medium);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.mds-badge--has-icon {
+  gap: var(--mds-spacing-xxs);
+}
+
+/* Normalize icon dimensions to match the badge icon token across <i> and <svg> usage. */
+.mds-badge > i,
+.mds-badge > svg {
+  width: var(--mds-icons-xxs);
+  height: var(--mds-icons-xxs);
+  font-size: var(--mds-icons-xxs);
+  flex-shrink: 0;
+}
+
+/* Pill shape overrides the default rounded corners */
+.mds-badge--pill {
+  border-radius: var(--mds-border-radius-pill);
+}
+
+/*
+ * Per-variant colour rules.
+ * Default contrast: solid coloured background with inverse text.
+ * Subtle contrast (.mds-badge--subtle): light tinted background, dark feedback text, visible border.
+ */
+
+.mds-badge--subtle {
+  border: var(--mds-stroke-weight-sm) solid transparent;
+}
+
+/* --- Primary --- */
+.mds-badge--primary {
+  background-color: var(--mds-bg-feedback-primary-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--primary.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-primary-subtle);
+  color: var(--mds-text-feedback-primary);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* --- Secondary --- */
+.mds-badge--secondary {
+  background-color: var(--mds-bg-feedback-secondary-default);
+  color: var(--mds-text-feedback-secondary);
+}
+
+.mds-badge--secondary.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-secondary-subtle);
+  color: var(--mds-text-feedback-secondary);
+  border-color: var(--mds-border-feedback-secondary);
+}
+
+/* --- Success --- */
+.mds-badge--success {
+  background-color: var(--mds-bg-feedback-success-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--success.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-success-subtle);
+  color: var(--mds-text-feedback-success);
+  border-color: var(--mds-border-feedback-success);
+}
+
+/* --- Danger --- */
+.mds-badge--danger {
+  background-color: var(--mds-bg-feedback-danger-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--danger.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-danger-subtle);
+  color: var(--mds-text-feedback-danger);
+  border-color: var(--mds-border-feedback-danger);
+}
+
+/* --- Warning --- */
+.mds-badge--warning {
+  background-color: var(--mds-bg-feedback-warning-default);
+  color: var(--mds-text-feedback-warning);
+}
+
+.mds-badge--warning.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-warning-subtle);
+  color: var(--mds-text-feedback-warning);
+  border-color: var(--mds-border-feedback-warning);
+}
+
+/* --- Info --- */
+.mds-badge--info {
+  background-color: var(--mds-bg-feedback-info-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--info.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-info-subtle);
+  color: var(--mds-text-feedback-info);
+  border-color: var(--mds-border-feedback-info);
+}

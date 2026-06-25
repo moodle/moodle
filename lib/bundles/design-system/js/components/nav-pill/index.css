@@ -1,0 +1,96 @@
+/* Nav pill — compact navigation destination indicator */
+
+.mds-nav-pill,
+.mds-nav-pill:visited {
+  /* Reset anchor/link defaults */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mds-spacing-xxs);
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+
+  border-radius: var(--mds-border-radius-md);
+
+  /* Label colour: unselected default */
+  color: var(--mds-text-subtle);
+  text-decoration: none;
+}
+
+.mds-nav-pill:hover,
+.mds-nav-pill:focus,
+.mds-nav-pill:active,
+.mds-nav-pill:visited {
+  text-decoration: none;
+}
+
+/* ---- Label ---- */
+
+.mds-nav-pill__label {
+  /* UI small — matches Figma: $font-size-sm / font-weight/medium / line-height/paragraph/xs */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-xs);
+  white-space: nowrap;
+}
+
+/* ---- Active-indicator dot (selected state only) ---- */
+
+.mds-nav-pill__indicator {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-interactive-primary-default);
+  flex-shrink: 0;
+}
+
+/* ---- Hover (unselected) ---- */
+
+.mds-nav-pill:hover:not([aria-disabled='true']):not(.mds-nav-pill--selected) {
+  background-color: var(--mds-bg-nav-pill-hover);
+}
+
+/* ---- Pressed / active (unselected) ---- */
+
+.mds-nav-pill:active:not([aria-disabled='true']):not(.mds-nav-pill--selected) {
+  background-color: var(--mds-bg-nav-pill-pressed);
+}
+
+/* ---- Focus-visible ring — keyboard navigation ---- */
+
+.mds-nav-pill:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.mds-nav-pill:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* ---- Disabled ---- */
+
+.mds-nav-pill[aria-disabled='true'] {
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+  background-color: transparent;
+}
+
+/* ---- Selected state ---- */
+
+.mds-nav-pill--selected {
+  color: var(--mds-text-default);
+  background-color: var(--mds-bg-nav-pill-selected);
+}
+
+.mds-nav-pill--selected:visited {
+  color: var(--mds-text-default);
+}
+
+.mds-nav-pill--selected:hover:not([aria-disabled='true']) {
+  background-color: var(--mds-bg-nav-pill-selected);
+}

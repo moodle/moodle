@@ -1,0 +1,133 @@
+/* Parent element */
+.mds-form-check {
+  /* Grid layout: column 1 = input, column 2 = label. The feedback is then placed
+     explicitly into column 2 via grid-column so it aligns with the label without
+     requiring any offset calculation. Grid formatting context also suppresses
+     Bootstrap's float on the input child. */
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: start;
+  /* Prevent flex containers from stretching this element across the cross axis,
+     which would widen the grid and split the two auto columns equally, pushing
+     the label away from the input. start preserves content-sized behaviour. */
+  align-self: start;
+  /* min-height matches the icon-lg token (24px) so the wrapper never collapses
+     below the height of the radio indicator, regardless of label content. */
+  min-height: var(--mds-icons-lg, 1.5rem);
+  /* Reset Bootstrap's padding-inline-start — it exists to indent label text past a
+     floated input, which our grid layout does not use. column-gap handles the spacing. */
+  padding: var(--mds-spacing-none, 0);
+  /* column-gap keeps input and label spaced; row-gap gives breathing room above feedback */
+  column-gap: var(--mds-spacing-xs, 0.5rem);
+  row-gap: var(--mds-spacing-xxs, 0.25rem);
+
+  /* UI text/UI default */
+  font-family: var(--mds-font-family-base, Arial, sans-serif);
+  font-size: var(--mds-font-size-body, 1rem);
+  font-weight: var(--mds-font-weight-regular, 400);
+  line-height: var(--mds-line-height-paragraph-xs, 0.75rem);
+  letter-spacing: var(--mds-letter-spacing, 0);
+}
+
+/* Input element styles */
+.mds-form-check-input {
+  border-radius: var(--mds-border-radius-pill, 50rem);
+  border: var(--mds-stroke-weight-sm, 1px) solid
+    var(--mds-border-interactive-secondary-default, #6a737b);
+  /* Use background-color, not the background shorthand — the shorthand resets
+     background-image to none, which wipes out Bootstrap's --bs-form-check-bg-image
+     (the inner dot SVG) on the checked state. */
+}
+/* Bootstrap's .form-check .form-check-input rule (specificity 0,2,0) sets float: left
+   and a negative margin-inline-start that causes overlap. Match its specificity to
+   ensure our flex-friendly reset wins regardless of load order. */
+.mds-form-check .mds-form-check-input {
+  margin: 0;
+  float: none;
+  background-color: var(--mds-bg-surface-default, #fff);
+}
+.mds-form-check-input:checked {
+  background-color: var(--mds-bg-interactive-primary-default);
+  border-color: transparent;
+}
+.mds-form-check-input:disabled {
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+.mds-form-check-input:disabled:checked {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+.mds-form-check-input.is-invalid {
+  border-color: var(--mds-border-interactive-danger-default);
+}
+.mds-form-check-input.is-invalid:checked {
+  background-color: var(--mds-bg-interactive-danger-default);
+  border-color: transparent;
+}
+/* Explicit rule for invalid + disabled to avoid relying on specificity cascade order.
+   Disabled takes visual precedence: use the disabled background/border, not the danger ones. */
+.mds-form-check-input.is-invalid:disabled {
+  background-color: var(--mds-bg-interactive-secondary-disabled);
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+.mds-form-check-input.is-invalid:disabled:checked {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+/* is-valid (Bootstrap) and neutral feedback states are intentionally not supported.
+   Radio buttons surface a binary valid/invalid result; positive confirmation
+   is conveyed by form-level success messaging rather than per-input valid styling. */
+/* Hover styles are intentionally omitted. The radio input relies on the OS/browser
+   default appearance for hover; no design token exists for a radio hover state. */
+
+/* Focus ring: Only outline + outline-offset allowed (no box-shadow or border).
+  See .github/instructions/components.instructions.md for full rules and rationale. */
+.mds-form-check-input:focus,
+.mds-form-check-input.is-invalid:focus {
+  /* Reset Bootstrap's :focus box-shadow; our ring is applied on :focus-visible only */
+  box-shadow: none;
+  outline: none;
+}
+.mds-form-check-input:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+.mds-form-check-input.is-invalid:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-border-feedback-danger);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* Label element styles */
+.mds-form-check .form-check-label,
+.mds-form-check .mds-form-check-label {
+  color: var(--mds-text-default, #1d2125);
+}
+/* Use sibling selector so the label reflects the input's disabled/invalid state */
+.mds-form-check .mds-form-check-input:disabled ~ .form-check-label,
+.mds-form-check .mds-form-check-input:disabled ~ .mds-form-check-label {
+  color: var(--mds-text-muted);
+}
+.mds-form-check .mds-form-check-input.is-invalid ~ .form-check-label,
+.mds-form-check .mds-form-check-input.is-invalid ~ .mds-form-check-label {
+  color: var(--mds-text-danger);
+}
+
+/* Feedback element styles — UI text/UI small */
+.mds-form-check .invalid-feedback,
+.mds-form-check .mds-form-check-feedback {
+  /* Place feedback in column 2 (the label column) so it aligns with the label
+     regardless of input size or font-size differences. Row placement is automatic. */
+  grid-column: 2;
+  font-size: var(--mds-font-size-paragraph-small, 0.875rem);
+  font-weight: var(--mds-font-weight-medium, 500);
+  line-height: var(--mds-line-height-paragraph-xs, 0.75rem);
+  color: var(--mds-text-danger);
+}
+/* Dim the feedback when the input is disabled to match the reduced visual weight of
+   the label and input; keeps the feedback legible without implying it is actionable. */
+.mds-form-check:has(.mds-form-check-input:disabled) .invalid-feedback,
+.mds-form-check:has(.mds-form-check-input:disabled) .mds-form-check-feedback {
+  opacity: 0.5;
+}

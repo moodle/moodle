@@ -1,0 +1,86 @@
+/* Favourite button (icon-only toggle) */
+
+.mds-favourite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mds-spacing-xs);
+  border: none;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-default);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.mds-favourite-button__icon {
+  display: block;
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  background-color: currentColor;
+  mask-image: url('./assets/star-outline.svg');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: url('./assets/star-outline.svg');
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+.mds-favourite-button--selected .mds-favourite-button__icon {
+  mask-image: url('./assets/star-filled.svg');
+  -webkit-mask-image: url('./assets/star-filled.svg');
+}
+
+/* Unselected states */
+.mds-favourite-button:hover:not(:disabled) {
+  background-color: var(--mds-bg-surface-subtle);
+  color: var(--mds-text-subtle);
+}
+
+.mds-favourite-button:active:not(:disabled) {
+  background-color: var(--mds-bg-surface-strong);
+  color: var(--mds-text-default);
+}
+
+/* Selected states */
+.mds-favourite-button--selected {
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-link-primary-default);
+}
+
+.mds-favourite-button--selected:hover:not(:disabled) {
+  background-color: var(--mds-bg-surface-subtle);
+  color: var(--mds-text-link-primary-hover);
+}
+
+.mds-favourite-button--selected:active:not(:disabled) {
+  background-color: var(--mds-bg-surface-strong);
+  color: var(--mds-text-link-primary-default);
+}
+
+/* Disabled states */
+.mds-favourite-button:disabled {
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+}
+
+.mds-favourite-button--selected:disabled {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* Focus ring */
+.mds-favourite-button:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-favourite-button:focus-visible {
+  box-shadow: none;
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: 0;
+}

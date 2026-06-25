@@ -1,0 +1,193 @@
+/* Wrapper layout */
+.mds-progress-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mds-spacing-xs);
+  /* 120px is intentionally has no token by design just as in Figma. */
+  min-width: 120px;
+  width: 100%;
+}
+
+/* Inline variant: bar on the left, count on the right in one row. */
+.mds-progress-bar.mds-progress-bar--label-inline {
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Track (outer container) */
+.mds-progress-bar-track.progress {
+  /* Re-state Bootstrap progress primitives here so host .progress overrides cannot drift MDS visuals. */
+  /* 0.375rem = 6px from Figma; intentionally has no token by design for consumer flexibility. */
+  display: flex;
+  height: 0.375rem;
+  overflow: hidden;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-feedback-secondary-default);
+  box-shadow: none;
+}
+
+/* In-progress and loading use the primary-subtle track. */
+.mds-progress-bar--in-progress .mds-progress-bar-track,
+.mds-progress-bar--loading .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-primary-subtle);
+}
+
+/* Error track. */
+.mds-progress-bar--error .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-danger-subtle);
+}
+
+/* Warning track. */
+.mds-progress-bar--warning .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-warning-subtle);
+}
+
+/* Completed and empty keep the default secondary track. */
+.mds-progress-bar--completed .mds-progress-bar-track,
+.mds-progress-bar--empty .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-secondary-default);
+}
+
+/* Inline variant: track should fill available row space. */
+.mds-progress-bar--label-inline .mds-progress-bar-track {
+  flex: 1 1 0;
+  min-inline-size: var(--mds-spacing-xxl);
+}
+
+/* Fill (inner progress indicator) */
+.mds-progress-bar-fill.progress-bar {
+  /* Keep core progress-bar behavior local so host --bs-progress-* token changes do not leak in. */
+  display: flex;
+  overflow: hidden;
+  background-color: var(--mds-bg-interactive-primary-default);
+  transition: width 0.3s ease;
+}
+
+/* Explicit striped styles avoid dependence on host Bootstrap variables. */
+.mds-progress-bar-fill.progress-bar-striped {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  /* Figma loading pattern uses a larger tile than the 6px bar height. */
+  background-size: var(--mds-spacing-md) var(--mds-spacing-md);
+  background-repeat: repeat;
+  background-position-x: 0;
+}
+
+[dir='rtl'] .mds-progress-bar-fill.progress-bar-striped {
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
+.mds-progress-bar-fill.progress-bar-animated {
+  animation: mds-progress-bar-stripes 0.8s linear infinite;
+}
+
+[dir='rtl'] .mds-progress-bar-fill.progress-bar-animated {
+  animation-name: mds-progress-bar-stripes-rtl;
+}
+
+@keyframes mds-progress-bar-stripes {
+  0% {
+    background-position-x: var(--mds-spacing-md);
+  }
+}
+
+@keyframes mds-progress-bar-stripes-rtl {
+  0% {
+    background-position-x: calc(var(--mds-spacing-md) * -1);
+  }
+}
+
+/* Error fill. */
+.mds-progress-bar--error .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-danger-default);
+}
+
+/* Warning fill. */
+.mds-progress-bar--warning .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-warning-default);
+}
+
+/* Completed fill. */
+.mds-progress-bar--completed .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-success-default);
+}
+
+/* Empty fill blends with the track. */
+.mds-progress-bar--empty .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-secondary-default);
+}
+
+/* Label container */
+.mds-progress-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--mds-spacing-xs);
+  width: 100%;
+
+  /* UI text/small */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing-default);
+  color: var(--mds-text-subtle);
+}
+
+/* Title text */
+.mds-progress-bar-title {
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-small);
+  word-break: break-word;
+}
+
+/* In title-and-count layout, title and count share one row and must both be able to shrink. */
+.mds-progress-bar--label-title-and-count .mds-progress-bar-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* Count / percentage text */
+.mds-progress-bar-count {
+  font-weight: var(--mds-font-weight-regular);
+
+  /* Inline count sits outside .mds-progress-bar-label, so it needs explicit text styles. */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing-default);
+  color: var(--mds-text-subtle);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+}
+
+/* In title-and-count layout, count is bounded to prevent hogging the row. */
+.mds-progress-bar--label-title-and-count .mds-progress-bar-count {
+  flex: 0 1 50%;
+  max-inline-size: 50%;
+  text-align: end;
+}
+
+/* In inline layout, count takes only what it needs, leaving space for the track. */
+.mds-progress-bar--label-inline .mds-progress-bar-count {
+  flex: 0 1 auto;
+  max-inline-size: 40%;
+  text-align: start;
+}

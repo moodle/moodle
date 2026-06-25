@@ -1,0 +1,122 @@
+.mds-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mds-spacing-xs);
+
+  color: var(--mds-text-link-primary-default);
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-regular);
+  font-size: var(--mds-font-size-paragraph-default);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.mds-link:hover:not(:focus-visible) {
+  color: var(--mds-text-link-primary-hover);
+}
+
+.mds-link:active {
+  color: var(--mds-text-link-primary-hover);
+}
+
+/* Underline on hover applies only to the label text, not the icon.
+   Pressed state has no underline (Figma). Thickness and position use
+   from-font so the underline follows the font's own metrics. */
+.mds-link:hover:not(:focus-visible) .mds-link__label {
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+}
+
+/* Slide icon toward the label on hover using transform so the link node width
+   stays constant (gap remains --mds-spacing-xs; only the icon moves visually). */
+.mds-link:hover:not(:focus-visible) .mds-link__icon:first-child {
+  transform: translateX(var(--mds-spacing-xxs));
+}
+
+.mds-link:hover:not(:focus-visible) .mds-link__icon:last-child {
+  transform: translateX(calc(-1 * var(--mds-spacing-xxs)));
+}
+
+[dir='rtl'] .mds-link:hover:not(:focus-visible) .mds-link__icon:first-child {
+  transform: translateX(calc(-1 * var(--mds-spacing-xxs)));
+}
+
+[dir='rtl'] .mds-link:hover:not(:focus-visible) .mds-link__icon:last-child {
+  transform: translateX(var(--mds-spacing-xxs));
+}
+
+/* Reset icon position on press */
+.mds-link:active .mds-link__icon {
+  transform: none;
+}
+
+.mds-link:focus {
+  outline: none;
+}
+
+.mds-link:focus-visible {
+  /* Bottom-only focus underline matching Figma: 2px border-bottom, 1px gap below content */
+  outline: none;
+  border-radius: 0;
+  padding-bottom: var(--mds-spacing-offset);
+  border-bottom: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+}
+
+.mds-link.mds-link--secondary {
+  color: var(--mds-text-subtle);
+}
+
+.mds-link.mds-link--secondary:hover:not(:focus-visible),
+.mds-link.mds-link--secondary:active {
+  color: var(--mds-text-default);
+}
+
+.mds-link.mds-link--disabled,
+.mds-link.mds-link--disabled:hover,
+.mds-link.mds-link--disabled:active {
+  color: var(--mds-text-link-primary-disabled);
+  pointer-events: none;
+}
+
+.mds-link.mds-link--disabled .mds-link__icon,
+.mds-link.mds-link--disabled:hover .mds-link__icon,
+.mds-link.mds-link--disabled:active .mds-link__icon {
+  transform: none;
+}
+
+.mds-link.mds-link--disabled .mds-link__label,
+.mds-link.mds-link--disabled:hover .mds-link__label,
+.mds-link.mds-link--disabled:active .mds-link__label {
+  text-decoration: none;
+}
+
+.mds-link.mds-link--secondary.mds-link--disabled,
+.mds-link.mds-link--secondary.mds-link--disabled:hover,
+.mds-link.mds-link--secondary.mds-link--disabled:active {
+  color: var(--mds-text-muted);
+}
+
+.mds-link__icon,
+.mds-link__icon i,
+.mds-link__icon svg {
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  font-size: var(--mds-icons-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-link__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease;
+}
+
+.mds-link__label {
+  text-align: start;
+}

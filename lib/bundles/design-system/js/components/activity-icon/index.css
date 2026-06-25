@@ -1,0 +1,99 @@
+.mds-activity-icon {
+  align-items: center;
+  /*
+   * content-box so block-size/inline-size declare the ICON content area.
+   * Padding then expands the tile beyond that — matching Figma's structure
+   * where "size" is the icon and padding is added by the container variant.
+   */
+  box-sizing: content-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* none: no background tile, no padding — tile equals the icon size */
+.mds-activity-icon--none {
+  border-radius: var(--mds-border-radius-none);
+}
+
+/*
+ * default: 8px padding each side — tile = icon + 16px (e.g. lg: 24+16 = 40px total).
+ * large:  12px padding each side — tile = icon + 24px (e.g. lg: 24+24 = 48px total).
+ */
+.mds-activity-icon--default {
+  border-radius: var(--mds-border-radius-xl);
+  padding: var(--mds-spacing-xs);
+}
+
+.mds-activity-icon--large {
+  border-radius: var(--mds-border-radius-xl);
+  padding: var(--mds-spacing-sm);
+}
+
+/* Figma uses a smaller outer radius for default+sm only. */
+.mds-activity-icon--default.mds-activity-icon--size-sm {
+  border-radius: var(--mds-border-radius-lg);
+}
+
+/* Category background colors apply only when a background container is active. */
+.mds-activity-icon--default.mds-activity-icon--category-assessment,
+.mds-activity-icon--large.mds-activity-icon--category-assessment {
+  background-color: var(--mds-activity-icon-assessment-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-collaboration,
+.mds-activity-icon--large.mds-activity-icon--category-collaboration {
+  background-color: var(--mds-activity-icon-collaboration-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-communication,
+.mds-activity-icon--large.mds-activity-icon--category-communication {
+  background-color: var(--mds-activity-icon-communication-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-interactive,
+.mds-activity-icon--large.mds-activity-icon--category-interactive {
+  background-color: var(--mds-activity-icon-interactive-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-other,
+.mds-activity-icon--large.mds-activity-icon--category-other {
+  background-color: var(--mds-activity-icon-other-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-resource,
+.mds-activity-icon--large.mds-activity-icon--category-resource {
+  background-color: var(--mds-activity-icon-resource-bg);
+}
+
+/* Size variants */
+.mds-activity-icon--size-sm {
+  block-size: var(--mds-icons-sm);
+  inline-size: var(--mds-icons-sm);
+}
+
+.mds-activity-icon--size-md {
+  /* Intentionally follows the Figma token mapping, where md uses the lg icon token. */
+  block-size: var(--mds-icons-lg);
+  inline-size: var(--mds-icons-lg);
+}
+
+.mds-activity-icon--size-lg {
+  /* Intentionally follows the Figma token mapping, where lg uses the xl icon token. */
+  block-size: var(--mds-icons-xl);
+  inline-size: var(--mds-icons-xl);
+}
+
+.mds-activity-icon--size-xl {
+  /* Intentionally follows the Figma token mapping, where xl uses the xxl icon token. */
+  block-size: var(--mds-icons-xxl);
+  inline-size: var(--mds-icons-xxl);
+}
+
+.mds-activity-icon__asset {
+  block-size: 100%;
+  border-radius: var(--mds-border-radius-xs);
+  display: block;
+  inline-size: 100%;
+}

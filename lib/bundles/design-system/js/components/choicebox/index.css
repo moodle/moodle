@@ -1,0 +1,364 @@
+/* ==========================================================================
+   Choicebox
+   A full-surface interactive card for single-select option picking.
+   HTML structure:
+     .mds-choicebox-wrapper
+       input.mds-choicebox-input  (visually hidden radio)
+       label.mds-choicebox
+         span.mds-choicebox-icon?   (optional — aria-hidden)
+         span.mds-choicebox-labels
+           span.mds-choicebox-label
+           span.mds-choicebox-supporting-text?
+         span.mds-choicebox-indicator  (decorative — aria-hidden)
+   State is driven entirely by CSS sibling selectors (.mds-choicebox-input
+   precedes .mds-choicebox in the DOM), avoiding any JS state management.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Wrapper
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-wrapper {
+  display: block;
+  /* Prevent flex containers from stretching this element */
+  align-self: start;
+  min-width: 320px; /* Ensure enough space for the indicator and some label text */
+}
+
+/* --------------------------------------------------------------------------
+   Hidden input
+   Visually hidden but focusable so keyboard and assistive tech can reach it.
+   pointer-events: none prevents it from receiving clicks — the <label for>
+   association handles delegation to the radio input instead.
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Card (label element — full-surface clickable area)
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--mds-spacing-xs);
+
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  border-radius: var(--mds-border-radius-md);
+  border: var(--mds-stroke-weight-sm) solid var(--mds-border-default);
+  background-color: var(--mds-bg-surface-subtle);
+
+  cursor: pointer;
+  /* Ensure the label fills its container when Choicebox is used in a grid or flex layout */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Hover — unselected */
+.mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:hover {
+  background-color: var(--mds-bg-surface-default);
+  border-color: var(--mds-border-default);
+}
+
+/* Active/pressed — unselected */
+.mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:active {
+  background-color: var(--mds-bg-surface-strong);
+  border-color: var(--mds-border-default);
+}
+
+/* Selected — default */
+.mds-choicebox-input:checked + .mds-choicebox {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Selected — hover */
+.mds-choicebox-input:not(:disabled):checked + .mds-choicebox:hover {
+  background-color: var(--mds-bg-surface-subtle);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Selected — pressed */
+.mds-choicebox-input:not(:disabled):checked + .mds-choicebox:active {
+  background-color: var(--mds-bg-surface-strong);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Disabled — show 'not-allowed' cursor over the whole card area.
+   cursor: not-allowed cannot be set on the label itself because
+   pointer-events: none (below) removes it from hit-testing, making the cursor
+   rule unreachable. :has() is safe for all Moodle-target browsers. */
+.mds-choicebox-wrapper:has(.mds-choicebox-input:disabled) {
+  cursor: not-allowed;
+}
+
+/* Block clicks on the label so the disabled radio cannot be activated */
+.mds-choicebox-input:disabled + .mds-choicebox {
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Focus — ring appears on the indicator per design spec
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-input:focus-visible
+  + .mds-choicebox
+  .mds-choicebox-indicator::after {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   Icon slot
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mds-spacing-xxs);
+  flex-shrink: 0;
+  /* Icon size matches --mds-icons-sm (16px) */
+  font-size: var(--mds-icons-sm);
+  color: var(--mds-text-default);
+}
+
+/* Selected icon */
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-icon {
+  color: var(--mds-text-feedback-primary);
+}
+
+/* Disabled unselected icon */
+.mds-choicebox-input:disabled:not(:checked)
+  + .mds-choicebox
+  .mds-choicebox-icon {
+  color: var(--mds-text-muted);
+}
+
+/* Disabled selected icon */
+.mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-icon {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Labels container
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-labels {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  gap: var(--mds-spacing-xxs);
+  padding: var(--mds-spacing-xxs) 0;
+  min-width: 0; /* Allow text to wrap within the flex item */
+}
+
+/* --------------------------------------------------------------------------
+   Label text
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-label {
+  display: block;
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-headings-6);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-headings-6);
+  letter-spacing: var(--mds-letter-spacing);
+  color: var(--mds-text-default);
+  word-break: break-word;
+}
+
+/* Selected label */
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-label {
+  color: var(--mds-text-feedback-primary);
+}
+
+/* Disabled unselected label */
+.mds-choicebox-input:disabled:not(:checked)
+  + .mds-choicebox
+  .mds-choicebox-label {
+  color: var(--mds-text-muted);
+}
+
+/* Disabled selected label */
+.mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-label {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Supporting text
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-supporting-text {
+  display: block;
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing);
+  color: var(--mds-text-subtle);
+  word-break: break-word;
+}
+
+/* Disabled unselected supporting text */
+.mds-choicebox-input:disabled:not(:checked)
+  + .mds-choicebox
+  .mds-choicebox-supporting-text {
+  color: var(--mds-text-subtle);
+}
+
+/* Disabled selected supporting text */
+.mds-choicebox-input:disabled:checked
+  + .mds-choicebox
+  .mds-choicebox-supporting-text {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Choice indicator
+   The visible circle and circle-check are rendered via ::after so no extra
+   DOM nodes are needed. The input's checked/disabled state drives the styling
+   via CSS sibling selectors.
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  /* Vertically centre the indicator against the label line.
+     labels container has padding-block-start: spacing-xxs (0.25rem);
+     the label line-height is 1.2rem; indicator height is 1rem.
+     Offset = labels-padding-top + (label-line-height − indicator-height) / 2 */
+  margin-block-start: calc(
+    var(--mds-spacing-xxs) + (var(--mds-line-height-headings-6) - 1rem) / 2
+  );
+  flex-shrink: 0;
+}
+
+/* Unselected circle */
+.mds-choicebox-indicator::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--mds-border-radius-pill);
+  border: var(--mds-stroke-weight-sm) solid
+    var(--mds-border-interactive-secondary-default);
+  background-color: var(--mds-bg-surface-subtle);
+  box-sizing: border-box;
+}
+
+/* Unselected hover indicator background follows card background. */
+.mds-choicebox-input:not(:disabled):not(:checked)
+  + .mds-choicebox:hover
+  .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-surface-default);
+}
+
+.mds-choicebox-input:not(:disabled):not(:checked)
+  + .mds-choicebox:active
+  .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-surface-strong);
+}
+
+/* Checked: filled circle with inline SVG checkmark via background-image.
+   Path matches the Figma design spec exactly (fill-based, 16×16 viewBox). */
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-indicator::after {
+  border: none;
+  background-color: var(--mds-bg-interactive-primary-default);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6.05791 11.1853C6.47273 11.6049 7.1138 11.6049 7.52862 11.1853L12.3556 6.30245C12.7704 5.88283 12.7704 5.23433 12.3556 4.81471C11.9407 4.3951 11.2997 4.3951 10.8848 4.81471L6.81212 8.93461L5.11515 7.25613C4.70034 6.83651 4.05926 6.83651 3.64444 7.25613C3.22963 7.67575 3.22963 8.32425 3.64444 8.74387L6.05791 11.1853Z' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-size: cover;
+}
+
+/* Disabled unselected indicator — muted border */
+.mds-choicebox-input:disabled:not(:checked)
+  + .mds-choicebox
+  .mds-choicebox-indicator::after {
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+/* Disabled selected indicator — dimmed fill */
+.mds-choicebox-input:disabled:checked
+  + .mds-choicebox
+  .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6.05791 11.1853C6.47273 11.6049 7.1138 11.6049 7.52862 11.1853L12.3556 6.30245C12.7704 5.88283 12.7704 5.23433 12.3556 4.81471C11.9407 4.3951 11.2997 4.3951 10.8848 4.81471L6.81212 8.93461L5.11515 7.25613C4.70034 6.83651 4.05926 6.83651 3.64444 7.25613C3.22963 7.67575 3.22963 8.32425 3.64444 8.74387L6.05791 11.1853Z' fill='%23ffffff'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   Forced colors (Windows High Contrast)
+   Card borders and indicator geometry use system colour keywords so they
+   remain visible when forced-colors is active. Text colours are left to adapt
+   automatically — they reference CSS custom properties that the browser will
+   remap to system colours.
+   Note: the SVG checkmark's hardcoded fill (%23ffffff) inside the checked
+   indicator will not adapt until Must Fix 2 (mask-image refactor) is done.
+   -------------------------------------------------------------------------- */
+
+@media (forced-colors: active) {
+  .mds-choicebox {
+    border-color: ButtonText;
+  }
+
+  .mds-choicebox-input:checked + .mds-choicebox {
+    border-color: Highlight;
+  }
+
+  .mds-choicebox-input:disabled + .mds-choicebox {
+    border-color: GrayText;
+  }
+
+  /* Preserve the indicator circle using forced-color-adjust: none so the
+     border/fill remain under author control via system colour keywords. */
+  .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    border-color: ButtonText;
+    background-color: Canvas;
+  }
+
+  .mds-choicebox-input:checked
+    + .mds-choicebox
+    .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    /* SVG fill %23ffffff may be invisible on some Highlight backgrounds —
+       fully addressed when Must Fix 2 (mask-image refactor) is completed. */
+  }
+
+  .mds-choicebox-input:disabled:not(:checked)
+    + .mds-choicebox
+    .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    border-color: GrayText;
+    background-color: Canvas;
+  }
+
+  .mds-choicebox-input:disabled:checked
+    + .mds-choicebox
+    .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    background-color: GrayText;
+  }
+
+  /* Keep the focus ring aligned with the system Highlight colour */
+  .mds-choicebox-input:focus-visible
+    + .mds-choicebox
+    .mds-choicebox-indicator::after {
+    outline-color: Highlight;
+  }
+}

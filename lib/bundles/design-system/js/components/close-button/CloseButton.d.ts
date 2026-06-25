@@ -11,4 +11,4 @@ export interface CloseButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEl
      */
     size?: string;
 }
-export declare const CloseButton: ({ "aria-label": ariaLabel, size, className, ...props }: CloseButtonProps) => import("react/jsx-runtime").JSX.Element;
+export declare const CloseButton: ({ "aria-label": ariaLabel, size, className, ...props }: CloseButtonProps) => import("react").JSX.Element;

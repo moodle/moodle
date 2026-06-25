@@ -1,6 +1,6 @@
 import { HTMLAttributes } from 'react';
 import { ActivityIconName } from './activityIconRegistry';
-export type ActivityIconVariant = 'none' | 'default' | 'large';
+export type ActivityIconContainer = 'none' | 'default' | 'large';
 export type ActivityIconSize = 'sm' | 'md' | 'lg' | 'xl';
 export interface ActivityIconProps extends HTMLAttributes<HTMLSpanElement> {
     /**
@@ -14,10 +14,10 @@ export interface ActivityIconProps extends HTMLAttributes<HTMLSpanElement> {
     /**
      * Visual container style around the icon.
      */
-    variant?: ActivityIconVariant;
+    container?: ActivityIconContainer;
     /**
      * Icon size token.
      */
     size?: ActivityIconSize;
 }
-export declare const ActivityIcon: ({ icon, alt, variant, size, className, ...props }: ActivityIconProps) => import("react/jsx-runtime").JSX.Element;
+export declare const ActivityIcon: ({ icon, alt, container, size, className, ...props }: ActivityIconProps) => import("react").JSX.Element;

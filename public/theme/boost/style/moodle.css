@@ -1,4 +1,2164 @@
 @charset "UTF-8";
+:root {
+  --mds-border-radius-lg: 0.75rem;
+  --mds-border-radius-md: 0.5rem;
+  --mds-border-radius-none: 0rem;
+  --mds-border-radius-pill: 50rem;
+  --mds-border-radius-sm: 0.375rem;
+  --mds-border-radius-xl: 1rem;
+  --mds-border-radius-xs: 0.25rem;
+  --mds-border-radius-xxl: 2rem;
+  --mds-stroke-weight-lg: 0.1875rem;
+  --mds-stroke-weight-md: 0.125rem;
+  --mds-stroke-weight-sm: 0.0625rem;
+  --mds-stroke-weight-xl: 0.25rem;
+  --mds-stroke-weight-xxl: 0.3125rem;
+  --mds-breakpoints-lg: 62rem;
+  --mds-breakpoints-md: 48rem;
+  --mds-breakpoints-sm: 36rem;
+  --mds-breakpoints-xl: 75rem;
+  --mds-breakpoints-xxl: 87.5rem;
+  --mds-activity-icon-assessment-bg: #f8d1e3;
+  --mds-activity-icon-assessment-icon: #db1a74;
+  --mds-activity-icon-collaboration-bg: #e0cffc;
+  --mds-activity-icon-collaboration-icon: #6610f2;
+  --mds-activity-icon-communication-bg: #ffe3d1;
+  --mds-activity-icon-communication-icon: #cc5e13;
+  --mds-activity-icon-file-bg: #cce6ea;
+  --mds-activity-icon-file-icon: #008196;
+  --mds-activity-icon-interactive-bg: #f4d6d2;
+  --mds-activity-icon-interactive-icon: #791d13;
+  --mds-activity-icon-other-bg: #dee2e6;
+  --mds-activity-icon-other-icon: #1d2125;
+  --mds-activity-icon-resource-bg: #cce6ea;
+  --mds-activity-icon-resource-icon: #008196;
+  --mds-bg-feedback-danger-default: #ca3120;
+  --mds-bg-feedback-danger-light: #faeae9;
+  --mds-bg-feedback-danger-subtle: #f4d6d2;
+  --mds-bg-feedback-info-default: #006778;
+  --mds-bg-feedback-info-light: #e5f2f4;
+  --mds-bg-feedback-info-subtle: #cce6ea;
+  --mds-bg-feedback-primary-default: #0f6cbf;
+  --mds-bg-feedback-primary-light: #e7f0f9;
+  --mds-bg-feedback-primary-subtle: #cfe2f2;
+  --mds-bg-feedback-secondary-default: #dee2e6;
+  --mds-bg-feedback-secondary-subtle: #f8f9fa;
+  --mds-bg-feedback-success-default: #357a32;
+  --mds-bg-feedback-success-light: #ebf2ea;
+  --mds-bg-feedback-success-subtle: #d7e4d6;
+  --mds-bg-feedback-warning-default: #f0ad4e;
+  --mds-bg-feedback-warning-light: #fdf7ed;
+  --mds-bg-feedback-warning-subtle: #fcefdc;
+  --mds-bg-interactive-danger-active: #791d13;
+  --mds-bg-interactive-danger-default: #ca3120;
+  --mds-bg-interactive-danger-default-light: #faeae9;
+  --mds-bg-interactive-danger-disabled: #eaada6;
+  --mds-bg-interactive-danger-hover: #a2271a;
+  --mds-bg-interactive-primary-active: #094173;
+  --mds-bg-interactive-primary-default: #0f6cbf;
+  --mds-bg-interactive-primary-default-light: #e7f0f9;
+  --mds-bg-interactive-primary-disabled: #9fc4e5;
+  --mds-bg-interactive-primary-hover: #0c5699;
+  --mds-bg-interactive-secondary-active: #dee2e6;
+  --mds-bg-interactive-secondary-default: #dee2e6;
+  --mds-bg-interactive-secondary-disabled: #e9ecef;
+  --mds-bg-interactive-secondary-hover: #ced4da;
+  --mds-bg-nav-pill-hover: #e9ecef;
+  --mds-bg-nav-pill-pressed: #dee2e6;
+  --mds-bg-nav-pill-selected: #e9ecef;
+  --mds-bg-surface-default: #ffffff;
+  --mds-bg-surface-strong: #e9ecef;
+  --mds-bg-surface-subtle: #f8f9fa;
+  --mds-border-default: #dee2e6;
+  --mds-border-feedback-danger: #eaada6;
+  --mds-border-feedback-info: #99cdd5;
+  --mds-border-feedback-primary: #9fc4e5;
+  --mds-border-feedback-secondary: #e9ecef;
+  --mds-border-feedback-success: #aecaad;
+  --mds-border-feedback-warning: #f9deb8;
+  --mds-border-interactive-danger-active: #a2271a;
+  --mds-border-interactive-danger-default: #ca3120;
+  --mds-border-interactive-danger-disabled: #df8379;
+  --mds-border-interactive-danger-hover: #ca3120;
+  --mds-border-interactive-primary-active: #0c5699;
+  --mds-border-interactive-primary-default: #0f6cbf;
+  --mds-border-interactive-primary-disabled: #6fa7d9;
+  --mds-border-interactive-primary-hover: #0f6cbf;
+  --mds-border-interactive-secondary-active: #495057;
+  --mds-border-interactive-secondary-default: #8f959e;
+  --mds-border-interactive-secondary-disabled: #8f959e;
+  --mds-border-interactive-secondary-hover: #6a737b;
+  --mds-border-subtle: #e9ecef;
+  --mds-border-translucent: rgba(0, 0, 0, 0);
+  --mds-focus-danger: #eaada6;
+  --mds-focus-default: #0f6cbf;
+  --mds-text-danger: #ca3120;
+  --mds-text-danger-disabled: #df8379;
+  --mds-text-default: #1d2125;
+  --mds-text-emphasis: #000000;
+  --mds-text-feedback-danger: #51140d;
+  --mds-text-feedback-info: #00343c;
+  --mds-text-feedback-primary: #062b4c;
+  --mds-text-feedback-secondary: #343a40;
+  --mds-text-feedback-success: #153114;
+  --mds-text-feedback-warning: #60451f;
+  --mds-text-inverse: #f8f9fa;
+  --mds-text-link-primary-default: #0f6cbf;
+  --mds-text-link-primary-disabled: #6fa7d9;
+  --mds-text-link-primary-hover: #0c5699;
+  --mds-text-muted: #6a737b;
+  --mds-text-subtle: #495057;
+  --mds-color-blue-50: #e7f0f9;
+  --mds-color-blue-100: #cfe2f2;
+  --mds-color-blue-200: #9fc4e5;
+  --mds-color-blue-300: #6fa7d9;
+  --mds-color-blue-400: #3f89cc;
+  --mds-color-blue-500: #0f6cbf;
+  --mds-color-blue-600: #0c5699;
+  --mds-color-blue-700: #094173;
+  --mds-color-blue-800: #062b4c;
+  --mds-color-blue-900: #031626;
+  --mds-color-cyan-50: #e5f2f4;
+  --mds-color-cyan-100: #cce6ea;
+  --mds-color-cyan-200: #99cdd5;
+  --mds-color-cyan-300: #66b3c0;
+  --mds-color-cyan-400: #339aab;
+  --mds-color-cyan-500: #008196;
+  --mds-color-cyan-600: #006778;
+  --mds-color-cyan-700: #004d5a;
+  --mds-color-cyan-800: #00343c;
+  --mds-color-cyan-900: #001a1e;
+  --mds-color-gray-100: #f8f9fa;
+  --mds-color-gray-200: #e9ecef;
+  --mds-color-gray-300: #dee2e6;
+  --mds-color-gray-400: #ced4da;
+  --mds-color-gray-500: #8f959e;
+  --mds-color-gray-600: #6a737b;
+  --mds-color-gray-700: #495057;
+  --mds-color-gray-800: #343a40;
+  --mds-color-gray-900: #1d2125;
+  --mds-color-gray-black: #000000;
+  --mds-color-gray-white: #ffffff;
+  --mds-color-green-50: #ebf2ea;
+  --mds-color-green-100: #d7e4d6;
+  --mds-color-green-200: #aecaad;
+  --mds-color-green-300: #86af84;
+  --mds-color-green-400: #5d955b;
+  --mds-color-green-500: #357a32;
+  --mds-color-green-600: #2a6228;
+  --mds-color-green-700: #20491e;
+  --mds-color-green-800: #153114;
+  --mds-color-green-900: #0b180a;
+  --mds-color-indigo-100: #e0cffc;
+  --mds-color-indigo-200: #c29ffa;
+  --mds-color-indigo-300: #a370f7;
+  --mds-color-indigo-400: #8540f5;
+  --mds-color-indigo-500: #6610f2;
+  --mds-color-indigo-600: #520dc2;
+  --mds-color-indigo-700: #3d0a91;
+  --mds-color-indigo-800: #290661;
+  --mds-color-indigo-900: #140330;
+  --mds-color-orange-100: #ffe3d1;
+  --mds-color-orange-200: #ffc8a3;
+  --mds-color-orange-300: #ffac74;
+  --mds-color-orange-400: #ff9146;
+  --mds-color-orange-500: #ff7518;
+  --mds-color-orange-600: #cc5e13;
+  --mds-color-orange-700: #99460e;
+  --mds-color-orange-800: #662f0a;
+  --mds-color-orange-900: #331705;
+  --mds-color-pink-100: #f8d1e3;
+  --mds-color-pink-200: #f1a3c7;
+  --mds-color-pink-300: #e976ac;
+  --mds-color-pink-400: #e24890;
+  --mds-color-pink-500: #db1a74;
+  --mds-color-pink-600: #af155d;
+  --mds-color-pink-700: #831046;
+  --mds-color-pink-800: #580a2e;
+  --mds-color-pink-900: #2c0517;
+  --mds-color-purple-100: #dfd8e5;
+  --mds-color-purple-200: #c0b1cb;
+  --mds-color-purple-300: #a08bb0;
+  --mds-color-purple-400: #816496;
+  --mds-color-purple-500: #613d7c;
+  --mds-color-purple-600: #4e3163;
+  --mds-color-purple-700: #3a254a;
+  --mds-color-purple-800: #271832;
+  --mds-color-purple-900: #130c19;
+  --mds-color-red-50: #faeae9;
+  --mds-color-red-100: #f4d6d2;
+  --mds-color-red-200: #eaada6;
+  --mds-color-red-300: #df8379;
+  --mds-color-red-400: #d55a4d;
+  --mds-color-red-500: #ca3120;
+  --mds-color-red-600: #a2271a;
+  --mds-color-red-700: #791d13;
+  --mds-color-red-800: #51140d;
+  --mds-color-red-900: #280a06;
+  --mds-color-teal-100: #d2f4ea;
+  --mds-color-teal-200: #a6e9d5;
+  --mds-color-teal-300: #79dfc1;
+  --mds-color-teal-400: #4dd4ac;
+  --mds-color-teal-500: #20c997;
+  --mds-color-teal-600: #1aa179;
+  --mds-color-teal-700: #13795b;
+  --mds-color-teal-800: #0d503c;
+  --mds-color-teal-900: #06281e;
+  --mds-color-yellow-50: #fdf7ed;
+  --mds-color-yellow-100: #fcefdc;
+  --mds-color-yellow-200: #f9deb8;
+  --mds-color-yellow-300: #f6ce95;
+  --mds-color-yellow-400: #f3bd71;
+  --mds-color-yellow-500: #f0ad4e;
+  --mds-color-yellow-600: #c08a3e;
+  --mds-color-yellow-700: #90682f;
+  --mds-color-yellow-800: #60451f;
+  --mds-color-yellow-900: #302310;
+  --mds-color-lg: rgba(0, 0, 0, 0.17);
+  --mds-color-md: rgba(0, 0, 0, 0.15);
+  --mds-color-sm: rgba(0, 0, 0, 0.08);
+  --mds-scale-0: 0rem;
+  --mds-scale-50: 0.125rem;
+  --mds-scale-100: 0.25rem;
+  --mds-scale-200: 0.375rem;
+  --mds-scale-300: 0.5rem;
+  --mds-scale-400: 0.75rem;
+  --mds-scale-500: 0.875rem;
+  --mds-scale-600: 1rem;
+  --mds-scale-700: 1.25rem;
+  --mds-scale-800: 1.5rem;
+  --mds-scale-900: 1.75rem;
+  --mds-scale-1000: 2rem;
+  --mds-scale-1100: 2.5rem;
+  --mds-scale-1200: 3rem;
+  --mds-scale-1300: 3.5rem;
+  --mds-scale-1400: 4rem;
+  --mds-scale-1500: 4.5rem;
+  --mds-scale-1600: 5rem;
+  --mds-scale-1700: 6rem;
+  --mds-scale-1800: 50rem;
+  --mds-typography-font-family-monospace: Menlo;
+  --mds-typography-font-family-sans-serif: Noto sans;
+  --mds-typography-font-size-0: 0rem;
+  --mds-typography-font-size-1: 1rem;
+  --mds-typography-font-size-2: 2rem;
+  --mds-typography-font-size-0-875: 0.875rem;
+  --mds-typography-font-size-1-25: 1.25rem;
+  --mds-typography-font-size-1-5: 1.5rem;
+  --mds-typography-font-size-1-75: 1.75rem;
+  --mds-typography-font-size-2-5: 2.5rem;
+  --mds-typography-font-weight-black: 900;
+  --mds-typography-font-weight-bold: 700;
+  --mds-typography-font-weight-extrabold: 800;
+  --mds-typography-font-weight-extralight: 200;
+  --mds-typography-font-weight-light: 300;
+  --mds-typography-font-weight-medium: 500;
+  --mds-typography-font-weight-regular: 400;
+  --mds-typography-font-weight-semibold: 600;
+  --mds-typography-font-weight-thin: 100;
+  --mds-typography-letter-spacing-none: 0rem;
+  --mds-typography-line-height-displays-d1: 6rem;
+  --mds-typography-line-height-displays-d2: 5.4rem;
+  --mds-typography-line-height-displays-d3: 4.8rem;
+  --mds-typography-line-height-displays-d4: 4.2rem;
+  --mds-typography-line-height-displays-d5: 3.6rem;
+  --mds-typography-line-height-displays-d6: 3rem;
+  --mds-typography-line-height-headings-h1: 3rem;
+  --mds-typography-line-height-headings-h2: 2.4rem;
+  --mds-typography-line-height-headings-h3: 2.1rem;
+  --mds-typography-line-height-headings-h4: 1.8rem;
+  --mds-typography-line-height-headings-h5: 1.5rem;
+  --mds-typography-line-height-headings-h6: 1.2rem;
+  --mds-typography-line-height-paragraph-base: 1.5rem;
+  --mds-typography-line-height-paragraph-lg: 2.5rem;
+  --mds-typography-line-height-paragraph-sm: 1.0875rem;
+  --mds-typography-line-height-paragraph-xs: 0.75rem;
+  --mds-blur-lg: 3rem;
+  --mds-blur-md: 1rem;
+  --mds-blur-sm: 0.25rem;
+  --mds-offset-lg: 1rem;
+  --mds-offset-md: 0.5rem;
+  --mds-offset-sm: 0.125rem;
+  --mds-icons-lg: 1.5rem;
+  --mds-icons-md: 1.25rem;
+  --mds-icons-sm: 1rem;
+  --mds-icons-xl: 2rem;
+  --mds-icons-xs: 0.75rem;
+  --mds-icons-xxl: 2.5rem;
+  --mds-icons-xxs: 0.5rem;
+  --mds-icons-xxxl: 3rem;
+  --mds-spacing-lg: 1.25rem;
+  --mds-spacing-md: 1rem;
+  --mds-spacing-none: 0rem;
+  --mds-spacing-offset: 0.0625rem;
+  --mds-spacing-sm: 0.75rem;
+  --mds-spacing-xl: 2rem;
+  --mds-spacing-xs: 0.5rem;
+  --mds-spacing-xxl: 3rem;
+  --mds-spacing-xxs: 0.25rem;
+  --mds-font-family-base: Noto sans;
+  --mds-font-family-code: Menlo;
+  --mds-font-size-displays-1: 5rem;
+  --mds-font-size-displays-2: 4.5rem;
+  --mds-font-size-displays-3: 4rem;
+  --mds-font-size-displays-4: 3.5rem;
+  --mds-font-size-displays-5: 3rem;
+  --mds-font-size-displays-6: 2.5rem;
+  --mds-font-size-headings-1: 2.5rem;
+  --mds-font-size-headings-2: 2rem;
+  --mds-font-size-headings-3: 1.75rem;
+  --mds-font-size-headings-4: 1.5rem;
+  --mds-font-size-headings-5: 1.25rem;
+  --mds-font-size-headings-6: 1rem;
+  --mds-font-size-paragraph-default: 1rem;
+  --mds-font-size-paragraph-lead: 1.25rem;
+  --mds-font-size-paragraph-small: 0.875rem;
+  --mds-font-weight-bold: 700;
+  --mds-font-weight-light: 300;
+  --mds-font-weight-medium: 500;
+  --mds-font-weight-regular: 400;
+  --mds-font-weight-semibold: 600;
+  --mds-letter-spacing-default: 0rem;
+  --mds-line-height-displays-1: 6rem;
+  --mds-line-height-displays-2: 5.4rem;
+  --mds-line-height-displays-3: 4.8rem;
+  --mds-line-height-displays-4: 4.2rem;
+  --mds-line-height-displays-5: 3.6rem;
+  --mds-line-height-displays-6: 3rem;
+  --mds-line-height-headings-1: 3rem;
+  --mds-line-height-headings-2: 2.4rem;
+  --mds-line-height-headings-3: 2.1rem;
+  --mds-line-height-headings-4: 1.8rem;
+  --mds-line-height-headings-5: 1.5rem;
+  --mds-line-height-headings-6: 1.2rem;
+  --mds-line-height-paragraph-default: 1.5rem;
+  --mds-line-height-paragraph-lead: 2.5rem;
+  --mds-line-height-paragraph-small: 1.0875rem;
+  --mds-line-height-paragraph-xs: 0.75rem;
+  --mds-margin-bottom-display: 0rem;
+  --mds-margin-bottom-heading: 0.5rem;
+  --mds-margin-bottom-paragraph: 1rem;
+}
+
+/* activity-icon/index.css */
+.mds-activity-icon {
+  align-items: center;
+  /*
+   * content-box so block-size/inline-size declare the ICON content area.
+   * Padding then expands the tile beyond that — matching Figma's structure
+   * where "size" is the icon and padding is added by the container variant.
+   */
+  box-sizing: content-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* none: no background tile, no padding — tile equals the icon size */
+.mds-activity-icon--none {
+  border-radius: var(--mds-border-radius-none);
+}
+
+/*
+ * default: 8px padding each side — tile = icon + 16px (e.g. lg: 24+16 = 40px total).
+ * large:  12px padding each side — tile = icon + 24px (e.g. lg: 24+24 = 48px total).
+ */
+.mds-activity-icon--default {
+  border-radius: var(--mds-border-radius-xl);
+  padding: var(--mds-spacing-xs);
+}
+
+.mds-activity-icon--large {
+  border-radius: var(--mds-border-radius-xl);
+  padding: var(--mds-spacing-sm);
+}
+
+/* Figma uses a smaller outer radius for default+sm only. */
+.mds-activity-icon--default.mds-activity-icon--size-sm {
+  border-radius: var(--mds-border-radius-lg);
+}
+
+/* Category background colors apply only when a background container is active. */
+.mds-activity-icon--default.mds-activity-icon--category-assessment,
+.mds-activity-icon--large.mds-activity-icon--category-assessment {
+  background-color: var(--mds-activity-icon-assessment-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-collaboration,
+.mds-activity-icon--large.mds-activity-icon--category-collaboration {
+  background-color: var(--mds-activity-icon-collaboration-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-communication,
+.mds-activity-icon--large.mds-activity-icon--category-communication {
+  background-color: var(--mds-activity-icon-communication-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-interactive,
+.mds-activity-icon--large.mds-activity-icon--category-interactive {
+  background-color: var(--mds-activity-icon-interactive-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-other,
+.mds-activity-icon--large.mds-activity-icon--category-other {
+  background-color: var(--mds-activity-icon-other-bg);
+}
+
+.mds-activity-icon--default.mds-activity-icon--category-resource,
+.mds-activity-icon--large.mds-activity-icon--category-resource {
+  background-color: var(--mds-activity-icon-resource-bg);
+}
+
+/* Size variants */
+.mds-activity-icon--size-sm {
+  block-size: var(--mds-icons-sm);
+  inline-size: var(--mds-icons-sm);
+}
+
+.mds-activity-icon--size-md {
+  /* Intentionally follows the Figma token mapping, where md uses the lg icon token. */
+  block-size: var(--mds-icons-lg);
+  inline-size: var(--mds-icons-lg);
+}
+
+.mds-activity-icon--size-lg {
+  /* Intentionally follows the Figma token mapping, where lg uses the xl icon token. */
+  block-size: var(--mds-icons-xl);
+  inline-size: var(--mds-icons-xl);
+}
+
+.mds-activity-icon--size-xl {
+  /* Intentionally follows the Figma token mapping, where xl uses the xxl icon token. */
+  block-size: var(--mds-icons-xxl);
+  inline-size: var(--mds-icons-xxl);
+}
+
+.mds-activity-icon__asset {
+  block-size: 100%;
+  border-radius: var(--mds-border-radius-xs);
+  display: block;
+  inline-size: 100%;
+}
+
+/* badge/index.css */
+.mds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-sm);
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-medium);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.mds-badge--has-icon {
+  gap: var(--mds-spacing-xxs);
+}
+
+/* Normalize icon dimensions to match the badge icon token across <i> and <svg> usage. */
+.mds-badge > i,
+.mds-badge > svg {
+  width: var(--mds-icons-xxs);
+  height: var(--mds-icons-xxs);
+  font-size: var(--mds-icons-xxs);
+  flex-shrink: 0;
+}
+
+/* Pill shape overrides the default rounded corners */
+.mds-badge--pill {
+  border-radius: var(--mds-border-radius-pill);
+}
+
+/*
+ * Per-variant colour rules.
+ * Default contrast: solid coloured background with inverse text.
+ * Subtle contrast (.mds-badge--subtle): light tinted background, dark feedback text, visible border.
+ */
+.mds-badge--subtle {
+  border: var(--mds-stroke-weight-sm) solid transparent;
+}
+
+/* --- Primary --- */
+.mds-badge--primary {
+  background-color: var(--mds-bg-feedback-primary-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--primary.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-primary-subtle);
+  color: var(--mds-text-feedback-primary);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* --- Secondary --- */
+.mds-badge--secondary {
+  background-color: var(--mds-bg-feedback-secondary-default);
+  color: var(--mds-text-feedback-secondary);
+}
+
+.mds-badge--secondary.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-secondary-subtle);
+  color: var(--mds-text-feedback-secondary);
+  border-color: var(--mds-border-feedback-secondary);
+}
+
+/* --- Success --- */
+.mds-badge--success {
+  background-color: var(--mds-bg-feedback-success-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--success.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-success-subtle);
+  color: var(--mds-text-feedback-success);
+  border-color: var(--mds-border-feedback-success);
+}
+
+/* --- Danger --- */
+.mds-badge--danger {
+  background-color: var(--mds-bg-feedback-danger-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--danger.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-danger-subtle);
+  color: var(--mds-text-feedback-danger);
+  border-color: var(--mds-border-feedback-danger);
+}
+
+/* --- Warning --- */
+.mds-badge--warning {
+  background-color: var(--mds-bg-feedback-warning-default);
+  color: var(--mds-text-feedback-warning);
+}
+
+.mds-badge--warning.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-warning-subtle);
+  color: var(--mds-text-feedback-warning);
+  border-color: var(--mds-border-feedback-warning);
+}
+
+/* --- Info --- */
+.mds-badge--info {
+  background-color: var(--mds-bg-feedback-info-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-badge--info.mds-badge--subtle {
+  background-color: var(--mds-bg-feedback-info-subtle);
+  color: var(--mds-text-feedback-info);
+  border-color: var(--mds-border-feedback-info);
+}
+
+/* button/index.css */
+.mds-btn.btn {
+  background-color: var(--mds-bg-interactive-primary-default);
+  border: none;
+  border-radius: var(--mds-border-radius-sm);
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  color: var(--mds-text-inverse);
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-regular);
+  font-size: var(--mds-font-size-paragraph-default);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+  /* Keep icon/text spacing consistent with icon variants from the design matrix. */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mds-spacing-xs);
+}
+
+/* Icon-only sizing in Figma is not derived from text button size classes. */
+.mds-btn.btn.mds-btn--icon-only {
+  padding: var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-xl);
+}
+
+.mds-btn.btn.mds-btn--icon-only i,
+.mds-btn.btn.mds-btn--icon-only svg {
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  font-size: var(--mds-icons-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-btn.btn.mds-btn--icon-only.mds-btn--size-sm {
+  padding: var(--mds-spacing-xxs);
+}
+
+.mds-btn.btn.mds-btn--icon-only.mds-btn--size-sm i,
+.mds-btn.btn.mds-btn--icon-only.mds-btn--size-sm svg {
+  inline-size: var(--mds-icons-xxs);
+  block-size: var(--mds-icons-xxs);
+  font-size: var(--mds-icons-xxs);
+}
+
+.mds-btn.btn.mds-btn--icon-only.mds-btn--size-lg {
+  padding: var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-sm);
+}
+
+.mds-btn.btn.mds-btn--size-sm i,
+.mds-btn.btn.mds-btn--size-sm svg {
+  inline-size: var(--mds-icons-xxs);
+  block-size: var(--mds-icons-xxs);
+  font-size: var(--mds-icons-xxs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-btn.btn.mds-btn--size-md i,
+.mds-btn.btn.mds-btn--size-md svg,
+.mds-btn.btn.mds-btn--size-lg i,
+.mds-btn.btn.mds-btn--size-lg svg {
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  font-size: var(--mds-icons-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-btn.btn:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-btn.btn:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-btn.btn:active:focus-visible {
+  box-shadow: none;
+}
+
+.mds-btn.btn.btn-danger:focus-visible,
+.mds-btn.btn.btn-outline-danger:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-danger);
+}
+
+.mds-btn.btn:hover {
+  background-color: var(--mds-bg-interactive-primary-hover);
+}
+
+.mds-btn.btn:active {
+  background-color: var(--mds-bg-interactive-primary-active);
+  box-shadow: none;
+}
+
+.mds-btn.btn:disabled {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+}
+
+/**
+  * Secondary variants
+  */
+.mds-btn.btn.btn-secondary {
+  background-color: var(--mds-bg-interactive-secondary-default);
+  color: var(--mds-text-subtle);
+}
+
+.mds-btn.btn.btn-secondary:hover {
+  background-color: var(--mds-bg-interactive-secondary-hover);
+}
+
+.mds-btn.btn.btn-secondary:active {
+  background-color: var(--mds-bg-interactive-secondary-active);
+}
+
+.mds-btn.btn.btn-secondary:disabled {
+  background-color: var(--mds-bg-interactive-secondary-disabled);
+  color: var(--mds-text-muted);
+}
+
+/**
+  * Danger variants
+  */
+.mds-btn.btn-danger {
+  background-color: var(--mds-bg-interactive-danger-default);
+}
+
+.mds-btn.btn-danger:hover {
+  background-color: var(--mds-bg-interactive-danger-hover);
+}
+
+.mds-btn.btn-danger:active {
+  background-color: var(--mds-bg-interactive-danger-active);
+}
+
+.mds-btn.btn.btn-danger:disabled {
+  background-color: var(--mds-bg-interactive-danger-disabled);
+}
+
+/**
+  * Ghost variants
+  */
+.mds-btn.btn.btn-ghost {
+  background-color: transparent;
+  color: var(--mds-text-subtle);
+}
+
+.mds-btn.btn.btn-ghost:hover {
+  background-color: var(--mds-bg-interactive-secondary-hover);
+  color: var(--mds-text-subtle);
+}
+
+.mds-btn.btn.btn-ghost:active {
+  background-color: var(--mds-bg-interactive-secondary-active);
+  color: var(--mds-text-subtle);
+}
+
+.mds-btn.btn.btn-ghost:disabled {
+  background-color: transparent;
+  color: var(--mds-text-muted);
+}
+
+/**
+  * Outline Primary variants
+  */
+.mds-btn.btn:is(.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger) {
+  background-color: transparent;
+  border: var(--mds-stroke-weight-sm) solid transparent;
+}
+
+.mds-btn.btn.btn-outline-primary {
+  border-color: var(--mds-border-interactive-primary-default);
+  color: var(--mds-text-link-primary-default);
+}
+
+.mds-btn.btn-outline-primary:hover {
+  border-color: var(--mds-bg-interactive-primary-hover);
+  background-color: var(--mds-bg-interactive-primary-hover);
+  color: var(--mds-text-inverse);
+}
+
+.mds-btn.btn-outline-primary:active {
+  border-color: var(--mds-bg-interactive-primary-active);
+  background-color: var(--mds-bg-interactive-primary-active);
+  color: var(--mds-text-inverse);
+}
+
+.mds-btn.btn.btn-outline-primary:disabled {
+  border-color: var(--mds-border-interactive-primary-disabled);
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/**
+  * Outline Secondary variants
+  */
+.mds-btn.btn.btn-outline-secondary {
+  border-color: var(--mds-border-interactive-secondary-default);
+  color: var(--mds-text-subtle);
+}
+
+.mds-btn.btn-outline-secondary:hover {
+  border-color: var(--mds-border-interactive-secondary-hover);
+  background-color: var(--mds-border-interactive-secondary-hover);
+  color: var(--mds-text-inverse);
+}
+
+.mds-btn.btn-outline-secondary:active {
+  border-color: var(--mds-border-interactive-secondary-active);
+  background-color: var(--mds-border-interactive-secondary-active);
+  color: var(--mds-text-inverse);
+}
+
+.mds-btn.btn.btn-outline-secondary:disabled {
+  border-color: var(--mds-border-interactive-secondary-disabled);
+  color: var(--mds-text-muted);
+}
+
+/**
+  * Outline Danger variants
+  */
+.mds-btn.btn.btn-outline-danger {
+  border-color: var(--mds-border-interactive-danger-default);
+  color: var(--mds-text-danger);
+}
+
+.mds-btn.btn-outline-danger:hover {
+  border-color: var(--mds-bg-interactive-danger-hover);
+  background-color: var(--mds-bg-interactive-danger-hover);
+  color: var(--mds-text-inverse);
+}
+
+.mds-btn.btn-outline-danger:active {
+  border-color: var(--mds-bg-interactive-danger-active);
+  background-color: var(--mds-bg-interactive-danger-active);
+  color: var(--mds-text-inverse);
+}
+
+.mds-btn.btn.btn-outline-danger:disabled {
+  border-color: var(--mds-border-interactive-danger-disabled);
+  color: var(--mds-text-danger-disabled);
+}
+
+/**
+  * Size variants
+  */
+.mds-btn.mds-btn--size-sm {
+  padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-xs);
+  font-weight: var(--mds-font-weight-medium);
+  font-size: var(--mds-font-size-paragraph-small);
+}
+
+.mds-btn.mds-btn--size-md {
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  font-size: var(--mds-font-size-paragraph-default);
+}
+
+.mds-btn.mds-btn--size-lg {
+  padding: var(--mds-spacing-sm) var(--mds-spacing-md);
+  font-size: var(--mds-font-size-paragraph-default);
+}
+
+/* Keep outer geometry aligned with filled variants when outline border is present. */
+.mds-btn.mds-btn--size-sm:is(.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger) {
+  padding: calc(var(--mds-spacing-xxs) - var(--mds-stroke-weight-sm)) calc(var(--mds-spacing-xs) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--size-md:is(.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger) {
+  padding: calc(var(--mds-spacing-xs) - var(--mds-stroke-weight-sm)) calc(var(--mds-spacing-sm) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--size-lg:is(.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger) {
+  padding: calc(var(--mds-spacing-sm) - var(--mds-stroke-weight-sm)) calc(var(--mds-spacing-md) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--icon-only:is(.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger) {
+  padding: calc(var(--mds-spacing-xs) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--icon-only.mds-btn--size-sm:is(.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger) {
+  padding: calc(var(--mds-spacing-xxs) - var(--mds-stroke-weight-sm));
+}
+
+.mds-btn.mds-btn--icon-only.mds-btn--size-lg:is(.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger) {
+  padding: calc(var(--mds-spacing-xs) - var(--mds-stroke-weight-sm));
+}
+
+/* checkbox/index.css */
+.mds-checkbox {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  align-self: start;
+  min-height: var(--mds-icons-lg);
+  padding: var(--mds-spacing-none);
+  column-gap: var(--mds-spacing-xs);
+  row-gap: var(--mds-spacing-xxs);
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-default);
+  font-weight: var(--mds-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+}
+
+.mds-checkbox-input {
+  border-radius: var(--mds-border-radius-xs);
+  border: var(--mds-stroke-weight-sm) solid var(--mds-border-interactive-secondary-default);
+}
+
+.mds-checkbox .mds-checkbox-input {
+  /* Bootstrap applies float/offset styles to .form-check-input for indented label layouts.
+     Match selector specificity and reset float/margins for the grid-based sibling layout. */
+  margin: 0;
+  float: none;
+  background-color: var(--mds-bg-surface-default);
+}
+
+.mds-checkbox-input:checked {
+  background-color: var(--mds-bg-interactive-primary-default);
+  border-color: transparent;
+}
+
+.mds-checkbox-input:indeterminate {
+  background-color: var(--mds-bg-interactive-primary-default);
+  border-color: transparent;
+}
+
+.mds-checkbox-input:disabled {
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+.mds-checkbox-input:disabled:checked {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-checkbox-input:disabled:indeterminate {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-checkbox-input.is-invalid {
+  border-color: var(--mds-border-interactive-danger-default);
+}
+
+.mds-checkbox-input.is-invalid:checked {
+  background-color: var(--mds-bg-interactive-danger-default);
+  border-color: transparent;
+}
+
+.mds-checkbox-input.is-invalid:indeterminate {
+  background-color: var(--mds-bg-interactive-danger-default);
+  border-color: transparent;
+}
+
+.mds-checkbox-input.is-invalid:disabled {
+  background-color: var(--mds-bg-interactive-secondary-disabled);
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+.mds-checkbox-input.is-invalid:disabled:checked {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-checkbox-input.is-invalid:disabled:indeterminate {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-checkbox-input:focus,
+.mds-checkbox-input.is-invalid:focus {
+  /* Reset Bootstrap's :focus box-shadow; our ring is applied on :focus-visible only */
+  box-shadow: none;
+  outline: none;
+}
+
+/* Bootstrap also sets border-color on :focus. Restore the correct border for each state,
+   excluding checked/indeterminate which keep their transparent border. */
+.mds-checkbox-input:focus:not(:checked):not(:indeterminate) {
+  border-color: var(--mds-border-interactive-secondary-default);
+}
+
+.mds-checkbox-input.is-invalid:focus:not(:checked):not(:indeterminate) {
+  border-color: var(--mds-border-interactive-danger-default);
+}
+
+.mds-checkbox-input:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-checkbox-input.is-invalid:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-border-feedback-danger);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-checkbox .form-check-label,
+.mds-checkbox .mds-checkbox-label {
+  display: flex;
+  align-items: center;
+  /* In the radio-style sibling layout, the checkbox should align to the label text line,
+     not to an expanded label hit area. Keep the label box tight and let htmlFor preserve click behavior. */
+  padding: 0;
+  color: var(--mds-text-default);
+}
+
+.mds-checkbox .mds-checkbox-label-text {
+  min-width: 0;
+}
+
+.mds-checkbox .mds-checkbox-input:disabled ~ .form-check-label,
+.mds-checkbox .mds-checkbox-input:disabled ~ .mds-checkbox-label {
+  color: var(--mds-text-muted);
+}
+
+.mds-checkbox .mds-checkbox-input.is-invalid ~ .form-check-label,
+.mds-checkbox .mds-checkbox-input.is-invalid ~ .mds-checkbox-label {
+  color: var(--mds-text-danger);
+}
+
+/* Disabled takes precedence over invalid — restore muted colour when both are active. */
+.mds-checkbox .mds-checkbox-input.is-invalid:disabled ~ .form-check-label,
+.mds-checkbox .mds-checkbox-input.is-invalid:disabled ~ .mds-checkbox-label {
+  color: var(--mds-text-muted);
+}
+
+.mds-checkbox-required {
+  color: var(--mds-text-danger);
+  margin-inline-start: var(--mds-spacing-xxs);
+}
+
+.mds-checkbox .invalid-feedback,
+.mds-checkbox .mds-checkbox-feedback {
+  grid-column: 2;
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-xs);
+}
+
+.mds-checkbox .invalid-feedback,
+.mds-checkbox .mds-checkbox-feedback.mds-checkbox-supporting-text {
+  margin: 0;
+}
+
+.mds-checkbox .invalid-feedback {
+  color: var(--mds-text-danger);
+}
+
+/* In the default state supporting text is subtle. In the invalid state use danger to match
+   the label colour \u2014 matching Figma where the label container sets the colour for both. */
+.mds-checkbox .mds-checkbox-feedback.mds-checkbox-supporting-text {
+  color: var(--mds-text-subtle);
+}
+
+.mds-checkbox .mds-checkbox-input.is-invalid ~ .mds-checkbox-feedback.mds-checkbox-supporting-text {
+  color: var(--mds-text-danger);
+}
+
+.mds-checkbox .mds-checkbox-input:disabled ~ .invalid-feedback,
+.mds-checkbox .mds-checkbox-input:disabled ~ .mds-checkbox-feedback {
+  opacity: 0.5;
+}
+
+/* choicebox/index.css */
+/* ==========================================================================
+   Choicebox
+   A full-surface interactive card for single-select option picking.
+   HTML structure:
+     .mds-choicebox-wrapper
+       input.mds-choicebox-input  (visually hidden radio)
+       label.mds-choicebox
+         span.mds-choicebox-icon?   (optional — aria-hidden)
+         span.mds-choicebox-labels
+           span.mds-choicebox-label
+           span.mds-choicebox-supporting-text?
+         span.mds-choicebox-indicator  (decorative — aria-hidden)
+   State is driven entirely by CSS sibling selectors (.mds-choicebox-input
+   precedes .mds-choicebox in the DOM), avoiding any JS state management.
+   ========================================================================== */
+/* --------------------------------------------------------------------------
+   Wrapper
+   -------------------------------------------------------------------------- */
+.mds-choicebox-wrapper {
+  display: block;
+  /* Prevent flex containers from stretching this element */
+  align-self: start;
+  min-width: 320px; /* Ensure enough space for the indicator and some label text */
+}
+
+/* --------------------------------------------------------------------------
+   Hidden input
+   Visually hidden but focusable so keyboard and assistive tech can reach it.
+   pointer-events: none prevents it from receiving clicks — the <label for>
+   association handles delegation to the radio input instead.
+   -------------------------------------------------------------------------- */
+.mds-choicebox-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Card (label element — full-surface clickable area)
+   -------------------------------------------------------------------------- */
+.mds-choicebox {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--mds-spacing-xs);
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  border-radius: var(--mds-border-radius-md);
+  border: var(--mds-stroke-weight-sm) solid var(--mds-border-default);
+  background-color: var(--mds-bg-surface-subtle);
+  cursor: pointer;
+  /* Ensure the label fills its container when Choicebox is used in a grid or flex layout */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Hover — unselected */
+.mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:hover {
+  background-color: var(--mds-bg-surface-default);
+  border-color: var(--mds-border-default);
+}
+
+/* Active/pressed — unselected */
+.mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:active {
+  background-color: var(--mds-bg-surface-strong);
+  border-color: var(--mds-border-default);
+}
+
+/* Selected — default */
+.mds-choicebox-input:checked + .mds-choicebox {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Selected — hover */
+.mds-choicebox-input:not(:disabled):checked + .mds-choicebox:hover {
+  background-color: var(--mds-bg-surface-subtle);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Selected — pressed */
+.mds-choicebox-input:not(:disabled):checked + .mds-choicebox:active {
+  background-color: var(--mds-bg-surface-strong);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Disabled — show 'not-allowed' cursor over the whole card area.
+   cursor: not-allowed cannot be set on the label itself because
+   pointer-events: none (below) removes it from hit-testing, making the cursor
+   rule unreachable. :has() is safe for all Moodle-target browsers. */
+.mds-choicebox-wrapper:has(.mds-choicebox-input:disabled) {
+  cursor: not-allowed;
+}
+
+/* Block clicks on the label so the disabled radio cannot be activated */
+.mds-choicebox-input:disabled + .mds-choicebox {
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Focus — ring appears on the indicator per design spec
+   -------------------------------------------------------------------------- */
+.mds-choicebox-input:focus-visible + .mds-choicebox .mds-choicebox-indicator::after {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   Icon slot
+   -------------------------------------------------------------------------- */
+.mds-choicebox-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mds-spacing-xxs);
+  flex-shrink: 0;
+  /* Icon size matches --mds-icons-sm (16px) */
+  font-size: var(--mds-icons-sm);
+  color: var(--mds-text-default);
+}
+
+/* Selected icon */
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-icon {
+  color: var(--mds-text-feedback-primary);
+}
+
+/* Disabled unselected icon */
+.mds-choicebox-input:disabled:not(:checked) + .mds-choicebox .mds-choicebox-icon {
+  color: var(--mds-text-muted);
+}
+
+/* Disabled selected icon */
+.mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-icon {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Labels container
+   -------------------------------------------------------------------------- */
+.mds-choicebox-labels {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  gap: var(--mds-spacing-xxs);
+  padding: var(--mds-spacing-xxs) 0;
+  min-width: 0; /* Allow text to wrap within the flex item */
+}
+
+/* --------------------------------------------------------------------------
+   Label text
+   -------------------------------------------------------------------------- */
+.mds-choicebox-label {
+  display: block;
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-headings-6);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-headings-6);
+  letter-spacing: var(--mds-letter-spacing);
+  color: var(--mds-text-default);
+  word-break: break-word;
+}
+
+/* Selected label */
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-label {
+  color: var(--mds-text-feedback-primary);
+}
+
+/* Disabled unselected label */
+.mds-choicebox-input:disabled:not(:checked) + .mds-choicebox .mds-choicebox-label {
+  color: var(--mds-text-muted);
+}
+
+/* Disabled selected label */
+.mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-label {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Supporting text
+   -------------------------------------------------------------------------- */
+.mds-choicebox-supporting-text {
+  display: block;
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing);
+  color: var(--mds-text-subtle);
+  word-break: break-word;
+}
+
+/* Disabled unselected supporting text */
+.mds-choicebox-input:disabled:not(:checked) + .mds-choicebox .mds-choicebox-supporting-text {
+  color: var(--mds-text-subtle);
+}
+
+/* Disabled selected supporting text */
+.mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-supporting-text {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Choice indicator
+   The visible circle and circle-check are rendered via ::after so no extra
+   DOM nodes are needed. The input's checked/disabled state drives the styling
+   via CSS sibling selectors.
+   -------------------------------------------------------------------------- */
+.mds-choicebox-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  /* Vertically centre the indicator against the label line.
+     labels container has padding-block-start: spacing-xxs (0.25rem);
+     the label line-height is 1.2rem; indicator height is 1rem.
+     Offset = labels-padding-top + (label-line-height − indicator-height) / 2 */
+  margin-block-start: calc(var(--mds-spacing-xxs) + (var(--mds-line-height-headings-6) - 1rem) / 2);
+  flex-shrink: 0;
+}
+
+/* Unselected circle */
+.mds-choicebox-indicator::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--mds-border-radius-pill);
+  border: var(--mds-stroke-weight-sm) solid var(--mds-border-interactive-secondary-default);
+  background-color: var(--mds-bg-surface-subtle);
+  box-sizing: border-box;
+}
+
+/* Unselected hover indicator background follows card background. */
+.mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:hover .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-surface-default);
+}
+
+.mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:active .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-surface-strong);
+}
+
+/* Checked: filled circle with inline SVG checkmark via background-image.
+   Path matches the Figma design spec exactly (fill-based, 16×16 viewBox). */
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-indicator::after {
+  border: none;
+  background-color: var(--mds-bg-interactive-primary-default);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6.05791 11.1853C6.47273 11.6049 7.1138 11.6049 7.52862 11.1853L12.3556 6.30245C12.7704 5.88283 12.7704 5.23433 12.3556 4.81471C11.9407 4.3951 11.2997 4.3951 10.8848 4.81471L6.81212 8.93461L5.11515 7.25613C4.70034 6.83651 4.05926 6.83651 3.64444 7.25613C3.22963 7.67575 3.22963 8.32425 3.64444 8.74387L6.05791 11.1853Z' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-size: cover;
+}
+
+/* Disabled unselected indicator — muted border */
+.mds-choicebox-input:disabled:not(:checked) + .mds-choicebox .mds-choicebox-indicator::after {
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+/* Disabled selected indicator — dimmed fill */
+.mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6.05791 11.1853C6.47273 11.6049 7.1138 11.6049 7.52862 11.1853L12.3556 6.30245C12.7704 5.88283 12.7704 5.23433 12.3556 4.81471C11.9407 4.3951 11.2997 4.3951 10.8848 4.81471L6.81212 8.93461L5.11515 7.25613C4.70034 6.83651 4.05926 6.83651 3.64444 7.25613C3.22963 7.67575 3.22963 8.32425 3.64444 8.74387L6.05791 11.1853Z' fill='%23ffffff'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   Forced colors (Windows High Contrast)
+   Card borders and indicator geometry use system colour keywords so they
+   remain visible when forced-colors is active. Text colours are left to adapt
+   automatically — they reference CSS custom properties that the browser will
+   remap to system colours.
+   Note: the SVG checkmark's hardcoded fill (%23ffffff) inside the checked
+   indicator will not adapt until Must Fix 2 (mask-image refactor) is done.
+   -------------------------------------------------------------------------- */
+@media (forced-colors: active) {
+  .mds-choicebox {
+    border-color: ButtonText;
+  }
+  .mds-choicebox-input:checked + .mds-choicebox {
+    border-color: Highlight;
+  }
+  .mds-choicebox-input:disabled + .mds-choicebox {
+    border-color: GrayText;
+  }
+  /* Preserve the indicator circle using forced-color-adjust: none so the
+     border/fill remain under author control via system colour keywords. */
+  .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    border-color: ButtonText;
+    background-color: Canvas;
+  }
+  .mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    /* SVG fill %23ffffff may be invisible on some Highlight backgrounds —
+       fully addressed when Must Fix 2 (mask-image refactor) is completed. */
+  }
+  .mds-choicebox-input:disabled:not(:checked) + .mds-choicebox .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    border-color: GrayText;
+    background-color: Canvas;
+  }
+  .mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    background-color: GrayText;
+  }
+  /* Keep the focus ring aligned with the system Highlight colour */
+  .mds-choicebox-input:focus-visible + .mds-choicebox .mds-choicebox-indicator::after {
+    outline-color: Highlight;
+  }
+}
+/* close-button/index.css */
+.mds-close-button.btn-close {
+  inline-size: var(--mds-icons-md);
+  block-size: var(--mds-icons-md);
+  padding: 0;
+  border-radius: var(--mds-border-radius-xs);
+  background-image: url("./close-button.svg");
+  background-size: var(--mds-icons-md) var(--mds-icons-md);
+  opacity: 0.6;
+}
+
+.mds-close-button.btn-close:hover {
+  opacity: 0.75;
+}
+
+.mds-close-button.btn-close:focus {
+  box-shadow: none;
+}
+
+.mds-close-button.btn-close:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: 0;
+  box-shadow: none;
+  opacity: 1;
+}
+
+.mds-close-button.btn-close:disabled,
+.mds-close-button.btn-close.disabled {
+  opacity: 0.25;
+}
+
+.mds-close-button.btn-close.mds-close-button--sm {
+  inline-size: var(--mds-icons-sm);
+  block-size: var(--mds-icons-sm);
+  background-size: var(--mds-icons-sm) var(--mds-icons-sm);
+}
+
+.mds-close-button.btn-close.mds-close-button--md {
+  inline-size: var(--mds-icons-md);
+  block-size: var(--mds-icons-md);
+  background-size: var(--mds-icons-md) var(--mds-icons-md);
+}
+
+.mds-close-button.btn-close.mds-close-button--lg {
+  inline-size: var(--mds-icons-lg);
+  block-size: var(--mds-icons-lg);
+  background-size: var(--mds-icons-lg) var(--mds-icons-lg);
+}
+
+/* favourite-button/index.css */
+/* Favourite button (icon-only toggle) */
+.mds-favourite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mds-spacing-xs);
+  border: none;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-default);
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.mds-favourite-button__icon {
+  display: block;
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  background-color: currentColor;
+  mask-image: url("./assets/star-outline.svg");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: url("./assets/star-outline.svg");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+.mds-favourite-button--selected .mds-favourite-button__icon {
+  mask-image: url("./assets/star-filled.svg");
+  -webkit-mask-image: url("./assets/star-filled.svg");
+}
+
+/* Unselected states */
+.mds-favourite-button:hover:not(:disabled) {
+  background-color: var(--mds-bg-surface-subtle);
+  color: var(--mds-text-subtle);
+}
+
+.mds-favourite-button:active:not(:disabled) {
+  background-color: var(--mds-bg-surface-strong);
+  color: var(--mds-text-default);
+}
+
+/* Selected states */
+.mds-favourite-button--selected {
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-link-primary-default);
+}
+
+.mds-favourite-button--selected:hover:not(:disabled) {
+  background-color: var(--mds-bg-surface-subtle);
+  color: var(--mds-text-link-primary-hover);
+}
+
+.mds-favourite-button--selected:active:not(:disabled) {
+  background-color: var(--mds-bg-surface-strong);
+  color: var(--mds-text-link-primary-default);
+}
+
+/* Disabled states */
+.mds-favourite-button:disabled {
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+}
+
+.mds-favourite-button--selected:disabled {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* Focus ring */
+.mds-favourite-button:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-favourite-button:focus-visible {
+  box-shadow: none;
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: 0;
+}
+
+/* link/index.css */
+.mds-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mds-spacing-xs);
+  color: var(--mds-text-link-primary-default);
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-regular);
+  font-size: var(--mds-font-size-paragraph-default);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mds-link:hover:not(:focus-visible) {
+  color: var(--mds-text-link-primary-hover);
+}
+
+.mds-link:active {
+  color: var(--mds-text-link-primary-hover);
+}
+
+/* Underline on hover applies only to the label text, not the icon.
+   Pressed state has no underline (Figma). Thickness and position use
+   from-font so the underline follows the font's own metrics. */
+.mds-link:hover:not(:focus-visible) .mds-link__label {
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+}
+
+/* Slide icon toward the label on hover using transform so the link node width
+   stays constant (gap remains --mds-spacing-xs; only the icon moves visually). */
+.mds-link:hover:not(:focus-visible) .mds-link__icon:first-child {
+  transform: translateX(var(--mds-spacing-xxs));
+}
+
+.mds-link:hover:not(:focus-visible) .mds-link__icon:last-child {
+  transform: translateX(calc(-1 * var(--mds-spacing-xxs)));
+}
+
+[dir=rtl] .mds-link:hover:not(:focus-visible) .mds-link__icon:first-child {
+  transform: translateX(calc(-1 * var(--mds-spacing-xxs)));
+}
+
+[dir=rtl] .mds-link:hover:not(:focus-visible) .mds-link__icon:last-child {
+  transform: translateX(var(--mds-spacing-xxs));
+}
+
+/* Reset icon position on press */
+.mds-link:active .mds-link__icon {
+  transform: none;
+}
+
+.mds-link:focus {
+  outline: none;
+}
+
+.mds-link:focus-visible {
+  /* Bottom-only focus underline matching Figma: 2px border-bottom, 1px gap below content */
+  outline: none;
+  border-radius: 0;
+  padding-bottom: var(--mds-spacing-offset);
+  border-bottom: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+}
+
+.mds-link.mds-link--secondary {
+  color: var(--mds-text-subtle);
+}
+
+.mds-link.mds-link--secondary:hover:not(:focus-visible),
+.mds-link.mds-link--secondary:active {
+  color: var(--mds-text-default);
+}
+
+.mds-link.mds-link--disabled,
+.mds-link.mds-link--disabled:hover,
+.mds-link.mds-link--disabled:active {
+  color: var(--mds-text-link-primary-disabled);
+  pointer-events: none;
+}
+
+.mds-link.mds-link--disabled .mds-link__icon,
+.mds-link.mds-link--disabled:hover .mds-link__icon,
+.mds-link.mds-link--disabled:active .mds-link__icon {
+  transform: none;
+}
+
+.mds-link.mds-link--disabled .mds-link__label,
+.mds-link.mds-link--disabled:hover .mds-link__label,
+.mds-link.mds-link--disabled:active .mds-link__label {
+  text-decoration: none;
+}
+
+.mds-link.mds-link--secondary.mds-link--disabled,
+.mds-link.mds-link--secondary.mds-link--disabled:hover,
+.mds-link.mds-link--secondary.mds-link--disabled:active {
+  color: var(--mds-text-muted);
+}
+
+.mds-link__icon,
+.mds-link__icon i,
+.mds-link__icon svg {
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  font-size: var(--mds-icons-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-link__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease;
+}
+
+.mds-link__label {
+  text-align: start;
+}
+
+/* nav-pill/index.css */
+/* Nav pill — compact navigation destination indicator */
+.mds-nav-pill,
+.mds-nav-pill:visited {
+  /* Reset anchor/link defaults */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mds-spacing-xxs);
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  border-radius: var(--mds-border-radius-md);
+  /* Label colour: unselected default */
+  color: var(--mds-text-subtle);
+  text-decoration: none;
+}
+
+.mds-nav-pill:hover,
+.mds-nav-pill:focus,
+.mds-nav-pill:active,
+.mds-nav-pill:visited {
+  text-decoration: none;
+}
+
+/* ---- Label ---- */
+.mds-nav-pill__label {
+  /* UI small — matches Figma: $font-size-sm / font-weight/medium / line-height/paragraph/xs */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-xs);
+  white-space: nowrap;
+}
+
+/* ---- Active-indicator dot (selected state only) ---- */
+.mds-nav-pill__indicator {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-interactive-primary-default);
+  flex-shrink: 0;
+}
+
+/* ---- Hover (unselected) ---- */
+.mds-nav-pill:hover:not([aria-disabled=true]):not(.mds-nav-pill--selected) {
+  background-color: var(--mds-bg-nav-pill-hover);
+}
+
+/* ---- Pressed / active (unselected) ---- */
+.mds-nav-pill:active:not([aria-disabled=true]):not(.mds-nav-pill--selected) {
+  background-color: var(--mds-bg-nav-pill-pressed);
+}
+
+/* ---- Focus-visible ring — keyboard navigation ---- */
+.mds-nav-pill:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.mds-nav-pill:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* ---- Disabled ---- */
+.mds-nav-pill[aria-disabled=true] {
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+  background-color: transparent;
+}
+
+/* ---- Selected state ---- */
+.mds-nav-pill--selected {
+  color: var(--mds-text-default);
+  background-color: var(--mds-bg-nav-pill-selected);
+}
+
+.mds-nav-pill--selected:visited {
+  color: var(--mds-text-default);
+}
+
+.mds-nav-pill--selected:hover:not([aria-disabled=true]) {
+  background-color: var(--mds-bg-nav-pill-selected);
+}
+
+/* pagination/index.css */
+.mds-pagination {
+  display: flex;
+  gap: var(--mds-spacing-xxs);
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: inherit;
+  direction: inherit;
+}
+
+/* Shared base styles for buttons and page items */
+.mds-pagination__button,
+.mds-pagination__page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  padding: var(--mds-spacing-xs);
+  border: var(--mds-stroke-weight-sm) solid transparent;
+  border-radius: var(--mds-border-radius-xs);
+  background-color: transparent;
+  color: var(--mds-text-default);
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Keep hover affordance on prev/next controls only. Page-number buttons must
+   switch state atomically to avoid visible handoff when ellipsis positions move. */
+.mds-pagination__button {
+  transition: background-color 150ms ease;
+}
+
+.mds-pagination__page {
+  transition: none;
+}
+
+.mds-pagination__button:hover:not(:disabled),
+.mds-pagination__page:hover:not(:disabled) {
+  background-color: var(--mds-bg-interactive-secondary-hover);
+}
+
+.mds-pagination__button:active:not(:disabled),
+.mds-pagination__page:active:not(:disabled) {
+  background-color: var(--mds-bg-interactive-secondary-active);
+}
+
+.mds-pagination__button:focus,
+.mds-pagination__page:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-pagination__button:focus-visible:not(:disabled),
+.mds-pagination__page:focus-visible:not(:disabled) {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-pagination__button:disabled,
+.mds-pagination__page:disabled {
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+}
+
+/* Icon sizing */
+.mds-pagination__button i {
+  /* width/font-size use --mds-icons-sm (= scale-600 = 1rem = 16px, the icon md size). */
+  width: var(--mds-icons-sm);
+  font-size: var(--mds-icons-sm);
+  line-height: var(--mds-line-height-paragraph-xs);
+}
+
+/* Full variant */
+.mds-pagination--full .mds-pagination__pages {
+  display: flex;
+  gap: var(--mds-spacing-xxs);
+  align-items: center;
+}
+
+/* Page items */
+.mds-pagination__page {
+  line-height: var(--mds-line-height-paragraph-xs);
+}
+
+/* Current page state */
+.mds-pagination__page[data-current=true] {
+  background-color: var(--mds-bg-interactive-primary-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-pagination__page[data-current=true]:disabled {
+  background-color: transparent;
+  color: var(--mds-text-muted);
+}
+
+.mds-pagination__page[data-current=true]:hover:not(:disabled) {
+  background-color: var(--mds-bg-interactive-primary-hover);
+}
+
+.mds-pagination__page[data-current=true]:active:not(:disabled) {
+  background-color: var(--mds-bg-interactive-primary-active);
+}
+
+.mds-pagination__page[data-current=true]:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* Ellipsis */
+.mds-pagination__ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  color: var(--mds-text-muted);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Grouped variant - only shows prev/next buttons */
+.mds-pagination--grouped .mds-pagination__pages {
+  display: none;
+}
+
+/* Grouped button styling */
+.mds-pagination--grouped .mds-pagination__button {
+  border-color: var(--mds-border-interactive-secondary-default);
+}
+
+/* Flip prev/next chevrons in RTL so they point in the correct travel direction */
+[dir=rtl] .mds-pagination__button i {
+  transform: scaleX(-1);
+}
+
+/* progress-bar/index.css */
+/* Wrapper layout */
+.mds-progress-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mds-spacing-xs);
+  /* 120px is intentionally has no token by design just as in Figma. */
+  min-width: 120px;
+  width: 100%;
+}
+
+/* Inline variant: bar on the left, count on the right in one row. */
+.mds-progress-bar.mds-progress-bar--label-inline {
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Track (outer container) */
+.mds-progress-bar-track.progress {
+  /* Re-state Bootstrap progress primitives here so host .progress overrides cannot drift MDS visuals. */
+  /* 0.375rem = 6px from Figma; intentionally has no token by design for consumer flexibility. */
+  display: flex;
+  height: 0.375rem;
+  overflow: hidden;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-feedback-secondary-default);
+  box-shadow: none;
+}
+
+/* In-progress and loading use the primary-subtle track. */
+.mds-progress-bar--in-progress .mds-progress-bar-track,
+.mds-progress-bar--loading .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-primary-subtle);
+}
+
+/* Error track. */
+.mds-progress-bar--error .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-danger-subtle);
+}
+
+/* Warning track. */
+.mds-progress-bar--warning .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-warning-subtle);
+}
+
+/* Completed and empty keep the default secondary track. */
+.mds-progress-bar--completed .mds-progress-bar-track,
+.mds-progress-bar--empty .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-secondary-default);
+}
+
+/* Inline variant: track should fill available row space. */
+.mds-progress-bar--label-inline .mds-progress-bar-track {
+  flex: 1 1 0;
+  min-inline-size: var(--mds-spacing-xxl);
+}
+
+/* Fill (inner progress indicator) */
+.mds-progress-bar-fill.progress-bar {
+  /* Keep core progress-bar behavior local so host --bs-progress-* token changes do not leak in. */
+  display: flex;
+  overflow: hidden;
+  background-color: var(--mds-bg-interactive-primary-default);
+  transition: width 0.3s ease;
+}
+
+/* Explicit striped styles avoid dependence on host Bootstrap variables. */
+.mds-progress-bar-fill.progress-bar-striped {
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  /* Figma loading pattern uses a larger tile than the 6px bar height. */
+  background-size: var(--mds-spacing-md) var(--mds-spacing-md);
+  background-repeat: repeat;
+  background-position-x: 0;
+}
+
+[dir=rtl] .mds-progress-bar-fill.progress-bar-striped {
+  background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+}
+
+.mds-progress-bar-fill.progress-bar-animated {
+  animation: mds-progress-bar-stripes 0.8s linear infinite;
+}
+
+[dir=rtl] .mds-progress-bar-fill.progress-bar-animated {
+  animation-name: mds-progress-bar-stripes-rtl;
+}
+
+@keyframes mds-progress-bar-stripes {
+  0% {
+    background-position-x: var(--mds-spacing-md);
+  }
+}
+@keyframes mds-progress-bar-stripes-rtl {
+  0% {
+    background-position-x: calc(var(--mds-spacing-md) * -1);
+  }
+}
+/* Error fill. */
+.mds-progress-bar--error .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-danger-default);
+}
+
+/* Warning fill. */
+.mds-progress-bar--warning .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-warning-default);
+}
+
+/* Completed fill. */
+.mds-progress-bar--completed .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-success-default);
+}
+
+/* Empty fill blends with the track. */
+.mds-progress-bar--empty .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-secondary-default);
+}
+
+/* Label container */
+.mds-progress-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--mds-spacing-xs);
+  width: 100%;
+  /* UI text/small */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing-default);
+  color: var(--mds-text-subtle);
+}
+
+/* Title text */
+.mds-progress-bar-title {
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-small);
+  word-break: break-word;
+}
+
+/* In title-and-count layout, title and count share one row and must both be able to shrink. */
+.mds-progress-bar--label-title-and-count .mds-progress-bar-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* Count / percentage text */
+.mds-progress-bar-count {
+  font-weight: var(--mds-font-weight-regular);
+  /* Inline count sits outside .mds-progress-bar-label, so it needs explicit text styles. */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing-default);
+  color: var(--mds-text-subtle);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+}
+
+/* In title-and-count layout, count is bounded to prevent hogging the row. */
+.mds-progress-bar--label-title-and-count .mds-progress-bar-count {
+  flex: 0 1 50%;
+  max-inline-size: 50%;
+  text-align: end;
+}
+
+/* In inline layout, count takes only what it needs, leaving space for the track. */
+.mds-progress-bar--label-inline .mds-progress-bar-count {
+  flex: 0 1 auto;
+  max-inline-size: 40%;
+  text-align: start;
+}
+
+/* radio/index.css */
+/* Parent element */
+.mds-form-check {
+  /* Grid layout: column 1 = input, column 2 = label. The feedback is then placed
+     explicitly into column 2 via grid-column so it aligns with the label without
+     requiring any offset calculation. Grid formatting context also suppresses
+     Bootstrap's float on the input child. */
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: start;
+  /* Prevent flex containers from stretching this element across the cross axis,
+     which would widen the grid and split the two auto columns equally, pushing
+     the label away from the input. start preserves content-sized behaviour. */
+  align-self: start;
+  /* min-height matches the icon-lg token (24px) so the wrapper never collapses
+     below the height of the radio indicator, regardless of label content. */
+  min-height: var(--mds-icons-lg, 1.5rem);
+  /* Reset Bootstrap's padding-inline-start — it exists to indent label text past a
+     floated input, which our grid layout does not use. column-gap handles the spacing. */
+  padding: var(--mds-spacing-none, 0);
+  /* column-gap keeps input and label spaced; row-gap gives breathing room above feedback */
+  column-gap: var(--mds-spacing-xs, 0.5rem);
+  row-gap: var(--mds-spacing-xxs, 0.25rem);
+  /* UI text/UI default */
+  font-family: var(--mds-font-family-base, Arial, sans-serif);
+  font-size: var(--mds-font-size-body, 1rem);
+  font-weight: var(--mds-font-weight-regular, 400);
+  line-height: var(--mds-line-height-paragraph-xs, 0.75rem);
+  letter-spacing: var(--mds-letter-spacing, 0);
+}
+
+/* Input element styles */
+.mds-form-check-input {
+  border-radius: var(--mds-border-radius-pill, 50rem);
+  border: var(--mds-stroke-weight-sm, 1px) solid var(--mds-border-interactive-secondary-default, #6a737b);
+  /* Use background-color, not the background shorthand — the shorthand resets
+     background-image to none, which wipes out Bootstrap's --bs-form-check-bg-image
+     (the inner dot SVG) on the checked state. */
+}
+
+/* Bootstrap's .form-check .form-check-input rule (specificity 0,2,0) sets float: left
+   and a negative margin-inline-start that causes overlap. Match its specificity to
+   ensure our flex-friendly reset wins regardless of load order. */
+.mds-form-check .mds-form-check-input {
+  margin: 0;
+  float: none;
+  background-color: var(--mds-bg-surface-default, #fff);
+}
+
+.mds-form-check-input:checked {
+  background-color: var(--mds-bg-interactive-primary-default);
+  border-color: transparent;
+}
+
+.mds-form-check-input:disabled {
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+.mds-form-check-input:disabled:checked {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+.mds-form-check-input.is-invalid {
+  border-color: var(--mds-border-interactive-danger-default);
+}
+
+.mds-form-check-input.is-invalid:checked {
+  background-color: var(--mds-bg-interactive-danger-default);
+  border-color: transparent;
+}
+
+/* Explicit rule for invalid + disabled to avoid relying on specificity cascade order.
+   Disabled takes visual precedence: use the disabled background/border, not the danger ones. */
+.mds-form-check-input.is-invalid:disabled {
+  background-color: var(--mds-bg-interactive-secondary-disabled);
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+.mds-form-check-input.is-invalid:disabled:checked {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  border-color: transparent;
+}
+
+/* is-valid (Bootstrap) and neutral feedback states are intentionally not supported.
+   Radio buttons surface a binary valid/invalid result; positive confirmation
+   is conveyed by form-level success messaging rather than per-input valid styling. */
+/* Hover styles are intentionally omitted. The radio input relies on the OS/browser
+   default appearance for hover; no design token exists for a radio hover state. */
+/* Focus ring: Only outline + outline-offset allowed (no box-shadow or border).
+  See .github/instructions/components.instructions.md for full rules and rationale. */
+.mds-form-check-input:focus,
+.mds-form-check-input.is-invalid:focus {
+  /* Reset Bootstrap's :focus box-shadow; our ring is applied on :focus-visible only */
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-form-check-input:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-form-check-input.is-invalid:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-border-feedback-danger);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* Label element styles */
+.mds-form-check .form-check-label,
+.mds-form-check .mds-form-check-label {
+  color: var(--mds-text-default, #1d2125);
+}
+
+/* Use sibling selector so the label reflects the input's disabled/invalid state */
+.mds-form-check .mds-form-check-input:disabled ~ .form-check-label,
+.mds-form-check .mds-form-check-input:disabled ~ .mds-form-check-label {
+  color: var(--mds-text-muted);
+}
+
+.mds-form-check .mds-form-check-input.is-invalid ~ .form-check-label,
+.mds-form-check .mds-form-check-input.is-invalid ~ .mds-form-check-label {
+  color: var(--mds-text-danger);
+}
+
+/* Feedback element styles — UI text/UI small */
+.mds-form-check .invalid-feedback,
+.mds-form-check .mds-form-check-feedback {
+  /* Place feedback in column 2 (the label column) so it aligns with the label
+     regardless of input size or font-size differences. Row placement is automatic. */
+  grid-column: 2;
+  font-size: var(--mds-font-size-paragraph-small, 0.875rem);
+  font-weight: var(--mds-font-weight-medium, 500);
+  line-height: var(--mds-line-height-paragraph-xs, 0.75rem);
+  color: var(--mds-text-danger);
+}
+
+/* Dim the feedback when the input is disabled to match the reduced visual weight of
+   the label and input; keeps the feedback legible without implying it is actionable. */
+.mds-form-check:has(.mds-form-check-input:disabled) .invalid-feedback,
+.mds-form-check:has(.mds-form-check-input:disabled) .mds-form-check-feedback {
+  opacity: 0.5;
+}
+
 /*!
  * Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
