@@ -98,9 +98,10 @@ function filter_tex_updatedcallback($name) {
     global $CFG, $DB;
     reset_text_filters_cache();
 
-    if (file_exists("$CFG->dataroot/filter/tex")) {
-        remove_dir("$CFG->dataroot/filter/tex");
-    }
+    $syscontext = \core\context\system::instance();
+    get_file_storage()->delete_area_files($syscontext->id, 'filter_tex', 'rendered_images');
+    \cache_helper::purge_by_definition('filter_tex', 'rendered_images');
+
     if (file_exists("$CFG->tempdir/latex")) {
         remove_dir("$CFG->tempdir/latex");
     }

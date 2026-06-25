@@ -60,5 +60,45 @@ function xmldb_filter_tex_upgrade($oldversion) {
     // Automatically generated Moodle v5.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2026062500) {
+        global $CFG;
+
+        // Migrate existing rendered images from the legacy dataroot location to the Moodle file system,
+        // then remove the old directory. Images not migrated (corrupt/unreadable) will be re-rendered.
+        $olddir = str_replace('\\', '/', "{$CFG->dataroot}/filter/tex");
+        if (file_exists($olddir) && is_dir($olddir)) {
+            $syscontext = \core\context\system::instance();
+            $fs = get_file_storage();
+
+            $files = array_merge(
+                glob($olddir . '/*.png') ?: [],
+                glob($olddir . '/*.gif') ?: [],
+                glob($olddir . '/*.svg') ?: [],
+            );
+            foreach ($files as $filepath) {
+                $filename = basename($filepath);
+                if ($fs->file_exists($syscontext->id, 'filter_tex', 'rendered_images', 0, '/', $filename)) {
+                    continue;
+                }
+                $filerecord = [
+                    'contextid' => $syscontext->id,
+                    'component' => 'filter_tex',
+                    'filearea' => 'rendered_images',
+                    'itemid' => 0,
+                    'filepath' => '/',
+                    'filename' => $filename,
+                ];
+                try {
+                    $fs->create_file_from_pathname($filerecord, $filepath);
+                } catch (\stored_file_creation_exception) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+                    // Corrupt or unreadable images will be re-rendered on demand.
+                }
+            }
+            remove_dir($olddir);
+        }
+
+        upgrade_plugin_savepoint(true, 2026062500, 'filter', 'tex');
+    }
+
     return true;
 }
