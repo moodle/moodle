@@ -21,6 +21,7 @@ use coding_exception;
 use context;
 use context_module;
 use core_question\local\bank\question_version_status;
+use core_question\local\bank\random_question_loader;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use moodle_exception;
@@ -579,51 +580,38 @@ class quiz_settings {
      *
      * @param boolean $includepotential if the quiz include random questions,
      *      setting this flag to true will make the function to return all the
-     *      possible question types in the random questions category.
+     *      possible question types matching random question filters.
      * @return array a sorted array including the different question types.
      * @since  Moodle 3.1
      */
     public function get_all_question_types_used($includepotential = false) {
         $questiontypes = [];
-
-        // To control if we need to look in categories for questions.
-        $qcategories = [];
+        $loadedconditions = [];
 
         foreach ($this->get_questions(null, false) as $questiondata) {
             if ($questiondata->status == question_version_status::QUESTION_STATUS_DRAFT) {
                 // Skip questions where all versions are draft.
                 continue;
             }
-            if ($questiondata->qtype === 'random' && $includepotential) {
-                $filtercondition = $questiondata->filtercondition;
-                if (!empty($filtercondition)) {
-                    $filter = $filtercondition['filter'];
-                    if (isset($filter['category'])) {
-                        foreach ($filter['category']['values'] as $catid) {
-                            $qcategories[$catid] = $filter['category']['filteroptions']['includesubcategories'];
+            if ($questiondata->qtype === 'random') {
+                if ($includepotential) {
+                    $filtercondition = $questiondata->filtercondition;
+                    if (!empty($filtercondition) && !in_array($filtercondition, $loadedconditions)) {
+                        $loader = new random_question_loader(new \qubaid_list([]));
+                        $potentials = $loader->get_filtered_questions($filtercondition['filter'], 0);
+                        foreach ($potentials as $potential) {
+                            if (!in_array($potential->qtype, $questiontypes)) {
+                                $questiontypes[] = $potential->qtype;
+                            }
                         }
+                        $loadedconditions[] = $filtercondition; // Save re-loading the same pool of questions used multiple times.
                     }
                 }
-            } else {
-                if (!in_array($questiondata->qtype, $questiontypes)) {
-                    $questiontypes[] = $questiondata->qtype;
-                }
+            } else if (!in_array($questiondata->qtype, $questiontypes)) {
+                $questiontypes[] = $questiondata->qtype;
             }
         }
 
-        if (!empty($qcategories)) {
-            // We have to look for all the question types in these categories.
-            $categoriestolook = [];
-            foreach ($qcategories as $cat => $includesubcats) {
-                if ($includesubcats) {
-                    $categoriestolook = array_merge($categoriestolook, question_categorylist($cat));
-                } else {
-                    $categoriestolook[] = $cat;
-                }
-            }
-            $questiontypesincategories = question_bank::get_all_question_types_in_categories($categoriestolook);
-            $questiontypes = array_merge($questiontypes, $questiontypesincategories);
-        }
         $questiontypes = array_unique($questiontypes);
         sort($questiontypes);
 
