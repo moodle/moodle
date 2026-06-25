@@ -729,7 +729,7 @@ EOF;
      * @return int
      */
     public function get_user_limit(): int {
-        if ((boolean) config::get('userlimit_editable')) {
+        if ((bool) config::get('userlimit_editable')) {
             return intval($this->get_instance_var('userlimit'));
         }
 
@@ -1233,7 +1233,7 @@ EOF;
      * @return bool
      */
     public function should_record() {
-        return (boolean) config::recordings_enabled() && $this->is_recorded();
+        return (bool) config::recordings_enabled() && $this->is_recorded();
     }
 
     /**

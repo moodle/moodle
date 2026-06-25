@@ -36,7 +36,7 @@ $relativepath = get_file_argument('pix.php');
 $args = explode('/', trim($relativepath, '/'));
 
 if (count($args) == 2) {
-    $userid = (integer)$args[0];
+    $userid = (int)$args[0];
     if ($args[1] === 'f1.jpg') {
         $image = 'f1';
     } else {

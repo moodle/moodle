@@ -772,9 +772,9 @@ final class imsenterprise_test extends \advanced_testcase {
 
         // Check all categories except the last subcategory was created.
         $parentcatid = $DB->get_field('course_categories', 'id', array('idnumber' => $topcatidnumber));
-        $this->assertTrue((boolean)$parentcatid);
+        $this->assertTrue((bool)$parentcatid);
         $subcatid = $DB->get_field('course_categories', 'id', array('idnumber' => $subcatidnumber, 'parent' => $parentcatid));
-        $this->assertFalse((boolean)$subcatid);
+        $this->assertFalse((bool)$subcatid);
 
         // Check course was put in default category.
         $defaultcat = \core_course_category::get_default();

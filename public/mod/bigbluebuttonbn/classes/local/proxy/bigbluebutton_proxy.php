@@ -165,7 +165,7 @@ class bigbluebutton_proxy extends proxy_base {
             $cache->set('serverversion', $serverversion);
         }
 
-        return (double) $serverversion;
+        return (float) $serverversion;
     }
 
     /**

@@ -541,7 +541,7 @@ class profile_field_base {
      * @return bool
      */
     public function is_required() {
-        return (boolean)$this->field->required;
+        return (bool)$this->field->required;
     }
 
     /**
@@ -550,7 +550,7 @@ class profile_field_base {
      * @return bool
      */
     public function is_locked() {
-        return (boolean)$this->field->locked;
+        return (bool)$this->field->locked;
     }
 
     /**
@@ -559,7 +559,7 @@ class profile_field_base {
      * @return bool
      */
     public function is_unique() {
-        return (boolean)$this->field->forceunique;
+        return (bool)$this->field->forceunique;
     }
 
     /**
@@ -568,7 +568,7 @@ class profile_field_base {
      * @return bool
      */
     public function is_signup_field() {
-        return (boolean)$this->field->signup;
+        return (bool)$this->field->signup;
     }
 
     /**

@@ -299,7 +299,7 @@ abstract class moodle_list {
         \core\deprecation::emit_deprecation([$this, __FUNCTION__]);
         $html = '';
         $topcount = count($this->items);
-        $this->pagecount = (integer) ceil(($topcount + $this->offset)/ QUESTION_PAGE_LENGTH );
+        $this->pagecount = (int) ceil(($topcount + $this->offset) / QUESTION_PAGE_LENGTH);
         if (!empty($this->page) && ($this->paged)) {
             $html = "<div class=\"paging\">".get_string('page').":\n";
             foreach (range(1,$this->pagecount) as $currentpage) {

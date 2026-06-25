@@ -157,7 +157,7 @@ class settings {
             $this->section,
             get_string('config_general', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_general_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_general_shown()) && ($this->moduleenabled)
         );
         if ($this->admin->fulltree) {
             // Configuration for BigBlueButton.
@@ -245,7 +245,7 @@ class settings {
             "{$this->sectionnameprefix}_default_messages",
             get_string('config_default_messages', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_default_messages_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_default_messages_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -292,7 +292,7 @@ class settings {
             "{$this->sectionnameprefix}_recording",
             get_string('config_recording', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_record_meeting_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_record_meeting_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -415,7 +415,7 @@ class settings {
             "{$this->sectionnameprefix}_importrecording",
             get_string('config_importrecordings', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_import_recordings_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_import_recordings_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -460,7 +460,7 @@ class settings {
             "{$this->sectionnameprefix}_showrecordings",
             get_string('config_recordings', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_show_recordings_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_show_recordings_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -571,7 +571,7 @@ class settings {
             "{$this->sectionnameprefix}_waitformoderator",
             get_string('config_waitformoderator', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_wait_moderator_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_wait_moderator_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -640,7 +640,7 @@ class settings {
             "{$this->sectionnameprefix}_voicebridge",
             get_string('config_voicebridge', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_static_voice_bridge_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_static_voice_bridge_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -674,7 +674,7 @@ class settings {
             "{$this->sectionnameprefix}_preupload",
             get_string('config_preuploadpresentation', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_preupload_presentation_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_preupload_presentation_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -749,7 +749,7 @@ class settings {
             "{$this->sectionnameprefix}_userlimit",
             get_string('config_userlimit', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_user_limit_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_user_limit_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -796,7 +796,7 @@ class settings {
             "{$this->sectionnameprefix}_participant",
             get_string('config_participant', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_moderator_default_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_moderator_default_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -837,7 +837,7 @@ class settings {
             "{$this->sectionnameprefix}_muteonstart",
             get_string('config_muteonstart', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_muteonstart_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_muteonstart_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {
@@ -881,7 +881,7 @@ class settings {
             "{$this->sectionnameprefix}_locksettings",
             get_string('config_locksettings', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_lock_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_lock_shown()) && ($this->moduleenabled)
         );
         // Configuration for various lock settings for meetings.
         if ($this->admin->fulltree) {
@@ -903,7 +903,7 @@ class settings {
      */
     protected function add_lock_setting_from_name(string $settingname, admin_settingpage $lockingsetting): void {
         $validatorname = "section_{$settingname}_shown";
-        if ((boolean) setting_validator::$validatorname()) {
+        if ((bool) setting_validator::$validatorname()) {
             // Configuration for BigBlueButton.
             $item = new admin_setting_configcheckbox(
                     'bigbluebuttonbn_' . $settingname . '_default',
@@ -939,7 +939,7 @@ class settings {
             "{$this->sectionnameprefix}_extendedcapabilities",
             get_string('config_extended_capabilities', 'bigbluebuttonbn'),
             'moodle/site:config',
-            !((boolean) setting_validator::section_settings_extended_shown()) && ($this->moduleenabled)
+            !((bool) setting_validator::section_settings_extended_shown()) && ($this->moduleenabled)
         );
 
         if ($this->admin->fulltree) {

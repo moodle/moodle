@@ -64,21 +64,21 @@ final class course_competency_settings_test extends \advanced_testcase {
         set_config('pushcourseratingstouserplans', true, 'core_competency');
 
         $coursesettings = course_competency_settings::get_by_courseid($c1->id);
-        $this->assertTrue((boolean)$coursesettings->get('pushratingstouserplans'));
+        $this->assertTrue((bool)$coursesettings->get('pushratingstouserplans'));
 
         set_config('pushcourseratingstouserplans', false, 'core_competency');
 
         $coursesettings = course_competency_settings::get_by_courseid($c1->id);
-        $this->assertFalse((boolean)$coursesettings->get('pushratingstouserplans'));
+        $this->assertFalse((bool)$coursesettings->get('pushratingstouserplans'));
 
         api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => true));
         $coursesettings = course_competency_settings::get_by_courseid($c1->id);
-        $this->assertTrue((boolean)$coursesettings->get('pushratingstouserplans'));
+        $this->assertTrue((bool)$coursesettings->get('pushratingstouserplans'));
 
         set_config('pushcourseratingstouserplans', true, 'core_competency');
         api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => false));
         $coursesettings = course_competency_settings::get_by_courseid($c1->id);
-        $this->assertFalse((boolean)$coursesettings->get('pushratingstouserplans'));
+        $this->assertFalse((bool)$coursesettings->get('pushratingstouserplans'));
 
         // Right now the setting is false.
         api::grade_competency_in_course($c1->id, $u1->id, $comp1->get('id'), 1, 'Note');

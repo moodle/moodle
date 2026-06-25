@@ -195,19 +195,19 @@ final class oauth2_test extends \advanced_testcase {
 
         api::enable_issuer($issuerid);
         $check = api::get_issuer($issuer->get('id'));
-        $this->assertTrue((boolean)$check->get('enabled'));
+        $this->assertTrue((bool)$check->get('enabled'));
 
         api::enable_issuer($issuerid);
         $check = api::get_issuer($issuer->get('id'));
-        $this->assertTrue((boolean)$check->get('enabled'));
+        $this->assertTrue((bool)$check->get('enabled'));
 
         api::disable_issuer($issuerid);
         $check = api::get_issuer($issuer->get('id'));
-        $this->assertFalse((boolean)$check->get('enabled'));
+        $this->assertFalse((bool)$check->get('enabled'));
 
         api::enable_issuer($issuerid);
         $check = api::get_issuer($issuer->get('id'));
-        $this->assertTrue((boolean)$check->get('enabled'));
+        $this->assertTrue((bool)$check->get('enabled'));
     }
 
     /**
