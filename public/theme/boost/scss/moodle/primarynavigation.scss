@@ -18,6 +18,27 @@
     }
 }
 
+.editmode-switch-form {
+    .form-check.form-switch .form-check-input {
+        background-image: escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$gray-600}'/></svg>"));
+        background-color: var(--#{$prefix}gray-400);
+        border: none;
+
+        &:checked {
+            background-image: escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$white}'/></svg>"));
+            background-color: var(--#{$prefix}primary);
+            border: none;
+        }
+
+        &:focus {
+            border-color: transparent;
+            box-shadow: none;
+            outline: 2px solid var(--#{$prefix}primary);
+            outline-offset: 1px;
+        }
+    }
+}
+
 .drawer-primary .drawercontent {
     padding: 0;
 
