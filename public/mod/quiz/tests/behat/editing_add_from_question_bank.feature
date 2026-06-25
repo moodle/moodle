@@ -21,30 +21,22 @@ Feature: Adding questions to a quiz from the question bank
       | qbank    | Question Bank A                                                                                                  | Question Bank A for testing qbank name   | C1     | qbankA   |
       | qbank    | Question Bank B                                                                                                  | Question Bank B for testing qbank name   | C1     | qbankB   |
     And the following "question categories" exist:
-      | contextlevel    | reference  | name              |
-      | Activity module | quiz1      | Test questions    |
-      | Activity module | qbank1     | Qbank questions   |
-      | Activity module | qbankA     | Qbank Questions 1 |
-      | Activity module | qbankB     | Qbank Questions 2 |
+      | contextlevel    | reference | name              |
+      | Activity module | quiz1     | Test questions    |
+      | Activity module | qbank1    | Qbank questions   |
+      | Activity module | qbankA    | Qbank Questions 1 |
+      | Activity module | qbankB    | Qbank Questions 2 |
     And the following "questions" exist:
-      | questioncategory  | qtype     | name             | user     | questiontext     | idnumber |
-      | Test questions    | essay     | question 01 name | admin    | Question 01 text |          |
-      | Test questions    | essay     | question 02 name | teacher1 | Question 02 text | qidnum   |
-      | Qbank questions   | essay     | question 03 name | teacher1 | Question 03 text | q3idnum  |
-      | Qbank questions   | essay     | question 04 name | teacher1 | Question 04 text | q4idnum  |
-      | Qbank Questions 1 | truefalse | TF1              | admin    | Qbank 1 question |          |
-      | Qbank Questions 2 | truefalse | TF2              | admin    | Qbank 2 question |          |
+      | questioncategory  | qtype     | name             | user     | questiontext     | idnumber | tags      |
+      | Test questions    | essay     | question 01 name | admin    | Question 01 text |          | foo       |
+      | Test questions    | essay     | question 02 name | teacher1 | Question 02 text | qidnum   | bar       |
+      | Qbank questions   | essay     | question 03 name | teacher1 | Question 03 text | q3idnum  | qbanktag1 |
+      | Qbank questions   | essay     | question 04 name | teacher1 | Question 04 text | q4idnum  | qbanktag2 |
+      | Qbank Questions 1 | truefalse | TF1              | admin    | Qbank 1 question |          |           |
+      | Qbank Questions 2 | truefalse | TF2              | admin    | Qbank 2 question |          |           |
 
   Scenario: The questions can be filtered by tag
-    Given I am on the "question 01 name" "core_question > edit" page logged in as teacher1
-    And I set the following fields to these values:
-      | Tags | foo |
-    And I press "id_submitbutton"
-    And I choose "Edit question" action for "question 02 name" in the question bank
-    And I set the following fields to these values:
-      | Tags | bar |
-    And I press "id_submitbutton"
-    When I am on the "Quiz 1" "mod_quiz > Edit" page
+    Given I am on the "Quiz 1" "mod_quiz > edit" page logged in as teacher1
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And I apply question bank filter "Category" with value "Test questions"
@@ -58,15 +50,7 @@ Feature: Adding questions to a quiz from the question bank
   Scenario: The questions can be filtered by tag on a shared question bank
     Given the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
-    And I am on the "question 03 name" "core_question > edit" page logged in as teacher1
-    And I set the following fields to these values:
-      | Tags | qbanktag1 |
-    And I press "Save changes"
-    And I am on the "question 04 name" "core_question > edit" page logged in as teacher1
-    And I set the following fields to these values:
-      | Tags | qbanktag2 |
-    And I press "Save changes"
-    When I am on the "Quiz 1" "mod_quiz > Edit" page
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And I click on "Switch bank" "button"
@@ -80,8 +64,8 @@ Feature: Adding questions to a quiz from the question bank
 
   Scenario: The question modal can be paginated
     Given the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | quiz1    | My collection  |
+      | contextlevel    | reference | name          |
+      | Activity module | quiz1     | My collection |
     And 45 "questions" exist with the following data:
       | questioncategory | My collection             |
       | qtype            | essay                     |
@@ -118,8 +102,8 @@ Feature: Adding questions to a quiz from the question bank
 
   Scenario: After closing and reopening the modal, it still works
     Given the following "question categories" exist:
-      | contextlevel    | reference | name           |
-      | Activity module | quiz1     | My collection  |
+      | contextlevel    | reference | name          |
+      | Activity module | quiz1     | My collection |
     And the following "question" exists:
       | questioncategory | My collection     |
       | qtype            | essay             |
@@ -204,8 +188,8 @@ Feature: Adding questions to a quiz from the question bank
   @javascript
   Scenario: Validate the sorting while adding questions from question bank
     Given the following "questions" exist:
-      | questioncategory | qtype       | name              | questiontext          |
-      | Test questions   | multichoice | question 03 name  | question 03 name text |
+      | questioncategory | qtype       | name             | questiontext          |
+      | Test questions   | multichoice | question 03 name | question 03 name text |
     And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "from question bank"
@@ -276,8 +260,8 @@ Feature: Adding questions to a quiz from the question bank
       | fullname | shortname | category |
       | Course 2 | C2        | 0        |
     And the following "activities" exist:
-      | activity   | name            | course | idnumber |
-      | qbank      | Question Bank C | C2     | qbankC   |
+      | activity | name            | course | idnumber |
+      | qbank    | Question Bank C | C2     | qbankC   |
     And the following "question categories" exist:
       | contextlevel    | reference | name              |
       | Activity module | qbankC    | Qbank Questions 3 |
