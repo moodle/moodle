@@ -32260,8 +32260,24 @@ body.drawer-ease {
   visibility: visible;
 }
 .drawer.drawer-right .drawertoggle {
-  margin-left: auto;
-  margin-right: 0.5rem;
+  width: 40px;
+  height: 40px;
+  background-color: #e9ecef;
+}
+.drawer.drawer-right .drawertoggle:hover {
+  background-color: #ced4da;
+}
+.drawer.drawer-right .drawerheader {
+  height: auto;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  padding-block: 1rem;
+}
+.drawer.drawer-right .drawerheader .draweractions {
+  gap: 0;
+}
+.drawer.drawer-right .block-header:has(> h3, > .h3) {
+  border-bottom: 1px solid #dee2e6;
 }
 .drawer.drawer-left {
   transition: left 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
@@ -32375,8 +32391,28 @@ body.drawer-ease {
 }
 @media (max-width: 991.98px) {
   .drawer-md.drawer-right .drawertoggle {
-    margin-left: auto;
-    margin-right: 0.5rem;
+    width: 40px;
+    height: 40px;
+    background-color: #e9ecef;
+  }
+  .drawer-md.drawer-right .drawertoggle:hover {
+    background-color: #ced4da;
+  }
+}
+@media (max-width: 991.98px) {
+  .drawer-md.drawer-right .drawerheader {
+    height: auto;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    padding-block: 1rem;
+  }
+  .drawer-md.drawer-right .drawerheader .draweractions {
+    gap: 0;
+  }
+}
+@media (max-width: 991.98px) {
+  .drawer-md.drawer-right .block-header:has(> h3, > .h3) {
+    border-bottom: 1px solid #dee2e6;
   }
 }
 @media (max-width: 991.98px) {
@@ -32461,8 +32497,28 @@ body.drawer-ease {
 }
 @media (max-width: 767.98px) {
   .drawer-sm.drawer-right .drawertoggle {
-    margin-left: auto;
-    margin-right: 0.5rem;
+    width: 40px;
+    height: 40px;
+    background-color: #e9ecef;
+  }
+  .drawer-sm.drawer-right .drawertoggle:hover {
+    background-color: #ced4da;
+  }
+}
+@media (max-width: 767.98px) {
+  .drawer-sm.drawer-right .drawerheader {
+    height: auto;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    padding-block: 1rem;
+  }
+  .drawer-sm.drawer-right .drawerheader .draweractions {
+    gap: 0;
+  }
+}
+@media (max-width: 767.98px) {
+  .drawer-sm.drawer-right .block-header:has(> h3, > .h3) {
+    border-bottom: 1px solid #dee2e6;
   }
 }
 @media (max-width: 767.98px) {
@@ -39647,7 +39703,7 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
 }
 .drawer-toggles .drawer-toggler .btn {
   margin: auto 16px;
-  background-color: #dee2e6;
+  background-color: #e9ecef;
   width: 40px;
   height: 40px;
 }
