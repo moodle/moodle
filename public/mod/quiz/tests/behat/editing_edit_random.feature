@@ -24,17 +24,10 @@ Feature: Editing random questions already in a quiz based on category and tags
       | Activity module | quiz1     | Questions Category 2|
       | Activity module | qbank1    | Questions Category 3|
     And the following "questions" exist:
-      | questioncategory     | qtype | name            | user     | questiontext    |
-      | Questions Category 1 | essay | question 1 name | admin    | Question 1 text |
-      | Questions Category 1 | essay | question 2 name | teacher1 | Question 2 text |
-      | Questions Category 3 | essay | question 3 name | teacher1 | Question 3 text |
-    And the following "core_question > Tags" exist:
-      | question        | tag   |
-      | question 1 name | easy  |
-      | question 1 name | essay |
-      | question 2 name | hard  |
-      | question 2 name | essay |
-      | question 3 name | essay |
+      | questioncategory     | qtype | name            | user     | questiontext    | tags        |
+      | Questions Category 1 | essay | question 1 name | admin    | Question 1 text | easy, essay |
+      | Questions Category 1 | essay | question 2 name | teacher1 | Question 2 text | hard, essay |
+      | Questions Category 3 | essay | question 3 name | teacher1 | Question 3 text | essay       |
 
   Scenario: Editing tags on one slot does not delete the rest
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
