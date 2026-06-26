@@ -156,6 +156,8 @@ $courseindex-item-current: $primary !default;
         // Completion.
         .completioninfo {
             min-width: 24px;
+            display: inline-flex;
+            align-items: center;
 
             &.completion_complete {
                 color: $success;
