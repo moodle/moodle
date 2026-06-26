@@ -48,12 +48,12 @@ function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree
     $context = context_user::instance($user->id);
     $courseid = empty($course) ? 0 : $course->id;
 
-    // Site badges link - shown on site profile when at least one non-archived site badge exists.
+    // Site badges link - shown on site profile when at least one active site badge exists.
     if ($courseid == 0) {
         $hassitebadges = $DB->record_exists_select(
             'badge',
-            'status != :archived AND type = :type',
-            ['archived' => BADGE_STATUS_ARCHIVED, 'type' => BADGE_TYPE_SITE]
+            '(status = :active OR status = :activelocked) AND type = :type',
+            ['active' => BADGE_STATUS_ACTIVE, 'activelocked' => BADGE_STATUS_ACTIVE_LOCKED, 'type' => BADGE_TYPE_SITE]
         );
         if ($hassitebadges) {
             $url = new moodle_url('/badges/index.php', ['type' => BADGE_TYPE_SITE]);

@@ -55,3 +55,15 @@ Feature: Site badges link on user profile
     And I log in as "admin"
     And I follow "Profile" in the user menu
     Then I should not see "Site badges"
+
+  @javascript
+  Scenario: Badges section is hidden on user profile when only archived site badges exist
+    Given the following "core_badges > Badge" exists:
+      | name        | Archived site badge          |
+      | description | Test badge description       |
+      | image       | badges/tests/behat/badge.png |
+      | status      | 4                            |
+      | type        | 1                            |
+    And I log in as "admin"
+    And I follow "Profile" in the user menu
+    Then I should not see "Site badges"

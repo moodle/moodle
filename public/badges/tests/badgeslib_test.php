@@ -823,6 +823,89 @@ final class badgeslib_test extends badges_testcase {
     }
 
     /**
+     * Tests that the site badges link is shown when an active site badge exists.
+     *
+     * @covers ::core_badges_myprofile_navigation
+     */
+    public function test_core_badges_myprofile_navigation_sitebadges_link_shown(): void {
+        global $DB;
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+
+        // Activate the site badge so it appears to all users.
+        $DB->set_field('badge', 'status', BADGE_STATUS_ACTIVE, ['id' => $this->badgeid]);
+
+        set_config('enablebadges', true);
+
+        core_badges_myprofile_navigation($tree, $this->user, false, null);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $this->assertArrayHasKey('sitebadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests that the site badges link is not shown when no active site badges exist.
+     *
+     * @covers ::core_badges_myprofile_navigation
+     */
+    public function test_core_badges_myprofile_navigation_sitebadges_link_no_active_badges(): void {
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+
+        // The default site badge fixture has BADGE_STATUS_INACTIVE — no active site badges.
+        set_config('enablebadges', true);
+
+        core_badges_myprofile_navigation($tree, $this->user, false, null);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $this->assertArrayNotHasKey('sitebadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests that the site badges link is not shown when only archived site badges exist.
+     *
+     * @covers ::core_badges_myprofile_navigation
+     */
+    public function test_core_badges_myprofile_navigation_sitebadges_link_archived_only(): void {
+        global $DB;
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+
+        // Archive the site badge.
+        $DB->set_field('badge', 'status', BADGE_STATUS_ARCHIVED, ['id' => $this->badgeid]);
+
+        set_config('enablebadges', true);
+
+        core_badges_myprofile_navigation($tree, $this->user, false, null);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $this->assertArrayNotHasKey('sitebadges', $nodes->getValue($tree));
+    }
+
+    /**
+     * Tests that the site badges link is not shown on a course profile page.
+     *
+     * @covers ::core_badges_myprofile_navigation
+     */
+    public function test_core_badges_myprofile_navigation_sitebadges_link_not_on_course_profile(): void {
+        global $DB;
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+
+        // Activate the site badge.
+        $DB->set_field('badge', 'status', BADGE_STATUS_ACTIVE, ['id' => $this->badgeid]);
+
+        set_config('enablebadges', true);
+        set_config('badges_allowcoursebadges', true);
+
+        // Pass a course — site badges link must not appear on a course profile.
+        core_badges_myprofile_navigation($tree, $this->user, false, $this->course);
+        $reflector = new ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $this->assertArrayNotHasKey('sitebadges', $nodes->getValue($tree));
+    }
+
+    /**
      * Test insert and update endorsement with a site badge.
      */
     public function test_badge_endorsement(): void {
