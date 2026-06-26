@@ -40930,6 +40930,8 @@ div.editor_atto_toolbar button .icon {
 }
 .courseindex .courseindex-item .completioninfo {
   min-width: 20px;
+  display: inline-flex;
+  align-items: center;
 }
 .courseindex .courseindex-item .completioninfo.completion_complete {
   color: #357a32;
