@@ -198,8 +198,6 @@ function outputText($texexp) {
 }
 
 function tex2image($texexp, $md5, $return=false) {
-    global $CFG;
-
     if (!$texexp) {
         echo 'No tex expresion specified';
         return;
@@ -207,13 +205,6 @@ function tex2image($texexp, $md5, $return=false) {
 
     $convertformat = get_config('filter_algebra', 'convertformat');
     $image = $md5 . ".{$convertformat}";
-    if (!file_exists("$CFG->dataroot/filter/algebra")) {
-        make_upload_directory("filter/algebra");
-    }
-    $pathname = "$CFG->dataroot/filter/algebra/$image";
-    if (file_exists($pathname)) {
-        unlink($pathname);
-    }
 
     // Render with LaTeX.
     $latex = new latex('filter_algebra');
@@ -221,12 +212,27 @@ function tex2image($texexp, $md5, $return=false) {
     $background = get_config('filter_algebra', 'latexbackground');
     $lateximage = $latex->render($texexp, $image, 12, $density, $background);
 
+    if ($lateximage) {
+        $syscontext = context_system::instance();
+        $fs = get_file_storage();
+        if (!$fs->file_exists($syscontext->id, 'filter_algebra', 'rendered_images', 0, '/', $image)) {
+            $filerecord = [
+                'contextid' => $syscontext->id,
+                'component' => 'filter_algebra',
+                'filearea' => 'rendered_images',
+                'itemid' => 0,
+                'filepath' => '/',
+                'filename' => $image,
+            ];
+            $fs->create_file_from_pathname($filerecord, $lateximage);
+        }
+    }
+
     if ($return) {
         return $image;
     }
     if ($lateximage) {
-        copy($lateximage, $pathname);
-        send_file($pathname, $image);
+        send_file($lateximage, $image);
     } else {
         echo "Image not found!<br />";
         echo "Please check that LaTeX tools are properly configured in the filter settings.";

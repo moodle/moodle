@@ -33,9 +33,10 @@ function filter_algebra_updatedcallback($name) {
     global $CFG, $DB;
     reset_text_filters_cache();
 
-    if (file_exists("$CFG->dataroot/filter/algebra")) {
-        remove_dir("$CFG->dataroot/filter/algebra");
-    }
+    $syscontext = \core\context\system::instance();
+    get_file_storage()->delete_area_files($syscontext->id, 'filter_algebra', 'rendered_images');
+    \cache_helper::purge_by_definition('filter_algebra', 'rendered_images');
+
     if (file_exists("$CFG->tempdir/latex")) {
         remove_dir("$CFG->tempdir/latex");
     }

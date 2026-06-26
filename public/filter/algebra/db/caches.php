@@ -15,16 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tex filter
+ * Cache definitions for filter_algebra.
  *
- * @package    filter
- * @subpackage tex
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @package    filter_algebra
+ * @copyright  2026 Yusuf Wibisono <yusuf.wibisono@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026062500;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2026041000;        // Requires this Moodle version.
-$plugin->component = 'filter_tex';      // Full name of the plugin (used for diagnostics)
+$definitions = [
+    'rendered_images' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 100,
+    ],
+];

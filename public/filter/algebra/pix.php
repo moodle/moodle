@@ -1,5 +1,5 @@
 <?php
-      // This function fetches math. images from the data directory
+      // This function fetches math. images from the file storage
       // If not, it obtains the corresponding TeX expression from the cache_filters db table
       // and uses LaTeX to create the image file.
 
@@ -23,22 +23,22 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
 
     if (count($args) == 1) {
         $image    = $args[0];
-        $pathname = $CFG->dataroot.'/filter/algebra/'.$image;
     } else {
         throw new \moodle_exception('invalidarguments', 'error');
     }
 
-    if (!file_exists($pathname)) {
-        $convertformat = get_config('filter_algebra', 'convertformat');
-        if (strpos($image, '.png')) {
-            $convertformat = 'png';
-        }
-        $md5 = str_replace(".{$convertformat}", '', $image);
-        if ($texcache = $DB->get_record('cache_filters', array('filter'=>'algebra', 'md5key'=>$md5))) {
-            if (!file_exists($CFG->dataroot.'/filter/algebra')) {
-                make_upload_directory('filter/algebra');
-            }
+    $convertformat = get_config('filter_algebra', 'convertformat');
+    if (strpos($image, '.png')) {
+        $convertformat = 'png';
+    }
+    $md5 = str_replace(".{$convertformat}", '', $image);
+    $cachekey = $md5 . '_' . $convertformat;
+    $syscontext = \core\context\system::instance();
+    $fs = get_file_storage();
+    $storedfile = $fs->get_file($syscontext->id, 'filter_algebra', 'rendered_images', 0, '/', $image);
 
+    if (!$storedfile) {
+        if ($texcache = $DB->get_record('cache_filters', ['filter' => 'algebra', 'md5key' => $md5])) {
             // Render with LaTeX.
             $latex = new latex('filter_algebra');
             $density = get_config('filter_algebra', 'density');
@@ -46,13 +46,26 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
             $texexp = $texcache->rawtext;
             $lateximage = $latex->render($texexp, $image, 12, $density, $background);
             if ($lateximage) {
-                copy($lateximage, $pathname);
+                $filerecord = [
+                    'contextid' => $syscontext->id,
+                    'component' => 'filter_algebra',
+                    'filearea' => 'rendered_images',
+                    'itemid' => 0,
+                    'filepath' => '/',
+                    'filename' => $image,
+                ];
+                try {
+                    $storedfile = $fs->create_file_from_pathname($filerecord, $lateximage);
+                } catch (\stored_file_creation_exception $e) {
+                    $storedfile = $fs->get_file($syscontext->id, 'filter_algebra', 'rendered_images', 0, '/', $image);
+                }
             }
         }
     }
 
-    if (file_exists($pathname)) {
-        send_file($pathname, $image, YEARSECS, 0, false, false, '', false, [
+    if ($storedfile) {
+        \cache::make('filter_algebra', 'rendered_images')->set($cachekey, 1);
+        send_stored_file($storedfile, YEARSECS, 0, false, [
             'cacheability' => 'public',
             'immutable' => true,
         ]);

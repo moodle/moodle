@@ -1,0 +1,11 @@
+issueNumber: MDL-87554
+notes:
+  core_filters:
+    - message: >-
+        Rendered TeX/Algebra images are now stored using the File Storage API
+        instead of the `$CFG->dataroot/filter/{tex,algebra}/` directory. A new
+        `rendered_images` cache definition has been added to both `filter_tex`
+        and `filter_algebra`. The upgrade step automatically migrates existing
+        images from the legacy dataroot location to file storage and removes the
+        old directory.
+      type: improved

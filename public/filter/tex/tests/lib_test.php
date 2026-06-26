@@ -37,6 +37,8 @@ require_once($CFG->dirroot . '/filter/tex/lib.php');
  *
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers ::filter_tex_sanitize_formula
+ * @covers ::filter_tex_updatedcallback
  */
 final class lib_test extends advanced_testcase {
     /**
@@ -62,5 +64,52 @@ final class lib_test extends advanced_testcase {
      */
     public function test_filter_tex_sanitize_formula(string $formula, string $expected): void {
         $this->assertEquals($expected, filter_tex_sanitize_formula($formula));
+    }
+
+    public function test_updatedcallback_purges_file_area_and_cache(): void {
+        $this->resetAfterTest(true);
+
+        $syscontext = \core\context\system::instance();
+        $fs = get_file_storage();
+
+        $filerecord = [
+            'contextid' => $syscontext->id,
+            'component' => 'filter_tex',
+            'filearea' => 'rendered_images',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'testimage.png',
+        ];
+        $fs->create_file_from_string($filerecord, 'test content');
+
+        $cache = \cache::make('filter_tex', 'rendered_images');
+        $cache->set('testimage_png', 1);
+
+        $this->assertTrue($fs->file_exists($syscontext->id, 'filter_tex', 'rendered_images', 0, '/', 'testimage.png'));
+        $this->assertNotFalse($cache->get('testimage_png'));
+
+        filter_tex_updatedcallback('convertformat');
+
+        $this->assertFalse($fs->file_exists($syscontext->id, 'filter_tex', 'rendered_images', 0, '/', 'testimage.png'));
+        $this->assertFalse($cache->get('testimage_png'));
+    }
+
+    public function test_updatedcallback_deletes_cache_filters_records(): void {
+        $this->resetAfterTest(true);
+
+        global $DB;
+
+        $DB->insert_record('cache_filters', (object)[
+            'filter' => 'tex',
+            'md5key' => 'abc123',
+            'rawtext' => 'x^2',
+            'timemodified' => time(),
+        ]);
+
+        $this->assertEquals(1, $DB->count_records('cache_filters', ['filter' => 'tex']));
+
+        filter_tex_updatedcallback('convertformat');
+
+        $this->assertEquals(0, $DB->count_records('cache_filters', ['filter' => 'tex']));
     }
 }

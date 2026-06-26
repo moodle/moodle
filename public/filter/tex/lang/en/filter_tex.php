@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cachedef_rendered_images'] = 'Rendered TeX images';
 $string['configconvertformat'] = 'If <i>latex</i> and <i>dvips</i> are present in addition to <i>convert</i> or <i>dvisvgm</i>, select the preferred image type (<i>convert</i> produces PNG or GIF; <i>dvisvgm</i> produces SVG).';
 $string['convertformat'] = 'Output image format';
 $string['filtername'] = 'TeX notation';

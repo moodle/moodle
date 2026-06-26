@@ -16,6 +16,7 @@
 
 namespace filter_tex;
 
+use cache;
 use core\context\system as context_system;
 use core\exception\coding_exception;
 use core\output\actions\popup_action;
@@ -190,7 +191,20 @@ class text_filter extends \core_filters\text_filter {
         }
         $anchorcontents .= "\" $style/>";
 
-        $imagefound = file_exists("$CFG->dataroot/filter/tex/$imagefile");
+        $cachekey = pathinfo($imagefile, PATHINFO_FILENAME) . '_' . pathinfo($imagefile, PATHINFO_EXTENSION);
+        $rendercache = cache::make('filter_tex', 'rendered_images');
+        $imagefound = $rendercache->get($cachekey) !== false;
+        if (!$imagefound) {
+            $storedfile = get_file_storage()->get_file(
+                context_system::instance()->id,
+                'filter_tex',
+                'rendered_images',
+                0,
+                '/',
+                $imagefile
+            );
+            $imagefound = (bool) $storedfile;
+        }
         if (!$imagefound && has_capability('moodle/site:config', context_system::instance())) {
             $link = '/filter/tex/texdebug.php';
             $action = null;
