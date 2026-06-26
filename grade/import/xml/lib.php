@@ -121,3 +121,44 @@ function import_xml_grades($text, $course, &$error) {
     }
 }
 
+/**
+ * Download an XML grades file from a URL and import it into a course.
+ *
+ * @param stdClass $course target course
+ * @param string $url source URL of the XML grades file
+ * @param bool $feedback import feedback alongside grades
+ * @param bool $verbose whether grade_import_commit prints progress
+ * @return bool true if the grades were committed
+ */
+function gradeimport_xml_fetch_and_commit(stdClass $course, string $url, bool $feedback, bool $verbose): bool {
+    global $CFG;
+    require_once($CFG->libdir.'/filelib.php');
+
+    // Large files are likely to take their time and memory. Let PHP know that we'll
+    // take longer, and that the process should be recycled soon to free up memory.
+    core_php_time_limit::raise();
+    raise_memory_limit(MEMORY_EXTRA);
+
+    $text = download_file_content($url);
+    if ($text === false) {
+        throw new \moodle_exception(
+            'cannotreadfile',
+            'error',
+            $CFG->wwwroot . '/grade/import/xml/index.php?id=' . $course->id,
+            $url
+        );
+    }
+
+    $error = '';
+    $importcode = import_xml_grades($text, $course, $error);
+    if ($importcode === false) {
+        throw new \moodle_exception(
+            'errorduringimport',
+            'gradeimport_xml',
+            $CFG->wwwroot . '/grade/import/xml/index.php?id=' . $course->id,
+            $error
+        );
+    }
+
+    return grade_import_commit($course->id, $importcode, $feedback, $verbose);
+}

@@ -36,46 +36,17 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 require_login($course);
 $context = context_course::instance($id);
 
+// Only reachable as the body of fetch.php (key login); reject direct access. MDL-84545.
+if (!defined('USER_KEY_LOGIN')) {
+    throw new \moodle_exception('invalidaccess', 'error');
+}
+
 require_capability('moodle/grade:import', $context);
 require_capability('gradeimport/xml:view', $context);
 
-
-// Large files are likely to take their time and memory. Let PHP know
-// that we'll take longer, and that the process should be recycled soon
-// to free up memory.
-core_php_time_limit::raise();
-raise_memory_limit(MEMORY_EXTRA);
-
-$text = download_file_content($gradesurl);
-if ($text === false) {
-    throw new \moodle_exception('cannotreadfile', 'error',
-            $CFG->wwwroot . '/grade/import/xml/index.php?id=' . $id, $gradesurl);
-}
-
-$error = '';
-$importcode = import_xml_grades($text, $course, $error);
-
-if ($importcode !== false) {
-    /// commit the code if we are up this far
-
-    if (defined('USER_KEY_LOGIN')) {
-        if (grade_import_commit($id, $importcode, $feedback, false)) {
-            echo 'ok';
-            die;
-        } else {
-            throw new \moodle_exception('cannotimportgrade'); // TODO: localize.
-        }
-
-    } else {
-        print_grade_page_head($course->id, 'import', 'xml', get_string('importxml', 'grades'));
-
-        grade_import_commit($id, $importcode, $feedback, true);
-
-        echo $OUTPUT->footer();
-        die;
-    }
-
+if (gradeimport_xml_fetch_and_commit($course, $gradesurl, $feedback, false)) {
+    echo 'ok';
+    die;
 } else {
-    throw new \moodle_exception('errorduringimport', 'gradeimport_xml',
-            $CFG->wwwroot . '/grade/import/xml/index.php?id=' . $id, $error);
+    throw new \moodle_exception('cannotimportgrade');
 }
