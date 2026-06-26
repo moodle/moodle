@@ -45117,6 +45117,17 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-item.pageitem a {
   color: #ffffff;
 }
+.courseindex .courseindex-item.pageitem .completioninfo .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  font-size: 0.625rem;
+  line-height: 1;
+}
 .courseindex .courseindex-item .completioninfo {
   min-width: 20px;
 }
