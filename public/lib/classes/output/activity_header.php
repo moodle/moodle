@@ -189,24 +189,28 @@ class activity_header implements renderable, templatable {
         $activityinfo = null;
         $activitycompletiondata = [];
         $activitydatesdata = [];
+        $shownavigation = \core_courseformat\local\linearnavigationsettings::show_navigation_footer($this->page);
         if (!$this->hidecompletion) {
-            $completiondetails = \core_completion\cm_completion_details::get_instance($this->page->cm, $this->user->id);
+            $activitycompletiondata = (new \core_course\output\completion_status($this->page->cm, $this->user->id))
+                ->export_for_template($output);
             $activitydates = \core\activity_dates::get_dates_for_module($this->page->cm, $this->user->id);
-
-            $activitycompletion = new \core_course\output\activity_completion($this->page->cm, $completiondetails);
-            $activitycompletiondata = (array) $activitycompletion->export_for_template($output);
             $activitydates = new \core_course\output\activity_dates($activitydates);
             $activitydatesdata = (array) $activitydates->export_for_template($output);
             $data = array_merge($activitycompletiondata, $activitydatesdata);
             $data['description'] = $this->description;
-
             if (
                 !empty($data)
+                && !empty($data['hascompletion'])
                 && !empty($data['uservisible'])
             ) {
-                if (!empty($data['showmanualcompletion'])) {
+                if ($shownavigation) {
+                    // With linear navigation, the interactive completion control is relocated to the
+                    // sticky footer, so only a read-only completion status indicator is shown in the
+                    // header. It is updated in place when the footer button is toggled.
+                    $this->add_completion_status_to_page_header($output, $data);
+                } else if (!empty($data['showmanualcompletion'])) {
                     $this->add_manual_completion_to_page_header($output, $data);
-                } else if (!empty($data['hascompletion']) && !empty($data['isautomatic'])) {
+                } else if (!empty($data['isautomatic'])) {
                     $this->add_completion_status_to_page_header($output, $data);
                 }
             }
@@ -234,6 +238,7 @@ class activity_header implements renderable, templatable {
             'completion' => $activityinfo,
             'activitydates' => $activitydatesdata,
             'additional_items' => $additionalitems,
+            'shownavigation' => $shownavigation,
         ], $activitycompletiondata);
     }
 

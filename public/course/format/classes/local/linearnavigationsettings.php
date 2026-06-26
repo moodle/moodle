@@ -119,4 +119,41 @@ class linearnavigationsettings {
             );
         }
     }
+
+    /**
+     * Check if the navigation footer should be shown on the page.
+     *
+     * @param \moodle_page $page
+     * @return bool if the navigation footer should be shown
+     */
+    public static function show_navigation_footer(\moodle_page $page): bool {
+        if ($page->cm === null) {
+            // Not on an activity page, do not add the sticky footer.
+            return false;
+        }
+        if ($page->has_sticky_footer()) {
+            // If there is already a sticky footer, do not add another one.
+            return false;
+        }
+        if (!$page->should_show_navigation_footer()) {
+            // If the page should not show the navigation footer, do not add the sticky footer.
+            return false;
+        }
+
+        $format = \course_get_format($page->course);
+        $supplementarycontent = $page->get_supplementary_content();
+        if (!$format->uses_linear_navigation() && $supplementarycontent === null) {
+            // Only add the sticky footer for course formats using linear navigation or
+            // if there is supplementary content to be added.
+            return false;
+        }
+        $formatoptions = $format->get_format_options();
+        $linearnavigationenabled = ($formatoptions[self::SETTING_ENABLE_LINEAR_NAV] ?? false);
+        if (!$linearnavigationenabled && $supplementarycontent === null) {
+            // Linear navigation is not enabled and there is no supplementary content, do not add the sticky footer.
+            return false;
+        }
+
+        return true;
+    }
 }

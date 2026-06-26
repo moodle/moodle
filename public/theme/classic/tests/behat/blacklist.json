@@ -13,7 +13,8 @@
         "course/format/tests/behat/courseindex_language.feature",
         "badges/tests/behat/badge_navigation.feature",
         "lib/tests/behat/menu_navigation_single_activity.feature",
-        "lib/tests/behat/menu_navigation_topics.feature"
+        "lib/tests/behat/menu_navigation_topics.feature",
+        "course/format/tests/behat/course_linear_navigation.feature"
     ],
     "tags": [
         "addablocklink"

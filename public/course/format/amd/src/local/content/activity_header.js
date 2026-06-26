@@ -25,11 +25,16 @@
 import {BaseComponent} from 'core/reactive';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import * as CourseEvents from 'core_course/events';
+import Templates from 'core/templates';
 
 // Global page selectors.
 const SELECTORS = {
     ACTIVITY_HEADER: `[data-for='page-activity-header']`,
+    COMPLETION_STATUS: `[data-region='completion-status']`,
 };
+
+// Template used to render the activity completion status indicator in the header.
+const COMPLETION_STATUS_TEMPLATE = 'core_course/completion_status';
 
 export default class Component extends BaseComponent {
 
@@ -61,9 +66,11 @@ export default class Component extends BaseComponent {
      * Initial state ready method.
      */
     stateReady() {
-        // Capture completion events.
+        // Capture completion events from anywhere on the page. The manual completion button may be
+        // relocated to the linear navigation sticky footer, which is outside the activity header,
+        // so the toggle event must be captured at the document level.
         this.addEventListener(
-            this.element,
+            document,
             CourseEvents.manualCompletionToggled,
             this._completionHandler
         );
@@ -75,10 +82,42 @@ export default class Component extends BaseComponent {
      * @param {Event} event the custom event
      * @param {object} event.detail the event details
      */
-    _completionHandler({detail}) {
-        if (detail === undefined) {
+    _completionHandler(event) {
+        const {detail} = event;
+        if (detail === undefined || event.activityHeaderCompletionHandled) {
             return;
         }
+        // More than one activity header component may listen for this event (for example the
+        // page heading and the activity header instances). Make sure the completion change is
+        // only processed once per event.
+        event.activityHeaderCompletionHandled = true;
         this.reactive.dispatch('cmCompletion', [detail.cmid], detail.completed);
+        this._refreshCompletionStatus(detail);
+    }
+
+    /**
+     * Refresh the read-only completion status indicator displayed in the activity header.
+     *
+     * This keeps the header indicator in sync when the manual completion button is toggled,
+     * for instance from the linear navigation sticky footer.
+     *
+     * @param {object} detail the completion toggle event details
+     * @param {number} detail.cmid the course module id
+     * @param {boolean} detail.completed whether the activity is now complete
+     */
+    async _refreshCompletionStatus({cmid, completed}) {
+        const statusElement = document.querySelector(
+            `${SELECTORS.COMPLETION_STATUS}[data-cmid='${cmid}']`
+        );
+        if (!statusElement) {
+            return;
+        }
+        const {html, js} = await Templates.renderForPromise(COMPLETION_STATUS_TEMPLATE, {
+            cmid,
+            istrackeduser: true, // We know completion is tracked for this user given the toggle event originated from their button.
+            overallcomplete: completed,
+            overallincomplete: !completed,
+        });
+        Templates.replaceNode(statusElement, html, js);
     }
 }
