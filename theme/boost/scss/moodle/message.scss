@@ -540,6 +540,9 @@ $message-day-color: color-yiq($message-app-bg) !default;
             &:hover {
                 color: $white;
                 background-color: $primary;
+                .message-icon-forward {
+                    color: inherit !important; // stylelint-disable-line declaration-no-important
+                }
                 .badge-primary {
                     background-color: $white;
                     color: $primary;
