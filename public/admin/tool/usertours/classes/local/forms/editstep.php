@@ -170,7 +170,7 @@ class editstep extends \moodleform {
             ];
             $value = preg_replace($stripvalues, '', (string)$value);
             if (empty($value)) {
-                $errors['contenthtmlgrp'] = get_string('required');
+                $errors['content'] = get_string('required');
             }
         }
 
