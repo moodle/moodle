@@ -183,6 +183,8 @@ $courseindex-item-current: $primary !default;
         // Completion.
         .completioninfo {
             min-width: 20px;
+            display: inline-flex;
+            align-items: center;
 
             &.completion_complete {
                 color: $success;
