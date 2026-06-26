@@ -140,20 +140,31 @@ class linearnavigationsettings {
             return false;
         }
 
-        $format = \course_get_format($page->course);
-        $supplementarycontent = $page->get_supplementary_content();
-        if (!$format->uses_linear_navigation() && $supplementarycontent === null) {
-            // Only add the sticky footer for course formats using linear navigation or
-            // if there is supplementary content to be added.
-            return false;
-        }
-        $formatoptions = $format->get_format_options();
-        $linearnavigationenabled = ($formatoptions[self::SETTING_ENABLE_LINEAR_NAV] ?? false);
-        if (!$linearnavigationenabled && $supplementarycontent === null) {
-            // Linear navigation is not enabled and there is no supplementary content, do not add the sticky footer.
+        if (!self::is_linear_navigation_enabled($page->course)) {
+            // Only add the navigation footer when linear navigation is enabled.
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Check if linear navigation is enabled for the course.
+     *
+     * This only checks the course format and the linear navigation format option, regardless of any
+     * page-level state. It is useful for activities that need to adapt their output (for example,
+     * hiding navigation controls of their own) when linear navigation is enabled.
+     *
+     * @param int|\stdClass $course The course record or course ID.
+     * @return bool true if linear navigation is enabled for the course.
+     */
+    public static function is_linear_navigation_enabled(int|\stdClass $course): bool {
+        $format = \course_get_format($course);
+        if (!$format->uses_linear_navigation()) {
+            // The course format does not support linear navigation.
+            return false;
+        }
+        $formatoptions = $format->get_format_options();
+        return (bool) ($formatoptions[self::SETTING_ENABLE_LINEAR_NAV] ?? false);
     }
 }

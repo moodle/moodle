@@ -121,4 +121,52 @@ final class linearnavigationsettings_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test is_linear_navigation_enabled.
+     *
+     * @param string $format The course format to use.
+     * @param int $enablelinearnav The value of the enablelinearnav setting.
+     * @param bool $expected The expected result.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_linear_navigation_enabled_provider')]
+    public function test_is_linear_navigation_enabled(
+        string $format,
+        int $enablelinearnav,
+        bool $expected,
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course([
+            'format' => $format,
+            'enablelinearnav' => $enablelinearnav,
+        ]);
+
+        $this->assertSame($expected, linearnavigationsettings::is_linear_navigation_enabled($course));
+    }
+
+    /**
+     * Data provider for {@see test_is_linear_navigation_enabled}.
+     *
+     * @return array
+     */
+    public static function is_linear_navigation_enabled_provider(): array {
+        return [
+            'Supported format with linear navigation enabled' => [
+                'format' => 'topics',
+                'enablelinearnav' => 1,
+                'expected' => true,
+            ],
+            'Supported format with linear navigation disabled' => [
+                'format' => 'topics',
+                'enablelinearnav' => 0,
+                'expected' => false,
+            ],
+            'Unsupported format with linear navigation enabled' => [
+                'format' => 'singleactivity',
+                'enablelinearnav' => 1,
+                'expected' => false,
+            ],
+        ];
+    }
 }
