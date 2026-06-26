@@ -525,6 +525,9 @@ $message-day-color: color-contrast($message-app-bg) !default;
             &:hover {
                 color: $white;
                 background-color: $primary;
+                .message-icon-forward {
+                    color: inherit !important; // stylelint-disable-line declaration-no-important
+                }
             }
             &:first-child {
                 border-top: 0;
