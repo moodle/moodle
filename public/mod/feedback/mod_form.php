@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_feedback_mod_form extends moodleform_mod {
 
     public function definition() {
-        global $CFG, $DB;
+        global $DB;
 
         $editoroptions = feedback_get_editor_options();
 
@@ -118,13 +118,22 @@ class mod_feedback_mod_form extends moodleform_mod {
 
         $mform->setType('page_after_submit_editor', PARAM_RAW);
 
-        $mform->addElement('text',
-                           'site_after_submit',
-                           get_string('url_for_continue', 'feedback'),
-                           array('size'=>'64', 'maxlength'=>'255'));
-
-        $mform->setType('site_after_submit', PARAM_TEXT);
-        $mform->addHelpButton('site_after_submit', 'url_for_continue', 'feedback');
+        // With linear navigation, progression to the next activity is handled by the sticky footer,
+        // so the 'Link to next activity' setting is hidden. The current value is kept in a hidden
+        // field so it is preserved if linear navigation is disabled later.
+        if (\core_courseformat\local\linearnavigationsettings::is_linear_navigation_enabled($this->get_course())) {
+            $mform->addElement('hidden', 'site_after_submit');
+            $mform->setType('site_after_submit', PARAM_TEXT);
+        } else {
+            $mform->addElement(
+                'text',
+                'site_after_submit',
+                get_string('url_for_continue', 'feedback'),
+                ['size' => '64', 'maxlength' => '255'],
+            );
+            $mform->setType('site_after_submit', PARAM_TEXT);
+            $mform->addHelpButton('site_after_submit', 'url_for_continue', 'feedback');
+        }
         //-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
         //-------------------------------------------------------------------------------

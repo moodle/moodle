@@ -87,6 +87,7 @@ if ($data = $courseselectform->get_data()) {
 // Print the page header.
 navigation_node::override_active_url($baseurl);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');

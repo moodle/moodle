@@ -45,6 +45,10 @@ if (!$feedbackstructure->can_view_analysis()) {
 /// Print the page header
 
 $PAGE->set_heading($course->fullname);
+if (!has_capability('mod/feedback:complete', $context, $USER, false)) {
+    // If the user cannot complete the feedback (potentially because is a teacher), hide the navigation footer.
+    $PAGE->set_show_navigation_footer(false);
+}
 
 $renderer = $PAGE->get_renderer('mod_feedback');
 $renderer->set_title(

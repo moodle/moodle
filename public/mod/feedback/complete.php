@@ -69,12 +69,15 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->add_body_class('limitedwidth');
 
+$linearnavigationdisabled = !\core_courseformat\local\linearnavigationsettings::is_linear_navigation_enabled($course);
 // Check if the feedback is open (timeopen, timeclose).
 if (!$feedbackcompletion->is_open()) {
     echo $OUTPUT->header();
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     echo $OUTPUT->notification(get_string('feedback_is_not_open', 'feedback'));
-    echo $OUTPUT->continue_button(course_get_url($courseid ?: $feedback->course));
+    if ($linearnavigationdisabled) {
+        echo $OUTPUT->continue_button(course_get_url($courseid ?: $feedback->course));
+    }
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
     exit;
@@ -125,9 +128,12 @@ if ($feedbackcompletion->is_empty()) {
         } else {
             $url = course_get_url($courseid ?: $course->id);
         }
-        echo $OUTPUT->continue_button($url);
+        if ($linearnavigationdisabled) {
+            echo $OUTPUT->continue_button($url);
+        }
     } else {
         // Display the form with the questions.
+        $PAGE->set_show_navigation_footer(false);
         echo $feedbackcompletion->render_items();
     }
 } else {
@@ -137,7 +143,9 @@ if ($feedbackcompletion->is_empty()) {
         \core\output\notification::NOTIFY_INFO,
         closebutton: false,
     );
-    echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
+    if ($linearnavigationdisabled) {
+        echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
+    }
     echo $OUTPUT->box_end();
 }
 

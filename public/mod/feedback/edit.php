@@ -77,6 +77,7 @@ $lastposition++;
 
 $PAGE->set_url($url);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');
