@@ -1322,12 +1322,21 @@ abstract class base {
                 $args = array_merge($args, $option['element_attributes']);
             }
             $elements[] = call_user_func_array(array($mform, 'addElement'), $args);
+            $helpcomponent = 'format_' . $this->get_format();
+            if (isset($option['help_component'])) {
+                $helpcomponent = $option['help_component'];
+            }
             if (isset($option['help'])) {
-                $helpcomponent = 'format_'. $this->get_format();
-                if (isset($option['help_component'])) {
-                    $helpcomponent = $option['help_component'];
-                }
                 $mform->addHelpButton($optionname, $option['help'], $helpcomponent);
+            }
+            if (isset($option['inline_help'])) {
+                $helpdata = get_formatted_help_string($option['inline_help'], $helpcomponent);
+                $helptext = $helpdata->text ?? '';
+                if (isset($helpdata->completedoclink)) {
+                    $helptext .= " {$helpdata->completedoclink}";
+                }
+                $mform->addElement('static', $optionname . '_desc', '', $helptext);
+                $elements[] = $mform->getElement($optionname . '_desc');
             }
             if (isset($option['type'])) {
                 $mform->setType($optionname, $option['type']);

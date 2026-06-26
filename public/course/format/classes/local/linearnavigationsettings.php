@@ -84,7 +84,7 @@ class linearnavigationsettings {
                         1 => new lang_string('yes'),
                     ],
                 ],
-                'help' => 'linearnavigationsettings',
+                'inline_help' => 'linearnavigationsettings',
                 'help_component' => $helpcomponent,
             ],
         ];
