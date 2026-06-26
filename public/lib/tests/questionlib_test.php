@@ -16,8 +16,11 @@
 
 namespace core;
 
+use core\context\course;
+use core\context\module;
 use core_question\local\bank\question_bank_helper;
 use mod_quiz\quiz_settings;
+use PHPUnit\Framework\Attributes\DataProvider;
 use question_bank;
 
 defined('MOODLE_INTERNAL') || die();
@@ -53,9 +56,9 @@ final class questionlib_test extends \advanced_testcase {
 
     /**
      * Generate a course and question bank module instance for use in test cases, and return the bank context.
-     * @return \core\context\module
+     * @return module
      */
-    protected function create_course_and_question_bank(): \core\context\module {
+    protected function create_course_and_question_bank(): module {
         $course = self::getDataGenerator()->create_course();
         $qbank = self::getDataGenerator()->create_module('qbank', ['course' => $course->id]);
         return \context_module::instance($qbank->cmid);
@@ -1776,5 +1779,77 @@ final class questionlib_test extends \advanced_testcase {
 
         $this->assertEquals($randomquestion->contextid, $context2->id);
         $this->assertEquals($randomquestion->filtercondition['filter']['category']['values'][0], $topcategory2->id);
+    }
+
+    /**
+     * Provide examples of different modules and the page types returned by their _page_type_list function.
+     *
+     * @return array[] Module name, and a list of page types.
+     */
+    public static function module_page_types(): array {
+        return [
+            'quiz' => [
+                'module' => 'quiz',
+                'pagetypes' => [
+                    'mod-quiz-*',
+                    'mod-quiz-view',
+                    'mod-quiz-attempt',
+                    'mod-quiz-summary',
+                    'mod-quiz-review',
+                    'mod-quiz-edit',
+                    'mod-quiz-report',
+                ],
+            ],
+            'forum' => [
+                'module' => 'forum',
+                'pagetypes' => [
+                    'mod-forum-*',
+                    'mod-forum-view',
+                    'mod-forum-discuss',
+                ],
+            ],
+            'scorm' => [
+                'module' => 'scorm',
+                'pagetypes' => [
+                    'mod-scorm-*',
+                ],
+            ],
+            'lti' => [ // LTI has no additional page types.
+                'module' => 'lti',
+                'pagetypes' => [],
+            ],
+        ];
+    }
+
+    /**
+     * Calling question_page_type_list should return the question page types, plus the page types for the module context.
+     *
+     * @covers ::question_page_type_list
+     * @param string $module The module name.
+     * @param string[] $pagetypes A list of the page type patterns this module should add.
+     */
+    #[DataProvider('module_page_types')]
+    public function test_question_page_type_list(string $module, array $pagetypes): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = course::instance($course->id);
+
+        $modulerecord = $this->getDataGenerator()->create_module($module, ['course' => $course->id]);
+        $modulecontext = module::instance($modulerecord->cmid);
+
+        $questionpagetypes = [
+            'question-*',
+            'question-edit',
+            'question-bank-managecategories-category',
+            'question-bank-exportquestions-export',
+            'question-bank-importquestions-import',
+        ];
+
+        $expectedpagetypes = array_merge($pagetypes, $questionpagetypes);
+        $actualpagetypes = question_page_type_list('question-edit', $coursecontext, $modulecontext);
+        // Check that the expected page type patterns match those returned for this module.
+        $this->assertEquals($expectedpagetypes, array_keys($actualpagetypes));
     }
 }
