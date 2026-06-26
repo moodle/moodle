@@ -70,7 +70,17 @@ if ($data = $mform->get_data()) {
         }
 
     } else if (empty($data->key)) {
-        redirect('import.php?id='.$id.'&amp;feedback='.(int)($data->feedback).'&url='.urlencode($data->url));
+        print_grade_page_head(
+            courseid: $COURSE->id,
+            active_type: 'import',
+            active_plugin: 'xml',
+            heading: get_string('importxml', 'grades'),
+            headerhelpidentifier: 'importxml',
+            headerhelpcomponent: 'gradeimport_xml'
+        );
+        gradeimport_xml_fetch_and_commit($course, $data->url, $data->feedback, true);
+        echo $OUTPUT->footer();
+        die;
 
     } else {
         if ($data->key == 1) {
