@@ -45,6 +45,8 @@ MDL-73700 - remove old PHP version check and dead code
 MDL-85820 - Remove unnecessary `-` character beside each client validation error message for consistency with the server side
             validation error messages.
 MDL-90608 - Don't truncate client validation error messages, following the change in MDL-85820.
+MDL-88702 - PHP 8.5 compatibility. Normalise null element names and array keys to empty strings before using them
+            as array offsets.
 
 Pear
 ====

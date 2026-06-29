@@ -1658,6 +1658,16 @@ EOD;
         $records = $DB->get_records_sql($sql, null, PHP_INT_MAX, PHP_INT_MAX); // Skip all courses.
         $this->assertCount(0, $records);
 
+        // Test fetching records where the first column is null.
+        $DB->insert_record($tablename2, ['course' => 7, 'nametext' => null]);
+        $records = $DB->get_records_sql(
+            "SELECT nametext, course FROM {{$tablename2}} WHERE course = ?",
+            [7]
+        );
+        $this->assertCount(1, $records);
+        $this->assertArrayHasKey('', $records);
+        $this->assertNull(reset($records)->nametext);
+
         // TODO: Test limits in queries having DISTINCT clauses.
 
         // Note: fetching nulls, empties, LOBs already tested by test_update_record() no needed here.

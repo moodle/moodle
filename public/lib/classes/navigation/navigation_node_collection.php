@@ -71,21 +71,28 @@ class navigation_node_collection implements Countable, IteratorAggregate {
      * Adds a navigation node to the collection.
      *
      * @param navigation_node $node Node to add
-     * @param string $beforekey If specified, adds before a node with this key,
+     * @param string|int|null $beforekey If specified, adds before a node with this key,
      *   otherwise adds at end
      * @return navigation_node Added node
      */
     public function add(navigation_node $node, $beforekey = null) {
         global $CFG;
-        $key = $node->key;
-        $type = $node->type;
+
+        // Fallback to empty string when node key/type are not set.
+        $key = $node->key ?? '';
+        $type = $node->type ?? '';
+
+        // Discourage null keys because they are likely to collide with other nodes.
+        if ($node->key === null) {
+            debugging('Navigation node add: Node key should not be null', DEBUG_DEVELOPER);
+        }
 
         // First check we have a 2nd dimension for this type.
-        if (!array_key_exists($type, $this->orderedcollection)) {
+        if (!isset($this->orderedcollection[$type])) {
             $this->orderedcollection[$type] = [];
         }
         // Check for a collision and report if debugging is turned on.
-        if ($CFG->debug && array_key_exists($key, $this->orderedcollection[$type])) {
+        if ($CFG->debug && isset($this->orderedcollection[$type][$key])) {
             debugging('Navigation node intersect: Adding a node that already exists ' . $key, DEBUG_DEVELOPER);
         }
 
@@ -164,15 +171,17 @@ class navigation_node_collection implements Countable, IteratorAggregate {
     /**
      * Fetches a node from this collection.
      *
-     * @param string|int $key The key of the node we want to find.
-     * @param int $type One of navigation_node::TYPE_*.
-     * @return navigation_node|null|false
+     * @param string|int|null $key The key of the node we want to find.
+     * @param ?int $type One of navigation_node::TYPE_*.
+     * @return navigation_node|false
      */
     public function get($key, $type = null) {
+        $keyindex = $key ?? '';
+        $typeindex = $type ?? '';
         if ($type !== null) {
             // If the type is known then we can simply check and fetch.
-            if (!empty($this->orderedcollection[$type][$key])) {
-                return $this->orderedcollection[$type][$key];
+            if (!empty($this->orderedcollection[$typeindex][$keyindex])) {
+                return $this->orderedcollection[$typeindex][$keyindex];
             }
         } else {
             // Because we don't know the type we look in the progressive array.
@@ -193,17 +202,15 @@ class navigation_node_collection implements Countable, IteratorAggregate {
      *
      * Recursive.
      *
-     * @param string|int $key  The key of the node we want to find.
-     * @param int $type  One of navigation_node::TYPE_*.
+     * @param string|int|null $key  The key of the node we want to find.
+     * @param ?int $type  One of navigation_node::TYPE_*.
      * @return navigation_node|false
      */
     public function find($key, $type = null) {
-        if (
-            $type !== null
-            && array_key_exists($type, $this->orderedcollection)
-            && array_key_exists($key, $this->orderedcollection[$type])
-        ) {
-            return $this->orderedcollection[$type][$key];
+        $keyindex = $key ?? '';
+        $typeindex = $type ?? '';
+        if ($type !== null && isset($this->orderedcollection[$typeindex][$keyindex])) {
+            return $this->orderedcollection[$typeindex][$keyindex];
         } else {
             $nodes = $this->getIterator();
 
@@ -237,11 +244,12 @@ class navigation_node_collection implements Countable, IteratorAggregate {
     /**
      * Fetches all nodes of a given type from this collection
      *
-     * @param string|int $type  node type being searched for.
+     * @param ?int $type  node type being searched for.
      * @return array ordered collection
      */
     public function type($type) {
-        if (!array_key_exists($type, $this->orderedcollection)) {
+        $type = $type ?? '';
+        if (!isset($this->orderedcollection[$type])) {
             $this->orderedcollection[$type] = [];
         }
         return $this->orderedcollection[$type];
@@ -249,23 +257,22 @@ class navigation_node_collection implements Countable, IteratorAggregate {
     /**
      * Removes the node with the given key and type from the collection
      *
-     * @param string|int $key The key of the node we want to find.
-     * @param int $type
+     * @param string|int|null $key The key of the node we want to find.
+     * @param ?int $type
      * @return bool
      */
     public function remove($key, $type = null) {
         $child = $this->get($key, $type);
         if ($child !== false) {
             foreach ($this->collection as $colkey => $node) {
-                if ($node->key === $key && (is_null($type) || $node->type == $type)) {
+                if ($node === $child) {
                     unset($this->collection[$colkey]);
                     $this->collection = array_values($this->collection);
-                    break;
+                    unset($this->orderedcollection[$child->type ?? ''][$child->key ?? '']);
+                    $this->count--;
+                    return true;
                 }
             }
-            unset($this->orderedcollection[$child->type][$child->key]);
-            $this->count--;
-            return true;
         }
         return false;
     }

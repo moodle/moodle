@@ -200,9 +200,10 @@ class badge extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$badgealias}.language")
-            ->add_callback(static function($language): string {
+            ->add_callback(static function (?string $language): string {
+                $language = $language ?? '';
                 $languages = get_string_manager()->get_list_of_languages();
-                return (string) ($languages[$language] ?? $language);
+                return $languages[$language] ?? $language;
             });
 
         // Version.

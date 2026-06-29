@@ -157,6 +157,9 @@ class filter implements Countable, Iterator, JsonSerializable {
      * @return bool
      */
     public function valid(): bool {
+        if ($this->iteratorposition === null) {
+            return false;
+        }
         return isset($this->filtervalues[$this->iteratorposition]);
     }
 

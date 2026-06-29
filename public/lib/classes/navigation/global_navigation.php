@@ -2266,8 +2266,9 @@ class global_navigation extends navigation_node {
         if (!$this->initialised) {
             $this->initialise();
         }
-        if ($type == self::TYPE_ROOTNODE && array_key_exists($key, $this->rootnodes)) {
-            return $this->rootnodes[$key];
+        $keyindex = $key ?? '';
+        if ($type == self::TYPE_ROOTNODE && isset($this->rootnodes[$keyindex])) {
+            return $this->rootnodes[$keyindex];
         }
         return parent::find($key, $type);
     }

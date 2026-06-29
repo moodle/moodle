@@ -110,8 +110,9 @@ abstract class question_bank {
      */
     public static function get_qtype($qtypename, $mustexist = true) {
         global $CFG;
-        if (isset(self::$questiontypes[$qtypename])) {
-            return self::$questiontypes[$qtypename];
+        $qtypenamekey = $qtypename ?? '';
+        if (isset(self::$questiontypes[$qtypenamekey])) {
+            return self::$questiontypes[$qtypenamekey];
         }
         $file = core_component::get_plugin_directory('qtype', $qtypename) . '/questiontype.php';
         if (!is_readable($file)) {

@@ -1551,6 +1551,9 @@ $cache = ' . var_export($cache, true) . ';
      * @return bool if this string is a valid plugin name.
      */
     public static function is_valid_plugin_name($plugintype, $pluginname) {
+        if ($pluginname === null) {
+            return false;
+        }
         if ($plugintype === 'mod') {
             // Modules must not have the same name as core subsystems.
             if (!isset(self::$subsystems)) {
@@ -1562,7 +1565,7 @@ $cache = ' . var_export($cache, true) . ';
             }
             // Modules MUST NOT have any underscores,
             // component normalisation would break very badly otherwise!
-            return !is_null($pluginname) && (bool) preg_match('/^[a-z][a-z0-9]*$/', $pluginname);
+            return (bool) preg_match('/^[a-z][a-z0-9]*$/', $pluginname);
         } else if ($plugintype === 'qtype' && $pluginname === 'random') {
             // Special case, qtype_random no longer exists, and we must never have a plugin with that name due to special handling
             // in the backup/restore subsystem.
@@ -1573,7 +1576,7 @@ $cache = ' . var_export($cache, true) . ';
             );
             return false;
         } else {
-            return !is_null($pluginname) && (bool) preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
+            return (bool) preg_match('/^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$/', $pluginname);
         }
     }
 

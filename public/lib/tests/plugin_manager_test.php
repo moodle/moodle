@@ -283,6 +283,11 @@ final class plugin_manager_test extends \advanced_testcase {
         $this->assertInstanceOf('\core\plugininfo\editor', $info);
     }
 
+    public function test_get_plugin_info_null_name(): void {
+        // The 'core' component (like 'moodle' and '') normalises to a null plugin name.
+        $this->assertNull(core_plugin_manager::instance()->get_plugin_info('core'));
+    }
+
     public function test_can_uninstall_plugin(): void {
         global $CFG;
 

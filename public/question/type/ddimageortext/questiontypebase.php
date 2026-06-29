@@ -141,7 +141,7 @@ class qtype_ddtoimage_base extends question_type {
                 $correct = $question->rightchoices[$placeno] == $i;
                 $choices[$choice->no] = new question_possible_response($choice->summarise(), $correct ? 1 : 0);
             }
-            $choices[null] = question_possible_response::no_response();
+            $choices[''] = question_possible_response::no_response();
 
             $parts[$placeno] = $choices;
         }

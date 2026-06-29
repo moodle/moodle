@@ -89,8 +89,9 @@ final class audience_test extends advanced_testcase {
         ];
 
         $audienceid = 0;
-        if (array_key_exists($audiencename, $audiences)) {
-            $audienceid = $audiences[$audiencename]->get_persistent()->get('id');
+        $audiencekey = $audiencename ?? '';
+        if (isset($audiences[$audiencekey])) {
+            $audienceid = $audiences[$audiencekey]->get_persistent()->get('id');
         }
 
         $filter = (new filter(

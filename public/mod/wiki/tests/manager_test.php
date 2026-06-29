@@ -349,9 +349,10 @@ final class manager_test extends \advanced_testcase {
             return $page->id;
         }, $pages);
         $idtopage = array_flip($pagestoid);
+        $pagekey = $pageid ?? '';
         $this->assertEquals(
             $expectedpage,
-            $idtopage[$pageid] ?? null,
+            $idtopage[$pagekey] ?? null,
             "Page id for user $username does not match expected page id."
         );
 
