@@ -1662,7 +1662,7 @@ EOD;
 
         // following code maybe helps to improve socket behaviour ... more testing needed
         // disabled at the moment ...
-        // socket_set_timeout($this->sock,1 );
+        // stream_set_timeout($this->sock, 1);
         // $socket_state = socket_get_status($this->sock);
 
         // read stream one byte by another until http header ends
@@ -1773,13 +1773,13 @@ EOD;
         default:
             // just get the data until foef appears...
             $this->_error_log('reading until feof...' . $header);
-            socket_set_timeout($this->sock, 0, 0);
+            stream_set_timeout($this->sock, 0, 0);
             while (!feof($this->sock)) {
                 $chunk = fread($this->sock, 4096);
                 self::update_file_or_buffer($chunk, $fp, $buffer);
             }
             // renew the socket timeout...does it do something ???? Is it needed. More debugging needed...
-            socket_set_timeout($this->sock, $this->_socket_timeout, 0);
+            stream_set_timeout($this->sock, $this->_socket_timeout, 0);
         }
 
         $this->_header = $header;
