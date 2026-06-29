@@ -1,31 +1,16 @@
-@theme_boost
-Feature: Using the help popover
-  As a user who wants to use the help popover
-  The help popover must be accessible
+@theme_classic @javascript
+Feature: Navigate form help popover links in Classic
+  As a keyboard user
+  I need links in form help popovers to be accessible
 
-  @javascript @accessibility
-  Scenario: Checking the policies link in the footer popover
-    Given the following config values are set as admin:
-      | sitepolicyhandler | tool_policy |
-    And the following policies exist:
-      | Name             | Revision | Content    | Summary     | Status |
-      | This site policy |          | full text2 | short text2 | active |
-    And I am on site homepage
-    And I click on "Continue" "link"
-    When I click on "Show footer" "button" in the "page-footer" "region"
-    Then I should see "Policies" in the "page-footer" "region"
-    And the page should meet accessibility standards with "best-practice" extra tests
-
-  @javascript
   Scenario: Navigate to a link in a form help popover using the keyboard
     Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "course" exists:
-      | fullname         | Course 1 |
-      | shortname        | C1       |
-      | category         | 0        |
-      | enablecompletion | 1        |
+      | fullname  | Course 1 |
+      | shortname | C1       |
+      | category  | 0        |
     And the following "activity" exists:
       | activity | quiz      |
       | course   | C1        |
@@ -60,7 +45,6 @@ Feature: Using the help popover
     Then ".help-popover" "css_element" should not be visible
     And the focused element is "#fitem_id_timelimit .help-icon" "css_element"
 
-  @javascript
   Scenario: Use a form help popover without a More help link
     Given the following "users" exist:
       | username | firstname | lastname | email                |
