@@ -83,12 +83,12 @@ class analysis_for_subpart {
      * @return analysis_for_class
      */
     public function get_response_class($classid) {
-        if (!isset($this->responseclasses[$classid])) {
+        $classindex = $classid ?? '';
+        if (!isset($this->responseclasses[$classindex])) {
             debugging('Unexpected class id ' . $classid . ' encountered.');
-            $this->responseclasses[$classid] = new analysis_for_class('[Unknown]', $classid);
+            $this->responseclasses[$classindex] = new analysis_for_class('[Unknown]', $classindex);
         }
-        return $this->responseclasses[$classid];
-
+        return $this->responseclasses[$classindex];
     }
 
     /**

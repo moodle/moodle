@@ -76,7 +76,7 @@ final class question_type_test extends \advanced_testcase {
                 13 => new question_possible_response('frog', 1),
                 14 => new question_possible_response('toad', 0.8),
                 15 => new question_possible_response('*', 0),
-                null => question_possible_response::no_response()
+                '' => question_possible_response::no_response(),
             ),
         ), $this->qtype->get_possible_responses($q));
     }
@@ -88,7 +88,7 @@ final class question_type_test extends \advanced_testcase {
             $q->id => array(
                 13 => new question_possible_response('frog', 1),
                 0 => new question_possible_response(get_string('didnotmatchanyanswer', 'question'), 0),
-                null => question_possible_response::no_response()
+                '' => question_possible_response::no_response(),
             ),
         ), $this->qtype->get_possible_responses($q));
     }

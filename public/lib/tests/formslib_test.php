@@ -292,6 +292,8 @@ final class formslib_test extends \advanced_testcase {
 
         $this->assertTag(array('tag'=>'input', 'id'=>'id_repeatradio_2_2',
             'attributes'=>array('type'=>'radio', 'name'=>'repeatradio[2]', 'value'=>'2')), $html);
+
+        $this->assertStringContainsString('Unnamed static element', $html);
     }
 
     public function test_settype_debugging_text(): void {
@@ -690,6 +692,8 @@ class formslib_test_form extends moodleform {
             $this->_form->createElement('radio', 'repeatradio', 'Choose {no}', 'Two', 2),
         );
         $this->repeat_elements($repeatels, 3, array(), 'numradios', 'addradios');
+
+        $this->_form->addElement('static', null, 'Static label', 'Unnamed static element');
     }
 }
 

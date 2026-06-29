@@ -64,7 +64,8 @@ final class override_manager_test extends \advanced_testcase {
      */
     private function replace_placeholders(array $data, array $placeholdervalues) {
         foreach ($data as $key => $value) {
-            $replacement = $placeholdervalues[$value] ?? null;
+            $placeholder = $value ?? '';
+            $replacement = $placeholdervalues[$placeholder] ?? null;
 
             if (!empty($replacement)) {
                 $data[$key] = $replacement;

@@ -82,10 +82,11 @@ class question_version_info implements \renderable, \templatable {
                   GROUP BY questionbankentryid";
         $latestversions = $DB->get_records_sql_menu($sql, $params);
         array_walk(self::$pendingdefinitions, function($definition) use ($latestversions) {
-            if (!isset($latestversions[$definition->questionbankentryid])) {
+            $questionbankentryid = $definition->questionbankentryid ?? '';
+            if (!isset($latestversions[$questionbankentryid])) {
                 return;
             }
-            $definition->set_latest_version($latestversions[$definition->questionbankentryid]);
+            $definition->set_latest_version($latestversions[$questionbankentryid]);
             unset(self::$pendingdefinitions[$definition->id]);
         });
     }

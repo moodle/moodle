@@ -88,7 +88,7 @@ class navigation_node implements renderable {
 
     /** @var int Parameter to aid the coder in tracking [optional] */
     public $id = null;
-    /** @var string|int The identifier for the node, used to retrieve the node */
+    /** @var string|int|null The identifier for the node, used to retrieve the node */
     public $key = null;
     /** @var string|lang_string The text to use for the node */
     public $text = null;
@@ -102,7 +102,7 @@ class navigation_node implements renderable {
     public $action = null;
     /** @var pix_icon The path to an icon to use for this node */
     public $icon = null;
-    /** @var int See TYPE_* constants defined for this class */
+    /** @var ?int See TYPE_* constants defined for this class */
     public $type = self::TYPE_UNKNOWN;
     /** @var int See NODETYPE_* constants defined for this class */
     public $nodetype = self::NODETYPE_LEAF;
@@ -332,9 +332,9 @@ class navigation_node implements renderable {
      *
      * @param string $text
      * @param url|action_link $action
-     * @param int $type
+     * @param ?int $type
      * @param string $shorttext
-     * @param string|int $key
+     * @param string|int|null $key
      * @param pix_icon $icon
      * @return navigation_node
      */
@@ -383,7 +383,7 @@ class navigation_node implements renderable {
      * @param url|action_link|string $action
      * @param ?int $type
      * @param string $shorttext
-     * @param string|int $key
+     * @param string|int|null $key
      * @param pix_icon $icon
      * @return navigation_node
      */
@@ -402,7 +402,7 @@ class navigation_node implements renderable {
      * Adds a navigation node as a child of this one, given a $node object
      * created using the create function.
      * @param navigation_node $childnode Node to add
-     * @param string $beforekey
+     * @param string|int|null $beforekey
      * @return navigation_node The added node
      */
     public function add_node(navigation_node $childnode, $beforekey = null) {
@@ -453,7 +453,7 @@ class navigation_node implements renderable {
      * If you know the node you are looking for is a child of this node then please
      * use the get method instead.
      *
-     * @param int|string $key The key of the node we are looking for
+     * @param int|string|null $key The key of the node we are looking for
      * @param ?int $type One of navigation_node::TYPE_*
      * @return navigation_node|false
      */
@@ -491,8 +491,8 @@ class navigation_node implements renderable {
      * If you are looking for a node and want to search all children + their children
      * then please use the find method instead.
      *
-     * @param int|string $key The key of the node we are looking for
-     * @param int $type One of navigation_node::TYPE_*
+     * @param int|string|null $key The key of the node we are looking for
+     * @param ?int $type One of navigation_node::TYPE_*
      * @return navigation_node|false
      */
     public function get($key, $type = null) {
@@ -787,7 +787,7 @@ class navigation_node implements renderable {
      * @return string
      */
     public function get_css_type() {
-        if (array_key_exists($this->type, $this->namedtypes)) {
+        if (isset($this->type) && isset($this->namedtypes[$this->type])) {
             return 'type_' . $this->namedtypes[$this->type];
         }
         return 'type_unknown';
@@ -813,7 +813,7 @@ class navigation_node implements renderable {
     /**
      * Finds all nodes of a given type (recursive)
      *
-     * @param int $type One of navigation_node::TYPE_*
+     * @param ?int $type One of navigation_node::TYPE_*
      * @return array
      */
     public function find_all_of_type($type) {

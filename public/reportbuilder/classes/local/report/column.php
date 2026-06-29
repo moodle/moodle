@@ -580,6 +580,7 @@ final class column {
      * @return array
      */
     public function get_aggregation_options(?string $aggregation): array {
+        $aggregation = $aggregation ?? '';
         return $this->aggregationoptions[$aggregation] ?? [];
     }
 

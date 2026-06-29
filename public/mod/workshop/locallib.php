@@ -2148,15 +2148,16 @@ class workshop {
 
         // get the user details for all moderators (teachers) that have overridden a submission grade
         foreach ($submissions as $submission) {
-            if (!isset($userinfo[$submission->gradeoverby])) {
-                $userinfo[$submission->gradeoverby]            = new stdclass();
-                $userinfo[$submission->gradeoverby]->id        = $submission->gradeoverby;
-                $userinfo[$submission->gradeoverby]->picture   = $submission->overpicture;
-                $userinfo[$submission->gradeoverby]->imagealt  = $submission->overimagealt;
-                $userinfo[$submission->gradeoverby]->email     = $submission->overemail;
+            $gradeoverby = $submission->gradeoverby ?? '';
+            if (!isset($userinfo[$gradeoverby])) {
+                $userinfo[$gradeoverby]            = new stdclass();
+                $userinfo[$gradeoverby]->id        = $submission->gradeoverby;
+                $userinfo[$gradeoverby]->picture   = $submission->overpicture;
+                $userinfo[$gradeoverby]->imagealt  = $submission->overimagealt;
+                $userinfo[$gradeoverby]->email     = $submission->overemail;
                 foreach ($additionalnames as $addname) {
                     $temp = 'over' . $addname;
-                    $userinfo[$submission->gradeoverby]->$addname = $submission->$temp;
+                    $userinfo[$gradeoverby]->$addname = $submission->$temp;
                 }
             }
         }

@@ -26,7 +26,7 @@ namespace core_adminpresets\local\setting;
  */
 class adminpresets_admin_setting_configselect_with_advanced extends adminpresets_admin_setting_configselect {
     /** @var string Name of the advanced setting. **/
-    protected $advancedkey;
+    protected $advancedkey = '';
 
     /**
      * Constructor for the admin presets config select with advanced.

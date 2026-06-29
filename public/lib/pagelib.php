@@ -2082,7 +2082,9 @@ class moodle_page {
         } else if (substr($pagetype, 0, 6) == 'admin-') {
             $this->_legacyclass = 'admin';
         }
-        $this->add_body_class($this->_legacyclass);
+        if (isset($this->_legacyclass)) {
+            $this->add_body_class($this->_legacyclass);
+        }
 
         $pathbits = explode('-', trim($pagetype));
         for ($i = 1; $i < count($pathbits); $i++) {

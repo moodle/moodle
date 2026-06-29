@@ -722,7 +722,7 @@ function grade_get_setting($courseid, $name, $default=null, $resetcache=false) {
         $result = $default;
     }
 
-    $gradesetting[$name] = $result;
+    $gradesetting[$name ?? ''] = $result;
     $cache->set($courseid, $gradesetting);
     return $result;
 }

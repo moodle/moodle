@@ -336,7 +336,7 @@ abstract class qtype_gapselect_base extends question_type {
                         html_to_text($choice->text, 0, false),
                         ($question->rightchoices[$place] == $i) / count($question->places));
             }
-            $choices[null] = question_possible_response::no_response();
+            $choices[''] = question_possible_response::no_response();
 
             $parts[$place] = $choices;
         }

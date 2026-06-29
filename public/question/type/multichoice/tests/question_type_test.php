@@ -95,7 +95,7 @@ final class question_type_test extends \advanced_testcase {
             $q->id => array(
                 1 => new question_possible_response('frog', 1),
                 2 => new question_possible_response('toad', 0),
-                null => question_possible_response::no_response(),
+                '' => question_possible_response::no_response(),
             )), $this->qtype->get_possible_responses($q));
     }
 

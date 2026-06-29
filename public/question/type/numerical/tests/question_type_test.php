@@ -101,7 +101,7 @@ final class question_type_test extends \advanced_testcase {
             $q->id => array(
                 13 => new question_possible_response('42 m (41.5..42.5)', 1),
                 14 => new question_possible_response('*', 0.1),
-                null => question_possible_response::no_response()
+                '' => question_possible_response::no_response(),
             ),
         ), $this->qtype->get_possible_responses($q));
     }
@@ -115,7 +115,7 @@ final class question_type_test extends \advanced_testcase {
                 13 => new question_possible_response('42 m (41.5..42.5)', 1),
                 0 => new question_possible_response(
                         get_string('didnotmatchanyanswer', 'question'), 0),
-                null => question_possible_response::no_response()
+                '' => question_possible_response::no_response(),
             ),
         ), $this->qtype->get_possible_responses($q));
     }
