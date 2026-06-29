@@ -59,8 +59,86 @@ module.exports = grunt => {
 
     // Register JS tasks.
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
-    grunt.registerTask('amd', ['ignorefiles', 'eslint:amd', 'rollup']);
+    grunt.registerTask('amd', ['ignorefiles', 'eslint:amd', 'rollup', 'amdtypes']);
     grunt.registerTask('js', ['amd', 'yui', 'esm']);
+
+    // Generate .d.ts declarations for AMD source files (best-effort).
+    // Respects --files, inComponent, and watch-narrowed file lists so only
+    // the affected sources are recompiled.
+    grunt.registerTask('amdtypes', 'Generate AMD type declarations', function() {
+        const ts = require('typescript');
+        const glob = require('glob');
+        const typesBaseDir = path.resolve('.types', 'amd');
+
+        // Determine which source files to process.
+        // Priority: explicit --files > amdSrc globs (already component-scoped when inComponent).
+        let srcFiles = [];
+        grunt.log.ok('amdtypes: determining source files to process...');
+        if (grunt.moodleEnv.files) {
+            // Explicit file list from --files flag or watch event.
+            grunt.moodleEnv.files.forEach((file) => {
+                if (file.match(/\/amd\/src\//)) {
+                    grunt.log.debug(`amdtypes: adding explicitly matched file ${file}`);
+                    srcFiles.push(file);
+                } else {
+                    grunt.log.warn(`amdtypes: skipping explicitly matched file ${file} because it does not match /amd/src/`);
+                    srcFiles.push(path.join(file, 'amd', 'src', '**', '*.js'));
+                }
+            });
+        } else {
+            // Expand the amdSrc globs (component-scoped or full tree).
+            srcFiles = grunt.file.expand(grunt.moodleEnv.amdSrc)
+                .map(f => path.resolve(f));
+        }
+
+        if (srcFiles.length === 0) {
+            grunt.log.ok('amdtypes: nothing to process.');
+            return;
+        }
+
+        // Group files by their amd/src root so we can set rootDir per component.
+        /** @type {Map<string, string[]>} srcDir -> [absolute file paths] */
+        const groups = new Map();
+        for (const file of srcFiles) {
+            const [componentDir] = file.split('/amd/src/');
+            if (!groups.has(componentDir)) {
+                groups.set(componentDir, []);
+            }
+
+            if (file.match(/\/amd\/src\//)) {
+                groups.get(componentDir).push(...glob.sync(file));
+            } else {
+                groups.get(componentDir).push(...glob.sync(path.join(file, 'amd', 'src', '**', '*.js')));
+            }
+        }
+
+        grunt.log.ok(`amdtypes: processing ${srcFiles.length} file(s) across ${groups.size} component(s).`);
+
+        const gruntRoot = path.resolve('.');
+        for (const [componentDir, files] of groups) {
+            // Map componentDir back to a componentPath-relative output dir.
+            // Format: componentDir = <root>/public/lib -> componentPath = public/lib.
+            const componentPath = path.relative(gruntRoot, componentDir); // Path: `public/lib`.
+            const srcDir = path.join(componentDir, 'amd', 'src'); // Path: `<root>/public/lib/amd/src`.
+            const outDir = path.join(typesBaseDir, componentPath);
+
+            const options = {
+                declaration: true,
+                emitDeclarationOnly: true,
+                allowJs: true,
+                outDir,
+                rootDir: srcDir,
+                skipLibCheck: true,
+            };
+
+            const program = ts.createProgram(files, options);
+            program.emit();
+            grunt.log.write('.');
+        }
+        grunt.log.writeln('');
+
+        grunt.log.ok(`amdtypes: generated declarations for ${srcFiles.length} file(s).`);
+    });
 
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-watch');
