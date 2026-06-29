@@ -187,7 +187,6 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
         return false;
     }
     $data = ob_get_clean();
-    imagedestroy($im1);
     $icon['filename'] = 'f1'.$imageext;
     $fs->delete_area_files($context->id, $component, $filearea, $itemid);
     $file1 = $fs->create_file_from_string($icon, $data);
@@ -199,7 +198,6 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
         return false;
     }
     $data = ob_get_clean();
-    imagedestroy($im2);
     $icon['filename'] = 'f2'.$imageext;
     $fs->create_file_from_string($icon, $data);
 
@@ -210,7 +208,6 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
         return false;
     }
     $data = ob_get_clean();
-    imagedestroy($im3);
     $icon['filename'] = 'f3'.$imageext;
     $fs->create_file_from_string($icon, $data);
 
@@ -346,8 +343,6 @@ function resize_image_from_image($original, $imageinfo, $width, $height, $forcec
         return false;
     }
     $data = ob_get_clean();
-    imagedestroy($original);
-    imagedestroy($newimage);
 
     return $data;
 }

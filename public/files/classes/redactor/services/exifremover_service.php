@@ -309,8 +309,6 @@ class exifremover_service extends service implements file_redactor_service_inter
             quality: self::DEFAULT_JPEG_COMPRESSION,
         );
 
-        imagedestroy($image);
-
         if ($result) {
             return $destinationfile;
         }

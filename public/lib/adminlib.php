@@ -570,11 +570,9 @@ function is_dataroot_insecure($fetchtest=false) {
         if (!curl_errno($ch)) {
             $data = trim($data);
             if ($data === $teststr) {
-                curl_close($ch);
                 return INSECURE_DATAROOT_ERROR;
             }
         }
-        curl_close($ch);
     }
 
     if ($data = @file_get_contents($testurl)) {

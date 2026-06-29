@@ -1081,8 +1081,6 @@ EOD;
 
                     unlink($tempfile);
                     rmdir($tmpdir);
-                    imagedestroy($source);
-                    imagedestroy($content);
                     $file->delete();
                     if (!empty($newfile)) {
                         page_editor::set_page_rotation(

@@ -167,7 +167,7 @@ class mnet_encxml_parser {
      * Destroy the parser and free up any related resource.
      */
     function free_resource() {
-        $free = xml_parser_free($this->parser);
+        $this->parser = null;
     }
 
     /**

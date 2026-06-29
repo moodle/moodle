@@ -228,7 +228,6 @@ function testing_update_composer_dependencies(bool $selfupdate = true, bool $upd
         $curlerror = curl_error($curl);
         $curlinfo = curl_getinfo($curl);
 
-        curl_close($curl);
         fclose($file);
 
         if (!$result) {

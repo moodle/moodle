@@ -671,8 +671,6 @@ class webdav_client {
                                 xml_get_current_line_number($this->_parser)));
                         }
 
-                        // Free resources
-                        xml_parser_free($this->_parser);
                         // add status code to array
                         $this->_lock[$this->_parserid]['status'] = 200;
                         return $this->_lock[$this->_parserid];
@@ -770,8 +768,6 @@ class webdav_client {
 
                         print "<br>";
 
-                        // Free resources
-                        xml_parser_free($this->_parser);
                         $this->_delete[$this->_parserid]['status'] = $response['status']['status-code'];
                         return $this->_delete[$this->_parserid];
 
@@ -930,12 +926,11 @@ class webdav_client {
                             xml_get_current_line_number($this->_parser)
                         );
 
-                        xml_parser_free($this->_parser);
+                        $this->_parser = null;
                         debugging($errormessage, DEBUG_DEVELOPER);
                         return false;
                     }
 
-                    xml_parser_free($this->_parser);
                     $arr = $this->_ls[$this->_parserid];
                     // Return empty array instead of false for no results to maintain consistent API behavior.
                     if (!is_array($arr)) {
@@ -1029,8 +1024,6 @@ EOD;
                                 xml_get_current_line_number($this->_parser)));
                         }
 
-                        // Free resources
-                        xml_parser_free($this->_parser);
                         $arr = $this->_ls[$this->_parserid];
                         return $arr;
                     } else {

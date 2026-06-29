@@ -1169,7 +1169,6 @@ class stored_file {
                                 'width' => $exif["ExifImageLength"],
                             ];
                         }
-                        imagedestroy($source);
                         return [$data, $size];
                     }
                 }

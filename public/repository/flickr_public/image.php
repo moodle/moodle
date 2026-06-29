@@ -63,8 +63,8 @@ class moodle_image {
     }
 
     function destroy() {
-         imagedestroy($this->image);
-         imagedestroy($this->backup);
+         $this->image = null;
+         $this->backup = null;
          return true;
     }
 
