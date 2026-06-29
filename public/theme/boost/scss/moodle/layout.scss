@@ -95,6 +95,9 @@
             &:focus {
                 box-shadow: $input-btn-focus-box-shadow;
             }
+            &:hover {
+                background-color: $gray-400;
+            }
         }
     }
 
@@ -104,14 +107,6 @@
 
     .drawer-right-toggle {
         right: 0;
-    }
-
-    .drawer-toggler {
-        .btn {
-            &:hover {
-                background-color: $gray-400;
-            }
-        }
     }
 }
 
@@ -127,10 +122,7 @@
     .drawer-toggler .btn {
         box-shadow: 0 2px 8px 0 rgba($black, .33);
     }
-}
 
-@include media-breakpoint-down(md) {
-    //the scroll to top button
     .drawer-toggles {
         z-index: 100;
 
@@ -200,30 +192,117 @@
         @include transition(0.2s);
         left: 0;
         right: 0;
+
         &.show-drawer-left {
             margin-left: $drawer-left-width;
             margin-right: 0;
-            padding-left: 1rem;
         }
+
         &.show-drawer-right {
             margin-left: 0;
             margin-right: $drawer-right-width;
-            padding-right: 1rem;
-            .jsenabled & .popover-process-monitor,
-            .jsenabled & .btn-footer-popover,
-            .jsenabled & .btn-footer-communication {
-                right: calc(#{$drawer-right-width} + 2rem);
-            }
-            .jsenabled:has(&) .maintenancewarning {
-                right: calc(#{$drawer-right-width} + 5rem);
-            }
         }
+
         &.show-drawer-left.show-drawer-right {
             margin-left: $drawer-left-width;
             margin-right: $drawer-right-width;
         }
+
         &.hasstickyfooter {
             margin-bottom: $stickyfooter-height;
+        }
+    }
+
+    // Shift floating footer buttons when the right drawer opens at the browser edge.
+    // Excluded for pagelayout-standard/limitedwidth where the drawer is anchored to
+    // .main-inner and does not overlap the footer button area.
+    body:not(.pagelayout-standard):not(.limitedwidth) {
+        #page.drawers.show-drawer-right .popover-process-monitor,
+        #page.drawers.show-drawer-right .btn-footer-popover,
+        #page.drawers.show-drawer-right .btn-footer-communication {
+            right: calc(#{$drawer-right-width} + 2rem);
+        }
+
+        &:has(#page.drawers.show-drawer-right) .maintenancewarning {
+            right: calc(#{$drawer-right-width} + 5rem);
+        }
+    }
+
+    // Toggle buttons repositioned to viewport edges on lg+.
+    .pagelayout-standard,
+    body.limitedwidth {
+        .drawer-toggles {
+            .drawer-left-toggle {
+                left: auto;
+                right: calc(100% - #{$icon-medium-width} - 2 * 16px);
+                @include transition(right 0.2s ease);
+            }
+
+            .drawer-right-toggle {
+                right: auto;
+                left: calc(100% - #{$icon-medium-width} - 2 * 16px);
+                @include transition(left 0.2s ease);
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xxl) {
+    .pagelayout-standard #page.drawers,
+    body.limitedwidth #page.drawers {
+        &.show-drawer-left.show-drawer-right {
+            margin-left: $drawer-left-width;
+            margin-right: $drawer-right-width;
+        }
+    }
+
+    // On wide viewports, anchor toggle buttons to the main region edges instead of viewport edges.
+    // Toggles use the same offset formula as drawers: 50% + maxwidth/2 ± (margin-shift)/2 + gap.
+    .pagelayout-standard,
+    body.limitedwidth {
+        // Default (no drawer open): symmetric, toggles sit at main-inner edges.
+        .drawer-toggles {
+            .drawer-left-toggle {
+                right: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-main-gap});
+            }
+
+            .drawer-right-toggle {
+                left: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-main-gap});
+            }
+        }
+
+        // Single right drawer open: both toggles shift to track the moved main-inner.
+        &:has(#page.drawers.show-drawer-right):not(:has(#page.drawers.show-drawer-left)) {
+            .drawer-toggles .drawer-left-toggle {
+                right: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-right-width} / 2 + #{$drawer-main-gap});
+            }
+
+            .drawer-toggles .drawer-right-toggle {
+                left: calc(50% + #{$course-content-maxwidth} / 2 - #{$drawer-right-width} / 2 + #{$drawer-main-gap});
+            }
+        }
+
+        // Single left drawer open: both toggles shift to track the moved main-inner.
+        &:has(#page.drawers.show-drawer-left):not(:has(#page.drawers.show-drawer-right)) {
+            .drawer-toggles .drawer-left-toggle {
+                right: calc(50% + #{$course-content-maxwidth} / 2 - #{$drawer-left-width} / 2 + #{$drawer-main-gap});
+            }
+
+            .drawer-toggles .drawer-right-toggle {
+                left: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-left-width} / 2 + #{$drawer-main-gap});
+            }
+        }
+
+        // Both drawers open: toggles hidden (handled by show-drawer-* display:none rules).
+        // Included for completeness — tracks same offset as drawer-both formulas.
+        &:has(#page.drawers.show-drawer-left.show-drawer-right) {
+            .drawer-toggles .drawer-left-toggle {
+                right: $drawer-both-left-anchor;
+            }
+
+            .drawer-toggles .drawer-right-toggle {
+                left: $drawer-both-right-anchor;
+            }
         }
     }
 }

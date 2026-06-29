@@ -11,6 +11,23 @@ $drawer-bg-color: $gray-100 !default;
 $drawer-scroll-bg-track: $gray-100 !default;
 $drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
+$drawer-main-gap: calc(0.5rem + 20px);
+$drawer-anchor-none: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-main-gap});
+$drawer-anchor-left-open: calc(100% - #{$drawer-left-width});
+$drawer-right-anchor-left-open: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-main-gap} + #{$drawer-left-width} / 2);
+$drawer-anchor-right-open: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-main-gap} + #{$drawer-right-width} / 2);
+$drawer-right-anchor-right-open: calc(100% - #{$drawer-right-width});
+// lg+: both drawers open — anchor formula clamped so drawers don't clip the viewport.
+// Min() picks the smaller: anchor (gap from main) OR flush to viewport edge.
+$drawer-both-offset:      calc((#{$drawer-right-width} - #{$drawer-left-width}) / 2);
+$drawer-both-left-anchor: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-both-offset} + #{$drawer-main-gap});
+$drawer-both-right-anchor: calc(50% + #{$course-content-maxwidth} / 2 - #{$drawer-both-offset} + #{$drawer-main-gap});
+$drawer-anchor-both-left: Min(#{$drawer-both-left-anchor}, calc(100% - #{$drawer-left-width}));
+$drawer-anchor-both-right: Min(#{$drawer-both-right-anchor}, calc(100% - #{$drawer-right-width}));
+// xxl: single drawer open — drawer anchored to main-inner edge, accounting for one margin.
+$drawer-anchor-xxl-left-open: calc(50% + #{$course-content-maxwidth} / 2 - #{$drawer-left-width} / 2 + #{$drawer-main-gap});
+$drawer-anchor-xxl-right-open: calc(50% + #{$course-content-maxwidth} / 2 - #{$drawer-right-width} / 2 + #{$drawer-main-gap});
+
 :target,
 :focus {
     scroll-margin-top: $fixed-header-y + 10px;
@@ -252,6 +269,156 @@ $right-drawer-width: 320px;
 
         &.not-initialized {
             display: block;
+        }
+    }
+
+    .pagelayout-standard,
+    body.limitedwidth {
+        // Anchored drawers sit below the sticky footer, so they don't cover it.
+        .drawer.drawer-left,
+        .drawer.drawer-right {
+            z-index: map-get($zindex-levels, 2);
+        }
+
+        .drawer.drawer-left {
+            left: auto;
+            right: $drawer-anchor-none;
+            width: 0;
+            min-width: 0;
+            max-width: $drawer-left-width;
+            overflow: clip;
+            overscroll-behavior: none;
+            @include transition(width 0.2s ease, right 0.2s ease, visibility 0.2s ease);
+
+            &.show {
+                left: auto;
+                right: $drawer-anchor-none;
+                width: $drawer-left-width;
+            }
+
+            &:not(.show) .drawercontent {
+                overflow-y: hidden;
+            }
+        }
+
+        .drawer.drawer-right {
+            right: auto;
+            left: $drawer-anchor-none;
+            width: $drawer-right-width;
+            min-width: 0;
+            max-width: $drawer-right-width;
+            clip-path: inset(0 100% 0 0);
+            overscroll-behavior: none;
+            @include transition(clip-path 0.2s ease, left 0.2s ease, visibility 0.2s ease);
+
+            &.show {
+                right: auto;
+                left: $drawer-anchor-none;
+                width: $drawer-right-width;
+                clip-path: inset(0 0 0 0);
+            }
+
+            &:not(.show) .drawercontent {
+                overflow-y: hidden;
+            }
+        }
+
+        &:has(#page.drawers.show-drawer-left):not(:has(#page.drawers.show-drawer-right)) {
+            .drawer.drawer-left {
+                right: $drawer-anchor-left-open;
+
+                &.show {
+                    right: $drawer-anchor-left-open;
+                }
+            }
+            .drawer.drawer-right {
+                left: $drawer-right-anchor-left-open;
+
+                &.show {
+                    left: $drawer-right-anchor-left-open;
+                }
+            }
+        }
+
+        &:has(#page.drawers.show-drawer-right):not(:has(#page.drawers.show-drawer-left)) {
+            .drawer.drawer-left {
+                right: $drawer-anchor-right-open;
+
+                &.show {
+                    right: $drawer-anchor-right-open;
+                }
+            }
+            .drawer.drawer-right {
+                left: $drawer-right-anchor-right-open;
+
+                &.show {
+                    left: $drawer-right-anchor-right-open;
+                }
+            }
+        }
+
+        // Both drawers open: anchor to main-inner edges, clamped so drawers don't clip the viewport.
+        &:has(#page.drawers.show-drawer-left.show-drawer-right) {
+            .drawer.drawer-left {
+                right: $drawer-anchor-both-left;
+
+                &.show {
+                    right: $drawer-anchor-both-left;
+                }
+            }
+
+            .drawer.drawer-right {
+                left: $drawer-anchor-both-right;
+
+                &.show {
+                    left: $drawer-anchor-both-right;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xxl) {
+    .pagelayout-standard,
+    body.limitedwidth {
+        // Single right drawer open: anchor to main-inner edge (shifted by right margin).
+        &:has(#page.drawers.show-drawer-right):not(:has(#page.drawers.show-drawer-left)) {
+            .drawer.drawer-right {
+                left: $drawer-anchor-xxl-right-open;
+
+                &.show {
+                    left: $drawer-anchor-xxl-right-open;
+                }
+            }
+        }
+
+        // Single left drawer open: anchor to main-inner edge (shifted by left margin).
+        &:has(#page.drawers.show-drawer-left):not(:has(#page.drawers.show-drawer-right)) {
+            .drawer.drawer-left {
+                right: $drawer-anchor-xxl-left-open;
+
+                &.show {
+                    right: $drawer-anchor-xxl-left-open;
+                }
+            }
+        }
+
+        // Both drawers open: anchor each drawer to the main-inner edge (shifted by both margins).
+        &:has(#page.drawers.show-drawer-left.show-drawer-right) {
+            .drawer.drawer-left {
+                right: $drawer-anchor-both-left;
+
+                &.show {
+                    right: $drawer-anchor-both-left;
+                }
+            }
+            .drawer.drawer-right {
+                left: $drawer-anchor-both-right;
+
+                &.show {
+                    left: $drawer-anchor-both-right;
+                }
+            }
         }
     }
 }
