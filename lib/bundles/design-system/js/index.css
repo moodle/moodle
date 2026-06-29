@@ -743,6 +743,391 @@
   opacity: 0.5;
 }
 
+/* ==========================================================================
+   Choicebox
+   A full-surface interactive card for single-select option picking.
+   HTML structure:
+     .mds-choicebox-wrapper
+       input.mds-choicebox-input  (visually hidden radio)
+       label.mds-choicebox
+         span.mds-choicebox-icon?   (optional — aria-hidden)
+         span.mds-choicebox-labels
+           span.mds-choicebox-label
+           span.mds-choicebox-supporting-text?
+         span.mds-choicebox-indicator  (decorative — aria-hidden)
+   State is driven entirely by CSS sibling selectors (.mds-choicebox-input
+   precedes .mds-choicebox in the DOM), avoiding any JS state management.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Wrapper
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-wrapper {
+  display: block;
+  /* Prevent flex containers from stretching this element */
+  align-self: start;
+  min-width: 320px; /* Ensure enough space for the indicator and some label text */
+}
+
+/* --------------------------------------------------------------------------
+   Hidden input
+   Visually hidden but focusable so keyboard and assistive tech can reach it.
+   pointer-events: none prevents it from receiving clicks — the <label for>
+   association handles delegation to the radio input instead.
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Card (label element — full-surface clickable area)
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--mds-spacing-xs);
+
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  border-radius: var(--mds-border-radius-md);
+  border: var(--mds-stroke-weight-sm) solid var(--mds-border-default);
+  background-color: var(--mds-bg-surface-subtle);
+
+  cursor: pointer;
+  /* Ensure the label fills its container when Choicebox is used in a grid or flex layout */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Hover — unselected */
+
+.mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:hover {
+  background-color: var(--mds-bg-surface-default);
+  border-color: var(--mds-border-default);
+}
+
+/* Active/pressed — unselected */
+
+.mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:active {
+  background-color: var(--mds-bg-surface-strong);
+  border-color: var(--mds-border-default);
+}
+
+/* Selected — default */
+
+.mds-choicebox-input:checked + .mds-choicebox {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Selected — hover */
+
+.mds-choicebox-input:not(:disabled):checked + .mds-choicebox:hover {
+  background-color: var(--mds-bg-surface-subtle);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Selected — pressed */
+
+.mds-choicebox-input:not(:disabled):checked + .mds-choicebox:active {
+  background-color: var(--mds-bg-surface-strong);
+  border-color: var(--mds-border-feedback-primary);
+}
+
+/* Disabled — show 'not-allowed' cursor over the whole card area.
+   cursor: not-allowed cannot be set on the label itself because
+   pointer-events: none (below) removes it from hit-testing, making the cursor
+   rule unreachable. :has() is safe for all Moodle-target browsers. */
+
+.mds-choicebox-wrapper:has(.mds-choicebox-input:disabled) {
+  cursor: not-allowed;
+}
+
+/* Block clicks on the label so the disabled radio cannot be activated */
+
+.mds-choicebox-input:disabled + .mds-choicebox {
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Focus — ring appears on the indicator per design spec
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-input:focus-visible
+  + .mds-choicebox
+  .mds-choicebox-indicator::after {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   Icon slot
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mds-spacing-xxs);
+  flex-shrink: 0;
+  /* Icon size matches --mds-icons-sm (16px) */
+  font-size: var(--mds-icons-sm);
+  color: var(--mds-text-default);
+}
+
+/* Selected icon */
+
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-icon {
+  color: var(--mds-text-feedback-primary);
+}
+
+/* Disabled unselected icon */
+
+.mds-choicebox-input:disabled:not(:checked)
+  + .mds-choicebox
+  .mds-choicebox-icon {
+  color: var(--mds-text-muted);
+}
+
+/* Disabled selected icon */
+
+.mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-icon {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Labels container
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-labels {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  gap: var(--mds-spacing-xxs);
+  padding: var(--mds-spacing-xxs) 0;
+  min-width: 0; /* Allow text to wrap within the flex item */
+}
+
+/* --------------------------------------------------------------------------
+   Label text
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-label {
+  display: block;
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-headings-6);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-headings-6);
+  letter-spacing: var(--mds-letter-spacing);
+  color: var(--mds-text-default);
+  word-break: break-word;
+}
+
+/* Selected label */
+
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-label {
+  color: var(--mds-text-feedback-primary);
+}
+
+/* Disabled unselected label */
+
+.mds-choicebox-input:disabled:not(:checked)
+  + .mds-choicebox
+  .mds-choicebox-label {
+  color: var(--mds-text-muted);
+}
+
+/* Disabled selected label */
+
+.mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-label {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Supporting text
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-supporting-text {
+  display: block;
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing);
+  color: var(--mds-text-subtle);
+  word-break: break-word;
+}
+
+/* Disabled unselected supporting text */
+
+.mds-choicebox-input:disabled:not(:checked)
+  + .mds-choicebox
+  .mds-choicebox-supporting-text {
+  color: var(--mds-text-subtle);
+}
+
+/* Disabled selected supporting text */
+
+.mds-choicebox-input:disabled:checked
+  + .mds-choicebox
+  .mds-choicebox-supporting-text {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* --------------------------------------------------------------------------
+   Choice indicator
+   The visible circle and circle-check are rendered via ::after so no extra
+   DOM nodes are needed. The input's checked/disabled state drives the styling
+   via CSS sibling selectors.
+   -------------------------------------------------------------------------- */
+
+.mds-choicebox-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  /* Vertically centre the indicator against the label line.
+     labels container has padding-block-start: spacing-xxs (0.25rem);
+     the label line-height is 1.2rem; indicator height is 1rem.
+     Offset = labels-padding-top + (label-line-height − indicator-height) / 2 */
+  margin-block-start: calc(
+    var(--mds-spacing-xxs) + (var(--mds-line-height-headings-6) - 1rem) / 2
+  );
+  flex-shrink: 0;
+}
+
+/* Unselected circle */
+
+.mds-choicebox-indicator::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--mds-border-radius-pill);
+  border: var(--mds-stroke-weight-sm) solid
+    var(--mds-border-interactive-secondary-default);
+  background-color: var(--mds-bg-surface-subtle);
+  box-sizing: border-box;
+}
+
+/* Unselected hover indicator background follows card background. */
+
+.mds-choicebox-input:not(:disabled):not(:checked)
+  + .mds-choicebox:hover
+  .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-surface-default);
+}
+
+.mds-choicebox-input:not(:disabled):not(:checked)
+  + .mds-choicebox:active
+  .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-surface-strong);
+}
+
+/* Checked: filled circle with inline SVG checkmark via background-image.
+   Path matches the Figma design spec exactly (fill-based, 16×16 viewBox). */
+
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-indicator::after {
+  border: none;
+  background-color: var(--mds-bg-interactive-primary-default);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6.05791 11.1853C6.47273 11.6049 7.1138 11.6049 7.52862 11.1853L12.3556 6.30245C12.7704 5.88283 12.7704 5.23433 12.3556 4.81471C11.9407 4.3951 11.2997 4.3951 10.8848 4.81471L6.81212 8.93461L5.11515 7.25613C4.70034 6.83651 4.05926 6.83651 3.64444 7.25613C3.22963 7.67575 3.22963 8.32425 3.64444 8.74387L6.05791 11.1853Z' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-size: cover;
+}
+
+/* Disabled unselected indicator — muted border */
+
+.mds-choicebox-input:disabled:not(:checked)
+  + .mds-choicebox
+  .mds-choicebox-indicator::after {
+  border-color: var(--mds-border-interactive-secondary-disabled);
+}
+
+/* Disabled selected indicator — dimmed fill */
+
+.mds-choicebox-input:disabled:checked
+  + .mds-choicebox
+  .mds-choicebox-indicator::after {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6.05791 11.1853C6.47273 11.6049 7.1138 11.6049 7.52862 11.1853L12.3556 6.30245C12.7704 5.88283 12.7704 5.23433 12.3556 4.81471C11.9407 4.3951 11.2997 4.3951 10.8848 4.81471L6.81212 8.93461L5.11515 7.25613C4.70034 6.83651 4.05926 6.83651 3.64444 7.25613C3.22963 7.67575 3.22963 8.32425 3.64444 8.74387L6.05791 11.1853Z' fill='%23ffffff'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   Forced colors (Windows High Contrast)
+   Card borders and indicator geometry use system colour keywords so they
+   remain visible when forced-colors is active. Text colours are left to adapt
+   automatically — they reference CSS custom properties that the browser will
+   remap to system colours.
+   Note: the SVG checkmark's hardcoded fill (%23ffffff) inside the checked
+   indicator will not adapt until Must Fix 2 (mask-image refactor) is done.
+   -------------------------------------------------------------------------- */
+
+@media (forced-colors: active) {
+  .mds-choicebox {
+    border-color: ButtonText;
+  }
+
+  .mds-choicebox-input:checked + .mds-choicebox {
+    border-color: Highlight;
+  }
+
+  .mds-choicebox-input:disabled + .mds-choicebox {
+    border-color: GrayText;
+  }
+
+  /* Preserve the indicator circle using forced-color-adjust: none so the
+     border/fill remain under author control via system colour keywords. */
+  .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    border-color: ButtonText;
+    background-color: Canvas;
+  }
+
+  .mds-choicebox-input:checked
+    + .mds-choicebox
+    .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    /* SVG fill %23ffffff may be invisible on some Highlight backgrounds —
+       fully addressed when Must Fix 2 (mask-image refactor) is completed. */
+  }
+
+  .mds-choicebox-input:disabled:not(:checked)
+    + .mds-choicebox
+    .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    border-color: GrayText;
+    background-color: Canvas;
+  }
+
+  .mds-choicebox-input:disabled:checked
+    + .mds-choicebox
+    .mds-choicebox-indicator::after {
+    forced-color-adjust: none;
+    background-color: GrayText;
+  }
+
+  /* Keep the focus ring aligned with the system Highlight colour */
+  .mds-choicebox-input:focus-visible
+    + .mds-choicebox
+    .mds-choicebox-indicator::after {
+    outline-color: Highlight;
+  }
+}
+
 .mds-close-button.btn-close {
   inline-size: var(--mds-icons-md);
   block-size: var(--mds-icons-md);
@@ -789,6 +1174,684 @@
   inline-size: var(--mds-icons-lg);
   block-size: var(--mds-icons-lg);
   background-size: var(--mds-icons-lg) var(--mds-icons-lg);
+}
+
+/* Favourite button (icon-only toggle) */
+
+.mds-favourite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mds-spacing-xs);
+  border: none;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-default);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
+.mds-favourite-button__icon {
+  display: block;
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  background-color: currentColor;
+  mask-image: url("data:image/svg+xml,%3csvg%20width='13'%20height='13'%20viewBox='0%200%2013%2013'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.17227%200C6.40664%200%206.59414%200.140625%206.68789%200.328125L8.30508%203.63281L11.891%204.17188C12.102%204.19531%2012.266%204.33594%2012.3363%204.54688C12.4066%204.75781%2012.3598%204.96875%2012.1957%205.13281L9.59414%207.71094L10.2035%2011.3438C10.2504%2011.5547%2010.1566%2011.7891%209.99258%2011.9062C9.80508%2012.0234%209.5707%2012.0469%209.3832%2011.9531L6.17227%2010.2188L2.98477%2011.9531C2.77383%2012.0469%202.56289%2012.0234%202.37539%2011.9062C2.21133%2011.7656%202.11758%2011.5547%202.16445%2011.3438L2.77383%207.71094L0.172266%205.13281C0.00820312%204.96875%20-0.0386719%204.75781%200.0316406%204.54688C0.101953%204.35938%200.266016%204.19531%200.476953%204.17188L4.06289%203.63281L5.68008%200.328125C5.77383%200.140625%205.96133%200%206.17227%200ZM6.17227%201.85156L4.95352%204.40625C4.85977%204.57031%204.71914%204.6875%204.53164%204.71094L1.76602%205.10938L3.7582%207.10156C3.89883%207.24219%203.96914%207.42969%203.92227%207.59375L3.45352%2010.4062L5.91445%209.09375C6.07852%209%206.28945%209%206.45352%209.09375L8.91445%2010.4062L8.4457%207.61719C8.39883%207.42969%208.46914%207.24219%208.60977%207.125L10.602%205.10938L7.83633%204.71094C7.64883%204.6875%207.5082%204.57031%207.41445%204.40625L6.17227%201.85156Z'%20fill='%231D2125'/%3e%3c/svg%3e");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: url("data:image/svg+xml,%3csvg%20width='13'%20height='13'%20viewBox='0%200%2013%2013'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.17227%200C6.40664%200%206.59414%200.140625%206.68789%200.328125L8.30508%203.63281L11.891%204.17188C12.102%204.19531%2012.266%204.33594%2012.3363%204.54688C12.4066%204.75781%2012.3598%204.96875%2012.1957%205.13281L9.59414%207.71094L10.2035%2011.3438C10.2504%2011.5547%2010.1566%2011.7891%209.99258%2011.9062C9.80508%2012.0234%209.5707%2012.0469%209.3832%2011.9531L6.17227%2010.2188L2.98477%2011.9531C2.77383%2012.0469%202.56289%2012.0234%202.37539%2011.9062C2.21133%2011.7656%202.11758%2011.5547%202.16445%2011.3438L2.77383%207.71094L0.172266%205.13281C0.00820312%204.96875%20-0.0386719%204.75781%200.0316406%204.54688C0.101953%204.35938%200.266016%204.19531%200.476953%204.17188L4.06289%203.63281L5.68008%200.328125C5.77383%200.140625%205.96133%200%206.17227%200ZM6.17227%201.85156L4.95352%204.40625C4.85977%204.57031%204.71914%204.6875%204.53164%204.71094L1.76602%205.10938L3.7582%207.10156C3.89883%207.24219%203.96914%207.42969%203.92227%207.59375L3.45352%2010.4062L5.91445%209.09375C6.07852%209%206.28945%209%206.45352%209.09375L8.91445%2010.4062L8.4457%207.61719C8.39883%207.42969%208.46914%207.24219%208.60977%207.125L10.602%205.10938L7.83633%204.71094C7.64883%204.6875%207.5082%204.57031%207.41445%204.40625L6.17227%201.85156Z'%20fill='%231D2125'/%3e%3c/svg%3e");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+.mds-favourite-button--selected .mds-favourite-button__icon {
+  mask-image: url("data:image/svg+xml,%3csvg%20width='13'%20height='13'%20viewBox='0%200%2013%2013'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.84706%200.421875L8.3705%203.53906L11.7221%204.03125C12.0033%204.07812%2012.2377%204.26562%2012.3314%204.54688C12.4252%204.80469%2012.3549%205.10938%2012.1439%205.29688L9.70643%207.71094L10.2924%2011.1328C10.3392%2011.4141%2010.2221%2011.6953%209.98768%2011.8594C9.75331%2012.0469%209.44862%2012.0469%209.19081%2011.9297L6.19081%2010.3125L3.16737%2011.9297C2.933%2012.0469%202.62831%2012.0469%202.39393%2011.8594C2.15956%2011.6953%202.04237%2011.4141%202.08925%2011.1328L2.65175%207.71094L0.214245%205.29688C0.0267453%205.10938%20-0.0435672%204.80469%200.0267453%204.54688C0.120495%204.26562%200.35487%204.07812%200.63612%204.03125L4.01112%203.53906L5.51112%200.421875C5.62831%200.164062%205.88612%200%206.19081%200C6.47206%200%206.72987%200.164062%206.84706%200.421875Z'%20fill='%230F6CBF'/%3e%3c/svg%3e");
+  -webkit-mask-image: url("data:image/svg+xml,%3csvg%20width='13'%20height='13'%20viewBox='0%200%2013%2013'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M6.84706%200.421875L8.3705%203.53906L11.7221%204.03125C12.0033%204.07812%2012.2377%204.26562%2012.3314%204.54688C12.4252%204.80469%2012.3549%205.10938%2012.1439%205.29688L9.70643%207.71094L10.2924%2011.1328C10.3392%2011.4141%2010.2221%2011.6953%209.98768%2011.8594C9.75331%2012.0469%209.44862%2012.0469%209.19081%2011.9297L6.19081%2010.3125L3.16737%2011.9297C2.933%2012.0469%202.62831%2012.0469%202.39393%2011.8594C2.15956%2011.6953%202.04237%2011.4141%202.08925%2011.1328L2.65175%207.71094L0.214245%205.29688C0.0267453%205.10938%20-0.0435672%204.80469%200.0267453%204.54688C0.120495%204.26562%200.35487%204.07812%200.63612%204.03125L4.01112%203.53906L5.51112%200.421875C5.62831%200.164062%205.88612%200%206.19081%200C6.47206%200%206.72987%200.164062%206.84706%200.421875Z'%20fill='%230F6CBF'/%3e%3c/svg%3e");
+}
+
+/* Unselected states */
+
+.mds-favourite-button:hover:not(:disabled) {
+  background-color: var(--mds-bg-surface-subtle);
+  color: var(--mds-text-subtle);
+}
+
+.mds-favourite-button:active:not(:disabled) {
+  background-color: var(--mds-bg-surface-strong);
+  color: var(--mds-text-default);
+}
+
+/* Selected states */
+
+.mds-favourite-button--selected {
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-link-primary-default);
+}
+
+.mds-favourite-button--selected:hover:not(:disabled) {
+  background-color: var(--mds-bg-surface-subtle);
+  color: var(--mds-text-link-primary-hover);
+}
+
+.mds-favourite-button--selected:active:not(:disabled) {
+  background-color: var(--mds-bg-surface-strong);
+  color: var(--mds-text-link-primary-default);
+}
+
+/* Disabled states */
+
+.mds-favourite-button:disabled {
+  background-color: var(--mds-bg-surface-default);
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+}
+
+.mds-favourite-button--selected:disabled {
+  color: var(--mds-text-link-primary-disabled);
+}
+
+/* Focus ring */
+
+.mds-favourite-button:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-favourite-button:focus-visible {
+  box-shadow: none;
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: 0;
+}
+
+.mds-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mds-spacing-xs);
+
+  color: var(--mds-text-link-primary-default);
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-regular);
+  font-size: var(--mds-font-size-paragraph-default);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.mds-link:hover:not(:focus-visible) {
+  color: var(--mds-text-link-primary-hover);
+}
+
+.mds-link:active {
+  color: var(--mds-text-link-primary-hover);
+}
+
+/* Underline on hover applies only to the label text, not the icon.
+   Pressed state has no underline (Figma). Thickness and position use
+   from-font so the underline follows the font's own metrics. */
+
+.mds-link:hover:not(:focus-visible) .mds-link__label {
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+}
+
+/* Slide icon toward the label on hover using transform so the link node width
+   stays constant (gap remains --mds-spacing-xs; only the icon moves visually). */
+
+.mds-link:hover:not(:focus-visible) .mds-link__icon:first-child {
+  transform: translateX(var(--mds-spacing-xxs));
+}
+
+.mds-link:hover:not(:focus-visible) .mds-link__icon:last-child {
+  transform: translateX(calc(-1 * var(--mds-spacing-xxs)));
+}
+
+[dir='rtl'] .mds-link:hover:not(:focus-visible) .mds-link__icon:first-child {
+  transform: translateX(calc(-1 * var(--mds-spacing-xxs)));
+}
+
+[dir='rtl'] .mds-link:hover:not(:focus-visible) .mds-link__icon:last-child {
+  transform: translateX(var(--mds-spacing-xxs));
+}
+
+/* Reset icon position on press */
+
+.mds-link:active .mds-link__icon {
+  transform: none;
+}
+
+.mds-link:focus {
+  outline: none;
+}
+
+.mds-link:focus-visible {
+  /* Bottom-only focus underline matching Figma: 2px border-bottom, 1px gap below content */
+  outline: none;
+  border-radius: 0;
+  padding-bottom: var(--mds-spacing-offset);
+  border-bottom: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+}
+
+.mds-link.mds-link--secondary {
+  color: var(--mds-text-subtle);
+}
+
+.mds-link.mds-link--secondary:hover:not(:focus-visible),
+.mds-link.mds-link--secondary:active {
+  color: var(--mds-text-default);
+}
+
+.mds-link.mds-link--disabled,
+.mds-link.mds-link--disabled:hover,
+.mds-link.mds-link--disabled:active {
+  color: var(--mds-text-link-primary-disabled);
+  pointer-events: none;
+}
+
+.mds-link.mds-link--disabled .mds-link__icon,
+.mds-link.mds-link--disabled:hover .mds-link__icon,
+.mds-link.mds-link--disabled:active .mds-link__icon {
+  transform: none;
+}
+
+.mds-link.mds-link--disabled .mds-link__label,
+.mds-link.mds-link--disabled:hover .mds-link__label,
+.mds-link.mds-link--disabled:active .mds-link__label {
+  text-decoration: none;
+}
+
+.mds-link.mds-link--secondary.mds-link--disabled,
+.mds-link.mds-link--secondary.mds-link--disabled:hover,
+.mds-link.mds-link--secondary.mds-link--disabled:active {
+  color: var(--mds-text-muted);
+}
+
+.mds-link__icon,
+.mds-link__icon i,
+.mds-link__icon svg {
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  font-size: var(--mds-icons-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mds-link__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease;
+}
+
+.mds-link__label {
+  text-align: start;
+}
+
+/* Nav pill — compact navigation destination indicator */
+
+.mds-nav-pill,
+.mds-nav-pill:visited {
+  /* Reset anchor/link defaults */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mds-spacing-xxs);
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+
+  border-radius: var(--mds-border-radius-md);
+
+  /* Label colour: unselected default */
+  color: var(--mds-text-subtle);
+  text-decoration: none;
+}
+
+.mds-nav-pill:hover,
+.mds-nav-pill:focus,
+.mds-nav-pill:active,
+.mds-nav-pill:visited {
+  text-decoration: none;
+}
+
+/* ---- Label ---- */
+
+.mds-nav-pill__label {
+  /* UI small — matches Figma: $font-size-sm / font-weight/medium / line-height/paragraph/xs */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-xs);
+  white-space: nowrap;
+}
+
+/* ---- Active-indicator dot (selected state only) ---- */
+
+.mds-nav-pill__indicator {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-interactive-primary-default);
+  flex-shrink: 0;
+}
+
+/* ---- Hover (unselected) ---- */
+
+.mds-nav-pill:hover:not([aria-disabled='true']):not(.mds-nav-pill--selected) {
+  background-color: var(--mds-bg-nav-pill-hover);
+}
+
+/* ---- Pressed / active (unselected) ---- */
+
+.mds-nav-pill:active:not([aria-disabled='true']):not(.mds-nav-pill--selected) {
+  background-color: var(--mds-bg-nav-pill-pressed);
+}
+
+/* ---- Focus-visible ring — keyboard navigation ---- */
+
+.mds-nav-pill:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.mds-nav-pill:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* ---- Disabled ---- */
+
+.mds-nav-pill[aria-disabled='true'] {
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+  background-color: transparent;
+}
+
+/* ---- Selected state ---- */
+
+.mds-nav-pill--selected {
+  color: var(--mds-text-default);
+  background-color: var(--mds-bg-nav-pill-selected);
+}
+
+.mds-nav-pill--selected:visited {
+  color: var(--mds-text-default);
+}
+
+.mds-nav-pill--selected:hover:not([aria-disabled='true']) {
+  background-color: var(--mds-bg-nav-pill-selected);
+}
+
+.mds-pagination {
+  display: flex;
+  gap: var(--mds-spacing-xxs);
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: inherit;
+  direction: inherit;
+}
+
+/* Shared base styles for buttons and page items */
+
+.mds-pagination__button,
+.mds-pagination__page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  padding: var(--mds-spacing-xs);
+  border: var(--mds-stroke-weight-sm) solid transparent;
+  border-radius: var(--mds-border-radius-xs);
+  background-color: transparent;
+  color: var(--mds-text-default);
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Keep hover affordance on prev/next controls only. Page-number buttons must
+   switch state atomically to avoid visible handoff when ellipsis positions move. */
+
+.mds-pagination__button {
+  transition: background-color 150ms ease;
+}
+
+.mds-pagination__page {
+  transition: none;
+}
+
+.mds-pagination__button:hover:not(:disabled),
+.mds-pagination__page:hover:not(:disabled) {
+  background-color: var(--mds-bg-interactive-secondary-hover);
+}
+
+.mds-pagination__button:active:not(:disabled),
+.mds-pagination__page:active:not(:disabled) {
+  background-color: var(--mds-bg-interactive-secondary-active);
+}
+
+.mds-pagination__button:focus,
+.mds-pagination__page:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-pagination__button:focus-visible:not(:disabled),
+.mds-pagination__page:focus-visible:not(:disabled) {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-pagination__button:disabled,
+.mds-pagination__page:disabled {
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+}
+
+/* Icon sizing */
+
+.mds-pagination__button i {
+  /* width/font-size use --mds-icons-sm (= scale-600 = 1rem = 16px, the icon md size). */
+  width: var(--mds-icons-sm);
+  font-size: var(--mds-icons-sm);
+  line-height: var(--mds-line-height-paragraph-xs);
+}
+
+/* Full variant */
+
+.mds-pagination--full .mds-pagination__pages {
+  display: flex;
+  gap: var(--mds-spacing-xxs);
+  align-items: center;
+}
+
+/* Page items */
+
+.mds-pagination__page {
+  line-height: var(--mds-line-height-paragraph-xs);
+}
+
+/* Current page state */
+
+.mds-pagination__page[data-current='true'] {
+  background-color: var(--mds-bg-interactive-primary-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-pagination__page[data-current='true']:disabled {
+  background-color: transparent;
+  color: var(--mds-text-muted);
+}
+
+.mds-pagination__page[data-current='true']:hover:not(:disabled) {
+  background-color: var(--mds-bg-interactive-primary-hover);
+}
+
+.mds-pagination__page[data-current='true']:active:not(:disabled) {
+  background-color: var(--mds-bg-interactive-primary-active);
+}
+
+.mds-pagination__page[data-current='true']:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* Ellipsis */
+
+.mds-pagination__ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  color: var(--mds-text-muted);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Grouped variant - only shows prev/next buttons */
+
+.mds-pagination--grouped .mds-pagination__pages {
+  display: none;
+}
+
+/* Grouped button styling */
+
+.mds-pagination--grouped .mds-pagination__button {
+  border-color: var(--mds-border-interactive-secondary-default);
+}
+
+/* Flip prev/next chevrons in RTL so they point in the correct travel direction */
+
+[dir='rtl'] .mds-pagination__button i {
+  transform: scaleX(-1);
+}
+
+/* Wrapper layout */
+
+.mds-progress-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mds-spacing-xs);
+  /* 120px is intentionally has no token by design just as in Figma. */
+  min-width: 120px;
+  width: 100%;
+}
+
+/* Inline variant: bar on the left, count on the right in one row. */
+
+.mds-progress-bar.mds-progress-bar--label-inline {
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Track (outer container) */
+
+.mds-progress-bar-track.progress {
+  /* Re-state Bootstrap progress primitives here so host .progress overrides cannot drift MDS visuals. */
+  /* 0.375rem = 6px from Figma; intentionally has no token by design for consumer flexibility. */
+  display: flex;
+  height: 0.375rem;
+  overflow: hidden;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-feedback-secondary-default);
+  box-shadow: none;
+}
+
+/* In-progress and loading use the primary-subtle track. */
+
+.mds-progress-bar--in-progress .mds-progress-bar-track,
+.mds-progress-bar--loading .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-primary-subtle);
+}
+
+/* Error track. */
+
+.mds-progress-bar--error .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-danger-subtle);
+}
+
+/* Warning track. */
+
+.mds-progress-bar--warning .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-warning-subtle);
+}
+
+/* Completed and empty keep the default secondary track. */
+
+.mds-progress-bar--completed .mds-progress-bar-track,
+.mds-progress-bar--empty .mds-progress-bar-track {
+  background-color: var(--mds-bg-feedback-secondary-default);
+}
+
+/* Inline variant: track should fill available row space. */
+
+.mds-progress-bar--label-inline .mds-progress-bar-track {
+  flex: 1 1 0;
+  min-inline-size: var(--mds-spacing-xxl);
+}
+
+/* Fill (inner progress indicator) */
+
+.mds-progress-bar-fill.progress-bar {
+  /* Keep core progress-bar behavior local so host --bs-progress-* token changes do not leak in. */
+  display: flex;
+  overflow: hidden;
+  background-color: var(--mds-bg-interactive-primary-default);
+  transition: width 0.3s ease;
+}
+
+/* Explicit striped styles avoid dependence on host Bootstrap variables. */
+
+.mds-progress-bar-fill.progress-bar-striped {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  /* Figma loading pattern uses a larger tile than the 6px bar height. */
+  background-size: var(--mds-spacing-md) var(--mds-spacing-md);
+  background-repeat: repeat;
+  background-position-x: 0;
+}
+
+[dir='rtl'] .mds-progress-bar-fill.progress-bar-striped {
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+
+.mds-progress-bar-fill.progress-bar-animated {
+  animation: mds-progress-bar-stripes 0.8s linear infinite;
+}
+
+[dir='rtl'] .mds-progress-bar-fill.progress-bar-animated {
+  animation-name: mds-progress-bar-stripes-rtl;
+}
+
+@keyframes mds-progress-bar-stripes {
+  0% {
+    background-position-x: var(--mds-spacing-md);
+  }
+}
+
+@keyframes mds-progress-bar-stripes-rtl {
+  0% {
+    background-position-x: calc(var(--mds-spacing-md) * -1);
+  }
+}
+
+/* Error fill. */
+
+.mds-progress-bar--error .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-danger-default);
+}
+
+/* Warning fill. */
+
+.mds-progress-bar--warning .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-warning-default);
+}
+
+/* Completed fill. */
+
+.mds-progress-bar--completed .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-success-default);
+}
+
+/* Empty fill blends with the track. */
+
+.mds-progress-bar--empty .mds-progress-bar-fill {
+  background-color: var(--mds-bg-feedback-secondary-default);
+}
+
+/* Label container */
+
+.mds-progress-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--mds-spacing-xs);
+  width: 100%;
+
+  /* UI text/small */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing-default);
+  color: var(--mds-text-subtle);
+}
+
+/* Title text */
+
+.mds-progress-bar-title {
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-small);
+  word-break: break-word;
+}
+
+/* In title-and-count layout, title and count share one row and must both be able to shrink. */
+
+.mds-progress-bar--label-title-and-count .mds-progress-bar-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* Count / percentage text */
+
+.mds-progress-bar-count {
+  font-weight: var(--mds-font-weight-regular);
+
+  /* Inline count sits outside .mds-progress-bar-label, so it needs explicit text styles. */
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing-default);
+  color: var(--mds-text-subtle);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+}
+
+/* In title-and-count layout, count is bounded to prevent hogging the row. */
+
+.mds-progress-bar--label-title-and-count .mds-progress-bar-count {
+  flex: 0 1 50%;
+  max-inline-size: 50%;
+  text-align: end;
+}
+
+/* In inline layout, count takes only what it needs, leaving space for the track. */
+
+.mds-progress-bar--label-inline .mds-progress-bar-count {
+  flex: 0 1 auto;
+  max-inline-size: 40%;
+  text-align: start;
 }
 
 /* Parent element */
@@ -1038,6 +2101,9 @@
   --mds-bg-interactive-secondary-default: var(--mds-color-gray-300);
   --mds-bg-interactive-secondary-disabled: var(--mds-color-gray-200);
   --mds-bg-interactive-secondary-hover: var(--mds-color-gray-400);
+  --mds-bg-nav-pill-hover: var(--mds-color-gray-200);
+  --mds-bg-nav-pill-pressed: var(--mds-color-gray-300);
+  --mds-bg-nav-pill-selected: var(--mds-color-gray-200);
   --mds-bg-surface-default: var(--mds-color-gray-white);
   --mds-bg-surface-strong: var(--mds-color-gray-200);
   --mds-bg-surface-subtle: var(--mds-color-gray-100);

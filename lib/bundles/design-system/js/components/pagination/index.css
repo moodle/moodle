@@ -1,0 +1,139 @@
+.mds-pagination {
+  display: flex;
+  gap: var(--mds-spacing-xxs);
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: inherit;
+  direction: inherit;
+}
+
+/* Shared base styles for buttons and page items */
+.mds-pagination__button,
+.mds-pagination__page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  padding: var(--mds-spacing-xs);
+  border: var(--mds-stroke-weight-sm) solid transparent;
+  border-radius: var(--mds-border-radius-xs);
+  background-color: transparent;
+  color: var(--mds-text-default);
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Keep hover affordance on prev/next controls only. Page-number buttons must
+   switch state atomically to avoid visible handoff when ellipsis positions move. */
+.mds-pagination__button {
+  transition: background-color 150ms ease;
+}
+
+.mds-pagination__page {
+  transition: none;
+}
+
+.mds-pagination__button:hover:not(:disabled),
+.mds-pagination__page:hover:not(:disabled) {
+  background-color: var(--mds-bg-interactive-secondary-hover);
+}
+
+.mds-pagination__button:active:not(:disabled),
+.mds-pagination__page:active:not(:disabled) {
+  background-color: var(--mds-bg-interactive-secondary-active);
+}
+
+.mds-pagination__button:focus,
+.mds-pagination__page:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-pagination__button:focus-visible:not(:disabled),
+.mds-pagination__page:focus-visible:not(:disabled) {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-pagination__button:disabled,
+.mds-pagination__page:disabled {
+  color: var(--mds-text-muted);
+  cursor: not-allowed;
+}
+
+/* Icon sizing */
+.mds-pagination__button i {
+  /* width/font-size use --mds-icons-sm (= scale-600 = 1rem = 16px, the icon md size). */
+  width: var(--mds-icons-sm);
+  font-size: var(--mds-icons-sm);
+  line-height: var(--mds-line-height-paragraph-xs);
+}
+
+/* Full variant */
+.mds-pagination--full .mds-pagination__pages {
+  display: flex;
+  gap: var(--mds-spacing-xxs);
+  align-items: center;
+}
+
+/* Page items */
+.mds-pagination__page {
+  line-height: var(--mds-line-height-paragraph-xs);
+}
+
+/* Current page state */
+.mds-pagination__page[data-current='true'] {
+  background-color: var(--mds-bg-interactive-primary-default);
+  color: var(--mds-text-inverse);
+}
+
+.mds-pagination__page[data-current='true']:disabled {
+  background-color: transparent;
+  color: var(--mds-text-muted);
+}
+
+.mds-pagination__page[data-current='true']:hover:not(:disabled) {
+  background-color: var(--mds-bg-interactive-primary-hover);
+}
+
+.mds-pagination__page[data-current='true']:active:not(:disabled) {
+  background-color: var(--mds-bg-interactive-primary-active);
+}
+
+.mds-pagination__page[data-current='true']:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+/* Ellipsis */
+.mds-pagination__ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  color: var(--mds-text-muted);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Grouped variant - only shows prev/next buttons */
+.mds-pagination--grouped .mds-pagination__pages {
+  display: none;
+}
+
+/* Grouped button styling */
+.mds-pagination--grouped .mds-pagination__button {
+  border-color: var(--mds-border-interactive-secondary-default);
+}
+
+/* Flip prev/next chevrons in RTL so they point in the correct travel direction */
+[dir='rtl'] .mds-pagination__button i {
+  transform: scaleX(-1);
+}

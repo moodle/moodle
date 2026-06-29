@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@moodlehq/design-system": "^4.1.0",
+    "@moodlehq/design-system": "^5.0.0",
     "react": "^19.1",
     "react-dom": "^19.1"
   },

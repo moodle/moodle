@@ -1,4 +1,7 @@
-// Import Design System.
-// Do NOT import _index.scss - it uses @forward (incompatible with @import).
-
-@import "../../../../lib/bundles/design-system/scss/tokens/scss/_index.legacy";
+// Design tokens — legacy SCSS variables (used for Bootstrap variable overrides).
+// Do NOT import _index.scss as it uses @forward which is incompatible with @import.
+@import "../../../../lib/bundles/design-system/scss/tokens/_index.legacy";
+// Design tokens — CSS custom properties.
+@import "../../../../lib/bundles/design-system/scss/tokens/_index_css_vars";
+// Design system component styles.
+@import '../../../../lib/bundles/design-system/js/components/_index.legacy';

@@ -15,5 +15,5 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
     /** Optional icon rendered after the label. Must be an `<i>` or `<svg>` element. Mutually exclusive with `startIcon`. */
     endIcon?: IconElement;
 }
-export declare const Badge: ({ label, variant, subtle, pill, startIcon, endIcon, className, ...props }: BadgeProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Badge: ({ label, variant, subtle, pill, startIcon, endIcon, className, ...props }: BadgeProps) => import("react").JSX.Element;
 export {};
