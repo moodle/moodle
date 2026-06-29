@@ -17,6 +17,16 @@ Feature: Navbar user menu
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
 
+  Scenario: User first name is displayed alongside the avatar on wider viewports
+    Given I log in as "student1"
+    And I am on site homepage
+    Then the "class" attribute of ".userfirstname" "css_element" should contain "d-xl-block"
+    And I should see "Student" in the ".userfirstname" "css_element"
+    And I change window size to "large"
+    And ".userfirstname" "css_element" should be visible
+    And I change window size to "mobile"
+    And ".userfirstname" "css_element" should not be visible
+
   Scenario Outline: User menu is in the right edge of the navbar
     Given I log in as "<username>"
     When I am on <location>

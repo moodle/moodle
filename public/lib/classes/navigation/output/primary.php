@@ -259,7 +259,13 @@ class primary implements renderable, templatable {
      * This is leveraging the data from user_get_user_navigation_info and the logic in $OUTPUT->user_menu()
      *
      * @param renderer_base $output
-     * @return array
+     * @return array The template context array, including:
+     *               - userfirstname string The first name of the logged-in user (or real user when impersonating).
+     *               - userfullname  string The full name of the logged-in user (or real user when impersonating).
+     *               - avatardata    array  Avatar image(s) for display in the menu trigger.
+     *               - metadata      array  Additional contextual metadata (role, login failures, etc.).
+     *               - items         array  Navigation links shown in the dropdown.
+     *               - submenus      array  Nested submenus (e.g. language selector).
      */
     public function get_user_menu(renderer_base $output): array {
         global $CFG, $USER, $PAGE;
@@ -279,6 +285,7 @@ class primary implements renderable, templatable {
             'classes' => 'current'
         ];
         $usermenudata['userfullname'] = $info->metadata['realuserfullname'] ?? $info->metadata['userfullname'];
+        $usermenudata['userfirstname'] = $info->metadata['realuserfirstname'] ?? $info->metadata['userfirstname'];
 
         // Logged in as someone else.
         if ($info->metadata['asotheruser']) {

@@ -440,6 +440,28 @@ final class primary_test extends \advanced_testcase {
     }
 
     /**
+     * Test that get_user_menu includes userfirstname in the template context.
+     *
+     * @covers \core\navigation\output\primary::get_user_menu
+     */
+    public function test_get_user_menu_includes_userfirstname(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+
+        $PAGE->set_url('/');
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'Testfirstname']);
+        $this->setUser($user);
+        $PAGE->initialise_theme_and_output();
+
+        $primary = new \core\navigation\output\primary($PAGE);
+        $renderer = $PAGE->get_renderer('core');
+        $usermenu = $primary->get_user_menu($renderer);
+
+        $this->assertArrayHasKey('userfirstname', $usermenu);
+        $this->assertEquals('Testfirstname', $usermenu['userfirstname']);
+    }
+
+    /**
      * Traverse the menu array structure (all nodes recursively) and fetch the node texts from the menu nodes that are
      * active/open (determined via param $nodetype that can be "inactive" or "isopen"). The returned array contains a
      * list of nade names that match this criterion.

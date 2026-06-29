@@ -652,6 +652,25 @@ final class userlib_test extends \advanced_testcase {
     }
 
     /**
+     * Test that user_get_user_navigation_info includes the user's first name in metadata.
+     *
+     * @covers ::user_get_user_navigation_info
+     */
+    public function test_user_navigation_info_includes_userfirstname(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+
+        $PAGE->set_url('/');
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'Testfirstname']);
+        $this->setUser($user);
+
+        $opts = user_get_user_navigation_info($user, $PAGE);
+
+        $this->assertArrayHasKey('userfirstname', $opts->metadata);
+        $this->assertEquals('Testfirstname', $opts->metadata['userfirstname']);
+    }
+
+    /**
      * Test user_can_view_profile
      */
     public function test_user_can_view_profile(): void {

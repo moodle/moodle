@@ -864,6 +864,7 @@ function user_get_default_homepage_options(): array {
  *
  *          userid         int        the id of the user in question
  *          userfullname   string     the user's full name
+ *          userfirstname  string     the user's first name
  *          userprofileurl moodle_url the url of the user's profile
  *          useravatar     string     a HTML fragment - the rendered
  *                                    user_picture for this user
@@ -877,6 +878,7 @@ function user_get_default_homepage_options(): array {
  *          asotheruser        bool    whether viewing as another user
  *          realuserid         int        the id of the user in question
  *          realuserfullname   string     the user's full name
+ *          realuserfirstname  string     the real user's first name
  *          realuserprofileurl moodle_url the url of the user's profile
  *          realuseravatar     string     a HTML fragment - the rendered
  *                                        user_picture for this user
@@ -912,6 +914,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
     // Get basic user metadata.
     $returnobject->metadata['userid'] = $user->id;
     $returnobject->metadata['userfullname'] = fullname($user);
+    $returnobject->metadata['userfirstname'] = !empty($CFG->forcefirstname) ? $CFG->forcefirstname : $user->firstname;
     $returnobject->metadata['userprofileurl'] = new moodle_url('/user/profile.php', array(
         'id' => $user->id
     ));
@@ -1023,6 +1026,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
         // user is disguised as.
         $returnobject->metadata['realuserid'] = $realuser->id;
         $returnobject->metadata['realuserfullname'] = fullname($realuser);
+        $returnobject->metadata['realuserfirstname'] = !empty($CFG->forcefirstname) ? $CFG->forcefirstname : $realuser->firstname;
         $returnobject->metadata['realuserprofileurl'] = new moodle_url('/user/profile.php', [
             'id' => $realuser->id
         ]);

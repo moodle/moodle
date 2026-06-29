@@ -28,6 +28,7 @@
     * avatardata - Array of avatars to be displayed. Usually only the current user's avatar. If viewing as another user,
         includes that user's avatar.
     * userfullname - The name of the logged in user
+    * userfirstname - The first name of the logged in user, displayed alongside the avatar on wider viewports.
     * submenus - Array of submenus within the user menu.
       * id - The id of the submenu.
       * title - The title of the submenu.
@@ -43,6 +44,7 @@
         "metadata": [],
         "avatardata": [],
         "userfullname": "Admin User",
+        "userfirstname": "Admin",
         "submenus": [
             {
                 "id": "86cebd87",
@@ -71,6 +73,9 @@
                 <span class="userbutton">
                     {{> core/user_menu_metadata }}
                 </span>
+                {{#userfirstname}}
+                <span class="userfirstname d-none d-xl-block" dir="auto" aria-hidden="true">{{userfirstname}}</span>
+                {{/userfirstname}}
             </a>
             <div id="user-action-menu" class="dropdown-menu dropdown-menu-end">
                 <div id="usermenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
