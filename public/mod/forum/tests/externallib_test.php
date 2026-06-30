@@ -535,6 +535,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
                 'markasunread' => null,
                 'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id($discussion1reply2->discussion),
             ],
+            'label' => get_string(
+                'postbyuser', 'mod_forum',
+                ['post' => $discussion1reply2->subject, 'user' => $exporteduser3['fullname']]
+            ),
         );
 
 
@@ -596,6 +600,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
                 'markasunread' => null,
                 'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id($discussion1reply1->discussion),
             ],
+            'label' => get_string(
+                'postbyuser', 'mod_forum',
+                ['post' => $discussion1reply1->subject, 'user' => $exporteduser2['fullname']]
+            ),
         );
 
         // Test a discussion with two additional posts (total 3 posts).
@@ -2524,6 +2532,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
                             'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id(
                                 $discussion1reply1->discussion)->out(false),
                         ],
+                        'label' => get_string(
+                            'postbyuser', 'mod_forum',
+                            ['post' => $discussion1reply1->subject, 'user' => $exporteduser2['fullname']]
+                        ),
                     ]
                 ],
                 'parentposts' => [
@@ -2587,6 +2599,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
                             'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id(
                                 $discussion1firstpostobject->discussion)->out(false),
                         ],
+                        'label' => get_string(
+                            'postbyuser', 'mod_forum',
+                            ['post' => $discussion1firstpostobject->subject, 'user' => $exporteduser1['fullname']]
+                        ),
                     ]
                 ],
             ],
@@ -2667,6 +2683,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
                             'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id(
                                 $discussion2reply1->discussion)->out(false),
                         ],
+                        'label' => get_string(
+                            'postbyuser', 'mod_forum',
+                            ['post' => $discussion2reply1->subject, 'user' => $exporteduser2['fullname']]
+                        ),
                     ]
                 ],
                 'parentposts' => [
@@ -2730,7 +2750,11 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
                             'discuss' => $urlfactory->get_discussion_view_url_from_discussion_id(
                                 $discussion2firstpostobject->discussion)->out(false),
 
-                        ]
+                        ],
+                        'label' => get_string(
+                            'postbyuser', 'mod_forum',
+                            ['post' => $discussion2firstpostobject->subject, 'user' => $exporteduser1['fullname']]
+                        ),
                     ],
                 ]
             ],
