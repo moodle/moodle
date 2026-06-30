@@ -10,6 +10,9 @@
 - Two new steps have been added to simplify testing of linear navigation: the course linear navigation should/should not be visible
 
   For more information see [MDL-87575](https://tracker.moodle.org/browse/MDL-87575)
+- Add a inline_help flag for course format setting elements.  When this flag is present in the setting definition, or set to true,  the help text is displayed as static text beneath the setting.
+
+  For more information see [MDL-88669](https://tracker.moodle.org/browse/MDL-88669)
 
 ## 5.2
 

@@ -1,5 +1,13 @@
 # theme_boost Upgrade notes
 
+## 5.3dev
+
+### Changed
+
+- The default UI typeface for Boost has changed from the system-ui font stack to Noto Sans. Noto Sans is now self-hosted under `theme/boost/fonts/` and declared via `@font-face` in `theme/boost/scss/moodle/fonts.scss`. The latin and latin-ext subsets are included (normal and italic, weight 100-900). The `$font-family-sans-serif` Bootstrap variable is now set from the `$mds-font-family-base` MDS token. Child themes that override `$font-family-sans-serif` are unaffected. Child themes that rely on the system-ui fallback behaviour will now render Noto Sans instead.
+
+  For more information see [MDL-88412](https://tracker.moodle.org/browse/MDL-88412)
+
 ## 5.2
 
 ### Removed

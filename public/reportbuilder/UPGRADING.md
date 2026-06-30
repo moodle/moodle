@@ -2,6 +2,14 @@
 
 ## 5.3dev
 
+### Added
+
+- The report `join` trait contains new `prepend_join[s]` methods, which are called from the base entity to ensure entity joins are automatically prepended to all entity columns, filters and conditions
+
+  Entity implementations no longer have to manually add boilerplace to add the same joins to their own columns, filters and conditions
+
+  For more information see [MDL-87405](https://tracker.moodle.org/browse/MDL-87405)
+
 ### Changed
 
 - New method of the base report class for setting complex SQL as the main report table, `set_main_table_sql()`

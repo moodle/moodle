@@ -141,6 +141,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Two new steps have been added to simplify testing of linear navigation: the course linear navigation should/should not be visible
 
   For more information see [MDL-87575](https://tracker.moodle.org/browse/MDL-87575)
+- Add a inline_help flag for course format setting elements.  When this flag is present in the setting definition, or set to true,  the help text is displayed as static text beneath the setting.
+
+  For more information see [MDL-88669](https://tracker.moodle.org/browse/MDL-88669)
 
 ### core_external
 
@@ -176,7 +179,23 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81225](https://tracker.moodle.org/browse/MDL-81225)
 
+### core_filters
+
+#### Added
+
+- Rendered TeX/Algebra images are now stored using the File Storage API instead of the `$CFG->dataroot/filter/{tex,algebra}/` directory. A new `rendered_images` cache definition has been added to both `filter_tex` and `filter_algebra`. The upgrade step automatically migrates existing images from the legacy dataroot location to file storage and removes the old directory.
+
+  For more information see [MDL-87554](https://tracker.moodle.org/browse/MDL-87554)
+
 ### core_reportbuilder
+
+#### Added
+
+- The report `join` trait contains new `prepend_join[s]` methods, which are called from the base entity to ensure entity joins are automatically prepended to all entity columns, filters and conditions
+
+  Entity implementations no longer have to manually add boilerplace to add the same joins to their own columns, filters and conditions
+
+  For more information see [MDL-87405](https://tracker.moodle.org/browse/MDL-87405)
 
 #### Changed
 
@@ -253,6 +272,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The delete_override, delete_all_overrides, move_group_override, reorder_group_overrides are now deprecated. Use the corresponding methods in the override_manager class instead: - override_manager::delete_override - override_manager::delete_all_overrides - override_manager::move_group_override - override_manager::reorder_group_overrides
 
   For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
+
+### theme_boost
+
+#### Changed
+
+- The default UI typeface for Boost has changed from the system-ui font stack to Noto Sans. Noto Sans is now self-hosted under `theme/boost/fonts/` and declared via `@font-face` in `theme/boost/scss/moodle/fonts.scss`. The latin and latin-ext subsets are included (normal and italic, weight 100-900). The `$font-family-sans-serif` Bootstrap variable is now set from the `$mds-font-family-base` MDS token. Child themes that override `$font-family-sans-serif` are unaffected. Child themes that rely on the system-ui fallback behaviour will now render Noto Sans instead.
+
+  For more information see [MDL-88412](https://tracker.moodle.org/browse/MDL-88412)
 
 ## 5.2
 

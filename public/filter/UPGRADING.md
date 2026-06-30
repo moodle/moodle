@@ -1,5 +1,13 @@
 # core_filters (subsystem / plugintype) Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- Rendered TeX/Algebra images are now stored using the File Storage API instead of the `$CFG->dataroot/filter/{tex,algebra}/` directory. A new `rendered_images` cache definition has been added to both `filter_tex` and `filter_algebra`. The upgrade step automatically migrates existing images from the legacy dataroot location to file storage and removes the old directory.
+
+  For more information see [MDL-87554](https://tracker.moodle.org/browse/MDL-87554)
+
 ## 5.2
 
 ### Removed
