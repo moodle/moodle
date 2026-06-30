@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20260112" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20260707" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -5060,6 +5060,135 @@
         <INDEX NAME="shortcode_userid" UNIQUE="true" FIELDS="userid, shortcode"/>
         <INDEX NAME="shortcode" UNIQUE="false" FIELDS="shortcode"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="oauth2_server_clients" COMMENT="OAuth2 server clients">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Human-readable name of the OAuth2 client"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Optional human-readable description of the OAuth2 client"/>
+        <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Public OAuth2 Client identifier used in token requests"/>
+        <FIELD NAME="ownercontext" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context ID representing the owner of the OAuth client"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Current lifecycle status of the OAuth2 client"/>
+        <FIELD NAME="isconfidential" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Indicates if the OAuth2 client can securely maintain a secret"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last modification timestamp"/>
+        <FIELD NAME="lastaccessed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last accessed timestamp"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="clientidentifier_uk" TYPE="unique" FIELDS="clientidentifier"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="oauth2_server_client_secrets" COMMENT="Secrets for OAuth2 clients">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 client identifier"/>
+        <FIELD NAME="secret" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 Client secret"/>
+        <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Expiry timestamp"/>
+        <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the OAuth2 Client secret is revoked"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
+        <FIELD NAME="lastaccessed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Timestamp when the client secret was last successfully used to authenticate a client"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="clientidentifier_fk" TYPE="foreign" FIELDS="clientidentifier" REFTABLE="oauth2_server_clients" REFFIELDS="clientidentifier"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="oauth2_server_client_redirect_uris" COMMENT="Redirect URIs for OAuth2 Clients">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 Client identifier"/>
+        <FIELD NAME="uri" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 Client redirect URI"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="clientidentifier_fk" TYPE="foreign" FIELDS="clientidentifier" REFTABLE="oauth2_server_clients" REFFIELDS="clientidentifier"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="oauth2_server_client_refresh_tokens" COMMENT="OAuth2 refresh tokens to renew access tokens">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Public OAuth2 refresh token identifier"/>
+        <FIELD NAME="accesstokenidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 Access token identifier"/>
+        <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Expiry timestamp"/>
+        <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the OAuth2 Client refresh token is revoked"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="identifier_uk" TYPE="unique" FIELDS="identifier"/>
+        <KEY NAME="accesstokenidentifier_fk" TYPE="foreign" FIELDS="accesstokenidentifier" REFTABLE="oauth2_server_client_access_tokens" REFFIELDS="identifier"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="oauth2_server_client_access_tokens" COMMENT="OAuth2 access tokens issued to clients">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Public OAuth2 access token identifier"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="User ID of the access token owner"/>
+        <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 client identifier"/>
+        <FIELD NAME="scopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Space-seperated list of scopes"/>
+        <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Expiry timestamp"/>
+        <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the OAuth2 access token is revoked"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="identifier_uk" TYPE="unique" FIELDS="identifier"/>
+        <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="clientidentifier_fk" TYPE="foreign" FIELDS="clientidentifier" REFTABLE="oauth2_server_clients" REFFIELDS="clientidentifier"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="oauth2_server_client_auth_codes" COMMENT="OAuth2 authorisation codes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Public OAuth2 authentication code identifier"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID of the authorisation request approver"/>
+        <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 client identifier"/>
+        <FIELD NAME="redirecturi" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Redirect URI used in authorisation request"/>
+        <FIELD NAME="scopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Space-seperated list of scopes"/>
+        <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Expiry timestamp"/>
+        <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the OAuth2 authorisation code is revoked"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="identifier_uk" TYPE="unique" FIELDS="identifier"/>
+        <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="clientidentifier_fk" TYPE="foreign" FIELDS="clientidentifier" REFTABLE="oauth2_server_clients" REFFIELDS="clientidentifier"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="oauth2_server_client_granted_scopes" COMMENT="User consent and granted scopes for OAuth2 clients">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 client identifier"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID of the resource owner who approved the application access"/>
+        <FIELD NAME="scope" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Scope explicitly granted to this client by the user"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="clientidentifier_fk" TYPE="foreign" FIELDS="clientidentifier" REFTABLE="oauth2_server_clients" REFFIELDS="clientidentifier"/>
+        <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="rest_api_tokens" COMMENT="Non-OAuth2 REST tokens">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Human-readable name of the REST API token"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Optional human-readable description of the REST API token"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="REST API token used to authenticate API requests"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID of the token owner"/>
+        <FIELD NAME="scopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Space-separated list of scopes granted to the token"/>
+        <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Token expiry timestamp, or NULL if the token does not expire"/>
+        <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the REST API token is revoked"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
+        <FIELD NAME="lastaccessed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Timestamp when the token was last successfully used to authenticate an API request"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="token_uk" TYPE="unique" FIELDS="token"/>
+        <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>
