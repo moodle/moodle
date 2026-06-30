@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Script to download the export of a single question.
+ * Script to download the export of several question.
  *
  * @package    qbank_exporttoxml
- * @copyright  2015 the Open University
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @copyright  2026 MoodleMoot DACH
+ * @author     Andreas Steiger, Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,9 +28,9 @@ require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/format/xml/format.php');
 
 // Get the parameters from the URL.
-$questionid = required_param('id', PARAM_INT);
+$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $cmid = required_param('cmid', PARAM_INT);
-$urlparams = ['id' => $questionid, 'sesskey' => sesskey()];
+$urlparams = ['sesskey' => sesskey()];
 
 \core_question\local\bank\helper::require_plugin_enabled('qbank_exporttoxml');
 
@@ -39,27 +39,42 @@ require_login($cm->course, false, $cm);
 $thiscontext = context_module::instance($cmid);
 $urlparams['cmid'] = $cmid;
 
-require_sesskey();
-
+if ($returnurl) {
+    $returnurl = new moodle_url($returnurl);
+}
 // Load the necessary data.
 $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
-$questiondata = question_bank::load_question_data($questionid);
 
-// Check permissions.
-question_require_capability_on($questiondata, 'view');
+require_sesskey();
 
 // Initialise $PAGE. Nothing is output, so this does not really matter. Just avoids notices.
-$PAGE->set_url('/question/bank/exporttoxml/exportone.php', $urlparams);
+$PAGE->set_url('/question/bank/exporttoxml/exportmany.php', $urlparams);
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->set_pagelayout('admin');
 
+// Make a list of all the questions that are selected.
+$rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
+$questionlist = [];  // Array of ids of questions to be exported.
+foreach ($rawquestions as $key => $value) {    // Parse input for question ids.
+    if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
+        $key = $matches[1];
+        $questionlist[] = question_bank::load_question_data((int)$key);
+        question_require_capability_on((int)$key, 'edit');
+    }
+}
+if (!$questionlist) { // No questions were selected.
+    redirect($returnurl);
+}
+
 // Set up the export format.
 $qformat = new qformat_xml();
-$filename = question_default_export_filename($COURSE, $questiondata) .
-        $qformat->export_file_extension();
+$filename = question_default_export_filename(
+    $COURSE,
+    (object) ['name' => get_string('selectedquestions', 'qbank_exporttoxml')],
+) . $qformat->export_file_extension();
 $qformat->setContexts($contexts->having_one_edit_tab_cap('export'));
 $qformat->setCourse($COURSE);
-$qformat->setQuestions([$questiondata]);
+$qformat->setQuestions($questionlist);
 $qformat->setCattofile(false);
 $qformat->setContexttofile(false);
 
