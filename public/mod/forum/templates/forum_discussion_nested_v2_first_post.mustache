@@ -42,7 +42,7 @@
     {{! The firstpost and starter classes below aren't used for anything other than to identify the first post in behat. }}
     <div
         class="d-flex focus-target mb-4 {{#firstpost}}firstpost starter{{/firstpost}}"
-        aria-label='{{#str}} postbyuser, mod_forum, {"post": "{{subject}}", "user": "{{author.fullname}}"} {{/str}}'
+        aria-label="{{label}}"
         data-post-id="{{id}}" data-content="forum-post"
     >
         {{#isfirstunread}}<a id="unread" aria-hidden="true"></a>{{/isfirstunread}}
