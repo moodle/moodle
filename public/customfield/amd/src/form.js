@@ -152,6 +152,7 @@ const createNewCategory = (component, area, itemid) => {
     promises[0].then(() => Repository.reloadTemplate(component, area, itemid))
     .then(response => Templates.render('core_customfield/list', response))
     .then((html, js) => Templates.replaceNode(jQuery('[data-region="list-page"]'), html, js))
+    .then(() => addToast(getString('categoryadded', 'core_customfield'), {type: 'success'}))
     .then(() => pendingPromise.resolve())
     .catch(Notification.exception);
 };

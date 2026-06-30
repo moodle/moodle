@@ -10,6 +10,8 @@ Feature: Managers can manage categories for course custom fields
     And I press "Add a new category"
     And I wait until the page is ready
     Then I should see "Other fields" in the "#customfield_catlist" "css_element"
+    And "The category has been successfully added" "toast_message" should exist
+    And I wait until "The category has been successfully added" "toast_message" does not exist
     And I navigate to "Reports > Logs" in site administration
     And I press "Get these logs"
 
