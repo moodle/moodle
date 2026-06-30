@@ -94,6 +94,7 @@ class post extends exporter {
             'id' => ['type' => PARAM_INT],
             'subject' => ['type' => PARAM_TEXT],
             'replysubject' => ['type' => PARAM_TEXT],
+            'label' => ['type' => PARAM_TEXT],
             'message' => ['type' => PARAM_RAW],
             'messageformat' => ['type' => PARAM_INT],
             'author' => ['type' => author_exporter::read_properties_definition()],
@@ -421,10 +422,12 @@ class post extends exporter {
             $subject = $post->get_subject();
             $timecreated = $this->get_start_time($discussion, $post);
             $message = $this->get_message($post);
+            $label = get_string('postbyuser', 'mod_forum', ['post' => $subject, 'user' => $exportedauthor->fullname]);
         } else {
             $subject = $isdeleted ? get_string('forumsubjectdeleted', 'forum') : get_string('forumsubjecthidden', 'forum');
             $message = $isdeleted ? get_string('forumbodydeleted', 'forum') : get_string('forumbodyhidden', 'forum');
             $timecreated = null;
+            $label = $subject;
         }
 
         $replysubject = $subject;
@@ -446,6 +449,7 @@ class post extends exporter {
             'id' => $post->get_id(),
             'subject' => $subject,
             'replysubject' => $replysubject,
+            'label' => $label,
             'message' => $message,
             'messageformat' => $post->get_message_format(),
             'author' => $exportedauthor,
