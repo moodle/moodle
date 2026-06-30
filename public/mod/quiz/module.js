@@ -387,11 +387,13 @@ M.mod_quiz.secure_window = {
     },
 
     prevent_mouse: function(e) {
-        if (e.button == 1 && /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/i.test(e.target.get('tagName'))) {
+        // e.button === 0 is left-click (W3C spec: 0=left, 1=middle, 2=right).
+        // Previously used e.button == 1 which is middle-click — that was a bug.
+        if (e.button === 0 && /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL|A)$/i.test(e.target.get('tagName'))) {
             // Left click on a button or similar. No worries.
             return;
         }
-        if (e.button == 1 && M.mod_quiz.secure_window.is_content_editable(e.target)) {
+        if (e.button === 0 && M.mod_quiz.secure_window.is_content_editable(e.target)) {
             // Left click in Atto or similar.
             return;
         }

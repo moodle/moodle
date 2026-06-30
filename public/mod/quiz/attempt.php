@@ -127,7 +127,7 @@ if ($attemptobj->is_own_preview()) {
 }
 
 // Initialise the JavaScript.
-$headtags = $attemptobj->get_html_head_contributions($page);
+// Note: get_html_head_contributions() is called below (line 141); removed duplicate call here.
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
 \core\session\manager::keepalive(); // Try to prevent sessions expiring during quiz attempts.
 
@@ -148,4 +148,7 @@ if ($attemptobj->is_last_page($page)) {
     $nextpage = $page + 1;
 }
 
-echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);
+// Bug fix: $id is only set in the old-style URL redirect block at the top;
+// in the normal code path it is never defined. Use get_cmid() instead.
+$cmid = $attemptobj->get_cmid();
+echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $cmid, $nextpage);
