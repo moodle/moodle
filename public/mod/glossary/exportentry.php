@@ -16,6 +16,7 @@ if ($hook !== 'ALL') {
     $url->param('hook', $hook);
 }
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 
 if (!$entry = $DB->get_record('glossary_entries', array('id'=>$id))) {
     throw new \moodle_exception('invalidentry');

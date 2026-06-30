@@ -77,6 +77,7 @@ if (!empty($action)) {
 }
 $PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 
 // Prepare format_string/text options
 $fmtoptions = array(
