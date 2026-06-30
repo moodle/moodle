@@ -1662,24 +1662,26 @@ function xmldb_main_upgrade($oldversion) {
             );
             $recordcount = count($questions);
             $questionids = array_keys($questions);
-            [$insql, $params] = $DB->get_in_or_equal($questionids);
-            $questionversionsandentires = $DB->get_records_select_menu(
-                'question_versions',
-                'questionid ' . $insql,
-                $params,
-                fields: 'id, questionbankentryid'
-            );
-            $versionids = array_keys($questionversionsandentires);
-            $entryids = array_unique(array_values($questionversionsandentires));
-            // No need to call question_delete_question, it is safe to delete the records directly. See MDL-88393.
-            // These are all random questions, so have no files or other qtype-specific records to clean up.
-            $DB->delete_records_list('question_versions', 'id', $versionids);
-            $DB->delete_records_list('question_bank_entries', 'id', $entryids);
-            $DB->delete_records_list('question', 'id', $questionids);
-            // Reset timeout after each batch to avoid timeouts on large sites.
-            upgrade_set_timeout();
-            // Set the start point for the next batch. IDs were fetched in order, so we use the last one we got.
-            $lastid = end($questionids);
+            if ($recordcount > 0) {
+                [$insql, $params] = $DB->get_in_or_equal($questionids);
+                $questionversionsandentires = $DB->get_records_select_menu(
+                    'question_versions',
+                    'questionid ' . $insql,
+                    $params,
+                    fields: 'id, questionbankentryid'
+                );
+                $versionids = array_keys($questionversionsandentires);
+                $entryids = array_unique(array_values($questionversionsandentires));
+                // No need to call question_delete_question, it is safe to delete the records directly. See MDL-88393.
+                // These are all random questions, so have no files or other qtype-specific records to clean up.
+                $DB->delete_records_list('question_versions', 'id', $versionids);
+                $DB->delete_records_list('question_bank_entries', 'id', $entryids);
+                $DB->delete_records_list('question', 'id', $questionids);
+                // Reset timeout after each batch to avoid timeouts on large sites.
+                upgrade_set_timeout();
+                // Set the start point for the next batch. IDs were fetched in order, so we use the last one we got.
+                $lastid = end($questionids);
+            }
         } while ($recordcount === $batchsize);
         // Finally, uninstall qtype_random as it's been removed.
         uninstall_plugin('qtype', 'random');
