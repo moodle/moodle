@@ -3722,7 +3722,7 @@ abstract class enrol_plugin {
         $message->fullmessageformat = FORMAT_MARKDOWN;
         $message->fullmessagehtml = $messagehtml;
         $message->notification = 1;
-        $message->contexturl = $a->profileurl;
+        $message->contexturl = $a->courselink;
         $message->contexturlname = $a->coursename;
 
         message_send($message);

@@ -794,6 +794,7 @@ final class lib_test extends \advanced_testcase {
             'startdate' => 1622502000,
         ]);
         $courseurl = course_get_url($course)->out();
+        $expectedcontexturl = course_get_url($course)->out();
 
         // Create users.
         $student = $this->getDataGenerator()->create_user();
@@ -839,6 +840,7 @@ final class lib_test extends \advanced_testcase {
             ),
             $message->fullmessage,
         );
+        $this->assertEquals($expectedcontexturl, $message->contexturl);
 
         // Clear sink.
         $messagesink->clear();
@@ -870,6 +872,7 @@ final class lib_test extends \advanced_testcase {
                 $student->lastname . ', your course: ' . $course->fullname . ' on 1 June 2021, 7:00 AM',
             $message->fullmessage,
         );
+        $this->assertEquals($expectedcontexturl, $message->contexturl);
         // Clear sink.
         $messagesink->clear();
 
@@ -896,6 +899,7 @@ final class lib_test extends \advanced_testcase {
             "Welcome to <a href=\"{$courseurl}\">" . htmlentities($course->fullname) . "</a>",
             $message->fullmessagehtml,
         );
+        $this->assertEquals($expectedcontexturl, $message->contexturl);
         // Clear sink.
         $messagesink->clear();
 
@@ -914,6 +918,7 @@ final class lib_test extends \advanced_testcase {
             'fullname' => 'Course 1',
             'shortname' => 'C1',
         ]);
+        $expectedcontexturl = course_get_url($course)->out();
         $maninstance = $DB->get_record(
             'enrol',
             ['courseid' => $course->id, 'enrol' => 'manual'],
@@ -931,6 +936,7 @@ final class lib_test extends \advanced_testcase {
         $this->assertNotEmpty($messages);
         $message = reset($messages);
         $this->assertStringContainsString($course->fullname, $message->subject);
+        $this->assertEquals($expectedcontexturl, $message->contexturl);
     }
 
 }
