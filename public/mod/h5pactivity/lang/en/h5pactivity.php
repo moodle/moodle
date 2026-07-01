@@ -71,6 +71,7 @@ $string['enablesavestate'] = 'Save state';
 $string['enablesavestate_help'] = 'Automatically save the user\'s current state. The user can return later and resume where they left off.';
 $string['enabletracking'] = 'Enable attempt tracking';
 $string['false'] = 'False';
+$string['gotoallattempts'] = 'Go to all attempts';
 $string['grade_grademethod'] = 'Grading method';
 $string['grade_grademethod_help'] = 'When using point grading, the following methods are available for calculating the final grade:
 

@@ -67,6 +67,24 @@ if ($attempt) {
     $params['attemptid'] = $attempt->get_id();
 }
 $PAGE->set_url('/mod/h5pactivity/report.php', $params);
+if (!has_capability('mod/h5pactivity:submit', $context, $USER, false)) {
+    // If the user cannot submit the H5P activity (potentially because is a teacher), hide the navigation footer.
+    $PAGE->set_show_navigation_footer(false);
+}
+
+if ($attemptid !== null) {
+    // Add link to all attempts as supplementary content to go to the main Attempts report page.
+    // This is only added when viewing an individual attempt, not when viewing the list of attempts
+    // and it always points to the main report page.
+    $params = ['a' => $cm->instance];
+    $url = new \core\url('/mod/h5pactivity/report.php', $params);
+    $PAGE->set_supplementary_content(
+        new action_link(
+            $url,
+            get_string('gotoallattempts', 'mod_h5pactivity'),
+        )
+    );
+}
 
 // Trigger event.
 $other = [
