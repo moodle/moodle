@@ -42,10 +42,10 @@ Feature: A user can navigate to previous and next discussions
     When I follow "Discussion 3"
     Then I should not see "Discussion 1"
     And I should see "Discussion 2"
-    And I follow "Discussion 2"
+    And I click on "Previous discussion: Discussion 2" "mod_forum > Discussion navigation link"
     And I should see "Discussion 1"
     And I should see "Discussion 3"
-    And I follow "Discussion 1"
+    And I click on "Previous discussion: Discussion 1" "mod_forum > Discussion navigation link"
     And I should see "Discussion 2"
     And I should not see "Discussion 3"
     And I follow "Reply"
@@ -61,7 +61,7 @@ Feature: A user can navigate to previous and next discussions
     And I follow "Discussion 3"
     And I should see "Discussion 1"
     And I should see "Discussion 2"
-    And I follow "Discussion 2"
+    And I click on "Previous discussion: Discussion 2" "mod_forum > Discussion navigation link"
     And I should not see "Discussion 1"
     And I should see "Discussion 3"
 
@@ -127,3 +127,82 @@ Feature: A user can navigate to previous and next discussions
     And I follow "Discussion 2 Group 1"
     And I should see "Discussion 1 Group 1"
     And I should not see "Group 2"
+
+  Scenario: Navigation buttons are displayed at top and bottom of discussion
+    Given the following "activity" exists:
+      | activity   | forum                    |
+      | course     | C1                       |
+      | idnumber   | forum1                   |
+      | name       | Test Forum               |
+      | forcesubscribe | 1                   |
+    And the following "mod_forum > discussions" exist:
+      | forum  | user     | name              | subject           | message                      |
+      | forum1 | student1 | First Discussion  | First Discussion  | Content of first discussion  |
+      | forum1 | student1 | Second Discussion | Second Discussion | Content of second discussion |
+      | forum1 | student1 | Third Discussion  | Third Discussion  | Content of third discussion  |
+    And I am on the "Test Forum" "forum activity" page logged in as "student1"
+    When I click on "Second Discussion" "link"
+    Then I should see "2" node occurrences of type "nav" in the "[data-content='forum-discussion']" "css_element"
+    And "Previous discussion: First Discussion" "mod_forum > Discussion navigation link" should exist
+    And "Next discussion: Third Discussion" "mod_forum > Discussion navigation link" should exist
+
+  Scenario: Navigation buttons allow moving between discussions and we can still rely on labels to navigate
+    Given the following "activity" exists:
+      | activity   | forum                    |
+      | course     | C1                       |
+      | idnumber   | forum1                   |
+      | name       | Test Forum               |
+      | forcesubscribe | 1                   |
+    And the following "mod_forum > discussions" exist:
+      | forum  | user     | name              | subject           | message                      |
+      | forum1 | student1 | First Discussion  | First Discussion  | Content of first discussion  |
+      | forum1 | student1 | Second Discussion | Second Discussion | Content of second discussion |
+      | forum1 | student1 | Third Discussion  | Third Discussion  | Content of third discussion  |
+    And I am on the "Test Forum" "forum activity" page logged in as "student1"
+    And I am on the "Test Forum" "forum activity" page
+    When I click on "Second Discussion" "link"
+    And I click on "Previous discussion: First Discussion" "mod_forum > Discussion navigation link"
+    Then I should see "First Discussion" in the "region-main" "region"
+    And I click on "Next discussion: Second Discussion" "mod_forum > Discussion navigation link"
+    And I should see "Second Discussion" in the "region-main" "region"
+    And I click on "Next discussion: Third Discussion" "mod_forum > Discussion navigation link"
+    Then I should see "Third Discussion" in the "region-main" "region"
+    # We can still navigate via the labels we sets for the links.
+    And I follow "Second Discussion"
+    Then I should see "Second Discussion" in the "region-main" "region"
+
+  Scenario: Navigation is not shown in experimental nested view
+    Given I am logged in as "student1"
+    And I follow "Preferences" in the user menu
+    And I click on "Forum preferences" "link"
+    And I set the field "Use experimental nested discussion view" to "Yes"
+    And I press "Save changes"
+    And the following "activity" exists:
+      | activity   | forum                    |
+      | course     | C1                       |
+      | idnumber   | forum1                   |
+      | name       | Test Forum               |
+      | forcesubscribe | 1                   |
+    And the following "mod_forum > discussions" exist:
+      | forum  | user     | name              | subject           | message                      |
+      | forum1 | student1 | First Discussion  | First Discussion  | Content of first discussion  |
+      | forum1 | student1 | Second Discussion | Second Discussion | Content of second discussion |
+      | forum1 | student1 | Third Discussion  | Third Discussion  | Content of third discussion  |
+    And I am on the "Test Forum" "forum activity" page
+    When I click on "Second Discussion" "link"
+    Then "nav.discussion-nav" "css_element" should not exist
+
+  Scenario: Previous and next buttons are disabled when it is the last discussion link
+    Given the following "activity" exists:
+      | activity   | forum                    |
+      | course     | C1                       |
+      | idnumber   | forum1                   |
+      | name       | Test Forum               |
+      | forcesubscribe | 1                   |
+    And the following "mod_forum > discussions" exist:
+      | forum  | user     | name              | subject           | message                      |
+      | forum1 | student1 | First Discussion  | First Discussion  | Content of first discussion  |
+    And I am on the "Test Forum" "forum activity" page logged in as "student1"
+    When I click on "First Discussion" "link"
+    Then the "class" attribute of "prev" "mod_forum > Discussion navigation link" should contain "disabled"
+    And the "class" attribute of "next" "mod_forum > Discussion navigation link" should contain "disabled"
