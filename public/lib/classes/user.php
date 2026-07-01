@@ -1180,7 +1180,7 @@ class user {
             'permissioncallback' => function ($user, $preferencename) {
                 global $CFG;
                 return self::is_current_user($user) &&
-                    (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
+                    (!empty($CFG->allowuserstartpage));
             },
         ];
 

@@ -182,9 +182,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
             new lang_string('configdefaulthomepage', 'admin'), get_default_home_page(), $choices));
 
     $temp->add(new admin_setting_configcheckbox(
-            'allowuserpreference',
-            new lang_string('allowuserpreference', 'admin'),
-            new lang_string('configallowuserpreference', 'admin'),
+            'allowuserstartpage',
+            new lang_string('allowuserstartpage', 'admin'),
+            new lang_string('configallowuserstartpage', 'admin'),
             1
         ));
     if (!isset($CFG->enabledashboard) || $CFG->enabledashboard) {

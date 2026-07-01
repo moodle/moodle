@@ -4966,6 +4966,7 @@ EOT;
      * @param int $expected Expected value after calling the get_home_page method.
      * @param int|string|null $defaulthomepage The $CFG->defaulthomepage setting value.
      * @param int|null $enabledashboard Whether the dashboard should be enabled or not.
+     * @param int|null $allowuserstartpage admin preference if users 
      * @param int|string|null $userpreference User preference for the home page setting.
      * $param int|null $allowguestmymoodle The $CFG->allowguestmymoodle setting value.
      * @param int|null $enablemycourses Whether my courses should be enabled or not.
@@ -4977,6 +4978,7 @@ EOT;
         int $expected,
         int|string|null $defaulthomepage = null,
         ?int $enabledashboard = null,
+        int $allowuserstartpage = null,
         int|string|null $userpreference = null,
         ?int $allowguestmymoodle = null,
         ?int $enablemycourses = null,
@@ -5010,6 +5012,9 @@ EOT;
         }
         $CFG->enablemyhome = $enablemyhome;
 
+        if(isset($allowuserstartpage)) {
+            $CFG->allowuserstartpage = $allowuserstartpage;
+        }
         if ($USER) {
             set_user_preferences(['user_home_page_preference' => $userpreference], $USER->id);
         }
@@ -5051,7 +5056,8 @@ EOT;
             'Guest user. User preference set as default page' => [
                 'user' => 'guest',
                 'expected' => HOMEPAGE_SITE,
-                'defaulthomepage' => HOMEPAGE_USER,
+                'defaulthomepage' => HOMEPAGE_SITE,
+                'allowuserstartpage' => 1
             ],
             'Logged user. Dashboard set as default home page and enabled' => [
                 'user' => 'logged',
@@ -5095,35 +5101,40 @@ EOT;
             'Logged user. User preference set as default page with dashboard enabled and user preference set to dashboard' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_MY,
-                'defaulthomepage' => HOMEPAGE_USER,
+                'defaulthomepage' => HOMEPAGE_MY,
                 'enabledashboard' => 1,
+                'allowuserstartpage' => 1,
                 'userpreference' => HOMEPAGE_MY,
             ],
             'Logged user. User preference set as default page with dashboard disabled and user preference set to dashboard' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_MYCOURSES,
-                'defaulthomepage' => HOMEPAGE_USER,
+                'defaulthomepage' => HOMEPAGE_MYCOURSES,
                 'enabledashboard' => 0,
+                'allowuserstartpage' => 1,
                 'userpreference' => HOMEPAGE_MY,
             ],
             'Logged user. User preference set as default page with dashboard enabled and user preference set to my courses' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_MYCOURSES,
-                'defaulthomepage' => HOMEPAGE_USER,
+                'defaulthomepage' => HOMEPAGE_MY,
                 'enabledashboard' => 1,
+                'allowuserstartpage' => 1,
                 'userpreference' => HOMEPAGE_MYCOURSES,
             ],
             'Logged user. User preference set as default page with dashboard disabled and user preference set to my courses' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_MYCOURSES,
-                'defaulthomepage' => HOMEPAGE_USER,
+                'defaulthomepage' => HOMEPAGE_MYCOURSES,
                 'enabledashboard' => 0,
+                'allowuserstartpage' => 1,
                 'userpreference' => HOMEPAGE_MYCOURSES,
             ],
             'Logged user. User preference set as default page with user preference set to URL.' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_URL,
-                'defaulthomepage' => HOMEPAGE_USER,
+                'defaulthomepage' => HOMEPAGE_SITE,
+                'allowuserstartpage' => 1,
                 'enabledashboard' => null,
                 'userpreference' => "/home",
             ],
@@ -5143,7 +5154,8 @@ EOT;
             'Logged user. User preference set to site with home disabled' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_MY,
-                'defaulthomepage' => HOMEPAGE_USER,
+                'defaulthomepage' => HOMEPAGE_MY,
+                'allowuserstartpage' => 1,
                 'enabledashboard' => 1,
                 'userpreference' => HOMEPAGE_SITE,
                 'enablemyhome' => 0,
@@ -5158,8 +5170,9 @@ EOT;
             'Logged user. User preference set to my courses with my courses disabled' => [
                 'user' => 'logged',
                 'expected' => HOMEPAGE_MY,
-                'defaulthomepage' => HOMEPAGE_USER,
+                'defaulthomepage' => HOMEPAGE_MY,
                 'enabledashboard' => 1,
+                'allowuserstartpage' => 1,
                 'userpreference' => HOMEPAGE_MYCOURSES,
                 'enablemycourses' => 0,
             ],

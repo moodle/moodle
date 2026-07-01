@@ -9789,12 +9789,14 @@ function mnet_get_idp_jump_url($user) {
  */
 function get_home_page() {
     global $CFG;
+
+    $homeenabled = !empty($CFG->enablemyhome);
     if (isloggedin() && !empty($CFG->defaulthomepage)) {
         $defaultpage = get_default_home_page();
         $userhomepage = get_user_preferences('user_home_page_preference', $defaultpage);
 
-        if(!empty($CFG->allowuserstartpage) && !empty($CFG->enabledashboard)){
-            if (empty($userhomepage)){
+        if(!empty($CFG->allowuserstartpage)){
+            if (!empty($userhomepage)){
                 return (int) $userhomepage;
             }
         }

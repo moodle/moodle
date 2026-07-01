@@ -1197,7 +1197,7 @@ class settings_navigation extends navigation_node {
         }
 
         //Default Homepage.
-        $defaulthomepageuser = ($CFG->allowuserstartpage);
+        $defaulthomepageuser = (!empty($CFG->allowuserstartpage) && $CFG->allowuserstartpage);
         if (isloggedin() && !isguestuser($user) && $defaulthomepageuser) {
             require_once($CFG->dirroot . '/user/lib.php');
             $options = user_get_default_homepage_options();
