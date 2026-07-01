@@ -110,7 +110,6 @@ class table implements \core\output\renderable {
         $table->id = $this->type . 'reporttable';
         $table->attributes = ['class' => 'admintable ' . $this->type . 'report table generaltable'];
 
-        $fails = [];
         foreach ($this->checks as $check) {
             $ref = $check->get_ref();
 
@@ -122,9 +121,6 @@ class table implements \core\output\renderable {
 
             foreach ($results as $result) {
                 $row = [];
-                if ($result->get_status() !== result::OK) {
-                    $fails[] = $result;
-                }
                 $row[] = $output->check_result($result);
 
                 if (empty($this->checkname)) {
@@ -150,16 +146,22 @@ class table implements \core\output\renderable {
         $html .= \html_writer::table($table);
 
         if ($this->detail) {
-            $details = array_filter(array_map(
-                fn ($result) => $result->get_details(),
-                $fails,
-            ));
+            $results = [];
+            foreach ($this->checks as $check) {
+                $results = array_merge($results, $check->get_results());
+            }
+            $details = array_filter(
+                array_map(
+                    fn ($results) => $results->get_details(),
+                    $results,
+                ),
+            );
             if (count($details) > 0) {
                 $html .= $output->heading(get_string('details'), 3);
 
                 if (count($details) === 1) {
-                    $result = reset($fails);
-                    $html .= $output->box($result->get_details(), 'generalbox boxwidthnormal boxaligncenter');
+                    $result = reset($details);
+                    $html .= $output->box($result, 'generalbox boxwidthnormal boxaligncenter');
                 } else {
                     $html .= html_writer::start_tag('ul');
                     foreach ($details as $detail) {
