@@ -9789,48 +9789,38 @@ function mnet_get_idp_jump_url($user) {
  */
 function get_home_page() {
     global $CFG;
-
-    $homeenabled = !empty($CFG->enablemyhome);
-
-    if (isloggedin() && isset($CFG->defaulthomepage) && $CFG->defaulthomepage !== '') {
-        // If dashboard, mycourses or home is disabled, home will be set to default page.
+    if (isloggedin() && !empty($CFG->defaulthomepage)) {
         $defaultpage = get_default_home_page();
-        if ($CFG->defaulthomepage == HOMEPAGE_SITE) {
-            if ($homeenabled) {
-                return HOMEPAGE_SITE;
-            } else {
-                return $defaultpage;
+        $userhomepage = get_user_preferences('user_home_page_preference', $defaultpage);
+
+        if(!empty($CFG->allowuserstartpage) && !empty($CFG->enabledashboard)){
+            if (empty($userhomepage)){
+                return (int) $userhomepage;
             }
-        } else if ($CFG->defaulthomepage == HOMEPAGE_MY && (!isguestuser() || !empty($CFG->allowguestmymoodle))) {
-            if (!empty($CFG->enabledashboard)) {
-                return HOMEPAGE_MY;
-            } else {
-                return $defaultpage;
-            }
-        } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES && !isguestuser()) {
-            if (!empty($CFG->enablemycourses)) {
+        }
+        else{
+            if ($CFG->defaulthomepage == HOMEPAGE_MY && (!isguestuser() || !empty($CFG->allowguestmymoodle))) {
+                if (!empty($CFG->enabledashboard)) {
+                    return HOMEPAGE_MY;
+                } else {
+                    return $defaultpage;
+                }
+            } else if ($CFG->defaulthomepage == HOMEPAGE_MYCOURSES && !isguestuser()) {
                 return HOMEPAGE_MYCOURSES;
-            } else {
-                return $defaultpage;
-            }
-        } else if ($CFG->defaulthomepage == HOMEPAGE_USER && !isguestuser()) {
-            $userhomepage = get_user_preferences('user_home_page_preference', $defaultpage);
-            if (!$homeenabled && $userhomepage == HOMEPAGE_SITE) {
-                $userhomepage = $defaultpage;
-            }
-            if (empty($CFG->enabledashboard) && $userhomepage == HOMEPAGE_MY) {
-                // If the user was using the dashboard but it's disabled, return the default home page.
-                $userhomepage = $defaultpage;
-            } else if (empty($CFG->enablemycourses) && $userhomepage == HOMEPAGE_MYCOURSES) {
-                // If the user was using my courses but it's disabled, return the default home page.
-                $userhomepage = $defaultpage;
+            } else if ($CFG->defaulthomepage == HOMEPAGE_USER && !isguestuser()) {
+                $userhomepage = get_user_preferences('user_home_page_preference', $defaultpage);
+                if (empty($CFG->enabledashboard) && $userhomepage == HOMEPAGE_MY) {
+                    // If the user was using the dashboard but it's disabled, return the default home page.
+                    $userhomepage = $defaultpage;
+                } else if (get_default_home_page_url()) {
+                    return HOMEPAGE_URL;
+                }
+                return (int) $userhomepage;
             } else if (get_default_home_page_url()) {
                 return HOMEPAGE_URL;
             }
-            return (int) $userhomepage;
-        } else if (get_default_home_page_url()) {
-            return HOMEPAGE_URL;
         }
+
     }
     if (!$homeenabled && isloggedin()) {
         return get_default_home_page();

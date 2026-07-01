@@ -1196,8 +1196,8 @@ class settings_navigation extends navigation_node {
             $useraccount->add(get_string("changepassword"), $passwordchangeurl, self::TYPE_SETTING, null, 'changepassword');
         }
 
-        // Default homepage.
-        $defaulthomepageuser = (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER));
+        //Default Homepage.
+        $defaulthomepageuser = ($CFG->allowuserstartpage);
         if (isloggedin() && !isguestuser($user) && $defaulthomepageuser) {
             require_once($CFG->dirroot . '/user/lib.php');
             $options = user_get_default_homepage_options();

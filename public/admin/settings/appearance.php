@@ -172,7 +172,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     if (!isset($CFG->enablemycourses) || $CFG->enablemycourses) {
         $choices[HOMEPAGE_MYCOURSES] = new lang_string('mycourses', 'admin');
     }
-    $choices[HOMEPAGE_USER] = new lang_string('userpreference', 'admin');
 
     // Allow hook callbacks to extend options.
     $hook = new \core_user\hook\extend_default_homepage();
@@ -181,6 +180,13 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
 
     $temp->add(new admin_setting_configselect('defaulthomepage', new lang_string('defaulthomepage', 'admin'),
             new lang_string('configdefaulthomepage', 'admin'), get_default_home_page(), $choices));
+
+    $temp->add(new admin_setting_configcheckbox(
+            'allowuserpreference',
+            new lang_string('allowuserpreference', 'admin'),
+            new lang_string('configallowuserpreference', 'admin'),
+            1
+        ));
     if (!isset($CFG->enabledashboard) || $CFG->enabledashboard) {
         $temp->add(new admin_setting_configcheckbox(
             'allowguestmymoodle',

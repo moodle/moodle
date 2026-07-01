@@ -68,6 +68,7 @@ $string['allowguestmymoodle'] = 'Allow guest access to Dashboard';
 $string['allowobjectembed'] = 'Allow EMBED and OBJECT tags';
 $string['allowthemechangeonurl'] = 'Allow theme changes in the URL';
 $string['allowuserblockhiding'] = 'Allow users to hide blocks';
+$string['allowuserstartpage'] = 'Allow user start page';
 $string['allowuserswitchrolestheycantassign'] = 'Allow users without the assign roles capability to switch roles';
 $string['allowuserthemes'] = 'Allow user themes';
 $string['alternativefullnameformat'] = 'Alternative full name format';
@@ -194,6 +195,7 @@ $string['configallowswitch'] = 'For each role in the left column, select which r
 $string['configallowthemechangeonurl'] = 'If enabled, the theme can be changed by adding either:<br />?theme=themename to any Moodle URL (eg: mymoodlesite.com/?theme=afterburner ) or <br />&theme=themename to any internal Moodle URL (eg: mymoodlesite.com/course/view.php?id=2&theme=afterburner ).';
 $string['configallowuserblockhiding'] = 'Do you want to allow users to hide/show side blocks throughout this site?  This feature uses Javascript and cookies to remember the state of each collapsible block, and only affects the user\'s own view.';
 $string['configallowusermailcharset'] = 'If enabled, users can choose an email charset in their messaging preferences.';
+$string['configallowuserstartpage'] = 'Allow users to overwrite the start page in the user settings';
 $string['configallowuserswitchrolestheycantassign'] = 'By default, moodle/role:assign is required for users to switch roles. Enabling this setting removes this requirement, and results in the roles available in the "Switch role to" dropdown menu being determined by settings in the "Allow role assignments" table only.
 It is recommended that the settings in the "Allow role assignments" table do not allow users to switch to a role with more capabilities than their existing role.';
 $string['configallowuserthemes'] = 'If you enable this, then users will be allowed to set their own themes.  User themes override site themes (but not course themes)';
