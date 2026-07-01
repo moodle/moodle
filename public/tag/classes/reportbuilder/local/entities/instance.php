@@ -99,8 +99,7 @@ class instance extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$instancealias}.component")
-            ->set_is_sortable(true);
+            ->add_fields("{$instancealias}.component");
 
         // Item type.
         $columns[] = (new column(
@@ -109,8 +108,7 @@ class instance extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$instancealias}.itemtype")
-            ->set_is_sortable(true);
+            ->add_fields("{$instancealias}.itemtype");
 
         // Item ID.
         $columns[] = (new column(
@@ -118,8 +116,7 @@ class instance extends base {
             new lang_string('itemid', 'core_tag'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$instancealias}.itemid")
-            ->set_is_sortable(true);
+            ->add_fields("{$instancealias}.itemid");
 
         // Time created.
         $columns[] = (new column(
@@ -129,7 +126,6 @@ class instance extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$instancealias}.timecreated")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Time modified.
@@ -140,7 +136,6 @@ class instance extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$instancealias}.timemodified")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

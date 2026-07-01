@@ -68,7 +68,6 @@ class message extends base {
             $this->get_entity_name(),
         ))
             ->add_field("{$messagealias}.subject")
-            ->set_is_sortable(true)
             ->add_callback(static function (?string $subject): string {
                 if ($subject === null) {
                     return '';
@@ -83,7 +82,6 @@ class message extends base {
             $this->get_entity_name(),
         ))
             ->add_fields("{$messagealias}.fullmessage, {$messagealias}.fullmessageformat, {$messagealias}.fullmessagetrust")
-            ->set_is_sortable(true)
             ->add_callback(static function (?string $fullmessage, stdClass $message): string {
                 if ($fullmessage === null) {
                     return '';
@@ -99,7 +97,6 @@ class message extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$messagealias}.timecreated")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

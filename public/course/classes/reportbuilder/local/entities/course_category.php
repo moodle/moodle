@@ -87,8 +87,7 @@ class course_category extends base {
                 $context = context::instance_by_id($category->ctxid);
 
                 return format_string($name, true, ['context' => $context]);
-            })
-            ->set_is_sortable(true);
+            });
 
         // Category name with link column.
         $columns[] = (new column(
@@ -111,8 +110,7 @@ class course_category extends base {
                     new url('/course/management.php', ['categoryid' => $context->instanceid]),
                     format_string($name, true, ['context' => $context]),
                 );
-            })
-            ->set_is_sortable(true);
+            });
 
         // Path column.
         $columns[] = (new column(
@@ -128,8 +126,7 @@ class course_category extends base {
             ->set_disabled_aggregation([
                 groupconcat::get_class_name(),
                 groupconcatdistinct::get_class_name(),
-            ])
-            ->set_is_sortable(true);
+            ]);
 
         // ID number column.
         $columns[] = (new column(
@@ -137,8 +134,7 @@ class course_category extends base {
             new lang_string('idnumbercoursecategory'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$tablealias}.idnumber")
-            ->set_is_sortable(true);
+            ->add_fields("{$tablealias}.idnumber");
 
         // Description column (note we need to join/select from the context table in order to format the column).
         $columns[] = (new column(
@@ -150,7 +146,6 @@ class course_category extends base {
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat")
             ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $category): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
@@ -175,7 +170,6 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_fields("{$tablealias}.theme")
-            ->set_is_sortable(true)
             ->add_callback(static function (?string $theme): string {
                 return match ($theme) {
                     null => '',
@@ -191,8 +185,7 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$tablealias}.coursecount")
-            ->set_is_sortable(true);
+            ->add_fields("{$tablealias}.coursecount");
 
         return $columns;
     }

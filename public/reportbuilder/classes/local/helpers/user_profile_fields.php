@@ -134,7 +134,6 @@ class user_profile_fields {
                 ->add_field($userinfosql, 'data')
                 ->add_field("{$userinfotablealias}.dataformat")
                 ->add_field($this->usertablefieldalias, 'userid')
-                ->set_is_sortable(true)
                 ->add_callback(static function($value, stdClass $row, profile_field_base $field): string {
                     if ($row->userid === null && $value === null) {
                         return '';

@@ -72,7 +72,6 @@ class collection extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$collectionalias}.name, {$collectionalias}.component, {$collectionalias}.isdefault,
                 {$collectionalias}.id")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $name, stdClass $collection): string {
                 return core_tag_collection::display_name($collection);
             });
@@ -85,7 +84,6 @@ class collection extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$collectionalias}.isdefault")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         // Component.
@@ -95,8 +93,7 @@ class collection extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$collectionalias}.component")
-            ->set_is_sortable(true);
+            ->add_fields("{$collectionalias}.component");
 
         // Searchable.
         $columns[] = (new column(
@@ -106,7 +103,6 @@ class collection extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$collectionalias}.searchable")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         // Custom URL.
@@ -116,8 +112,7 @@ class collection extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$collectionalias}.customurl")
-            ->set_is_sortable(true);
+            ->add_fields("{$collectionalias}.customurl");
 
         return $columns;
     }

@@ -95,7 +95,6 @@ class cohort extends base {
         ))
             ->add_join($this->get_context_join())
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->add_callback(static function($contextid, stdClass $cohort): string {
                 if ($cohort->ctxid === null) {
                     return '';
@@ -116,7 +115,6 @@ class cohort extends base {
             ->add_join($this->get_context_join())
             ->add_field("{$tablealias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->set_callback(static function (?string $name, stdClass $cohort): string {
                 if ($name === null || $cohort->ctxid === null) {
                     return '';
@@ -134,8 +132,7 @@ class cohort extends base {
             new lang_string('idnumber', 'core_cohort'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$tablealias}.idnumber")
-            ->set_is_sortable(true);
+            ->add_fields("{$tablealias}.idnumber");
 
         // Description column.
         $columns[] = (new column(
@@ -147,7 +144,6 @@ class cohort extends base {
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$tablealias}.description, {$tablealias}.descriptionformat, {$tablealias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $cohort): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
@@ -173,7 +169,6 @@ class cohort extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$tablealias}.visible")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'boolean_as_text']);
 
         // Time created column.
@@ -184,7 +179,6 @@ class cohort extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timecreated")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Time modified column.
@@ -195,7 +189,6 @@ class cohort extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timemodified")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Component column.
@@ -205,7 +198,6 @@ class cohort extends base {
             $this->get_entity_name()
         ))
             ->add_fields("{$tablealias}.component")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $component): string {
                 if ($component === null) {
                     return '';
@@ -223,7 +215,6 @@ class cohort extends base {
             $this->get_entity_name()
         ))
             ->add_fields("{$tablealias}.theme")
-            ->set_is_sortable(true)
             ->add_callback(static function (?string $theme): string {
                 return match ($theme) {
                     null => '',

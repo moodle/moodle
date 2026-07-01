@@ -74,7 +74,6 @@ class access extends base {
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$tablealias}.timeaccess")
             ->add_field("{$user}.id", 'userid')
-            ->set_is_sortable(true)
             ->add_callback(static function(?int $value, stdClass $row, $arguments, ?string $aggregation): string {
                 if ($row->userid === null && $aggregation === null) {
                     return '';

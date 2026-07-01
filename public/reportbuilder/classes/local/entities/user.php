@@ -259,6 +259,7 @@ class user extends base {
             $this->get_entity_name()
         ))
             ->add_fields($userpictureselect)
+            ->set_is_sortable(false)
             ->add_callback(static function($value, stdClass $row): string {
                 global $OUTPUT;
 
@@ -277,7 +278,6 @@ class user extends base {
             ))
                 ->set_type($columntype)
                 ->add_field("{$usertablealias}.{$userfield}")
-                ->set_is_sortable(true)
                 ->add_callback([$this, 'format'], $userfield);
 
             // Join on the context table so that we can use it for formatting these columns later.

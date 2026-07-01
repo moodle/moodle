@@ -74,7 +74,6 @@ class tag extends base {
             $this->get_entity_name()
         ))
             ->add_fields("{$tagalias}.rawname, {$tagalias}.name")
-            ->set_is_sortable(true)
             ->add_callback(static function($rawname, stdClass $tag): string {
                 if ($rawname === null) {
                     return '';
@@ -89,7 +88,6 @@ class tag extends base {
             $this->get_entity_name()
         ))
             ->add_fields("{$tagalias}.rawname, {$tagalias}.name, {$tagalias}.flag, {$tagalias}.isstandard")
-            ->set_is_sortable(true)
             ->set_aggregation_options(groupconcat::get_class_name(), ['separator' => ' '])
             ->set_aggregation_options(groupconcatdistinct::get_class_name(), ['separator' => ' '])
             ->add_callback(static function($rawname, stdClass $tag): string {
@@ -117,7 +115,6 @@ class tag extends base {
             $this->get_entity_name()
         ))
             ->add_fields("{$tagalias}.rawname, {$tagalias}.name, {$tagalias}.tagcollid")
-            ->set_is_sortable(true)
             ->add_callback(static function($rawname, stdClass $tag): string {
                 if ($rawname === null) {
                     return '';
@@ -134,7 +131,6 @@ class tag extends base {
         ))
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$tagalias}.description, {$tagalias}.descriptionformat, {$tagalias}.id")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $description, stdClass $tag): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
@@ -158,7 +154,6 @@ class tag extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$tagalias}.isstandard")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         // Flagged.
@@ -169,7 +164,6 @@ class tag extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_field("CASE WHEN {$tagalias}.flag > 0 THEN 1 ELSE {$tagalias}.flag END", 'flag')
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         // Flag count.
@@ -179,8 +173,7 @@ class tag extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$tagalias}.flag")
-            ->set_is_sortable(true);
+            ->add_fields("{$tagalias}.flag");
 
         // Time modified.
         $columns[] = (new column(
@@ -190,7 +183,6 @@ class tag extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tagalias}.timemodified")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

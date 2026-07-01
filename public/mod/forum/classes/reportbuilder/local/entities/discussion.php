@@ -74,7 +74,6 @@ class discussion extends base {
         ))
             ->add_field("{$discussionalias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->set_callback(static function (?string $name, stdClass $discussion): string {
                 if ($name === null || $discussion->ctxid === null) {
                     return '';
@@ -94,7 +93,6 @@ class discussion extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$discussionalias}.timestart")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Time end.
@@ -105,7 +103,6 @@ class discussion extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$discussionalias}.timeend")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Time modified.
@@ -116,7 +113,6 @@ class discussion extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$discussionalias}.timemodified")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         return $columns;

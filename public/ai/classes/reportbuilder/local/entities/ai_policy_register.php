@@ -62,7 +62,6 @@ class ai_policy_register extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$tablealias}.timeaccepted")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

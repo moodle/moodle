@@ -83,8 +83,7 @@ class badge extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$badgealias}.name")
-            ->set_is_sortable(true);
+            ->add_field("{$badgealias}.name");
 
         // Name with link.
         $columns[] = (new column(
@@ -94,7 +93,6 @@ class badge extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$badgealias}.name, {$badgealias}.id")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $value, stdClass $row): string {
                 if (!$row->id) {
                     return '';
@@ -117,7 +115,6 @@ class badge extends base {
                 "{$badgealias}.name, {$badgealias}.id, {$badgealias}.type, {$badgealias}.courseid, {$badgealias}.imagecaption"
             )
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->add_callback(static function ($value, stdClass $badge): string {
                 if ($badge->id === null) {
                     return '';
@@ -141,8 +138,7 @@ class badge extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_LONGTEXT)
-            ->add_field("{$badgealias}.description")
-            ->set_is_sortable(true);
+            ->add_field("{$badgealias}.description");
 
         // Criteria.
         $columns[] = (new column(
@@ -153,6 +149,7 @@ class badge extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$badgealias}.id")
             ->set_disabled_aggregation_all()
+            ->set_is_sortable(false)
             ->add_callback(static function($badgeid): string {
                 global $PAGE;
                 if (!$badgeid) {
@@ -179,6 +176,7 @@ class badge extends base {
                    AND {$contextalias}.instanceid = {$badgealias}.courseid")
             ->add_fields("{$badgealias}.id, {$badgealias}.type, {$badgealias}.imagecaption")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
+            ->set_is_sortable(false)
             ->add_callback(static function($value, stdClass $badge): string {
                 if ($value === null) {
                     return '';
@@ -202,7 +200,6 @@ class badge extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$badgealias}.language")
-            ->set_is_sortable(true)
             ->add_callback(static function($language): string {
                 $languages = get_string_manager()->get_list_of_languages();
                 return (string) ($languages[$language] ?? $language);
@@ -215,8 +212,7 @@ class badge extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$badgealias}.version")
-            ->set_is_sortable(true);
+            ->add_field("{$badgealias}.version");
 
         // Status.
         $columns[] = (new column(
@@ -226,7 +222,6 @@ class badge extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$badgealias}.status")
-            ->set_is_sortable(true)
             ->add_callback(static function($status): string {
                 if ($status === null) {
                     return '';

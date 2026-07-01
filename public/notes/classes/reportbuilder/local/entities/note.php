@@ -84,7 +84,6 @@ class note extends base {
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$postalias}.content, {$postalias}.format, {$postalias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $content, stdClass $note): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
@@ -109,7 +108,6 @@ class note extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$postalias}.publishstate")
-            ->set_is_sortable(true)
             ->add_callback(static function(string $publishstate): string {
                 $states = [
                     NOTES_STATE_SITE => new lang_string('sitenotes', 'core_notes'),
@@ -128,7 +126,6 @@ class note extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.created")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Time modified.
@@ -139,7 +136,6 @@ class note extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.lastmodified")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

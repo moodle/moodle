@@ -70,7 +70,6 @@ class enrolment extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$userenrolments}.timecreated")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Enrolment time started.
@@ -85,7 +84,6 @@ class enrolment extends base {
                      THEN {$userenrolments}.timecreated
                      ELSE {$userenrolments}.timestart
                  END", 'timestarted')
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Enrolment time ended.
@@ -96,7 +94,6 @@ class enrolment extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$userenrolments}.timeend")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Enrolment status.
@@ -106,7 +103,6 @@ class enrolment extends base {
             $this->get_entity_name()
         ))
             ->add_field($this->get_status_field_sql(), 'status')
-            ->set_is_sortable(true)
             ->add_callback(static function (?string $status): string {
                 if ($status === null) {
                     return '';

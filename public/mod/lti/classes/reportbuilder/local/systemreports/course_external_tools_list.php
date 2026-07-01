@@ -136,7 +136,6 @@ class course_external_tools_list extends system_report {
             $tooltypesentity->get_entity_name()
         ))
             ->set_type(column::TYPE_INTEGER)
-            ->set_is_sortable(true)
             ->add_field("{$entitymainalias}.id")
             ->add_callback(fn() => $this->perrowtoolusage);
 

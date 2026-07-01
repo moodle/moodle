@@ -103,7 +103,6 @@ class task_log extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.classname")
-            ->set_is_sortable(true)
             ->add_callback([self::class, 'format_classname']);
 
         // Component column.
@@ -113,8 +112,7 @@ class task_log extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$tablealias}.component")
-            ->set_is_sortable(true);
+            ->add_field("{$tablealias}.component");
 
         // Type column.
         $columns[] = (new column(
@@ -124,7 +122,6 @@ class task_log extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.type")
-            ->set_is_sortable(true)
             ->add_callback(static function ($value): string {
                 if (\core\task\database_logger::TYPE_SCHEDULED === (int) $value) {
                     return get_string('task_type:scheduled', 'admin');
@@ -140,7 +137,6 @@ class task_log extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$tablealias}.timestart")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate'], get_string('strftimedatetimeshortaccurate', 'core_langconfig'));
 
         // End time column.
@@ -151,7 +147,6 @@ class task_log extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$tablealias}.timeend")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate'], get_string('strftimedatetimeshortaccurate', 'core_langconfig'));
 
         // Duration column.
@@ -162,7 +157,6 @@ class task_log extends base {
         ))
             ->set_type(column::TYPE_FLOAT)
             ->add_field("{$tablealias}.timeend - {$tablealias}.timestart", 'duration')
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'format_time'], 2);
 
         // Hostname column.
@@ -172,8 +166,7 @@ class task_log extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("$tablealias.hostname")
-            ->set_is_sortable(true);
+            ->add_field("$tablealias.hostname");
 
         // PID column.
         $columns[] = (new column(
@@ -181,8 +174,7 @@ class task_log extends base {
             new lang_string('pid', 'admin'),
             $this->get_entity_name()
         ))
-            ->add_field("{$tablealias}.pid")
-            ->set_is_sortable(true);
+            ->add_field("{$tablealias}.pid");
 
         // Database column.
         $columns[] = (new column(
@@ -206,8 +198,7 @@ class task_log extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$tablealias}.dbreads")
-            ->set_is_sortable(true);
+            ->add_fields("{$tablealias}.dbreads");
 
         // Database writes column.
         $columns[] = (new column(
@@ -216,8 +207,7 @@ class task_log extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$tablealias}.dbwrites")
-            ->set_is_sortable(true);
+            ->add_fields("{$tablealias}.dbwrites");
 
         // Result column.
         $columns[] = (new column(
@@ -228,7 +218,6 @@ class task_log extends base {
             ->set_type(column::TYPE_BOOLEAN)
             // For accurate aggregation, we need to return boolean success = true by xor'ing the field value.
             ->add_field($DB->sql_bitxor("{$tablealias}.result", 1), 'success')
-            ->set_is_sortable(true)
             ->add_callback(static function (bool $success): string {
                 if (!$success) {
                     return get_string('task_result:failed', 'admin');

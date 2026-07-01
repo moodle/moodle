@@ -74,7 +74,6 @@ class post extends base {
         ))
             ->add_field("{$postalias}.subject")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->set_callback(static function (?string $subject, stdClass $post): string {
                 if ($subject === null || $post->ctxid === null) {
                     return '';
@@ -94,7 +93,6 @@ class post extends base {
         ))
             ->add_fields("{$postalias}.message, {$postalias}.messageformat, {$postalias}.messagetrust, {$postalias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->set_callback(static function (?string $message, stdClass $post): string {
                 if ($message === null || $post->ctxid === null) {
                     return '';
@@ -119,7 +117,6 @@ class post extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.created")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Time modified.
@@ -130,7 +127,6 @@ class post extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.modified")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Word count.
@@ -140,8 +136,7 @@ class post extends base {
             $this->get_entity_name(),
         ))
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$postalias}.wordcount")
-            ->set_is_sortable(true);
+            ->add_fields("{$postalias}.wordcount");
 
         // Character count.
         $columns[] = (new column(
@@ -150,8 +145,7 @@ class post extends base {
             $this->get_entity_name(),
         ))
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$postalias}.charcount")
-            ->set_is_sortable(true);
+            ->add_fields("{$postalias}.charcount");
 
         return $columns;
     }

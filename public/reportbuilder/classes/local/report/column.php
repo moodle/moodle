@@ -85,10 +85,10 @@ final class column {
     private $disabledaggregation = [];
 
     /** @var bool $issortable Used to indicate if a column is sortable */
-    private $issortable = false;
+    private bool $issortable = true;
 
-    /** @var array $sortfields Fields to sort the column by */
-    private $sortfields = [];
+    /** @var string[] $sortfields Fields to sort the column by */
+    private array $sortfields = [];
 
     /** @var string[] $headerattributes Column header attributes */
     private array $headerattributes = [];
@@ -622,7 +622,7 @@ final class column {
      * Sets the column as sortable
      *
      * @param bool $issortable
-     * @param array $sortfields Define the fields that should be used when the column is sorted. Must be a subset of the fields
+     * @param string[] $sortfields Define the fields that should be used when the column is sorted. Must be a subset of the fields
      *      selected for the column, via {@see add_field}. If omitted then the first selected field is used
      * @return self
      */
@@ -650,7 +650,7 @@ final class column {
     /**
      * Return fields to use for sorting of the column, where available the field aliases will be returned
      *
-     * @return array
+     * @return string[]
      */
     public function get_sort_fields(): array {
         $fieldsalias = $this->get_fields_sql_alias();

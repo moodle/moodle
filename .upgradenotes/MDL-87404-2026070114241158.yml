@@ -1,0 +1,13 @@
+issueNumber: MDL-87404
+notes:
+  core_reportbuilder:
+    - message: >-
+        The default column `sortable` property is now true; for columns that
+        were previously non-sortable by virtue of omitting a call to
+        `->set_is_sortable(...)` they should now call this method passing false
+        argument
+
+
+        Entity boilerplate that called the aforementioned method passing true
+        argument can now be removed
+      type: changed

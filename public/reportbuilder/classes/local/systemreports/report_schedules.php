@@ -167,7 +167,6 @@ class report_schedules extends system_report {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timelastsent")
-            ->set_is_sortable(true)
             ->add_callback(static function(int $timelastsent, stdClass $row): string {
                 if ($timelastsent === 0) {
                     return get_string('never');
@@ -185,7 +184,6 @@ class report_schedules extends system_report {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timenextsend")
-            ->set_is_sortable(true)
             ->add_callback(static function(int $timenextsend, stdClass $row): string {
                 if ($timenextsend < time()) {
                     return get_string('never');
@@ -203,7 +201,6 @@ class report_schedules extends system_report {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.format")
-            ->set_is_sortable(true)
             ->add_callback(static function(string $format): string {
                 if (get_string_manager()->string_exists('dataformat', 'dataformat_' . $format)) {
                     return get_string('dataformat', 'dataformat_' . $format);
@@ -221,7 +218,6 @@ class report_schedules extends system_report {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timecreated")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate'])
         );
 
@@ -233,7 +229,6 @@ class report_schedules extends system_report {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timemodified")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate'])
         );
 

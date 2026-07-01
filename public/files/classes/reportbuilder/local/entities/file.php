@@ -83,8 +83,7 @@ class file extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$filesalias}.filename")
-            ->set_is_sortable(true);
+            ->add_field("{$filesalias}.filename");
 
         // Size.
         $columns[] = (new column(
@@ -95,7 +94,6 @@ class file extends base {
             ->set_type(column::TYPE_INTEGER)
             ->add_field("{$filesalias}.filesize")
             ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
-            ->set_is_sortable(true)
             ->add_callback(static function($filesize, stdClass $fileinfo): string {
                 // Absent file size and/or directory should not return output.
                 if ($fileinfo->filesize === null || $fileinfo->directory) {
@@ -111,8 +109,7 @@ class file extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$filesalias}.filepath")
-            ->set_is_sortable(true);
+            ->add_field("{$filesalias}.filepath");
 
         // Type.
         $columns[] = (new column(
@@ -123,7 +120,6 @@ class file extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$filesalias}.mimetype")
             ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
-            ->set_is_sortable(true)
             ->add_callback(static function($mimetype, stdClass $fileinfo): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
@@ -148,6 +144,7 @@ class file extends base {
             ->add_field("{$filesalias}.mimetype")
             ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
             ->set_disabled_aggregation_all()
+            ->set_is_sortable(false)
             ->add_callback(static function($mimetype, stdClass $fileinfo): string {
                 global $CFG, $OUTPUT;
                 require_once("{$CFG->libdir}/filelib.php");
@@ -174,8 +171,7 @@ class file extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$filesalias}.author")
-            ->set_is_sortable(true);
+            ->add_field("{$filesalias}.author");
 
         // License.
         $columns[] = (new column(
@@ -185,7 +181,6 @@ class file extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$filesalias}.license")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $license): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/licenselib.php");
@@ -204,8 +199,7 @@ class file extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$filesalias}.contenthash")
-            ->set_is_sortable(true);
+            ->add_field("{$filesalias}.contenthash");
 
         // Component.
         $columns[] = (new column(
@@ -214,8 +208,7 @@ class file extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$filesalias}.component")
-            ->set_is_sortable(true);
+            ->add_fields("{$filesalias}.component");
 
         // Area.
         $columns[] = (new column(
@@ -224,8 +217,7 @@ class file extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$filesalias}.filearea")
-            ->set_is_sortable(true);
+            ->add_fields("{$filesalias}.filearea");
 
         // Item ID.
         $columns[] = (new column(
@@ -233,8 +225,7 @@ class file extends base {
             new lang_string('pluginitemid'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$filesalias}.itemid")
-            ->set_is_sortable(true);
+            ->add_fields("{$filesalias}.itemid");
 
         // Time created.
         $columns[] = (new column(
@@ -244,8 +235,7 @@ class file extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$filesalias}.timecreated")
-            ->add_callback([format::class, 'userdate'])
-            ->set_is_sortable(true);
+            ->add_callback([format::class, 'userdate']);
 
         return $columns;
     }

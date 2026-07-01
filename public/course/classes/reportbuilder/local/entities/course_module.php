@@ -66,8 +66,7 @@ class course_module extends base {
             new lang_string('idnumber'),
             $this->get_entity_name(),
         ))
-            ->add_field("{$coursemodulealias}.idnumber")
-            ->set_is_sortable(true);
+            ->add_field("{$coursemodulealias}.idnumber");
 
         // Visible.
         $columns[] = (new column(
@@ -77,7 +76,6 @@ class course_module extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_field("{$coursemodulealias}.visible")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         // Time created.
@@ -88,7 +86,6 @@ class course_module extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$coursemodulealias}.added")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

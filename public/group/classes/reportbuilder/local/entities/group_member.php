@@ -69,7 +69,6 @@ class group_member extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$groupsmembersalias}.timeadded")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Component column.
@@ -79,8 +78,7 @@ class group_member extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$groupsmembersalias}.component")
-            ->set_is_sortable(true);
+            ->add_fields("{$groupsmembersalias}.component");
 
         return $columns;
     }

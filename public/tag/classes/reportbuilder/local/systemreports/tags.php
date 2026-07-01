@@ -105,7 +105,6 @@ class tags extends system_report {
         ))
             ->add_fields("{$tagalias}.name, {$tagalias}.rawname, {$tagalias}.tagcollid, {$tagalias}.id")
             ->set_type(column::TYPE_TEXT)
-            ->set_is_sortable(true)
             ->set_callback(static function(string $name, stdClass $tag): string {
                 global $PAGE;
                 $editable = new tagname($tag);
@@ -129,7 +128,6 @@ class tags extends system_report {
         ))
             ->add_fields("{$tagalias}.flag, {$tagalias}.id")
             ->set_type(column::TYPE_BOOLEAN)
-            ->set_is_sortable(true)
             ->set_callback(static function(bool $flag, stdClass $tag): string {
                 global $PAGE;
                 $editable = new tagflag($tag);
@@ -149,7 +147,6 @@ class tags extends system_report {
         ))
             ->add_fields("{$tagalias}.isstandard, {$tagalias}.id")
             ->set_type(column::TYPE_BOOLEAN)
-            ->set_is_sortable(true)
             ->set_callback(static function(bool $standard, stdClass $tag): string {
                 global $PAGE;
                 $editable = new tagisstandard($tag);

@@ -71,7 +71,6 @@ class enrol extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$enrolalias}.enrol")
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $enrol): string {
                 if ($enrol === null || !$plugin = enrol_get_plugin($enrol)) {
                     return '';
@@ -89,7 +88,6 @@ class enrol extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$enrolalias}.enrol, {$enrolalias}.name, {$enrolalias}.courseid, " .
                 "{$enrolalias}.roleid, {$enrolalias}.customint1")
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $enrol, stdClass $instance): string {
                 if ($enrol === null || !$plugin = enrol_get_plugin($enrol)) {
                     return '';
@@ -107,7 +105,6 @@ class enrol extends base {
             ->set_type(column::TYPE_BOOLEAN)
             // For accurate aggregation, we need to return boolean enabled = true by xor'ing the field value.
             ->add_field($DB->sql_bitxor("{$enrolalias}.status", 1), 'status')
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'boolean_as_text']);
 
         // Period column.
@@ -118,7 +115,6 @@ class enrol extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$enrolalias}.enrolperiod")
-            ->set_is_sortable(true)
             ->set_callback(static function(?int $enrolperiod, stdClass $row): string {
                 if ($enrolperiod === 0) {
                     return '';
@@ -134,7 +130,6 @@ class enrol extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$enrolalias}.enrolstartdate")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // End date column.
@@ -145,7 +140,6 @@ class enrol extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$enrolalias}.enrolenddate")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         return $columns;
