@@ -163,7 +163,7 @@ if (empty($availablefilters)) {
         $table->colclasses[] = 'leftalign';
     }
     $table->id = 'frontpagefiltersettings';
-    $table->attributes['class'] = 'admintable table generaltable table-hover';
+    $table->attributes['class'] = 'admintable table generaltable table-striped table-hover mb-3';
     $table->data = [];
 
     // Iterate through filters adding to display table.
