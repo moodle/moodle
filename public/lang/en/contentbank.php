@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['ariadisplaytype'] = 'Select a display type for the list';
 $string['author'] = 'Author';
 $string['contentbank'] = 'Content bank';
 $string['choosecontext'] = 'Choose course or category...';

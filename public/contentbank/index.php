@@ -86,7 +86,7 @@ if (has_capability('moodle/contentbank:viewunlistedcontent', $context)) {
         'checkbox' => true,
         'checked' => !empty($display),
         'label' => get_string('displayunlisted', 'contentbank'),
-        'class' => 'displayunlisted m-2',
+        'class' => 'displayunlisted form-check-input',
         'action' => 'displayunlisted',
     ];
     $PAGE->requires->js_call_amd(
