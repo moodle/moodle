@@ -214,8 +214,30 @@ $right-drawer-width: 320px;
         }
 
         .drawertoggle {
-            margin-left: auto;
-            margin-right: map-get($spacers, 2);
+            width: $icon-medium-width;
+            height: $icon-medium-width; // Using the same value for width and height to make the button square.
+            background-color: $gray-200;
+
+            &:hover {
+                background-color: $gray-400;
+            }
+        }
+
+        .drawerheader {
+            height: auto;
+            flex-direction: column-reverse;
+            align-items: flex-start;
+            padding-block: map-get($spacers, 3);
+
+            .draweractions {
+                gap: 0;
+            }
+        }
+
+        .block-header {
+            &:has(> h3) {
+                border-bottom: $border-width solid $border-color;
+            }
         }
     }
     &.drawer-left {
