@@ -43,6 +43,13 @@ class engine extends \core_search\engine {
     protected $totalresults = null;
 
     /**
+     * MySQL InnoDB minimum full-text token size.
+     *
+     * @var null|int
+     */
+    private ?int $mysqlmintokensize = null;
+
+    /**
      * Prepares a SQL query, applies filters and executes it returning its results.
      *
      * @throws \core_search\engine_exception
@@ -130,52 +137,61 @@ class engine extends \core_search\engine {
         if (!empty($filters->q)) {
             switch ($DB->get_dbfamily()) {
                 case 'postgres':
+                    $postgresquery = $this->get_fulltext_query($filters->q);
+                    if ($postgresquery === '') {
+                        return [];
+                    }
+
                     $ands[] = "(" .
-                        "to_tsvector('simple', title) @@ plainto_tsquery('simple', ?) OR ".
-                        "to_tsvector('simple', content) @@ plainto_tsquery('simple', ?) OR ".
-                        "to_tsvector('simple', description1) @@ plainto_tsquery('simple', ?) OR ".
-                        "to_tsvector('simple', description2) @@ plainto_tsquery('simple', ?)".
-                        ")";
-                    $params[] = $filters->q;
-                    $params[] = $filters->q;
-                    $params[] = $filters->q;
-                    $params[] = $filters->q;
+                        "to_tsvector('simple', title) @@ to_tsquery('simple', ?) OR " .
+                        "to_tsvector('simple', content) @@ to_tsquery('simple', ?) OR " .
+                        "to_tsvector('simple', description1) @@ to_tsquery('simple', ?) OR " .
+                        "to_tsvector('simple', description2) @@ to_tsquery('simple', ?))";
+
+                    $params[] = $postgresquery;
+                    $params[] = $postgresquery;
+                    $params[] = $postgresquery;
+                    $params[] = $postgresquery;
                     break;
+
                 case 'mysql':
                     if ($DB->is_fulltext_search_supported()) {
-                        $ands[] = "MATCH (title, content, description1, description2) AGAINST (?)";
-                        $params[] = $filters->q;
-
-                        // Sorry for the hack, but it does not seem that we will have a solution for
-                        // this soon (https://bugs.mysql.com/bug.php?id=78485).
-                        if ($filters->q === '*') {
-                            return array();
+                        $mysqlquery = $this->get_fulltext_query($filters->q);
+                        if ($mysqlquery === '') {
+                            return [];
                         }
+
+                        $ands[] = "(MATCH (title, content, description1, description2) AGAINST (? IN BOOLEAN MODE))";
+                        $params[] = $mysqlquery;
                     } else {
-                        // Clumsy version for mysql versions with no fulltext support.
-                        list($queryand, $queryparams) = $this->get_simple_query($filters->q);
-                        $ands[] = $queryand;
-                        $params = array_merge($params, $queryparams);
+                        // Fallback when full-text is not supported.
+                        [$simplequeryand, $simplequeryparams] = $this->get_simple_query($filters->q);
+                        $ands[] = $simplequeryand;
+                        $params = array_merge($params, $simplequeryparams);
                     }
                     break;
+
                 case 'mssql':
                     if ($DB->is_fulltext_search_supported()) {
+                        $mssqlquery = $this->get_fulltext_query($filters->q);
+                        if ($mssqlquery === '') {
+                            return [];
+                        }
+
                         $ands[] = "CONTAINS ((title, content, description1, description2), ?)";
-                        // Special treatment for double quotes:
-                        // - Puntuation is ignored so we can get rid of them.
-                        // - Phrases should be enclosed in double quotation marks.
-                        $params[] = '"' . str_replace('"', '', $filters->q) . '"';
+                        $params[] = $mssqlquery;
                     } else {
-                        // Clumsy version for mysql versions with no fulltext support.
-                        list($queryand, $queryparams) = $this->get_simple_query($filters->q);
-                        $ands[] = $queryand;
-                        $params = array_merge($params, $queryparams);
+                        // Fallback when full-text is not supported.
+                        [$simplequeryand, $simplequeryparams] = $this->get_simple_query($filters->q);
+                        $ands[] = $simplequeryand;
+                        $params = array_merge($params, $simplequeryparams);
                     }
                     break;
+
                 default:
-                    list($queryand, $queryparams) = $this->get_simple_query($filters->q);
-                    $ands[] = $queryand;
-                    $params = array_merge($params, $queryparams);
+                    [$simplequeryand, $simplequeryparams] = $this->get_simple_query($filters->q);
+                    $ands[] = $simplequeryand;
+                    $params = array_merge($params, $simplequeryparams);
                     break;
             }
         }
@@ -357,6 +373,78 @@ class engine extends \core_search\engine {
         ];
 
         return array($sql, $params);
+    }
+
+    /**
+     * Get a full-text query according to the requirements of the current database.
+     *
+     * @param string $q The query string
+     * @return string The full-text query
+     */
+    private function get_fulltext_query(string $q): string {
+        global $DB;
+        // Normalise typographic apostrophes to a plain apostrophe.
+        $q = preg_replace('/[\x{2018}\x{2019}]/u', "'", $q);
+        // Remove apostrophes and everything after them within each token.
+        $q = preg_replace("/'[^\\s]*/u", '', $q);
+        // Split the query into individual words on whitespace boundaries.
+        $parts = preg_split('/\s+/u', trim($q));
+
+        if (!$parts) {
+            return '';
+        }
+
+        // For MySQL, tokens shorter than innodb_ft_min_token_size are never indexed, so
+        // including them as required (+) boolean-mode terms returns zero rows.
+        $dbfamily = $DB->get_dbfamily();
+        if ($dbfamily === 'mysql' && $this->mysqlmintokensize === null) {
+            try {
+                $this->mysqlmintokensize = (int) $DB->get_field_sql('SELECT @@innodb_ft_min_token_size');
+            } catch (\dml_exception $e) {
+                $this->mysqlmintokensize = 3; // InnoDB default.
+            }
+        }
+
+        $terms = [];
+        foreach ($parts as $part) {
+            // Strip any remaining non-letter, non-number characters from each word.
+            $term = preg_replace('/[^\pL\pN_]+/u', '', $part);
+            if ($term === '') {
+                continue;
+            }
+            switch ($dbfamily) {
+                case 'postgres':
+                    $terms[] = $term . ':*';
+                    break;
+                case 'mysql':
+                    // Skip tokens that are too short to be indexed.
+                    if (\core_text::strlen($term) >= $this->mysqlmintokensize) {
+                        $terms[] = '+' . $term . '*';
+                    }
+                    break;
+                case 'mssql':
+                    $terms[] = '"' . $term . '*"';
+                    break;
+            }
+        }
+
+        if (!$terms) {
+            return '';
+        }
+
+        switch ($dbfamily) {
+            case 'postgres':
+                // Join terms with the tsquery AND operator so all terms must match.
+                return implode(' & ', $terms);
+            case 'mysql':
+                // Join terms with spaces; the + prefix on each term enforces AND semantics.
+                return implode(' ', $terms);
+            case 'mssql':
+                // Join terms with AND to enforce all-terms-must-match semantics.
+                return implode(' AND ', $terms);
+            default:
+                return '';
+        }
     }
 
     /**

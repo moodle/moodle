@@ -437,4 +437,63 @@ final class engine_test extends \advanced_testcase {
         global $DB;
         return ($DB->get_dbfamily() === 'mssql' && $DB->is_fulltext_search_supported());
     }
+
+    /**
+     * Tests fulltext matching behaviour for course names across supported DB families.
+     *
+     * @covers ::execute_query
+     * @dataProvider prefix_matching_using_fulltext_search_provider
+     * @param string $query Query text to search for
+     * @param int $expectedcount Expected result count
+     */
+    public function test_prefix_matching_using_fulltext_search(
+        string $query,
+        int $expectedcount
+    ): void {
+        global $DB;
+
+        if (
+            !in_array($DB->get_dbfamily(), ['postgres', 'mysql', 'mssql']) ||
+            !$DB->is_fulltext_search_supported()
+        ) {
+            $this->markTestSkipped('This test is specific to fulltext search for PostgreSQL, MySQL, and MSSQL.');
+        }
+
+        // Generate some courses.
+        $generator = $this->getDataGenerator();
+        $generator->create_course(['fullname' => 'a course about climbing trees', 'shortname' => 'c1']);
+        $generator->create_course(['fullname' => "trees - an adventurer's guide", 'shortname' => 'c2']);
+        $generator->create_course(['fullname' => "i should've spent more time climbing trees", 'shortname' => 'c3']);
+
+        // Index our content.
+        $this->search->index(true);
+        $this->update_index();
+
+        // Build our query.
+        $querydata = new \stdClass();
+        $querydata->areaids = [\core_search\manager::generate_areaid('core_course', 'course')];
+        $querydata->q = $query;
+
+        $this->assertCount($expectedcount, $this->search->search($querydata));
+    }
+
+    /**
+     * Data provider for test_prefix_matching_using_fulltext_search.
+     *
+     * @return array[]
+     */
+    public static function prefix_matching_using_fulltext_search_provider(): array {
+        return [
+            'prefix match' => ['tre', 3],
+            'exact match' => ['trees', 3],
+            'prefix match multi-word' => ['adven guid', 1],
+            'exact match multi-word' => ['climbing trees', 2],
+            'infix should not match' => ['uide', 0],
+            'apostrophe base word' => ['adventurer', 1],
+            'apostrophe query term' => ["adventurer's", 1],
+            'typographic apostrophe query term' => ["adventurer’s", 1],
+            'apostrophe truncation still matches by prefix' => ["should've", 1],
+            'non-matching control query' => ['notfoundterm', 0],
+        ];
+    }
 }
