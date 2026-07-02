@@ -284,6 +284,7 @@ const setupSortableLists = rootNode => {
         } else if (afterElement.attr('data-field-name')) {
             return getString('afterfield', 'customfield', afterElement.attr('data-field-name'));
         } else {
+            // Empty string signals sortable_list to skip this destination.
             return Promise.resolve('');
         }
     };

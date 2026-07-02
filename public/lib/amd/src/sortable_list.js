@@ -662,6 +662,8 @@ define([
      *
      * Note that we use "after" in the label for better UX
      *
+     * Returning an empty or whitespace-only string will omit this destination from the dialogue.
+     *
      * @public
      * @param {jQuery} parentElement
      * @param {jQuery} afterElement
@@ -722,6 +724,9 @@ define([
                     return this.getDestinationName(parentElement, afterElement);
                 }, this))
                 .then(function(txt) {
+                    if (typeof txt === 'string' && txt.trim() === '') {
+                        return destinations;
+                    }
                     var li = $('<li/>').appendTo(destinations);
                     var a = $('<a href="#"/>').attr('data-core_sortable_list-quickmove', 1).appendTo(li);
                     a.data('parent-element', parentElement).data('before-element', beforeElement).text(txt);
