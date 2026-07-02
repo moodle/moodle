@@ -24,6 +24,7 @@
 
 declare(strict_types=1);
 
+use core\exception\invalid_parameter_exception;
 use core\output\inplace_editable;
 use core_reportbuilder\form\{audience, filter};
 use core_reportbuilder\local\audiences\base as audience_base;
@@ -61,13 +62,18 @@ function core_reportbuilder_output_fragment_filters_form(array $params): string 
  *
  * @param array $params Containing keys 'reportid' and 'classname'
  * @return string
+ * @throws invalid_parameter_exception
  */
 function core_reportbuilder_output_fragment_audience_form(array $params): string {
     $report = new report($params['reportid']);
     permission::require_can_edit_report($report);
 
     // Verify current user can add the requested audience type.
-    audience_base::instance(0, (object) $params)->require_user_can_add();
+    $instance = audience_base::instance(0, (object) $params);
+    if ($instance === null) {
+        throw new invalid_parameter_exception($params['classname']);
+    }
+    $instance->require_user_can_add();
 
     $audienceform = new audience(ajaxformdata: $params);
     $audienceform->set_data_for_dynamic_submission();
