@@ -211,6 +211,10 @@ class api {
             'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
             'tool_mobile_setuplink' => clean_param(get_config('tool_mobile', 'setuplink'), PARAM_URL),
             'tool_mobile_qrcodetype' => clean_param(get_config('tool_mobile', 'qrcodetype'), PARAM_INT),
+            'tool_mobile_enabledeeplinkautologin' => clean_param(
+                get_config('tool_mobile', 'enabledeeplinkautologin'),
+                PARAM_BOOL
+            ),
             'supportpage' => $sitesupportavailable ? clean_param($CFG->supportpage, PARAM_URL) : '',
             'supportavailability' => clean_param($CFG->supportavailability, PARAM_INT),
             'showloginform' => (int) get_config('core', 'showloginform'),

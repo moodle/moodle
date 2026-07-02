@@ -515,6 +515,13 @@ if ($hassiteconfig || has_capability('moodle/site:configview', context_system::i
         $options
     ));
 
+    $temp->add(new admin_setting_configcheckbox(
+        'tool_mobile/enabledeeplinkautologin',
+        new lang_string('enabledeeplinkautologin', 'tool_mobile'),
+        new lang_string('enabledeeplinkautologin_desc', 'tool_mobile'),
+        0
+    ));
+
     $ADMIN->add('mobileapp', $temp);
 
     // Features settings page.
