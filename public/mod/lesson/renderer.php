@@ -623,6 +623,13 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $output .= $this->paragraph(get_string("modattemptsnoteacher", "lesson"), 'centerpadded');
         }
 
+        $linearnavigationenabled = \core_courseformat\local\linearnavigationsettings::is_linear_navigation_enabled($course);
+        if ($linearnavigationenabled) {
+            // If linear navigation is enabled, we don't want to show the activity link, return to course link or
+            // the view grades link, to not interfere with the linear navigation flow. So we return early here.
+            return $output;
+        }
+
         if ($data->activitylink !== false) {
             $output .= $data->activitylink;
         }

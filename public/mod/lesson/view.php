@@ -175,7 +175,15 @@ if (empty($pageid)) {
         if (!$lesson->retake) {
             echo $lessonoutput->header($lesson, $cm, 'view', '', null, get_string("noretake", "lesson"));
             echo $lessonoutput->render($editbuttons);
-            $courselink = new single_button(new moodle_url('/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+            $courselink = null;
+            $linearnavigationdisabled = !\core_courseformat\local\linearnavigationsettings::is_linear_navigation_enabled($course);
+            if ($linearnavigationdisabled) {
+                $courselink = new single_button(
+                    new \core\url('/course/view.php', ['id' => $PAGE->course->id]),
+                    get_string('returntocourse', 'lesson'),
+                    'get',
+                );
+            }
             echo $lessonoutput->message(get_string("noretake", "lesson"), $courselink);
             echo $lessonoutput->footer();
             exit();

@@ -145,31 +145,39 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setDefault('feedback', $lessonconfig->defaultfeedback);
         $mform->setAdvanced('feedback', $lessonconfig->defaultfeedback_adv);
 
-        // Get the modules.
-        if ($mods = get_course_mods($COURSE->id)) {
-            $modinstances = array();
-            foreach ($mods as $mod) {
-                // Get the module name and then store it in a new array.
-                if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
-                    // Exclude this lesson, if it's already been saved.
-                    if (!isset($this->_cm->id) || $this->_cm->id != $mod->id) {
-                        $modinstances[$mod->id] = get_string('pluginname', $mod->modname) . ' - ' . format_string(
-                            $module->name,
-                            true,
-                            [
-                                'context' => $this->context,
-                            ],
-                        );
+        // With linear navigation, progression to the next activity is handled by the sticky footer,
+        // so the 'Link to next activity' setting is hidden. The current value is kept in a hidden
+        // field so it is preserved if linear navigation is disabled later.
+        if (\core_courseformat\local\linearnavigationsettings::is_linear_navigation_enabled($this->get_course())) {
+            $mform->addElement('hidden', 'activitylink');
+            $mform->setType('activitylink', PARAM_INT);
+        } else {
+            // Get the modules.
+            if ($mods = get_course_mods($COURSE->id)) {
+                $modinstances = [];
+                foreach ($mods as $mod) {
+                    // Get the module name and then store it in a new array.
+                    if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
+                        // Exclude this lesson, if it's already been saved.
+                        if (!isset($this->_cm->id) || $this->_cm->id != $mod->id) {
+                            $modinstances[$mod->id] = get_string('pluginname', $mod->modname) . ' - ' . format_string(
+                                $module->name,
+                                true,
+                                [
+                                    'context' => $this->context,
+                                ],
+                            );
+                        }
                     }
                 }
-            }
-            asort($modinstances); // Sort by module name.
-            $modinstances=array(0=>get_string('none'))+$modinstances;
+                asort($modinstances); // Sort by module name.
+                $modinstances = [0 => get_string('none')] + $modinstances;
 
-            $mform->addElement('select', 'activitylink', get_string('activitylink', 'lesson'), $modinstances);
-            $mform->addHelpButton('activitylink', 'activitylink', 'lesson');
-            $mform->setDefault('activitylink', 0);
-            $mform->setAdvanced('activitylink', $lessonconfig->activitylink_adv);
+                $mform->addElement('select', 'activitylink', get_string('activitylink', 'lesson'), $modinstances);
+                $mform->addHelpButton('activitylink', 'activitylink', 'lesson');
+                $mform->setDefault('activitylink', 0);
+                $mform->setAdvanced('activitylink', $lessonconfig->activitylink_adv);
+            }
         }
 
         // Availability.

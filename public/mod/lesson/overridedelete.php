@@ -86,6 +86,7 @@ $PAGE->add_body_class('limitedwidth');
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($lesson->name, true, array('context' => $context)));

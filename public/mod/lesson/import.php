@@ -54,17 +54,19 @@ $data->pageid = $pageid;
 $mform = new lesson_import_form(null, array('formats'=>lesson_get_import_export_formats('import')));
 $mform->set_data($data);
 
-    $PAGE->navbar->add($strimportquestions);
-    $PAGE->set_title($strimportquestions);
-    $PAGE->set_heading($course->fullname);
-    $PAGE->activityheader->set_attrs([
-        'hidecompletion' => true,
-        'description' => ''
-    ]);
-    $PAGE->add_body_class('limitedwidth');
-    echo $OUTPUT->header();
-    $headinglevel = $PAGE->activityheader->get_heading_level();
-    echo $OUTPUT->heading_with_help($strimportquestions, 'importquestions', 'lesson', '', '', $headinglevel);
+$PAGE->navbar->add($strimportquestions);
+$PAGE->set_title($strimportquestions);
+$PAGE->set_heading($course->fullname);
+$PAGE->activityheader->set_attrs([
+    'hidecompletion' => true,
+    'description' => '',
+]);
+$PAGE->add_body_class('limitedwidth');
+$PAGE->set_show_navigation_footer(false);
+
+echo $OUTPUT->header();
+$headinglevel = $PAGE->activityheader->get_heading_level();
+echo $OUTPUT->heading_with_help($strimportquestions, 'importquestions', 'lesson', '', '', $headinglevel);
 
 if ($data = $mform->get_data()) {
 

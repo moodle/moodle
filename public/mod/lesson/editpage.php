@@ -54,6 +54,7 @@ $PAGE->set_url('/mod/lesson/editpage.php', array('pageid'=>$pageid, 'id'=>$id, '
 $PAGE->set_pagelayout('admin');
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->add_body_class('limitedwidth');
+$PAGE->set_show_navigation_footer(false);
 
 if ($edit) {
     $editpage = lesson_page::load($pageid, $lesson);
