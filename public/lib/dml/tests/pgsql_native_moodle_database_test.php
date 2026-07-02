@@ -384,10 +384,30 @@ final class pgsql_native_moodle_database_test extends \advanced_testcase {
         }
 
         $cfg->dboptions['ssl'] = $ssl;
+        $pgconnwarning = '';
 
         // Get a separate disposable db connection handle with guaranteed 'readonly' config.
         $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
-        $db2->raw_connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+        // Suppress expected pg_connect() warning output in #[WithoutErrorHandler] tests,
+        // while preserving it as debuginfo on the thrown moodle_exception.
+        set_error_handler(function (int $errno, string $errstr) use (&$pgconnwarning): bool {
+            if ($errno === E_WARNING && str_contains($errstr, 'pg_connect():')) {
+                $pgconnwarning = $errstr;
+                return true;
+            }
+
+            return false;
+        });
+        try {
+            $db2->raw_connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+        } catch (moodle_exception $e) {
+            if (empty($e->debuginfo) && $pgconnwarning !== '') {
+                $e->debuginfo = $pgconnwarning;
+            }
+            throw $e;
+        } finally {
+            restore_error_handler();
+        }
 
         $reflector = new ReflectionClass($db2);
         $rp = $reflector->getProperty('pgsql');
