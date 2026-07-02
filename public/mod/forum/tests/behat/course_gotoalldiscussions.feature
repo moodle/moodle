@@ -38,8 +38,8 @@ Feature: Course linear navigation from forum activity
     # The Go to all discussions link should be visible when we are in a discussion page.
     But I follow "Post one"
     And I should see "Go to all discussions" in the "sticky-footer" "region"
-    And I <shouldnavbevisible> "Previous"
-    And I <shouldnavbevisible> "Next"
+    And I <shouldnavbevisible> "Previous" in the "sticky-footer" "region"
+    And I <shouldnavbevisible> "Next" in the "sticky-footer" "region"
     # Clicking the Go to all discussions link should take us to the discussions list page.
     And I click on "Go to all discussions" "link" in the "sticky-footer" "region"
     And I should see "Forum1" in the "page-header" "region"
