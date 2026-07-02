@@ -157,11 +157,11 @@ module.exports = grunt => {
             return [scssMatch];
         }
 
-        if (grunt.moodleEnv.runDir.startsWith('theme')) {
+        if (grunt.moodleEnv.runDir.startsWith('public/theme')) {
             return [`*/${scssMatch}`];
         }
 
-        return [`theme/*/${scssMatch}`];
+        return [`public/theme/*/${scssMatch}`];
     };
 
     // Add the watch configuration for rawcss, and scss.
