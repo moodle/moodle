@@ -27354,6 +27354,7 @@ nav.navbar .logo img {
 
 ul.dragdrop-keyboard-drag li {
   list-style-type: none;
+  margin-bottom: 0.1em;
 }
 ul.dragdrop-keyboard-drag li a,
 ul.dragdrop-keyboard-drag li a:hover {

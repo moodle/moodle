@@ -43,6 +43,7 @@ Feature: Managers can manage categories for course custom fields
     And I navigate to "Reports > Logs" in site administration
     And I press "Get these logs"
 
+  @accessibility
   Scenario: Move field in the course custom fields to another category
     Given the following "custom field categories" exist:
       | name      | component   | area   | itemid |
@@ -60,6 +61,7 @@ Feature: Managers can manage categories for course custom fields
     And "Field2" "text" should appear after "Category2" "text"
     And "Category3" "text" should appear after "Field2" "text"
     And I press "Move \"Field1\""
+    And the page should meet accessibility standards
     And I follow "To the top of category Category2"
     And "Category2" "text" should appear after "Category1" "text"
     And "Field1" "text" should appear after "Category2" "text"
