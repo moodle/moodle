@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\form;
 
 use context;
+use core\exception\invalid_parameter_exception;
 use core_form\dynamic_form;
 use core_reportbuilder\local\audiences\base;
 use core_reportbuilder\output\audience_heading_editable;
@@ -39,6 +40,7 @@ class audience extends dynamic_form {
      * Audience we work with
      *
      * @return base
+     * @throws invalid_parameter_exception
      */
     protected function get_audience(): base {
         $id = $this->optional_param('id', 0, PARAM_INT);
@@ -49,7 +51,11 @@ class audience extends dynamic_form {
             $record->reportid = $this->optional_param('reportid', null, PARAM_INT);
             $record->classname = $this->optional_param('classname', null, PARAM_RAW_TRIMMED);
         }
-        return base::instance($id, $record);
+        $instance = base::instance($id, $record);
+        if ($instance === null) {
+            throw new invalid_parameter_exception($record->classname);
+        }
+        return $instance;
     }
 
     /**

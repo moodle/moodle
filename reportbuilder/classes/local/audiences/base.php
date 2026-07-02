@@ -66,7 +66,7 @@ abstract class base {
         }
 
         // Check if audience type class still exists in the system.
-        if (!class_exists($classname)) {
+        if (!class_exists($classname) || !is_subclass_of($classname, self::class)) {
             return null;
         }
 
