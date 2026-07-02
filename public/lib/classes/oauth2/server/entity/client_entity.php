@@ -93,4 +93,26 @@ class client_entity implements ClientEntityInterface {
     public function get_description(): ?string {
         return $this->description;
     }
+
+    /**
+     * Create a client_entity from a database record.
+     *
+     * @param \stdClass $clientrecord The client database record.
+     * @param array $redirecturis Array of redirect URI records.
+     * @return self The client entity.
+     */
+    public static function create_from_record(\stdClass $clientrecord, array $redirecturis): self {
+        $client = new self();
+        $client->setIdentifier($clientrecord->clientidentifier);
+        $client->name = $clientrecord->name;
+        $client->description = $clientrecord->description;
+        $client->ownercontext = \core\context::instance_by_id($clientrecord->ownercontext);
+        $client->redirectUri = array_map(function ($redirecturi) {
+            return $redirecturi->uri;
+        }, $redirecturis);
+        $client->status = (int) $clientrecord->status;
+        $client->isConfidential = (bool) $clientrecord->isconfidential;
+
+        return $client;
+    }
 }

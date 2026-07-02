@@ -183,6 +183,92 @@ final class client_entity_test extends \advanced_testcase {
     }
 
     /**
+     * Test create_from_record method.
+     *
+     * @param \stdClass $record The client database record.
+     * @param array $redirecturis The redirect URIs database records.
+     * @param string $expectedidentifier The expected identifier.
+     * @param string $expectedname The expected name.
+     * @param string|null $expecteddescription The expected description.
+     * @param int $expectedstatus The expected status.
+     * @param bool $expectedconfidential The expected isConfidential state.
+     * @param array $expectedredirecturis The expected redirect URIs.
+     * @return void
+     */
+    #[DataProvider('create_from_record_provider')]
+    public function test_create_from_record(
+        \stdClass $record,
+        array $redirecturis,
+        string $expectedidentifier,
+        string $expectedname,
+        ?string $expecteddescription,
+        int $expectedstatus,
+        bool $expectedconfidential,
+        array $expectedredirecturis
+    ): void {
+        $this->resetAfterTest();
+        $systemcontext = \context_system::instance();
+        $record->ownercontext = $systemcontext->id;
+
+        $client = client_entity::create_from_record($record, $redirecturis);
+
+        $this->assertSame($expectedidentifier, $client->getIdentifier());
+        $this->assertSame($expectedname, $client->getName());
+        $this->assertSame($expecteddescription, $client->get_description());
+        $this->assertSame($systemcontext->id, $client->get_owner_context()->id);
+        $this->assertSame($expectedstatus, $client->get_status());
+        $this->assertSame($expectedconfidential, $client->isConfidential());
+        $this->assertSame($expectedredirecturis, (array)$client->getRedirectUri());
+    }
+
+    /**
+     * Data provider for testing create_from_record.
+     *
+     * @return array Data sets for testing.
+     */
+    public static function create_from_record_provider(): array {
+        return [
+            'active, confidential client with single redirect uri' => [
+                (object) [
+                    'clientidentifier' => 'client-1',
+                    'name' => 'Client One',
+                    'description' => 'Description One',
+                    'ownercontext' => 1,
+                    'status' => 1,
+                    'isconfidential' => 1,
+                ],
+                [(object) ['uri' => 'https://example.test/callback']],
+                'client-1',
+                'Client One',
+                'Description One',
+                1,
+                true,
+                ['https://example.test/callback'],
+            ],
+            'revoked, public client with multiple redirect uris' => [
+                (object) [
+                    'clientidentifier' => 'client-2',
+                    'name' => 'Client Two',
+                    'description' => null,
+                    'ownercontext' => 1,
+                    'status' => 2,
+                    'isconfidential' => 0,
+                ],
+                [
+                    (object) ['uri' => 'https://example.test/alt1'],
+                    (object) ['uri' => 'https://example.test/alt2'],
+                ],
+                'client-2',
+                'Client Two',
+                null,
+                2,
+                false,
+                ['https://example.test/alt1', 'https://example.test/alt2'],
+            ],
+        ];
+    }
+
+    /**
      * Helper method to set protected properties using reflection.
      *
      * @param object $object The object to set the property on.
