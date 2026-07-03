@@ -88,6 +88,7 @@ $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 echo $OUTPUT->header();
 echo $OUTPUT->heading_with_help($pagename, 'uploadrecords', 'mod_data');
 

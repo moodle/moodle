@@ -81,6 +81,7 @@ $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 $PAGE->activityheader->disable();
+$PAGE->set_show_navigation_footer(false);
 $PAGE->requires->js_call_amd('mod_data/deletepreset', 'init');
 
 // fill in missing properties needed for updating of instance
