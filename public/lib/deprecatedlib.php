@@ -873,7 +873,7 @@ function user_count_login_failures($user, $reset = true) {
 #[\core\attribute\deprecated('\core\user::convert_text_to_menu_items()', since: '5.3', mdl: 'MDL-82650')]
 function user_convert_text_to_menu_items($text, $page) {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
-    return \core\user::convert_text_to_menu_items($text, $page);
+    return \core\user::convert_text_to_menu_items($text);
 }
 
 /**

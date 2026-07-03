@@ -2385,11 +2385,10 @@ class user {
      * Converts a string into a flat array of menu items, where each item is a stdClass with fields type, url, title.
      *
      * @param string $text the menu items definition
-     * @param moodle_page $page the current page
      * @return array
      * @since Moodle 5.3
      */
-    public static function convert_text_to_menu_items(string $text, $page): array {
+    public static function convert_text_to_menu_items(string $text): array {
         $lines = explode("\n", $text);
         $children = [];
         foreach ($lines as $line) {
@@ -2407,6 +2406,7 @@ class user {
             $child = new stdClass();
             $child->itemtype = $itemtype;
             if ($itemtype === 'divider') {
+                $child->divider = true;
                 $children[] = $child;
                 continue;
             }
@@ -2432,6 +2432,7 @@ class user {
                     $bits[1] = static::mygrades_url();
                 }
                 $bits[1] = new url(trim($bits[1]));
+                $child->link = true;
             }
             $child->url = $bits[1];
             $children[] = $child;
@@ -2521,7 +2522,7 @@ class user {
 
         $returnobject->metadata['asotherrole'] = false;
 
-        $customitems = static::convert_text_to_menu_items($CFG->customusermenuitems, $page);
+        $customitems = static::convert_text_to_menu_items($CFG->customusermenuitems);
         $custommenucount = 0;
         foreach ($customitems as $item) {
             $returnobject->navitems[] = $item;
@@ -2533,17 +2534,19 @@ class user {
         $hook = new \core_user\hook\extend_user_menu();
         \core\di::get(\core\hook\manager::class)->dispatch($hook);
         foreach ($hook->get_menu_items() as $menuitem) {
-            $returnobject->navitems[] = $menuitem;
+            $returnobject->navitems[] = (object) $menuitem->export_for_template($OUTPUT);
         }
 
         if ($custommenucount > 0) {
             $divider = new stdClass();
             $divider->itemtype = 'divider';
+            $divider->divider = true;
             $returnobject->navitems[] = $divider;
         }
 
         $preferences = new stdClass();
         $preferences->itemtype = 'link';
+        $preferences->link = true;
         $preferences->url = new url('/user/preferences.php');
         $preferences->title = get_string('preferences');
         $preferences->titleidentifier = 'preferences,moodle';
@@ -2553,6 +2556,7 @@ class user {
             if ($role = $DB->get_record('role', ['id' => $user->access['rsw'][$context->path]])) {
                 $rolereturn = new stdClass();
                 $rolereturn->itemtype = 'link';
+                $rolereturn->link = true;
                 $rolereturn->url = new url('/course/switchrole.php', [
                     'id' => $course->id,
                     'sesskey' => sesskey(),
@@ -2570,6 +2574,7 @@ class user {
             if (is_array($roles) && (count($roles) > 0)) {
                 $switchrole = new stdClass();
                 $switchrole->itemtype = 'link';
+                $switchrole->link = true;
                 $switchrole->url = new url('/course/switchrole.php', [
                     'id' => $course->id,
                     'switchrole' => -1,
@@ -2592,6 +2597,7 @@ class user {
 
             $userrevert = new stdClass();
             $userrevert->itemtype = 'link';
+            $userrevert->link = true;
             $userrevert->url = new url('/course/loginas.php', ['id' => $course->id, 'sesskey' => sesskey()]);
             $userrevert->title = get_string('logout');
             $userrevert->titleidentifier = 'logout,moodle';
@@ -2599,6 +2605,7 @@ class user {
         } else {
             $logout = new stdClass();
             $logout->itemtype = 'link';
+            $logout->link = true;
             $logout->url = new url('/login/logout.php', ['sesskey' => sesskey()]);
             $logout->title = get_string('logout');
             $logout->titleidentifier = 'logout,moodle';
