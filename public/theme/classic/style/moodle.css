@@ -29614,6 +29614,14 @@ img.icon {
   white-space: normal;
 }
 
+.drawercontent .card-title {
+  color: #495057;
+  font-size: 1rem;
+}
+.drawercontent .card-text {
+  color: #6a737b;
+}
+
 .card-grid {
   display: flex;
 }
@@ -30547,7 +30555,7 @@ table.calendartable caption {
 }
 
 .max-section-alert {
-  border-top: 2px dashed #dee2e6;
+  border-top: 1px solid #dee2e6;
   font-size: 0.875rem;
   font-weight: normal;
   color: #6a737b;
@@ -30562,11 +30570,30 @@ table.calendartable caption {
   margin-top: 0.5rem;
 }
 .course-section .section-item {
+  border: 1px solid #e9ecef;
+  border-radius: 1rem;
+  background-color: #fff;
+}
+.course-section .section-item .course-section-header {
   padding: 1rem;
-  border: 1px solid #dee2e6;
   border-radius: 1rem;
 }
-.course-section.hidden .section-item, .course-section.orphaned .section-item {
+.course-section .section-item .course-section-header .section-restrictionlock .icon {
+  color: #6a737b;
+}
+.course-section .section-item .course-content-item-content [data-for=sectioninfo] {
+  padding-left: calc(16px + 3rem);
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+}
+.course-section .section-item .course-content-item-content .section-content-inner {
+  padding: 0.5rem;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+}
+.course-section.hidden .section-item .course-section-header, .course-section.orphaned .section-item .course-section-header {
   background-color: #f8f9fa;
 }
 .course-section.current > .section-item {
@@ -30580,10 +30607,11 @@ table.calendartable caption {
   position: absolute;
   top: 0;
 }
-.course-section .sectionname > a {
+.course-section .sectionname a {
   color: #1d2125;
+  font-size: 1.25rem;
 }
-.course-section .sectionname > a:hover {
+.course-section .sectionname a:hover {
   text-decoration: none;
 }
 .course-section .sectionbadges .badge {
@@ -30601,15 +30629,23 @@ table.calendartable caption {
 .course-section .section_action_menu .dropdown-toggle::after {
   display: none;
 }
+.course-section .summarytext {
+  color: #6a737b;
+}
 .course-section .summarytext img {
   border-radius: 1rem;
 }
 .course-section .availabilityinfo {
   margin-top: 0.5rem;
-  padding: 0.25rem 1rem;
+  padding: 1rem;
   background-color: #e9ecef;
+  border: 1px solid #dee2e6;
+  color: #495057;
   font-size: 0.875em;
   border-radius: 1rem;
+}
+.course-section .availabilityinfo .icon {
+  color: #6a737b;
 }
 .course-section .availabilityinfo .editavailability a {
   border-radius: 0.375rem;
@@ -30652,8 +30688,6 @@ table.calendartable caption {
 /* Activities */
 .activity {
   list-style: none;
-  padding-top: 0.25rem;
-  margin-top: 0.25rem;
 }
 .activity.indented .activity-item {
   margin-left: 1rem;
@@ -30661,27 +30695,25 @@ table.calendartable caption {
 .editing .activity, .section .activity:first-child {
   padding-top: 0;
   margin-top: 0;
-  border-top: none;
 }
 
 .activity-item {
-  padding: 0.75rem;
-}
-body:not(.editing) .activity-item {
-  border-bottom: 1px solid #dee2e6;
-}
-.section-list .section .section-item .activity:last-child > .activity-item {
-  border-bottom: none;
-}
-.activity-item.activityinline {
-  padding: 0.75rem 0;
+  padding: 1.25rem;
+  border-radius: 1rem;
 }
 .activity-item.hiddenactivity {
-  background-color: #f8f9fa;
+  background-color: #e9ecef;
 }
-.activity-item.hiddenactivity .activityiconcontainer,
-.activity-item.hiddenactivity .badge {
+.activity-item.hiddenactivity .activityiconcontainer {
   mix-blend-mode: multiply;
+}
+.activity-item.hiddenactivity .badge {
+  background-color: transparent;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+.activity-item.hiddenactivity .activity-altcontent.activity-description {
+  color: #495057;
 }
 .editing .activity-item {
   cursor: move;
@@ -30691,7 +30723,6 @@ body:not(.editing) .activity-item {
 }
 .editing .activity-item:hover:not(:has(.activity:hover)), .editing .activity-item.selected {
   outline: 2px solid #0f6cbf;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 .editing .activity-item:hover:not(:has(.activity:hover)) .activityiconcontainer,
 .editing .activity-item:hover:not(:has(.activity:hover)) .badge, .editing .activity-item.selected .activityiconcontainer,
@@ -30709,13 +30740,13 @@ body:not(.editing) .activity-item {
   align-items: center;
   grid-template-columns: min-content 1fr min-content min-content min-content;
   grid-template-rows: 1fr repeat(5, min-content);
-  grid-template-areas: "icon   name          groupmode      completion    actions" "icon   visibility    groupmode      completion    actions" "icon   dates         groupmode      completion    actions" "icon   altcontent    altcontent     altcontent    altcontent" "icon   afterlink     afterlink      afterlink     afterlink" "icon   availability  availability   availability  availability";
+  grid-template-areas: "icon   name          groupmode      completion    actions" "icon   altcontent    altcontent     altcontent    altcontent" "icon   afterlink     afterlink      afterlink     afterlink" "visibility   visibility   visibility     visibility    visibility" "dates        dates        dates          dates         dates" "availability availability availability   availability  availability";
 }
 @media (max-width: 575.98px) {
   .activity-item .activity-grid {
     grid-template-columns: min-content 1fr min-content min-content min-content;
     grid-template-rows: 1fr repeat(4, min-content);
-    grid-template-areas: "icon          name          actions" "icon          visibility    actions" "dates         dates         dates" "groupmode     groupmode     groupmode" "completion    completion    completion" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "availability  availability  availability";
+    grid-template-areas: "icon          name          actions" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "visibility    visibility    visibility" "dates         dates         dates" "groupmode     groupmode     groupmode" "completion    completion    completion" "availability  availability  availability";
   }
 }
 .activity-item .activity-grid.noname-grid {
@@ -30757,6 +30788,13 @@ body:not(.editing) .activity-item {
 .activity-item .activity-name-area {
   grid-area: name;
 }
+.activity-item .activity-name-area .activityname {
+  color: #495057;
+  font-weight: 500;
+}
+.activity-item .activity-name-area .activityname .aalink, .activity-item .activity-name-area .activityname a.autolink {
+  color: #1d2125;
+}
 .activity-item .activity-name-area .activityname .afterlink {
   margin-left: 0.5rem;
 }
@@ -30767,9 +30805,12 @@ body:not(.editing) .activity-item {
 }
 .activity-item .activity-name-area .activitybadge.badge-none {
   font-weight: normal;
-  --bs-badge-color: #1d2125;
-  font-size: 0.875em;
-  padding: 0;
+  background-color: #fff;
+  color: #6a737b;
+  border: 1px solid #e9ecef;
+  font-size: 12px;
+  border-radius: 0.25rem !important;
+  padding: 0.25rem;
 }
 .activity-item .activity-completion {
   grid-area: completion;
@@ -30860,9 +30901,7 @@ body:not(.editing) .activity-item {
   margin-top: 0.25rem;
 }
 .activity-item .activity-altcontent.activity-description {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #dee2e6;
+  color: #6a737b;
   font-size: 0.875em;
 }
 .activity-item .activity-altcontent.activity-description ul:not(.activity-description ul ul) {
@@ -30895,18 +30934,18 @@ body:not(.editing) .activity-item {
 .course-content .divider hr {
   width: 100%;
   margin: 0.5rem 0.25rem;
-  border-top: 2px dashed #dee2e6;
+  border-top: 1px solid #e9ecef;
   opacity: 1;
 }
 .changenumsections.disabled .course-content .divider hr {
-  border-top: 2px dashed #dee2e6;
+  border-top: 1px solid #e9ecef;
 }
 .course-content .divider .divider-content {
   opacity: 0;
   visibility: hidden;
   transition: visibility 0.1s;
   position: absolute;
-  background: linear-gradient(transparent 40%, #fff 40%, #fff 60%, transparent 60%);
+  background: linear-gradient(transparent 40%, #f8f9fa 40%, #f8f9fa 60%, transparent 60%);
 }
 .section.hidden .course-content .divider .divider-content {
   background: linear-gradient(transparent 40%, #f8f9fa 40%, #f8f9fa 60%, transparent 60%);
@@ -30948,11 +30987,11 @@ body:not(.editing) .activity-item {
 .course-content .divider .btn.add-content {
   position: relative;
   z-index: 1;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: bold;
-  color: #094173;
-  background-color: #cfe2f2;
+  border-radius: 0.5rem;
+  color: #495057;
+  background-color: #dee2e6;
+  padding: 0.5rem 0.75rem;
+  line-height: 1;
 }
 .course-content .divider .btn.add-content:hover, .course-content .divider .btn.add-content:focus {
   color: #fff;
@@ -30991,7 +31030,7 @@ body:not(.editing) .activity-item {
   margin-top: 0.5rem;
   margin-left: 2rem;
   padding-top: 0.5rem;
-  border-top: 2px dashed #dee2e6;
+  border-top: 1px solid #e9ecef;
 }
 .bulkenabled .activity:first-child {
   margin-top: 1.5rem;
@@ -31143,19 +31182,13 @@ body:not(.editing) .single-section > ul > .course-section .section-item .activit
 
 /* Subsections */
 .activity.subsection > .activity-item {
-  border-bottom: none;
-  padding: 0;
-  margin: 0.5rem 0;
+  padding: 1.25rem 0.5rem;
 }
 .activity.subsection > .activity-item > .activity-grid > .activity-altcontent {
   margin-top: 0;
 }
 .activity.subsection .section {
   margin-top: 0;
-}
-.activity.subsection .section .section-item {
-  border: none;
-  padding: 0.75rem 0.75rem 0;
 }
 .activity.subsection .section .icons-collapse-expand:has(+ h4, + .h4) {
   height: 24px;
@@ -31177,35 +31210,7 @@ body:not(.editing) .single-section > ul > .course-section .section-item .activit
   opacity: 0;
   visibility: hidden;
 }
-.activity.subsection .activity {
-  margin-left: 1.5rem;
-}
-body:not(.editing) .activity.subsection .section-item .course-content-item-content {
-  border-bottom: 1px solid #dee2e6;
-}
-body:not(.editing) .activity.subsection .section-item .course-section-header {
-  padding-bottom: 1rem;
-}
-body:not(.editing) .activity.subsection .section-item .course-section-header:has(.icons-collapse-expand.collapsed) {
-  border-bottom: 1px solid #dee2e6;
-}
-body:not(.editing) .activity.subsection .section-item:has(.course-content-item-content.collapsing) .course-section-header {
-  border-bottom: none;
-}
 body:not(.editing) .activity.subsection .section-item .section .activity:last-child {
-  border-bottom: none;
-}
-body:not(.editing) .activity.subsection .course-content-item-content > [data-for=sectioninfo] {
-  margin: 0.25rem 0;
-}
-body:not(.editing) .activity.subsection .course-content-item-content > [data-for=sectioninfo]:not(.description) {
-  margin: 0;
-  min-height: 0;
-}
-body:not(.editing) .activity.subsection:last-child .section-item .course-content-item-content {
-  border-bottom: none;
-}
-body:not(.editing) .activity.subsection:last-child .section-item .course-section-header:has(.icons-collapse-expand.collapsed) {
   border-bottom: none;
 }
 
@@ -31250,10 +31255,6 @@ body:not(.editing) .activity.subsection:last-child .section-item .course-section
 }
 .editing .editinprogress .editinprogress:after {
   display: none;
-}
-
-[data-for=sectioninfo] {
-  margin: 1rem 0;
 }
 
 /* Drag and drop */
@@ -31382,6 +31383,15 @@ body:not(.editing) [id^=module-]:target, body.editing [id^=module-]:target .acti
     outline: 2px solid transparent;
   }
 }
+#course-addsection .btn-add-content {
+  height: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border-radius: 1rem;
+}
+
 /*
  * Course management page styles.
  */
@@ -32195,7 +32205,6 @@ body.drawer-ease {
   right: 0;
   height: calc(100% - 50px);
   width: 320px;
-  box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.25);
   padding: 0;
   visibility: visible;
   opacity: 1;
@@ -32224,12 +32233,7 @@ body.drawer-ease {
     overflow: hidden;
   }
 }
-.dir-rtl [data-region=right-hand-drawer] {
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-}
-
 .drawer {
-  background-color: #f8f9fa;
   z-index: 1015;
   position: fixed;
   height: 100vh;
@@ -32257,6 +32261,7 @@ body.drawer-ease {
   max-width: 315px;
   right: calc(-315px + -10px);
   visibility: hidden;
+  background-color: #f8f9fa;
 }
 @media (prefers-reduced-motion: reduce) {
   .drawer.drawer-right {
@@ -32283,6 +32288,7 @@ body.drawer-ease {
   max-width: 285px;
   left: calc(-285px + -10px);
   visibility: hidden;
+  background-color: #e9ecef;
 }
 @media (prefers-reduced-motion: reduce) {
   .drawer.drawer-left {
@@ -32509,7 +32515,6 @@ body.drawer-ease {
 @media (max-width: 991.98px) {
   .drawer-md {
     display: block;
-    background-color: #f8f9fa;
     z-index: 1015;
     position: fixed;
     height: 100vh;
@@ -32543,6 +32548,7 @@ body.drawer-ease {
     max-width: 315px;
     right: calc(-315px + -10px);
     visibility: hidden;
+    background-color: #f8f9fa;
   }
 }
 @media (max-width: 991.98px) and (prefers-reduced-motion: reduce) {
@@ -32579,6 +32585,7 @@ body.drawer-ease {
     max-width: 285px;
     left: calc(-285px + -10px);
     visibility: hidden;
+    background-color: #e9ecef;
   }
 }
 @media (max-width: 991.98px) and (prefers-reduced-motion: reduce) {
@@ -32615,7 +32622,6 @@ body.drawer-ease {
 @media (max-width: 767.98px) {
   .drawer-sm {
     display: block;
-    background-color: #f8f9fa;
     z-index: 1015;
     position: fixed;
     height: 100vh;
@@ -32649,6 +32655,7 @@ body.drawer-ease {
     max-width: 315px;
     right: calc(-315px + -10px);
     visibility: hidden;
+    background-color: #f8f9fa;
   }
 }
 @media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
@@ -32685,6 +32692,7 @@ body.drawer-ease {
     max-width: 285px;
     left: calc(-285px + -10px);
     visibility: hidden;
+    background-color: #e9ecef;
   }
 }
 @media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
@@ -38097,8 +38105,9 @@ p.arrow_button {
 
 /* Specific styles for the collapse/expand buttons. */
 .btn-icon.icons-collapse-expand {
-  color: #0f6cbf;
-  background-color: #e7f0f9;
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
 }
 .btn-icon.icons-collapse-expand:hover {
   outline: 2px solid #0f6cbf;
@@ -38250,11 +38259,10 @@ p.arrow_button {
  */
 .btn-add-content {
   border-radius: 0.375rem;
-  border: 2px dashed #dee2e6;
-  color: #0f6cbf;
+  border: 1px dashed #8f959e;
+  color: #495057;
   background-color: #fff;
   font-size: 0.875rem;
-  font-weight: bold;
 }
 .btn-add-content:hover, .btn-add-content:focus {
   background-color: #e7f0f9;
@@ -39756,7 +39764,6 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   width: 100%;
   margin: 0 auto;
   border-radius: 0.375rem;
-  background-color: #fff;
   padding: 1.5rem 0.5rem;
   margin-top: 0.5rem;
   margin-bottom: 3rem;

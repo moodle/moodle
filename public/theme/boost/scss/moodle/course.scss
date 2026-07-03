@@ -3,12 +3,12 @@
  */
 
 // Variables.
-$activity-item-padding: 0.75rem !default;
+$activity-item-padding: 1.25rem !default;
 $activity-border-radius: 1rem !default;
 $activity-border-width: 2px !default;
 $activity-hover-border-color: $primary !default;
-$divider-color: $gray-300 !default;
-$divider-width: 2px !default;
+$divider-color: $gray-200 !default;
+$divider-width: 1px !default;
 $divider-hover-color: $primary !default;
 
 /* Course content */
@@ -55,7 +55,7 @@ $divider-hover-color: $primary !default;
 
 // Max sections reached alert.
 .max-section-alert {
-    border-top: $divider-width dashed $border-color;
+    border-top: $divider-width solid $border-color;
     font-size: $font-size-sm;
     font-weight: normal;
     color: $gray-600;
@@ -72,15 +72,41 @@ $divider-hover-color: $primary !default;
     }
 
     .section-item {
-        padding: map-get($spacers, 3);
-        border: $border-width solid $border-color;
+        border: $border-width solid $gray-200;
         @include border-radius($activity-border-radius);
+        background-color: $white;
+
+        .course-section-header {
+            padding: map-get($spacers, 3);
+            @include border-radius($activity-border-radius);
+
+            .section-restrictionlock .icon {
+                color: $gray-600;
+            }
+        }
+
+        .course-content-item-content {
+            [data-for="sectioninfo"] {
+                padding-left: calc(#{$icon-height} + #{map-get($spacers, 6)});
+                padding-right: map-get($spacers, 3);
+                padding-bottom: map-get($spacers, 3);
+            }
+
+            .section-content-inner {
+                padding: map-get($spacers, 2);
+                border-top: $border-width solid $gray-200;
+                background-color: $gray-100;
+                @include border-bottom-radius($activity-border-radius);
+            }
+        }
     }
 
     &.hidden,
     &.orphaned {
         .section-item {
-            background-color: $gray-100;
+            .course-section-header {
+                background-color: $gray-100;
+            }
         }
     }
 
@@ -99,8 +125,9 @@ $divider-hover-color: $primary !default;
         }
     }
 
-    .sectionname > a {
+    .sectionname a {
         color: $gray-900;
+        font-size: $h5-font-size;
         &:hover {
             text-decoration: none;
         }
@@ -127,6 +154,7 @@ $divider-hover-color: $primary !default;
     }
 
     .summarytext {
+        color: $gray-600;
         // Add rounded borders to images.
         img {
             @include border-radius($activity-border-radius);
@@ -136,10 +164,15 @@ $divider-hover-color: $primary !default;
     // Availability styles for both section and activities.
     .availabilityinfo {
         margin-top: map-get($spacers, 2);
-        padding: map-get($spacers, 1) map-get($spacers, 3);
+        padding: map-get($spacers, 3);
         background-color: $gray-200;
+        border: $border-width solid $gray-300;
+        color: $gray-700;
         @include font-size($small-font-size);
         @include border-radius($activity-border-radius);
+        .icon {
+            color: $gray-600;
+        }
         .editavailability {
             a {
                 @include border-radius();
@@ -198,8 +231,6 @@ $divider-hover-color: $primary !default;
 
 .activity {
     list-style: none;
-    padding-top: map-get($spacers, 1);
-    margin-top: map-get($spacers, 1);
     &.indented {
         .activity-item {
             margin-left: map-get($spacers, 3);
@@ -208,31 +239,27 @@ $divider-hover-color: $primary !default;
     // Custom styles for activity while editing and for the first activity card in the section.
     .editing &,
     .section &:first-child {
-        // Remove activity top border and spacing, while editing a separator is displayed.
+        // Remove activity top spacing, while editing a separator is displayed.
         padding-top: 0;
         margin-top: 0;
-        border-top: none;
     }
 }
 
 .activity-item {
     padding: $activity-item-padding;
-    // In not editing mode we add a grayed line as a separator between activities.
-    body:not(.editing) & {
-        border-bottom: $border-width solid $border-color;
-    }
-    // Remove last activity bottom border in sections outside course content (like single section page).
-    .section-list .section .section-item .activity:last-child > & {
-        border-bottom: none;
-    }
-    &.activityinline {
-        padding: $activity-item-padding 0;
-    }
+    @include border-radius($activity-border-radius);
     &.hiddenactivity {
-        background-color: $gray-100;
-        .activityiconcontainer,
-        .badge {
+        background-color: $gray-200;
+        .activityiconcontainer {
             mix-blend-mode: multiply;
+        }
+        .badge {
+            background-color: transparent;
+            color: $gray-700;
+            border: $border-width solid $gray-300;
+        }
+        .activity-altcontent.activity-description {
+            color: $gray-700;
         }
     }
     // Custom styles for activity cards while editing.
@@ -246,7 +273,6 @@ $divider-hover-color: $primary !default;
         &.selected {
             // We use outline here to avoid changing the layout everytime we hover.
             outline: $activity-border-width solid $activity-hover-border-color;
-            box-shadow: $box-shadow-sm;
             .activityiconcontainer,
             .badge {
                 mix-blend-mode: multiply;
@@ -271,22 +297,22 @@ $divider-hover-color: $primary !default;
         grid-template-rows: 1fr repeat(5, min-content);
         grid-template-areas:
             "icon   name          groupmode      completion    actions"
-            "icon   visibility    groupmode      completion    actions"
-            "icon   dates         groupmode      completion    actions"
             "icon   altcontent    altcontent     altcontent    altcontent"
             "icon   afterlink     afterlink      afterlink     afterlink"
-            "icon   availability  availability   availability  availability";
+            "visibility   visibility   visibility     visibility    visibility"
+            "dates        dates        dates          dates         dates"
+            "availability availability availability   availability  availability";
         @include media-breakpoint-down(sm) {
             grid-template-columns: min-content 1fr min-content min-content min-content;
             grid-template-rows: 1fr repeat(4, min-content);
             grid-template-areas:
                 "icon          name          actions"
-                "icon          visibility    actions"
+                "altcontent    altcontent    altcontent"
+                "afterlink     afterlink     afterlink"
+                "visibility    visibility    visibility"
                 "dates         dates         dates"
                 "groupmode     groupmode     groupmode"
                 "completion    completion    completion"
-                "altcontent    altcontent    altcontent"
-                "afterlink     afterlink     afterlink"
                 "availability  availability  availability";
         }
     }
@@ -340,6 +366,11 @@ $divider-hover-color: $primary !default;
         grid-area: name;
         // Prevent bootstrap strech-link from covering the inplace editable button using z-index.
         .activityname {
+            color: $gray-700;
+            font-weight: $font-weight-medium;
+            .aalink {
+                color: $gray-900;
+            }
             .afterlink {
                 margin-left: map-get($spacers, 2);
             }
@@ -352,9 +383,13 @@ $divider-hover-color: $primary !default;
         .activitybadge {
             &.badge-none {
                 font-weight: normal;
-                --#{$prefix}badge-color: #{$body-color};
-                @include font-size($small-font-size);
-                padding: 0;
+                background-color: $white;
+                color: $gray-600;
+                border: $border-width solid $gray-200;
+                font-size: 12px;
+                // Override the 'rounded-pill' class from the markup, which is shared with other badge styles.
+                border-radius: $border-radius-sm !important; // stylelint-disable-line declaration-no-important
+                padding: map-get($spacers, 1);
             }
         }
     }
@@ -447,9 +482,7 @@ $divider-hover-color: $primary !default;
         grid-area: altcontent;
         margin-top: map-get($spacers, 1);
         &.activity-description {
-            margin-top: map-get($spacers, 2);
-            padding-top: map-get($spacers, 2);
-            border-top: $border-width solid $border-color;
+            color: $gray-600;
             @include font-size($small-font-size);
             // Fix activity description bottom margin for first level-lists.
             ul:not(.activity-description ul ul) {
@@ -489,10 +522,10 @@ $divider-hover-color: $primary !default;
     hr {
         width: 100%;
         margin: map-get($spacers, 2) map-get($spacers, 1);
-        border-top: $divider-width dashed $divider-color;
+        border-top: $divider-width solid $divider-color;
         opacity: 1;
         .changenumsections.disabled & {
-            border-top: $divider-width dashed $divider-color;
+            border-top: $divider-width solid $divider-color;
         }
     }
     .divider-content {
@@ -500,7 +533,7 @@ $divider-hover-color: $primary !default;
         visibility: hidden;
         transition: visibility 0.1s;
         position: absolute;
-        background: linear-gradient(transparent 40%, $white 40%, $white 60%, transparent 60%);
+        background: linear-gradient(transparent 40%, $gray-100 40%, $gray-100 60%, transparent 60%);
         .section.hidden & {
             background: linear-gradient(transparent 40%, $gray-100 40%, $gray-100 60%, transparent 60%);
         }
@@ -558,11 +591,11 @@ $divider-hover-color: $primary !default;
 .course-content .divider .btn.add-content {
     position: relative;
     z-index: 1;
-    @include border-radius();
-    font-size: $font-size-sm;
-    font-weight: bold;
-    color: shift-color($primary, $alert-color-scale);
-    background-color: shift-color($primary, $alert-bg-scale);
+    @include border-radius($border-radius-lg);
+    color: $gray-700;
+    background-color: $gray-300;
+    padding: map-get($spacers, 2) ($spacer * 0.75);
+    line-height: 1;
     &:hover,
     &:focus {
         color: color-contrast($primary);
@@ -605,7 +638,7 @@ $divider-hover-color: $primary !default;
         margin-top: map-get($spacers, 2);
         margin-left: 2rem;
         padding-top: map-get($spacers, 2);
-        border-top: $divider-width dashed $divider-color;
+        border-top: $divider-width solid $divider-color;
         &:first-child {
             margin-top: map-get($spacers, 4);
         }
@@ -782,10 +815,7 @@ $divider-hover-color: $primary !default;
 
 .activity.subsection {
     > .activity-item {
-        // Remove bottom border from subsection container.
-        border-bottom: none;
-        padding: 0;
-        margin: map-get($spacers, 2) 0;
+        padding: $activity-item-padding map-get($spacers, 2);
 
         > .activity-grid > .activity-altcontent {
             margin-top: 0;
@@ -793,10 +823,6 @@ $divider-hover-color: $primary !default;
     }
     .section {
         margin-top: 0;
-        .section-item {
-            border: none;
-            padding: $activity-item-padding $activity-item-padding 0;
-        }
         .icons-collapse-expand:has(+ h4) {
             height: map-get($iconsizes, 4);
             width: map-get($iconsizes, 4);
@@ -822,43 +848,9 @@ $divider-hover-color: $primary !default;
         opacity: 0;
         visibility: hidden;
     }
-    .activity {
-        margin-left: map-get($spacers, 4);
-    }
     body:not(.editing) & {
         .section-item {
-            .course-content-item-content {
-                border-bottom: $border-width solid $border-color;
-            }
-            .course-section-header {
-                padding-bottom: map-get($spacers, 3);
-            }
-            .course-section-header:has(.icons-collapse-expand.collapsed) {
-                border-bottom: $border-width solid $border-color;
-            }
-
-            &:has(.course-content-item-content.collapsing) .course-section-header {
-                border-bottom: none;
-            }
             .section .activity:last-child {
-                border-bottom: none;
-            }
-
-        }
-        .course-content-item-content > [data-for="sectioninfo"] {
-            margin: map-get($spacers, 1) 0;
-        }
-        .course-content-item-content > [data-for="sectioninfo"]:not(.description) {
-            margin: 0;
-            min-height: 0;
-        }
-        // No bottom line for the last subsection.
-        &:last-child .section-item {
-            .course-content-item-content {
-                border-bottom: none;
-            }
-
-            .course-section-header:has(.icons-collapse-expand.collapsed) {
                 border-bottom: none;
             }
         }
@@ -919,10 +911,6 @@ $divider-hover-color: $primary !default;
             }
         }
     }
-}
-
-[data-for="sectioninfo"] {
-    margin: map-get($spacers, 3) 0;
 }
 
 /* Drag and drop */
@@ -1039,3 +1027,15 @@ $highlight-style: highlight-fade 2s ease-in-out;
         outline: $activity-border-width solid transparent;
     }
 }
+
+#course-addsection {
+    .btn-add-content {
+        height: 112px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: $font-size-base;
+        @include border-radius($activity-border-radius);
+    }
+}
+

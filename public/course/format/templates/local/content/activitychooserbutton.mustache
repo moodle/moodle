@@ -39,7 +39,7 @@
 {{! Dropdown with "add a new activity or resource" item and any other action links. }}
 {{#hasactionlinks}}
 <div class="dropdown">
-    <button class="btn add-content d-flex justify-content-center align-items-center p-1 icon-no-margin"
+    <button class="btn add-content d-flex justify-content-center align-items-center icon-no-margin"
             type="button"
             id="dropdownMenuButton-{{#modid}}{{modid}}{{/modid}}{{^modid}}{{uniqid}}{{/modid}}"
             data-bs-toggle="dropdown"
@@ -56,7 +56,7 @@
             tabindex="0"
             title="{{#str}}addcontent, core{{/str}}"
     >
-        {{#pix}} t/add, core {{/pix}}
+        <span class="me-2">{{#pix}} t/add, core {{/pix}}</span>{{#str}}addcontent, core{{/str}}
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{#modid}}{{modid}}{{/modid}}{{^modid}}{{uniqid}}{{/modid}}">
         {{> core_courseformat/local/content/addresourceoractivitybutton }}

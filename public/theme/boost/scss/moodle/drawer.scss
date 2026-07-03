@@ -7,7 +7,8 @@ $drawer-right-width: 315px !default;
 $drawer-padding-x: 20px !default;
 $drawer-padding-y: 20px !default;
 $drawer-offscreen-gutter: 20px !default;
-$drawer-bg-color: $gray-100 !default;
+$drawer-left-bg-color: $gray-200 !default;
+$drawer-right-bg-color: $gray-100 !default;
 $drawer-scroll-bg-track: $gray-100 !default;
 $drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
@@ -140,7 +141,6 @@ $right-drawer-width: 320px;
         right: 0;
         height: calc(100% - #{$navbar-height});
         width: $right-drawer-width;
-        box-shadow: -2px 2px 4px $drawer-shadow-color;
         padding: 0;
         visibility: visible;
         opacity: 1;
@@ -172,14 +172,7 @@ $right-drawer-width: 320px;
     }
 }
 
-.dir-rtl {
-    [data-region=right-hand-drawer] {
-        box-shadow: 2px 2px 4px $drawer-shadow-color;
-    }
-}
-
 @mixin drawer() {
-    background-color: $drawer-bg-color;
     // Drawers has a z-index higher than the page content,
     // lower than the top navbar and the sticky footer,
     // and lower to the message drawer.
@@ -220,7 +213,7 @@ $right-drawer-width: 320px;
         max-width: $drawer-right-width;
         right: calc(-#{$drawer-right-width} + -10px);
         visibility: hidden;
-        @include box-shadow($box-shadow-drawer-right);
+        background-color: $drawer-right-bg-color;
 
         &.show {
             right: 0;
@@ -248,7 +241,7 @@ $right-drawer-width: 320px;
         max-width: $drawer-left-width;
         left: calc(-#{$drawer-left-width} + -10px);
         visibility: hidden;
-        @include box-shadow($box-shadow-drawer-left);
+        background-color: $drawer-left-bg-color;
 
         &.show {
             left: 0;
