@@ -2878,26 +2878,28 @@ class user {
     /**
      * Returns users tagged with a specified tag.
      *
-     * @param core_tag_tag $tag
+     * @param core_tag_tag $tag the tag to search for
      * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
      *             are displayed on the page and the per-page limit may be bigger
-     * @param int $fromctx context id where the link was displayed
-     * @param int $ctx context id where to search for records
+     * @param int|null $fromctx context id where the link was displayed
+     * @param int|null $ctx context id where to search for records
      * @param int $rec search in subcontexts as well
      * @param int $page 0-based number of page being displayed
      * @return \core_tag\output\tagindex
      * @since Moodle 5.3
      */
     public static function get_tagged_users(
-        $tag,
+        core_tag_tag $tag,
         bool $exclusivemode = false,
-        int $fromctx = 0,
-        int $ctx = 0,
+        ?int $fromctx = 0,
+        ?int $ctx = 0,
         int $rec = 1,
         int $page = 0,
-    ) {
+    ): tagindex {
         global $PAGE;
 
+        $fromctx ??= 0;
+        $ctx ??= 0;
         $perpage = $exclusivemode ? 24 : 5;
         $filteredusers = [];
 
