@@ -238,7 +238,7 @@
   --mds-scale-1700: 6rem;
   --mds-scale-1800: 50rem;
   --mds-typography-font-family-monospace: Menlo;
-  --mds-typography-font-family-sans-serif: Noto sans;
+  --mds-typography-font-family-sans-serif: Noto Sans;
   --mds-typography-font-size-0: 0rem;
   --mds-typography-font-size-1: 1rem;
   --mds-typography-font-size-2: 2rem;
@@ -279,6 +279,12 @@
   --mds-offset-lg: 1rem;
   --mds-offset-md: 0.5rem;
   --mds-offset-sm: 0.125rem;
+  --mds-avatars-lg: 3rem;
+  --mds-avatars-md: 2rem;
+  --mds-avatars-sm: 1.5rem;
+  --mds-avatars-xl: 4rem;
+  --mds-avatars-xs: 1rem;
+  --mds-avatars-xxl: 6rem;
   --mds-icons-lg: 1.5rem;
   --mds-icons-md: 1.25rem;
   --mds-icons-sm: 1rem;
@@ -296,7 +302,7 @@
   --mds-spacing-xs: 0.5rem;
   --mds-spacing-xxl: 3rem;
   --mds-spacing-xxs: 0.25rem;
-  --mds-font-family-base: Noto sans;
+  --mds-font-family-base: Noto Sans;
   --mds-font-family-code: Menlo;
   --mds-font-size-displays-1: 5rem;
   --mds-font-size-displays-2: 4.5rem;
@@ -441,6 +447,121 @@
   inline-size: 100%;
 }
 
+/* avatar/index.css */
+/*
+ * avatar.css
+ * Styles for the Avatar component.
+ *
+ * Sizing uses --mds-scale-* primitives because no semantic avatar-size tokens
+ * exist in the current token set. When dedicated tokens are added, replace
+ * the scale references here.
+ */
+.mds-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-surface-strong);
+  color: var(--mds-text-default);
+  /* Prevent the avatar from collapsing in flex or grid containers */
+  flex-shrink: 0;
+}
+
+/* ── Size variants ─────────────────────────────────────────────────────────── */
+.mds-avatar--xs {
+  width: var(--mds-avatars-xs);
+  height: var(--mds-avatars-xs);
+}
+
+.mds-avatar--sm {
+  width: var(--mds-avatars-sm);
+  height: var(--mds-avatars-sm);
+}
+
+.mds-avatar--md {
+  width: var(--mds-avatars-md);
+  height: var(--mds-avatars-md);
+}
+
+.mds-avatar--lg {
+  width: var(--mds-avatars-lg);
+  height: var(--mds-avatars-lg);
+}
+
+.mds-avatar--xl {
+  width: var(--mds-avatars-xl);
+  height: var(--mds-avatars-xl);
+}
+
+.mds-avatar--xxl {
+  width: var(--mds-avatars-xxl);
+  height: var(--mds-avatars-xxl);
+}
+
+/* ── Image content ─────────────────────────────────────────────────────────── */
+.mds-avatar__image {
+  /* Absolutely positioned so it overlays the initials base layer.
+     overflow: hidden on the parent clips it to the circular shape. */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Initials content ──────────────────────────────────────────────────────── */
+.mds-avatar__initials {
+  font-family: var(--mds-font-family-base);
+  letter-spacing: var(--mds-letter-spacing-default);
+  /* line-height is intentionally the unitless value 1, not a token.
+     All --mds-line-height-* tokens are absolute rem values designed for prose
+     (e.g. --mds-line-height-paragraph-lead resolves to 2.5rem). Using any of
+     them here would add a fixed vertical gutter that is independent of the
+     avatar's font-size, causing the glyphs to sit off-centre in the flex
+     container at one or more size variants. The unitless 1 means "line box
+     height = 1× font-size" and scales correctly with every size variant. */
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+
+/* xs and sm are image-only per the design spec. Hide the initials layer at
+   these sizes so a blank circle is not displayed if the DOM node is present
+   (e.g. during an image-load error before imgFailed state flips). */
+.mds-avatar--xs .mds-avatar__initials,
+.mds-avatar--sm .mds-avatar__initials {
+  display: none;
+}
+
+/* When an image is visible the initials layer is both aria-hidden and
+   visually hidden. Using visibility: hidden (rather than opacity/display)
+   means the element stays in the DOM so the fallback is instant on error,
+   but removes the underlying text from axe's colour-contrast analysis. */
+.mds-avatar--has-image .mds-avatar__initials {
+  visibility: hidden;
+}
+
+/* md uses the smallest paragraph size. */
+.mds-avatar--md .mds-avatar__initials {
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+}
+
+.mds-avatar--lg .mds-avatar__initials {
+  font-size: var(--mds-font-size-paragraph-default);
+  font-weight: var(--mds-font-weight-regular);
+}
+
+.mds-avatar--xl .mds-avatar__initials,
+.mds-avatar--xxl .mds-avatar__initials {
+  font-size: var(--mds-font-size-paragraph-lead);
+  font-weight: var(--mds-font-weight-regular);
+}
+
 /* badge/index.css */
 .mds-badge {
   display: inline-flex;
@@ -560,7 +681,7 @@
 .mds-btn.btn {
   background-color: var(--mds-bg-interactive-primary-default);
   border: none;
-  border-radius: var(--mds-border-radius-sm);
+  border-radius: var(--mds-border-radius-md);
   padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
   color: var(--mds-text-inverse);
   font-family: var(--mds-font-family-base);
@@ -602,7 +723,7 @@
 
 .mds-btn.btn.mds-btn--icon-only.mds-btn--size-lg {
   padding: var(--mds-spacing-xs);
-  border-radius: var(--mds-border-radius-sm);
+  border-radius: var(--mds-border-radius-md);
 }
 
 .mds-btn.btn.mds-btn--size-sm i,
@@ -1258,6 +1379,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   width: 16px;
   height: 16px;
   /* Vertically centre the indicator against the label line.
@@ -1280,6 +1402,24 @@
   box-sizing: border-box;
 }
 
+/* Checkmark is a reusable mask so icon colour can follow tokens/system colours. */
+.mds-choicebox-indicator::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  background-color: var(--mds-text-inverse);
+  mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%3E%20%3Cpath%20d%3D%22M6.05791%2011.1853C6.47273%2011.6049%207.1138%2011.6049%207.52862%2011.1853L12.3556%206.30245C12.7704%205.88283%2012.7704%205.23433%2012.3556%204.81471C11.9407%204.3951%2011.2997%204.3951%2010.8848%204.81471L6.81212%208.93461L5.11515%207.25613C4.70034%206.83651%204.05926%206.83651%203.64444%207.25613C3.22963%207.67575%203.22963%208.32425%203.64444%208.74387L6.05791%2011.1853Z%22%20fill%3D%22%23000000%22%20%2F%3E%20%3C%2Fsvg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: cover;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%3E%20%3Cpath%20d%3D%22M6.05791%2011.1853C6.47273%2011.6049%207.1138%2011.6049%207.52862%2011.1853L12.3556%206.30245C12.7704%205.88283%2012.7704%205.23433%2012.3556%204.81471C11.9407%204.3951%2011.2997%204.3951%2010.8848%204.81471L6.81212%208.93461L5.11515%207.25613C4.70034%206.83651%204.05926%206.83651%203.64444%207.25613C3.22963%207.67575%203.22963%208.32425%203.64444%208.74387L6.05791%2011.1853Z%22%20fill%3D%22%23000000%22%20%2F%3E%20%3C%2Fsvg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: cover;
+}
+
 /* Unselected hover indicator background follows card background. */
 .mds-choicebox-input:not(:disabled):not(:checked) + .mds-choicebox:hover .mds-choicebox-indicator::after {
   background-color: var(--mds-bg-surface-default);
@@ -1289,13 +1429,14 @@
   background-color: var(--mds-bg-surface-strong);
 }
 
-/* Checked: filled circle with inline SVG checkmark via background-image.
-   Path matches the Figma design spec exactly (fill-based, 16×16 viewBox). */
+/* Checked: filled circle with token-coloured checkmark mask. */
 .mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-indicator::after {
   border: none;
   background-color: var(--mds-bg-interactive-primary-default);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6.05791 11.1853C6.47273 11.6049 7.1138 11.6049 7.52862 11.1853L12.3556 6.30245C12.7704 5.88283 12.7704 5.23433 12.3556 4.81471C11.9407 4.3951 11.2997 4.3951 10.8848 4.81471L6.81212 8.93461L5.11515 7.25613C4.70034 6.83651 4.05926 6.83651 3.64444 7.25613C3.22963 7.67575 3.22963 8.32425 3.64444 8.74387L6.05791 11.1853Z' fill='%23ffffff'/%3E%3C/svg%3E");
-  background-size: cover;
+}
+
+.mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-indicator::before {
+  opacity: 1;
 }
 
 /* Disabled unselected indicator — muted border */
@@ -1306,7 +1447,6 @@
 /* Disabled selected indicator — dimmed fill */
 .mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-indicator::after {
   background-color: var(--mds-bg-interactive-primary-disabled);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M6.05791 11.1853C6.47273 11.6049 7.1138 11.6049 7.52862 11.1853L12.3556 6.30245C12.7704 5.88283 12.7704 5.23433 12.3556 4.81471C11.9407 4.3951 11.2997 4.3951 10.8848 4.81471L6.81212 8.93461L5.11515 7.25613C4.70034 6.83651 4.05926 6.83651 3.64444 7.25613C3.22963 7.67575 3.22963 8.32425 3.64444 8.74387L6.05791 11.1853Z' fill='%23ffffff'/%3E%3C/svg%3E");
 }
 
 /* --------------------------------------------------------------------------
@@ -1315,8 +1455,7 @@
    remain visible when forced-colors is active. Text colours are left to adapt
    automatically — they reference CSS custom properties that the browser will
    remap to system colours.
-   Note: the SVG checkmark's hardcoded fill (%23ffffff) inside the checked
-   indicator will not adapt until Must Fix 2 (mask-image refactor) is done.
+   Checked icon is rendered as a mask so it can map to system colours.
    -------------------------------------------------------------------------- */
 @media (forced-colors: active) {
   .mds-choicebox {
@@ -1335,11 +1474,17 @@
     border-color: ButtonText;
     background-color: Canvas;
   }
+  .mds-choicebox-indicator::before {
+    forced-color-adjust: none;
+    background-color: Canvas;
+  }
   .mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-indicator::after {
     forced-color-adjust: none;
     background-color: Highlight;
-    /* SVG fill %23ffffff may be invisible on some Highlight backgrounds —
-       fully addressed when Must Fix 2 (mask-image refactor) is completed. */
+  }
+  .mds-choicebox-input:checked + .mds-choicebox .mds-choicebox-indicator::before {
+    forced-color-adjust: none;
+    background-color: HighlightText;
   }
   .mds-choicebox-input:disabled:not(:checked) + .mds-choicebox .mds-choicebox-indicator::after {
     forced-color-adjust: none;
@@ -1349,6 +1494,10 @@
   .mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-indicator::after {
     forced-color-adjust: none;
     background-color: GrayText;
+  }
+  .mds-choicebox-input:disabled:checked + .mds-choicebox .mds-choicebox-indicator::before {
+    forced-color-adjust: none;
+    background-color: Canvas;
   }
   /* Keep the focus ring aligned with the system Highlight colour */
   .mds-choicebox-input:focus-visible + .mds-choicebox .mds-choicebox-indicator::after {
@@ -1361,8 +1510,17 @@
   block-size: var(--mds-icons-md);
   padding: 0;
   border-radius: var(--mds-border-radius-xs);
-  background-image: url("./close-button.svg");
-  background-size: var(--mds-icons-md) var(--mds-icons-md);
+  color: var(--mds-text-default);
+  background-color: currentColor;
+  background-image: none;
+  mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M4.12109%205.87891L8.22266%209.98047L4.12109%2014.1211C3.61328%2014.5898%203.61328%2015.4102%204.12109%2015.8789C4.58984%2016.3867%205.41016%2016.3867%205.87891%2015.8789L9.98047%2011.7773L14.1211%2015.8789C14.5898%2016.3867%2015.4102%2016.3867%2015.8789%2015.8789C16.3867%2015.4102%2016.3867%2014.5898%2015.8789%2014.1211L11.7773%209.98047L15.8789%205.87891C16.3867%205.41016%2016.3867%204.58984%2015.8789%204.12109C15.4102%203.61328%2014.5898%203.61328%2014.1211%204.12109L9.98047%208.22266L5.87891%204.12109C5.41016%203.61328%204.58984%203.61328%204.12109%204.12109C3.61328%204.58984%203.61328%205.41016%204.12109%205.87891Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: var(--mds-icons-md) var(--mds-icons-md);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M4.12109%205.87891L8.22266%209.98047L4.12109%2014.1211C3.61328%2014.5898%203.61328%2015.4102%204.12109%2015.8789C4.58984%2016.3867%205.41016%2016.3867%205.87891%2015.8789L9.98047%2011.7773L14.1211%2015.8789C14.5898%2016.3867%2015.4102%2016.3867%2015.8789%2015.8789C16.3867%2015.4102%2016.3867%2014.5898%2015.8789%2014.1211L11.7773%209.98047L15.8789%205.87891C16.3867%205.41016%2016.3867%204.58984%2015.8789%204.12109C15.4102%203.61328%2014.5898%203.61328%2014.1211%204.12109L9.98047%208.22266L5.87891%204.12109C5.41016%203.61328%204.58984%203.61328%204.12109%204.12109C3.61328%204.58984%203.61328%205.41016%204.12109%205.87891Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: var(--mds-icons-md) var(--mds-icons-md);
   opacity: 0.6;
 }
 
@@ -1389,19 +1547,22 @@
 .mds-close-button.btn-close.mds-close-button--sm {
   inline-size: var(--mds-icons-sm);
   block-size: var(--mds-icons-sm);
-  background-size: var(--mds-icons-sm) var(--mds-icons-sm);
+  mask-size: var(--mds-icons-sm) var(--mds-icons-sm);
+  -webkit-mask-size: var(--mds-icons-sm) var(--mds-icons-sm);
 }
 
 .mds-close-button.btn-close.mds-close-button--md {
   inline-size: var(--mds-icons-md);
   block-size: var(--mds-icons-md);
-  background-size: var(--mds-icons-md) var(--mds-icons-md);
+  mask-size: var(--mds-icons-md) var(--mds-icons-md);
+  -webkit-mask-size: var(--mds-icons-md) var(--mds-icons-md);
 }
 
 .mds-close-button.btn-close.mds-close-button--lg {
   inline-size: var(--mds-icons-lg);
   block-size: var(--mds-icons-lg);
-  background-size: var(--mds-icons-lg) var(--mds-icons-lg);
+  mask-size: var(--mds-icons-lg) var(--mds-icons-lg);
+  -webkit-mask-size: var(--mds-icons-lg) var(--mds-icons-lg);
 }
 
 /* favourite-button/index.css */
@@ -1424,19 +1585,19 @@
   inline-size: var(--mds-icons-xs);
   block-size: var(--mds-icons-xs);
   background-color: currentColor;
-  mask-image: url("./assets/star-outline.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M6.17227%200C6.40664%200%206.59414%200.140625%206.68789%200.328125L8.30508%203.63281L11.891%204.17188C12.102%204.19531%2012.266%204.33594%2012.3363%204.54688C12.4066%204.75781%2012.3598%204.96875%2012.1957%205.13281L9.59414%207.71094L10.2035%2011.3438C10.2504%2011.5547%2010.1566%2011.7891%209.99258%2011.9062C9.80508%2012.0234%209.5707%2012.0469%209.3832%2011.9531L6.17227%2010.2188L2.98477%2011.9531C2.77383%2012.0469%202.56289%2012.0234%202.37539%2011.9062C2.21133%2011.7656%202.11758%2011.5547%202.16445%2011.3438L2.77383%207.71094L0.172266%205.13281C0.00820312%204.96875%20-0.0386719%204.75781%200.0316406%204.54688C0.101953%204.35938%200.266016%204.19531%200.476953%204.17188L4.06289%203.63281L5.68008%200.328125C5.77383%200.140625%205.96133%200%206.17227%200ZM6.17227%201.85156L4.95352%204.40625C4.85977%204.57031%204.71914%204.6875%204.53164%204.71094L1.76602%205.10938L3.7582%207.10156C3.89883%207.24219%203.96914%207.42969%203.92227%207.59375L3.45352%2010.4062L5.91445%209.09375C6.07852%209%206.28945%209%206.45352%209.09375L8.91445%2010.4062L8.4457%207.61719C8.39883%207.42969%208.46914%207.24219%208.60977%207.125L10.602%205.10938L7.83633%204.71094C7.64883%204.6875%207.5082%204.57031%207.41445%204.40625L6.17227%201.85156Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E");
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
-  -webkit-mask-image: url("./assets/star-outline.svg");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M6.17227%200C6.40664%200%206.59414%200.140625%206.68789%200.328125L8.30508%203.63281L11.891%204.17188C12.102%204.19531%2012.266%204.33594%2012.3363%204.54688C12.4066%204.75781%2012.3598%204.96875%2012.1957%205.13281L9.59414%207.71094L10.2035%2011.3438C10.2504%2011.5547%2010.1566%2011.7891%209.99258%2011.9062C9.80508%2012.0234%209.5707%2012.0469%209.3832%2011.9531L6.17227%2010.2188L2.98477%2011.9531C2.77383%2012.0469%202.56289%2012.0234%202.37539%2011.9062C2.21133%2011.7656%202.11758%2011.5547%202.16445%2011.3438L2.77383%207.71094L0.172266%205.13281C0.00820312%204.96875%20-0.0386719%204.75781%200.0316406%204.54688C0.101953%204.35938%200.266016%204.19531%200.476953%204.17188L4.06289%203.63281L5.68008%200.328125C5.77383%200.140625%205.96133%200%206.17227%200ZM6.17227%201.85156L4.95352%204.40625C4.85977%204.57031%204.71914%204.6875%204.53164%204.71094L1.76602%205.10938L3.7582%207.10156C3.89883%207.24219%203.96914%207.42969%203.92227%207.59375L3.45352%2010.4062L5.91445%209.09375C6.07852%209%206.28945%209%206.45352%209.09375L8.91445%2010.4062L8.4457%207.61719C8.39883%207.42969%208.46914%207.24219%208.60977%207.125L10.602%205.10938L7.83633%204.71094C7.64883%204.6875%207.5082%204.57031%207.41445%204.40625L6.17227%201.85156Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E");
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
 }
 
 .mds-favourite-button--selected .mds-favourite-button__icon {
-  mask-image: url("./assets/star-filled.svg");
-  -webkit-mask-image: url("./assets/star-filled.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M6.84706%200.421875L8.3705%203.53906L11.7221%204.03125C12.0033%204.07812%2012.2377%204.26562%2012.3314%204.54688C12.4252%204.80469%2012.3549%205.10938%2012.1439%205.29688L9.70643%207.71094L10.2924%2011.1328C10.3392%2011.4141%2010.2221%2011.6953%209.98768%2011.8594C9.75331%2012.0469%209.44862%2012.0469%209.19081%2011.9297L6.19081%2010.3125L3.16737%2011.9297C2.933%2012.0469%202.62831%2012.0469%202.39393%2011.8594C2.15956%2011.6953%202.04237%2011.4141%202.08925%2011.1328L2.65175%207.71094L0.214245%205.29688C0.0267453%205.10938%20-0.0435672%204.80469%200.0267453%204.54688C0.120495%204.26562%200.35487%204.07812%200.63612%204.03125L4.01112%203.53906L5.51112%200.421875C5.62831%200.164062%205.88612%200%206.19081%200C6.47206%200%206.72987%200.164062%206.84706%200.421875Z%22%20fill%3D%22%230F6CBF%22%2F%3E%20%3C%2Fsvg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M6.84706%200.421875L8.3705%203.53906L11.7221%204.03125C12.0033%204.07812%2012.2377%204.26562%2012.3314%204.54688C12.4252%204.80469%2012.3549%205.10938%2012.1439%205.29688L9.70643%207.71094L10.2924%2011.1328C10.3392%2011.4141%2010.2221%2011.6953%209.98768%2011.8594C9.75331%2012.0469%209.44862%2012.0469%209.19081%2011.9297L6.19081%2010.3125L3.16737%2011.9297C2.933%2012.0469%202.62831%2012.0469%202.39393%2011.8594C2.15956%2011.6953%202.04237%2011.4141%202.08925%2011.1328L2.65175%207.71094L0.214245%205.29688C0.0267453%205.10938%20-0.0435672%204.80469%200.0267453%204.54688C0.120495%204.26562%200.35487%204.07812%200.63612%204.03125L4.01112%203.53906L5.51112%200.421875C5.62831%200.164062%205.88612%200%206.19081%200C6.47206%200%206.72987%200.164062%206.84706%200.421875Z%22%20fill%3D%22%230F6CBF%22%2F%3E%20%3C%2Fsvg%3E");
 }
 
 /* Unselected states */
@@ -15556,7 +15717,7 @@ readers do not read off random characters that represent icons */
   --bs-dark-border-subtle: #8f959e;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
-  --bs-font-sans-serif: Noto sans, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-font-sans-serif: Noto Sans, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);

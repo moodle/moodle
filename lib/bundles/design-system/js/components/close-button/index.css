@@ -3,8 +3,17 @@
   block-size: var(--mds-icons-md);
   padding: 0;
   border-radius: var(--mds-border-radius-xs);
-  background-image: url('./close-button.svg');
-  background-size: var(--mds-icons-md) var(--mds-icons-md);
+  color: var(--mds-text-default);
+  background-color: currentColor;
+  background-image: none;
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M4.12109%205.87891L8.22266%209.98047L4.12109%2014.1211C3.61328%2014.5898%203.61328%2015.4102%204.12109%2015.8789C4.58984%2016.3867%205.41016%2016.3867%205.87891%2015.8789L9.98047%2011.7773L14.1211%2015.8789C14.5898%2016.3867%2015.4102%2016.3867%2015.8789%2015.8789C16.3867%2015.4102%2016.3867%2014.5898%2015.8789%2014.1211L11.7773%209.98047L15.8789%205.87891C16.3867%205.41016%2016.3867%204.58984%2015.8789%204.12109C15.4102%203.61328%2014.5898%203.61328%2014.1211%204.12109L9.98047%208.22266L5.87891%204.12109C5.41016%203.61328%204.58984%203.61328%204.12109%204.12109C3.61328%204.58984%203.61328%205.41016%204.12109%205.87891Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: var(--mds-icons-md) var(--mds-icons-md);
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M4.12109%205.87891L8.22266%209.98047L4.12109%2014.1211C3.61328%2014.5898%203.61328%2015.4102%204.12109%2015.8789C4.58984%2016.3867%205.41016%2016.3867%205.87891%2015.8789L9.98047%2011.7773L14.1211%2015.8789C14.5898%2016.3867%2015.4102%2016.3867%2015.8789%2015.8789C16.3867%2015.4102%2016.3867%2014.5898%2015.8789%2014.1211L11.7773%209.98047L15.8789%205.87891C16.3867%205.41016%2016.3867%204.58984%2015.8789%204.12109C15.4102%203.61328%2014.5898%203.61328%2014.1211%204.12109L9.98047%208.22266L5.87891%204.12109C5.41016%203.61328%204.58984%203.61328%204.12109%204.12109C3.61328%204.58984%203.61328%205.41016%204.12109%205.87891Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: var(--mds-icons-md) var(--mds-icons-md);
   opacity: 0.6;
 }
 
@@ -31,17 +40,20 @@
 .mds-close-button.btn-close.mds-close-button--sm {
   inline-size: var(--mds-icons-sm);
   block-size: var(--mds-icons-sm);
-  background-size: var(--mds-icons-sm) var(--mds-icons-sm);
+  mask-size: var(--mds-icons-sm) var(--mds-icons-sm);
+  -webkit-mask-size: var(--mds-icons-sm) var(--mds-icons-sm);
 }
 
 .mds-close-button.btn-close.mds-close-button--md {
   inline-size: var(--mds-icons-md);
   block-size: var(--mds-icons-md);
-  background-size: var(--mds-icons-md) var(--mds-icons-md);
+  mask-size: var(--mds-icons-md) var(--mds-icons-md);
+  -webkit-mask-size: var(--mds-icons-md) var(--mds-icons-md);
 }
 
 .mds-close-button.btn-close.mds-close-button--lg {
   inline-size: var(--mds-icons-lg);
   block-size: var(--mds-icons-lg);
-  background-size: var(--mds-icons-lg) var(--mds-icons-lg);
+  mask-size: var(--mds-icons-lg) var(--mds-icons-lg);
+  -webkit-mask-size: var(--mds-icons-lg) var(--mds-icons-lg);
 }

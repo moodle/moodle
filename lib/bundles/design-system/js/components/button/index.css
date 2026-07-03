@@ -1,7 +1,7 @@
 .mds-btn.btn {
   background-color: var(--mds-bg-interactive-primary-default);
   border: none;
-  border-radius: var(--mds-border-radius-sm);
+  border-radius: var(--mds-border-radius-md);
   padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
 
   color: var(--mds-text-inverse);
@@ -45,7 +45,7 @@
 
 .mds-btn.btn.mds-btn--icon-only.mds-btn--size-lg {
   padding: var(--mds-spacing-xs);
-  border-radius: var(--mds-border-radius-sm);
+  border-radius: var(--mds-border-radius-md);
 }
 
 .mds-btn.btn.mds-btn--size-sm i,
