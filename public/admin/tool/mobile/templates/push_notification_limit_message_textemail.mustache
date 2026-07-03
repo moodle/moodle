@@ -1,0 +1,44 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_mobile/push_notification_limit_message_textemail
+
+    Plain text email template for the push notification limit alert.
+
+    Context variables required for this template:
+    * heading
+    * subheading
+    * metriclabel
+    * ratiolabel
+    * footer
+
+    Example context (json):
+    {
+        "heading": "Your monthly device limit for push notifications has been reached",
+        "subheading": "15 users have stopped receiving push notifications this month.",
+        "metriclabel": "Active devices for push notifications",
+        "ratiolabel": "60 / 50",
+        "footer": "New devices added over the limit will not receive push notifications."
+    }
+}}
+{{heading}}
+
+{{subheading}}
+
+{{metriclabel}}: {{ratiolabel}}
+
+{{footer}}

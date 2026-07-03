@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activedeviceslabel'] = 'Active devices for push notifications';
 $string['activitiesoverview'] = 'Activities overview';
 $string['adodbdebugwarning'] = 'ADOdb debugging is enabled. It should be disabled in the external database authentication or external database enrolment plugin settings.';
 $string['androidappid'] = 'Android app\'s unique identifier';
@@ -119,6 +120,10 @@ $string['learnmore'] = 'Learn more';
 $string['limiteddisabledfeature'] = 'Your <strong>{$a->plan}</strong> plan allows {$a->limit} {$a->feature}. <a href="{$a->url}">View plan details</a>.';
 $string['limiteddisabledfeature_related'] = 'Your <strong>{$a->plan}</strong> plan allows {$a->limit} item total across <strong>{$a->feature1}</strong> and <strong>{$a->feature2}</strong>. <a href="{$a->url}">View plan details</a>.';
 $string['limitedfeatures'] = 'Limited features';
+$string['limitnewdevices'] = 'New devices added over the limit will not receive push notifications.';
+$string['limitreached'] = 'Limit reached';
+$string['limitreachedmonthly'] = 'Your monthly device limit for push notifications has been reached';
+$string['limitreachedpushnotifications'] = '🚨 Push notification device limit reached';
 $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
@@ -129,8 +134,13 @@ $string['lookingforqrcodelogin'] = 'Looking for QR code login?';
 $string['mainmenu'] = 'Main menu';
 $string['manage'] = 'Manage';
 $string['managefiletypes'] = 'Manage file types';
+$string['messageprovider:pushlimitreached'] = 'Push notification plan limit reached';
+$string['messageprovider:pushlimitreached_help'] = 'This notification is sent when the number of devices that can receive push notifications reaches its monthly limit. Once the limit is reached, push notifications will not be delivered to new devices until the next month, or until the plan is upgraded.';
 $string['minimumversion'] = 'If an app version is specified (3.8.0 or higher), any users using an older app version will be prompted to upgrade their app before being allowed access to the site.';
 $string['minimumversion_key'] = 'Minimum app version required';
+$string['missedadditionalusers'] = 'Additional users will not receive push notifications this month.';
+$string['missedusersmultiple'] = '{$a} users have stopped receiving push notifications this month.';
+$string['misseduserssingle'] = '1 user has stopped receiving push notifications this month.';
 $string['mobileapp'] = 'Mobile app';
 $string['mobileappearance'] = 'Mobile appearance';
 $string['mobileappenabled'] = 'This site has mobile app access enabled.<br /><a href="{$a}">Download the mobile app</a>.';
@@ -220,6 +230,7 @@ $string['subscriptionlimitsurpassed'] = 'Subscription limit exceeded';
 $string['subscriptionregister'] = 'For details of the various app plans, and to access Moodle app usage statistics, please visit the <a href="{$a}" target="_blank">Moodle Apps Portal</a>.';
 $string['subscriptionsseemore'] = 'Note: The information displayed is not updated in real time. You may need to log out and log in again to see updates. For information on upgrading your app plan, please log in to the <a href="{$a}" target="_blank">Moodle Apps Portal</a>.';
 $string['switchaccount'] = 'Switch account';
+$string['tasknotifypushnotificationlimittoadmins'] = 'Notify admins when mobile app push notification limit is reached';
 $string['taskrefreshsubscriptioncache'] = 'Refresh Moodle app subscription information cache';
 $string['typeoflogin'] = 'Type of login';
 $string['typeoflogin_desc'] = 'If the site uses a Single Sign-On (SSO) authentication method, then select via a browser window or via an embedded browser. An embedded browser provides a better user experience, though it doesn\'t work with all SSO plugins.';
@@ -227,6 +238,7 @@ $string['upgradeforunlimit'] = 'Upgrade to {$a} for unlimited access.';
 $string['upgradeplanlimits'] = 'Some features are available with limits on the {$a} plan.';
 $string['upgraderemovelimits'] = 'Upgrade to {$a} and remove all limits';
 $string['upgradetosubscription'] = 'Upgrade to {$a}';
+$string['upgradeyourplanaction'] = 'Upgrade your plan';
 $string['upgradeyourplan'] = '(Upgrade your plan! 🚀)';
 $string['viewqrcode'] = 'View QR code';
 

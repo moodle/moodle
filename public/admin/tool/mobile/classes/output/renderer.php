@@ -36,7 +36,6 @@ use plugin_renderer_base;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
-
     /**
      * Defer to template.
      *
@@ -46,5 +45,18 @@ class renderer extends plugin_renderer_base {
     protected function render_subscription(\tool_mobile\output\subscription $subscription): string {
         $data = $subscription->export_for_template($this);
         return parent::render_from_template('tool_mobile/subscription', $data);
+    }
+
+    /**
+     * Defer to template.
+     *
+     * @param \tool_mobile\output\push_notification_limit_message $message Push notification limit message.
+     * @return string HTML
+     */
+    protected function render_push_notification_limit_message(
+        \tool_mobile\output\push_notification_limit_message $message
+    ): string {
+        $data = $message->export_for_template($this);
+        return parent::render_from_template('tool_mobile/push_notification_limit_message', $data);
     }
 }

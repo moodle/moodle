@@ -1,0 +1,96 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_mobile/push_notification_limit_message
+
+    Rich HTML notification shown when the mobile push notification device limit is reached.
+
+    Context variables required for this template:
+    * heading
+    * subheading
+    * metriclabel
+    * limitlabel
+    * footer
+    * buttonlabel
+    * buttonurl
+    * ratiolabel
+    * alerticonurl
+    * illustrationurl
+    * progresswidth
+
+    Example context (json):
+    {
+        "heading": "Your monthly device limit for push notifications has been reached",
+        "subheading": "New students aren't receiving push notifications from the Moodle app.",
+        "metriclabel": "Active devices for push notifications",
+        "limitlabel": "Limit reached",
+        "footer": "New devices added over the limit will not receive push notifications. 15 notifications were already not sent.",
+        "buttonlabel": "Upgrade your plan",
+        "buttonurl": "https://example.com/admin/tool/mobile/subscription.php",
+        "ratiolabel": "60 / 50",
+        "alerticonurl": "/pix/i/risk_xss.svg",
+        "illustrationurl": "/admin/tool/mobile/pix/push_notification.svg",
+        "progresswidth": 100
+    }
+}}
+<table class="tool-mobile-push-limit-card" style="width:100%;border-radius:12px;border:1px solid #e0e0e0;border-collapse:inherit;border-spacing:0;background:#ffffff;font-size:14px;">
+    <tr>
+        <td style="padding:24px;border:none;">
+            <table role="presentation" style="width:100%;border:none;border-collapse:inherit;border-spacing:0;">
+                <tr>
+                    <td style="padding:0 24px 0 0;border:none;vertical-align:top;">
+                        <h4 style="margin:0 0 8px 0;font-weight:600;color:#1f2328;font-size:16px;line-height:1.25;">
+                            <img class="tool-mobile-push-limit-alert-icon" src="{{alerticonurl}}" alt="" aria-hidden="true" width="16" height="16" style="vertical-align:text-top;margin-top:4px;">
+                            {{heading}}
+                        </h4>
+                        <p style="margin:0 0 16px 0;color:#57606a;line-height:1.5;">{{subheading}}</p>
+                        <table role="presentation" style="width:100%;margin:0 0 8px 0;border:none;border-collapse:inherit;border-spacing:0;">
+                            <tr>
+                                <td style="padding:0 16px 0 0;color:#1f2328;border:none;line-height:1.4;vertical-align:top;">{{metriclabel}}</td>
+                                <td style="border:none;vertical-align:top;text-align:right;">
+                                    <strong style="display:inline-block;background:#f4d6d2;color:#51140d;padding:6px 12px;border-radius:999px;line-height:1;font-weight:500;">{{ratiolabel}}</strong>
+                                </td>
+                            </tr>
+                        </table>
+                        <table role="presentation" style="width:100%;margin:0 0 10px 0;background:#f3d1cb;border:none;border-radius:999px;overflow:hidden;border-collapse:inherit;border-spacing:0;">
+                            <tr>
+                                <td style="width:{{progresswidth}}%;height:12px;background:#d6402f;border:none;border-radius:999px;"></td>
+                                <td style="border:none;"></td>
+                            </tr>
+                        </table>
+                        <p style="margin:0;color:#d6402f;line-height:1.4;text-align:right;"><strong style="font-weight:500;">{{limitlabel}}</strong></p>
+                    </td>
+                    <td style="width:168px;border:none;vertical-align:top;">
+                        <img src="{{illustrationurl}}" alt="{{heading}}" width="168" style="display:block;width:168px;height:auto;">
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding:12px 20px;background:#f8f9fa;border:none;border-top:1px solid #e0e0e0;border-radius:0 0 12px 12px;overflow:hidden;">
+            <table role="presentation" style="width:100%;border:none;border-collapse:inherit;border-spacing:0;">
+                <tr>
+                    <td style="padding:8px 16px 0 0;color:#57606a;border:none;line-height:1.5;vertical-align:top;">{{footer}}</td>
+                    <td style="white-space:nowrap;border:none;vertical-align:top;text-align:right;">
+                        <a href="{{buttonurl}}" style="display:inline-block;background:#0969da;color:#ffffff;text-decoration:none;padding:8px 10px;border-radius:12px;line-height:1.2;">{{buttonlabel}}</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

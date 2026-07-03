@@ -55,10 +55,10 @@ class subscription implements \renderable, \templatable {
     /**
      * Exports the data.
      *
-     * @param \renderer_base $output
+     * @param \core\output\renderer_base $output
      * @return array with the subscription information
      */
-    public function export_for_template(\renderer_base $output): array {
+    public function export_for_template(\core\output\renderer_base $output): array {
         global $CFG, $USER;
 
         $ms = get_config('tool_mobile');    // Get mobile settings.
