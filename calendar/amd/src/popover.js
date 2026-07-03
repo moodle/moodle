@@ -27,6 +27,36 @@ import jQuery from 'jquery';
 import * as CalendarSelectors from 'core_calendar/selectors';
 
 /**
+ * Remove popover event listeners.
+ *
+ * @param {Element} target
+ */
+const removePopoverListeners = (target) => {
+    target.removeEventListener('mouseleave', hidePopover);
+    target.removeEventListener('focusout', hidePopover);
+    target.removeEventListener('click', hidePopover);
+    document.removeEventListener('keydown', handleEscapeKey);
+};
+
+/**
+ * Handle the escape key to dismiss the popover.
+ *
+ * @param {KeyboardEvent} e
+ */
+const handleEscapeKey = (e) => {
+    if (e.key === 'Escape') {
+        const activePopover = document.querySelector('.popover.show');
+        if (activePopover) {
+            const target = document.querySelector('[aria-describedby="' + activePopover.id + '"]');
+            if (target && target.closest(CalendarSelectors.elements.dateContainer)) {
+                jQuery(target).popover('hide');
+                removePopoverListeners(target);
+            }
+        }
+    }
+};
+
+/**
  * Check if we are allowing to enable the popover or not.
  * @param {Element} dateContainer
  * @returns {boolean}
@@ -67,6 +97,7 @@ const showPopover = target => {
         target.addEventListener('focusout', hidePopover);
         // Set up the hide function to the click event type.
         target.addEventListener('click', hidePopover);
+        document.addEventListener('keydown', handleEscapeKey);
     }
 };
 
@@ -93,9 +124,7 @@ const hidePopover = e => {
         }
 
         if (removeListener) {
-            target.removeEventListener('mouseleave', hidePopover);
-            target.removeEventListener('focusout', hidePopover);
-            target.removeEventListener('click', hidePopover);
+            removePopoverListeners(target);
         }
     }
 };
