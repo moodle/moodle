@@ -17,7 +17,9 @@
 {{!
     @template core/search_input_navbar_inline
 
-    Inline navbar search input for desktop. Always visible, no collapse or toggle.
+    Navbar search input using the inline field design. The field is always
+    visible on desktop. On small screens only a toggle button is shown and
+    the field expands across the navbar, with a close button inside the field.
 
     Example context (json):
     {
@@ -34,7 +36,17 @@
     }
 }}
 <div id="searchinput-navbar" class="search-input-inline">
+    <button type="button"
+            class="nav-link icon-no-margin search-toggle"
+            data-action="opensearch"
+            aria-expanded="false"
+            aria-controls="searchform-navbar-inline"
+            title="{{#str}} togglesearch {{/str}}">
+        {{#pix}} a/search, core {{/pix}}
+        <span class="visually-hidden">{{#str}} togglesearch {{/str}}</span>
+    </button>
     <form role="search"
+          id="searchform-navbar-inline"
           {{#grouplabel}}aria-label="{{{ grouplabel }}}"{{/grouplabel}}
           autocomplete="off"
           action="{{{ action }}}"
@@ -57,6 +69,12 @@
                 name="{{{ inputname }}}"
                 data-region="input"
                 autocomplete="off">
+            <button type="button"
+                class="search-close d-md-none"
+                data-action="closesearch">
+                {{#pix}} e/cancel, core {{/pix}}
+                <span class="visually-hidden">{{#str}} closebuttontitle {{/str}}</span>
+            </button>
         </div>
     </form>
 </div>
@@ -66,11 +84,26 @@ require([], function() {
     const wrapper = document.getElementById('searchinput-navbar');
     const form = wrapper.querySelector('.searchform-navbar');
     const input = wrapper.querySelector('[data-region="input"]');
+    const opensearch = wrapper.querySelector('[data-action="opensearch"]');
+    const closesearch = wrapper.querySelector('[data-action="closesearch"]');
 
     form.addEventListener('submit', (e) => {
         if (input.value.trim() === '') {
             e.preventDefault();
         }
+    });
+
+    opensearch.addEventListener('click', () => {
+        wrapper.classList.add('expanded');
+        opensearch.setAttribute('aria-expanded', 'true');
+        input.focus();
+    });
+
+    closesearch.addEventListener('click', () => {
+        wrapper.classList.remove('expanded');
+        opensearch.setAttribute('aria-expanded', 'false');
+        input.value = '';
+        opensearch.focus();
     });
 });
 {{/js}}

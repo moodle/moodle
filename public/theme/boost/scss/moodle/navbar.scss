@@ -190,19 +190,19 @@
 
 // Inline search form.
 .navbar.fixed-top #usernavigation .search-input-inline {
-    display: none;
+    display: flex;
+    align-items: center;
+    height: 100%;
 
-    @include media-breakpoint-up(md) {
+    .search-toggle {
         display: flex;
         align-items: center;
         height: 100%;
-        padding: 0 $primary-nav-padding-x;
     }
 
     .searchform-navbar {
-        .input-group {
-            width: 256px;
-        }
+        display: none;
+
         .input-group-text,
         .form-control {
             background-color: $gray-200;
@@ -210,6 +210,74 @@
         .input-group-text,
         .form-control::placeholder {
             color: $gray-700;
+        }
+        .input-group > .form-control {
+            @include border-end-radius($input-border-radius);
+        }
+        // Close button floats inside the field, over its end padding.
+        .search-close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            padding: 0 0.5rem;
+            background: none;
+            border: 0;
+            color: $gray-700;
+            z-index: 6;
+
+            .icon {
+                margin: 0;
+            }
+        }
+    }
+
+    @include media-breakpoint-up(md) {
+        padding: 0 $primary-nav-padding-x;
+
+        .search-toggle {
+            display: none;
+        }
+
+        .searchform-navbar {
+            display: block;
+
+            .input-group {
+                width: 256px;
+            }
+        }
+    }
+
+    // On small screens the field expands across the whole navbar.
+    @include media-breakpoint-down(md) {
+        &.expanded {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: $navbar-height;
+            padding: 0 $primary-nav-padding-x;
+            background-color: $white;
+            z-index: $zindex-popover;
+
+            .search-toggle {
+                display: none;
+            }
+
+            .searchform-navbar {
+                display: flex;
+                align-items: center;
+                width: 100%;
+
+                .input-group {
+                    width: 100%;
+                    flex-wrap: nowrap;
+                }
+
+                .form-control {
+                    padding-right: 2rem;
+                }
+            }
         }
     }
 }
