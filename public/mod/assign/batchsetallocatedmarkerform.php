@@ -39,6 +39,8 @@ class mod_assign_batch_set_allocatedmarker_form extends moodleform {
      * @throws moodle_exception
      */
     public function definition() {
+        global $OUTPUT;
+
         $mform = $this->_form;
         $params = $this->_customdata;
 
@@ -47,21 +49,42 @@ class mod_assign_batch_set_allocatedmarker_form extends moodleform {
 
         $options = $params['markers'];
 
-        $markercount = (!empty($params['markercount'])) ? $params['markercount'] : 1;
+        $requiredmarkercount = (!empty($params['markercount'])) ? $params['markercount'] : 1;
+        $optionalmarkercount = (!empty($params['optionalmarkercount'])) ? $params['optionalmarkercount'] : 0;
+        $totalmarkercount = $requiredmarkercount + $optionalmarkercount;
         $markerids = array_keys($options);
 
-        // If we do not have enough markers to meet the requested number, throw an exception with a meaningful message.
-        if (count($markerids) < $markercount) {
+        // If we do not have enough markers to meet the minimum required markers, throw an exception with a meaningful message.
+        if (count($markerids) < $requiredmarkercount) {
             throw new \core\exception\moodle_exception('invalidmarkerallocation:notenoughmarkers', 'assign', '', [
                 'markers' => count($markerids),
-                'requested' => $markercount,
+                'requested' => $requiredmarkercount,
             ]);
         }
 
+        // If multi marking is enabled and we have existing grades, warn the user about potential updates.
+        if (!empty($params['agreedgrades'])) {
+            $notification = $OUTPUT->notification(get_string('changeallocatedmarkersaftergrade', 'mod_assign'), 'warning', false);
+            $mform->addElement('html', $notification);
+        }
+
+        $manageoptional = !empty($params['context']) && has_capability('mod/assign:manageoptionalallocations', $params['context']);
         $options = ['' => get_string('choosemarker', 'assign')] + $options;
 
-        for ($i = 1; $i <= $markercount; $i++) {
-            $mform->addElement('select', "allocatedmarker{$i}", get_string('allocatedmarker', 'assign') . ' ' . $i, $options);
+        for ($i = 1; $i <= $totalmarkercount; $i++) {
+            $group = [];
+            if ($i > $requiredmarkercount) {
+                // Add checkbox for optional markers.
+                $checkbox = $mform->createElement('advcheckbox', "allocatedmarkerenabled[$i]", '', get_string('enable'));
+                if (!$manageoptional) {
+                    $checkbox->freeze();
+                }
+                $group[] = $checkbox;
+                $mform->disabledIf("allocatedmarker[$i]", "allocatedmarkerenabled[$i]", 'eq', 0);
+            }
+            $name = get_string('allocatedmarker', 'assign') . ' ' . $i;
+            $group[] = $mform->createElement('select', "allocatedmarker[$i]", $name, $options);
+            $mform->addGroup($group, "allocatedmarkergroup[$i]", $name, null, false);
         }
 
         $mform->addElement('hidden', 'id');

@@ -31,6 +31,7 @@ define([
     'core/str',
     'mod_assign/grading_form_change_checker',
     'mod_assign/grading_events',
+    'mod_assign/optional_marker',
     'core_form/events',
     'core/toast',
     'core_form/changechecker',
@@ -44,6 +45,7 @@ define([
     str,
     checker,
     GradingEvents,
+    OptionalMarker,
     FormEvents,
     Toast,
     FormChangeChecker
@@ -126,6 +128,17 @@ define([
      * @fires event:formSubmittedByJavascript
      */
     GradingPanel.prototype._submitForm = function(event, nextUserId, nextUser) {
+        // Warn the user if enabling an optional marker would clear an existing grade.
+        if (OptionalMarker.shouldConfirmSubmit()) {
+            OptionalMarker.showConfirm(true).then(function(confirmed) {
+                if (confirmed) {
+                    OptionalMarker.saveEnabledState();
+                    this._submitForm(event, nextUserId, nextUser);
+                }
+            }.bind(this)).catch(notification.exception);
+            return;
+        }
+
         // If the form has data in comment-area, then we need to save that comment
         var commentAreaElement = document.querySelector('.comment-area');
         if (commentAreaElement) {
@@ -356,6 +369,7 @@ define([
                         this._niceReplaceNodeContents(this._region, html, js)
                         .done(function() {
                             checker.saveFormState('[data-region="grade-panel"] .gradeform');
+                            OptionalMarker.saveEnabledState();
                             $(document).on('editor-content-restored', function() {
                                 // If the editor has some content that has been restored
                                 // then save the form state again for comparison.

@@ -303,6 +303,30 @@
     display: none;
 }
 
+.path-mod-assign .gradingtable select[name*="allocatedmarker"] {
+    width: 100%;
+    min-width: 240px;
+}
+
+.path-mod-assign .gradingtable .optional-marker {
+    display: flex;
+    align-items: center;
+    margin-inline-end: 1rem;
+}
+
+.path-mod-assign .gradingtable .optional-marker input[type="checkbox"] {
+    margin-left: auto;
+}
+
+.path-mod-assign .gradingtable input[type="checkbox"] + label {
+    margin-left: 0.25rem;
+}
+
+.path-mod-assign .gradingtable input[type="checkbox"][disabled] + label {
+    opacity: 0.5;
+    font-size: 0.875rem;
+}
+
 .path-mod-assign .editsubmissionform input[name="submissionstatement"] {
     vertical-align: top;
 }
