@@ -1,0 +1,117 @@
+/*
+ * avatar.css
+ * Styles for the Avatar component.
+ *
+ * Sizing uses --mds-scale-* primitives because no semantic avatar-size tokens
+ * exist in the current token set. When dedicated tokens are added, replace
+ * the scale references here.
+ */
+
+.mds-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-surface-strong);
+  color: var(--mds-text-default);
+  /* Prevent the avatar from collapsing in flex or grid containers */
+  flex-shrink: 0;
+}
+
+/* ── Size variants ─────────────────────────────────────────────────────────── */
+
+.mds-avatar--xs {
+  width: var(--mds-avatars-xs);
+  height: var(--mds-avatars-xs);
+}
+
+.mds-avatar--sm {
+  width: var(--mds-avatars-sm);
+  height: var(--mds-avatars-sm);
+}
+
+.mds-avatar--md {
+  width: var(--mds-avatars-md);
+  height: var(--mds-avatars-md);
+}
+
+.mds-avatar--lg {
+  width: var(--mds-avatars-lg);
+  height: var(--mds-avatars-lg);
+}
+
+.mds-avatar--xl {
+  width: var(--mds-avatars-xl);
+  height: var(--mds-avatars-xl);
+}
+
+.mds-avatar--xxl {
+  width: var(--mds-avatars-xxl);
+  height: var(--mds-avatars-xxl);
+}
+
+/* ── Image content ─────────────────────────────────────────────────────────── */
+
+.mds-avatar__image {
+  /* Absolutely positioned so it overlays the initials base layer.
+     overflow: hidden on the parent clips it to the circular shape. */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Initials content ──────────────────────────────────────────────────────── */
+
+.mds-avatar__initials {
+  font-family: var(--mds-font-family-base);
+  letter-spacing: var(--mds-letter-spacing-default);
+  /* line-height is intentionally the unitless value 1, not a token.
+     All --mds-line-height-* tokens are absolute rem values designed for prose
+     (e.g. --mds-line-height-paragraph-lead resolves to 2.5rem). Using any of
+     them here would add a fixed vertical gutter that is independent of the
+     avatar's font-size, causing the glyphs to sit off-centre in the flex
+     container at one or more size variants. The unitless 1 means "line box
+     height = 1× font-size" and scales correctly with every size variant. */
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+
+/* xs and sm are image-only per the design spec. Hide the initials layer at
+   these sizes so a blank circle is not displayed if the DOM node is present
+   (e.g. during an image-load error before imgFailed state flips). */
+.mds-avatar--xs .mds-avatar__initials,
+.mds-avatar--sm .mds-avatar__initials {
+  display: none;
+}
+
+/* When an image is visible the initials layer is both aria-hidden and
+   visually hidden. Using visibility: hidden (rather than opacity/display)
+   means the element stays in the DOM so the fallback is instant on error,
+   but removes the underlying text from axe's colour-contrast analysis. */
+.mds-avatar--has-image .mds-avatar__initials {
+  visibility: hidden;
+}
+
+/* md uses the smallest paragraph size. */
+.mds-avatar--md .mds-avatar__initials {
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+}
+
+.mds-avatar--lg .mds-avatar__initials {
+  font-size: var(--mds-font-size-paragraph-default);
+  font-weight: var(--mds-font-weight-regular);
+}
+
+.mds-avatar--xl .mds-avatar__initials,
+.mds-avatar--xxl .mds-avatar__initials {
+  font-size: var(--mds-font-size-paragraph-lead);
+  font-weight: var(--mds-font-weight-regular);
+}
