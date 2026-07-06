@@ -30,7 +30,8 @@ Feature: Sections can be moved
     When I open section "1" edit menu
     And I click on "Move" "link" in the "Section 1" "section"
     And I click on "Section 3" "link" in the "Move section" "dialogue"
-    Then "Section 1" "section" should appear after "Section 3" "section"
+    Then "Course section Section 1 moved after course section Section 3." "text" should exist in the ".toast-wrapper" "css_element"
+    And "Section 1" "section" should appear after "Section 3" "section"
     And I should see "Test forum name" in the "Section 1" "section"
     And I should see "Second forum name" in the "Section 3" "section"
 
