@@ -6066,6 +6066,8 @@ class assign {
             $gradingitem = $gradinginfo->items[0];
         }
 
+        $usergrade = $this->get_grade_item()->get_grade($userid, false);
+
         foreach ($grades as $grade) {
             // First lookup the grader info.
             if (!$showgradername) {
@@ -6082,7 +6084,7 @@ class assign {
 
             // The assign grade for each attempt is not stored in the gradebook.
             // We need to calculate them from assign_grade records.
-            [$penalisedgrade, $deductedmark] = $this->calculate_penalised_grade($grade);
+            [$penalisedgrade, $deductedmark] = $this->calculate_penalised_grade($grade, $usergrade);
 
             // Now get the gradefordisplay.
             if ($controller) {
@@ -6111,9 +6113,10 @@ class assign {
      * Calculate penalised grade and deducted mark.
      *
      * @param stdClass $grade The grade object
+     * @param grade_grade|null $usergraderecord Optional pre-fetched grade_grade for the user.
      * @return array [$penalisedgrade, $deductedmark] the penalised grade and the deducted mark
      */
-    public function calculate_penalised_grade(stdClass $grade): array {
+    public function calculate_penalised_grade(stdClass $grade, ?\grade_grade $usergraderecord = null): array {
         $penalisedgrade = $grade->grade;
         $deductedmark = 0;
 
@@ -6126,6 +6129,17 @@ class assign {
             $deductedmark = $grade->grade * $grade->penalty / 100;
             $penalisedgrade = $grade->grade - $deductedmark;
         }
+        // Apply the grade-item factors so the returned grade matches the
+        // final grade stored in the gradebook.
+        $gradeitem = $this->get_grade_item();
+        if ($usergraderecord === null) {
+            $usergraderecord = $gradeitem->get_grade($grade->userid, false);
+        }
+        $penalisedgrade = \core_grades\penalty_manager::apply_grade_item_factors(
+            $penalisedgrade,
+            $gradeitem,
+            $usergraderecord
+        );
         return [$penalisedgrade, $deductedmark];
     }
 

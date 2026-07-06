@@ -1,0 +1,18 @@
+issueNumber: MDL-88407
+notes:
+  core_grades:
+    - message: >-
+        The `grade_item::update_deducted_mark()` method has been deprecated and
+        will be removed in a future release (See MDL-88663 for the final
+        deprecation). Penalties are now applied directly in `penalty_manager`
+        via `adjust_raw_grade()`. There is no replacement for this method.
+      type: deprecated
+  mod_assign:
+    - message: >-
+        The `assign::calculate_penalised_grade()` method now applies grade-item
+        scaling so the returned value now matches the `finalgrade` stored in the
+        gradebook. It also accepts an optional `\grade_grade $usergraderecord`
+        parameter to avoid redundant database lookups. Callers that previously
+        applied their own grade-item scaling to the returned value should remove
+        it to avoid double scaling.
+      type: changed
