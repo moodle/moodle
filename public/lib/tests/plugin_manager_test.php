@@ -199,6 +199,23 @@ final class plugin_manager_test extends \advanced_testcase {
         }
     }
 
+    /**
+     * Tests that orphaned plugin info has a component.
+     *
+     * @covers \core\plugininfo\orphaned::get_plugins
+     */
+    public function test_orphaned_plugininfo_has_component(): void {
+        $this->resetAfterTest();
+
+        set_config('version', '2026070600', 'orphanexample_name');
+        core_plugin_manager::reset_caches();
+
+        $plugininfo = core_plugin_manager::instance()->get_plugin_info('orphanexample_name');
+
+        $this->assertInstanceOf(\core\plugininfo\orphaned::class, $plugininfo);
+        $this->assertSame('orphanexample_name', $plugininfo->component);
+    }
+
     public function test_get_subplugins_of_plugin(): void {
         global $CFG;
 

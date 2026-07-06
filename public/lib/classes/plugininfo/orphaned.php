@@ -76,6 +76,7 @@ class orphaned extends base {
             $plugin->type        = $type;
             $plugin->typerootdir = $typerootdir;
             $plugin->name        = $name;
+            $plugin->component   = $plugin->type . '_' . $plugin->name;
             $plugin->rootdir     = null;
             $plugin->displayname = $name;
             $plugin->versiondb   = $version;
