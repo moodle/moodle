@@ -5,6 +5,16 @@
 
 .que.ddwtos .draghome {
     margin-bottom: 1em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: transparent;
+    border: 1px solid #000;
+    cursor: move;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: normal;
 }
 
 .que.ddwtos .answertext {
@@ -12,10 +22,15 @@
 }
 
 .que.ddwtos .drop.active {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     border: 1px solid #000;
     margin-bottom: 2px;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: normal;
 }
 
 .que.ddwtos .drop {
@@ -24,14 +39,6 @@
 
 .que.ddwtos .drags {
     height: 0;
-}
-
-.que.ddwtos .draghome {
-    display: inline-block;
-    text-align: center;
-    background: transparent;
-    border: 1px solid #000;
-    cursor: move;
 }
 
 .que.ddwtos.qtype_ddwtos-readonly .draghome {
@@ -50,7 +57,7 @@
 
 .que.ddwtos .draghome.dragplaceholder.active {
     visibility: hidden;
-    display: inline-block;
+    display: inline-flex;
 }
 
 .que.ddwtos .draghome.placed {
