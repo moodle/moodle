@@ -276,4 +276,210 @@ final class penalty_test extends \advanced_testcase {
         // Check the grade.
         $this->assertEquals(50, $gradeitem->get_final($student->id)->finalgrade);
     }
+
+    /**
+     * Test that the penalty in assign_grades is calculated from rawgrade,
+     * and that opening a new attempt preserves the existing penalty.
+     *
+     * @covers \mod_assign\penalty\helper::apply_penalty_to_user
+     * @covers \grade_item::update_raw_grade
+     */
+    public function test_assign_grades_penalty_uses_rawgrade(): void {
+        global $DB, $USER;
+
+        $this->resetAfterTest();
+        [$course, $student] = $this->set_up_test();
+
+        $generator = $this->getDataGenerator();
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // Grademax=200; fake_deduction will deduct 10% of grademax = 20 points when late.
+        $duedate = DAYSECS;
+        $instance = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => $duedate,
+            'assignsubmission_onlinetext_enabled' => 1,
+            'gradepenalty' => 1,
+            'grade' => 200,
+        ]);
+
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = \context_module::instance($cm->id);
+        $assign = new mod_assign_testable_assign($context, $cm, $course);
+
+        // Apply grade-item factors.
+        grade_update(
+            source: 'mod/assign',
+            courseid: $course->id,
+            itemtype: 'mod',
+            itemmodule: 'assign',
+            iteminstance: $instance->id,
+            itemnumber: 0,
+            grades: null,
+            itemdetails: ['multfactor' => 2.0, 'plusfactor' => 5.0],
+        );
+
+        $this->add_submission($student, $assign, 'Sample text');
+        $this->submit_for_grading($student, $assign);
+
+        // Submit one day after due date so penalty applies.
+        $DB->set_field('assign_submission', 'timemodified', $duedate + 1, ['userid' => $student->id]);
+
+        // Teacher grades at 60/200.
+        $assign->testable_apply_grade_to_user((object)['grade' => 60.0], $student->id, 0);
+        $this->assertDebuggingCalledCount(2);
+
+        // Penalty deducted: 10% of grademax(200) = 20 raw points.
+        // The penalty in assign_grades is based on rawgrade (60): 20 / 60 * 100 = 33.333%.
+        $assigngrade = $DB->get_record('assign_grades', ['assignment' => $instance->id, 'userid' => $student->id]);
+        $this->assertEqualsWithDelta(33.333, (float) $assigngrade->penalty, 0.001);
+
+        // Verify the grade item recorded finalgrade = ((60 - 20) * 2) + 5 = 85.
+        $gradeitem = grade_item::fetch([
+            'courseid' => $course->id,
+            'itemtype' => 'mod',
+            'itemmodule' => 'assign',
+            'iteminstance' => $instance->id,
+            'itemnumber' => 0,
+        ]);
+        $this->assertEquals(85.0, (float) $gradeitem->get_final($student->id)->finalgrade);
+        $this->assertEquals(60.0, (float) $gradeitem->get_final($student->id)->rawgrade);
+
+        // Teacher allows another attempt — triggers update_raw_grade(rawgrade=false).
+        $this->setAdminUser();
+        $USER->ignoresesskey = true;
+        $assign->testable_process_add_attempt($student->id);
+
+        // The penalty must be preserved: finalgrade and deductedmark must not change.
+        $after = $gradeitem->get_final($student->id);
+        $this->assertEquals(85.0, (float) $after->finalgrade, 'Penalty must be preserved after add_attempt.');
+        $this->assertEquals(20.0, (float) $after->deductedmark, 'deductedmark must be preserved after add_attempt.');
+    }
+
+    /**
+     * Data provider for test_calculate_penalised_grade.
+     *
+     * @return array
+     */
+    public static function calculate_penalised_grade_provider(): array {
+        // A raw grade of 50 is used in all test cases. The grade item applies
+        // a multiplication factor of 1.5 and an offset of 10.
+        return [
+            'late submission: penalty and grade-item factors applied' => [
+                'submissiontime'     => DAYSECS + 1,
+                // The fake_deduction plugin emits these messages on every call.
+                'debugmessages' => ['Submission date: ' . (DAYSECS + 1), 'Due date: ' . DAYSECS],
+                'expectedpenalty' => 20.0,
+                'expectedfinalgrade' => 70.0,
+                'expecteddeducted' => 10.0,
+            ],
+            'on-time submission: only grade-item factors applied' => [
+                'submissiontime' => DAYSECS - 1,
+                'debugmessages' => ['Submission date: ' . (DAYSECS - 1), 'Due date: ' . DAYSECS],
+                'expectedpenalty' => 0.0,
+                'expectedfinalgrade' => 85.0,
+                'expecteddeducted' => 0.0,
+            ],
+        ];
+    }
+
+    /**
+     * Test that calculate_penalised_grade applies grade-item multfactor/plusfactor,
+     * both when a penalty is deducted and when the submission is on time.
+     *
+     * @dataProvider calculate_penalised_grade_provider
+     * @covers \assign::calculate_penalised_grade
+     *
+     * @param int $submissiontime Submission timemodified (controls late vs on-time).
+     * @param array $debugmessages Expected debugging messages from the penalty plugin.
+     * @param float $expectedpenalty Expected penalty percentage stored in assign_grades.
+     * @param float $expectedfinalgrade Expected gradebook finalgrade.
+     * @param float $expecteddeducted Expected deducted mark returned by calculate_penalised_grade.
+     */
+    public function test_calculate_penalised_grade(
+        int $submissiontime,
+        array $debugmessages,
+        float $expectedpenalty,
+        float $expectedfinalgrade,
+        float $expecteddeducted,
+    ): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        [$course, $student] = $this->set_up_test();
+
+        $generator = $this->getDataGenerator();
+        $assignmentgenerator = $generator->get_plugin_generator('mod_assign');
+
+        // The grade is set to 100 so the fake_deduction plugin deducts
+        // 10% of grademax (10 raw points) for late submissions.
+        $instance = $assignmentgenerator->create_instance([
+            'course' => $course->id,
+            'duedate' => DAYSECS,
+            'assignsubmission_onlinetext_enabled' => 1,
+            'gradepenalty' => 1,
+            'grade' => 100,
+        ]);
+        $cm = get_coursemodule_from_instance('assign', $instance->id);
+        $context = \context_module::instance($cm->id);
+        $assign = new mod_assign_testable_assign($context, $cm, $course);
+
+        // Set grade-item factors: finalgrade = rawgrade * 1.5 + 10.
+        grade_update(
+            source: 'mod/assign',
+            courseid: $course->id,
+            itemtype: 'mod',
+            itemmodule: 'assign',
+            iteminstance: $instance->id,
+            itemnumber: 0,
+            grades: null,
+            itemdetails: ['multfactor' => 1.5, 'plusfactor' => 10.0],
+        );
+
+        $this->add_submission($student, $assign, 'Test submission');
+        $this->submit_for_grading($student, $assign);
+        $DB->set_field('assign_submission', 'timemodified', $submissiontime, ['userid' => $student->id]);
+
+        // Teacher grades at 50/100.
+        $assign->testable_apply_grade_to_user((object)['grade' => 50.0], $student->id, 0);
+        // Verify both the count and the exact content of the debug messages from fake_deduction.
+        $this->assertDebuggingCalledCount(count($debugmessages), $debugmessages);
+
+        $assigngrade = $DB->get_record('assign_grades', ['assignment' => $instance->id, 'userid' => $student->id]);
+        $this->assertEqualsWithDelta(
+            $expectedpenalty,
+            (float) $assigngrade->penalty,
+            .001,
+            'Penalty percentage stored in assign_grades is incorrect.'
+        );
+
+        $gradeitem = grade_item::fetch([
+            'courseid' => $course->id,
+            'itemtype' => 'mod',
+            'itemmodule' => 'assign',
+            'iteminstance' => $instance->id,
+            'itemnumber' => 0,
+        ]);
+        $this->assertEqualsWithDelta(
+            $expectedfinalgrade,
+            (float) $gradeitem->get_final($student->id)->finalgrade,
+            0.001,
+            'Gradebook finalgrade is incorrect.'
+        );
+
+        // The calculate_penalised_grade() must return a value on the same scale as the gradebook finalgrade.
+        [$penalisedgrade, $deductedmark] = $assign->calculate_penalised_grade($assigngrade);
+        $this->assertEqualsWithDelta(
+            $expecteddeducted,
+            $deductedmark,
+            0.001,
+            'Deducted mark returned by calculate_penalised_grade is incorrect.'
+        );
+        $this->assertEqualsWithDelta(
+            $expectedfinalgrade,
+            $penalisedgrade,
+            0.001,
+            'calculate_penalised_grade result must match the gradebook finalgrade.'
+        );
+    }
 }
