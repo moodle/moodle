@@ -30,7 +30,7 @@ Feature: Admin can set Recover grades default setting
     # Confirm that assigned grade was saved
     And I am on the "Course 1" "grades > Grader report > View" page
     And I should see "60.00" in the "Student One" "table_row"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I click on "Unenrol" "icon" in the "Student One" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I press "Enrol users"

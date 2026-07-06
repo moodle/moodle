@@ -21,9 +21,7 @@ Feature: Edit user roles
 
   @javascript
   Scenario: Assign roles on participants page
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I click on "Student 1's role assignments" "link"
     And I type "Non-editing teacher"
     And I press the enter key
@@ -32,9 +30,7 @@ Feature: Edit user roles
 
   @javascript
   Scenario: Remove roles on participants page
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I click on "Student 1's role assignments" "link"
     And I click on "Student" "autocomplete_selection"
     When I click on "Save changes" "link"

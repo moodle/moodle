@@ -25,9 +25,7 @@ Feature: Viewing the list of cohorts to enrol in a course
       | role                 | editingteacher |
       | moodle/cohort:manage | prohibit       |
       | moodle/cohort:view   | prohibit       |
-    And I log out
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as teacher1
     When I press "Enrol users"
     Then I should not see "Select cohorts"
     And I should not see "Enrol selected users and cohorts"
@@ -38,16 +36,14 @@ Feature: Viewing the list of cohorts to enrol in a course
       | name        | Test cohort name        |
       | idnumber    | 1337                    |
       | description | Test cohort description |
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as teacher1
     When I press "Enrol users"
     Then I should see "Select cohorts"
     And I should see "Enrol selected users and cohorts"
 
   @javascript
   Scenario: Check we do not show the cohorts field if there are none present
-    Given I am on the "Course 1" course page logged in as teacher1
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as teacher1
     When I press "Enrol users"
     Then I should not see "Select cohorts"
     And I should not see "Enrol selected users and cohorts"
