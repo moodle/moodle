@@ -43717,6 +43717,23 @@ div.editor_atto_toolbar button .icon {
     position: absolute !important;
   }
 }
+.editmode-switch-form .form-check.form-switch .form-check-input {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%236a737b'/%3e%3c/svg%3e");
+  background-color: var(--bs-gray-400);
+  border: none;
+}
+.editmode-switch-form .form-check.form-switch .form-check-input:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e");
+  background-color: var(--bs-primary);
+  border: none;
+}
+.editmode-switch-form .form-check.form-switch .form-check-input:focus {
+  border-color: transparent;
+  box-shadow: none;
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 1px;
+}
+
 .drawer-primary .drawercontent {
   padding: 0;
 }
