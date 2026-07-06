@@ -80,6 +80,8 @@ if (!wiki_user_can_edit($subwiki)) {
     throw new \moodle_exception('cannoteditpage', 'wiki');
 }
 
+$PAGE->set_show_navigation_footer(false);
+
 if ($option == get_string('save', 'wiki')) {
     if (!confirm_sesskey()) {
         throw new \moodle_exception(get_string('invalidsesskey', 'wiki'));

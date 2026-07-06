@@ -58,6 +58,8 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
     throw new \moodle_exception('cannotviewpage', 'wiki');
 }
 
+$PAGE->set_show_navigation_footer(false);
+
 $editcomments = new page_wiki_editcomment($wiki, $subwiki, $cm, 'modulepage');
 $comment = new stdClass();
 if ($action == 'edit') {

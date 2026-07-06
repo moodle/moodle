@@ -64,6 +64,8 @@ if (!wiki_user_can_view($subwiki)) {
     throw new \moodle_exception('cannotviewpage', 'wiki');
 }
 
+$PAGE->set_show_navigation_footer(false);
+
 if ($confirm) {
     if (!confirm_sesskey()) {
         throw new \moodle_exception(get_string('invalidsesskey', 'wiki'));

@@ -84,6 +84,8 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 
 require_login($course, true, $cm);
 
+$PAGE->set_show_navigation_footer(false);
+
 // The title of the new page, cannot be empty.
 $title = optional_param('title', get_string('newpage', 'wiki'), PARAM_TEXT);
 $wikipage = new page_wiki_create($wiki, $subwiki, $cm);
