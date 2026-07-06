@@ -73,7 +73,7 @@ class tokens extends system_report {
 
         // Only show tokens created by the current user for non-manager users.
         if (!has_capability('moodle/webservice:managealltokens', context_system::instance())) {
-            $this->add_base_condition_simple("{$entitycreatoralias}.userid", $USER->id);
+            $this->add_base_condition_simple("{$entitytokenalias}.creatorid", $USER->id);
         }
 
         $this->add_columns($entityuseralias, $entityservicealias);
