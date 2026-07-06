@@ -14,7 +14,7 @@ Feature: Create testing scenarios using generators
     Then I am on the "C1" "Course" page
     And I should see "Activity sample 1" in the "Section 1" "section"
     And I should see "Activity sample 2" in the "Section 1" "section"
-    And I navigate to course participants
+    And I am on the "C1" "enrolled users" page
     And I should see "Teacher Test1"
     And I should see "Student Test1"
     And I should see "Student Test2"

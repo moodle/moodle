@@ -56,9 +56,7 @@ Feature: View course participants
 
   @javascript
   Scenario: Use select and deselect all buttons
-    Given I log in as "teacher1x"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1x"
     When I click on "Select all" "checkbox"
     Then the field "Select 'Teacher 1x'" matches value "1"
     And the field "Select 'Student 0x'" matches value "1"
@@ -111,8 +109,7 @@ Feature: View course participants
     And the following "course enrolments" exist:
       | user      | course | role           |
       | student19x | C1     | student |
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I follow "Email address"
     When I click on "2" "link" in the "//nav[@aria-label='Page']" "xpath_element"
     Then I should not see "student0x@example.com"
@@ -130,9 +127,7 @@ Feature: View course participants
     Given the following "course enrolments" exist:
       | user      | course | role    |
       | student19x | C1     | student |
-    When I log in as "teacher1x"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "teacher1x"
     And I click on "Select all" "checkbox"
     Then I should not see "Student 9x"
     And the field "Select 'Teacher 1x'" matches value "1"
@@ -232,9 +227,7 @@ Feature: View course participants
     And the field "Select 'Student 19x'" matches value "0"
 
   Scenario: View the participants page as a teacher
-    Given I log in as "teacher1x"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1x"
     Then I should see "Active" in the "student0x" "table_row"
     Then I should see "Active" in the "student1x" "table_row"
     And I should see "Active" in the "student2x" "table_row"
@@ -256,9 +249,7 @@ Feature: View course participants
     And I should see "Active" in the "student18x" "table_row"
 
   Scenario: View the participants page as a student
-    Given I log in as "student1x"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "student1x"
     # Student should not see the status column.
     Then I should not see "Status" in the "participants" "table"
     # Student should be able to see the other actively-enrolled students.
@@ -278,5 +269,5 @@ Feature: View course participants
     Given I log in as "admin"
     And I am on the "Course 1" "enrolment methods" page
     And I click on "Disable" "link" in the "Manual enrolments" "table_row"
-    Then I navigate to course participants
+    Then I am on the "Course 1" "enrolled users" page
     And I should see "Not current" in the "student0x" "table_row"

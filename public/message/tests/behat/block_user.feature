@@ -48,10 +48,7 @@ Feature: To be able to block users that we are able to or to see a message if we
     And I open contact menu
     And I click on "Block" "link" in the "[data-region='header-container']" "css_element"
     And I click on "Block" "button" in the "[data-region='confirm-dialogue']" "css_element"
-    And I log out
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "admin"
     And I click on "Unenrol" "icon" in the "student2" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I enrol "Student 2" user as "Teacher"

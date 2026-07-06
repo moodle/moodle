@@ -333,8 +333,7 @@ Feature: Assign group override
     And the following "mod_assign > user overrides" exist:
       | assignment            | user     | allowsubmissionsfromdate | duedate           |
       | Test assignment name  | student1 | ##tomorrow##             | ##tomorrow noon## |
-    And I am on the "C1" "Course" page logged in as "teacher1"
-    And I navigate to course participants
+    And I am on the "C1" "enrolled users" page logged in as "teacher1"
     And I click on "Unenrol" "icon" in the "student1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     When I log in as "student1"

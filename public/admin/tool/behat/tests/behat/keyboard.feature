@@ -48,8 +48,7 @@ Feature: Verify that keyboard steps work as expected
      | fullname  | C1|
      | shortname | C1 |
     And I log in as "admin"
-    And I am on "C1" course homepage
-    And I navigate to course participants
+    And I am on the "C1" "enrolled users" page
     And I press "Enrol users"
     And "Enrol users" "dialogue" should be visible
     When I press the escape key

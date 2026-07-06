@@ -34,8 +34,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | True/false question 1 | True      | Correct  | Next page | 1     |
       | True/false question 1 | False     | Wrong    | This page | 0     |
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I follow "Student 1"
     And I follow "Outline report"
     Then I should see "No attempts have been made on this lesson"
@@ -56,8 +55,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
-    Then I am on the "Course 1" course page logged in as teacher1
-    And I navigate to course participants
+    Then I am on the "Course 1" "enrolled users" page logged in as teacher1
     And I follow "Student 1"
     And I follow "Outline report"
     And I should see "Lesson has been started, but not yet completed"
@@ -86,8 +84,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    Then I am on the "Course 1" course page logged in as teacher1
-    And I navigate to course participants
+    Then I am on the "Course 1" "enrolled users" page logged in as teacher1
     And I follow "Student 1"
     And I follow "Outline report"
     And I should see "Grade: 100.00 / 100.00"
@@ -107,8 +104,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I press "Next page"
     And I should see "Second page contents"
     And I press "End of lesson"
-    Then I am on the "Course 1" course page logged in as teacher1
-    And I navigate to course participants
+    Then I am on the "C1" "enrolled users" page logged in as teacher1
     And I follow "Student 1"
     And I follow "Outline report"
     And I should see "Completed"

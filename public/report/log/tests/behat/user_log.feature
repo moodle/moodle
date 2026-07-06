@@ -38,9 +38,7 @@ Feature: User can view activity log.
     And I log out
 
   Scenario: View Todays' and all log report for user
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I follow "Ann, Jill, Grainne, Beauchamp"
     When I follow "Today's logs"
     And I should see "Assignment: Test assignment name"
@@ -52,15 +50,11 @@ Feature: User can view activity log.
     Given I log in as "admin"
     And I navigate to "Plugins > Logging > Manage log stores" in site administration
     And I click on "Disable" "link" in the "Standard log" "table_row"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I follow "Ann, Jill, Grainne, Beauchamp"
     When I follow "Today's logs"
     And I should see "No log reader enabled"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I follow "Ann, Jill, Grainne, Beauchamp"
     And I follow "All logs"
     Then I should see "No log reader enabled"

@@ -34,9 +34,7 @@ Feature: View course participants groups
       | student4x | G2    |
 
   Scenario: User should not be able to see other groups in separated group mode
-    Given I log in as "student1x"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "student1x"
     Then I should see "Group A"
     And I should see "Student 1x"
     And I should see "Student 2x"
@@ -52,10 +50,7 @@ Feature: View course participants groups
     And I expand all fieldsets
     And I set the field "Group mode" to "Visible groups"
     And I press "Save and display"
-    And I log out
-    And I log in as "student1x"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "student1x"
     Then I should see "Group A"
     And I should see "Student 1x"
     And I should see "Student 2x"
@@ -72,10 +67,7 @@ Feature: View course participants groups
     And I expand all fieldsets
     And I set the field "Group mode" to "No groups"
     And I press "Save and display"
-    And I log out
-    And I log in as "student1x"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "student1x"
     Then I should see "Group A"
     And I should see "Student 1x"
     And I should see "Student 2x"
