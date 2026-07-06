@@ -46,11 +46,7 @@ Feature: Users can request and approve courses
     And I should see "There are no courses pending approval"
     And I press "Back to course listing"
     And I should see "My new course"
-    And I log out
-    And I log in as "user1"
-    And I am on course index
-    And I follow "My new course"
-    And I navigate to course participants
+    And I am on the "My new course" "enrolled users" page logged in as "user1"
     And I should see "Teacher" in the "User 1" "table_row"
     And I log out
 

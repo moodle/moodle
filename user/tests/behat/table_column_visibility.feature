@@ -21,9 +21,7 @@ Feature: The visibility of table columns can be toggled
 
   @javascript
   Scenario: The visibility of columns can be individually toggled within the participants table
-    Given I log in as "t1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "t1"
     And I should see "Email address" in the "participants" "table"
     And I should see "matilda@example.com" in the "participants" "table"
     And I should see "Roles" in the "participants" "table"

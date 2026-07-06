@@ -33,6 +33,7 @@ Feature: Assign group override
       | activity | name                 | intro                   | course | assignsubmission_onlinetext_enabled |
       | assign   | Test assignment name | Submit your online text | C1     | 1                                   |
 
+  @javascript
   Scenario: Add, modify then delete a group override
     Given I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
@@ -163,7 +164,7 @@ Feature: Assign group override
     And I am on the "Assignment 2" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
     And I select "Group overrides" from the "jump" singleselect
-    Then I should see "No groups you can access."
+    Then I should see "There are no groups in this course."
     And the "Add group override" "button" should be disabled
 
   Scenario: A teacher without accessallgroups permission should only be able to add group override for groups that he/she is a member of,
@@ -283,8 +284,7 @@ Feature: Assign group override
     And the following "mod_assign > user overrides" exist:
       | assignment            | user     | allowsubmissionsfromdate | duedate           |
       | Test assignment name  | student1 | ##tomorrow##             | ##tomorrow noon## |
-    And I am on the "C1" "Course" page logged in as "teacher1"
-    And I navigate to course participants
+    And I am on the "C1" "enrolled users" page logged in as "teacher1"
     And I click on "Unenrol" "icon" in the "student1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     When I log in as "student1"

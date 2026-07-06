@@ -21,9 +21,7 @@ Feature: Edit user enrolment
 
   @javascript
   Scenario: Edit a user's enrolment
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "Edit enrolment" "icon" in the "student1" "table_row"
     And I should see "Edit Student 1's enrolment"
     And I set the field "Status" to "Suspended"
@@ -41,18 +39,14 @@ Feature: Edit user enrolment
 
   @javascript
   Scenario: Unenrol a student
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "Unenrol" "icon" in the "student1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     Then I should not see "Student 1" in the "participants" "table"
 
   @javascript
   Scenario: View a student's enrolment details
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "Manual enrolments" "icon" in the "student1" "table_row"
     Then I should see "Enrolment details"
     And I should see "Student 1" in the "Full name" "table_row"
@@ -84,10 +78,7 @@ Feature: Edit user enrolment
     And I click on "Enable" "link" in the "Course meta link" "table_row"
     And I add "Course meta link" enrolment method in "Course 1" with:
       | Link course  | C2      |
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     Then I should see "Student 3" in the "participants" "table"
     And "Edit enrolment" "icon" should not exist in the "student3" "table_row"
     And "Unenrol" "icon" should not exist in the "student3" "table_row"
@@ -100,9 +91,7 @@ Feature: Edit user enrolment
 
   @javascript
   Scenario: Edit a student's enrolment details from the status dialogue
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "Manual enrolments" "icon" in the "student2" "table_row"
     And I click on "Edit enrolment" "icon" in the "Enrolment method" "table_row"
     And I should see "Edit Student 2's enrolment"
@@ -112,9 +101,7 @@ Feature: Edit user enrolment
 
   # Without JS, the user should be redirected to the original edit enrolment form.
   Scenario: Edit a user's enrolment without JavaScript
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "Edit enrolment" "link" in the "student1" "table_row"
     And I should see "Student 1"
     And I set the field "Status" to "Suspended"
@@ -132,9 +119,7 @@ Feature: Edit user enrolment
 
   # Without JS, the user should be redirected to the original unenrol confirmation page.
   Scenario: Unenrol a student
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "Unenrol" "link" in the "student1" "table_row"
     And I click on "Continue" "button"
     Then I should not see "Student 1" in the "participants" "table"
