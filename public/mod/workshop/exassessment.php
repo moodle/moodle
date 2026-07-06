@@ -42,6 +42,7 @@ $workshop = new workshop($workshop, $cm, $course);
 $PAGE->set_url($workshop->exassess_url($assessment->id));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 $PAGE->navbar->add(get_string('assessingexample', 'workshop'));
 $PAGE->set_secondary_active_tab('modulepage');
 $currenttab = 'assessment';

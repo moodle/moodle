@@ -52,6 +52,7 @@ if ($confirm) {
 
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''
