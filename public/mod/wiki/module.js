@@ -87,6 +87,10 @@ M.mod_wiki.deleteversion = function(Y, args) {
     var radio  = document.getElementsByName('fromversion');
     var radio2 = document.getElementsByName('toversion');
     var length = radio.length;
+    if (length < 2) {
+        // There is only zero or one version. We will just return.
+        return;
+    }
     //version to should be more then version from
     for (var i = 0; i < radio.length; i++) {
         //if from-version is selected then disable all to-version options after that.
