@@ -216,9 +216,23 @@ const adjustEditorSize = (editor, target) => {
 const getStandardConfig = (target, tinyMCE, options, plugins) => {
     const lang = document.querySelector('html').lang;
 
+    let iframeAriaText = '';
+    let label = null;
+    if (target.id) {
+        label = document.querySelector(`label[for="${CSS.escape(target.id)}"]`);
+        if (label) {
+            iframeAriaText = label.textContent.trim();
+        }
+    }
+
     const config = Object.assign({}, getDefaultConfiguration(), {
         // eslint-disable-next-line camelcase
         base_url: baseUrl,
+
+        ...(iframeAriaText && {
+            // eslint-disable-next-line camelcase
+            iframe_aria_text: iframeAriaText
+        }),
 
         // Set the editor target.
         // https://www.tiny.cloud/docs/tinymce/6/editor-important-options/#target
@@ -362,6 +376,39 @@ const getStandardConfig = (target, tinyMCE, options, plugins) => {
                 removeSubmenuItem(editor, 'align', 'tiny:justify');
                 // Adjust the editor size.
                 adjustEditorSize(editor, target);
+
+                // Give the editor iframe an accessible name based on the field's label.
+                // An <iframe> is not a labelable element, so it cannot be the target of the
+                // label's "for" attribute. Associate them via aria-labelledby instead,
+                // generating an id for the label if it does not already have one.
+                // The iframe title is set separately through the iframe_aria_text option.
+                if (label && editor.iframeElement) {
+                    if (!label.id) {
+                        label.id = `${editor.iframeElement.id}_label`;
+                    }
+                    editor.iframeElement.setAttribute('aria-labelledby', label.id);
+                }
+
+                // The resize handle has a focusable role="separator", for which aria-valuenow
+                // is required (and aria-valuemin/max recommended). TinyMCE does not set these,
+                // so expose the editor's real height and keep aria-valuenow in sync on resize.
+                const resizeHandle = editor.getContainer().querySelector('.tox-statusbar__resize-handle');
+                if (resizeHandle) {
+                    const minHeight = editor.options.get('min_height');
+                    const maxHeight = editor.options.get('max_height');
+                    if (minHeight) {
+                        resizeHandle.setAttribute('aria-valuemin', minHeight);
+                    }
+                    if (maxHeight) {
+                        resizeHandle.setAttribute('aria-valuemax', maxHeight);
+                    }
+                    const updateResizeHandleValue = () => {
+                        const height = Math.round(editor.getContainer().getBoundingClientRect().height);
+                        resizeHandle.setAttribute('aria-valuenow', height);
+                    };
+                    updateResizeHandleValue();
+                    editor.on('ResizeEditor', updateResizeHandleValue);
+                }
             });
 
             addMathMLSupport(editor);
