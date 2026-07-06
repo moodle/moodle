@@ -22,8 +22,7 @@ Feature: In a report, admin can filter log data
     And I log in as "admin"
 
   Scenario: Filter log report for standard log reader
-    Given I am on "Course 1" course homepage
-    And I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page
     And I follow "Ann, Jill, Grainne, Beauchamp"
     And I click on "Log in as" "link"
     And I press "Continue"

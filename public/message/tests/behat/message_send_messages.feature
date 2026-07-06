@@ -105,8 +105,7 @@ Feature: Message send messages
     Given I log in as "teacher1"
     And I open messaging
     And I send "Hi!" message to "Student 1" user
-    And I am on "C1" course homepage
-    And I navigate to course participants
+    And I am on the "C1" "enrolled users" page
     And I click on "Unenrol" "link" in the "student1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I log in as "student1"

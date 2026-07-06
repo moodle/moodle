@@ -27,8 +27,7 @@ Feature: Adding blog tag block
       | unaddableblocks | | theme_boost|
     # TODO MDL-57120 site "Blogs" link not accessible without navigation block.
     And I add the "Navigation" block if not present
-
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I click on "Course blogs" "link" in the "Navigation" "block"
     And I follow "Blog about this Course"
     And I set the following fields to these values:
@@ -36,10 +35,7 @@ Feature: Adding blog tag block
       | Blog entry body                             | Teacher blog post content |
       | Tags                                        | Cats, dogs                 |
     And I press "Save changes"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "student1"
     And I click on "Course blogs" "link" in the "Navigation" "block"
     And I follow "Blog about this Course"
     And I set the following fields to these values:

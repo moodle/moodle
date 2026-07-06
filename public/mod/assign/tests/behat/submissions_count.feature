@@ -31,8 +31,7 @@ Feature: Assignment submission count includes submissions from active students i
 
   @javascript
   Scenario: Submission count excludes submissions from unenrolled students
-    Given I am on the "C1" "Course" page logged in as "teacher1"
-    And I navigate to course participants
+    Given I am on the "C1" "enrolled users" page logged in as "teacher1"
     And I click on "Unenrol" "icon" in the "student3" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I should not see "Student 3" in the "participants" "table"
