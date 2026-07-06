@@ -1,0 +1,11 @@
+issueNumber: MDL-88407
+notes:
+  mod_assign:
+    - message: >-
+        The `assign::calculate_penalised_grade()` method now applies grade-item
+        scaling so the returned value now matches the `finalgrade` stored in the
+        gradebook. It also accepts an optional `\grade_grade $usergraderecord`
+        parameter to avoid redundant database lookups. Callers that previously
+        applied their own grade-item scaling to the returned value should remove
+        it to avoid double scaling.
+      type: changed

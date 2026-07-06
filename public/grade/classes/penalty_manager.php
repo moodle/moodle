@@ -231,12 +231,58 @@ class penalty_manager {
 
         // Update the grade if not in preview mode.
         if (!$previewonly) {
-            // Update the raw grade and store the deducted mark.
-            $gradeitem->update_raw_grade($userid, $container->get_grade_after_penalties(), 'gradepenalty');
-            $gradeitem->update_deducted_mark($userid, $container->get_penalty());
+            $oldfinalgrade = $grade->finalgrade;
+
+            // Apply penalty to raw grade first, then apply grade-item factors to compute final grade.
+            // rawgrade is intentionally not updated - it must always hold the original unpenalised source grade.
+            $grade->deductedmark = $container->get_penalty();
+
+            $penalisedraw = $container->get_grade_after_penalties();
+            $grade->finalgrade = self::apply_grade_item_factors($penalisedraw, $gradeitem, $grade);
+
+            $grade->timemodified = time();
+            $grade->update('gradepenalty');
+
+            if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
+                \core\event\user_graded::create_from_grade($grade)->trigger();
+                // Regrade parent category/course totals so the penalised finalgrade
+                // is preserved and updated through nested categories if present.
+                if (!$gradeitem->needsupdate && !grade_item::fetch_course_item($gradeitem->courseid)->needsupdate) {
+                    $updateditem = grade_item::fetch([
+                        'itemtype' => 'category',
+                        'iteminstance' => $gradeitem->categoryid,
+                        'courseid' => $gradeitem->courseid,
+                    ]) ?: grade_item::fetch_course_item($gradeitem->courseid);
+                    if (grade_regrade_final_grades($gradeitem->courseid, $userid, $updateditem) !== true) {
+                        // Fast regrade failed; mark the parent (category/course) item for regrading.
+                        $updateditem->force_regrading();
+                    }
+                }
+            }
         }
 
         return $container;
+    }
+
+    /**
+     * Apply grade-item multfactor/plusfactor to a raw penalised grade, returning a value
+     * on the same scale as the gradebook finalgrade.
+     *
+     * @param float $rawgrade The penalised raw grade (before grade-item factors are applied).
+     * @param grade_item $gradeitem The grade item whose multfactor/plusfactor to apply.
+     * @param grade_grade|null $usergrade The user's grade_grade record, which carries the
+     *        rawgrademin/rawgrademax stored at grading time. Falls back to gradeitem
+     *        grademin/grademax when null or when the record has not yet been persisted.
+     * @return float|null The adjusted grade, or null when rawgrade is null.
+     */
+    public static function apply_grade_item_factors(
+        float $rawgrade,
+        grade_item $gradeitem,
+        ?grade_grade $usergrade = null
+    ): ?float {
+        $rawmin = !empty($usergrade->id) ? $usergrade->rawgrademin : $gradeitem->grademin;
+        $rawmax = !empty($usergrade->id) ? $usergrade->rawgrademax : $gradeitem->grademax;
+        return $gradeitem->adjust_raw_grade($rawgrade, $rawmin, $rawmax);
     }
 
     /**

@@ -104,10 +104,13 @@ final class penalty_container {
     /**
      * Get the grade before penalties are applied.
      *
-     * @return float The grade before penalties are applied
+     * Returns the raw grade (the original source grade from the activity, before
+     * grade-item factors such as multiplier or offset are applied).
+     *
+     * @return float The raw grade before any penalty or grade-item adjustment
      */
     public function get_grade_before_penalties(): float {
-        return $this->gradegrade->finalgrade;
+        return $this->gradegrade->rawgrade;
     }
 
     /**
