@@ -20,9 +20,7 @@ Feature: Bulk message
       | student2 | C1     | student        |
 
   Scenario: Send a message to students from participants list
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Send a message"
     And "Send message to 3 people" "dialogue" should exist

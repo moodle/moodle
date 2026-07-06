@@ -50,9 +50,7 @@ Feature: Viewing participants page in different group modes
       | teacher2 | C3G1   |
 
   Scenario: Viewing participants page as an editing teacher in a course without group mode
-    When I log in as "teacher1"
-    And I am on "C1 nogroups" course homepage
-    And I navigate to course participants
+    When I am on the "C1 nogroups" "enrolled users" page logged in as "teacher1"
     Then "Student 1" row "Groups" column of "participants" table should contain "No groups"
     And "Student 2" row "Groups" column of "participants" table should contain "No groups"
     And "Student 3" row "Groups" column of "participants" table should contain "No groups"
@@ -60,9 +58,7 @@ Feature: Viewing participants page in different group modes
     And "Teacher 2" row "Groups" column of "participants" table should contain "No groups"
 
   Scenario: Viewing participants page as an editing teacher in a course in visible groups mode
-    When I log in as "teacher1"
-    And I am on "C2 visgroups" course homepage
-    And I navigate to course participants
+    When I am on the "C2 visgroups" "enrolled users" page logged in as "teacher1"
     Then "Student 1" row "Groups" column of "participants" table should contain "G1"
     And "Student 2" row "Groups" column of "participants" table should contain "G2"
     And "Student 3" row "Groups" column of "participants" table should contain "No groups"
@@ -70,9 +66,7 @@ Feature: Viewing participants page in different group modes
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
 
   Scenario: Viewing participants page as an editing teacher in a course in separate groups mode
-    When I log in as "teacher1"
-    And I am on "C3 sepgroups" course homepage
-    And I navigate to course participants
+    When I am on the "C3 sepgroups" "enrolled users" page logged in as "teacher1"
     Then "Student 1" row "Groups" column of "participants" table should contain "G1"
     And "Student 2" row "Groups" column of "participants" table should contain "G2"
     And "Student 3" row "Groups" column of "participants" table should contain "No groups"
@@ -80,9 +74,7 @@ Feature: Viewing participants page in different group modes
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
 
   Scenario: Viewing participants page as a non-editing teacher in a course without group mode
-    When I log in as "teacher2"
-    And I am on "C1 nogroups" course homepage
-    And I navigate to course participants
+    When I am on the "C1 nogroups" "enrolled users" page logged in as "teacher2"
     Then "Student 1" row "Groups" column of "participants" table should contain "No groups"
     And "Student 2" row "Groups" column of "participants" table should contain "No groups"
     And "Student 3" row "Groups" column of "participants" table should contain "No groups"
@@ -90,9 +82,7 @@ Feature: Viewing participants page in different group modes
     And "Teacher 2" row "Groups" column of "participants" table should contain "No groups"
 
   Scenario: Viewing participants page as a non-editing teacher in a course in visible groups mode
-    When I log in as "teacher2"
-    And I am on "C2 visgroups" course homepage
-    And I navigate to course participants
+    When I am on the "C2 visgroups" "enrolled users" page logged in as "teacher2"
     Then "Student 1" row "Groups" column of "participants" table should contain "G1"
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
     And I should not see "Teacher 1"
@@ -107,9 +97,7 @@ Feature: Viewing participants page in different group modes
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
 
   Scenario: Viewing participants page as a non-editing teacher in a course in separate groups mode
-    When I log in as "teacher2"
-    And I am on "C3 sepgroups" course homepage
-    And I navigate to course participants
+    When I am on the "C3 sepgroups" "enrolled users" page logged in as "teacher2"
     Then "Student 1" row "Groups" column of "participants" table should contain "G1"
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
     And I should not see "Teacher 1"
@@ -124,17 +112,13 @@ Feature: Viewing participants page in different group modes
     And I should not see "Student 3"
 
   Scenario: Viewing participants page as a student in a course without group mode
-    When I log in as "student1"
-    And I am on "C1 nogroups" course homepage
-    And I navigate to course participants
+    When I am on the "C1 nogroups" "enrolled users" page logged in as "student1"
     Then "Student 1" row "Groups" column of "participants" table should contain "No groups"
     And "Student 2" row "Groups" column of "participants" table should contain "No groups"
     And "Student 3" row "Groups" column of "participants" table should contain "No groups"
 
   Scenario: Viewing participants page as a student in a group in a course in visible groups mode
-    When I log in as "student1"
-    And I am on "C2 visgroups" course homepage
-    And I navigate to course participants
+    When I am on the "C2 visgroups" "enrolled users" page logged in as "student1"
     Then "Student 1" row "Groups" column of "participants" table should contain "G1"
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
     And I should not see "Student 2"
@@ -148,9 +132,7 @@ Feature: Viewing participants page in different group modes
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
 
   Scenario: Viewing participants page as a student in a group in a course in separate groups mode
-    When I log in as "student1"
-    And I am on "C3 sepgroups" course homepage
-    And I navigate to course participants
+    When I am on the "C3 sepgroups" "enrolled users" page logged in as "student1"
     Then "Student 1" row "Groups" column of "participants" table should contain "G1"
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
     And I should not see "Student 2"
@@ -164,9 +146,7 @@ Feature: Viewing participants page in different group modes
     And I should not see "Teacher 1"
 
   Scenario: Viewing participants page as a student not in a group in a course in visible groups mode
-    When I log in as "student3"
-    And I am on "C2 visgroups" course homepage
-    And I navigate to course participants
+    When I am on the "C2 visgroups" "enrolled users" page logged in as "student3"
     Then "Student 1" row "Groups" column of "participants" table should contain "G1"
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
     And I should not see "Student 2"
@@ -180,7 +160,5 @@ Feature: Viewing participants page in different group modes
     And "Teacher 2" row "Groups" column of "participants" table should contain "G1"
 
   Scenario: Viewing participants page as a student not in a group in a course in separate groups mode
-    When I log in as "student3"
-    And I am on "C3 sepgroups" course homepage
-    And I navigate to course participants
+    When I am on the "C3 sepgroups" "enrolled users" page logged in as "student3"
     Then I should see "Sorry, but you need to be part of a group to see this page."

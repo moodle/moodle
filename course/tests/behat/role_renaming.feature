@@ -23,13 +23,10 @@ Feature: Rename roles in a course
       | Your word for 'Teacher' | Lecturer |
       | Your word for 'Student' | Learner  |
     And I press "Save"
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     Then I should see "Lecturer (Teacher)" in the "Teacher 1" "table_row"
     And I should see "Learner (Student)" in the "Student 1" "table_row"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page logged in as "student1"
     And I should see "Lecturer" in the "Teacher 1" "table_row"
     And I should see "Learner" in the "Student 1" "table_row"
     And I should not see "Lecturer (Teacher)" in the "Teacher 1" "table_row"
@@ -39,7 +36,5 @@ Feature: Rename roles in a course
     Given the following "role capability" exists:
       | role                      | editingteacher |
       | moodle/course:renameroles | inherit        |
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     Then I should not see "Role renaming"

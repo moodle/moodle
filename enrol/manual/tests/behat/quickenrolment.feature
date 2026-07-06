@@ -116,13 +116,11 @@ Feature: Teacher can search and enrol users one by one into the course
     And the following "course enrolments" exist:
       | user       | course | role           | timestart       |
       | teacher001 | C001   | editingteacher | ##1 month ago## |
-    And I log in as "teacher001"
-    And I am on "Course 001" course homepage
+    And I am on the "Course 001" "enrolled users" page logged in as "teacher001"
 
   @javascript
   Scenario: Teacher can search and enrol one particular student
-    Given I navigate to course participants
-    And I press "Enrol users"
+    Given I press "Enrol users"
     When I set the field "Select users" to "student001"
     And I should see "Student 001"
     And I click on "Enrol users" "button" in the "Enrol users" "dialogue"
@@ -131,16 +129,14 @@ Feature: Teacher can search and enrol users one by one into the course
 
   @javascript
   Scenario: Searching for a non-existing user
-    Given I navigate to course participants
-    And I press "Enrol users"
+    Given I press "Enrol users"
     And I click on "Select users" "field"
     And I type "qwertyuiop"
     Then I should see "No suggestions"
 
   @javascript
   Scenario: If there are less than 100 matching users, all are displayed for selection
-    Given I navigate to course participants
-    And I press "Enrol users"
+    Given I press "Enrol users"
     When I click on "Select users" "field"
     And I type "example.com"
     Then "Student 099" "autocomplete_suggestions" should exist
@@ -151,7 +147,6 @@ Feature: Teacher can search and enrol users one by one into the course
       | username    | firstname | lastname | email                   |
       | student100  | Student   | 100      | student100@example.com  |
       | student101  | Student   | 101      | student101@example.com  |
-    And I navigate to course participants
     And I press "Enrol users"
     When I click on "Select users" "field"
     And I type "example.com"
@@ -161,7 +156,6 @@ Feature: Teacher can search and enrol users one by one into the course
   Scenario: Changing the Maximum users per page setting affects the enrolment pop-up.
     Given the following config values are set as admin:
       | maxusersperpage | 5 |
-    And I navigate to course participants
     And I press "Enrol users"
     When I click on "Select users" "field"
     And I type "student00"
@@ -176,8 +170,7 @@ Feature: Teacher can search and enrol users one by one into the course
       | student100  | Student   | 100      | student100@example.com  | 1234567892 | 1234567893 | ABC1       | ABC2        | CITY1   | GB       |
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution |
-    When I am on "Course 001" course homepage
-    Then I navigate to course participants
+    And I am on the "Course 001" "enrolled users" page
     And I press "Enrol users"
     And I click on "Select users" "field"
     And I type "student100@example.com"
@@ -185,8 +178,7 @@ Feature: Teacher can search and enrol users one by one into the course
     # Remove identity field in setting User policies
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,phone1,phone2,department,institution |
-    And I am on "Course 001" course homepage
-    And I navigate to course participants
+    And I am on the "Course 001" "enrolled users" page
     And I press "Enrol users"
     And I click on "Select users" "field"
     And I type "student100@example.com"
@@ -196,7 +188,6 @@ Feature: Teacher can search and enrol users one by one into the course
   Scenario: Custom user profile fields work for search and display, if user has permission
     Given the following config values are set as admin:
       | showuseridentity | email,profile_field_customid |
-    And I navigate to course participants
     And I press "Enrol users"
     When I set the field "Select users" to "Q994"
     Then I should see "student001@example.com, Q994"

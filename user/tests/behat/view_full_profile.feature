@@ -27,21 +27,17 @@ Feature: Access to full profiles of users
       | messaging | 1 |
 
   Scenario: Viewing full profiles with default settings
-    When I log in as "student1"
+    When I am on the "Course 1" "enrolled users" page logged in as "student1"
     # Another student's full profile is visible
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
     And I follow "Student 2"
     Then I should see "Full profile"
     # Teacher's full profile is visible
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I follow "Teacher 1"
     And I follow "Full profile"
     And I should see "First access to site"
     # Own full profile is visible
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    And I am on the "Course 1" "enrolled users" page
     And I click on "Student 1" "link" in the "#participants" "css_element"
     And I follow "Full profile"
     And I should see "First access to site"
@@ -49,9 +45,7 @@ Feature: Access to full profiles of users
   Scenario: Viewing full profiles with forceloginforprofiles off
     Given the following config values are set as admin:
       |  forceloginforprofiles | 0 |
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "student1"
     And I follow "Student 2"
     And I follow "Full profile"
     Then I should see "First access to site"
@@ -60,17 +54,13 @@ Feature: Access to full profiles of users
     Given the following "role capability" exists:
       | role                    | user  |
       | moodle/user:viewdetails | allow |
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "student1"
     And I follow "Student 2"
     And I follow "Full profile"
     Then I should see "First access to site"
 
   Scenario: Viewing full profiles of students as a teacher
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     And I follow "Student 1"
     And I follow "Full profile"
     Then I should see "First access to site"
@@ -91,9 +81,7 @@ Feature: Access to full profiles of users
       | student3 | G2    |
       | teacher1 | G1    |
       | teacher1 | G2    |
-    When I log in as "student3"
-    And I am on "Course 2" course homepage
-    And I navigate to course participants
+    When I am on the "Course 2" "enrolled users" page logged in as "student3"
     And I follow "Teacher 1"
     Then I should see "Group 2"
     And I should not see "Group 1"
@@ -109,9 +97,7 @@ Feature: Access to full profiles of users
       | student2 | G2    |
       | teacher1 | G1    |
       | teacher1 | G2    |
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to course participants
+    When I am on the "Course 1" "enrolled users" page logged in as "student1"
     And I follow "Teacher 1"
     Then I should see "Group 1"
     And I should see "Group 2"
@@ -173,9 +159,7 @@ Feature: Access to full profiles of users
 
   @javascript
   Scenario: Accessibility, users can not click on profile image when on user's profile page.
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
-    When I navigate to course participants
+    Given I am on the "Course 1" "enrolled users" page logged in as "admin"
     Then "//img[contains(@class, 'userpicture')]" "xpath_element" should exist
     And "//a/child::img[contains(@class, 'userpicture')]" "xpath_element" should exist
     When I follow "Teacher 1"
