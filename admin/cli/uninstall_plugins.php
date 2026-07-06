@@ -24,6 +24,7 @@
  */
 
 define('CLI_SCRIPT', true);
+define('IGNORE_COMPONENT_CACHE', true);
 
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/clilib.php');
@@ -98,6 +99,7 @@ if ($options['showsql']) {
     $DB->set_debug(true);
 }
 
+core_plugin_manager::reset_caches();
 $pluginman = core_plugin_manager::instance();
 $plugininfo = $pluginman->get_plugins();
 
