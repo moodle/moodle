@@ -531,7 +531,7 @@ abstract class scheduled_task extends task_base {
      */
     public function get_next_scheduled_time(int $now = 0): int {
         if (!$now) {
-            $now = time();
+            $now = \core\di::get(\core\clock::class)->time();
         }
 
         // We need to change to the server timezone before using php date() functions.
