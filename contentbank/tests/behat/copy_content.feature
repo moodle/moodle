@@ -37,7 +37,7 @@ Feature: Copy content from the content bank
     And I click on "Save changes" "button"
     Then I should see "Fill the blanks copy 1"
     And I click on "Edit" "link"
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     Then the field "Title" matches value "Geography"
 
   Scenario: Users without the required capability cannot copy content

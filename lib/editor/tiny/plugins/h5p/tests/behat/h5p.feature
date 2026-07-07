@@ -82,7 +82,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I click on "Insert H5P content" "button" in the "Insert H5P content" "dialogue"
     When I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should not see "reveal"
     And I should see "Cloudberries"
     And I switch to the main frame
@@ -111,7 +111,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     When I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then ".h5p-actions" "css_element" should not exist
     And I switch to the main frame
     And I navigate to "Settings" in current page administration
@@ -123,7 +123,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I wait "1" seconds
     And I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And "Reuse" "text" should exist in the ".h5p-actions" "css_element"
     And I should not see "Embed"
     And I should not see "Rights of use"
@@ -138,7 +138,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I wait "1" seconds
     And I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And "Reuse" "text" should not exist in the ".h5p-actions" "css_element"
     And I should see "Embed"
     And I should see "Rights of use"
@@ -185,5 +185,5 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I click on "Save and display" "button"
     When I am on the PageName1 "page activity" page logged in as student1
     Then I switch to "h5pcontent" iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "reveal"
