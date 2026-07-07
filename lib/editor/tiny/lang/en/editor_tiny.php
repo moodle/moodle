@@ -152,6 +152,7 @@ $string['tiny:failed_to_initialize_plugin_0'] = 'Failed to initialize plugin: {0
 $string['tiny:failed_to_load_plugin_url_0'] = 'Failed to load plugin url: {0}';
 $string['tiny:failed_to_load_plugin_0_from_url_1'] = 'Failed to load plugin: {0} from url {1}';
 $string['tiny:failed_to_upload_image_0'] = 'Failed to upload image: {0}';
+$string['tiny:field_label_and_rich_textarea_help'] = '{$a}. Rich text area. Press ALT-F9 for menu. Press ALT-F10 for toolbar. Press ALT-0 for help.';
 $string['tiny:file'] = 'File';
 $string['tiny:find'] = 'Find';
 $string['tiny:find_if_searchreplace_plugin_activated'] = 'Find (if search and replace plugin activated)';
