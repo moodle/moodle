@@ -39,7 +39,7 @@ Feature: Updating a file in the content bank after using in a course
     And I click on "package.h5p" "link"
     And I click on "Edit" "link"
     And I wait until the page is ready
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I set the field "Title" to "Required title"
     And I set the field "Descriptive solution label" to "This is a new text"
     And I switch to the main frame
@@ -81,7 +81,7 @@ Feature: Updating a file in the content bank after using in a course
     And I click on "package.h5p" "link"
     And I click on "Edit" "link"
     And I wait until the page is ready
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I set the field "Title" to "Required title"
     And I set the field "Descriptive solution label" to "This is a new text"
     And I switch to the main frame
