@@ -198,8 +198,12 @@
             </div>
             <div class="col-lg-7 p-0">
                 <div class="tiny_media_preview_box border rounded">
-                    <button class="btn btn-secondary rounded-circle tiny_media_delete_icon" tabindex="0" title="{{#str}} deletemedia, tiny_media {{/str}}">
-                        <i class="fa fa-trash-o"></i>
+                    <button class="btn btn-secondary rounded-circle tiny_media_delete_icon"
+                        type="button"
+                        title="{{#str}} deletemedia, tiny_media {{/str}}"
+                        aria-label="{{#str}} deletemedia, tiny_media {{/str}}"
+                    >
+                        {{#pix}} delete, tiny_media {{/pix}}
                     </button>
                     <div id="media-filter-preview-container" class="w-100 text-center"></div>
                 </div>
