@@ -29,6 +29,7 @@ import * as Options from './options';
 import {addToolbarButton, addToolbarButtons, addToolbarSection,
     removeToolbarButton, removeSubmenuItem, updateEditorState} from './utils';
 import {addMathMLSupport, addSVGSupport} from './content';
+import {getString} from 'core/str';
 import Config from 'core/config';
 
 /**
@@ -213,26 +214,27 @@ const adjustEditorSize = (editor, target) => {
  * @param {Array} plugins
  * @returns {object}
  */
-const getStandardConfig = (target, tinyMCE, options, plugins) => {
+const getStandardConfig = async(target, tinyMCE, options, plugins) => {
     const lang = document.querySelector('html').lang;
 
-    let iframeAriaText = '';
     let label = null;
     if (target.id) {
         label = document.querySelector(`label[for="${CSS.escape(target.id)}"]`);
-        if (label) {
-            iframeAriaText = label.textContent.trim();
-        }
     }
+
+    const iframeAriaText = label
+        ? await getString('tiny:field_label_and_rich_textarea_help', 'editor_tiny', label.textContent.trim())
+        : await getString(
+            'tiny:rich_text_area._press_alt-f9_for_menu._press_alt-f10_for_toolbar._press_alt-0_for_hel',
+            'editor_tiny'
+        );
 
     const config = Object.assign({}, getDefaultConfiguration(), {
         // eslint-disable-next-line camelcase
         base_url: baseUrl,
 
-        ...(iframeAriaText && {
-            // eslint-disable-next-line camelcase
-            iframe_aria_text: iframeAriaText
-        }),
+        // eslint-disable-next-line camelcase
+        iframe_aria_text: iframeAriaText,
 
         // Set the editor target.
         // https://www.tiny.cloud/docs/tinymce/6/editor-important-options/#target
@@ -377,11 +379,8 @@ const getStandardConfig = (target, tinyMCE, options, plugins) => {
                 // Adjust the editor size.
                 adjustEditorSize(editor, target);
 
-                // Give the editor iframe an accessible name based on the field's label.
-                // An <iframe> is not a labelable element, so it cannot be the target of the
-                // label's "for" attribute. Associate them via aria-labelledby instead,
-                // generating an id for the label if it does not already have one.
-                // The iframe title is set separately through the iframe_aria_text option.
+                // Associate the iframe with the field's label using aria-labelledby as iframes are not labelable elements.
+                // The iframe title is set via the iframe_aria_text option.
                 if (label && editor.iframeElement) {
                     if (!label.id) {
                         label.id = `${editor.iframeElement.id}_label`;
@@ -446,7 +445,7 @@ const getStandardConfig = (target, tinyMCE, options, plugins) => {
  * @param {object} pluginValues.pluginNames The list of plugins to load
  * @returns {object} The TinyMCE Configuration
  */
-const getEditorConfiguration = (target, tinyMCE, options, pluginValues) => {
+const getEditorConfiguration = async(target, tinyMCE, options, pluginValues) => {
     const {
         pluginNames,
         pluginConfig,
@@ -456,7 +455,7 @@ const getEditorConfiguration = (target, tinyMCE, options, pluginValues) => {
     // This seems a little strange, but we must double-process the config slightly.
 
     // First we fetch the standard configuration.
-    const instanceConfig = getStandardConfig(target, tinyMCE, options, pluginNames);
+    const instanceConfig = await getStandardConfig(target, tinyMCE, options, pluginNames);
 
     // Next we make any standard changes.
     // Here we remove the file menu, as it doesn't offer any useful functionality.
@@ -565,7 +564,8 @@ export const setupForTarget = async(target, options = {}) => {
     }
 
     // Get the editor configuration for this editor.
-    const instanceConfig = getEditorConfiguration(target, tinyMCE, options, pluginValues);
+    // Get the configuration for this editor instance.
+    const instanceConfig = await getEditorConfiguration(target, tinyMCE, options, pluginValues);
 
     // Initialise the editor instance for the given configuration.
     // At this point any plugin which has configuration options registered will have them applied for this instance.
