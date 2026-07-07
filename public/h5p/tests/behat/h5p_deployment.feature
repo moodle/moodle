@@ -44,7 +44,7 @@ Feature: Undeployed H5P content should be only available to users that can deplo
   @javascript
   Scenario: A student I should not be able to see a package that has been deployed by a deleted user. Then if another user deploys the package, I can see it.
     Given I am on the "H5PPage" "page activity" page logged in as student1
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "This file can't be displayed"
     And I switch to the main frame
     And I log out
@@ -52,13 +52,13 @@ Feature: Undeployed H5P content should be only available to users that can deplo
     When I am on the "H5PPage" "page activity" page logged in as teacher2
     # Note the double switch to iframe is needed because the first iframe is the one that contains the H5P package and
     # the second iframe is the one that contains the H5P content.
-    And I switch to "h5p-iframe" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Of which countries are Berlin"
     And I switch to the main frame
     And I log out
     # Now student1 should be able to see the package.
     And I am on the "H5PPage" "page activity" page logged in as student1
-    And I switch to "h5p-iframe" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Of which countries are Berlin"

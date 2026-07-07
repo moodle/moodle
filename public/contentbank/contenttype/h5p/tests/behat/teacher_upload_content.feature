@@ -173,5 +173,5 @@ Feature: H5P file upload to content bank for non admins
     And I click on "Content bank" "link"
     And I should see "filltheblanks.h5p"
     And I click on "filltheblanks.h5p" "link"
-    And I wait until "h5p-iframe" iframe is interactable and switch to it
+    And I wait until "h5p-player" iframe is interactable and switch to it
     And I should see "missing-main-library"
