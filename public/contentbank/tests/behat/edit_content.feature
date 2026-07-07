@@ -56,7 +56,7 @@ Feature: Content bank use editor feature
     When I click on "Content bank" "link"
     And I click on "filltheblanks.h5p" "link"
     Then I click on "Edit" "link"
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I switch to the main frame
     And I change viewport size to "800x1400"
     And I click on "Cancel" "button"
@@ -71,7 +71,7 @@ Feature: Content bank use editor feature
     When I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "[data-action=Add-content]" "css_element"
     Then I click on "Fill in the Blanks" "link"
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And I switch to the main frame
     And I click on "Cancel" "button"
 
@@ -109,14 +109,14 @@ Feature: Content bank use editor feature
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "filltheblanks.h5p" "link"
     And I click on "Edit" "link"
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     And the field "Title" matches value "Geography"
     And I set the field "Title" to "New title"
     And I switch to the main frame
     When I click on "Save" "button"
     And "filltheblanks.h5p" "heading" should exist
     And I click on "Edit" "link"
-    And I switch to "h5p-editor-iframe" class iframe
+    And I wait until "h5p-editor-iframe" iframe is interactable and switch to it
     Then the field "Title" matches value "New title"
 
   Scenario: Teachers can edit their own content in the content bank
