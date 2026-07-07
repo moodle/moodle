@@ -69,7 +69,7 @@ $event->add_record_snapshot('course_modules', $cm);
 $event->add_record_snapshot('scorm', $scorm);
 $event->trigger();
 
-$sql = "SELECT a.id, a.userid, a.scormid, v.scoid, a.attempt, v.value, v.timemodified, e.element
+$sql = "SELECT v.id, a.userid, a.scormid, v.scoid, a.attempt, v.value, v.timemodified, e.element
           FROM {scorm_attempt} a
           JOIN {scorm_scoes_value} v ON v.attemptid = a.id
           JOIN {scorm_element} e ON e.id = v.elementid
@@ -178,4 +178,3 @@ $table->finish_output();
 if (!$table->is_downloading()) {
     echo $OUTPUT->footer();
 }
-
