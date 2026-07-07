@@ -1096,6 +1096,18 @@ export default class Modal {
             if (this.focusOnClose) {
                 // Focus on the element that actually triggers the modal.
                 this.focusOnClose.focus();
+
+                // Browsers only show the native :focus-visible ring on elements like buttons/links when
+                // focus arrived via the keyboard. Since the whole show/hide round trip here was likely
+                // mouse-driven (e.g. click the trigger, then click Cancel/a destination inside the modal),
+                // the ring would otherwise stay hidden even though focus was deliberately moved back to
+                // this element. Force it visible with the same '.focus' class that Moodle's button styles
+                // already style as an alias for :focus-visible.
+                const returnElement = $(this.focusOnClose).get(0);
+                if (returnElement) {
+                    returnElement.classList.add('focus');
+                    returnElement.addEventListener('blur', () => returnElement.classList.remove('focus'), {once: true});
+                }
             }
         });
     }

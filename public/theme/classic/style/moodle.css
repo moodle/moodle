@@ -37792,87 +37792,87 @@ p.arrow_button {
 /**
  * Focus styles to improve Bootstrap default contrast.
  */
-.btn:focus-visible, .btn.focus {
+.btn:focus-visible, .btn:focus.focus {
   outline: 0.25rem solid #5f6e7d;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-primary:focus-visible, .btn-primary.focus {
+.btn-primary:focus-visible, .btn-primary:focus.focus {
   outline: 0.25rem solid #000102;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-secondary:focus-visible, .btn-secondary.focus {
+.btn-secondary:focus-visible, .btn-secondary:focus.focus {
   outline: 0.25rem solid #5f6e7d;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-success:focus-visible, .btn-success.focus {
+.btn-success:focus-visible, .btn-success:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-info:focus-visible, .btn-info.focus {
+.btn-info:focus-visible, .btn-info:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-warning:focus-visible, .btn-warning.focus {
+.btn-warning:focus-visible, .btn-warning:focus.focus {
   outline: 0.25rem solid #694109;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-danger:focus-visible, .btn-danger.focus {
+.btn-danger:focus-visible, .btn-danger:focus.focus {
   outline: 0.25rem solid #1a0604;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-light:focus-visible, .btn-light.focus {
+.btn-light:focus-visible, .btn-light:focus.focus {
   outline: 0.25rem solid #8193a5;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-dark:focus-visible, .btn-dark.focus {
+.btn-dark:focus-visible, .btn-dark:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
 
-.btn-outline-primary:focus-visible, .btn-outline-primary.focus {
+.btn-outline-primary:focus-visible, .btn-outline-primary:focus.focus {
   outline: 0.25rem solid #000102;
   box-shadow: inset 0 0 0 2px #343a40;
 }
 
-.btn-outline-secondary:focus-visible, .btn-outline-secondary.focus {
+.btn-outline-secondary:focus-visible, .btn-outline-secondary:focus.focus {
   outline: 0.25rem solid #5f6e7d;
   box-shadow: inset 0 0 0 2px #343a40;
 }
 
-.btn-outline-success:focus-visible, .btn-outline-success.focus {
+.btn-outline-success:focus-visible, .btn-outline-success:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #343a40;
 }
 
-.btn-outline-info:focus-visible, .btn-outline-info.focus {
+.btn-outline-info:focus-visible, .btn-outline-info:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #343a40;
 }
 
-.btn-outline-warning:focus-visible, .btn-outline-warning.focus {
+.btn-outline-warning:focus-visible, .btn-outline-warning:focus.focus {
   outline: 0.25rem solid #694109;
   box-shadow: inset 0 0 0 2px #343a40;
 }
 
-.btn-outline-danger:focus-visible, .btn-outline-danger.focus {
+.btn-outline-danger:focus-visible, .btn-outline-danger:focus.focus {
   outline: 0.25rem solid #1a0604;
   box-shadow: inset 0 0 0 2px #343a40;
 }
 
-.btn-outline-light:focus-visible, .btn-outline-light.focus {
+.btn-outline-light:focus-visible, .btn-outline-light:focus.focus {
   outline: 0.25rem solid #8193a5;
   box-shadow: inset 0 0 0 2px #343a40;
 }
 
-.btn-outline-dark:focus-visible, .btn-outline-dark.focus {
+.btn-outline-dark:focus-visible, .btn-outline-dark:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #343a40;
 }
@@ -37892,7 +37892,7 @@ p.arrow_button {
   align-items: center;
   justify-content: center;
 }
-.btn-icon:focus-visible, .btn-icon.focus {
+.btn-icon:focus-visible, .btn-icon:focus.focus {
   outline: 0.25rem solid #5f6e7d;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37956,7 +37956,7 @@ p.arrow_button {
 .btn-icon.icons-collapse-expand:hover {
   outline: 2px solid #0f6cbf;
 }
-.btn-icon.icons-collapse-expand:focus-visible, .btn-icon.icons-collapse-expand.focus {
+.btn-icon.icons-collapse-expand:focus-visible, .btn-icon.icons-collapse-expand:focus.focus {
   outline: 0.25rem solid #3481c1;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37974,7 +37974,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-primary);
   --bs-btn-focus-shadow-rgb: 15, 108, 191;
 }
-.btn-subtle-primary:focus-visible, .btn-subtle-primary.focus {
+.btn-subtle-primary:focus-visible, .btn-subtle-primary:focus.focus {
   outline: 0.25rem solid #000102;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -37989,7 +37989,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-secondary);
   --bs-btn-focus-shadow-rgb: 206, 212, 218;
 }
-.btn-subtle-secondary:focus-visible, .btn-subtle-secondary.focus {
+.btn-subtle-secondary:focus-visible, .btn-subtle-secondary:focus.focus {
   outline: 0.25rem solid #5f6e7d;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -38004,7 +38004,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-success);
   --bs-btn-focus-shadow-rgb: 53, 122, 50;
 }
-.btn-subtle-success:focus-visible, .btn-subtle-success.focus {
+.btn-subtle-success:focus-visible, .btn-subtle-success:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -38019,7 +38019,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-info);
   --bs-btn-focus-shadow-rgb: 0, 129, 150;
 }
-.btn-subtle-info:focus-visible, .btn-subtle-info.focus {
+.btn-subtle-info:focus-visible, .btn-subtle-info:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -38034,7 +38034,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-warning);
   --bs-btn-focus-shadow-rgb: 240, 173, 78;
 }
-.btn-subtle-warning:focus-visible, .btn-subtle-warning.focus {
+.btn-subtle-warning:focus-visible, .btn-subtle-warning:focus.focus {
   outline: 0.25rem solid #694109;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -38049,7 +38049,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-danger);
   --bs-btn-focus-shadow-rgb: 202, 49, 32;
 }
-.btn-subtle-danger:focus-visible, .btn-subtle-danger.focus {
+.btn-subtle-danger:focus-visible, .btn-subtle-danger:focus.focus {
   outline: 0.25rem solid #1a0604;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -38064,7 +38064,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-light);
   --bs-btn-focus-shadow-rgb: 248, 249, 250;
 }
-.btn-subtle-light:focus-visible, .btn-subtle-light.focus {
+.btn-subtle-light:focus-visible, .btn-subtle-light:focus.focus {
   outline: 0.25rem solid #8193a5;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -38079,7 +38079,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-dark);
   --bs-btn-focus-shadow-rgb: 29, 33, 37;
 }
-.btn-subtle-dark:focus-visible, .btn-subtle-dark.focus {
+.btn-subtle-dark:focus-visible, .btn-subtle-dark:focus.focus {
   outline: 0.25rem solid black;
   box-shadow: inset 0 0 0 2px #fff;
 }
@@ -38093,7 +38093,7 @@ p.arrow_button {
   --bs-btn-hover-bg: var(--bs-gray-600);
   --bs-btn-focus-shadow-rgb: 106, 115, 123;
 }
-.btn-subtle-body:focus-visible, .btn-subtle-body.focus {
+.btn-subtle-body:focus-visible, .btn-subtle-body:focus.focus {
   outline: 0.25rem solid #0c0d0d;
   box-shadow: inset 0 0 0 2px #fff;
 }
