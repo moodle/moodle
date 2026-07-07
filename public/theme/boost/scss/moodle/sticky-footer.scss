@@ -11,12 +11,23 @@ body {
     position: fixed;
     right: 0;
     left: 0;
-    height: $stickyfooter-height;
-    bottom: calc(#{$stickyfooter-height} * -1);
-    transition: bottom .5s;
+    bottom: 0;
+    transform: translateY(100%);
+    transition: transform .5s;
+    will-change: transform;
     // Sticky footer overlays the main content, but not the page layout.
     z-index: map-get($zindex-levels, 3);
     font-size: calc(#{$font-size-base} * 1.10);
+
+    .sticky-footer-content-wrapper {
+        height: $stickyfooter-height;
+    }
+
+    .sticky-footer-supplementary-wrapper {
+        height: $stickyfooter-supplementary-height;
+        font-size: $font-size-base;
+    }
+
     // Adjust sticky footer width to the main content area.
     .sticky-footer-content {
         overflow: hidden;
@@ -27,6 +38,7 @@ body {
             }
         }
     }
+
     // Adjust sticky footer width when drawers are open.
     .sticky-footer-content-wrapper,
     .sticky-footer-supplementary-wrapper {
@@ -54,10 +66,10 @@ body {
     [data-groupname="buttonar"] {
         width: 100%;
     }
-}
 
-.sticky-footer-supplementary-wrapper {
-    font-size: $font-size-base;
+    .hasstickyfooter & {
+        transform: translateY(0);
+    }
 }
 
 .sticky-footer-supplementary-wrapper:has(.sticky-footer-supplementary) {
@@ -66,8 +78,14 @@ body {
     }
 }
 
-.hasstickyfooter .stickyfooter {
-    bottom: 0;
+/* Course linear navigation fixes for sticky footer. */
+
+.stickyfooter .course-linear-navigation {
+    max-width: $course-content-maxwidth;
+    .course-linear-navigation-completion .btn {
+        font-size: $btn-font-size-sm;
+        min-height: map-get($iconsizes, 5);
+    }
 }
 
 /* Standard components fixes for sticky footer. */

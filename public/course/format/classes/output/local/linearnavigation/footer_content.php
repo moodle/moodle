@@ -75,7 +75,7 @@ class footer_content implements named_templatable, renderable {
 
         $userid = $this->userid ?? $USER->id;
         $details = \core_completion\cm_completion_details::get_instance($this->cminfo, $userid);
-        $data = (array) (new \core_course\output\activity_completion($this->cminfo, $details, smallbutton: false))
+        $data = (array) (new \core_course\output\activity_completion($this->cminfo, $details, smallbutton: true))
             ->export_for_template($output);
         if (empty($data['uservisible'])) {
             return '';
