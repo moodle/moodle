@@ -50,6 +50,7 @@ require_login();  // this is selectively called again with $course later when we
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/portfolio/add.php', array('id' => $dataid, 'sesskey' => sesskey()));
 $PAGE->set_pagelayout('admin');
+$PAGE->set_show_navigation_footer(false);
 $exporter = null;
 
 if ($postcontrol && $type && !$dataid) {
