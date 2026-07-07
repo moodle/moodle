@@ -55,6 +55,7 @@ $PAGE->set_url($url);
 
 require_login($course, false, $cm);
 $PAGE->set_pagelayout('report');
+$PAGE->set_show_navigation_footer(false);
 
 require_capability('mod/scorm:viewreport', $contextmodule);
 

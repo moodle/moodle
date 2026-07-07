@@ -46,6 +46,7 @@ $user = $DB->get_record('user', array('id' => $userid), implode(',', \core_user\
 $selsco = $DB->get_record('scorm_scoes', array('id' => $scoid), '*', MUST_EXIST);
 
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 // END of url setting + data buildup.
 
 // Checking login +logging +getting context.
@@ -169,4 +170,3 @@ if (!$table->is_downloading()) {
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
 }
-

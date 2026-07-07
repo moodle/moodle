@@ -47,6 +47,7 @@ $attemptids = scorm_get_all_attempts($scorm->id, $userid);
 
 $PAGE->set_url($url);
 $PAGE->set_secondary_active_tab('scormreport');
+$PAGE->set_show_navigation_footer(false);
 // END of url setting + data buildup.
 
 // Checking login +logging +getting context.

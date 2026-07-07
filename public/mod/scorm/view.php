@@ -96,11 +96,18 @@ if (!empty($scorm->popup)) {
     }
     // Redirect back to the section with one section per page ?
 
-    $courseformat = course_get_format($course)->get_course();
-    if ($courseformat->format == 'singleactivity') {
-        $courseurl = $url->out(false, array('preventskip' => '1'));
+    $linearnavigationenabled = \core_courseformat\local\linearnavigationsettings::is_linear_navigation_enabled($course);
+    if ($linearnavigationenabled) {
+        // When linear navigation is enabled, redirect to the activity page, so that the user can navigate to the next activity.
+        // Prevent the skipview logic from re-launching the player, otherwise closing the popup would immediately reopen it.
+        $courseurl = $url->out(false, ['preventskip' => '1']);
     } else {
-        $courseurl = course_get_url($course, $cm->sectionnum)->out(false);
+        $courseformat = course_get_format($course)->get_course();
+        if ($courseformat->format == 'singleactivity') {
+            $courseurl = $url->out(false, ['preventskip' => '1']);
+        } else {
+            $courseurl = course_get_url($course, $cm->sectionnum)->out(false);
+        }
     }
     $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => $launch,
                                                            'currentorg' => $orgidentifier,
@@ -146,6 +153,7 @@ if (!empty($action) && $action == 'delete' && confirm_sesskey() && has_capabilit
 echo $OUTPUT->header();
 if (!empty($action) && confirm_sesskey() && has_capability('mod/scorm:deleteownresponses', $contextmodule)) {
     if ($action == 'delete') {
+        $PAGE->set_show_navigation_footer(false);
         $confirmurl = new moodle_url($PAGE->url, array('action' => 'deleteconfirm'));
         echo $OUTPUT->confirm(get_string('deleteuserattemptcheck', 'scorm'), $confirmurl, $PAGE->url);
         echo $OUTPUT->footer();
