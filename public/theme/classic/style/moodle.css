@@ -32243,6 +32243,14 @@ body.drawer-ease {
 .drawer.not-initialized {
   display: none;
 }
+.drawer .drawerheader .draweractions .btn {
+  width: 40px;
+  height: 40px;
+  background-color: #e9ecef;
+}
+.drawer .drawerheader .draweractions .btn:hover {
+  background-color: #ced4da;
+}
 .drawer.drawer-right {
   transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
   width: 315px;
@@ -32259,22 +32267,12 @@ body.drawer-ease {
   right: 0;
   visibility: visible;
 }
-.drawer.drawer-right .drawertoggle {
-  width: 40px;
-  height: 40px;
-  background-color: #e9ecef;
-}
-.drawer.drawer-right .drawertoggle:hover {
-  background-color: #ced4da;
-}
 .drawer.drawer-right .drawerheader {
-  height: auto;
-  flex-direction: column-reverse;
-  align-items: flex-start;
-  padding-block: 1rem;
+  flex-direction: row-reverse;
 }
-.drawer.drawer-right .drawerheader .draweractions {
-  gap: 0;
+.drawer.drawer-right .drawertoggle {
+  margin-left: auto;
+  margin-right: 0.5rem;
 }
 .drawer.drawer-right .block-header:has(> h3, > .h3) {
   border-bottom: 1px solid #dee2e6;
@@ -32529,6 +32527,16 @@ body.drawer-ease {
   }
 }
 @media (max-width: 991.98px) {
+  .drawer-md .drawerheader .draweractions .btn {
+    width: 40px;
+    height: 40px;
+    background-color: #e9ecef;
+  }
+  .drawer-md .drawerheader .draweractions .btn:hover {
+    background-color: #ced4da;
+  }
+}
+@media (max-width: 991.98px) {
   .drawer-md.drawer-right {
     transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
     width: 315px;
@@ -32549,24 +32557,14 @@ body.drawer-ease {
   }
 }
 @media (max-width: 991.98px) {
-  .drawer-md.drawer-right .drawertoggle {
-    width: 40px;
-    height: 40px;
-    background-color: #e9ecef;
-  }
-  .drawer-md.drawer-right .drawertoggle:hover {
-    background-color: #ced4da;
+  .drawer-md.drawer-right .drawerheader {
+    flex-direction: row-reverse;
   }
 }
 @media (max-width: 991.98px) {
-  .drawer-md.drawer-right .drawerheader {
-    height: auto;
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    padding-block: 1rem;
-  }
-  .drawer-md.drawer-right .drawerheader .draweractions {
-    gap: 0;
+  .drawer-md.drawer-right .drawertoggle {
+    margin-left: auto;
+    margin-right: 0.5rem;
   }
 }
 @media (max-width: 991.98px) {
@@ -32635,6 +32633,16 @@ body.drawer-ease {
   }
 }
 @media (max-width: 767.98px) {
+  .drawer-sm .drawerheader .draweractions .btn {
+    width: 40px;
+    height: 40px;
+    background-color: #e9ecef;
+  }
+  .drawer-sm .drawerheader .draweractions .btn:hover {
+    background-color: #ced4da;
+  }
+}
+@media (max-width: 767.98px) {
   .drawer-sm.drawer-right {
     transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
     width: 315px;
@@ -32655,24 +32663,14 @@ body.drawer-ease {
   }
 }
 @media (max-width: 767.98px) {
-  .drawer-sm.drawer-right .drawertoggle {
-    width: 40px;
-    height: 40px;
-    background-color: #e9ecef;
-  }
-  .drawer-sm.drawer-right .drawertoggle:hover {
-    background-color: #ced4da;
+  .drawer-sm.drawer-right .drawerheader {
+    flex-direction: row-reverse;
   }
 }
 @media (max-width: 767.98px) {
-  .drawer-sm.drawer-right .drawerheader {
-    height: auto;
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    padding-block: 1rem;
-  }
-  .drawer-sm.drawer-right .drawerheader .draweractions {
-    gap: 0;
+  .drawer-sm.drawer-right .drawertoggle {
+    margin-left: auto;
+    margin-right: 0.5rem;
   }
 }
 @media (max-width: 767.98px) {
