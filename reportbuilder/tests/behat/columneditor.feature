@@ -69,6 +69,19 @@ Feature: Manage custom report columns
     Then "Moved column 'Last access'" "toast_message" should be visible
     And "Last access" "text" should appear before "Email address" "text"
 
+  Scenario: Cancelling the move column dialogue returns focus to its move button
+    Given the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   | default |
+      | My report | core_user\reportbuilder\datasource\users | 0       |
+    And the following "core_reportbuilder > Columns" exist:
+      | report    | uniqueidentifier |
+      | My report | user:fullname    |
+      | My report | user:email       |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    When I click on "Move column 'Full name'" "button"
+    And I click on "Cancel" "button" in the "Move column 'Full name'" "dialogue"
+    Then the focused element is "Move column 'Full name'" "button"
+
   Scenario: Delete column from report
     Given the following "core_reportbuilder > Reports" exist:
       | name      | source                                   | default |
