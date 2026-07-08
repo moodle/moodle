@@ -64,6 +64,8 @@ if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
 }
 require_login($course, true, $cm);
 
+$PAGE->set_show_navigation_footer(false);
+
 if ($action == 'add' || $action == 'edit') {
     //just check sesskey
     if (!confirm_sesskey()) {

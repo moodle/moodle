@@ -57,6 +57,8 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
     throw new \moodle_exception('cannotviewpage', 'wiki');
 }
 
+$PAGE->set_show_navigation_footer(false);
+
 $wikipage = new page_wiki_prettyview($wiki, $subwiki, $cm);
 
 $wikipage->set_page($page);

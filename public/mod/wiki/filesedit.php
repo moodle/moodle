@@ -83,6 +83,7 @@ $PAGE->activityheader->set_attrs([
     'hidecompletion' => true
 ]);
 $PAGE->add_body_class('limitedwidth');
+$PAGE->set_show_navigation_footer(false);
 
 $data = new stdClass();
 $data->returnurl = $returnurl;
