@@ -27,8 +27,8 @@ Feature: View fill the blanks attempt report
   Scenario: View attempt in a fill the blanks content
     Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     # Do an attempt.
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Brigadoon"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 2 of 4\")]" to "Emerald city"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 3 of 4\")]" to "Narnia"
