@@ -2707,7 +2707,10 @@ final class external_test extends \core_external\tests\externallib_testcase {
 
         $evidence = external::grade_competency_in_course($course->id, $this->user->id, $c1->get('id'), 1, 'Evil note');
 
-        $this->assertEquals('The competency rating was manually set in the course \'Course: Evil course\'.', $evidence->description);
+        $this->assertEquals(
+            'The competency rating was manually set in the course &#39;Course: Evil course&#39;.',
+            $evidence->description
+        );
         $this->assertEquals('A', $evidence->gradename);
         $this->assertEquals('Evil note', $evidence->note);
 
@@ -2738,7 +2741,10 @@ final class external_test extends \core_external\tests\externallib_testcase {
 
         $evidence = external::grade_competency_in_plan($plan->get('id'), $c1->get('id'), 1, 'Evil note');
 
-        $this->assertEquals('The competency rating was manually set in the learning plan \'Evil\'.', $evidence->description);
+        $this->assertEquals(
+            'The competency rating was manually set in the learning plan &#39;Evil&#39;.',
+            $evidence->description
+        );
         $this->assertEquals('A', $evidence->gradename);
         $this->assertEquals('Evil note', $evidence->note);
 

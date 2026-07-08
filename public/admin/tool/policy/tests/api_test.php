@@ -100,14 +100,14 @@ final class api_test extends \advanced_testcase {
         $current = api::list_current_versions();
         $this->assertEquals(1, count($current));
         $first = reset($current);
-        $this->assertEquals('Test terms &amp; conditions', $first->name);
+        $this->assertEquals('Test terms &#38; conditions', $first->name);
 
         // Activate another policy version.
         api::make_current($new->get('id'));
         $current = api::list_current_versions();
         $this->assertEquals(1, count($current));
         $first = reset($current);
-        $this->assertEquals('New terms &amp; conditions', $first->name);
+        $this->assertEquals('New terms &#38; conditions', $first->name);
 
         // Inactivate the policy.
         api::inactivate($new->get('policyid'));
