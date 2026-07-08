@@ -43,8 +43,8 @@ Feature: Inline editing H5P content in mod_forum
     And I click on "Select this file" "button"
     And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I click on "Save and display" "button"
-    And I switch to "h5p-iframe" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Hello world!"
     And I switch to the main frame
     # The Edit button is only displayed when editing mode is on.
@@ -89,8 +89,8 @@ Feature: Inline editing H5P content in mod_forum
     And I click on "Select this file" "button"
     And I click on "Insert H5P" "button" in the "Insert H5P content" "dialogue"
     And I press "Save changes"
-    And I switch to "h5p-iframe" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Hello world!"
     And I switch to the main frame
     # The Edit button is only displayed when editing mode is on.
