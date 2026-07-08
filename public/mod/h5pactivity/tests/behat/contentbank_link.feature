@@ -51,8 +51,8 @@ Feature: Content bank link in the activity settings form
     And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Save and display" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Of which countries are Berlin, Washington, Beijing, Canberra and Brasilia the capitals?"
     And I switch to the main frame
     When I navigate to "Settings" in current page administration
@@ -73,8 +73,8 @@ Feature: Content bank link in the activity settings form
     And I click on "Make a copy of the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Save and display" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Of which countries are Berlin,"
     And I switch to the main frame
     When I navigate to "Settings" in current page administration
@@ -96,8 +96,8 @@ Feature: Content bank link in the activity settings form
     And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Save and display" "button"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Which fruit is this?"
     And I switch to the main frame
     And I navigate to "Settings" in current page administration

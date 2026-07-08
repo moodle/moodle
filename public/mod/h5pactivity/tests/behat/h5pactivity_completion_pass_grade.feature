@@ -42,8 +42,8 @@ Feature: Completion of H5P activity by achieving a passing grade
   Scenario: Verify that students can complete an H5P activity by achieving a passing grade
     # Student 1 attempt the H5P and fills the blanks with the wrong answers... needs more geography lessons!
     Given I am on the "Music history" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Of which countries are Berlin, Washington, Beijing, Canberra and Brasilia the capitals?"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Rio de Janeiro"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 2 of 4\")]" to "New York"
@@ -58,8 +58,8 @@ Feature: Completion of H5P activity by achieving a passing grade
 
     # Student 2 attempts the H5P and fills the blanks with the correct answers.
     And I am on the "Music history" "h5pactivity activity" page logged in as student2
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I should see "Of which countries are Berlin, Washington, Beijing, Canberra and Brasilia the capitals?"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Brasilia"
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 2 of 4\")]" to "Washington"
