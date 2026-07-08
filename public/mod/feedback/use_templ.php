@@ -53,6 +53,7 @@ $strfeedback  = get_string("modulename", "feedback");
 $params = ['id' => $id];
 $activeurl = new moodle_url('/mod/feedback/manage_templates.php', $params);
 $PAGE->set_url($activeurl);
+$PAGE->set_show_navigation_footer(false);
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
@@ -74,4 +75,3 @@ $form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_VIEW_TEM
 $form->display();
 
 echo $OUTPUT->footer();
-

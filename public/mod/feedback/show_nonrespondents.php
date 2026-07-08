@@ -62,6 +62,7 @@ if ($feedback->anonymous != FEEDBACK_ANONYMOUS_NO OR $feedback->course == SITEID
 $url = new moodle_url('/mod/feedback/show_nonrespondents.php', array('id'=>$cm->id));
 
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 
 $context = context_module::instance($cm->id);
 
@@ -318,4 +319,3 @@ if (empty($students)) {
 ///////////////////////////////////////////////////////////////////////////
 
 echo $OUTPUT->footer();
-

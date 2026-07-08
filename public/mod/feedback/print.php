@@ -68,6 +68,8 @@ $renderer->set_title(
 
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->set_title(format_string($feedback->name));
+$PAGE->set_show_navigation_footer(false);
+
 echo $OUTPUT->header();
 
 $continueurl = new moodle_url('/mod/feedback/view.php', array('id' => $id));

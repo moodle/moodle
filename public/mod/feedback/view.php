@@ -125,11 +125,14 @@ if (!$PAGE->has_secondary_navigation()) {
 }
 
 if ($feedbackcompletion->can_complete()) {
+    $linearnavigationdisabled = !\core_courseformat\local\linearnavigationsettings::is_linear_navigation_enabled($course);
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     if (!$feedbackcompletion->is_open()) {
         // Feedback is not yet open or is already closed.
         echo $OUTPUT->notification(get_string('feedback_is_not_open', 'feedback'));
-        echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
+        if ($linearnavigationdisabled) {
+            echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
+        }
     } else if (!$feedbackcompletion->can_submit()) {
         // Feedback was already submitted.
         echo $OUTPUT->notification(
@@ -137,7 +140,9 @@ if ($feedbackcompletion->can_complete()) {
             \core\output\notification::NOTIFY_INFO,
             closebutton: false,
         );
-        $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
+        if ($linearnavigationdisabled) {
+            echo $OUTPUT->continue_button(course_get_url($courseid ?: $course->id));
+        }
     }
     echo $OUTPUT->box_end();
 }

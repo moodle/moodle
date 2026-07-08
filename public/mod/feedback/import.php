@@ -39,6 +39,7 @@ if ($action !== false) {
     $url->param('action', $action);
 }
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 navigation_node::override_active_url(new moodle_url('/mod/feedback/edit.php'));
 
 if (! $cm = get_coursemodule_from_id('feedback', $id)) {

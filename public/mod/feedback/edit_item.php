@@ -51,6 +51,7 @@ $feedback = $PAGE->activityrecord;
 $editurl = new moodle_url('/mod/feedback/edit.php', array('id' => $cm->id));
 
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 
 // If the typ is pagebreak so the item will be saved directly.
 if (!$item->id && $typ === 'pagebreak') {
