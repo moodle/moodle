@@ -44,7 +44,7 @@ final class exifremover_service_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         // Ensure that the exif remover tool path is not set.
-        set_config('exifremovertoolpath', null, 'core_files');
+        set_config('file_redactor_exifremovertoolpath', null);
 
         $sourcepath = self::get_fixture_path('core_files', 'redactor/dummy.jpg');
 
@@ -83,7 +83,7 @@ final class exifremover_service_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         // Ensure that the exif remover tool path is not set.
-        set_config('exifremovertoolpath', null, 'core_files');
+        set_config('file_redactor_exifremovertoolpath', null);
 
         // Flip the orientation.
         $service = new exifremover_service();
