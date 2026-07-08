@@ -42,9 +42,13 @@
                 <!-- Row 1: Image preview -->
                 <div class="tiny_image_preview_box border rounded">
                     <!-- Delete image icon -->
-                    <div class="tiny_image_deleteicon" tabindex="0" title="{{#str}} deleteimage, tiny_media {{/str}}">
-                        <i class="fa fa-trash-o" title="{{#str}} deleteimage, tiny_media {{/str}}"></i>
-                    </div>
+                    <button class="btn btn-icon icon-size-3 p-0 ms-auto tiny_image_deleteicon"
+                        type="button"
+                        title="{{#str}} deleteimage, tiny_media {{/str}}"
+                        aria-label="{{#str}} deleteimage, tiny_media {{/str}}"
+                    >
+                        {{#pix}} delete, tiny_media {{/pix}}
+                    </button>
                     <!-- Image placeholder -->
                     <img class="tiny_image_preview" src="data:," alt>
                 </div>
