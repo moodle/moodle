@@ -18,9 +18,11 @@ Feature: Add blocks to dashboard page
       | student2 | C1 | student |
     And I log in as "student1"
 
+  @javascript @accessibility
   Scenario: Add blocks to page
     When I turn editing mode on
     And I add the "Latest announcements" block
+    And the "Latest announcements" "block" should meet accessibility standards with "best-practice" extra tests
     And I turn editing mode off
     Then I should see "Latest announcements" in the "Latest announcements" "block"
     And I should see "Course overview" in the "Course overview" "block"
