@@ -85,6 +85,7 @@ $strname    = get_string('name');
 $strtime    = get_string('time');
 
 $PAGE->set_title(get_string('allratingsforitem', 'rating'));
+$PAGE->set_show_navigation_footer(false);
 echo $OUTPUT->header();
 
 $ratingoptions = new stdClass;
