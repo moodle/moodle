@@ -272,6 +272,8 @@ function question_category_delete_safe($category, bool $coursedeletion = false):
                 $name = $context->get_context_name();
                 $parentcontext = $context->get_course_context(false);
                 $course = ($parentcontext && !$coursedeletion) ? get_course($parentcontext->instanceid) : get_site();
+            } else {
+                $course = get_site();
             }
             $qbank = core_question\local\bank\question_bank_helper::get_default_open_instance_system_type($course, true);
             question_save_from_deletion(array_keys($questionids), $qbank->context->id, $name, $rescue);
@@ -642,8 +644,18 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
         $DB->update_record('question_bank_entries', $entry);
 
         // Log this question move.
-        $event = \core\event\question_moved::create_from_question_instance($question, context::instance_by_id($question->contextid),
-                ['oldcategoryid' => $question->category, 'newcategoryid' => $newcategorydata->id]);
+        $oldcontext = context::instance_by_id($question->contextid, IGNORE_MISSING);
+        // When fixing orphaned question categories (e.g. via admin/cli/fix_orphaned_question_categories.php),
+        // the original context may be missing. The question_moved event requires a valid context
+        // and will throw a fatal exception otherwise, so fall back to the system context.
+        if ($oldcontext === false) {
+            $oldcontext = \context_system::instance();
+        }
+        $event = \core\event\question_moved::create_from_question_instance(
+            $question,
+            $oldcontext,
+            ['oldcategoryid' => $question->category, 'newcategoryid' => $newcategorydata->id]
+        );
         $event->trigger();
     }
 
