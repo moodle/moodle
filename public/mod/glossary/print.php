@@ -62,6 +62,7 @@ $fmtoptions = array(
 $PAGE->set_pagelayout('print');
 $PAGE->set_title(get_string("modulenameplural", "glossary"));
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 echo $OUTPUT->header();
 
 if (!has_capability('mod/glossary:manageentries', $context) and !$glossary->allowprintview) {

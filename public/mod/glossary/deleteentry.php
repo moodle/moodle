@@ -66,6 +66,7 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
     $PAGE->navbar->add(get_string('delete'));
     $PAGE->set_title($glossary->name);
     $PAGE->set_heading($course->fullname);
+    $PAGE->set_show_navigation_footer(false);
     $PAGE->activityheader->disable();
     echo $OUTPUT->header();
     $areyousure = "<b>".format_string($entry->concept)."</b><p>$strareyousuredelete</p>";

@@ -199,6 +199,7 @@ case 'approval':    /// Looking for entries waiting for approval
     if ( !$hook and !$sortkey and !$sortorder) {
         $hook = 'ALL';
     }
+    $PAGE->set_show_navigation_footer(false);
 break;
 
 case 'term':   /// Looking for entries that include certain term in its concept, definition or aliases
