@@ -11,8 +11,8 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | fullname | shortname | category | enablelinearnav |
+      | Course 1 | C1        | 0        | 0               |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |

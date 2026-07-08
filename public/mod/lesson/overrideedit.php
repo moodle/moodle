@@ -65,6 +65,7 @@ if ($overrideid) {
 }
 
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 
 require_login($course, false, $cm);
 

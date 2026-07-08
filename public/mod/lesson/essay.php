@@ -46,6 +46,7 @@ if ($mode !== 'display') {
 }
 $PAGE->set_url($url);
 $PAGE->set_secondary_active_tab('modulepage');
+$PAGE->set_show_navigation_footer(false);
 
 $currentgroup = groups_get_activity_group($cm, true);
 

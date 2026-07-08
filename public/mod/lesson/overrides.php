@@ -71,6 +71,8 @@ $PAGE->activityheader->set_attrs([
     'hidecompletion' => true,
     'description' => ''
 ]);
+$PAGE->set_show_navigation_footer(false);
+
 navigation_node::override_active_url(new moodle_url('/mod/lesson/overrides.php', ['cmid' => $cmid]));
 
 $renderer = $PAGE->get_renderer('mod_lesson');

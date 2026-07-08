@@ -44,6 +44,7 @@ require_login($course, false, $cm);
 
 $url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$id,'action'=>$action));
 $PAGE->set_url($url);
+$PAGE->set_show_navigation_footer(false);
 
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:edit', $context);

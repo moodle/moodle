@@ -54,6 +54,8 @@ if ($action == 'reportdetail') {
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 $PAGE->activityheader->set_description('');
+$PAGE->set_show_navigation_footer(false);
+
 $reportactionmenu = new \mod_lesson\output\report_action_menu($id, $url);
 $reportactionarea = $lessonoutput->render($reportactionmenu);
 
