@@ -1,5 +1,13 @@
 # core_grades (subsystem) Upgrade notes
 
+## 5.3dev
+
+### Deprecated
+
+- The `grade_item::update_deducted_mark()` method has been deprecated and will be removed in a future release (See MDL-88663 for the final deprecation). Penalties are now applied directly in `penalty_manager` via `adjust_raw_grade()`. There is no replacement for this method.
+
+  For more information see [MDL-88407](https://tracker.moodle.org/browse/MDL-88407)
+
 ## 5.2
 
 ### Removed

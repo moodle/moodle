@@ -102,6 +102,130 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_admin
 
+#### Added
+
+- The following classes have been renamed and now support autoloading.
+  Existing classes are currently unaffected.
+
+  | Old class name                                        | New class name                                                     |
+  | ----------------------------------------------------- | ------------------------------------------------------------------ |
+  | `\admin_category`                                     | `\core_admin\setting\tree\category`                                |
+  | `\admin_externalpage`                                 | `\core_admin\setting\tree\externalpage`                            |
+  | `\admin_page_manageblocks`                            | `\core_admin\setting\page\manageblocks`                            |
+  | `\admin_page_managefilters`                           | `\core_admin\setting\page\managefilters`                           |
+  | `\admin_page_managemessageoutputs`                    | `\core_admin\setting\page\managemessageoutputs`                    |
+  | `\admin_page_managemods`                              | `\core_admin\setting\page\managemods`                              |
+  | `\admin_page_manageportfolios`                        | `\core_admin\setting\page\manageportfolios`                        |
+  | `\admin_page_manageqbehaviours`                       | `\core_admin\setting\page\manageqbehaviours`                       |
+  | `\admin_page_manageqtypes`                            | `\core_admin\setting\page\manageqtypes`                            |
+  | `\admin_page_managerepositories`                      | `\core_admin\setting\page\managerepositories`                      |
+  | `\admin_page_pluginsoverview`                         | `\core_admin\setting\page\pluginsoverview`                         |
+  | `\admin_root`                                         | `\core_admin\setting\tree\root`                                    |
+  | `\admin_setting`                                      | `\core_admin\setting`                                              |
+  | `\admin_setting_agedigitalconsentmap`                 | `\core_admin\setting\setting\agedigitalconsentmap`                 |
+  | `\admin_setting_bloglevel`                            | `\core_admin\setting\setting\bloglevel`                            |
+  | `\admin_setting_check`                                | `\core_admin\setting\setting\check`                                |
+  | `\admin_setting_configbackupfilenamemustachetemplate` | `\core_admin\setting\setting\configbackupfilenamemustachetemplate` |
+  | `\admin_setting_configcheckbox`                       | `\core_admin\setting\setting\configcheckbox`                       |
+  | `\admin_setting_configcheckbox_with_advanced`         | `\core_admin\setting\setting\configcheckbox_with_advanced`         |
+  | `\admin_setting_configcheckbox_with_lock`             | `\core_admin\setting\setting\configcheckbox_with_lock`             |
+  | `\admin_setting_configcolourpicker`                   | `\core_admin\setting\setting\configcolourpicker`                   |
+  | `\admin_setting_configdirectory`                      | `\core_admin\setting\setting\configdirectory`                      |
+  | `\admin_setting_configduration`                       | `\core_admin\setting\setting\configduration`                       |
+  | `\admin_setting_configduration_with_advanced`         | `\core_admin\setting\setting\configduration_with_advanced`         |
+  | `\admin_setting_configempty`                          | `\core_admin\setting\setting\configempty`                          |
+  | `\admin_setting_configexecutable`                     | `\core_admin\setting\setting\configexecutable`                     |
+  | `\admin_setting_configfile`                           | `\core_admin\setting\setting\configfile`                           |
+  | `\admin_setting_confightmleditor`                     | `\core_admin\setting\setting\confightmleditor`                     |
+  | `\admin_setting_configiplist`                         | `\core_admin\setting\setting\configiplist`                         |
+  | `\admin_setting_configmixedhostiplist`                | `\core_admin\setting\setting\configmixedhostiplist`                |
+  | `\admin_setting_configmulticheckbox`                  | `\core_admin\setting\setting\configmulticheckbox`                  |
+  | `\admin_setting_configmulticheckbox2`                 | `\core_admin\setting\setting\configmulticheckbox2`                 |
+  | `\admin_setting_configmultiselect`                    | `\core_admin\setting\setting\configmultiselect`                    |
+  | `\admin_setting_configmultiselect_modules`            | `\core_admin\setting\setting\configmultiselect_modules`            |
+  | `\admin_setting_configpasswordunmask`                 | `\core_admin\setting\setting\configpasswordunmask`                 |
+  | `\admin_setting_configpasswordunmask_with_advanced`   | `\core_admin\setting\setting\configpasswordunmask_with_advanced`   |
+  | `\admin_setting_configportlist`                       | `\core_admin\setting\setting\configportlist`                       |
+  | `\admin_setting_configselect`                         | `\core_admin\setting\setting\configselect`                         |
+  | `\admin_setting_configselect_autocomplete`            | `\core_admin\setting\setting\configselect_autocomplete`            |
+  | `\admin_setting_configselect_with_advanced`           | `\core_admin\setting\setting\configselect_with_advanced`           |
+  | `\admin_setting_configselect_with_lock`               | `\core_admin\setting\setting\configselect_with_lock`               |
+  | `\admin_setting_configstoredfile`                     | `\core_admin\setting\setting\configstoredfile`                     |
+  | `\admin_setting_configtext`                           | `\core_admin\setting\setting\configtext`                           |
+  | `\admin_setting_configtext_with_advanced`             | `\core_admin\setting\setting\configtext_with_advanced`             |
+  | `\admin_setting_configtext_with_maxlength`            | `\core_admin\setting\setting\configtext_with_maxlength`            |
+  | `\admin_setting_configtextarea`                       | `\core_admin\setting\setting\configtextarea`                       |
+  | `\admin_setting_configthemepreset`                    | `\core_admin\setting\setting\configthemepreset`                    |
+  | `\admin_setting_configtime`                           | `\core_admin\setting\setting\configtime`                           |
+  | `\admin_setting_countrycodes`                         | `\core_admin\setting\setting\countrycodes`                         |
+  | `\admin_setting_courselist_frontpage`                 | `\core_admin\setting\setting\courselist_frontpage`                 |
+  | `\admin_setting_description`                          | `\core_admin\setting\setting\description`                          |
+  | `\admin_setting_emoticons`                            | `\core_admin\setting\setting\emoticons`                            |
+  | `\admin_setting_enablemobileservice`                  | `\core_admin\setting\setting\enablemobileservice`                  |
+  | `\admin_setting_encryptedpassword`                    | `\core_admin\setting\setting\encryptedpassword`                    |
+  | `\admin_setting_filetypes`                            | `\core_admin\setting\setting\filetypes`                            |
+  | `\admin_setting_flag`                                 | `\core_admin\setting\setting\flag`                                 |
+  | `\admin_setting_forcetimezone`                        | `\core_admin\setting\setting\forcetimezone`                        |
+  | `\admin_setting_grade_profilereport`                  | `\core_admin\setting\setting\grade_profilereport`                  |
+  | `\admin_setting_gradecat_combo`                       | `\core_admin\setting\setting\gradecat_combo`                       |
+  | `\admin_setting_heading`                              | `\core_admin\setting\setting\heading`                              |
+  | `\admin_setting_langlist`                             | `\core_admin\setting\setting\langlist`                             |
+  | `\admin_setting_manage_fileconverter_plugins`         | `\core_admin\setting\setting\manage_fileconverter_plugins`         |
+  | `\admin_setting_manage_plugins`                       | `\core_admin\setting\setting\manage_plugins`                       |
+  | `\admin_setting_manageantiviruses`                    | `\core_admin\setting\setting\manageantiviruses`                    |
+  | `\admin_setting_manageauths`                          | `\core_admin\setting\setting\manageauths`                          |
+  | `\admin_setting_managecontentbankcontenttypes`        | `\core_admin\setting\setting\managecontentbankcontenttypes`        |
+  | `\admin_setting_managecustomfields`                   | `\core_admin\setting\setting\managecustomfields`                   |
+  | `\admin_setting_managedataformats`                    | `\core_admin\setting\setting\managedataformats`                    |
+  | `\admin_setting_manageenrols`                         | `\core_admin\setting\setting\manageenrols`                         |
+  | `\admin_setting_manageexternalservices`               | `\core_admin\setting\setting\manageexternalservices`               |
+  | `\admin_setting_manageformats`                        | `\core_admin\setting\setting\manageformats`                        |
+  | `\admin_setting_managemediaplayers`                   | `\core_admin\setting\setting\managemediaplayers`                   |
+  | `\admin_setting_managerepository`                     | `\core_admin\setting\setting\managerepository`                     |
+  | `\admin_setting_managewebserviceprotocols`            | `\core_admin\setting\setting\managewebserviceprotocols`            |
+  | `\admin_setting_my_grades_report`                     | `\core_admin\setting\setting\my_grades_report`                     |
+  | `\admin_setting_php_extension_enabled`                | `\core_admin\setting\setting\php_extension_enabled`                |
+  | `\admin_setting_pickfilters`                          | `\core_admin\setting\setting\pickfilters`                          |
+  | `\admin_setting_pickroles`                            | `\core_admin\setting\setting\pickroles`                            |
+  | `\admin_setting_question_behaviour`                   | `\core_admin\setting\setting\question_behaviour`                   |
+  | `\admin_setting_regradingcheckbox`                    | `\core_admin\setting\setting\regradingcheckbox`                    |
+  | `\admin_setting_requiredpasswordunmask`               | `\core_admin\setting\setting\requiredpasswordunmask`               |
+  | `\admin_setting_requiredtext`                         | `\core_admin\setting\setting\requiredtext`                         |
+  | `\admin_setting_savebutton`                           | `\core_admin\setting\setting\savebutton`                           |
+  | `\admin_setting_scsscode`                             | `\core_admin\setting\setting\scsscode`                             |
+  | `\admin_setting_searchsetupinfo`                      | `\core_admin\setting\setting\searchsetupinfo`                      |
+  | `\admin_setting_servertimezone`                       | `\core_admin\setting\setting\servertimezone`                       |
+  | `\admin_setting_sitesetcheckbox`                      | `\core_admin\setting\setting\sitesetcheckbox`                      |
+  | `\admin_setting_sitesetselect`                        | `\core_admin\setting\setting\sitesetselect`                        |
+  | `\admin_setting_sitesettext`                          | `\core_admin\setting\setting\sitesettext`                          |
+  | `\admin_setting_special_adminseesall`                 | `\core_admin\setting\setting\special_adminseesall`                 |
+  | `\admin_setting_special_backup_auto_destination`      | `\core_admin\setting\setting\special_backup_auto_destination`      |
+  | `\admin_setting_special_backupdays`                   | `\core_admin\setting\setting\special_backupdays`                   |
+  | `\admin_setting_special_calendar_weekend`             | `\core_admin\setting\setting\special_calendar_weekend`             |
+  | `\admin_setting_special_coursecontact`                | `\core_admin\setting\setting\special_coursecontact`                |
+  | `\admin_setting_special_debug`                        | `\core_admin\setting\setting\special_debug`                        |
+  | `\admin_setting_special_frontpagedesc`                | `\core_admin\setting\setting\special_frontpagedesc`                |
+  | `\admin_setting_special_gradebookroles`               | `\core_admin\setting\setting\special_gradebookroles`               |
+  | `\admin_setting_special_gradeexport`                  | `\core_admin\setting\setting\special_gradeexport`                  |
+  | `\admin_setting_special_gradeexportdefault`           | `\core_admin\setting\setting\special_gradeexportdefault`           |
+  | `\admin_setting_special_gradelimiting`                | `\core_admin\setting\setting\special_gradelimiting`                |
+  | `\admin_setting_special_grademinmaxtouse`             | `\core_admin\setting\setting\special_grademinmaxtouse`             |
+  | `\admin_setting_special_gradepointdefault`            | `\core_admin\setting\setting\special_gradepointdefault`            |
+  | `\admin_setting_special_gradepointmax`                | `\core_admin\setting\setting\special_gradepointmax`                |
+  | `\admin_setting_special_registerauth`                 | `\core_admin\setting\setting\special_registerauth`                 |
+  | `\admin_setting_special_selectsetup`                  | `\core_admin\setting\setting\special_selectsetup`                  |
+  | `\admin_setting_users_with_capability`                | `\core_admin\setting\setting\users_with_capability`                |
+  | `\admin_setting_webservicesoverview`                  | `\core_admin\setting\setting\webservicesoverview`                  |
+  | `\admin_settingdependency`                            | `\core_admin\setting\settingpage\dependency`                       |
+  | `\admin_settingpage`                                  | `\core_admin\setting\settingpage\settingpage`                      |
+  | `\admin_settings_country_select`                      | `\core_admin\setting\setting\country_select`                       |
+  | `\admin_settings_coursecat_select`                    | `\core_admin\setting\setting\coursecat_select`                     |
+  | `\admin_settings_h5plib_handler_select`               | `\core_admin\setting\setting\h5plib_handler_select`                |
+  | `\admin_settings_num_course_sections`                 | `\core_admin\setting\setting\num_course_sections`                  |
+  | `\admin_settings_sitepolicy_handler_select`           | `\core_admin\setting\setting\sitepolicy_handler_select`            |
+
+  For more information see [MDL-81935](https://tracker.moodle.org/browse/MDL-81935)
+
 #### Deprecated
 
 - The `core_admin_renderer::upgradekey_form_page(...)` method has been deprecated, existing callers and/or overrides of this method should instead use replacement `core_admin_renderer::upgradekey_form_page_with_validation(...)`
@@ -187,6 +311,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87554](https://tracker.moodle.org/browse/MDL-87554)
 
+### core_grades
+
+#### Deprecated
+
+- The `grade_item::update_deducted_mark()` method has been deprecated and will be removed in a future release (See MDL-88663 for the final deprecation). Penalties are now applied directly in `penalty_manager` via `adjust_raw_grade()`. There is no replacement for this method.
+
+  For more information see [MDL-88407](https://tracker.moodle.org/browse/MDL-88407)
+
 ### core_reportbuilder
 
 #### Added
@@ -266,6 +398,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Assignment override logic has been refactored and put in a new override_manager class. There are 3 new web services for managing assignment overrides: - mod_assign_save_overrides - mod_assign_get_overrides - mod_assign_delete_overrides
 
   For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
+
+#### Changed
+
+- The `assign::calculate_penalised_grade()` method now applies grade-item scaling so the returned value now matches the `finalgrade` stored in the gradebook. It also accepts an optional `\grade_grade $usergraderecord` parameter to avoid redundant database lookups. Callers that previously applied their own grade-item scaling to the returned value should remove it to avoid double scaling.
+
+  For more information see [MDL-88407](https://tracker.moodle.org/browse/MDL-88407)
 
 #### Deprecated
 

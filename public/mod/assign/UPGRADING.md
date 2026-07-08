@@ -8,6 +8,12 @@
 
   For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
 
+### Changed
+
+- The `assign::calculate_penalised_grade()` method now applies grade-item scaling so the returned value now matches the `finalgrade` stored in the gradebook. It also accepts an optional `\grade_grade $usergraderecord` parameter to avoid redundant database lookups. Callers that previously applied their own grade-item scaling to the returned value should remove it to avoid double scaling.
+
+  For more information see [MDL-88407](https://tracker.moodle.org/browse/MDL-88407)
+
 ### Deprecated
 
 - The delete_override, delete_all_overrides, move_group_override, reorder_group_overrides are now deprecated. Use the corresponding methods in the override_manager class instead: - override_manager::delete_override - override_manager::delete_all_overrides - override_manager::move_group_override - override_manager::reorder_group_overrides
