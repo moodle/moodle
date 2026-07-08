@@ -1,0 +1,8 @@
+issueNumber: MDL-79755
+notes:
+  block_myoverview:
+    - message: >-
+        For the correct display of title and context menus, fields like fullname
+        are returned with numeric HTML entities (&#60;) instead of named
+        entities (&lt;) and unencoded quotes.
+      type: changed
