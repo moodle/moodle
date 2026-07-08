@@ -56,6 +56,8 @@ if (empty($messages->error) && empty($messages->exception)) {
         [$course, $cm] = get_course_and_cm_from_cmid($context->instanceid);
         $PAGE->set_cm($cm, $course);
         $PAGE->activityheader->disable();
+        // This is embedded content, so it must not display the linear navigation footer of the parent activity page.
+        $PAGE->set_show_navigation_footer(false);
     } else {
         $PAGE->set_context($context);
     }
