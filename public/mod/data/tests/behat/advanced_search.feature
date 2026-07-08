@@ -18,13 +18,14 @@ Feature: Database entries can be searched using an advanced search form.
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
     And the following "mod_data > fields" exist:
-      | database | type | name        | description         |
-      | data1    | text | My Field    | Field 1 description |
-      | data1    | text | Their field | Field 2 description |
+      | database | type | name        | description         | param1 |
+      | data1    | text | My Field    | Field 1 description |        |
+      | data1    | text | Their field | Field 2 description |        |
+      | data1    | menu | My menu     | Field 3 description | 0\nFoo |
     And the following "mod_data > entries" exist:
-      | database | user     | My Field       | Their field       |
-      | data1    | teacher1 | First content  | Owned content     |
-      | data1    | teacher1 | Second content | Authored content  |
+      | database | user     | My Field       | Their field      | My menu |
+      | data1    | teacher1 | First content  | 0                | 0       |
+      | data1    | teacher1 | Second content | Authored content | Foo     |
     And I am on the "Test database name" "data activity" page logged in as teacher1
     And I should see "First content"
     And I should see "Second content"
@@ -34,9 +35,23 @@ Feature: Database entries can be searched using an advanced search form.
     Given I click on "Advanced search" "checkbox"
     And I should see "My Field" in the "data_adv_form" "region"
     And I should see "Their field" in the "data_adv_form" "region"
-    When I set the field "My Field" to "First"
+    When I set the field "My Field" in the "data_adv_form" "region" to "First"
     And I click on "Save settings" "button" in the "data_adv_form" "region"
     Then I should see "First content"
+    And I should not see "Second content"
+    And I set the following fields in the "data_adv_form" "region" to these values:
+      | My Field    |   |
+      | Their field | 0 |
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
+    And I should see "First content"
+    And I should not see "Second content"
+    And I set the following fields in the "data_adv_form" "region" to these values:
+      | My Field      |   |
+      | Their field   |   |
+      # My menu.
+      | Dropdown list | 0 |
+    And I click on "Save settings" "button" in the "data_adv_form" "region"
+    And I should see "First content"
     And I should not see "Second content"
 
   @javascript
