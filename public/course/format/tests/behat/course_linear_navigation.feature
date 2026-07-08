@@ -51,10 +51,11 @@ Feature: Display the course linear navigation
       | page     | Page1 | C1     |
       | page     | Page2 | C1     |
     When I am on the "Page1" "page activity" page logged in as "s1"
+    And I should not see "Back to course" in the "sticky-footer" "region"
     And I click on "Next" "link" in the "sticky-footer" "region"
     Then I should see "Page2" in the "page-header" "region"
-    # The last activity in the course should redirect to the course page.
-    And I click on "Next" "link" in the "sticky-footer" "region"
+    # The last activity in the course should show "Back to course" to redirect to the course.
+    And I click on "Back to course" "link" in the "sticky-footer" "region"
     And I should see "Course1" in the "page-header" "region"
 
     Examples:
@@ -77,6 +78,7 @@ Feature: Display the course linear navigation
     When I am on the "Page2" "page activity" page logged in as "s1"
     And I click on "Previous" "link" in the "sticky-footer" "region"
     Then I should see "Page1" in the "page-header" "region"
+    And I should not see "Previous" in the "sticky-footer" "region"
 
     Examples:
       | format |

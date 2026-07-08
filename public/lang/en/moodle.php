@@ -178,6 +178,7 @@ $string['availability'] = 'Availability';
 $string['availablecourses'] = 'Available courses';
 $string['back'] = 'Back';
 $string['backto'] = 'Back to {$a}';
+$string['backtocourse'] = 'Back to course';
 $string['backtocourselisting'] = 'Back to course listing';
 $string['backtohome'] = 'Back to the site home';
 $string['backtopageyouwereon'] = 'Back to the page you were on';
