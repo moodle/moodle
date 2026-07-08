@@ -39,6 +39,12 @@ class client_entity implements ClientEntityInterface {
     /** @var int Revoked client status */
     public const int STATUS_REVOKED = 2;
 
+    /** @var int Client secret is not revoked */
+    public const int SECRET_REVOKED_NO = 0;
+
+    /** @var int Client secret is revoked */
+    public const int SECRET_REVOKED_YES = 1;
+
     /** @var \core\context The owner context */
     protected \core\context $ownercontext;
 
