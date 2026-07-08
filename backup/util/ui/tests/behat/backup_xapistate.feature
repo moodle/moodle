@@ -23,14 +23,14 @@ Feature: Backup xAPI states
       | enableasyncbackup | 0 |
     # Save state for the student user.
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And I set the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" to "Narnia"
     And I switch to the main frame
     And I am on the "Course 1" course page
     And I am on the "Awesome H5P package" "h5pactivity activity" page
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     And the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" matches value "Narnia"
     And I log out
 
@@ -47,8 +47,8 @@ Feature: Backup xAPI states
     # Login as student and confirm xAPI state has been restored.
     When I am on the "Course 2" course page logged in as student1
     And I click on "Awesome H5P package" "link" in the "region-main" "region"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" matches value "Narnia"
 
   Scenario: Content state is not restored when user data is not included in the backup
@@ -67,8 +67,8 @@ Feature: Backup xAPI states
     # Login as student and confirm xAPI state hasn't been restored.
     And I am on the "Course 2" course page logged in as student1
     And I click on "Awesome H5P package" "link" in the "region-main" "region"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" does not match value "Narnia"
 
   Scenario: Content state is not restored when user data is included in the backup but xAPI state is not restored
@@ -83,8 +83,8 @@ Feature: Backup xAPI states
     # Login as student and confirm xAPI state hasn't been restored.
     When I am on the "Course 2" course page logged in as student1
     And I click on "Awesome H5P package" "link" in the "region-main" "region"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" does not match value "Narnia"
 
   Scenario: Content state is not restored when it is not included explicitly in the backup
@@ -100,6 +100,6 @@ Feature: Backup xAPI states
     # Login as student and confirm xAPI state hasn't been restored.
     And I am on the "Course 2" course page logged in as student1
     And I click on "Awesome H5P package" "link" in the "region-main" "region"
-    And I switch to "h5p-player" class iframe
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-player" iframe is interactable and switch to it
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then the field with xpath "//input[contains(@aria-label,\"Blank input 1 of 4\")]" does not match value "Narnia"

@@ -24,7 +24,7 @@ Feature: Render H5P content using filters
       | activity | name      | intro     | introformat | course | content                                                                      | contentformat | idnumber |
       | page     | PageName1 | PageDesc1 | 1           | C1     | <div>Go for it</div>https://moodle.h5p.com/content/1290772960722742119/embed | 1             | 1        |
     When I am on the PageName1 "page activity" page logged in as teacher1
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Lorum ipsum"
 
   @javascript
@@ -33,7 +33,7 @@ Feature: Render H5P content using filters
       | activity | name      | intro     | introformat | course | content                                                                                                                         | contentformat | idnumber |
       | page     | PageName1 | PageDesc1 | 1           | C1     | <a href='https://moodle.h5p.com/content/1290772960722742119/embed'>https://moodle.h5p.com/content/1290772960722742119/embed</a> | 1             | 1        |
     When I am on the PageName1 "page activity" page logged in as teacher1
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Lorum ipsum"
 
   Scenario: Add an external H5P content URL in a link with text. Shouldn't be rendered.
@@ -52,17 +52,17 @@ Feature: Render H5P content using filters
     When I am on the PageName1 "page activity" page logged in as teacher1
     And I should see "PageName1" in the "page-header" "region"
 #   Switch to iframe created by filter
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
 #   Switch to iframe created by embed.php page
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Lorum ipsum"
     And I switch to the main frame
     And I log out
     And I am on the PageName1 "page activity" page logged in as student1
 #   Switch to iframe created by filter
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
 #   Switch to iframe created by embed.php page
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should not see "you don't have access"
     And I should see "Lorum ipsum"
 
@@ -74,7 +74,7 @@ Feature: Render H5P content using filters
     When I am on the PageName1 "page activity" page logged in as teacher1
     And I should see "PageName1" in the "page-header" "region"
 #   Switch to iframe created by filter
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Note that the libraries may exist in the file you uploaded, but you're not allowed to upload new libraries."
     And I should see "missing-required-library"
 
@@ -87,24 +87,24 @@ Feature: Render H5P content using filters
     When I am on the PageName1 "page activity" page logged in as teacher1
     And I should see "PageName1" in the "page-header" "region"
 #   Switch to iframe created by filter
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
 #   Libraries don't exist, so an error should be displayed.
     Then I should see "missing-required-library"
     And I switch to the main frame
     And I am on the PageName2 "page activity" page logged in as admin
     And I should see "PageName2" in the "page-header" "region"
 #   Switch to iframe created by filter
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
 #   Switch to iframe created by embed.php page
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
 #   Libraries have been installed.
     Then I should see "Lorum ipsum"
     And I switch to the main frame
     And I am on the PageName1 "page activity" page logged in as teacher1
 #   Switch to iframe created by filter
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
 #   Switch to iframe created by embed.php page
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should not see "missing-required-library"
     And I should see "Lorum ipsum"
 
@@ -121,7 +121,7 @@ Feature: Render H5P content using filters
     And I click on "Disable" "link" in the "Accordion" "table_row"
     And I am on the PageName1 "page activity" page logged in as admin
     And I should see "PageName1" in the "page-header" "region"
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
 #   Library is disabled, so an error should be displayed.
     Then I should see "This file can't be displayed because its content type is disabled."
     And I should not see "Lorum ipsum"
@@ -131,9 +131,9 @@ Feature: Render H5P content using filters
 #   Content should be deployed now that main library is enabled.
     And I am on the PageName1 "page activity" page
 #   Switch to iframe created by filter.
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
 #   Switch to iframe created by embed.php page.
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "Lorum ipsum"
     And I should not see "This file can't be displayed because its content type is disabled."
     And I switch to the main frame
@@ -141,7 +141,7 @@ Feature: Render H5P content using filters
     And I click on "Disable" "link" in the "Accordion" "table_row"
 #   Library is disabled again, so an error should be displayed.
     And I am on the PageName1 "page activity" page
-    And I switch to "h5p-iframe" class iframe
+    And I wait until "h5p-iframe" iframe is interactable and switch to it
     Then I should see "This file can't be displayed because its content type is disabled."
     And I should not see "Lorum ipsum"
     And I switch to the main frame
