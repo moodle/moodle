@@ -34,6 +34,8 @@ final class linearnavigationsettings_test extends \advanced_testcase {
      * @param bool $shownavigationfooter Whether the navigation footer should be shown.
      * @param bool $hascm Whether the page is on an activity page.
      * @param bool $expected The expected result.
+     * @param array $cmoptions Options to pass to the module generator.
+     * @param string $user The user role to use for the test. Default: student. Use 'admin' to use the admin user.
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('show_navigation_footer_provider')]
     public function test_show_navigation_footer(
@@ -43,19 +45,36 @@ final class linearnavigationsettings_test extends \advanced_testcase {
         bool $shownavigationfooter,
         bool $hascm,
         bool $expected,
+        array $cmoptions = [],
+        string $user = 'student',
     ): void {
         $this->resetAfterTest();
+        if (array_key_exists('visibleoncoursepage', $cmoptions)) {
+            set_config('allowstealth', 1);
+        }
+        $sectionhidden = $cmoptions['sectionhidden'] ?? false;
+        unset($cmoptions['sectionhidden']);
+
+        if ($user === 'admin') {
+            $this->setAdminUser();
+        } else {
+            $this->setUser($this->getDataGenerator()->create_user());
+        }
 
         $course = $this->getDataGenerator()->create_course([
             'format' => $format,
             'enablelinearnav' => $enablelinearnav,
         ]);
-        $page = $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
 
         $moodlepage = new \moodle_page();
         $moodlepage->set_course($course);
+        if ($sectionhidden) {
+            $sectioninfo = get_fast_modinfo($course->id)->get_section_info(0);
+            \core_courseformat\formatactions::section($course->id)->set_visibility($sectioninfo, false);
+        }
+        $module = $this->getDataGenerator()->create_module('page', array_merge(['course' => $course->id], $cmoptions));
         if ($hascm) {
-            $cm = get_coursemodule_from_id('page', $page->cmid);
+            $cm = get_coursemodule_from_id('page', $module->cmid);
             $moodlepage->set_cm($cm, $course);
         }
         $moodlepage->set_has_sticky_footer($hasstickyfooter);
@@ -118,6 +137,44 @@ final class linearnavigationsettings_test extends \advanced_testcase {
                 'shownavigationfooter' => false,
                 'hascm' => true,
                 'expected' => false,
+            ],
+            'Stealth module' => [
+                'format' => 'topics',
+                'enablelinearnav' => 1,
+                'hasstickyfooter' => false,
+                'shownavigationfooter' => true,
+                'hascm' => true,
+                'expected' => false,
+                'cmoptions' => ['visibleoncoursepage' => false],
+            ],
+            'Section hidden, visible module' => [
+                'format' => 'topics',
+                'enablelinearnav' => 1,
+                'hasstickyfooter' => false,
+                'shownavigationfooter' => true,
+                'hascm' => true,
+                'expected' => false,
+                'cmoptions' => ['visible' => true, 'sectionhidden' => true],
+            ],
+            'Admin: Stealth module' => [
+                'format' => 'topics',
+                'enablelinearnav' => 1,
+                'hasstickyfooter' => false,
+                'shownavigationfooter' => true,
+                'hascm' => true,
+                'expected' => true,
+                'cmoptions' => ['visibleoncoursepage' => false],
+                'user' => 'admin',
+            ],
+            'Admin: Section hidden, visible module' => [
+                'format' => 'topics',
+                'enablelinearnav' => 1,
+                'hasstickyfooter' => false,
+                'shownavigationfooter' => true,
+                'hascm' => true,
+                'expected' => true,
+                'cmoptions' => ['visible' => true, 'sectionhidden' => true],
+                'user' => 'admin',
             ],
         ];
     }

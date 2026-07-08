@@ -145,6 +145,11 @@ class linearnavigationsettings {
             return false;
         }
 
+        if ($page->cm->is_stealth() && !has_capability('moodle/course:viewhiddenactivities', $page->cm->context)) {
+            // Stealth activities should not show the navigation footer if the user lacks hidden activity permissions.
+            return false;
+        }
+
         return true;
     }
 
