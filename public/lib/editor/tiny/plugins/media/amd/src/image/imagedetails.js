@@ -355,11 +355,6 @@ export class ImageDetails extends MediaBase {
         deleteImageEle.addEventListener('click', () => {
             this.deleteImage();
         });
-        deleteImageEle.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-                this.deleteImage();
-            }
-        });
 
         this.root.addEventListener('change', async(e) => {
             const presentationEle = e.target.closest(Selectors.IMAGE.elements.presentation);

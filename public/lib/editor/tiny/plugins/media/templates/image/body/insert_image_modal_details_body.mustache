@@ -41,7 +41,7 @@
             <div class="tiny_image_properties_col col-lg-5">
                 {{! Image description }}
                 <div class="mb-2">
-                    <span class="fw-bold">{{#str}} imagealternativetext, tiny_media {{/str}}</span>
+                    <h6 class="h6 fw-bold">{{#str}} imagealternativetext, tiny_media {{/str}}</h6>
                     <label for="{{elementid}}_tiny_image_altentry">{{#str}} enteralt, tiny_media {{/str}}</label>
                     <textarea class="tiny_image_altentry form-control fullwidth" rows="5" id="{{elementid}}_tiny_image_altentry" name="altentry" maxlength="{{maxlengthalt}}">{{alt}}</textarea>
                     {{! Character counter }}
@@ -59,7 +59,7 @@
                     <span>{{#alttexthelpicon}}{{> core/help_icon }}{{/alttexthelpicon}}</span>
                 </div>
                 <hr>
-                <div class="fw-bold">{{#str}} imagesize, tiny_media {{/str}}</div>
+                <h6 class="h6 fw-bold">{{#str}} imagesize, tiny_media {{/str}}</h6>
                 {{! Original size radio button }}
                 <div class="mt-1 mb-1">
                     <div class="btn-group" role="group" aria-label="{{#str}} imagesize, tiny_media{{/str}}">
@@ -103,9 +103,13 @@
                 {{! Image preview }}
                 <div class="tiny_image_preview_box border rounded position-relative">
                     {{! Delete image icon }}
-                    <div class="tiny_image_deleteicon" tabindex="0" title="{{#str}} deleteimage, tiny_media {{/str}}">
-                        <i class="fa fa-trash-o" title="{{#str}} deleteimage, tiny_media {{/str}}"></i>
-                    </div>
+                    <button class="btn btn-icon icon-size-3 p-0 ms-auto tiny_image_deleteicon"
+                        type="button"
+                        title="{{#str}} deleteimage, tiny_media {{/str}}"
+                        aria-label="{{#str}} deleteimage, tiny_media {{/str}}"
+                    >
+                        {{#pix}} delete, tiny_media {{/pix}}
+                    </button>
                     {{! Image placeholder }}
                     <img class="tiny_image_preview" src="data:," alt>
                 </div>
