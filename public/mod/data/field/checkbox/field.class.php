@@ -207,7 +207,7 @@ class data_field_checkbox extends data_field_base {
 
     function display_browse_field($recordid, $template) {
         $content = $this->get_data_content($recordid);
-        if (!$content || empty($content->content)) {
+        if (!$content || !isset($content->content)) {
             return '';
         }
 

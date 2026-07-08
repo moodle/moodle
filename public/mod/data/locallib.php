@@ -1072,10 +1072,6 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
         $searcharray = array();
     }
 
-    if (core_text::strlen($search) < 2) {
-        $search = '';
-    }
-
     $approvecap = has_capability('mod/data:approve', $context);
     $canmanageentries = has_capability('mod/data:manageentries', $context);
 
@@ -1171,7 +1167,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
             $initialparams['myid3'] = $params['myid2'];
         }
 
-        if ($search) {
+        if ($search !== '') {
             $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)."
                               OR ".$DB->sql_like('u.firstname', ':search2', false)."
                               OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
@@ -1211,7 +1207,7 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
             $initialparams['myid3'] = $params['myid2'];
         }
 
-        if ($search) {
+        if ($search !== '') {
             $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR
                 ".$DB->sql_like('u.firstname', ':search2', false)." OR
                 ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
@@ -1361,7 +1357,12 @@ function data_build_search_array($data, $paging, $searcharray, $defaults = null,
                     $val = '';
                 }
             }
-            if (!empty($val)) {
+
+            // Account for both arrays and empty text.
+            if (
+                (is_array($val) && !empty($val)) ||
+                ((string) $val !== '')
+            ) {
                 $searcharray[$field->id] = new stdClass();
                 list($searcharray[$field->id]->sql, $searcharray[$field->id]->params) = $searchfield->generate_sql('c'.$field->id, $val);
                 $searcharray[$field->id]->data = $val;
