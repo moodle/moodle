@@ -720,13 +720,19 @@ class manager {
         $concurrencylimit = get_config('core', 'task_adhoc_concurrency_limit');
         $cachedqueuesize = 1200;
 
-        $uniquetasksinqueue = array_map(
-            ['\core\task\manager', 'adhoc_task_from_record'],
+        $uniquetasksinqueue = [];
+        foreach (
             $DB->get_records_sql(
                 'SELECT classname FROM {task_adhoc} WHERE nextruntime < :timestart GROUP BY classname',
                 ['timestart' => $timestart]
-            )
-        );
+            ) as $uniqueclassname => $record
+        ) {
+            try {
+                $uniquetasksinqueue[$uniqueclassname] = self::adhoc_task_from_record($record);
+            } catch (\moodle_exception $e) {
+                debugging("Failed to load task: $record->classname", DEBUG_DEVELOPER, $e->getTrace());
+            }
+        }
 
         if (!isset(self::$numtasks) || self::$numtasks !== count($uniquetasksinqueue)) {
             self::$numtasks = count($uniquetasksinqueue);
