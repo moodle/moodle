@@ -84,6 +84,7 @@ if ($displaymode !== '') {
 }
 $PAGE->set_url($url);
 $PAGE->set_secondary_active_tab("modulepage");
+$PAGE->set_show_navigation_footer(false);
 
 $forcejs = get_config('scorm', 'forcejavascript');
 if (!empty($forcejs)) {
@@ -102,7 +103,6 @@ require_login($course, false, $cm);
 $strscorms = get_string('modulenameplural', 'scorm');
 $strscorm  = get_string('modulename', 'scorm');
 $strpopup = get_string('popup', 'scorm');
-$strexit = get_string('exitactivity', 'scorm');
 
 $coursecontext = context_course::instance($course->id);
 
@@ -173,19 +173,25 @@ $formatoptions = $format->get_format_options();
 $coursedisplay = $formatoptions['coursedisplay'] ?? null;
 $exiturl = "";
 if (empty($scorm->popup) || $displaymode == 'popup') {
-    if (
-        $format->get_format() == 'singleactivity' &&
-        $scorm->skipview == SCORM_SKIPVIEW_ALWAYS &&
-        !has_capability('mod/scorm:viewreport', context_module::instance($cm->id))
-    ) {
-        // Redirect students back to site home to avoid redirect loop.
-        $exiturl = $CFG->wwwroot;
-    } else if ($coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
-        // Redirect back to the current section if one section per page is being used.
-        $exiturl = course_get_url($course, $cm->sectionnum, ['sr' => $cm->sectionnum])->out();
+    $linearnavigationenabled = \core_courseformat\local\linearnavigationsettings::is_linear_navigation_enabled($course);
+    if ($linearnavigationenabled) {
+        // If linear navigation is enabled, ignore skipview and redirect to the activity page so the user can proceed.
+        $exiturl = (new \core\url('/mod/scorm/view.php', ['id' => $cm->id, 'preventskip' => '1']))->out();
     } else {
-        // Redirect back to the current section anchor on the course page.
-        $exiturl = course_get_url($course, $cm->sectionnum)->out();
+        if (
+            $format->get_format() == 'singleactivity' &&
+            $scorm->skipview == SCORM_SKIPVIEW_ALWAYS &&
+            !has_capability('mod/scorm:viewreport', context_module::instance($cm->id))
+        ) {
+            // Redirect students back to site home to avoid redirect loop.
+            $exiturl = $CFG->wwwroot;
+        } else if ($coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            // Redirect back to the current section if one section per page is being used.
+            $exiturl = course_get_url($course, $cm->sectionnum, ['sr' => $cm->sectionnum])->out();
+        } else {
+            // Redirect back to the current section anchor on the course page.
+            $exiturl = course_get_url($course, $cm->sectionnum)->out();
+        }
     }
 }
 
