@@ -650,11 +650,15 @@ M.core_filepicker.init = function(Y, options) {
             formData.append('env', this.options.env);
             formData.append('sesskey', M.cfg.sesskey);
             formData.append('client_id', args.client_id);
-            formData.append('itemid', this.options.itemid || 0);
+            // Use set() rather than append() as the upload form already has a hidden
+            // itemid field: appending here would send it twice.
+            formData.set('itemid', this.options.itemid || 0);
             formData.append('maxbytes', this.options.maxbytes || -1);
             // The unlimited value of areamaxbytes is -1, it is defined by FILE_AREA_MAX_BYTES_UNLIMITED.
             formData.append('areamaxbytes', this.options.areamaxbytes || -1);
-            // The form element only accept certain file types.
+            // The form element only accept certain file types. Clear any values already
+            // present on the underlying upload form first to avoid sending duplicates.
+            formData.delete('accepted_types[]');
             this.options.accepted_types.forEach(element => {
                 formData.append("accepted_types[]", element);
             });
@@ -662,8 +666,10 @@ M.core_filepicker.init = function(Y, options) {
                 formData.append('ctx_id', this.options.context.id);
             }
             if (args.params) {
+                // Use set() rather than append(): for uploads, repo_upload_file/title/author/license
+                // are already present on the underlying form, so append() would send the file twice.
                 Object.entries(args.params).forEach(([key, value]) => {
-                    formData.append(key, value);
+                    formData.set(key, value);
                 });
             }
             const dataString = [...formData.entries()]
@@ -697,7 +703,14 @@ M.core_filepicker.init = function(Y, options) {
                     return;
                 }
                 if (xhr.status === 200) {
-                    const data = JSON.parse(xhr.responseText);
+                    let data = null;
+                    try {
+                        data = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        Y.use('moodle-core-notification-exception', function() {
+                            return new M.core.exception(e);
+                        });
+                    }
                     if (data) {
                         if (data.error) {
                             if (data.errorcode === 'invalidfiletypewithaccepted') {
@@ -2046,6 +2059,12 @@ M.core_filepicker.init = function(Y, options) {
                     args.callbackStartUpload = Y.bind('startUpload', scope.options.magicscope);
                     args.callbackUploadFinished = Y.bind('uploadFinished', scope.options.magicscope);
                     args.callbackProgress = Y.bind('updateProgress', scope.options.magicscope);
+                    args.onerror = function() {
+                        // The dialogue was hidden to reveal the progress bar. Restore it so the
+                        // user can see the error and correct the file without reopening "Add...".
+                        scope.mainui.show();
+                        scope.create_upload_form(data);
+                    };
                 }
                 scope.request(args, true);
             }, this);

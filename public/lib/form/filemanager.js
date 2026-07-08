@@ -1373,13 +1373,13 @@ M.form_filemanager.init = function(Y, options) {
                 <div>${displayFileName}
                     <div class="progress">
                         <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                            <span class="sr-only"></span>
+                            <span class="visually-hidden"></span>
                         </div>
                     </div>
                 </div>
             `);
             const progressInner = progressOuter.one('.progress-bar');
-            const progressInnerText = progressInner.one('.sr-only');
+            const progressInnerText = progressInner.one('.visually-hidden');
             let progressContainer = this.filemanager.one('.fpupload-progressbars');
             progressContainer.setContent(progressOuter);
 
