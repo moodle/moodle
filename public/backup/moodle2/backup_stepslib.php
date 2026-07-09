@@ -871,6 +871,55 @@ class backup_final_scales_structure_step extends backup_structure_step {
 }
 
 /**
+ * This step annotates every outcome available in the course being backed up,
+ * regardless of whether it is referenced by an activity, so unused course
+ * outcomes are included in the backup.
+ *
+ * This only runs for complete course backups.
+ */
+class backup_annotate_course_outcomes extends backup_execution_step {
+    /**
+     * Only annotate course outcomes when the gradebook is included in the backup.
+     *
+     * @return bool
+     */
+    protected function execute_condition() {
+        $courseid = $this->get_courseid();
+        if ($courseid == SITEID) {
+            return false;
+        }
+
+        return backup_plan_dbops::require_gradebook_backup($courseid, $this->get_backupid());
+    }
+
+    /**
+     * Marks all course outcomes for backup.
+     *
+     * @return void
+     */
+    protected function define_execution() {
+        global $DB;
+
+        $outcomes = $DB->get_records_sql(
+            "SELECT go.id, go.scaleid
+               FROM {grade_outcomes} go
+               JOIN {grade_outcomes_courses} goc ON goc.outcomeid = go.id
+              WHERE goc.courseid = ?",
+            [$this->get_courseid()]
+        );
+
+        foreach ($outcomes as $outcome) {
+            // Annotate the outcome itself as final, whether or not it is used.
+            backup_structure_dbops::insert_backup_ids_record($this->get_backupid(), 'outcomefinal', $outcome->id);
+            // Scaled outcomes need their scale preserved too; scale-less outcomes have no scaleid.
+            if (!empty($outcome->scaleid)) {
+                backup_structure_dbops::insert_backup_ids_record($this->get_backupid(), 'scalefinal', $outcome->scaleid);
+            }
+        }
+    }
+}
+
+/**
  * structure step that will generate the outcomes.xml containing the
  * list of outcomes used along the whole backup process.
  */
@@ -2962,6 +3011,11 @@ class backup_activity_grades_structure_step extends backup_structure_step {
         $letter = new backup_nested_element('grade_letter', 'id', array(
             'lowerboundary', 'letter'));
 
+        // Scale-less outcomes associated to this activity via grade_outcomes_modules.
+        $outcomesmodules = new backup_nested_element('outcomes_modules');
+
+        $outcomemodule = new backup_nested_element('outcome_module', ['id'], ['outcomeid']);
+
         // Build the tree
 
         $book->add_child($items);
@@ -2972,6 +3026,9 @@ class backup_activity_grades_structure_step extends backup_structure_step {
 
         $book->add_child($letters);
         $letters->add_child($letter);
+
+        $book->add_child($outcomesmodules);
+        $outcomesmodules->add_child($outcomemodule);
 
         // Define sources
 
@@ -2989,6 +3046,11 @@ class backup_activity_grades_structure_step extends backup_structure_step {
 
         $letter->set_source_table('grade_letters', array('contextid' => backup::VAR_CONTEXTID));
 
+        $outcomemodule->set_source_sql("SELECT gom.id, goc.outcomeid
+                                          FROM {grade_outcomes_modules} gom
+                                          JOIN {grade_outcomes_courses} goc ON goc.id = gom.outcomecourseid
+                                         WHERE gom.cmid = ?", [backup::VAR_MODID]);
+
         // Annotations
 
         $item->annotate_ids('scalefinal', 'scaleid'); // Straight as scalefinal because it's > 0
@@ -2996,6 +3058,8 @@ class backup_activity_grades_structure_step extends backup_structure_step {
 
         $grade->annotate_ids('user', 'userid');
         $grade->annotate_ids('user', 'usermodified');
+
+        $outcomemodule->annotate_ids('outcome', 'outcomeid');
 
         // Return the root element (book)
 

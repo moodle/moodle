@@ -34,6 +34,13 @@ require_once($CFG->dirroot . '/grade/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class outcome_scaleless_test extends \advanced_testcase {
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+        parent::setUpBeforeClass();
+    }
+
     /**
      * An outcome can be created, saved and re-fetched without a scale.
      *
@@ -402,6 +409,250 @@ final class outcome_scaleless_test extends \advanced_testcase {
     }
 
     /**
+     * Backing up and restoring a full course preserves scaleless outcomes and
+     * their activity associations.
+     *
+     * @covers \restore_outcomes_structure_step
+     * @covers \restore_activity_grades_structure_step
+     */
+    public function test_course_backup_restore_preserves_scaleless_outcome_association(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $CFG->enableoutcomes = 1;
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
+
+        $course = $this->getDataGenerator()->create_course();
+        $scaleless = $this->create_scaleless_outcome($course->id);
+        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $cm = get_coursemodule_from_instance('assign', $assign->id, $course->id);
+        $scaleless->add_outcome_to_module($course->id, $cm->id);
+
+        $newcourseid = $this->backup_and_restore_course($course->id);
+
+        // The scaleless outcome must exist in the new course with scaleid = null.
+        $restoredoutcomes = \grade_outcome::fetch_all(['courseid' => $newcourseid]);
+        $this->assertCount(1, $restoredoutcomes);
+        $restored = reset($restoredoutcomes);
+        $this->assertNull($restored->scaleid, 'scaleid must remain null after course restore.');
+
+        // The restored assign module.
+        $modinfo = get_fast_modinfo($newcourseid);
+        $newassigns = array_values($modinfo->get_instances_of('assign'));
+        $this->assertCount(1, $newassigns, 'Exactly one assign must exist in the restored course.');
+        $newcmid = (int)$newassigns[0]->id;
+
+        $this->assertTrue(
+            $this->outcome_module_exists($restored, $newcourseid, $newcmid),
+            'The restored module should retain its outcome association.'
+        );
+    }
+
+    /**
+     * A course containing scaled and scale-less outcomes, both used and unused,
+     * preserves all outcomes across a full course backup/restore.
+     *
+     * @covers \backup_annotate_course_outcomes
+     * @covers \restore_outcomes_structure_step
+     */
+    public function test_course_backup_restore_preserves_course_outcomes(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $CFG->enableoutcomes = 1;
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
+
+        $course = $this->getDataGenerator()->create_course();
+        $scale  = $this->getDataGenerator()->create_scale(['scale' => 'Yes,No', 'courseid' => $course->id]);
+
+        // Used scaled outcome: attached to an assignment via a grade item.
+        $usedscaled = $this->getDataGenerator()->create_grade_outcome([
+            'courseid' => $course->id,
+            'shortname' => 'usedscaled',
+            'fullname' => 'Used scaled outcome',
+            'scaleid' => $scale->id,
+        ]);
+        $assign = $this->getDataGenerator()->create_module('assign', [
+            'course' => $course->id,
+            'outcome_' . $usedscaled->id => 1,
+        ]);
+
+        // Used scale-less outcome: attached to the same activity via grade_outcomes_modules.
+        $cm = get_coursemodule_from_instance('assign', $assign->id, $course->id);
+        $usedscaleless = $this->create_scaleless_outcome($course->id, 'usedscaleless');
+        $usedscaleless->add_outcome_to_module($course->id, $cm->id);
+
+        // Unused scaled outcome: not referenced anywhere.
+        $this->getDataGenerator()->create_grade_outcome([
+            'courseid' => $course->id,
+            'shortname' => 'unusedscaled',
+            'fullname' => 'Unused scaled outcome',
+            'scaleid' => $scale->id,
+        ]);
+
+        // Unused scale-less outcome: not referenced anywhere.
+        $this->create_scaleless_outcome($course->id, 'unusedscaleless');
+
+        $newcourseid = $this->backup_and_restore_course($course->id);
+
+        $restoredoutcomes = \grade_outcome::fetch_all(['courseid' => $newcourseid]);
+        $this->assertCount(4, $restoredoutcomes, 'All four outcomes must be preserved regardless of usage.');
+
+        $outcomesbyshortname = [];
+        foreach ($restoredoutcomes as $restored) {
+            $outcomesbyshortname[$restored->shortname] = $restored;
+        }
+
+        $this->assertArrayHasKey('usedscaled', $outcomesbyshortname);
+        $this->assertArrayHasKey('usedscaleless', $outcomesbyshortname);
+        $this->assertArrayHasKey('unusedscaled', $outcomesbyshortname);
+        $this->assertArrayHasKey('unusedscaleless', $outcomesbyshortname);
+
+        $this->assertNotEmpty($outcomesbyshortname['usedscaled']->scaleid);
+        $this->assertNotEmpty($outcomesbyshortname['unusedscaled']->scaleid);
+        $this->assertNull($outcomesbyshortname['usedscaleless']->scaleid);
+        $this->assertNull($outcomesbyshortname['unusedscaleless']->scaleid);
+
+        // Verify that the restored scaled outcomes still have their scales.
+        $restoredscale = \grade_scale::fetch(['id' => $outcomesbyshortname['usedscaled']->scaleid]);
+        $this->assertNotFalse($restoredscale);
+        $this->assertSame('Yes,No', $restoredscale->scale);
+    }
+
+    /**
+     * Backing up and restoring an activity preserves referenced outcomes but does not
+     * include unrelated course outcomes.
+     *
+     * @covers \restore_outcomes_structure_step
+     * @covers \restore_activity_grades_structure_step
+     */
+    public function test_activity_backup_restore_only_restores_referenced_outcomes(): void {
+        global $CFG, $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $CFG->enableoutcomes = 1;
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $scale   = $this->getDataGenerator()->create_scale(['scale' => 'Yes,No', 'courseid' => $course1->id]);
+
+        // Create an unrelated scaled outcome that should not be included in the activity backup.
+        $unusedscaled = $this->getDataGenerator()->create_grade_outcome([
+            'courseid' => $course1->id,
+            'shortname' => 'unusedscaled',
+            'fullname' => 'Unused scaled outcome',
+            'scaleid' => $scale->id,
+        ]);
+
+        // Create a scaleless outcome referenced by the activity.
+        $scaleless = $this->create_scaleless_outcome($course1->id);
+        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id]);
+        $cm = get_coursemodule_from_instance('assign', $assign->id, $course1->id);
+        $scaleless->add_outcome_to_module($course1->id, $cm->id);
+
+        // Backup the activity.
+        $bc = new \backup_controller(
+            \backup::TYPE_1ACTIVITY,
+            $cm->id,
+            \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_IMPORT,
+            $USER->id
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Restore the activity into another course.
+        $rc = new \restore_controller(
+            $backupid,
+            $course2->id,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_IMPORT,
+            $USER->id,
+            \backup::TARGET_CURRENT_ADDING,
+        );
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Verify that only the referenced scaleless outcome was restored.
+        $restoredoutcomes = \grade_outcome::fetch_all(['courseid' => $course2->id]);
+        $this->assertCount(1, $restoredoutcomes);
+
+        $restored = reset($restoredoutcomes);
+        $this->assertNull($restored->scaleid);
+        $this->assertSame($scaleless->shortname, $restored->shortname);
+        $this->assertEmpty(
+            \grade_outcome::fetch_all([
+                'courseid' => $course2->id,
+                'shortname' => $unusedscaled->shortname,
+            ]),
+            'Unused course outcomes should not be restored with an activity backup.'
+        );
+
+        // Verify that the restored activity retains its outcome association.
+        $modinfo = get_fast_modinfo($course2->id);
+        $newassigns = array_values($modinfo->get_instances_of('assign'));
+        $this->assertCount(1, $newassigns, 'Exactly one assign must exist in the restored course.');
+        $newcmid = (int) $newassigns[0]->id;
+
+        $this->assertTrue(
+            $this->outcome_module_exists($restored, $course2->id, $newcmid),
+            'The restored module should retain its outcome association.'
+        );
+    }
+
+    /**
+     * Performs a full course backup and restores it into a new course, returning
+     * the new course's id.
+     *
+     * @param int $courseid The id of the course to back up.
+     * @return int The id of the newly restored course.
+     */
+    private function backup_and_restore_course(int $courseid): int {
+        global $USER;
+
+        // Backup the full course.
+        $bc = new \backup_controller(
+            \backup::TYPE_1COURSE,
+            $courseid,
+            \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_IMPORT,
+            $USER->id
+        );
+        $backupid = $bc->get_backupid();
+        $bc->execute_plan();
+        $bc->destroy();
+
+        // Restore into a new course.
+        $course = get_course($courseid);
+        $newcourseid = \restore_dbops::create_new_course(
+            'Restored course',
+            'restored_' . $backupid,
+            $course->category
+        );
+        $rc = new \restore_controller(
+            $backupid,
+            $newcourseid,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_IMPORT,
+            $USER->id,
+            \backup::TARGET_NEW_COURSE
+        );
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        return $newcourseid;
+    }
+
+    /**
      * Checks whether a module outcome record exists for the given outcome, course and course module.
      *
      * @param grade_outcome $outcome The outcome.
@@ -424,12 +675,13 @@ final class outcome_scaleless_test extends \advanced_testcase {
      * Creates a scale-less outcome for the given course.
      *
      * @param int $courseid The course ID.
+     * @param string $shortname The outcome shortname.
      * @return grade_outcome The created outcome.
      */
-    private function create_scaleless_outcome(int $courseid): grade_outcome {
+    private function create_scaleless_outcome(int $courseid, string $shortname = 'noscale'): grade_outcome {
         $outcome = new grade_outcome();
         $outcome->courseid = $courseid;
-        $outcome->shortname = 'noscale';
+        $outcome->shortname = $shortname;
         $outcome->fullname = 'No scale outcome';
         $outcome->insert();
         return $outcome;

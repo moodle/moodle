@@ -155,12 +155,22 @@ if ($handle = fopen($imported_file, 'r')) {
             break;
         }
 
-        // sanity check #3: all required fields must be present on the current line.
-        foreach ($headers as $header => $position) {
+        // Sanity check #3: the mandatory outcome fields must always be present on the current line.
+        foreach (['outcome_name', 'outcome_shortname'] as $header) {
             if ($csv_data[$imported_headers[$header]] == '') {
                 $fatal_error = true;
                 $errormessage = get_string('importoutcomenofile', 'grades', $line);
                 break;
+            }
+        }
+
+        // Sanity check #4: if a scale is provided, both scale_name and scale_items must be present.
+        if (!$fatal_error) {
+            $hasscalename = $csv_data[$imported_headers['scale_name']] != '';
+            $hasscaleitems = $csv_data[$imported_headers['scale_items']] != '';
+            if ($hasscalename !== $hasscaleitems) {
+                $fatal_error = true;
+                $errormessage = get_string('importoutcomenofile', 'grades', $line);
             }
         }
 
@@ -196,7 +206,10 @@ if ($handle = fopen($imported_file, 'r')) {
             // already exists in the right scope: use it.
             $scale_id = key($scale);
         } else {
-            if (!has_capability('moodle/course:managescales', $context)) {
+            if ($csv_data[$imported_headers['scale_name']] === '') {
+                // No scale specified, outcome will be created without a scale.
+                $scale_id = null;
+            } else if (!has_capability('moodle/course:managescales', $context)) {
                 echo $OUTPUT->notification(get_string('importskippedoutcome', 'grades',
                     $csv_data[$imported_headers['outcome_shortname']]), 'warning', false);
                 continue;

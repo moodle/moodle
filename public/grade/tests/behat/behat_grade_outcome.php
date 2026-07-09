@@ -26,7 +26,6 @@ use Behat\Mink\Exception\ExpectationException;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_grade_outcome extends behat_base {
-
     /**
      * Downloads the file by submitting the named button and verifies its type and content.
      *

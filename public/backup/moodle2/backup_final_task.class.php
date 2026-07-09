@@ -100,6 +100,13 @@ class backup_final_task extends backup_task {
             $this->add_step(new backup_badges_structure_step('course_badges', 'badges.xml'));
         }
 
+        // Annotate all course outcomes for full course backups before the final scale and
+        // outcome structure steps. Activity backups only include outcomes referenced by
+        // the activity.
+        if ($this->plan->get_type() == backup::TYPE_1COURSE) {
+            $this->add_step(new backup_annotate_course_outcomes('annotate_course_outcomes'));
+        }
+
         // Generate the scales file with all the (final) annotated scales
         $this->add_step(new backup_final_scales_structure_step('scaleslist', 'scales.xml'));
 

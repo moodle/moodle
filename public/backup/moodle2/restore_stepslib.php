@@ -1514,8 +1514,8 @@ class restore_outcomes_structure_step extends restore_structure_step {
             // Remap the user
             $userid = $this->get_mappingid('user', $data->usermodified);
             $data->usermodified = $userid ? $userid : $this->task->get_userid();
-            // Remap the scale
-            $data->scaleid = $this->get_mappingid('scale', $data->scaleid);
+            // Remap the scale ID for scaled outcomes; preserve null for scaleless outcomes.
+            $data->scaleid = !empty($data->scaleid) ? $this->get_mappingid('scale', $data->scaleid) : null;
             // Remap the course if course outcome
             $data->courseid = $data->courseid ? $this->get_courseid() : null;
             // If global outcome (course=null), check the user has perms to create it
@@ -4165,6 +4165,7 @@ class restore_activity_grades_structure_step extends restore_structure_step {
             $paths[] = new restore_path_element('grade_grade',
                            '/activity_gradebook/grade_items/grade_item/grade_grades/grade_grade');
         }
+        $paths[] = new restore_path_element('outcome_module', '/activity_gradebook/outcomes_modules/outcome_module');
         return $paths;
     }
 
@@ -4262,6 +4263,27 @@ class restore_activity_grades_structure_step extends restore_structure_step {
         } else {
             debugging("Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'");
         }
+    }
+
+    /**
+     * Restores the outcome association for this activity.
+     *
+     * @param array $data
+     */
+    protected function process_outcome_module(array $data): void {
+        $data = (object)$data;
+
+        $outcomeid = $this->get_mappingid('outcome', $data->outcomeid);
+        if (!$outcomeid) {
+            return;
+        }
+
+        $outcome = grade_outcome::fetch(['id' => $outcomeid]);
+        if (!$outcome) {
+            return;
+        }
+
+        $outcome->add_outcome_to_module($this->get_courseid(), $this->task->get_moduleid());
     }
 
     /**
