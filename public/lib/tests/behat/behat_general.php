@@ -1769,24 +1769,26 @@ EOF;
     }
 
     /**
-     * Given the text of a link, download the linked file and return the contents.
+     * Given the text of an element, download the linked file and return the contents.
      *
      * A helper method used by the steps in {@see behat_download}, and the legacy
      * {@see following_should_download_bytes()} and {@see following_should_download_between_and_bytes()}.
      *
-     * @param string $link the text of the link.
+     * @param string $link the text/locator of the element to download from.
      * @param string $containerlocator optional container element locator.
      * @param string $containertype optional container element selector type.
+     * @param string $selectortype the selector type of $link, e.g. 'link', 'button', 'select'. Defaults to 'link'.
      *
      * @return string the content of the downloaded file.
      */
-    public function download_file_from_link(string $link, string $containerlocator = '', string $containertype = ''): string {
+    public function download_file_from_link(string $link, string $containerlocator = '', string $containertype = '',
+            string $selectortype = 'link'): string {
 
-        // Find the link.
+        // Find the element to download from.
         if ($containerlocator !== '' && $containertype !== '') {
-            $linknode = $this->get_node_in_container('link', $link, $containertype, $containerlocator);
+            $linknode = $this->get_node_in_container($selectortype, $link, $containertype, $containerlocator);
         } else {
-            $linknode = $this->find_link($link);
+            $linknode = $this->find($selectortype, $link);
         }
 
         $this->ensure_node_is_visible($linknode);

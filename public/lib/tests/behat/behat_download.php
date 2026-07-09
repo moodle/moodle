@@ -48,7 +48,22 @@ class behat_download extends behat_base {
      * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
      */
     public function following_should_download_a_file_that(string $linktext, TableNode $table): void {
-        $this->following_in_element_should_download_a_file_that($linktext, '', '', $table);
+        $this->following_element_in_container_should_download_a_file_that($linktext, 'link', '', '', $table);
+    }
+
+    /**
+     * Downloads the file from the given element on the page and verify the type and content.
+     *
+     * @Then following :link_text :selector_type should download a file that:
+     *
+     * @param string $linktext the text/locator of the element to download from.
+     * @param string $selectortype the selector type of $linktext, e.g. 'link', 'button', 'select'.
+     * @param TableNode $table the table of assertions to use the check the file contents.
+     * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
+     */
+    public function following_element_should_download_a_file_that(string $linktext, string $selectortype,
+            TableNode $table): void {
+        $this->following_element_in_container_should_download_a_file_that($linktext, $selectortype, '', '', $table);
     }
 
     /**
@@ -64,22 +79,43 @@ class behat_download extends behat_base {
      */
     public function following_in_element_should_download_a_file_that(string $linktext, string $containerlocator,
             string $containertype, TableNode $table): void {
+        $this->following_element_in_container_should_download_a_file_that($linktext, 'link', $containerlocator,
+                $containertype, $table);
+    }
 
-        $filecontent = $this->download_file($linktext, $containerlocator, $containertype);
+    /**
+     * Downloads the file from the given element inside a container and verify the type and content.
+     *
+     * @Then following :link_text :selector_type in the :element_container_string :text_selector_string should download a file that:
+     *
+     * @param string $linktext the text/locator of the element to download from.
+     * @param string $selectortype the selector type of $linktext, e.g. 'link', 'button', 'select'.
+     * @param string $containerlocator the container element.
+     * @param string $containertype the container selector type.
+     * @param TableNode $table the table of assertions to use the check the file contents.
+     * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
+     */
+    public function following_element_in_container_should_download_a_file_that(string $linktext, string $selectortype,
+            string $containerlocator, string $containertype, TableNode $table): void {
+
+        $filecontent = $this->download_file($linktext, $containerlocator, $containertype, $selectortype);
         $this->verify_file_content($filecontent, $table);
     }
 
     /**
-     * Download a file from the given link.
+     * Download a file from the given element.
      *
-     * @param string $linktext the text of the link.
+     * @param string $linktext the text/locator of the element to download from.
      * @param string $containerlocator the container element.
      * @param string $containertype the container selector type.
+     * @param string $selectortype the selector type of $linktext, e.g. 'link', 'button', 'select'. Defaults to 'link'.
      * @return string the file contents.
      * @throws ExpectationException if the download fails.
      */
-    protected function download_file(string $linktext, string $containerlocator, string $containertype): string {
-        return behat_context_helper::get('behat_general')->download_file_from_link($linktext, $containerlocator, $containertype);
+    protected function download_file(string $linktext, string $containerlocator, string $containertype,
+            string $selectortype = 'link'): string {
+        return behat_context_helper::get('behat_general')->download_file_from_link(
+            $linktext, $containerlocator, $containertype, $selectortype);
     }
 
     /**
