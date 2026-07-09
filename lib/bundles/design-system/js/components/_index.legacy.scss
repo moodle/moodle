@@ -567,7 +567,7 @@
   */
 .mds-btn.mds-btn--size-sm {
   padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
-  border-radius: var(--mds-border-radius-xs);
+  border-radius: var(--mds-border-radius-sm);
   font-weight: var(--mds-font-weight-medium);
   font-size: var(--mds-font-size-paragraph-small);
 }
@@ -1288,7 +1288,7 @@
   border: none;
   border-radius: var(--mds-border-radius-pill);
   background-color: var(--mds-bg-surface-default);
-  color: var(--mds-text-default);
+  color: var(--mds-text-subtle);
   cursor: pointer;
   transition:
     background-color 0.15s ease-in-out,
@@ -1323,7 +1323,7 @@
 
 .mds-favourite-button:active:not(:disabled) {
   background-color: var(--mds-bg-surface-strong);
-  color: var(--mds-text-default);
+  color: var(--mds-text-subtle);
 }
 
 /* Selected states */
