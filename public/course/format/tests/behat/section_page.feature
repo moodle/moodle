@@ -29,7 +29,7 @@ Feature: Single section course page
 
   @javascript
   Scenario: Collapsed sections are always expanded in the single section page
-    Given I press "Collapse all"
+    Given I click on "Collapse all" "button" in the "region-main" "region"
     And I should not see "Activity sample 1.1" in the "region-main" "region"
     When I am on the "Course 1 > Section 1" "course > section" page
     Then I should see "Activity sample 1.1"

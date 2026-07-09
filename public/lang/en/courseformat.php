@@ -69,7 +69,6 @@ $string['cmsmove'] = 'Move activities';
 $string['cmsmove_title'] = 'Move selected activities';
 $string['cmsmove_info'] = 'Move {$a} activities after';
 $string['courseindex'] = 'Course index';
-$string['courseindexoptions'] = 'Course index options';
 $string['linearnavigationsettings'] = 'Enable linear navigation';
 $string['linearnavigationsettings_help'] = 'Display \'Previous\' and \'Next\' buttons on activity pages to help learners move sequentially through the course.';
 $string['nobulkaction'] = 'No bulk actions available';
@@ -102,3 +101,6 @@ $string['selectsection'] = 'Select section {$a}';
 
 // Deprecated since Moodle 5.1.
 $string['maxsectionaddmessage'] = 'You have reached the maximum number of sections allowed for a course.';
+
+// Deprecated since Moodle 5.3.
+$string['courseindexoptions'] = 'Course index options';

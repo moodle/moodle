@@ -36,28 +36,30 @@
     }} data-close-on-resize="{{$drawercloseonresize}}0{{/drawercloseonresize}}"{{!
     }}>
     <div class="drawerheader">
-        <div class="drawerheading">
-            {{$drawerheading}}{{/drawerheading}}
-        </div>
-        <div class="draweractions">
-            <div class="drawerheadercontent">
-                {{$drawerheadercontent}}{{/drawerheadercontent}}
+        <div class="drawerheadertop">
+            <div class="drawerheading">
+                {{$drawerheading}}{{/drawerheading}}
             </div>
-            <button
-                class="btn btn-icon icon-size-3 drawertoggle"
-                data-toggler="drawers"
-                data-action="closedrawer"
-                data-target="{{$id}}{{/id}}"
-                data-bs-toggle="tooltip"
-                data-bs-placement="{{$tooltipplacement}}right{{/tooltipplacement}}"
-                title="{{$closebuttontext}}{{#str}}closedrawer, core{{/str}}{{/closebuttontext}}"
-                aria-label="{{$closebuttontext}}{{#str}}closedrawer, core{{/str}}{{/closebuttontext}}"
-            >
-                {{$closebuttonicon}}
-                    {{! This is the default icon used if the parent doesn't override it }}
-                    {{#pix}} e/cancel, core {{/pix}}
-                {{/closebuttonicon}}
-            </button>
+            <div class="draweractions">
+                <button
+                    class="btn btn-icon icon-size-3 drawertoggle"
+                    data-toggler="drawers"
+                    data-action="closedrawer"
+                    data-target="{{$id}}{{/id}}"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="{{$tooltipplacement}}right{{/tooltipplacement}}"
+                    title="{{$closebuttontext}}{{#str}}closedrawer, core{{/str}}{{/closebuttontext}}"
+                    aria-label="{{$closebuttontext}}{{#str}}closedrawer, core{{/str}}{{/closebuttontext}}"
+                >
+                    {{$closebuttonicon}}
+                        {{! This is the default icon used if the parent doesn't override it }}
+                        {{#pix}} e/cancel, core {{/pix}}
+                    {{/closebuttonicon}}
+                </button>
+            </div>
+        </div>
+        <div class="drawercontrols">
+            {{$drawercontrols}}{{/drawercontrols}}
         </div>
     </div>
     <div class="drawercontent drag-container" data-usertour="scroller">

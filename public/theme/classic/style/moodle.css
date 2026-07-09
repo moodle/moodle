@@ -30582,6 +30582,22 @@ table.calendartable caption {
   display: block;
 }
 
+.courseindex-collapsemenu {
+  color: #495057;
+}
+.courseindex-collapsemenu .collapseall {
+  display: block;
+}
+.courseindex-collapsemenu .expandall {
+  display: none;
+}
+.courseindex-collapsemenu.collapsed .collapseall {
+  display: none;
+}
+.courseindex-collapsemenu.collapsed .expandall {
+  display: block;
+}
+
 .max-section-alert {
   border-top: 1px solid #dee2e6;
   font-size: 0.875rem;
@@ -32266,6 +32282,8 @@ body.drawer-ease {
   position: fixed;
   height: 100vh;
   top: 0;
+  display: flex;
+  flex-direction: column;
 }
 @media (max-width: 991.98px) {
   .drawer {
@@ -32300,7 +32318,7 @@ body.drawer-ease {
   right: 0;
   visibility: visible;
 }
-.drawer.drawer-right .drawerheader {
+.drawer.drawer-right .drawerheadertop {
   flex-direction: row-reverse;
 }
 .drawer.drawer-right .drawertoggle {
@@ -32514,7 +32532,7 @@ body.drawer-ease {
   display: none;
 }
 
-.drawerheader {
+.drawerheader .drawerheadertop {
   padding: 0;
   height: 50px;
   display: flex;
@@ -32528,8 +32546,6 @@ body.drawer-ease {
   margin-right: 16px;
 }
 .drawerheader .draweractions {
-  display: flex;
-  gap: 0.25rem;
   margin-left: 0.5rem;
 }
 .drawerheader .draweractions .btn {
@@ -32547,6 +32563,8 @@ body.drawer-ease {
     position: fixed;
     height: 100vh;
     top: 0;
+    display: flex;
+    flex-direction: column;
   }
 }
 @media (max-width: 991.98px) and (max-width: 991.98px) {
@@ -32591,7 +32609,7 @@ body.drawer-ease {
   }
 }
 @media (max-width: 991.98px) {
-  .drawer-md.drawer-right .drawerheader {
+  .drawer-md.drawer-right .drawerheadertop {
     flex-direction: row-reverse;
   }
 }
@@ -32654,6 +32672,8 @@ body.drawer-ease {
     position: fixed;
     height: 100vh;
     top: 0;
+    display: flex;
+    flex-direction: column;
   }
 }
 @media (max-width: 767.98px) and (max-width: 991.98px) {
@@ -32698,7 +32718,7 @@ body.drawer-ease {
   }
 }
 @media (max-width: 767.98px) {
-  .drawer-sm.drawer-right .drawerheader {
+  .drawer-sm.drawer-right .drawerheadertop {
     flex-direction: row-reverse;
   }
 }
@@ -32757,7 +32777,9 @@ body.drawer-ease {
 .drawercontent {
   position: relative;
   z-index: -1;
-  height: calc(100% - 50px);
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -41268,7 +41290,7 @@ div.editor_atto_toolbar button .icon {
 }
 .drawerheader .drawerheading #courseindexdrawerheading {
   font-size: 1rem;
-  margin-left: 1rem;
+  margin-left: 1.5rem;
   min-width: 0;
   overflow: hidden;
 }

@@ -25,71 +25,84 @@ import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 
 export default class Component extends BaseComponent {
 
-  create() {
-    this.name = 'courseindexdrawercontrols';
-    this.selectors = {
-      COLLAPSEALL: `[data-action="collapseallcourseindexsections"]`,
-      EXPANDALL: `[data-action="expandallcourseindexsections"]`,
-    };
-  }
-
-  /**
-   * @param {element|string} target the DOM main element or its ID
-   * @param {object} selectors optional css selector overrides
-   * @return {Component}
-   */
-  static init(target, selectors) {
-    return new Component({
-      element: document.getElementById(target),
-      reactive: getCurrentCourseEditor(),
-      selectors,
-    });
-  }
-
-  /**
-   * Initial state ready method.
-   */
-  stateReady() {
-    // Attach the on-click event handlers to the expand-all and collapse-all buttons, if present.
-    const expandAllBtn = this.getElement(this.selectors.EXPANDALL);
-    if (expandAllBtn) {
-      this.addEventListener(expandAllBtn, 'click', this._expandAllSections);
-
+    create() {
+        this.name = 'courseindexdrawercontrols';
+        this.selectors = {
+            TOGGLE: `[data-action="toggleallcourseindexsections"]`,
+        };
+        this.classes = {
+            COLLAPSED: `collapsed`,
+        };
     }
-    const collapseAllBtn = this.getElement(this.selectors.COLLAPSEALL);
-    if (collapseAllBtn) {
-      this.addEventListener(collapseAllBtn, 'click', this._collapseAllSections);
+
+    /**
+     * @param {HTMLElement|string} target the DOM main element or its ID
+     * @param {object} selectors optional css selector overrides
+     * @return {Component}
+     */
+    static init(target, selectors) {
+        return new Component({
+            element: document.getElementById(target),
+            reactive: getCurrentCourseEditor(),
+            selectors,
+        });
     }
-  }
 
-  /**
-   * On-click event handler for the collapse-all button.
-   *
-   * @param {Event} event
-   * @private
-   */
-  _collapseAllSections(event) {
-    event.preventDefault();
-    this._toggleAllSections(true);
-  }
+    /**
+     * @return {Array}
+     */
+    getWatchers() {
+        return [
+            {watch: `section.indexcollapsed:updated`, handler: this._refreshToggle},
+            {watch: `section:created`, handler: this._refreshToggle},
+            {watch: `section:deleted`, handler: this._refreshToggle},
+        ];
+    }
 
-  /**
-   * On-click event handler for the expand-all button.
-   *
-   * @param {Event} event
-   * @private
-   */
-  _expandAllSections(event) {
-    event.preventDefault();
-    this._toggleAllSections(false);
-  }
+    /**
+     * @param {Object} state
+     */
+    stateReady(state) {
+        const btn = this.getElement(this.selectors.TOGGLE);
+        if (btn) {
+            const courseindex = document.getElementById('courseindex');
+            if (courseindex) {
+                btn.setAttribute('aria-controls', courseindex.id);
+            }
+            this.addEventListener(btn, 'click', this._toggleAllSections);
+        }
+        this._refreshToggle({state});
+    }
 
-  /**
-   * Collapses or expands all sections in the course index.
-   * @param {boolean} expandOrCollapse set to TRUE to collapse all, and FALSE to expand all.
-   * @private
-   */
-  _toggleAllSections(expandOrCollapse) {
-    this.reactive.dispatch('allSectionsIndexCollapsed', expandOrCollapse);
-  }
+    /**
+     * On-click handler. Collapses all when currently expanded, otherwise expands.
+     *
+     * @param {Event} event
+     * @private
+     */
+    _toggleAllSections(event) {
+        event.preventDefault();
+        const btn = this.getElement(this.selectors.TOGGLE);
+        const isAllCollapsed = btn.classList.contains(this.classes.COLLAPSED);
+        this.reactive.dispatch('allSectionsIndexCollapsed', !isAllCollapsed);
+    }
+
+    /**
+     * Syncs the toggle to the current section state: adds the "collapsed" class
+     * (and updates aria-expanded) only when every section is collapsed.
+     *
+     * @param {Object} param
+     * @param {Object} param.state
+     * @private
+     */
+    _refreshToggle({state}) {
+        const btn = this.getElement(this.selectors.TOGGLE);
+        if (!btn) {
+            return;
+        }
+        const sections = [...state.section.values()].filter((section) => !section.component);
+        const allCollapsed = sections.length > 0 && sections.every(s => s.indexcollapsed);
+        btn.classList.toggle(this.classes.COLLAPSED, allCollapsed);
+        btn.setAttribute('aria-expanded', String(!allCollapsed));
+    }
 }
