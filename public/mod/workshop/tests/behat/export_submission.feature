@@ -26,7 +26,7 @@ Feature: Exporting workshop submissions and assessments to a portfolio
     And the following config values are set as admin:
       | enableportfolios | 1 |
     And I navigate to "Plugins > Portfolios > Manage portfolios" in site administration
-    And I set portfolio instance "File download" to "Enabled and visible"
+    And I set the portfolio instance "File download" to "Enabled and visible"
     And I click on "Save" "button"
     # Teacher sets up assessment form and changes the phase to submission.
     And I am on the "Course1" course page logged in as teacher1

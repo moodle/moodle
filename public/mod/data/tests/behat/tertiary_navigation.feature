@@ -35,7 +35,7 @@ Feature: Users can navigate through the database activity using the tertiary nav
     And the following config values are set as admin:
       | enableportfolios | 1 |
     And I navigate to "Plugins > Portfolios > Manage portfolios" in site administration
-    And I set portfolio instance "File download" to "Enabled and visible"
+    And I set the portfolio instance "File download" to "Enabled and visible"
     And I click on "Save" "button"
     And I log out
     And I am on the "Test database name" "data activity" page logged in as teacher1
