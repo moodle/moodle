@@ -310,15 +310,16 @@ final class column {
     /**
      * Add a list of comma-separated fields
      *
-     * @param string $sql
+     * @param string|string[] $sql SQL string with comma-separated fields, or array of field strings
+     *      Each field can include an alias, e.g. '{table}.field' or '{table}.field AS alias'
      * @param array $params
      * @return self
      */
-    public function add_fields(string $sql, array $params = []): self {
+    public function add_fields(string|array $sql, array $params = []): self {
         database::validate_params($params);
 
         // Split SQL into separate fields (separated by comma).
-        $fields = preg_split('/\s*,\s*/', $sql);
+        $fields = is_array($sql) ? $sql : preg_split('/\s*,\s*/', $sql);
         foreach ($fields as $field) {
             // Split each field into expression, <field> <as> <alias> where "as" and "alias" are optional.
             $fieldparts = preg_split('/\s+/', $field);

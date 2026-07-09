@@ -136,10 +136,10 @@ class tokens extends system_report {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$entityuseralias}.id", 'userid')
-            ->add_fields(implode(', ', [
+            ->add_fields([
                 "{$entityservicealias}.id",
                 "{$entityservicealias}.shortname",
-            ]))
+            ])
             ->add_callback(static function($value, \stdClass $row): string {
                 global $OUTPUT;
 
