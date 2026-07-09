@@ -1,0 +1,7 @@
+issueNumber: MDL-88287
+notes:
+  block_timeline:
+    - message: |-
+        The legacy AMD and Mustache frontend for the Timeline block has been removed and
+        replaced with an ESM + React implementation.
+      type: improved

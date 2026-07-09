@@ -15,15 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the timeline block.
+ * Web service definitions for the timeline block.
  *
  * @package    block_timeline
- * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
+ * @copyright  2026 Meirza Arson <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026062401;         // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2026041000;         // Requires this Moodle version.
-$plugin->component = 'block_timeline'; // Full name of the plugin (used for diagnostics).
+$functions = [
+    'block_timeline_get_timeline_events' => [
+        'classname'   => 'block_timeline\external\get_timeline_events',
+        'description' => 'Fetch calendar action events for the timeline block dates view.',
+        'type'        => 'read',
+        'ajax'        => true,
+        'loginrequired' => true,
+    ],
+    'block_timeline_get_courses_with_events' => [
+        'classname'   => 'block_timeline\external\get_courses_with_events',
+        'description' => 'Fetch enrolled in-progress courses with their action events for the timeline block courses view.',
+        'type'        => 'read',
+        'ajax'        => true,
+        'loginrequired' => true,
+    ],
+];

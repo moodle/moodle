@@ -14,178 +14,65 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Class containing data for timeline block.
- *
- * @package    block_timeline
- * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace block_timeline\output;
+
 defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use renderer_base;
 use templatable;
-use core_course\external\course_summary_exporter;
 
-require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/blocks/timeline/lib.php');
-require_once($CFG->libdir . '/completionlib.php');
 
 /**
- * Class containing data for timeline block.
+ * Class containing data for the timeline block.
  *
+ * Produces the minimal props needed to bootstrap the React frontend.
+ *
+ * @package    block_timeline
  * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class main implements renderable, templatable {
 
-    /** Number of courses to load per page */
-    const COURSES_PER_PAGE = 2;
+    /** @var string The current sort/order preference. */
+    public string $order;
+
+    /** @var string The current day-filter preference. */
+    public string $filter;
+
+    /** @var int The current activity-limit preference. */
+    public int $limit;
 
     /**
-     * @var string The current filter preference
-     */
-    public $filter;
-
-    /**
-     * @var string The current sort/order preference
-     */
-    public $order;
-
-    /**
-     * @var string The current limit preference
-     */
-    public $limit;
-
-    /** @var int Number of timeline instances displayed. */
-    protected static $timelineinstances = 0;
-
-    /** @var int This timeline instance's ID. */
-    protected $timelineinstanceid = 0;
-
-    /**
-     * main constructor.
+     * Constructor.
      *
-     * @param string $order Constant sort value from ../timeline/lib.php
-     * @param string $filter Constant filter value from ../timeline/lib.php
-     * @param string $limit Constant limit value from ../timeline/lib.php
+     * @param string|null $order Sort preference from user preferences.
+     * @param string|null $filter Filter preference from user preferences.
+     * @param string|null $limit Activity limit preference from user preferences.
      */
-    public function __construct($order, $filter, $limit) {
-        $this->order = $order ? $order : BLOCK_TIMELINE_SORT_BY_DATES;
-        $this->filter = $filter ? $filter : BLOCK_TIMELINE_FILTER_BY_7_DAYS;
-        $this->limit = $limit ? $limit : BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT;
-        // Increment the timeline instances count on initialisation.
-        self::$timelineinstances++;
-        // Assign this instance an ID based on the latest timeline instances count.
-        $this->timelineinstanceid = self::$timelineinstances;
+    public function __construct(?string $order, ?string $filter, ?string $limit) {
+        $this->order  = $order ?: BLOCK_TIMELINE_SORT_BY_DATES;
+        $this->filter = $filter ?: BLOCK_TIMELINE_FILTER_BY_30_DAYS;
+        $this->limit  = (int) ($limit ?: BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT);
     }
 
     /**
-     * Test the available filters with the current user preference and return an array with
-     * bool flags corresponding to which is active
+     * Export the props required to mount the React Timeline component.
      *
+     * @param renderer_base $output
      * @return array
      */
-    protected function get_filters_as_booleans() {
-        $filters = [
-            BLOCK_TIMELINE_FILTER_BY_NONE => false,
-            BLOCK_TIMELINE_FILTER_BY_OVERDUE => false,
-            BLOCK_TIMELINE_FILTER_BY_7_DAYS => false,
-            BLOCK_TIMELINE_FILTER_BY_30_DAYS => false,
-            BLOCK_TIMELINE_FILTER_BY_3_MONTHS => false,
-            BLOCK_TIMELINE_FILTER_BY_6_MONTHS => false
-        ];
-
-        // Set the selected filter to true.
-        $filters[$this->filter] = true;
-
-        return $filters;
-    }
-
-    /**
-     * Get the offset/limit values corresponding to $this->filter
-     * which are used to send through to the context as default values
-     *
-     * @return array
-     */
-    private function get_filter_offsets() {
-
-        $limit = '';
-        if (in_array($this->filter, [BLOCK_TIMELINE_FILTER_BY_NONE, BLOCK_TIMELINE_FILTER_BY_OVERDUE])) {
-            $offset = -14;
-            if ($this->filter == BLOCK_TIMELINE_FILTER_BY_OVERDUE) {
-                $limit = 1;
-            }
-        } else {
-            $offset = 0;
-            $limit = 7;
-
-            switch($this->filter) {
-                case BLOCK_TIMELINE_FILTER_BY_30_DAYS:
-                    $limit = 30;
-                    break;
-                case BLOCK_TIMELINE_FILTER_BY_3_MONTHS:
-                    $limit = 90;
-                    break;
-                case BLOCK_TIMELINE_FILTER_BY_6_MONTHS:
-                    $limit = 180;
-                    break;
-            }
-        }
-
+    public function export_for_template(renderer_base $output): array {
+        $courses = enrol_get_my_courses(['id'], null, 1);
         return [
-            'daysoffset' => $offset,
-            'dayslimit' => $limit
+            'midnight'            => usergetmidnight(time()),
+            'filter'              => $this->filter,
+            'order'               => $this->order,
+            'limit'               => $this->limit,
+            'nocoursesurl'        => $output->image_url('courses', 'block_timeline')->out(),
+            'noeventsurl'         => $output->image_url('activities', 'block_timeline')->out(),
+            'hasenrolledcourses'  => !empty($courses),
         ];
-    }
-
-    /**
-     * Export this data so it can be used as the context for a mustache template.
-     *
-     * @param \renderer_base $output
-     * @return array
-     */
-    public function export_for_template(renderer_base $output) {
-
-        $nocoursesurl = $output->image_url('courses', 'block_timeline')->out();
-        $noeventsurl = $output->image_url('activities', 'block_timeline')->out();
-
-        $requiredproperties = course_summary_exporter::define_properties();
-        $fields = join(',', array_keys($requiredproperties));
-        $courses = course_get_enrolled_courses_for_logged_in_user(0, 0, null, $fields);
-        list($inprogresscourses, $processedcount) = course_filter_courses_by_timeline_classification(
-            $courses,
-            COURSE_TIMELINE_INPROGRESS,
-            self::COURSES_PER_PAGE
-        );
-        $formattedcourses = array_map(function($course) use ($output) {
-            \context_helper::preload_from_record($course);
-            $context = \context_course::instance($course->id);
-            $exporter = new course_summary_exporter($course, ['context' => $context]);
-            return $exporter->export($output);
-        }, $inprogresscourses);
-
-        $filters = $this->get_filters_as_booleans();
-        $offsets = $this->get_filter_offsets();
-        $contextvariables = [
-            'timelineinstanceid' => $this->timelineinstanceid,
-            'midnight' => usergetmidnight(time()),
-            'coursepages' => [$formattedcourses],
-            'urls' => [
-                'nocourses' => $nocoursesurl,
-                'noevents' => $noeventsurl
-            ],
-            'sorttimelinedates' => $this->order == BLOCK_TIMELINE_SORT_BY_DATES,
-            'sorttimelinecourses' => $this->order == BLOCK_TIMELINE_SORT_BY_COURSES,
-            'selectedfilter' => $this->filter,
-            'hasdaysoffset' => true,
-            'hasdayslimit' => $offsets['dayslimit'] !== '' ,
-            'nodayslimit' => $offsets['dayslimit'] === '' ,
-            'limit' => $this->limit,
-            'hascourses' => !empty($formattedcourses),
-        ];
-        return array_merge($contextvariables, $filters, $offsets);
     }
 }
