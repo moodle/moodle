@@ -246,6 +246,19 @@
       }
     },
     {
+      files: ["**/*.mjs"],
+      env: {
+        node: true
+      },
+      parserOptions: {
+        sourceType: 'module'
+      },
+      rules: {
+        // .mjs files are Node CLI/build scripts; console output is their purpose.
+        'no-console': 'off'
+      }
+    },
+    {
       files: ["**/*.ts", "**/*.tsx"],
       parser: '@typescript-eslint/parser',
       parserOptions: {

@@ -99,9 +99,19 @@ module.exports = grunt => {
             try {
                 const {generateAliases} = await import('../../.esbuild/generate-aliases.mjs');
                 const {buildPluginComponents} = await import('../../.esbuild/plugin/plugincomponents.mjs');
+                const {applyDefaultSwizzleSafety} = await import('../../scripts/lib/swizzle/index.mjs');
 
                 generateAliases();
                 await buildPluginComponents();
+
+                const defaulted = applyDefaultSwizzleSafety(grunt.moodleEnv.gruntFilePath);
+                if (defaulted.length > 0) {
+                    grunt.log.warn(
+                        `${defaulted.length} component(s) had no explicit swizzle safety level and were ` +
+                        `defaulted to risky/risky in swizzle.json: ${defaulted.join(', ')}`
+                    );
+                }
+
                 done();
             } catch (err) {
                 grunt.log.error(err.message);

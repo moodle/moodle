@@ -1,0 +1,12 @@
+issueNumber: MDL-88509
+notes:
+  core:
+    - type: improved
+      message: |-
+        A new `swizzle` command has been added to launch an interactive CLI wizard for ejecting or wrapping a React component into your theme:
+
+        ```bash
+        ./scripts/swizzle.mjs
+        ```
+
+        Plugin developers can run `./scripts/swizzle.mjs manifest generate` to generate an initial component manifest, and `./scripts/swizzle.mjs manifest set` to set the safety level for each component.

@@ -277,6 +277,8 @@ module.exports = function(grunt) {
 
     addTask('upgradablelibs', grunt);
 
+    addTask('swizzle', grunt);
+
     // Register the default task.
     grunt.registerTask('default', ['startup']);
 };

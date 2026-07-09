@@ -7,7 +7,8 @@
     "update-packages": "node scripts/update-packages.mjs",
     "upgradenote": "node .grunt/upgradenotes.mjs create",
     "pretest": "grunt jsconfig",
-    "test": "jest"
+    "test": "jest",
+    "swizzle": "node scripts/swizzle.mjs"
   },
   "dependencies": {
     "@moodlehq/design-system": "^5.0.0",
@@ -39,6 +40,7 @@
     "cross-env": "^7.0.3",
     "current-git-branch": "^2.0.2",
     "docdash": "^2.0.2",
+    "enquirer": "^2.4.1",
     "esbuild": "^0.25.0",
     "eslint": "^8.56.0",
     "eslint-plugin-jsdoc": "^48.0.4",
