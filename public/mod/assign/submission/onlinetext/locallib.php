@@ -94,7 +94,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
         // Create a text box that can be enabled/disabled for onlinetext word limit.
         $wordlimitgrp = array();
-        $wordlimitgrp[] = $mform->createElement('text', 'assignsubmission_onlinetext_wordlimit', '', $options);
+        $wordlimitgrp[] = $mform->createElement('text', 'assignsubmission_onlinetext_wordlimit', $name, $options);
         $wordlimitgrp[] = $mform->createElement('checkbox', 'assignsubmission_onlinetext_wordlimit_enabled',
                 '', get_string('enable'));
         $mform->addGroup($wordlimitgrp, 'assignsubmission_onlinetext_wordlimit_group', $name, ' ', false);
