@@ -39885,35 +39885,6 @@ img.userpicture {
 .path-mod-feedback #showentryanontable td.cell.deleteentry {
   width: 10px;
 }
-.path-mod-feedback .response_navigation {
-  margin: 0.5rem 0;
-}
-.path-mod-feedback .response_navigation a {
-  display: block;
-}
-.path-mod-feedback .response_navigation a.back_to_list {
-  text-align: center;
-}
-.path-mod-feedback .response_navigation .prev_response {
-  text-align: left;
-}
-.path-mod-feedback .response_navigation .prev_response:before {
-  /*rtl:raw:
-  content: ' ► ';
-  */
-  /*rtl:remove*/
-  content: " ◄ ";
-}
-.path-mod-feedback .response_navigation .next_response {
-  text-align: right;
-}
-.path-mod-feedback .response_navigation .next_response:after {
-  /*rtl:raw:
-  content: ' ◄ ';
-  */
-  /*rtl:remove*/
-  content: " ► ";
-}
 
 /* reports.less */
 #page-report-participation-index .participationselectform div label {
