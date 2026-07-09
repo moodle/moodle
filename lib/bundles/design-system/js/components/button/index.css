@@ -229,7 +229,7 @@
   */
 .mds-btn.mds-btn--size-sm {
   padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
-  border-radius: var(--mds-border-radius-xs);
+  border-radius: var(--mds-border-radius-sm);
   font-weight: var(--mds-font-weight-medium);
   font-size: var(--mds-font-size-paragraph-small);
 }

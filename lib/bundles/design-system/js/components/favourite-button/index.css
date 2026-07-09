@@ -8,7 +8,7 @@
   border: none;
   border-radius: var(--mds-border-radius-pill);
   background-color: var(--mds-bg-surface-default);
-  color: var(--mds-text-default);
+  color: var(--mds-text-subtle);
   cursor: pointer;
   transition:
     background-color 0.15s ease-in-out,
@@ -43,7 +43,7 @@
 
 .mds-favourite-button:active:not(:disabled) {
   background-color: var(--mds-bg-surface-strong);
-  color: var(--mds-text-default);
+  color: var(--mds-text-subtle);
 }
 
 /* Selected states */

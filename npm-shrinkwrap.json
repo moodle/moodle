@@ -3655,9 +3655,9 @@
       }
     },
     "node_modules/@moodlehq/design-system": {
-      "version": "5.1.0",
-      "resolved": "https://registry.npmjs.org/@moodlehq/design-system/-/design-system-5.1.0.tgz",
-      "integrity": "sha512-xL0lMWjG3MYIWkJqg3jmjCg19KGzTo33alLTn5Ys4+PgeJrhSwMTz7UmoTpWF+imWy9YzFmfQSABXGl1T9J49A==",
+      "version": "5.1.2",
+      "resolved": "https://registry.npmjs.org/@moodlehq/design-system/-/design-system-5.1.2.tgz",
+      "integrity": "sha512-exOc3C/w3YNOU1gIP9mrZMYu3YvneyRZEgV9WnuAkK5uPf9qLmBEOwiT3+5Lqhh281qh6/0IqBqgo9G7+UqDJQ==",
       "license": "GPL-3.0-only",
       "dependencies": {
         "bootstrap": "^5.3.8"
