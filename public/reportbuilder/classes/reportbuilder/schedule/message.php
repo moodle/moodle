@@ -89,7 +89,7 @@ class message extends base {
             $schedule = $this->get_persistent();
 
             $scheduleuserviewas = $schedule->get('userviewas');
-            $schedulereportempty = $this->get_configdata()['reportempty'] ?? static::REPORT_EMPTY_SEND_EMPTY;
+            $schedulereportempty = (int) ($this->get_configdata()['reportempty'] ?? static::REPORT_EMPTY_SEND_EMPTY);
 
             // Handle schedule configuration as to who the report should be viewed as.
             if ($scheduleuserviewas === schedule::REPORT_VIEWAS_CREATOR) {
