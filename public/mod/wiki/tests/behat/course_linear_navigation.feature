@@ -31,7 +31,7 @@ Feature: Display the course linear navigation in the wiki pages
     And I click on "Print" "link"
     And I switch to a second window
     And the course linear navigation should not be visible
-    And I switch to the main window
+    And I close all opened windows
     # Edit.
     And I select "Edit" from the "jump" singleselect
     And the course linear navigation should not be visible
