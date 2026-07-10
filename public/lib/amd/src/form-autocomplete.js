@@ -976,7 +976,7 @@ define([
                 case KEYS.ENTER:
                     // Get the item that is currently selected.
                     var selectedItem = $(document.getElementById(state.selectionId)).children('[data-active-selection]');
-                    if (selectedItem) {
+                    if (selectedItem.length > 0) {
                         e.preventDefault();
 
                         // Unselect this item.
