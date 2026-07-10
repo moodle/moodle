@@ -123,9 +123,13 @@ export class EmbedInsert {
             // Process the media preview.
             this.processMediaPreview();
         } else { // Media added using dropzone or repositories.
-            this.mediaType ??= await checkMediaType(url);
+            // Only check media type via HEAD request for same-origin URLs (e.g. dropzone uploads).
+            // Cross-origin URLs (e.g. YouTube) would fail due to CORS policy.
+            if (!this.mediaType && parsedUrl.origin === window.location.origin) {
+                this.mediaType = await checkMediaType(url);
+            }
 
-            // If checkMediaType returns null, try fetching preview to detect external media providers.
+            // If media type is still unknown, try fetching preview to detect external media providers.
             if (!this.mediaType) {
                 this.filteredContent = await fetchPreview(this.originalUrl, this.contextId);
                 // If the filtered content is not empty, it means Moodle's filter recognized it as external media.
