@@ -1850,6 +1850,7 @@ final class enrollib_test extends advanced_testcase {
             'fullname' => 'Course 1',
             'shortname' => 'C1',
         ]);
+        $expectedcontexturl = course_get_url($course)->out();
         // Create user.
         $student = $this->getDataGenerator()->create_user();
         // Get manual plugin.
@@ -1875,5 +1876,6 @@ final class enrollib_test extends advanced_testcase {
         $this->assertNotEmpty($messages);
         $message = reset($messages);
         $this->assertStringContainsString('Hi ' . $student->firstname, quoted_printable_decode($message->fullmessage));
+        $this->assertEquals($expectedcontexturl, $message->contexturl);
     }
 }
