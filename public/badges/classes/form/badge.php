@@ -130,11 +130,8 @@ class badge extends moodleform {
         $mform->addGroup($issuancedetails, 'expirydategr', get_string('expirydate', 'badges'), [' '], false);
         $mform->setDefault('expiry', 0);
         $mform->setDefault('expiredate', strtotime('+1 year'));
-        $mform->disabledIf('expiredate[day]', 'expiry', 'neq', 1);
-        $mform->disabledIf('expiredate[month]', 'expiry', 'neq', 1);
-        $mform->disabledIf('expiredate[year]', 'expiry', 'neq', 1);
-        $mform->disabledIf('expireperiod[number]', 'expiry', 'neq', 2);
-        $mform->disabledIf('expireperiod[timeunit]', 'expiry', 'neq', 2);
+        $mform->disabledIf('expiredate', 'expiry', 'neq', 1);
+        $mform->disabledIf('expireperiod', 'expiry', 'neq', 2);
 
         $mform->addElement('hidden', 'action', $action);
         $mform->setType('action', PARAM_TEXT);
