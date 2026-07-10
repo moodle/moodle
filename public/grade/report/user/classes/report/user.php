@@ -620,6 +620,16 @@ class user extends grade_report {
                 $gradeitemdata['scaleid'] = $gradeobject->outcomeid;
                 $gradeitemdata['locked'] = $canviewall ? $gradegrade->grade_item->is_locked() : null;
 
+                // Grade items of type "category" have neither an itemname nor a categoryid yet.
+                if ($gradegrade->grade_item->itemtype == 'category') {
+                    // Load the parent category for category items.
+                    if ($category = $gradegrade->grade_item->load_parent_category()) {
+                        // Set the fullname and parentcategory properties for category items.
+                        $gradeitemdata['itemname'] = $category->get_name();
+                        $gradeitemdata['parentcategoryid'] = $category->parent;
+                    }
+                }
+
                 if ($this->showfeedback) {
                     // Copy $class before appending itemcenter as feedback should not be centered.
                     $classfeedback = $class;

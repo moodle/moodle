@@ -422,4 +422,66 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->assertEquals('course', $studentgrades['usergrades'][0]['gradeitems'][0]['itemtype']);
     }
 
+    /**
+     * Test gradereport_user_get_grade_items returns category names and parent category IDs.
+     *
+     * @covers \gradereport_user\external\user::get_grade_items
+     */
+    public function test_gradereport_user_get_grade_items_category_name(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a course and users for testing.
+        $course = $this->getDataGenerator()->create_course();
+
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+
+        $student = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        // Create a parent grade category.
+        $parentcategory = new \grade_category();
+        $parentcategory->fullname = 'Parent Category';
+        $parentcategory->courseid = $course->id;
+        $parentcategory->insert();
+
+        // Create a sub-category within the parent category.
+        $subcategory = new \grade_category();
+        $subcategory->fullname = 'Sub Category';
+        $subcategory->courseid = $course->id;
+        $subcategory->parent = $parentcategory->id;
+        $subcategory->insert();
+
+        // Create a grade item within the sub-category.
+        $gradeitem = new \grade_item();
+        $gradeitem->courseid = $course->id;
+        $gradeitem->itemname = 'Test Grade Item';
+        $gradeitem->itemtype = 'manual';
+        $gradeitem->categoryid = $subcategory->id;
+        $gradeitem->insert();
+
+        // Set the current user as the teacher.
+        $this->setUser($teacher);
+
+        // Call the API gradereport_user_get_grade_items.
+        $gradeitems = user_external::get_grade_items($course->id);
+        $gradeitems = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $gradeitems);
+
+        // Find category-type items and verify their names.
+        $categoryitems = [];
+        foreach ($gradeitems['usergrades'][0]['gradeitems'] as $item) {
+            if ($item['itemtype'] === 'category') {
+                $categoryitems[$item['itemname']] = $item;
+            }
+        }
+
+        $this->assertArrayHasKey('Parent Category', $categoryitems);
+        $this->assertArrayHasKey('Sub Category', $categoryitems);
+        $this->assertEquals($parentcategory->id, $categoryitems['Sub Category']['parentcategoryid']);
+    }
 }

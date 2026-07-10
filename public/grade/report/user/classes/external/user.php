@@ -542,6 +542,7 @@ class user extends external_api {
                                         'averageformatted' => new external_value(PARAM_NOTAGS, 'Grade average', VALUE_OPTIONAL),
                                         'feedback' => new external_value(PARAM_RAW, 'Grade feedback', VALUE_OPTIONAL),
                                         'feedbackformat' => new external_format_value('feedback', VALUE_OPTIONAL),
+                                        'parentcategoryid' => new external_value(PARAM_INT, 'Parent category id', VALUE_OPTIONAL),
                                     ], 'Grade items'
                                 )
                             )
