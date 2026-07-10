@@ -2043,16 +2043,26 @@ $footer-link-color: $bg-inverse-link-color !default;
     @include box-shadow($popover-box-shadow);
 }
 
-.hasstickyfooter .btn-footer-popover {
-    bottom: calc(1rem + #{$stickyfooter-height});
-}
-
-.hasstickyfooter .btn-footer-communication {
-    bottom: calc(4rem + #{$stickyfooter-height});
-}
-
-.hasstickyfooter .maintenancewarning {
-    bottom: #{$stickyfooter-height};
+// Fix the position of the footer related elements when a sticky footer is present.
+.hasstickyfooter {
+    &:has(.sticky-footer-content-wrapper) {
+        --sticky-footer-total-height: #{$stickyfooter-height};
+    }
+    &:has(.sticky-footer-supplementary-wrapper) {
+        --sticky-footer-total-height: #{$stickyfooter-supplementary-height};
+    }
+    &:has(.sticky-footer-content-wrapper):has(.sticky-footer-supplementary-wrapper) {
+        --sticky-footer-total-height: calc(#{$stickyfooter-height} + #{$stickyfooter-supplementary-height});
+    }
+    .btn-footer-popover {
+        bottom: calc(1rem + var(--sticky-footer-total-height, 4rem));
+    }
+    .btn-footer-communication {
+        bottom: calc(4rem + var(--sticky-footer-total-height, 4rem));
+    }
+    .maintenancewarning {
+        bottom: var(--sticky-footer-total-height, 4rem);
+    }
 }
 
 .popover.footer {

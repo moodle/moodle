@@ -59,15 +59,15 @@
     {{/ extradata }}
 >
     {{# supplementary }}
-    <div class="sticky-footer-supplementary-wrapper">
-        <div class="sticky-footer-supplementary d-flex justify-content-center align-items-center" >
+    <div class="sticky-footer-supplementary-wrapper d-flex justify-content-center align-items-center">
+        <div class="sticky-footer-supplementary" >
             {{> core/action_link}}
         </div>
     </div>
     {{/ supplementary }}
 
     {{# stickycontent }}
-    <div class="sticky-footer-content-wrapper h-100 d-flex justify-content-center align-items-center">
+    <div class="sticky-footer-content-wrapper d-flex justify-content-center align-items-center">
         <div class="sticky-footer-content w-100 {{!
             }} {{$ stickyclasses }}{{!
                 }}{{# stickyclasses }}{{ stickyclasses }}{{/ stickyclasses }}{{!
@@ -76,8 +76,8 @@
         >
             {{{stickycontent}}}
         </div>
-    {{/ stickycontent }}
     </div>
+    {{/ stickycontent }}
 </div>
 {{#js}}
 require(['theme_boost/sticky-footer'], function(footer) {

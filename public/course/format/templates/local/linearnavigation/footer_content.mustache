@@ -27,28 +27,29 @@
         "completion": "<span class=\"completion-status text-success\"><i class=\"fa fa-check\"></i> <span>Done</span></span>"
     }
 }}
-<div class="course-linear-navigation-footer-content d-flex w-100 align-items-center">
+<div class="course-linear-navigation-footer-content d-flex w-100 align-items-center px-2 px-sm-0">
     {{#previousurl}}
     <a href="{{.}}" class="course-linear-navigation-link text-decoration-none d-inline-flex align-items-center gap-1">
-        <span class="dir-rtl-hide" aria-hidden="true">{{#pix}} e/backward, core {{/pix}}</span>
-        <span class="dir-ltr-hide" aria-hidden="true">{{#pix}} e/forward, core {{/pix}}</span>
+        <span class="dir-rtl-hide icon-no-margin" aria-hidden="true">{{#pix}} e/backward, core {{/pix}}</span>
+        <span class="dir-ltr-hide icon-no-margin" aria-hidden="true">{{#pix}} e/forward, core {{/pix}}</span>
         <span>{{#str}} previous, core {{/str}}</span>
     </a>
     {{/previousurl}}
 
-    <div class="d-flex align-items-center gap-3 ms-auto" data-for="course-linear-navigation-footer">
+    <div class="d-flex align-items-center gap-4 ms-auto" data-for="course-linear-navigation-footer">
         {{! Completion status is displayed in the footer for linear navigation. }}
         {{#completion}}
         <div class="course-linear-navigation-completion">
             {{{ . }}}
         </div>
+        <div class="vr"></div>
         {{/completion}}
 
         {{#nexturl}}
         <a href="{{.}}" class="course-linear-navigation-link text-decoration-none d-inline-flex align-items-center gap-1 ms-auto">
             <span>{{#str}} next, core {{/str}}</span>
-            <span class="dir-rtl-hide" aria-hidden="true">{{#pix}} e/forward, core {{/pix}}</span>
-            <span class="dir-ltr-hide" aria-hidden="true">{{#pix}} e/backward, core {{/pix}}</span>
+            <span class="dir-rtl-hide icon-no-margin" aria-hidden="true">{{#pix}} e/forward, core {{/pix}}</span>
+            <span class="dir-ltr-hide icon-no-margin" aria-hidden="true">{{#pix}} e/backward, core {{/pix}}</span>
         </a>
         {{/nexturl}}
         {{#backtocourseurl}}

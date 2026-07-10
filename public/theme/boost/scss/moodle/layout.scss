@@ -209,7 +209,7 @@
         }
 
         &.hasstickyfooter {
-            margin-bottom: $stickyfooter-height;
+            margin-bottom: var(--sticky-footer-total-height, #{$stickyfooter-height});
         }
     }
 
