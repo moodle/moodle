@@ -1,0 +1,7 @@
+issueNumber: MDL-88602
+notes:
+  mod_forum:
+    - message: >-
+        Added the method `discussion::get_discussion_navigation_buttons()` that
+        returns data for the discussion navigation template.
+      type: improved

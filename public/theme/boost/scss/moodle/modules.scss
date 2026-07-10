@@ -249,6 +249,45 @@ select {
             font-weight: inherit;
         }
     }
+
+    .forumpost {
+        .authorsubheading a {
+            text-decoration: underline;
+        }
+    }
+
+    // Indent nested discussions.
+    .indent {
+        margin-left: 5rem;
+
+        @include media-breakpoint-down(md) {
+            margin-left: 3.5rem;
+        }
+
+        @include media-breakpoint-down(sm) {
+            margin-left: 2rem;
+        }
+    }
+
+    // Highlight the selected post by adding a blue border to the left of the post.
+    :target > .forumpost::before {
+        content: "";
+        position: absolute;
+        top: calc(#{$border-radius-xl}/2);
+        bottom: calc(#{$border-radius-xl}/2);
+        left: 0;
+        width: 3px;
+        background: $primary;
+    }
+
+    // Specific styles for the discussion navigation buttons.
+    .forum-navigation-button {
+        height: calc(#{$icon-height} + 1.25rem);
+        width: calc(#{$icon-height} + 1.25rem);
+        &.disabled .icon {
+            color: $border-color;
+        }
+    }
 }
 
 .discussion-settings-container {
