@@ -1693,9 +1693,12 @@ class restore_section_structure_step extends restore_structure_step {
                 $section->summaryformat = $data->summaryformat;
                 $restorefiles = true;
             }
-
-            // Don't update availability (I didn't see a useful way to define
-            // whether existing or new one should take precedence).
+            if (!$data->visible) {
+                $section->visible = $data->visible;
+            }
+            if (!empty($CFG->enableavailability) && empty($secrec->availability)) {
+                $section->availability = isset($data->availabilityjson) ? $data->availabilityjson : null;
+            }
 
             $DB->update_record('course_sections', $section);
             $newitemid = $secrec->id;

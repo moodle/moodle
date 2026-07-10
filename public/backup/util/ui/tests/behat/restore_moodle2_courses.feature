@@ -128,7 +128,8 @@ Feature: Restore Moodle 2 course backups
     And the field "Course layout" matches value "Show one section per page"
     And the field "Course short name" matches value "C1_1"
     And I press "Cancel"
-    And section "3" should be visible
+    And section "2" should be visible
+    And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
     And I should see "Section 15"
@@ -150,7 +151,8 @@ Feature: Restore Moodle 2 course backups
     And the field "Course short name" matches value "C2"
     And the field "Course layout" matches value "Show all sections on one page"
     And I press "Cancel"
-    And section "3" should be visible
+    And section "2" should be visible
+    And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
     And I should see "Section 15"
