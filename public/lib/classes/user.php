@@ -2736,10 +2736,10 @@ class user {
      *
      * @param int|null $userid The user's ID.
      * @param int $courseid The course ID if available.
-     * @return url|string A URL to be directed to for "Grades".
+     * @return url A URL to be directed to for "Grades".
      * @since Moodle 5.3
      */
-    public static function mygrades_url(?int $userid = null, int $courseid = SITEID) {
+    public static function mygrades_url(?int $userid = null, int $courseid = SITEID): url {
         global $CFG, $USER;
 
         if (isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report != 'external') {
@@ -2756,10 +2756,10 @@ class user {
             isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report == 'external'
                 && !empty($CFG->gradereport_mygradeurl)
         ) {
-            return $CFG->gradereport_mygradeurl;
+            return new url($CFG->gradereport_mygradeurl);
         }
 
-        return $CFG->wwwroot;
+        return new url($CFG->wwwroot);
     }
 
     /**

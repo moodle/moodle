@@ -311,11 +311,7 @@ class api {
 
         if (empty($section) or $section == 'gradessettings') {
             require_once($CFG->dirroot . '/user/lib.php');
-            $settings->mygradesurl = \core\user::mygrades_url();
-            // The previous function may return moodle_url instances or plain string URLs.
-            if ($settings->mygradesurl instanceof moodle_url) {
-                $settings->mygradesurl = $settings->mygradesurl->out(false);
-            }
+            $settings->mygradesurl = \core\user::mygrades_url()->out(false);
         }
 
         if (empty($section) or $section == 'mobileapp') {
