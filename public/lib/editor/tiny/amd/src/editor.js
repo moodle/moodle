@@ -29,6 +29,7 @@ import * as Options from './options';
 import {addToolbarButton, addToolbarButtons, addToolbarSection,
     removeToolbarButton, removeSubmenuItem, updateEditorState} from './utils';
 import {addMathMLSupport, addSVGSupport} from './content';
+import {getString} from 'core/str';
 import Config from 'core/config';
 
 /**
@@ -213,12 +214,27 @@ const adjustEditorSize = (editor, target) => {
  * @param {Array} plugins
  * @returns {object}
  */
-const getStandardConfig = (target, tinyMCE, options, plugins) => {
+const getStandardConfig = async(target, tinyMCE, options, plugins) => {
     const lang = document.querySelector('html').lang;
+
+    let label = null;
+    if (target.id) {
+        label = document.querySelector(`label[for="${CSS.escape(target.id)}"]`);
+    }
+
+    const iframeAriaText = label
+        ? await getString('tiny:field_label_and_rich_textarea_help', 'editor_tiny', label.textContent.trim())
+        : await getString(
+            'tiny:rich_text_area._press_alt-f9_for_menu._press_alt-f10_for_toolbar._press_alt-0_for_hel',
+            'editor_tiny'
+        );
 
     const config = Object.assign({}, getDefaultConfiguration(), {
         // eslint-disable-next-line camelcase
         base_url: baseUrl,
+
+        // eslint-disable-next-line camelcase
+        iframe_aria_text: iframeAriaText,
 
         // Set the editor target.
         // https://www.tiny.cloud/docs/tinymce/6/editor-important-options/#target
@@ -362,6 +378,36 @@ const getStandardConfig = (target, tinyMCE, options, plugins) => {
                 removeSubmenuItem(editor, 'align', 'tiny:justify');
                 // Adjust the editor size.
                 adjustEditorSize(editor, target);
+
+                // Associate the iframe with the field's label using aria-labelledby as iframes are not labelable elements.
+                // The iframe title is set via the iframe_aria_text option.
+                if (label && editor.iframeElement) {
+                    if (!label.id) {
+                        label.id = `${editor.iframeElement.id}_label`;
+                    }
+                    editor.iframeElement.setAttribute('aria-labelledby', label.id);
+                }
+
+                // The resize handle has a focusable role="separator", for which aria-valuenow
+                // is required (and aria-valuemin/max recommended). TinyMCE does not set these,
+                // so expose the editor's real height and keep aria-valuenow in sync on resize.
+                const resizeHandle = editor.getContainer().querySelector('.tox-statusbar__resize-handle');
+                if (resizeHandle) {
+                    const minHeight = editor.options.get('min_height');
+                    const maxHeight = editor.options.get('max_height');
+                    if (minHeight) {
+                        resizeHandle.setAttribute('aria-valuemin', minHeight);
+                    }
+                    if (maxHeight) {
+                        resizeHandle.setAttribute('aria-valuemax', maxHeight);
+                    }
+                    const updateResizeHandleValue = () => {
+                        const height = Math.round(editor.getContainer().getBoundingClientRect().height);
+                        resizeHandle.setAttribute('aria-valuenow', height);
+                    };
+                    updateResizeHandleValue();
+                    editor.on('ResizeEditor', updateResizeHandleValue);
+                }
             });
 
             addMathMLSupport(editor);
@@ -399,7 +445,7 @@ const getStandardConfig = (target, tinyMCE, options, plugins) => {
  * @param {object} pluginValues.pluginNames The list of plugins to load
  * @returns {object} The TinyMCE Configuration
  */
-const getEditorConfiguration = (target, tinyMCE, options, pluginValues) => {
+const getEditorConfiguration = async(target, tinyMCE, options, pluginValues) => {
     const {
         pluginNames,
         pluginConfig,
@@ -409,7 +455,7 @@ const getEditorConfiguration = (target, tinyMCE, options, pluginValues) => {
     // This seems a little strange, but we must double-process the config slightly.
 
     // First we fetch the standard configuration.
-    const instanceConfig = getStandardConfig(target, tinyMCE, options, pluginNames);
+    const instanceConfig = await getStandardConfig(target, tinyMCE, options, pluginNames);
 
     // Next we make any standard changes.
     // Here we remove the file menu, as it doesn't offer any useful functionality.
@@ -518,7 +564,8 @@ export const setupForTarget = async(target, options = {}) => {
     }
 
     // Get the editor configuration for this editor.
-    const instanceConfig = getEditorConfiguration(target, tinyMCE, options, pluginValues);
+    // Get the configuration for this editor instance.
+    const instanceConfig = await getEditorConfiguration(target, tinyMCE, options, pluginValues);
 
     // Initialise the editor instance for the given configuration.
     // At this point any plugin which has configuration options registered will have them applied for this instance.
