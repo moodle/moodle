@@ -73,6 +73,46 @@ class api {
     const AUTOLOGOUT_CUSTOM = 2;
 
     /**
+     * Return the current or provided subscription plan in a normalised format.
+     *
+     * If the provided data is missing or malformed and $loadfromapi is true, cached subscription information is requested.
+     *
+     * @param ?array $subscriptiondata Optional subscription information returned by the Apps Portal API.
+     * @param bool $loadfromapi Whether cached API data should be requested if the provided data is void or invalid.
+     * @return ?string The normalised plan, or null if it is missing or invalid.
+     */
+    public static function get_normalized_plan(?array $subscriptiondata = null, bool $loadfromapi = true): ?string {
+        if (
+            !is_array($subscriptiondata) ||
+            empty($subscriptiondata['subscription']) ||
+            !is_array($subscriptiondata['subscription']) ||
+            empty($subscriptiondata['subscription']['plan']) ||
+            !is_string($subscriptiondata['subscription']['plan'])
+        ) {
+            if (!$loadfromapi) {
+                return null;
+            }
+            $subscriptiondata = self::get_subscription_information(true);
+            return self::get_normalized_plan($subscriptiondata, false);
+        }
+
+        return \core_text::strtolower(trim($subscriptiondata['subscription']['plan']));
+    }
+
+    /**
+     * Check whether the current or provided subscription data belongs to a Premium or BMA plan.
+     *
+     * @param ?array $subscriptiondata Optional subscription information returned by the Apps Portal API.
+     * @param bool $loadfromapi Whether cached API data should be requested if the provided data is void or invalid.
+     * @return bool
+     */
+    public static function is_premium_or_bma_plan(?array $subscriptiondata = null, bool $loadfromapi = true): bool {
+        $plan = self::get_normalized_plan($subscriptiondata, $loadfromapi);
+
+        return $plan === 'premium' || $plan === 'bma';
+    }
+
+    /**
      * Returns a list of Moodle plugins supporting the mobile app.
      *
      * @return array an array of objects containing the plugin information

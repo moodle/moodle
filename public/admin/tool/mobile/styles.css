@@ -31,16 +31,16 @@
     width: 100%;
 }
 
-.tool_mobile-settings-alert a:not(.btn) {
+.tool-mobile-settings-alert a:not(.btn) {
     font-weight: 700;
     text-decoration: underline;
 }
 
-.tool_mobile-settings-alert a:not(.btn):hover {
+.tool-mobile-settings-alert a:not(.btn):hover {
     text-decoration: underline;
 }
 
-.tool_mobile-settings-alert img.icon {
+.tool-mobile-settings-alert img.icon {
     width: 20px;
     height: 20px;
     margin-bottom: .5rem;
@@ -54,3 +54,386 @@
     border-bottom: 0 solid transparent;
     font-size: 1rem;
 }
+
+/* Branding preview animation. */
+#page-admin-setting-premiumfeatures {
+    .tool-mobile-branding-preview {
+        background: #ececed;
+        --tool-mobile-branding-preview-cycle: 4.5s;
+        --tool-mobile-branding-preview-unit: clamp(0.84px, 0.07vw + 0.62px, 1px);
+        padding:
+            calc(16 * var(--tool-mobile-branding-preview-unit)) calc(28 * var(--tool-mobile-branding-preview-unit))
+            calc(16 * var(--tool-mobile-branding-preview-unit)) calc(16 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: calc(28 * var(--tool-mobile-branding-preview-unit));
+        overflow: visible;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .tool-mobile-branding-preview-scene {
+        min-height: calc(320 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: nowrap;
+        gap: calc(20 * var(--tool-mobile-branding-preview-unit));
+        overflow: visible;
+    }
+
+    .tool-mobile-branding-preview-picker {
+        width: calc(153 * var(--tool-mobile-branding-preview-unit));
+        background: #fff;
+        border-radius: calc(16 * var(--tool-mobile-branding-preview-unit));
+        box-shadow:
+            0 calc(12 * var(--tool-mobile-branding-preview-unit)) calc(32 * var(--tool-mobile-branding-preview-unit))
+            rgba(0, 0, 0, 0.12);
+        padding: calc(20 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        flex-direction: column;
+        gap: calc(18 * var(--tool-mobile-branding-preview-unit));
+    }
+
+    .tool-mobile-branding-preview-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .tool-mobile-branding-preview-pill {
+        height: calc(11 * var(--tool-mobile-branding-preview-unit));
+        background: #e3e3e6;
+        border-radius: 999px;
+    }
+
+    .tool-mobile-branding-preview-pill-wide {
+        width: 55%;
+    }
+
+    .tool-mobile-branding-preview-pill-mid {
+        width: 40%;
+    }
+
+    .tool-mobile-branding-preview-pill-small {
+        width: 20%;
+    }
+
+    .tool-mobile-branding-preview-dot {
+        width: calc(22 * var(--tool-mobile-branding-preview-unit));
+        height: calc(22 * var(--tool-mobile-branding-preview-unit));
+        border-radius: calc(8 * var(--tool-mobile-branding-preview-unit));
+        animation: tool-mobile-branding-preview-pickercolour var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-swatches {
+        display: flex;
+        gap: calc(9 * var(--tool-mobile-branding-preview-unit));
+    }
+
+    .tool-mobile-branding-preview-swatch {
+        width: calc(25 * var(--tool-mobile-branding-preview-unit));
+        height: calc(25 * var(--tool-mobile-branding-preview-unit));
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .tool-mobile-branding-preview-swatch-a {
+        background: #3cb878;
+    }
+
+    .tool-mobile-branding-preview-swatch-b {
+        background: #f98012;
+    }
+
+    .tool-mobile-branding-preview-swatch-c {
+        background: #5a48d8;
+    }
+
+    .tool-mobile-branding-preview-swatch::after {
+        content: "";
+        position: absolute;
+        inset: calc(-6 * var(--tool-mobile-branding-preview-unit));
+        border: calc(3 * var(--tool-mobile-branding-preview-unit)) solid #b9b9f0;
+        border-radius: 50%;
+        opacity: 0;
+        animation: tool-mobile-branding-preview-ring var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-swatch-a::after {
+        animation-delay: 1s;
+    }
+
+    .tool-mobile-branding-preview-swatch-c::after {
+        animation-delay: 2.2s;
+    }
+
+    .tool-mobile-branding-preview-swatch-b::after {
+        animation-delay: 3.3s;
+    }
+
+    .tool-mobile-branding-preview-gradient {
+        height: calc(52 * var(--tool-mobile-branding-preview-unit));
+        border-radius: calc(13 * var(--tool-mobile-branding-preview-unit));
+        background: linear-gradient(135deg, #f98012, #ffc371, #3cb878, #38b6ff, #5a48d8);
+        position: relative;
+    }
+
+    .tool-mobile-branding-preview-cursor {
+        position: absolute;
+        top: calc(16 * var(--tool-mobile-branding-preview-unit));
+        left: 40%;
+        width: calc(18 * var(--tool-mobile-branding-preview-unit));
+        height: calc(18 * var(--tool-mobile-branding-preview-unit));
+        border: calc(4 * var(--tool-mobile-branding-preview-unit)) solid #fff;
+        border-radius: 50%;
+        box-shadow:
+            0 calc(3 * var(--tool-mobile-branding-preview-unit)) calc(10 * var(--tool-mobile-branding-preview-unit))
+            rgba(0, 0, 0, 0.3);
+        animation: tool-mobile-branding-preview-slide var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-phone {
+        width: calc(135 * var(--tool-mobile-branding-preview-unit));
+        background: #fff;
+        border-radius: calc(20 * var(--tool-mobile-branding-preview-unit));
+        box-shadow:
+            0 0 0 calc(7 * var(--tool-mobile-branding-preview-unit)) #f7f7f8,
+            0 calc(18 * var(--tool-mobile-branding-preview-unit)) calc(44 * var(--tool-mobile-branding-preview-unit))
+            rgba(0, 0, 0, 0.14);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(calc(2 * var(--tool-mobile-branding-preview-unit)));
+    }
+
+    .tool-mobile-branding-preview-header {
+        height: calc(61 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        align-items: center;
+        gap: calc(9 * var(--tool-mobile-branding-preview-unit));
+        padding: 0 calc(14 * var(--tool-mobile-branding-preview-unit));
+        animation: tool-mobile-branding-preview-paintheader var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-header-pill {
+        width: 40%;
+        height: calc(11 * var(--tool-mobile-branding-preview-unit));
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 999px;
+    }
+
+    .tool-mobile-branding-preview-header-dot {
+        width: calc(22 * var(--tool-mobile-branding-preview-unit));
+        height: calc(22 * var(--tool-mobile-branding-preview-unit));
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.55);
+        margin-left: auto;
+    }
+
+    .tool-mobile-branding-preview-list {
+        padding: calc(14 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        flex-direction: column;
+        gap: calc(13 * var(--tool-mobile-branding-preview-unit));
+    }
+
+    .tool-mobile-branding-preview-card {
+        border: calc(1 * var(--tool-mobile-branding-preview-unit)) solid #ececef;
+        border-radius: calc(11 * var(--tool-mobile-branding-preview-unit));
+        padding: calc(13 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        flex-direction: column;
+        gap: calc(9 * var(--tool-mobile-branding-preview-unit));
+    }
+
+    .tool-mobile-branding-preview-card-pill {
+        height: calc(9 * var(--tool-mobile-branding-preview-unit));
+        background: #e3e3e6;
+        border-radius: 999px;
+        width: 70%;
+    }
+
+    .tool-mobile-branding-preview-card-pill-secondary {
+        background: #efeff1;
+        width: 45%;
+    }
+
+    .tool-mobile-branding-preview-card-pill-secondary-short {
+        width: 35%;
+    }
+
+    .tool-mobile-branding-preview-card-pill-short {
+        width: 60%;
+    }
+
+    .tool-mobile-branding-preview-bar {
+        height: calc(7 * var(--tool-mobile-branding-preview-unit));
+        border-radius: 999px;
+        width: 55%;
+        animation: tool-mobile-branding-preview-paintbars var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-bar-short {
+        width: 40%;
+    }
+
+    .tool-mobile-branding-preview-button {
+        margin: 0 calc(14 * var(--tool-mobile-branding-preview-unit)) calc(14 * var(--tool-mobile-branding-preview-unit));
+        height: calc(36 * var(--tool-mobile-branding-preview-unit));
+        border-radius: calc(11 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: tool-mobile-branding-preview-paintbtn var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-button-label {
+        width: 40%;
+        height: calc(8 * var(--tool-mobile-branding-preview-unit));
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 999px;
+    }
+
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-dot,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-swatch::after,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-cursor,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-header,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-bar,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-button,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-dot,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-swatch::after,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-cursor,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-header,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-bar,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-button {
+        animation-play-state: running;
+    }
+}
+
+/*
+ * Kept outside #page-admin-setting-premiumfeatures on purpose: @keyframes can't be scoped to a
+ * selector, so nesting them inside a page-id rule makes them invalid and silently dropped.
+ */
+@keyframes tool-mobile-branding-preview-pickercolour {
+    0%,
+    20% {
+        background-color: #c9c9ce;
+    }
+
+    24%,
+    42% {
+        background-color: #3cb878;
+    }
+
+    46%,
+    64% {
+        background-color: #5a48d8;
+    }
+
+    68%,
+    95% {
+        background-color: #f98012;
+    }
+
+    100% {
+        background-color: #c9c9ce;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-ring {
+    0%,
+    22% {
+        opacity: 1;
+    }
+
+    31%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-slide {
+    0%,
+    20% {
+        left: 40%;
+        opacity: 0;
+    }
+
+    24%,
+    42% {
+        left: 55%;
+        opacity: 1;
+    }
+
+    46%,
+    64% {
+        left: 78%;
+    }
+
+    68%,
+    94% {
+        left: 8%;
+        opacity: 1;
+    }
+
+    95%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-paintheader {
+    0%,
+    24% {
+        background-color: #c9c9ce;
+    }
+
+    28%,
+    97% {
+        background-color: #3cb878;
+    }
+
+    100% {
+        background-color: #c9c9ce;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-paintbars {
+    0%,
+    68% {
+        background-color: #c9c9ce;
+    }
+
+    72%,
+    97% {
+        background-color: #f98012;
+    }
+
+    100% {
+        background-color: #c9c9ce;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-paintbtn {
+    0%,
+    46% {
+        background-color: #c9c9ce;
+    }
+
+    50%,
+    97% {
+        background-color: #5a48d8;
+    }
+
+    100% {
+        background-color: #c9c9ce;
+    }
+}
+/* END Branding preview animation. */
