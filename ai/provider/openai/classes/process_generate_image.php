@@ -140,7 +140,7 @@ class process_generate_image extends abstract_processor {
         return new Request(
             method: 'POST',
             uri: '',
-            body: json_encode($body),
+            body: json_encode($body, JSON_UNESCAPED_SLASHES),
             headers: [
                 'Content-Type' => 'application/json',
             ],

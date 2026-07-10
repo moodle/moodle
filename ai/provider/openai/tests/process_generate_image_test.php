@@ -119,7 +119,7 @@ final class process_generate_image_test extends \advanced_testcase {
      */
     public function test_create_request_object(): void {
         $this->resetAfterTest();
-        set_config('action_generate_image_model', 'dall-e-3', 'aiprovider_openai');
+        set_config('action_generate_image_model', 'dall-e-3/custom', 'aiprovider_openai');
 
         $processor = new process_generate_image($this->provider, $this->action);
 
@@ -127,16 +127,18 @@ final class process_generate_image_test extends \advanced_testcase {
         $method = new \ReflectionMethod($processor, 'create_request_object');
         $request = $method->invoke($processor, 1);
 
-        $requestdata = (object) json_decode($request->getBody()->getContents());
+        $rawbody = $request->getBody()->getContents();
+        $requestdata = (object) json_decode($rawbody);
 
         $this->assertEquals('This is a test prompt', $requestdata->prompt);
-        $this->assertEquals('dall-e-3', $requestdata->model);
+        $this->assertEquals('dall-e-3/custom', $requestdata->model);
         $this->assertEquals('1', $requestdata->n);
         $this->assertEquals('hd', $requestdata->quality);
         $this->assertEquals('b64_json', $requestdata->response_format);
         $this->assertEquals('vivid', $requestdata->style);
         $this->assertEquals('1024x1024', $requestdata->size);
         $this->assertFalse(property_exists($requestdata, 'output_format'));
+        $this->assertStringNotContainsString('\/', $rawbody); // Slashes must not be escaped.
     }
 
     /**
