@@ -233,6 +233,13 @@ if ($hassiteconfig || has_capability('moodle/site:configview', context_system::i
         ''
     ));
 
+    $temp->add(new admin_setting_configcheckbox(
+        'tool_mobile/showlogoinappheader',
+        new lang_string('showlogoinappheader', 'tool_mobile'),
+        new lang_string('showlogoinappheader_desc', 'tool_mobile'),
+        0
+    ));
+
     $temp->add(new admin_setting_configtext(
         'mobilecssurl',
         new lang_string('mobilecssurl', 'tool_mobile'),

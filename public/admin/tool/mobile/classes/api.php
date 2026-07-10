@@ -326,6 +326,7 @@ class api {
             $settings->tool_mobile_forcelogout = get_config('tool_mobile', 'forcelogout');
             $settings->tool_mobile_customlangstrings = get_config('tool_mobile', 'customlangstrings');
             $settings->tool_mobile_disabledfeatures = get_config('tool_mobile', 'disabledfeatures');
+            $settings->tool_mobile_showlogoinappheader = clean_param(get_config('tool_mobile', 'showlogoinappheader'), PARAM_BOOL);
             $settings->tool_mobile_filetypeexclusionlist = get_config('tool_mobile', 'filetypeexclusionlist');
             $custommenuitems = get_config('tool_mobile', 'custommenuitems');
             $customusermenuitems = get_config('tool_mobile', 'customusermenuitems');
