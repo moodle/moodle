@@ -149,10 +149,6 @@ class award_criteria_course extends award_criteria {
             $mform->setType('grade_' . $param['course'], PARAM_INT);
             $mform->addGroup($parameter, 'param_' . $param['course'], '', array(' '), false);
 
-            $mform->disabledIf('bydate_' . $param['course'] . '[day]', 'bydate_' . $param['course'] . '[enabled]', 'notchecked');
-            $mform->disabledIf('bydate_' . $param['course'] . '[month]', 'bydate_' . $param['course'] . '[enabled]', 'notchecked');
-            $mform->disabledIf('bydate_' . $param['course'] . '[year]', 'bydate_' . $param['course'] . '[enabled]', 'notchecked');
-
             // Set existing values.
             if (isset($param['bydate'])) {
                 $mform->setDefault('bydate_' . $param['course'], $param['bydate']);

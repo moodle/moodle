@@ -242,9 +242,6 @@ abstract class award_criteria {
                 $mform->addGroupRule('param_' . $prefix . $param['id'], array(
                     'grade_' . $param['id'] => array(array(get_string('err_numeric', 'form'), 'numeric', '', 'client'))));
             }
-            $mform->disabledIf('bydate_' . $param['id'] . '[day]', 'bydate_' . $param['id'] . '[enabled]', 'notchecked');
-            $mform->disabledIf('bydate_' . $param['id'] . '[month]', 'bydate_' . $param['id'] . '[enabled]', 'notchecked');
-            $mform->disabledIf('bydate_' . $param['id'] . '[year]', 'bydate_' . $param['id'] . '[enabled]', 'notchecked');
             $mform->disabledIf('param_' . $prefix . $param['id'], $prefix . $param['id'], 'notchecked');
         }
 
