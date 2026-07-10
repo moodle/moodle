@@ -16,6 +16,7 @@ require_once($CFG->libdir.'/portfolio/exporter.php');
 $id = required_param('id', PARAM_INT);
 
 $PAGE->set_url('/portfolio/download/file.php', array('id' => $id));
+$PAGE->set_show_navigation_footer(false);
 
 $exporter = portfolio_exporter::rewaken_object($id);
 portfolio_export_pagesetup($PAGE, $exporter->get('caller'));

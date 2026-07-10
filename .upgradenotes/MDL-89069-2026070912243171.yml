@@ -1,0 +1,7 @@
+issueNumber: MDL-89069
+notes:
+  mod_workshop:
+    - message: >-
+        Deprecated the Behat step `behat_mod_workshop::i_set_portfolio_instance_to`,
+        please use `behat_portfolio::i_set_the_portfolio_instance_to` instead.
+      type: deprecated
