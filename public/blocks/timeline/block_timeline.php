@@ -21,16 +21,6 @@
  * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Timeline block class.
- *
- * @package    block_timeline
- * @copyright  2018 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class block_timeline extends block_base {
 
     /**
@@ -59,7 +49,7 @@ class block_timeline extends block_base {
 
         $this->content = (object) [
             'text' => $renderer->render($renderable),
-            'footer' => ''
+            'footer' => '',
         ];
 
         return $this->content;
@@ -71,6 +61,6 @@ class block_timeline extends block_base {
      * @return array
      */
     public function applicable_formats() {
-        return array('my' => true);
+        return ['my' => true];
     }
 }

@@ -24,15 +24,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
 
-    'block/timeline:myaddinstance' => array(
+    'block/timeline:myaddinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
-    )
-);
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+        'clonepermissionsfrom' => 'moodle/my:manageblocks',
+    ],
+];
