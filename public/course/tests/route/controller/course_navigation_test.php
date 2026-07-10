@@ -165,7 +165,7 @@ final class course_navigation_test extends route_testcase {
             ],
             'current' => 'cm1',
             'expected' => [
-                'id' => 'cm2',
+                'id' => 'cm2', // Teachers can see stealth modules.
             ],
             'role' => 'teacher',
         ];
@@ -931,7 +931,7 @@ final class course_navigation_test extends route_testcase {
             ],
             'current' => 'cm2',
             'expected' => [
-                'id' => 'cm1', // Students cannot see stealth modules in the course page.
+                'id' => 'cm1', // Teachers can see hidden modules in the course page.
             ],
             'role' => 'teacher',
         ];
@@ -952,7 +952,7 @@ final class course_navigation_test extends route_testcase {
             ],
             'current' => 'cm2',
             'expected' => [
-                'id' => 'cm1',
+                'id' => 'cm1', // Teachers can see stealth modules in the course page.
             ],
             'role' => 'teacher',
         ];
