@@ -242,9 +242,14 @@ class shutdown_manager {
 
         // Help apache server if possible.
         $apachereleasemem = false;
-        if (function_exists('apache_child_terminate') && function_exists('memory_get_usage') && ini_get_bool('child_terminate')) {
+        if (function_exists('apache_child_terminate') && function_exists('memory_get_usage')) {
+            $childterminate = ini_get('child_terminate');
             $limit = (empty($CFG->apachemaxmem) ? 64 * 1024 * 1024 : $CFG->apachemaxmem); // 64MB default.
-            if (memory_get_usage() > get_real_size($limit)) {
+            if (
+                ($childterminate == '1' || strtolower($childterminate) == 'on')
+                &&
+                memory_get_usage() > @ini_parse_quantity($limit)
+            ) {
                 $apachereleasemem = $limit;
                 @apache_child_terminate();
             }
