@@ -45,8 +45,8 @@ class behat_search extends behat_base {
      * @param string $query Query to search for
      */
     public function i_search_for_using_the_header_global_search_box($query) {
-        // In boost the toggle button lives inside the mobile-only wrapper and is hidden on desktop.
-        // Classic always shows it. Check visibility before clicking to handle both cases.
+        // In boost the toggle button is only visible on small screens, where it expands the
+        // inline search field. Check visibility before clicking.
         $togglelabel = get_string('togglesearch', 'core');
         $toggle = $this->getSession()->getPage()->find('named', ['button', $togglelabel]);
         if ($toggle && $toggle->isVisible()) {

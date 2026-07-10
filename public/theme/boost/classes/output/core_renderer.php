@@ -33,10 +33,13 @@ defined('MOODLE_INTERNAL') || die;
  */
 class core_renderer extends \core_renderer {
     /**
-     * Returns an inline search box permanently visible in the top navigation.
+     * Returns the navbar search box using the inline field design.
      *
-     * @param string $id Passed to parent::search_box() for the mobile fallback.
-     * @return string HTML for the inline and mobile search forms, or empty string.
+     * The field is always visible on md+ viewports and collapses behind a
+     * toggle button on smaller screens.
+     *
+     * @param string $id Unused, kept for compatibility with the parent signature.
+     * @return string HTML for the navbar search form, or empty string.
      */
     public function search_box($id = false) {
         global $CFG;
@@ -53,13 +56,7 @@ class core_renderer extends \core_renderer {
             'grouplabel' => get_string('sitewidesearch', 'search'),
         ];
 
-        // Desktop (md+): new inline, always-visible form.
-        $desktop = $this->render_from_template('core/search_input_navbar_inline', $data);
-
-        // Mobile (< md): keep the original toggle + collapse pattern.
-        $mobile = html_writer::div(parent::search_box($id), 'd-flex d-md-none');
-
-        return $desktop . $mobile;
+        return $this->render_from_template('core/search_input_navbar_inline', $data);
     }
 
     /**

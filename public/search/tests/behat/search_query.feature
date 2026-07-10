@@ -29,6 +29,21 @@ Feature: Use global search interface
     And I should see "PageName1" in the ".breadcrumb" "css_element"
 
   @javascript
+  Scenario: Use the header search box on a small screen
+    When I change window size to "mobile"
+    Then the "aria-expanded" attribute of "Toggle search input" "button" should contain "false"
+    And "Search" "field" in the "usernavigation" "region" should not be visible
+    And I click on "Toggle search input" "button"
+    And the "aria-expanded" attribute of "Toggle search input" "button" should contain "true"
+    And "Search" "field" in the "usernavigation" "region" should be visible
+    And I click on "Close" "button" in the "usernavigation" "region"
+    And the "aria-expanded" attribute of "Toggle search input" "button" should contain "false"
+    And "Search" "field" in the "usernavigation" "region" should not be visible
+    And I search for "frogs" using the header global search box
+    And I should see "PageName1"
+    And I should see "PageDesc1"
+
+  @javascript
   Scenario: Search from search page with two results
     When I search for "zombies" using the header global search box
     Then I should see "No results"
