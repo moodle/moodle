@@ -150,7 +150,7 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->provider = $this->create_provider(
             actionclass: \core_ai\aiactions\generate_image::class,
             actionconfig: [
-                'model' => 'my-custom-gpt',
+                'model' => 'my/custom-gpt',
                 'modelextraparams' => '{"temperature": 0.5,"max_completion_tokens": 100}',
             ],
         );
@@ -160,11 +160,13 @@ final class process_generate_image_test extends \advanced_testcase {
         $method = new \ReflectionMethod($processor, 'create_request_object');
         $request = $method->invoke($processor, 1);
 
-        $body = (object) json_decode($request->getBody()->getContents());
+        $rawbody = $request->getBody()->getContents();
+        $body = (object) json_decode($rawbody);
 
-        $this->assertEquals('my-custom-gpt', $body->model);
+        $this->assertEquals('my/custom-gpt', $body->model);
         $this->assertEquals('0.5', $body->temperature);
         $this->assertEquals('100', $body->max_completion_tokens);
+        $this->assertStringNotContainsString('\/', $rawbody); // Slashes must not be escaped.
     }
 
     /**
