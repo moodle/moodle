@@ -15,9 +15,17 @@ import { getTimelineEvents } from "../repository";
 import { DatesViewSkeleton } from "../Skeleton";
 import EventListItem from "../EventListItem";
 import { computeTimeRange, groupByDay, filterEvents } from "../utils";
-const FIRST_LOAD_LIMIT = 5;
 const MORE_LOAD_LIMIT = 10;
-function DatesView({ midnight, offsets, searchvalue, nocoursesurl, noeventsurl, hasenrolledcourses, searchPending }) {
+function DatesView({
+  midnight,
+  offsets,
+  searchvalue,
+  nocoursesurl,
+  noeventsurl,
+  hasenrolledcourses,
+  limit,
+  searchPending
+}) {
   const [days, setDays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
@@ -33,11 +41,11 @@ function DatesView({ midnight, offsets, searchvalue, nocoursesurl, noeventsurl, 
       timesortfrom: starttime,
       timesortto: endtime,
       aftereventid,
-      limitnum: (append ? MORE_LOAD_LIMIT : FIRST_LOAD_LIMIT) + 1,
+      limitnum: (append ? MORE_LOAD_LIMIT : limit) + 1,
       searchvalue: searchvalue || null
     });
     let filtered = filterEvents(result.events, midnight, offsets.filteroverdue);
-    const loadedAll = filtered.length <= (append ? MORE_LOAD_LIMIT : FIRST_LOAD_LIMIT);
+    const loadedAll = filtered.length <= (append ? MORE_LOAD_LIMIT : limit);
     if (!loadedAll) {
       filtered.pop();
     }
@@ -64,7 +72,7 @@ function DatesView({ midnight, offsets, searchvalue, nocoursesurl, noeventsurl, 
     if (filtered.length > 0) {
       setLastId(filtered[filtered.length - 1].id);
     }
-  }, [starttime, endtime, searchvalue, offsets.filteroverdue, midnight]);
+  }, [starttime, endtime, searchvalue, offsets.filteroverdue, midnight, limit]);
   useEffect(() => {
     setLoading(true);
     setDays([]);
@@ -79,7 +87,7 @@ function DatesView({ midnight, offsets, searchvalue, nocoursesurl, noeventsurl, 
   if (loading || searchPending) {
     return /* @__PURE__ */ jsxDEV(DatesViewSkeleton, {}, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 127,
+      lineNumber: 137,
       columnNumber: 16
     }, this);
   }
@@ -88,42 +96,42 @@ function DatesView({ midnight, offsets, searchvalue, nocoursesurl, noeventsurl, 
       return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-courses-empty-message", children: [
         /* @__PURE__ */ jsxDEV("img", { src: nocoursesurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-          lineNumber: 134,
+          lineNumber: 144,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "nocoursesinprogress", component: "block_timeline", children: "" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-          lineNumber: 136,
+          lineNumber: 146,
           columnNumber: 25
         }, this) }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-          lineNumber: 135,
+          lineNumber: 145,
           columnNumber: 21
         }, this)
       ] }, void 0, true, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 133,
+        lineNumber: 143,
         columnNumber: 17
       }, this);
     }
     return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-events-empty-message", children: [
       /* @__PURE__ */ jsxDEV("img", { src: noeventsurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 143,
+        lineNumber: 153,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "noevents", component: "block_timeline", children: "" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 145,
+        lineNumber: 155,
         columnNumber: 21
       }, this) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 144,
+        lineNumber: 154,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 142,
+      lineNumber: 152,
       columnNumber: 13
     }, this);
   }
@@ -131,29 +139,29 @@ function DatesView({ midnight, offsets, searchvalue, nocoursesurl, noeventsurl, 
     /* @__PURE__ */ jsxDEV("div", { className: "pb-2", "data-region": "event-list-wrapper", children: days.map((day) => /* @__PURE__ */ jsxDEV("div", { children: [
       /* @__PURE__ */ jsxDEV("div", { className: "mt-3", "data-region": "event-list-content-date", "data-timestamp": day.dayTimestamp, children: /* @__PURE__ */ jsxDEV("h4", { className: "h6 d-inline fw-bold px-2", children: day.events[0].formattedday }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 157,
+        lineNumber: 167,
         columnNumber: 29
       }, this) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 156,
+        lineNumber: 166,
         columnNumber: 25
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "list-group list-group-flush", children: day.events.map((event) => /* @__PURE__ */ jsxDEV(EventListItem, { event }, event.id, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 163,
+        lineNumber: 173,
         columnNumber: 33
       }, this)) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 161,
+        lineNumber: 171,
         columnNumber: 25
       }, this)
     ] }, day.dayTimestamp, true, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 155,
+      lineNumber: 165,
       columnNumber: 21
     }, this)) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 153,
+      lineNumber: 163,
       columnNumber: 13
     }, this),
     hasMore && /* @__PURE__ */ jsxDEV("div", { className: "pt-1 pb-2 ps-2", "data-region": "more-events-button-container", children: /* @__PURE__ */ jsxDEV(
@@ -167,7 +175,7 @@ function DatesView({ midnight, offsets, searchvalue, nocoursesurl, noeventsurl, 
         label: moreActivitiesLabel,
         endIcon: loadingMore ? /* @__PURE__ */ jsxDEV("i", { className: "spinner-border spinner-border-sm ms-1", role: "status", "aria-hidden": "true" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-          lineNumber: 180,
+          lineNumber: 190,
           columnNumber: 31
         }, this) : void 0
       },
@@ -175,18 +183,18 @@ function DatesView({ midnight, offsets, searchvalue, nocoursesurl, noeventsurl, 
       false,
       {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 172,
+        lineNumber: 182,
         columnNumber: 21
       },
       this
     ) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 171,
+      lineNumber: 181,
       columnNumber: 17
     }, this)
   ] }, void 0, true, {
     fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-    lineNumber: 152,
+    lineNumber: 162,
     columnNumber: 9
   }, this);
 }

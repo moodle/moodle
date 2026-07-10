@@ -31,7 +31,6 @@ import {computeTimeRange, groupByDay, filterEvents} from '../utils';
 import type {DayGroup} from '../utils';
 import type {FilterOffsets} from '../types';
 
-const FIRST_LOAD_LIMIT = 5;
 const MORE_LOAD_LIMIT = 10;
 
 interface DatesViewProps {
@@ -41,6 +40,8 @@ interface DatesViewProps {
     nocoursesurl: string;
     noeventsurl: string;
     hasenrolledcourses: boolean;
+    /** Number of events to show on first load, from block_timeline_user_limit_preference. */
+    limit: number;
     /** True while the search debounce is pending — show skeleton immediately on keystroke. */
     searchPending?: boolean;
 }
@@ -48,7 +49,16 @@ interface DatesViewProps {
 /**
  * Renders timeline events sorted by date with lazy-load pagination.
  */
-export default function DatesView({midnight, offsets, searchvalue, nocoursesurl, noeventsurl, hasenrolledcourses, searchPending}: DatesViewProps) {
+export default function DatesView({
+    midnight,
+    offsets,
+    searchvalue,
+    nocoursesurl,
+    noeventsurl,
+    hasenrolledcourses,
+    limit,
+    searchPending,
+}: DatesViewProps) {
     const [days, setDays] = useState<DayGroup[]>([]);
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(false);
@@ -67,13 +77,13 @@ export default function DatesView({midnight, offsets, searchvalue, nocoursesurl,
             timesortfrom: starttime,
             timesortto:   endtime,
             aftereventid,
-            limitnum:     (append ? MORE_LOAD_LIMIT : FIRST_LOAD_LIMIT) + 1,
+            limitnum:     (append ? MORE_LOAD_LIMIT : limit) + 1,
             searchvalue:  searchvalue || null,
         });
 
         let filtered = filterEvents(result.events, midnight, offsets.filteroverdue);
 
-        const loadedAll = filtered.length <= (append ? MORE_LOAD_LIMIT : FIRST_LOAD_LIMIT);
+        const loadedAll = filtered.length <= (append ? MORE_LOAD_LIMIT : limit);
         if (!loadedAll) {
             filtered.pop();
         }
@@ -108,7 +118,7 @@ export default function DatesView({midnight, offsets, searchvalue, nocoursesurl,
         if (filtered.length > 0) {
             setLastId(filtered[filtered.length - 1].id);
         }
-    }, [starttime, endtime, searchvalue, offsets.filteroverdue, midnight]);
+    }, [starttime, endtime, searchvalue, offsets.filteroverdue, midnight, limit]);
 
     useEffect(() => {
         setLoading(true);

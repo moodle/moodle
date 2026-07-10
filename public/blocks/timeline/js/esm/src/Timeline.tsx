@@ -133,6 +133,7 @@ export default function Timeline({midnight, filter, order, limit, nocoursesurl, 
                             nocoursesurl={nocoursesurl}
                             noeventsurl={noeventsurl}
                             hasenrolledcourses={hasenrolledcourses}
+                            limit={limit}
                             searchPending={searchPending}
                         />
                     )}
