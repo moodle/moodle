@@ -97,6 +97,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'tool_mobile_androidappid' => get_config('tool_mobile', 'androidappid'),
             'tool_mobile_setuplink' => get_config('tool_mobile', 'setuplink'),
             'tool_mobile_qrcodetype' => get_config('tool_mobile', 'qrcodetype'),
+            'tool_mobile_enabledeeplinkautologin' => (int) get_config('tool_mobile', 'enabledeeplinkautologin'),
             'supportpage' => $CFG->supportpage,
             'supportavailability' => $CFG->supportavailability,
             'warnings' => [],
@@ -121,6 +122,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         set_config('lang', 'a_b');  // Set invalid lang.
         set_config('disabledfeatures', 'myoverview', 'tool_mobile');
         set_config('minimumversion', '3.8.0', 'tool_mobile');
+        set_config('enabledeeplinkautologin', 1, 'tool_mobile');
         set_config('supportemail', 'test@test.com');
         set_config('supportavailability', CONTACT_SUPPORT_ANYONE);
 
@@ -146,6 +148,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $expected['lang'] = ''; // Expect empty because it was set to an invalid lang.
         $expected['tool_mobile_disabledfeatures'] = 'myoverview';
         $expected['tool_mobile_minimumversion'] = '3.8.0';
+        $expected['tool_mobile_enabledeeplinkautologin'] = 1;
 
         if ($logourl = $OUTPUT->get_logo_url()) {
             $expected['logourl'] = $logourl->out(false);
