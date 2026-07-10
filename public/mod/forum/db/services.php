@@ -224,4 +224,12 @@ $functions = array(
         'capabilities' => 'mod/forum:viewdiscussion',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+
+    'mod_forum_set_read_state' => [
+        'classname' => 'mod_forum\external\set_read_state',
+        'methodname' => 'execute',
+        'description' => 'Set the read or unread state for a forum post for the current user.',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 );
