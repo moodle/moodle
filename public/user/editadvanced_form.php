@@ -97,7 +97,7 @@ class user_editadvanced_form extends moodleform {
             }
         }
 
-        $purpose = user_edit_map_field_purpose($userid, 'username');
+        $purpose = \core\user::edit_map_field_purpose($userid, 'username');
         $mform->addElement('text', 'username', get_string('username'), 'size="20"' . $purpose);
         $mform->addHelpButton('username', 'username', 'auth');
         $mform->setType('username', PARAM_RAW);
@@ -119,7 +119,7 @@ class user_editadvanced_form extends moodleform {
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
 
-        $purpose = user_edit_map_field_purpose($userid, 'password');
+        $purpose = \core\user::edit_map_field_purpose($userid, 'password');
         $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'),
             'maxlength="'.MAX_PASSWORD_CHARACTERS.'" size="20"' . $purpose);
         $mform->addRule('newpassword', get_string('maximumchars', '', MAX_PASSWORD_CHARACTERS),

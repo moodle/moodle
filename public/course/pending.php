@@ -138,7 +138,7 @@ if (empty($pending)) {
             $course->get_requester(),
             [
                 'includefullname' => true,
-                'link' => user_can_view_profile($course->get_requester()),
+                'link' => \core\user::can_view_profile($course->get_requester()),
             ],
         );
 

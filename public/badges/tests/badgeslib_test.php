@@ -568,7 +568,7 @@ final class badgeslib_test extends badges_testcase {
         $this->user->department = 'sillywalks';
         $sink = $this->redirectEmails();
         profile_save_data((object)array('id' => $this->user->id, 'profile_field_newfield' => 'X'));
-        user_update_user($this->user, false);
+        \core\user::update_user($this->user, false);
         $this->assertCount(1, $sink->get_messages());
         $sink->close();
         // Check if badge is awarded.

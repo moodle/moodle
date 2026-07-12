@@ -133,7 +133,7 @@ final class helper_test extends \advanced_testcase {
 
         // Calculate the minimum fields that can be returned.
         $namefields = \core_user\fields::for_name()->get_required_fields();
-        $fields = array_intersect($namefields, user_get_default_fields());
+        $fields = array_intersect($namefields, \core\user::get_default_fields());
 
         $minimaluser = (object) [
             'id' => $user2->id,

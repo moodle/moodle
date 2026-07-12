@@ -3385,9 +3385,9 @@ abstract class grade_helper {
         }
 
         $fields = array();
-        require_once($CFG->dirroot.'/user/lib.php');                // Loads user_get_default_fields()
+        require_once($CFG->dirroot . '/user/lib.php');              // Loads \core\user::get_default_fields.
         require_once($CFG->dirroot.'/user/profile/lib.php');        // Loads constants, such as PROFILE_VISIBLE_ALL
-        $userdefaultfields = user_get_default_fields();
+        $userdefaultfields = \core\user::get_default_fields();
 
         // Sets the list of profile fields
         $userprofilefields = array_map('trim', explode(',', $CFG->grade_export_userprofilefields));

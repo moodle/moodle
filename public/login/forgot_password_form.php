@@ -52,13 +52,13 @@ class login_forgot_password_form extends moodleform {
 
         $mform->addElement('header', 'searchbyusername', get_string('searchbyusername'), '');
 
-        $purpose = user_edit_map_field_purpose($USER->id, 'username');
+        $purpose = \core\user::edit_map_field_purpose($USER->id, 'username');
         $mform->addElement('text', 'username', get_string('username'), 'size="20"' . $purpose);
         $mform->setType('username', PARAM_RAW);
 
         $mform->addElement('header', 'searchbyemail', get_string('searchbyemail'), '');
 
-        $purpose = user_edit_map_field_purpose($USER->id, 'email');
+        $purpose = \core\user::edit_map_field_purpose($USER->id, 'email');
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"' . $purpose);
         $mform->setType('email', PARAM_RAW_TRIMMED);
 

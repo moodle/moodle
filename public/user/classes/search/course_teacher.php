@@ -151,7 +151,7 @@ class course_teacher extends \core_search\base {
             return \core_search\manager::ACCESS_DELETED;
         }
 
-        if (user_can_view_profile($user)) {
+        if (\core\user::can_view_profile($user)) {
             return \core_search\manager::ACCESS_GRANTED;
         }
 

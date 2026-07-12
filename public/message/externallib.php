@@ -3433,7 +3433,7 @@ class core_message_external extends external_api {
                 return true;
             } else {
                 // User is not a contact, so we need to check if the user is allowed to see the profile or not.
-                return user_can_view_profile($targetuser);
+                return \core\user::can_view_profile($targetuser);
             }
         });
 

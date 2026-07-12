@@ -314,8 +314,9 @@ class api {
         $noofvalidseenrecords = 0;
         $returnedusers = [];
 
-        // Only fields that are also part of user_get_default_fields() are valid when passed into user_get_user_details().
-        $fields = array_intersect($namefields->get_required_fields(), user_get_default_fields());
+        // Only fields that are also part of \core\user::get_default_fields() are valid when passed
+        // into \core\user::get_user_details().
+        $fields = array_intersect($namefields->get_required_fields(), \core\user::get_default_fields());
 
         foreach ($getnoncontactusers(0, $batchlimit) as $users) {
             foreach ($users as $id => $user) {

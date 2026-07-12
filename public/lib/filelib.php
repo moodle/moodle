@@ -4855,7 +4855,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
                 // Verify the current user is able to view the profile of the supplied user anywhere.
                 $user = core_user::get_user($userid);
-                if (!user_can_view_profile($user, null, $context)) {
+                if (!\core\user::can_view_profile($user, null, $context)) {
                     send_file_not_found();
                 }
             }
@@ -4884,7 +4884,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
 
                 // Verify the current user is able to view the profile of the supplied user in current course.
                 $user = core_user::get_user($userid);
-                if (!user_can_view_profile($user, $course, $usercontext)) {
+                if (!\core\user::can_view_profile($user, $course, $usercontext)) {
                     send_file_not_found();
                 }
             }

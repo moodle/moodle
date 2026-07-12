@@ -41,7 +41,7 @@ class award_criteria_profile extends award_criteria {
 
     /* @var array The default profile fields allowed to be used as award criteria.
      *
-     * Note: This is used instead of user_get_default_fields(), because it is not possible to
+     * Note: This is used instead of \core\user::get_default_fields(), because it is not possible to
      * determine which fields the user can modify.
      */
     protected $allowed_default_fields = [

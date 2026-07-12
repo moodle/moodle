@@ -32,7 +32,7 @@ $PAGE->set_url('/user/defaulthomepage.php', ['id' => $userid]);
 
 list($user, $course) = useredit_setup_preference_page($userid, SITEID);
 
-$options = user_get_default_homepage_options();
+$options = \core\user::get_default_homepage_options();
 if (empty($options)) {
     redirect(new moodle_url('/user/preferences.php', ['userid' => $user->id]));
 }

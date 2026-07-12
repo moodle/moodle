@@ -697,7 +697,7 @@ final class sync_members_test extends \lti_advantage_testcase {
         $authenticateduser = $this->lti_advantage_user_authenticates('123');
         $authenticateduser->auth = 'manual';
         $authenticateduser->password = '1234abcD*';
-        user_update_user($authenticateduser);
+        \core\user::update_user($authenticateduser);
         $authenticateduser = \core_user::get_user($authenticateduser->id);
 
         // Mock the launch for the specified user.

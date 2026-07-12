@@ -1,0 +1,36 @@
+issueNumber: MDL-82650
+notes:
+  core:
+    - message: >
+        The following functions from `user/lib.php` have been deprecated and moved to the
+        `\core\user` class as static methods. Existing calls continue to work but will emit
+        a `DEBUG_DEVELOPER` notice. Update your code to use the new class methods:
+
+         | Old function name                            | New method name                                          |
+         | ---                                          | ---                                                       |
+         | `user_create_user()`                         | `\core\user::create_user()`                               |
+         | `user_update_user()`                         | `\core\user::update_user()`                               |
+         | `user_delete_user()`                         | `\core\user::delete_user()`                               |
+         | `user_get_users_by_id()`                     | `\core\user::get_users_by_id()`                            |
+         | `user_get_default_fields()`                  | `\core\user::get_default_fields()`                         |
+         | `user_get_user_details()`                    | `\core\user::get_user_details()`                           |
+         | `user_get_user_details_courses()`            | `\core\user::get_user_details_courses()`                   |
+         | `can_view_user_details_cap()`                | `\core\user::can_view_user_details_cap()`                  |
+         | `user_count_login_failures()`                | `\core\user::count_login_failures()`                       |
+         | `user_convert_text_to_menu_items()`          | `\core\user::convert_text_to_menu_items()`                 |
+         | `user_get_default_homepage_options()`        | `\core\user::get_default_homepage_options()`               |
+         | `user_get_user_navigation_info()`             | `\core\user::get_user_navigation_info()`                   |
+         | `user_add_password_history()`                | `\core\user::add_password_history()`                       |
+         | `user_is_previously_used_password()`         | `\core\user::is_previously_used_password()`                |
+         | `user_remove_user_device()`                  | `\core\user::remove_user_device()`                         |
+         | `user_list_view()`                           | `\core\user::list_view()`                                  |
+         | `user_mygrades_url()`                        | `\core\user::mygrades_url()`                               |
+         | `user_can_view_profile()`                    | `\core\user::can_view_profile()`                           |
+         | `user_process_profile_callbacks()`           | `\core\user::process_profile_callbacks()`                  |
+         | `user_get_tagged_users()`                    | `\core\user::get_tagged_users()`                           |
+         | `user_get_course_lastaccess_sql()`           | `\core\user::get_course_lastaccess_sql()`                  |
+         | `user_get_user_lastaccess_sql()`             | `\core\user::get_user_lastaccess_sql()`                    |
+         | `user_get_lastaccess_sql()`                  | `\core\user::get_lastaccess_sql()`                         |
+         | `user_edit_map_field_purpose()`              | `\core\user::edit_map_field_purpose()`                     |
+         | `user_update_device_public_key()`            | `\core_user\devicekey::update_device_public_key()`         |
+      type: deprecated

@@ -368,7 +368,7 @@ class auth_plugin_lti extends \auth_plugin_base {
         $user->lastname = $userdata['family_name'] ?? $iss;
         $user->password = '';
         $user->confirmed = 1;
-        $user->id = user_create_user($user, false);
+        $user->id = \core\user::create_user($user, false);
 
         // Link this user with the LTI credentials for future use.
         $this->create_user_binding($iss, $userid, $user->id);
@@ -405,7 +405,7 @@ class auth_plugin_lti extends \auth_plugin_base {
         $userfieldstocompare = array_intersect_key((array) $user, $update);
 
         if (!empty(array_diff($update, $userfieldstocompare))) {
-            user_update_user($update); // Only update if there's a change.
+            \core\user::update_user((object) $update); // Only update if there's a change.
         }
 
         if (!empty($userdata['picture'])) {

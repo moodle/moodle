@@ -2718,7 +2718,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
             $coursegroups = groups_get_all_groups($course->id);
         }
 
-        $userfields = user_get_default_fields();
+        $userfields = \core\user::get_default_fields();
         if (!$params['includeenrolments']) {
             // Remove enrolled courses from users fields to be returned.
             $key = array_search('enrolledcourses', $userfields);
@@ -2755,7 +2755,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                 }
                 // Now we do the expensive lookup of user details because we completed the filtering.
                 if (!$assign->is_blind_marking() && !$params['onlyids']) {
-                    $userdetails = user_get_user_details($record, $course, $userfields);
+                    $userdetails = \core\user::get_user_details($record, $course, $userfields);
                     if ($userdetails === null) {
                         // If user details are not available (e.g. access prevented), fall back to minimal data.
                         $userdetails = ['id' => $record->id];
@@ -2945,7 +2945,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
         // Skip the expensive lookup of user detail if we're blind marking or the caller
         // hasn't asked for user details to be embedded.
         if (!$assign->is_blind_marking() && $embeduser) {
-            if ($userdetails = user_get_user_details($participant, $course)) {
+            if ($userdetails = \core\user::get_user_details($participant, $course)) {
                 $userdetails['initials'] = core_user::get_initials($participant);
                 $return['user'] = $userdetails;
             }

@@ -254,7 +254,7 @@ class tool_provider extends ToolProvider {
             }
 
             $user->auth = 'lti';
-            $user->id = \user_create_user($user);
+            $user->id = \core\user::create_user($user);
 
             // Get the updated user record.
             $user = $DB->get_record('user', ['id' => $user->id]);
@@ -282,7 +282,7 @@ class tool_provider extends ToolProvider {
                 }
 
                 $user->id = $dbuser->id;
-                \user_update_user($user);
+                \core\user::update_user($user);
 
                 // Get the updated user record.
                 $user = $DB->get_record('user', ['id' => $user->id]);

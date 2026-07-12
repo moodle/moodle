@@ -56,8 +56,7 @@ $tagareas = [
     [
         'itemtype' => 'user', // Users.
         'component' => 'core',
-        'callback' => 'user_get_tagged_users',
-        'callbackfile' => '/user/lib.php',
+        'callback' => '\core\user::get_tagged_users',
         'showstandard' => core_tag_tag::HIDE_STANDARD,
     ],
     [
