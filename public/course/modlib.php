@@ -531,19 +531,8 @@ function set_moduleinfo_defaults($moduleinfo) {
     }
 
     $enabledaiactions = [];
-    // Get and check for enabled AI actions in the course placement.
-    $aiactions = aiplacement_courseassist\utils::get_actions_available($PAGE->context, false);
-    foreach ($aiactions as $action) {
-        $value = 0;
-        $actionname = "action-" . $action['action'];
-        if (!empty($moduleinfo->{$actionname})) {
-            $value = 1;
-        }
-        $enabledaiactions[$action['action']] = $value;
-    }
-
-    // Get and check for enabled AI actions in the editor placement.
-    $aiactions = aiplacement_editor\utils::get_actions_available($PAGE->context, false);
+    // Get and check for enabled AI actions in enabled placements.
+    $aiactions = \core_ai\manager::get_placement_actions_available($PAGE->context, false);
     foreach ($aiactions as $action) {
         $value = 0;
         $actionname = "action-" . $action['action'];
