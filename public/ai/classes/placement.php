@@ -34,6 +34,31 @@ abstract class placement {
     abstract public static function get_action_list(): array;
 
     /**
+     * Check whether this placement is available in a context.
+     *
+     * Placement plugins should override this method when they provide actions
+     * for a context. The default keeps existing placements compatible until
+     * they opt in to the context-aware placement API.
+     *
+     * @param \context $context The context to check.
+     * @return bool Whether the placement is available in the context.
+     */
+    public static function is_available_in_context(\context $context): bool {
+        return false;
+    }
+
+    /**
+     * Get the available actions for this placement in a context.
+     *
+     * @param \context $context The context.
+     * @param bool $checkcontext Whether to check the action is enabled in the context.
+     * @return array The available actions.
+     */
+    public static function get_actions_available(\context $context, bool $checkcontext = true): array {
+        return [];
+    }
+
+    /**
      * Given an action class name.
      *
      * Returns an array of sub actions that this placement supports.

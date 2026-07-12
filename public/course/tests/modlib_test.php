@@ -39,6 +39,63 @@ final class modlib_test extends \advanced_testcase {
     }
 
     /**
+     * Test module defaults when an AI placement is uninstalled.
+     *
+     * @param string $placement The placement plugin component.
+     * @dataProvider provider_uninstalled_ai_placements
+     * @covers ::set_moduleinfo_defaults
+     */
+    public function test_set_moduleinfo_defaults_with_uninstalled_ai_placement(string $placement): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $course = self::getDataGenerator()->create_course();
+        $PAGE->set_context(\context_course::instance($course->id));
+        unset_config('version', $placement);
+        \core_plugin_manager::reset_caches();
+
+        $moduleinfo = (object) [
+            'course' => $course->id,
+            'modulename' => 'forum',
+        ];
+        $moduleinfo = set_moduleinfo_defaults($moduleinfo);
+
+        $this->assertObjectNotHasProperty('enabledaiactions', $moduleinfo);
+    }
+
+    /**
+     * Data provider for {@see test_set_moduleinfo_defaults_with_uninstalled_ai_placement()}.
+     *
+     * @return array
+     */
+    public static function provider_uninstalled_ai_placements(): array {
+        return [
+            'course assistance placement' => ['aiplacement_courseassist'],
+            'editor placement' => ['aiplacement_editor'],
+        ];
+    }
+
+    /**
+     * Test course code has no direct dependency on AI placement plugins.
+     *
+     * @coversNothing
+     */
+    public function test_course_code_has_no_ai_placement_dependencies(): void {
+        global $CFG;
+
+        $files = [
+            '/course/edit_form.php',
+            '/course/modlib.php',
+            '/course/moodleform_mod.php',
+        ];
+
+        foreach ($files as $file) {
+            $this->assertStringNotContainsString('aiplacement_', file_get_contents($CFG->dirroot . $file));
+        }
+    }
+
+    /**
      * Test prepare_new_moduleinfo_data
      */
     public function test_prepare_new_moduleinfo_data(): void {

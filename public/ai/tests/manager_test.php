@@ -32,6 +32,29 @@ use core_ai\aiactions\responses\response_generate_image;
  */
 final class manager_test extends \advanced_testcase {
     /**
+     * Test the default placement context API.
+     *
+     * @covers \core_ai\placement::is_available_in_context
+     * @covers \core_ai\placement::get_actions_available
+     */
+    public function test_default_placement_context_api(): void {
+        $placement = new class extends placement {
+            /**
+             * Get the action list.
+             *
+             * @return array
+             */
+            public static function get_action_list(): array {
+                return [];
+            }
+        };
+
+        $context = \context_system::instance();
+        $this->assertFalse($placement::is_available_in_context($context));
+        $this->assertEmpty($placement::get_actions_available($context));
+    }
+
+    /**
      * Test get_ai_plugin_classname.
      */
     public function test_get_ai_plugin_classname(): void {
@@ -68,6 +91,71 @@ final class manager_test extends \advanced_testcase {
             summarise_text::class,
             explain_text::class,
         ], $actions);
+    }
+
+    /**
+     * Test get placements available in a context.
+     */
+    public function test_get_placements_available_in_context(): void {
+        $this->resetAfterTest();
+
+        set_config('enabled', 1, 'aiplacement_courseassist');
+        set_config('enabled', 1, 'aiplacement_editor');
+        \core_plugin_manager::reset_caches();
+        $course = self::getDataGenerator()->create_course();
+        $placements = manager::get_placements_available_in_context(\context_course::instance($course->id));
+        $this->assertArrayHasKey('aiplacement_courseassist', $placements);
+        $this->assertArrayHasKey('aiplacement_editor', $placements);
+        $placements = manager::get_placements_available_in_context(\context_system::instance());
+        $this->assertArrayNotHasKey('aiplacement_courseassist', $placements);
+        $this->assertArrayHasKey('aiplacement_editor', $placements);
+
+        unset_config('version', 'aiplacement_courseassist');
+        \core_plugin_manager::reset_caches();
+        $placements = manager::get_placements_available_in_context(\context_course::instance($course->id));
+        $this->assertArrayNotHasKey('aiplacement_courseassist', $placements);
+        $this->assertArrayHasKey('aiplacement_editor', $placements);
+        $this->assertEmpty(manager::get_placement_actions_available(\context_system::instance(), false));
+    }
+
+    /**
+     * Test getting enabled placements without a concrete context.
+     */
+    public function test_get_enabled_placements(): void {
+        $this->resetAfterTest();
+
+        set_config('enabled', 1, 'aiplacement_courseassist');
+        set_config('enabled', 1, 'aiplacement_editor');
+        \core_plugin_manager::reset_caches();
+
+        $placements = manager::get_enabled_placements();
+        $this->assertArrayHasKey('aiplacement_courseassist', $placements);
+        $this->assertArrayHasKey('aiplacement_editor', $placements);
+
+        set_config('enabled', 0, 'aiplacement_courseassist');
+        \core_plugin_manager::reset_caches();
+
+        $placements = manager::get_enabled_placements();
+        $this->assertArrayNotHasKey('aiplacement_courseassist', $placements);
+        $this->assertArrayHasKey('aiplacement_editor', $placements);
+    }
+
+    /**
+     * Test placement actions are excluded when the editor placement is uninstalled.
+     */
+    public function test_get_placement_actions_available_with_editor_uninstalled(): void {
+        $this->resetAfterTest();
+
+        set_config('enabled', 1, 'aiplacement_courseassist');
+        set_config('enabled', 1, 'aiplacement_editor');
+        unset_config('version', 'aiplacement_editor');
+        \core_plugin_manager::reset_caches();
+
+        $course = self::getDataGenerator()->create_course();
+        $placements = manager::get_placements_available_in_context(\context_course::instance($course->id));
+        $this->assertArrayHasKey('aiplacement_courseassist', $placements);
+        $this->assertArrayNotHasKey('aiplacement_editor', $placements);
+        $this->assertEmpty(manager::get_placement_actions_available(\context_system::instance(), false));
     }
 
     /**
