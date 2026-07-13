@@ -98,10 +98,10 @@ final class custom_completion_test extends advanced_testcase {
             ->onlyMethods(['get_custom_data'])
             ->getMock();
 
-        // Mock the return of the magic getter method when fetching the cm_info object's customdata and instance values.
+        // Mock the return of the get_custom_data method when fetching the cm_info object's customdata.
         $mockcminfo->expects($this->any())
             ->method('get_custom_data')
-            ->willReturn($customdataval);;
+            ->willReturn($customdataval);
 
         // Mock the DB calls.
         $DB = $this->createMock(get_class($DB));
@@ -201,7 +201,7 @@ final class custom_completion_test extends advanced_testcase {
             ->onlyMethods(['get_custom_data'])
             ->getMock();
 
-        // Mock the return of magic getter for the customdata attribute.
+        // Mock the return of the get_custom_data method when fetching the cm_info object's customdata.
         $mockcminfo->expects($this->any())
             ->method('get_custom_data')
             ->willReturn($customdataval);
