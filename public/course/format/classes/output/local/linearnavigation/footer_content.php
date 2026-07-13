@@ -95,6 +95,9 @@ class footer_content implements named_templatable, renderable {
         if (!empty($data['showmanualcompletion'])) {
             return $output->render_from_template('core_course/completion_manual', $data);
         } else if (!empty($data['hascompletion']) && !empty($data['isautomatic'])) {
+            if (!$data['istrackeduser'] || !$data['overallcomplete']) {
+                return ''; // In this case the template would be an empty span.
+            }
             return $output->render_from_template('core_course/completion_status', $data);
         }
         return '';
