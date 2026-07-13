@@ -29,14 +29,14 @@ Feature: Use the qbank plugin manager page for exporttoxml
   Scenario: Enable/disable exporttoxml column from the base view
     Given I log in as "admin"
     When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
-    And I should see "Export to XML"
+    Then I should see "Export to XML"
     And I click on "Disable" "link" in the "Export to XML" "table_row"
     And I am on the "Qbank 1" "core_question > question bank" page
     And I apply question bank filter "Category" with value "Default for C1"
-    Then the "Export as Moodle XML" action should not exist for the "First question" question in the question bank
+    And the "Export as Moodle XML" action should not exist for the "First question" question in the question bank
     And I click on "First question" "checkbox"
     And I click on "With selected" "button"
-    Then I should not see question bulk action "Export to XML"
+    And I should not see question bulk action "Export to XML"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Export to XML" "table_row"
     And I am on the "Qbank 1" "core_question > question bank" page
@@ -44,14 +44,14 @@ Feature: Use the qbank plugin manager page for exporttoxml
     And the "Export as Moodle XML" action should exist for the "First question" question in the question bank
     And I click on "First question" "checkbox"
     And I click on "With selected" "button"
-    Then I should see question bulk action "exportselected"
+    And I should see question bulk action "exportselected"
 
   @javascript
   Scenario: Bulk export questions as Moodle XML
     Given I log in as "teacher"
-    And I am on the "Qbank 1" "core_question > question bank" page
+    When I am on the "Qbank 1" "core_question > question bank" page
     And I apply question bank filter "Category" with value "Default for C1"
-    And I should see "First question"
+    Then I should see "First question"
     And I should not see "Essay Foo Bar"
     And I click on "Also show questions from subcategories" "checkbox"
     And I click on "Apply filters" "button"
@@ -62,5 +62,7 @@ Feature: Use the qbank plugin manager page for exporttoxml
     And I click on "With selected" "button"
     And I should see question bulk action "exportselected"
     And I click on question bulk action "exportselected"
-    #A dialogue appears to download the file which must be confirmed with ok. Therefore the next step does not work.
-    #Then following "Download" should download between "1" and "180000" bytes
+    # TODO: Uncomment the following step as part of MDL-86636 once non-link elements are supported.
+    # Then following "Export to MoodleXML" in the "#bulkactionsui-selector" "css_element" should download a file that:
+    #  | Has mimetype                 | text/xml      |
+    #  | Contains text in xml element | Essay Foo Bar |
