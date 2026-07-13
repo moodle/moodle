@@ -96,7 +96,7 @@ Feature: Moving a question to another category should not affect random question
     And I open the action menu in "Used category" "list_item"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete" "dialogue"
-    And I press "Save in category"
+    And I press "Delete category"
     And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     Then I should not see "Random (Used category) based on filter condition" on quiz page "1"
     And I should see "Missing question category" on quiz page "1"

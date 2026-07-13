@@ -101,3 +101,4 @@ modhidden_help,core
 moodlenetprofile,core_user
 moodlenetprofile_help,core_user
 privacy:metadata:moodlenetprofile,core_user
+categorymove,core_question

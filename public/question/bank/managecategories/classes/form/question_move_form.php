@@ -16,6 +16,7 @@
 
 namespace qbank_managecategories\form;
 
+use core_question\category_manager;
 use moodleform;
 
 defined('MOODLE_INTERNAL') || die();
@@ -43,10 +44,47 @@ class question_move_form extends moodleform {
 
         $currentcat = $this->_customdata['currentcat'];
         $contexts = $this->_customdata['contexts'];
+        $allcount = $this->_customdata['allcount'];
+        $inusecount = $this->_customdata['inusecount'];
 
-        $mform->addElement('questioncategory', 'category', get_string('category', 'question'), compact('contexts', 'currentcat'));
+        // Use an appropriate string depending on whether there are questions in use, or not.
+        if ($inusecount > 0) {
+            $movestring = get_string(
+                'movequestions:inuse',
+                'qbank_managecategories',
+                $inusecount,
+            );
+            $moveoption = category_manager::MOVEINUSEQUESTIONS;
+        } else {
+            $movestring = get_string('none', 'moodle');
+            $moveoption = category_manager::MOVENOQUESTIONS;
+        }
 
-        $this->add_action_buttons(true, get_string('categorymoveto', 'question'));
+        $mform->addElement(
+            'select',
+            'movequestions',
+            get_string('movequestions', 'qbank_managecategories'),
+            [
+                category_manager::MOVEALLQUESTIONS => get_string(
+                    'movequestions:all',
+                    'qbank_managecategories',
+                    $allcount,
+                ),
+                $moveoption => $movestring,
+            ],
+        );
+
+        $mform->addElement(
+            'questioncategory',
+            'category',
+            get_string('destinationcategory', 'qbank_managecategories'),
+            compact('contexts', 'currentcat')
+        );
+
+        // Disable the category dropdown if user is not moving any questions.
+        $mform->disabledIf('category', 'movequestions', 'eq', category_manager::MOVENOQUESTIONS);
+
+        $this->add_action_buttons(true, get_string('deletecategory', 'qbank_managecategories'));
 
         $mform->addElement('hidden', 'delete', $currentcat);
         $mform->setType('delete', PARAM_INT);

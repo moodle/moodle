@@ -29,6 +29,15 @@ use core\context;
  * @package core_question
  */
 class category_manager {
+    /** @var int Move no questions option. */
+    const MOVENOQUESTIONS = 0;
+
+    /** @var int Move in use questions option. */
+    const MOVEINUSEQUESTIONS = 1;
+
+    /** @var int Move all questions option. */
+    const MOVEALLQUESTIONS = 2;
+
     /**
      * Cached checks for managecategories permissions in each context.
      *
@@ -47,6 +56,12 @@ class category_manager {
         $category = $DB->get_record('question_categories', ['id' => $categoryid]);
 
         $transaction = $DB->start_delegated_transaction();
+
+        // Delete any questions that remain in the category.
+        $questionids = $this->get_real_question_ids_in_category($categoryid);
+        foreach ($questionids as $questionid) {
+            question_delete_question($questionid);
+        }
         // Send the children categories to live with their grandparent.
         $DB->set_field('question_categories', 'parent', $category->parent, ['parent' => $category->id]);
 
@@ -61,16 +76,18 @@ class category_manager {
     }
 
     /**
-     * Move questions and then delete the category.
+     * Move questions and then delete the category and any remaining questions.
      *
      * @param int $oldcat id of the old category.
      * @param int $newcat id of the new category.
+     * @param int[] $questionids question ids to be moved.
      */
-    public function move_questions_and_delete_category(int $oldcat, int $newcat): void {
+    public function move_questions_and_delete_category(int $oldcat, int $newcat, array $questionids = []): void {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
         $this->require_can_delete_category($oldcat);
-        $this->move_questions($oldcat, $newcat);
+        // Move specified questions.
+        $this->move_questions($oldcat, $newcat, $questionids);
         $this->delete_category($oldcat);
         $transaction->allow_commit();
     }
@@ -125,13 +142,16 @@ class category_manager {
 
     /**
      * Move questions to another category.
+     * If question ids are not provided then all questions in the target category will be moved.
      *
      * @param int $oldcat id of the old category.
      * @param int $newcat id of the new category.
-     * @throws \dml_exception
+     * @param array $questionids question ids to be moved.
      */
-    public function move_questions(int $oldcat, int $newcat): void {
-        $questionids = $this->get_real_question_ids_in_category($oldcat);
+    public function move_questions(int $oldcat, int $newcat, array $questionids = []): void {
+        if (empty($questionids)) {
+            $questionids = $this->get_real_question_ids_in_category($oldcat);
+        }
         question_move_questions_to_category($questionids, $newcat);
     }
 
@@ -367,6 +387,31 @@ class category_manager {
 
         $questionids = $DB->get_records_sql($sql, ['categoryid' => $categoryid]);
         return array_keys($questionids);
+    }
+
+    /**
+     * Returns ids of the questions that are in use in a given category.
+     *
+     * @param int $categoryid id of the category.
+     * @return int[] array of question ids.
+     */
+    public function get_in_use_question_ids_in_category(int $categoryid): array {
+        global $DB;
+
+        $sql = "SELECT q.id
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                 WHERE qbe.questioncategoryid = :categoryid";
+
+        $questionids = $DB->get_records_sql($sql, ['categoryid' => $categoryid]);
+        $return = [];
+        foreach ($questionids as $questionid) {
+            if (questions_in_use([$questionid->id])) {
+                $return[] = (int) $questionid->id;
+            }
+        }
+        return $return;
     }
 
     /**

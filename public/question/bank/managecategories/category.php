@@ -26,6 +26,7 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
+use core_question\output\qbank_action_menu;
 use core_question\output\qbank_actionbar;
 use core_question\category_manager;
 use qbank_managecategories\form\question_move_form;
@@ -59,13 +60,26 @@ if ($todelete) {
 
     helper::question_remove_stale_questions_from_category($todelete);
 
-    $questionstomove = count($manager->get_real_question_ids_in_category($todelete));
+    // Get category questions.
+    $allquestions = $manager->get_real_question_ids_in_category($todelete);
+    $allcount = count($allquestions);
 
-    // Second pass, if we still have questions to move, setup the form.
-    if ($questionstomove) {
+    // Get questions that are in use for the category.
+    $inusequestions = $manager->get_in_use_question_ids_in_category($todelete);
+    $inusecount = count($inusequestions);
+
+    // If there are questions in the category display the form.
+    if ($allquestions) {
         $categorycontext = context::instance_by_id($category->contextid);
-        $moveform = new question_move_form($thispageurl,
-            ['contexts' => [$categorycontext], 'currentcat' => "$todelete"]);
+        $moveform = new question_move_form(
+            $thispageurl,
+            [
+                'contexts' => [$categorycontext],
+                'currentcat' => "$todelete",
+                'allcount' => $allcount,
+                'inusecount' => $inusecount,
+            ],
+        );
         if ($moveform->is_cancelled()) {
             $thispageurl->remove_all_params();
             if (!is_null($cmid)) {
@@ -75,17 +89,28 @@ if ($todelete) {
             }
             redirect($thispageurl);
         } else if ($formdata = $moveform->get_data()) {
-            list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
-            $manager->move_questions_and_delete_category($formdata->delete, $tocategoryid);
+            // Which questions are we moving based on the form?
+            $questionstomove = $inusequestions;
+            if ($formdata->movequestions == category_manager::MOVEALLQUESTIONS) {
+                $questionstomove = $allquestions;
+            }
+            // If we have questions to move then move them and delete.
+            if (!empty($questionstomove)) {
+                [$tocategoryid, $tocontextid] = explode(',', $formdata->category);
+                $manager->move_questions_and_delete_category($formdata->delete, $tocategoryid, $questionstomove);
+            } else {
+                // Otherwise just delete the category.
+                $manager->delete_category($formdata->delete);
+            }
             $thispageurl->remove_params('cat', 'category');
             redirect($thispageurl);
         }
     }
 } else {
-    $questionstomove = 0;
+    $allquestions = 0;
 }
 
-if ((!empty($todelete) && (!$questionstomove) && confirm_sesskey())) {
+if ((!empty($todelete) && (!$allquestions) && confirm_sesskey())) {
     $manager->delete_category($todelete);// Delete the category now no questions to move.
     $thispageurl->remove_params('cat', 'category');
     redirect($thispageurl);
@@ -100,13 +125,15 @@ $PAGE->set_show_navigation_footer(false);
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
 echo $OUTPUT->header();
-$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
+$qbankaction = new qbank_action_menu($thispageurl);
 echo $renderer->render($qbankaction);
-if ($questionstomove) {
+if ($allquestions) {
     $vars = new stdClass();
     $vars->name = $category->name;
-    $vars->count = $questionstomove;
-    echo $OUTPUT->box(get_string('categorymove', 'question', $vars), 'generalbox boxaligncenter');
+    $vars->allcount = $allcount;
+    $vars->inusecount = $inusecount;
+    echo $OUTPUT->heading(get_string('movequestionsbeforedeleting', 'qbank_managecategories'));
+    echo $OUTPUT->box(get_string('movequestionsexplanation', 'qbank_managecategories', $vars), 'generalbox boxaligncenter');
     $moveform->display();
 } else {
     // Display the user interface.
