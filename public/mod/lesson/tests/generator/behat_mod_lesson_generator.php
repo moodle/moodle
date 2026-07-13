@@ -89,16 +89,9 @@ class behat_mod_lesson_generator extends behat_generator_base {
     protected function preprocess_attempt(array $data): array {
         global $DB;
 
-        if (isset($data['user'])) {
-            $data['userid'] = $DB->get_field('user', 'id', ['username' => $data['user']], MUST_EXIST);
-            unset($data['user']);
-        }
-
-        if (isset($data['lesson'])) {
-            $data['lessonid'] = $this->get_lesson_id($data['lesson']);
-            unset($data['lesson']);
-        }
-
+        // The 'lesson' and 'user' fields are already resolved to 'lessonid' and 'userid' by the
+        // 'switchids' declaration, which runs before this method. Here we only need to resolve the
+        // 'page' and 'answer' fields, which depend on those ids having been resolved first.
         if (isset($data['page']) && isset($data['lessonid'])) {
             $data['pageid'] = $DB->get_field(
                 'lesson_pages',
