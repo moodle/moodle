@@ -158,6 +158,17 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
         white-space: normal;
     }
 }
+.drawercontent {
+    .card-title {
+        color: $gray-700;
+        font-size: $h6-font-size;
+    }
+
+    .card-text {
+        color: $gray-600;
+    }
+}
+
 .card-grid {
     display: flex;
     .card {

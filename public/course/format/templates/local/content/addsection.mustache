@@ -53,13 +53,13 @@
     {{/decrease}}
     {{#addsections}}
         <a href="{{{url}}}"
-           class="w-100 btn btn-add-content rounded-4 p-3"
+           class="w-100 btn btn-add-content"
            data-add-sections="{{title}}"
            data-new-sections="{{newsection}}"
            data-action="addSection"
             {{#insertafter}} data-id="{{id}}" {{/insertafter}}
         >
-            {{#pix}} t/add, core {{/pix}}
+            <span>{{#pix}} t/add, core {{/pix}}</span>
             {{title}}
         </a>
     {{/addsections}}

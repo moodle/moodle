@@ -30,7 +30,7 @@
     }
 }}
 <button class="section-modchooser section-modchooser-link {{!
-    }}{{^hasactionlinks}}btn add-content d-flex justify-content-center align-items-center p-1 icon-no-margin{{/hasactionlinks}}{{!
+    }}{{^hasactionlinks}}btn add-content d-flex justify-content-center align-items-center icon-no-margin{{/hasactionlinks}}{{!
     }}{{#hasactionlinks}}dropdown-item{{/hasactionlinks}}"
     data-action="open-chooser"
     data-sectionnum="{{sectionnum}}"
@@ -53,9 +53,9 @@
             {{#pix}} t/add, core {{/pix}}
         {{/modid}}
         {{^modid}}
-            <div class="px-1">
-                {{#pix}} t/add, core {{/pix}}
-                <span class="activity-add-text pe-1">{{#str}}addresourceoractivity, core{{/str}}</span>
+            <div>
+                <span class="me-2">{{#pix}} t/add, core {{/pix}}</span>
+                <span class="activity-add-text">{{#str}}addresourceoractivity, core{{/str}}</span>
             </div>
         {{/modid}}
     {{/hasactionlinks}}

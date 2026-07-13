@@ -105,6 +105,13 @@ $dropdown-link-hover-bg: $primary;
 // Popovers
 $popover-max-width: 300px !default;
 
+// Body
+$body-bg: $gray-100 !default;
+
+// Cards
+$card-bg: $white !default;
+$card-border-color: $gray-200 !default;
+
 // Spacers
 $spacer: 1rem !default;
 $spacers: (
@@ -141,10 +148,6 @@ $enable-smooth-scroll: not $behatsite !default;
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-.navbar {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
 }
 
 // Rounded user pictures
