@@ -159,6 +159,7 @@ final class exporters_post_test extends \advanced_testcase {
 
         $this->assertEquals('This is the subject', $exportedpost->subject);
         $this->assertEquals('This is the message', $exportedpost->message);
+        $this->assertEquals('This is the subject by ' . $exportedpost->author->fullname, $exportedpost->label);
         $this->assertEquals($user->id, $exportedpost->author->id);
         $this->assertEquals($discussion->get_id(), $exportedpost->discussionid);
         $this->assertEquals(false, $exportedpost->hasparent);
@@ -314,6 +315,7 @@ final class exporters_post_test extends \advanced_testcase {
 
         $this->assertNotEquals('This is the subject', $exportedpost->subject);
         $this->assertNotEquals('This is the message', $exportedpost->message);
+        $this->assertEquals('This forum post has been removed', $exportedpost->label);
         $this->assertEquals(null, $exportedpost->timecreated);
         $this->assertEquals(null, $exportedpost->unread);
         $this->assertEquals(true, $exportedpost->isdeleted);
@@ -422,6 +424,7 @@ final class exporters_post_test extends \advanced_testcase {
 
         $this->assertNotEquals('This is the subject', $exportedpost->subject);
         $this->assertNotEquals('This is the message', $exportedpost->message);
+        $this->assertEquals('Subject (hidden)', $exportedpost->label);
         $this->assertEquals(null, $exportedpost->timecreated);
         $this->assertEquals(null, $exportedpost->unread);
         $this->assertEquals(false, $exportedpost->isdeleted);
