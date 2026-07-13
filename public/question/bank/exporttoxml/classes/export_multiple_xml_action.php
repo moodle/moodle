@@ -16,30 +16,42 @@
 
 namespace qbank_exporttoxml;
 
-use core_question\local\bank\plugin_features_base;
-use core_question\local\bank\view;
+use core_question\local\bank\bulk_action_base;
+use Override;
 
 /**
- * Class plugin_feature is the entrypoint for the columns.
+ * Class to add the bulk action menu item
  *
  * @package    qbank_exporttoxml
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @copyright  2026 MoodleMoot DACH
+ * @author     Andreas Steiger, Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_feature extends plugin_features_base {
-
-    public function get_question_actions($qbank): array {
-        return [
-            new export_xml_action($qbank),
-        ];
+class export_multiple_xml_action extends bulk_action_base {
+    #[\Override]
+    public function get_bulk_action_title(): string {
+        return get_string('exporttoxml', 'qbank_exporttoxml');
     }
 
     #[\Override]
-    public function get_bulk_actions(view $qbank): array {
-        return [
-            new export_multiple_xml_action($qbank),
-        ];
+    public function get_key(): string {
+        return 'exportselected';
     }
 
+    #[\Override]
+    public function get_bulk_action_url(): \moodle_url {
+        return new \moodle_url('/question/bank/exporttoxml/exportmany.php');
+    }
+
+    #[\Override]
+    public function get_bulk_action_classes(): string {
+        return '';
+    }
+
+    #[\Override]
+    public function get_bulk_action_capabilities(): ?array {
+        return [
+            'moodle/question:viewall',
+        ];
+    }
 }
