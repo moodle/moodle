@@ -1048,6 +1048,7 @@ class page_requirements_manager {
      */
     public function get_import_map(moodle_page $page): string {
         $importmap = \core\di::get(import_map::class);
+
         $importmap->set_default_loader(
             \core\router\util::get_path_for_callable(
                 [\core\route\controller\esm_controller::class, 'serve'],
@@ -1577,6 +1578,20 @@ EOF;
         \core\hook\output\before_requirejs_config $requirejshook,
     ): string {
         $requirejshook->add_requirejs_esm_map_entries([
+            'bootstrap' => 'bootstrap',
+            'bootstrap/dom/data' => 'bootstrap/dom/data',
+            'bootstrap/dom/event-handler' => 'bootstrap/dom/event-handler:default',
+            'bootstrap/dom/manipulator' => 'bootstrap/dom/manipulator:default',
+            'bootstrap/dom/selector-engine' => 'bootstrap/dom/selector-engine:default',
+            'bootstrap/util/backdrop' => 'bootstrap/util/backdrop:default',
+            'bootstrap/util/component-functions' => 'bootstrap/util/component-functions:default',
+            'bootstrap/util/config' => 'bootstrap/util/config:default',
+            'bootstrap/util/focustrap' => 'bootstrap/util/focustrap:default',
+            'bootstrap/util/index' => 'bootstrap/util/index:default',
+            'bootstrap/util/sanitizer' => 'bootstrap/util/sanitizer.js',
+            'bootstrap/util/scrollbar' => 'bootstrap/util/scrollbar:default',
+            'bootstrap/util/swipe' => 'bootstrap/util/swipe:default',
+            'bootstrap/util/template-factory' => 'bootstrap/util/template-factory:default',
             'core/config' => '@moodle/lms/core/config:default',
             'core/deprecated' => '@moodle/lms/core/deprecated:default',
             'core/fetch' => '@moodle/lms/core/fetch:default',
@@ -1587,6 +1602,11 @@ EOF;
             'core/storagewrapper' => '@moodle/lms/core/Storage:default',
             'core/url' => '@moodle/lms/core/url',
             'core/utils' => '@moodle/lms/core/utils',
+
+            // Map core/popper2 to the standard name loaded by ESM.
+            'core/popper2' => '@popperjs/core',
+            // Map the @popperjs/core module when loaded via AMD to load via ESM.
+            '@popperjs/core' => '@popperjs/core',
         ]);
 
         $maps = $requirejshook->get_requirejs_map();

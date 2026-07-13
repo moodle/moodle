@@ -28,7 +28,7 @@ import {debounce} from 'core/utils';
 import {isSmall, isLarge} from 'core/pagehelpers';
 import Pending from 'core/pending';
 import {setUserPreference} from 'core_user/repository';
-import Tooltip from './bootstrap/tooltip';
+import {Tooltip} from 'bootstrap';
 import * as FocusLock from 'core/local/aria/focuslock';
 
 let backdropPromise = null;

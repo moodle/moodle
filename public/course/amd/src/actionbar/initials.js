@@ -24,7 +24,7 @@
 import Pending from 'core/pending';
 import * as Url from 'core/url';
 import CustomEvents from "core/custom_interaction_events";
-import Dropdown from 'theme_boost/bootstrap/dropdown';
+import {Dropdown} from 'bootstrap';
 
 /**
  * Whether the event listener has already been registered for this module.

@@ -46,14 +46,18 @@ import { updateThirdPartyLibsXml } from './thirdpartylibs.mjs';
  *   Entries to update in thirdpartylibs.xml files. componentPath is the directory containing the
  *   XML file; packageLocation is the <location> value to match. packageName defaults to
  *   options.packageName when omitted.
+ * @param {Function} [options.postCopy] - optional async/sync callback invoked after all copies,
+ *   readmes, and thirdpartylibs updates, but before the final "Done!" footer. Use this to apply
+ *   any post-processing (e.g. patching copied files) while keeping the log output in order.
  */
-export const copyFromNodeModules = ({
+export const copyFromNodeModules = async ({
     packageName,
     version,
     cleanDirs = [],
     copies = [],
     readmePaths = [],
     thirdpartylibs = [],
+    postCopy,
 }) => {
     const rootDir = getRootDir();
     const nodeModuleRoot = path.join(rootDir, 'node_modules', packageName);
@@ -85,6 +89,10 @@ export const copyFromNodeModules = ({
             updateThirdPartyLibsXml(componentPath, packageLocation, pkgName ?? packageName, version);
         }
         console.log(chalk.green('→ thirdpartylibs.xml files ✓'));
+    }
+
+    if (postCopy) {
+        await postCopy();
     }
 
     console.log('\nAll files updated' + chalk.green(' ✓'));

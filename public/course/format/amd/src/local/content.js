@@ -23,7 +23,7 @@
  */
 
 import {BaseComponent} from 'core/reactive';
-import Collapse from 'theme_boost/bootstrap/collapse';
+import {Collapse} from 'bootstrap';
 import {throttle, debounce} from 'core/utils';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
 import Config from 'core/config';

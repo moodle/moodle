@@ -21,8 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Popover from './bootstrap/popover';
+export {Popover} from 'bootstrap';
+import emitDeprecation from 'core/deprecation';
 
-export {
-    Popover
-};
+emitDeprecation('theme_boost/popover', {
+    replacement: 'import {Popover} from "bootstrap"',
+});

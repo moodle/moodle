@@ -22,7 +22,7 @@
  * @since 4.0
  */
 
-import Popover from 'theme_boost/bootstrap/popover';
+import {Popover} from 'bootstrap';
 import * as CalendarSelectors from 'core_calendar/selectors';
 
 /**

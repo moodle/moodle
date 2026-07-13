@@ -21,7 +21,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Dropdown from 'theme_boost/bootstrap/dropdown';
+import {Dropdown} from 'bootstrap';
 import {
     firstFocusableElement,
     lastFocusableElement,
@@ -29,7 +29,7 @@ import {
     nextFocusableElement,
 } from 'core/pagehelpers';
 import Pending from 'core/pending';
-import EventHandler from 'theme_boost/bootstrap/dom/event-handler';
+import EventHandler from 'bootstrap/dom/event-handler';
 
 const Selectors = {
     dropdownButton: '[data-for="dropdowndialog_button"]',

@@ -22,7 +22,7 @@
  * @since 4.0
  */
 
-import Collapse from 'theme_boost/bootstrap/collapse';
+import {Collapse} from 'bootstrap';
 import Pending from 'core/pending';
 
 const SELECTORS = {

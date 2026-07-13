@@ -44,7 +44,7 @@ final class esm_controller_test extends route_testcase {
     private function make_test_controller(?string $filename = null): esm_controller {
         \core\di::set(
             \core\output\requirements\import_map::class,
-            \DI\create(\core\tests\output\requirements\import_map::class),
+            \DI\get(\core\tests\output\requirements\import_map::class),
         );
 
         if ($filename === null) {

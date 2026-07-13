@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Carousel from 'theme_boost/bootstrap/carousel';
+import {Carousel} from 'bootstrap';
 import {space, enter} from 'core/key_codes';
 
 /**

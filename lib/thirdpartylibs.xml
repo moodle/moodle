@@ -29,4 +29,39 @@
       <copyright>Moodle HQ</copyright>
     </copyrights>
   </library>
+  <library>
+    <location>bundles/bootstrap</location>
+    <name>Twitter Bootstrap</name>
+    <description>HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects on the web.</description>
+    <version>5.3.8</version>
+    <license>MIT</license>
+    <repository>https://github.com/twbs/bootstrap</repository>
+    <copyrights>
+      <copyright>2011-2021 Twitter, Inc</copyright>
+      <copyright>2011-2021 The Bootstrap Authors</copyright>
+    </copyrights>
+    <customised/>
+  </library>
+  <library>
+    <location>bundles/fontawesome</location>
+    <name>Font Awesome Free</name>
+    <description>Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
+    <version>6.7.2</version>
+    <license>(MIT)</license>
+    <repository>https://github.com/FortAwesome/Font-Awesome</repository>
+    <copyrights>
+      <copyright>2023 Fonticons, Inc</copyright>
+    </copyrights>
+  </library>
+  <library>
+    <location>bundles/@popperjs</location>
+    <name>Popper.js</name>
+    <description>A kickass library used to created Poppers in web applications.</description>
+    <version>2.11.8</version>
+    <license>MIT</license>
+    <repository>https://github.com/floating-ui/floating-ui</repository>
+    <copyrights>
+      <copyright>2016 Federico Zivolo and contributors</copyright>
+    </copyrights>
+  </library>
 </libraries>

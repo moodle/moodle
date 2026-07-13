@@ -43,7 +43,7 @@
 {{/finalgrade}}
 
 {{#js}}
-require(['theme_boost/bootstrap/tooltip'], function(Tooltip) {
+require(['bootstrap'], function({Tooltip}) {
     // Re-init the tooltip to ensure those dynamically added through AJAX are initialized
     document.querySelectorAll('.penalty-indicator-icon[data-bs-toggle="tooltip"]').forEach(tooltipElement => {
         Tooltip.getInstance(tooltipElement)?.dispose();

@@ -1,56 +1,6 @@
 <?xml version="1.0"?>
 <libraries>
   <library>
-    <location>scss/bootstrap</location>
-    <name>Twitter Bootstrap</name>
-    <description>HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects on the web.</description>
-    <version>5.3.3</version>
-    <license>MIT</license>
-    <repository>https://github.com/twbs/bootstrap</repository>
-    <copyrights>
-      <copyright>2011-2021 Twitter, Inc</copyright>
-      <copyright>2011-2021 The Bootstrap Authors</copyright>
-    </copyrights>
-    <customised/>
-  </library>
-  <library>
-    <location>amd/src/bootstrap/</location>
-    <name>Twitter Bootstrap</name>
-    <description>HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects on the web.</description>
-    <version>5.3.3</version>
-    <license>MIT</license>
-    <repository>https://github.com/twbs/bootstrap</repository>
-    <copyrights>
-      <copyright>2011-2021 Twitter, Inc</copyright>
-      <copyright>2011-2021 The Bootstrap Authors</copyright>
-    </copyrights>
-    <customised/>
-  </library>
-  <library>
-    <location>amd/src/index.js</location>
-    <name>Twitter Bootstrap</name>
-    <description>HTML, CSS, and JavaScript framework for developing responsive, mobile-first projects on the web.</description>
-    <version>5.3.3</version>
-    <license>MIT</license>
-    <repository>https://github.com/twbs/bootstrap</repository>
-    <copyrights>
-      <copyright>2011-2021 Twitter, Inc</copyright>
-      <copyright>2011-2021 The Bootstrap Authors</copyright>
-    </copyrights>
-    <customised/>
-  </library>
-  <library>
-    <location>scss/fontawesome</location>
-    <name>Font Awesome - http://fontawesome.com</name>
-    <description>Font Awesome CSS, LESS, and Sass files. Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
-    <version>6.7.2</version>
-    <license>(MIT)</license>
-    <repository>https://github.com/FortAwesome/Font-Awesome</repository>
-    <copyrights>
-      <copyright>2023 Fonticons, Inc</copyright>
-    </copyrights>
-  </library>
-  <library>
     <location>fonts/noto-sans</location>
     <name>Noto Sans</name>
     <description>Noto Sans is a global font family by Google, designed to support all languages with harmonious visual quality.</description>

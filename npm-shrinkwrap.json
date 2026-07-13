@@ -7,7 +7,10 @@
       "name": "Moodle",
       "hasInstallScript": true,
       "dependencies": {
+        "@fortawesome/fontawesome-free": "^6.7.2",
         "@moodlehq/design-system": "^5.0.0",
+        "@popperjs/core": "^2.11.8",
+        "bootstrap": "^5.3.8",
         "react": "^19.1",
         "react-dom": "^19.1"
       },
@@ -18,6 +21,7 @@
         "@babel/preset-env": "7.16.11",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.2",
+        "@types/bootstrap": "^5.2.10",
         "@types/jest": "^30.0.0",
         "@types/jquery": "^4.0.0",
         "@types/node": "^25.9.1",
@@ -2584,6 +2588,15 @@
         "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
       }
     },
+    "node_modules/@fortawesome/fontawesome-free": {
+      "version": "6.7.2",
+      "resolved": "https://registry.npmjs.org/@fortawesome/fontawesome-free/-/fontawesome-free-6.7.2.tgz",
+      "integrity": "sha512-JUOtgFW6k9u4Y+xeIaEiLr3+cjoUPiAuLXoyKOJSia6Duzb7pq+A76P9ZdPDoAoxHdHzq6gE9/jKBGXlZT8FbA==",
+      "license": "(CC-BY-4.0 AND OFL-1.1 AND MIT)",
+      "engines": {
+        "node": ">=6"
+      }
+    },
     "node_modules/@humanwhocodes/config-array": {
       "version": "0.13.0",
       "dev": true,
@@ -3749,7 +3762,6 @@
       "resolved": "https://registry.npmjs.org/@popperjs/core/-/core-2.11.8.tgz",
       "integrity": "sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==",
       "license": "MIT",
-      "peer": true,
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/popperjs"
@@ -4039,6 +4051,16 @@
       "license": "MIT",
       "dependencies": {
         "@babel/types": "^7.28.2"
+      }
+    },
+    "node_modules/@types/bootstrap": {
+      "version": "5.2.10",
+      "resolved": "https://registry.npmjs.org/@types/bootstrap/-/bootstrap-5.2.10.tgz",
+      "integrity": "sha512-F2X+cd6551tep0MvVZ6nM8v7XgGN/twpdNDjqS1TUM7YFNEtQYWk+dKAnH+T1gr6QgCoGMPl487xw/9hXooa2g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@popperjs/core": "^2.9.2"
       }
     },
     "node_modules/@types/istanbul-lib-coverage": {

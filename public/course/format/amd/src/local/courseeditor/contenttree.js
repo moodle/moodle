@@ -27,7 +27,7 @@
  */
 
 // The core/tree uses jQuery to expand all nodes.
-import Collapse from 'theme_boost/bootstrap/collapse';
+import {Collapse} from 'bootstrap';
 import jQuery from 'jquery';
 import Tree from 'core/tree';
 import {getList, getFirst} from 'core/normalise';

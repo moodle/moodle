@@ -26,7 +26,7 @@
 import Pending from 'core/pending';
 import * as Url from 'core/url';
 import CustomEvents from "core/custom_interaction_events";
-import Dropdown from 'theme_boost/bootstrap/dropdown';
+import {Dropdown} from 'bootstrap';
 import emitDeprecation from 'core/deprecated';
 
 emitDeprecation('core_grades/searchwidget/initials', {

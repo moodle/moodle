@@ -28,9 +28,8 @@
  * @todo       Final deprecation in Moodle 6.0. See MDL-84465.
  */
 
-import { DefaultAllowlist } from './bootstrap/util/sanitizer';
-import Popover from 'theme_boost/bootstrap/popover';
-import Tooltip from 'theme_boost/bootstrap/tooltip';
+import {DefaultAllowlist} from 'bootstrap/util/sanitizer';
+import {Popover, Tooltip} from 'bootstrap';
 import log from 'core/log';
 import emitDeprecation from 'core/deprecated';
 

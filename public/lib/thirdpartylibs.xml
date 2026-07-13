@@ -459,18 +459,6 @@ All rights reserved.</copyright>
     <customised/>
   </library>
   <library>
-    <location>fonts</location>
-    <name>Font Awesome - http://fontawesome.com</name>
-    <description>The Font Awesome font. Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
-    <version>6.7.2</version>
-    <license>SIL OFL</license>
-    <licenseversion>1.1</licenseversion>
-    <repository>https://github.com/FortAwesome/Font-Awesome</repository>
-    <copyrights>
-      <copyright>2023 Fonticons, Inc</copyright>
-    </copyrights>
-  </library>
-  <library>
     <location>amd/src/adapter.js</location>
     <name>WebRTC adapter</name>
     <description>JavaScript library to insulate apps from spec changes and prefix differences in WebRTC. The prefix differences are mostly gone these days but differences in behaviour between browsers remain.</description>
@@ -499,17 +487,6 @@ All rights reserved.</copyright>
     <name>Popper.js</name>
     <description>A kickass library used to created Poppers in web applications.</description>
     <version>v1.12.6</version>
-    <license>MIT</license>
-    <repository>https://github.com/floating-ui/floating-ui</repository>
-    <copyrights>
-      <copyright>2016 Federico Zivolo and contributors</copyright>
-    </copyrights>
-  </library>
-    <library>
-    <location>amd/src/popper2.js</location>
-    <name>Popper.js</name>
-    <description>A kickass library used to created Poppers in web applications.</description>
-    <version>v2.11.8</version>
     <license>MIT</license>
     <repository>https://github.com/floating-ui/floating-ui</repository>
     <copyrights>

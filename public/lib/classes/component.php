@@ -574,6 +574,7 @@ class component {
         $keyclasses = [
             \core\exception\moodle_exception::class,
             \core\hook\output\before_requirejs_config::class,
+            \core\hook\output\before_import_map_config::class,
         ];
         foreach ($keyclasses as $classname) {
             if (!array_key_exists($classname, $cache['classmap'])) {

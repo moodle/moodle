@@ -51,7 +51,7 @@
     </div>
 </div>
 {{#js}}
-require(['theme_boost/bootstrap/toast'], function(Toast) {
+require(['bootstrap'], function({Toast}) {
     // Show the toast.
     const toastTrigger = document.getElementById('toast-{{uniqid}}');
     new Toast(toastTrigger).show();

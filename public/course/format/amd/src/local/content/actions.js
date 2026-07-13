@@ -27,7 +27,7 @@
 
 import {BaseComponent} from 'core/reactive';
 import {eventTypes} from 'core/local/inplace_editable/events';
-import Collapse from 'theme_boost/bootstrap/collapse';
+import {Collapse} from 'bootstrap';
 import Modal from 'core/modal';
 import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalDeleteCancel from 'core/modal_delete_cancel';

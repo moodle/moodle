@@ -63,9 +63,13 @@ class import_map implements \JsonSerializable {
 
     /**
      * Initialise the import_map requirement by setting the standard import list.
+     *
+     * @param \core\hook\manager $hookmanager The hook manager to dispatch the before_import_map_config event.
      */
-    public function __construct() {
+    public function __construct(\core\hook\manager $hookmanager) {
         $this->add_standard_imports();
+
+        $hookmanager->dispatch(new \core\hook\output\before_import_map_config($this));
     }
 
     /**
@@ -190,6 +194,23 @@ class import_map implements \JsonSerializable {
             ],
             themable: false,
         );
+        $this->add_import(
+            '@popperjs/',
+            path: 'lib/bundles/@popperjs',
+        );
+
+        // Register the main Bootstrap bundle as a bare specifier, and the internal util and dom modules as subpath specifiers.
+        $this->add_import(
+            specifier: 'bootstrap',
+            path: 'lib/bundles/bootstrap/js',
+            urlsuffix: '/bootstrap.js',
+            allowedsuffixes: ['.js', '.js.map'],
+        );
+        $this->add_import(
+            specifier: 'bootstrap/',
+            path: 'lib/bundles/bootstrap/js',
+            allowedsuffixes: ['.js', '.js.map'],
+        );
     }
 
     /**
@@ -278,6 +299,7 @@ class import_map implements \JsonSerializable {
         string $requestedpath,
     ): ?string {
         global $CFG;
+
         // Sort longest-key-first once so a more-specific prefix always wins over a shorter one.
         if (!$this->importssorted) {
             uksort($this->imports, fn ($a, $b) => strlen($b) <=> strlen($a));

@@ -97,10 +97,9 @@ class behat_form_autocomplete extends behat_form_text {
         // If the autocomplete found suggestions, then it will have:
         // 1) marked itself as expanded; and
         // 2) have an aria-selected suggestion in the list.
-        $expanded = $this->field->getAttribute('aria-expanded');
         $suggestion = $this->field->getParent()->getParent()->find('css', '.form-autocomplete-suggestions > [aria-selected="true"]');
 
-        if ($expanded && null !== $suggestion) {
+        if ($this->is_field_expanded() && null !== $suggestion) {
             // A suggestion was found.
             // Click on the first item in the list.
             $suggestion->click();
@@ -115,8 +114,23 @@ class behat_form_autocomplete extends behat_form_text {
 
         $this->wait_for_pending_js();
 
-        // Press the escape to close the autocomplete suggestions list.
-        behat_base::type_keys($this->session, [behat_keys::ESCAPE]);
-        $this->wait_for_pending_js();
+        // For cases where only a single value is allowed, the autocomplete will close after a selection is made.
+        // However, for cases where multiple values are allowed, the autocomplete will remain open after a selection is made.
+        // In this case, we need to close it before returning.
+        if ($this->is_field_expanded()) {
+            // Press the escape to close the autocomplete suggestions list.
+            behat_base::type_keys($this->session, [behat_keys::ESCAPE]);
+            $this->wait_for_pending_js();
+        }
+    }
+
+    /**
+     * Check whether the suggestionsi list is open.
+     *
+     * @return bool
+     */
+    protected function is_field_expanded(): bool {
+        $expanded = $this->field->getAttribute('aria-expanded');
+        return $expanded === 'true' || $expanded === true;
     }
 }

@@ -14,12 +14,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import {addIconToContainer} from 'core/loadingicon';
-import Carousel from 'theme_boost/bootstrap/carousel';
+import {Carousel, Tab} from 'bootstrap';
 import {getFirst} from 'core/normalise';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import selectors from 'core_courseformat/local/activitychooser/selectors';
-import Tab from 'theme_boost/bootstrap/tab';
 import * as Templates from 'core/templates';
 
 

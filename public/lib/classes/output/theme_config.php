@@ -1956,8 +1956,8 @@ class theme_config {
             if (file_exists("$CFG->dataroot/fonts/$font")) {
                 return "$CFG->dataroot/fonts/$font";
             }
-            if (file_exists("$CFG->dirroot/lib/fonts/$font")) {
-                return "$CFG->dirroot/lib/fonts/$font";
+            if (file_exists("$CFG->root/lib/bundles/fontawesome/webfonts/$font")) {
+                return "$CFG->root/lib/bundles/fontawesome/webfonts/$font";
             }
             return null;
         } else if ($component === 'theme') { // Exception.

@@ -1265,7 +1265,7 @@ M.form_filemanager.init = function(Y, options) {
             }
             // Load popover for the filemanager content.
             var filepickerContent = Y.one('.filemanager.fp-file');
-            require(['theme_boost/bootstrap/popover'], function(Popover) {
+            require(['bootstrap'], function({Popover}) {
                 var popoverTriggerList = filepickerContent.getDOMNode().querySelectorAll('[data-bs-toggle="popover"]');
                 popoverTriggerList.forEach((popoverTriggerEl) => {
                     new Popover(popoverTriggerEl);
