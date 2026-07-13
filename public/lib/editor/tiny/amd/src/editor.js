@@ -388,11 +388,13 @@ const getStandardConfig = async(target, tinyMCE, options, plugins) => {
                     editor.iframeElement.setAttribute('aria-labelledby', label.id);
                 }
 
-                // The resize handle has a focusable role="separator", for which aria-valuenow
-                // is required (and aria-valuemin/max recommended). TinyMCE does not set these,
-                // so expose the editor's real height and keep aria-valuenow in sync on resize.
+                // TinyMCE's resize handle is a plain, roleless div with only an aria-label, which is not a
+                // permitted attribute without an explicit ARIA role. Give it a focusable role="separator",
+                // for which aria-valuenow is required (and aria-valuemin/max recommended), then expose the
+                // editor's real height and keep aria-valuenow in sync on resize.
                 const resizeHandle = editor.getContainer().querySelector('.tox-statusbar__resize-handle');
                 if (resizeHandle) {
+                    resizeHandle.setAttribute('role', 'separator');
                     const minHeight = editor.options.get('min_height');
                     const maxHeight = editor.options.get('max_height');
                     if (minHeight) {
