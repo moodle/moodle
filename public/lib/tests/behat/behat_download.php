@@ -24,6 +24,8 @@
  */
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
@@ -37,18 +39,17 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_download extends behat_base {
-
     /**
      * Downloads the file from a link on the page and verify the type and content.
      *
      * @Then following :link_text should download a file that:
      *
-     * @param string $linktext the text of the link.
+     * @param string $element the text of the link.
      * @param TableNode $table the table of assertions to use the check the file contents.
      * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
      */
-    public function following_should_download_a_file_that(string $linktext, TableNode $table): void {
-        $this->following_element_in_container_should_download_a_file_that($linktext, 'link', '', '', $table);
+    public function following_should_download_a_file_that(string $element, TableNode $table): void {
+        $this->following_element_in_container_should_download_a_file_that($element, 'link', '', '', $table);
     }
 
     /**
@@ -56,14 +57,17 @@ class behat_download extends behat_base {
      *
      * @Then following :link_text :selector_type should download a file that:
      *
-     * @param string $linktext the text/locator of the element to download from.
-     * @param string $selectortype the selector type of $linktext, e.g. 'link', 'button', 'select'.
+     * @param string $element the text/locator of the element to download from.
+     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'select'.
      * @param TableNode $table the table of assertions to use the check the file contents.
      * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
      */
-    public function following_element_should_download_a_file_that(string $linktext, string $selectortype,
-            TableNode $table): void {
-        $this->following_element_in_container_should_download_a_file_that($linktext, $selectortype, '', '', $table);
+    public function following_element_should_download_a_file_that(
+        string $element,
+        string $selectortype,
+        TableNode $table
+    ): void {
+        $this->following_element_in_container_should_download_a_file_that($element, $selectortype, '', '', $table);
     }
 
     /**
@@ -71,16 +75,25 @@ class behat_download extends behat_base {
      *
      * @Then following :link_text in the :element_container_string :text_selector_string should download a file that:
      *
-     * @param string $linktext the text of the link.
+     * @param string $element the text of the link.
      * @param string $containerlocator the container element.
      * @param string $containertype the container selector type.
      * @param TableNode $table the table of assertions to use the check the file contents.
      * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
      */
-    public function following_in_element_should_download_a_file_that(string $linktext, string $containerlocator,
-            string $containertype, TableNode $table): void {
-        $this->following_element_in_container_should_download_a_file_that($linktext, 'link', $containerlocator,
-                $containertype, $table);
+    public function following_in_element_should_download_a_file_that(
+        string $element,
+        string $containerlocator,
+        string $containertype,
+        TableNode $table
+    ): void {
+        $this->following_element_in_container_should_download_a_file_that(
+            $element,
+            'link',
+            $containerlocator,
+            $containertype,
+            $table
+        );
     }
 
     /**
@@ -88,34 +101,51 @@ class behat_download extends behat_base {
      *
      * @Then following :link_text :selector_type in the :element_container_string :text_selector_string should download a file that:
      *
-     * @param string $linktext the text/locator of the element to download from.
-     * @param string $selectortype the selector type of $linktext, e.g. 'link', 'button', 'select'.
+     * @param string $element the text/locator of the element to download from.
+     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'select'.
      * @param string $containerlocator the container element.
      * @param string $containertype the container selector type.
      * @param TableNode $table the table of assertions to use the check the file contents.
      * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
      */
-    public function following_element_in_container_should_download_a_file_that(string $linktext, string $selectortype,
-            string $containerlocator, string $containertype, TableNode $table): void {
+    public function following_element_in_container_should_download_a_file_that(
+        string $element,
+        string $selectortype,
+        string $containerlocator,
+        string $containertype,
+        TableNode $table
+    ): void {
 
-        $filecontent = $this->download_file($linktext, $containerlocator, $containertype, $selectortype);
+        $filecontent = $this->download_file($element, $containerlocator, $containertype, $selectortype);
         $this->verify_file_content($filecontent, $table);
     }
 
     /**
      * Download a file from the given element.
      *
-     * @param string $linktext the text/locator of the element to download from.
+     * @param string $element the text/locator of the element to download from.
      * @param string $containerlocator the container element.
      * @param string $containertype the container selector type.
-     * @param string $selectortype the selector type of $linktext, e.g. 'link', 'button', 'select'. Defaults to 'link'.
+     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'select'. Defaults to 'link'.
      * @return string the file contents.
      * @throws ExpectationException if the download fails.
      */
-    protected function download_file(string $linktext, string $containerlocator, string $containertype,
-            string $selectortype = 'link'): string {
+    protected function download_file(
+        string $element,
+        string $containerlocator,
+        string $containertype,
+        string $selectortype = 'link'
+    ): string {
+        if ($selectortype === 'button') {
+            return $this->download_file_from_button($element, $containerlocator, $containertype);
+        }
+
         return behat_context_helper::get('behat_general')->download_file_from_link(
-            $linktext, $containerlocator, $containertype, $selectortype);
+            $element,
+            $containerlocator,
+            $containertype,
+            $selectortype
+        );
     }
 
     /**
@@ -142,7 +172,9 @@ class behat_download extends behat_base {
                     break;
                 default:
                     throw new ExpectationException(
-                        'Invalid type of file assertion: ' . $row[0], $this->getSession());
+                        'Invalid type of file assertion: ' . $row[0],
+                        $this->getSession()
+                    );
             }
         }
     }
@@ -243,5 +275,155 @@ class behat_download extends behat_base {
                 $this->getSession(),
             );
         }
+    }
+
+    /**
+     * Given the text of a button, download the requested file and return the contents.
+     *
+     * @param string $element the text of the button.
+     * @param string $containerlocator optional container element locator.
+     * @param string $containertype optional container element selector type.
+     *
+     * @return string the content of the downloaded file.
+     */
+    public function download_file_from_button(string $element, string $containerlocator, string $containertype): string {
+        if ($containerlocator !== '' && $containertype !== '') {
+            $buttonnode = $this->get_node_in_container('button', $element, $containertype, $containerlocator);
+        } else {
+            $buttonnode = $this->find('button', $element);
+        }
+
+        $this->ensure_node_is_visible($buttonnode);
+
+        // Only check button-related attributes.
+        $url = $buttonnode->getAttribute('formaction');
+
+        $form = null;
+        // Case 1: button has form="id".
+        if ($formid = $buttonnode->getAttribute('form')) {
+            try {
+                $form = $this->find('css', '#' . $formid);
+            } catch (ElementNotFoundException $e) {
+                $form = null;
+            }
+        }
+        // Case 2: button is inside a form.
+        if (!$form) {
+            $form = $buttonnode->getParent();
+            while ($form && strtolower($form->getTagName()) !== 'form') {
+                $form = $form->getParent();
+            }
+        }
+
+        // Fallback to form action if formaction is not present.
+        if (!$url && $form) {
+            $url = $form->getAttribute('action');
+        }
+
+        if (!$url) {
+            throw new ExpectationException(
+                'Button does not have formaction or associated form action',
+                $this->getSession()
+            );
+        }
+
+        $url = trim($url);
+        if (!preg_match('~^https?://~', $url)) {
+            $url = (new \moodle_url($url))->out(true);
+        }
+
+        $session = $this->getSession()->getCookie('MoodleSession');
+        $headers = ['Cookie' => 'MoodleSession=' . $session];
+
+        // Determine method (button > form > default GET).
+        $method = strtolower($buttonnode->getAttribute('formmethod') ?: ($form ? $form->getAttribute('method') : 'get'));
+
+        // Build form submission data.
+        $postdata = $this->get_form_postdata($form, $buttonnode);
+
+        // POST request.
+        if ($method === 'post' && !empty($postdata)) {
+            return download_file_content($url, $headers, $postdata);
+        }
+
+        // GET with query params.
+        if (!empty($postdata)) {
+            $separator = str_contains($url, '?') ? '&' : '?';
+            $url .= $separator . http_build_query($postdata);
+        }
+
+        return download_file_content($url, $headers);
+    }
+
+    /**
+     * Build the form body for a submit button so the download request matches the browser submission.
+     *
+     * @param NodeElement|null $form the form element if one can be resolved.
+     * @param NodeElement $buttonnode the button trigger element.
+     * @return array the form data to submit.
+     */
+    protected function get_form_postdata(?NodeElement $form, NodeElement $buttonnode): array {
+        $postdata = [];
+
+        // Include clicked button.
+        if ($name = $buttonnode->getAttribute('name')) {
+            $postdata[$name] = $buttonnode->getAttribute('value') ?? '1';
+        }
+
+        // No form, return only button data.
+        if (!$form) {
+            return $postdata;
+        }
+
+        foreach ($form->findAll('css', 'input, select, textarea') as $field) {
+            $name = $field->getAttribute('name');
+            if (!$name) {
+                continue;
+            }
+
+            $type = strtolower($field->getAttribute('type') ?? 'text');
+            $tag = strtolower($field->getTagName());
+
+            // Skip irrelevant fields.
+            if (in_array($type, ['submit', 'button', 'reset', 'image', 'file'], true)) {
+                continue;
+            }
+
+            // Checkbox / radio.
+            if (in_array($type, ['checkbox', 'radio'], true)) {
+                if ($field->isChecked()) {
+                    $postdata[$name] = $field->getAttribute('value') ?? '1';
+                }
+                continue;
+            }
+
+            // Select.
+            if ($tag === 'select') {
+                $value = $field->getValue();
+
+                if (is_array($value)) {
+                    foreach ($value as $v) {
+                        $postdata[$name][] = $v;
+                    }
+                } else if ($value !== null && $value !== '') {
+                    $postdata[$name] = $value;
+                }
+
+                continue;
+            }
+
+            // Textarea.
+            if ($tag === 'textarea') {
+                $postdata[$name] = $field->getValue();
+                continue;
+            }
+
+            // Default fields.
+            if (($value = $field->getAttribute('value')) !== null) {
+                $postdata[$name] = $value;
+            }
+        }
+
+        return $postdata;
     }
 }
