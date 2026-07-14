@@ -3969,14 +3969,21 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
         $params['myid'] = $USER->id;
     }
 
+    $sortbyconcept = true;
     if ($order == 'CREATION') {
+        $sortbyconcept = false;
         $sqlorderby = "ORDER BY ge.timecreated $sort";
     } else if ($order == 'UPDATE') {
+        $sortbyconcept = false;
         $sqlorderby = "ORDER BY ge.timemodified $sort";
     } else {
-        $sqlorderby = "ORDER BY ge.concept $sort";
+        // Sort by ID at DB level and perform locale-aware concept sorting below.
+        $sqlorderby = "ORDER BY ge.id ASC";
     }
-    $sqlorderby .= " , ge.id ASC"; // Sort on ID to avoid random ordering when entries share an ordering value.
+    // Sort on ID to avoid random ordering when entries share an ordering value (only add if not already sorting by ID).
+    if ($sortbyconcept === false) {
+        $sqlorderby .= " , ge.id ASC";
+    }
 
     $sqlwhere = "WHERE ($searchcond) $approvedsql";
 
@@ -3984,7 +3991,38 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
     $count = $DB->count_records_sql("SELECT COUNT(DISTINCT(ge.id)) $sqlfrom $sqlwhere", $params);
 
     $query = "$sqlwrapheader $sqlselect $sqlfrom $sqlwhere $sqlwrapfooter $sqlorderby";
-    $entries = $DB->get_records_sql($query, $params, $from, $limit);
+
+    if ($sortbyconcept) {
+        // Load all matching entries, apply locale-aware concept sorting, and only then paginate.
+        $entries = $DB->get_records_sql($query, $params);
+
+        $sortkeys = [];
+        foreach ($entries as $key => $entry) {
+            // Normalize concept values first so ordering is consistently case-insensitive across DBs/locales.
+            $sortkeys[$key] = core_text::strtolower(format_string($entry->concept));
+        }
+
+        core_collator::asort($sortkeys, core_collator::SORT_STRING);
+
+        if (strcasecmp($sort, 'DESC') === 0) {
+            $sortkeys = array_reverse($sortkeys, true);
+        }
+
+        $sortedentries = [];
+        foreach (array_keys($sortkeys) as $key) {
+            $sortedentries[$key] = $entries[$key];
+        }
+        $entries = $sortedentries;
+
+        $from = $from ?? 0;
+        if ($limit > 0) {
+            $entries = array_slice($entries, $from, $limit);
+        } else if ($from > 0) {
+            $entries = array_slice($entries, $from);
+        }
+    } else {
+        $entries = $DB->get_records_sql($query, $params, $from, $limit);
+    }
 
     return array($entries, $count);
 }

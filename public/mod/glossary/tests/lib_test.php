@@ -506,6 +506,47 @@ final class lib_test extends \advanced_testcase {
         $this->assertCount(0, $search);
     }
 
+    /**
+     * Test that glossary_get_entries_by_search orders concepts case-insensitively.
+     *
+     * @covers ::glossary_get_entries_by_search
+     */
+    public function test_glossary_get_entries_by_search_orders_concepts_case_insensitive(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $glossarygenerator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $course = $this->getDataGenerator()->create_course();
+        $glossary = $this->getDataGenerator()->create_module('glossary', ['course' => $course->id]);
+        $context = \context_module::instance($glossary->cmid);
+
+        // The concepts are intentionally mixed-case to validate case-insensitive alphabetical sorting.
+        $glossarygenerator->create_content($glossary, ['concept' => 'Apple']);
+        $glossarygenerator->create_content($glossary, ['concept' => 'Banana']);
+        $glossarygenerator->create_content($glossary, ['concept' => 'apricot']);
+
+        [$entries, $count] = glossary_get_entries_by_search(
+            $glossary,
+            $context,
+            'a',
+            false,
+            'CONCEPT',
+            'ASC',
+            0,
+            0
+        );
+
+        $expected = ['Apple', 'apricot', 'Banana'];
+        $actual = array_values(array_map(
+            static function ($entry) {
+                return $entry->concept;
+            },
+            $entries
+        ));
+        $this->assertEquals(3, $count);
+        $this->assertSame($expected, $actual);
+    }
+
     public function test_mod_glossary_can_delete_entry_users(): void {
         $this->resetAfterTest();
 
