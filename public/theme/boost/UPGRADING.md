@@ -8,6 +8,50 @@
 
   For more information see [MDL-88412](https://tracker.moodle.org/browse/MDL-88412)
 
+### Deprecated
+
+- AMD modules **must not** depend upon core Bootstrap modules from
+  `theme_boost/bootstrap/*`. Direct loading of Bootstrap submodules
+  is not supported by the Bootstrap project.
+
+  Instead of:
+  ```js
+  import Tooltip from 'theme_boost/bootstrap/tooltip';
+  ```
+
+  You can use either of the following approaches:
+
+  ### For Moodle 5.2 and earlier
+
+  ```js
+  // For Moodle 5.2 and earlier:
+  // This option will be supported until Moodle 7.0 when it will be removed.
+  // You are encouraged to switch to the new approach as soon as possible to
+  // avoid last-minute issues when upgrading to Moodle 7.0.
+  import {Tooltip} from 'theme_boost/index';
+
+  // For Moodle 5.3 and later
+  import {Tooltip} from 'bootstrap';
+  ```
+
+  ### Important note
+
+  The `util` and `dom` helper directories **must** still directly load modules.
+  These modules are _not_ a part of the public Bootstrap API.
+  Use of these modules is at your own risk.
+
+  To use these modules you can use:
+
+  ```js
+  // Moodle 5.2 and earlier:
+  import EventHandler from 'theme_boost/bootstrap/dom/event-handler';
+
+  // Moodle 5.3 and later:
+  import EventHandler from 'bootstrap/dom/event-handler';
+  ```
+
+  For more information see [MDL-88766](https://tracker.moodle.org/browse/MDL-88766)
+
 ## 5.2
 
 ### Removed

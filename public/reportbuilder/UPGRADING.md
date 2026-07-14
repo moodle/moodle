@@ -17,6 +17,9 @@
   The `$tablealias` parameter of the existing `set_main_table()` method in the same class is now mandatory
 
   For more information see [MDL-88397](https://tracker.moodle.org/browse/MDL-88397)
+- The `add_fields()` method of the report class now accepts union type parameter of string or array of strings to define the column fields
+
+  For more information see [MDL-89004](https://tracker.moodle.org/browse/MDL-89004)
 
 ### Deprecated
 

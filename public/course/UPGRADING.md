@@ -1,5 +1,25 @@
 # core_course (subsystem) Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- New get_all_section_cms function has been added to course_navigation class to get all course modules of the given section in order, including also activities inside subsections
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+- New get_adjacent_section() function has been added to course_navigation class to get an adjacent section of a course in the given direction.
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+- New is_first_navigable() function has been added to course_navigation class to know whether a module is considered the first accessible element of a course.
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+- New is_last_navigable() function has been added to course_navigation class to know whether a module is considered the last accessible element of a course.
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+- New get_section() function has been added to get the main section (not delegated) of a course module in the course_navigation class.
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+
 ## 5.2
 
 ### Added

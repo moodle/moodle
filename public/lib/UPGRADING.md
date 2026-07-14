@@ -52,6 +52,15 @@
 - Two new AMD modules are now available. `core/import` lets AMD code do a native ESM dynamic import without Babel rewriting it. `core/component` provides `appendToDom` and `prependToDom` to mount React components into the DOM, which are then picked up automatically by `react_autoinit`.
 
   For more information see [MDL-88505](https://tracker.moodle.org/browse/MDL-88505)
+- A new `swizzle` command has been added to launch an interactive CLI wizard for ejecting or wrapping a React component into your theme:
+
+  ```bash
+  ./scripts/swizzle.mjs
+  ```
+
+  Plugin developers can run `./scripts/swizzle.mjs manifest generate` to generate an initial component manifest, and `./scripts/swizzle.mjs manifest set` to set the safety level for each component.
+
+  For more information see [MDL-88509](https://tracker.moodle.org/browse/MDL-88509)
 - The `moodle_exception` class now accepts a `$previous` Throwable.
 
   For more information see [MDL-88579](https://tracker.moodle.org/browse/MDL-88579)
@@ -85,6 +94,37 @@
 
 ### Deprecated
 
+- The following functions from `user/lib.php` have been deprecated and moved to the `\core\user` class as static methods. Existing calls continue to work but will emit a `DEBUG_DEVELOPER` notice. Update your code to use the new class methods:
+
+   | Old function name                            | New method name                                          |
+   | ---                                          | ---                                                       |
+   | `user_create_user()`                         | `\core\user::create_user()`                               |
+   | `user_update_user()`                         | `\core\user::update_user()`                               |
+   | `user_delete_user()`                         | `\core\user::delete_user()`                               |
+   | `user_get_users_by_id()`                     | `\core\user::get_users_by_id()`                            |
+   | `user_get_default_fields()`                  | `\core\user::get_default_fields()`                         |
+   | `user_get_user_details()`                    | `\core\user::get_user_details()`                           |
+   | `user_get_user_details_courses()`            | `\core\user::get_user_details_courses()`                   |
+   | `can_view_user_details_cap()`                | `\core\user::can_view_user_details_cap()`                  |
+   | `user_count_login_failures()`                | `\core\user::count_login_failures()`                       |
+   | `user_convert_text_to_menu_items()`          | `\core\user::convert_text_to_menu_items()`                 |
+   | `user_get_default_homepage_options()`        | `\core\user::get_default_homepage_options()`               |
+   | `user_get_user_navigation_info()`             | `\core\user::get_user_navigation_info()`                   |
+   | `user_add_password_history()`                | `\core\user::add_password_history()`                       |
+   | `user_is_previously_used_password()`         | `\core\user::is_previously_used_password()`                |
+   | `user_remove_user_device()`                  | `\core\user::remove_user_device()`                         |
+   | `user_list_view()`                           | `\core\user::list_view()`                                  |
+   | `user_mygrades_url()`                        | `\core\user::mygrades_url()`                               |
+   | `user_can_view_profile()`                    | `\core\user::can_view_profile()`                           |
+   | `user_process_profile_callbacks()`           | `\core\user::process_profile_callbacks()`                  |
+   | `user_get_tagged_users()`                    | `\core\user::get_tagged_users()`                           |
+   | `user_get_course_lastaccess_sql()`           | `\core\user::get_course_lastaccess_sql()`                  |
+   | `user_get_user_lastaccess_sql()`             | `\core\user::get_user_lastaccess_sql()`                    |
+   | `user_get_lastaccess_sql()`                  | `\core\user::get_lastaccess_sql()`                         |
+   | `user_edit_map_field_purpose()`              | `\core\user::edit_map_field_purpose()`                     |
+   | `user_update_device_public_key()`            | `\core_user\devicekey::update_device_public_key()`         |
+
+  For more information see [MDL-82650](https://tracker.moodle.org/browse/MDL-82650)
 - The `FEATURE_GROUPMEMBERSONLY` constant has been deprecated and is no longer supported. It should be removed from any plugin code.
 
   For more information see [MDL-83231](https://tracker.moodle.org/browse/MDL-83231)

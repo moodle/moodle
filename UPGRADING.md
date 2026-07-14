@@ -60,6 +60,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Two new AMD modules are now available. `core/import` lets AMD code do a native ESM dynamic import without Babel rewriting it. `core/component` provides `appendToDom` and `prependToDom` to mount React components into the DOM, which are then picked up automatically by `react_autoinit`.
 
   For more information see [MDL-88505](https://tracker.moodle.org/browse/MDL-88505)
+- A new `swizzle` command has been added to launch an interactive CLI wizard for ejecting or wrapping a React component into your theme:
+
+  ```bash
+  ./scripts/swizzle.mjs
+  ```
+
+  Plugin developers can run `./scripts/swizzle.mjs manifest generate` to generate an initial component manifest, and `./scripts/swizzle.mjs manifest set` to set the safety level for each component.
+
+  For more information see [MDL-88509](https://tracker.moodle.org/browse/MDL-88509)
 - The `moodle_exception` class now accepts a `$previous` Throwable.
 
   For more information see [MDL-88579](https://tracker.moodle.org/browse/MDL-88579)
@@ -93,6 +102,37 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Deprecated
 
+- The following functions from `user/lib.php` have been deprecated and moved to the `\core\user` class as static methods. Existing calls continue to work but will emit a `DEBUG_DEVELOPER` notice. Update your code to use the new class methods:
+
+   | Old function name                            | New method name                                          |
+   | ---                                          | ---                                                       |
+   | `user_create_user()`                         | `\core\user::create_user()`                               |
+   | `user_update_user()`                         | `\core\user::update_user()`                               |
+   | `user_delete_user()`                         | `\core\user::delete_user()`                               |
+   | `user_get_users_by_id()`                     | `\core\user::get_users_by_id()`                            |
+   | `user_get_default_fields()`                  | `\core\user::get_default_fields()`                         |
+   | `user_get_user_details()`                    | `\core\user::get_user_details()`                           |
+   | `user_get_user_details_courses()`            | `\core\user::get_user_details_courses()`                   |
+   | `can_view_user_details_cap()`                | `\core\user::can_view_user_details_cap()`                  |
+   | `user_count_login_failures()`                | `\core\user::count_login_failures()`                       |
+   | `user_convert_text_to_menu_items()`          | `\core\user::convert_text_to_menu_items()`                 |
+   | `user_get_default_homepage_options()`        | `\core\user::get_default_homepage_options()`               |
+   | `user_get_user_navigation_info()`             | `\core\user::get_user_navigation_info()`                   |
+   | `user_add_password_history()`                | `\core\user::add_password_history()`                       |
+   | `user_is_previously_used_password()`         | `\core\user::is_previously_used_password()`                |
+   | `user_remove_user_device()`                  | `\core\user::remove_user_device()`                         |
+   | `user_list_view()`                           | `\core\user::list_view()`                                  |
+   | `user_mygrades_url()`                        | `\core\user::mygrades_url()`                               |
+   | `user_can_view_profile()`                    | `\core\user::can_view_profile()`                           |
+   | `user_process_profile_callbacks()`           | `\core\user::process_profile_callbacks()`                  |
+   | `user_get_tagged_users()`                    | `\core\user::get_tagged_users()`                           |
+   | `user_get_course_lastaccess_sql()`           | `\core\user::get_course_lastaccess_sql()`                  |
+   | `user_get_user_lastaccess_sql()`             | `\core\user::get_user_lastaccess_sql()`                    |
+   | `user_get_lastaccess_sql()`                  | `\core\user::get_lastaccess_sql()`                         |
+   | `user_edit_map_field_purpose()`              | `\core\user::edit_map_field_purpose()`                     |
+   | `user_update_device_public_key()`            | `\core_user\devicekey::update_device_public_key()`         |
+
+  For more information see [MDL-82650](https://tracker.moodle.org/browse/MDL-82650)
 - The `FEATURE_GROUPMEMBERSONLY` constant has been deprecated and is no longer supported. It should be removed from any plugin code.
 
   For more information see [MDL-83231](https://tracker.moodle.org/browse/MDL-83231)
@@ -255,6 +295,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
 
+### core_course
+
+#### Added
+
+- New get_all_section_cms function has been added to course_navigation class to get all course modules of the given section in order, including also activities inside subsections
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+- New get_adjacent_section() function has been added to course_navigation class to get an adjacent section of a course in the given direction.
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+- New is_first_navigable() function has been added to course_navigation class to know whether a module is considered the first accessible element of a course.
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+- New is_last_navigable() function has been added to course_navigation class to know whether a module is considered the last accessible element of a course.
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+- New get_section() function has been added to get the main section (not delegated) of a course module in the course_navigation class.
+
+  For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+
 ### core_courseformat
 
 #### Added
@@ -336,6 +396,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   The `$tablealias` parameter of the existing `set_main_table()` method in the same class is now mandatory
 
   For more information see [MDL-88397](https://tracker.moodle.org/browse/MDL-88397)
+- The `add_fields()` method of the report class now accepts union type parameter of string or array of strings to define the column fields
+
+  For more information see [MDL-89004](https://tracker.moodle.org/browse/MDL-89004)
 
 #### Deprecated
 
@@ -358,6 +421,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   The previous `add_navitem` method of the hook class has been deprecated in favour of the above
 
   For more information see [MDL-88938](https://tracker.moodle.org/browse/MDL-88938)
+
+### block_myoverview
+
+#### Changed
+
+- For the correct display of title and context menus, fields like fullname are returned with numeric HTML entities (&#60;) instead of named entities (&lt;) and unencoded quotes.
+
+  For more information see [MDL-79755](https://tracker.moodle.org/browse/MDL-79755)
 
 ### core\task\adhoc_task
 
@@ -391,6 +462,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87302](https://tracker.moodle.org/browse/MDL-87302)
 
+### gradereport_user
+
+#### Changed
+
+- The external function `gradereport_user_get_grade_items` now includes the optional `parentcategoryid` field in its response for category grade items.
+
+  For more information see [MDL-64304](https://tracker.moodle.org/browse/MDL-64304)
+
 ### mod_assign
 
 #### Added
@@ -411,6 +490,28 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
 
+### mod_forum
+
+#### Added
+
+- Added the method `discussion::get_discussion_navigation_buttons()` that returns data for the discussion navigation template.
+
+  For more information see [MDL-88602](https://tracker.moodle.org/browse/MDL-88602)
+
+#### Changed
+
+- Add new mod_forum_set_read_state web service to allow clients to manually mark individual forum posts as read or unread (when manual read tracking is enabled), returning a simple status and warnings structure.
+
+  For more information see [MDL-87887](https://tracker.moodle.org/browse/MDL-87887)
+
+### mod_workshop
+
+#### Deprecated
+
+- Deprecated the Behat step `behat_mod_workshop::i_set_portfolio_instance_to`, please use `behat_portfolio::i_set_the_portfolio_instance_to` instead.
+
+  For more information see [MDL-89069](https://tracker.moodle.org/browse/MDL-89069)
+
 ### theme_boost
 
 #### Changed
@@ -418,6 +519,50 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The default UI typeface for Boost has changed from the system-ui font stack to Noto Sans. Noto Sans is now self-hosted under `theme/boost/fonts/` and declared via `@font-face` in `theme/boost/scss/moodle/fonts.scss`. The latin and latin-ext subsets are included (normal and italic, weight 100-900). The `$font-family-sans-serif` Bootstrap variable is now set from the `$mds-font-family-base` MDS token. Child themes that override `$font-family-sans-serif` are unaffected. Child themes that rely on the system-ui fallback behaviour will now render Noto Sans instead.
 
   For more information see [MDL-88412](https://tracker.moodle.org/browse/MDL-88412)
+
+#### Deprecated
+
+- AMD modules **must not** depend upon core Bootstrap modules from
+  `theme_boost/bootstrap/*`. Direct loading of Bootstrap submodules
+  is not supported by the Bootstrap project.
+
+  Instead of:
+  ```js
+  import Tooltip from 'theme_boost/bootstrap/tooltip';
+  ```
+
+  You can use either of the following approaches:
+
+  ### For Moodle 5.2 and earlier
+
+  ```js
+  // For Moodle 5.2 and earlier:
+  // This option will be supported until Moodle 7.0 when it will be removed.
+  // You are encouraged to switch to the new approach as soon as possible to
+  // avoid last-minute issues when upgrading to Moodle 7.0.
+  import {Tooltip} from 'theme_boost/index';
+
+  // For Moodle 5.3 and later
+  import {Tooltip} from 'bootstrap';
+  ```
+
+  ### Important note
+
+  The `util` and `dom` helper directories **must** still directly load modules.
+  These modules are _not_ a part of the public Bootstrap API.
+  Use of these modules is at your own risk.
+
+  To use these modules you can use:
+
+  ```js
+  // Moodle 5.2 and earlier:
+  import EventHandler from 'theme_boost/bootstrap/dom/event-handler';
+
+  // Moodle 5.3 and later:
+  import EventHandler from 'bootstrap/dom/event-handler';
+  ```
+
+  For more information see [MDL-88766](https://tracker.moodle.org/browse/MDL-88766)
 
 ## 5.2
 
