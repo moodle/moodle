@@ -141,7 +141,7 @@
 	path = public/mod/diary
 	url = https://github.com/drachels/moodle-mod_diary
 	branch = master
-	tag = v5.1.0
+	tag = v5.1.2
 [submodule "public/mod/oublog"]
 	path = public/mod/oublog
 	url = https://github.com/moodleou/moodle-mod_oublog
