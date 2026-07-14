@@ -22,6 +22,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-88805](https://tracker.moodle.org/browse/MDL-88805)
 
+### block_myoverview
+
+#### Changed
+
+- For the correct display of title and context menus, fields like fullname are returned with numeric HTML entities (&#60;) instead of named entities (&lt;) and unencoded quotes.
+
+  For more information see [MDL-79755](https://tracker.moodle.org/browse/MDL-79755)
+
 ### core\task\adhoc_task
 
 #### Added
