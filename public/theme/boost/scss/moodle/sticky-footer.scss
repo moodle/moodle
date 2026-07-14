@@ -82,9 +82,14 @@ body {
 
 .stickyfooter .course-linear-navigation {
     max-width: $course-content-maxwidth;
-    .course-linear-navigation-completion .btn {
-        font-size: $btn-font-size-sm;
-        min-height: map-get($iconsizes, 5);
+    .course-linear-navigation-completion {
+        .btn {
+            font-size: $btn-font-size-sm;
+            min-height: map-get($iconsizes, 5);
+        }
+        .completion-status {
+            font-size: $font-size-base;
+        }
     }
 }
 

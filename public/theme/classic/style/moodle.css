@@ -39187,6 +39187,9 @@ body {
   font-size: 0.875rem;
   min-height: 32px;
 }
+.stickyfooter .course-linear-navigation .course-linear-navigation-completion .completion-status {
+  font-size: 1rem;
+}
 
 /* Standard components fixes for sticky footer. */
 .stickyfooter ul.pagination {
