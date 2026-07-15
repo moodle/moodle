@@ -176,8 +176,9 @@ class csv_import_reader {
         $filepointer = fopen($filename, "w");
         // The information has been stored in csv format, as serialized data has issues
         // with special characters and line returns.
-        $storedata = csv_export_writer::print_array($columns, ',', '"', true);
-        fwrite($filepointer, $storedata);
+        foreach ($columns as $row) {
+            fputcsv($filepointer, $row, ',', '"', '\\');
+        }
 
         fclose($fp);
         unlink($tempfile);
