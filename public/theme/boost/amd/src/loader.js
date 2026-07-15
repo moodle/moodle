@@ -133,7 +133,10 @@ const enablePopovers = () => {
             Bootstrap.Popover.getOrCreateInstance(helpPopoverTrigger).hide();
         }
         if (e.key === 'Enter' && popoverTrigger) {
-            Bootstrap.Popover.getOrCreateInstance(popoverTrigger).show();
+            const popover = Bootstrap.Popover.getOrCreateInstance(popoverTrigger);
+            if (!popover._isShown()) {
+                popover.show();
+            }
         }
         if (e.key === 'Tab' && !e.shiftKey && popoverTrigger?.classList.contains('help-icon')) {
             const popover = Bootstrap.Popover.getOrCreateInstance(popoverTrigger);
