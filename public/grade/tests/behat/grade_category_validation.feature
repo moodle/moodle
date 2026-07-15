@@ -29,6 +29,13 @@ Feature: Editing a grade item
       | Item 2   | C1     | Cat 1    |
     And I am on the "Course 1" "grades > gradebook setup" page logged in as "admin"
 
+  Scenario: Rename gradebook category
+    When I click on grade item menu "Cat 1" of type "category" on "setup" page
+    And I choose "Edit category" in the open action menu
+    And I set the field "Category name" in the "Edit category" "dialogue" to "0"
+    And I click on "Save" "button" in the "Edit category" "dialogue"
+    Then I should see "0"
+
   Scenario: Being able to change the grade type, scale and maximum grade for a grade category when there are no overridden grades
     Given I click on grade item menu "Cat 1" of type "category" on "setup" page
     And I choose "Edit category" in the open action menu
