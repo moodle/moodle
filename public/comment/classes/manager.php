@@ -261,7 +261,6 @@ class manager {
 
         $page->requires->strings_for_js(
             [
-                'addcomment',
                 'comments',
                 'commentsrequirelogin',
                 'deletecommentbyon',
