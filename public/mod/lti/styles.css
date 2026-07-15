@@ -433,7 +433,7 @@
 }
 
 /* Strip the caret from the action menu toggle, as the ... ellipsis icon is used. */
-#page-mod-lti-coursetools a.dropdown-toggle::after {
+#page-mod-lti-coursetools table.reportbuilder-table a.dropdown-toggle::after {
     display: none;
 }
 
