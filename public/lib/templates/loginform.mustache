@@ -30,7 +30,6 @@
     * info - Info notification to display,
     * forgotpasswordurl - Forgot password url,
     * hasidentityproviders - Flag, set to true to hide identity providers,
-    * hasinstructions - Flag, set to true to show instructions,
     * identityproviders - List of identiy providers,
     * instructions - Instructions,
     * instructionsformat - Format of instructions,
@@ -188,13 +187,6 @@
             {{/identityproviders}}
         </div>
     {{/hasidentityproviders}}
-    {{#hasinstructions}}
-        <div class="login-divider"></div>
-        <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
-            <h2 class="login-heading">{{#str}}firsttime{{/str}}</h2>
-            {{{instructions}}}
-        </div>
-    {{/hasinstructions}}
     {{#cansignup}}
         <div class="login-signup">
             <a class="btn btn-secondary" href="{{signupurl}}">{{#str}}startsignup{{/str}}</a>
