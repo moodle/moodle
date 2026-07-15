@@ -228,3 +228,10 @@ Feature: Manage notification preferences - Email
     And I follow "Preferences" in the user menu
     And I click on "Notification preferences" "link" in the "#page-content" "css_element"
     And I should not see "Subscribed forum posts"
+
+  Scenario: User is redirected to notification preferences after login via deep link
+    Given I visit "/message/notificationpreferences.php"
+    And I set the field "Username" to "student1"
+    And I set the field "Password" to "student1"
+    And I press "Log in"
+    Then I should see "Notification preferences"
