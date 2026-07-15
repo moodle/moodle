@@ -49,6 +49,7 @@ $functions = array(
         'type'        => 'write',
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
     'core_auth_is_minor' => array(
         'classname'   => 'core_auth_external',
@@ -57,6 +58,7 @@ $functions = array(
         'type'        => 'read',
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
     'core_auth_is_age_digital_consent_verification_enabled' => array(
         'classname'   => 'core_auth_external',
@@ -65,6 +67,7 @@ $functions = array(
         'type'        => 'read',
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
     'core_auth_resend_confirmation_email' => array(
         'classname'   => 'core_auth_external',
@@ -73,6 +76,7 @@ $functions = array(
         'type'        => 'write',
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
     'core_backup_get_async_backup_progress' => array(
         'classname'   => 'core_backup_external',

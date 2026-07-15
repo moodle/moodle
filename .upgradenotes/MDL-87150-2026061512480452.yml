@@ -1,0 +1,7 @@
+issueNumber: MDL-87150
+notes:
+  core_webservice:
+    - message: >-
+        New "allowcorsrequests" property in external functions definition
+        for allowing specific AJAX Web Services to support CORS
+      type: improved

@@ -73,6 +73,8 @@ $settings->set_fileurl(true);
 $settings->set_filter(true);
 $settings->set_raw(false);
 
+// Just allow CORS if no Moodle cookies are being used, non-session requests and all the requests indicate so.
+$allowcors = NO_MOODLE_COOKIES && count($requests) > 0;
 $haserror = false;
 foreach ($requests as $request) {
     $response = [];
@@ -82,6 +84,14 @@ foreach ($requests as $request) {
 
     $response = external_api::call_external_function($methodname, $args, true);
     $responses[$index] = $response;
+
+    if ($allowcors) {
+        $externalfunctioninfo = external_api::external_function_info($methodname);
+        // If the function does not allow CORS requests or requires login, disable CORS for the whole response.
+        if (!$externalfunctioninfo->allowcorsrequests || $externalfunctioninfo->loginrequired) {
+            $allowcors = false;
+        }
+    }
 
     if ($response['error']) {
         $haserror = true;
@@ -103,6 +113,10 @@ foreach ($requests as $request) {
             break;
         }
     }
+}
+
+if (NO_MOODLE_COOKIES && $allowcors) {
+    header('Access-Control-Allow-Origin: *');
 }
 
 if ($cacherequest && !$haserror) {

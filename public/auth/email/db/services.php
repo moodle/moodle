@@ -33,6 +33,7 @@ $functions = array(
         'type'        => 'read',
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
     'auth_email_signup_user' => array(
         'classname'   => 'auth_email_external',
@@ -41,6 +42,7 @@ $functions = array(
         'type'        => 'write',
         'ajax'          => true,
         'loginrequired' => false,
+        'allowcorsrequests' => true,
     ),
 );
 
