@@ -132,12 +132,12 @@ Feature: Non anonymous feedback
     And I click on "," "link" in the "Username 1" "table_row"
     And I should see "(Username 1)"
     And I should see "Yes of course"
-    And I should not see "Prev"
-    And I follow "Next"
+    And "//a[@aria-label='Previous response' and @aria-disabled='true']" "xpath_element" should exist
+    And I follow "Next response"
     And I should see "(Username 2)"
-    And I should not see "Next"
-    And I should see "Prev"
-    And I click on "Back" "link" in the "region-main" "region"
+    And "//a[@aria-label='Next response' and @aria-disabled='true']" "xpath_element" should exist
+    And "//a[@aria-label='Previous response' and not(@aria-disabled='true')]" "xpath_element" should exist
+    And I click on "Go to all responses" "link" in the "sticky-footer" "region"
     # Sort the feedback responses.
     And I click on "Do you like this course?" "link" in the "generaltable" "table"
     And "Username 1" "table_row" should appear before "Username 2" "table_row"

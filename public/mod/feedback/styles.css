@@ -1,0 +1,13 @@
+.feedback_response_navigation {
+    border-top: 1px solid var(--mds-color-gray-300);
+    padding-top: 1rem;
+    margin-top: 1.5rem;
+}
+
+.path-mod-feedback .feedback-navigation-button {
+    height: calc(16px + 1.25rem);
+    width: calc(16px + 1.25rem);
+}
+.path-mod-feedback .feedback-navigation-button.disabled .icon {
+    color: var(--mds-color-gray-300);
+}

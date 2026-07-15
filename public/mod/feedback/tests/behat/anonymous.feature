@@ -209,12 +209,12 @@ Feature: Anonymous feedback
     And I follow "Response number: 1"
     And I should not see "Username"
     And I should see "Response number: 1 (Anonymous)"
-    And I should not see "Prev"
-    And I follow "Next"
+    And "//a[@aria-label='Previous response' and @aria-disabled='true']" "xpath_element" should exist
+    And I follow "Next response"
     And I should see "Response number: 2 (Anonymous)"
-    And I should see "Prev"
-    And I should not see "Next"
-    And I click on "Back" "link" in the "[role=main]" "css_element"
+    And "//a[@aria-label='Previous response' and not(@aria-disabled='true')]" "xpath_element" should exist
+    And "//a[@aria-label='Next response' and @aria-disabled='true']" "xpath_element" should exist
+    And I click on "Go to all responses" "link" in the "sticky-footer" "region"
     # Delete anonymous response
     And I click on "Delete entry" "link" in the "Response number: 1" "table_row"
     And I press "Yes"

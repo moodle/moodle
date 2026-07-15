@@ -1791,35 +1791,4 @@ $popout-header-height: 4rem;
     #showentryanontable td.cell.deleteentry {
         width: 10px;
     }
-
-    // Responses navigation.
-    .response_navigation {
-        margin: map-get($spacers, 2) 0;
-        a {
-            display: block;
-            &.back_to_list {
-                text-align: center;
-            }
-        }
-        .prev_response {
-            text-align: left;
-            &:before {
-                /*rtl:raw:
-                content: ' ► ';
-                */
-                /*rtl:remove*/
-                content: ' ◄ ';
-            }
-        }
-        .next_response {
-            text-align: right;
-            &:after {
-                /*rtl:raw:
-                content: ' ◄ ';
-                */
-                /*rtl:remove*/
-                content: ' ► ';
-            }
-        }
-    }
 }

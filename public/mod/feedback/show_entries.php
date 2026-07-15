@@ -132,25 +132,35 @@ if ($userid || $showcompleted) {
             $responsestable->get_reponse_navigation_links($completedrecord) :
             $anonresponsestable->get_reponse_navigation_links($completedrecord);
 
-    echo html_writer::start_div('response_navigation');
+    echo html_writer::start_div('feedback_response_navigation');
 
-    $responsenavigation = [
-        'col1content' => '',
-        'col2content' => html_writer::link($returnurl, get_string('back'), ['class' => 'back_to_list']),
-        'col3content' => '',
+    // Add link to all responses as supplementary content to go to the main Responses page.
+    $PAGE->set_supplementary_content(
+        new action_link(
+            $returnurl,
+            get_string('gotoallresponses', 'mod_feedback'),
+        )
+    );
+
+    $buttons = [];
+    $buttons[] = [
+        'type' => 'prev',
+        'buttonicon' => 'i/previous',
+        'url' => $prevresponseurl ? $prevresponseurl->out(false) : null,
+        'title' => get_string('prevresponse', 'mod_feedback'),
+        'arialabel' => get_string('prevresponse', 'mod_feedback'),
+        'disabled' => !$prevresponseurl,
     ];
-
-    if ($prevresponseurl) {
-        $responsenavigation['col1content'] = html_writer::link($prevresponseurl, get_string('prev'), ['class' => 'prev_response']);
-    }
-
-    if ($nextresponseurl) {
-        $responsenavigation['col3content'] = html_writer::link($nextresponseurl, get_string('next'), ['class' => 'next_response']);
-    }
-
-    echo $OUTPUT->render_from_template('core/columns-1to1to1', $responsenavigation);
+    $buttons[] = [
+        'type' => 'next',
+        'buttonicon' => 'i/next',
+        'url' => $nextresponseurl ? $nextresponseurl->out(false) : null,
+        'title' => get_string('nextresponse', 'mod_feedback'),
+        'arialabel' => get_string('nextresponse', 'mod_feedback'),
+        'disabled' => !$nextresponseurl,
+    ];
+    echo $OUTPUT->render_from_template('mod_feedback/responses_navigation', ['navbuttons' => $buttons]);
     echo html_writer::end_div();
-
 } else {
     // Print the list of responses.
     $courseselectform->display();
