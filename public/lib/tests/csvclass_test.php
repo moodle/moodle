@@ -150,4 +150,43 @@ final class csvclass_test extends \advanced_testcase {
         // Five lines including the headings should be imported.
         $this->assertEquals($contentcount, 5);
     }
+
+    /**
+     * Test that values starting with spreadsheet formula characters are preserved unchanged during import.
+     *
+     * Regression test for MDL-87794: csv_import_reader::load_csv_content() was re-serialising
+     * parsed data via csv_export_writer::print_array() which applies escape_spreadsheet_formula(),
+     * prepending a "'" to values starting with =, +, -, or @.
+     *
+     * @covers \csv_import_reader::load_csv_content
+     * @covers \csv_import_reader::next
+     */
+    public function test_import_preserves_formula_characters(): void {
+        // CSV with values starting with each of the four formula trigger characters.
+        $csv = "username,password,phone1,description\n" .
+               "user1,@secret,+14167222323,=SUM(1)\n" .
+               "user2,-password,+44207111222,-note\n";
+
+        $iid = csv_import_reader::get_new_iid('lib');
+        $csvimport = new csv_import_reader($iid, 'lib');
+        $csvimport->load_csv_content($csv, 'utf-8', 'comma');
+        $csvimport->init();
+
+        $rows = [];
+        $rows[] = $csvimport->get_columns();
+        while ($record = $csvimport->next()) {
+            $rows[] = $record;
+        }
+        $csvimport->cleanup();
+        $csvimport->close();
+
+        // Headers must be intact.
+        $this->assertSame(['username', 'password', 'phone1', 'description'], $rows[0]);
+
+        // Values must not have a leading apostrophe prepended.
+        $this->assertSame('@secret', $rows[1][1], 'Password starting with @ must not be escaped');
+        $this->assertSame('+14167222323', $rows[1][2], 'Phone starting with + must not be escaped');
+        $this->assertSame('=SUM(1)', $rows[1][3], 'Value starting with = must not be escaped');
+        $this->assertSame('-password', $rows[2][1], 'Value starting with - must not be escaped');
+    }
 }
