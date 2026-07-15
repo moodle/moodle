@@ -41,6 +41,7 @@ require_capability('mod/workshop:editdimensions', $workshop->context);
 $PAGE->set_url($workshop->previewform_url());
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 $PAGE->navbar->add(get_string('editingassessmentform', 'workshop'), $workshop->editform_url(), navigation_node::TYPE_CUSTOM);
 $PAGE->navbar->add(get_string('previewassessmentform', 'workshop'));
 $PAGE->set_secondary_active_tab('workshopassessement');

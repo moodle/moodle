@@ -188,6 +188,10 @@ if ($edit) {
     $PAGE->navbar->add(get_string('submission', 'workshop'));
 }
 
+if (!$submission->id || $edit || $delete) {
+    $PAGE->set_show_navigation_footer(false);
+}
+
 // Output starts here
 $output = $PAGE->get_renderer('mod_workshop');
 echo $output->header();

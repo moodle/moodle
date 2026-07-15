@@ -47,6 +47,7 @@ $workshop = new workshop($workshop, $cm, $course);
 $PAGE->set_url($workshop->exsubmission_url($id), array('edit' => $edit));
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_show_navigation_footer(false);
 $PAGE->set_secondary_active_tab('modulepage');
 if ($edit) {
     $PAGE->navbar->add(get_string('exampleediting', 'workshop'));
