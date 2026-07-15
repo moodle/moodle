@@ -509,6 +509,49 @@ final class authlib_test extends \advanced_testcase {
     }
 
     /**
+     * Test that signup_validate_data() never passes an existing, persisted user's id to
+     * the password policy service via the temporary signup user object.
+     */
+    public function test_signup_validate_data_password_policy_user_id(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        require_once($CFG->libdir . '/authlib.php');
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        $CFG->registerauth = 'email';
+        $CFG->passwordpolicy = 1;
+
+        // Mock the password service to capture the $user object signup_validate_data()
+        // passes to check_policy() - this is what would be forwarded on to any
+        // check_password_policy plugin callbacks.
+        $observeduser = null;
+        $passwordservice = $this->createMock(\core\authentication\password::class);
+        $passwordservice->method('check_policy')
+            ->willReturnCallback(function (string $password, ?string $errmsg, ?\stdClass $user = null) use (&$observeduser): bool {
+                $observeduser = $user;
+                return true;
+            });
+        \core\di::set(\core\authentication\password::class, $passwordservice);
+
+        $formdata = [
+            'username' => 'signupuseridprobetest',
+            'firstname' => 'First',
+            'lastname' => 'Last',
+            'email' => 'signupuseridprobetest@example.com',
+            'email2' => 'signupuseridprobetest@example.com',
+            'password' => 'anypassword',
+        ];
+
+        signup_validate_data($formdata, []);
+
+        // The temporary signup user's id must be 0 (belonging to no real user), never an
+        // existing user's id such as the admin's.
+        $this->assertNotNull($observeduser);
+        $this->assertSame(0, $observeduser->id);
+    }
+
+    /**
      * Test the find_cli_user method
      */
     public function test_find_cli_user(): void {
