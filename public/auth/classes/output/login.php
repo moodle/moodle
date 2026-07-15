@@ -258,13 +258,17 @@ class login implements renderable, templatable {
         $data->cansignup = $this->cansignup;
         $data->cookieshelpicon = $this->cookieshelpicon->export_for_template($output);
         $data->error = $this->error;
+        $data->errorformatted = $output->error_text($data->error);
         $data->errortitle = $this->errortitle;
         $data->info = $this->info;
         $data->forgotpasswordurl = $this->forgotpasswordurl->out(false);
         $data->hasidentityproviders = !empty($this->identityproviders);
         $data->identityproviders = $identityproviders;
-        list($data->instructions, $data->instructionsformat) = \core_external\util::format_text($this->instructions, FORMAT_MOODLE,
-            context_system::instance()->id);
+        [$data->instructions, $data->instructionsformat] = \core_external\util::format_text(
+            $this->instructions,
+            FORMAT_MOODLE,
+            \core\context\system::instance()->id,
+        );
         $data->loginurl = $this->loginurl->out(false);
         $data->signupurl = $this->signupurl->out(false);
         $data->username = $this->username;
@@ -280,6 +284,19 @@ class login implements renderable, templatable {
         $data->client = $this->oauth2client !== null
             ? \core_auth\output\oauth2\oauth2_page::describe_client($this->oauth2client)
             : null;
+        $data->logourl = null;
+        $logourl = $output->get_logo_url();
+        if ($logourl) {
+            $data->logourl = $logourl->out(false);
+        }
+
+        $data->sitename = $formatter->format_string(
+            string: $SITE->fullname,
+            context: \core\context\course::instance(SITEID),
+            escape: false,
+        );
+
+        $data->hasauthinstructions = !empty($CFG->auth_instructions);
 
         return $data;
     }
