@@ -33,7 +33,6 @@ M.core_comment = {
         Y.extend(CommentHelper, Y.Base, {
             api: M.cfg.wwwroot+'/comment/comment_ajax.php',
             initializer: function(args) {
-                var scope = this;
                 this.client_id = args.client_id;
                 this.itemid = args.itemid;
                 this.commentarea = args.commentarea;
@@ -69,13 +68,21 @@ M.core_comment = {
                         return false;
                     }, '13,32', this);
                 }
-                scope.toggleTextarea(false);
             },
             post: function() {
                 var container = Y.one('#comment-list-'+this.client_id);
                 var ta = Y.one('#dlg-content-'+this.client_id);
                 var scope = this;
                 var value = ta.get('value');
+                // Read design-system CSS custom properties at runtime so custom themes
+                // are respected. YUI2 ColorAnim requires literal colour values, so
+                // getComputedStyle is used with hardcoded hex fallbacks for environments
+                // where the CSS custom properties are not defined.
+                var rootStyle = getComputedStyle(document.documentElement);
+                var highlightBg = rootStyle.getPropertyValue(
+                    '--mds-bg-feedback-warning-subtle').trim() || '#fcefdc';
+                var highlightText = rootStyle.getPropertyValue(
+                    '--mds-text-feedback-warning').trim() || '#60451f';
                 if (value) {
                     ta.set('disabled', true);
                     var spinner = M.util.add_spinner(Y, container);
@@ -92,7 +99,6 @@ M.core_comment = {
                             ta.set('value', '');
                             ta.set('disabled', false);
                             spinner.remove();
-                            scope.toggleTextarea(false);
                             var container = Y.one('#comment-list-'+cid);
                             var result = await scope.render([obj], true);
                             var newcomment = Y.Node.create(result.html);
@@ -102,15 +108,6 @@ M.core_comment = {
                             if (linkTextCount) {
                                 linkTextCount.set('innerHTML', obj.count);
                             }
-                            // Read design-system CSS custom properties at runtime so custom themes
-                            // are respected. YUI2 ColorAnim requires literal colour values, so
-                            // getComputedStyle is used with hardcoded hex fallbacks for environments
-                            // where the CSS custom properties are not defined.
-                            var rootStyle = getComputedStyle(document.documentElement);
-                            var highlightBg = rootStyle.getPropertyValue(
-                                '--mds-bg-feedback-warning-subtle').trim() || '#fcefdc';
-                            var highlightText = rootStyle.getPropertyValue(
-                                '--mds-text-feedback-warning').trim() || '#60451f';
                             for(var i in ids) {
                                 // SC 1.4.1: apply the non-colour link indicator immediately rather than
                                 // waiting for the colour animation to complete, so the link is never
@@ -129,9 +126,9 @@ M.core_comment = {
                     }, true);
                 } else {
                     var attributes = {
-                        backgroundColor: {from: '#fcefdc', to: '#FFFFFF'}
+                        backgroundColor: {from: highlightBg, to: '#FFFFFF'}
                     };
-                    var anim = new Y.YUI2.util.ColorAnim('dlg-content-'+cid, attributes);
+                    var anim = new Y.YUI2.util.ColorAnim('dlg-content-'+this.client_id, attributes);
                     anim.animate();
                 }
             },
@@ -423,20 +420,8 @@ M.core_comment = {
                         commenttoggler.setAttribute('aria-expanded', 'false');
                     }
                 }
-                if (ta) {
-                    ta.on('focus', function() {
-                        this.toggleTextarea(true);
-                    }, this);
-                    ta.on('blur', function() {
-                        this.toggleTextarea(false);
-                    }, this);
-                }
                 this.register_actions();
                 return false;
-            },
-            toggleTextarea: function() {
-                // Native HTML placeholder now handles the hint text. This method
-                // is retained so any existing call sites remain valid.
             },
             wait: function() {
                 var container = Y.one('#comment-list-'+this.client_id);
