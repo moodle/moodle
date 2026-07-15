@@ -349,6 +349,31 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Test that get_next_adhoc_task() skips orphaned tasks whose class no longer exists
+     * (e.g. because the providing plugin was removed) instead of throwing and blocking
+     * dispatch of other valid tasks.
+     *
+     * @covers \core\task\manager::get_next_adhoc_task
+     */
+    public function test_get_next_adhoc_task_skips_orphaned_task_with_invalid_classname(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        manager::queue_adhoc_task(new adhoc_test_task());
+        $orphanedid = manager::queue_adhoc_task(new adhoc_test_task());
+        $DB->set_field('task_adhoc', 'classname', '\core\task\nonexistent_removed_plugin_task', ['id' => $orphanedid]);
+
+        $timestart = time();
+
+        $task = manager::get_next_adhoc_task($timestart);
+        $this->assertDebuggingCalled('Failed to load task: \core\task\nonexistent_removed_plugin_task');
+        $this->assertNotNull($task);
+        $this->assertNotEquals($orphanedid, $task->get_id());
+        manager::adhoc_task_complete($task);
+    }
+
+    /**
      * Test verifying \core\task\manager behaviour for scheduled tasks when dealing with deprecated plugin types.
      *
      * This only verifies that existing tasks will not be listed, or returned for execution via existing APIs, like:
