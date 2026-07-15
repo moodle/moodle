@@ -33,7 +33,6 @@ M.core_comment = {
         Y.extend(CommentHelper, Y.Base, {
             api: M.cfg.wwwroot+'/comment/comment_ajax.php',
             initializer: function(args) {
-                var scope = this;
                 this.client_id = args.client_id;
                 this.itemid = args.itemid;
                 this.commentarea = args.commentarea;
@@ -69,13 +68,14 @@ M.core_comment = {
                         return false;
                     }, '13,32', this);
                 }
-                scope.toggleTextarea(false);
             },
             post: function() {
                 var container = Y.one('#comment-list-'+this.client_id);
                 var ta = Y.one('#dlg-content-'+this.client_id);
                 var scope = this;
                 var value = ta.get('value');
+                var highlightBg = '#fcefdc'; // --mds-bg-feedback-warning-subtle.
+                var highlightText = '#60451f'; // --mds-text-feedback-warning: 7.82:1 on highlightBg.
                 if (value) {
                     ta.set('disabled', true);
                     var spinner = M.util.add_spinner(Y, container);
@@ -92,7 +92,6 @@ M.core_comment = {
                             ta.set('value', '');
                             ta.set('disabled', false);
                             spinner.remove();
-                            scope.toggleTextarea(false);
                             var container = Y.one('#comment-list-'+cid);
                             var result = await scope.render([obj], true);
                             var newcomment = Y.Node.create(result.html);
@@ -108,8 +107,8 @@ M.core_comment = {
                                 // shown as colour-only distinguishable even momentarily.
                                 Y.all('#' + ids[i] + ' a').setStyle('textDecoration', 'underline');
                                 var attributes = {
-                                    color: {to: '#60451f'}, // --mds-text-feedback-warning: 7.82:1 on #fcefdc
-                                    backgroundColor: {to: '#fcefdc'} // --mds-bg-feedback-warning-subtle
+                                    color: {to: highlightText},
+                                    backgroundColor: {to: highlightBg}
                                 };
                                 var anim = new Y.YUI2.util.ColorAnim(ids[i], attributes);
                                 anim.animate();
@@ -120,9 +119,9 @@ M.core_comment = {
                     }, true);
                 } else {
                     var attributes = {
-                        backgroundColor: {from: '#fcefdc', to: '#FFFFFF'}
+                        backgroundColor: {from: highlightBg, to: '#FFFFFF'}
                     };
-                    var anim = new Y.YUI2.util.ColorAnim('dlg-content-'+cid, attributes);
+                    var anim = new Y.YUI2.util.ColorAnim('dlg-content-'+this.client_id, attributes);
                     anim.animate();
                 }
             },
@@ -414,20 +413,8 @@ M.core_comment = {
                         commenttoggler.setAttribute('aria-expanded', 'false');
                     }
                 }
-                if (ta) {
-                    ta.on('focus', function() {
-                        this.toggleTextarea(true);
-                    }, this);
-                    ta.on('blur', function() {
-                        this.toggleTextarea(false);
-                    }, this);
-                }
                 this.register_actions();
                 return false;
-            },
-            toggleTextarea: function() {
-                // Native HTML placeholder now handles the hint text. This method
-                // is retained so any existing call sites remain valid.
             },
             wait: function() {
                 var container = Y.one('#comment-list-'+this.client_id);

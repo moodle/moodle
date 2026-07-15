@@ -261,7 +261,6 @@ class comment {
         self::$comment_area = optional_param('comment_area',    '', PARAM_AREA);
 
         $page->requires->strings_for_js(array(
-                'addcomment',
                 'comments',
                 'commentsrequirelogin',
                 'deletecommentbyon'
