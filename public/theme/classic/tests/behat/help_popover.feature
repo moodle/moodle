@@ -28,6 +28,8 @@ Feature: Navigate form help popover links in Classic
     And "More help" "link" should be visible
     When I press the shift tab key
     Then the focused element is "#fitem_id_timelimit .help-icon" "css_element"
+    When I press the enter key
+    Then ".help-popover" "css_element" should be visible
     When I press the tab key
     Then the focused element is "More help" "link"
     When I press the tab key
