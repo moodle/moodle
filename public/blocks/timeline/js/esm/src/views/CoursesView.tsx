@@ -33,7 +33,6 @@ import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
 import {getEnrolledCourses, getEventsByCourses, getEventsByCourse} from '../repository';
-import {CoursesViewSkeleton} from '../Skeleton';
 import EventListItem from '../EventListItem';
 import {computeTimeRange, groupByDay, filterEvents, getFormattedDays} from '../utils';
 import type {CalendarEvent, CourseWithEvents, FilterOffsets} from '../types';
@@ -90,7 +89,7 @@ interface CoursesViewProps {
     nocoursesurl: string;
     noeventsurl: string;
     hasenrolledcourses: boolean;
-    /** True while the search debounce is pending — show skeleton immediately on keystroke. */
+    /** True while the search debounce is pending — suppresses stale results until it resolves. */
     searchPending?: boolean;
 }
 
@@ -306,7 +305,7 @@ export default function CoursesView({
     };
 
     if (loading || searchPending) {
-        return <CoursesViewSkeleton />;
+        return null;
     }
 
     if (displayedCourses.length === 0) {

@@ -25,7 +25,6 @@ import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
 import {getTimelineEvents} from '../repository';
-import {DatesViewSkeleton} from '../Skeleton';
 import EventListItem from '../EventListItem';
 import {computeTimeRange, groupByDay, filterEvents, getFormattedDays} from '../utils';
 import type {DayGroup} from '../utils';
@@ -42,7 +41,7 @@ interface DatesViewProps {
     hasenrolledcourses: boolean;
     /** Number of events to show on first load, from block_timeline_user_limit_preference. */
     limit: number;
-    /** True while the search debounce is pending — show skeleton immediately on keystroke. */
+    /** True while the search debounce is pending — suppresses stale results until it resolves. */
     searchPending?: boolean;
 }
 
@@ -137,7 +136,7 @@ export default function DatesView({
     };
 
     if (loading || searchPending) {
-        return <DatesViewSkeleton />;
+        return null;
     }
 
     if (days.length === 0) {
