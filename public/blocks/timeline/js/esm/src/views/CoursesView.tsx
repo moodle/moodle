@@ -152,7 +152,9 @@ export default function CoursesView({
             const pageCourses = hasMorePhp
                 ? coursesResult.courses.slice(0, COURSES_PER_PAGE)
                 : coursesResult.courses;
-            offset = coursesResult.nextoffset;
+            // Advance by the number of courses actually kept, not coursesResult.nextoffset —
+            // that counts the discarded sentinel course too and would skip a course each page.
+            offset += pageCourses.length;
 
             if (pageCourses.length > 0) {
                 const eventsResult = await getEventsByCourses({
