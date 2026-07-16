@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {getTimelineEvents, getCoursesWithEvents} from '../src/repository';
+import {getTimelineEvents, getEnrolledCourses, getEventsByCourses} from '../src/repository';
 
 // Mock for fetchOne(request) -> Promise<T> — single request, single response.
 const mockFetchOne = jest.fn();
@@ -43,7 +43,7 @@ describe('repository', () => {
 
             expect(mockFetchOne).toHaveBeenCalledTimes(1);
             const request = mockFetchOne.mock.calls[0][0];
-            expect(request.methodname).toBe('block_timeline_get_timeline_events');
+            expect(request.methodname).toBe('core_calendar_get_action_events_by_timesort');
             expect(request.args.timesortfrom).toBe(1000);
             expect(request.args.limitnum).toBe(5);
             expect(result.events).toEqual(events);
@@ -76,42 +76,48 @@ describe('repository', () => {
         });
     });
 
-    describe('getCoursesWithEvents', () => {
-        it('calls fetchOne with correct methodname and returns courses', async() => {
-            const response = {courses: [], nextoffset: 0, morecoursesavailable: false};
+    describe('getEnrolledCourses', () => {
+        it('calls fetchOne with correct methodname, classification, and sort', async() => {
+            const response = {courses: [], nextoffset: 0};
             mockFetchOne.mockResolvedValue(response);
 
-            const result = await getCoursesWithEvents({limit: 2, offset: 0});
+            const result = await getEnrolledCourses({limit: 3, offset: 0});
 
             expect(mockFetchOne).toHaveBeenCalledTimes(1);
             const request = mockFetchOne.mock.calls[0][0];
-            expect(request.methodname).toBe('block_timeline_get_courses_with_events');
-            expect(request.args.limit).toBe(2);
+            expect(request.methodname).toBe('core_course_get_enrolled_courses_by_timeline_classification');
+            expect(request.args.classification).toBe('all');
+            expect(request.args.sort).toBe('fullname ASC');
+            expect(request.args.limit).toBe(3);
             expect(request.args.offset).toBe(0);
             expect(result).toEqual(response);
         });
 
         it('applies correct defaults for missing optional args', async() => {
-            mockFetchOne.mockResolvedValue({courses: [], nextoffset: 0, morecoursesavailable: false});
+            mockFetchOne.mockResolvedValue({courses: [], nextoffset: 0});
 
-            await getCoursesWithEvents({});
+            await getEnrolledCourses({});
 
             const {args} = mockFetchOne.mock.calls[0][0];
-            expect(args.starttime).toBeNull();
-            expect(args.endtime).toBeNull();
             expect(args.limit).toBe(2);
             expect(args.offset).toBe(0);
             expect(args.searchvalue).toBeNull();
         });
+    });
 
-        it('passes starttime and endtime when provided', async() => {
-            mockFetchOne.mockResolvedValue({courses: [], nextoffset: 0, morecoursesavailable: false});
+    describe('getEventsByCourses', () => {
+        it('calls fetchOne with correct methodname and courseids', async() => {
+            const response = {groupedbycourse: [{courseid: 5, events: []}]};
+            mockFetchOne.mockResolvedValue(response);
 
-            await getCoursesWithEvents({starttime: 1000, endtime: 2000});
+            const result = await getEventsByCourses({courseids: [5, 6], limitnum: 7});
 
-            const {args} = mockFetchOne.mock.calls[0][0];
-            expect(args.starttime).toBe(1000);
-            expect(args.endtime).toBe(2000);
+            expect(mockFetchOne).toHaveBeenCalledTimes(1);
+            const request = mockFetchOne.mock.calls[0][0];
+            expect(request.methodname).toBe('core_calendar_get_action_events_by_courses');
+            expect(request.args.courseids).toEqual([5, 6]);
+            expect(request.args.limitnum).toBe(7);
+            expect(result).toEqual(response);
         });
     });
 });

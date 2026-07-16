@@ -32,7 +32,7 @@ import {useState, useEffect, useCallback, useRef} from 'react';
 import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
-import {getCoursesWithEvents, getEventsByCourse} from '../repository';
+import {getEnrolledCourses, getEventsByCourses, getEventsByCourse} from '../repository';
 import {CoursesViewSkeleton} from '../Skeleton';
 import EventListItem from '../EventListItem';
 import {computeTimeRange, groupByDay, filterEvents, getFormattedDays} from '../utils';
@@ -141,21 +141,43 @@ export default function CoursesView({
         let hasMorePhp = false;
 
         do {
-            const result = await getCoursesWithEvents({
-                starttime,
-                endtime,
-                limit:       COURSES_PER_PAGE,
+            // Request one extra course to detect whether more pages exist, mirroring
+            // the sentinel trick core_course_get_enrolled_courses_by_timeline_classification's
+            // own callers use — the WS itself has no "more available" flag.
+            const coursesResult = await getEnrolledCourses({
+                limit:       COURSES_PER_PAGE + 1,
                 offset,
                 searchvalue: searchvalue || null,
             });
-            hasMorePhp = result.morecoursesavailable;
-            offset = result.nextoffset;
+            hasMorePhp = coursesResult.courses.length > COURSES_PER_PAGE;
+            const pageCourses = hasMorePhp
+                ? coursesResult.courses.slice(0, COURSES_PER_PAGE)
+                : coursesResult.courses;
+            offset = coursesResult.nextoffset;
 
-            for (const course of result.courses) {
-                const {shown, hasMore, lastId} = processInitialEvents(course.events, midnight, filteroverdue);
-                if (shown.length > 0) {
-                    visibleCourses.push(course);
-                    visiblePerCourse.set(course.id, {events: shown, hasMore, lastEventId: lastId, loading: false});
+            if (pageCourses.length > 0) {
+                const eventsResult = await getEventsByCourses({
+                    courseids:    pageCourses.map(c => c.id),
+                    timesortfrom: starttime,
+                    timesortto:   endtime,
+                    limitnum:     EVENTS_PER_PAGE + 1,
+                    searchvalue:  searchvalue || null,
+                });
+                const eventsByCourseId = new Map(eventsResult.groupedbycourse.map(g => [g.courseid, g.events]));
+                const dayMap = await getFormattedDays(
+                    eventsResult.groupedbycourse.flatMap(g => g.events.map(e => e.timeusermidnight))
+                );
+
+                for (const course of pageCourses) {
+                    const events = (eventsByCourseId.get(course.id) ?? []).map(e => ({
+                        ...e,
+                        formattedday: dayMap.get(e.timeusermidnight) ?? '',
+                    }));
+                    const {shown, hasMore, lastId} = processInitialEvents(events, midnight, filteroverdue);
+                    if (shown.length > 0) {
+                        visibleCourses.push({...course, events});
+                        visiblePerCourse.set(course.id, {events: shown, hasMore, lastEventId: lastId, loading: false});
+                    }
                 }
             }
         } while (visibleCourses.length < COURSES_PER_PAGE && hasMorePhp);

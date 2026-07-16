@@ -27,7 +27,7 @@ import {Button} from '@moodlehq/design-system';
 import {getTimelineEvents} from '../repository';
 import {DatesViewSkeleton} from '../Skeleton';
 import EventListItem from '../EventListItem';
-import {computeTimeRange, groupByDay, filterEvents} from '../utils';
+import {computeTimeRange, groupByDay, filterEvents, getFormattedDays} from '../utils';
 import type {DayGroup} from '../utils';
 import type {FilterOffsets} from '../types';
 
@@ -81,7 +81,10 @@ export default function DatesView({
             searchvalue:  searchvalue || null,
         });
 
-        let filtered = filterEvents(result.events, midnight, offsets.filteroverdue);
+        const dayMap = await getFormattedDays(result.events.map(e => e.timeusermidnight));
+        const events = result.events.map(e => ({...e, formattedday: dayMap.get(e.timeusermidnight) ?? ''}));
+
+        let filtered = filterEvents(events, midnight, offsets.filteroverdue);
 
         const loadedAll = filtered.length <= (append ? MORE_LOAD_LIMIT : limit);
         if (!loadedAll) {

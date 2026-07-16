@@ -1,7 +1,8 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 /**
- * Data-access layer for the Timeline block — wraps block_timeline and core_calendar web services.
+ * Data-access layer for the Timeline block — wraps existing core_calendar and
+ * core_course web services; block_timeline defines none of its own.
  *
  * @module     block_timeline/repository
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -9,7 +10,7 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
 import { fetchOne } from "@moodle/lms/core/ajax";
 const getTimelineEvents = /* @__PURE__ */ __name((args) => {
   return fetchOne({
-    methodname: "block_timeline_get_timeline_events",
+    methodname: "core_calendar_get_action_events_by_timesort",
     args: {
       timesortfrom: args.timesortfrom ?? 0,
       timesortto: args.timesortto ?? null,
@@ -19,18 +20,30 @@ const getTimelineEvents = /* @__PURE__ */ __name((args) => {
     }
   });
 }, "getTimelineEvents");
-const getCoursesWithEvents = /* @__PURE__ */ __name((args) => {
+const getEnrolledCourses = /* @__PURE__ */ __name((args) => {
   return fetchOne({
-    methodname: "block_timeline_get_courses_with_events",
+    methodname: "core_course_get_enrolled_courses_by_timeline_classification",
     args: {
-      starttime: args.starttime ?? null,
-      endtime: args.endtime ?? null,
+      classification: "all",
       limit: args.limit ?? 2,
       offset: args.offset ?? 0,
+      sort: "fullname ASC",
       searchvalue: args.searchvalue ?? null
     }
   });
-}, "getCoursesWithEvents");
+}, "getEnrolledCourses");
+const getEventsByCourses = /* @__PURE__ */ __name((args) => {
+  return fetchOne({
+    methodname: "core_calendar_get_action_events_by_courses",
+    args: {
+      courseids: args.courseids,
+      timesortfrom: args.timesortfrom ?? null,
+      timesortto: args.timesortto ?? null,
+      limitnum: args.limitnum ?? 10,
+      searchvalue: args.searchvalue ?? null
+    }
+  });
+}, "getEventsByCourses");
 const getEventsByCourse = /* @__PURE__ */ __name((args) => {
   return fetchOne({
     methodname: "core_calendar_get_action_events_by_course",
@@ -45,8 +58,9 @@ const getEventsByCourse = /* @__PURE__ */ __name((args) => {
   });
 }, "getEventsByCourse");
 export {
-  getCoursesWithEvents,
+  getEnrolledCourses,
   getEventsByCourse,
+  getEventsByCourses,
   getTimelineEvents
 };
 //# sourceMappingURL=repository.dev.js.map
