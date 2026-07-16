@@ -131,6 +131,10 @@ $callbacks = [
         'callback' => [\core\router\hook_callbacks::class, 'provide_di_configuration'],
     ],
     [
+        'hook' => \core\hook\di_configuration::class,
+        'callback' => [\core\oauth2\hook_callbacks::class, 'provide_di_configuration'],
+    ],
+    [
         'hook' => \core_files\hook\before_file_created::class,
         'callback' => [\core_files\redactor\hook_listener::class, 'file_redaction_handler'],
     ],
