@@ -16,6 +16,11 @@
 
 namespace core_courseformat;
 
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/completionlib.php');
+
 /**
  * Tests for course
  *
@@ -29,7 +34,6 @@ final class activityoverviewbase_test extends \advanced_testcase {
     #[\Override()]
     public static function setUpBeforeClass(): void {
         global $CFG;
-        require_once($CFG->libdir . '/completionlib.php');
         require_once($CFG->dirroot . '/course/format/tests/fixtures/fake_activityoverview.php');
         require_once($CFG->libdir . '/gradelib.php');
         parent::setUpBeforeClass();
