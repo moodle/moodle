@@ -261,7 +261,6 @@ class comment {
         self::$comment_area = optional_param('comment_area',    '', PARAM_AREA);
 
         $page->requires->strings_for_js(array(
-                'addcomment',
                 'comments',
                 'commentsrequirelogin',
                 'deletecommentbyon'
@@ -494,7 +493,8 @@ class comment {
                     'name' => 'content',
                     'rows' => 2,
                     'id' => 'dlg-content-'.$this->cid,
-                    'aria-label' => get_string('addcomment')
+                    'aria-label' => get_string('addcomment'),
+                    'placeholder' => get_string('addcomment'),
                 );
                 if (!$this->fullwidth) {
                     $textareaattrs['cols'] = '20';
@@ -510,7 +510,9 @@ class comment {
                 $html .= html_writer::tag('textarea', '', $textareaattrs);
                 $html .= html_writer::end_tag('div'); // .db
 
-                $html .= html_writer::start_tag('div', array('class' => 'fd', 'id' => 'comment-action-'.$this->cid));
+                // SC 2.5.8: add spacing above the action links so the "Save comment" link
+                // meets the target size minimum relative to the textarea above it.
+                $html .= html_writer::start_tag('div', ['class' => 'fd mt-1', 'id' => 'comment-action-' . $this->cid]);
                 $html .= html_writer::link('#', get_string('savecomment'), array('id' => 'comment-action-post-'.$this->cid));
 
                 if ($this->displaycancel) {
