@@ -24,11 +24,11 @@
  */
 
 import {useState, useCallback} from 'react';
-import DayFilter from './nav/DayFilter';
-import ViewSelector from './nav/ViewSelector';
-import Search from './nav/Search';
-import DatesView from './views/DatesView';
-import CoursesView from './views/CoursesView';
+import DayFilter from '@moodle/lms/block_timeline/nav/DayFilter';
+import ViewSelector from '@moodle/lms/block_timeline/nav/ViewSelector';
+import Search from '@moodle/lms/block_timeline/nav/Search';
+import DatesView from '@moodle/lms/block_timeline/views/DatesView';
+import CoursesView from '@moodle/lms/block_timeline/views/CoursesView';
 import {setUserPreference} from './repository';
 import type {TimelineProps, FilterName, OrderName, FilterOffsets} from './common/types';
 
@@ -64,7 +64,7 @@ export default function Timeline({midnight, filter, order, limit, nocoursesurl, 
     /**
      * Applies the newly selected day filter and persists it as a user preference.
      *
-     * @param next filter option chosen from the DayFilter dropdown
+     * @param next filter option chosen from the DayFilter dropdown.
      */
     const handleFilterChange = useCallback((next: FilterName) => {
         setActiveFilter(next);
@@ -74,7 +74,7 @@ export default function Timeline({midnight, filter, order, limit, nocoursesurl, 
     /**
      * Applies the newly selected sort order and persists it as a user preference.
      *
-     * @param next sort order chosen from the ViewSelector dropdown
+     * @param next sort order chosen from the ViewSelector dropdown.
      */
     const handleOrderChange = useCallback((next: OrderName) => {
         setActiveOrder(next);
@@ -84,7 +84,7 @@ export default function Timeline({midnight, filter, order, limit, nocoursesurl, 
     /**
      * Updates the active search term used to filter events client-side.
      *
-     * @param value current text entered into the Search field
+     * @param value current text entered into the Search field.
      */
     const handleSearch = useCallback((value: string) => {
         setSearchvalue(value);
@@ -111,8 +111,6 @@ export default function Timeline({midnight, filter, order, limit, nocoursesurl, 
             </div>
 
             <div className="p-0">
-                {/* Both containers are always in the DOM so Behat can find [data-region='view-dates']
-                    and [data-region='view-courses'] regardless of which view is active. */}
                 <div data-region="view-dates" role="tabpanel" className={showCoursesView ? 'd-none' : ''}>
                     {!showCoursesView && (
                         <DatesView

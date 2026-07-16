@@ -25,7 +25,7 @@ import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
 import {getTimelineEvents, getFormattedDays} from '../repository';
-import EventListItem from './EventListItem';
+import EventListItem from '@moodle/lms/block_timeline/views/EventListItem';
 import {computeTimeRange, groupByDay, filterEvents} from '../common/utils';
 import type {DayGroup} from '../common/utils';
 import type {FilterOffsets} from '../common/types';
@@ -71,6 +71,12 @@ export default function DatesView({
 
     const {starttime, endtime} = computeTimeRange(midnight, offsets);
 
+    /**
+     * Fetches a page of events and merges or replaces the current day list.
+     *
+     * @param aftereventid id to page from; 0 for the first load.
+     * @param append true to append to the existing days (Show more), false to replace them.
+     */
     const load = useCallback(async(aftereventid: number, append: boolean) => {
         const result = await getTimelineEvents({
             timesortfrom: starttime,

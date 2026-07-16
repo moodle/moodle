@@ -1,4 +1,4 @@
-import{useState as o,useEffect as M,useCallback as R}from"react";import L from"@moodle/lms/core/String";import{getString as z}from"@moodle/lms/core/stringUtils";import{Button as H}from"@moodlehq/design-system";import{getTimelineEvents as q,getFormattedDays as J}from"../repository";import K from"./EventListItem";import{computeTimeRange as Q,groupByDay as U,filterEvents as W}from"../common/utils";import{jsx as e,jsxs as m}from"react/jsx-runtime";/**
+import{useState as o,useEffect as M,useCallback as R}from"react";import L from"@moodle/lms/core/String";import{getString as z}from"@moodle/lms/core/stringUtils";import{Button as H}from"@moodlehq/design-system";import{getTimelineEvents as q,getFormattedDays as J}from"../repository";import K from"@moodle/lms/block_timeline/views/EventListItem";import{computeTimeRange as Q,groupByDay as U,filterEvents as W}from"../common/utils";import{jsx as e,jsxs as m}from"react/jsx-runtime";/**
  * Dates view for the Timeline block — events grouped by day with lazy loading.
  *
  * @module     block_timeline/views/DatesView

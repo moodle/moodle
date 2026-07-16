@@ -11,11 +11,11 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useState, useCallback } from "react";
-import DayFilter from "./nav/DayFilter";
-import ViewSelector from "./nav/ViewSelector";
-import Search from "./nav/Search";
-import DatesView from "./views/DatesView";
-import CoursesView from "./views/CoursesView";
+import DayFilter from "@moodle/lms/block_timeline/nav/DayFilter";
+import ViewSelector from "@moodle/lms/block_timeline/nav/ViewSelector";
+import Search from "@moodle/lms/block_timeline/nav/Search";
+import DatesView from "@moodle/lms/block_timeline/views/DatesView";
+import CoursesView from "@moodle/lms/block_timeline/views/CoursesView";
 import { setUserPreference } from "./repository";
 const PREF_FILTER = "block_timeline_user_filter_preference";
 const PREF_ORDER = "block_timeline_user_sort_preference";
@@ -107,13 +107,13 @@ function Timeline({ midnight, filter, order, limit, nocoursesurl, noeventsurl, h
         false,
         {
           fileName: "public/blocks/timeline/js/esm/src/Timeline.tsx",
-          lineNumber: 118,
+          lineNumber: 116,
           columnNumber: 25
         },
         this
       ) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/Timeline.tsx",
-        lineNumber: 116,
+        lineNumber: 114,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("div", { "data-region": "view-courses", role: "tabpanel", className: showCoursesView ? "" : "d-none", children: showCoursesView && /* @__PURE__ */ jsxDEV(
@@ -131,13 +131,13 @@ function Timeline({ midnight, filter, order, limit, nocoursesurl, noeventsurl, h
         false,
         {
           fileName: "public/blocks/timeline/js/esm/src/Timeline.tsx",
-          lineNumber: 132,
+          lineNumber: 130,
           columnNumber: 25
         },
         this
       ) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/Timeline.tsx",
-        lineNumber: 130,
+        lineNumber: 128,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {

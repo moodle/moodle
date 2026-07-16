@@ -4,14 +4,6 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
 /**
  * Courses view for the Timeline block — events grouped by course with lazy loading.
  *
- * Course pagination uses a "drain-until-visible" strategy: pages are loaded
- * greedily until COURSES_PER_PAGE visible courses are found (or pages are
- * exhausted), and the next batch is pre-loaded (lookahead) so "Show more
- * courses" only appears when more visible courses are actually available.
- *
- * Event pagination within a course uses "Show more activities" and calls
- * core_calendar_get_action_events_by_course with aftereventid pagination.
- *
  * @module     block_timeline/views/CoursesView
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -20,7 +12,7 @@ import String from "@moodle/lms/core/String";
 import { getString } from "@moodle/lms/core/stringUtils";
 import { Button } from "@moodlehq/design-system";
 import { getEnrolledCourses, getEventsByCourses, getEventsByCourse, getFormattedDays } from "../repository";
-import EventListItem from "./EventListItem";
+import EventListItem from "@moodle/lms/block_timeline/views/EventListItem";
 import { computeTimeRange, groupByDay, filterEvents } from "../common/utils";
 const COURSES_PER_PAGE = 2;
 const EVENTS_PER_PAGE = 6;
@@ -45,8 +37,9 @@ function CoursesView({
   const [displayedCourses, setDisplayedCourses] = useState([]);
   const [perCourse, setPerCourse] = useState(/* @__PURE__ */ new Map());
   const [nextBatch, setNextBatch] = useState(null);
+  const [hasMoreCourses, setHasMoreCourses] = useState(false);
+  const [preparingNextBatch, setPreparingNextBatch] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [moreActivitiesLabel, setMoreActivitiesLabel] = useState("");
   const [moreCoursesLabel, setMoreCoursesLabel] = useState("");
   useEffect(() => {
@@ -105,6 +98,7 @@ function CoursesView({
       setDisplayedCourses([]);
       setPerCourse(/* @__PURE__ */ new Map());
       setNextBatch(null);
+      setHasMoreCourses(false);
       const batch1 = await loadUntilVisibleRef.current(0);
       if (cancelled) {
         return;
@@ -115,6 +109,7 @@ function CoursesView({
         const batch2 = await loadUntilVisibleRef.current(batch1.nextOffset);
         if (!cancelled) {
           setNextBatch(batch2);
+          setHasMoreCourses(batch2.courses.length > 0);
         }
       } else {
         setNextBatch({ courses: [], perCourse: /* @__PURE__ */ new Map(), nextOffset: 0, hasMorePhp: false });
@@ -129,20 +124,22 @@ function CoursesView({
     };
   }, [loadUntilVisible]);
   const handleShowMoreCourses = /* @__PURE__ */ __name(async () => {
-    if (!nextBatch || nextBatch.courses.length === 0) {
+    if (preparingNextBatch || !nextBatch || nextBatch.courses.length === 0) {
       return;
     }
-    setLoadingMore(true);
     const consumed = nextBatch;
     setDisplayedCourses((prev) => [...prev, ...consumed.courses]);
     setPerCourse((prev) => new Map([...prev, ...consumed.perCourse]));
+    setPreparingNextBatch(true);
     if (consumed.hasMorePhp) {
       const peek = await loadUntilVisibleRef.current(consumed.nextOffset);
       setNextBatch(peek);
+      setHasMoreCourses(peek.courses.length > 0);
     } else {
       setNextBatch({ courses: [], perCourse: /* @__PURE__ */ new Map(), nextOffset: 0, hasMorePhp: false });
+      setHasMoreCourses(false);
     }
-    setLoadingMore(false);
+    setPreparingNextBatch(false);
   }, "handleShowMoreCourses");
   const handleShowMoreActivities = /* @__PURE__ */ __name(async (courseId) => {
     const state = perCourse.get(courseId);
@@ -199,46 +196,45 @@ function CoursesView({
       return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-events-empty-message", children: [
         /* @__PURE__ */ jsxDEV("img", { src: noeventsurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 317,
+          lineNumber: 301,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "noevents", component: "block_timeline", children: "" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 319,
+          lineNumber: 303,
           columnNumber: 25
         }, this) }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 318,
+          lineNumber: 302,
           columnNumber: 21
         }, this)
       ] }, void 0, true, {
         fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 316,
+        lineNumber: 300,
         columnNumber: 17
       }, this);
     }
     return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-courses-empty-message", children: [
       /* @__PURE__ */ jsxDEV("img", { src: nocoursesurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 326,
+        lineNumber: 310,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "nocoursesinprogress", component: "block_timeline", children: "" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 328,
+        lineNumber: 312,
         columnNumber: 21
       }, this) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 327,
+        lineNumber: 311,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-      lineNumber: 325,
+      lineNumber: 309,
       columnNumber: 13
     }, this);
   }
-  const hasMoreCourses = nextBatch !== null && nextBatch.courses.length > 0;
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("ul", { className: "list-group unstyled", "data-region": "courses-list", children: displayedCourses.map((course) => {
       const state = perCourse.get(course.id);
@@ -255,7 +251,7 @@ function CoursesView({
           children: [
             /* @__PURE__ */ jsxDEV("h4", { className: "h5 fw-bold", children: course.fullname }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 352,
+              lineNumber: 334,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "pb-2", "data-region": "event-list-wrapper", children: state.events.length === 0 ? /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-events-empty-message", children: /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(
@@ -269,17 +265,17 @@ function CoursesView({
               false,
               {
                 fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                lineNumber: 357,
+                lineNumber: 339,
                 columnNumber: 49
               },
               this
             ) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 356,
+              lineNumber: 338,
               columnNumber: 45
             }, this) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 355,
+              lineNumber: 337,
               columnNumber: 41
             }, this) : groupByDay(state.events).map(({ dayTimestamp, events }) => /* @__PURE__ */ jsxDEV("div", { children: [
               /* @__PURE__ */ jsxDEV(
@@ -290,7 +286,7 @@ function CoursesView({
                   "data-timestamp": dayTimestamp,
                   children: /* @__PURE__ */ jsxDEV("h4", { className: "h6 d-inline", children: events[0].formattedday }, void 0, false, {
                     fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                    lineNumber: 371,
+                    lineNumber: 353,
                     columnNumber: 53
                   }, this)
                 },
@@ -298,27 +294,27 @@ function CoursesView({
                 false,
                 {
                   fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                  lineNumber: 366,
+                  lineNumber: 348,
                   columnNumber: 49
                 },
                 this
               ),
               /* @__PURE__ */ jsxDEV("div", { className: "list-group list-group-flush", children: events.map((event) => /* @__PURE__ */ jsxDEV(EventListItem, { event, courseview: true }, event.id, false, {
                 fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                lineNumber: 375,
+                lineNumber: 357,
                 columnNumber: 57
               }, this)) }, void 0, false, {
                 fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                lineNumber: 373,
+                lineNumber: 355,
                 columnNumber: 49
               }, this)
             ] }, dayTimestamp, true, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 365,
+              lineNumber: 347,
               columnNumber: 45
             }, this)) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 353,
+              lineNumber: 335,
               columnNumber: 33
             }, this),
             state.hasMore && /* @__PURE__ */ jsxDEV("div", { className: "pt-1 pb-2 ps-2", "data-region": "more-events-button-container", children: /* @__PURE__ */ jsxDEV(
@@ -341,7 +337,7 @@ function CoursesView({
                   false,
                   {
                     fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                    lineNumber: 393,
+                    lineNumber: 375,
                     columnNumber: 49
                   },
                   this
@@ -351,13 +347,13 @@ function CoursesView({
               false,
               {
                 fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                lineNumber: 385,
+                lineNumber: 367,
                 columnNumber: 41
               },
               this
             ) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 384,
+              lineNumber: 366,
               columnNumber: 37
             }, this)
           ]
@@ -366,18 +362,18 @@ function CoursesView({
         true,
         {
           fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 346,
+          lineNumber: 328,
           columnNumber: 29
         },
         this
       ) }, course.id, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 345,
+        lineNumber: 327,
         columnNumber: 25
       }, this);
     }) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-      lineNumber: 338,
+      lineNumber: 320,
       columnNumber: 13
     }, this),
     hasMoreCourses && /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center pt-3", "data-region": "more-courses-button-container", children: /* @__PURE__ */ jsxDEV(
@@ -386,31 +382,26 @@ function CoursesView({
         variant: "primary",
         size: "lg",
         onClick: handleShowMoreCourses,
-        disabled: loadingMore,
+        disabled: preparingNextBatch,
         "data-action": "more-courses",
-        label: moreCoursesLabel,
-        endIcon: loadingMore ? /* @__PURE__ */ jsxDEV("i", { className: "spinner-border spinner-border-sm ms-1", role: "status", "aria-hidden": "true" }, void 0, false, {
-          fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 418,
-          columnNumber: 31
-        }, this) : void 0
+        label: moreCoursesLabel
       },
       void 0,
       false,
       {
         fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 410,
+        lineNumber: 392,
         columnNumber: 21
       },
       this
     ) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-      lineNumber: 409,
+      lineNumber: 391,
       columnNumber: 17
     }, this)
   ] }, void 0, true, {
     fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-    lineNumber: 337,
+    lineNumber: 319,
     columnNumber: 9
   }, this);
 }

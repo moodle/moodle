@@ -12,7 +12,7 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
 import { useState, useEffect } from "react";
 import { getString } from "@moodle/lms/core/stringUtils";
 import { Badge } from "@moodlehq/design-system";
-import { ActivityIcon } from "./ActivityIcon";
+import { ActivityIcon } from "@moodle/lms/block_timeline/views/ActivityIcon";
 function EventListItem({ event, courseview = false }) {
   const pxClass = courseview ? "px-0" : "px-2";
   const [overdueLabel, setOverdueLabel] = useState("");
@@ -48,7 +48,7 @@ function EventListItem({ event, courseview = false }) {
               lineNumber: 70,
               columnNumber: 25
             }, this),
-            /* @__PURE__ */ jsxDEV("div", { className: "event-name-container flex-grow-1 line-height-3 nowrap text-truncate", children: [
+            /* @__PURE__ */ jsxDEV("div", { className: "event-name-container flex-grow-1 line-height-4 nowrap text-truncate", children: [
               /* @__PURE__ */ jsxDEV("div", { className: "d-flex", children: /* @__PURE__ */ jsxDEV("h5", { className: "h6 event-name mb-0 pb-1 text-truncate", children: [
                 /* @__PURE__ */ jsxDEV("a", { href: event.url, title: event.name, children: event.activityname }, void 0, false, {
                   fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",

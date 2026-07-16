@@ -25,7 +25,7 @@
 import {useState, useEffect} from 'react';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Badge} from '@moodlehq/design-system';
-import {ActivityIcon} from './ActivityIcon';
+import {ActivityIcon} from '@moodle/lms/block_timeline/views/ActivityIcon';
 import type {CalendarEvent} from '../common/types';
 
 interface EventListItemProps {
@@ -72,7 +72,7 @@ export default function EventListItem({event, courseview = false}: EventListItem
                         </div>
                     )}
 
-                    <div className="event-name-container flex-grow-1 line-height-3 nowrap text-truncate">
+                    <div className="event-name-container flex-grow-1 line-height-4 nowrap text-truncate">
                         <div className="d-flex">
                             <h5 className="h6 event-name mb-0 pb-1 text-truncate">
                                 <a href={event.url} title={event.name}>

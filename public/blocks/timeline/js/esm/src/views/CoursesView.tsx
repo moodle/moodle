@@ -16,14 +16,6 @@
 /**
  * Courses view for the Timeline block — events grouped by course with lazy loading.
  *
- * Course pagination uses a "drain-until-visible" strategy: pages are loaded
- * greedily until COURSES_PER_PAGE visible courses are found (or pages are
- * exhausted), and the next batch is pre-loaded (lookahead) so "Show more
- * courses" only appears when more visible courses are actually available.
- *
- * Event pagination within a course uses "Show more activities" and calls
- * core_calendar_get_action_events_by_course with aftereventid pagination.
- *
  * @module     block_timeline/views/CoursesView
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,20 +25,12 @@ import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
 import {getEnrolledCourses, getEventsByCourses, getEventsByCourse, getFormattedDays} from '../repository';
-import EventListItem from './EventListItem';
+import EventListItem from '@moodle/lms/block_timeline/views/EventListItem';
 import {computeTimeRange, groupByDay, filterEvents} from '../common/utils';
 import type {CalendarEvent, CourseWithEvents, FilterOffsets} from '../common/types';
 
-/**
- * Visible courses per "page" — how many courses we aim to accumulate before
- * stopping a greedy load pass.  PHP returns COURSES_PER_PAGE courses per call.
- */
 const COURSES_PER_PAGE = 2;
-
-/** Events shown per course on first load (PHP EVENTS_PER_COURSE = EVENTS_PER_PAGE + 1 sentinel). */
 const EVENTS_PER_PAGE = 6;
-
-/** Events loaded per "Show more activities" click. */
 const MORE_EVENTS_LIMIT = 10;
 
 interface PerCourseState {
@@ -56,20 +40,20 @@ interface PerCourseState {
     loading: boolean;
 }
 
-/**
- * Pre-loaded batch of courses ready to be appended to the display on the
- * next "Show more courses" click.
- */
 interface Batch {
     courses: CourseWithEvents[];
     perCourse: Map<number, PerCourseState>;
-    /** Offset for the WS call AFTER this batch (for subsequent lookahead). */
     nextOffset: number;
-    /** Whether PHP indicated more pages exist after this batch was loaded. */
     hasMorePhp: boolean;
 }
 
-
+/**
+ * Filters a course's raw events and slices them down to the first-load page size.
+ *
+ * @param raw unfiltered events fetched for the course.
+ * @param midnight start-of-day timestamp used by the overdue/open-event filter.
+ * @param filteroverdue whether only overdue events should be kept.
+ */
 function processInitialEvents(
     raw: CalendarEvent[],
     midnight: number,
@@ -93,14 +77,7 @@ interface CoursesViewProps {
     searchPending?: boolean;
 }
 
-/**
- * Renders timeline events grouped by in-progress courses.
- *
- * Course-level pagination: "Show more courses" appends the pre-loaded next
- * batch and immediately starts loading the following one.
- *
- * Event-level pagination: per-course "Show more activities" button.
- */
+/** Renders timeline events grouped by in-progress courses with lazy-load pagination. */
 export default function CoursesView({
     midnight,
     offsets,
@@ -113,8 +90,9 @@ export default function CoursesView({
     const [displayedCourses, setDisplayedCourses] = useState<CourseWithEvents[]>([]);
     const [perCourse, setPerCourse] = useState<Map<number, PerCourseState>>(new Map());
     const [nextBatch, setNextBatch] = useState<Batch | null>(null);
+    const [hasMoreCourses, setHasMoreCourses] = useState(false);
+    const [preparingNextBatch, setPreparingNextBatch] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [loadingMore, setLoadingMore] = useState(false);
     const [moreActivitiesLabel, setMoreActivitiesLabel] = useState('');
     const [moreCoursesLabel, setMoreCoursesLabel] = useState('');
 
@@ -127,11 +105,9 @@ export default function CoursesView({
     const {filteroverdue} = offsets;
 
     /**
-     * Load WS pages greedily until we accumulate COURSES_PER_PAGE visible
-     * courses (after client-side filtering) or run out of pages.
+     * Loads course pages until COURSES_PER_PAGE visible courses are found or pages run out.
      *
-     * Only visible courses are returned; invisible ones (all events filtered
-     * out) are silently discarded since they must not appear in the UI.
+     * @param startOffset WS course offset to resume loading from.
      */
     const loadUntilVisible = useCallback(async(startOffset: number): Promise<Batch> => {
         const visibleCourses: CourseWithEvents[] = [];
@@ -140,9 +116,7 @@ export default function CoursesView({
         let hasMorePhp = false;
 
         do {
-            // Request one extra course to detect whether more pages exist, mirroring
-            // the sentinel trick core_course_get_enrolled_courses_by_timeline_classification's
-            // own callers use — the WS itself has no "more available" flag.
+            // Request one extra course as a sentinel — the WS has no "more available" flag.
             const coursesResult = await getEnrolledCourses({
                 limit:       COURSES_PER_PAGE + 1,
                 offset,
@@ -152,8 +126,7 @@ export default function CoursesView({
             const pageCourses = hasMorePhp
                 ? coursesResult.courses.slice(0, COURSES_PER_PAGE)
                 : coursesResult.courses;
-            // Advance by the number of courses actually kept, not coursesResult.nextoffset —
-            // that counts the discarded sentinel course too and would skip a course each page.
+            // Advance by courses kept, not coursesResult.nextoffset (that counts the sentinel too).
             offset += pageCourses.length;
 
             if (pageCourses.length > 0) {
@@ -186,7 +159,6 @@ export default function CoursesView({
         return {courses: visibleCourses, perCourse: visiblePerCourse, nextOffset: offset, hasMorePhp};
     }, [starttime, endtime, searchvalue, midnight, filteroverdue]);
 
-    // Keep a ref to loadUntilVisible so the effect closure always gets the latest version.
     const loadUntilVisibleRef = useRef(loadUntilVisible);
     loadUntilVisibleRef.current = loadUntilVisible;
 
@@ -198,6 +170,7 @@ export default function CoursesView({
             setDisplayedCourses([]);
             setPerCourse(new Map());
             setNextBatch(null);
+            setHasMoreCourses(false);
 
             const batch1 = await loadUntilVisibleRef.current(0);
             if (cancelled) {
@@ -211,6 +184,7 @@ export default function CoursesView({
                 const batch2 = await loadUntilVisibleRef.current(batch1.nextOffset);
                 if (!cancelled) {
                     setNextBatch(batch2);
+                    setHasMoreCourses(batch2.courses.length > 0);
                 }
             } else {
                 setNextBatch({courses: [], perCourse: new Map(), nextOffset: 0, hasMorePhp: false});
@@ -227,31 +201,41 @@ export default function CoursesView({
         };
     }, [loadUntilVisible]);
 
+    /**
+     * Reveals the pre-loaded next batch and kicks off pre-loading the one after it.
+     *
+     * The reveal itself is always instant (the batch is already in state), so there is
+     * nothing to show a spinner for — but the button stays visible and disabled while
+     * the following batch pre-loads, matching legacy's "disable, don't hide, while a
+     * fetch is in flight" pattern. Disabling (rather than hiding) is also what prevents
+     * a double-click from re-appending the same batch.
+     */
     const handleShowMoreCourses = async() => {
-        if (!nextBatch || nextBatch.courses.length === 0) {
+        if (preparingNextBatch || !nextBatch || nextBatch.courses.length === 0) {
             return;
         }
-
-        setLoadingMore(true);
 
         const consumed = nextBatch;
         setDisplayedCourses(prev => [...prev, ...consumed.courses]);
         setPerCourse(prev => new Map([...prev, ...consumed.perCourse]));
+        setPreparingNextBatch(true);
 
         if (consumed.hasMorePhp) {
             const peek = await loadUntilVisibleRef.current(consumed.nextOffset);
             setNextBatch(peek);
+            setHasMoreCourses(peek.courses.length > 0);
         } else {
             setNextBatch({courses: [], perCourse: new Map(), nextOffset: 0, hasMorePhp: false});
+            setHasMoreCourses(false);
         }
 
-        setLoadingMore(false);
+        setPreparingNextBatch(false);
     };
 
     /**
      * Loads and appends the next page of events for a single course's "show more" button.
      *
-     * @param courseId id of the course whose event list is being expanded
+     * @param courseId id of the course whose event list is being expanded.
      */
     const handleShowMoreActivities = async(courseId: number) => {
         const state = perCourse.get(courseId);
@@ -331,8 +315,6 @@ export default function CoursesView({
         );
     }
 
-    const hasMoreCourses = nextBatch !== null && nextBatch.courses.length > 0;
-
     return (
         <>
             <ul className="list-group unstyled" data-region="courses-list">
@@ -411,12 +393,9 @@ export default function CoursesView({
                         variant="primary"
                         size="lg"
                         onClick={handleShowMoreCourses}
-                        disabled={loadingMore}
+                        disabled={preparingNextBatch}
                         data-action="more-courses"
                         label={moreCoursesLabel}
-                        endIcon={loadingMore
-                            ? <i className="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true" />
-                            : undefined}
                     />
                 </div>
             )}
