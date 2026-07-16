@@ -43039,6 +43039,12 @@ div.editor_atto_toolbar button .icon {
 }
 .navbar.fixed-top .usermenu .dropdown-menu {
   min-width: 235px;
+  max-width: 20rem;
+}
+@media (max-width: 575.98px) {
+  .navbar.fixed-top .usermenu .dropdown-menu {
+    max-width: calc(100vw - 1rem);
+  }
 }
 .navbar.fixed-top .usermenu .dropdown-menu .carousel-navigation-link > * {
   pointer-events: none;
@@ -43047,6 +43053,9 @@ div.editor_atto_toolbar button .icon {
 .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item,
 .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item-text {
   padding: 0.25rem 1.75rem 0.25rem 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .navbar.fixed-top .usermenu .dropdown-menu .dropdown-header.carousel-navigation-link::after,
 .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
