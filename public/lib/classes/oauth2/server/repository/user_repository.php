@@ -46,4 +46,18 @@ class user_repository implements UserRepositoryInterface {
 
         return $userentity;
     }
+
+    /**
+     * Get the current logged-in user as a user entity.
+     *
+     * @return user_entity
+     */
+    public function get_current_user(): user_entity {
+        global $USER;
+
+        $userentity = new user_entity();
+        $userentity->setIdentifier($USER->id);
+
+        return $userentity;
+    }
 }

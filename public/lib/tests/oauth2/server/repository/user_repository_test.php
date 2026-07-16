@@ -76,4 +76,21 @@ final class user_repository_test extends \advanced_testcase {
 
         ini_set('error_log', $oldlog);
     }
+
+    /**
+     * Test getting the current logged-in user as a user entity.
+     */
+    public function test_get_current_user(): void {
+        $this->resetAfterTest();
+
+        $repository = new user_repository();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $userentity = $repository->get_current_user();
+
+        $this->assertInstanceOf(user_entity::class, $userentity);
+        $this->assertSame((string) $user->id, $userentity->getIdentifier());
+    }
 }

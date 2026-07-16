@@ -1,0 +1,65 @@
+
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/oauth2/continue_as_user_page
+
+    Moodle template for the login page.
+
+    Context variables required for this template:
+    * sitename - Name of site.,
+    * logourl - Flag, logo url,
+    * maintenance - Maintenance message,
+    * error - Any errors in the form?,
+    * info - Info notification to display,
+    * languagemenu - Language menu HTML,
+    * actionurl - The form action URL,
+    * userinfo - Information about the user
+      * username - The username of the user,
+      * fullname - The full name of the user,
+      * email - The email of the user.
+
+    Example context (json):
+    {
+        "sitename": "My Moodle Site",
+        "logourl": false,
+        "maintenance": "For full access to this site, you need to login in as an admin.",
+        "error": "",
+        "info": "",
+        "languagemenu": "Choose language",
+        "actionurl": "http://localhost/stable_master/login/index.php"
+    }
+}}
+
+<div class="login_form">
+    {{>core/local/login_form/logo}}
+
+    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
+        "clientname": {{#quote}}{{client.name}}{{/quote}},
+        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+        "sitename": {{#quote}}{{sitename}}{{/quote}}
+    }{{/str}}</h2>
+
+    {{>core/oauth2/user}}
+    {{>core/oauth2/client_description}}
+    {{>core/local/login_form/maintenance}}
+    {{>core/local/login_form/errorinfo}}
+    {{>core/oauth2/confirm_scopes/scope_information}}
+    {{>core/oauth2/confirm_scopes/form}}
+    {{>core/local/login_form/languagemenu}}
+    {{>core/local/login_form/cookiesnotice}}
+</div>

@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/oauth2/confirm_scopes/scope_information
+
+    TODO describe template scope_information
+
+    Example context (json):
+    {
+    }
+}}
+<h2 class="h4">
+    {{#str}}oauth2:confirmscopes:beforelist, moodle, {
+        "clientname": {{#quote}}{{client.name}}{{/quote}},
+        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+        "sitename": {{#quote}}{{sitename}}{{/quote}}
+    }{{/str}}
+</h2>
+
+<ul>
+    {{#requestedscopes}}
+        <li>{{description}}</li>
+    {{/requestedscopes}}
+</ul>
+
+<h2 class="h4">
+    {{#str}}oauth2:confirmscopes:makesureyoutrust, moodle, {
+        "clientname": {{#quote}}{{client.name}}{{/quote}},
+        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+        "sitename": {{#quote}}{{sitename}}{{/quote}}
+    }{{/str}}
+</h2>
+
+{{#client.privacy}}
+<div>
+    {{#str}}oauth2:confirmscopes:reviewpolicies, moodle, {
+        "clientname": {{#quote}}{{client.name}}{{/quote}},
+        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+        "clientprivacypolicy": {{#quote}}{{client.privacy}}{{/quote}},
+        "clienttermsofservice": {{#quote}}{{client.terms}}{{/quote}},
+        "sitename": {{#quote}}{{sitename}}{{/quote}}
+    }{{/str}}
+</div>
+{{/client.privacy}}
+
+<div>
+    {{#str}}oauth2:confirmscopes:moodleaccount, moodle, {
+        "clientname": {{#quote}}{{client.name}}{{/quote}},
+        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+        "profilelink": {{#quote}}{{userinfo.profileurl}}{{/quote}},
+        "sitename": {{#quote}}{{sitename}}{{/quote}}
+    }{{/str}}
+</div>
