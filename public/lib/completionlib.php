@@ -417,7 +417,10 @@ class completion_info {
             }
 
             // Order records so activities are in the same order as they appear on the course view page.
-            $activitiesorder = array_keys(get_fast_modinfo($this->course)->get_cms());
+            $modinfo = get_fast_modinfo($this->course);
+            $cms = $modinfo->get_cms();
+            $modinfo->sort_cm_array($cms);
+            $activitiesorder = array_keys($cms);
 
             // Remove disabled modules.
             foreach ($records as $key => $record) {
@@ -1345,8 +1348,10 @@ class completion_info {
      */
     public function get_activities() {
         $modinfo = get_fast_modinfo($this->course);
+        $cms = $modinfo->get_cms();
+        $modinfo->sort_cm_array($cms);
         $result = array();
-        foreach ($modinfo->get_cms() as $cm) {
+        foreach ($cms as $cm) {
             if ($cm->completion != COMPLETION_TRACKING_NONE && !$cm->deletioninprogress) {
                 $result[$cm->id] = $cm;
             }

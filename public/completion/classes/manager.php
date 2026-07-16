@@ -79,6 +79,7 @@ class manager {
         global $OUTPUT;
         $moduleinfo = get_fast_modinfo($this->courseid);
         $sections = $moduleinfo->get_sections();
+        $delegatedsections = $moduleinfo->get_sections_delegated_by_cm();
         $data = new stdClass;
         $data->courseid = $this->courseid;
         $data->sesskey = sesskey();
@@ -91,8 +92,16 @@ class manager {
             $sectionobject->sectionnumber = $sectionnumber;
             $sectionobject->name = get_section_name($this->courseid, $sectioninfo);
             $sectionobject->activities = $this->get_activities($section, true);
-            $data->sections[] = $sectionobject;
+            $data->sections[$sectionnumber] = $sectionobject;
+
+            // Reserve position for delegated sections.
+            foreach ($section as $cmid) {
+                if (isset($delegatedsections[$cmid])) {
+                    $data->sections += [$delegatedsections[$cmid]->sectionnum => null];
+                }
+            }
         }
+        $data->sections = array_values($data->sections);
         return $data;
     }
 
