@@ -2696,8 +2696,8 @@ function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpag
         $specialselected = true;
     }
 
-    //If there are results (more than 1 page)
-    if ($totalcount > $perpage) {
+    // Build pagination code if there is more than 1 page and we are not viewing ALL entries.
+    if ($totalcount > $perpage && $page !== -1) {
         $code .= "<div style=\"text-align:center\">";
         $code .= "<p>".get_string("page").":";
 
