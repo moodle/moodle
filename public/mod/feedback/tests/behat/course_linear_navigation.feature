@@ -82,7 +82,7 @@ Feature: Display the course linear navigation in the feedback pages
     And I navigate to "Responses" in current page administration
     And I follow "Response number: 1"
     And the course linear navigation should not be visible
-    And I click on "Back" "link" in the "region-main" "region"
+    And I click on "Go to all responses" "link" in the "sticky-footer" "region"
     # Analysis.
     And I navigate to "Analysis" in current page administration
     And the course linear navigation should not be visible
