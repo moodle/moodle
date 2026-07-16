@@ -36,6 +36,8 @@ Feature: Glossary pagination and alphabet filter display entries correctly
     Then I should see "1st item"
     And I should see "Apple"
     And I should not see "No entries found in this section"
+    # Pagination bar should be visible when viewing subset of glossary entries.
+    And I should see "ALL" in the ".paging" "css_element"
 
   Scenario: Clicking ALL in paging bar shows all glossary entries
     Given I am on the "Test glossary" "glossary activity" page logged in as "teacher1"
@@ -48,6 +50,8 @@ Feature: Glossary pagination and alphabet filter display entries correctly
     And I should see "Date"
     And I should see "Eggplant"
     And I should not see "No entries found in this section"
+    # Pagination bar should be hidden when viewing all glossary entries.
+    And I should not see "ALL" in the ".paging" "css_element"
 
   @javascript
   Scenario: Print view from ALL alphabet filter and ALL paging shows all entries
