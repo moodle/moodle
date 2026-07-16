@@ -65,7 +65,11 @@ class course_delete_modules extends \core\task\adhoc_task {
         $cmsfailed = [];
         foreach ($cms as $key => $cm) {
             try {
-                $coursecontext = \context_module::instance($cm->id)->get_course_context();
+                $modulecontext = \context_module::instance($cm->id, IGNORE_MISSING);
+                if (!$modulecontext) {
+                    continue;
+                }
+                $coursecontext = $modulecontext->get_course_context();
                 \core_courseformat\formatactions::cm($coursecontext->instanceid)->delete($cm->id);
             } catch (\Exception $e) {
                 // Keep the information instead of throw an exception and continue with next cms.
