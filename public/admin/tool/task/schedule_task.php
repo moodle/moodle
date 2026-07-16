@@ -80,8 +80,14 @@ if ($action == 'asap') {
         );
     }
     // Set nextruntime to the past so cron picks it up on its very next run.
-    \core\task\manager::set_scheduled_task_nextruntime($task, time() - HOURSECS);
-    echo $OUTPUT->notification(get_string('runasapsuccess', 'tool_task', $task->get_name()), 'success');
+    if (\core\task\manager::set_scheduled_task_nextruntime($task, time() - HOURSECS)) {
+        echo $OUTPUT->notification(get_string('runasapsuccess', 'tool_task', $task->get_name()), 'success');
+    } else {
+        echo $OUTPUT->notification(
+            get_string('runasaperrorrunning', 'tool_task', $task->get_name()),
+            \core\output\notification::NOTIFY_ERROR,
+        );
+    }
     echo $output->link_back(get_class($task));
     echo $OUTPUT->footer();
     exit;

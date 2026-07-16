@@ -696,10 +696,51 @@ final class manager_test extends \advanced_testcase {
         $next = \core\task\manager::get_next_scheduled_task($clock->time() + 10);
         $this->assertNull($next);
 
-        manager::set_scheduled_task_nextruntime($first, $clock->time() + 20);
+        $this->assertTrue(manager::set_scheduled_task_nextruntime($first, $clock->time() + 20));
 
         $next = \core\task\manager::get_next_scheduled_task($clock->time() + 30);
         $this->assertNotNull($next);
         manager::scheduled_task_complete($next);
+    }
+
+    /**
+     * Test that a running task cannot have its next run time changed.
+     */
+    public function test_set_scheduled_task_nextruntime_rejects_running_task(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $clock = $this->mock_clock_with_frozen();
+        set_config('lock_factory', '\core\lock\db_record_lock_factory');
+
+        // Disable all the tasks, so we can insert our own and be sure it is the only one being run.
+        $DB->set_field('task_scheduled', 'disabled', 1);
+
+        $task = new scheduled_test_task();
+        $originalnextruntime = $clock->time() + HOURSECS;
+        $task->set_next_run_time($originalnextruntime);
+        $classname = manager::get_canonical_class_name($task);
+        $DB->insert_record('task_scheduled', manager::record_from_scheduled_task($task));
+
+        // Reject the change when the task has running metadata, even if its execution lock has gone stale.
+        $DB->set_field('task_scheduled', 'timestarted', $clock->time(), ['classname' => $classname]);
+        $this->assertFalse(manager::set_scheduled_task_nextruntime($task, $clock->time() - HOURSECS));
+        $DB->set_field('task_scheduled', 'timestarted', null, ['classname' => $classname]);
+
+        // Also reject the change during the window after the execution lock is acquired but before metadata is recorded.
+        $lockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        $lock = $lockfactory->get_lock($classname, 10);
+        $this->assertNotFalse($lock);
+        try {
+            $result = manager::set_scheduled_task_nextruntime($task, $clock->time() - HOURSECS);
+        } finally {
+            $lock->release();
+        }
+
+        $this->assertFalse($result);
+        $this->assertSame(
+            $originalnextruntime,
+            (int)$DB->get_field('task_scheduled', 'nextruntime', ['classname' => $classname]),
+        );
     }
 }
