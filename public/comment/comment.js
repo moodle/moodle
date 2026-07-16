@@ -33,7 +33,6 @@ M.core_comment = {
         Y.extend(CommentHelper, Y.Base, {
             api: M.cfg.wwwroot+'/comment/comment_ajax.php',
             initializer: function(args) {
-                var scope = this;
                 this.client_id = args.client_id;
                 this.itemid = args.itemid;
                 this.commentarea = args.commentarea;
@@ -69,14 +68,22 @@ M.core_comment = {
                         return false;
                     }, '13,32', this);
                 }
-                scope.toggle_textarea(false);
             },
             post: function() {
                 var container = Y.one('#comment-list-'+this.client_id);
                 var ta = Y.one('#dlg-content-'+this.client_id);
                 var scope = this;
                 var value = ta.get('value');
-                if (value && value != M.util.get_string('addcomment', 'moodle')) {
+                // Read design-system CSS custom properties at runtime so custom themes
+                // are respected. YUI2 ColorAnim requires literal colour values, so
+                // getComputedStyle is used with hardcoded hex fallbacks for environments
+                // where the CSS custom properties are not defined.
+                var rootStyle = getComputedStyle(document.documentElement);
+                var highlightBg = rootStyle.getPropertyValue(
+                    '--mds-bg-feedback-warning-subtle').trim() || '#fcefdc';
+                var highlightText = rootStyle.getPropertyValue(
+                    '--mds-text-feedback-warning').trim() || '#60451f';
+                if (value) {
                     ta.set('disabled', true);
                     var spinner = M.util.add_spinner(Y, container);
                     spinner.show();
@@ -92,7 +99,6 @@ M.core_comment = {
                             ta.set('value', '');
                             ta.set('disabled', false);
                             spinner.remove();
-                            scope.toggle_textarea(false);
                             var container = Y.one('#comment-list-'+cid);
                             var result = await scope.render([obj], true);
                             var newcomment = Y.Node.create(result.html);
@@ -103,9 +109,13 @@ M.core_comment = {
                                 linkTextCount.set('innerHTML', obj.count);
                             }
                             for(var i in ids) {
+                                // SC 1.4.1: apply the non-colour link indicator immediately rather than
+                                // waiting for the colour animation to complete, so the link is never
+                                // shown as colour-only distinguishable even momentarily.
+                                Y.all('#' + ids[i] + ' a').setStyle('textDecoration', 'underline');
                                 var attributes = {
-                                    color: { to: '#06e' },
-                                    backgroundColor: { to: '#FFE390' }
+                                    color: {to: highlightText},
+                                    backgroundColor: {to: highlightBg}
                                 };
                                 var anim = new Y.YUI2.util.ColorAnim(ids[i], attributes);
                                 anim.animate();
@@ -116,9 +126,9 @@ M.core_comment = {
                     }, true);
                 } else {
                     var attributes = {
-                        backgroundColor: { from: '#FFE390', to:'#FFFFFF' }
+                        backgroundColor: {from: highlightBg, to: '#FFFFFF'}
                     };
-                    var anim = new Y.YUI2.util.ColorAnim('dlg-content-'+cid, attributes);
+                    var anim = new Y.YUI2.util.ColorAnim('dlg-content-'+this.client_id, attributes);
                     anim.animate();
                 }
             },
@@ -410,40 +420,8 @@ M.core_comment = {
                         commenttoggler.setAttribute('aria-expanded', 'false');
                     }
                 }
-                if (ta) {
-                    //toggle_textarea.apply(ta, [false]);
-                    //// reset textarea size
-                    ta.on('focus', function() {
-                        this.toggle_textarea(true);
-                    }, this);
-                    //ta.onkeypress = function() {
-                        //if (this.scrollHeight > this.clientHeight && !window.opera)
-                            //this.rows += 1;
-                    //}
-                    ta.on('blur', function() {
-                        this.toggle_textarea(false);
-                    }, this);
-                }
                 this.register_actions();
                 return false;
-            },
-            toggle_textarea: function(focus) {
-                var t = Y.one('#dlg-content-'+this.client_id);
-                if (!t) {
-                    return false;
-                }
-                if (focus) {
-                    if (t.get('value') == M.util.get_string('addcomment', 'moodle')) {
-                        t.set('value', '');
-                        t.setStyle('color', 'black');
-                    }
-                }else{
-                    if (t.get('value') == '') {
-                        t.set('value', M.util.get_string('addcomment', 'moodle'));
-                        t.setStyle('color','grey');
-                        t.set('rows', 2);
-                    }
-                }
             },
             wait: function() {
                 var container = Y.one('#comment-list-'+this.client_id);
