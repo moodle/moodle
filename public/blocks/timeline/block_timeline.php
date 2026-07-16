@@ -36,19 +36,39 @@ class block_timeline extends block_base {
      * @return stdClass contents of block
      */
     public function get_content() {
+        global $CFG, $OUTPUT;
+
         if (isset($this->content)) {
             return $this->content;
         }
 
-        $sort = get_user_preferences('block_timeline_user_sort_preference');
-        $filter = get_user_preferences('block_timeline_user_filter_preference');
-        $limit = get_user_preferences('block_timeline_user_limit_preference');
+        require_once($CFG->dirroot . '/blocks/timeline/lib.php');
 
-        $renderable = new \block_timeline\output\main($sort, $filter, $limit);
-        $renderer = $this->page->get_renderer('block_timeline');
+        $courses = enrol_get_my_courses(['id'], null, 1);
+
+        $filter = get_user_preferences('block_timeline_user_filter_preference') ?: BLOCK_TIMELINE_FILTER_BY_30_DAYS;
+        $order = get_user_preferences('block_timeline_user_sort_preference') ?: BLOCK_TIMELINE_SORT_BY_DATES;
+        $limit = get_user_preferences('block_timeline_user_limit_preference') ?: BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT;
+
+        $props = json_encode([
+            'midnight'           => usergetmidnight(time()),
+            'filter'             => $filter,
+            'order'              => $order,
+            'limit'              => (int) $limit,
+            'nocoursesurl'       => $OUTPUT->image_url('courses', 'block_timeline')->out(),
+            'noeventsurl'        => $OUTPUT->image_url('activities', 'block_timeline')->out(),
+            'hasenrolledcourses' => !empty($courses),
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+
+        // Mount the React Timeline component directly — no renderer, no template.
+        // core/react_autoinit mounts any element carrying these two attributes.
+        $mount = \html_writer::div('', '', [
+            'data-react-component' => '@moodle/lms/block_timeline/Timeline',
+            'data-react-props'     => $props,
+        ]);
 
         $this->content = (object) [
-            'text' => $renderer->render($renderable),
+            'text' => $mount,
             'footer' => '',
         ];
 
