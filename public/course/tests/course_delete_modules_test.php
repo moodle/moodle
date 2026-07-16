@@ -36,7 +36,7 @@ namespace core_course;
 final class course_delete_modules_test extends \advanced_testcase {
 
     /**
-     * Test to have a no message for usual process.
+     * Test course module deletion and repeated task execution.
      */
     public function test_delete_module_execution(): void {
         $this->resetAfterTest();
@@ -62,7 +62,14 @@ final class course_delete_modules_test extends \advanced_testcase {
         $removaltask->set_custom_data($data);
         $removaltask->execute();
 
-        // The module has deleted from the course.
+        // The module has been deleted from the course.
+        $coursedmodules = get_course_mods($course->id);
+        $this->assertCount(0, $coursedmodules);
+
+        // Execute the task again, just to be sure we arn't holding onto old stuff now.
+        $removaltask->execute();
+
+        // The module remains deleted from the course.
         $coursedmodules = get_course_mods($course->id);
         $this->assertCount(0, $coursedmodules);
     }
