@@ -21,17 +21,28 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {getTimelineEvents, getEnrolledCourses, getEventsByCourses} from '../src/repository';
+import {getTimelineEvents, getEnrolledCourses, getEventsByCourses, setUserPreference, getFormattedDays} from '../src/repository';
 
 // Mock for fetchOne(request) -> Promise<T> — single request, single response.
 const mockFetchOne = jest.fn();
+// Mock for fetchMany(requests) -> Promise<T[]> — batched requests, one response per request.
+const mockFetchMany = jest.fn();
 jest.mock('@moodle/lms/core/ajax', () => ({
     fetchOne: (...args: unknown[]) => mockFetchOne(...args),
+    fetchMany: (...args: unknown[]) => mockFetchMany(...args),
+}));
+jest.mock('@moodle/lms/core/stringUtils', () => ({
+    getString: jest.fn().mockResolvedValue('%A, %d %B %Y'),
+}));
+jest.mock('@moodle/lms/core/config', () => ({
+    __esModule: true,
+    'default': {contextid: 42},
 }));
 
 describe('repository', () => {
     beforeEach(() => {
         mockFetchOne.mockClear();
+        mockFetchMany.mockClear();
     });
 
     describe('getTimelineEvents', () => {
@@ -118,6 +129,50 @@ describe('repository', () => {
             expect(request.args.courseids).toEqual([5, 6]);
             expect(request.args.limitnum).toBe(7);
             expect(result).toEqual(response);
+        });
+    });
+
+    describe('setUserPreference', () => {
+        it('calls fetchOne with core_user_update_user_preferences', () => {
+            mockFetchOne.mockResolvedValue({saved: true});
+
+            setUserPreference('block_timeline_user_sort_preference', 'sortbycourses');
+
+            expect(mockFetchOne).toHaveBeenCalledTimes(1);
+            const request = mockFetchOne.mock.calls[0][0];
+            expect(request.methodname).toBe('core_user_update_user_preferences');
+            expect(request.args.preferences).toEqual([
+                {type: 'block_timeline_user_sort_preference', value: 'sortbycourses'},
+            ]);
+        });
+
+        it('swallows rejection from fetchOne', async() => {
+            mockFetchOne.mockRejectedValue(new Error('Network error'));
+            expect(() => setUserPreference('name', 'value')).not.toThrow();
+        });
+    });
+
+    describe('getFormattedDays', () => {
+        it('returns an empty map for an empty timestamp list', async() => {
+            const result = await getFormattedDays([]);
+            expect(result.size).toBe(0);
+            expect(mockFetchMany).not.toHaveBeenCalled();
+        });
+
+        it('maps unique timestamps to formatted day strings', async() => {
+            mockFetchMany.mockResolvedValue([{dates: ['Monday, 1 January 2026', 'Tuesday, 2 January 2026']}]);
+
+            const result = await getFormattedDays([1000, 2000, 1000]);
+
+            expect(mockFetchMany).toHaveBeenCalledTimes(1);
+            const [request] = mockFetchMany.mock.calls[0][0];
+            expect(request.methodname).toBe('core_get_user_dates');
+            expect(request.args.timestamps).toEqual([
+                {timestamp: 1000, format: '%A, %d %B %Y'},
+                {timestamp: 2000, format: '%A, %d %B %Y'},
+            ]);
+            expect(result.get(1000)).toBe('Monday, 1 January 2026');
+            expect(result.get(2000)).toBe('Tuesday, 2 January 2026');
         });
     });
 });

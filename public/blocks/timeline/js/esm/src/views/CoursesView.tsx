@@ -32,10 +32,10 @@ import {useState, useEffect, useCallback, useRef} from 'react';
 import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
-import {getEnrolledCourses, getEventsByCourses, getEventsByCourse} from '../repository';
-import EventListItem from '../EventListItem';
-import {computeTimeRange, groupByDay, filterEvents, getFormattedDays} from '../utils';
-import type {CalendarEvent, CourseWithEvents, FilterOffsets} from '../types';
+import {getEnrolledCourses, getEventsByCourses, getEventsByCourse, getFormattedDays} from '../repository';
+import EventListItem from './EventListItem';
+import {computeTimeRange, groupByDay, filterEvents} from '../common/utils';
+import type {CalendarEvent, CourseWithEvents, FilterOffsets} from '../common/types';
 
 /**
  * Visible courses per "page" — how many courses we aim to accumulate before

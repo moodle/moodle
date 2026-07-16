@@ -14,15 +14,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Data-access layer for the Timeline block — wraps existing core_calendar and
- * core_course web services; block_timeline defines none of its own.
+ * Data-access layer for the Timeline block.
+ *
+ * All AJAX calls live here — views only ever talk to this module, never to
+ * @moodle/lms/core/ajax directly. Every call wraps an existing core_calendar
+ * or core_course web service; block_timeline defines none of its own.
  *
  * @module     block_timeline/repository
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {fetchOne} from '@moodle/lms/core/ajax';
-import type {CalendarEvent, Course} from './types';
+import {fetchOne, fetchMany} from '@moodle/lms/core/ajax';
+import {getString} from '@moodle/lms/core/stringUtils';
+import config from '@moodle/lms/core/config';
+import type {CalendarEvent, Course} from './common/types';
 
 /** Options for fetching timeline events (dates view). */
 export interface GetTimelineEventsArgs {
@@ -42,6 +47,8 @@ export interface TimelineEventsResponse {
  * Fetch action events for the timeline dates view.
  *
  * Calls core_calendar_get_action_events_by_timesort.
+ *
+ * @param args time range, pagination and search filters.
  */
 export const getTimelineEvents = (args: GetTimelineEventsArgs): Promise<TimelineEventsResponse> => {
     return fetchOne<TimelineEventsResponse>({
@@ -76,6 +83,8 @@ export interface EnrolledCoursesResponse {
  * classification 'all' — the same classification the legacy Timeline block
  * used, so every non-hidden enrolled course is eligible, not just
  * "in progress" ones.
+ *
+ * @param args pagination and search filters.
  */
 export const getEnrolledCourses = (args: GetEnrolledCoursesArgs): Promise<EnrolledCoursesResponse> => {
     return fetchOne<EnrolledCoursesResponse>({
@@ -114,6 +123,8 @@ export interface EventsByCoursesResponse {
  * Fetch action events for a set of courses, grouped by course id.
  *
  * Calls core_calendar_get_action_events_by_courses.
+ *
+ * @param args course ids, time range and search filters.
  */
 export const getEventsByCourses = (args: GetEventsByCoursesArgs): Promise<EventsByCoursesResponse> => {
     return fetchOne<EventsByCoursesResponse>({
@@ -149,6 +160,8 @@ export interface EventsByCourseResponse {
  * Fetch more action events for a single course (for per-course "Show more activities").
  *
  * Calls core_calendar_get_action_events_by_course.
+ *
+ * @param args course id, time range, pagination and search filters.
  */
 export const getEventsByCourse = (args: GetEventsByCourseArgs): Promise<EventsByCourseResponse> => {
     return fetchOne<EventsByCourseResponse>({
@@ -163,3 +176,44 @@ export const getEventsByCourse = (args: GetEventsByCourseArgs): Promise<EventsBy
         },
     });
 };
+
+/**
+ * Persist a single user preference via the core_user_update_user_preferences WS.
+ * Failures are intentionally swallowed — the preference will revert on next page load.
+ *
+ * @param name preference key to update.
+ * @param value new preference value.
+ */
+export const setUserPreference = (name: string, value: string): void => {
+    fetchOne({
+        methodname: 'core_user_update_user_preferences',
+        args: {preferences: [{type: name, value}]},
+    }).catch(() => undefined);
+};
+
+/**
+ * Fetch server-formatted day strings for the given midnight timestamps.
+ *
+ * Calls core_get_user_dates so the format respects the site language and the
+ * user's timezone, matching the server-side userdate() output the deleted
+ * block-specific web services used to embed directly in their responses.
+ * None of the core calendar/course services return a formatted day string,
+ * so every fetch path enriches its events with this afterwards.
+ *
+ * @param timestamps midnight timestamps to format, one per distinct day.
+ */
+export async function getFormattedDays(timestamps: number[]): Promise<Map<number, string>> {
+    const unique = [...new Set(timestamps)];
+    if (unique.length === 0) {
+        return new Map();
+    }
+    const format = await getString('strftimedaydate', 'langconfig');
+    const [result] = await fetchMany<{dates: string[]}>([{
+        methodname: 'core_get_user_dates',
+        args: {
+            contextid: config.contextid ?? 1,
+            timestamps: unique.map(ts => ({timestamp: ts, format})),
+        },
+    }]);
+    return new Map(unique.map((ts, i) => [ts, result.dates[i]]));
+}

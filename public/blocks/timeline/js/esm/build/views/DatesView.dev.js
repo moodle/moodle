@@ -11,9 +11,9 @@ import { useState, useEffect, useCallback } from "react";
 import String from "@moodle/lms/core/String";
 import { getString } from "@moodle/lms/core/stringUtils";
 import { Button } from "@moodlehq/design-system";
-import { getTimelineEvents } from "../repository";
-import EventListItem from "../EventListItem";
-import { computeTimeRange, groupByDay, filterEvents, getFormattedDays } from "../utils";
+import { getTimelineEvents, getFormattedDays } from "../repository";
+import EventListItem from "./EventListItem";
+import { computeTimeRange, groupByDay, filterEvents } from "../common/utils";
 const MORE_LOAD_LIMIT = 10;
 function DatesView({
   midnight,

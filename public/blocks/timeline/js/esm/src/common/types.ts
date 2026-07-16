@@ -16,7 +16,7 @@
 /**
  * TypeScript types for the Timeline block React frontend.
  *
- * @module     block_timeline/types
+ * @module     block_timeline/common/types
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -60,13 +60,17 @@ export interface CalendarEvent {
     };
 }
 
-/** A course as returned by get_courses_with_events, including its events. */
-export interface CourseWithEvents {
+/** A course as returned by core_course_get_enrolled_courses_by_timeline_classification. */
+export interface Course {
     id: number;
     fullname: string;
     shortname: string;
     viewurl: string;
     courseimage: string;
+}
+
+/** A course zipped together with its action events for the courses view. */
+export interface CourseWithEvents extends Course {
     events: CalendarEvent[];
 }
 

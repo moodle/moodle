@@ -17,10 +17,10 @@
  * Swizzlable wrapper around the design system ActivityIcon.
  *
  * Themes that need a custom icon can eject this component via the swizzle
- * manifest. All other code imports from @moodle/lms/block_timeline/ActivityIcon
+ * manifest. All other code imports from @moodle/lms/block_timeline/views/ActivityIcon
  * so the override applies everywhere without touching call sites.
  *
- * @module     block_timeline/ActivityIcon
+ * @module     block_timeline/views/ActivityIcon
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

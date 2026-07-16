@@ -23,7 +23,7 @@
 
 import {render, screen, waitFor, fireEvent} from '@testing-library/react';
 import Timeline from '../src/Timeline';
-import type {TimelineProps} from '../src/types';
+import type {TimelineProps} from '../src/common/types';
 
 // Mock child views to isolate Timeline state logic.
 jest.mock('../src/views/DatesView', () => ({
@@ -65,6 +65,7 @@ const defaultProps: TimelineProps = {
     limit: 5,
     nocoursesurl: '/nocourses.png',
     noeventsurl: '/noevents.png',
+    hasenrolledcourses: true,
 };
 
 describe('Timeline', () => {

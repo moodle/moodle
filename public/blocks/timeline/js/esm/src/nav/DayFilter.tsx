@@ -22,10 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {useState, useEffect} from 'react';
 import String from '@moodle/lms/core/String';
-import {getString} from '@moodle/lms/core/stringUtils';
-import type {FilterName} from '../types';
+import type {FilterName} from '../common/types';
+import {useAriaLabels} from '../common/useAriaLabels';
 
 const MENU_ID = 'menudayfilter';
 const SPAN_ID = 'timeline-day-filter-current-selection';
@@ -67,18 +66,7 @@ interface DayFilterProps {
  * so the gap and outside-click behaviour match the original exactly.
  */
 export default function DayFilter({activeFilter, onChange}: DayFilterProps) {
-    const [buttonLabel, setButtonLabel] = useState('');
-    const [itemLabels, setItemLabels] = useState<Partial<Record<FilterName, string>>>({});
-
-    useEffect(() => {
-        getString('ariadayfilter', 'block_timeline').then(setButtonLabel);
-
-        ALL_OPTIONS.forEach(opt => {
-            getString(opt.labelKey, opt.labelComponent)
-                .then(label => getString('ariadayfilteroption', 'block_timeline', label))
-                .then(ariaLabel => setItemLabels(prev => ({...prev, [opt.name]: ariaLabel})));
-        });
-    }, []);
+    const {buttonLabel, itemLabels} = useAriaLabels('ariadayfilter', 'ariadayfilteroption', ALL_OPTIONS);
 
     const activeOption = ALL_OPTIONS.find(o => o.name === activeFilter) ?? ALL_OPTIONS[0];
 

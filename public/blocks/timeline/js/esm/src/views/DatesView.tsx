@@ -24,11 +24,11 @@ import {useState, useEffect, useCallback} from 'react';
 import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
-import {getTimelineEvents} from '../repository';
-import EventListItem from '../EventListItem';
-import {computeTimeRange, groupByDay, filterEvents, getFormattedDays} from '../utils';
-import type {DayGroup} from '../utils';
-import type {FilterOffsets} from '../types';
+import {getTimelineEvents, getFormattedDays} from '../repository';
+import EventListItem from './EventListItem';
+import {computeTimeRange, groupByDay, filterEvents} from '../common/utils';
+import type {DayGroup} from '../common/utils';
+import type {FilterOffsets} from '../common/types';
 
 const MORE_LOAD_LIMIT = 10;
 

@@ -22,10 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {useState, useEffect, useId} from 'react';
+import {useId} from 'react';
 import String from '@moodle/lms/core/String';
-import {getString} from '@moodle/lms/core/stringUtils';
-import type {OrderName} from '../types';
+import type {OrderName} from '../common/types';
+import {useAriaLabels} from '../common/useAriaLabels';
 
 const SPAN_ID = 'timeline-view-selector-current-selection';
 
@@ -61,18 +61,7 @@ export default function ViewSelector({activeOrder, onChange}: ViewSelectorProps)
         sortbycourses: coursesId,
     };
 
-    const [buttonLabel, setButtonLabel] = useState('');
-    const [itemLabels, setItemLabels] = useState<Partial<Record<OrderName, string>>>({});
-
-    useEffect(() => {
-        getString('ariaviewselector', 'block_timeline').then(setButtonLabel);
-
-        VIEW_OPTIONS.forEach(opt => {
-            getString(opt.labelKey, 'block_timeline')
-                .then(label => getString('ariaviewselectoroption', 'block_timeline', label))
-                .then(ariaLabel => setItemLabels(prev => ({...prev, [opt.name]: ariaLabel})));
-        });
-    }, []);
+    const {buttonLabel, itemLabels} = useAriaLabels('ariaviewselector', 'ariaviewselectoroption', VIEW_OPTIONS);
 
     const activeOption = VIEW_OPTIONS.find(o => o.name === activeOrder) ?? VIEW_OPTIONS[0];
 

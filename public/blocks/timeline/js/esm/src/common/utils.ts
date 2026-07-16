@@ -16,13 +16,10 @@
 /**
  * Shared calendar utilities for the Timeline block.
  *
- * @module     block_timeline/utils
+ * @module     block_timeline/common/utils
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {fetchMany} from '@moodle/lms/core/ajax';
-import {getString} from '@moodle/lms/core/stringUtils';
-import config from '@moodle/lms/core/config';
 import type {CalendarEvent, FilterOffsets} from './types';
 
 /** Number of seconds in a day, used to convert day offsets into timestamp ranges. */
@@ -34,7 +31,12 @@ export interface DayGroup {
     events: CalendarEvent[];
 }
 
-/** Derive WS starttime and endtime from midnight and filter offsets. */
+/**
+ * Derive WS starttime and endtime from midnight and filter offsets.
+ *
+ * @param midnight start-of-day timestamp the offsets are relative to.
+ * @param offsets day offset/limit pair for the active filter.
+ */
 export function computeTimeRange(midnight: number, offsets: FilterOffsets): {starttime: number; endtime: number | null} {
     return {
         starttime: midnight + offsets.daysoffset * SECONDS_IN_DAY,
@@ -44,7 +46,11 @@ export function computeTimeRange(midnight: number, offsets: FilterOffsets): {sta
     };
 }
 
-/** Group a flat event list into per-day buckets sorted ascending by day timestamp. */
+/**
+ * Group a flat event list into per-day buckets sorted ascending by day timestamp.
+ *
+ * @param events events to group.
+ */
 export function groupByDay(events: CalendarEvent[]): DayGroup[] {
     const map = new Map<number, CalendarEvent[]>();
     for (const event of events) {
@@ -60,10 +66,13 @@ export function groupByDay(events: CalendarEvent[]): DayGroup[] {
 }
 
 /**
- * Client-side event filter matching the original event_list.js behaviour.
+ * Client-side event filter matching the original event_list.js behaviour:
+ * open/opensubmission events due at or before midnight are excluded, and
+ * when filteroverdue is true only events with event.overdue=true pass.
  *
- * open/opensubmission events due at or before midnight are excluded.
- * When filteroverdue is true only events with event.overdue=true pass.
+ * @param events events to filter.
+ * @param midnight start-of-day timestamp used to exclude not-yet-due open events.
+ * @param filteroverdue whether only overdue events should be kept.
  */
 export function filterEvents(events: CalendarEvent[], midnight: number, filteroverdue: boolean): CalendarEvent[] {
     return events.filter(event => {
@@ -72,27 +81,4 @@ export function filterEvents(events: CalendarEvent[], midnight: number, filterov
         }
         return !filteroverdue || event.overdue;
     });
-}
-
-/**
- * Fetch server-formatted day strings for the given midnight timestamps.
- *
- * Calls core_get_user_dates so the format respects the site language and the
- * user's timezone, matching the server-side userdate() output used in our own
- * web service responses.
- */
-export async function getFormattedDays(timestamps: number[]): Promise<Map<number, string>> {
-    const unique = [...new Set(timestamps)];
-    if (unique.length === 0) {
-        return new Map();
-    }
-    const format = await getString('strftimedaydate', 'langconfig');
-    const [result] = await fetchMany<{dates: string[]}>([{
-        methodname: 'core_get_user_dates',
-        args: {
-            contextid: config.contextid ?? 1,
-            timestamps: unique.map(ts => ({timestamp: ts, format})),
-        },
-    }]);
-    return new Map(unique.map((ts, i) => [ts, result.dates[i]]));
 }

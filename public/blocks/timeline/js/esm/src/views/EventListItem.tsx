@@ -18,7 +18,7 @@
  *
  * Matches the DOM structure of the legacy event-list-item.mustache template.
  *
- * @module     block_timeline/EventListItem
+ * @module     block_timeline/views/EventListItem
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,7 +26,7 @@ import {useState, useEffect} from 'react';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Badge} from '@moodlehq/design-system';
 import {ActivityIcon} from './ActivityIcon';
-import type {CalendarEvent} from './types';
+import type {CalendarEvent} from '../common/types';
 
 interface EventListItemProps {
     event: CalendarEvent;

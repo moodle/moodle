@@ -24,27 +24,16 @@
  */
 
 import {useState, useCallback} from 'react';
-import {fetchOne} from '@moodle/lms/core/ajax';
 import DayFilter from './nav/DayFilter';
 import ViewSelector from './nav/ViewSelector';
 import Search from './nav/Search';
 import DatesView from './views/DatesView';
 import CoursesView from './views/CoursesView';
-import type {TimelineProps, FilterName, OrderName, FilterOffsets} from './types';
+import {setUserPreference} from './repository';
+import type {TimelineProps, FilterName, OrderName, FilterOffsets} from './common/types';
 
 const PREF_FILTER = 'block_timeline_user_filter_preference';
 const PREF_ORDER = 'block_timeline_user_sort_preference';
-
-/**
- * Persist a single user preference via the core_user_update_user_preferences WS.
- * Failures are intentionally swallowed — the preference will revert on next page load.
- */
-const setUserPreference = (name: string, value: string): void => {
-    fetchOne({
-        methodname: 'core_user_update_user_preferences',
-        args: {preferences: [{type: name, value}]},
-    }).catch(() => undefined);
-};
 
 // Overdue filter sets dayslimit to null so endtime is null — the WS returns events from daysoffset
 // to infinity and the client filters by event.overdue=true. Using dayslimit:0 would set

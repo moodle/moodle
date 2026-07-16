@@ -9,9 +9,8 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @module     block_timeline/nav/DayFilter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { useState, useEffect } from "react";
 import String from "@moodle/lms/core/String";
-import { getString } from "@moodle/lms/core/stringUtils";
+import { useAriaLabels } from "../common/useAriaLabels";
 const MENU_ID = "menudayfilter";
 const SPAN_ID = "timeline-day-filter-current-selection";
 const GROUP_ID = "duedatefiltergrouplabel";
@@ -27,14 +26,7 @@ const GROUP_OPTIONS = [
 ];
 const ALL_OPTIONS = [...TOP_OPTIONS, ...GROUP_OPTIONS];
 function DayFilter({ activeFilter, onChange }) {
-  const [buttonLabel, setButtonLabel] = useState("");
-  const [itemLabels, setItemLabels] = useState({});
-  useEffect(() => {
-    getString("ariadayfilter", "block_timeline").then(setButtonLabel);
-    ALL_OPTIONS.forEach((opt) => {
-      getString(opt.labelKey, opt.labelComponent).then((label) => getString("ariadayfilteroption", "block_timeline", label)).then((ariaLabel) => setItemLabels((prev) => ({ ...prev, [opt.name]: ariaLabel })));
-    });
-  }, []);
+  const { buttonLabel, itemLabels } = useAriaLabels("ariadayfilter", "ariadayfilteroption", ALL_OPTIONS);
   const activeOption = ALL_OPTIONS.find((o) => o.name === activeFilter) ?? ALL_OPTIONS[0];
   const renderItem = /* @__PURE__ */ __name((option) => /* @__PURE__ */ jsxDEV(
     "a",
@@ -53,7 +45,7 @@ function DayFilter({ activeFilter, onChange }) {
       },
       children: /* @__PURE__ */ jsxDEV(String, { identifier: option.labelKey, component: option.labelComponent, children: "" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-        lineNumber: 101,
+        lineNumber: 89,
         columnNumber: 13
       }, this)
     },
@@ -61,7 +53,7 @@ function DayFilter({ activeFilter, onChange }) {
     false,
     {
       fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-      lineNumber: 86,
+      lineNumber: 74,
       columnNumber: 9
     },
     this
@@ -89,13 +81,13 @@ function DayFilter({ activeFilter, onChange }) {
           false,
           {
             fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-            lineNumber: 118,
+            lineNumber: 106,
             columnNumber: 21
           },
           this
         ) }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-          lineNumber: 117,
+          lineNumber: 105,
           columnNumber: 17
         }, this)
       },
@@ -103,7 +95,7 @@ function DayFilter({ activeFilter, onChange }) {
       false,
       {
         fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-        lineNumber: 107,
+        lineNumber: 95,
         columnNumber: 13
       },
       this
@@ -112,33 +104,33 @@ function DayFilter({ activeFilter, onChange }) {
       TOP_OPTIONS.map(renderItem),
       /* @__PURE__ */ jsxDEV("div", { className: "dropdown-divider", role: "separator" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-        lineNumber: 128,
+        lineNumber: 116,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("div", { role: "group", "aria-labelledby": GROUP_ID, children: [
         /* @__PURE__ */ jsxDEV("div", { className: "h6 dropdown-header", role: "presentation", id: GROUP_ID, children: /* @__PURE__ */ jsxDEV(String, { identifier: "duedate", component: "block_timeline", children: "" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-          lineNumber: 132,
+          lineNumber: 120,
           columnNumber: 25
         }, this) }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-          lineNumber: 131,
+          lineNumber: 119,
           columnNumber: 21
         }, this),
         GROUP_OPTIONS.map(renderItem)
       ] }, void 0, true, {
         fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-        lineNumber: 130,
+        lineNumber: 118,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-      lineNumber: 125,
+      lineNumber: 113,
       columnNumber: 13
     }, this)
   ] }, void 0, true, {
     fileName: "public/blocks/timeline/js/esm/src/nav/DayFilter.tsx",
-    lineNumber: 106,
+    lineNumber: 94,
     columnNumber: 9
   }, this);
 }
