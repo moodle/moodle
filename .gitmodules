@@ -71,7 +71,7 @@
 	path = public/lib/editor/tiny/plugins/fontcolor
 	url = https://github.com/bfh/moodle-tiny_fontcolor
 	branch = main
-	tag = V1.3
+	tag = V1.4
 [submodule "public/local/bulkenrol"]
 	path = public/local/bulkenrol
 	url = https://github.com/moodle-an-hochschulen/moodle-local_bulkenrol
