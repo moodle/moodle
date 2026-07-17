@@ -71,7 +71,7 @@ class hook_callbacks {
 
         $hook->add_definition(
             ScopeRepositoryInterface::class,
-            \DI\get(\core\oauth2\server\scope_repository::class),
+            \DI\get(\core\oauth2\server\repository\scope_repository::class),
         );
     }
 }
