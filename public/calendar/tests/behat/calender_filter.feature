@@ -27,6 +27,9 @@ Feature: Perform calendar filter actions
       | user     | group |
       | teacher1 | G1    |
     And the following "events" exist:
+      | name       | eventtype |
+      | Site event | site      |
+    And the following "events" exist:
       | name      | eventtype | course |
       | C1 event  | course    | C1     |
     And the following "events" exist:
@@ -35,15 +38,6 @@ Feature: Perform calendar filter actions
     And the following "events" exist:
       | name         | eventtype | group | course |
       | Group1 event | group     | G1    | C1     |
-    # Workaround for the known site event generator visibility bug
-    And I log in as "admin"
-    And I follow "Calendar" in the user menu
-    And I click on "New event" "button"
-    And I set the field "Event title" to "Site event"
-    And I set the field "Type of event" to "Site"
-    And I click on "Save" "button" in the "New event" "dialogue"
-    And I wait until the page is ready
-    And I log out
 
   Scenario: Teacher of a Course can see his events and filter them
     Given I log in as "teacher1"
@@ -100,11 +94,20 @@ Feature: Perform calendar filter actions
     And I should see "C1 event"
     And I should see "Dep1a event"
     And I should see "Group1 event"
-    And I should see "User event" 
+    And I should see "User event"
+    # Hide and show each event type using the Events key (QA Step 10).
     And I click on "Hide site events" "link"
     And I should not see "Site event"
     And I click on "Show site events" "link"
     And I should see "Site event"
+    And I click on "Hide group events" "link"
+    And I should not see "Group1 event"
+    And I click on "Show group events" "link"
+    And I should see "Group1 event"
+    And I click on "Hide user events" "link"
+    And I should not see "User event"
+    And I click on "Show user events" "link"
+    And I should see "User event"
     And I set the field "course" to "<test_course>"
     And I should not see "C1 event"
     And I should not see "Dep1a event"
