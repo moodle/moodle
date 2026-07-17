@@ -57,6 +57,20 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
 
       ######################################################################
+      # Skip if this synchronize event was triggered by our own commit.
+      ######################################################################
+      - name: Skip self-trigger
+        run: |
+          LAST_AUTHOR=$(git log -1 --format='%ae')
+
+          echo "Latest commit author: $LAST_AUTHOR"
+
+          if [ "$LAST_AUTHOR" = "41898282+github-actions[bot]@users.noreply.github.com" ]; then
+            echo "Latest commit was created by this workflow. Exiting."
+            exit 0
+          fi
+
+      ######################################################################
       # Configure git identity for commits made by the workflow.
       ######################################################################
       - name: Configure Git
