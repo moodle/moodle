@@ -124,15 +124,8 @@ final class client_repository_test extends \advanced_testcase {
                     'redirecturis' => ['https://example.test/uri1', 'https://example.test/uri2'],
                 ],
                 'client-identifier-1',
-                false,
-                [
-                    'identifier' => 'client-identifier-1',
-                    'name' => 'Revoked Client',
-                    'description' => null,
-                    'status' => client_entity::STATUS_REVOKED,
-                    'isconfidential' => false,
-                    'redirecturi' => ['https://example.test/uri1', 'https://example.test/uri2'],
-                ],
+                true,
+                null,
             ],
         ];
     }
