@@ -641,4 +641,13 @@ $definitions = array(
         'simpledata' => true,
         'ttl' => 90000, // 25 hours.
     ],
+
+    // Cache to store OAuth2 server data that requires expensive processing (e.g. scope mapping).
+    'oauth2_server' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
+    ],
 );

@@ -16,6 +16,8 @@
 
 namespace core\router;
 
+use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+
 /**
  * Class hook_callbacks
  *
@@ -65,6 +67,11 @@ class hook_callbacks {
         $hook->add_definition(
             \Psr\Http\Message\ResponseFactoryInterface::class,
             \DI\factory([\Slim\Factory\AppFactory::class, 'determineResponseFactory']),
+        );
+
+        $hook->add_definition(
+            ScopeRepositoryInterface::class,
+            \DI\get(\core\oauth2\server\scope_repository::class),
         );
     }
 }
