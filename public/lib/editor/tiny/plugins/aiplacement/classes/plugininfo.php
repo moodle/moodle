@@ -16,7 +16,6 @@
 
 namespace tiny_aiplacement;
 
-use aiplacement_editor\utils;
 use core\context;
 use core_ai\aiactions\generate_image;
 use core_ai\aiactions\generate_text;
@@ -108,18 +107,25 @@ class plugininfo extends plugin implements
     /**
      * Get the allowed actions for the plugin.
      *
+     * Available actions are discovered through the component-neutral core AI manager API rather
+     * than a direct call to a specific AI placement plugin. This lets any AI placement plugin
+     * offer actions through this editor entry point, and keeps this plugin working when a
+     * specific placement plugin, such as aiplacement_editor, is not installed.
+     *
      * @param context $context The context that the editor is used within
      * @param array $options The options passed in when requesting the editor
      * @return array The allowed actions.
      */
     private static function get_allowed_actions(context $context, array $options): array {
+        $availableactions = array_column(
+            manager::get_placement_actions_available($context),
+            null,
+            'action',
+        );
+
         $allowedactions = [];
-        foreach (self::$possibleactions as $action => $actionclass) {
-            $allowedactions[$action] = utils::is_html_editor_placement_action_available(
-                context: $context,
-                actionname: $action,
-                actionclass: $actionclass,
-            );
+        foreach (array_keys(self::$possibleactions) as $action) {
+            $allowedactions[$action] = array_key_exists($action, $availableactions);
 
             if ($allowedactions[$action] && $action == 'generate_image') {
                 // For generate image, we need to check if the user has the capability to upload files.
