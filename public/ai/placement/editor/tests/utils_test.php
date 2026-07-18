@@ -176,4 +176,16 @@ final class utils_test extends \advanced_testcase {
         $this->assertCount(0, $actions);
     }
 
+    /**
+     * Test is_html_editor_placement_available method.
+     */
+    public function test_is_html_editor_placement_available(): void {
+        // Plugin is not enabled.
+        set_config('enabled', 0, 'aiplacement_editor');
+        $this->assertFalse(utils::is_html_editor_placement_available());
+
+        // Plugin is enabled.
+        set_config('enabled', 1, 'aiplacement_editor');
+        $this->assertTrue(utils::is_html_editor_placement_available());
+    }
 }
