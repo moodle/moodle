@@ -45,21 +45,32 @@
     }
 }}
 
-<div class="login_form">
-    {{>core/local/login_form/logo}}
+<div id="page-content" class="min-vh-100 row g-0">
+    <aside class="login-layout-left col-lg-6 d-none d-lg-flex">
+        {{>core/local/login_form/login_panel}}
+    </aside>
+    <div id="region-main" class="login-layout-right col-12 col-lg-6">
+        <div id="region-main-box" class="login-layout-right-content">
+            <div class="login-container">
+                <div class="login_form">
+                    {{>core/local/login_form/logo}}
 
-    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
-        "clientname": {{#quote}}{{client.name}}{{/quote}},
-        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
-        "sitename": {{#quote}}{{sitename}}{{/quote}}
-    }{{/str}}</h2>
+                    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
+                        "clientname": {{#quote}}{{client.name}}{{/quote}},
+                        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+                        "sitename": {{#quote}}{{sitename}}{{/quote}}
+                    }{{/str}}</h2>
 
-    {{>core/oauth2/user}}
-    {{>core/oauth2/client_description}}
-    {{>core/local/login_form/maintenance}}
-    {{>core/local/login_form/errorinfo}}
-    {{>core/oauth2/confirm_scopes/scope_information}}
-    {{>core/oauth2/confirm_scopes/form}}
-    {{>core/local/login_form/languagemenu}}
-    {{>core/local/login_form/cookiesnotice}}
+                    {{>core/oauth2/user}}
+                    {{>core/oauth2/client_description}}
+                    {{>core/local/login_form/maintenance}}
+                    {{>core/local/login_form/errorinfo}}
+                    {{>core/oauth2/confirm_scopes/scope_information}}
+                    {{>core/oauth2/confirm_scopes/form}}
+                    {{>core/local/login_form/languagemenu}}
+                    {{>core/local/login_form/cookiesnotice}}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

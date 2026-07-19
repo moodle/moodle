@@ -604,6 +604,7 @@ class oauth2 {
         if ($title) {
             $response->getBody()->write($OUTPUT->heading($title));
         }
+
         $response->getBody()->write($OUTPUT->render($content));
         $response->getBody()->write($OUTPUT->footer());
 

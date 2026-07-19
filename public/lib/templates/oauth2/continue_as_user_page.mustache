@@ -49,19 +49,43 @@
         }
     }
 }}
-<div class="loginform">
-    {{>core/local/login_form/logo}}
-    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
-        "clientname": {{#quote}}{{client.name}}{{/quote}},
-        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
-        "sitename": {{#quote}}{{sitename}}{{/quote}}
-    }{{/str}}</h2>
-    {{>core/oauth2/user}}
-    {{>core/local/login_form/maintenance}}
-    {{>core/local/login_form/errorinfo}}
+<div id="page-content" class="min-vh-100 row g-0">
+    <aside class="login-layout-left col-lg-6 d-none d-lg-flex">
+        {{>core/local/login_form/login_panel}}
+    </aside>
+    <div id="region-main" class="login-layout-right col-12 col-lg-6">
+        <div id="region-main-box" class="login-layout-right-content">
+            <div class="login-container">
+                <div class="loginform">
+                    {{>core/local/login_form/logo}}
+                    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
+                        "clientname": {{#quote}}{{client.name}}{{/quote}},
+                        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+                        "sitename": {{#quote}}{{sitename}}{{/quote}}
+                    }{{/str}}</h2>
+                    {{>core/oauth2/user}}
+                    {{>core/local/login_form/maintenance}}
+                    {{>core/local/login_form/errorinfo}}
 
-    <p>{{#str}} oauth2:continueasuserinfo, core, {{userinfo.fullname}} {{/str}}</p>
-    {{>core/oauth2/continue/form}}
-    {{>core/local/login_form/languagemenu}}
-    {{>core/local/login_form/cookiesnotice}}
+                    <p>{{#str}} oauth2:continueasuserinfo, core, {{userinfo.fullname}} {{/str}}</p>
+                    {{>core/oauth2/continue/form}}
+                    {{>core/local/login_form/languagemenu}}
+                    {{>core/local/login_form/cookiesnotice}}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+{{#js}}
+    require(['core/pending'], function(Pending) {
+        const errorMessage = document.getElementById('loginerrormessage')?.textContent.trim();
+        if (errorMessage) {
+            const pendingJS = new Pending('login-move-focus');
+            setTimeout(function() {
+                document.getElementById('username')?.focus();
+                pendingJS.resolve();
+            }, 500);
+        }
+    });
+{{/js}}
