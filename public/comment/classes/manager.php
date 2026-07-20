@@ -217,7 +217,7 @@ class manager {
         $this->template .= html_writer::start_tag('div', ['class' => 'comment-message-meta me-3']);
 
         $this->template .= html_writer::tag('span', '___picture___', ['class' => 'picture']);
-        $this->template .= html_writer::tag('span', '___name___', ['class' => 'user']) . ' - ';
+        $this->template .= html_writer::tag('span', '___name___', ['class' => 'user fw-bold']) . ' - ';
         $this->template .= html_writer::tag('span', '___time___', ['class' => 'time']);
 
         $this->template .= html_writer::end_tag('div'); // End .comment-message-meta.
