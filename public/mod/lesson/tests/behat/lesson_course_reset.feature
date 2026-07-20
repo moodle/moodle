@@ -34,14 +34,10 @@ Feature: Lesson reset
       | True/false question 1 | True      | Wrong    | This page | 0     |
 
   Scenario: Use course reset to clear all attempt data
-    When I am on the "Test lesson name" "lesson activity" page logged in as student1
-    And I should see "Cat is an amphibian"
-    And I set the following fields to these values:
-      | False | 1 |
-    And I press "Submit"
-    And I press "Continue"
-    And I should see "Congratulations - end of lesson reached"
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
+    Given the following "mod_lesson > attempts" exist:
+      | lesson           | user     | page                  | answer | correct |
+      | Test lesson name | student1 | True/false question 1 | False  | 1       |
+    When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     And I navigate to "Reports" in current page administration
     And I should see "Sam1 Student1"
     And I am on the "Course 1" "reset" page
