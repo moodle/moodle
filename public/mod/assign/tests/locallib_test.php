@@ -2593,6 +2593,69 @@ You can see it appended to your <a href="' . $assignurl .
         $this->assertEquals(false, $assign->testable_submissions_open($student->id));
     }
 
+    /**
+     * Tests {@see \assign::submissions_open()} with a user override.
+     */
+    public function test_submissions_open_user_override(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->setAdminUser();
+
+        $now = time();
+        $tomorrow = $now + DAYSECS;
+        $yesterday = $now - DAYSECS;
+
+        // Assign that is due in the past.
+        $assign = $this->create_instance($course, ['duedate' => $yesterday, 'cutoffdate' => $yesterday]);
+
+        // Initially, submissions are not open for the student.
+        $this->assertFalse($assign->testable_submissions_open($student->id));
+
+        // Add a user override for the student to make cutoff date later.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $generator->create_override([
+            'assignid' => $assign->get_instance()->id,
+            'userid' => $student->id,
+            'cutoffdate' => $tomorrow,
+        ]);
+
+        // Now submissions are open for the student.
+        $this->assertTrue($assign->testable_submissions_open($student->id));
+    }
+
+    /**
+     * Tests {@see \assign::submissions_open()} with a group override.
+     */
+    public function test_submissions_open_group_override(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->setAdminUser();
+
+        $now = time();
+        $yesterday = $now - DAYSECS;
+
+        // Assign that is due in the past.
+        $assign = $this->create_instance($course, ['duedate' => $yesterday, 'cutoffdate' => $yesterday]);
+
+        // Initially, submissions are not open for the student.
+        $this->assertFalse($assign->testable_submissions_open($student->id));
+
+        // Add a group override for the student to turn off the cutoff date.
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member($group, $student->id);
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $generator->create_override([
+            'assignid' => $assign->get_instance()->id,
+            'groupid' => $group->id,
+            'cutoffdate' => 0,
+        ]);
+        $this->assertTrue($assign->testable_submissions_open($student->id));
+    }
+
     public function test_get_graders(): void {
         global $DB;
 
