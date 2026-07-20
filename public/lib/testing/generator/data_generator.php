@@ -1332,8 +1332,8 @@ EOD;
                 break;
             case 'site':
                 unset($record->categoryid);
-                unset($record->courseid);
                 unset($record->groupid);
+                $record->courseid = SITEID;
                 break;
         }
 
