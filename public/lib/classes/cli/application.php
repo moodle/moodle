@@ -16,55 +16,14 @@
 
 namespace core\cli;
 
-use Symfony\Component\Console\Command\CompleteCommand;
-use Symfony\Component\Console\Command\DumpCompletionCommand;
-
 /**
  * Moodle CLI application.
+ *
+ * This class is configured in the DI container, see \core\di::create_container().
  *
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class application extends \Symfony\Component\Console\Application {
-    /**
-     * Constructor for the Moodle CLI application.
-     *
-     * @param \Symfony\Component\Console\CommandLoader\CommandLoaderInterface $commandloader The command loader
-     */
-    public function __construct(
-        \Symfony\Component\Console\CommandLoader\CommandLoaderInterface $commandloader,
-    ) {
-        parent::__construct('Moodle CLI Application', self::get_moodle_version());
-        $this->setCommandLoader($commandloader);
-
-        $this->add(new CompleteCommand());
-        $this->add(new DumpCompletionCommand());
-    }
-
-    /**
-     * Get an input instance for the given command name and arguments.
-     *
-     * @param string $commandname
-     * @param array $args
-     * @return \Symfony\Component\Console\Input\InputInterface
-     */
-    public static function get_input_for_command(
-        string $commandname,
-        array $args = [],
-    ): \Symfony\Component\Console\Input\InputInterface {
-        $inputargs = array_merge(['command' => $commandname], $args);
-        return new \Symfony\Component\Console\Input\ArrayInput($inputargs);
-    }
-
-    /**
-     * Get the Moodle version number.
-     *
-     * @return int
-     */
-    private static function get_moodle_version(): int {
-        require(dirname(__DIR__, 3) . '/version.php');
-
-        return $version;
-    }
 }
