@@ -2,7 +2,7 @@
 Feature: Course Category Events
   In order to inform multiple courses of shared events
   As a manager
-  I need to create catgory events
+  I need to create category events
 
   Background:
     Given the following "users" exist:
@@ -46,9 +46,6 @@ Feature: Course Category Events
       | student1    | A2i       | student           |
       | student2    | B1i       | student           |
       | student2    | B2i       | student           |
-    And the following "events" exist:
-      | name        | eventtype |
-      | Site event  | site    |
     And the following "events" exist:
       | name        | eventtype | course |
       | CA1i event  | course    | A1i    |
