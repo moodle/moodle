@@ -109,10 +109,6 @@ M.core_comment = {
                                 linkTextCount.set('innerHTML', obj.count);
                             }
                             for(var i in ids) {
-                                // SC 1.4.1: apply the non-colour link indicator immediately rather than
-                                // waiting for the colour animation to complete, so the link is never
-                                // shown as colour-only distinguishable even momentarily.
-                                Y.all('#' + ids[i] + ' a').setStyle('textDecoration', 'underline');
                                 var attributes = {
                                     color: {to: highlightText},
                                     backgroundColor: {to: highlightBg}
