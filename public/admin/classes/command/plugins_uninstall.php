@@ -47,35 +47,36 @@ class plugins_uninstall extends Command {
                 'Plugin component name(s) to uninstall (e.g. mod_assign local_myplugin)',
             )
             ->addOption(
-                'yes',
+                'assume-yes',
                 'y',
                 InputOption::VALUE_NONE,
-                'Assume yes to the confirmation prompt when uninstalling multiple plugins',
+                'Assume yes to the confirmation prompt and uninstall without asking',
             )
             ->setHelp(<<<'EOT'
                 The <info>admin:plugins:uninstall</info> command uninstalls one or more Moodle plugins.
 
-                When a single plugin is specified, the command validates it and uninstalls it immediately.
-                When multiple plugins are specified, the command validates all plugins, shows the list to be
-                uninstalled, and asks for confirmation before continuing.
+                All requested plugins are validated first. If any plugin is unknown or cannot be uninstalled,
+                the command fails and no plugin is uninstalled. Once validated, the command always shows the
+                list of plugins to be uninstalled and asks for confirmation before continuing, whether one or
+                several plugins were requested.
 
-                Use <info>--yes</info> to skip the confirmation prompt for multi-plugin uninstalls. This is
-                required in non-interactive mode.
+                Use <info>--assume-yes</info> to skip the confirmation prompt. This is required in
+                non-interactive mode, where the command fails without making changes if it is not supplied.
 
-                Uninstall a single plugin:
+                Uninstall a single plugin with confirmation:
                   <info>php bin/moodle admin:plugins:uninstall local_myplugin</info>
 
                 Uninstall multiple plugins with confirmation:
                   <info>php bin/moodle admin:plugins:uninstall mod_assign local_myplugin</info>
 
-                Uninstall multiple plugins without prompting:
-                  <info>php bin/moodle admin:plugins:uninstall mod_assign local_myplugin --yes</info>
+                Uninstall without prompting:
+                  <info>php bin/moodle admin:plugins:uninstall mod_assign local_myplugin --assume-yes</info>
                 EOT);
     }
 
     #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int {
-        $assumeyes = $input->getOption('yes');
+        $assumeyes = $input->getOption('assume-yes');
         $components = $input->getArgument('plugin');
         $pluginman = $this->get_plugin_manager();
         $plugins = [];
@@ -100,25 +101,24 @@ class plugins_uninstall extends Command {
             $plugins[$component] = $plugin;
         }
 
-        if (count($plugins) > 1) {
-            $output->writeln('<comment>The following plugins will be uninstalled:</comment>');
-            foreach ($plugins as $component => $plugin) {
-                $output->writeln(sprintf('  - %s (%s)', $component, $plugin->displayname));
+        $output->writeln('<comment>The following plugins will be uninstalled:</comment>');
+        foreach ($plugins as $component => $plugin) {
+            $output->writeln(sprintf('  - %s (%s)', $component, $plugin->displayname));
+        }
+
+        if (!$assumeyes) {
+            if (!$input->isInteractive()) {
+                $output->writeln(
+                    '<error>Confirmation is required to uninstall plugins in non-interactive mode. ' .
+                    'Re-run with --assume-yes.</error>',
+                );
+                return Command::FAILURE;
             }
 
-            if (!$assumeyes) {
-                if (!$input->isInteractive()) {
-                    $output->writeln(
-                        '<error>Confirmation is required when uninstalling multiple plugins in non-interactive mode. Re-run with --yes.</error>',
-                    );
-                    return Command::FAILURE;
-                }
-
-                $question = new ConfirmationQuestion('<question>Continue with uninstall? [y/N]</question> ', false);
-                if (!$this->getHelper('question')->ask($input, $output, $question)) {
-                    $output->writeln('<info>Aborted. No plugins were uninstalled.</info>');
-                    return Command::SUCCESS;
-                }
+            $question = new ConfirmationQuestion('<question>Continue with uninstall? [y/N]</question> ', false);
+            if (!$this->getHelper('question')->ask($input, $output, $question)) {
+                $output->writeln('<info>Aborted. No plugins were uninstalled.</info>');
+                return Command::SUCCESS;
             }
         }
 

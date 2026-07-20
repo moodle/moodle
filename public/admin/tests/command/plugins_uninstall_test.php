@@ -151,20 +151,75 @@ final class plugins_uninstall_test extends \advanced_testcase {
     }
 
     /**
-     * Ensure a single plugin uninstalls immediately without prompting.
+     * Ensure a single plugin is displayed and uninstalled after confirmation is accepted.
      */
-    public function test_single_plugin_uninstalls_without_confirmation(): void {
+    public function test_single_plugin_confirmation_accepted(): void {
         $uninstallcalls = 0;
         $manager = $this->build_mock_manager([
             'local_myplugin' => ['name' => 'My plugin', 'canuninstall' => true],
         ], $uninstallcalls);
 
         $tester = new CommandTester($this->build_command($manager));
+        $tester->setInputs(['yes']);
         $tester->execute(['plugin' => ['local_myplugin']]);
 
         $tester->assertCommandIsSuccessful();
         $this->assertSame(1, $uninstallcalls);
-        $this->assertStringContainsString('Uninstalling: local_myplugin', $tester->getDisplay());
+        $output = $tester->getDisplay();
+        $this->assertStringContainsString('The following plugins will be uninstalled:', $output);
+        $this->assertStringContainsString('local_myplugin (My plugin)', $output);
+        $this->assertStringContainsString('Uninstalling: local_myplugin', $output);
+    }
+
+    /**
+     * Ensure a single plugin is not uninstalled when confirmation is declined.
+     */
+    public function test_single_plugin_confirmation_declined(): void {
+        $uninstallcalls = 0;
+        $manager = $this->build_mock_manager([
+            'local_myplugin' => ['name' => 'My plugin', 'canuninstall' => true],
+        ], $uninstallcalls);
+
+        $tester = new CommandTester($this->build_command($manager));
+        $tester->setInputs(['no']);
+        $tester->execute(['plugin' => ['local_myplugin']]);
+
+        $tester->assertCommandIsSuccessful();
+        $this->assertSame(0, $uninstallcalls);
+        $this->assertStringContainsString('Aborted. No plugins were uninstalled.', $tester->getDisplay());
+    }
+
+    /**
+     * Ensure --assume-yes bypasses confirmation for a single plugin.
+     */
+    public function test_single_plugin_with_assume_yes_uninstalls_non_interactive(): void {
+        $uninstallcalls = 0;
+        $manager = $this->build_mock_manager([
+            'local_myplugin' => ['name' => 'My plugin', 'canuninstall' => true],
+        ], $uninstallcalls);
+
+        $tester = new CommandTester($this->build_command($manager));
+        $tester->execute(['plugin' => ['local_myplugin'], '--assume-yes' => true], ['interactive' => false]);
+
+        $tester->assertCommandIsSuccessful();
+        $this->assertSame(1, $uninstallcalls);
+    }
+
+    /**
+     * Ensure non-interactive mode fails cleanly when single-plugin confirmation cannot be asked.
+     */
+    public function test_single_plugin_non_interactive_requires_assume_yes(): void {
+        $uninstallcalls = 0;
+        $manager = $this->build_mock_manager([
+            'local_myplugin' => ['name' => 'My plugin', 'canuninstall' => true],
+        ], $uninstallcalls);
+
+        $tester = new CommandTester($this->build_command($manager));
+        $tester->execute(['plugin' => ['local_myplugin']], ['interactive' => false]);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertSame(0, $uninstallcalls);
+        $this->assertStringContainsString('Re-run with --assume-yes.', $tester->getDisplay());
     }
 
     /**
@@ -211,7 +266,7 @@ final class plugins_uninstall_test extends \advanced_testcase {
     /**
      * Ensure non-interactive mode fails cleanly when multi-plugin confirmation cannot be asked.
      */
-    public function test_multiple_plugins_non_interactive_requires_yes(): void {
+    public function test_multiple_plugins_non_interactive_requires_assume_yes(): void {
         $uninstallcalls = 0;
         $manager = $this->build_mock_manager([
             'local_alpha' => ['name' => 'Alpha', 'canuninstall' => true],
@@ -223,13 +278,13 @@ final class plugins_uninstall_test extends \advanced_testcase {
 
         $this->assertSame(Command::FAILURE, $tester->getStatusCode());
         $this->assertSame(0, $uninstallcalls);
-        $this->assertStringContainsString('Re-run with --yes.', $tester->getDisplay());
+        $this->assertStringContainsString('Re-run with --assume-yes.', $tester->getDisplay());
     }
 
     /**
      * Ensure non-interactive mode proceeds when confirmation is pre-approved.
      */
-    public function test_multiple_plugins_with_yes_uninstalls_non_interactive(): void {
+    public function test_multiple_plugins_with_assume_yes_uninstalls_non_interactive(): void {
         $uninstallcalls = 0;
         $manager = $this->build_mock_manager([
             'local_alpha' => ['name' => 'Alpha', 'canuninstall' => true],
@@ -237,7 +292,7 @@ final class plugins_uninstall_test extends \advanced_testcase {
         ], $uninstallcalls);
 
         $tester = new CommandTester($this->build_command($manager));
-        $tester->execute(['plugin' => ['local_alpha', 'local_beta'], '--yes' => true], ['interactive' => false]);
+        $tester->execute(['plugin' => ['local_alpha', 'local_beta'], '--assume-yes' => true], ['interactive' => false]);
 
         $tester->assertCommandIsSuccessful();
         $this->assertSame(2, $uninstallcalls);
