@@ -402,7 +402,7 @@ class behat_core_question extends behat_question_base {
         // Set the filter value.
         $this->execute('behat_forms::i_set_the_field_to', [
             $filtertype,
-            $value
+            $value,
         ]);
 
         // Apply filters.
