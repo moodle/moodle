@@ -179,6 +179,20 @@ class core_question_generator extends component_generator_base {
         $question->version = $questionversion->version;
         $question->status = $questionversion->status;
 
+        // Add any tags if they are provided in the overrides.
+        if (array_key_exists('tags', (array)$overrides)) {
+            $tags = array_filter(
+                array_map(
+                    'trim',
+                    explode(',', $overrides['tags']),
+                ),
+            );
+            foreach ($tags as $tag) {
+                $tag = trim($tag);
+                $this->create_question_tag(['questionid' => $question->id, 'tag' => $tag]);
+            }
+        }
+
         return $question;
     }
 
