@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,12 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <style>
     :root {
       /* Typography */
@@ -26,7 +29,7 @@
       --text-inverse: #090714;
       --shadow-card: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
       --border-radius: 16px;
-      
+
       --primary: #7c4dff;
       --primary-rgb: 124, 77, 255;
       --primary-hover: #9e7dff;
@@ -34,7 +37,7 @@
       --success: #00e676;
       --warning: #ffd600;
       --danger: #ff1744;
-      
+
       /* Shorthand utilities */
       --transition-speed: 0.3s;
     }
@@ -48,7 +51,7 @@
       --text-muted: #5e597c;
       --text-inverse: #ffffff;
       --shadow-card: 0 12px 40px 0 rgba(108, 60, 247, 0.06);
-      
+
       --primary: #651fff;
       --primary-rgb: 101, 31, 255;
       --primary-hover: #5013e8;
@@ -130,7 +133,8 @@
     }
 
     /* Theme Switcher Button */
-    .theme-toggle-btn, .view-toggle-btn {
+    .theme-toggle-btn,
+    .view-toggle-btn {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
       color: var(--text-main);
@@ -147,7 +151,8 @@
       backdrop-filter: blur(10px);
     }
 
-    .theme-toggle-btn:hover, .view-toggle-btn:hover {
+    .theme-toggle-btn:hover,
+    .view-toggle-btn:hover {
       transform: translateY(-2px);
       border-color: var(--primary);
       box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.15);
@@ -782,30 +787,69 @@
 
     /* Animations */
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes pulseWarning {
-      0% { box-shadow: 0 0 0 0 rgba(255, 23, 68, 0.4); }
-      70% { box-shadow: 0 0 0 6px rgba(255, 23, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 23, 68, 0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 23, 68, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 6px rgba(255, 23, 68, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 23, 68, 0);
+      }
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-6px); }
-      40%, 80% { transform: translateX(6px); }
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-6px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(6px);
+      }
     }
 
     /* Responsive */
@@ -815,20 +859,24 @@
         gap: 16px;
         align-items: flex-start;
       }
+
       .header-actions {
         width: 100%;
         justify-content: space-between;
       }
+
       .controls-panel {
         flex-direction: column;
         align-items: stretch;
       }
+
       .filter-group {
         flex-direction: column;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <!-- Header -->
@@ -855,7 +903,8 @@
       <div class="avatar">JD</div>
       <div class="user-info">
         <h4>Welcome back, Jane Doe</h4>
-        <p><i class="fa-solid fa-circle-check text-success"></i> Registered Student • Last login: Today at 09:14 AM • Total Logins: 42</p>
+        <p><i class="fa-solid fa-circle-check text-success"></i> Registered Student • Last login: Today at 09:14 AM •
+          Total Logins: 42</p>
       </div>
     </div>
 
@@ -922,9 +971,10 @@
       <div class="controls-panel">
         <div class="search-wrapper">
           <i class="fa-solid fa-magnifying-glass search-icon"></i>
-          <input type="text" id="searchInput" class="search-input" placeholder="Search by course name or category..." onkeyup="filterReport()">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search by course name or category..."
+            onkeyup="filterReport()">
         </div>
-        
+
         <div class="filter-group">
           <!-- Category -->
           <select id="categoryFilter" class="filter-select" onchange="filterReport()">
@@ -961,14 +1011,22 @@
         <table>
           <thead>
             <tr>
-              <th onclick="sortTable('coursename')">Course Name <span id="sort-coursename"><i class="fa-solid fa-sort"></i></span></th>
-              <th onclick="sortTable('categoryname')">Category <span id="sort-categoryname"><i class="fa-solid fa-sort"></i></span></th>
-              <th onclick="sortTable('enrolled')">Enrolled Students <span id="sort-enrolled"><i class="fa-solid fa-sort"></i></span></th>
-              <th onclick="sortTable('assignments')">Assignments <span id="sort-assignments"><i class="fa-solid fa-sort"></i></span></th>
-              <th onclick="sortTable('quizzes')">Quizzes <span id="sort-quizzes"><i class="fa-solid fa-sort"></i></span></th>
-              <th onclick="sortTable('completed_activities')">Completed Activities <span id="sort-completed_activities"><i class="fa-solid fa-sort"></i></span></th>
-              <th onclick="sortTable('lastaccess_days')">Last Access <span id="sort-lastaccess_days"><i class="fa-solid fa-sort"></i></span></th>
-              <th onclick="sortTable('completion_pct')">Completion % <span id="sort-completion_pct"><i class="fa-solid fa-sort"></i></span></th>
+              <th onclick="sortTable('coursename')">Course Name <span id="sort-coursename"><i
+                    class="fa-solid fa-sort"></i></span></th>
+              <th onclick="sortTable('categoryname')">Category <span id="sort-categoryname"><i
+                    class="fa-solid fa-sort"></i></span></th>
+              <th onclick="sortTable('enrolled')">Enrolled Students <span id="sort-enrolled"><i
+                    class="fa-solid fa-sort"></i></span></th>
+              <th onclick="sortTable('assignments')">Assignments <span id="sort-assignments"><i
+                    class="fa-solid fa-sort"></i></span></th>
+              <th onclick="sortTable('quizzes')">Quizzes <span id="sort-quizzes"><i class="fa-solid fa-sort"></i></span>
+              </th>
+              <th onclick="sortTable('completed_activities')">Completed Activities <span
+                  id="sort-completed_activities"><i class="fa-solid fa-sort"></i></span></th>
+              <th onclick="sortTable('lastaccess_days')">Last Access <span id="sort-lastaccess_days"><i
+                    class="fa-solid fa-sort"></i></span></th>
+              <th onclick="sortTable('completion_pct')">Completion % <span id="sort-completion_pct"><i
+                    class="fa-solid fa-sort"></i></span></th>
             </tr>
           </thead>
           <tbody id="reportTableBody">
@@ -983,11 +1041,13 @@
           Showing 1 to 5 of 8 courses
         </div>
         <div class="pagination-controls">
-          <button id="prevPageBtn" class="page-btn" onclick="changePage(-1)" aria-label="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
+          <button id="prevPageBtn" class="page-btn" onclick="changePage(-1)" aria-label="Previous Page"><i
+              class="fa-solid fa-chevron-left"></i></button>
           <div id="pageNumberBtns" style="display: flex; gap: 6px;">
             <!-- Render page numbers dynamically -->
           </div>
-          <button id="nextPageBtn" class="page-btn" onclick="changePage(1)" aria-label="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+          <button id="nextPageBtn" class="page-btn" onclick="changePage(1)" aria-label="Next Page"><i
+              class="fa-solid fa-chevron-right"></i></button>
         </div>
       </div>
     </section>
@@ -1007,7 +1067,8 @@
         <i class="fa-solid fa-circle-exclamation"></i>
         <div class="danger-alert-text">
           <h5>CRITICAL ACTION REQUIRED</h5>
-          <p>Your completion level in this course is below 50%. Please review and complete your pending assignments and upcoming quizzes immediately to avoid falling behind.</p>
+          <p>Your completion level in this course is below 50%. Please review and complete your pending assignments and
+            upcoming quizzes immediately to avoid falling behind.</p>
         </div>
       </div>
 
@@ -1190,7 +1251,7 @@
     let isAscending = true;
 
     // Initialize Dashboard
-    window.onload = function() {
+    window.onload = function () {
       renderStudentCourses();
       renderReportTable();
       calculateKPIs();
@@ -1202,7 +1263,7 @@
       const completed = courseData.filter(c => c.completion_pct >= 80).length;
       const pending = courseData.reduce((acc, c) => acc + c.pending_assignments, 0);
       const upcoming = courseData.reduce((acc, c) => acc + c.upcoming_quizzes, 0);
-      
+
       const totalPct = courseData.reduce((acc, c) => acc + c.completion_pct, 0);
       const avgPct = (totalPct / enrolled).toFixed(1);
 
@@ -1240,7 +1301,7 @@
         const isHigh = c.completion_pct > 80;
         const lowClass = isLow ? 'low-completion' : '';
         const highClass = isHigh ? 'high-completion' : '';
-        
+
         let warningBadge = '';
         if (isLow) {
           warningBadge = `<div class="warning-badge"><i class="fa-solid fa-triangle-exclamation"></i> Warning &lt; 50%</div>`;
@@ -1290,11 +1351,11 @@
 
       const progressBar = document.getElementById('modalProgressBar');
       progressBar.style.width = `${course.completion_pct}%`;
-      
+
       const isLow = course.completion_pct < 50;
       const barColor = isLow ? 'var(--danger)' : (course.completion_pct > 80 ? 'var(--success)' : 'var(--primary)');
       progressBar.style.background = barColor;
-      
+
       const warningAlert = document.getElementById('belowFiftyWarning');
       if (isLow) {
         warningAlert.style.display = 'flex';
@@ -1335,7 +1396,7 @@
       pageData.forEach(c => {
         // Last access text
         let accessText = c.lastaccess_str;
-        
+
         // Completion style
         let completionClass = '';
         if (c.completion_pct < 50) {
@@ -1364,7 +1425,7 @@
       // Update Pagination details
       const actualEndIndex = Math.min(endIndex, filteredData.length);
       document.getElementById('pageInfo').innerText = `Showing ${startIndex + 1} to ${actualEndIndex} of ${filteredData.length} courses`;
-      
+
       const totalPages = Math.ceil(filteredData.length / itemsPerPage);
       updatePaginationButtons(totalPages);
     }
@@ -1403,10 +1464,10 @@
       filteredData = courseData.filter(c => {
         // Search matches Name or Category
         const matchesSearch = c.coursename.toLowerCase().includes(searchVal) || c.categoryname.toLowerCase().includes(searchVal);
-        
+
         // Category filter
         const matchesCat = (catVal === 'all') || (c.categoryname === catVal);
-        
+
         // Completion filter
         let matchesComp = true;
         if (compVal === 'low') matchesComp = c.completion_pct < 50;
@@ -1425,7 +1486,7 @@
 
       // Sort current selection
       sortData();
-      
+
       // Go to first page and render
       currentPage = 1;
       renderReportTable();
@@ -1436,7 +1497,7 @@
       document.getElementById('categoryFilter').value = 'all';
       document.getElementById('completionFilter').value = 'all';
       document.getElementById('lastAccessFilter').value = 'all';
-      
+
       filteredData = [...courseData];
       sortData();
       currentPage = 1;
@@ -1488,7 +1549,7 @@
       const currentTheme = html.getAttribute('data-theme');
       const newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
       html.setAttribute('data-theme', newTheme);
-      
+
       const themeIcon = document.getElementById('themeIcon');
       if (newTheme === 'dark') {
         themeIcon.className = "fa-solid fa-sun";
@@ -1498,4 +1559,5 @@
     }
   </script>
 </body>
+
 </html>

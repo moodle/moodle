@@ -1,0 +1,4 @@
+﻿-->local_courseanalytics
+++ Success (0.29 seconds) ++
+== Setting new default values ==
+Command line upgrade from 5.3dev (Build: 20260714) (2026071400) to 5.3dev (Build: 20260714) (2026071400) completed successfully.
