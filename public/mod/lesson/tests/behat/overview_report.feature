@@ -31,12 +31,12 @@ Feature: Testing overview_report in mod_lesson
       | page       | answer    | jumpto         | score   |
       | Question 1 | True      | End of lesson  |  1      |
       | Question 1 | False     | End of lesson  |  0      |
-    And the following "mod_lesson > submissions" exist:
-      | lesson    | user     | grade  |
-      | Lesson 1  | student1 | 50     |
-      | Lesson 1  | student1 | 60     |
-      | Lesson 1  | student1 | 100    |
-      | Lesson 1  | student2 | 90     |
+    And the following "mod_lesson > attempts" exist:
+      | lesson   | user     | grade | retry |
+      | Lesson 1 | student1 | 50    | 0     |
+      | Lesson 1 | student1 | 60    | 1     |
+      | Lesson 1 | student1 | 100   | 2     |
+      | Lesson 1 | student2 | 90    | 0     |
 
   @javascript
   Scenario: Teacher can see the lesson relevant information in the lesson overview
