@@ -165,7 +165,7 @@ class config {
      * @return bool
      */
     public static function recordings_enabled(): bool {
-        return (boolean) self::get('recordings_enabled');
+        return (bool) self::get('recordings_enabled');
     }
 
     /**
@@ -174,7 +174,7 @@ class config {
      * @return bool
      */
     public static function importrecordings_enabled(): bool {
-        return (boolean) self::get('importrecordings_enabled');
+        return (bool) self::get('importrecordings_enabled');
     }
 
     /**

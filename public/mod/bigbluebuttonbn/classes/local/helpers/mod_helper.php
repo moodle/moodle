@@ -55,7 +55,7 @@ class mod_helper {
      **/
     protected static function process_pre_save_instance(stdClass $bigbluebuttonbn): void {
         $bigbluebuttonbn->timemodified = time();
-        if ((integer) $bigbluebuttonbn->instance == 0) {
+        if ((int) $bigbluebuttonbn->instance == 0) {
             $bigbluebuttonbn->meetingid = 0;
             $bigbluebuttonbn->timecreated = time();
             $bigbluebuttonbn->timemodified = 0;

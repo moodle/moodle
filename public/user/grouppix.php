@@ -37,7 +37,7 @@ $relativepath = get_file_argument();
 $args = explode('/', trim($relativepath, '/'));
 
 if (count($args) == 2) {
-    $groupid  = (integer)$args[0];
+    $groupid  = (int)$args[0];
     $image    = $args[1];
     $pathname = $CFG->dataroot.'/groups/'.$groupid.'/'.$image;
 } else {

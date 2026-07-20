@@ -112,7 +112,7 @@ class reset {
     public static function reset_course_items(): array {
         $items = ["events" => 0, "tags" => 0, "logs" => 0];
         // Include recordings only if enabled.
-        if ((boolean) config::recordings_enabled()) {
+        if ((bool) config::recordings_enabled()) {
             $items["recordings"] = 0;
         }
         return $items;

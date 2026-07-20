@@ -44,7 +44,7 @@ $course = $destinationinstance->get_course();
 
 require_login($course, true, $cm);
 
-if (!(boolean) \mod_bigbluebuttonbn\local\config::importrecordings_enabled()) {
+if (!(bool) \mod_bigbluebuttonbn\local\config::importrecordings_enabled()) {
     notification::add(
         get_string('view_message_importrecordings_disabled', plugin::COMPONENT),
         notification::ERROR

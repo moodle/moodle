@@ -443,7 +443,7 @@ abstract class base {
             return true;
 
         } else {
-            return (double)$this->versionrequires <= (double)$moodleversion;
+            return (float)$this->versionrequires <= (float)$moodleversion;
         }
     }
 

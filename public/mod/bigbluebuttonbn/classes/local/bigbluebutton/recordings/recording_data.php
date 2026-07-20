@@ -71,7 +71,7 @@ class recording_data {
         foreach ($recordings as $recording) {
             $rowtools = $tools;
             // Protected recordings may be enabled or disabled from UI through configuration.
-            if (!(boolean) config::get('recording_protect_editable')) {
+            if (!(bool) config::get('recording_protect_editable')) {
                 $rowtools = array_diff($rowtools, ['protect', 'unprotect']);
             }
             // Protected recordings is not a standard feature, remove actions when protected flag is not present.

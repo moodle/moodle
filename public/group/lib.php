@@ -965,7 +965,7 @@ function groups_assign_grouping($groupingid, $groupid, $timeadded = null, $inval
     $assign->groupingid = $groupingid;
     $assign->groupid    = $groupid;
     if ($timeadded != null) {
-        $assign->timeadded = (integer)$timeadded;
+        $assign->timeadded = (int)$timeadded;
     } else {
         $assign->timeadded = time();
     }

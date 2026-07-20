@@ -1470,29 +1470,29 @@ final class subscriptions_test extends \advanced_testcase {
 
         // A guest user.
         $this->setUser(0);
-        $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
-        $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+        $this->assertFalse((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertFalse((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
 
         // A user enrolled in the course.
         $this->setUser($author->id);
-        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
-        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+        $this->assertTrue((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertTrue((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
 
         // Subscribption disabled.
         $this->setUser($student->id);
         \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_DISALLOWSUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
-        $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
-        $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+        $this->assertFalse((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertFalse((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
 
         \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_FORCESUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
-        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
-        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+        $this->assertTrue((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertTrue((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
 
         // Admin user.
         $this->setAdminUser();
-        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
-        $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
+        $this->assertTrue((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
+        $this->assertTrue((bool)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
     }
 }

@@ -99,7 +99,7 @@ class recording_action {
     public static function unprotect(recording $recording): void {
         $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
         $recordingid = $recording->get('id');
-        if (!(boolean) config::get('recording_protect_editable')) {
+        if (!(bool) config::get('recording_protect_editable')) {
             // Recording protect action through UI is disabled, there is no need to do anything else.
             throw new \moodle_exception('cannotperformaction', 'mod_bigblubuebuttobn', '', 'unprotect');
         }
@@ -122,7 +122,7 @@ class recording_action {
     public static function protect(recording $recording): void {
         $instance = instance::get_from_instanceid($recording->get('bigbluebuttonbnid'));
         $recordingid = $recording->get('id');
-        if (!(boolean) config::get('recording_protect_editable')) {
+        if (!(bool) config::get('recording_protect_editable')) {
             // Recording protect action through UI is disabled, there is no need to do anything else.
             throw new \moodle_exception('cannotperformaction', 'mod_bigblubuebuttobn', '', 'protect');
         }

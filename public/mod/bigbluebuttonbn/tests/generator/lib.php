@@ -368,10 +368,10 @@ class mod_bigbluebuttonbn_generator extends \testing_module_generator {
                 'bbb-recording-name' => $instance->get_meeting_name(),
             ],
         ]);
-        if ((boolean) config::get('recordingready_enabled')) {
+        if ((bool) config::get('recordingready_enabled')) {
             $roomconfig['meta']['bbb-recording-ready-url'] = $instance->get_record_ready_url()->out(false);
         }
-        if ((boolean) config::get('meetingevents_enabled')) {
+        if ((bool) config::get('meetingevents_enabled')) {
             $roomconfig['meta']['analytics-callback-url'] = $instance->get_meeting_event_notification_url()->out(false);
         }
         if (!empty($roomconfig['isBreakout'])) {
