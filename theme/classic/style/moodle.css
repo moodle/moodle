@@ -27292,6 +27292,9 @@ img.icon {
     margin-top: 0;
   }
 }
+.editing .block_recentlyaccessedcourses .paging-bar-container {
+  margin-top: 0;
+}
 
 #block-region-side-pre .block_recentlyaccessedcourses .paging-bar-container {
   margin-top: 0;
