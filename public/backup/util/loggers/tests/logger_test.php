@@ -360,6 +360,37 @@ final class logger_test extends \basic_testcase {
         // Remove the test dir and any content
         @remove_dir(dirname($file));
     }
+
+    /**
+     * test file_logger relative path serialization
+     *
+     * @covers \file_logger
+     */
+    public function test_file_logger_relative_path(): void {
+        // Instantiate with relative path, verify file created in backuptempdir.
+        $backuptempdir = make_backup_temp_directory('');
+        $lo = new file_logger(backup::LOG_ERROR, true, true, 'test_backup_id.log');
+        $this->assertTrue($lo instanceof file_logger);
+        $this->assertTrue(file_exists($backuptempdir . '/test_backup_id.log'));
+
+        // Serialize and verify relative path stored, not absolute.
+        $serialised = serialize($lo);
+        $this->assertStringContainsString('relativepath', $serialised);
+        $this->assertStringNotContainsString('fullpath', $serialised);
+
+        // Unserialize and verify logger still works.
+        $lo2 = unserialize($serialised);
+        $this->assertTrue($lo2 instanceof file_logger);
+        $message = 'testing file_logger relative path';
+        $result = $lo2->process($message, backup::LOG_ERROR);
+        $this->assertTrue($result);
+        $lo->destroy();
+        $lo2->destroy();
+        $fcontents = file_get_contents($backuptempdir . '/test_backup_id.log');
+        $this->assertStringContainsString($message, $fcontents);
+
+        unlink($backuptempdir . '/test_backup_id.log');
+    }
 }
 
 
