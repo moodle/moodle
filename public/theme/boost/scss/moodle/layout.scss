@@ -231,6 +231,11 @@
     .pagelayout-standard,
     body.limitedwidth {
         .drawer-toggles {
+            // Keep the open togglers of closed drawers aligned with the drawers.
+            .drawer-toggler {
+                top: $drawer-anchored-toggler-top;
+            }
+
             .drawer-left-toggle {
                 left: auto;
                 right: calc(100% - #{$icon-medium-width} - 2 * 16px);

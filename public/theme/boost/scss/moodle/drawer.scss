@@ -13,6 +13,18 @@ $drawer-scroll-bg-track: $gray-100 !default;
 $drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
 $drawer-main-gap: calc(0.5rem + 20px);
+// Line up the drawers with the page title.
+$drawer-anchored-top-gap: 3rem !default;
+$drawer-anchored-bottom-gap: 1rem !default;
+$drawer-anchored-content-bottom-gap: 1rem !default;
+// The wrapper is pulled up by this amount and the same value is re-added as
+// header padding, so the header content stays aligned with the page title
+// while the drawer's rounded top edge gets some breathing room above it.
+$drawer-anchored-header-padding: 0.5rem !default;
+$drawer-anchored-header-bottom-gap: 0.5rem !default;
+$drawer-anchored-top-offset: calc(#{$navbar-height} + #{$drawer-anchored-top-gap} - #{$drawer-anchored-header-padding});
+$drawer-anchored-vertical-offset: calc(#{$drawer-anchored-top-offset} + #{$drawer-anchored-bottom-gap});
+$drawer-anchored-toggler-top: calc(#{$navbar-height} + #{$drawer-anchored-top-gap});
 $drawer-anchor-none: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-main-gap});
 $drawer-anchor-left-open: calc(100% - #{$drawer-left-width});
 $drawer-right-anchor-left-open: calc(50% + #{$course-content-maxwidth} / 2 + #{$drawer-main-gap} + #{$drawer-left-width} / 2);
@@ -294,6 +306,24 @@ $right-drawer-width: 320px;
         .drawer.drawer-left,
         .drawer.drawer-right {
             z-index: map-get($zindex-levels, 2);
+            top: $drawer-anchored-top-offset;
+            @include border-radius();
+            height: auto;
+            max-height: calc(100vh - #{$drawer-anchored-vertical-offset} - var(--sticky-footer-total-height, 0px));
+            // Keeps the scrollable area, and its scrollbar, clear of the rounded corners.
+            padding-bottom: $drawer-anchored-content-bottom-gap;
+
+            .drawerheader {
+                flex-shrink: 0;
+                padding-top: $drawer-anchored-header-padding;
+
+                // Let the toggle button set the row height, so it lines up with
+                // the page title instead of sitting below it.
+                .drawerheadertop {
+                    height: auto;
+                    padding-bottom: $drawer-anchored-header-bottom-gap;
+                }
+            }
         }
 
         .drawer.drawer-left {
@@ -304,7 +334,7 @@ $right-drawer-width: 320px;
             max-width: $drawer-left-width;
             overflow: clip;
             overscroll-behavior: none;
-            @include transition(width 0.2s ease, right 0.2s ease, visibility 0.2s ease);
+            @include transition(width 0.2s ease, right 0.2s ease, visibility 0.2s ease, max-height 0.2s ease);
 
             &.show {
                 left: auto;
@@ -325,7 +355,7 @@ $right-drawer-width: 320px;
             max-width: $drawer-right-width;
             clip-path: inset(0 100% 0 0);
             overscroll-behavior: none;
-            @include transition(clip-path 0.2s ease, left 0.2s ease, visibility 0.2s ease);
+            @include transition(clip-path 0.2s ease, left 0.2s ease, visibility 0.2s ease, max-height 0.2s ease);
 
             &.show {
                 right: auto;
