@@ -102,9 +102,13 @@ class utils {
                 foreach ($fields as $field) {
                     $contents = '';
                     if (isset($content[$field->field->id])) {
-                        $contents = $field->export_text_value($content[$field->field->id]);
-                        if (!empty($contents) && $field->file_export_supported() && $includefiles
-                            && !is_null($field->export_file_value($record))) {
+                        $contents = (string) $field->export_text_value($content[$field->field->id]);
+                        if (
+                            $contents !== ''
+                            && $field->file_export_supported()
+                            && $includefiles
+                            && !is_null($field->export_file_value($record))
+                        ) {
                             // For exporting overwrite the content of the column with a unique
                             // filename, even it is not exactly the name of the file in the
                             // mod_data instance content. But it's more important to match the name
@@ -113,8 +117,6 @@ class utils {
                             $exporter->add_file_from_string($contents, $field->export_file_value($record));
                         }
                     }
-                    // Just be double sure.
-                    $contents = !empty($contents) ? $contents : '';
                     $exporter->add_to_current_row($contents);
                 }
                 if ($tags) {
