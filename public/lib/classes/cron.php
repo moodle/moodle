@@ -350,6 +350,10 @@ class cron {
     /**
      * Execute all failed adhoc tasks.
      *
+     * This includes tasks that have exhausted their retry limits.
+     * It is intended for manual intervention from CLI or UI scripts,
+     * matching the behaviour of manually triggering individual failed tasks.
+     *
      * @param string|null  $classname Run only tasks of this class
      */
     public static function run_failed_adhoc_tasks(?string $classname = null): void {
@@ -362,8 +366,6 @@ class cron {
             $params['classname'] = \core\task\manager::get_canonical_class_name($classname);
         }
 
-        // Only rerun the failed tasks that allow to be re-tried or have the remaining attempts available.
-        $where .= ' AND (attemptsavailable > 0 OR attemptsavailable IS NULL)';
         $tasks = $DB->get_records_sql("SELECT * from {task_adhoc} WHERE $where", $params);
         foreach ($tasks as $t) {
             self::run_adhoc_task($t->id);
