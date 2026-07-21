@@ -628,6 +628,8 @@ class api {
                 'NoDelegate_CoreCourseDownload' => new lang_string('downloadcourse', 'tool_mobile'),
                 'NoDelegate_CoreCoursesDownload' => new lang_string('downloadcourses', 'tool_mobile'),
                 'CoreCourseOptionsDelegate_CoreCourseOverview' => new lang_string('activitiesoverview', 'tool_mobile'),
+                'NoDelegate_CoreCourseModuleNavigation' => new lang_string('modulenavigation', 'tool_mobile'),
+                'NoDelegate_CoreCourseSectionNavigation' => new lang_string('sectionnavigation', 'tool_mobile'),
             ],
             "$participants" => [
                 'CoreUserDelegate_CoreGrades:viewGrades' => new lang_string('grades', 'grades'),
