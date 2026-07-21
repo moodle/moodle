@@ -1,4 +1,4 @@
-import p from"@moodle/lms/core/config";import{getString as f}from"@moodle/lms/core/String";import{requireAsync as c}from"@moodle/lms/core/amd";/**
+import p from"@moodle/lms/core/config";import{getString as f}from"@moodle/lms/core/stringUtils";import{requireAsync as c}from"@moodle/lms/core/amd";/**
  * The core/deprecated module allows you to mark things as deprecated and warn appropriately.
  *
  * It emits a console error for non-final deprecations, or throws an Error for final ones.

@@ -35,7 +35,7 @@
  */
 
 import config from '@moodle/lms/core/config';
-import {getString} from '@moodle/lms/core/String';
+import {getString} from '@moodle/lms/core/stringUtils';
 import {requireAsync} from '@moodle/lms/core/amd';
 
 /** Options accepted by {@link emitDeprecation}. */

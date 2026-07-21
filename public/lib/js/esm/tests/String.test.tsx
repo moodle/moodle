@@ -21,7 +21,8 @@
  */
 
 import {render, screen, act} from '@testing-library/react';
-import String, {getString, getStrings, getRequestedStrings, cacheStrings} from '@moodle/lms/core/String';
+import String from '@moodle/lms/core/String';
+import {getString, getStrings, getRequestedStrings, cacheStrings} from '@moodle/lms/core/stringUtils';
 import * as Ajax from '@moodle/lms/core/ajax';
 
 describe('@moodle/lms/core/String', () => {
@@ -221,6 +222,24 @@ describe('@moodle/lms/core/String', () => {
             });
 
             expect(screen.getByText('Save')).toBeInTheDocument();
+        });
+    });
+
+    describe('params', () => {
+        beforeEach(() => {
+            // Restore the original implementation so that params are actually forwarded to
+            // M.util.get_string, rather than being ignored by the globally-mocked implementation.
+            (getRequestedStrings as jest.Mock).mockRestore();
+        });
+
+        it('forwards params through to the resolved string', async() => {
+            mockString('welcome', 'core', 'Welcome, {$a}!');
+
+            await act(async() => {
+                render(<String identifier="welcome" component="core" params="Alice" />);
+            });
+
+            expect(screen.getByText('Welcome, Alice!')).toBeInTheDocument();
         });
     });
 });
