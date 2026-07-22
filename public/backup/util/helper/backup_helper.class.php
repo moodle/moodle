@@ -22,6 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
+require_once($CFG->dirroot . '/backup/backup.class.php');
+
 /**
  * Base abstract class for all the helper classes providing various operations
  *
@@ -439,10 +444,7 @@ abstract class backup_helper {
      * @return bool True if any backup/restore operation is pending for this course, false otherwise
      */
     public static function is_async_pending_for_course(int $courseid): bool {
-        global $DB, $CFG;
-
-        require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
-        require_once($CFG->dirroot . '/backup/backup.class.php');
+        global $DB;
 
         // Check for course-, section- and activity-level backup/restore operations in a single query.
         // - Course level: the controller item is the course itself.
