@@ -18,14 +18,13 @@ function SHORTFORMS() {
 var SELECTORS = {
         COLLAPSED: '.collapsed',
         FIELDSETCOLLAPSIBLE: 'fieldset.collapsible',
-        FIELDSETLEGENDLINK: 'fieldset.collapsible .fheader',
         FHEADER: '.fheader',
+        FCONTAINER: '.fcontainer',
         LEGENDFTOGGLER: 'legend.ftoggler'
     },
     CSS = {
-        COLLAPSEALL: 'collapse-all',
         COLLAPSED: 'collapsed',
-        FHEADER: 'fheader'
+        SHOW: 'show'
     },
     ATTRS = {};
 
@@ -67,55 +66,46 @@ Y.extend(SHORTFORMS, Y.Base, {
         // Stores the form in the object.
         this.form = form;
 
-        // Subscribe collapsible fieldsets and buttons to click events.
-        form.delegate('click', this.switch_state, SELECTORS.FIELDSETLEGENDLINK, this);
+        // Keep each fieldset's hidden "is it expanded" status field in sync with its actual
+        // container visibility. This observes the container's own "show" class directly,
+        // rather than reacting to a click or to a Bootstrap collapse event, so it works no
+        // matter how the section was expanded/collapsed (a direct click, or "Expand
+        // all"/"Collapse all") and regardless of Bootstrap version. Bootstrap 5 delegates its
+        // own collapse click handling in the capture phase, so it always runs before a
+        // bubble-phase handler attached here on the same click - but Bootstrap 4 (jQuery)
+        // delegates in the bubble phase, where that order is reversed. Reacting to the click
+        // itself is therefore not reliable across versions, whereas the "show" class, and what
+        // it means, has been stable since Bootstrap 3.
+        form.all(SELECTORS.FIELDSETCOLLAPSIBLE).each(function(fieldset) {
+            var container = fieldset.one(SELECTORS.FCONTAINER);
+            if (!container) {
+                return;
+            }
+            var observer = new MutationObserver(function() {
+                this.set_state(fieldset, !container.hasClass(CSS.SHOW));
+            }.bind(this));
+            observer.observe(container.getDOMNode(), {attributes: true, attributeFilter: ['class']});
+        }, this);
 
         // Handle event, when there's an error in collapsed section.
         Y.Global.on(M.core.globalEvents.FORM_ERROR, this.expand_fieldset, this);
     },
 
     /**
-     * Set the collapsed state for the specified fieldset.
+     * Record the expanded state for the specified fieldset in its hidden status field.
      *
      * @method set_state
      * @param {Node} fieldset The Node relating to the fieldset to set state on.
-     * @param {Boolean} [collapsed] Whether the fieldset is collapsed.
-     * @chainable
+     * @param {Boolean} collapsed Whether the fieldset is now collapsed.
      */
     set_state: function(fieldset, collapsed) {
-        var headerlink = fieldset.one(SELECTORS.FHEADER);
-        if (collapsed) {
-            fieldset.addClass(CSS.COLLAPSED);
-            if (headerlink) {
-                headerlink.setAttribute('aria-expanded', 'false');
-            }
-        } else {
-            fieldset.removeClass(CSS.COLLAPSED);
-            if (headerlink) {
-                headerlink.setAttribute('aria-expanded', 'true');
-            }
-        }
         var statuselement = this.form.one('input[name=mform_isexpanded_' + fieldset.get('id') + ']');
         if (!statuselement) {
-            Y.log("M.form.shortforms::switch_state was called on an fieldset without a status field: '" +
+            Y.log("M.form.shortforms::set_state was called on an fieldset without a status field: '" +
                 fieldset.get('id') + "'", 'debug', 'moodle-form-shortforms');
-            return this;
+            return;
         }
         statuselement.set('value', collapsed ? 0 : 1);
-
-        return this;
-    },
-
-    /**
-     * Toggle the state for the fieldset that was clicked.
-     *
-     * @method switch_state
-     * @param {EventFacade} e
-     */
-    switch_state: function(e) {
-        e.preventDefault();
-        var fieldset = e.target.ancestor(SELECTORS.FIELDSETCOLLAPSIBLE);
-        this.set_state(fieldset, !fieldset.hasClass(CSS.COLLAPSED));
     },
 
     /**
