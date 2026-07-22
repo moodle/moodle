@@ -61,6 +61,10 @@
         }
         .dropdown-menu {
             min-width: 235px;
+            max-width: 20rem;
+            @include media-breakpoint-down(sm) {
+                max-width: calc(100vw - 1rem);
+            }
             .carousel-navigation-link {
                 > * {
                     pointer-events: none;
@@ -70,6 +74,9 @@
             .dropdown-item,
             .dropdown-item-text {
                 padding: .25rem 1.75rem .25rem .75rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 &.carousel-navigation-link::after {
                     font: var(--fa-font-solid);
                     content: fa-content($fa-var-caret-right);

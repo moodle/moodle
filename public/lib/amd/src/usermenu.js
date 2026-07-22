@@ -22,8 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {Carousel} from 'bootstrap';
+import {Carousel, Tooltip} from 'bootstrap';
 import {space, enter} from 'core/key_codes';
+import {debounce} from 'core/utils';
 
 /**
  * User menu constants.
@@ -34,6 +35,8 @@ const selectors = {
     userMenuCarouselItem: '.usermenu #usermenu-carousel .carousel-item',
     userMenuCarouselItemActive: '.usermenu #usermenu-carousel .carousel-item.active',
     userMenuCarouselNavigationLink: '.usermenu #usermenu-carousel .carousel-navigation-link',
+    userMenuDropdown: '.usermenu .dropdown-menu',
+    dropdownItem: '.dropdown-menu .dropdown-item',
 };
 
 /**
@@ -59,6 +62,9 @@ const registerEventListeners = () => {
                 element.style.height = activeCarouselItem.offsetHeight + 'px';
             }
         });
+
+        // Initialize the user menu truncation tooltips.
+        initTruncationTooltips(userMenu);
     });
 
     // Handle click events in the user menu.
@@ -79,6 +85,9 @@ const registerEventListeners = () => {
             carouselManagement(e);
         }
     });
+
+    // Handle the resize event to (re)initialize the user menu tooltips truncation.
+    window.addEventListener('resize', debounce(() => initTruncationTooltips(userMenu), 400));
 
     /**
      * We do the same actions here even if the caller was a click or button press.
@@ -114,6 +123,37 @@ const registerEventListeners = () => {
         const activeCarouselItem = userMenu.querySelector(selectors.userMenuCarouselItemActive);
         // Set the focus on the newly activated carousel item.
         activeCarouselItem.focus();
+    });
+};
+
+/**
+ * Initialize the user menu truncation tooltips.
+ *
+ * @param {HTMLElement} userMenu The user menu element.
+ */
+const initTruncationTooltips = (userMenu) => {
+    // Truncation tooltips are only initialized when the user menu dropdown is open.
+    const dropdownMenu = userMenu.querySelector(selectors.userMenuDropdown);
+    if (!dropdownMenu.classList.contains('show')) {
+        return;
+    }
+
+    const userMenuDropdownItems = userMenu.querySelectorAll(selectors.dropdownItem);
+    userMenuDropdownItems.forEach(item => {
+        const existingTooltip = Tooltip.getInstance(item);
+        if (item.offsetWidth < item.scrollWidth) {
+            if (!existingTooltip) {
+                new Tooltip(item, {title: item.textContent, placement: 'left'});
+            }
+        } else {
+            existingTooltip?.dispose();
+        }
+
+        // Remove the aria-describedby attribute from the dropdown item once the tooltip is inserted into the DOM.
+        // That prevents the screen readers from reading the content twice (once from the dropdown item and once from the tooltip).
+        item.addEventListener('inserted.bs.tooltip', () => {
+            item.removeAttribute('aria-describedby');
+        });
     });
 };
 
