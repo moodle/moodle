@@ -1,5 +1,13 @@
 # core_webservice (subsystem / plugintype) Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- New "allowcorsrequests" property in external functions definition for allowing specific AJAX Web Services to support CORS
+
+  For more information see [MDL-87150](https://tracker.moodle.org/browse/MDL-87150)
+
 ## 5.2
 
 ### Changed

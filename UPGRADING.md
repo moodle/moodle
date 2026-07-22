@@ -422,6 +422,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-88938](https://tracker.moodle.org/browse/MDL-88938)
 
+### core_webservice
+
+#### Added
+
+- New "allowcorsrequests" property in external functions definition for allowing specific AJAX Web Services to support CORS
+
+  For more information see [MDL-87150](https://tracker.moodle.org/browse/MDL-87150)
+
 ### block_myoverview
 
 #### Changed
