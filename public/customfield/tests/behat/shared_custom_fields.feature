@@ -15,6 +15,23 @@ Feature: Create shared categories and fields
     And I wait until the page is ready
     And I wait until "Other fields" "text" does not exist
 
+  @accessibility
+  Scenario: Create categories for shared custom fields using keyboard
+    Given I log in as "admin"
+    And I navigate to "Custom fields > Shared custom fields" in site administration
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
+    And I press the tab key
+    And I click on "Skip to main content" "link"
+    And I press the tab key
+    And the focused element is "Add a new category" "button"
+    When I press the space key
+    Then I wait until "Other fields" "text" exists
+    And I press the tab key
+    And the focused element is "Add a new category" "button"
+    And I press enter
+    And I wait until "Other fields 1" "text" exists
+    And the "region-main" "region" should meet accessibility standards with "best-practice" extra tests
+
   Scenario: Shared custom field short name must be unique across all instance fields
     Given the following "custom field categories" exist:
       | name                | component        | area   | itemid |
