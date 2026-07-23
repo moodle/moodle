@@ -17,6 +17,7 @@ namespace mod_bigbluebuttonbn\local;
 
 use backup;
 use backup_controller;
+use core_component;
 use mod_bigbluebuttonbn\broker;
 use mod_bigbluebuttonbn\completion\custom_completion;
 use mod_bigbluebuttonbn\extension;
@@ -62,6 +63,26 @@ final class extension_test extends \advanced_testcase {
     public function tearDown(): void {
         $this->uninstall_fake_plugin('simple');
         parent::tearDown();
+    }
+
+    /**
+     * Test fake plugins are loaded before existing subplugins.
+     *
+     * @covers \mod_bigbluebuttonbn\test\subplugins_test_helper_trait::setup_fake_plugin
+     */
+    public function test_setup_fake_plugin_prepends_to_existing_subplugins(): void {
+        $this->setup_fake_plugin('complex');
+        $this->resetDebugging();
+
+        try {
+            $plugins = core_component::get_plugin_list(extension::BBB_EXTENSION_PLUGIN_NAME);
+            $this->assertSame('complex', array_key_first($plugins));
+
+            $subplugins = core_component::get_subplugins('mod_bigbluebuttonbn');
+            $this->assertSame('complex', $subplugins[extension::BBB_EXTENSION_PLUGIN_NAME][0]);
+        } finally {
+            $this->uninstall_fake_plugin('complex');
+        }
     }
 
     /**
