@@ -130,12 +130,6 @@ export default class Component extends BaseComponent {
             toogleAll.setAttribute('aria-controls', collapseElementIds.join(' '));
 
             this.addEventListener(toogleAll, 'click', this._allSectionToggler);
-            this.addEventListener(toogleAll, 'keydown', e => {
-                // Collapse/expand all sections when Space key is pressed on the toggle button.
-                if (e.key === ' ') {
-                    this._allSectionToggler(e);
-                }
-            });
             this._refreshAllSectionsToggler(state);
         }
 

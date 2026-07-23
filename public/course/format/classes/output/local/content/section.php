@@ -333,10 +333,6 @@ class section implements named_templatable, renderable {
             !$section->is_delegated()
         );
 
-        if ($data->num === 0 && !$data->iscoursedisplaymultipage) {
-            $data->collapsemenu = true;
-        }
-
         $data->contentcollapsed = $this->is_section_collapsed();
 
         if ($format->is_section_current($section)) {

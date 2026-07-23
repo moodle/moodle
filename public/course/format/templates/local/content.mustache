@@ -21,6 +21,7 @@
 
     Example context (json):
     {
+        "collapsemenu": true,
         "initialsection": {
                 "num": 0,
                 "id": 34,
@@ -172,7 +173,26 @@
 <div id="course-format-{{uniqid}}">
     <h2 class="accesshide">{{{title}}}</h2>
     {{{completionhelp}}}
-    <ul class="{{format}} section-list" data-for="course_sectionlist">
+    {{#collapsemenu}}
+        <div class="d-flex justify-content-end mb-1">
+            <button type="button"
+                    id="collapsesections"
+                    class="section-collapsemenu aabtn"
+                    aria-expanded="true"
+                    data-toggle="toggleall"
+            >
+                <span class="collapseall text-nowrap">
+                    {{#pix}} t/collapseall, core {{/pix}}
+                    <span class="collapsemenu-text">{{#str}}collapseall{{/str}}</span>
+                </span>
+                <span class="expandall text-nowrap">
+                    {{#pix}} t/expandall, core {{/pix}}
+                    <span class="collapsemenu-text">{{#str}}expandall{{/str}}</span>
+                </span>
+            </button>
+        </div>
+    {{/collapsemenu}}
+    <ul class="{{format}} section-list{{#collapsemenu}} has-collapsemenu{{/collapsemenu}}" data-for="course_sectionlist">
         {{#initialsection}}
             {{$ core_courseformat/local/content/section }}
                 {{> core_courseformat/local/content/section }}
