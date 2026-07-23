@@ -21,7 +21,7 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  * });
  */
 import config from "@moodle/lms/core/config";
-import { getString } from "@moodle/lms/core/String";
+import { getString } from "@moodle/lms/core/stringUtils";
 import { requireAsync } from "@moodle/lms/core/amd";
 const getMessage = /* @__PURE__ */ __name((thing, alternativeNotice, replacement, since, reason, mdl) => {
   const parts = [];

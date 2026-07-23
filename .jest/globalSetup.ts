@@ -21,8 +21,7 @@
  */
 
 import {requireAsync, requireManyAsync} from '@moodle/lms/core/amd';
-import {resetStringCache} from '@moodle/lms/core/String';
-import * as String from '@moodle/lms/core/String';
+import * as stringUtils from '@moodle/lms/core/stringUtils';
 import * as Ajax from '@moodle/lms/core/ajax';
 import { AjaxOptions, AjaxRequest } from '@moodle/lms/core/ajax';
 
@@ -156,7 +155,7 @@ beforeEach(() => {
 
     (globalThis as any).M.str = {};
 
-    resetStringCache();
+    stringUtils.resetStringCache();
 
     // Provide a mock implementation for requireAsync to return mocked modules when requested.
     // If a module is not mocked, it throws an error to indicate an unexpected call.
@@ -193,7 +192,7 @@ beforeEach(() => {
         }),
     });
 
-    const getRequestedStringsSpy = jest.spyOn(String, 'getRequestedStrings');
+    const getRequestedStringsSpy = jest.spyOn(stringUtils, 'getRequestedStrings');
     (getRequestedStringsSpy as jest.SpyInstance).mockImplementation((requests: {key: string; component: string; param?: unknown}[]) => {
         return requests.map(({key, component}) => {
             const mapKey = `${component}:${key}`;

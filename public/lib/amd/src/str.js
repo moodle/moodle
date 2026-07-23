@@ -16,8 +16,8 @@
 /**
  * Fetch and return language strings.
  *
- * This is a backward-compatibility shim that delegates to the ESM String module.
- * New code should import from '@moodle/lms/core/String' directly.
+ * This is a backward-compatibility shim that delegates to the ESM stringUtils module.
+ * New code should import from '@moodle/lms/core/stringUtils' directly.
  *
  * @module     core/str
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
@@ -25,7 +25,7 @@
  * @since      2.9
  */
 import $ from 'jquery';
-import Str from 'core/esm!@moodle/lms/core/String';
+import stringUtils from 'core/esm!@moodle/lms/core/stringUtils';
 
 /**
  * @typedef StringRequest
@@ -82,7 +82,7 @@ export const get_string = (key, component, param, lang) => {
  * .then((str) => window.console.log(str)); // Cannot find teacher
  */
 export const getString = (key, component, param, lang) =>
-    Str.getRequestedStrings([{key, component, param, lang}])[0];
+    stringUtils.getRequestedStrings([{key, component, param, lang}])[0];
 
 /**
  * Make a batch request to load a set of strings.
@@ -93,7 +93,7 @@ export const getString = (key, component, param, lang) =>
  * @param {Array.<StringRequest>} requests List of strings to fetch
  * @return {Promise<string[]>} A native promise containing an array of the translated strings
  */
-export const getStrings = (requests) => Str.getStrings(requests);
+export const getStrings = (requests) => stringUtils.getStrings(requests);
 
 /**
  * Internal function to perform the string requests.
@@ -101,7 +101,7 @@ export const getStrings = (requests) => Str.getStrings(requests);
  * @param {Array.<StringRequest>} requests List of strings to fetch
  * @returns {Promise[]}
  */
-const getRequestedStrings = (requests) => Str.getRequestedStrings(requests);
+const getRequestedStrings = (requests) => stringUtils.getRequestedStrings(requests);
 
 /**
  * Make a batch request to load a set of strings.
@@ -157,5 +157,5 @@ export const get_strings = (requests) => {
  * @param {string} [strings.lang] The language to fetch a string for. Defaults to current page language.
  */
 // eslint-disable-next-line camelcase
-export const cache_strings = (strings) => Str.cacheStrings(strings);
+export const cache_strings = (strings) => stringUtils.cacheStrings(strings);
 /* eslint-enable no-restricted-properties */
