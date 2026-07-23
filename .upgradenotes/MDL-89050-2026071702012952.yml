@@ -1,0 +1,9 @@
+issueNumber: MDL-89050
+notes:
+  theme_boost:
+    - message: >-
+        The course index drawer now shows a single collapse/expand all toggle
+        button instead of a dropdown menu. The `drawerheadercontent` block in
+        `theme_boost/drawer` has been removed and replaced with a new
+        `drawercontrols` block.
+      type: changed

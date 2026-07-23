@@ -32,8 +32,8 @@ $divider-hover-color: $primary !default;
     }
 }
 
-// Expand all/Collapse all.
-.section-collapsemenu {
+// Expand all/Collapse all toggle state.
+@mixin collapsemenu-toggle {
     .collapseall {
         display: block;
     }
@@ -51,6 +51,17 @@ $divider-hover-color: $primary !default;
             display: block;
         }
     }
+}
+
+// Expand all/Collapse all toggle in the section header.
+.section-collapsemenu {
+    @include collapsemenu-toggle;
+}
+
+// Expand all/Collapse all toggle in the course index drawer.
+.courseindex-collapsemenu {
+    @include collapsemenu-toggle;
+    color: $gray-700;
 }
 
 // Max sections reached alert.

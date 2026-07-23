@@ -186,6 +186,8 @@ $right-drawer-width: 320px;
     position: fixed;
     height: 100vh;
     top: 0;
+    display: flex;
+    flex-direction: column;
 
     &.not-initialized {
         display: none;
@@ -220,7 +222,7 @@ $right-drawer-width: 320px;
             visibility: visible;
         }
 
-        .drawerheader {
+        .drawerheadertop {
             flex-direction: row-reverse;
         }
 
@@ -446,11 +448,13 @@ $right-drawer-width: 320px;
 }
 
 .drawerheader {
-    padding: 0;
-    height: $navbar-height;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    .drawerheadertop {
+        padding: 0;
+        height: $navbar-height;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
     .sitename {
         overflow: hidden;
         white-space: nowrap;
@@ -458,8 +462,6 @@ $right-drawer-width: 320px;
         margin-right: 16px;
     }
     .draweractions {
-        display: flex;
-        gap: map-get($spacers, 1);
         margin-left: map-get($spacers, 2);
         .btn {
             --#{$prefix}btn-color: #{$gray-700};
@@ -489,7 +491,9 @@ $right-drawer-width: 320px;
 .drawercontent {
     position: relative;
     z-index: -1;
-    height: calc(100% - #{$navbar-height});
+    flex: 1 1 0;
+    min-height: 0;
+    height: auto;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;

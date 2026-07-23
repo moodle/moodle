@@ -214,9 +214,8 @@ Feature: Course index depending on role
     And I should see "Section 3" in the "courseindex-content" "region"
     And I should see "Activity sample 3" in the "courseindex-content" "region"
     # Collapse all sections
-    And I click on "Course index options" "button" in the "#courseindexdrawercontrols" "css_element"
+    And I click on "Collapse all" "button" in the "courseindexdrawercontrols" "region"
     And the page should meet accessibility standards
-    And I click on "Collapse all" "link" in the "#courseindexdrawercontrols" "css_element"
     And I should see "Section 1" in the "courseindex-content" "region"
     And I should not see "Activity sample 1" in the "courseindex-content" "region"
     And I should see "Section 2" in the "courseindex-content" "region"
@@ -224,14 +223,44 @@ Feature: Course index depending on role
     And I should see "Section 3" in the "courseindex-content" "region"
     And I should not see "Activity sample 3" in the "courseindex-content" "region"
     # Expand all sections
-    And I click on "Course index options" "button" in the "#courseindexdrawercontrols" "css_element"
-    And I click on "Expand all" "link" in the "#courseindexdrawercontrols" "css_element"
+    And I click on "Expand all" "button" in the "courseindexdrawercontrols" "region"
     And I should see "Section 1" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
     And I should see "Section 2" in the "courseindex-content" "region"
     And I should see "Activity sample 2" in the "courseindex-content" "region"
     And I should see "Section 3" in the "courseindex-content" "region"
     And I should see "Activity sample 3" in the "courseindex-content" "region"
+    # Mixed state with only section 1 collapsed so toggle should still show "Collapse all".
+    And I click on "Collapse" "link" in the ".courseindex-section[data-number='1']" "css_element"
+    And I should not see "Activity sample 1" in the "courseindex-content" "region"
+    And I should see "Activity sample 2" in the "courseindex-content" "region"
+    And I should see "Activity sample 3" in the "courseindex-content" "region"
+    And I should see "Collapse all" in the "courseindexdrawercontrols" "region"
+    And I should not see "Expand all" in the "courseindexdrawercontrols" "region"
+
+  @javascript
+  Scenario: Adding a section updates the toggle button state
+    Given I am on the "Course 1" course page logged in as teacher1
+    And I turn editing mode on
+    And I click on "Collapse all" "button" in the "courseindexdrawercontrols" "region"
+    # New section is expanded by default so toggle switches back to "Collapse all".
+    When I click on "Add section" "link" in the "course-addsection" "region"
+    Then I should see "New section" in the "courseindex-content" "region"
+    And I should see "Collapse all" in the "courseindexdrawercontrols" "region"
+    But I should not see "Expand all" in the "courseindexdrawercontrols" "region"
+
+  @javascript
+  Scenario: Deleting a section updates the toggle button state
+    Given I am on the "Course 1" course page logged in as teacher1
+    And I turn editing mode on
+    And I click on "Collapse all" "button" in the "courseindexdrawercontrols" "region"
+    # Expand section 4 to create a mixed state.
+    And I click on "Expand" "link" in the ".courseindex-section[data-number='4']" "css_element"
+    # Delete the only expanded section so the toggle should revert to "Expand all".
+    When I delete section "4"
+    And I click on "Delete" "button" in the "Delete section?" "dialogue"
+    Then I should see "Expand all" in the "courseindexdrawercontrols" "region"
+    But I should not see "Collapse all" in the "courseindexdrawercontrols" "region"
 
   @javascript
   Scenario: Course index section preferences
