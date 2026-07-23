@@ -136,6 +136,12 @@ $string['supportmessagealternative'] = 'Instead you can email {$a}.';
 $string['target:upcomingactivitiesdue'] = 'Upcoming activities due';
 $string['target:upcomingactivitiesdue_help'] = 'This target generates reminders for upcoming activities due.';
 $string['target:upcomingactivitiesdueinfo'] = 'All upcoming activities due insights are listed here. These students have received these insights directly.';
+$string['user_delete_scope_desc'] = 'Allows access to delete user accounts and related data.';
+$string['user_delete_scope_summary'] = 'Delete user accounts';
+$string['user_read_scope_desc'] = 'Allows site-wide read-only access to user accounts and related data, including user profile and user preferences.';
+$string['user_read_scope_summary'] = 'View user accounts';
+$string['user_write_scope_desc'] = 'Allows create and update access to user accounts and related data, including user profile and user preferences.';
+$string['user_write_scope_summary'] = 'Create and update user accounts';
 $string['usergroupselectorcount'] = '{$a->fullname} ({$a->groupcount})';
 $string['userprofile'] = 'User profile';
 
