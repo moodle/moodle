@@ -29,6 +29,8 @@ use moodle_page;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/fixtures/testable_string_manager_for_current_language_tests.php');
+
 /**
  * Unit tests for current_language() in moodlelib.php.
  *
@@ -146,51 +148,5 @@ final class moodlelib_current_language_test extends \advanced_testcase {
         $this->assertEquals('de', current_language());
 
         testable_string_manager_for_current_language_tests::reset_installed_languages_override();
-    }
-}
-
-
-/**
- * Test helper class for test which need Moodle to think there are other languages installed.
- *
- * @copyright 2022 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class testable_string_manager_for_current_language_tests extends \core_string_manager_standard {
-
-    /** @var array $installedlanguages list of languages which we want to pretend are installed. */
-    protected $installedlanguages;
-
-    /**
-     * Start pretending that the list of installed languages is other than what it is.
-     *
-     * You need to pass in an array like ['en' => 'English', 'fr' => 'French'].
-     *
-     * @param array $installedlanguages the list of languages to assume are installed.
-     */
-    public static function set_fake_list_of_installed_languages(array $installedlanguages): void {
-        global $CFG;
-
-        // Re-create the custom string-manager instance using this class, and force the thing we are overriding.
-        $oldsetting = $CFG->config_php_settings['customstringmanager'] ?? null;
-        $CFG->config_php_settings['customstringmanager'] = self::class;
-        get_string_manager(true)->installedlanguages = $installedlanguages;
-
-        // Reset the setting we overrode.
-        unset($CFG->config_php_settings['customstringmanager']);
-        if ($oldsetting) {
-            $CFG->config_php_settings['customstringmanager'] = $oldsetting;
-        }
-    }
-
-    /**
-     * Must be called at the end of any test which called set_fake_list_of_installed_languages to reset things.
-     */
-    public static function reset_installed_languages_override(): void {
-        get_string_manager(true);
-    }
-
-    public function get_list_of_translations($returnall = false) {
-        return $this->installedlanguages;
     }
 }
