@@ -66,6 +66,49 @@ if ($hassiteconfig || has_capability('moodle/site:configview', context_system::i
         }
         $premiumfeaturesurl = (new moodle_url("/admin/settings.php", ['section' => 'premiumfeatures']))->out(true);
     }
+
+    // Contextual Premium plan promotions at the top of related core settings pages.
+    if ($hassiteconfig && !during_initial_install() && !$ispremiumplan) {
+        $subscriptionurl = (new moodle_url('/admin/tool/mobile/subscription.php'))->out(false);
+
+        $haslogos = !empty(get_config('core_admin', 'logo')) || !empty(get_config('core_admin', 'logocompact'));
+        if ($haslogos && ($logospage = $ADMIN->locate('logos'))) {
+            $logospage->add(
+                new admin_setting_heading(
+                    'tool_mobile/logospromotion',
+                    '',
+                    $OUTPUT->render_from_template('tool_mobile/feature_banner', [
+                        'iconclass' => 'fa-solid fa-mobile-screen-button',
+                        'title' => get_string('logocanappearapp', 'tool_mobile'),
+                        'message' => get_string('logocanappearapp_desc', 'tool_mobile'),
+                        'buttonstr' => get_string('learnmore', 'tool_mobile'),
+                        'buttonurl' => $subscriptionurl,
+                        'animation' => 1,
+                        'animationtemplatelogo' => 1,
+                    ]),
+                ),
+                'core_adminlogo',
+            );
+        }
+
+        if (api::has_matomo_additional_html() && ($additionalhtmlpage = $ADMIN->locate('additionalhtml'))) {
+            $additionalhtmlpage->add(
+                new admin_setting_heading(
+                    'tool_mobile/matomopromotion',
+                    '',
+                    $OUTPUT->render_from_template('tool_mobile/feature_banner', [
+                        'iconclass' => 'fa-solid fa-chart-line',
+                        'title' => get_string('matomocantrackapp', 'tool_mobile'),
+                        'message' => get_string('matomocantrackapp_desc', 'tool_mobile'),
+                        'buttonstr' => get_string('learnmore', 'tool_mobile'),
+                        'buttonurl' => $subscriptionurl,
+                    ]),
+                ),
+                'additionalhtml_heading',
+            );
+        }
+    }
+
     // Setting pages group.
     $ismobilewsdisabled = empty($CFG->enablemobilewebservice);
     $ADMIN->add(

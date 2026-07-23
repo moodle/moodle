@@ -1,0 +1,13 @@
+issueNumber: MDL-89302
+notes:
+  core_admin:
+    - message: >-
+        The settings page add() method (\core_admin\setting\settingpage\settingpage,
+        also known as admin_settingpage) now accepts an optional $beforesibling
+        parameter. When given the name of an existing setting on the page (including
+        its plugin prefix, if any), the new setting is inserted before that sibling
+        instead of being appended at the end, mirroring the behaviour of the admin
+        tree add() method. Plugins subclassing admin_settingpage and overriding
+        add() must update their method signature to remain compatible, for example
+        `public function add($setting, ?string $beforesibling = null)`.
+      type: changed
