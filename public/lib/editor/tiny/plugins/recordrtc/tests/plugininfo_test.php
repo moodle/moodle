@@ -30,13 +30,12 @@ use advanced_testcase;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class plugininfo_test extends advanced_testcase {
-
     /**
      * Basic setup for tests.
      */
     public function setUp(): void {
         parent::setUp();
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
     }
 
     /**
@@ -49,8 +48,6 @@ final class plugininfo_test extends advanced_testcase {
      * @return void
      */
     public function test_for_external(bool $guest, bool $expectedenabled, array $expectedconfiguration): void {
-        global $CFG;
-
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $context = \context_system::instance();
@@ -59,9 +56,26 @@ final class plugininfo_test extends advanced_testcase {
         } else {
             $this->setGuestUser();
         }
+        $expectedconfiguration['maxrecsize'] = get_user_max_upload_file_size($context);
 
         $this->assertEquals($expectedenabled, plugininfo::is_enabled_for_external($context, ['pluginname' => 'recordrtc']));
         $this->assertEquals($expectedconfiguration, plugininfo::get_plugin_configuration_for_external($context));
+    }
+
+    /**
+     * Test that the get_plugin_configuration_for_external method returns -1 for maxrecsize
+     * when the user has the 'moodle/course:ignorefilesizelimits' capability.
+     */
+    public function test_for_external_with_ignore_limits_capability(): void {
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $context = \context_system::instance();
+        $roleid = $generator->create_role();
+        assign_capability('moodle/course:ignorefilesizelimits', CAP_ALLOW, $roleid, $context->id);
+        role_assign($roleid, $user->id, $context->id);
+        $this->setUser($user);
+        $config = plugininfo::get_plugin_configuration_for_external($context);
+        $this->assertSame('-1', $config['maxrecsize']);
     }
 
     /**
@@ -79,7 +93,6 @@ final class plugininfo_test extends advanced_testcase {
             'audiotimelimit' => get_config('tiny_recordrtc', 'audiotimelimit'),
             'videotimelimit' => get_config('tiny_recordrtc', 'videotimelimit'),
             'screentimelimit' => get_config('tiny_recordrtc', 'screentimelimit'),
-            'maxrecsize' => (string) get_max_upload_file_size(),
             'videoscreenwidth' => explode(',', get_config('tiny_recordrtc', 'screensize'))[0],
             'videoscreenheight' => explode(',', get_config('tiny_recordrtc', 'screensize'))[1],
             'audiortcformat' => (string) get_config('tiny_recordrtc', 'audiortcformat'),

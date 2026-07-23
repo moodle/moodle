@@ -115,7 +115,7 @@ class plugininfo extends plugin implements
             }
         }
 
-        $maxrecsize = get_max_upload_file_size();
+        $maxrecsize = get_user_max_upload_file_size($context);
         if (!empty($options['maxbytes'])) {
             $maxrecsize = min($maxrecsize, $options['maxbytes']);
         }
