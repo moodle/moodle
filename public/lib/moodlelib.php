@@ -9711,52 +9711,25 @@ function is_mnet_remote_user($user) {
 function setup_lang_from_browser() {
     global $CFG, $SESSION, $USER;
 
+    // Lang is defined in session or user profile, nothing to do.
     if (!empty($SESSION->lang) or !empty($USER->lang) or empty($CFG->autolang)) {
-        // Lang is defined in session or user profile, nothing to do.
         return;
     }
 
-    if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) { // There isn't list of browser langs, nothing to do.
+    $lang = \core\lang::match_lang_from_browser_header($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null);
+
+    if (empty($lang)) {
         return;
     }
 
-    // Extract and clean langs from headers.
-    $rawlangs = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-    $rawlangs = str_replace('-', '_', $rawlangs);         // We are using underscores.
-    $rawlangs = explode(',', $rawlangs);                  // Convert to array.
-    $langs = array();
-
-    $order = 1.0;
-    foreach ($rawlangs as $lang) {
-        if (strpos($lang, ';') === false) {
-            $langs[(string)$order] = $lang;
-            $order = $order-0.01;
-        } else {
-            $parts = explode(';', $lang);
-            $pos = strpos($parts[1], '=');
-            $langs[substr($parts[1], $pos+1)] = $parts[0];
-        }
+    // If the translation for this language exists then try to set it
+    // for the rest of the session, if this is a read only session then
+    // we can only set it temporarily in $CFG.
+    if (defined('READ_ONLY_SESSION') && !empty($CFG->enable_read_only_sessions)) {
+        $CFG->lang = $lang;
+    } else {
+        $SESSION->lang = $lang;
     }
-    krsort($langs, SORT_NUMERIC);
-
-    // Look for such langs under standard locations.
-    foreach ($langs as $lang) {
-        // Clean it properly for include.
-        $lang = strtolower(clean_param($lang, PARAM_SAFEDIR));
-        if (get_string_manager()->translation_exists($lang, false)) {
-            // If the translation for this language exists then try to set it
-            // for the rest of the session, if this is a read only session then
-            // we can only set it temporarily in $CFG.
-            if (defined('READ_ONLY_SESSION') && !empty($CFG->enable_read_only_sessions)) {
-                $CFG->lang = $lang;
-            } else {
-                $SESSION->lang = $lang;
-            }
-            // We have finished. Go out.
-            break;
-        }
-    }
-    return;
 }
 
 /**
