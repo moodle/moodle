@@ -177,7 +177,7 @@ class import_ui_stage_precheck extends backup_ui_stage {
     /**
      * Initialises the backup_moodleform instance for this stage
      *
-     * @return backup_moodleform|void
+     * @return backup_moodleform|null
      */
     public function initialise_stage_form() {
         // Dummy functions. We don't have to do anything here.

@@ -220,7 +220,7 @@ class async_helper  {
      * @param int $id The item id to check in the backup record.
      * @param string $type The type of operation: course, activity or section.
      * @param string $operation Operation backup or restore.
-     * @return boolean $asyncpedning Is there a pending async operation.
+     * @return bool $asyncpedning Is there a pending async operation.
      */
     public static function is_async_pending($id, $type, $operation) {
         global $DB, $USER, $CFG;
@@ -314,7 +314,7 @@ class async_helper  {
      * to use in backup table UI.
      *
      * @param string $filearea The filearea to get backup data for.
-     * @param integer $instanceid The context id to get backup data for.
+     * @param int $instanceid The context id to get backup data for.
      * @return array $tabledata the rows of table data.
      */
     public static function get_async_backups($filearea, $instanceid) {

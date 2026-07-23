@@ -66,7 +66,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
 
     /**
      * Remaining space for parent directory paths.
-     * @var integer
+     * @var int
      */
     protected $parentcacheavailablesize = 2048;
 
@@ -219,7 +219,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
     /**
      * Get the parent path using a local cache for performance.
      *
-     * @param $path string The pathname you wish to obtain the parent name for.
+     * @param string $path The pathname you wish to obtain the parent name for.
      * @return string The parent pathname.
      */
     protected function get_parent_path($path) {

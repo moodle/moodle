@@ -568,7 +568,7 @@ abstract class backup_controller_dbops extends backup_dbops {
     /**
      * Given the courseid, return some course related information we want to transport
      *
-     * @param int $course the id of the course this backup belongs to
+     * @param int $courseid the id of the course this backup belongs to
      */
     public static function backup_get_original_course_info($courseid) {
         global $DB;
@@ -713,7 +713,7 @@ abstract class backup_controller_dbops extends backup_dbops {
      *
      * @param backup_controller $controller
      * @param array $settings a map from admin config names to setting names (Config name => Setting name)
-     * @param boolean $uselocks whether "locked" admin settings should be honoured
+     * @param bool $uselocks whether "locked" admin settings should be honoured
      */
     private static function apply_admin_config_defaults(backup_controller $controller, array $settings, $uselocks) {
         $plan = $controller->get_plan();

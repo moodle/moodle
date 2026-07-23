@@ -106,7 +106,7 @@ abstract class cc_converter {
      *
      * performs conversion
      * @param string $outdir - root directory of common cartridge
-     * @return boolean
+     * @return bool
      */
     abstract public function convert($outdir);
 

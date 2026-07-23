@@ -69,7 +69,7 @@ final class error_messages {
     }
 
     /**
-     * @param boolean $web
+     * @param bool $web
      * @return string
      */
     public function to_string($web = false) {
@@ -106,12 +106,12 @@ final class error_messages {
 
 final class libxml_errors_mgr {
     /**
-     * @var boolean
+     * @var bool
      */
     private $previous = false;
 
     /**
-     * @param boolean $reset
+     * @param bool $reset
      */
     public function __construct($reset=false){
         if ($reset) {
@@ -207,7 +207,7 @@ class cc_validate_type {
     /**
      * Validates the item
      * @param  string $element - File path for the xml
-     * @return boolean
+     * @return bool
      */
     public function validate($element) {
         $celement   = realpath($element);

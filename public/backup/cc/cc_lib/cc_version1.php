@@ -340,7 +340,7 @@ class cc_version1 extends cc_version_base {
      *
      * @param cc_i_metadata_file $met
      * @param DOMDocument $doc
-     * @param Object $xmlnode
+     * @param object $xmlnode
      * @return DOMNode
      */
     protected function create_metadata_file(cc_i_metadata_file $met, DOMDocument &$doc, $xmlnode = null) {

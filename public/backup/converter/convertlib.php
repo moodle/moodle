@@ -53,7 +53,7 @@ abstract class base_converter implements loggable {
      * Constructor
      *
      * @param string $tempdir the relative path to the directory containing the unpacked backup to convert
-     * @param null|base_logger logger to use during the conversion
+     * @param null|base_logger $logger logger to use during the conversion
      */
     public function __construct($tempdir, $logger = null) {
 
@@ -168,7 +168,7 @@ abstract class base_converter implements loggable {
      * This is intended for eventual PHP extensions check, environment check etc.
      * All checks that do not depend on actual backup data should be done here.
      *
-     * @return boolean true if this converter should be considered as available
+     * @return bool true if this converter should be considered as available
      */
     public static function is_available() {
         return true;

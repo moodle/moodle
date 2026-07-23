@@ -294,7 +294,7 @@ abstract class base_setting {
     /**
      * Sets the user interface for this setting
      *
-     * @param base_setting_ui $ui
+     * @param backup_setting_ui $ui
      */
     public function set_ui(backup_setting_ui $ui) {
         $this->uisetting = $ui;
@@ -555,7 +555,7 @@ abstract class base_setting {
 
     /**
      * Returns true if help has been set for this setting
-     * @return cool
+     * @return bool
      */
     public function has_help() {
         return (!empty($this->help));

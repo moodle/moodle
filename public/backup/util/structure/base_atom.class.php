@@ -42,7 +42,6 @@ abstract class base_atom {
      * Constructor - instantiates one base_atom, specifying its basic info.
      *
      * @param string $name name of the element
-     * @param string $value optional value of the element
      */
     public function __construct($name) {
 

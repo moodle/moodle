@@ -31,7 +31,7 @@
 /**
  * Make a Handler error with an exception msg error
  *
- * @param integer $errno
+ * @param int $errno
  * @param string $errstr
  * @param string $errfile
  * @param string $errline

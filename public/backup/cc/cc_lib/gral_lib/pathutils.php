@@ -279,10 +279,11 @@ function search_ident_by_name($array,$name){
  * Function returns files recursivly with appeneded relative path
  *
  * @param string $startDir
+ * @param resource $fhandle
  * @param string $rootDir
  * @param array $excludedirs
  * @param array $excludefileext
- * @return array
+ * @return bool
  */
 function getRawFiles($startDir, &$fhandle, $rootDir='', $excludedirs = null, $excludefileext = null) {
     $result = is_dir($startDir);

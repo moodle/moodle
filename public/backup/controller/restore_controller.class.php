@@ -58,7 +58,7 @@ class restore_controller extends base_controller {
 
     /**
      * Immediate/delayed execution type.
-     * @var integer
+     * @var int
      */
     protected $execution;
     protected $executiontime; // epoch time when we want the restore to be executed (requires cron to run)
@@ -71,7 +71,7 @@ class restore_controller extends base_controller {
     /**
      * Holds the relevant destination information for course copy operations.
      *
-     * @var \stdClass.
+     * @var \stdClass
      */
     protected $copy;
 

@@ -299,7 +299,7 @@ abstract class backup_activity_task extends backup_task {
      * @param int|string $identifier the identifier of the setting
      * @param string $type the type of the setting
      * @param string|int $value the value of the setting
-     * @return section_backup_setting the setting added
+     * @return activity_backup_setting the setting added
      */
     protected function add_section_setting(int|string $identifier, string $type, string|int $value): activity_backup_setting {
         if ($this->is_in_subsection()) {

@@ -255,9 +255,9 @@ abstract class backup_cron_automated_helper {
     /**
      * Loop through courses and push to course ad-hoc task if required
      *
-     * @param \record_set $courses
+     * @param \moodle_recordset $courses
      * @param stdClass $admin
-     * @return boolean
+     * @return bool
      */
     private static function check_and_push_automated_backups($courses, $admin) {
         global $DB;
@@ -316,7 +316,7 @@ abstract class backup_cron_automated_helper {
      * @param stdClass $backupcourse
      * @param stdClass $course
      * @param int $nextstarttime
-     * @return boolean
+     * @return bool
      */
     private static function should_skip_course_backup($backupcourse, $course, $nextstarttime) {
         global $DB;
@@ -577,7 +577,7 @@ abstract class backup_cron_automated_helper {
      * Try to get lock for automated backup.
      * @param int $rundirective
      *
-     * @return \core\lock\lock|boolean - An instance of \core\lock\lock if the lock was obtained, or false.
+     * @return \core\lock\lock|bool - An instance of \core\lock\lock if the lock was obtained, or false.
      */
     public static function get_automated_backup_lock($rundirective = self::RUN_ON_SCHEDULE) {
         $config = get_config('backup');
