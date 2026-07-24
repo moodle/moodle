@@ -1,0 +1,8 @@
+issueNumber: MDL-76966
+notes:
+  assignfeedback_editpdf:
+    - message: >-
+        Fixed multi-page assignment feedback PDF conversion on Windows.
+        Ghostscript's page number placeholder is no longer stripped by
+        escapeshellarg().
+      type: fixed

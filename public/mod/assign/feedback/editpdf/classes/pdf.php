@@ -694,8 +694,9 @@ class pdf extends Fpdi {
             $firstpage = $pagenoinc;
             $lastpage = $pagenoinc;
         } else {
-            // Convert all pages at once.
-            $imagefilearg = \escapeshellarg($imagefile . '%d.png');
+            // Convert all pages at once. Ensure that %d is not replaced by escapeshellarg on Windows systems.
+            $imagefilearg = \escapeshellarg($imagefile);
+            $imagefilearg = substr($imagefilearg, 0, -1) . '%d.png' . substr($imagefilearg, -1);
             $firstpage = 1;
             $lastpage = $this->pagecount;
         }
