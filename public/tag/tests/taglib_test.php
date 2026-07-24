@@ -236,6 +236,99 @@ final class taglib_test extends \advanced_testcase {
     }
 
     /**
+     * Test that cleanup() handles more orphaned instances than the chunk size.
+     *
+     * Regression test for MDL-87395: the id list must be chunked so it never exceeds the
+     * DB parameter limit (e.g. 65535 on PostgreSQL).
+     *
+     * Note: inserting 65535+ rows to reproduce the raw parameter-limit error is impractical here,
+     * so this exercises the multi-chunk path (more rows than core_tag_tag::DELETE_CHUNK_SIZE) to prove
+     * every batch is processed. It guards against a broken or incomplete chunk loop rather than the parameter limit itself.
+     */
+    public function test_cleanup_chunks_large_instance_list(): void {
+        global $DB;
+        $task = new \core\task\tag_cron_task();
+
+        // Insert more orphaned tag instances (pointing to a non-existent tag) than the chunk
+        // size so cleanup() is forced through more than one batch (including a partial last one).
+        $count = core_tag_tag::DELETE_CHUNK_SIZE + 500;
+        $syscontextid = \context_system::instance()->id;
+        $bogustagid = 999999;
+        $records = [];
+        for ($i = 0; $i < $count; $i++) {
+            $records[] = (object) [
+                'tagid' => $bogustagid,
+                'component' => 'core',
+                'itemtype' => 'user',
+                'itemid' => $i + 1,
+                'contextid' => $syscontextid,
+                'tiuserid' => 0,
+                'ordering' => 0,
+                'timecreated' => time(),
+                'timemodified' => time(),
+            ];
+        }
+        $DB->insert_records('tag_instance', $records);
+        $this->assertEquals($count, $DB->count_records('tag_instance', ['tagid' => $bogustagid]));
+
+        // Cleanup should remove them all without hitting the parameter limit.
+        $task->cleanup();
+
+        $this->assertEquals(0, $DB->count_records('tag_instance', ['tagid' => $bogustagid]));
+    }
+
+    /**
+     * Test that delete_tags() handles more tag ids than the chunk size.
+     *
+     * Regression test for MDL-87395: the id list must be chunked so it never exceeds the
+     * DB parameter limit (e.g. 65535 on PostgreSQL).
+     *
+     * Note: inserting 65535+ rows to reproduce the raw parameter-limit error is impractical
+     * here, so this exercises the multi-chunk path (more tags than core_tag_tag::DELETE_CHUNK_SIZE) to prove
+     * every batch is processed. It guards against a broken or incomplete chunk loop rather than the parameter limit itself.
+     */
+    public function test_delete_tags_chunks_large_tag_list(): void {
+        global $DB;
+
+        // Insert more tags than the chunk size so delete_tags() is forced through more than
+        // one batch (including a partial last one).
+        $count = core_tag_tag::DELETE_CHUNK_SIZE + 500;
+        $tagcollid = core_tag_collection::get_default();
+        $records = [];
+        for ($i = 0; $i < $count; $i++) {
+            $records[] = (object) [
+                'userid' => 0,
+                'tagcollid' => $tagcollid,
+                'name' => 'chunktag' . $i,
+                'rawname' => 'chunktag' . $i,
+                'isstandard' => 0,
+                'descriptionformat' => 0,
+                'timemodified' => time(),
+            ];
+        }
+        $DB->insert_records('tag', $records);
+        $tagids = $DB->get_fieldset_select(
+            'tag',
+            'id',
+            $DB->sql_like('name', ':name'),
+            ['name' => 'chunktag%']
+        );
+        $this->assertCount($count, $tagids);
+
+        // Deleting them all must not hit the parameter limit.
+        core_tag_tag::delete_tags($tagids);
+
+        $this->assertEquals(
+            0,
+            $DB->count_records_select(
+                'tag',
+                $DB->sql_like('name', ':name'),
+                ['name' => 'chunktag%']
+            )
+        );
+    }
+
+    /**
      * Test that setting a list of tags for "tag" item type throws exception if userid specified
      */
     public function test_set_item_tags_with_invalid_userid(): void {
