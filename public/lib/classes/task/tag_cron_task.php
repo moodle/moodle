@@ -199,8 +199,9 @@ class tag_cron_task extends scheduled_task {
         $tagareas->close();
 
         // Get instances for each of the ids to be deleted.
-        if (count($tagarray) > 0) {
-            list($sqlin, $params) = $DB->get_in_or_equal($tagarray);
+        // Chunk the ids so we never exceed the database parameter limit (e.g. 65535 on PostgreSQL).
+        foreach (array_chunk($tagarray, core_tag_tag::DELETE_CHUNK_SIZE) as $tagchunk) {
+            [$sqlin, $params] = $DB->get_in_or_equal($tagchunk);
             $sql = "SELECT ti.*, COALESCE(t.name, 'deleted') AS name, COALESCE(t.rawname, 'deleted') AS rawname
                       FROM {tag_instance} ti
                  LEFT JOIN {tag} t ON t.id = ti.tagid
@@ -255,11 +256,10 @@ class tag_cron_task extends scheduled_task {
             $instanceids[] = $instance->id;
         }
 
-        // This is a multi db compatible method of creating the correct sql when using the 'IN' value.
-        // $insql is the sql statement, $params are the id numbers.
-        list($insql, $params) = $DB->get_in_or_equal($instanceids);
-        $sql = 'id ' . $insql;
-        $DB->delete_records_select('tag_instance', $sql, $params);
+        // Chunk the ids so we never exceed the database parameter limit (e.g. 65535 on PostgreSQL).
+        foreach (array_chunk($instanceids, core_tag_tag::DELETE_CHUNK_SIZE) as $idchunk) {
+            $DB->delete_records_list('tag_instance', 'id', $idchunk);
+        }
 
         // Now go through and record each tag individually with the event system.
         foreach ($instances as $instance) {

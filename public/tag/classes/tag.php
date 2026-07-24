@@ -74,6 +74,14 @@ class core_tag_tag {
     /** @var int option to hide standard tags when editing item tags */
     const HIDE_STANDARD = 2;
 
+    /**
+     * @var int batch size for chunking id lists passed to IN () clauses.
+     *
+     * Kept well under the database parameter limit (e.g. 65535 on PostgreSQL) so bulk tag
+     * deletions never exceed it. See MDL-87395.
+     */
+    const DELETE_CHUNK_SIZE = 1000;
+
     /** @var int|null tag context ID. */
     public $taginstancecontextid;
 
@@ -1523,68 +1531,74 @@ class core_tag_tag {
             return;
         }
 
-        // Use the tagids to create a select statement to be used later.
-        list($tagsql, $tagparams) = $DB->get_in_or_equal($tagids);
+        // Chunk the tagids so we never exceed the database parameter limit (e.g. 65535 on PostgreSQL).
+        foreach (array_chunk($tagids, self::DELETE_CHUNK_SIZE) as $tagchunk) {
+            // Use the tagids to create a select statement to be used later.
+            [$tagsql, $tagparams] = $DB->get_in_or_equal($tagchunk);
 
-        // Store the tags and tag instances we are going to delete.
-        $tags = $DB->get_records_select('tag', 'id ' . $tagsql, $tagparams);
-        $taginstances = $DB->get_records_select('tag_instance', 'tagid ' . $tagsql, $tagparams);
+            // Store the tags and tag instances we are going to delete.
+            $tags = $DB->get_records_select('tag', 'id ' . $tagsql, $tagparams);
+            $taginstances = $DB->get_records_select('tag_instance', 'tagid ' . $tagsql, $tagparams);
 
-        // Delete all the tag instances.
-        $select = 'WHERE tagid ' . $tagsql;
-        $sql = "DELETE FROM {tag_instance} $select";
-        $DB->execute($sql, $tagparams);
+            // Delete all the tag instances.
+            $select = 'WHERE tagid ' . $tagsql;
+            $sql = "DELETE FROM {tag_instance} $select";
+            $DB->execute($sql, $tagparams);
 
-        // Delete all the tag correlations.
-        $sql = "DELETE FROM {tag_correlation} $select";
-        $DB->execute($sql, $tagparams);
+            // Delete all the tag correlations.
+            $sql = "DELETE FROM {tag_correlation} $select";
+            $DB->execute($sql, $tagparams);
 
-        // Delete all the tags.
-        $select = 'WHERE id ' . $tagsql;
-        $sql = "DELETE FROM {tag} $select";
-        $DB->execute($sql, $tagparams);
+            // Delete all the tags.
+            $select = 'WHERE id ' . $tagsql;
+            $sql = "DELETE FROM {tag} $select";
+            $DB->execute($sql, $tagparams);
 
-        // Fire an event that these items were untagged.
-        if ($taginstances) {
-            // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
-            $syscontextid = context_system::instance()->id;
-            // Loop through the tag instances and fire a 'tag_removed'' event.
-            foreach ($taginstances as $taginstance) {
-                // We can not fire an event with 'null' as the contextid.
-                if (is_null($taginstance->contextid)) {
-                    $taginstance->contextid = $syscontextid;
+            // Fire an event that these items were untagged.
+            if ($taginstances) {
+                // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
+                $syscontextid = context_system::instance()->id;
+                // Loop through the tag instances and fire a 'tag_removed'' event.
+                foreach ($taginstances as $taginstance) {
+                    // We can not fire an event with 'null' as the contextid.
+                    if (is_null($taginstance->contextid)) {
+                        $taginstance->contextid = $syscontextid;
+                    }
+
+                    // Trigger tag removed event.
+                    \core\event\tag_removed::create_from_tag_instance(
+                        $taginstance,
+                        $tags[$taginstance->tagid]->name,
+                        $tags[$taginstance->tagid]->rawname,
+                        true
+                    )->trigger();
                 }
-
-                // Trigger tag removed event.
-                \core\event\tag_removed::create_from_tag_instance($taginstance,
-                    $tags[$taginstance->tagid]->name, $tags[$taginstance->tagid]->rawname,
-                    true)->trigger();
             }
-        }
 
-        // Fire an event that these tags were deleted.
-        if ($tags) {
-            $context = context_system::instance();
-            foreach ($tags as $tag) {
-                // Delete all files associated with this tag.
-                $fs = get_file_storage();
-                $files = $fs->get_area_files($context->id, 'tag', 'description', $tag->id);
-                foreach ($files as $file) {
-                    $file->delete();
+            // Fire an event that these tags were deleted.
+            if ($tags) {
+                $context = context_system::instance();
+                foreach ($tags as $tag) {
+                    // Delete all files associated with this tag.
+                    $fs = get_file_storage();
+                    $files = $fs->get_area_files($context->id, 'tag', 'description', $tag->id);
+                    foreach ($files as $file) {
+                        $file->delete();
+                    }
+
+                    // Trigger an event for deleting this tag.
+                    $event = \core\event\tag_deleted::create([
+                        'objectid' => $tag->id,
+                        'relateduserid' => $tag->userid,
+                        'context' => $context,
+                        'other' => [
+                            'name' => $tag->name,
+                            'rawname' => $tag->rawname,
+                        ],
+                    ]);
+                    $event->add_record_snapshot('tag', $tag);
+                    $event->trigger();
                 }
-
-                // Trigger an event for deleting this tag.
-                $event = \core\event\tag_deleted::create(array(
-                    'objectid' => $tag->id,
-                    'relateduserid' => $tag->userid,
-                    'context' => $context,
-                    'other' => array(
-                        'name' => $tag->name,
-                        'rawname' => $tag->rawname
-                    )
-                ));
-                $event->add_record_snapshot('tag', $tag);
-                $event->trigger();
             }
         }
 
