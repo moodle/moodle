@@ -847,6 +847,23 @@ class html_writer {
     }
 
     /**
+     * Render the placeholder for a React component.
+     *
+     * @param string $modulename
+     * @param array|string|\stdClass|\JsonSerializable $props An object that can be serialized with `json_encode`
+     * @return string
+     */
+    public static function react_component(
+        string $modulename,
+        array|string|\stdClass|\JsonSerializable $props,
+    ): string {
+        return static::div('', '', [
+            'data-react-component' => $modulename,
+            'data-react-props' => json_encode($props, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+        ]);
+    }
+
+    /**
      * Starts a <div> tag. (Shortcut function.)
      *
      * @param string $class Optional CSS class (or classes as space-separated list)
