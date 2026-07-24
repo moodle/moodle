@@ -139,7 +139,7 @@ $right-drawer-width: 320px;
         position: fixed;
         top: $navbar-height;
         right: 0;
-        height: calc(100% - #{$navbar-height});
+        height: calc(100vh - #{$navbar-height}); // Drawer opens below the navbar, so it doesn't cover it.
         width: $right-drawer-width;
         padding: 0;
         visibility: visible;
@@ -159,13 +159,6 @@ $right-drawer-width: 320px;
 }
 
 @include media-breakpoint-down(md) {
-    [data-region=right-hand-drawer] {
-        &.drawer {
-            top: 0;
-            height: 100%;
-            z-index: $zindex-fixed + 1;
-        }
-    }
     body.drawer-open-left,
     body.drawer-open-right {
         overflow: hidden;
@@ -179,8 +172,12 @@ $right-drawer-width: 320px;
     z-index: $zindex-sticky - 5;
 
     @include media-breakpoint-down(lg) {
-        // In small screens the drawer goes over the top navbar with a modal with a backdrop effect.
-        z-index: $zindex-fixed + 5;
+        // In small screens the drawer acts as a modal with a backdrop effect.
+        // It is displayed below the fixed top navbar so the navbar remains visible and clickable while a drawer is open.
+        // The z-index keeps the drawer above any sticky page content ($zindex-sticky) but below the top navbar ($zindex-fixed).
+        z-index: $zindex-sticky + 1;
+        top: $navbar-height;
+        height: calc(100vh - #{$navbar-height});
     }
 
     position: fixed;

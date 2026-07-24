@@ -32247,7 +32247,7 @@ body.drawer-ease {
   position: fixed;
   top: 50px;
   right: 0;
-  height: calc(100% - 50px);
+  height: calc(100vh - 50px);
   width: 320px;
   padding: 0;
   visibility: visible;
@@ -32267,11 +32267,6 @@ body.drawer-ease {
 }
 
 @media (max-width: 767.98px) {
-  [data-region=right-hand-drawer].drawer {
-    top: 0;
-    height: 100%;
-    z-index: 1031;
-  }
   body.drawer-open-left,
   body.drawer-open-right {
     overflow: hidden;
@@ -32287,7 +32282,9 @@ body.drawer-ease {
 }
 @media (max-width: 991.98px) {
   .drawer {
-    z-index: 1035;
+    z-index: 1021;
+    top: 50px;
+    height: calc(100vh - 50px);
   }
 }
 .drawer.not-initialized {
@@ -32569,7 +32566,9 @@ body.drawer-ease {
 }
 @media (max-width: 991.98px) and (max-width: 991.98px) {
   .drawer-md {
-    z-index: 1035;
+    z-index: 1021;
+    top: 50px;
+    height: calc(100vh - 50px);
   }
 }
 @media (max-width: 991.98px) {
@@ -32678,7 +32677,9 @@ body.drawer-ease {
 }
 @media (max-width: 767.98px) and (max-width: 991.98px) {
   .drawer-sm {
-    z-index: 1035;
+    z-index: 1021;
+    top: 50px;
+    height: calc(100vh - 50px);
   }
 }
 @media (max-width: 767.98px) {

@@ -29,7 +29,6 @@ import {isSmall, isLarge} from 'core/pagehelpers';
 import Pending from 'core/pending';
 import {setUserPreference} from 'core_user/repository';
 import {Tooltip} from 'bootstrap';
-import * as FocusLock from 'core/local/aria/focuslock';
 
 let backdropPromise = null;
 
@@ -43,6 +42,7 @@ const SELECTORS = {
     DRAWERS: '[data-region="fixed-drawer"]',
     DRAWERCONTENT: '.drawercontent',
     PAGECONTENT: '#page-content',
+    NAVBAR: '.navbar.fixed-top',
 };
 
 const CLASSES = {
@@ -465,11 +465,6 @@ export default class Drawers {
             if (focusOnCloseButton) {
                 closeButton.focus();
             }
-            // On small devices, the drawer must have a trap focus once the focus is inside
-            // to prevent the user from focussing on covered elements.
-            if (isSmall()) {
-                FocusLock.trapFocus(this.drawerNode);
-            }
             pendingPromise.resolve();
         }, 300);
 
@@ -526,9 +521,6 @@ export default class Drawers {
                 return;
         });
 
-        if (isSmall()) {
-            FocusLock.untrapFocus();
-        }
         // Move focus to the open drawer (or toggler) button once the drawer is hidden.
         let openButton = getDrawerOpenButton(this.drawerNode.id);
         if (openButton) {
@@ -636,10 +628,14 @@ export default class Drawers {
 
     /**
      * Close all drawers.
+     *
+     * @param {object} [args] Options forwarded to each drawer's closeDrawer call.
+     * @param {boolean} [args.focusOnOpenButton=true] Whether to move focus back to the open button.
+     * @param {boolean} [args.updatePreferences=true] Whether to update the user preference.
      */
-    static closeAllDrawers() {
+    static closeAllDrawers(args = {}) {
         drawerMap.forEach(drawerInstance => {
-            drawerInstance.closeDrawer();
+            drawerInstance.closeDrawer(args);
         });
     }
 
@@ -713,6 +709,14 @@ const focusLastUsedToggle = (target) => {
 };
 
 /**
+ * Whether any drawer is currently open.
+ *
+ * @returns {boolean}
+ * @private
+ */
+const isAnyDrawerOpen = () => [...drawerMap.values()].some(drawerInstance => drawerInstance.isOpen);
+
+/**
  * Register the event listeners for the drawer.
  *
  * @private
@@ -749,6 +753,35 @@ const registerListeners = () => {
             drawerInstance.closeDrawer();
             focusLastUsedToggle(closeDrawerButton.dataset.target);
         }
+
+        // On small screens the drawers open below the navbar (see MDL-89076),
+        // which remains visible and interactive while a drawer is open. Any
+        // interaction with the navbar (search, edit toggle, user menu, etc.),
+        // other than a drawer toggle button, should close the open drawer,
+        // just like clicking the backdrop over the page content does.
+        // Focus is left on the clicked navbar element rather than moved back
+        // to the drawer's open button.
+        if (isSmall() && e.target.closest(SELECTORS.NAVBAR) && !e.target.closest(SELECTORS.BUTTONS)) {
+            if (isAnyDrawerOpen()) {
+                Drawers.closeAllDrawers({focusOnOpenButton: false});
+            }
+        }
+    });
+
+    // On small screens the drawers are not modal: focus is not trapped inside
+    // them (see MDL-89076). Moving keyboard focus out of an open drawer, e.g.
+    // tabbing to the navbar, dismisses it, mirroring how interacting with the
+    // navbar by mouse closes it. Focus stays on the element the user moved to.
+    document.addEventListener('focusin', e => {
+        if (!isSmall() || !isAnyDrawerOpen()) {
+            return;
+        }
+        // Focus staying inside a drawer, or moving onto a drawer toggle button
+        // (whose own handler manages the drawer state), must not dismiss it.
+        if (e.target.closest(SELECTORS.DRAWERS) || e.target.closest(SELECTORS.BUTTONS)) {
+            return;
+        }
+        Drawers.closeAllDrawers({focusOnOpenButton: false});
     });
 
     // Close drawer when another drawer opens.
