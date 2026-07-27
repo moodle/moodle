@@ -76,6 +76,22 @@ Feature: Use the TinyMCE editor to upload an image
     And the field "Width" matches value "102"
 
   @_file_upload
+  Scenario: Re-opening a resized image keeps the saved width and height
+    Given I log in as "admin"
+    And I open my profile in edit mode
+    And I click on the "Image" button for the "Description" TinyMCE editor
+    And I click on "Browse repositories" "button" in the "Insert image" "dialogue"
+    And I upload "lib/editor/tiny/tests/behat/fixtures/moodle-logo.png" to the file picker for TinyMCE
+    And I click on "Decorative image" "checkbox"
+    And I click on "Custom" "button" in the "Image details" "dialogue"
+    And I set the field "Width" to "650"
+    And I click on "Save" "button" in the "Image details" "dialogue"
+    When I select the "img" element in position "0" of the "Description" TinyMCE editor
+    And I click on the "Image" button for the "Description" TinyMCE editor
+    Then the field "Width" matches value "650"
+    And the field "Height" matches value "194"
+
+  @_file_upload
   Scenario: Set the alt text to the maximum and below the maximum length
     Given I log in as "admin"
     And I open my profile in edit mode

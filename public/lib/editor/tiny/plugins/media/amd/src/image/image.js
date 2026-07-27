@@ -204,19 +204,29 @@ export default class MediaImage {
         };
 
         const getImageHeight = (image) => {
-            if (!isPercentageValue(String(image.height))) {
-                return parseInt(image.height, 10);
+            // Values for the height attribute can be in pixels, percentage or null.
+            const heightAttr = image.getAttribute('height');
+            // For percentage-based heights, fall back to the rendered pixel height to preserve the previous behaviour.
+            // Properly supporting percentage dimensions should be handled in a separate issue.
+            if (heightAttr === null || isPercentageValue(heightAttr)) {
+                return image.height;
             }
 
-            return image.height;
+            const height = parseInt(heightAttr, 10);
+            return Number.isNaN(height) ? image.height : height;
         };
 
         const getImageWidth = (image) => {
-            if (!isPercentageValue(String(image.width))) {
-                return parseInt(image.width, 10);
+            // Values for the width attribute can be in pixels, percentage or null.
+            const widthAttr = image.getAttribute('width');
+            // For percentage-based widths, fall back to the rendered pixel width to preserve the previous behaviour.
+            // Properly supporting percentage dimensions should be handled in a separate issue.
+            if (widthAttr === null || isPercentageValue(widthAttr)) {
+                return image.width;
             }
 
-            return image.width;
+            const width = parseInt(widthAttr, 10);
+            return Number.isNaN(width) ? image.width : width;
         };
 
         // Get the current selection.
