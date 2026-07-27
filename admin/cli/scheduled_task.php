@@ -30,17 +30,18 @@ require_once("$CFG->libdir/clilib.php");
 
 list($options, $unrecognized) = cli_get_params(
     [
-        'help' => false,
-        'list' => false,
-        'execute' => false,
-        'showsql' => false,
-        'showdebugging' => false,
-        'force' => false,
         'disable' => false,
         'enable' => false,
+        'execute' => false,
+        'force' => false,
+        'help' => false,
+        'list' => false,
+        'showdebugging' => false,
+        'showsql' => false,
     ], [
-        'h' => 'help',
+        'e' => 'execute',
         'f' => 'force',
+        'h' => 'help',
     ]
 );
 
@@ -52,23 +53,33 @@ if ($unrecognized) {
 $commands = ['list', 'execute', 'disable', 'enable'];
 $hascommand = count(array_filter($commands, fn($command) => $options[$command])) > 0;
 if ($options['help'] || !$hascommand) {
-    $help =
-    "Scheduled cron tasks.
+    $help = <<<EOT
+Scheduled cron tasks.
 
-    Options:
-    --disable=\\some\\task  Disable scheduled task
-    --enable=\\some\\task  Enable scheduled task
-    --execute=\\some\\task  Execute scheduled task manually
-    --list                List all scheduled tasks
-    --showsql             Show sql queries before they are executed
-    --showdebugging       Show developer level debugging information
-    -h, --help            Print out this help
-    -f, --force           Execute task even if cron is disabled
+Options:
+     --disable='\\some\\task'  Disable scheduled task
+     --enable='\\some\\task'   Enable scheduled task
+ -e, --execute='\\some\\task'  Execute scheduled task manually
+ -e, --execute               Execute all due scheduled tasks
+ -f, --force                 Execute task even if cron is disabled
+ -h, --help                  Print out this help
+     --list                  List all scheduled tasks
+     --showdebugging         Show developer level debugging information
+     --showsql               Show sql queries before they are executed
 
-    Example:
-    \$sudo -u www-data /usr/bin/php admin/cli/scheduled_task.php --execute=\\core\\task\\session_cleanup_task
+Examples:
 
-    ";
+Run all due scheduled tasks:
+sudo -u www-data /usr/bin/php admin/cli/scheduled_task.php --execute
+
+Run a specific scheduled task:
+sudo -u www-data /usr/bin/php admin/cli/scheduled_task.php --execute='\\core\\task\\session_cleanup_task'
+
+Run a task with debugging:
+sudo -u www-data /usr/bin/php admin/cli/scheduled_task.php --execute='\\core\\task\\session_cleanup_task' --showdebugging
+
+
+EOT;
 
     echo $help;
     die;
@@ -157,17 +168,10 @@ if ($disable = $options['disable']) {
         exit(1);
     }
 
-    if (!$task = \core\task\manager::get_scheduled_task($execute)) {
-        mtrace("Task '$execute' not found");
-        exit(1);
-    }
-
     if (!get_config('core', 'cron_enabled') && !$options['force']) {
         mtrace('Cron is disabled. Use --force to override.');
         exit(1);
     }
-
-    \core\task\manager::scheduled_task_starting($task);
 
     // Increase memory limit.
     raise_memory_limit(MEMORY_EXTRA);
@@ -175,21 +179,35 @@ if ($disable = $options['disable']) {
     // Emulate normal session - we use admin account by default.
     \core\cron::setup_user();
 
-    // Execute the task.
     \core\local\cli\shutdown::script_supports_graceful_exit();
-    $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
-    if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
-        mtrace('Cannot obtain cron lock');
-        exit(129);
-    }
-    if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
+
+    if ($execute === true) {
+        // No specific task given - run all scheduled tasks.
+        // Note - cron locking is handled by the run_scheduled_tasks method.
+        \core\cron::run_scheduled_tasks(time());
+    } else {
+        // A specific task class was provided.
+        if (!$task = \core\task\manager::get_scheduled_task($execute)) {
+            mtrace("Task '$execute' not found");
+            exit(1);
+        }
+
+        \core\task\manager::scheduled_task_starting($task);
+
+        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+            mtrace('Cannot obtain cron lock');
+            exit(129);
+        }
+        if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
+            $cronlock->release();
+            mtrace('Cannot obtain task lock');
+            exit(130);
+        }
+
+        $task->set_lock($lock);
         $cronlock->release();
-        mtrace('Cannot obtain task lock');
-        exit(130);
+
+        \core\cron::run_inner_scheduled_task($task);
     }
-
-    $task->set_lock($lock);
-    $cronlock->release();
-
-    \core\cron::run_inner_scheduled_task($task);
 }
