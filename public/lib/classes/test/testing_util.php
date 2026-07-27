@@ -141,6 +141,13 @@ abstract class testing_util {
     }
 
     /**
+     * Reset the original data.
+     */
+    protected static function reset_original_data() {
+        self::$originaldatafilesjsonadded = false;
+    }
+
+    /**
      * Get data generator
      *
      * @return \testing_data_generator
