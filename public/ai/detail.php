@@ -32,9 +32,13 @@ $id = required_param('id', PARAM_INT);
 $pageurl = new moodle_url('/ai/detail.php', ['id' => $id]);
 $systemcontext = context_system::instance();
 
+// Require a logged-in session before any database read of the user-supplied id, regardless of what
+// the id resolves to. The course-specific require_login() call below (once the record's course context
+// is known) additionally enforces enrolment; this call only guards against unauthenticated access.
+require_login();
+
 $record = manager::get_action_detail($id);
 if (!$record) {
-    require_login();
     $PAGE->set_context($systemcontext);
     $PAGE->set_url($pageurl);
     $PAGE->set_pagelayout('report');
