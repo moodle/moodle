@@ -54,7 +54,6 @@ Feature: Drawers on small screens are dismissed by interaction outside them
     And I click on "Open course index" "button"
     And the focused element is "Close course index" "button"
     And I press the shift tab key
-    And I press the shift tab key
     And the focused element is "#theme_boost-drawers-courseindex .courseindex-link" "css_element"
     # Tab out of the drawer
     When I press the shift tab key
