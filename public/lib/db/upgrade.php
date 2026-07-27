@@ -2178,5 +2178,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026080700.01);
     }
 
+    if ($oldversion < 2026081800.01) {
+        // Define field courseid to be added to ai_action_register.
+        $table = new xmldb_table('ai_action_register');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'model');
+
+        // Conditionally launch add field courseid, with its foreign key to course.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            $key = new xmldb_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+            $dbman->add_key($table, $key);
+        }
+
+        // Existing rows are left with courseid = 0. Queue an adhoc task to backfill them from their
+        // contextid in the background, so the upgrade step itself stays fast on large sites.
+        $task = new \core_ai\task\backfill_action_courseid();
+        \core\task\manager::queue_adhoc_task($task);
+        upgrade_log(UPGRADE_LOG_NORMAL, null, 'Queueing courseid backfill task for ai_action_register.');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026081800.01);
+    }
+
     return true;
 }

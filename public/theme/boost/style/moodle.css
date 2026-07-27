@@ -32011,6 +32011,17 @@ blockquote {
   font-size: 32px;
 }
 
+/* AI action detail page (ai/detail.php). */
+.core-ai-action-detail-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.core-ai-action-detail-image {
+  max-width: 15rem;
+  max-height: 15rem;
+}
+
 .action-menu .dropdown-toggle {
   text-decoration: none;
   display: inline-block;

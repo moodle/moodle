@@ -37,11 +37,11 @@ class behat_core_ai_generator extends behat_generator_base {
                     'actionname',
                     'success',
                     'user',
-                    'contextid',
                     'provider',
                 ],
                 'switchids' => [
                     'user' => 'userid',
+                    'course' => 'courseid',
                 ],
             ],
             'ai providers' => [

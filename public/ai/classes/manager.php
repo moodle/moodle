@@ -29,6 +29,14 @@ use core\plugininfo\aiprovider as aiproviderplugin;
  */
 class manager {
 
+    /** @var string[] Recognised action basenames, each backed by its own 'ai_action_<name>' table. */
+    private const ACTION_TABLES = [
+        'generate_text',
+        'summarise_text',
+        'explain_text',
+        'generate_image',
+    ];
+
     /**
      * Create a new AI manager.
      *
@@ -230,12 +238,15 @@ class manager {
         responses\response_base $response,
     ): int {
         global $DB;
+
+        $contextid = $action->get_configuration('contextid');
+
         // Store the action result.
         $record = (object) [
             'actionname' => $action->get_basename(),
             'success' => $response->get_success(),
             'userid' => $action->get_configuration('userid'),
-            'contextid' => $action->get_configuration('contextid'),
+            'contextid' => $contextid,
             'provider' => $provider->get_name(),
             'errorcode' => $response->get_errorcode(),
             'error' => $response->get_error(),
@@ -243,6 +254,7 @@ class manager {
             'timecreated' => $action->get_configuration('timecreated'),
             'timecompleted' => $response->get_timecreated(),
             'model' => $response->get_model_used(),
+            'courseid' => self::resolve_courseid((int) $contextid),
         ];
 
         try {
@@ -263,6 +275,60 @@ class manager {
         }
 
         return $recordid;
+    }
+
+    /**
+     * Resolve the course id that an action's context belongs to, for course-level usage reporting.
+     *
+     * Not every action context resolves to a course (for example system or user context actions),
+     * in which case -1 is stored to distinguish "resolved, no course" from the not-yet-backfilled
+     * default of 0 used for rows created before this column existed.
+     *
+     * @param int $contextid The id of the context the action was made in.
+     * @return int The course id, or -1 if the context does not resolve to a course.
+     */
+    public static function resolve_courseid(int $contextid): int {
+        try {
+            $context = \context::instance_by_id($contextid, IGNORE_MISSING);
+        } catch (\dml_exception $e) {
+            return -1;
+        }
+
+        if (!$context) {
+            return -1;
+        }
+
+        $coursecontext = $context->get_course_context(false);
+
+        return $coursecontext ? (int) $coursecontext->instanceid : -1;
+    }
+
+    /**
+     * Get the full detail of a single logged AI action, for the "view detail" page linked from usage reports.
+     *
+     * Merges the {@see ai_action_register} row with its per-action-type row (e.g. the stored prompt and
+     * generated content for a generate_text action), when one exists for a recognised action type.
+     *
+     * @param int $id The id of the ai_action_register row to load.
+     * @return \stdClass|null The merged record with an additional 'typedata' property, or null if not found.
+     */
+    public static function get_action_detail(int $id): ?\stdClass {
+        global $DB;
+
+        $record = $DB->get_record('ai_action_register', ['id' => $id]);
+        if (!$record) {
+            return null;
+        }
+
+        // Only join to a per-action-type table for recognised action basenames, to avoid building a table
+        // name directly from a database value.
+        if (in_array($record->actionname, self::ACTION_TABLES, true)) {
+            $record->typedata = $DB->get_record('ai_action_' . $record->actionname, ['id' => $record->actionid]) ?: null;
+        } else {
+            $record->typedata = null;
+        }
+
+        return $record;
     }
 
     /**

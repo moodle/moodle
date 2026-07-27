@@ -173,6 +173,28 @@ class ai_action_register extends base {
                 return $value ?? get_string('unknownvalue', 'core_ai');
             });
 
+        // Detail column - links to the full detail of this logged action (prompt, generated content, etc).
+        $columns[] = (new column(
+            'detail',
+            new lang_string('detailcolumn', 'core_ai'),
+            $this->get_entity_name(),
+        ))
+            ->set_type(column::TYPE_INTEGER)
+            ->add_field("{$mainalias}.id")
+            ->set_is_sortable(false)
+            ->set_help_icon(new help_icon('detailcolumn', 'core_ai'))
+            ->add_callback(static function (?int $value): string {
+                global $PAGE;
+
+                if (empty($value)) {
+                    return '';
+                }
+                return \html_writer::link(
+                    new \moodle_url('/ai/detail.php', ['id' => $value, 'returnurl' => $PAGE->url->out(false)]),
+                    get_string('viewdetail', 'core_ai'),
+                );
+            });
+
         return $columns;
     }
 
