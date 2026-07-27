@@ -75,7 +75,7 @@ jobs:
         ports:
           - 6379:6379
       postgres:
-        image: ${{ matrix.db == 'pgsql' && 'postgres:16' || '' }}
+        image: ${{ matrix.db == 'pgsql' && 'postgres:17' || '' }}
         env:
           POSTGRES_DB: test
           POSTGRES_USER: test
