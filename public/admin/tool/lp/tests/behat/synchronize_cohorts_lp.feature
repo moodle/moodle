@@ -58,3 +58,21 @@ Feature: Cohorts can be synchronized with learning plans
       | Name | First name / Last name | Email address     |
       | LPT1 | User One               | user1@example.com |
       | LPT1 | User Two               | user2@example.com |
+
+  @javascript
+  Scenario: Multilang filter correctly displays in learning plan templates
+    Given I log in as "admin"
+    And the following "cohorts" exist:
+      | name                                                                                                          | idnumber |
+      | <span class="multilang" lang="en">Cohort 2</span><span class="multilang" lang="de">Kohorte 2</span> & < > ' " | CH2      |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I navigate to "Competencies > Learning plan templates" in site administration
+    And I click on "Add cohorts to sync" of edit menu in the "LPT1" row
+    And I set the field "Select cohorts to sync" to "Cohort 2"
+    When I press "Add cohorts"
+    And I wait until the page is ready
+    Then the following should exist in the "generaltable" table:
+      | Name               | Cohort ID |
+      | Cohort 2 & < > ' " | CH2       |
+    And I should not see "Kohorte 2"
