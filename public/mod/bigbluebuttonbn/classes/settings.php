@@ -30,6 +30,7 @@ use core_cache\helper as cache_helper;
 use core_plugin_manager;
 use lang_string;
 use mod_bigbluebuttonbn\local\config;
+use mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags;
 use mod_bigbluebuttonbn\local\helpers\roles;
 use mod_bigbluebuttonbn\local\plugins\admin_page_manage_extensions;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
@@ -383,23 +384,24 @@ class settings {
                 $item,
                 $recordingsetting
             );
-            $recordingsafeformat = [
+            $recordingformats = [
                 'notes' => get_string('view_recording_format_notes', 'mod_bigbluebuttonbn'),
                 'podcast' => get_string('view_recording_format_podcast', 'mod_bigbluebuttonbn'),
                 'presentation' => get_string('view_recording_format_presentation', 'mod_bigbluebuttonbn'),
                 'screenshare' => get_string('view_recording_format_screenshare', 'mod_bigbluebuttonbn'),
-                'statistics' => get_string('view_recording_format_statistics', 'mod_bigbluebuttonbn'),
                 'video' => get_string('view_recording_format_video', 'mod_bigbluebuttonbn'),
             ];
-            $item = new configmultiselect(
+            $item = new setting_configmultiselect_tags(
                 'bigbluebuttonbn_recording_safe_formats',
                 get_string('config_recording_safe_formats', 'mod_bigbluebuttonbn'),
                 get_string('config_recording_safe_formats_description', 'mod_bigbluebuttonbn'),
                 ['video', 'presentation'],
-                $recordingsafeformat
+                $recordingformats,
+                get_string('config_recording_safe_formats_placeholder', 'mod_bigbluebuttonbn'),
+                get_string('config_recording_safe_formats_noselection', 'mod_bigbluebuttonbn')
             );
             $this->add_conditional_element(
-                'recording_hide_button_editable',
+                'recording_safe_formats',
                 $item,
                 $recordingsetting
             );
