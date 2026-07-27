@@ -99,17 +99,13 @@ final class custom_completion_test extends advanced_testcase {
         // Build a mock cm_info instance.
         $mockcminfo = $this->getMockBuilder(cm_info::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['__get'])
+            ->onlyMethods(['get_custom_data'])
             ->getMock();
 
-        // Mock the return of the magic getter method when fetching the cm_info object's
-        // customdata and instance values.
+        // Mock the return of the get_custom_data method when fetching the cm_info object's customdata.
         $mockcminfo->expects($this->any())
-            ->method('__get')
-            ->will($this->returnValueMap([
-                ['customdata', $customdataval],
-                ['instance', 1],
-            ]));
+            ->method('get_custom_data')
+            ->willReturn($customdataval);
 
         if ($rule === 'completiontimespent') {
             // Mock the DB call fetching user's lesson time spent.
@@ -245,13 +241,12 @@ final class custom_completion_test extends advanced_testcase {
         // Build a mock cm_info instance.
         $mockcminfo = $this->getMockBuilder(cm_info::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['__get'])
+            ->onlyMethods(['get_custom_data'])
             ->getMock();
 
-        // Mock the return of magic getter for the customdata attribute.
+        // Mock the return of the get_custom_data method when fetching the cm_info object's customdata.
         $mockcminfo->expects($this->any())
-            ->method('__get')
-            ->with('customdata')
+            ->method('get_custom_data')
             ->willReturn($customcompletionrules);
 
         $customcompletion = new custom_completion($mockcminfo, 1);
