@@ -177,6 +177,16 @@ class template_cohorts_table extends table_sql {
         $this->pagesize($pagesize, $total);
         $this->rawdata = $DB->get_records_sql($sql, $params, $this->get_page_start(), $this->get_page_size());
 
+        // Filter the 'name' column.
+        if (!empty($this->rawdata)) {
+            foreach ($this->rawdata as $key => $record) {
+                if (is_object($record) && property_exists($record, 'name')) {
+                    $record->name = format_string($record->name, options: ['context' => $this->context]);
+                    $this->rawdata[$key] = $record;
+                }
+            }
+        }
+
         // Set initial bars.
         if ($useinitialsbar) {
             $this->initialbars($total > $pagesize);
