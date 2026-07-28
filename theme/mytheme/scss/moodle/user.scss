@@ -1,0 +1,332 @@
+/* user.less */
+.userprofile .fullprofilelink {
+    text-align: center;
+    margin: 10px;
+}
+
+.userprofile .page-context-header {
+    margin-bottom: 10px;
+    column-count: 1;
+}
+
+.userprofile .description {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+.userprofile .profile_tree {
+    column-count: 2;
+}
+
+// This rule overrides the automatic no-overflow on the participants table. It kills the auto-complete.
+#participantsform .no-overflow {
+    overflow: visible;
+}
+
+.userprofile dl.list {
+    // Copied from dl.row.
+    > dd + dt {
+        clear: left;
+    }
+}
+
+.user-box {
+    margin: 8px;
+    width: 115px;
+    height: 160px;
+    text-align: center;
+    float: left;
+    clear: none;
+}
+
+#page-user-profile .node_category,
+.path-user .node_category {
+    ul {
+        margin: 0;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    li {
+        margin-top: 5px;
+    }
+
+    .editprofile,
+    .viewmore {
+        text-align: right;
+    }
+}
+
+.ajax-contact-button {
+    box-sizing: border-box;
+    position: relative;
+
+    &.loading {
+        .loading-icon {
+            display: block;
+        }
+    }
+
+    .loading-icon {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: $user-loading-icon-bg;
+
+        .icon {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .userprofile .profile_tree {
+        /** Display the profile on one column on phones@mixin  */
+        column-count: 1;
+    }
+}
+
+.userlist #showall {
+    margin: 10px 0;
+}
+
+.userlist .buttons {
+    text-align: center;
+}
+
+.userlist .buttons label {
+    padding: 0 3px;
+}
+
+.userlist table#participants {
+    text-align: center;
+}
+
+.userlist table#participants td {
+    text-align: left;
+    padding: 4px;
+    vertical-align: middle;
+}
+
+.userlist table#participants th {
+    text-align: left;
+    padding: 4px;
+}
+
+.userlist {
+    table.controls {
+        width: 100%;
+
+        tr {
+            vertical-align: top;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .groupselector {
+            margin-bottom: 0;
+            margin-top: 0;
+
+            label {
+                display: block;
+            }
+        }
+    }
+}
+
+.userinfobox {
+    width: 100%;
+    border: 1px solid;
+    border-collapse: separate;
+    padding: 10px;
+}
+
+.userinfobox .left,
+.userinfobox .side {
+    width: 100px;
+    vertical-align: top;
+}
+
+.userinfobox .userpicture {
+    width: 100px;
+    height: 100px;
+}
+
+.userinfobox .content {
+    vertical-align: top;
+}
+
+.userinfobox .links {
+    width: 100px;
+    padding: 5px;
+    vertical-align: bottom;
+}
+
+.userinfobox .links a {
+    display: block;
+}
+
+.userinfobox .list td {
+    padding: 3px;
+}
+
+.userinfobox .username {
+    padding-bottom: 20px;
+    font-weight: bold;
+}
+
+.userinfobox td.label {
+    text-align: right;
+    white-space: nowrap;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+.group-edit {
+    position: absolute;
+    right: 0;
+    margin-right: 0.6em;
+}
+
+.group-image {
+    display: block;
+    float: left;
+    margin-right: 1em;
+
+    .grouppicture {
+        border-radius: 50%;
+    }
+}
+
+.groupinfobox .left {
+    padding: 10px;
+    width: 100px;
+    vertical-align: top;
+}
+
+.course-participation #showall {
+    text-align: center;
+    margin: 10px 0;
+}
+
+#user-policy .noticebox {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    width: 80%;
+    height: 250px;
+}
+
+#user-policy #policyframe {
+    width: 100%;
+    height: 100%;
+}
+
+.iplookup #map {
+    margin: auto;
+}
+
+.userselector select {
+    width: 100%;
+}
+
+.userselector div {
+    margin-top: 0.2em;
+}
+
+.userselector div label {
+    margin-right: 0.3em;
+}
+/* Next style does not work in all browsers but looks nicer when it does */
+.userselector .userselector-infobelow {
+    font-size: 0.8em;
+}
+
+#userselector_options .collapsibleregioncaption {
+    font-weight: bold;
+    img {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+#userselector_options p {
+    margin: 0.2em 0;
+    text-align: left;
+}
+/** user full profile */
+#page-user-profile .messagebox {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+/** user course profile */
+#page-course-view-weeks .messagebox {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.profileeditor {
+    > .singleselect {
+        margin: 0 0.5em 0 0;
+    }
+
+    > .singlebutton {
+        display: inline-block;
+        margin: 0 0 0 0.5em;
+
+        div,
+        input {
+            margin: 0;
+        }
+    }
+}
+
+// Remove the little cog from participants page because we are putting a cog menu there.
+.userlist h3 .action-icon {
+    display: none;
+}
+
+#page-enrol-users .popover {
+    max-width: none;
+}
+
+.user-enroller-panel {
+    width: 600px;
+}
+
+[data-filterverbfor],
+[data-filterregion="filter"]:last-child [data-filterregion="joinadverb"] {
+    display: none;
+}
+
+[data-filterverb="0"] [data-filterverbfor="0"],
+[data-filterverb="1"] [data-filterverbfor="1"],
+[data-filterverb="2"] [data-filterverbfor="2"] {
+    display: block;
+}
+
+[data-filterregion="value"] {
+    div:first-of-type {
+        @extend .align-top;
+    }
+}
+
+#page-user-contactsitesupport {
+    .supporticon {
+        i {
+            font-size: 35px;
+        }
+
+    }
+}

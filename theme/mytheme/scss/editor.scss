@@ -1,0 +1,12 @@
+/* Override the code-color to increase the contrast. */
+$code-color: #db1a74 !default;
+
+/* Give editor access to all of bootstrap. */
+@import "bootstrap/bootstrap";
+
+code[data-mce-selected="inline-boundary"]:not(pre code) {
+    background-color: $gray-100 !important; /* stylelint-disable-line declaration-no-important */
+    border: thin solid $gray-500;
+    border-radius: 0.25rem;
+    padding: 0.125rem;
+}

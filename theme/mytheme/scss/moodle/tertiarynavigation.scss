@@ -1,0 +1,90 @@
+.tertiary-navigation {
+    padding-top: 10px;
+
+    &.full-width-bottom-border {
+        width: calc(100% + 1rem + 30px);
+        margin-left: calc(-0.5rem - 15px);
+        margin-right: calc(-0.5rem - 15px);
+        border-bottom: 1px solid $gray-300;
+        margin-bottom: 25px;
+
+        @include media-breakpoint-down(sm) {
+            width: calc(100% + 1rem);
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
+        }
+
+        .row {
+            margin: 0;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+    }
+
+    .navitem,
+    .navitem-divider {
+        display: flex;
+        margin-bottom: 25px;
+    }
+
+    .navitem-divider {
+        width: 1px;
+        background-color: $gray-300;
+    }
+
+    & > a.btn,
+    & > div.urlselect {
+        margin-bottom: 25px;
+    }
+
+    .row {
+        column-gap: 10px;
+    }
+
+    .tertiary-navigation-selector {
+        .dropdown-toggle {
+            padding: 0;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+    }
+
+    h2 {
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin: 0;
+        align-self: center;
+    }
+
+    .navitem:not(:last-child),
+    .navitem-divider:not(:last-child) {
+        margin-right: 20px;
+    }
+
+    // Constrain the width of each tertiary buttons triggering element.
+    .btn {
+        & > div {
+            max-width: 200px;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .tertiary-navigation {
+        .mform {
+            padding-left: initial;
+        }
+    }
+}
+
+@include media-breakpoint-down(xs) {
+    .tertiary-navigation .page-toggler > p {
+        font-size: 80%;
+    }
+}
+
+@media print {
+    .tertiary-navigation {
+        display: none;
+    }
+}

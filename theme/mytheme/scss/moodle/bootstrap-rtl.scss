@@ -1,0 +1,66 @@
+/**
+ * Bootstrap overrides for RTL
+ *
+ * This file is only for overriding sass from upstream bootstrap, all general rtl fixes for
+ * moodle scss should be placed immediately after the definition of the ltr rule.
+ */
+
+.breadcrumb-item {
+    + .breadcrumb-item::before {
+        content: "#{$breadcrumb-divider-rtl}";
+        /*rtl:remove*/
+        content: "#{$breadcrumb-divider}"; /* stylelint-disable-line declaration-block-no-duplicate-properties */
+    }
+}
+
+.dir-rtl {
+    .custom-select {
+        background-position: 0.75rem center;
+    }
+
+    .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+        transform: translateX(-($custom-switch-width - $custom-control-indicator-size));
+    }
+
+    .tooltip {
+        &.bs-tooltip-left,
+        &.bs-tooltip-right {
+            .arrow {
+                transform: rotate(180deg);
+            }
+        }
+
+        &.bs-tooltip-left .arrow {
+            left: auto;
+            right: 0;
+        }
+
+        &.bs-tooltip-right .arrow {
+            left: 0;
+            right: auto;
+        }
+    }
+
+    .popover {
+        &.bs-popover-right,
+        &.bs-popover-auto[x-placement^="right"] {
+            margin-right: 0;
+            margin-left: $popover-arrow-height;
+            .arrow {
+                transform: rotate(180deg);
+                left: subtract(-$popover-arrow-height, $popover-border-width);
+                right: auto;
+            }
+        }
+        &.bs-popover-left,
+        &.bs-popover-auto[x-placement^="left"] {
+            margin-right: $popover-arrow-height;
+            margin-left: 0;
+            .arrow {
+                transform: rotate(180deg);
+                left: auto;
+                right: subtract(-$popover-arrow-height, $popover-border-width);
+            }
+        }
+    }
+}

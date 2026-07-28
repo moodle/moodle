@@ -1,0 +1,63 @@
+.primary-navigation {
+  .navigation {
+    height: $navbar-height;
+    .nav-link {
+      height: $navbar-height;
+      color: rgba($white, 0.85);
+      border-top: 3px solid transparent;
+      &:hover,
+      &:focus {
+        color: $white;
+        background-color: rgba($white, 0.06);
+      }
+      &.active {
+        color: $white;
+        border-top-color: $primary;
+        background-color: rgba($primary, 0.12);
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .primary-navigation {
+    display: none;
+  }
+  .editmode-switch-form label {
+    @include sr-only();
+  }
+}
+
+.editmode-switch-form .custom-control-input {
+  width: 100%;
+  z-index: 1;
+}
+
+.drawer-primary .drawercontent {
+  padding: 0;
+
+  .list-group {
+    border-radius: 0;
+    margin-top: -1px;
+    .list-group-item {
+      border-left: 0;
+      border-right: 0;
+    }
+  }
+}
+
+.drawer-primary .drawerheader {
+  [data-region="site-home-link"] {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .logo {
+    max-width: 100%;
+    max-height: $navbar-height;
+    width: auto;
+    height: $navbar-height;
+    object-fit: contain;
+  }
+}

@@ -1,0 +1,113 @@
+// Here we are forcing the navbar to be absolutely positioned for behat, because
+// when driver scrolls something into view in browser it doesn't account
+// for fixed positioned elements that end up obscuring the item thus
+// leading to errors that could be avoided by scrolling an additional amount.
+body.behat-site {
+    .fixed-top {
+        position: absolute;
+    }
+
+    // Sticky footer can overlap with elements so we keep it relative for behat.
+    &.hasstickyfooter .stickyfooter,
+    .stickyfooter {
+        position: inherit;
+        z-index: inherit;
+        .sticky-footer-content-wrapper {
+            padding: 0;
+            margin: 0;
+        }
+    }
+
+    // We need more spacing in action menus so behat does not click on the wrong menu item.
+    .dropdown-item {
+        margin-top: 4px !important; /* stylelint-disable declaration-no-important */
+    }
+
+    // Remove following after MDL-57172 is fixed.
+    &.drawer-ease {
+        -webkit-transition: initial;
+        -moz-transition: initial;
+        transition: initial;
+    }
+
+    [data-region="drawer"] {
+        -webkit-transition: initial;
+        -moz-transition: initial;
+        transition: initial;
+        position: absolute;
+    }
+    .custom-control,
+    .custom-switch {
+        padding-left: 0;
+    }
+    .custom-control-input {
+        position: static;
+        z-index: 0;
+        opacity: 1;
+        width: auto;
+    }
+    .custom-control-label {
+        &::before,
+        &::after {
+            content: none;
+        }
+    }
+
+    // Workaround for MDL-70411.
+    // Pad the side of the message drawer out slightly to ensure that Firefox scroll bar does not cover controls at the
+    // edge of the screen.
+    [data-region="message-drawer"] {
+        padding-right: 10px;
+    }
+    &.jsenabled #page-footer .footer-content-popover {
+        display: block;
+    }
+
+    &.path-grade-report-grader .gradeparent {
+        tr.heading,
+        tr.lastrow,
+        th.header {
+            position: relative;
+            left: auto;
+        }
+        tr.heading {
+            top: auto;
+        }
+    }
+}
+
+.phpinfo table,
+.phpinfo th,
+.phpinfo h2 {
+    margin: auto;
+}
+
+.phpinfo .e,
+.phpinfo .v,
+.phpinfo .h {
+    border: 1px solid $phpinfo-border-color;
+    font-size: 0.8em;
+    vertical-align: baseline;
+    color: $phpinfo-color;
+    background-color: $phpinfo-bg;
+}
+
+.phpinfo .e {
+    background-color: $phpinfo-e-bg;
+    font-weight: bold;
+}
+
+.phpinfo .h {
+    background-color: $phpinfo-h-bg;
+    font-weight: bold;
+}
+
+// PHP debug messages.
+
+body > .debuggingmessage {
+    margin-top: $navbar-height;
+}
+
+body > .debuggingmessage ~ .debuggingmessage {
+    margin-top: .5rem;
+}
