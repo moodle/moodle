@@ -5144,7 +5144,7 @@
         <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Public OAuth2 authentication code identifier"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID of the authorisation request approver"/>
         <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 client identifier"/>
-        <FIELD NAME="redirecturi" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Redirect URI used in authorisation request"/>
+        <FIELD NAME="redirecturi" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Redirect URI used in authorisation request"/>
         <FIELD NAME="scopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Space-seperated list of scopes"/>
         <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Expiry timestamp"/>
         <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the OAuth2 authorisation code is revoked"/>
