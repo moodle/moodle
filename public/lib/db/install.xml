@@ -5084,7 +5084,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 client identifier"/>
         <FIELD NAME="secret" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 Client secret"/>
-        <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Expiry timestamp"/>
+        <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Expiry timestamp"/>
         <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the OAuth2 Client secret is revoked"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
         <FIELD NAME="lastaccessed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Timestamp when the client secret was last successfully used to authenticate a client"/>
