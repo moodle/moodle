@@ -4,7 +4,7 @@ Feature: I can revert changes after a load
   Background: Apply Starter Moodle to revert it
     Given I log in as "admin"
     And I navigate to "Site admin presets" in site administration
-    And I press "Review settings and apply" action in the "Starter" report row
+    And I press "Review settings and apply" action in the "Moodle with all of the most popular features" report row
     And I should see "Setting changes"
     And I click on "Apply" "button"
     And I click on "Continue" "button"
