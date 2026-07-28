@@ -2128,6 +2128,7 @@ function xmldb_main_upgrade($oldversion) {
             ['clientidentifier']
         );
         $table->add_key('user_fk', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+        $table->add_key('clientidentifier-userid_uk', XMLDB_KEY_UNIQUE, ['clientidentifier', 'userid']);
 
         // Conditionally launch create table for oauth2_server_client_granted_scopes.
         if (!$dbman->table_exists($table)) {

@@ -5169,6 +5169,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="clientidentifier_fk" TYPE="foreign" FIELDS="clientidentifier" REFTABLE="oauth2_server_clients" REFFIELDS="clientidentifier"/>
         <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="clientidentifier-userid_uk" TYPE="unique" FIELDS="clientidentifier, userid"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="rest_api_tokens" COMMENT="Non-OAuth2 REST tokens">
