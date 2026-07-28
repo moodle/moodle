@@ -198,6 +198,14 @@ class import_map implements \JsonSerializable {
             '@popperjs/',
             path: 'lib/bundles/@popperjs',
         );
+        $this->add_import(
+            '@floating-ui/',
+            path: 'lib/bundles/@floating-ui',
+        );
+        $this->add_import(
+            'tabbable',
+            path: 'lib/bundles/tabbable/tabbable',
+        );
 
         // Register the main Bootstrap bundle as a bare specifier, and the internal util and dom modules as subpath specifiers.
         $this->add_import(
