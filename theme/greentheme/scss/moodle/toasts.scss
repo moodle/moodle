@@ -1,0 +1,50 @@
+@mixin toast-icon($content) {
+    @extend .fa-solid;
+    margin: 2px 5px 0 0;
+    content: fa-content($content);
+}
+
+@mixin toast-variant($color) {
+    $color-value: map-get($theme-colors, $color);
+    background-color: rgba(shift-color($color-value, $alert-bg-scale), .95);
+    color: shift-color($color-value, $alert-color-scale);
+    .toast-header {
+        color: shift-color($color-value, $alert-color-scale);
+    }
+}
+
+.toast {
+    border-radius: $toast-border-radius;
+
+    &.toast-success {
+        @include toast-variant('success');
+        .toast-body:before {
+            @include toast-icon($fa-var-check-circle);
+        }
+    }
+
+    &.toast-danger {
+        @include toast-variant('danger');
+        .toast-body:before {
+            @include toast-icon($fa-var-times-circle);
+        }
+    }
+
+    &.toast-info {
+        @include toast-variant('info');
+        .toast-body:before {
+            @include toast-icon($fa-var-info-circle);
+        }
+    }
+
+    &.toast-warning {
+        @include toast-variant('warning');
+        .toast-body:before {
+            @include toast-icon($fa-var-exclamation-circle);
+        }
+    }
+
+    .btn-close {
+        color: inherit;
+    }
+}

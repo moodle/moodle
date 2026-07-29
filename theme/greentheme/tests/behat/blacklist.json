@@ -1,0 +1,12 @@
+{
+    "features": [
+        "lib/tests/behat/action_menu.feature",
+        "blocks/tests/behat/hide_blocks.feature",
+        "blocks/tests/behat/move_blocks.feature",
+        "course/tests/behat/activity_navigation.feature",
+        "course/tests/behat/activity_navigation_with_restrictions.feature",
+        "course/tests/behat/paged_course_navigation.feature",
+        "course/tests/behat/section_visibility.feature",
+        "mod/page/tests/behat/page_appearance.feature"
+    ]
+}

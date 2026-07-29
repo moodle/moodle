@@ -143,14 +143,14 @@ class theme_config {
      *   $THEME->layouts = array(
      *       // Most pages - if we encounter an unknown or a missing page type, this one is used.
      *       'standard' => array(
-     *           'theme' = 'mytheme',
+    *           'theme' = 'darktheme',
      *           'file' => 'normal.php',
      *           'regions' => array('side-pre', 'side-post'),
      *           'defaultregion' => 'side-post'
      *       ),
      *       // The site home page.
      *       'home' => array(
-     *           'theme' = 'mytheme',
+    *           'theme' = 'darktheme',
      *           'file' => 'home.php',
      *           'regions' => array('side-pre', 'side-post'),
      *           'defaultregion' => 'side-post'
@@ -909,7 +909,7 @@ class theme_config {
             }
         }
 
-        // Allow themes to change the css url to something like theme/mytheme/mycss.php.
+        // Allow themes to change the css url to something like theme/darktheme/mycss.php.
         component_callback('theme_' . $this->name, 'alter_css_urls', [&$urls]);
         return $urls;
     }

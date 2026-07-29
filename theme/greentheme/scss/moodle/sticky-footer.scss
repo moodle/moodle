@@ -1,0 +1,105 @@
+/**
+ * This file contains the styles required to make the footer sticky.
+ */
+
+html,
+body {
+    height: 100%;
+}
+
+.stickyfooter {
+    position: fixed;
+    right: 0;
+    left: 0;
+    height: $stickyfooter-height;
+    bottom: calc(#{$stickyfooter-height} * -1);
+    transition: bottom .5s;
+    z-index: $zindex-sticky;
+    box-shadow: 0 0 1rem rgba($black, .15);
+    font-size: calc(#{$font-size-base} * 1.10);
+    // Adjust sticky footer width to the main content area.
+    .sticky-footer-content {
+        overflow: hidden;
+        @include media-breakpoint-up(md) {
+            .pagelayout-standard &,
+            body.limitedwidth.uses-drawers & {
+                max-width: $course-content-maxwidth;
+            }
+            body.mediumwidth.uses-drawers & {
+                max-width: $medium-content-maxwidth;
+            }
+        }
+    }
+    // Adjust sticky footer width when drawers are open.
+    .sticky-footer-content-wrapper {
+        @include transition(0.2s);
+        @include media-breakpoint-up(lg) {
+            .drawers {
+                padding: 0 3rem;
+            }
+            .show-drawer-left & {
+                margin-left: $drawer-left-width;
+                padding: 0 3rem 0 1rem;
+            }
+            .show-drawer-right & {
+                margin-right: $drawer-right-width;
+                padding: 0 1rem 0 3rem;
+            }
+            .show-drawer-right.show-drawer-left & {
+                padding: 0 1rem;
+            }
+        }
+    }
+}
+
+.hasstickyfooter .stickyfooter {
+    bottom: 0;
+}
+
+/* Standard components fixes for sticky footer. */
+
+.stickyfooter ul.pagination {
+    margin-bottom: map-get($spacers, 1);
+}
+
+.stickyfooter .btn {
+    font-size: calc(#{$font-size-base} * 1.10);
+}
+
+/* Breakpoints fixes. */
+
+@include media-breakpoint-up(sm) {
+    #page-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        #page {
+            &:not(.drawers) {
+                flex: 1 0 auto;
+            }
+            display: flex;
+            flex-direction: column;
+            #page-content {
+                flex: 1 0 auto;
+            }
+        }
+        #page-footer {
+            flex-shrink: 0;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    #page-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        #page {
+            &:not(.drawers) {
+                flex: 1 0 auto;
+            }
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}

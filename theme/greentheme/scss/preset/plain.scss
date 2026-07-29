@@ -1,0 +1,19 @@
+/**
+ * Plain preset file.
+ *
+ * This preset is plain Moodle & Bootstrap and must not contain anything else.
+ *
+ * To create your own preset file:
+ * - Duplicate this file and rename it, for instance to preset-apple.scss.
+ * - In settings.php, find the references to 'plain', duplicate them and rename
+ *   them to 'apple'. (Look around the choices for 'theme_boost/preset').
+ */
+
+// Import FontAwesome.
+@import "fontawesome";
+
+// Import All of Bootstrap
+@import "bootstrap";
+
+// Import Core moodle CSS
+@import "moodle";

@@ -1,0 +1,84 @@
+$loginbackground-gradient-from: $gray-100 !default;
+$loginbackground-gradient-to: $gray-300 !default;
+$logincontainer-bg: $white !default;
+$logincontainer-padding: 3rem !default;
+$logincontainer-shadow: $box-shadow !default;
+$logindivider-margin-top: 1.5rem !default;
+$logindivider-margin-bottom: 1.5rem !default;
+$logindivider-border: $border-color !default;
+$login-identity-provider-btn-border: $border-color !default;
+
+.pagelayout-login #region-main {
+    border: 0;
+    background-color: inherit;
+}
+
+.pagelayout-login #page {
+    background: $loginbackground-gradient-from;
+    @include gradient-x($loginbackground-gradient-from, $loginbackground-gradient-to, 0%, 100%);
+    div[role="main"] {
+        height: 100%;
+    }
+}
+
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.login-container {
+    background-color: $logincontainer-bg;
+    padding: $logincontainer-padding;
+    box-shadow: $logincontainer-shadow;
+    margin-bottom: 2rem;
+    @include border-radius();
+    .login-languagemenu {
+        display: flex;
+        justify-content: flex-start;
+        .dropdown-menu {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    }
+    .login-logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    .login-divider {
+        margin-top: $logindivider-margin-top;
+        margin-bottom: $logindivider-margin-bottom;
+        border-top: $border-width solid $logindivider-border;
+    }
+
+    h1.login-heading {
+        font-size: $h2-font-size;
+    }
+
+    h2.login-heading {
+        font-size: $h4-font-size;
+    }
+    .login-identityproviders {
+        .login-identityprovider-btn {
+            border: $border-width solid $login-identity-provider-btn-border;
+        }
+    }
+    .divider {
+        width: $border-width;
+        background-color: $gray-300;
+        height: $font-size-base * 2;
+    }
+    .action-menu-trigger {
+        a {
+            margin: 0.5rem 0;
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .login-container {
+        width: 500px !important; /* stylelint-disable-line declaration-no-important */
+    }
+}

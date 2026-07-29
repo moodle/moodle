@@ -24,9 +24,9 @@ use moodle_page;
 /**
  * This is renderer factory allows themes to override the standard renderers using php code.
  *
- * It will load any code from theme/mytheme/renderers.php and
+ * It will load any code from theme/darktheme/renderers.php and
  * theme/parenttheme/renderers.php, if then exist. Then whenever you ask for
- * a renderer for 'component', it will create a mytheme_component_renderer or a
+ * a renderer for 'component', it will create a darktheme_component_renderer or a
  * parenttheme_component_renderer, instead of a component_renderer,
  * if either of those classes exist.
  *

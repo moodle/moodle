@@ -1,0 +1,312 @@
+/* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
+$fixed-header-y: $navbar-height;
+
+$drawer-width: 285px !default;
+$drawer-left-width: 285px !default;
+$drawer-right-width: 315px !default;
+$drawer-padding-x: 20px !default;
+$drawer-padding-y: 20px !default;
+$drawer-offscreen-gutter: 20px !default;
+$drawer-bg-color: $gray-100 !default;
+$drawer-scroll-bg-track: $gray-100 !default;
+$drawer-shadow-color: rgba(0, 0, 0, .25) !default;
+
+:target,
+:focus {
+    scroll-margin-top: $fixed-header-y + 10px;
+}
+
+.pagelayout-embedded :target {
+    padding-top: initial;
+    margin-top: initial;
+}
+
+#nav-drawer.closed {
+    left: -($drawer-width + $drawer-offscreen-gutter);
+}
+
+#nav-drawer[aria-hidden=true] .list-group-item {
+    display: none;
+}
+
+/* Use a variable for the drawer background colors. */
+$drawer-bg: darken($body-bg, 5%) !default;
+
+[data-region="drawer"] {
+    position: fixed;
+    width: $drawer-width;
+    top: $fixed-header-y;
+    height: calc(100% - #{$navbar-height});
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: $zindex-dropdown - 1;
+    background-color: $drawer-bg;
+    @include transition(right 0.5s ease, left 0.5s ease);
+}
+
+@include media-breakpoint-up(sm) {
+    [data-region="drawer"] {
+        padding: $drawer-padding-x $drawer-padding-y;
+    }
+    .jsenabled .popover-process-monitor,
+    .jsenabled .btn-footer-popover,
+    .jsenabled .btn-footer-communication {
+        @include transition(0.2s);
+    }
+}
+#nav-drawer {
+    right: auto;
+    left: 0;
+
+    /* Override the z-indexes defined in bootstrap/_list-group.scss that
+       lead to side effects on the user tours positioning. */
+    .list-group-item-action.active,
+    .list-group-item.active {
+        z-index: inherit;
+    }
+    .list-group-item-action.active + .list-group-item,
+    .list-group-item.active + .list-group-item {
+        border-top: none;
+    }
+
+    .list-group {
+        // Remove default list styling in nav menus.
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        // Add margin to be consistent with `.list-group-item` spacing.
+        li {
+            margin-bottom: -1px;
+        }
+        li:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+body.drawer-ease {
+    @include transition(margin-left 0.5s ease, margin-right 0.5s ease);
+}
+
+body:not(.uses-drawers).drawer-open-left {
+    @include media-breakpoint-up(md) {
+        margin-left: $drawer-left-width;
+    }
+}
+
+body.drawer-open-left #page.drawers {
+    @include media-breakpoint-up(md) {
+        margin-left: $drawer-left-width;
+        padding-left: 1rem;
+    }
+}
+
+body.drawer-open-right {
+    @include media-breakpoint-up(md) {
+        margin-right: $drawer-right-width;
+    }
+}
+
+$right-drawer-width: 320px;
+
+[data-region=right-hand-drawer] {
+    display: flex;
+    flex-direction: column;
+    @include transition(right .2s ease-in-out);
+
+    &.drawer {
+        z-index: $zindex-sticky + 1;
+        position: fixed;
+        top: $navbar-height;
+        right: 0;
+        height: calc(100% - #{$navbar-height});
+        width: $right-drawer-width;
+        box-shadow: -2px 2px 4px $drawer-shadow-color;
+        padding: 0;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    &.hidden {
+        display: block;
+        right: $right-drawer-width * -1;
+        // Turn off visibility so that nothing in the drawer can receive focus when
+        // it is hidden.
+        visibility: hidden;
+        opacity: 0;
+        // Delay visibility changes until after the slide right animation has completed.
+        @include transition(right .2s ease-in-out, visibility 0s ease-in-out .2s, opacity 0s ease-in-out .2s);
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    [data-region=right-hand-drawer] {
+        &.drawer {
+            top: 0;
+            height: 100%;
+            z-index: $zindex-fixed + 1;
+        }
+    }
+    body.drawer-open-left,
+    body.drawer-open-right {
+        overflow: hidden;
+    }
+}
+
+.dir-rtl {
+    [data-region=right-hand-drawer] {
+        box-shadow: 2px 2px 4px $drawer-shadow-color;
+    }
+}
+
+@mixin drawer() {
+    background-color: $drawer-bg-color;
+    // Drawers has a z-index higher than the page content,
+    // lower than the top navbar and the sticky footer,
+    // and lower to the message drawer.
+    z-index: $zindex-sticky - 5;
+
+    @include media-breakpoint-down(md) {
+        // In small screens the drawer goes over the top navbar with a modal with a backdrop effect.
+        z-index: $zindex-fixed + 5;
+    }
+
+    position: fixed;
+    height: 100vh;
+    top: 0;
+
+    &.not-initialized {
+        display: none;
+    }
+}
+
+@mixin drawertypes() {
+    &.drawer-right {
+        @include transition(right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease);
+        width: $drawer-right-width;
+        max-width: $drawer-right-width;
+        right: calc(-#{$drawer-right-width} + -10px);
+        visibility: hidden;
+        @include box-shadow($box-shadow-drawer-right);
+
+        &.show {
+            right: 0;
+            visibility: visible;
+        }
+
+        .drawertoggle {
+            margin-left: auto;
+            margin-right: 5px;
+        }
+    }
+    &.drawer-left {
+        @include transition(left 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease);
+        width: $drawer-left-width;
+        max-width: $drawer-left-width;
+        left: calc(-#{$drawer-left-width} + -10px);
+        visibility: hidden;
+        @include box-shadow($box-shadow-drawer-left);
+
+        &.show {
+            left: 0;
+            visibility: visible;
+        }
+
+        .drawertoggle {
+            margin-right: auto;
+            margin-left: 5px;
+        }
+    }
+    &.drawer-bottom {
+        bottom: -110%;
+        &.show {
+            bottom: 0;
+        }
+    }
+    &.drawer-primary {
+        .drawertoggle {
+            margin-right: 16px;
+            margin-left: 5px;
+        }
+    }
+}
+
+.drawer {
+    @include drawer();
+    @include drawertypes();
+}
+
+@include media-breakpoint-up(lg) {
+    .drawer {
+
+        // Workaround to display the skip link elements from the blocks drawer infront of the navbar.
+        // As the skip link is in a fixed position and z-index for this element is ignored
+        // then it is hidden behind the top navbar.
+        // The workaround is to actually give a z-index to the drawer so it appears in front of the
+        // navbar (https://developer.mozilla.org/en-US/docs/Web/CSS/z-index).
+        &#theme_boost-drawers-blocks:focus-within {
+            z-index: $zindex-fixed + 1;
+        }
+
+        &.not-initialized {
+            display: block;
+        }
+    }
+}
+
+.drawer-md,
+.drawer-sm {
+    display: none;
+}
+
+.drawerheader {
+    padding: 0;
+    height: $navbar-height;
+    display: flex;
+    align-items: center;
+    .sitename {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-right: 16px;
+    }
+}
+.drawer.scrolled .drawerheader {
+    box-shadow: 0 8px 11px -7px $drawer-shadow-color;
+}
+
+@include media-breakpoint-down(md) {
+    .drawer-md {
+        display: block;
+        @include drawer();
+        @include drawertypes();
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .drawer-sm {
+        display: block;
+        @include drawer();
+        @include drawertypes();
+    }
+}
+
+.drawercontent {
+    position: relative;
+    z-index: -1;
+    height: calc(100% - #{$navbar-height});
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    padding: 0.4rem;
+
+    .dropdown-menu .dropdown-item {
+        width: 220px;
+        white-space: normal;
+    }
+
+    @include thin-scrolls($drawer-scroll-bg-track);
+}

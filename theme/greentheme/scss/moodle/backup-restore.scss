@@ -1,0 +1,213 @@
+.path-backup .mform {
+    .grouped_settings {
+        clear: both;
+        overflow: hidden;
+
+        /* Use card styles but avoid extend because that brings in too much. */
+        &.section_level {
+            background-color: $card-bg;
+            @include border-radius($card-border-radius);
+            border: $card-border-width solid $card-border-color;
+            @include clearfix;
+            padding: $card-spacer-x;
+            margin-bottom: $card-spacer-x;
+        }
+
+        &.subsection_level {
+            background-color: $card-bg;
+            @include border-radius($card-border-radius);
+            border: $card-border-width solid $card-border-color;
+            @include clearfix;
+            padding: $card-spacer-x;
+            margin: 0 $card-spacer-x $card-spacer-x $card-spacer-x;
+        }
+    }
+
+    /* These are long labels with checkboxes on the right. */
+    .include_setting {
+        width: 50%;
+        display: inline-block;
+        float: left;
+        padding: $table-cell-padding-sm;
+    }
+    .normal_setting {
+        width: 50%;
+        display: inline-block;
+        float: left;
+        padding: $table-cell-padding-sm;
+    }
+}
+
+.path-backup {
+    /* Bold section labels */
+    .section_level {
+        font-weight: bold;
+    }
+    .section_level .activity_level {
+        font-weight: normal;
+    }
+    .proceedbutton {
+        margin-left: auto;
+    }
+}
+
+/* Override the columns width to leave more room for the labels. */
+.path-backup .mform {
+    .root_setting,
+    .grouped_settings {
+        /* Striped rows like a table */
+        &:nth-of-type(odd) {
+            background-color: $table-accent-bg;
+        }
+        &:nth-of-type(even) {
+            background-color: $card-bg;
+        }
+        .fitem {
+            /* These checkboxes with no label on the left. */
+            .col-md-3.checkbox {
+                width: 0%;
+            }
+            .col-md-9.checkbox {
+                width: 100%;
+                left: 0;
+            }
+        }
+    }
+}
+
+/* Detail pair is (usually) some short label with a longer value */
+.path-backup .detail-pair {
+    .detail-pair-label {
+        width: 25%;
+        float: left;
+        clear: left;
+    }
+    .detail-pair-value {
+        width: 75%;
+        float: left;
+    }
+}
+
+.path-backup .backup-restore .singlebutton {
+    float: right;
+}
+/* Make these bits full width and work with the detail-pair */
+.path-backup .backup-section {
+    .sub-header,
+    .backup-sub-section,
+    .singlebutton,
+    .header {
+        width: 100%;
+        float: left;
+        clear: both;
+    }
+    /* Fix for nested table headers */
+    th.header {
+        width: auto;
+        float: none;
+    }
+
+    /* Add card styles to backup sections */
+    ::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    background-color: $card-bg;
+    @include border-radius($card-border-radius);
+    border: $card-border-width solid $card-border-color;
+    @include clearfix;
+    padding: $card-spacer-x;
+    margin-bottom: $card-spacer-x;
+}
+
+.path-backup .notification.dependencies_enforced {
+    color: $danger;
+    font-weight: bold;
+}
+
+.path-backup .backup_progress {
+    margin-top: $spacer;
+    margin-bottom: $spacer;
+
+    .backup_stage {
+        color: $text-muted;
+
+        &.backup_stage_current {
+            font-weight: bold;
+            color: inherit;
+        }
+    }
+}
+
+.path-backup .backup_progress span.backup_stage.backup_stage_complete {
+    color: inherit;
+}
+
+#page-backup-restore .filealiasesfailures {
+    background-color: $state-danger-bg;
+
+    .aliaseslist {
+        background-color: $body-bg;
+    }
+}
+
+
+.path-backup .wibbler {
+    width: 500px;
+    margin: 0 auto 10px;
+    border-bottom: 1px solid $backup-restore-wibbler-border-color;
+    border-right: 1px solid $backup-restore-wibbler-border-color;
+    border-left: 1px solid $backup-restore-wibbler-border-color;
+    position: relative;
+    min-height: 4px;
+
+    .wibble {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 4px;
+    }
+
+    .state0 {
+        background: $backup-restore-state0-bg;
+    }
+    .state1 {
+        background: $backup-restore-state1-bg;
+    }
+    .state2 {
+        background: $backup-restore-state2-bg;
+    }
+    .state3 {
+        background: $backup-restore-state3-bg;
+    }
+    .state4 {
+        background: $backup-restore-state4-bg;
+    }
+    .state5 {
+        background: $backup-restore-state5-bg;
+    }
+    .state6 {
+        background: $backup-restore-state6-bg;
+    }
+    .state7 {
+        background: $backup-restore-state7-bg;
+    }
+    .state8 {
+        background: $backup-restore-state8-bg;
+    }
+    .state9 {
+        background: $backup-restore-state9-bg;
+    }
+    .state10 {
+        background: $backup-restore-state10-bg;
+    }
+    .state11 {
+        background: $backup-restore-state11-bg;
+    }
+    .state12 {
+        background: $backup-restore-state12-bg;
+    }
+}

@@ -1,0 +1,83 @@
+.generaltable {
+    width: 100%;
+    margin-bottom: $spacer;
+    color: $table-color;
+    background-color: $table-bg; // Reset for nesting within parents with `background-color`.
+
+    th,
+    td {
+        padding: $table-cell-padding;
+        vertical-align: top;
+        border-top: $table-border-width solid $table-border-color;
+        .form-check {
+            padding: 0;
+        }
+    }
+
+    thead th,
+    thead td {
+        vertical-align: bottom;
+        border-bottom: (2 * $table-border-width) solid $table-border-color;
+    }
+
+    tbody + tbody {
+        border-top: (2 * $table-border-width) solid $table-border-color;
+    }
+
+    tbody tr:nth-of-type(#{$table-striped-order}) {
+        background-color: $table-accent-bg;
+    }
+    thead .sticky-column,
+    tbody tr:nth-of-type(even) {
+        background-color: $white;
+    }
+    tbody tr:nth-of-type(#{$table-striped-order}) .sticky-column {
+        background-color: $table-accent-bg;
+    }
+    &.table-sm {
+        th,
+        td {
+            padding: $table-cell-padding-sm;
+        }
+    }
+    tbody tr {
+        &:hover {
+            color: $table-hover-color;
+            background-color: $table-hover-bg;
+            &.dimmed_text {
+                a:not(.menu-action) {
+                    color: $table-hover-color;
+                }
+            }
+            td.sticky-column {
+                background-color: $table-hover-bg;
+            }
+        }
+    }
+}
+
+table {
+    caption {
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 42px;
+        text-align: left;
+        caption-side: top;
+    }
+    .sticky-column {
+        position: sticky;
+        left: 0;
+        background-color: inherit;
+    }
+}
+
+.table-dynamic > .loading-icon {
+    position: absolute;
+    left: calc(50% - 1.5rem);
+    top: 200px;
+    .icon {
+        max-height: 3rem;
+        max-width: 3rem;
+        font-size: 3rem;
+    }
+}

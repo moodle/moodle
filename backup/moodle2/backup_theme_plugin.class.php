@@ -73,7 +73,7 @@ abstract class backup_theme_plugin extends backup_plugin {
      * the theme used in the course. It will be compared against the name
      * of the theme, by use of third parameter in get_plugin_element; in
      * subclass, you should do:
-     * $plugin = $this->get_plugin_element(null, $this->get_theme_condition(), 'mytheme');
+    * $plugin = $this->get_plugin_element(null, $this->get_theme_condition(), 'darktheme');
      */
     protected function get_theme_condition() {
         return array('sqlparam' => $this->coursetheme);

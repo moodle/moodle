@@ -1,0 +1,20 @@
+.primary-navigation {
+  .navigation {
+    height: $navbar-height;
+    .nav-link {
+      height: $navbar-height;
+      color: rgba($white, 0.85);
+      border-top: 3px solid transparent;
+      &:hover,
+      &:focus {
+        color: $white;
+        background-color: rgba($white, 0.06);
+      }
+      &.active {
+        color: $white;
+        border-top-color: $primary;
+        background-color: rgba($white, 0.12);
+      }
+    }
+  }
+}

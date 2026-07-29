@@ -1,0 +1,64 @@
+.modal {
+    .modal-body {
+        & > .loading-icon {
+            display: block;
+            position: relative;
+            width: 100%;
+            height: 100%;
+
+            .icon {
+                position: absolute;
+                top: 50%;
+                /*rtl:ignore*/
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    }
+
+    // Override Bootstrap .close for better accessibility.
+    .btn-close {
+        // Adjust the margins so the focus outline does not look clipped.
+        margin: -0.8rem -0.8rem -0.8rem auto;
+
+        // Inherit the opacity when focus is received for better focus outline contrast.
+        &:not(:disabled):not(.disabled) {
+            &:hover,
+            &:focus {
+                opacity: inherit;
+            }
+        }
+    }
+}
+
+/* Change the modal-dialog-scrollable class to position: static to fix the issue with popper.js and autocomplete. */
+.modal-dialog-scrollable:has(.form-autocomplete-suggestions) {
+    position: static;
+    .modal-content {
+        position: static;
+        .modal-body {
+            position: static;
+        }
+    }
+}
+
+/* Bug fix for TinyMCE menu when in fullscreen mode. */
+body.tox-fullscreen .modal-dialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+
+    .modal-header {
+        height: 0;
+        padding: 0;
+    }
+
+    .tox-tinymce-aux {
+        position: relative;
+    }
+}
+
+/* Bug fix TinyMCE menu width dropdowns when in fullscreen mode. */
+body.tox-fullscreen .tox.tox-tinymce-aux {
+    position: relative !important; // stylelint-disable-line declaration-no-important
+}

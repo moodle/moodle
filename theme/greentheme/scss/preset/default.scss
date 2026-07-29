@@ -1,0 +1,1330 @@
+// ============================================================
+// greentheme – Green and White colour palette
+// ============================================================
+
+// --------------- Grays (White-based palette) ---------------------
+$white: #ffffff !default;
+$gray-100: #f5f5f5 !default; // light gray
+$gray-200: #eeeeee !default;
+$gray-300: #e0e0e0 !default;
+$gray-400: #d0d0d0 !default;
+$gray-500: #999999 !default;
+$gray-600: #757575 !default;
+$gray-700: #666666 !default; // used for text in dark ctx
+$gray-800: #424242 !default;
+$gray-900: #212121 !default;
+$black: #000 !default;
+
+// --------------- Brand colours (Green themed) ----------------
+$blue: #1976d2 !default; // Modern blue for accents
+$indigo: #3949ab !default;
+$purple: #7b1fa2 !default;
+$pink: #c2185b !default;
+$red: #d32f2f !default;
+$orange: #f57c00 !default;
+$yellow: #fbc02d !default;
+$green: #2e7d32 !default; // Primary green
+$teal: #00897b !default;
+$cyan: #0097a7 !default;
+
+$primary: $green !default; // Primary color is green
+$secondary: #f5f5f5 !default; // Light gray
+$success: $green !default;
+$info: #1976d2 !default;
+$warning: $orange !default;
+$danger: $red !default;
+$dark: #212121 !default;
+
+// --------------- Body ---------------------------------------
+$body-bg: #f9f9f9 !default; // Light off-white
+$body-color: #212121 !default; // Dark text for readability
+
+$info-outline: #0d47a1;
+$warning-outline: #e65100;
+
+// --------------- Component defaults -------------------------
+$table-accent-bg: rgba($black, 0.04) !default;
+
+// Options
+$enable-responsive-font-sizes: true !default;
+$enable-gradients: true !default;
+
+// Borders
+$border-color: rgba(255, 255, 255, 0.07) !default;
+
+// A single colour system for interactive surfaces. Light and bright.
+$greentheme-surface: #ffffff;
+$greentheme-surface-hover: #e8f5e9;
+$greentheme-text: #212121;
+$greentheme-text-strong: #1b5e20;
+$greentheme-link: #2e7d32;
+$greentheme-border: rgba(46, 125, 50, 0.2);
+$greentheme-border-subtle: rgba(46, 125, 50, 0.1);
+
+// Fonts
+$font-size-base: 0.9375rem !default;
+$rfs-base-font-size: 0.9rem !default;
+$headings-font-weight: 700 !default;
+
+// Navbar
+$navbar-dark-hover-color: rgba($white, 1) !default;
+$navbar-light-color: rgba($black, 0.7) !default;
+$navbar-light-hover-color: rgba($black, 0.95) !default;
+
+// Breadcrumbs
+$breadcrumb-padding-y: 0.5rem !default;
+$breadcrumb-padding-x: 0 !default;
+$breadcrumb-item-padding: 0.5rem !default;
+$breadcrumb-margin-bottom: 0 !default;
+$breadcrumb-bg: transparent !default;
+$breadcrumb-divider: "/" !default;
+$breadcrumb-divider-rtl: "/" !default;
+
+// Alerts
+$alert-border-width: 1px !default;
+
+$card-group-margin: 0.25rem;
+
+// Toasts (light)
+$toast-color: #212121 !default;
+$toast-background-color: rgba(#ffffff, 0.97) !default;
+$toast-header-color: #424242 !default;
+$toast-header-background-color: rgba(46, 125, 50, 0.08) !default;
+
+// Custom control
+$custom-control-indicator-size: 1.25rem;
+
+$input-btn-focus-color: rgba($primary, 0.25) !default;
+$input-border-color: rgba(46, 125, 50, 0.3) !default;
+
+// Dropdowns (light)
+$dropdown-bg: #ffffff !default;
+$dropdown-border-color: rgba(46, 125, 50, 0.2) !default;
+$dropdown-link-color: $body-color !default;
+$dropdown-link-hover-color: #2e7d32;
+$dropdown-link-hover-bg: rgba(46, 125, 50, 0.08);
+
+// Inputs (light)
+$input-bg: #ffffff !default;
+$input-color: $body-color !default;
+$input-placeholder-color: rgba($body-color, 0.5) !default;
+$input-focus-bg: #f5f5f5 !default;
+$input-focus-color: $body-color !default;
+$input-disabled-bg: #f5f5f5 !default;
+
+// Cards (light)
+$card-bg: #ffffff !default;
+$card-border-color: rgba(46, 125, 50, 0.15) !default;
+$card-cap-bg: rgba(46, 125, 50, 0.05) !default;
+
+// Tables (light)
+$table-color: $body-color !default;
+$table-bg: transparent !default;
+$table-border-color: rgba(46, 125, 50, 0.15) !default;
+$table-striped-bg: rgba(46, 125, 50, 0.05) !default;
+$table-hover-bg: rgba(46, 125, 50, 0.1) !default;
+
+// Modals (light)
+$modal-content-bg: #ffffff !default;
+$modal-content-border-color: rgba(46, 125, 50, 0.2) !default;
+$modal-header-bg: #f5f5f5 !default;
+$modal-footer-bg: #f5f5f5 !default;
+$modal-backdrop-bg: rgba(0, 0, 0, 0.3) !default;
+$modal-backdrop-opacity: 0.5 !default;
+
+// List groups (light)
+$list-group-bg: #ffffff !default;
+$list-group-border-color: rgba(46, 125, 50, 0.15) !default;
+$list-group-action-color: $body-color !default;
+$list-group-hover-bg: rgba(46, 125, 50, 0.08) !default;
+$list-group-active-bg: $primary !default;
+$list-group-action-active-bg: $primary !default;
+
+// Popovers (light)
+$popover-bg: #ffffff !default;
+$popover-border-color: rgba(46, 125, 50, 0.2) !default;
+$popover-header-bg: #f5f5f5 !default;
+$popover-body-color: $body-color !default;
+$popover-max-width: 300px !default;
+
+// Pagination (light)
+$pagination-bg: #ffffff !default;
+$pagination-border-color: rgba(46, 125, 50, 0.15) !default;
+$pagination-color: $body-color !default;
+$pagination-hover-bg: rgba(46, 125, 50, 0.08) !default;
+$pagination-hover-border-color: rgba(46, 125, 50, 0.3) !default;
+$pagination-hover-color: $primary !default;
+$pagination-active-bg: $primary !default;
+$pagination-active-border-color: $primary !default;
+$pagination-disabled-bg: #f5f5f5 !default;
+$pagination-disabled-border-color: rgba(46, 125, 50, 0.1) !default;
+$pagination-disabled-color: rgba($body-color, 0.5) !default;
+
+// Badges (dark)
+$badge-color: $white !default;
+
+$border-radius: 0.5rem !default;
+$border-radius-lg: 0.6rem !default;
+
+// stylelint-disable
+$theme-colors: () !default;
+$theme-colors: map-merge(
+  (
+    primary: $primary,
+    secondary: $secondary,
+    success: $success,
+    info: $info,
+    warning: $warning,
+    danger: $danger,
+  ),
+  $theme-colors
+);
+// stylelint-enable
+
+$spacer: 1rem !default;
+$spacers: (
+  0: 0,
+  1: (
+    $spacer * 0.25,
+  ),
+  2: (
+    $spacer * 0.5,
+  ),
+  3: $spacer,
+  4: (
+    $spacer * 1.5,
+  ),
+  5: (
+    $spacer * 2,
+  ),
+  6: (
+    $spacer * 3,
+  ),
+) !default;
+
+// Import FontAwesome.
+@import "fontawesome";
+
+// Import All of Bootstrap
+@import "bootstrap";
+
+// Import Core moodle CSS
+@import "moodle";
+
+// ============================================================
+// Preset CSS – greentheme dark overrides
+// ============================================================
+
+// ---- Base body gradient ------------------------------------
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(46, 125, 50, 0.05),
+      transparent 40%
+    ),
+    linear-gradient(135deg, #ffffff 0%, #f9f9f9 50%, #f5f5f5 100%);
+  color: $body-color;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ---- Page layout areas ------------------------------------
+#page,
+#page-content,
+#region-main,
+.pagelayout-frontpage #page,
+.pagelayout-course #page,
+.pagelayout-mypublic #page,
+.pagelayout-standard #page,
+.pagelayout-admin #page,
+.pagelayout-report #page,
+.pagelayout-coursecategory #page,
+.pagelayout-incourse #page,
+.pagelayout-login #page {
+  background: transparent !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Dashboard page ----------------------------------------
+.pagelayout-mydashboard #page {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(46, 125, 50, 0.08),
+      transparent 40%
+    ),
+    linear-gradient(135deg, #ffffff 0%, #f9f9f9 50%, #f5f5f5 100%);
+}
+
+.pagelayout-mydashboard #page-content,
+.pagelayout-mydashboard #region-main {
+  background: transparent;
+}
+
+.pagelayout-mydashboard .card,
+.pagelayout-mydashboard .block,
+.pagelayout-mydashboard .dashboard-card,
+.pagelayout-mydashboard .course-info-container,
+.pagelayout-mydashboard .main-calendar,
+.pagelayout-mydashboard .block-card {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.pagelayout-mydashboard .block .card-body,
+.pagelayout-mydashboard .dashboard-card-body,
+.pagelayout-mydashboard .card-body {
+  color: $body-color;
+}
+
+.pagelayout-mydashboard .page-header-headings,
+.pagelayout-mydashboard .page-header-headings h1,
+.pagelayout-mydashboard .secondary-navigation .nav-link,
+.pagelayout-mydashboard .secondary-navigation .nav-link.active,
+.pagelayout-mydashboard .secondary-navigation .nav-link:focus,
+.pagelayout-mydashboard .secondary-navigation .nav-link:hover {
+  color: #1b5e20;
+}
+
+.pagelayout-mydashboard .secondary-navigation .nav-link.active {
+  background-color: rgba(46, 125, 50, 0.15);
+  border-color: rgba(46, 125, 50, 0.3);
+  box-shadow: inset 0 -2px 0 #2e7d32;
+}
+
+.pagelayout-mydashboard .secondary-navigation .nav-tabs {
+  border-bottom-color: rgba(46, 125, 50, 0.15);
+}
+
+// ---- Navbar -----------------------------------------------
+.navbar.fixed-top {
+  background: linear-gradient(
+    90deg,
+    #2e7d32 0%,
+    #388e3c 50%,
+    #2e7d32 100%
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  border-bottom: 1px solid rgba(46, 125, 50, 0.3) !important; /* stylelint-disable-line declaration-no-important */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important; /* stylelint-disable-line declaration-no-important */
+
+  .navbar-brand,
+  .nav-link,
+  .navbar-text,
+  .dropdown-toggle {
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  // Divider between sections
+  .divider {
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.2
+    ) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  // All nav-links: visible hover/focus/active highlight
+  .nav-link {
+    &:hover,
+    &:focus {
+      background-color: rgba(
+        255,
+        255,
+        255,
+        0.15
+      ) !important; /* stylelint-disable-line declaration-no-important */
+      color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+    }
+
+    &[aria-expanded="true"],
+    &.active {
+      background-color: rgba(
+        255,
+        255,
+        255,
+        0.25
+      ) !important; /* stylelint-disable-line declaration-no-important */
+      color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+    }
+  }
+
+  // User-navigation icon buttons (bell, messages, user avatar, etc.)
+  #usernavigation .nav-link {
+    border-radius: 6px;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(
+        255,
+        255,
+        255,
+        0.15
+      ) !important; /* stylelint-disable-line declaration-no-important */
+      color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+    }
+
+    &[aria-expanded="true"],
+    &.active {
+      background-color: rgba(
+        255,
+        255,
+        255,
+        0.25
+      ) !important; /* stylelint-disable-line declaration-no-important */
+      color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+    }
+  }
+}
+
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// ---- Primary navigation (sits inside the green navbar) ------
+.primary-navigation .navigation .nav-link {
+  color: rgba($white, 0.9);
+
+  &:hover,
+  &:focus {
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.15
+    ) !important; /* stylelint-disable-line declaration-no-important */
+    color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  &.active {
+    background-color: rgba(
+      255,
+      255,
+      255,
+      0.2
+    ) !important; /* stylelint-disable-line declaration-no-important */
+    border-top-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+    color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+// ---- Moremenu (nav-tabs inside primary nav overflow area) --
+// Fix background on .moremenu .nav-tabs elements
+.moremenu .nav-tabs,
+[id^="moremenu-"][id$="-nav-tabs"] {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  border-bottom-color: rgba(
+    255,
+    255,
+    255,
+    0.2
+  ) !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Drawers (side navigation panels) ---------------------
+[data-region="drawer"],
+.drawer,
+.drawer-md,
+.drawer-sm {
+  background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+  border-right: 1px solid rgba(46, 125, 50, 0.15);
+}
+
+[data-region="drawer"] .list-group-item,
+.drawer .list-group-item {
+  background-color: transparent;
+  border-color: rgba(46, 125, 50, 0.1);
+  color: $body-color;
+}
+
+[data-region="drawer"] .list-group-item.active,
+.drawer .list-group-item.active {
+  background-color: rgba(46, 125, 50, 0.15);
+  border-color: rgba(46, 125, 50, 0.3);
+  color: #1b5e20;
+}
+
+[data-region="drawer"] .list-group-item:hover,
+.drawer .list-group-item:hover {
+  background-color: rgba(46, 125, 50, 0.08);
+  color: #1b5e20;
+}
+
+// ---- Course index sidebar ----------------------------------
+.courseindex {
+  background-color: #f5f5f5;
+  color: $body-color;
+
+  .courseindex-item,
+  .courseindex-section-title {
+    color: $body-color;
+  }
+
+  .courseindex-item.active,
+  .courseindex-item:hover {
+    background-color: rgba(46, 125, 50, 0.1);
+    color: #1b5e20;
+  }
+}
+
+.courseindex-section-title a,
+.courseindex-item a {
+  color: $body-color;
+
+  &:hover {
+    color: #2e7d32;
+  }
+}
+
+// ---- Cards & blocks ----------------------------------------
+.card,
+.block,
+.activity-item,
+.section .activity {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  color: $body-color;
+}
+
+.card-header,
+.card-footer,
+.block-header {
+  background-color: rgba(46, 125, 50, 0.05);
+  border-color: rgba(46, 125, 50, 0.15);
+  color: $body-color;
+}
+
+// ---- Headers -----------------------------------------------
+#page-header,
+.page-header-headings,
+.secondary-navigation {
+  color: $body-color;
+}
+
+#page-header {
+  background: transparent !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.page-header-headings h1,
+.page-header-headings h2,
+.page-header-headings .h1,
+.page-header-headings .h2 {
+  color: #1b5e20;
+}
+
+// ---- Single button (form-wrapped buttons) ------------------
+// Green buttons
+.singlebutton input[type="submit"],
+.singlebutton button,
+[id^="single_button"] input[type="submit"],
+[id^="single_button"] button {
+  background-image: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  border-color: #2e7d32;
+  color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+[id^="single_button"] input[type="submit"]:hover,
+[id^="single_button"] button:hover,
+.singlebutton input[type="submit"]:hover,
+.singlebutton button:hover {
+  background-image: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+  border-color: #1b5e20;
+  color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Forms & inputs ----------------------------------------
+.form-control,
+select.form-control,
+textarea.form-control {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.3);
+  color: $body-color;
+
+  &:focus {
+    background-color: #f9f9f9;
+    border-color: rgba(46, 125, 50, 0.6);
+    color: $body-color;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+  }
+
+  &::placeholder {
+    color: rgba($body-color, 0.5);
+  }
+}
+
+.form-control[disabled],
+.form-control[readonly],
+fieldset[disabled] .form-control {
+  background-color: #f5f5f5;
+  color: rgba($body-color, 0.6);
+}
+
+select option {
+  background-color: #ffffff;
+  color: $body-color;
+}
+
+.form-autocomplete-suggestions,
+.form-autocomplete-selection {
+  background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.2
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.form-autocomplete-suggestions li[aria-selected="true"],
+.form-autocomplete-suggestions li:hover {
+  background-color: rgba(
+    46,
+    125,
+    50,
+    0.1
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: #1b5e20 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Tables ------------------------------------------------
+.table {
+  color: $body-color;
+
+  th,
+  td {
+    border-color: rgba(46, 125, 50, 0.15);
+  }
+
+  thead th,
+  thead td {
+    background-color: rgba(
+      46,
+      125,
+      50,
+      0.1
+    ) !important; /* stylelint-disable-line declaration-no-important */
+    color: #1b5e20 !important; /* stylelint-disable-line declaration-no-important */
+    border-bottom-color: rgba(46, 125, 50, 0.2);
+  }
+
+  tbody tr:hover {
+    background-color: rgba(46, 125, 50, 0.05);
+    color: $body-color;
+  }
+
+  &.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(46, 125, 50, 0.02);
+  }
+
+  .fixed-left-column,
+  .fixed-right-column {
+    background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+    color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+// ---- Grade report ------------------------------------------
+.gradeparent table,
+.user-grade {
+  tr.userrow td,
+  tr td {
+    background-color: transparent !important; /* stylelint-disable-line declaration-no-important */
+    color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+    border-color: rgba(
+      46,
+      125,
+      50,
+      0.15
+    ) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  .levelodd {
+    background-color: rgba(
+      46,
+      125,
+      50,
+      0.02
+    ) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  .leveleven {
+    background-color: rgba(
+      46,
+      125,
+      50,
+      0.05
+    ) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  thead tr th {
+    background-color: rgba(
+      46,
+      125,
+      50,
+      0.1
+    ) !important; /* stylelint-disable-line declaration-no-important */
+    color: #1b5e20 !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+// ---- Modals ------------------------------------------------
+.modal-content {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.2);
+  color: $body-color;
+}
+
+.modal-header,
+.modal-footer {
+  background-color: #f5f5f5;
+  border-color: rgba(46, 125, 50, 0.15);
+}
+
+.modal-title {
+  color: #1b5e20;
+}
+
+// ---- Dropdowns (menus) ------------------------------------
+.dropdown-menu {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  .dropdown-item {
+    color: $body-color;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(46, 125, 50, 0.1);
+      color: #1b5e20;
+    }
+
+    &.active,
+    &:active {
+      background-color: rgba(46, 125, 50, 0.15);
+      color: #1b5e20;
+    }
+  }
+
+  .dropdown-divider {
+    border-top-color: rgba(46, 125, 50, 0.1);
+  }
+}
+
+// ---- List groups -------------------------------------------
+.list-group-item {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.15);
+  color: $body-color;
+}
+
+.list-group-item-action:hover,
+.list-group-item-action:focus {
+  background-color: rgba(46, 125, 50, 0.08);
+  color: #1b5e20;
+}
+
+.list-group-item.active,
+.list-group-item-action.active {
+  background-color: $primary;
+  border-color: $primary;
+  color: #ffffff;
+}
+
+// ---- Badges ------------------------------------------------
+.badge {
+  &.badge-secondary,
+  &.bg-secondary {
+    background-color: #e0e0e0 !important; /* stylelint-disable-line declaration-no-important */
+    color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+// ---- Breadcrumb -------------------------------------------
+.breadcrumb {
+  background-color: transparent;
+  color: rgba($body-color, 0.7);
+
+  .breadcrumb-item a {
+    color: #2e7d32;
+
+    &:hover {
+      color: #1b5e20;
+    }
+  }
+
+  .breadcrumb-item.active {
+    color: $body-color;
+  }
+}
+
+// ---- Alerts -----------------------------------------------
+.alert {
+  border: 1px solid;
+
+  &.alert-info {
+    background-color: rgba(25, 118, 210, 0.1);
+    border-color: rgba(25, 118, 210, 0.3);
+    color: #1976d2;
+  }
+
+  &.alert-success {
+    background-color: rgba(46, 125, 50, 0.1);
+    border-color: rgba(46, 125, 50, 0.3);
+    color: #2e7d32;
+  }
+
+  &.alert-warning {
+    background-color: rgba(245, 127, 23, 0.1);
+    border-color: rgba(245, 127, 23, 0.3);
+    color: #f57c00;
+  }
+
+  &.alert-danger {
+    background-color: rgba(211, 47, 47, 0.1);
+    border-color: rgba(211, 47, 47, 0.3);
+    color: #d32f2f;
+  }
+}
+
+// ---- Pagination -------------------------------------------
+.page-link {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.15);
+  color: $body-color;
+
+  &:hover {
+    background-color: rgba(46, 125, 50, 0.1);
+    border-color: rgba(46, 125, 50, 0.3);
+    color: #1b5e20;
+  }
+}
+
+.page-item.active .page-link {
+  background-color: $primary;
+  border-color: $primary;
+}
+
+.page-item.disabled .page-link {
+  background-color: #f5f5f5;
+  border-color: rgba(46, 125, 50, 0.1);
+  color: rgba($body-color, 0.5);
+}
+
+// ---- Buttons -----------------------------------------------
+.btn-primary {
+  background-image: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  border-color: #2e7d32;
+  color: #ffffff;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-image: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    border-color: #1b5e20;
+    color: #ffffff;
+  }
+}
+
+.btn-secondary {
+  background-image: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
+  border-color: #d0d0d0;
+  color: $body-color;
+
+  &:hover,
+  &:focus {
+    background-color: #d0d0d0;
+    color: $body-color;
+  }
+}
+
+.btn-outline-secondary {
+  @include button-outline-variant($gray-600);
+  border-color: $gray-600;
+}
+
+.btn-outline-info {
+  @include button-outline-variant($info-outline);
+}
+
+.btn-outline-warning {
+  @include button-outline-variant($warning-outline);
+}
+
+// ---- Admin / settings pages --------------------------------
+#page-admin-index,
+.path-admin {
+  #region-main,
+  .generalbox,
+  .admintable {
+    background-color: transparent;
+    color: $body-color;
+  }
+
+  .card,
+  .box {
+    background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+    border-color: rgba(
+      46,
+      125,
+      50,
+      0.15
+    ) !important; /* stylelint-disable-line declaration-no-important */
+    color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  .adminpagetitle,
+  .generaltable {
+    color: $body-color;
+    background-color: transparent;
+  }
+}
+
+// ---- Course listing ----------------------------------------
+.course-summary-item,
+.courses-card,
+.course-info-container {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.15);
+  color: $body-color;
+}
+
+// ---- Popover & tooltip -------------------------------------
+.popover {
+  background-color: #ffffff;
+  border-color: rgba(46, 125, 50, 0.2);
+
+  .popover-header {
+    background-color: #f5f5f5;
+    border-bottom-color: rgba(46, 125, 50, 0.15);
+    color: #1b5e20;
+  }
+
+  .popover-body {
+    color: $body-color;
+  }
+
+  .arrow::after,
+  .popover-arrow::after {
+    border-top-color: #ffffff;
+  }
+}
+
+.tooltip-inner {
+  background-color: #1b5e20;
+  color: #ffffff;
+  border: 1px solid rgba(27, 94, 32, 0.3);
+}
+
+// ---- Tabs --------------------------------------------------
+.nav-tabs {
+  border-bottom-color: rgba(46, 125, 50, 0.15);
+
+  .nav-link {
+    color: rgba($body-color, 0.7);
+    border-color: transparent;
+
+    &:hover {
+      color: #2e7d32;
+      border-color: rgba(46, 125, 50, 0.1);
+    }
+  }
+
+  .nav-link.active,
+  .nav-item.show .nav-link {
+    background-color: #ffffff;
+    border-color: rgba(46, 125, 50, 0.15) rgba(46, 125, 50, 0.15) #ffffff;
+    color: #1b5e20;
+  }
+}
+
+// ---- Secondary nav (below top navbar) ----------------------
+.secondary-navigation .nav-tabs,
+.secondary-navigation .navigation {
+  background-color: rgba(46, 125, 50, 0.05);
+}
+
+// ---- Moodle notification popover -------------------------
+.popover-region-container,
+.popover-region-header-container,
+.popover-region-footer-container,
+.popover-region-content-container {
+  background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.2
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.popover-region-header-container {
+  background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.popover-region-notification {
+  background-color: #f9f9f9 !important; /* stylelint-disable-line declaration-no-important */
+  border-bottom-color: rgba(
+    46,
+    125,
+    50,
+    0.1
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+
+  &:hover {
+    background-color: rgba(
+      46,
+      125,
+      50,
+      0.08
+    ) !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  &.unread {
+    background-color: rgba(
+      46,
+      125,
+      50,
+      0.1
+    ) !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+// ---- General white-background cleanup ----------------------
+.bg-white,
+.bg-light {
+  background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#region-main .card-body,
+#region-main .generalbox,
+#region-main .box,
+.generalbox,
+.boxaligncenter {
+  background-color: transparent;
+  color: $body-color;
+}
+
+// ---- File manager ------------------------------------------
+.fp-navbar,
+.filemanager .fp-toolbar,
+.fp-content {
+  background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Search results ----------------------------------------
+.search-results .result,
+.search-result-item,
+#searchresults .result {
+  background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Question engine ---------------------------------------
+.que,
+.formulation,
+.outcome,
+.comment {
+  background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.que .info {
+  background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Report builder ----------------------------------------
+.reportbuilder-report {
+  background-color: transparent !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+
+  .reportbuilder-sidebar {
+    background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+    border-color: rgba(
+      46,
+      125,
+      50,
+      0.15
+    ) !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+// ---- Message drawer ----------------------------------------
+.message-app,
+.message-drawer {
+  background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+
+  .message-drawer-section-header {
+    background-color: #eeeeee !important; /* stylelint-disable-line declaration-no-important */
+  }
+
+  .message {
+    background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+// ---- Chat module -------------------------------------------
+.chat-event,
+.chat-message,
+#chat-container {
+  background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Activity pages ----------------------------------------
+.activity-information,
+.activity-header,
+.activity-completion-info {
+  background-color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Process monitor ---------------------------------------
+.process-monitor {
+  background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Course section headers --------------------------------
+.section-modchooser-link,
+.section-header {
+  background-color: transparent;
+  color: $body-color;
+}
+
+.course-section-header {
+  background-color: rgba(
+    46,
+    125,
+    50,
+    0.08
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  border-color: rgba(
+    46,
+    125,
+    50,
+    0.15
+  ) !important; /* stylelint-disable-line declaration-no-important */
+  color: $body-color !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Targeted fixes for Moodle light-theme surfaces ---------------------
+#page-footer,
+#page-footer .footer-content-popover,
+#page-footer .footer-content-debugging {
+  background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+  border-color: $greentheme-border-subtle !important; /* stylelint-disable-line declaration-no-important */
+  color: $greentheme-text !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#page-footer > div,
+#page-footer .footer-content-popover > div {
+  background-color: #f5f5f5 !important; /* stylelint-disable-line declaration-no-important */
+  color: $greentheme-text !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#page-footer a,
+#page-footer a:hover,
+#page-footer a:focus {
+  color: $greentheme-link !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#region-main > div > div,
+#region-main > .card,
+#region-main > .card > .card-body {
+  background-color: $greentheme-surface !important; /* stylelint-disable-line declaration-no-important */
+  border-color: $greentheme-border-subtle !important; /* stylelint-disable-line declaration-no-important */
+  color: $greentheme-text !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.singlebutton input[type="submit"],
+.singlebutton button,
+[id^="single_button"] input[type="submit"],
+[id^="single_button"] button,
+[id^="single_button"] .btn {
+  background: #2e7d32 !important; /* stylelint-disable-line declaration-no-important */
+  border-color: #2e7d32 !important; /* stylelint-disable-line declaration-no-important */
+  color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.singlebutton,
+[id^="single_button"] {
+  background-color: $greentheme-surface !important; /* stylelint-disable-line declaration-no-important */
+  color: $greentheme-text !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.singlebutton input[type="submit"]:hover,
+.singlebutton button:hover,
+[id^="single_button"] input[type="submit"]:hover,
+[id^="single_button"] button:hover,
+[id^="single_button"] .btn:hover {
+  background: #1b5e20 !important; /* stylelint-disable-line declaration-no-important */
+  border-color: #1b5e20 !important; /* stylelint-disable-line declaration-no-important */
+  color: #ffffff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.maincalendar .calendarmonth,
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th,
+.maincalendar .calendarmonth .clickable,
+.block_calendar_month .calendarwrapper td > div {
+  background-color: $greentheme-surface !important; /* stylelint-disable-line declaration-no-important */
+  border-color: $greentheme-border-subtle !important; /* stylelint-disable-line declaration-no-important */
+  color: $greentheme-text !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.maincalendar .calendarmonth .clickable:hover,
+.maincalendar .calendarmonth td:hover,
+.block_calendar_month .calendarwrapper td > div:hover {
+  background-color: $greentheme-surface-hover !important; /* stylelint-disable-line declaration-no-important */
+  color: $greentheme-text-strong !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.maincalendar .calendarmonth a,
+.maincalendar .calendarmonth .day-number,
+.maincalendar .calendarmonth .eventname {
+  color: $greentheme-link !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.maincalendar .calendarmonth .clickable:hover a,
+.maincalendar .calendarmonth .clickable:hover .day-number,
+.maincalendar .calendarmonth .clickable:hover .eventname {
+  color: $greentheme-text-strong !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.maincalendar .calendar_event_category,
+.maincalendar .calendar_event_course,
+.maincalendar .calendar_event_site,
+.maincalendar .calendar_event_group,
+.maincalendar .calendar_event_user,
+.maincalendar .calendar_event_other {
+  background-color: rgba(46, 125, 50, 0.15) !important; /* stylelint-disable-line declaration-no-important */
+  border-color: #2e7d32 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.maincalendar .calendar_event_category a,
+.maincalendar .calendar_event_course a,
+.maincalendar .calendar_event_site a,
+.maincalendar .calendar_event_group a,
+.maincalendar .calendar_event_user a,
+.maincalendar .calendar_event_other a {
+  color: $greentheme-text !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#participantsform,
+#participantsform .table-responsive,
+#participantsform .generaltable,
+#participantsform .generaltable th,
+#participantsform .generaltable td {
+  background-color: $greentheme-surface !important; /* stylelint-disable-line declaration-no-important */
+  border-color: $greentheme-border !important; /* stylelint-disable-line declaration-no-important */
+  color: $greentheme-text !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#participantsform .generaltable tbody tr:nth-child(even) td {
+  background-color: rgba(46, 125, 50, 0.03) !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#participantsform .generaltable tbody tr:hover td {
+  background-color: $greentheme-surface-hover !important; /* stylelint-disable-line declaration-no-important */
+  color: $greentheme-text-strong !important; /* stylelint-disable-line declaration-no-important */
+}
+
+#participantsform a {
+  color: $greentheme-link !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// Keep the General section title legible against its section surface.
+#section-0 > div,
+#section-0 .sectionname,
+#section-0 .sectionname a {
+  color: #1b5e20 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// ---- Rounded user pictures --------------------------------
+.userpicture {
+  border-radius: 50%;
+}
+
+// ---- Scrollbars (webkit) -----------------------------------
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f9f9f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(46, 125, 50, 0.4);
+  border-radius: 3px;
+
+  &:hover {
+    background: rgba(46, 125, 50, 0.6);
+  }
+}

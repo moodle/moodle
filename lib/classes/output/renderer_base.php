@@ -337,12 +337,12 @@ class renderer_base {
      * in plugin and theme pix directories.
      *
      * There are three types of images:
-     * 1/ theme images  - stored in theme/mytheme/pix/,
+    * 1/ theme images  - stored in theme/darktheme/pix/,
      *                    use component 'theme'
      * 2/ core images   - stored in /pix/,
-     *                    overridden via theme/mytheme/pix_core/
+    *                    overridden via theme/darktheme/pix_core/
      * 3/ plugin images - stored in mod/mymodule/pix,
-     *                    overridden via theme/mytheme/pix_plugins/mod/mymodule/,
+    *                    overridden via theme/darktheme/pix_plugins/mod/mymodule/,
      *                    example: image_url('comment', 'mod_glossary')
      *
      * @param string $imagename the pathname of the image

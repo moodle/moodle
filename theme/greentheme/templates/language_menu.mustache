@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/language_menu
+
+    Language menu template.
+
+    Context variables required for this template:
+    * title - The title of the menu (displays the text of the currently active language).
+    * items - Array of data representing the available languages to be displayed in the language menu.
+       * link - If a link is provided render it.
+         * title - The title of the language item.
+         * text - The text displayed for the language item.
+         * url - The url link to activate the given language.
+         * isactive - Whether the language is currently active.
+
+    Example context (json):
+    {
+        "title": "English (en)",
+        "items": {
+            "link": {
+                "title": "English (en)",
+                "text": "English (en)",
+                "url": "http://example.com",
+                "isactive": 0
+            }
+        }
+    }
+}}
+<div class="langmenu">
+    <div class="dropdown show">
+        <a href="#" role="button" id="lang-menu-toggle" data-toggle="dropdown" aria-label="{{#str}}language{{/str}}" aria-haspopup="true" aria-controls="lang-action-menu" class="btn dropdown-toggle">
+            <i class="icon fa fa-language fa-fw me-1" aria-hidden="true"></i>
+            <span class="langbutton">
+                {{title}}
+            </span>
+            <b class="caret"></b>
+        </a>
+        <div role="menu" aria-labelledby="lang-menu-toggle" id="lang-action-menu" class="dropdown-menu dropdown-menu-right">
+            {{#items}}
+                {{#link}}
+                    <a href="{{{url}}}" class="dropdown-item ps-5" role="menuitem" {{#isactive}}aria-current="true"{{/isactive}}
+                            {{#attributes}}{{key}}="{{value}}" {{/attributes}}>
+                        {{text}}
+                    </a>
+                {{/link}}
+            {{/items}}
+        </div>
+    </div>
+</div>

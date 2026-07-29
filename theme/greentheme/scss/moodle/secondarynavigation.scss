@@ -1,0 +1,23 @@
+.secondary-navigation {
+    padding-bottom: 15px;
+    .navigation {
+        border-bottom: 1px solid $nav-tabs-border-color;
+        background-color: $body-bg;
+        margin: 0 -0.5rem;
+        padding: 0 0.5rem;
+        .nav-tabs {
+            border: none;
+            max-width: $course-content-maxwidth;
+            margin: 0 auto;
+            .nav-link {
+                border-radius: initial;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .secondary-navigation .navigation {
+        padding: 0 calc(0.5rem + 15px);
+    }
+}

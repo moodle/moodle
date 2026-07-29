@@ -1,0 +1,144 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+This file describes API changes in /theme/boost
+information provided here is intended especially for theme designers.
+
+=== 4.4 ===
+* Bootstrap badge color helper clases (badge-[primary|secondary|...]) are no longer used, use bg-[primary|secondary|...] instead.
+* Bootstrap badge-pill is no longer used, use rounded-pill instead.
+* The bootstrap ´.media´ helper class has been replaced with utility classes (´d-flex´, ´flex-shrink-´, ´flex-grow-´, ...)
+* The following bootstrap mixins that will be deprecated in BS5 have been replaced with their CSS code:
+  - hover, hover-focus, plain-hover-focus and hover-focus-active
+  - float-left, float-right and float-none
+  - nav-divider
+  - img-retina
+  - text-hide
+  - invisible
+  - form-control-focus
+  - text-emphasis-variant
+  - size
+  - make-container-max-widths
+  - g-variant and bg-gradient-variant
+* Bootstrap `.form-group` helper class is no longer used, use margin utilities instead (´mb-3´, ...).
+* Bootstrap `.form-inline` helper class is no longer used, use display utilities instead (`.d-flex.flex-wrap.align-items-center`).
+* The `.dashboard-card` class has been removed in favour of `.course-card` and `theme-card`.
+* Bootstrap `.card-deck` helper class is no longer used, use grid utility classes (row, row-cols, ...) instead.
+
+=== 4.3 ===
+* The $activity-iconcontainer-height and $activity-iconcontainer-width variables have been changed from 50px to 52px.
+* New SCSS mixin optional_animate to animate an element unless if the user has reduced motion in their preferences.
+
+=== 4.0 ===
+* Following the adopted standards, breadcrumbs have been removed for pages that reside on the 1st level within a course
+  e.g. participants, grades, settings, reports.
+* Any custom complex node structures added to the nav tree will now be displayed as a flattened structure within the corresponding
+  secondary navigation. It is dependent on what the first url for the construct.
+  Refer to secondary_test.php:test_add_external_nodes_to_secondary for examples.
+* New function addblockbutton in the renderer, which generates the new 'Add a block' button.
+  Call this and output it into your templates.
+* In order to view additional custom nodes, leverage the 'get_overflow_menu_data' which returns url_select if there are nodes available.
+* In order for existing themes to leverage the changes in the Boost theme, it is recommended to follow the guidelines in the 4.0 docs
+  https://moodledev.io/docs/4.1/devupdate
+
+=== 3.7 ===
+
+* Templates and renderers moved to core.
+
+* Behat override steps moved to core.
+
+Form element template
+---------------------
+A 'wrapperid' has been added to 'templates/core_form/element-template.mustache' to restore unique ids
+on Boost form element wrappers. This restores the same unique element ids seen on elements in BS2
+themes, which were mistakenly dropped when introducing the Boost theme.
+
+=== 3.5 ===
+
+The Boost theme now uses Bootstrap 4 Stable (BS4S).
+
+We are trying to use as much BS4S classes in MDL Templates to reduce the amount of Moodle CSS.
+
+The biggest changes are:
+
+JavaScript
+----------
+* All Bootstrap javascript has been updated.
+
+Sass
+----
+* A number of variables are no longer available in Bootstrap 4 Stable. For now a bs4alpha compatibility file has been added, see scss/bs4alphacompat.scss which translates veriable names from the Alpha version to the stable version.
+
+* m-t-* and other spacing utilities should be replaced with mt-*.
+
+The units that were used for margins have changed too
+m-t-1 is now mt-3
+m-t-2 is now mt-4
+m-t-3 is now mt-5
+
+
+Grid and Flexbox
+----------------
+The Boostrap grid uses CSS's flexbox grid to build layouts.
+
+New breakpoints for grids have been added:
+.col-*  <576px
+.col-sm-* >= 576px
+.col-md-* >= 768px
+.col-lg-* >= 992px
+.col-xl-* >= 1200px
+
+All usage of '*-xs-*' have been dropped. So what used to be col-xs-6 should now be written as col-6.
+
+*-md-* has become *-lg-*, and *-lg-* has become *-xl-*.
+
+Typography
+----------
+Boostrap 4 uses a native font stack that selects the best font-family for each OS and device. For font sizing the browser default root font-size (typically 16px) is used. this variable can be changed using the variable '$font-size-base'.
+In the default Boost preset we use: "0.9375rem" which computes to 15px on most browser.
+
+Presets
+-------
+The structure of preset files have changed. The new structure of a preset file is:
+
+// Space to set variables.
+$font-size-base: 0.9375rem
+
+// Import FontAwesome.
+@import "fontawesome";
+
+// Import All of Bootstrap.
+@import "bootstrap";
+
+// Import Core moodle CSS.
+@import "moodle";
+
+// Space to use Bootstrap mixins and extends.
+.navbar {
+  @include shadow();
+}
+
+Bootswatches
+------------
+Bootstrap 4 bootswatches can be imported using the theme/boost/cli/import-bootswatch.php script. Generated bootswatches can be added in the theme boost settings page.
+
+Changed Components
+------------------
+Cards need this structure
+ class='card'
+    class='card-body'
+This used to be 'card-block'
+
+The header.mustache template has been replace by a navbar.mustache template for name consistancy with Bootstrap
+
+A new header.mustache template has been created served from core/core_renderer.php. This should be move to core at some point.
+
+
+=== 3.4 ===
+* For improved accessibility, the footer links for boost have been changed to use $bg-inverse-link-color (defaults to white) and
+  now have an underline text-decoration. To override the link colour simply set $bg-inverse-link-color in your preset file or
+  theme scss.
+* To match the new primary colour we are switching to using the UX pallette, which uses a purple colour for info. To override,
+  set $brand-info in your preset file or theme scss.

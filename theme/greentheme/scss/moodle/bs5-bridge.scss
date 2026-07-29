@@ -1,0 +1,116 @@
+/* Bootstrap 5 bridge classes */
+
+/*
+ * These variables used to bridge the gap between Bootstrap 4 and Bootstrap 5 for
+ * alert and list-group-item.
+ */
+
+// Reduces the background color intensity by 80%. This is the definition in BS5.
+$alert-bg-scale: -80% !default;
+// Reduces the border color intensity by 70%. This is the definition in BS5.
+$alert-border-scale: -70% !default;
+// Increases the text color intensity by 50%. This is the definition in BS5.
+$alert-color-scale: 50% !default;
+
+/*
+ * These function used to bridge the gap between Bootstrap 4 and Bootstrap 5 and
+ * and will be located in __functions.scss in Bootstrap 5
+ * This file should be removed as part of MDL-75669.
+ */
+
+// Tint a color: mix a color with white based on the provided weight.
+@function tint-color($color, $weight) {
+    @return mix(white, $color, $weight);
+}
+
+// Shade a color: mix a color with black.
+// This function darkens a given color with black based on the provided weight.
+@function shade-color($color, $weight) {
+    @return mix(black, $color, $weight);
+}
+
+// Shade the color if the weight is positive, else tint it.
+@function shift-color($color, $weight) {
+    @return if($weight > 0, shade-color($color, $weight), tint-color($color, -$weight));
+}
+
+/* These classes are used to bridge the gap between Bootstrap 4 and Bootstrap 5. */
+/* This file should be removed as part of MDL-75669. */
+.g-0 {
+    @extend .no-gutters;
+}
+
+.btn-close {
+    @extend .close;
+}
+
+// Generate all spacer classes for all breakpoints for directions start and end.
+// ps-1 > pl-1, pe-1 > pr-1, me-sm-1 > ml-sm-1, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    @each $prop, $abbrev in (margin: m, padding: p) {
+        @each $size, $length in $spacers {
+            .#{$abbrev}s#{$infix}-#{$size} {
+                @extend .#{$abbrev}l#{$infix}-#{$size};
+            }
+            .#{$abbrev}e#{$infix}-#{$size} {
+                @extend .#{$abbrev}r#{$infix}-#{$size};
+            }
+        }
+    }
+}
+
+// Generate all margin auto classes for all breakpoints for directions start and end.
+// ps-auto > pl-auto, pe-auto > pr-auto, me-sm-auto > ml-sm-auto, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    .ms#{$infix}-auto {
+        @extend .ml#{$infix}-auto;
+    }
+    .me#{$infix}-auto {
+        @extend .mr#{$infix}-auto;
+    }
+}
+
+// Generate all float classes for all breakpoints for directions start and end.
+// float-start > float-left, float-sm-end > float-sm-right, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    .float#{$infix}-start {
+        @extend .float#{$infix}-left;
+    }
+    .float#{$infix}-end {
+        @extend .float#{$infix}-right;
+    }
+}
+
+// Generate all text classes for all breakpoints for directions start and end.
+// text-start > text-left, text-sm-end > text-sm-right, ...
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+    .text#{$infix}-start {
+        @extend .text#{$infix}-left;
+    }
+    .text#{$infix}-end {
+        @extend .text#{$infix}-right;
+    }
+}
+
+.border-start {
+    @extend .border-left;
+}
+.border-end {
+    @extend .border-right;
+}
+.border-start-0 {
+    @extend .border-left-0;
+}
+.border-end-0 {
+    @extend .border-right-0;
+}
+.rounded-start {
+    @extend .rounded-left;
+}
+.rounded-end {
+    @extend .rounded-right;
+}
