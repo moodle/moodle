@@ -36,15 +36,29 @@ class guest_login extends \moodleform {
         global $USER;
 
         $mform = $this->_form;
+        $instance = $this->_customdata['instance'];
+        $coursecontext = \context_course::instance($instance->get_course()->id);
+        $shouldfreezeusername = isloggedin()
+            && !isguestuser()
+            && is_enrolled($coursecontext, $USER, '', true);
         $mform->addElement('text', 'username',
             get_string('guestaccess_username', 'mod_bigbluebuttonbn'));
         $mform->setType('username', PARAM_NOTAGS);
-        $mform->addRule('username',
-            get_string('required'), 'required', null, 'client');
 
-        if (isloggedin() && !isguestuser()) {
+        if ($shouldfreezeusername) {
             $mform->setConstant('username', fullname($USER));
             $mform->freeze('username');
+        } else {
+            if (isloggedin() && !isguestuser()) {
+                $mform->setDefault('username', fullname($USER));
+            }
+            $mform->addRule(
+                'username',
+                get_string('required'),
+                'required',
+                null,
+                'client'
+            );
         }
 
         $mform->addElement('password', 'password',
