@@ -68,6 +68,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
 
         $question = $qa->get_question();
         $response = $question->get_response($qa);
+        $questiontextid = $qa->get_qt_field_name('qtext');
 
         $inputname = $qa->get_qt_field_name('answer');
         $inputattributes = array(
@@ -144,10 +145,12 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
         }
 
         $result = '';
-        $result .= html_writer::tag('div', $question->format_questiontext($qa),
-                array('class' => 'qtext'));
+        $result .= html_writer::tag('div', $question->format_questiontext($qa), ['class' => 'qtext', 'id' => $questiontextid]);
 
-        $result .= html_writer::start_tag('fieldset', array('class' => 'ablock no-overflow visual-scroll-x'));
+        $result .= html_writer::start_tag('fieldset', [
+            'class' => 'ablock no-overflow visual-scroll-x',
+            'aria-describedby' => $questiontextid,
+        ]);
         if ($question->showstandardinstruction == 1) {
             $legendclass = '';
             $questionnumber = $options->add_question_identifier_to_label($this->prompt(), true, true);
