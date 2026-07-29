@@ -9,7 +9,7 @@ Feature: Navigate site administration pages
     Given I log in as "admin"
     When I navigate to "Plugins > Activity modules > Assignment" in site administration
     # Ensure secondary navigation is still present and "Plugins" is selected.
-    Then "//a[@aria-current = 'true' and normalize-space() = 'Plugins']" "xpath" should exist in the ".secondary-navigation" "css_element"
+    Then "//a[(@aria-current = 'true' or @aria-current = 'page') and normalize-space() = 'Plugins']" "xpath" should exist in the ".secondary-navigation" "css_element"
     And I should see "Category: Assignment"
 
   @javascript
@@ -17,5 +17,5 @@ Feature: Navigate site administration pages
     Given I log in as "admin"
     When I navigate to "Plugins > Activity modules > Forum" in site administration
     # Ensure secondary navigation is still present and "Plugins" is selected.
-    Then "//a[@aria-current = 'true' and normalize-space() = 'Plugins']" "xpath" should exist in the ".secondary-navigation" "css_element"
+    Then "//a[(@aria-current = 'true' or @aria-current = 'page') and normalize-space() = 'Plugins']" "xpath" should exist in the ".secondary-navigation" "css_element"
     And I should see "Forum"

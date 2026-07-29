@@ -21,3 +21,68 @@
         padding: 0 calc(0.5rem + 15px);
     }
 }
+
+.secondary-navigation .navigation.secondarynav-tabbar {
+    border-bottom: none;
+    height: $moremenu-height;
+
+    .more-nav {
+        gap: var(--mds-spacing-xs);
+    }
+
+    .nav-item {
+        height: $moremenu-height;
+    }
+
+    // The "More" toggle keeps Bootstrap's .dropdown-toggle class (for the caret and dropdown JS),
+    // which also makes it match core.scss's generic `a.dropdown-toggle:focus` rule. That rule sets
+    // both box-shadow (which would otherwise stack with @moodlehq/design-system's own
+    // :focus-visible ring, and applies on every focus, not just keyboard) and outline: 0. The
+    // outline: 0 wins over the design system's own `.mds-nav-pill:focus-visible` rule regardless of
+    // source order, because `a.dropdown-toggle:focus`'s bare element selector outweighs having one
+    // fewer class, so the toggle would otherwise be left with no visible focus indicator at all.
+    .mds-nav-pill.dropdown-toggle:focus {
+        box-shadow: none;
+    }
+
+    .mds-nav-pill.dropdown-toggle:focus-visible {
+        outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+        outline-offset: var(--mds-spacing-offset);
+    }
+
+    // Works around a :visited cascade quirk in @moodlehq/design-system's nav-pill CSS: the base
+    // rule `.mds-nav-pill, .mds-nav-pill:visited { background-color: transparent; }` has higher
+    // specificity than `.mds-nav-pill--selected`'s background-color, so once a self-linking pill
+    // has been "visited" (i.e. always, since the active pill links to the current page), some
+    // browsers render its selected background as transparent instead of the intended fill.
+    .mds-nav-pill--selected:visited {
+        background-color: var(--mds-bg-nav-pill-selected);
+    }
+
+    opacity: 0;
+
+    &.secondarynav-measured {
+        opacity: 1;
+    }
+
+    // On istablist pages (e.g. admin/search.php), tabs are switched client-side by Bootstrap's
+    // tab.js, which toggles the plain ".active" class itself and never re-renders the React
+    // tree. The "selected" pill look must therefore be driven entirely by ".active" rather than
+    // by a React-controlled class/indicator element that would only ever reflect the
+    // server-rendered initial active node. This reproduces the nav-pill's selected style and
+    // indicator dot as a pseudo-element so it stays in sync with whichever tab is actually active.
+    .mds-nav-pill.active {
+        color: var(--mds-text-default);
+        background-color: var(--mds-bg-nav-pill-selected);
+
+        &::before {
+            content: "";
+            display: block;
+            width: 4px;
+            height: 4px;
+            flex-shrink: 0;
+            border-radius: var(--mds-border-radius-pill);
+            background-color: var(--mds-bg-interactive-primary-default);
+        }
+    }
+}

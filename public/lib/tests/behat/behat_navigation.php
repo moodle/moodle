@@ -1143,7 +1143,7 @@ class behat_navigation extends behat_base {
      */
     public function i_select_from_secondary_navigation(string $link) {
         $this->execute('behat_general::i_click_on_in_the',
-            [$link, 'link', '.secondary-navigation .moremenu.navigation', 'css_element']
+            [$link, 'link', '.secondary-navigation .navigation.secondarynav-tabbar', 'css_element']
         );
     }
 
@@ -1176,7 +1176,8 @@ class behat_navigation extends behat_base {
             $tabxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             $menubarxpath = '//ul[@role=\'menubar\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             $linkname = behat_context_helper::escape(get_string('moremenu'));
-            $menubarmorexpath = '//ul[contains(@class,\'more-nav\')]/li/a[contains(normalize-space(.), ' . $linkname . ')]';
+            $menubarmorexpath = '//ul[contains(@class,\'more-nav\')]//a[contains(@class,\'dropdown-toggle\')]' .
+                '[contains(normalize-space(.), ' . $linkname . ')]';
             $tabnode = $this->getSession()->getPage()->find('xpath', $tabxpath);
             $menunode = $this->getSession()->getPage()->find('xpath', $menubarxpath);
             $menubuttons = $this->getSession()->getPage()->findAll('xpath', $menubarmorexpath);
@@ -1200,7 +1201,7 @@ class behat_navigation extends behat_base {
                     } catch (Exception $e) {
                         $this->execute('behat_general::i_click_on', [$menubuttons[0], 'NodeElement']);
                     }
-                    $moreitemxpath = '//ul[@data-region=\'moredropdown\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
+                    $moreitemxpath = '//div[@data-region=\'moredropdown\']/a[contains(normalize-space(.), ' . $tabname . ')]';
                     if ($morenode = $this->getSession()->getPage()->find('xpath', $moreitemxpath)) {
                         $this->execute('behat_general::i_click_on', [$morenode, 'NodeElement']);
                         $xpath .= '//div[contains(@class,\'active\')]';
@@ -1239,7 +1240,7 @@ class behat_navigation extends behat_base {
      * @return null|string
      */
     protected function find_header_administration_menu($mustexist = false) {
-        $menuxpath = '//div[contains(@class,\'secondary-navigation\')]//nav[contains(@class,\'moremenu\')]';
+        $menuxpath = '//div[contains(@class,\'secondary-navigation\')]//ul[contains(@class,\'more-nav\')]';
 
         if ($mustexist) {
             $exception = new ElementNotFoundException($this->getSession(), 'Page header administration menu');
@@ -1295,9 +1296,47 @@ class behat_navigation extends behat_base {
             $menuxpath = $this->find_header_administration_menu() ?: $this->find_page_administration_menu();
         }
         if ($menuxpath && $this->running_javascript()) {
-            $node = $this->find('xpath', $menuxpath . '//a[@data-bs-toggle=\'dropdown\']');
+            // Scoped to the "More" toggle's own li (class shared with the legacy moremenu.mustache
+            // markup) rather than any dropdown-toggle under $menuxpath: when the page also has
+            // submenu-trigger nodes (e.g. "Course"/"Activity" in single-activity format courses),
+            // those are dropdown-toggles too, and an unscoped search would click the first one of
+            // those instead of the actual "More" overflow toggle.
+            $node = $this->find('xpath', $menuxpath . '//li[contains(@class,\'dropdownmoremenu\')]//a[@data-bs-toggle=\'dropdown\']');
             if ($node->isVisible()) {
                 $this->execute('behat_general::i_click_on', [$node, 'NodeElement']);
+            }
+        }
+    }
+
+    /**
+     * Opens every ancestor Bootstrap dropdown a node is nested inside, outermost first.
+     *
+     * A navigation link may sit inside more than one level of submenu-trigger dropdown (e.g.
+     * "Course > Course reuse > Backup" in a single-activity format course), none of which are
+     * opened just by locating the link via a descendant xpath search. Without this, clicking such
+     * a link fails with "element not interactable" because it is still hidden inside a closed
+     * dropdown-menu.
+     *
+     * @param NodeElement $node The (possibly hidden) target node about to be clicked.
+     */
+    protected function open_ancestor_dropdowns(NodeElement $node): void {
+        if (!$this->running_javascript() || $node->isVisible()) {
+            return;
+        }
+
+        // Document order, so outer dropdowns are opened before the inner ones nested within them
+        // (an inner toggle is itself hidden, and so not clickable, until its own ancestor is open).
+        $menus = $node->findAll('xpath', 'ancestor::*[contains(concat(" ", normalize-space(@class), " "), " dropdown-menu ")]');
+
+        foreach ($menus as $menu) {
+            $labelledby = $menu->getAttribute('aria-labelledby');
+            if (!$labelledby) {
+                continue;
+            }
+
+            $toggle = $this->getSession()->getPage()->find('xpath', "//*[@id='$labelledby']");
+            if ($toggle && $toggle->isVisible() && $toggle->getAttribute('aria-expanded') !== 'true') {
+                $this->execute('behat_general::i_click_on', [$toggle, 'NodeElement']);
             }
         }
     }
@@ -1335,10 +1374,12 @@ class behat_navigation extends behat_base {
             $linkname = behat_context_helper::escape($lastnode);
             $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' . $linkname . ')]');
             if ($link) {
+                $this->open_ancestor_dropdowns($link);
                 $this->execute('behat_general::i_click_on', [$link, 'NodeElement']);
                 return;
             }
         } else if ($firstlink) {
+            $this->open_ancestor_dropdowns($firstlink);
             $this->execute('behat_general::i_click_on', [$firstlink, 'NodeElement']);
             array_splice($nodelist, 0, 1);
             $this->select_on_administration_page($nodelist);
@@ -1357,10 +1398,12 @@ class behat_navigation extends behat_base {
                 $menuxpath . '//a[contains(normalize-space(.), ' . $courselinkname . ')]'
             );
             if ($link) {
+                $this->open_ancestor_dropdowns($link);
                 $this->execute('behat_general::i_click_on', [$link, 'NodeElement']);
                 $this->select_on_administration_page($nodelist);
                 return;
             } else if ($courselink) {
+                $this->open_ancestor_dropdowns($courselink);
                 $this->execute('behat_general::i_click_on', [$courselink, 'NodeElement']);
                 $this->select_on_administration_page($nodelist);
                 return;
@@ -1646,7 +1689,8 @@ class behat_navigation extends behat_base {
      * @param string $navigationmenuitem The navigation menu item name.
      */
     public function menu_item_should_be_active(string $navigationmenuitem): void {
-        $elementselector = "//*//a/following-sibling::*//a[contains(text(), '$navigationmenuitem') and @aria-current='true']";
+        $elementselector = "//*//a/following-sibling::*//a[contains(normalize-space(.), '$navigationmenuitem') " .
+            "and (@aria-current='true' or @aria-current='page')]";
         $params = [$elementselector, "xpath_element"];
         $this->execute("behat_general::should_exist", $params);
     }
@@ -1658,7 +1702,8 @@ class behat_navigation extends behat_base {
      * @param string $navigationmenuitem The navigation menu item name.
      */
     public function menu_item_should_not_be_active(string $navigationmenuitem): void {
-        $elementselector = "//*//a/following-sibling::*//a[contains(text(), '$navigationmenuitem') and @aria-current='true']";
+        $elementselector = "//*//a/following-sibling::*//a[contains(normalize-space(.), '$navigationmenuitem') " .
+            "and (@aria-current='true' or @aria-current='page')]";
         $params = [$elementselector, "xpath_element"];
         $this->execute("behat_general::should_not_exist", $params);
     }
