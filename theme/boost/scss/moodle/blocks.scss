@@ -207,6 +207,10 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width * 0.5 );
             margin-top: 0;
         }
     }
+    // Reset the negative margin in editing mode so the pagination controls do not obscure the block's move and action controls.
+    .editing & .paging-bar-container {
+        margin-top: 0;
+    }
 }
 #block-region-side-pre {
     .block_recentlyaccessedcourses {
