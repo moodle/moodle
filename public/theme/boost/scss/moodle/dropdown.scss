@@ -7,7 +7,7 @@
     a {
         display: block;
         width: 100%;
-        color: $body-color;
+        color: var(--#{$prefix}body-color);
     }
     &.active,
     &:active,

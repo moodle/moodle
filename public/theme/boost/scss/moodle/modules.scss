@@ -15,7 +15,7 @@ select {
         margin: 0 auto !important; /* stylelint-disable-line declaration-no-important */
     }
     .activity-details:not(:empty) {
-        background-color: $gray-100;
+        background-color: var(--#{$prefix}gray-100);
         margin-bottom: map-get($spacers, 3);
         padding-left: map-get($spacers, 3);
         padding-right: map-get($spacers, 3);
@@ -35,7 +35,7 @@ select {
         width: 100%;
         align-items: center;
         .date-item {
-            color: $gray-700;
+            color: var(--#{$prefix}gray-700);
             display: flex;
             align-items: center;
             white-space: nowrap;
@@ -97,7 +97,7 @@ select {
         margin-top: map-get($spacers, 1);
         mix-blend-mode: multiply;
         &.badge-light {
-            background-color: $gray-200 !important; /* stylelint-disable-line declaration-no-important */
+            background-color: var(--#{$prefix}gray-200) !important; /* stylelint-disable-line declaration-no-important */
         }
 
         .icon {
@@ -610,7 +610,7 @@ $input-line-height-lg:  1.5 !default;
         height: $grading-icon-button-size;
         width: $grading-icon-button-size;
         border-radius: $grading-icon-button-size * 0.5;
-        background-color: $gray-200;
+        background-color: var(--#{$prefix}gray-200);
     }
     to {
         width: 100%;
@@ -645,7 +645,7 @@ $input-line-height-lg:  1.5 !default;
         height: $grading-icon-button-size;
         width: $grading-icon-button-size;
         border-radius: $grading-icon-button-size * 0.5;
-        background-color: $gray-200;
+        background-color: var(--#{$prefix}gray-200);
     }
 }
 
@@ -1049,7 +1049,7 @@ $input-line-height-lg:  1.5 !default;
                     position: absolute;
                     top: calc(#{$author-image-width} + #{map-get($spacers, 2)});
                     content: "";
-                    background-color: $gray-200;
+                    background-color: var(--#{$prefix}gray-200);
                     width: 2px;
                     height: calc(100% - #{$author-image-width} + #{map-get($spacers, 2)});
                 }
@@ -1241,7 +1241,7 @@ div#dock {
                     width: 20px;
                     height: 20px;
                     border: $border-width solid $border-color;
-                    background-color: $white;
+                    background-color: var(--#{$prefix}white);
                     font-size: $font-size-base * .6;
                 }
             }
@@ -1259,13 +1259,13 @@ div#dock {
 }
 
 .userinitials {
-    background-color: $gray-200;
+    background-color: var(--#{$prefix}gray-200);
     vertical-align: middle;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    color: $gray-800;
+    color: var(--#{$prefix}gray-800);
     font-weight: normal;
     margin-right: $spacer * 0.25;
     &.size-16,
@@ -1353,7 +1353,7 @@ img.userpicture {
     span.qnbutton {
         cursor: default;
         background-color: $input-disabled-bg;
-        color: $gray-700;
+        color: var(--#{$prefix}gray-700);
     }
 
     a.qnbutton:hover,
@@ -1419,7 +1419,7 @@ img.userpicture {
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading,
     .qnbutton.requiresgrading .trafficlight {
-        background-color: $gray-300;
+        background-color: var(--#{$prefix}gray-300);
     }
 
     .qnbutton.notyetanswered .trafficlight,
@@ -1453,7 +1453,7 @@ img.userpicture {
     .qnbutton.complete .trafficlight,
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading .trafficlight {
-        background-color: $gray-300;
+        background-color: var(--#{$prefix}gray-300);
     }
 }
 
@@ -1494,7 +1494,7 @@ img.userpicture {
     z-index: $zindex-sticky;
     #quiz-timer {
         border: $border-width solid $red;
-        background-color: $white;
+        background-color: var(--#{$prefix}white);
     }
 }
 .pagelayout-embedded #quiz-timer-wrapper {
@@ -1698,8 +1698,8 @@ $popout-header-height: 4rem;
     }
     hr.feedback_pagebreak {
         height: 4px;
-        color: $gray-600;
-        background-color: $gray-600;
+        color: var(--#{$prefix}gray-600);
+        background-color: var(--#{$prefix}gray-600);
         border: 0;
         margin: 0;
     }
@@ -1728,7 +1728,7 @@ $popout-header-height: 4rem;
         .feedback_itemlist.sortable-list-is-dragged {
             padding: map-get($spacers, 3);
             border: $border-width solid $border-color;
-            background-color: $white;
+            background-color: var(--#{$prefix}white);
             position: relative;
             @include border-radius();
             .itemname {
@@ -1779,7 +1779,7 @@ $popout-header-height: 4rem;
             padding-top: 10px;
         }
         tr:hover {
-            background: $gray-300;
+            background: var(--#{$prefix}gray-300);
         }
         td.singlevalue:before,
         td.optionname:before {

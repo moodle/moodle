@@ -7,8 +7,8 @@ $drawer-right-width: 315px !default;
 $drawer-padding-x: 20px !default;
 $drawer-padding-y: 20px !default;
 $drawer-offscreen-gutter: 20px !default;
-$drawer-left-bg-color: $gray-200 !default;
-$drawer-right-bg-color: $gray-100 !default;
+$drawer-left-bg-color: var(--#{$prefix}gray-200) !default;
+$drawer-right-bg-color: var(--#{$prefix}gray-100) !default;
 $drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
 $drawer-main-gap: calc(0.5rem + 20px);
@@ -210,10 +210,10 @@ $right-drawer-width: 320px;
             .btn {
                 width: $icon-medium-width;
                 height: $icon-medium-width; // Using the same value for width and height to make the button square.
-                background-color: $gray-200;
+                background-color: var(--#{$prefix}gray-200);
 
                 &:hover {
-                    background-color: $gray-400;
+                    background-color: var(--#{$prefix}gray-400);
                 }
             }
         }
@@ -464,7 +464,7 @@ $right-drawer-width: 320px;
     .draweractions {
         margin-left: map-get($spacers, 2);
         .btn {
-            --#{$prefix}btn-color: #{$gray-700};
+            --#{$prefix}btn-color: var(--#{$prefix}gray-700);
         }
     }
 }

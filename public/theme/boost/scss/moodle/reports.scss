@@ -19,7 +19,7 @@
 }
 #page-report-outline-index #outlinereport tbody {
     tr {
-        background-color: $white;
+        background-color: var(--#{$prefix}white);
     }
     tr.section {
         padding-left: map-get($spacers, 5);

@@ -844,7 +844,7 @@ a.ygtvspacer:hover {
     height: 80px;
     position: absolute;
     top: 5px;
-    color: $gray-500;
+    color: var(--#{$prefix}gray-500);
 }
 
 .fitem.disabled .filepicker-container,

@@ -176,12 +176,12 @@
 
 .modchoosernav {
     --#{$prefix}nav-pills-border-radius: #{$border-radius-pill};
-    --#{$prefix}nav-pills-link-active-bg: #{$body-color};
+    --#{$prefix}nav-pills-link-active-bg: #{var(--#{$prefix}body-color)};
     --#{$prefix}nav-link-font-size: #{$font-size-base};
 
     .nav-link {
-        --#{$prefix}nav-link-color: #{$body-color};
-        --#{$prefix}nav-link-hover-color: #{$body-color};
+        --#{$prefix}nav-link-color: #{var(--#{$prefix}body-color)};
+        --#{$prefix}nav-link-hover-color: #{var(--#{$prefix}body-color)};
         --#{$prefix}nav-link-font-weight: #{$font-weight-medium};
         --#{$prefix}nav-link-padding-y: .3rem;
 
@@ -198,7 +198,7 @@
         &:not(.active) {
             &:hover {
                 border: $border-width $border-style $border-color;
-                background-color: $gray-100;
+                background-color: var(--#{$prefix}gray-100);
             }
         }
     }
@@ -206,7 +206,7 @@
     @include media-breakpoint-down(md) {
         overflow-x: auto;
         white-space: nowrap;
-        background-color: $body-bg !important; /* stylelint-disable-line declaration-no-important */
+        background-color: var(--#{$prefix}body-bg) !important; /* stylelint-disable-line declaration-no-important */
 
         .nav-link {
             border: $border-width $border-style $border-color !important; /* stylelint-disable-line declaration-no-important */
@@ -242,7 +242,7 @@
         }
 
         &:not(.selected):hover {
-            background-color: $gray-100;
+            background-color: var(--#{$prefix}gray-100);
         }
 
         .optioninfo {
@@ -264,7 +264,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     width: 100%;
-    background-color: $white;
+    background-color: var(--#{$prefix}white);
 
     .activitychooser-option-details {
         min-width: 15rem;

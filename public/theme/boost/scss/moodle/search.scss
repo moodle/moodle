@@ -27,14 +27,14 @@
     }
     .btn-submit {
         border-color: $input-border-color;
-        color: $gray-600;
+        color: var(--#{$prefix}gray-600);
     }
     .btn-close,
     .btn-clear {
         position: absolute;
         top: 0;
         right: 0;
-        color: $gray-600;
+        color: var(--#{$prefix}gray-600);
         z-index: 6;
     }
     .btn-close {
@@ -44,7 +44,7 @@
         line-height: inherit;
     }
     .btn-submit {
-        background-color: $gray-100;
+        background-color: var(--#{$prefix}gray-100);
     }
     .withclear {
         padding-right: 2rem;
@@ -67,7 +67,7 @@
     top: 0;
     width: 100%;
     display: flex;
-    background-color: $white;
+    background-color: var(--#{$prefix}white);
     z-index: $zindex-popover;
     height: $navbar-height;
     .searchform-navbar {

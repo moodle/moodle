@@ -24,7 +24,7 @@
     }
 
     .dropdown-subpanel.content-displayed {
-        background-color: $gray-200;
+        background-color: var(--#{$prefix}gray-200);
     }
 
     .dropdown-subpanel-content {
@@ -85,7 +85,7 @@
     a {
         display: block;
         width: 100%;
-        color: $body-color;
+        color: var(--#{$prefix}body-color);
     }
 
     &.active,

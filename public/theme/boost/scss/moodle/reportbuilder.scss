@@ -11,8 +11,8 @@
     .btn-outline-secondary[data-bs-toggle="collapse"]:not(.collapsed),
     .dropdown.show .btn-outline-secondary[data-bs-toggle="dropdown"] {
         color: color-contrast($gray-600);
-        background-color: $gray-600;
-        border-color: $gray-600;
+        background-color: var(--#{$prefix}gray-600);
+        border-color: var(--#{$prefix}gray-600);
     }
 }
 
@@ -128,9 +128,9 @@ $rb-right-sidebar-width: 350px !default;
             z-index: $zindex-fixed;
             width: calc(100% - 35px);
             padding-top: 1.25rem;
-            background-color: $white;
+            background-color: var(--#{$prefix}white);
             // Small hack to simulate padding bottom after nav-tabs border.
-            box-shadow: 0 1.25rem 0 $white;
+            box-shadow: 0 1.25rem 0 var(--#{$prefix}white);
         }
         .dynamictabs .tab-content {
             padding-top: $tabs-height;
@@ -186,7 +186,7 @@ $rb-right-sidebar-width: 350px !default;
             height: 12px;
             font-size: 12px;
             vertical-align: text-top;
-            color: $body-color;
+            color: var(--#{$prefix}body-color);
         }
     }
     button[data-action="report-remove-column"] .icon {
@@ -290,7 +290,7 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
         background-color: $rb-sortable-list-drag-color;
     }
     &.sortable-list-is-dragged {
-        background-color: $white;
+        background-color: var(--#{$prefix}white);
         opacity: 0.85;
     }
     &.sortable-list-is-dropped {
@@ -309,7 +309,7 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
     }
     .toggle-card-button {
         i.toggle-card-icon {
-            color: $gray-600;
+            color: var(--#{$prefix}gray-600);
             font-weight: 700;
         }
         // Toggle icons using standard bootstrap collapse.
@@ -399,7 +399,7 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
                     display: block;
                     text-transform: uppercase;
                     font-size: 70%;
-                    color: $gray-800;
+                    color: var(--#{$prefix}gray-800);
                 }
                 &:not([data-cardtitle]) {
                     min-height: 3rem;
@@ -417,7 +417,7 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
                 right: 10px;
                 button {
                     padding: 0 .5rem;
-                    color: $gray-600;
+                    color: var(--#{$prefix}gray-600);
                     i {
                         font-size: 1.5em;
                         font-weight: bold;

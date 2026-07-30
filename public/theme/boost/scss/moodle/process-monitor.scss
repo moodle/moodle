@@ -21,7 +21,7 @@ $popover-process-monitor-scroll-bg: $gray-100 !default;
     }
 
     .queue-process {
-        border-bottom: 1px solid $gray-200;
+        border-bottom: 1px solid var(--#{$prefix}gray-200);
     }
 
     .queue-process:last-child {

@@ -158,7 +158,7 @@ img.icon {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    background-color: $gray-100;
+    background-color: var(--#{$prefix}gray-100);
     border-radius: 12px;
     padding: 0.7rem;
 

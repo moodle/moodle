@@ -7,17 +7,20 @@
  * preset files instead.
  */
 
-$state-success-bg: shift-color($success, -80%) !default;
-$state-success-border: shift-color($success, -70%) !default;
+// The state tints are custom properties so that they can be darkened for the dark colour mode: the pale light mode
+// tints are only readable behind dark text, and the text on them comes from the body. The light mode values are
+// emitted in core.scss, and the dark ones in dark.scss.
+$state-success-bg: var(--#{$prefix}state-success-bg) !default;
+$state-success-border: var(--#{$prefix}state-success-border) !default;
 
-$state-info-bg: shift-color($info, -80%) !default;
-$state-info-border: shift-color($info, -70%) !default;
+$state-info-bg: var(--#{$prefix}state-info-bg) !default;
+$state-info-border: var(--#{$prefix}state-info-border) !default;
 
-$state-warning-bg: shift-color($warning, -80%) !default;
-$state-warning-border: shift-color($warning, -80%) !default;
+$state-warning-bg: var(--#{$prefix}state-warning-bg) !default;
+$state-warning-border: var(--#{$prefix}state-warning-border) !default;
 
-$state-danger-bg: shift-color($danger, -80%) !default;
-$state-danger-border: shift-color($danger, -70%) !default;
+$state-danger-bg: var(--#{$prefix}state-danger-bg) !default;
+$state-danger-border: var(--#{$prefix}state-danger-border) !default;
 
 $primary-nav-padding-y: ($spacer * 0.25) !default;
 $primary-nav-padding-x: ($spacer * 0.5) !default;
@@ -64,18 +67,18 @@ $activity-icon-colors: map-merge(
 );
 
 // Atto
-$atto-content-wrap-bg:                   $white !default;
+$atto-content-wrap-bg:                   var(--#{$prefix}white) !default;
 $atto-content-wrap-color:                #333 !default;
 $atto-toolbar-bg:                        #f2f2f2 !default;
 $atto-toolbar-border-color:              #ccc !default;
-$atto-toolbar-group-bg:                  $white !default;
+$atto-toolbar-group-bg:                  var(--#{$prefix}white) !default;
 $atto-toolbar-group-border-bottom-color: #b3b3b3 !default;
-$atto-toolbar-button-color:              $gray-700 !default;
+$atto-toolbar-button-color:              var(--#{$prefix}gray-700) !default;
 $atto-toolbar-button-hover-bg:           #ebebeb !default;
 $atto-toolbar-button-active-bg:          #dfdfdf !default;
-$atto-toolbar-button-gradient-inner:     $white !default;
+$atto-toolbar-button-gradient-inner:     var(--#{$prefix}white) !default;
 $atto-toolbar-button-gradient-outer:     #dfdfdf !default;
-$atto-control-icon-bg:                   $white !default;
+$atto-control-icon-bg:                   var(--#{$prefix}white) !default;
 $atto-notif-info:                        #f2f2f2 !default;
 $atto-notif-warning:                     #ffd700 !default;
 
@@ -114,25 +117,25 @@ $tags-tagarea-title-color:              #999 !default;
 $tags-tagarea-title-border-color:       #e3e3e3 !default;
 $tags-tagarea-title-text-shadow-color:  rgba($white, .5) !default;
 
-$webservice-doc-td-border-color: $black !default;
+$webservice-doc-td-border-color: var(--#{$prefix}black) !default;
 
 $userenrolment-link-hover-border-color: #666 !default;
 
 $corelightbox-bg: #ccc !default;
 
-$dialogue-base-bg:              $white !default;
+$dialogue-base-bg:              var(--#{$prefix}white) !default;
 $dialogue-base-border-color:    #ccc !default;
 $dialogue-base-hd-border-color: #dee2e6 !default;
 
 $dialogue-exception-label-bg:           #eee !default;
 $dialogue-exception-label-border-color: #ccc !default;
-$dialogue-exception-pre-bg:             $white !default;
+$dialogue-exception-pre-bg:             var(--#{$prefix}white) !default;
 $dialogue-exception-pre-border-color:   #ccc !default;
 $dialogue-exception-file-color:         navy !default;
 $dialogue-exception-call-color:         #333 !default;
 $dialogue-exception-call-border-color:  #eee !default;
 
-$dialogue-lightbox-bg: $white !default;
+$dialogue-lightbox-bg: var(--#{$prefix}white) !default;
 
 $chooserdialogue-bg:                    #f2f2f2 !default;
 $chooserdialogue-options-border-color:  #bbb !default;
@@ -141,7 +144,7 @@ $choosercontainer-label-border-color:       $white !default;
 $choosercontainer-instruction-bg:           $white !default;
 $choosercontainer-chooseform-selected-bg:   $white !default;
 
-$formlisting-bg:            $white !default;
+$formlisting-bg:            var(--#{$prefix}white) !default;
 $formlisting-border-color:  #ddd !default;
 
 $formlistingmore-bg:            whitesmoke !default;
@@ -154,11 +157,11 @@ $formlistingrow-border-color:   #e1e1e8 !default;
 $criteria-desc-bg:              #f9f9f9 !default;
 $criteria-desc-border-color:    #eee !default;
 
-$hover-tooltip-bg:               $white !default;
+$hover-tooltip-bg:               var(--#{$prefix}white) !default;
 $hover-tooltip-border-color:     rgba($black, .2) !default;
-$hover-tooltip-border-top-color: $white !default;
+$hover-tooltip-border-top-color: var(--#{$prefix}white) !default;
 
-$visually-hidden-active-bg: $white !default;
+$visually-hidden-active-bg: var(--#{$prefix}white) !default;
 
 $overlay-icon-bg:    rgba($white, .6) !default;
 $overlay-preview-bg: rgba($white, .8) !default;
@@ -178,38 +181,38 @@ $phpinfo-h-bg:         #99c !default;
 
 
 // Filemanager
-$filemanager-panel-button-bg:               $white !default;
+$filemanager-panel-button-bg:               var(--#{$prefix}white) !default;
 $filemanager-panel-button-shadow:           #999 !default;
-$filemanager-picker-bg:                     $white !default;
+$filemanager-picker-bg:                     var(--#{$prefix}white) !default;
 $filemanager-picker-active-bg:              #f2f2f2 !default;
-$filemanager-thumbnail-border-color:        $white !default;
+$filemanager-thumbnail-border-color:        var(--#{$prefix}white) !default;
 $filemanager-thumbnail-img-border-color:    #ddd !default;
 $filemanager-thumbnail-shadow:              #ccc !default;
-$filemanager-thumbnail-over-bg:             $white !default;
+$filemanager-thumbnail-over-bg:             var(--#{$prefix}white) !default;
 $filemanager-thumbnail-hover-border-color:  #ddd !default;
 $filemanager-thumbnail-hover-shadow:        #ccc !default;
-$filemanager-filename-bg:                   $white !default;
+$filemanager-filename-bg:                   var(--#{$prefix}white) !default;
 $filemanager-picker-table-border-color:     #bbb !default;
 $filemanager-ygtvfocus-bg:                  #eee !default;
-$filemanager-picker-thumbnail-bg:           $white !default;
+$filemanager-picker-thumbnail-bg:           var(--#{$prefix}white) !default;
 $filemanager-picker-thumbnail-border-color: #ddd !default;
 $filemanager-item-disabled-bg:              #ebebe4 !default;
 
 $filemanager-yui-table-border-color:               #bbb !default;
-$filemanager-yui-table-header-bg:                  $white !default;
+$filemanager-yui-table-header-bg:                  var(--#{$prefix}white) !default;
 $filemanager-yui-table-header-border-bottom-color: #ccc !default;
-$filemanager-yui-table-header-border-left-color:   $white !default;
+$filemanager-yui-table-header-border-left-color:   var(--#{$prefix}white) !default;
 $filemanager-yui-table-header-color:               #555 !default;
 $filemanager-yui-table-cell-odd-bg:                #f6f6f6 !default;
 $filemanager-yui-table-cell-odd-border-color:      #f6f6f6 !default;
-$filemanager-yui-table-cell-even-bg:               $white !default;
-$filemanager-yui-table-cell-even-border-color:     $white !default;
+$filemanager-yui-table-cell-even-bg:               var(--#{$prefix}white) !default;
+$filemanager-yui-table-cell-even-border-color:     var(--#{$prefix}white) !default;
 
 $filemanager-dnd-border-color:               #bbb !default;
-$filemanager-dnd-upload-target-bg:           $white !default;
+$filemanager-dnd-upload-target-bg:           var(--#{$prefix}white) !default;
 $filemanager-dnd-upload-target-border-color: #fb7979 !default;
-$filemanager-dnd-upload-target-shadow:       $white !default;
-$filemanager-dnd-upload-over-bg:             $white !default;
+$filemanager-dnd-upload-target-shadow:       var(--#{$prefix}white) !default;
+$filemanager-dnd-upload-over-bg:             var(--#{$prefix}white) !default;
 $filemanager-dnd-upload-over-border-color:   #6c8cd3 !default;
 
 $filemanager-select-bg:           #f9f9f9 !default;
@@ -217,7 +220,7 @@ $filemanager-select-border-color: #bbb !default;
 
 
 // Forms
-$forms-autocomplete-bg:                   $white !default;
+$forms-autocomplete-bg:                   var(--#{$prefix}white) !default;
 $forms-adminsettings-border-bottom-color: #e5e5e5 !default;
 
 
@@ -228,7 +231,7 @@ $grade-criterion-level-currentchecked-bg:    #fff0f0 !default;
 $grade-criterion-level-checked-bg:           #d0ffd0 !default;
 $grade-criterion-level-checked-border-color: #555 !default;
 $grade-criterion-level-delete-bg:            #ddd !default;
-$grade-table-td-bg:                          $white !default;
+$grade-table-td-bg:                          var(--#{$prefix}white) !default;
 $grade-table-toggle-icon-color:              #1d2125 !default;
 $grade-badge-bg:                             #ced4da !default;
 $grade-badge-color:                          #1d2125 !default;
@@ -259,21 +262,21 @@ $modules-highlight-bg:            rgba(0, 123, 255, 0.5) !default;
 
 // Popover
 $popover-standard-border-color:             #ddd !default;
-$popover-region-toggle-border-bottom-color: $white !default;
+$popover-region-toggle-border-bottom-color: var(--#{$prefix}white) !default;
 $popover-count-color:                       $white !default;
-$popover-region-container-bg:               $white !default;
+$popover-region-container-bg:               var(--#{$prefix}white) !default;
 
 
 // Question
 $question-choice-bg:                 #f2f2f2 !default;
 $question-choice-color:              #333 !default;
-$question-choice-text-shadow:        $white !default;
+$question-choice-text-shadow:        var(--#{$prefix}white) !default;
 $question-choice-shadow:             #666 !default;
 $question-border-color:              #ccc !default;
 $question-border-bottom-color:       #bbb !default;
-$question-gradient-start-color:      $white !default;
+$question-gradient-start-color:      var(--#{$prefix}white) !default;
 $question-gradient-end-color:        #ccc !default;
-$question-type-bg:                   $white !default;
+$question-type-bg:                   var(--#{$prefix}white) !default;
 $question-type-shadow:               #ccc !default;
 $question-import-error-border-color: #555 !default;
 $question-bank-header-color:         #444 !default;

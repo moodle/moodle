@@ -162,7 +162,7 @@
     background-color: $state-danger-bg;
 
     .aliaseslist {
-        background-color: $body-bg;
+        background-color: var(--#{$prefix}body-bg);
     }
 }
 

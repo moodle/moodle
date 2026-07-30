@@ -114,9 +114,9 @@ p.arrow_button {
 
 /* Specific styles for the collapse/expand buttons. */
 .btn-icon.icons-collapse-expand {
-    color: $gray-700;
-    background-color: $white;
-    border: $border-width solid $gray-300;
+    color: var(--#{$prefix}gray-700);
+    background-color: var(--#{$prefix}white);
+    border: $border-width solid var(--#{$prefix}gray-300);
     &:hover {
         outline: 2px solid $primary;
     }
@@ -158,8 +158,8 @@ p.arrow_button {
 .btn-add-content {
     @include border-radius();
     border: $border-width dashed #8f959e;
-    color: $gray-700;
-    background-color: $body-bg;
+    color: var(--#{$prefix}gray-700);
+    background-color: var(--#{$prefix}body-bg);
     font-size: $font-size-sm;
     &:hover,
     &:focus {

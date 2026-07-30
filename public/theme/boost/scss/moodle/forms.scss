@@ -293,7 +293,7 @@ $form-select-disabled-bg: $gray-200 !default;
     padding: $dropdown-item-padding-y $dropdown-item-padding-x;
     margin: 0;
     cursor: pointer;
-    color: $body-color;
+    color: var(--#{$prefix}body-color);
     word-break: normal;
     overflow-wrap: anywhere;
     white-space: normal;
@@ -311,8 +311,8 @@ $form-select-disabled-bg: $gray-200 !default;
     &.suggestions-heading {
         pointer-events: none;
         font-weight: bold;
-        color: $body-color;
-        background-color: $body-bg;
+        color: var(--#{$prefix}body-color);
+        background-color: var(--#{$prefix}body-bg);
         padding-left: calc(#{$dropdown-item-padding-x} / 2);
     }
     &::before {
@@ -321,7 +321,7 @@ $form-select-disabled-bg: $gray-200 !default;
 }
 
 .form-autocomplete-downarrow {
-    color: $body-color;
+    color: var(--#{$prefix}body-color);
     top: 0.2rem;
     right: 0.5rem;
     cursor: pointer;
@@ -329,7 +329,7 @@ $form-select-disabled-bg: $gray-200 !default;
         position: absolute;
         top: 0;
         left: 0;
-        background-color: $white;
+        background-color: var(--#{$prefix}white);
     }
 }
 
