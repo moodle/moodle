@@ -5126,7 +5126,7 @@
         <FIELD NAME="identifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Public OAuth2 access token identifier"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="User ID of the access token owner"/>
         <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 client identifier"/>
-        <FIELD NAME="scopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Space-seperated list of scopes"/>
+        <FIELD NAME="scopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Space-separated list of scopes"/>
         <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Expiry timestamp"/>
         <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the OAuth2 access token is revoked"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
@@ -5145,7 +5145,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID of the authorisation request approver"/>
         <FIELD NAME="clientidentifier" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="OAuth2 client identifier"/>
         <FIELD NAME="redirecturi" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Redirect URI used in authorisation request"/>
-        <FIELD NAME="scopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Space-seperated list of scopes"/>
+        <FIELD NAME="scopes" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Space-separated list of scopes"/>
         <FIELD NAME="expirytime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Expiry timestamp"/>
         <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the OAuth2 authorisation code is revoked"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
