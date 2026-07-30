@@ -383,12 +383,30 @@ body.path-question-type {
     a {
         color: darken($link-color, 30%);
     }
+
+    // The tint is mixed towards white for a light page, and the contents take the body colour, so the tint is
+    // shaded towards black instead once the page is dark.
+    @include dark-mode {
+        @include gradient-bg(shade-color($warning, 70%));
+        border-color: shade-color($warning, 40%);
+        color: var(--#{$prefix}body-color);
+
+        a {
+            color: var(--#{$prefix}link-color);
+        }
+    }
 }
 
 .que .formulation {
     color: shift-color($info, $alert-color-scale + 40%);
     border-color: shift-color($info, $alert-border-scale);
     @include gradient-bg(shift-color($info, $alert-bg-scale - 10%));
+
+    @include dark-mode {
+        @include gradient-bg(shade-color($info, 70%));
+        border-color: shade-color($info, 40%);
+        color: var(--#{$prefix}body-color);
+    }
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,

@@ -96,6 +96,12 @@ select {
         padding: map-get($spacers, 2);
         margin-top: map-get($spacers, 1);
         mix-blend-mode: multiply;
+
+        // Multiplying with a dark surface takes everything to black, so blend the other way once the page is dark.
+        @include dark-mode {
+            mix-blend-mode: screen;
+        }
+
         &.badge-light {
             background-color: var(--#{$prefix}gray-200) !important; /* stylelint-disable-line declaration-no-important */
         }
@@ -465,6 +471,11 @@ $author-image-margin-sm: 8px;
     .text-muted,
     .dimmed_text {
         color: $modules-forum-muted-color !important; /* stylelint-disable-line declaration-no-important */
+
+        // Darkened for a white page, so it falls below the threshold once the page is dark.
+        @include dark-mode {
+            color: var(--#{$prefix}gray-600) !important; /* stylelint-disable-line declaration-no-important */
+        }
     }
 
     .author-header {
@@ -1396,14 +1407,35 @@ img.userpicture {
         border-color: shift-color($warning, 40%);
     }
 
+    .qnbutton.correct {
+        // The tint colour-codes the answer state, so it stays and the label goes dark rather than following the mode.
+        @include dark-mode {
+            color: $gray-900;
+        }
+    }
+
     .qnbutton.correct,
     .qnbutton.correct .trafficlight {
         background-color: #dff4d8; /* light green */
     }
 
+    .qnbutton.incorrect {
+        // The tint colour-codes the answer state, so it stays and the label goes dark rather than following the mode.
+        @include dark-mode {
+            color: $gray-900;
+        }
+    }
+
     .qnbutton.incorrect,
     .qnbutton.incorrect .trafficlight {
         background-color: #fdd; /* light red */
+    }
+
+    .qnbutton.partiallycorrect {
+        // The tint colour-codes the answer state, so it stays and the label goes dark rather than following the mode.
+        @include dark-mode {
+            color: $gray-900;
+        }
     }
 
     .qnbutton.partiallycorrect,
@@ -1695,6 +1727,11 @@ $popout-header-height: 4rem;
     }
     span.feedback_depend {
         color: $danger;
+
+        // The danger colour itself is picked for a white page.
+        @include dark-mode {
+            color: var(--#{$prefix}danger-text-emphasis);
+        }
     }
     hr.feedback_pagebreak {
         height: 4px;

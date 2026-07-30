@@ -33,12 +33,20 @@ $calendarCurrentDateBackground: $primary;
 // Calendar event background colours defined.
 .calendar_event_category {
     background-color: $calendarEventCategoryColor;
+    // The tint carries the meaning, so it stays and the text on it goes dark rather than following the mode.
+    @include dark-mode {
+        color: $gray-900;
+    }
     .commands a {
         color: $calendarEventColor;
     }
 }
 .calendar_event_course {
     background-color: $calendarEventCourseColor;
+    // The tint carries the meaning, so it stays and the text on it goes dark rather than following the mode.
+    @include dark-mode {
+        color: $gray-900;
+    }
     .commands a {
         color: $calendarEventColor;
     }
@@ -46,6 +54,10 @@ $calendarCurrentDateBackground: $primary;
 
 .calendar_event_site {
     background-color: $calendarEventGlobalColor;
+    // The tint carries the meaning, so it stays and the text on it goes dark rather than following the mode.
+    @include dark-mode {
+        color: $gray-900;
+    }
     .commands a {
         color: $calendarEventColor;
     }
@@ -53,6 +65,10 @@ $calendarCurrentDateBackground: $primary;
 
 .calendar_event_group {
     background-color: $calendarEventGroupColor;
+    // The tint carries the meaning, so it stays and the text on it goes dark rather than following the mode.
+    @include dark-mode {
+        color: $gray-900;
+    }
     .commands a {
         color: $calendarEventColor;
     }
@@ -60,6 +76,10 @@ $calendarCurrentDateBackground: $primary;
 
 .calendar_event_user {
     background-color: $calendarEventUserColor;
+    // The tint carries the meaning, so it stays and the text on it goes dark rather than following the mode.
+    @include dark-mode {
+        color: $gray-900;
+    }
     .commands a {
         color: $calendarEventColor;
     }
@@ -67,6 +87,10 @@ $calendarCurrentDateBackground: $primary;
 
 .calendar_event_other {
     background-color: $calendarEventOtherColor;
+    // The tint carries the meaning, so it stays and the text on it goes dark rather than following the mode.
+    @include dark-mode {
+        color: $gray-900;
+    }
     .commands a {
         color: $calendarEventColor;
     }
@@ -285,6 +309,11 @@ $calendarCurrentDateBackground: $primary;
 
         .clickable:hover {
             background-color: $calendar-month-clickable-bg;
+
+            // A fixed light grey, which hides the date it is meant to highlight once the page is dark.
+            @include dark-mode {
+                background-color: var(--#{$prefix}gray-200);
+            }
         }
     }
 
@@ -669,6 +698,10 @@ table.calendartable caption {
                                     .day-number-circle {
                                         border-radius: 50%;
                                         background-color: $calendar-month-clickable-bg;
+
+                                        @include dark-mode {
+                                            background-color: var(--#{$prefix}gray-200);
+                                        }
                                     }
                                 }
                             }

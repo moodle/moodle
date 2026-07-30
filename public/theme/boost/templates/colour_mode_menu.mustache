@@ -1,0 +1,84 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/colour_mode_menu
+
+    Menu for switching between the light and dark colour modes.
+
+    Context variables required for this template:
+    * currenticon - The Font Awesome class of the icon representing the currently selected mode.
+    * currenttogglelabel - The accessible name of the menu toggle, naming the currently selected mode.
+    * modes - Array of data representing the colour modes which can be selected.
+      * mode - The identifier of the mode: light, dark or auto.
+      * label - The name of the mode.
+      * icon - The Font Awesome class of the icon representing the mode.
+      * togglelabel - The accessible name the menu toggle takes when the mode is selected.
+      * isactive - Whether the mode is the currently selected one.
+
+    Example context (json):
+    {
+        "currenticon": "fa-sun",
+        "currenttogglelabel": "Colour mode: Light",
+        "modes": [
+            {
+                "mode": "light",
+                "label": "Light",
+                "icon": "fa-sun",
+                "togglelabel": "Colour mode: Light",
+                "isactive": true
+            },
+            {
+                "mode": "dark",
+                "label": "Dark",
+                "icon": "fa-moon",
+                "togglelabel": "Colour mode: Dark",
+                "isactive": false
+            },
+            {
+                "mode": "auto",
+                "label": "System",
+                "icon": "fa-circle-half-stroke",
+                "togglelabel": "Colour mode: System",
+                "isactive": false
+            }
+        ]
+    }
+}}
+<div class="colourmodemenu" data-region="colourmode-menu">
+    <div class="dropdown show">
+        <button type="button" id="colourmode-menu-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+                aria-controls="colourmode-action-menu" class="btn dropdown-toggle">
+            <i class="icon fa {{currenticon}} fa-fw m-0" aria-hidden="true" data-region="colourmode-current-icon"></i>
+            <span class="visually-hidden" data-region="colourmode-current-label">{{currenttogglelabel}}</span>
+        </button>
+        <div role="menu" aria-labelledby="colourmode-menu-toggle" id="colourmode-action-menu" class="dropdown-menu dropdown-menu-end">
+            {{#modes}}
+                <button type="button" class="dropdown-item{{#isactive}} active{{/isactive}}" role="menuitemradio" data-action="set-colourmode"
+                        data-colourmode="{{mode}}" data-icon="{{icon}}" data-togglelabel="{{togglelabel}}"
+                        aria-checked="{{#isactive}}true{{/isactive}}{{^isactive}}false{{/isactive}}">
+                    <i class="icon fa {{icon}} fa-fw me-2" aria-hidden="true"></i>
+                    {{label}}
+                </button>
+            {{/modes}}
+        </div>
+    </div>
+</div>
+{{#js}}
+    require(['theme_boost/colourmode'], function(ColourMode) {
+        ColourMode.init();
+    });
+{{/js}}

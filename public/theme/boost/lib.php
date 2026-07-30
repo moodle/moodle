@@ -135,6 +135,13 @@ function theme_boost_user_preferences(): array {
             'default' => true,
             'permissioncallback' => [core_user::class, 'is_current_user'],
         ],
+        \theme_boost\colour_mode::PREFERENCE => [
+            'type' => PARAM_ALPHA,
+            'null' => NULL_NOT_ALLOWED,
+            'choices' => \theme_boost\colour_mode::get_modes(),
+            'default' => \theme_boost\colour_mode::AUTO,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
     ];
 }
 

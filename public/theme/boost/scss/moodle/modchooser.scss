@@ -179,6 +179,12 @@
     --#{$prefix}nav-pills-link-active-bg: #{var(--#{$prefix}body-color)};
     --#{$prefix}nav-link-font-size: #{$font-size-base};
 
+    // The selected pill is filled with the body text colour, so its label has to be the page behind that text.
+    // Bootstrap's white only works while the fill is dark, which it is not once the page is.
+    @include dark-mode {
+        --#{$prefix}nav-pills-link-active-color: #{var(--#{$prefix}body-bg)};
+    }
+
     .nav-link {
         --#{$prefix}nav-link-color: #{var(--#{$prefix}body-color)};
         --#{$prefix}nav-link-hover-color: #{var(--#{$prefix}body-color)};

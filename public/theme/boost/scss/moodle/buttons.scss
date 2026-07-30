@@ -80,6 +80,13 @@ p.arrow_button {
 @each $color, $value in $theme-colors {
     .btn-outline-#{$color} {
         @include button-focus($value, $gray-800);
+
+        // An outline button paints its label in the theme colour itself, which is picked for a white page. Boost's own
+        // overrides for secondary, info and warning are darkened further still, taking .btn-outline-secondary down to
+        // 2.4:1 on a dark surface.
+        @include dark-mode {
+            @include button-outline-variant(dark-readable($value));
+        }
     }
 }
 
@@ -149,6 +156,12 @@ p.arrow_button {
     --#{$prefix}btn-hover-bg: var(--#{$prefix}gray-600);
     --#{$prefix}btn-focus-shadow-rgb: #{to-rgb($gray-600)};
     @include button-focus($gray-600, $white);
+
+    // The hover fill is gray 600, which the dark palette makes light, so the label moves to the page colour with it.
+    // White only reads against the dark fill that gray 600 gives in light mode.
+    @include dark-mode {
+        --#{$prefix}btn-hover-color: var(--#{$prefix}body-bg);
+    }
 }
 
 /*

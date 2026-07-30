@@ -21,6 +21,12 @@ $login-input-bg: var(--#{$prefix}gray-100) !default;
 
 .login-layout-left {
     background-color: $login-layout-left-bg;
+
+    // A photographic panel in both colour modes, so its content stays light whatever the mode.
+    @include dark-mode {
+        color: $white;
+    }
+
     position: sticky;
     top: 0;
     align-self: flex-start;

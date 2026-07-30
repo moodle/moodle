@@ -24,6 +24,13 @@
         background-color: var(--#{$prefix}gray-400);
         border: none;
 
+        // The knob is the same grey the track takes in dark mode, which leaves the switch looking like a plain pill.
+        &:not(:checked) {
+            @include dark-mode {
+                background-image: escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$gray-100}'/></svg>"));
+            }
+        }
+
         &:checked {
             background-image: escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$white}'/></svg>"));
             background-color: var(--#{$prefix}primary);

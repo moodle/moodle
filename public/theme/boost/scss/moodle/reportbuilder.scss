@@ -13,6 +13,11 @@
         color: color-contrast($gray-600);
         background-color: var(--#{$prefix}gray-600);
         border-color: var(--#{$prefix}gray-600);
+
+        // The fill is gray 600, which the dark palette makes light, so the label moves to the page colour with it.
+        @include dark-mode {
+            color: var(--#{$prefix}body-bg);
+        }
     }
 }
 

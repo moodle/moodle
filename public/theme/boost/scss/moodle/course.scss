@@ -56,7 +56,9 @@ $divider-hover-color: $primary !default;
 .section-collapsemenu {
     @include collapsemenu-toggle;
     padding: map-get($spacers, 2) .75rem;
-    color: $gray-600;
+    // The custom property, not the SCSS variable: this toggle sits on the page rather than in a card, and gray 600
+    // only reaches 3.35:1 there once the page is dark. The light value is unchanged.
+    color: var(--#{$prefix}gray-600);
     line-height: 1;
     background: none;
     border: 0;
@@ -280,6 +282,12 @@ $divider-hover-color: $primary !default;
     &.hiddenactivity {
         .activityiconcontainer {
             mix-blend-mode: multiply;
+
+            // Multiplying with a dark surface takes everything to black. Screen is the counterpart which blends
+            // into a dark surface the way multiply blends into a light one.
+            @include dark-mode {
+                mix-blend-mode: screen;
+            }
         }
         .activity-name-area .activityname {
             color: var(--mds-text-muted);
@@ -308,6 +316,11 @@ $divider-hover-color: $primary !default;
             .activityiconcontainer,
             .badge {
                 mix-blend-mode: multiply;
+
+                // See the hidden activity icon above: multiply hides an icon on a dark card.
+                @include dark-mode {
+                    mix-blend-mode: screen;
+                }
             }
         }
     }

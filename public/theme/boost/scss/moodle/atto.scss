@@ -245,3 +245,25 @@ div.editor_atto_content:hover .atto_control {
 div.editor_atto_toolbar button .icon {
     color: $atto-toolbar-button-color;
 }
+
+// The editor draws its chrome from a set of fixed light colours, so it needs restating for the dark mode.
+.editor_atto_content_wrap,
+.editor_atto_content {
+    @include dark-mode {
+        background-color: var(--#{$prefix}white);
+        color: var(--#{$prefix}gray-900);
+    }
+}
+
+.editor_atto_toolbar {
+    @include dark-mode {
+        background-color: var(--#{$prefix}gray-200);
+        border-color: var(--#{$prefix}gray-300);
+
+        button {
+            background: var(--#{$prefix}white);
+            color: var(--#{$prefix}gray-700);
+            border-color: var(--#{$prefix}gray-300);
+        }
+    }
+}

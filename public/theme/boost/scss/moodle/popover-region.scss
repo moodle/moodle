@@ -235,6 +235,12 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
         margin: 0;
         background-color: $content-item-unread-colour;
 
+        // An unread item sits a shade off the container, which is a raised surface, so in dark mode the tint is
+        // the recessed surface. The near white it uses in light mode leaves the body text at 1.05:1.
+        @include dark-mode {
+            background-color: var(--#{$prefix}tertiary-bg);
+        }
+
         &:hover {
             color: $content-item-hover-colour-text;
             background-color: $content-item-hover-colour-bg;

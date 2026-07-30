@@ -1095,9 +1095,10 @@ audio.mediaplugin_html5audio {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
-    // Undo some YUI damage.
+    // Undo some YUI damage. The colour is inherited rather than initial: initial means black, which stops the header
+    // following the colour mode of the dialogue it sits on.
     min-height: 3rem;
-    color: initial;
+    color: inherit;
     background: initial;
     font-size: 1.5rem;
     line-height: 1.5;
@@ -2463,14 +2464,26 @@ $picker-emojis-per-row: 7 !default;
 }
 
 @each $color, $value in $theme-colors {
+    // Both of these are darkened to sit on the pale light mode tint. Bootstrap replaces that tint with a very dark
+    // one in dark mode, so the dark values are derived against the tint the alert actually has there.
+    $alert-bg-dark: shade-color($value, 80%);
+
     .alert-#{$color} {
         a {
             color: darken(shift-color($value, $alert-color-scale), 10%);
+
+            @include dark-mode {
+                color: dark-readable($value, $alert-bg-dark);
+            }
         }
         // Darken the close button text colour inside notification alerts for better contrast.
         .btn-close {
             color: darken(shift-color($value, $alert-color-scale), 20%);
             opacity: 0.6;
+
+            @include dark-mode {
+                color: dark-readable($value, $alert-bg-dark, $min: 7);
+            }
         }
     }
 }

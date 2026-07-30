@@ -50,9 +50,8 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
      * @param string $preference
      * @param bool $value
      * @param string $expectdescription
-     *
-     * @dataProvider export_user_preference_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_user_preference_provider')]
     public function test_export_user_preferences(string $preference, bool $value, string $expectdescription): void {
         $this->resetAfterTest();
 

@@ -16,7 +16,10 @@
 
 namespace theme_boost;
 
+use core\hook\output\before_html_attributes;
 use core\hook\output\before_requirejs_config;
+use core\hook\output\before_standard_head_html_generation;
+use core\output\html_writer;
 
 /**
  * Hook listeners for theme_boost.
@@ -67,5 +70,66 @@ class hook_listener {
                 'theme_boost/bootstrap/util/template-factory' => 'bootstrap/util/template-factory:default',
             ],
         );
+    }
+
+    /**
+     * Set the Bootstrap colour mode on the html tag.
+     *
+     * The data-bs-theme attribute drives every Bootstrap colour mode override, so it has to be on the page from the
+     * very first byte. The chosen mode is repeated in data-colourmode because "auto" can only be resolved in the
+     * browser, and the switcher needs to know what the user actually picked.
+     *
+     * @param before_html_attributes $hook The hook object.
+     */
+    public static function before_html_attributes_listener(before_html_attributes $hook): void {
+        if (!colour_mode::is_enabled() || !colour_mode::is_boost_theme()) {
+            return;
+        }
+
+        $mode = colour_mode::get_current_mode();
+
+        // Auto is resolved by the script added in before_standard_head_html_generation_listener(). Render light until
+        // then so that the page is still usable with JavaScript disabled.
+        $hook->add_attribute('data-bs-theme', $mode === colour_mode::AUTO ? colour_mode::LIGHT : $mode);
+        $hook->add_attribute('data-colourmode', $mode);
+    }
+
+    /**
+     * Add the script which resolves the "auto" colour mode against the device colour scheme.
+     *
+     * This has to run synchronously in the head, before the page is painted, otherwise people using the dark colour
+     * scheme get a flash of the light theme on every page load.
+     *
+     * @param before_standard_head_html_generation $hook The hook object.
+     */
+    public static function before_standard_head_html_generation_listener(
+        before_standard_head_html_generation $hook,
+    ): void {
+        if (!colour_mode::is_enabled() || !colour_mode::is_boost_theme()) {
+            return;
+        }
+
+        // Behat sites keep the colour mode the server decided on: which mode "auto" resolves to depends on the
+        // machine running the browser, which would make every colour assertion in the suite non-deterministic.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            return;
+        }
+
+        $js = <<<'EOF'
+            (function() {
+                var query = window.matchMedia('(prefers-color-scheme: dark)');
+                var resolve = function() {
+                    var root = document.documentElement;
+                    if (root.getAttribute('data-colourmode') !== 'auto') {
+                        return;
+                    }
+                    root.setAttribute('data-bs-theme', query.matches ? 'dark' : 'light');
+                };
+                resolve();
+                query.addEventListener('change', resolve);
+            })();
+            EOF;
+
+        $hook->add_html(html_writer::script($js));
     }
 }

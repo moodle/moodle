@@ -1,0 +1,67 @@
+/**
+ * Colour mode helpers.
+ *
+ * Imported before the component partials so that they can each carry their own dark mode overrides next to the rules
+ * those overrides correct. The dark palette itself lives in dark.scss, which is imported last.
+ */
+
+// The dark greyscale. This is not a straight inversion of the light ramp: in dark mode raised surfaces are lighter
+// than the page rather than darker, so the surface colours are ordered page < recessed < raised.
+$dark-surface-raised:   $gray-800 !default;                        // Cards, modals, dropdowns.
+$dark-surface-page:     $gray-900 !default;                        // Page background. Matches Bootstrap's $body-bg-dark.
+$dark-surface-recessed: mix($gray-800, $gray-900, 50%) !default;   // Drawers, table stripes, hovered rows.
+
+// The contrast the derived dark colours must reach against the surface they are drawn on. 4.6 rather than the 4.5
+// WCAG AA asks for, so that a colour which lands exactly on the threshold here is not reported as a failure by
+// checkers which round differently.
+$dark-min-contrast: 4.6 !default;
+
+/**
+ * Emit the content as a dark colour mode override of the rule it is written inside.
+ *
+ * Bootstrap's own color-mode() mixin puts the [data-bs-theme] selector at the point it is included, so nesting it
+ * inside a rule produces a descendant selector and the attribute is on the html tag, an ancestor. This prefixes the
+ * enclosing selector instead, which both matches and inherits that selector's specificity, so an override always
+ * wins against the rule it belongs to without the ancestors having to be repeated by hand.
+ *
+ * selector-nest() rather than interpolating the parent directly: interpolation would paste a comma separated parent
+ * in as one string and only the first of its selectors would get the attribute, letting the rest leak into light
+ * mode.
+ *
+ * Use it beside the rule being corrected:
+ *
+ *     .my-panel {
+ *         background-color: $gray-100;
+ *
+ *         @include dark-mode {
+ *             background-color: var(--#{$prefix}gray-200);
+ *         }
+ *     }
+ */
+@mixin dark-mode {
+    @at-root #{selector-nest('[data-bs-theme="dark"]', &)} {
+        @content;
+    }
+}
+
+/**
+ * Lighten a colour until it is readable on a dark surface.
+ *
+ * The theme colours are chosen for a white page and are mostly too dark to use as text once the page is dark. This
+ * tints them in 5% steps and returns the first tint which reaches the required contrast, so that the dark palette
+ * keeps meeting WCAG AA even when a site changes the brand colour.
+ *
+ * @param {Color} $color The colour to lighten.
+ * @param {Color} $background The surface the colour is drawn on.
+ * @param {Number} $min The contrast ratio to reach.
+ * @return {Color}
+ */
+@function dark-readable($color, $background: $dark-surface-raised, $min: $dark-min-contrast) {
+    $readable: $color;
+    @for $step from 1 through 20 {
+        @if contrast-ratio($background, $readable) < $min {
+            $readable: tint-color($color, percentage($step * 0.05));
+        }
+    }
+    @return $readable;
+}

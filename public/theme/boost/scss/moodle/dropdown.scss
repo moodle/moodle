@@ -56,3 +56,10 @@
         }
     }
 }
+
+// Bootstrap compiles the dropdown header colour from the light greyscale and has no dark counterpart for it.
+.dropdown-menu {
+    @include dark-mode {
+        --#{$prefix}dropdown-header-color: var(--#{$prefix}gray-600);
+    }
+}

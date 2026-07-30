@@ -186,12 +186,23 @@ $courseindex-item-current: $primary !default;
             display: inline-flex;
             align-items: center;
 
+            // The emphasis colours rather than the raw theme ones: these sit on the drawer surface, which follows
+            // the mode, and $success only reaches 2.2:1 against it once the page is dark. The light values are
+            // unchanged, since the emphasis colours are what the theme already uses for coloured text.
             &.completion_complete {
                 color: $success;
+
+                @include dark-mode {
+                    color: var(--#{$prefix}success-text-emphasis);
+                }
             }
 
             &.completion_fail {
                 color: $danger;
+
+                @include dark-mode {
+                    color: var(--#{$prefix}danger-text-emphasis);
+                }
             }
         }
 

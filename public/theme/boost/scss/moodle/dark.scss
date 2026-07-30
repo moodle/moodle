@@ -1,0 +1,181 @@
+/**
+ * The dark colour mode palette.
+ *
+ * Imported last so that it can re-point anything declared above it. Almost all of the work is done by moving the
+ * greyscale and the design system tokens: the rest of Boost refers to those through custom properties, so remapping
+ * them here flips nearly every surface, border and piece of secondary text at once.
+ *
+ * Overrides for individual components do not belong in this file. A component whose colours cannot follow the mode
+ * carries its own @include dark-mode block next to the rule being corrected, so that the two are changed together.
+ * See scss/moodle/colour-mode.scss for the mixin, and the calendar, question and module partials for examples.
+ */
+
+@include color-mode(dark) {
+    // Surfaces.
+    --#{$prefix}white: #{$dark-surface-raised};
+    --#{$prefix}gray-100: #{$dark-surface-page};
+    --#{$prefix}gray-200: #{$dark-surface-recessed};
+
+    // Borders.
+    --#{$prefix}gray-300: #{$gray-700};
+    --#{$prefix}gray-400: #{$gray-600};
+
+    // Gray 500 is used both for placeholder text and for input borders. The light value only reaches 3.8:1 against
+    // a raised surface, so lift it halfway to gray 400 to clear the 4.5:1 threshold for text.
+    --#{$prefix}gray-500: #{mix($gray-400, $gray-500, 50%)};
+
+    // Text.
+    --#{$prefix}gray-600: #{$gray-400};
+    --#{$prefix}gray-700: #{$gray-300};
+    --#{$prefix}gray-800: #{$gray-200};
+    --#{$prefix}gray-900: #{$gray-100};
+    --#{$prefix}black: #{$gray-100};
+
+    // Design system tokens. These are emitted as custom properties on :root, so they only need re-pointing.
+    --mds-bg-surface-default: #{$dark-surface-raised};
+    --mds-bg-surface-strong: #{$gray-700};
+    --mds-bg-surface-subtle: #{$dark-surface-recessed};
+    --mds-bg-interactive-secondary-default: #{$gray-700};
+    --mds-bg-interactive-secondary-hover: #{$gray-600};
+    --mds-bg-interactive-secondary-active: #{$gray-600};
+    --mds-bg-interactive-secondary-disabled: #{$dark-surface-recessed};
+    --mds-bg-nav-pill-hover: #{$gray-700};
+    --mds-bg-nav-pill-pressed: #{$gray-600};
+    --mds-bg-nav-pill-selected: #{$gray-700};
+    --mds-bg-feedback-secondary-default: #{$gray-700};
+    --mds-bg-feedback-secondary-subtle: #{$dark-surface-recessed};
+    --mds-border-default: #{$gray-700};
+    --mds-border-subtle: #{$dark-surface-recessed};
+    --mds-border-translucent: #{rgba($white, .15)};
+    --mds-border-feedback-secondary: #{$gray-700};
+    --mds-border-interactive-secondary-default: #{$gray-600};
+    --mds-border-interactive-secondary-hover: #{$gray-500};
+    --mds-border-interactive-secondary-active: #{$gray-500};
+    --mds-border-interactive-secondary-disabled: #{$gray-700};
+    --mds-text-default: #{$gray-300};
+    --mds-text-emphasis: #{$gray-100};
+    --mds-text-subtle: #{$gray-400};
+    // Muted text still has to reach 4.5:1 on a raised surface, which gray 500 does not manage in dark mode.
+    --mds-text-muted: #{$gray-400};
+    --mds-text-inverse: #{$gray-900};
+    --mds-text-feedback-secondary: #{$gray-300};
+
+    // Links and coloured text. Bootstrap's dark defaults tint the theme colours by 40%, which lands just under
+    // WCAG AA against a raised surface, so derive them instead.
+    --#{$prefix}link-color: #{dark-readable($primary)};
+    --#{$prefix}link-color-rgb: #{to-rgb(dark-readable($primary))};
+    --#{$prefix}link-hover-color: #{dark-readable($primary, $min: 7)};
+    --#{$prefix}link-hover-color-rgb: #{to-rgb(dark-readable($primary, $min: 7))};
+    // Only the hued theme colours: Bootstrap's light, dark and secondary emphasis colours are already greys chosen
+    // for a dark background, and tinting them would make them worse.
+    @each $name in ("primary", "success", "info", "warning", "danger") {
+        --#{$prefix}#{$name}-text-emphasis: #{dark-readable(map-get($theme-colors, $name))};
+    }
+
+    // The focus ring has to be visible against the dark surfaces it is drawn on (WCAG 2.2 focus appearance). Focus
+    // indicators are non-text, so the 3:1 threshold applies.
+    --#{$prefix}focus-ring-color: #{rgba(dark-readable($primary, $min: 3), $focus-ring-opacity)};
+
+    --mds-text-link-primary-default: #{dark-readable($primary)};
+    --mds-text-link-primary-hover: #{dark-readable($primary, $min: 7)};
+    --mds-text-link-primary-disabled: #{$gray-500};
+    --mds-text-feedback-primary: #{dark-readable($primary)};
+    // The danger text tokens drive the invalid state of the design system form controls and the required marker.
+    --mds-text-danger: #{dark-readable($danger)};
+    --mds-text-danger-disabled: #{dark-readable($danger, $min: 3)};
+    --mds-text-feedback-danger: #{dark-readable($danger)};
+    --mds-text-feedback-info: #{dark-readable($info)};
+    --mds-text-feedback-success: #{dark-readable($success)};
+    --mds-text-feedback-warning: #{dark-readable($warning)};
+
+    // Feedback surfaces. The "light" and "subtle" tints are far too bright to sit behind dark mode text.
+    @each $name, $color in ("primary": $primary, "danger": $danger, "info": $info, "success": $success, "warning": $warning) {
+        --mds-bg-feedback-#{$name}-light: #{shade-color($color, 75%)};
+        --mds-bg-feedback-#{$name}-subtle: #{shade-color($color, 60%)};
+        --mds-border-feedback-#{$name}: #{shade-color($color, 40%)};
+    }
+    --mds-bg-interactive-primary-default-light: #{shade-color($primary, 75%)};
+    --mds-bg-interactive-danger-default-light: #{shade-color($danger, 75%)};
+
+    // The --mds-bg-feedback-*-default and --mds-bg-interactive-* fills are left alone on purpose. They are the
+    // saturated brand colours, carrying inverse text which is chosen against the fill rather than against the page,
+    // so they read the same in both modes and tinting them would only weaken them.
+
+    // The tints declared in variables.scss and core.scss. The pale light mode versions only work behind dark text,
+    // and the text on them comes from the body, so they are shaded rather than tinted here.
+    @each $name, $color in ("success": $success, "info": $info, "warning": $warning, "danger": $danger) {
+        --#{$prefix}state-#{$name}-bg: #{shade-color($color, 70%)};
+        --#{$prefix}state-#{$name}-border: #{shade-color($color, 40%)};
+    }
+    --#{$prefix}collapse-list-item-hover-bg: #{shade-color($info, 70%)};
+    --#{$prefix}collapse-list-item-hover-border: #{shade-color($info, 40%)};
+
+    // The .text-* utilities take the raw theme colour, which is chosen for a white page. Re-pointing the colour
+    // inside the utility itself leaves .bg-* and the other consumers of the same variable alone.
+    @each $name in ("primary", "success", "info", "warning", "danger") {
+        .text-#{$name} {
+            --#{$prefix}#{$name}-rgb: #{to-rgb(dark-readable(map-get($theme-colors, $name)))};
+        }
+    }
+
+    // WCAG 1.4.1: a link sitting in a block of text has to be told apart from that text by something other than
+    // colour. In light mode the link colour is just dark enough against the body text to qualify on contrast alone
+    // (3.07:1), but no colour can manage that on a dark page: a link needs 3:1 against the body text and 4.5:1
+    // against the surface behind it, and on dark those two ranges do not overlap. So prose links are underlined.
+    #page-header,
+    #region-main,
+    #page-footer,
+    .block_html .card-text {
+        a:not(.btn):not(.nav-link):not(.dropdown-item):not(.list-group-item):not(.page-link) {
+            text-decoration: underline;
+        }
+    }
+
+    // Moodle uses .bg-white to mean "a raised surface" rather than literally white, and .bg-light to mean a recessed
+    // one. Both utilities are generated from the -rgb custom properties, which are left alone so that .text-white and
+    // .text-light keep working on top of the theme colours.
+    .bg-white {
+        background-color: var(--#{$prefix}white) !important; // stylelint-disable-line declaration-no-important
+    }
+
+    .bg-light {
+        background-color: var(--#{$prefix}tertiary-bg) !important; // stylelint-disable-line declaration-no-important
+    }
+
+    // .text-dark is right where it sits on a fill which does not follow the mode, which is most of its uses in core:
+    // 33 of them pair it with bg-warning and 23 with bg-secondary, and both of those stay light here. The exception is
+    // the fill immediately above, which does follow the mode, so dark text on it has to follow as well. Re-pointing
+    // the variable the utility reads leaves every other use of .text-dark alone.
+    .bg-light.text-dark,
+    .bg-light .text-dark {
+        --#{$prefix}dark-rgb: #{to-rgb($gray-200)};
+    }
+
+    // $secondary is a compile time literal, so the solid secondary button cannot be reached by re-pointing a custom
+    // property. It is the Cancel button on every form, so it cannot stay the light island it is by default.
+    //
+    // Gray 500 rather than anything darker: a filled button is told apart from the surface behind it by its own fill,
+    // which WCAG 1.4.11 asks to reach 3:1, and gray 500 is the first step on the ramp which does that against a raised
+    // surface. It is light enough to take dark text, which is where the 4.5:1 for the label comes from.
+    .btn-secondary {
+        --#{$prefix}btn-color: #{color-contrast($gray-500)};
+        --#{$prefix}btn-bg: #{$gray-500};
+        --#{$prefix}btn-border-color: #{$gray-500};
+        --#{$prefix}btn-hover-color: #{color-contrast($gray-400)};
+        --#{$prefix}btn-hover-bg: #{$gray-400};
+        --#{$prefix}btn-hover-border-color: #{$gray-400};
+        --#{$prefix}btn-active-color: #{color-contrast($gray-400)};
+        --#{$prefix}btn-active-bg: #{$gray-400};
+        --#{$prefix}btn-active-border-color: #{$gray-400};
+        --#{$prefix}btn-disabled-color: #{color-contrast($gray-500)};
+        --#{$prefix}btn-disabled-bg: #{$gray-500};
+        --#{$prefix}btn-disabled-border-color: #{$gray-500};
+    }
+
+    // Drop shadows do almost nothing on dark surfaces, so raised elements lean on their borders instead.
+    .card,
+    .dropdown-menu,
+    .modal-content {
+        border-color: var(--#{$prefix}gray-300);
+    }
+}
