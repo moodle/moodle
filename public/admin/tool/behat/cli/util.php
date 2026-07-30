@@ -62,6 +62,7 @@ list($options, $unrecognized) = cli_get_params(
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
         'axe'         => true,
+        'colourmode'  => '',
         'scss-deprecations' => false,
         'no-icon-deprecations' => false,
     ),
@@ -80,7 +81,8 @@ Behat utilities to manage the test environment
 
 Usage:
   php util.php  [--install|--drop|--enable|--disable|--diag|--updatesteps]
-                [--no-axe|--scss-deprecations|--no-icon-deprecations|--help]
+                [--no-axe|--colourmode=value|--scss-deprecations|--no-icon-deprecations]
+                [--help]
                 [--parallel=value [--maxruns=value]]
 
 Options:
@@ -91,6 +93,7 @@ Options:
 --diag                 Get behat test environment status code
 --updatesteps          Update feature step file.
 --no-axe               Disable axe accessibility tests.
+--colourmode           Colour mode to run the tests in, for themes which support them, e.g. light or dark.
 --scss-deprecations    Enable SCSS deprecation checks.
 --no-icon-deprecations Disable icon deprecation checks.
 

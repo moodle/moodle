@@ -570,6 +570,30 @@ function cli_execute_parallel($cmds, $cwd = null, $delay = 0) {
 }
 
 /**
+ * The colour mode the current Behat run was started with.
+ *
+ * Set with the --colourmode option of the Behat CLI tools. A theme which supports colour modes should treat this as
+ * the site default, so that a whole run can be exercised in, say, dark mode without every feature having to set a
+ * user preference. Preferences set by a scenario still win, so a feature can pin itself to one mode.
+ *
+ * @return string|null The colour mode the run asked for, or null when it did not ask for one.
+ */
+function behat_get_colour_mode(): ?string {
+    global $CFG;
+
+    if (!defined('BEHAT_SITE_RUNNING')) {
+        return null;
+    }
+
+    require_once($CFG->libdir . '/behat/classes/behat_command.php');
+    require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
+
+    $mode = behat_config_manager::get_behat_run_config_value('colourmode');
+
+    return empty($mode) ? null : $mode;
+}
+
+/**
  * Get command flags for an option/value combination
  *
  * @param string $option
