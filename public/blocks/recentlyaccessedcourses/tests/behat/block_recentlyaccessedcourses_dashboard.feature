@@ -29,9 +29,11 @@ Feature: The recently accessed courses block allows users to easily access their
       | blockname               | contextlevel | reference | pagetypepattern | defaultregion |
       | recentlyaccessedcourses | System       | 1         | my-index        | content       |
 
+  @accessibility
   Scenario: User has not accessed any course
     Given I log in as "student1"
     Then I should see "No recent courses" in the "Recently accessed courses" "block"
+    And the "Recently accessed courses" "block" should meet accessibility standards with "best-practice" extra tests
 
   Scenario: User has accessed two courses
     Given I log in as "student1"
@@ -50,8 +52,7 @@ Feature: The recently accessed courses block allows users to easily access their
   Scenario: Show course category name
     Given the following config values are set as admin:
       | displaycategories | 1 | block_recentlyaccessedcourses |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "C1" "Course" page logged in as "student1"
     And I am on "Course 4" course homepage
     And I follow "Dashboard"
     And I should see "Category 1" in the "Recently accessed courses" "block"
@@ -60,29 +61,52 @@ Feature: The recently accessed courses block allows users to easily access their
   Scenario: Hide course category name
     Given the following config values are set as admin:
       | displaycategories | 0 | block_recentlyaccessedcourses |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "C1" "Course" page logged in as "student1"
     And I am on "Course 4" course homepage
     And I follow "Dashboard"
     And I should not see "Category 1" in the "Recently accessed courses" "block"
     And I should not see "Category A" in the "Recently accessed courses" "block"
 
+  @accessibility
   Scenario: Show short course name
     Given the following config values are set as admin:
       | courselistshortnames | 1 |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "C1" "Course" page logged in as "student1"
     And I am on "Course 4" course homepage
     And I follow "Dashboard"
     And I should see "C1" in the "Recently accessed courses" "block"
     And I should see "C4" in the "Recently accessed courses" "block"
+    And the "Recently accessed courses" "block" should meet accessibility standards with "best-practice" extra tests
 
   Scenario: Hide short course name
     Given the following config values are set as admin:
       | courselistshortnames | 0 |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "C1" "Course" page logged in as "student1"
     And I am on "Course 4" course homepage
     And I follow "Dashboard"
     And I should not see "C1" in the "Recently accessed courses" "block"
     And I should not see "C4" in the "Recently accessed courses" "block"
+
+  @accessibility
+  Scenario: Showing the pagination bar on editing mode
+    Given I am on the "C1" "Course" page logged in as "student1"
+    And I am on "Course 2" course homepage
+    And I am on "Course 3" course homepage
+    And I am on "Course 4" course homepage
+    And I am on "Course 5" course homepage
+    When I follow "Dashboard"
+    Then "[data-region='paging-bar-container']" "css_element" should exist in the "Recently accessed courses" "block"
+    And the "Recently accessed courses" "block" should meet accessibility standards with "best-practice" extra tests
+    And I turn editing mode on
+    # Move the focus to the blocks controls before running a11y tests.
+    And I click on "Move Recently accessed courses block" "menuitem"
+    And I press the escape key
+    And the "Recently accessed courses" "block" should meet accessibility standards with "best-practice" extra tests
+    # Move the block to the blocks drawer.
+    And I click on "Move Recently accessed courses block" "menuitem"
+    And I press "To item \"Calendar\""
+    # Ensure the block move overlay is hidden before continuing with the rest of the tests.
+    And I wait until ".lightbox[hidden]" "css_element" exists
+    And I click on "Move Recently accessed courses block" "menuitem"
+    And I press the escape key
+    And the "Recently accessed courses" "block" should meet accessibility standards with "best-practice" extra tests
