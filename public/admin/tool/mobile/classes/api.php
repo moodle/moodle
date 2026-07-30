@@ -113,6 +113,46 @@ class api {
     }
 
     /**
+     * Check whether the provided HTML content contains Matomo tracking code.
+     *
+     * @param ?string $content HTML content to inspect.
+     * @return bool
+     */
+    public static function contains_matomo_tracking(?string $content): bool {
+        if (empty($content)) {
+            return false;
+        }
+
+        $pattern = '/(_paq|matomo\.(?:js|php)|piwik\.(?:js|php))/i';
+
+        return preg_match($pattern, $content) === 1;
+    }
+
+    /**
+     * Check whether Matomo is configured in the Additional HTML settings.
+     *
+     * @return bool
+     */
+    public static function has_matomo_additional_html(): bool {
+        global $CFG;
+
+        $settings = [
+            'additionalhtmlhead',
+            'additionalhtmltopofbody',
+            'additionalhtmlfooter',
+        ];
+
+        foreach ($settings as $settingname) {
+            $content = $CFG->{$settingname} ?? null;
+            if (self::contains_matomo_tracking($content)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Returns a list of Moodle plugins supporting the mobile app.
      *
      * @return array an array of objects containing the plugin information

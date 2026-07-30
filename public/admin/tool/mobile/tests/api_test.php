@@ -93,6 +93,62 @@ final class api_test extends \core_external\tests\externallib_testcase {
     }
 
     /**
+     * Test Matomo detection against common identifiers.
+     *
+     * @covers \tool_mobile\api::contains_matomo_tracking
+     */
+    public function test_contains_matomo_tracking(): void {
+        $samples = [
+            'var _paq = window._paq || [];',
+            '<script src="https://example.com/matomo.js"></script>',
+            '<img src="https://example.com/matomo.php?idsite=1">',
+            '<script src="https://example.com/piwik.js"></script>',
+            '<img src="https://example.com/piwik.php?idsite=1">',
+        ];
+
+        foreach ($samples as $sample) {
+            $this->assertTrue(api::contains_matomo_tracking($sample));
+        }
+
+        $this->assertFalse(api::contains_matomo_tracking('trackPageView'));
+        $this->assertFalse(api::contains_matomo_tracking('enableLinkTracking'));
+        $this->assertFalse(api::contains_matomo_tracking('setTrackerUrl'));
+        $this->assertFalse(api::contains_matomo_tracking('setSiteId'));
+        $this->assertFalse(api::contains_matomo_tracking('Google Analytics content only'));
+        $this->assertFalse(api::contains_matomo_tracking(''));
+        $this->assertFalse(api::contains_matomo_tracking(null));
+    }
+
+    /**
+     * Test Matomo detection in the Additional HTML settings.
+     *
+     * @covers \tool_mobile\api::has_matomo_additional_html
+     */
+    public function test_has_matomo_additional_html(): void {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        set_config('additionalhtmlhead', '<script>console.log("no matomo")</script>');
+        set_config('additionalhtmltopofbody', '<script>var _paq = window._paq || [];</script>');
+        set_config('additionalhtmlfooter', '');
+        $CFG->additionalhtmlhead = '<script>console.log("no matomo")</script>';
+        $CFG->additionalhtmltopofbody = '<script>var _paq = window._paq || [];</script>';
+        $CFG->additionalhtmlfooter = '';
+
+        $this->assertTrue(api::has_matomo_additional_html());
+
+        set_config('additionalhtmlhead', '');
+        set_config('additionalhtmltopofbody', '');
+        set_config('additionalhtmlfooter', '');
+        $CFG->additionalhtmlhead = '';
+        $CFG->additionalhtmltopofbody = '';
+        $CFG->additionalhtmlfooter = '';
+
+        $this->assertFalse(api::has_matomo_additional_html());
+    }
+
+    /**
      * Test get_autologin_key.
      */
     public function test_get_autologin_key(): void {
