@@ -160,6 +160,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
 
             // Note: Do not count the seconds when comparing modified dates.
             $skip = false;
+            $restricted = false;
             $stalemodificationdate = ($usergrade && $usergrade->timemodified > ($modified + 60));
 
             if (
@@ -186,10 +187,13 @@ class assign_feedback_offline extends assign_feedback_plugin {
                       (($record->grade < 0) || ($record->grade > $this->assignment->get_instance()->grade))) {
                 // Out of range.
                 $skip = true;
+            } else if ($this->assignment->grading_restricted($usergrade ? $usergrade->id : null, $record->user->id)) {
+                // Skip grade but allow marks when grading is restricted.
+                $restricted = true;
             }
 
             if (!$skip) {
-                $grademodified = ($record->grade && $record->grade !== '' && $record->grade >= 0);
+                $grademodified = (!$restricted && $record->grade && $record->grade !== '' && $record->grade >= 0);
                 if ($usergrade) {
                     $grademodified = ($grademodified && $record->grade != $usergrade->grade);
                 }

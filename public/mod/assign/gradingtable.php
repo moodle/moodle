@@ -706,7 +706,7 @@ class assign_grading_table extends table_sql implements renderable {
         if (empty($workflowstate)) {
             $workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED;
         }
-        if ($this->quickgrading && !$gradingdisabled) {
+        if ($this->quickgrading && !$gradingdisabled && !$this->assignment->grading_restricted($row->gradeid, $row->userid)) {
             $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
             $name = 'quickgrade_' . $row->id . '_workflowstate';
             if ($workflowstate !== ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED && !array_key_exists($workflowstate, $workflowstates)) {
@@ -1096,29 +1096,13 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_grade(stdClass $row): string {
-        global $DB, $USER;
-
         $gradingdisabled = $this->assignment->grading_disabled($row->id, true, $this->gradinginfo);
-        $displaygrade = $this->display_grade($row->grade, $this->quickgrading && !$gradingdisabled, $row->userid, $row->timemarked);
+        $editable = $this->quickgrading && !$gradingdisabled &&
+            !$this->assignment->grading_restricted($row->gradeid, $row->userid);
+        $displaygrade = $this->display_grade($row->grade, $editable, $row->userid, $row->timemarked);
 
-        // If assignment uses multiple markers with the manual (aka agreement)
-        // method then the grader must be an existing marker so only show the
-        // action menu if they are.
-        $multimarkcangrade = true;
-        if (
-            $this->assignment->is_using_multiple_marking() &&
-            $this->assignment->get_instance()->multimarkmethod === 'manual' &&
-            !$DB->get_record('assign_mark', ['gradeid' => $row->gradeid, 'marker' => $USER->id]) &&
-            !$DB->get_record('assign_allocated_marker', [
-                'assignment' => $this->assignment->get_instance()->id,
-                'marker' => $USER->id,
-                'student' => $row->userid,
-            ])
-        ) {
-            $multimarkcangrade = false;
-        }
 
-        if (!$this->is_downloading() && $this->hasgrade && $multimarkcangrade) {
+        if (!$this->is_downloading() && $this->hasgrade) {
             $urlparams = [
                 'id' => $this->assignment->get_course_module()->id,
                 'rownum' => 0,

@@ -8015,8 +8015,9 @@ class assign {
 
             // Update grade needs to be called when there's anything that can change the gradebook.
             $updategrade = !empty($modified->updategrade) || $modified->gradechanged || $modified->workflowstatechanged;
+            $gradingrestricted = $updategrade ? $this->grading_restricted($grade->id, $grade->userid) : false;
 
-            if ($modified->workflowstatechanged) {
+            if ($modified->workflowstatechanged && !$gradingrestricted) {
                 $flags->workflowstate = $modified->workflowstate;
                 if ($this->update_user_flags($flags)) {
                     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
@@ -8024,9 +8025,7 @@ class assign {
                 }
             }
 
-            // Update grade needs to be called when there's anything that can change the gradebook.
-            $updategrade = !empty($modified->updategrade) || $modified->gradechanged || $modified->workflowstatechanged;
-            if ($updategrade) {
+            if ($updategrade && !$gradingrestricted) {
                 $this->update_grade($grade);
             }
 
@@ -8807,6 +8806,27 @@ class assign {
         return $gradingdisabled;
     }
 
+    /**
+     * Determines if grading is restricted by multiple marking requirements.
+     * When grading is restricted grades can only be updated through marking calculations.
+     *
+     * @param int|null $gradeid
+     * @param int $studentid
+     * @return bool true if grading is restricted
+     */
+    public function grading_restricted(?int $gradeid, int $studentid): bool {
+        if (!$this->is_using_multiple_marking()) {
+            return false;
+        }
+
+        // The agreed grade and workflow state can only be updated when all markers have marked,
+        // or when the user has the capability to override multiple marking results.
+        if (has_capability('mod/assign:managerestrictedgrades', $this->get_context())) {
+            return false;
+        }
+
+        return empty($gradeid) || !$this->all_markers_marked($gradeid, $studentid);
+    }
 
     /**
      * Get an instance of a grading form if advanced grading is enabled.
@@ -8901,6 +8921,13 @@ class assign {
         } else {
             $mform->addElement('header', 'gradeheader', get_string('gradenoun'));
         }
+
+        $gradingrestricted = !$markerpage && $this->grading_restricted($grade->id, $userid);
+        if ($gradingrestricted) {
+            $warning = $this->get_renderer()->notification(get_string('gradingrestricted', 'assign'), 'warning', false);
+            $mform->addElement('html', $warning);
+        }
+
         if ($gradinginstance) {
             $gradingelement = $mform->addElement('grading',
                                                  'advancedgrading',
@@ -8926,6 +8953,9 @@ class assign {
                         $mform->addElement('text', 'grade', $name);
                         $mform->addHelpButton('grade', 'gradeoutofhelp', 'assign');
                         $mform->setType('grade', PARAM_RAW);
+                        if ($gradingrestricted) {
+                            $mform->freeze('grade');
+                        }
                     }
                 } else {
                     $name = get_string('gradeoutof', 'assign', $this->get_instance()->grade);
@@ -9036,6 +9066,13 @@ class assign {
                 $select->addOption($allworkflowstates[$currentstate], $currentstate);
                 $mform->freeze('workflowstate');
             }
+            if ($gradingrestricted) {
+                if (empty($currentstate)) {
+                    $select->setSelected('');
+                }
+                $mform->freeze('workflowstate');
+            }
+
             $gradingstatus = $this->get_grading_status($userid);
             if ($gradingstatus != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
                 if ($grade->grade && $grade->grade != -1) {
@@ -9570,6 +9607,11 @@ class assign {
                     continue;
                 }
 
+                $grade = $this->get_user_grade($userid, true);
+                if ($this->grading_restricted($grade->id, $userid)) {
+                    continue;
+                }
+
                 // Update grade workflow state.
                 $flags = $this->get_user_flags($userid, true);
                 $flags->workflowstate = $state;
@@ -9899,12 +9941,13 @@ class assign {
         $gradinginstance = $this->get_grading_instance($userid, $grade, $gradingdisabled);
         $modifiedallocations = [];
         if (!$gradingdisabled) {
+            $gradingrestricted = $this->grading_restricted($grade->id, $userid);
             if ($gradinginstance) {
                 $grade->grade = $gradinginstance->submit_and_get_grade($formdata->advancedgrading,
                                                                        $grade->id);
             } else {
                 // Handle the case when grade is set to No Grade.
-                if (isset($formdata->grade)) {
+                if (isset($formdata->grade) && !$gradingrestricted) {
                     $grade->grade = grade_floatval(unformat_float($formdata->grade));
                 }
             }
@@ -9913,6 +9956,7 @@ class assign {
                 $oldworkflowstate = $flags->workflowstate;
                 $flags->workflowstate = isset($formdata->workflowstate) ? $formdata->workflowstate : $flags->workflowstate;
                 if (
+                    !$gradingrestricted &&
                     $this->update_user_flags($flags) &&
                     isset($formdata->workflowstate) &&
                     $formdata->workflowstate !== $oldworkflowstate

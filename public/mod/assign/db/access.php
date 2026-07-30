@@ -167,6 +167,14 @@ $capabilities = array(
         'clonepermissionsfrom' => 'mod/assign:manageallocations',
     ],
 
+    'mod/assign:managerestrictedgrades' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
     'mod/assign:viewgrades' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
