@@ -97,7 +97,7 @@
 }
 
 .gradingform_rubric .criterion.even td {
-    background: #f0f0f0;
+    background: var(--bs-secondary-bg);
 }
 
 .gradingform_rubric .criterion.odd td {
