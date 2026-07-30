@@ -208,6 +208,11 @@ export default class {
         }
         if (data.targetSectionId) {
             feedbackParams.targetSectionName = stateManager.get('section', data.targetSectionId).title;
+        } else if (data.targetCmId) {
+            // The target section can also be derived from the target cm when only the latter is provided
+            // (e.g. dropping an activity right above another one).
+            const targetCm = stateManager.get('cm', data.targetCmId);
+            feedbackParams.targetSectionName = stateManager.get('section', targetCm.sectionid).title;
         }
         if (data.targetCmId) {
             feedbackParams.targetCmName = stateManager.get('cm', data.targetCmId).name;
@@ -336,6 +341,48 @@ export default class {
     }
 
     /**
+     * Build the action and feedback data describing where a cmMove will place the activities, in
+     * terms a screen reader user can act on.
+     *
+     * The activities are always inserted immediately before targetCmId (or appended to the end of
+     * targetSectionId if no targetCmId is given, see stateactions::cm_move()). The "Move activity"
+     * dialogue presents this to the user as "Move after: <activity>", so we report it the same way:
+     * as "moved after <activity>", using whichever activity currently sits immediately before the
+     * insertion point (skipping over any activities that are themselves being moved). Only when
+     * nothing precedes the insertion point (i.e. the activities land at the very top of the
+     * section) do we fall back to naming the activity they now precede.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmids the list of cm ids being moved
+     * @param {number} targetSectionId the target section id
+     * @param {number} targetCmId the target course module id
+     * @return {array} a [action, feedbackData] pair to pass to _getLoggerEntry
+     */
+    _getCmMoveFeedback(stateManager, cmids, targetSectionId, targetCmId) {
+        const targetSection = targetCmId
+            ? stateManager.get('section', stateManager.get('cm', targetCmId).sectionid)
+            : stateManager.get('section', targetSectionId);
+        const cmlist = targetSection.cmlist;
+        const insertionIndex = targetCmId ? cmlist.indexOf(targetCmId) : cmlist.length;
+
+        let anchorCmId;
+        for (let i = insertionIndex - 1; i >= 0; i--) {
+            if (!cmids.includes(cmlist[i])) {
+                anchorCmId = cmlist[i];
+                break;
+            }
+        }
+
+        if (anchorCmId) {
+            return ['cm_move_after', {targetCmId: anchorCmId}];
+        }
+        if (targetCmId) {
+            return ['cm_move_before', {targetCmId}];
+        }
+        return ['cm_move', {targetSectionId}];
+    }
+
+    /**
      * Move course modules to specific course location.
      *
      * Note that one of targetSectionId or targetCmId should be provided in order to identify the
@@ -356,10 +403,13 @@ export default class {
         }
         const course = stateManager.get('course');
         this.cmLock(stateManager, cmids, true);
+        const [moveAction, feedbackData] = this._getCmMoveFeedback(stateManager, cmids, targetSectionId, targetCmId);
+        const logEntry = this._getLoggerEntry(stateManager, moveAction, cmids, feedbackData);
         const updates = await this._callEditWebservice('cm_move', course.id, cmids, targetSectionId, targetCmId);
         this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmids, false);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**
@@ -397,10 +447,12 @@ export default class {
         }
         const course = stateManager.get('course');
         this.sectionLock(stateManager, sectionIds, true);
+        const logEntry = this._getLoggerEntry(stateManager, 'section_move_after', sectionIds, {targetSectionId});
         const updates = await this._callEditWebservice('section_move_after', course.id, sectionIds, targetSectionId);
         this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**
