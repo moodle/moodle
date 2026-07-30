@@ -1144,11 +1144,10 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 if ($isstandard = $plugin->is_standard()) {
                     $row->attributes['class'] .= ' standard';
-                    $sourcelabel = html_writer::span(get_string('sourcestd', 'core_plugin'),
-                        'sourcetext badge bg-secondary text-dark');
+                    $sourcelabel = html_writer::span(get_string('sourcestd', 'core_plugin'), 'sourcetext badge text-bg-secondary');
                 } else {
                     $row->attributes['class'] .= ' extension';
-                    $sourcelabel = html_writer::span(get_string('sourceext', 'core_plugin'), 'sourcetext badge bg-info text-white');
+                    $sourcelabel = html_writer::span(get_string('sourceext', 'core_plugin'), 'sourcetext badge text-bg-info');
                 }
 
                 $coredependency = $plugin->is_core_dependency_satisfied($version);
@@ -1177,7 +1176,7 @@ class core_admin_renderer extends plugin_renderer_base {
                         break;
                     case core_plugin_manager::PLUGIN_STATUS_NODB:
                     case core_plugin_manager::PLUGIN_STATUS_UPTODATE:
-                        $statusclass .= $dependenciesok ? 'bg-light text-dark' : 'bg-warning text-dark';
+                        $statusclass .= $dependenciesok ? 'bg-light text-body' : 'bg-warning text-dark';
                         break;
                 }
                 $status = html_writer::span(get_string('status_' . $statuscode, 'core_plugin'), $statusclass);
@@ -1312,13 +1311,21 @@ class core_admin_renderer extends plugin_renderer_base {
             );
         }
 
-        $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 0)),
-            get_string('plugincheckattention', 'core_plugin')).' '.html_writer::span($sumattention, 'badge bg-light text-dark'),
-            'btn btn-link me-1');
+        $out .= html_writer::div(
+            html_writer::link(
+                new moodle_url($this->page->url, ['showallplugins' => 0]),
+                get_string('plugincheckattention', 'core_plugin')
+            ) . ' ' . html_writer::span($sumattention, 'badge bg-light text-body'),
+            'btn btn-link me-1'
+        );
 
-        $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 1)),
-            get_string('plugincheckall', 'core_plugin')).' '.html_writer::span($sumtotal, 'badge bg-light text-dark'),
-            'btn btn-link me-1');
+        $out .= html_writer::div(
+            html_writer::link(
+                new moodle_url($this->page->url, ['showallplugins' => 1]),
+                get_string('plugincheckall', 'core_plugin')
+            ) . ' ' . html_writer::span($sumtotal, 'badge bg-light text-body'),
+            'btn btn-link me-1'
+        );
 
         $out .= $this->output->container_end(); // End of .actions container.
         $out .= $this->output->container_end(); // End of #plugins-check-info container.
@@ -1472,7 +1479,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 if ($CFG->branch == str_replace('.', '', $moodle->release)) {
                     $supportedmoodles[] = html_writer::span($moodle->release, 'badge bg-success text-white');
                 } else {
-                    $supportedmoodles[] = html_writer::span($moodle->release, 'badge bg-light text-dark');
+                    $supportedmoodles[] = html_writer::span($moodle->release, 'badge bg-light text-body');
                 }
             }
 
@@ -1752,13 +1759,13 @@ class core_admin_renderer extends plugin_renderer_base {
             $this->page->url,
             get_string('overviewall', 'core_plugin'),
             ['title' => get_string('filterall', 'core_plugin'), 'data-filterby' => 'all', 'class' => 'active']
-        ).' '.html_writer::span($numtotal, 'badge text-dark number number-all');
+        ) . ' ' . html_writer::span($numtotal, 'badge text-body number number-all');
 
         $infoext = html_writer::link(
             new moodle_url($this->page->url, [], 'additional'),
             get_string('overviewext', 'core_plugin'),
             ['title' => get_string('filtercontribonly', 'core_plugin'), 'data-filterby' => 'additional']
-        ).' '.html_writer::span($numextension, 'badge text-dark number number-additional');
+        ) . ' ' . html_writer::span($numextension, 'badge text-body number number-additional');
 
         if ($numupdatable) {
             $infoupdatable = html_writer::link(
