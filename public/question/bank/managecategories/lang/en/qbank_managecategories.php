@@ -43,12 +43,12 @@ $string['movequestions:all'] = 'All questions in this category ({$a})';
 $string['movequestions:inuse'] = 'In use questions in this category ({$a})';
 $string['movequestions'] = 'Questions to move';
 $string['movequestionsbeforedeleting'] = 'Move questions before deleting category';
-$string['movequestionsexplanation'] = '<p>The category <strong>{$a->name}</strong> contains questions (some of which may be hidden questions or random questions).</p>
+$string['movequestionsexplanation'] = '<p>The category <strong>{$a->name}</strong> contains questions (including any hidden or random questions).</p>
 <ul>
-<li><strong>{$a->allcount}</strong> questions in total</li>
-<li><strong>{$a->inusecount}</strong> questions in use</li>
+<li>Total questions: {$a->allcount}</li>
+<li>Questions in use: {$a->inusecount}</li>
 </ul>
-<p>Select which questions you want to retain and which category to move them into. Any remaining questions will be deleted along with the category.</p>';
+<p>Select the questions to retain and which category to move them into. Any remaining questions will be deleted along with the category.</p>';
 $string['newchild'] = 'As new child of {$a}';
 $string['pluginname'] = 'Manage categories';
 $string['privacy:preference:includesubcategories_filter_default'] = 'Indicates whether or not the "Also show questions from subcategories" filter option is enabled by default when the user views the question bank.';
