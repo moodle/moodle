@@ -24,18 +24,6 @@ Feature: Add notes to course participants
       | student1 | C1 | student |
       | student2 | C1 | student |
       | student3 | C1 | student |
-    # TODO MDL-57120 "Notes" and site "Participants" links are not accessible without navigation block.
-    Given I log in as "admin"
-    And I am on site homepage
-    And I turn editing mode on
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    And I add the "Navigation" block if not present
-    And I configure the "Navigation" block
-    And I set the following fields to these values:
-      | Page contexts | Display throughout the entire site |
-    And I press "Save changes"
-    And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I follow "Participants"
@@ -54,18 +42,21 @@ Feature: Add notes to course participants
     And I set the field "bulk-note" to "  "
     And I press "Add a new note to 1 person"
     And I follow "Student 1"
-    And I follow "Notes"
+    And I click on "Notes" "link" in the ".profile_tree" "css_element"
     # Student 1 has note from Teacher
     Then I should see "Teacher" in the "region-main" "region"
     And I should see "Student 1 needs to pick up his game"
-    And I follow "Participants"
-    And I follow "Student 2"
-    And I follow "Notes"
     And I am on "Course 1" course homepage
     And I follow "Participants"
-    And I follow "Notes"
+    And I log out
+    And I log in as "admin"
+    And I navigate to "Courses > Site participants" in site administration
+    And I follow "Student 1"
+    And I click on "Notes" "link" in the ".profile_tree" "css_element"
     Then I should see "Student 1"
     And I should see "Student 1 needs to pick up his game"
     # Verify Student 2 does not have a note added.
-    And I should not see "Student 2"
-    And I should not see "Student 3"
+    And I navigate to "Courses > Site participants" in site administration
+    And I follow "Student 2"
+    And I click on "Notes" "link" in the ".profile_tree" "css_element"
+    And I should not see "Student 1 needs to pick up his game"

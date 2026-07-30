@@ -17,7 +17,10 @@ Feature: Displaying the link to the Participants page
     And the following "course enrolments" exist:
       | user     | course | role    |
       | student1 | C1     | student |
-    And I log in as "admin"
+
+  @javascript
+  Scenario: Course participants link is displayed to enrolled students after expanding the course node
+    Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
     And the following config values are set as admin:
@@ -29,9 +32,6 @@ Feature: Displaying the link to the Participants page
       | Page contexts | Display throughout the entire site |
     And I press "Save changes"
     And I log out
-
-  @javascript
-  Scenario: Course participants link is displayed to enrolled students after expanding the course node
     When I log in as "student1"
     And I expand "C1" node
     Then "Participants" "link" should exist in the "Navigation" "block"
@@ -42,10 +42,21 @@ Feature: Displaying the link to the Participants page
 
   @javascript
   Scenario: Course participants link is displayed to users depending on role permissions settings
-    Given the following "activities" exist:
+    Given I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+      | enablemycourses | 1 |             |
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    And the following "activities" exist:
       | activity | course | name            |
       | forum    | C1     | Test forum name |
-    And I am on the "Course1" "enrolment methods" page logged in as admin
+    And I am on the "Course1" "enrolment methods" page
     And I click on "Edit" "link" in the "Guest access" "table_row"
     And I set the following fields to these values:
       | Allow guest access | Yes |
@@ -63,8 +74,15 @@ Feature: Displaying the link to the Participants page
     And I am on the "Test forum name" "forum activity" page
     And I should see "Participants" in the "Navigation" "block"
 
-  Scenario: Site participants link is displayed to admins
-    When I log in as "admin"
+  @javascript
+  Scenario: Site participants link is displayed to admins in the Navigation block
+    Given I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+    And I add the "Navigation" block if not present
+    And I expand "Site pages" node
     Then "Participants" "link" should exist in the "Navigation" "block"
     And I click on "Participants" "link" in the "Navigation" "block"
     And I should see "Participants"
@@ -72,8 +90,18 @@ Feature: Displaying the link to the Participants page
     And "Student Two" "link" should exist
 
   @javascript
-  Scenario: Site participants link is not displayed to students (MDL-55667)
+  Scenario: Site participants link is not displayed to students in the Navigation block
     Given I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And the following config values are set as admin:
+      | unaddableblocks | | theme_boost|
+      | enablemycourses | 1 |             |
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
     And I set the following administration settings values:
       | defaultfrontpageroleid | Student (student) |
     And I log out

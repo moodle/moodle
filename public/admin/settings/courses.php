@@ -43,6 +43,7 @@ $capabilities = [
     'moodle/course:configurecustomfields',
     'moodle/group:configurecustomfields',
     'moodle/course:recommendactivity',
+    'moodle/site:viewparticipants',
 ];
 if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     // Speedup for non-admins, add all caps used on this page.
@@ -64,6 +65,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
             array('moodle/category:manage')
         )
     );
+
     $ADMIN->add('courses',
         new admin_externalpage('restorecourse', new lang_string('restorecourse', 'admin'),
             new moodle_url('/backup/restorefile.php', array('contextid' => context_system::instance()->id)),
@@ -82,6 +84,16 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
     $ADMIN->add('courses', $coursedeletionsettings);
+
+    $ADMIN->add(
+        'courses',
+        new admin_externalpage(
+            'siteparticipants',
+            new lang_string('siteparticipants', 'admin'),
+            new moodle_url('/user/index.php', ['id' => SITEID]),
+            'moodle/site:viewparticipants'
+        )
+    );
 
     // Download course content.
     $downloadcoursedefaulturl = new moodle_url('/admin/settings.php', ['section' => 'coursesettings']);
