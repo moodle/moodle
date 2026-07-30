@@ -73,7 +73,7 @@ final class more_menu_test extends advanced_testcase {
      *
      * @return void
      */
-    public function test_export_for_template_haschildren_exports_reactprops(): void {
+    public function test_export_for_template_haschildren_exports_reactprops_and_nodecollection(): void {
         $root = $this->create_node('Root');
         $alpha = $this->create_node('Alpha', new url('/alpha.php'), 'alpha');
         $alpha->isactive = true;
@@ -95,10 +95,15 @@ final class more_menu_test extends advanced_testcase {
         $this->assertIsString($data['reactprops']);
         $this->assertArrayHasKey('moremenuid', $data);
 
-        // The legacy nodecollection computation was removed as dead code: it must no longer be present.
-        $this->assertArrayNotHasKey('nodecollection', $data);
         // The haschildren=true path does not export a nodearray (that's only for haschildren=false).
         $this->assertArrayNotHasKey('nodearray', $data);
+
+        // The legacy nodecollection structure must be present: it's rendered as the static
+        // server-side fallback inside the React mount point (see secondarymoremenu.mustache),
+        // so the menu still works for NonJS Behat and no-JS browsers.
+        $this->assertArrayHasKey('nodecollection', $data);
+        $this->assertSame($content, $data['nodecollection']);
+        $this->assertCount(2, $data['nodecollection']->children);
 
         $reactprops = json_decode($data['reactprops'], true);
         $this->assertIsArray($reactprops);

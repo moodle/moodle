@@ -45187,10 +45187,12 @@ div.editor_atto_toolbar button .icon {
 }
 
 .moremenu {
-  opacity: 0;
   height: 60px;
 }
-.moremenu.observed {
+.jsenabled .moremenu {
+  opacity: 0;
+}
+.jsenabled .moremenu.observed {
   opacity: 1;
 }
 .moremenu .nav-link {
@@ -45391,7 +45393,6 @@ div.editor_atto_toolbar button .icon {
 .secondary-navigation .navigation.secondarynav-tabbar {
   border-bottom: none;
   height: 60px;
-  opacity: 0;
 }
 .secondary-navigation .navigation.secondarynav-tabbar .more-nav {
   gap: var(--mds-spacing-xs);
@@ -45409,7 +45410,10 @@ div.editor_atto_toolbar button .icon {
 .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill--selected:visited {
   background-color: var(--mds-bg-nav-pill-selected);
 }
-.secondary-navigation .navigation.secondarynav-tabbar.secondarynav-measured {
+.jsenabled .secondary-navigation .navigation.secondarynav-tabbar {
+  opacity: 0;
+}
+.jsenabled .secondary-navigation .navigation.secondarynav-tabbar.secondarynav-measured {
   opacity: 1;
 }
 .secondary-navigation .navigation.secondarynav-tabbar .mds-nav-pill.active {

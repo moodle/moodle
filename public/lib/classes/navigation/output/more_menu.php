@@ -70,6 +70,20 @@ class more_menu implements renderable, templatable {
                 return [];
             }
             $data['reactprops'] = $this->export_react_props($this->content->children);
+
+            // Also export the legacy node-collection structure. This is rendered as static
+            // server-side fallback markup inside the React mount point (see
+            // secondarymoremenu.mustache): React replaces it once it mounts, but without
+            // JavaScript (NonJS Behat, no-JS browsers) this is the only markup that ever
+            // reaches the page, so the menu must remain fully functional on its own.
+            foreach ($this->content->children as &$item) {
+                if ($item->showchildreninsubmenu && isset($this->content->children) &&
+                        count($this->content->children) > 0) {
+                    $item->moremenuid = uniqid();
+                    $item->haschildren = true;
+                }
+            }
+            $data['nodecollection'] = $this->content;
         } else {
             $data['nodearray'] = (array) $this->content;
             // If there is no node array to render then return an empty array.

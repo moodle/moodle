@@ -59,10 +59,15 @@
         background-color: var(--mds-bg-nav-pill-selected);
     }
 
-    opacity: 0;
+    // Hides the tab bar until the auto-overflow split has settled, to avoid a flash of the
+    // unmeasured/wrapped state. Scoped to .jsenabled: without JS there is no measurement pass to
+    // reveal it again, and the NonJS fallback markup rendered inside is already final content.
+    .jsenabled & {
+        opacity: 0;
 
-    &.secondarynav-measured {
-        opacity: 1;
+        &.secondarynav-measured {
+            opacity: 1;
+        }
     }
 
     // On istablist pages (e.g. admin/search.php), tabs are switched client-side by Bootstrap's
