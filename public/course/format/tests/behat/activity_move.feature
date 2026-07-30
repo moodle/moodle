@@ -38,7 +38,8 @@ Feature: Activities can be moved between sections
     When I open "Test forum name" actions menu
     And I click on "Move" "link" in the "Test forum name" activity
     And I click on "Section 3" "link" in the "Move activity" "dialogue"
-    Then  I should see "Test forum name" in the "Section 3" "section"
+    Then "Test forum name moved before Third forum name." "text" should exist in the ".toast-wrapper" "css_element"
+    And I should see "Test forum name" in the "Section 3" "section"
 
   @javascript
   Scenario: The teacher can reorder activities in the same section using the activity action menu
@@ -46,7 +47,8 @@ Feature: Activities can be moved between sections
     When I open "Test forum name" actions menu
     And I click on "Move" "link" in the "Test forum name" activity
     And I click on "Second forum name" "link" in the "Move activity" "dialogue"
-    Then  I should see "Test forum name" in the "Section 1" "section"
+    Then "Test forum name moved after Second forum name." "text" should exist in the ".toast-wrapper" "css_element"
+    And I should see "Test forum name" in the "Section 1" "section"
     And "Second forum name" "activity" should appear before "Test forum name" "activity"
 
   @javascript
@@ -55,6 +57,7 @@ Feature: Activities can be moved between sections
     And I click on "Move" "link" in the "Test forum name" activity
     And I click on "Expand" "link" in the "movemodalsection3" "region"
     And I click on "Third forum name" "link" in the "Move activity" "dialogue"
-    Then  I should see "Test forum name" in the "Section 3" "section"
+    Then "Test forum name moved after Third forum name." "text" should exist in the ".toast-wrapper" "css_element"
+    And I should see "Test forum name" in the "Section 3" "section"
     And "Third forum name" "activity" should appear before "Test forum name" "activity"
     And "Test forum name" "activity" should appear before "Fourth forum name" "activity"
