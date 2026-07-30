@@ -85,8 +85,8 @@ Feature: A teacher can put questions in categories in the question bank
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete" "dialogue"
     Then I should see "The category Used category contains questions"
-    And I should see "1 questions in total"
-    And I should see "0 questions in use"
+    And I should see "Total questions: 1"
+    And I should see "Questions in use: 0"
     And I select "All questions in this category (1)" from the "Questions to move" singleselect
     And I select "Default for Qbank 1" from the "Destination category" singleselect
     And I press "Delete category"
@@ -99,8 +99,8 @@ Feature: A teacher can put questions in categories in the question bank
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete" "dialogue"
     Then I should see "The category Used category contains questions"
-    And I should see "1 questions in total"
-    And I should see "0 questions in use"
+    And I should see "Total questions: 1"
+    And I should see "Questions in use: 0"
     And I select "None" from the "Questions to move" singleselect
     And I press "Delete category"
     And I should not see "Used category"
@@ -112,8 +112,8 @@ Feature: A teacher can put questions in categories in the question bank
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete" "dialogue"
     Then I should see "The category In-use category contains questions"
-    And I should see "1 questions in total"
-    And I should see "1 questions in use"
+    And I should see "Total questions: 1"
+    And I should see "Questions in use: 1"
     And I select "All questions in this category (1)" from the "Questions to move" singleselect
     And I select "Default for Qbank 1" from the "Destination category" singleselect
     And I press "Delete category"
@@ -126,8 +126,8 @@ Feature: A teacher can put questions in categories in the question bank
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Delete" "dialogue"
     Then I should see "The category In-use category contains questions"
-    And I should see "1 questions in total"
-    And I should see "1 questions in use"
+    And I should see "Total questions: 1"
+    And I should see "Questions in use: 1"
     And I select "In use questions in this category (1)" from the "Questions to move" singleselect
     And I select "Default for Qbank 1" from the "Destination category" singleselect
     And I press "Delete category"
@@ -146,7 +146,7 @@ Feature: A teacher can put questions in categories in the question bank
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the ".modal-footer" "css_element"
     Then I should see "The category Default for Test images in backup contains questions"
-    And I should see "1 questions in total"
+    And I should see "Total questions: 1"
     And I select "Used category" from the "Destination category" singleselect
     And I press "Delete category"
     And I should not see "Default for Test images in backup"

@@ -63,6 +63,6 @@ Feature: Use the qbank plugin manager page for exporttoxml
     And I should see question bulk action "exportselected"
     And I click on question bulk action "exportselected"
     # TODO: Uncomment the following step as part of MDL-86636 once non-link elements are supported.
-    # Then following "Export to MoodleXML" in the "#bulkactionsui-selector" "css_element" should download a file that:
+    # Then following "Export as Moodle XML" in the "#bulkactionsui-selector" "css_element" should download a file that:
     #  | Has mimetype                 | text/xml      |
     #  | Contains text in xml element | Essay Foo Bar |
