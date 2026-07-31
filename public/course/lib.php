@@ -1045,7 +1045,38 @@ function course_module_bulk_update_calendar_events($modulename, $courseid = 0) {
 
     foreach ($instances as $instance) {
         if ($cm = get_coursemodule_from_instance($modulename, $instance->id, $instance->course)) {
-            course_module_calendar_event_update_process($instance, $cm);
+            // Optional check for modules mid-delete.
+            if (!empty($cm->deletioninprogress)) {
+                continue;
+            }
+            try {
+                // Validate the cm is present in course modinfo, not just in mdl_course_modules.
+                get_fast_modinfo($instance->course)->get_cm($cm->id);
+
+                course_module_calendar_event_update_process($instance, $cm);
+            } catch (Exception $e) {
+                $errorcode = $e->errorcode ?? '';
+                if ($errorcode === 'invalidrecord') {
+                    debugging(
+                        get_string('calendareventskipformissingcourse', 'error', $instance->course),
+                        DEBUG_DEVELOPER
+                    );
+                    continue;
+                }
+                if ($errorcode === 'invalidcoursemoduleid' || $errorcode === 'invalidmoduleid') {
+                    $a = new stdClass();
+                    $a->modulename = $modulename;
+                    $a->instance = $instance->id;
+                    $a->course = $instance->course;
+                    $a->cm = $cm->id;
+                    debugging(
+                        get_string('calendareventskipforbrokencoursemodule', 'error', $a),
+                        DEBUG_DEVELOPER
+                    );
+                    continue;
+                }
+                throw $e;
+            }
         }
     }
     return true;
