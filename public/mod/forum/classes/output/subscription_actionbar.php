@@ -21,6 +21,7 @@ use renderer_base;
 use url_select;
 use renderable;
 use templatable;
+use core\output\select_menu;
 
 /**
  * Renders the subscribers page for this activity.
@@ -116,11 +117,11 @@ class subscription_actionbar implements renderable, templatable {
     }
 
     /**
-     * Create view and manage subscribers select menu.
+     * Create view and manage subscribers select menu tertiary navigation item.
      *
-     * @return url_select|null get url_select object.
+     * @return select_menu|null get select_menu object.
      */
-    private function create_view_manage_menu(): ?url_select {
+    private function create_view_manage_menu(): ?select_menu {
         // If forced subscription is used then no need to show the view.
         if (\mod_forum\subscriptions::is_forcesubscribed($this->forum)) {
             return null;
@@ -139,7 +140,11 @@ class subscription_actionbar implements renderable, templatable {
         } else {
             $this->currenturl = $managelink;
         }
-        $urlselect = new url_select($menu, $this->currenturl->out(false), null, 'selectviewandmanagesubscribers');
+        $urlselect = new select_menu(
+            'selectviewandmanagesubscribers',
+            $menu,
+            $this->currenturl->out(false),
+        );
         $urlselect->set_label(get_string('subscribers', 'forum'), ['class' => 'accesshide']);
         return $urlselect;
     }

@@ -44,22 +44,28 @@
             ]
         },
         "viewandmanageselect": {
-            "formid": "selectviewandmanagesubscribers",
-            "classes": "urlselect",
+            "name": "selectviewandmanagesubscribers",
+            "value": "/mod/forum/subscribers.php?id=3&edit=off",
+            "baseid": "select-menu56789",
             "label": "Subscribers",
-            "disabled": false,
-            "sesskey": "abcdef",
-            "action": "http://localhost/course/jumpto.php",
+            "labelattributes": [{"name": "class", "value": "accesshide"}],
+            "selectedoption": "View subscribers",
+            "inlinelabel": false,
+            "disableactive": false,
             "options": [
                 {
                     "name": "View subscribers",
                     "value": "/mod/forum/subscribers.php?id=3&edit=off",
-                    "selected": true
-                 },
+                    "selected": true,
+                    "id": "select-menu-option1",
+                    "disableactive": false
+                },
                 {
                     "name": "Manage subscribers",
                     "value": "/mod/forum/subscribers.php?id=3&edit=on",
-                    "selected": false
+                    "selected": false,
+                    "id": "select-menu-option2",
+                    "disableactive": false
                 }
             ]
         }
@@ -69,7 +75,7 @@
     <div class="d-flex">
         {{#viewandmanageselect}}
             <div class="navitem">
-                {{>core/url_select}}
+                {{>core/tertiary_navigation_selector}}
             </div>
         {{/viewandmanageselect}}
         {{#subscriptionoptions}}
