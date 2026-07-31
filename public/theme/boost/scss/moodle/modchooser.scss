@@ -75,6 +75,51 @@
             }
         }
     }
+
+    // Reflow support for narrow or short viewports (e.g. 320x256 at 400% zoom on a
+    // 1280x1024 display, or 480x270 at 400% zoom on a 1920x1080 display), to satisfy
+    // WCAG 2.2 SC 1.4.10 (Reflow). The width and height conditions are combined with an
+    // "or" (comma-separated media queries) rather than "and", so the fix engages when
+    // either dimension is constrained, not only when both are constrained together.
+    // The search header and category tabs are no longer sticky/fixed and scroll away with
+    // the rest of the content, and the footer remains sticky but with reduced padding.
+    @media (max-width: 400px), (max-height: 300px) {
+        .modal-header {
+            padding-top: map-get($spacers, 1);
+            padding-bottom: map-get($spacers, 1);
+        }
+
+        .modal-footer {
+            height: auto;
+            min-height: 2.5rem;
+            padding-top: map-get($spacers, 0);
+            padding-bottom: map-get($spacers, 0);
+
+            .activitychooserfooter {
+                flex-wrap: wrap;
+                padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+                padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
+            }
+        }
+
+        .modal-body,
+        .modal-body .carousel,
+        .modal-body .carousel-inner,
+        .modal-body .carousel-item {
+            height: auto;
+            overflow: visible;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+        }
+
+        .modal-body .carousel-item {
+            float: none;
+            margin-right: 0;
+            padding: map-get($spacers, 1) !important; /* stylelint-disable-line declaration-no-important */
+        }
+    }
 }
 
 /* Main container layout styles. */
@@ -275,5 +320,47 @@
     .searchresultitemscontainer {
         height: 100%;
         overflow-y: auto;
+    }
+}
+
+/* Reflow support for narrow or short viewports (e.g. 320x256 at 400% zoom on a
+   1280x1024 display, or 480x270 at 400% zoom on a 1920x1080 display), to satisfy
+   WCAG 2.2 SC 1.4.10 (Reflow). The width and height conditions are combined with an
+   "or" (comma-separated media queries) rather than "and", so the fix engages when
+   either dimension is constrained, not only when both are constrained together.
+   Category tabs stack vertically and activities stack in a single column instead of
+   the fixed-height grid layout used at larger sizes. */
+@media (max-width: 400px), (max-height: 300px) {
+    .modchoosercontainer {
+        display: block;
+        height: auto;
+        overflow: visible;
+
+        .modchooserfilters .searchcontainer {
+            margin-bottom: map-get($spacers, 1) !important; /* stylelint-disable-line declaration-no-important */
+        }
+
+        .modchoosernav {
+            // Bootstrap's flex-row/flex-md-column utility classes on this element are
+            // generated with !important, so the override below must match.
+            flex-direction: column !important; /* stylelint-disable-line declaration-no-important */
+            height: auto;
+            overflow: visible;
+            white-space: normal;
+
+            .nav-link {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        .modchoosercontent {
+            height: auto;
+            overflow: visible;
+        }
+    }
+
+    .modchoosercontent .optionscontainer {
+        grid-template-columns: 1fr;
     }
 }
