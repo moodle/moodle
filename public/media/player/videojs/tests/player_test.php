@@ -319,6 +319,38 @@ final class player_test extends \advanced_testcase {
     }
 
     /**
+     * Test that ogvtech state does not leak to YouTube embed when both an ogv-compatible
+     * video and YouTube URL are processed sequentially by the same plugin instance.
+     *
+     * #[CoversMethod(\media_videojs_plugin::class, 'list_supported_urls')]
+     */
+    public function test_youtube_techorder_resets_following_ogv(): void {
+        set_config('youtube', 1, 'media_videojs');
+
+        $manager = core_media_manager::instance();
+
+        // First embed an ogv video to set $this->ogvtech = true on the plugin instance.
+        $ogvurl = new moodle_url('http://example.org/video.ogv');
+        $ogvoutput = $manager->embed_url($ogvurl);
+
+        // Verify the ogv video correctly uses OgvJs.
+        $this->assertStringContainsString('&quot;techOrder&quot;: [&quot;OgvJS&quot;]', $ogvoutput);
+
+        // Now embed a YouTube URL using the same manager plugin instance.
+        $youtubeurl = new moodle_url('http://www.youtube.com/v/vyrwMmsufJc');
+        $youtubeoutput = $manager->embed_url($youtubeurl);
+
+        // YouTube embed must have techOrder youtube.
+        $this->assertStringContainsString('&quot;techOrder&quot;: [&quot;youtube&quot;]', $youtubeoutput);
+
+        // Youtube embed must NOT have an OgvJS techOrder.
+        $this->assertStringNotContainsString('&quot;techOrder&quot;: [&quot;OgvJS&quot;]', $youtubeoutput);
+
+        // Ensure techOrder only appears once in the YouTube output and no duplicate.
+        $this->assertSame(1, substr_count($youtubeoutput, '&quot;techOrder&quot;'));
+    }
+
+    /**
      * Helper function for testing flash videos embedding.
      *
      * @param string $t output of core_media_manager::embed_url.
