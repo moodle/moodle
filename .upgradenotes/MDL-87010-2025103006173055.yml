@@ -1,0 +1,8 @@
+issueNumber: MDL-87010
+notes:
+  core:
+    - message: >-
+        Token endpoint security improvements: earlier service validation, GET
+        parameter sanitization. The 'appsitecheck' parameter has been removed
+        from the token endpoint.
+      type: improved
