@@ -1558,6 +1558,16 @@ $popout-header-height: 4rem;
     z-index: 1;
 }
 
+// At the small viewport produced by high browser zoom the primary navbar is no
+// longer fixed, so a sticky grading-table header would consume a large part of
+// the available height. Make the header non-sticky at this breakpoint instead
+// so submission rows stay readable.
+@media (max-width: map-get($grid-breakpoints, "sm")) and (max-height: 320px) {
+    .path-mod-assign .gradingtable thead tr {
+        position: static;
+    }
+}
+
 /**
  * Mod LTI.
  */
