@@ -22,6 +22,7 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  */
 import { isProfilerEnabled } from "@moodle/lms/core/profiler";
 import { mountReactApp, unmountReactApp } from "@moodle/lms/core/mount";
+import Pending from "@moodle/lms/core/pending";
 const SELECTOR = "[data-react-component]";
 const MOUNTED_FLAG = "reactMounted";
 const MOUNTING_FLAG = "reactMounting";
@@ -88,19 +89,18 @@ const mountOne = /* @__PURE__ */ __name(async (el) => {
     delete el.dataset[MOUNTING_FLAG];
     return;
   }
-  const mod = await resolveComponent(componentName);
-  if (!mod) {
-    window.console.warn("[react_autoinit] Component not found:", componentName);
-    delete el.dataset[MOUNTING_FLAG];
-    return;
-  }
-  const Component = mod.default;
-  if (!Component) {
-    window.console.warn("[react_autoinit] Module has no default export:", componentName);
-    delete el.dataset[MOUNTING_FLAG];
-    return;
-  }
+  const pendingPromise = new Pending(`reactAutoInit:${componentName}`);
   try {
+    const mod = await resolveComponent(componentName);
+    if (!mod) {
+      window.console.warn("[react_autoinit] Component not found:", componentName);
+      return;
+    }
+    const Component = mod.default;
+    if (!Component) {
+      window.console.warn("[react_autoinit] Module has no default export:", componentName);
+      return;
+    }
     const props = parseProps(el);
     mountReactComponent(el, Component, props);
     el.dataset[MOUNTED_FLAG] = "1";
@@ -113,6 +113,7 @@ const mountOne = /* @__PURE__ */ __name(async (el) => {
     window.console.error("[react_autoinit] Mount failed:", componentName, e);
   } finally {
     delete el.dataset[MOUNTING_FLAG];
+    pendingPromise.resolve();
   }
 }, "mountOne");
 const unmountOne = /* @__PURE__ */ __name((el) => {
