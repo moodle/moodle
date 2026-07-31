@@ -110,6 +110,10 @@ class content implements named_templatable, renderable {
             $data->sectionreturn = $singlesectionnum;
         }
 
+        if (empty($data->hasnavigation) && $format->get_course_display() != COURSE_DISPLAY_MULTIPAGE) {
+            $data->collapsemenu = true;
+        }
+
         if ($this->hasaddsection) {
             $addsection = new $this->addsectionclass($format);
             $data->numsections = $addsection->export_for_template($output);

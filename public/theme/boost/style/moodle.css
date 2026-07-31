@@ -32940,6 +32940,13 @@ table.calendartable caption {
   list-style: square;
 }
 
+.section-collapsemenu {
+  padding: 0.5rem 0.75rem;
+  color: #6a737b;
+  line-height: 1;
+  background: none;
+  border: 0;
+}
 .section-collapsemenu .collapseall {
   display: block;
 }
@@ -32951,6 +32958,9 @@ table.calendartable caption {
 }
 .section-collapsemenu.collapsed .expandall {
   display: block;
+}
+.section-collapsemenu:hover .collapsemenu-text {
+  text-decoration: underline;
 }
 
 .courseindex-collapsemenu {
@@ -33091,6 +33101,10 @@ table.calendartable caption {
 }
 .course-section .overlay-preview {
   z-index: 5;
+}
+
+.section-list.has-collapsemenu > .course-section:first-child {
+  margin-top: 0;
 }
 
 .section li.movehere a {
