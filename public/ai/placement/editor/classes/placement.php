@@ -16,6 +16,7 @@
 
 namespace aiplacement_editor;
 
+
 /**
  * Class placement.
  *
@@ -34,5 +35,15 @@ class placement extends \core_ai\placement {
             \core_ai\aiactions\generate_text::class,
             \core_ai\aiactions\generate_image::class,
         ];
+    }
+
+    #[\Override]
+    public static function is_available_in_context(\context $context): bool {
+        return true;
+    }
+
+    #[\Override]
+    public static function get_actions_available(\context $context, bool $checkcontext = true): array {
+        return utils::get_actions_available($context, $checkcontext);
     }
 }

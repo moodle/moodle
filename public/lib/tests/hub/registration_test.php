@@ -76,6 +76,7 @@ final class registration_test extends \advanced_testcase {
 
         // Disabled a plugin.
         $DB->set_field('modules', 'visible', 0, ['name' => 'feedback']);
+        \core_plugin_manager::reset_caches();
 
         // Check our plugin usage counts and enabled states are correct.
         $pluginusage = registration::get_plugin_usage_data();
