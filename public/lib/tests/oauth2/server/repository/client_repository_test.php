@@ -205,22 +205,6 @@ final class client_repository_test extends \advanced_testcase {
                 'authorization_code',
                 false,
             ],
-            'public client matches anything without secret check' => [
-                [
-                    'name' => 'Public Client',
-                    'clientidentifier' => 'client-pub',
-                    'status' => client_entity::STATUS_ACTIVE,
-                    'isconfidential' => 0,
-                    'timecreated' => time(),
-                ],
-                null,
-                client_entity::SECRET_REVOKED_NO,
-                time() + 3600,
-                'client-pub',
-                null,
-                'authorization_code',
-                true,
-            ],
             'confidential client with correct secret in active state' => [
                 [
                     'name' => 'Confidential Client',

@@ -51,6 +51,7 @@ class client_repository implements ClientRepositoryInterface {
     public function validateClient(string $clientidentifier, ?string $clientsecret, ?string $granttype): bool {
         global $DB;
 
+        // League only calls this method for confidential clients.
         $cliententity = $this->getClientEntity($clientidentifier);
 
         // Check if client exists.
@@ -61,17 +62,6 @@ class client_repository implements ClientRepositoryInterface {
         // Check if the grant type is supported.
         if ($granttype !== null && !$cliententity->supportsGrantType($granttype)) {
             return false;
-        }
-
-        // Handle Public (Non-Confidential) Clients.
-        if (!$cliententity->isConfidential()) {
-            // Public clients shouldn't provide a secret.
-            if ($clientsecret !== null && $clientsecret !== '') {
-                return false;
-            }
-
-            // Valid public client with no secret provided.
-            return true;
         }
 
         // Handle Confidential Clients (Secrets are mandatory).
