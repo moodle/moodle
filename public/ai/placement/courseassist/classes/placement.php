@@ -16,6 +16,7 @@
 
 namespace aiplacement_courseassist;
 
+
 /**
  * Class placement.
  *
@@ -33,4 +34,13 @@ class placement extends \core_ai\placement {
         ];
     }
 
+    #[\Override]
+    public static function is_available_in_context(\context $context): bool {
+        return in_array($context->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE]);
+    }
+
+    #[\Override]
+    public static function get_actions_available(\context $context, bool $checkcontext = true): array {
+        return utils::get_actions_available($context, $checkcontext);
+    }
 }
