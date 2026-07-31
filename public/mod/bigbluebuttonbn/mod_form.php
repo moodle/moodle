@@ -56,12 +56,17 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $mform = &$this->_form;
 
         // Validates if the BigBlueButton server is running.
-        $serverversion = bigbluebutton_proxy::get_server_version();
-        if (is_null($serverversion)) {
+        $serverurl = (string) \mod_bigbluebuttonbn\local\config::get('server_url');
+        $sharedsecret = (string) \mod_bigbluebuttonbn\local\config::get('shared_secret');
+        if (
+            $serverurl !== '' &&
+            $sharedsecret !== '' &&
+            bigbluebutton_proxy::get_server_version() === null
+        ) {
             throw new moodle_exception('general_error_unable_connect',
                 'bigbluebuttonbn',
                 $CFG->wwwroot . '/admin/settings.php?section=modsettingbigbluebuttonbn',
-                \mod_bigbluebuttonbn\local\config::get('server_url')
+                $serverurl
             );
         }
         // UI configuration options.

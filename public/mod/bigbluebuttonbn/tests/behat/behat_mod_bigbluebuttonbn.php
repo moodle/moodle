@@ -79,6 +79,19 @@ class behat_mod_bigbluebuttonbn extends behat_base {
     }
 
     /**
+     * Remove the BigBlueButton server credentials so the plugin is in the unconfigured state.
+     *
+     * This overrides the defaults set in before_scenario() so tests can verify how the plugin
+     * behaves when no server has been set up yet.
+     *
+     * @Given the BigBlueButton server is not configured
+     */
+    public function the_bbb_server_is_not_configured(): void {
+        set_config('bigbluebuttonbn_server_url', '');
+        set_config('bigbluebuttonbn_shared_secret', '');
+    }
+
+    /**
      * Return the list of exact named selectors.
      *
      * @return array

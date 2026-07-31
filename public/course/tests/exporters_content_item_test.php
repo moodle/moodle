@@ -34,6 +34,7 @@ use core_course\local\repository\content_item_readonly_repository;
  *
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_course\local\exporters\course_content_item_exporter
  */
 final class exporters_content_item_test extends \advanced_testcase {
 
@@ -128,5 +129,66 @@ final class exporters_content_item_test extends \advanced_testcase {
         // Most important, is this a legacy item?
         $this->assertObjectHasProperty('legacyitem', $exporteditem);
         $this->assertTrue($exporteditem->legacyitem);
+    }
+
+    /**
+     * Test that a disabled content item exports the disabled flag and reason.
+     *
+     * @covers ::export
+     */
+    public function test_export_disabled_content_item(): void {
+        $this->resetAfterTest();
+        global $PAGE;
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $contentitem = new \core_course\local\entity\content_item(
+            id: 22,
+            name: 'test_name',
+            title: new \core_course\local\entity\string_title('test_title'),
+            link: new \moodle_url('/course/mod.php', ['id' => $course->id, 'add' => 'test_name']),
+            icon: '',
+            help: '',
+            archetype: MOD_ARCHETYPE_OTHER,
+            componentname: 'mod_bigbluebuttonbn',
+            purpose: MOD_PURPOSE_COMMUNICATION,
+            disabled: true,
+            disabledreason: 'Server not configured.',
+        );
+
+        $ciexporter = new course_content_item_exporter($contentitem, ['context' => \context_course::instance($course->id)]);
+        $renderer = $PAGE->get_renderer('core');
+        $exporteditem = $ciexporter->export($renderer);
+
+        $this->assertObjectHasProperty('disabled', $exporteditem);
+        $this->assertTrue($exporteditem->disabled);
+        $this->assertObjectHasProperty('disabledreason', $exporteditem);
+        $this->assertEquals('Server not configured.', $exporteditem->disabledreason);
+    }
+
+    /**
+     * Test that a non-disabled content item exports disabled=false and disabledreason=null.
+     *
+     * @covers ::export
+     */
+    public function test_export_non_disabled_content_item_has_disabled_fields(): void {
+        $this->resetAfterTest();
+        global $PAGE;
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $cir = new content_item_readonly_repository();
+        $contentitems = $cir->find_all_for_course($course, $user);
+        $contentitem = array_shift($contentitems);
+
+        $ciexporter = new course_content_item_exporter($contentitem, ['context' => \context_course::instance($course->id)]);
+        $renderer = $PAGE->get_renderer('core');
+        $exporteditem = $ciexporter->export($renderer);
+
+        $this->assertObjectHasProperty('disabled', $exporteditem);
+        $this->assertFalse($exporteditem->disabled);
+        $this->assertObjectHasProperty('disabledreason', $exporteditem);
+        // PARAM_TEXT clean converts null to '' for non-disabled items; assertEmpty covers both.
+        $this->assertEmpty($exporteditem->disabledreason);
     }
 }

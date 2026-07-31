@@ -264,6 +264,7 @@ Feature: Display and choose from the available activities in course
     # Confirm right key works
     And I press the right key
     And I press the right key
+    And I press the right key
     And the focused element is "Choice" "menuitem" in the "Add an activity or resource" "dialogue"
     # Confirm left key works
     And I press the left key

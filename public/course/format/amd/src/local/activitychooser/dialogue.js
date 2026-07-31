@@ -349,8 +349,14 @@ class ActivityChooserDialogue {
         const module = this.dialogueDom.getClosestChooserOption(target);
         const moduleName = module.dataset.modname;
         const moduleData = this.mappedModules.get(moduleName);
-        // We select the module now. This way the back button will keep the module selected.
-        this.handleOptionSelection(target);
+        if (module.getAttribute('aria-disabled') === 'true') {
+            // Keep 'Add' button disabled when only viewing the summary of a disabled option.
+            this.selectedModule = null;
+            this.dialogueDom.unmarkAllChooserOptionAsSelected();
+        } else {
+            // We select the module now. This way the back button will keep the module selected.
+            this.handleOptionSelection(target);
+        }
         // We need to know if the overall modal has a footer so we know when to show a real / vs fake footer.
         moduleData.showFooter = this.modal.hasFooterContent();
         this.dialogueDom.setBackButtonModuleData(moduleData);
@@ -413,6 +419,9 @@ class ActivityChooserDialogue {
     handleOptionSelection(target) {
         const option = this.dialogueDom.getClosestChooserOption(target);
         if (option === null) {
+            return;
+        }
+        if (option.getAttribute('aria-disabled') === 'true') {
             return;
         }
         this.selectedModule = option;

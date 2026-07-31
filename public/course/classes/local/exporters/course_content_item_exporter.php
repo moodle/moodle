@@ -78,6 +78,17 @@ class course_content_item_exporter extends exporter {
                 'default' => null,
                 'description' => 'The alternative purpose of the component exposing the content item',
             ],
+            'disabled' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+                'description' => 'Whether this content item is currently unavailable',
+            ],
+            'disabledreason' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+                'default' => null,
+                'description' => 'The reason this content item is disabled, shown as a tooltip',
+            ],
         ];
     }
 
@@ -153,6 +164,8 @@ class course_content_item_exporter extends exporter {
             'branded' => $this->contentitem->is_branded(),
             'gradable' => $this->contentitem->is_gradable(),
             'otherpurpose' => $this->contentitem->get_other_purpose(),
+            'disabled' => $this->contentitem->is_disabled(),
+            'disabledreason' => $this->contentitem->get_disabled_reason(),
         ];
 
         return $properties;

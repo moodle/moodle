@@ -65,6 +65,19 @@ if ($groupid) {
 
 logger::log_instance_viewed($instance);
 
+// If the server credentials are not configured yet, render a neutral state page and stop.
+if (empty(config::get('server_url')) || empty(config::get('shared_secret'))) {
+    $PAGE->set_url($instance->get_view_url());
+    $PAGE->set_title($cm->name);
+    $PAGE->set_cacheable(false);
+    $PAGE->set_heading($course->fullname);
+    $renderer = $PAGE->get_renderer('mod_bigbluebuttonbn');
+    echo $OUTPUT->header();
+    echo $renderer->render(new \mod_bigbluebuttonbn\output\unconfigured_view($instance));
+    echo $OUTPUT->footer();
+    die();
+}
+
 // Require a working server.
 bigbluebutton_proxy::require_working_server($instance);
 

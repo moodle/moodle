@@ -49,6 +49,8 @@ class content_item {
      * @param bool $gradable whether or not this item is gradable.
      * @param string|null $otherpurpose the alternative purpose type of this component.
      * @param string|null $summary a brief summary of this content item.
+     * @param bool $disabled whether this item is currently unavailable (shown grayed out in the chooser).
+     * @param string|null $disabledreason the reason this item is disabled, shown as a tooltip.
      */
     public function __construct(
         /** @var int $id the id. */
@@ -77,6 +79,10 @@ class content_item {
         private ?string $otherpurpose = null,
         /** @var string|null $summary a brief summary of this content item. */
         private ?string $summary = null,
+        /** @var bool $disabled whether this item is currently unavailable. */
+        private bool $disabled = false,
+        /** @var string|null $disabledreason the reason this item is disabled, shown as a tooltip. */
+        private ?string $disabledreason = null,
     ) {
     }
 
@@ -194,5 +200,23 @@ class content_item {
      */
     public function get_summary(): ?string {
         return $this->summary;
+    }
+
+    /**
+     * Whether this item is currently disabled/unavailable.
+     *
+     * @return bool true if this item is disabled, false otherwise.
+     */
+    public function is_disabled(): bool {
+        return $this->disabled;
+    }
+
+    /**
+     * Get the reason this item is disabled, shown as a tooltip in the chooser.
+     *
+     * @return string|null
+     */
+    public function get_disabled_reason(): ?string {
+        return $this->disabledreason;
     }
 }

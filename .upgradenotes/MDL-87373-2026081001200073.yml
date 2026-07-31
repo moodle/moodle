@@ -1,0 +1,7 @@
+issueNumber: MDL-87373
+notes:
+  core_course:
+    - message: >-
+        Activity chooser items can now be disabled by adding the `disabled`
+        and `disabledreason` parameters to the `content_item` class.
+      type: improved
