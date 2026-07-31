@@ -1005,16 +1005,19 @@ final class locallib_test extends \advanced_testcase {
             $this->getDataGenerator()->create_and_enrol($course, 'student');
         }
 
-        // Create 10 suspended students.
+        // Create 10 students with suspended enrolments.
         for ($i = 0; $i < 10; $i++) {
             $this->getDataGenerator()->create_and_enrol($course, 'student', null, 'manual', 0, 0, ENROL_USER_SUSPENDED);
         }
+
+        // Create a student with an active enrolment and suspended account.
+        $this->getDataGenerator()->create_and_enrol($course, 'student', ['suspended' => 1]);
 
         $this->setUser($teacher);
         set_user_preference('grade_report_showonlyactiveenrol', false);
         $assign = $this->create_instance($course, ['grade' => 100]);
 
-        $this->assertCount(10, $assign->list_participants(null, true));
+        $this->assertCount(11, $assign->list_participants(0, true));
     }
 
     public function test_list_participants_with_group_restriction(): void {
