@@ -956,6 +956,99 @@ final class course_test extends \advanced_testcase {
         $this->assertTrue($found);
     }
 
+    /**
+     * Test that template course summary and overview files are copied to the new course
+     * when no explicit values are provided in the CSV.
+     *
+     * @covers \tool_uploadcourse_course::proceed
+     */
+    public function test_upload_course_imports_template_summary_and_overviewfiles(): void {
+        global $DB;
+        $this->initialise_test();
+        $this->setAdminUser();
+
+        $templatesummary = 'This is the template course summary';
+        $c1 = $this->getDataGenerator()->create_course(['summary' => $templatesummary, 'summaryformat' => FORMAT_HTML]);
+        $c1context = \context_course::instance($c1->id);
+
+        $fs = get_file_storage();
+        $overviewfile = $fs->create_file_from_string(
+            [
+                'contextid' => $c1context->id,
+                'component' => 'course',
+                'filearea' => 'overviewfiles',
+                'itemid' => 0,
+                'filepath' => '/',
+                'filename' => 'template-course-image.png',
+            ],
+            'fake image content'
+        );
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        // Deliberately omit summary so the template course's summary is copied.
+        $data = [
+            'shortname' => 'A1',
+            'templatecourse' => $c1->shortname,
+            'category' => 1,
+            'fullname' => 'A1',
+        ];
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+
+        $course = $DB->get_record('course', ['shortname' => 'A1'], '*', MUST_EXIST);
+        $this->assertEquals($templatesummary, $course->summary);
+
+        $newcontext = \context_course::instance($course->id);
+        $newoverviewfiles = $fs->get_area_files($newcontext->id, 'course', 'overviewfiles', 0, 'filename', false);
+        $this->assertCount(1, $newoverviewfiles);
+        $newoverviewfile = reset($newoverviewfiles);
+        $this->assertEquals($overviewfile->get_filename(), $newoverviewfile->get_filename());
+        $this->assertEquals($overviewfile->get_content(), $newoverviewfile->get_content());
+    }
+
+    /**
+     * Test that explicit course values provided in the CSV are not overwritten by
+     * corresponding values from the template course.
+     *
+     * @covers \tool_uploadcourse_course::proceed
+     */
+    public function test_upload_course_keeps_explicit_values_over_template(): void {
+        global $DB;
+
+        $this->initialise_test();
+        $this->setAdminUser();
+
+        $templatecourse = $this->getDataGenerator()->create_course([
+            'format' => 'weeks',
+            'summary' => 'Template summary',
+            'summaryformat' => FORMAT_HTML,
+        ]);
+
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+
+        // Explicitly provide values, which should take priority over the template course values.
+        $data = [
+            'shortname' => 'A1',
+            'fullname' => 'A1',
+            'category' => 1,
+            'templatecourse' => $templatecourse->shortname,
+            'format' => 'topics',
+            'summary' => 'Explicit CSV summary',
+        ];
+
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+
+        $course = $DB->get_record('course', ['shortname' => 'A1'], '*', MUST_EXIST);
+
+        $this->assertSame('topics', $course->format);
+        $this->assertSame('Explicit CSV summary', $course->summary);
+    }
+
     public function test_restore_file(): void {
         global $DB;
         $this->initialise_test();
