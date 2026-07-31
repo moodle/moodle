@@ -227,7 +227,7 @@ class notification_helper {
         $assignmentobj = self::get_assignment_data($assignmentid);
 
         // Get our assignment users.
-        $users = $assignmentobj->list_participants(0, true, false, true);
+        $users = $assignmentobj->list_participants(0, false, false, true);
 
         // If it's an overdue type and there are no submission plugins, skip the assignment.
         if ($type == self::TYPE_OVERDUE) {
@@ -243,6 +243,12 @@ class notification_helper {
         $completion = new \completion_info($course);
 
         foreach ($users as $key => $user) {
+            // Exclude suspended users.
+            if ($user->suspended || ($user->auth == 'nologin')) {
+                unset($users[$key]);
+                continue;
+            }
+
             // Check if the user has submitted already.
             $submission = $assignmentobj->get_user_submission($user->id, false);
             if ($submission && $submission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
@@ -333,7 +339,12 @@ class notification_helper {
             }
         }
 
-        return $users;
+        // Only the array key and user id field are required.
+        $userids = [];
+        foreach ($users as $key => $user) {
+            $userids[$key] = (object) ['id' => $user->id];
+        }
+        return $userids;
     }
 
     /**
