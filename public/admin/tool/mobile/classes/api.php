@@ -594,6 +594,7 @@ class api {
                 'CoreReportBuilderDelegate' => new lang_string('reportbuilder', 'core_reportbuilder'),
                 'NoDelegate_CoreUserSupport' => new lang_string('contactsitesupport', 'admin'),
                 'NoDelegate_GlobalSearch' => new lang_string('globalsearch', 'search'),
+                'NoDelegate_CoreFormatTextShortenText' => new lang_string('shortentext', 'tool_mobile'),
             ],
             "$mainmenu" => [
                 'CoreMainMenuDelegate_CoreSiteHome' => new lang_string('sitehome'),
