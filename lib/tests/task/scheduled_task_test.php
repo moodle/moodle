@@ -117,6 +117,41 @@ final class scheduled_task_test extends \advanced_testcase {
     }
 
     /**
+     * The next scheduled time must come from the injected clock, not from the system clock.
+     *
+     * Without this, tests cannot control the schedule and end up asserting against whatever
+     * time of day they happen to run at, which is the cause of MDL-89100.
+     */
+    public function test_get_next_scheduled_time_uses_injected_clock(): void {
+        $this->resetAfterTest();
+
+        $timezone = \core_date::get_server_timezone_object();
+        $clock = $this->mock_clock_with_frozen(
+            (new \DateTimeImmutable('2026-01-01 12:00:00', $timezone))->getTimestamp(),
+        );
+
+        // A task that runs once a day, at midnight.
+        $testclass = new scheduled_test_task();
+        $testclass->set_minute('0');
+        $testclass->set_hour('0');
+
+        $this->assertEquals(
+            (new \DateTimeImmutable('2026-01-02 00:00:00', $timezone))->getTimestamp(),
+            $testclass->get_next_scheduled_time(),
+            'Next scheduled time must be the midnight following the frozen time.',
+        );
+
+        // Moving the clock must move the result with it.
+        $clock->set_to((new \DateTimeImmutable('2026-03-15 12:00:00', $timezone))->getTimestamp());
+
+        $this->assertEquals(
+            (new \DateTimeImmutable('2026-03-16 00:00:00', $timezone))->getTimestamp(),
+            $testclass->get_next_scheduled_time(),
+            'Next scheduled time must follow the clock when it is moved.',
+        );
+    }
+
+    /**
      * Data provider for get_next_scheduled_time_detail.
      *
      * Note all times in here are in default Australia/Perth time zone.
@@ -609,7 +644,12 @@ final class scheduled_task_test extends \advanced_testcase {
         $record->disabled = 1;
         $DB->insert_record('task_scheduled', $record);
 
-        $now = time();
+        // Freeze the clock at a fixed midday time. These tasks run at 00:00, so with a
+        // wall-clock "now" the first task's next run time lands inside the $now + 120
+        // query below whenever the test runs within 120 seconds of midnight, and it is
+        // returned in place of the second task. See MDL-89100.
+        $now = (new \DateTimeImmutable('2026-01-01 12:00:00', \core_date::get_server_timezone_object()))->getTimestamp();
+        $this->mock_clock_with_frozen($now);
 
         // Should get handed the first task.
         $task = manager::get_next_scheduled_task($now);
