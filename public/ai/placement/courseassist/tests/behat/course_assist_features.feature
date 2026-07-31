@@ -91,6 +91,11 @@ Feature: AI course assist features
     And I am on the "PageName1" "page activity" page logged in as teacher1
     Then "AI features" "button" should not exist
 
+  Scenario: AI tools can be enabled while creating a course
+    Given I log in as "admin"
+    When I navigate to "Courses > Add a new course" in site administration
+    Then I should see "Allow AI tools for this course"
+
   Scenario: AI features are not available when AI tools is disabled at module level
     Given I am on the "PageName1" "page activity editing" page logged in as teacher1
     When I set the following fields to these values:

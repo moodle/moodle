@@ -136,6 +136,16 @@ final class utils_test extends \advanced_testcase {
     }
 
     /**
+     * Test the contexts where the placement is available.
+     *
+     * @covers \aiplacement_editor\placement::is_available_in_context
+     */
+    public function test_is_available_in_context(): void {
+        $this->assertTrue(placement::is_available_in_context($this->context));
+        $this->assertTrue(placement::is_available_in_context(\context_system::instance()));
+    }
+
+    /**
      * Test get_actions_available method.
      *
      * @param array $actionstouse The actions to use.

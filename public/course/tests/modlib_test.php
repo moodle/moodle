@@ -16,7 +16,11 @@
 
 namespace core_course;
 
+use core_ai\ai_test_trait;
 use core_courseformat\formatactions;
+
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../ai/tests/ai_test_trait.php');
 
 /**
  * Module lib related unit tests
@@ -27,6 +31,8 @@ use core_courseformat\formatactions;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class modlib_test extends \advanced_testcase {
+    use ai_test_trait;
+
     /**
      * Setup to ensure that fixtures are loaded.
      */
@@ -36,6 +42,83 @@ final class modlib_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/course/modlib.php');
         require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
         parent::setUpBeforeClass();
+    }
+
+    /**
+     * Test module defaults when an AI placement is uninstalled.
+     *
+     * A provider and action are configured and enabled for the placement so the assertion
+     * demonstrates that the uninstalled placement itself is excluded from discovery, rather
+     * than the action list being empty for an unrelated reason such as a missing provider.
+     *
+     * @param string $placement The placement plugin component.
+     * @param string $actionname The AI action to configure and expect for the placement.
+     * @dataProvider provider_uninstalled_ai_placements
+     * @covers ::set_moduleinfo_defaults
+     */
+    public function test_set_moduleinfo_defaults_with_uninstalled_ai_placement(
+        string $placement,
+        string $actionname,
+    ): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $PAGE->set_context(\context_course::instance($course->id));
+
+        $this->create_ai_provider([$actionname], \aiprovider_openai\provider::class);
+        set_config('enabled', 1, $placement);
+        set_config($actionname, 1, $placement);
+
+        $moduleinfo = (object) [
+            'course' => $course->id,
+            'modulename' => 'forum',
+        ];
+
+        // Confirm the action is discovered while the placement is installed and enabled.
+        $installed = set_moduleinfo_defaults(clone $moduleinfo);
+        $this->assertObjectHasProperty('enabledaiactions', $installed);
+        $this->assertArrayHasKey($actionname, json_decode($installed->enabledaiactions, true));
+
+        // Simulate the placement plugin being uninstalled.
+        unset_config('version', $placement);
+        \core_plugin_manager::reset_caches();
+
+        $uninstalled = set_moduleinfo_defaults(clone $moduleinfo);
+        $this->assertObjectNotHasProperty('enabledaiactions', $uninstalled);
+    }
+
+    /**
+     * Data provider for {@see test_set_moduleinfo_defaults_with_uninstalled_ai_placement()}.
+     *
+     * @return array
+     */
+    public static function provider_uninstalled_ai_placements(): array {
+        return [
+            'course assistance placement' => ['aiplacement_courseassist', 'explain_text'],
+            'editor placement' => ['aiplacement_editor', 'generate_text'],
+        ];
+    }
+
+    /**
+     * Test course code has no direct dependency on AI placement plugins.
+     *
+     * @coversNothing
+     */
+    public function test_course_code_has_no_ai_placement_dependencies(): void {
+        global $CFG;
+
+        $files = [
+            '/course/edit_form.php',
+            '/course/modlib.php',
+            '/course/moodleform_mod.php',
+        ];
+
+        foreach ($files as $file) {
+            $this->assertStringNotContainsString('aiplacement_', file_get_contents($CFG->dirroot . $file));
+        }
     }
 
     /**
