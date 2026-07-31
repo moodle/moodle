@@ -28,6 +28,7 @@ import {
     getStrings,
 } from 'core/str';
 import ModalForm from 'core_form/modalform';
+import {add as addToast} from 'core/toast';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import SortableList from 'core/sortable_list';
@@ -89,6 +90,7 @@ const createNewCategory = (component, area, itemid) => {
 
     promises[1].then(response => Templates.render('core_customfield/list', response))
     .then((html, js) => Templates.replaceNode(jQuery('[data-region="list-page"]'), html, js))
+    .then(() => addToast(getString('categoryadded', 'core_customfield'), {type: 'success'}))
     .then(() => pendingPromise.resolve())
     .catch(Notification.exception);
 };

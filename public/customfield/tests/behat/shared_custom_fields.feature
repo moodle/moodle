@@ -10,6 +10,7 @@ Feature: Create shared categories and fields
     And I press "Add a new category"
     And I wait until the page is ready
     Then I should see "Other fields" in the "#customfield_catlist" "css_element"
+    And "The category has been successfully added" "toast_message" should exist
     And I click on "[data-role='deletecategory']" "css_element"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     And I wait until the page is ready
