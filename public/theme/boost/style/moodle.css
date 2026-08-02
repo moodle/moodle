@@ -35659,17 +35659,30 @@ textarea[data-auto-rows] {
   margin: auto 0;
 }
 
-.login-container .login-form .form-control {
+.login-container .login-form .login-input-wrapper {
+  position: relative;
+}
+.login-container .login-form .login-input-wrapper .form-control {
   background-color: #f8f9fa;
   box-shadow: none;
+  padding-inline-start: 3rem;
 }
-.login-container .login-form .form-control:hover {
+.login-container .login-form .login-input-wrapper .form-control:hover {
   background-color: #f8f9fa;
 }
-.login-container .login-form .form-control:focus {
+.login-container .login-form .login-input-wrapper .form-control:focus {
   background-color: #f8f9fa;
   border-color: #87b6df;
   box-shadow: 0 0 0 0.25rem rgba(15, 108, 191, 0.75);
+}
+.login-container .login-form .login-input-wrapper .login-input-icon {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6a737b;
+  pointer-events: none;
+  z-index: 6;
 }
 .login-container .login-form .toggle-sensitive-wrapper .toggle-sensitive-btn {
   --bs-btn-bg: #f8f9fa;

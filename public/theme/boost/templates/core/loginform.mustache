@@ -103,19 +103,38 @@
                         {{#str}} usernameemail {{/str}}
                     {{/canloginbyemail}}
                 </label>
-                <input type="text" name="username" id="username" {{!
-                    !}}class="form-control" {{!
-                    !}}value="{{username}}" {{!
-                    !}}placeholder="{{^canloginbyemail}}{{#str}}enterusername{{/str}}{{/canloginbyemail}}{{!
-                    !}}{{#canloginbyemail}}{{#str}}loginenterusernameoremail{{/str}}{{/canloginbyemail}}" {{!
-                    !}}autocomplete="username">
+                <div class="login-input-wrapper">
+                    <span class="login-input-icon">
+                        {{#canloginbyemail}}{{#pix}}i/email, core{{/pix}}{{/canloginbyemail}}
+                        {{^canloginbyemail}}{{#pix}}i/user, core{{/pix}}{{/canloginbyemail}}
+                    </span>
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        class="form-control"
+                        value="{{username}}"
+                        placeholder="{{^canloginbyemail}}{{#str}}enterusername{{/str}}{{/canloginbyemail}}{{#canloginbyemail}}{{#str}}loginenterusernameoremail{{/str}}{{/canloginbyemail}}"
+                        autocomplete="username"
+                    >
+                </div>
             </div>
             <div class="login-form-password mb-3">
                 <label for="password" class="form-label">{{#str}} password {{/str}}</label>
-                <input type="password" name="password" id="password" value="" {{!
-                    !}}class="form-control" {{!
-                    !}}placeholder="{{#str}}loginenterpassword{{/str}}" {{!
-                    !}}autocomplete="current-password">
+                <div class="login-input-wrapper">
+                    <span class="login-input-icon">
+                        {{#pix}}i/lock, core{{/pix}}
+                    </span>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        value=""
+                        class="form-control"
+                        placeholder="{{#str}}loginenterpassword{{/str}}"
+                        autocomplete="current-password"
+                    >
+                </div>
             </div>
             <div class="text-end mb-3">
                 <a href="{{forgotpasswordurl}}">{{#str}}loginforgotpassword{{/str}}</a>
