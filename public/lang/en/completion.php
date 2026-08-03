@@ -138,7 +138,6 @@ $string['criteriagroup'] = 'Criteria group';
 $string['criteriarequiredall'] = 'All criteria below are required';
 $string['criteriarequiredany'] = 'Any criteria below are required';
 $string['criteriasummary'] = '{$a->type}: {$a->summary}';
-$string['csvdownload'] = 'Download in spreadsheet format (UTF-8 .csv)';
 $string['datepassed'] = 'Date passed';
 $string['days'] = 'Days';
 $string['daysoftotal'] = '{$a->days} of {$a->total}';
@@ -174,7 +173,6 @@ $string['eventcoursecompleted'] = 'Course completed';
 $string['eventcoursecompletionupdated'] = 'Course completion updated';
 $string['eventcoursemodulecompletionupdated'] = 'Course activity completion updated';
 $string['eventdefaultcompletionupdated'] = 'Default for course activity completion updated';
-$string['excelcsvdownload'] = 'Download in Excel-compatible format (.csv)';
 $string['failed'] = 'Failed';
 $string['fraction'] = 'Fraction';
 $string['graderequired'] = 'Required course grade';
@@ -258,3 +256,7 @@ $string['withconditions'] = 'With conditions';
 $string['writingcompletiondata'] = 'Writing completion data';
 $string['xdays'] = '{$a} days';
 $string['youmust'] = 'You must';
+
+// Deprecated since Moodle 5.3.
+$string['csvdownload'] = 'Download in spreadsheet format (UTF-8 .csv)';
+$string['excelcsvdownload'] = 'Download in Excel-compatible format (.csv)';
