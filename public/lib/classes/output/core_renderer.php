@@ -643,17 +643,7 @@ class core_renderer extends renderer_base {
         // for now. This will be replaced with the real content in {@see core_renderer::footer()}.
         $output = '';
         if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmlfooter)) {
-            // The additional HTML footer content needs to also support JS so it supports things like analytics or other tooling.
-            // It is controlled via config so is considered trusted for this.
-            // We use format_text rather than injecting directly, to support features like multi-lang.
-            $formatoptions = [
-                'trusted' => true,
-                'clean' => false,
-                'context' => $this->page->context,
-                'para' => false,
-                'allowid' => true,
-            ];
-            $output .= "\n" . format_text($CFG->additionalhtmlfooter, FORMAT_HTML, $formatoptions);
+            $output .= "\n" . $CFG->additionalhtmlfooter;
         }
         $output .= $this->unique_end_html_token;
         return $output;
