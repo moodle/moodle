@@ -2290,6 +2290,23 @@ EOF;
     }
 
     /**
+     * Skips the current scenario if the run was started with a colour mode.
+     *
+     * The --colourmode option overrides the colour mode settings of the site, so a scenario about those settings
+     * cannot assert anything while it is in use.
+     *
+     * @Given the run is not using a colour mode
+     * @throws \Moodle\BehatExtension\Exception\SkippedException
+     */
+    public function the_run_is_not_using_a_colour_mode(): void {
+        if (behat_config_manager::get_behat_run_config_value('colourmode')) {
+            throw new \Moodle\BehatExtension\Exception\SkippedException(
+                'Skipping this scenario because the run was started with a colour mode.'
+            );
+        }
+    }
+
+    /**
      * Checks if given plugin is installed, and skips the current scenario if not.
      *
      * @Given the :plugin plugin is installed
