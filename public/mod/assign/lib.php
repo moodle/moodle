@@ -1388,6 +1388,7 @@ function assign_pluginfile($course,
                 $forcedownload,
                 array $options=array()) {
     global $CFG;
+    require_once("{$CFG->dirroot}/mod/assign/locallib.php");
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -1398,13 +1399,13 @@ function assign_pluginfile($course,
         return false;
     }
 
-    require_once($CFG->dirroot . '/mod/assign/locallib.php');
     $assign = new assign($context, $cm, $course);
 
     if ($filearea !== ASSIGN_INTROATTACHMENT_FILEAREA && $filearea !== ASSIGN_ACTIVITYATTACHMENT_FILEAREA) {
         return false;
     }
-    if (!$assign->show_intro()) {
+
+    if ($filearea === ASSIGN_ACTIVITYATTACHMENT_FILEAREA && !$assign->show_intro()) {
         return false;
     }
 
