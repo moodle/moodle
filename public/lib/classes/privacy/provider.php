@@ -135,6 +135,29 @@ class provider implements
             'identifier' => 'privacy:metadata:shortlink:identifier',
         ], 'privacy:metadata:shortlink');
 
+        // The oauth2_server_client_access_tokens table stores OAuth2 access tokens that authorise OAuth2 clients to
+        // access protected resources on behalf of a user.
+        $collection->add_database_table('oauth2_server_client_access_tokens', [
+            'userid' => 'privacy:metadata:oauth2_server_client_access_tokens:userid',
+        ], 'privacy:metadata:oauth2_server_client_access_tokens');
+
+        // The oauth2_server_client_auth_codes table stores temporary OAuth2 authorisation codes issued after a user
+        // grants consent to an OAuth2 client.
+        $collection->add_database_table('oauth2_server_client_auth_codes', [
+            'userid' => 'privacy:metadata:oauth2_server_client_auth_codes:userid',
+        ], 'privacy:metadata:oauth2_server_client_auth_codes');
+
+        // The oauth2_server_client_granted_scopes table stores the OAuth2 scopes granted by users to OAuth2 clients
+        // during the authorisation process.
+        $collection->add_database_table('oauth2_server_client_granted_scopes', [
+            'userid' => 'privacy:metadata:oauth2_server_client_granted_scopes:userid',
+        ], 'privacy:metadata:oauth2_server_client_granted_scopes');
+
+        // The rest_api_tokens table stores manually created REST API tokens by users.
+        $collection->add_database_table('rest_api_tokens', [
+            'userid' => 'privacy:metadata:rest_api_tokens:userid',
+        ], 'privacy:metadata:rest_api_tokens');
+
         return $collection;
     }
 
