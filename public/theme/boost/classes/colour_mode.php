@@ -69,9 +69,21 @@ class colour_mode {
     /**
      * Whether users are allowed to switch between colour modes on this site.
      *
+     * Colour modes are an experimental feature which a site opts in to, so they are off until an admin turns them on.
+     * A Behat run started with --colourmode turns them on for the run, as the option exists in order to exercise the
+     * whole suite in one mode.
+     *
      * @return bool
      */
     public static function is_enabled(): bool {
+        if (
+            defined('BEHAT_SITE_RUNNING')
+            && function_exists('behat_get_colour_mode')
+            && self::is_valid_mode(behat_get_colour_mode())
+        ) {
+            return true;
+        }
+
         return (bool) get_config('theme_boost', 'enablecolourmodes');
     }
 
@@ -100,7 +112,7 @@ class colour_mode {
      * The colour mode to render the page with.
      *
      * Falls back to the site default when the user has not chosen a mode, and to light mode when colour modes have
-     * been turned off for the site.
+     * not been turned on for the site.
      *
      * @return string One of the self::LIGHT, self::DARK or self::AUTO constants.
      */
@@ -148,7 +160,7 @@ class colour_mode {
     /**
      * Render the navbar menu for switching between the colour modes.
      *
-     * Nothing is rendered when colour modes are turned off for the site, or for people who cannot store a user
+     * Nothing is rendered when colour modes are not turned on for the site, or for people who cannot store a user
      * preference (guests and users who are not logged in), as they always get the site default.
      *
      * @param \renderer_base $output The renderer to render the menu with.

@@ -2,13 +2,14 @@ issueNumber: MDL-68037
 notes:
   core:
     - message: >-
-        Boost now has a dark colour mode, so a plugin's styles.css can no longer
-        assume the page is light. Styles work in both modes if they take their
-        colours from the Bootstrap custom properties (--bs-body-bg,
-        --bs-body-color, --bs-secondary-bg, --bs-tertiary-bg, --bs-border-color,
-        --bs-emphasis-color, --bs-link-color) or the design system tokens
-        (--mds-bg-surface-*, --mds-text-*, --mds-border-*), all of which change
-        with the mode. The equivalent utility classes (bg-body,
+        Boost now has a dark colour mode, which a site turns on with the
+        experimental theme_boost | enablecolourmodes setting, so a plugin's
+        styles.css can no longer assume the page is light. Styles work in both
+        modes if they take their colours from the Bootstrap custom properties
+        (--bs-body-bg, --bs-body-color, --bs-secondary-bg, --bs-tertiary-bg,
+        --bs-border-color, --bs-emphasis-color, --bs-link-color) or the design
+        system tokens (--mds-bg-surface-*, --mds-text-*, --mds-border-*), all of
+        which change with the mode. The equivalent utility classes (bg-body,
         bg-body-secondary, bg-body-tertiary, text-body, text-body-secondary,
         text-bg-*, border) do the same, and are safer than bg-white or text-dark.
         Where a colour genuinely has to differ between the modes, scope it with
@@ -34,9 +35,12 @@ notes:
         themes.
 
         Precedence is user preference, then the run option, then the site
-        setting, so a scenario which asserts a particular colour mode must pin it
-        with a user preference rather than relying on the site default. See
-        theme/boost/tests/behat/colour_mode_accessibility.feature.
+        settings, so a scenario which asserts a particular colour mode must pin
+        it with a user preference rather than relying on the site default. See
+        theme/boost/tests/behat/colour_mode_accessibility.feature. The option
+        also turns colour modes on for the run, as they are off until a site
+        opts in, so a scenario about them being off has to skip itself with
+        "Given the run is not using a colour mode".
       type: added
   editor_tiny:
     - message: >-
@@ -59,7 +63,9 @@ notes:
         Boost supports a light and a dark colour mode, built on the Bootstrap 5.3
         colour modes API. The mode in use is written to the data-bs-theme
         attribute of the html tag, and theme_boost\colour_mode is the entry point
-        for reading or rendering it.
+        for reading or rendering it. The feature is experimental, so it is off
+        until a site turns on enablecolourmodes on the new Experimental tab of
+        the Boost settings, which is also where the default mode is chosen.
 
         Themes inheriting from Boost need to be aware of three changes. Boost's
         stylesheets now refer to the greyscale and the body colours through

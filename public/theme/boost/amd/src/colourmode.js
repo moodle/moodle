@@ -22,7 +22,7 @@
  * not get a flash of the light theme before this module has loaded.
  *
  * @module     theme_boost/colourmode
- * @copyright  2026 Moodle Pty Ltd
+ * @copyright  2026 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

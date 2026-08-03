@@ -8,7 +8,9 @@ Feature: Colour mode accessibility
   example is a colour mode regression rather than a pre-existing problem with the page itself.
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablecolourmodes | 1 | theme_boost |
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
     And the following "courses" exist:

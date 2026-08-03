@@ -5,7 +5,9 @@ Feature: Light and dark colour modes
   I need to be able to switch Boost between a light and a dark colour scheme
 
   Background:
-    Given the following "users" exist:
+    Given the following config values are set as admin:
+      | enablecolourmodes | 1 | theme_boost |
+    And the following "users" exist:
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
 
@@ -39,7 +41,9 @@ Feature: Light and dark colour modes
     And the "data-colourmode" attribute of "html" "css_element" should contain "light"
 
   Scenario: The colour mode switcher is hidden when colour modes are turned off
-    Given the following config values are set as admin:
+    # A run started with --colourmode turns colour modes on for the whole run, so it cannot exercise them turned off.
+    Given the run is not using a colour mode
+    And the following config values are set as admin:
       | enablecolourmodes | 0    | theme_boost |
       | defaultcolourmode | dark | theme_boost |
     And the following "user preferences" exist:

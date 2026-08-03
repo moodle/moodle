@@ -80,24 +80,6 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
-    // Colour modes.
-    $name = 'theme_boost/enablecolourmodes';
-    $title = get_string('enablecolourmodes', 'theme_boost');
-    $description = get_string('enablecolourmodes_desc', 'theme_boost');
-    $setting = new admin_setting_configcheckbox($name, $title, $description, 1);
-    $page->add($setting);
-
-    $name = 'theme_boost/defaultcolourmode';
-    $title = get_string('defaultcolourmode', 'theme_boost');
-    $description = get_string('defaultcolourmode_desc', 'theme_boost');
-    $choices = [];
-    foreach (\theme_boost\colour_mode::get_modes() as $mode) {
-        $choices[$mode] = get_string('colourmode:' . $mode, 'theme_boost');
-    }
-    $setting = new admin_setting_configselect($name, $title, $description, \theme_boost\colour_mode::AUTO, $choices);
-    $page->add($setting);
-    $page->hide_if('theme_boost/defaultcolourmode', 'theme_boost/enablecolourmodes', 'notchecked');
-
     // We use an empty default value because the default colour should come from the preset.
     $name = 'theme_boost/brandcolor';
     $title = get_string('brandcolor', 'theme_boost');
@@ -123,6 +105,33 @@ if ($ADMIN->fulltree) {
         get_string('rawscss_desc', 'theme_boost'), '', PARAM_RAW);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
+
+    $settings->add($page);
+
+    // Experimental settings.
+    $page = new admin_settingpage('theme_boost_experimental', get_string('experimentalsettings', 'theme_boost'));
+
+    // Colour modes. Off until a site opts in, because a plugin which has not been checked in dark mode can still
+    // draw its pages in light colours.
+    $name = 'theme_boost/enablecolourmodes';
+    $title = get_string('enablecolourmodes', 'theme_boost');
+    $description = get_string('enablecolourmodes_desc', 'theme_boost');
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $page->add($setting);
+
+    $name = 'theme_boost/defaultcolourmode';
+    $title = get_string('defaultcolourmode', 'theme_boost');
+    $description = get_string('defaultcolourmode_desc', 'theme_boost');
+    $choices = [];
+    foreach (\theme_boost\colour_mode::get_modes() as $mode) {
+        $choices[$mode] = get_string('colourmode:' . $mode, 'theme_boost');
+    }
+    $setting = new admin_setting_configselect($name, $title, $description, \theme_boost\colour_mode::AUTO, $choices);
+    $page->add($setting);
+    // The dependency goes on the tabs page rather than the tab: admin/settings.php reads the dependencies from the
+    // top level page, and theme_boost_admin_settingspage_tabs::add_tab() copies a tab's settings up but not its
+    // dependencies, so one recorded on the tab never reaches the JavaScript.
+    $settings->hide_if('theme_boost/defaultcolourmode', 'theme_boost/enablecolourmodes', 'notchecked');
 
     $settings->add($page);
 }
