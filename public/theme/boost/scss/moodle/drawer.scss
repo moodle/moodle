@@ -324,6 +324,12 @@ $right-drawer-width: 320px;
                     padding-bottom: $drawer-anchored-header-bottom-gap;
                 }
             }
+
+            // The drawer is content-sized here, so the scrollable area must
+            // contribute its content height instead of a zero flex base.
+            .drawercontent {
+                flex-basis: auto;
+            }
         }
 
         .drawer.drawer-left {

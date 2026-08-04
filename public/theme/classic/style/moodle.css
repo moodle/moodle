@@ -32480,6 +32480,12 @@ body.drawer-ease {
     height: auto;
     padding-bottom: 0.5rem;
   }
+  .pagelayout-standard .drawer.drawer-left .drawercontent,
+  .pagelayout-standard .drawer.drawer-right .drawercontent,
+  body.limitedwidth .drawer.drawer-left .drawercontent,
+  body.limitedwidth .drawer.drawer-right .drawercontent {
+    flex-basis: auto;
+  }
   .pagelayout-standard .drawer.drawer-left,
   body.limitedwidth .drawer.drawer-left {
     left: auto;
