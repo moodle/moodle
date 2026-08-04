@@ -3509,7 +3509,8 @@ function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $li
     if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
         // Build a new array with the filtered entries.
         foreach ($entries as $key => $entry) {
-            if (strtoupper(substr(format_string($entry->concept), 0, 1)) === strtoupper($letter)) {
+            $first = core_text::substr(format_string($entry->concept), 0, 1);
+            if (core_text::strtoupper($first) === core_text::strtoupper($letter)) {
                 // Add it when starting with the correct letter.
                 $filteredentries[$key] = $entry;
             }
@@ -3520,7 +3521,8 @@ function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $li
     if ($letter == 'SPECIAL') {
         // Build a new array with the filtered entries.
         foreach ($entries as $key => $entry) {
-            if (!ctype_alpha(substr(format_string($entry->concept), 0, 1))) {
+            $first = core_text::substr(format_string($entry->concept), 0, 1);
+            if (!preg_match('/^\p{L}/u', $first)) {
                 // Add it when starting with a non-letter character.
                 $filteredentries[$key] = $entry;
             }
