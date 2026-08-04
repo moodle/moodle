@@ -1,0 +1,7 @@
+issueNumber: MDL-89181
+notes:
+  core:
+    - type: improved
+      message: >-
+        A new `\core\oauth2\server\client_manager` class manages the lifecycle of OAuth2 server
+        clients, their secrets and their redirect URIs.
