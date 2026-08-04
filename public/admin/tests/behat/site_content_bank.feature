@@ -23,6 +23,24 @@ Feature: Site content bank link in Site Administration
     When I navigate to "Courses > Site content bank" in site administration
     Then I should see "Content bank"
 
+  Scenario: User holding only the contentbank:access capability, without category:manage, can still reach the link
+    Given the following "roles" exist:
+      | name                | shortname          | archetype |
+      | Content bank viewer | contentbankviewer  |           |
+    And the following "users" exist:
+      | username | firstname | lastname |
+      | viewer1  | Viewer    | One      |
+    And the following "permission overrides" exist:
+      | capability                | permission | role              | contextlevel | reference |
+      | moodle/site:configview    | Allow      | contentbankviewer | System       | System    |
+      | moodle/contentbank:access | Allow      | contentbankviewer | System       | System    |
+    And the following "system role assigns" exist:
+      | user    | role              |
+      | viewer1 | contentbankviewer |
+    And I log in as "viewer1"
+    When I navigate to "Courses > Site content bank" in site administration
+    Then I should see "Content bank"
+
   Scenario: User without contentbank:access at system context cannot see the Site content bank link
     Given the following "roles" exist:
       | name                  | shortname           | archetype |
