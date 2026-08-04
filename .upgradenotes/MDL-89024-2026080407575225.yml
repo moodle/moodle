@@ -1,0 +1,9 @@
+issueNumber: MDL-89024
+notes:
+  theme_boost:
+    - message: >-
+        The Noto Sans variable font's cyrillic and cyrillic-ext subsets (normal
+        and italic styles, weights 100-900) are now included in
+        `theme/boost/fonts/noto-sans/`. As a result, sites using cyrillic text
+        will now render in Noto Sans.
+      type: improved
