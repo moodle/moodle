@@ -509,6 +509,8 @@ final class authlib_test extends \advanced_testcase {
     /**
      * Test that signup_validate_data() never passes an existing, persisted user's id to
      * the password policy service via the temporary signup user object.
+     *
+     * @runInSeparateProcess
      */
     public function test_signup_validate_data_password_policy_user_id(): void {
         global $CFG;
@@ -520,17 +522,20 @@ final class authlib_test extends \advanced_testcase {
         $CFG->registerauth = 'email';
         $CFG->passwordpolicy = 1;
 
-        // Mock the password service to capture the $user object signup_validate_data()
-        // passes to check_policy() - this is what would be forwarded on to any
-        // check_password_policy plugin callbacks.
-        $observeduser = null;
-        $passwordservice = $this->createMock(\core\authentication\password::class);
-        $passwordservice->method('check_policy')
-            ->willReturnCallback(function (string $password, ?string $errmsg, ?\stdClass $user = null) use (&$observeduser): bool {
-                $observeduser = $user;
-                return true;
-            });
-        \core\di::set(\core\authentication\password::class, $passwordservice);
+        // Mock an auth plugin implementing the check_password_policy callback, to capture the
+        // $user object signup_validate_data() forwards to it via check_password_policy().
+        $this->add_mocked_plugin(
+            'auth',
+            'passwordpolicyprobe',
+            "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/auth/passwordpolicyprobe",
+        );
+        // Force get_plugin_list_with_file() to rescan disk instead of using its stale cached
+        // file map, so it picks up the mocked plugin's lib.php.
+        $componentreflection = new \ReflectionClass(\core_component::class);
+        $componentreflection->setStaticPropertyValue('filemap', null);
+        set_config('version', 2026080300, 'auth_passwordpolicyprobe');
+        \core_plugin_manager::reset_caches(true);
+        unset($CFG->allversionshash);
 
         $formdata = [
             'username' => 'signupuseridprobetest',
@@ -545,8 +550,8 @@ final class authlib_test extends \advanced_testcase {
 
         // The temporary signup user's id must be 0 (belonging to no real user), never an
         // existing user's id such as the admin's.
-        $this->assertNotNull($observeduser);
-        $this->assertSame(0, $observeduser->id);
+        $this->assertNotNull(\auth_passwordpolicyprobe_capture::$user);
+        $this->assertSame(0, \auth_passwordpolicyprobe_capture::$user->id);
     }
 
     /**
