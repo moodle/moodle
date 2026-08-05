@@ -673,7 +673,12 @@ final class manager_test extends \advanced_testcase {
 
         $this->resetAfterTest();
         $this->preventResetByRollback();
-        $clock = $this->mock_clock_with_frozen();
+        // Freeze at a fixed midday time. The task below runs at 00:00, and passing no
+        // argument freezes at the real time, so during hour 00 the task's next run is
+        // only seconds away and the assertNull() below fails. See MDL-89100.
+        $clock = $this->mock_clock_with_frozen(
+            (new \DateTimeImmutable('2026-01-01 12:00:00', \core_date::get_server_timezone_object()))->getTimestamp(),
+        );
 
         // Disable all the tasks, so we can insert our own and be sure it's the only one being run.
         $DB->set_field('task_scheduled', 'disabled', 1);
