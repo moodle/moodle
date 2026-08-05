@@ -56,3 +56,19 @@ Feature: See the completion for items in a course
     Then the following should exist in the "completionreport" table:
       | -1-               | -2-                  | -3-     |
       | Grainne Beauchamp | student1@example.com | Kumquat |
+
+  @javascript
+  Scenario: The completion report provides the standard download widget and data can be exported
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    And I navigate to "Course completion" in current page administration
+    And I expand all fieldsets
+    And I set the following fields to these values:
+      | Page - PageName1 | 1 |
+    And I press "Save changes"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reports" in current page administration
+    When I click on "Course completion" "link" in the "region-main" "region"
+    Then "Download table data as" "field" should exist
+    And "Download" "button" should exist
+    And I set the field "Download table data as" to "Comma separated values (.csv)"
+    And I press "Download"

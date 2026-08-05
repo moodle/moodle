@@ -3,11 +3,6 @@
     margin-bottom: 30px;
 }
 
-#page-report-completion-index .export-actions {
-    text-align: center;
-    list-style: none;
-}
-
 #page-report-completion-index .criterianame,
 #page-report-completion-index .criteriaicon,
 #page-report-completion-index .completion-progresscell {

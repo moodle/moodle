@@ -41,7 +41,7 @@ define('COMPLETION_REPORT_COL_TITLES',  true);
 
 // Get course
 $courseid = required_param('course', PARAM_INT);
-$format = optional_param('format','',PARAM_ALPHA);
+$dataformat = optional_param('dataformat', '', PARAM_ALPHA);
 $sort = optional_param('sort','',PARAM_ALPHA);
 $edituser = optional_param('edituser', 0, PARAM_INT);
 
@@ -54,17 +54,11 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 
 $firstnamesort = ($sort == 'firstname');
-$excel = ($format == 'excelcsv');
-$csv = ($format == 'csv' || $excel);
-if ($csv) {
+$download = ($dataformat !== '');
+if ($download) {
     $dateformat = "%F %T";
 } else {
     $dateformat = get_string('strftimedatetimeshort', 'langconfig');
-}
-
-// Load CSV library
-if ($csv) {
-    require_once("{$CFG->libdir}/csvlib.class.php");
 }
 
 // Paging
@@ -124,7 +118,7 @@ foreach ($completion->get_criteria() as $criterion) {
 $allow_marking = false;
 $allow_marking_criteria = null;
 
-if (!$csv) {
+if (!$download) {
     // Get role criteria
     $rcriteria = $completion->get_criteria(COMPLETION_CRITERIA_TYPE_ROLE);
 
@@ -146,13 +140,12 @@ if (!$csv) {
 /*
  * Setup page header
  */
-if ($csv) {
-
+if ($download) {
     $shortname = format_string($course->shortname, true, array('context' => $context));
     $shortname = preg_replace('/[^a-z0-9-]/', '_',core_text::strtolower(strip_tags($shortname)));
 
-    $export = new csv_export_writer('comma', '"', 'application/download', $excel);
-    $export->set_filename('completion-'.$shortname);
+    $downloadfilename = clean_filename('completion-' . $shortname . '-' . gmdate('Ymd_Hi'));
+    $alldata = [];
 
 } else {
     // Navigation and header
@@ -225,8 +218,8 @@ if ($total) {
         $where_params,
         $group,
         $firstnamesort ? 'u.firstname ASC' : 'u.lastname ASC',
-        $csv ? 0 : COMPLETION_REPORT_PAGE,
-        $csv ? 0 : $start,
+        $download ? 0 : COMPLETION_REPORT_PAGE,
+        $download ? 0 : $start,
         $context
     );
 }
@@ -298,7 +291,7 @@ if ($total > COMPLETION_REPORT_PAGE) {
  */
 
 // Start of table
-if (!$csv) {
+if (!$download) {
     print '<br class="clearer"/>'; // ugh
 
     $total_header = ($total == $grandtotal) ? $total : "{$total}/{$grandtotal}";
@@ -515,7 +508,7 @@ if (!$csv) {
 
     echo '<tbody>';
 } else {
-    // The CSV headers
+    // Download column names.
     $row = array();
 
     $row[] = get_string('id', 'report_completion');
@@ -544,7 +537,7 @@ if (!$csv) {
 
     $row[] = get_string('coursecomplete', 'completion');
 
-    $export->add_data($row);
+    $columnnames = $row;
 }
 
 ///
@@ -553,12 +546,12 @@ if (!$csv) {
 foreach ($progress as $user) {
 
     // User name
-    if ($csv) {
+    if ($download) {
         $row = array();
         $row[] = $user->id;
         $row[] = fullname($user, has_capability('moodle/site:viewfullnames', $context));
         foreach ($extrafields as $field) {
-            $row[] = $user->{$field};
+            $row[$field] = $user->{$field};
         }
     } else {
         print PHP_EOL.'<tr id="user-'.$user->id.'">';
@@ -621,7 +614,7 @@ foreach ($progress as $user) {
             $a->activity  = $activity->get_formatted_name();
             $fulldescribe = get_string('progress-title', 'completion', $a);
 
-            if ($csv) {
+            if ($download) {
                 $row[] = $describe;
                 $row[] = $date;
             } else {
@@ -654,7 +647,7 @@ foreach ($progress as $user) {
         $a->activity = strip_tags($criterion->get_title());
         $fulldescribe = get_string('progress-title', 'completion', $a);
 
-        if ($csv) {
+        if ($download) {
             $row[] = $a->date;
         } else {
 
@@ -709,7 +702,7 @@ foreach ($progress as $user) {
     $a->activity = strip_tags(get_string('coursecomplete', 'completion'));
     $fulldescribe = get_string('progress-title', 'completion', $a);
 
-    if ($csv) {
+    if ($download) {
         $row[] = $a->date;
     } else {
 
@@ -721,28 +714,41 @@ foreach ($progress as $user) {
         print '</td>';
     }
 
-    if ($csv) {
-        $export->add_data($row);
+    if ($download) {
+        $alldata[] = $row;
     } else {
         print '</tr>';
     }
 }
 
-if ($csv) {
-    $export->download_file();
+if ($download) {
+    \core\dataformat::download_data(
+        $downloadfilename,
+        $dataformat,
+        $columnnames,
+        $alldata,
+        function (array $record, bool $supportshtml) use ($extrafields): array {
+            if ($supportshtml) {
+                foreach ($extrafields as $extrafield) {
+                    $record[$extrafield] = s($record[$extrafield]);
+                }
+            }
+            return $record;
+        },
+    );
+    die;
 } else {
     echo '</tbody>';
 }
 
 print '</table>';
 
-$csvurl = new moodle_url('/report/completion/index.php', array('course' => $course->id, 'format' => 'csv'));
-$excelurl = new moodle_url('/report/completion/index.php', array('course' => $course->id, 'format' => 'excelcsv'));
-
-print '<ul class="export-actions">';
-print '<li><a href="'.$csvurl->out().'">'.get_string('csvdownload','completion').'</a></li>';
-print '<li><a href="'.$excelurl->out().'">'.get_string('excelcsvdownload','completion').'</a></li>';
-print '</ul>';
+echo $OUTPUT->download_dataformat_selector(
+    get_string('downloadas', 'table'),
+    $url->out_omit_querystring(),
+    'dataformat',
+    $url->params()
+);
 
 echo $OUTPUT->footer($course);
 
