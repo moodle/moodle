@@ -57,13 +57,13 @@ $customdata['providername'] = $provider;
 $urlparams = [
     'provider' => $provider,
     'action' => $action,
-    'id' => $id,
+    'providerid' => $id,
 ];
 
 // Page setup.
 $title = get_string('actionsettingprovider', 'core_ai', $action::get_name());
 $PAGE->set_context($context);
-$PAGE->set_url('/ai/configure.php_actions', $urlparams);
+$PAGE->set_url('/ai/configure_actions.php', $urlparams);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
