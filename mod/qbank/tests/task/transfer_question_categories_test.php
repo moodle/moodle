@@ -80,7 +80,7 @@ final class transfer_question_categories_test extends \advanced_testcase {
 
         [$insql, $inparams] = $DB->get_in_or_equal($categoryids);
 
-        $sql = "SELECT q.id, qbe.questioncategoryid AS categoryid, qv.status
+        $sql = "SELECT q.id, q.qtype, qbe.questioncategoryid AS categoryid, qv.status
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
                   JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
@@ -390,7 +390,9 @@ final class transfer_question_categories_test extends \advanced_testcase {
         // Make sure we have 2 questions in the above course category level question category.
         $questions = $this->get_question_data(array_map(static fn($cat) => $cat->id, $allcoursecatcats));
         $this->assertCount(2, $questions);
-        $question = reset($questions);
+        $essayquestions = array_filter($questions, static fn($question) => $question->qtype === 'essay');
+        $this->assertCount(1, $essayquestions);
+        $question = reset($essayquestions);
         $this->assertEquals($parentcat->id, $question->categoryid);
         // Make sure there are files in the expected fileareas for this question.
         $fs = get_file_storage();
