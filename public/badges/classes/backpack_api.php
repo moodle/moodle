@@ -553,7 +553,7 @@ class backpack_api {
             }
             // Now we can make requests.
             $badges = $this->curl_request('badges', $collection->entityid);
-            if (count($badges) == 0) {
+            if (empty($badges)) {
                 return [];
             }
             $badges = $badges[0];
