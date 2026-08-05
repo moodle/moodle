@@ -14,23 +14,11 @@ Feature: Comment on a blog entry
     And the following "core_blog > entries" exist:
       | subject               | body                     | user     |
       | Blog post from user 1 | User 1 blog post content | testuser |
-    And I log in as "admin"
-    And I am on site homepage
-    And I turn editing mode on
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    # TODO MDL-57120 "Site blogs" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I configure the "Navigation" block
-    And I set the following fields to these values:
-      | Page contexts | Display throughout the entire site |
-    And I press "Save changes"
-    And I log out
 
   Scenario: Commenting on my own blog entry
     Given I log in as "testuser"
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Site blogs" "link" in the "Navigation" "block"
+    And I follow "Profile" in the user menu
+    And I follow "View site blog entries"
     And I follow "Blog post from user 1"
     And I should see "User 1 blog post content"
     And I follow "Comments (0)"
@@ -43,8 +31,8 @@ Feature: Comment on a blog entry
 
   Scenario: Deleting my own comment
     Given I log in as "testuser"
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Site blogs" "link" in the "Navigation" "block"
+    And I follow "Profile" in the user menu
+    And I follow "View site blog entries"
     And I follow "Blog post from user 1"
     And I should see "User 1 blog post content"
     And I follow "Comments (0)"
@@ -63,8 +51,8 @@ Feature: Comment on a blog entry
     Given I am on site homepage
     And I log in as "testuser2"
     And I am on site homepage
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Site blogs" "link" in the "Navigation" "block"
+    And I follow "Profile" in the user menu
+    And I follow "View site blog entries"
     And I follow "Blog post from user 1"
     When I follow "Comments (0)"
     And I set the field "content" to "$My own >nasty< \"string\"!"

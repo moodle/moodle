@@ -13,18 +13,12 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
       | blog_recent | System       | 1         | site-index      | side-pre      |
     And the following config values are set as admin:
       | enablemyhome    | 1 | |
-      | unaddableblocks | | theme_boost|
-    And I log in as "admin"
-    And I am on site homepage
-    And I turn editing mode on
-    # TODO MDL-57120 site "Blogs" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I log out
 
   Scenario: Students use the recent blog entries block to view blogs
     Given I log in as "student1"
     And I am on site homepage
-    And I click on "Site blogs" "link" in the "Navigation" "block"
+    And I follow "Profile" in the user menu
+    And I follow "View site blog entries"
     And I follow "Add a new entry"
     When I set the following fields to these values:
       | Entry title | S1 First Blog |
@@ -40,7 +34,8 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
   Scenario: Students only see a few entries in the recent blog entries block
     Given I log in as "student1"
     And I am on site homepage
-    And I click on "Site blogs" "link" in the "Navigation" "block"
+    And I follow "Profile" in the user menu
+    And I follow "View site blog entries"
     And I follow "Add a new entry"
     # Blog 1 of 5
     And I set the following fields to these values:

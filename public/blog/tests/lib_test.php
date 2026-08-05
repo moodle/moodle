@@ -158,6 +158,8 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests the core_blog_myprofile_navigation() function.
+     *
+     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation(): void {
         global $USER;
@@ -175,11 +177,55 @@ final class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $this->assertArrayHasKey('blogs', $nodes->getValue($tree));
+        $nodes = $nodes->getValue($tree);
+
+        $this->assertArrayHasKey('blogs', $nodes);
+        $this->assertSame('View my blog entries', $nodes['blogs']->title);
+        $this->assertSame(
+            (new \moodle_url('/blog/index.php', ['userid' => $USER->id]))->out(false),
+            $nodes['blogs']->url->out(false)
+        );
+
+        $this->assertArrayHasKey('siteblogs', $nodes);
+        $this->assertSame('View site blog entries', $nodes['siteblogs']->title);
+        $this->assertSame('blogs', $nodes['siteblogs']->after);
+        $this->assertSame((new \moodle_url('/blog/index.php'))->out(false), $nodes['siteblogs']->url->out(false));
+    }
+
+    /**
+     * Tests the core_blog_myprofile_navigation() function when a course context is provided.
+     *
+     * @covers ::core_blog_myprofile_navigation
+     */
+    public function test_core_blog_myprofile_navigation_in_course(): void {
+        global $DB, $USER;
+
+        // Set up the test.
+        $tree = new \core_user\output\myprofile\tree();
+        $this->setAdminUser();
+        $iscurrentuser = true;
+        $course = $DB->get_record('course', ['id' => $this->courseid], '*', MUST_EXIST);
+
+        // Enable blogs.
+        set_config('enableblogs', true);
+
+        // Check the node tree is correct.
+        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $reflector = new \ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes = $nodes->getValue($tree);
+
+        $this->assertSame(
+            (new \moodle_url('/blog/index.php', ['userid' => $USER->id, 'courseid' => $course->id]))->out(false),
+            $nodes['blogs']->url->out(false)
+        );
+        $this->assertSame((new \moodle_url('/blog/index.php'))->out(false), $nodes['siteblogs']->url->out(false));
     }
 
     /**
      * Tests the core_blog_myprofile_navigation() function as a guest.
+     *
+     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation_as_guest(): void {
         global $USER;
@@ -196,11 +242,15 @@ final class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
+        $nodes = $nodes->getValue($tree);
+        $this->assertArrayNotHasKey('blogs', $nodes);
+        $this->assertArrayNotHasKey('siteblogs', $nodes);
     }
 
     /**
      * Tests the core_blog_myprofile_navigation() function when blogs are disabled.
+     *
+     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation_blogs_disabled(): void {
         global $USER;
@@ -218,7 +268,110 @@ final class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
+        $nodes = $nodes->getValue($tree);
+        $this->assertArrayNotHasKey('blogs', $nodes);
+        $this->assertArrayNotHasKey('siteblogs', $nodes);
+    }
+
+    /**
+     * Tests the core_blog_myprofile_navigation() function when viewing another user's profile.
+     *
+     * @covers ::core_blog_myprofile_navigation
+     */
+    public function test_core_blog_myprofile_navigation_other_user(): void {
+        // Set up the test: admin views another user's profile.
+        $tree = new \core_user\output\myprofile\tree();
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->setAdminUser();
+        $iscurrentuser = false;
+        $course = null;
+
+        // Enable blogs.
+        set_config('enableblogs', true);
+
+        // Check the node tree is correct.
+        core_blog_myprofile_navigation($tree, $otheruser, $iscurrentuser, $course);
+        $reflector = new \ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes = $nodes->getValue($tree);
+
+        // Personal blog link should use the neutral label (not "my").
+        $this->assertArrayHasKey('blogs', $nodes);
+        $this->assertSame('View blog entries', $nodes['blogs']->title);
+
+        // URL should reference the profile owner's userid, not the viewer's.
+        $this->assertSame(
+            (new \moodle_url('/blog/index.php', ['userid' => $otheruser->id]))->out(false),
+            $nodes['blogs']->url->out(false)
+        );
+
+        $this->assertArrayHasKey('siteblogs', $nodes);
+    }
+
+    /**
+     * Tests that the site blog link is independent of personal blog visibility, but still
+     * requires the site to be configured at (or above) BLOG_SITE_LEVEL.
+     *
+     * A viewer with moodle/blog:view capability but without moodle/user:readuserblogs on the
+     * profile owner's context should still see the site blog link, provided bloglevel allows it.
+     *
+     * @covers ::core_blog_myprofile_navigation
+     */
+    public function test_core_blog_myprofile_navigation_site_blog_independent_of_user_visibility(): void {
+        // Create a viewer (plain user role) and a profile owner.
+        $viewer = $this->getDataGenerator()->create_user();
+        $profileowner = $this->getDataGenerator()->create_user();
+
+        // Enable blogs at user level: other users' personal blogs are only visible to those
+        // with moodle/user:readuserblogs. Plain users do not have that capability by default,
+        // so blog_user_can_view_user_entry() returns false.
+        set_config('enableblogs', true);
+        set_config('bloglevel', BLOG_USER_LEVEL);
+
+        $this->setUser($viewer);
+
+        $tree = new \core_user\output\myprofile\tree();
+        core_blog_myprofile_navigation($tree, $profileowner, false, null);
+
+        $reflector = new \ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes = $nodes->getValue($tree);
+
+        // Personal blog node should be absent (viewer cannot see the owner's personal entries).
+        $this->assertArrayNotHasKey('blogs', $nodes);
+
+        // Site blog node should also be absent: /blog/index.php itself requires bloglevel
+        // >= BLOG_SITE_LEVEL, so the link must not be offered below that level either.
+        $this->assertArrayNotHasKey('siteblogs', $nodes);
+    }
+
+    /**
+     * Tests that the site blog link is shown once bloglevel allows site-wide access, even when
+     * the profile owner's personal entries remain inaccessible to the viewer.
+     *
+     * @covers ::core_blog_myprofile_navigation
+     */
+    public function test_core_blog_myprofile_navigation_site_blog_shown_at_site_level(): void {
+        // Create a viewer (plain user role) and a profile owner.
+        $viewer = $this->getDataGenerator()->create_user();
+        $profileowner = $this->getDataGenerator()->create_user();
+
+        // At BLOG_SITE_LEVEL, logged-in viewers have moodle/blog:view by default, matching the
+        // access level required by /blog/index.php itself.
+        set_config('enableblogs', true);
+        set_config('bloglevel', BLOG_SITE_LEVEL);
+
+        $this->setUser($viewer);
+
+        $tree = new \core_user\output\myprofile\tree();
+        core_blog_myprofile_navigation($tree, $profileowner, false, null);
+
+        $reflector = new \ReflectionObject($tree);
+        $nodes = $reflector->getProperty('nodes');
+        $nodes = $nodes->getValue($tree);
+
+        $this->assertArrayHasKey('siteblogs', $nodes);
+        $this->assertSame((new \moodle_url('/blog/index.php'))->out(false), $nodes['siteblogs']->url->out(false));
     }
 
     public function test_blog_get_listing_course(): void {
@@ -282,4 +435,3 @@ final class lib_test extends \advanced_testcase {
         $this->assertCount(1, $bloglisting->get_entries());
     }
 }
-
