@@ -43,6 +43,8 @@
  * @return bool
  */
 function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
+    global $DB;
+
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -60,6 +62,19 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
 
     // Automatically generated Moodle v5.1.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2025100601) {
+        // Remove any recently accessed item records for course modules that no longer exist.
+        upgrade_set_timeout();
+        $stalesql = "SELECT rai.id AS staleid
+                       FROM {block_recentlyaccesseditems} rai
+                  LEFT JOIN {course_modules} cm ON cm.id = rai.cmid
+                      WHERE cm.id IS NULL";
+        $DB->delete_records_subquery('block_recentlyaccesseditems', 'id', 'staleid', $stalesql);
+
+        // Recentlyaccesseditems savepoint reached.
+        upgrade_block_savepoint(true, 2025100601, 'recentlyaccesseditems');
+    }
 
     return true;
 }

@@ -37,6 +37,9 @@ class helper {
     /**
      * Returns a list of the most recently items accessed by the logged user
      *
+     * Stale records for course modules that are no longer present in course modinfo are removed as they
+     * are encountered.
+     *
      * @param int $limit Restrict result set to this amount
      * @return array List of recent items accessed by userid
      */
@@ -74,6 +77,11 @@ class helper {
                 continue;
             }
             foreach ($items as $key => $item) {
+                if (empty($modinfo->cms[$item->cmid])) {
+                    $DB->delete_records('block_recentlyaccesseditems', ['id' => $item->id]);
+                    continue;
+                }
+
                 // Exclude not visible items.
                 if (!$modinfo->cms[$item->cmid]->uservisible) {
                     continue;
