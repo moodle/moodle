@@ -82,6 +82,7 @@ $string['cachedef_message_processors_enabled'] = "Message processors enabled sta
 $string['cachedef_contextwithinsights'] = 'Context with insights';
 $string['cachedef_navigation_cache'] = 'Navigation cache';
 $string['cachedef_navigation_expandcourse'] = 'Navigation expandable courses';
+$string['cachedef_oauth2_server'] = 'OAuth2 server cache';
 $string['cachedef_observers'] = 'Event observers';
 $string['cachedef_plugin_functions'] = 'Plugins available callbacks';
 $string['cachedef_plugin_manager'] = 'Plugin info manager';
