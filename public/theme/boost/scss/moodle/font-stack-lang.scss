@@ -1,0 +1,14 @@
+// Language-specific font stacks.
+
+// Load Noto Sans JP only for Japanese content to avoid serving the JP font globally.
+// The font is applied when the content language is resolved as Japanese via lang="ja".
+//
+// Must be imported after Bootstrap: .tooltip and .popover set font-family from
+// --bs-font-sans-serif at the same specificity as :lang(ja), so an earlier rule would lose
+// on source order and Japanese text in tooltips and popovers would fall back to the system font.
+//
+// Exclude FontAwesome classes, which set their own icon font-family at the same specificity
+// as :lang(ja). Without this, Japanese content can override the icon font and render glyphs blank.
+:lang(ja):not(.fa, .fas, .far, .fab, [class*="fa-"]) {
+    font-family: $font-family-sans-serif-jp;
+}

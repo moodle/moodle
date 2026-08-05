@@ -1,0 +1,36 @@
+// Font stack
+
+// Must be imported after "design-system" and before Bootstrap.
+
+// Fallbacks shared by every font stack in the theme.
+$font-family-fallback: system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    "Liberation Sans",
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji" !default;
+
+// The stacks are flattened with join() rather than built by nesting one list inside another:
+// Bootstrap emits them through inspect() (see _root.scss), which preserves the nesting and would
+// produce an invalid "Noto Sans, (system-ui, ...)" value for --bs-font-sans-serif.
+$font-family-sans-serif: join(
+    ($mds-font-family-base,),
+    $font-family-fallback,
+    comma
+) !default;
+
+// Japanese stack, applied via :lang(ja) in "moodle/font-stack-lang" so that the JP font is
+// never served globally. Noto Sans is listed first because its unicode-range excludes CJK:
+// latin and cyrillic still resolve to Noto Sans, and only kana/kanji fall through to
+// Noto Sans JP.
+$font-family-sans-serif-jp: join(
+    ($mds-font-family-base, $mds-font-family-base-jp),
+    $font-family-fallback,
+    comma
+) !default;

@@ -1,0 +1,3 @@
+// Design tokens only - legacy SCSS variables. For contexts (e.g. the editor)
+// that need MDS variables without the CSS custom properties or component styles.
+@import "../../../../lib/bundles/design-system/scss/tokens/_index.legacy";

@@ -374,6 +374,13 @@ const getStandardConfig = async(target, tinyMCE, options, plugins) => {
                 this.contentWindow = this.iframeElement.contentWindow;
             });
             editor.on('init', function() {
+                // The editor content lives in its own iframe document, which does not inherit the
+                // parent document's lang attribute. Set it explicitly so that :lang() CSS selectors
+                // (for example the theme's language-specific font stacks) apply to the editor content.
+                if (editor.getDoc()) {
+                    editor.getDoc().documentElement.lang = lang;
+                }
+
                 // Hide justify alignment sub-menu.
                 removeSubmenuItem(editor, 'align', 'tiny:justify');
                 // Adjust the editor size.

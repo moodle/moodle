@@ -2330,10 +2330,6 @@
   opacity: 0.5;
 }
 
-:lang(ja) {
-  font-family: Noto Sans JP, Noto Sans, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
-
 /**
  * Noto Sans webfont declarations, files are served from theme/boost/fonts/noto-sans/.
  */
@@ -29092,6 +29088,10 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+:lang(ja):not(.fa, .fas, .far, .fab, [class*=fa-]) {
+  font-family: Noto Sans, Noto Sans JP, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 /**
  * Moodle variables
  *

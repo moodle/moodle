@@ -6,26 +6,8 @@
 // Must be imported before Bootstrap so that the design system tokens can be used to override Bootstrap variables.
 @import "design-system";
 
-// Typography
-$font-family-sans-serif: $mds-font-family-base,
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    "Liberation Sans",
-    Arial,
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji" !default;
-
-// Load Noto Sans JP only for Japanese content to avoid serving the JP font globally.
-// The font is applied when the content language is resolved as Japanese via lang="ja".
-:lang(ja) {
-    font-family: $mds-font-family-base-jp, $font-family-sans-serif;
-}
+// Import font stack.
+@import "moodle/font-stack";
 
 // Prefix for all CSS variables
 $prefix: bs- !default;
@@ -143,6 +125,9 @@ $enable-smooth-scroll: not $behatsite !default;
 
 // Import All of Bootstrap
 @import "bootstrap";
+
+// Import language-specific font stacks. Must be imported after Bootstrap.
+@import "moodle/font-stack-lang";
 
 // Import Core moodle CSS
 @import "moodle";
