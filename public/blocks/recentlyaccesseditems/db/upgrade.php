@@ -60,7 +60,7 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
     // Automatically generated Moodle v5.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2026050700) {
+    if ($oldversion < 2026042001) {
         // Remove any recently accessed item records for course modules that no longer exist.
         upgrade_set_timeout();
         $stalesql = "SELECT rai.id AS staleid
@@ -70,7 +70,7 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
         $DB->delete_records_subquery('block_recentlyaccesseditems', 'id', 'staleid', $stalesql);
 
         // Recentlyaccesseditems savepoint reached.
-        upgrade_block_savepoint(true, 2026050700, 'recentlyaccesseditems');
+        upgrade_block_savepoint(true, 2026042001, 'recentlyaccesseditems');
     }
 
     return true;
