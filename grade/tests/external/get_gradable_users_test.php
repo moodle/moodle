@@ -194,4 +194,53 @@ final class get_gradable_users_test extends \externallib_advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test access to get_gradable_users based on role capability.
+     */
+    public function test_execute_access_by_user_type(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher'], '*', MUST_EXIST);
+        $managerrole = $DB->get_record('role', ['shortname' => 'manager'], '*', MUST_EXIST);
+
+        $student = $generator->create_user(['username' => 'student']);
+        $teacher = $generator->create_user(['username' => 'teacherwithcap']);
+        $manager = $generator->create_user(['username' => 'managerwithcap']);
+
+        $generator->enrol_user($student->id, $course->id, $studentrole->id);
+        $generator->enrol_user($teacher->id, $course->id, $teacherrole->id);
+        $generator->enrol_user($manager->id, $course->id, $managerrole->id);
+
+        $generator->create_module('assign', ['course' => $course->id]);
+
+        // Teacher has the capability to call get_gradable_users.
+        $this->setUser($teacher);
+        $result = get_gradable_users::execute($course->id);
+        $result = external_api::clean_returnvalue(get_gradable_users::execute_returns(), $result);
+        $this->assertArrayHasKey('users', $result);
+        $this->assertArrayHasKey('warnings', $result);
+
+        // Manager has the capability to call get_gradable_users.
+        $this->setUser($manager);
+        $result = get_gradable_users::execute($course->id);
+        $result = external_api::clean_returnvalue(get_gradable_users::execute_returns(), $result);
+        $this->assertArrayHasKey('users', $result);
+        $this->assertArrayHasKey('warnings', $result);
+
+        // Student does not have the capability to call get_gradable_users.
+        try {
+            $this->setUser($student);
+            $result = get_gradable_users::execute($course->id);
+            $result = external_api::clean_returnvalue(get_gradable_users::execute_returns(), $result);
+            $this->fail('Users without moodle/site:viewuseridentity should not be able to access this service.');
+        } catch (\required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+    }
 }

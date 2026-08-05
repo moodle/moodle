@@ -86,7 +86,7 @@ class get_gradable_users extends external_api {
         $coursecontext = \context_course::instance($params['courseid']);
         parent::validate_context($coursecontext);
 
-        require_capability('moodle/course:viewparticipants', $coursecontext);
+        require_capability('moodle/site:viewuseridentity', $coursecontext);
 
         $course = $DB->get_record('course', ['id' => $params['courseid']]);
 
