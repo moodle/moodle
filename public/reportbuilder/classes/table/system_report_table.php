@@ -109,7 +109,7 @@ class system_report_table extends base_report_table {
             $groupby = $fields;
         }
 
-        $columnheaders = $columnattributes = $columnicons = [];
+        $columnheaders = $columnheaderattributes = $columnattributes = $columnicons = [];
 
         // Check whether report has checkbox toggle defined, note that select all is excluded during download.
         if (($checkbox = $this->report->get_checkbox_toggleall(true)) && !$this->is_downloading()) {
@@ -142,6 +142,7 @@ class system_report_table extends base_report_table {
             }
 
             // Generate column attributes/icons for the table.
+            $columnheaderattributes[$column->get_column_alias()] = $column->get_header_attributes();
             $columnattributes[$column->get_column_alias()] = $column->get_attributes();
             $columnicons[] = $column->get_help_icon();
         }
@@ -158,6 +159,7 @@ class system_report_table extends base_report_table {
         $this->define_headers(array_values($columnheaders));
 
         // Add column attributes/icons to the table.
+        $this->set_columnheadersattributes($columnheaderattributes);
         $this->set_columnsattributes($columnattributes);
         $this->define_help_for_headers($columnicons);
 
