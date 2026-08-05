@@ -206,8 +206,8 @@ $string['setuplink_desc'] = 'URL of page with options to download the mobile app
 $string['shortentext'] = 'Shorten text on small screens';
 $string['showingcacheddata'] = 'Last synced: {$a->since} days ago ({$a->date}).';
 $string['showinglivedata'] = 'View live data in the <a href="{$a}" target="_blank">Moodle Apps Portal</a>.';
-$string['showlogoinappheader'] = 'Show site logo in app header';
-$string['showlogoinappheader_desc'] = 'Display the site logo in the app\'s home and dashboard header instead of the site name. Requires a site logo to be configured in Site administration > Appearance.';
+$string['showlogoinappheader'] = 'Show logo in app header';
+$string['showlogoinappheader_desc'] = 'Show the site logo in the mobile app\'s home and dashboard header instead of the site name. Requires a logo to be uploaded in Site administration > Appearance.';
 $string['siteplugins'] = 'Site plugins';
 $string['smartappbanners'] = 'App Banners';
 $string['subscription'] = 'Subscription';

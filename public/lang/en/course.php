@@ -89,7 +89,7 @@ $string['coursecontentnotifupdatebody'] = '<p>{$a->moduletypename} <a href="{$a-
 $string['coursecontentnotification_help'] = 'Tick the box to notify course participants about this new or changed activity or resource. Only users who can access the activity or resource will receive the notification.';
 $string['coursecount'] = 'Course count';
 $string['coursedeletionasynctask'] = 'Delete a course asynchronously task';
-$string['coursedeletionsettings'] = 'Delete Course';
+$string['coursedeletionsettings'] = 'Delete course';
 $string['coursemodule'] = 'Course module';
 $string['coursenotyetstarted'] = 'The course has not yet started';
 $string['coursenotyetfinished'] = 'The course has not yet finished';

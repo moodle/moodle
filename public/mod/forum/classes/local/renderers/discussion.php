@@ -490,8 +490,8 @@ class discussion {
                 'type' => $key,
                 'buttonicon' => $key === 'prev' ? 'i/previous' : 'i/next',
                 'url' => '#',
-                'title' => get_string('no' . $key . 'discussion', 'mod_forum'),
-                'arialabel' => get_string('no' . $key . 'discussion', 'mod_forum'),
+                'title' => get_string($key . 'discussion', 'mod_forum'),
+                'arialabel' => get_string($key . 'discussion', 'mod_forum'),
                 'disabled' => true,
             ];
             if ($neighbour) {
