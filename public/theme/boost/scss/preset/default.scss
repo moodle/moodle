@@ -21,6 +21,12 @@ $font-family-sans-serif: $mds-font-family-base,
     "Segoe UI Symbol",
     "Noto Color Emoji" !default;
 
+// Load Noto Sans JP only for Japanese content to avoid serving the JP font globally.
+// The font is applied when the content language is resolved as Japanese via lang="ja".
+:lang(ja) {
+    font-family: $mds-font-family-base-jp, $font-family-sans-serif;
+}
+
 // Prefix for all CSS variables
 $prefix: bs- !default;
 
