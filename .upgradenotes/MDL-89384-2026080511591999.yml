@@ -1,0 +1,8 @@
+issueNumber: MDL-89384
+notes:
+  core_reportbuilder:
+    - message: >-
+        New `add_header_attributes(...)` method on column class instances for
+        defining additional header attributes for the column when rendered in a
+        report
+      type: improved
