@@ -116,12 +116,13 @@ class report_schedules extends system_report {
         // Enable toggle column.
         $this->add_column((new column(
             'enabled',
-            null,
+            new lang_string('enabled', 'core_reportbuilder'),
             $this->get_schedule_entity_name()
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$tablealias}.enabled, {$tablealias}.id")
             ->set_is_sortable(false)
+            ->add_header_attributes(['class' => 'visually-hidden'])
             ->set_callback(static function(bool $enabled, stdClass $row): string {
                 global $PAGE;
 

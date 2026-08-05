@@ -112,6 +112,7 @@ $string['editscheduledetails'] = 'Edit schedule details';
 $string['editschedulename'] = 'Edit schedule name';
 $string['enablecustomreports'] = 'Enable custom reports';
 $string['enablecustomreports_desc'] = 'If enabled, users can create and view Report builder custom reports.';
+$string['enabled'] = 'Enabled';
 $string['enableschedule'] = 'Enable schedule';
 $string['entitycourse'] = 'Course';
 $string['entityuser'] = 'User';
