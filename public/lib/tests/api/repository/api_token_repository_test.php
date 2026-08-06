@@ -263,12 +263,17 @@ final class api_token_repository_test extends \advanced_testcase {
         $token = $repository->create_token('Test', 'secret', $user->id, 'scope');
         $this->assertNull($token->get_lastaccessed());
 
+        // Capture the time windows before and after execution.
+        $before = time();
         $repository->log_token_access($token->get_id());
+        $after = time();
 
         $updatedtoken = $repository->get_by_id($token->get_id());
+        $actual = $updatedtoken->get_lastaccessed();
 
-        $this->assertNotNull($updatedtoken->get_lastaccessed());
-        $this->assertGreaterThanOrEqual(time(), $updatedtoken->get_lastaccessed());
+        $this->assertNotNull($actual);
+        $this->assertGreaterThanOrEqual($before, $actual);
+        $this->assertLessThanOrEqual($after, $actual);
     }
 
     /**
