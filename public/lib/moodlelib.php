@@ -8499,19 +8499,24 @@ function address_in_subnet($addr, $subnetstr, $checkallzeros = false) {
     if ($addr == '0.0.0.0' && !$checkallzeros) {
         return false;
     }
-    $subnets = explode(',', $subnetstr);
-    $found = false;
+
     $addr = trim($addr);
 
-    // Convert IPv4-mapped IPv6 (::ffff:x.x.x.x) to IPv4 so IPv4 subnet rules apply.
+    // An IPv4-mapped IPv6 address (::ffff:x.x.x.x) is equivalent to its plain IPv4 form.
+    // Also test the unwrapped IPv4 form against the subnet list, so IPv4-notation rules apply
+    // (e.g. 127.0.0.0/8) without changing how $addr itself is matched against rules already
+    // expressed in IPv6 notation (e.g. ::ffff:127.0.0.0/104) below.
     $packed = @inet_pton($addr);
     if ($packed !== false && strlen($packed) === 16
             && substr($packed, 0, 12) === "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff") {
         $unwrapped = inet_ntop(substr($packed, 12));
-        if ($unwrapped !== false) {
-            $addr = $unwrapped;
+        if ($unwrapped !== false && address_in_subnet($unwrapped, $subnetstr, $checkallzeros)) {
+            return true;
         }
     }
+
+    $subnets = explode(',', $subnetstr);
+    $found = false;
 
     $addr = cleanremoteaddr($addr, false); // Normalise.
     if ($addr === null) {
