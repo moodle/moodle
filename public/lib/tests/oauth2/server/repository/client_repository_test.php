@@ -75,7 +75,7 @@ final class client_repository_test extends \advanced_testcase {
             $this->assertSame($expectedproperties['description'], $client->get_description());
             $this->assertSame($expectedproperties['status'], $client->get_status());
             $this->assertSame($expectedproperties['isconfidential'], $client->isConfidential());
-            $this->assertSame($expectedproperties['redirecturi'], array_values($client->getRedirectUri()));
+            $this->assertEqualsCanonicalizing($expectedproperties['redirecturi'], array_values($client->getRedirectUri()));
         }
     }
 
