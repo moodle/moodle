@@ -24,11 +24,9 @@
 
 namespace core_auth\output;
 
-use context_system;
 use help_icon;
 use moodle_url;
 use renderable;
-use renderer_base;
 use stdClass;
 use templatable;
 
@@ -290,10 +288,10 @@ class login implements renderable, templatable {
             $data->logourl = $logourl->out(false);
         }
 
-        $data->sitename = $formatter->format_string(
-            string: $SITE->fullname,
-            context: \core\context\course::instance(SITEID),
-            escape: false,
+        $data->sitename = \format_string(
+            $SITE->fullname,
+            true,
+            ['context' => \core\context\course::instance(SITEID), 'escape' => false]
         );
 
         $data->hasauthinstructions = !empty($CFG->auth_instructions);
