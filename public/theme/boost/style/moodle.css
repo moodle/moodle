@@ -31779,15 +31779,6 @@ body.dragging .dragging {
   padding-left: calc(1rem * 3);
 }
 
-.page-mycourses .drawers .block_myoverview {
-  border: 0;
-}
-.page-mycourses .drawers .block_myoverview > .card-body {
-  padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
-  padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
-  padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
-}
-
 #page-my-index .my-action-buttons {
   display: flex;
   justify-content: center;
