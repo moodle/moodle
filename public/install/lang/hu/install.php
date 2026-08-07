@@ -66,6 +66,8 @@ $string['pathsunsecuredataroot'] = 'Az adatok gyökérkönyvtára nem biztonság
 $string['pathswrongadmindir'] = 'Nem létezik az admin könyvtár.';
 $string['phpextension'] = '{$a} PHP-bővítmény';
 $string['phpversion'] = 'PHP-verzió';
+$string['webserverconfigproblemdescription'] = 'A webszerver nincs úgy konfigurálva, hogy megakadályozza a /public könyvtáron kívüli fájlokhoz való hozzáférést. A webszerver helyes konfigurálásával kapcsolatos részletekért tekintse meg a <a href="https://docs.moodle.org/en/Upgrading#Code_directories_restructure">Frissítés – Kódkönyvtár-átalakítás</a> dokumentációt. Az újrakonfigurálás után <a href="{$a}"> keresse fel újra az oldalt</a>.';
+$string['webservernotconfigured'] = 'A webszerver nincs beállítva';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Azért látja ezt az oldalt, mert sikeresen telepítette és futtatja a(z) {$a->packname} {$a->packversion} csomagot számítógépén. Gratulálunk!';
 $string['welcomep30'] = 'A(z) {$a->installername} tartalmazza azokat az alkalmazásokat, amelyekkel a Moodle számára kialakítható a működési környezet, azaz:';
