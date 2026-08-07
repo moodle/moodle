@@ -153,8 +153,6 @@ class process_generate_image extends abstract_processor {
         $response = [
             'success' => true,
             'fingerprint' => (string)($responseheaders['x-amzn-requestid'] ?? ''),
-            'prompttokens' => (string)($responseheaders['x-amzn-bedrock-input-token-count'] ?? '0'),
-            'completiontokens' => (string)($responseheaders['x-amzn-bedrock-output-token-count'] ?? '0'),
             'revisedprompt' => $this->action->get_configuration('prompttext'), // No revised prompt in AWS Bedrock.
             'model' => $model,
         ];
