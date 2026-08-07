@@ -169,7 +169,7 @@
 	path = public/plagiarism/turnitin
 	url = https://github.com/turnitin/moodle-plagiarism_turnitin
 	branch = master
-	tag = v2025102901
+	tag = v2026072901
 [submodule "public/question/type/knowledgecheck"]
 	path = public/question/type/knowledgecheck
 	url = https://github.com/ucsf-education/knowledgecheck
