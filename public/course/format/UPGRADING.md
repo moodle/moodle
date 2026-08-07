@@ -14,6 +14,12 @@
 
   For more information see [MDL-88669](https://tracker.moodle.org/browse/MDL-88669)
 
+### Changed
+
+- The section collapse/expand-all toggle (collapsemenu) is no longer part of core_courseformat\output\local\content\section's exported data or the core_courseformat/local/content/section template. It has moved to core_courseformat\output\local\content and the core_courseformat/local/content template, and is now rendered once above the section list instead of as part of the first section. Course formats or themes that override these classes/templates to customise the toggle will need to update accordingly.
+
+  For more information see [MDL-88410](https://tracker.moodle.org/browse/MDL-88410)
+
 ## 5.2
 
 ### Added

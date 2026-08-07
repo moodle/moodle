@@ -15,6 +15,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - `email_to_user()` now emits a hook `before_email_to_user`. This hook allows any subscriber to modify the email contents, add additional headers, or add reasons to block the email. If any block reasons are added, the email is stopped from being sent and the reasons are output.
 
   For more information see [MDL-69724](https://tracker.moodle.org/browse/MDL-69724)
+- Token endpoint security improvements: earlier service validation, GET parameter sanitization. The 'appsitecheck' parameter has been removed from the token endpoint.
+
+  For more information see [MDL-87010](https://tracker.moodle.org/browse/MDL-87010)
 - New methods have been added to `\core\session\manager` to replace the `NO_MOODLE_COOKIES` constant.
 
   The constant is still respected if defined before the inclusion of `config.php`,
@@ -328,6 +331,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add a inline_help flag for course format setting elements.  When this flag is present in the setting definition, or set to true,  the help text is displayed as static text beneath the setting.
 
   For more information see [MDL-88669](https://tracker.moodle.org/browse/MDL-88669)
+
+#### Changed
+
+- The section collapse/expand-all toggle (collapsemenu) is no longer part of core_courseformat\output\local\content\section's exported data or the core_courseformat/local/content/section template. It has moved to core_courseformat\output\local\content and the core_courseformat/local/content template, and is now rendered once above the section list instead of as part of the first section. Course formats or themes that override these classes/templates to customise the toggle will need to update accordingly.
+
+  For more information see [MDL-88410](https://tracker.moodle.org/browse/MDL-88410)
 
 ### core_external
 

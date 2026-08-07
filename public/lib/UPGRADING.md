@@ -7,6 +7,9 @@
 - `email_to_user()` now emits a hook `before_email_to_user`. This hook allows any subscriber to modify the email contents, add additional headers, or add reasons to block the email. If any block reasons are added, the email is stopped from being sent and the reasons are output.
 
   For more information see [MDL-69724](https://tracker.moodle.org/browse/MDL-69724)
+- Token endpoint security improvements: earlier service validation, GET parameter sanitization. The 'appsitecheck' parameter has been removed from the token endpoint.
+
+  For more information see [MDL-87010](https://tracker.moodle.org/browse/MDL-87010)
 - New methods have been added to `\core\session\manager` to replace the `NO_MOODLE_COOKIES` constant.
 
   The constant is still respected if defined before the inclusion of `config.php`,
