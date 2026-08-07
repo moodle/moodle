@@ -197,4 +197,4 @@
 	path = public/theme/ucsf
 	url = https://github.com/ucsf-education/moodle-theme-ucsf
 	branch = MOODLE_501_STABLE
-	tag = v5.1.4
+	tag = v5.1.5
