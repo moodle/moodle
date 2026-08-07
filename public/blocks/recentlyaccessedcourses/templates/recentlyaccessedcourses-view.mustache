@@ -25,10 +25,10 @@
 }}
 <div id="recentlyaccessedcourses-view-{{uniqid}}" data-region="recentlyaccessedcourses-view">
     <div data-region="loading-placeholder">
-        <div class="card-grid mx-0 mt-5 row row-cols-1 row-cols-sm-2 row-cols-md-3 flex-nowrap overflow-hidden" style="height: 13.05rem">
-            <div class="col p-0">{{> core_course/placeholder-course }}</div>
-            <div class="col p-0">{{> core_course/placeholder-course }}</div>
-            <div class="col p-0">{{> core_course/placeholder-course }}</div>
+        <div class="card-grid row gx-2 mt-5 row-cols-1 row-cols-sm-2 row-cols-md-3 flex-nowrap overflow-hidden" style="height: 13.05rem">
+            <div class="col">{{> core_course/placeholder-course }}</div>
+            <div class="col">{{> core_course/placeholder-course }}</div>
+            <div class="col">{{> core_course/placeholder-course }}</div>
         </div>
     </div>
     <div class="hidden" data-region="view-content">
@@ -37,7 +37,7 @@
                 {{> core/paged_content_paging_bar }}
             </div>
         {{/pagingbar}}
-        <div class="card-carousel mx-0 justify-content-center flex-nowrap overflow-hidden" data-region="card-deck" role="list">
+        <div class="card-carousel mx-0 gap-2 justify-content-center flex-nowrap overflow-hidden" data-region="card-deck" role="list">
             {{#courses}}
                 {{> core_course/coursecard }}
             {{/courses}}
