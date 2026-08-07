@@ -5,7 +5,7 @@
     "type": "moodle-core",
     "homepage": "https://moodle.org",
     "provide": {
-        "moodle/lms": "5.2"
+        "moodle/lms": "5.3"
     },
     "require-dev": {
         "filp/whoops": "^2.15",
