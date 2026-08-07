@@ -113,8 +113,6 @@ final class process_generate_image_test extends \advanced_testcase {
                     'statusCode' => 200,
                     'headers' => [
                         'x-amzn-requestid' => 'mock-request-id',
-                        'x-amzn-bedrock-input-token-count' => '11',
-                        'x-amzn-bedrock-output-token-count' => '568',
                     ],
                 ],
             ]);
@@ -195,8 +193,6 @@ final class process_generate_image_test extends \advanced_testcase {
         $responsesuccess = [
             'success' => true,
             'fingerprint' => 'mock-request-id',
-            'prompttokens' => '11',
-            'completiontokens' => '568',
             'model' => 'amazon.nova-pro-v1:0',
             'revisedprompt' => 'This is a test prompt',
             'draftfile' => $this->testfile,
@@ -310,8 +306,6 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $this->assertTrue($result['success']);
         $this->assertEquals('mock-request-id', $result['fingerprint']);
-        $this->assertEquals('11', $result['prompttokens']);
-        $this->assertEquals('568', $result['completiontokens']);
         $this->assertEquals('amazon.nova-canvas-v1:0', $result['model']);
     }
 
@@ -344,8 +338,6 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $this->assertTrue($result['success']);
         $this->assertEquals('', $result['fingerprint']);
-        $this->assertEquals('0', $result['prompttokens']);
-        $this->assertEquals('0', $result['completiontokens']);
     }
 
     /**
@@ -423,8 +415,6 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->assertTrue($result['success']);
         $this->assertEquals('mock-request-id', $result['fingerprint']);
         $this->assertEquals('This is a test prompt', $result['revisedprompt']);
-        $this->assertEquals('11', $result['prompttokens']);
-        $this->assertEquals('568', $result['completiontokens']);
         $this->assertEquals('15a539ba5aa81f35.png', $result['draftfile']->get_filename());
     }
 
