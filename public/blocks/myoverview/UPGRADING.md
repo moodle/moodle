@@ -1,6 +1,6 @@
 # block_myoverview Upgrade notes
 
-## 5.2.1+
+## 5.2.2
 
 ### Changed
 
