@@ -209,6 +209,23 @@ class oauth2_server_clients extends system_report {
             ->add_callback(function ($value) {
                 return $value ? userdate($value, get_string('strftimedatemonthtimeshort24', 'langconfig')) : '-';
             }));
+
+        // Custom Actions.
+        $this->add_column((new column(
+            'actions',
+            new lang_string('actions', 'core'),
+            'client'
+        ))
+            ->set_type(column::TYPE_TEXT)
+            // Add all fields needed to build the action URLs.
+            ->add_fields('client.id, client.name, client.status')
+            ->set_is_sortable(false)
+            ->add_callback(function ($value, \stdClass $row): string {
+                $actions = [];
+
+                $separator = \html_writer::span('', 'vr mx-2');
+                return \html_writer::div(implode($separator, $actions), 'd-flex text-nowrap align-items-center');
+            }));
     }
 
     /**
