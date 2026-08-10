@@ -1,8 +1,20 @@
+/* Import Moodle Design System tokens (variables only - no component styles). */
+@import "design-system-tokens";
+
+/* Import font stack. */
+@import "moodle/font-stack";
+
+/* Import Noto Sans font face declarations. */
+@import "moodle/fonts";
+
 /* Override the code-color to increase the contrast. */
 $code-color: #db1a74 !default;
 
 /* Give editor access to all of bootstrap. */
 @import "../../../../lib/bundles/bootstrap/scss/bootstrap.scss";
+
+/* Import language-specific font stacks. Must be imported after Bootstrap. */
+@import "moodle/font-stack-lang";
 
 /**
  * Reset the Bootstrap _reboot.scss styles for tables.

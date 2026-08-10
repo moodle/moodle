@@ -8,12 +8,16 @@ version numbering, and license are from the upstream GitHub repository.
 1. Open the following URL in your browser:
    https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap
 
-2. Locate the /* latin-ext */ and /* latin */ @font-face blocks for normal and italic
-   styles, copy the woff2 URLs, and download:
+2. Locate the /* latin-ext */, /* latin */, /* cyrillic-ext */, and /* cyrillic */
+   @font-face blocks for normal and italic styles, copy the woff2 URLs, and download:
    - noto-sans-normal-latin-ext.woff2
    - noto-sans-normal-latin.woff2
    - noto-sans-italic-latin-ext.woff2
    - noto-sans-italic-latin.woff2
+   - noto-sans-normal-cyrillic-ext.woff2
+   - noto-sans-normal-cyrillic.woff2
+   - noto-sans-italic-cyrillic-ext.woff2
+   - noto-sans-italic-cyrillic.woff2
 
 3. Place the files in this folder (theme/boost/fonts/noto-sans/).
 

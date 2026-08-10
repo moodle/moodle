@@ -12,4 +12,16 @@
       <copyright>2022 The Noto Project Authors</copyright>
     </copyrights>
   </library>
+  <library>
+    <location>fonts/noto-sans-jp</location>
+    <name>Noto Sans JP</name>
+    <description>Noto Sans JP is a Japanese font family by Google, designed to support Japanese characters.</description>
+    <version>2.004</version>
+    <license>OFL</license>
+    <licenseversion>1.1</licenseversion>
+    <repository>https://github.com/notofonts/noto-cjk</repository>
+    <copyrights>
+      <copyright>2022 The Noto Project Authors</copyright>
+    </copyrights>
+  </library>
 </libraries>

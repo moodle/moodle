@@ -1,0 +1,14 @@
+issueNumber: MDL-89024
+notes:
+  theme_boost:
+    - message: >-
+        The Noto Sans JP variable font (weights 100-900) has been added to
+        `theme/boost/fonts/noto-sans-jp/`. Noto Sans JP is scoped to `:lang(ja)`
+        so that it is only served when the content language is Japanese, rather
+        than being loaded as part of the global font stack. For sites using
+        Japanese (`ja`, `ja_kids`, or `ja_wp`), the `<html>` element will have
+        `lang="ja"` set. As a result, Japanese content on these sites will be
+        rendered using Noto Sans JP. If the content language is not Japanese and
+        Japanese text is not explicitly marked with `lang="ja"`, Noto Sans JP
+        will not be served and the system font will be used instead.
+      type: improved
