@@ -640,6 +640,23 @@ if ($hassiteconfig) {
         $ADMIN->add('server', $temp);
     }
 
+    // OAuth 2 clients.
+    $composer = \core\di::get(\core\composer::class);
+    // The 'league/oauth2-server' composer package needs to be installed and the user has to have a capability to
+    // manage OAuth 2 clients.
+    $iscomposerpackageinstalled = $composer->get_package_status('league/oauth2-server')->installed;
+    $canmanageoauth2clients = has_capability('moodle/site:manageoauth2clients', \context_system::instance());
+
+    if ($iscomposerpackageinstalled && $canmanageoauth2clients) {
+        $ADMIN->add('server', new admin_externalpage(
+            'oauth2serverclients',
+            new lang_string('oauth2server_clients', 'admin'),
+            (string) \core\router\util::get_path_for_callable(
+                [\core_admin\route\controller\oauth2\server\client_management::class, 'list_clients'],
+            ),
+        ));
+    }
+
     // Web services.
 
     // Web services > Overview.

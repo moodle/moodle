@@ -174,6 +174,7 @@ $string['questioniconfollowlangdirection'] = 'yes';
 $string['strftimedate'] = '%d %B %Y';
 $string['strftimedatemonthabbr'] = '%d %b %Y';
 $string['strftimedatemonthtimeshort'] = '%d %b %Y, %I:%M';
+$string['strftimedatemonthtimeshort24'] = '%d %b %Y, %H:%M';
 $string['strftimedatefullshort'] = '%d/%m/%y';
 $string['strftimedateshort'] = '%d %B';
 $string['strftimedateshortmonthabbr'] = '%d %b';
