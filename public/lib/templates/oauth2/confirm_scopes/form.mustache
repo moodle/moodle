@@ -17,14 +17,20 @@
 {{!
     @template core/oauth2/confirm_scopes/form
 
-    TODO describe template form
+    The approve/cancel buttons for the OAuth2 scope confirmation page.
+
+    Context variables required for this template:
+    * actionurl - The URL the form should submit to,
+    * sesskey - The current session key.
 
     Example context (json):
     {
+        "actionurl": "https://example.com/moodle/oauth2/approve",
+        "sesskey": "abcdef1234"
     }
 }}
 <form method="POST" action="{{actionurl}}">
-    <input type="hidden" name="sesskey" value="{{sesskey}}"/>
+    <input type="hidden" name="sesskey" value="{{sesskey}}">
     <div class="login-form-submit mb-3 mt-3">
         <button type="submit" name="approve" value="1" class="btn btn-secondary w-100 mb-3">{{#str}} continue {{/str}}</button>
         <button type="submit" name="approve" value="0" class="btn btn-primary w-100 mb-3">{{#str}} cancel {{/str}}</button>

@@ -233,7 +233,19 @@ final class oauth2_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $route = $this->get_route_with_stubbed_rendering();
+        // login() is only ever reached, in production, via authorize()'s redirect, which always
+        // attaches "authrequestid" for a request already validated and stored in the session.
+        // Simulate that here, rather than hitting the unconfigured AuthorizationServer stub's
+        // validateAuthorizationRequest() fallback.
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client);
+        $authrequest->setUser($this->make_user_entity($user->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route_with_stubbed_rendering(clientrepository: $clientrepository);
 
         $capturedcontent = null;
         $route->method('render_page_from_renderable')
@@ -243,7 +255,7 @@ final class oauth2_test extends \advanced_testcase {
             });
 
         $route->login(
-            new ServerRequest('GET', '/login'),
+            (new ServerRequest('GET', '/login'))->withQueryParams(['authrequestid' => $requestid]),
             new Response(),
         );
 

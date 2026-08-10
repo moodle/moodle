@@ -16,61 +16,44 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/oauth2/continue_as_user_page
+    @template core/oauth2/confirm_scopes_page
 
-    Moodle template for the login page.
+    Moodle template for the OAuth2 scope confirmation page.
 
     Context variables required for this template:
     * sitename - Name of site.,
     * logourl - Flag, logo url,
     * maintenance - Maintenance message,
-    * error - Any errors in the form?,
-    * info - Info notification to display,
     * languagemenu - Language menu HTML,
     * actionurl - The form action URL,
-    * userinfo - Information about the user
-      * username - The username of the user,
-      * fullname - The full name of the user,
-      * email - The email of the user.
+    * authinstructions - Custom auth instructions for the left panel, if configured,
+    * client - The OAuth2 client requesting access,
+    * userinfo - Information about the user,
+    * requestedscopes - The scopes being requested,
+    * grantedscopes - The scopes already granted.
 
     Example context (json):
     {
         "sitename": "My Moodle Site",
         "logourl": false,
         "maintenance": "For full access to this site, you need to login in as an admin.",
-        "error": "",
-        "info": "",
         "languagemenu": "Choose language",
-        "actionurl": "http://localhost/stable_master/login/index.php"
+        "actionurl": "http://localhost/stable_master/login/index.php",
+        "authinstructions": ""
     }
 }}
 
-<div id="page-content" class="min-vh-100 row g-0">
-    <aside class="login-layout-left col-lg-6 d-none d-lg-flex">
-        {{>core/local/login_form/login_panel}}
-    </aside>
-    <div id="region-main" class="login-layout-right col-12 col-lg-6">
-        <div id="region-main-box" class="login-layout-right-content">
-            <div class="login-container">
-                <div class="login_form">
-                    {{>core/local/login_form/logo}}
-
-                    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
-                        "clientname": {{#quote}}{{client.name}}{{/quote}},
-                        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
-                        "sitename": {{#quote}}{{sitename}}{{/quote}}
-                    }{{/str}}</h2>
-
-                    {{>core/oauth2/user}}
-                    {{>core/oauth2/client_description}}
-                    {{>core/local/login_form/maintenance}}
-                    {{>core/local/login_form/errorinfo}}
-                    {{>core/oauth2/confirm_scopes/scope_information}}
-                    {{>core/oauth2/confirm_scopes/form}}
-                    {{>core/local/login_form/languagemenu}}
-                    {{>core/local/login_form/cookiesnotice}}
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="loginform">
+    {{>core/local/login_form/logo}}
+    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
+        "clientname": {{#quote}}{{client.name}}{{/quote}},
+        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+        "sitename": {{#quote}}{{sitename}}{{/quote}}
+    }{{/str}}</h2>
+    {{>core/oauth2/user}}
+    {{>core/oauth2/client_description}}
+    {{>core/local/login_form/maintenance}}
+    {{>core/oauth2/confirm_scopes/scope_information}}
+    {{>core/oauth2/confirm_scopes/form}}
+    {{>core/local/login_form/languagemenu}}
 </div>

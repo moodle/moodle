@@ -17,10 +17,42 @@
 {{!
     @template core/oauth2/confirm_scopes/scope_information
 
-    TODO describe template scope_information
+    Lists the scopes an OAuth2 client is requesting, and any scopes already granted to it, along
+    with a reminder to trust the client and a link to the user's account.
+
+    Context variables required for this template:
+    * client - The OAuth2 client
+      * name - The client's name.
+    * sitename - Name of the site,
+    * userinfo - Information about the current user
+      * profileurl - URL of the user's profile page.
+    * requestedscopes - The scopes being requested, each with:
+      * summary - A short summary of the scope,
+      * description - A longer description of the scope.
+    * grantedscopes - The scopes already granted to this client, in the same shape as
+      requestedscopes.
 
     Example context (json):
     {
+        "client": {
+            "name": "Example client"
+        },
+        "sitename": "My Moodle Site",
+        "userinfo": {
+            "profileurl": "https://example.com/moodle/user/profile.php?id=2"
+        },
+        "requestedscopes": [
+            {
+                "summary": "View your profile",
+                "description": "Allows the application to view your public profile information."
+            }
+        ],
+        "grantedscopes": [
+            {
+                "summary": "View your courses",
+                "description": "Allows the application to see which courses you are enrolled in."
+            }
+        ]
     }
 }}
 <h2 class="h4">
@@ -33,9 +65,25 @@
 
 <ul>
     {{#requestedscopes}}
-        <li>{{description}}</li>
+        <li><strong>{{summary}}: </strong>{{description}}</li>
     {{/requestedscopes}}
 </ul>
+
+{{#hasgrantedscopes}}
+<h2 class="h4">
+    {{#str}}oauth2:confirmscopes:alreadygranted, moodle, {
+        "clientname": {{#quote}}{{client.name}}{{/quote}},
+        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+        "sitename": {{#quote}}{{sitename}}{{/quote}}
+    }{{/str}}
+</h2>
+
+<ul>
+    {{#grantedscopes}}
+        <li><strong>{{summary}}: </strong>{{description}}</li>
+    {{/grantedscopes}}
+</ul>
+{{/hasgrantedscopes}}
 
 <h2 class="h4">
     {{#str}}oauth2:confirmscopes:makesureyoutrust, moodle, {
@@ -44,18 +92,6 @@
         "sitename": {{#quote}}{{sitename}}{{/quote}}
     }{{/str}}
 </h2>
-
-{{#client.privacy}}
-<div>
-    {{#str}}oauth2:confirmscopes:reviewpolicies, moodle, {
-        "clientname": {{#quote}}{{client.name}}{{/quote}},
-        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
-        "clientprivacypolicy": {{#quote}}{{client.privacy}}{{/quote}},
-        "clienttermsofservice": {{#quote}}{{client.terms}}{{/quote}},
-        "sitename": {{#quote}}{{sitename}}{{/quote}}
-    }{{/str}}
-</div>
-{{/client.privacy}}
 
 <div>
     {{#str}}oauth2:confirmscopes:moodleaccount, moodle, {

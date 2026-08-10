@@ -18,74 +18,61 @@
 {{!
     @template core/oauth2/continue_as_user_page
 
-    Moodle template for the login page.
+    Moodle template for the OAuth2 "continue as this user" confirmation page, shown when a user
+    is already logged in and reaching an OAuth2 authorization flow.
 
     Context variables required for this template:
     * sitename - Name of site.,
     * logourl - Flag, logo url,
     * maintenance - Maintenance message,
-    * error - Any errors in the form?,
-    * info - Info notification to display,
     * languagemenu - Language menu HTML,
-    * actionurl - The form action URL,
+    * actionurl - The URL to submit to in order to continue as the current user,
+    * logouturl - The URL to submit to in order to log out and change user,
+    * sesskey - The current session key,
+    * authinstructions - Custom auth instructions for the left panel, if configured,
+    * client - The OAuth2 client requesting access
+      * name - The client's name,
+      * description - The client's description, as formatted HTML.
     * userinfo - Information about the user
       * username - The username of the user,
       * fullname - The full name of the user,
-      * email - The email of the user.
+      * email - The email of the user,
+      * userpicture - The rendered user picture HTML.
 
     Example context (json):
     {
         "sitename": "My Moodle Site",
         "logourl": false,
         "maintenance": "For full access to this site, you need to login in as an admin.",
-        "error": "",
-        "info": "",
         "languagemenu": "Choose language",
-        "actionurl": "http://localhost/stable_master/login/index.php",
+        "actionurl": "http://localhost/stable_master/oauth2/login",
+        "logouturl": "http://localhost/stable_master/oauth2/logout",
+        "sesskey": "abcdef1234",
+        "authinstructions": "",
+        "client": {
+            "name": "Example client",
+            "description": "This application would like to view your course enrolments."
+        },
         "userinfo": {
             "username": "johndoe",
             "fullname": "John Doe",
-            "email": "johndoe@example.com"
+            "email": "johndoe@example.com",
+            "userpicture": "<img class=\"userpicture\" src=\"http://localhost/stable_master/pix/u/1/f1\" alt=\"Picture of John Doe\">"
         }
     }
 }}
-<div id="page-content" class="min-vh-100 row g-0">
-    <aside class="login-layout-left col-lg-6 d-none d-lg-flex">
-        {{>core/local/login_form/login_panel}}
-    </aside>
-    <div id="region-main" class="login-layout-right col-12 col-lg-6">
-        <div id="region-main-box" class="login-layout-right-content">
-            <div class="login-container">
-                <div class="loginform">
-                    {{>core/local/login_form/logo}}
-                    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
-                        "clientname": {{#quote}}{{client.name}}{{/quote}},
-                        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
-                        "sitename": {{#quote}}{{sitename}}{{/quote}}
-                    }{{/str}}</h2>
-                    {{>core/oauth2/user}}
-                    {{>core/local/login_form/maintenance}}
-                    {{>core/local/login_form/errorinfo}}
 
-                    <p>{{#str}} oauth2:continueasuserinfo, core, {{userinfo.fullname}} {{/str}}</p>
-                    {{>core/oauth2/continue/form}}
-                    {{>core/local/login_form/languagemenu}}
-                    {{>core/local/login_form/cookiesnotice}}
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="loginform">
+    {{>core/local/login_form/logo}}
+    <h2>{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
+        "clientname": {{#quote}}{{client.name}}{{/quote}},
+        "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+        "sitename": {{#quote}}{{sitename}}{{/quote}}
+    }{{/str}}</h2>
+    {{>core/oauth2/user}}
+    {{>core/local/login_form/maintenance}}
+
+    <p>{{#str}} oauth2:continueasuserinfo, core, {{userinfo.fullname}} {{/str}}</p>
+    {{>core/oauth2/continue/form}}
+    {{>core/local/login_form/languagemenu}}
 </div>
-
-{{#js}}
-    require(['core/pending'], function(Pending) {
-        const errorMessage = document.getElementById('loginerrormessage')?.textContent.trim();
-        if (errorMessage) {
-            const pendingJS = new Pending('login-move-focus');
-            setTimeout(function() {
-                document.getElementById('username')?.focus();
-                pendingJS.resolve();
-            }, 500);
-        }
-    });
-{{/js}}

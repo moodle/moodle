@@ -27,10 +27,6 @@ use core\router\scope\abstract_scope;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class confirm_scopes_page extends oauth2_page {
-    use \core_auth\output\login_renderable_trait {
-        export_for_template as shared_export_for_template;
-    }
-
     /**
      * Create an instance of the form page.
      *
@@ -46,27 +42,65 @@ class confirm_scopes_page extends oauth2_page {
         protected array $grantedscopes,
         /** @var array The list of scopes the client is requesting */
         protected array $requestedscopes,
-        \core\url $action,
+        /** @var \core\url The URL the scope confirmation form should submit to */
+        private \core\url $actionurl,
         /** @var \stdClass The user entity */
         protected \stdClass $user,
     ) {
         $this->client = $client;
-        $this->set_action_url($action);
     }
 
     #[\Override]
     public function export_for_template(\core\output\renderer_base $renderer): \stdClass {
-        $data = $this->shared_export_for_template($renderer);
+        global $CFG, $PAGE, $SITE;
+
+        $data = new \stdClass();
+        $data->actionurl = $this->actionurl->out(false);
         $data->userinfo = $this->get_user_info($renderer);
         $data->client = $this->get_client_info();
         $data->sesskey = sesskey();
+
+        // Maintenance banner. Matches core_auth\output\login::export_for_template().
+        $maintenance = null;
+        if ($CFG->maintenance_enabled == true) {
+            $maintenance = !empty($CFG->maintenance_message)
+                ? $CFG->maintenance_message
+                : get_string('sitemaintenance', 'admin');
+        }
+        $data->maintenance = format_text($maintenance, FORMAT_MOODLE);
+
+        // Language menu.
+        $languagedata = new \core\output\language_menu($PAGE);
+        $data->languagemenu = $languagedata->export_for_action_menu($renderer);
+
+        // Site name and logo.
+        $data->sitename = \format_string(
+            $SITE->fullname,
+            true,
+            ['context' => \core\context\course::instance(SITEID), 'escape' => false],
+        );
+        $data->logourl = null;
+        $logourl = $renderer->get_logo_url();
+        if ($logourl) {
+            $data->logourl = $logourl->out(false);
+        }
+
+        // Auth instructions, shown in the branding panel when the admin has configured them.
+        $data->hasauthinstructions = !empty($CFG->auth_instructions);
+        $data->authinstructions = null;
+        if (!empty($CFG->auth_instructions)) {
+            $data->authinstructions = format_text(
+                $CFG->auth_instructions,
+                FORMAT_MOODLE,
+                ['context' => \core\context\system::instance()],
+            );
+        }
 
         $normalisescope = static function (ScopeEntityInterface&abstract_scope $scope): \stdClass {
             return (object) [
                 'identifier' => $scope->getIdentifier(),
                 'description' => $scope->get_description(),
-                'qualifiedName' => $scope->get_qualified_name(),
-                'humanName' => $scope->get_human_name(),
+                'summary' => $scope->get_summary(),
             ];
         };
 

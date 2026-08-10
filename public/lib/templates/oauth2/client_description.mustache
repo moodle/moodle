@@ -17,14 +17,21 @@
 {{!
     @template core/oauth2/client_description
 
-    TODO describe template client_description
+    Displays an OAuth2 client's description in an information alert.
+
+    Context variables required for this template:
+    * client - The OAuth2 client
+      * description - The client's description, as formatted HTML.
 
     Example context (json):
     {
+        "client": {
+            "description": "This application would like to view your course enrolments."
+        }
     }
 }}
-<div class="alert alert-primary d-flex align-items-center" role="alert">
-    <i class="icon fa fa-info-circle"></i>
+<div class="alert alert-primary d-flex align-items-start" role="alert">
+    <i class="icon fa fa-info-circle mt-1"></i>
     <div>
         {{{ client.description }}}
     </div>

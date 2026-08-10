@@ -15,23 +15,17 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/oauth2/user
-
-    Displays the current user's picture, during an OAuth2 authorization flow.
+    @template core/local/login_form/languagemenu
 
     Context variables required for this template:
-    * userinfo - Information about the current user
-      * userpicture - The rendered user picture HTML.
+    * languagemenu
 
     Example context (json):
     {
-        "userinfo": {
-            "userpicture": "<img class=\"userpicture\" src=\"https://example.com/moodle/pix/u/1/f1\" alt=\"Picture of Jane Doe\">"
-        }
     }
 }}
-<div class="p-1 mt-2 mb-2 w-100 d-flex flex-row">
-    <div class="picture">
-        {{{ userinfo.userpicture }}}
+{{#languagemenu}}
+    <div class="login-languagemenu d-flex justify-content-center my-5">
+        {{>core/action_menu}}
     </div>
-</div>
+{{/languagemenu}}
