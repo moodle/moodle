@@ -145,6 +145,9 @@ class flexible_table {
 
     private $column_textsort = [];
 
+    /** @var array[] Attributes for each column header */
+    private $columnheadersattributes = [];
+
     /** @var array[] Attributes for each column  */
     private $columnsattributes = [];
 
@@ -422,10 +425,18 @@ class flexible_table {
     }
 
     /**
-     * Sets the given $attributes to $this->columnsattributes.
-     * Column attributes will be added to every cell in the column.
+     * Sets the given $attributes to $this->columnheadersattributes, which will be added to the header of the column
      *
-     * @param array[] $attributes e.g. ['c0_firstname' => ['data-foo' => 'bar']]
+     * @param array[] $attributes e.g. ['mycolumn' => ['class' => 'visually-hidden', 'data-foo' => 'bar']]
+     */
+    public function set_columnheadersattributes(array $attributes): void {
+        $this->columnheadersattributes = $attributes;
+    }
+
+    /**
+     * Sets the given $attributes to $this->columnsattributes, which will be added to every cell in the column
+     *
+     * @param array[] $attributes e.g. ['mycolumn' => ['class' => 'font-italic', 'data-foo' => 'bar']]
      */
     public function set_columnsattributes(array $attributes): void {
         $this->columnsattributes = $attributes;
@@ -462,6 +473,7 @@ class flexible_table {
         $this->column_style = [];
         $this->column_class = [];
         $this->columnsticky = [];
+        $this->columnheadersattributes = [];
         $this->columnsattributes = [];
         $colnum = 0;
 
@@ -470,6 +482,7 @@ class flexible_table {
             $this->column_style[$column]    = [];
             $this->column_class[$column]    = '';
             $this->columnsticky[$column]    = '';
+            $this->columnheadersattributes[$column] = [];
             $this->columnsattributes[$column] = [];
             $this->column_suppress[$column] = false;
         }
@@ -1349,10 +1362,19 @@ class flexible_table {
                     }
             }
 
+            $columnheaderattributes = $this->columnheadersattributes[$column] ?? [];
+            $columnheaderclass = '';
+            if (isset($columnheaderattributes['class'])) {
+                $columnheaderclass = " {$columnheaderattributes['class']}";
+                unset($columnheaderattributes['class']);
+            }
+
             $attributes = [
-                'class' => 'header c' . $index . $this->column_class[$column] . $this->columnsticky[$column],
+                'class' => 'header c' . $index . $this->column_class[$column] . $this->columnsticky[$column] . $columnheaderclass,
                 'scope' => 'col',
             ];
+            $attributes += $columnheaderattributes;
+
             if ($this->headers[$index] === null) {
                 $content = '&nbsp;';
             } else if (!empty($this->prefs['collapse'][$column])) {
