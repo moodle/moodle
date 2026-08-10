@@ -9,7 +9,6 @@ $drawer-padding-y: 20px !default;
 $drawer-offscreen-gutter: 20px !default;
 $drawer-left-bg-color: $gray-200 !default;
 $drawer-right-bg-color: $gray-100 !default;
-$drawer-scroll-bg-track: $gray-100 !default;
 $drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
 $drawer-main-gap: calc(0.5rem + 20px);
@@ -538,5 +537,10 @@ $right-drawer-width: 320px;
         white-space: normal;
     }
 
-    @include thin-scrolls($drawer-scroll-bg-track);
+    .drawer-left & {
+        @include thin-scrolls($drawer-left-bg-color);
+    }
+    .drawer-right & {
+        @include thin-scrolls($drawer-right-bg-color);
+    }
 }
