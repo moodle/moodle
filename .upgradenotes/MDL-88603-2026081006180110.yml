@@ -1,0 +1,13 @@
+issueNumber: MDL-88603
+notes:
+  tiny_recordrtc:
+    - message: >-
+        Duration metadata is created when recording is stopped to accurately
+        determine the recording duration.
+      type: fixed
+    - message: >-
+        When a recording file is too large to upload, users are presented with
+        an option to download the file.
+      type: changed
+    - message: You can now always download the recorded files.
+      type: improved
