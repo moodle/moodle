@@ -187,6 +187,7 @@ final class client_entity_test extends \advanced_testcase {
      *
      * @param \stdClass $record The client database record.
      * @param array $redirecturis The redirect URIs database records.
+     * @param int $expectedid The expected client ID (from the database record).
      * @param string $expectedidentifier The expected identifier.
      * @param string $expectedname The expected name.
      * @param string|null $expecteddescription The expected description.
@@ -199,6 +200,7 @@ final class client_entity_test extends \advanced_testcase {
     public function test_create_from_record(
         \stdClass $record,
         array $redirecturis,
+        int $expectedid,
         string $expectedidentifier,
         string $expectedname,
         ?string $expecteddescription,
@@ -212,6 +214,7 @@ final class client_entity_test extends \advanced_testcase {
 
         $client = client_entity::create_from_record($record, $redirecturis);
 
+        $this->assertSame($expectedid, $client->get_id());
         $this->assertSame($expectedidentifier, $client->getIdentifier());
         $this->assertSame($expectedname, $client->getName());
         $this->assertSame($expecteddescription, $client->get_description());
@@ -230,6 +233,7 @@ final class client_entity_test extends \advanced_testcase {
         return [
             'active, confidential client with single redirect uri' => [
                 (object) [
+                    'id' => 10,
                     'clientidentifier' => 'client-1',
                     'name' => 'Client One',
                     'description' => 'Description One',
@@ -238,6 +242,7 @@ final class client_entity_test extends \advanced_testcase {
                     'isconfidential' => 1,
                 ],
                 [(object) ['uri' => 'https://example.test/callback']],
+                10,
                 'client-1',
                 'Client One',
                 'Description One',
@@ -247,6 +252,7 @@ final class client_entity_test extends \advanced_testcase {
             ],
             'revoked, public client with multiple redirect uris' => [
                 (object) [
+                    'id' => 20,
                     'clientidentifier' => 'client-2',
                     'name' => 'Client Two',
                     'description' => null,
@@ -258,6 +264,7 @@ final class client_entity_test extends \advanced_testcase {
                     (object) ['uri' => 'https://example.test/alt1'],
                     (object) ['uri' => 'https://example.test/alt2'],
                 ],
+                20,
                 'client-2',
                 'Client Two',
                 null,
