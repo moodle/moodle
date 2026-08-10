@@ -9,7 +9,7 @@ Feature: Blog entries can be added, modified and deleted
       | username | firstname | lastname | email              |
       | testuser | Test      | User     | moodle@example.com |
     And I am on the "testuser" "user > profile" page logged in as testuser
-    And I follow "Blog entries"
+    And I follow "View my blog entries"
     And I follow "Add a new entry"
     And I should see "Blogs: Add a new entry"
     And I set the following fields to these values:

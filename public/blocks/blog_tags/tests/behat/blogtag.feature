@@ -23,12 +23,9 @@ Feature: Adding blog tag block
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I add the "Blog tags" block
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    # TODO MDL-57120 site "Blogs" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
     And I am on the "Course 1" "enrolled users" page
-    And I click on "Course blogs" "link" in the "Navigation" "block"
+    And I follow "Teacher 1"
+    And I follow "View my blog entries"
     And I follow "Blog about this Course"
     And I set the following fields to these values:
       | Entry title                                 | Blog post from teacher    |
@@ -36,7 +33,8 @@ Feature: Adding blog tag block
       | Tags                                        | Cats, dogs                 |
     And I press "Save changes"
     And I am on the "Course 1" "enrolled users" page logged in as "student1"
-    And I click on "Course blogs" "link" in the "Navigation" "block"
+    And I follow "Student 1"
+    And I follow "View my blog entries"
     And I follow "Blog about this Course"
     And I set the following fields to these values:
       | Entry title                                 | Blog post from student    |

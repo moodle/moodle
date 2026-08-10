@@ -27,7 +27,7 @@ Feature: Blogs can be set to be only visible by the author.
     Given  I am on the "C1" "enrolled users" page logged in as testuser
     When I follow "Test2 User2"
     And I should see "Miscellaneous"
-    Then I should not see "Blog entries"
+    Then I should not see "View my blog entries"
     And I follow "Profile" in the user menu
-    And I follow "Blog entries"
+    And I follow "View my blog entries"
     And I should see "User blog: Test User"
