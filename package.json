@@ -11,12 +11,14 @@
     "swizzle": "node scripts/swizzle.mjs"
   },
   "dependencies": {
-    "@moodlehq/design-system": "^5.0.0",
+    "@floating-ui/react": "^0.27.20",
     "@fortawesome/fontawesome-free": "^6.7.2",
+    "@moodlehq/design-system": "^5.0.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
     "react": "^19.1",
-    "react-dom": "^19.1"
+    "react-dom": "^19.1",
+    "tabbable": "^6.5.0"
   },
   "devDependencies": {
     "@babel/core": "7.17.5",
