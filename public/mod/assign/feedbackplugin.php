@@ -168,6 +168,7 @@ abstract class assign_feedback_plugin extends assign_plugin {
      *                  - 'icon': the button icon (string)
      *                  - 'confirmationtitle': the title for the confirmation modal (string)
      *                  - 'confirmationquestion': the question for the confirmation modal (string)
+     *                  - 'confirmationyes': the content of the confirmation button (string)
      */
     public function get_grading_batch_operation_details() {
         return [];
