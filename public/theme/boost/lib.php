@@ -57,7 +57,6 @@ function theme_boost_get_extra_scss($theme) {
 
     // Sets the login background image.
     $loginbackgroundimageurl = $theme->setting_file_url('loginbackgroundimage', 'loginbackgroundimage');
-    $backgroundposition = '';
     $isdefaultloginimage = empty($loginbackgroundimageurl);
     if ($isdefaultloginimage) {
         // Use the default login background image.
@@ -65,12 +64,11 @@ function theme_boost_get_extra_scss($theme) {
             'login_background',
             'theme',
         );
-        // Set the default background position to center.
-        $backgroundposition = 'background-position: center;';
     }
     $content .= 'body.pagelayout-login #page .login-layout-left { ';
     $content .= "background-image: url('$loginbackgroundimageurl'); ";
-    $content .= "background-size: cover; {$backgroundposition}";
+    // Center the login background image so cropping is symmetrical, for both the default and any custom image.
+    $content .= 'background-size: cover; background-position: center;';
     $content .= ' }';
 
     // Add a watermark to indicate the image is AI generated, but only for the default image.
