@@ -441,8 +441,9 @@ class assign_feedback_file extends assign_feedback_plugin {
                 'key' => 'uploadfiles',
                 'label' => get_string('batchoperationuploadfiles', 'assignfeedback_file'),
                 'icon' => $OUTPUT->pix_icon('i/upload', ''),
-                'confirmationtitle' => get_string('uploadfiles', 'assignfeedback_file'),
+                'confirmationtitle' => get_string('batchoperationuploadfiles', 'assignfeedback_file'),
                 'confirmationquestion' => get_string('batchoperationconfirmuploadfiles', 'assignfeedback_file'),
+                'confirmationyes' => get_string('ok'),
             ],
         ];
     }

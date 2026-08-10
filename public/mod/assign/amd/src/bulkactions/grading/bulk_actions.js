@@ -232,6 +232,7 @@ export default class extends BulkActions {
                     operation.icon,
                     operation.confirmationtitle,
                     operation.confirmationquestion,
+                    operation.confirmationyes,
                 )
             );
         }

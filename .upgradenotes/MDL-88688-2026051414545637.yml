@@ -1,0 +1,8 @@
+issueNumber: MDL-88688
+notes:
+  mod_assign:
+    - message: >-
+        The feedback plugin `get_grading_batch_operation_details()` method can
+        return a `'confirmationyes'` key to define the content of the
+        confirmation save button
+      type: changed
