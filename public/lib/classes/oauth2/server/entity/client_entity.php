@@ -45,6 +45,12 @@ class client_entity implements ClientEntityInterface {
     /** @var int Client secret is revoked */
     public const int SECRET_REVOKED_YES = 1;
 
+    /** @var int Public client type */
+    public const int TYPE_PUBLIC = 0;
+
+    /** @var int Confidential client type */
+    public const int TYPE_CONFIDENTIAL = 1;
+
     /** @var \core\context The owner context */
     protected \core\context $ownercontext;
 
