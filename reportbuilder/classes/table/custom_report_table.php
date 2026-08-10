@@ -102,7 +102,7 @@ class custom_report_table extends base_report_table {
         // Also take account of the report setting to show unique rows (only if no columns are being aggregated).
         $showuniquerows = !$hasaggregatedcolumns && $this->persistent->get('uniquerows');
 
-        $columnheaders = $columnsattributes = [];
+        $columnheaders = $columnheaderattributes = $columnattributes = [];
         foreach ($columns as $column) {
             $columnheading = $column->get_persistent()->get_formatted_heading($this->report->get_context());
             $columnheaders[$column->get_column_alias()] = $columnheading !== '' ? $columnheading : $column->get_title();
@@ -134,14 +134,16 @@ class custom_report_table extends base_report_table {
             }
 
             // Generate column attributes to be included in each cell.
-            $columnsattributes[$column->get_column_alias()] = $column->get_attributes();
+            $columnheaderattributes[$column->get_column_alias()] = $column->get_header_attributes();
+            $columnattributes[$column->get_column_alias()] = $column->get_attributes();
         }
 
         $this->define_columns(array_keys($columnheaders));
         $this->define_headers(array_values($columnheaders));
 
         // Add column attributes to the table.
-        $this->set_columnsattributes($columnsattributes);
+        $this->set_columnheadersattributes($columnheaderattributes);
+        $this->set_columnsattributes($columnattributes);
 
         // Table configuration.
         $this->initialbars(false);

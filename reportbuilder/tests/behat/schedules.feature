@@ -86,12 +86,14 @@ Feature: Manage custom report schedules
     And I should see "Are you sure you want to delete the schedule 'English'?" in the "Delete schedule" "dialogue"
     And I click on "Cancel" "button" in the "Delete schedule" "dialogue"
 
+  @accessibility
   Scenario: Toggle report schedule
     Given the following "core_reportbuilder > Schedules" exist:
       | report    | name        |
       | My report | My schedule |
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     And I click on the "Schedules" dynamic tab
+    And the "Report schedules" "table" should meet accessibility standards with "best-practice" extra tests
     When I click on "Disable schedule" "field" in the "My schedule" "table_row"
     Then the "class" attribute of "My schedule" "table_row" should contain "text-muted"
     And I click on "Enable schedule" "field" in the "My schedule" "table_row"
