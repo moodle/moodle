@@ -602,6 +602,28 @@ function badges_prepare_badgeclass_for_external(core_badges\output\badgeclass $b
 }
 
 /**
+ * Checks whether the current user holds any badge management capability in the given context.
+ *
+ * Users who can manage badges (create, award, configure, delete, or view awarded badges) are
+ * treated as badge managers, matching the access check used by the badges system report. Badge
+ * managers should be able to access and view badges regardless of a badge's active status.
+ *
+ * @param context $context
+ * @return bool
+ */
+function badges_can_manage_badges(context $context): bool {
+    return has_any_capability([
+        'moodle/badges:viewawarded',
+        'moodle/badges:createbadge',
+        'moodle/badges:awardbadge',
+        'moodle/badges:configurecriteria',
+        'moodle/badges:configuremessages',
+        'moodle/badges:configuredetails',
+        'moodle/badges:deletebadge',
+    ], $context);
+}
+
+/**
  * Extends the course administration navigation with the Badges page
  *
  * @param navigation_node $coursenode

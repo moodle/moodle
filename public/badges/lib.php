@@ -48,14 +48,25 @@ function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree
     $context = context_user::instance($user->id);
     $courseid = empty($course) ? 0 : $course->id;
 
-    // Site badges link - shown on site profile when at least one active site badge exists.
+    // Site badges link - shown on site profile once a site badge exists. Badge managers (who can
+    // create, award, or configure badges) see the link for a badge of any status, so they can
+    // reach it to manage inactive or archived badges. Other users need moodle/badges:viewbadges
+    // and at least one active badge, since that is all they could see on the site badges page.
     if ($courseid == 0) {
-        $hassitebadges = $DB->record_exists_select(
-            'badge',
-            '(status = :active OR status = :activelocked) AND type = :type',
-            ['active' => BADGE_STATUS_ACTIVE, 'activelocked' => BADGE_STATUS_ACTIVE_LOCKED, 'type' => BADGE_TYPE_SITE]
-        );
-        if ($hassitebadges) {
+        $sitecontext = context_system::instance();
+        $ismanager = badges_can_manage_badges($sitecontext);
+        $showsitebadges = false;
+        if ($ismanager || has_capability('moodle/badges:viewbadges', $sitecontext)) {
+            $sql = 'type = :type';
+            $params = ['type' => BADGE_TYPE_SITE];
+            if (!$ismanager) {
+                $sql .= ' AND (status = :active OR status = :activelocked)';
+                $params['active'] = BADGE_STATUS_ACTIVE;
+                $params['activelocked'] = BADGE_STATUS_ACTIVE_LOCKED;
+            }
+            $showsitebadges = $DB->record_exists_select('badge', $sql, $params);
+        }
+        if ($showsitebadges) {
             $url = new moodle_url('/badges/index.php', ['type' => BADGE_TYPE_SITE]);
             $sitebadgesnode = new core_user\output\myprofile\node(
                 'badges',
