@@ -20,7 +20,7 @@ use core\oauth2\server\entity\client_entity;
 use core\oauth2\server\entity\user_entity;
 use core\oauth2\server\repository\granted_scopes_repository;
 use core\oauth2\server\repository\user_repository;
-use core_auth\output\login_form;
+use core_auth\output\login;
 use core_auth\output\oauth2\confirm_scopes_page;
 use core_auth\output\oauth2\continue_as_user_page;
 use GuzzleHttp\Psr7\Response;
@@ -46,7 +46,7 @@ final class oauth2_test extends \advanced_testcase {
      * render_page_from_renderable() replaced with a stub so that no real page rendering
      * takes place.
      *
-     * Actual page rendering is exercised separately by login_form_test.php, so it is safe
+     * Actual page rendering is exercised separately by login_test.php, so it is safe
      * to bypass here in order to focus on the wiring performed by the routes themselves.
      *
      * @param AuthorizationServer|null $server
@@ -216,7 +216,7 @@ final class oauth2_test extends \advanced_testcase {
             new Response(),
         );
 
-        $this->assertInstanceOf(login_form::class, $capturedcontent);
+        $this->assertInstanceOf(login::class, $capturedcontent);
 
         $data = $capturedcontent->export_for_template($PAGE->get_renderer('core'));
         $this->assertFalse($data->canloginasguest);
