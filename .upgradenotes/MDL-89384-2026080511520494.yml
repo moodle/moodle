@@ -1,0 +1,8 @@
+issueNumber: MDL-89384
+notes:
+  core:
+    - message: >-
+        New `flexible_table::set_columnheadersattributes(...)` method for tables
+        to define additional attributes ('class', 'data-X', etc.) for column
+        headers
+      type: improved
