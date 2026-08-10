@@ -103,20 +103,13 @@ Feature: Managers can create and manage tag collections
       | Searchable | 0 |
     And I press "Create"
     And "Yes" "text" should not exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hiddencoll')]" "xpath_element"
-    And I turn editing mode on
-    And the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    # TODO MDL-57120 "Tags" link not accessible without navigation block.
-    And I add the "Navigation" block if not present
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Tags" "link" in the "Navigation" "block"
+    And I visit "/tag/search.php"
     Then the "Select tag collection" select box should contain "Default collection"
     And the "Select tag collection" select box should contain "Hobbies"
     And the "Select tag collection" select box should not contain "Hiddencoll"
     And I navigate to "Appearance > Manage tags" in site administration
     And I click on "Change searchable" "link" in the "Hobbies" "table_row"
-    And I click on "Site pages" "list_item" in the "Navigation" "block"
-    And I click on "Tags" "link" in the "Navigation" "block"
+    And I visit "/tag/search.php"
     And "Select tag collection" "select" should not exist
 
   Scenario: Making default tag collection not searchable

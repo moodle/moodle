@@ -67,6 +67,13 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         }
     }
 
+    // Tags link.
+    if (!empty($CFG->usetags) && isloggedin() && !isguestuser()) {
+        $url = new moodle_url('/tag/search.php');
+        $node = new core_user\output\myprofile\node('miscellaneous', 'tags', get_string('tags'), null, $url);
+        $tree->add_node($node);
+    }
+
     // Edit profile.
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
         if (($iscurrentuser || is_siteadmin($USER) || !is_siteadmin($user)) && has_capability('moodle/user:update',
