@@ -73,7 +73,7 @@ if ($hassiteconfig || has_capability('moodle/site:configview', context_system::i
 
         $haslogos = !empty(get_config('core_admin', 'logo')) || !empty(get_config('core_admin', 'logocompact'));
         if ($haslogos && ($logospage = $ADMIN->locate('logos'))) {
-            $logospage->add(
+            $logospage->add_before(
                 new admin_setting_heading(
                     'tool_mobile/logospromotion',
                     '',
@@ -92,7 +92,7 @@ if ($hassiteconfig || has_capability('moodle/site:configview', context_system::i
         }
 
         if (api::has_matomo_additional_html() && ($additionalhtmlpage = $ADMIN->locate('additionalhtml'))) {
-            $additionalhtmlpage->add(
+            $additionalhtmlpage->add_before(
                 new admin_setting_heading(
                     'tool_mobile/matomopromotion',
                     '',

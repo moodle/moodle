@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class theme_boost_admin_settingspage_tabs extends admin_settingpage {
 
-    /** @var admin_settingpage[] The tabs. */
+    /** @var The tabs */
     protected $tabs = array();
 
     /**
@@ -45,8 +45,7 @@ class theme_boost_admin_settingspage_tabs extends admin_settingpage {
         return true;
     }
 
-    #[\Override]
-    public function add($tab, ?string $beforesibling = null) {
+    public function add($tab) {
         return $this->add_tab($tab);
     }
 
