@@ -44,6 +44,7 @@ $capabilities = [
     'moodle/group:configurecustomfields',
     'moodle/course:recommendactivity',
     'moodle/site:viewparticipants',
+    'moodle/contentbank:access',
 ];
 if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     // Speedup for non-admins, add all caps used on this page.
@@ -70,6 +71,15 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         new admin_externalpage('restorecourse', new lang_string('restorecourse', 'admin'),
             new moodle_url('/backup/restorefile.php', array('contextid' => context_system::instance()->id)),
             array('moodle/restore:restorecourse')
+        )
+    );
+    $ADMIN->add(
+        'courses',
+        new admin_externalpage(
+            'sitecontentbank',
+            new lang_string('sitecontentbank', 'admin'),
+            new moodle_url('/contentbank/index.php', ['contextid' => context_system::instance()->id]),
+            'moodle/contentbank:access'
         )
     );
 

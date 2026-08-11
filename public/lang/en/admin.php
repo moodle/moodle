@@ -1328,6 +1328,7 @@ $string['showuseridentity_desc'] = 'When selecting or searching for users, and w
 
 Fields marked * are custom user profile fields (of type \'text\', with a character limit of 255). These fields are currently not shown on all screens.';
 $string['simplexmlrequired'] = 'The SimpleXML PHP extension is now required by Moodle.';
+$string['sitecontentbank'] = 'Site content bank';
 $string['sitemenubar'] = 'Site navigation';
 $string['sitemailcharset'] = 'Character set';
 $string['sitemaintenance'] = 'The site is undergoing maintenance and is currently not available';
