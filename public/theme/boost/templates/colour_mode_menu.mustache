@@ -20,6 +20,7 @@
     Menu for switching between the light and dark colour modes.
 
     Context variables required for this template:
+    * cookieattributes - The attributes the browser copy of the chosen mode is stored with.
     * currenticon - The Font Awesome class of the icon representing the currently selected mode.
     * currenttogglelabel - The accessible name of the menu toggle, naming the currently selected mode.
     * modes - Array of data representing the colour modes which can be selected.
@@ -31,6 +32,7 @@
 
     Example context (json):
     {
+        "cookieattributes": "; Max-Age=31536000; Path=/; SameSite=Lax",
         "currenticon": "fa-sun",
         "currenttogglelabel": "Colour mode: Light",
         "modes": [
@@ -58,7 +60,7 @@
         ]
     }
 }}
-<div class="colourmodemenu" data-region="colourmode-menu">
+<div class="colourmodemenu" data-region="colourmode-menu" data-cookieattributes="{{cookieattributes}}">
     <div class="dropdown show">
         <button type="button" id="colourmode-menu-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
                 aria-controls="colourmode-action-menu" class="btn dropdown-toggle">

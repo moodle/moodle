@@ -95,10 +95,15 @@ class hook_listener {
     }
 
     /**
-     * Add the script which resolves the "auto" colour mode against the device colour scheme.
+     * Add the script which resolves the "auto" colour mode before the page is painted.
      *
-     * This has to run synchronously in the head, before the page is painted, otherwise people using the dark colour
-     * scheme get a flash of the light theme on every page load.
+     * Which mode "auto" means is known only to the browser, so the server renders the page light and this corrects
+     * it. That has to happen synchronously in the head, or the person gets a flash of the wrong colours on every
+     * page load, and it has to keep listening, so that a device which changes its colour scheme while the page is
+     * open is followed.
+     *
+     * The explicit modes need none of this: the server knows which one to render, from the user preference or from
+     * the cookie which stands in for it on a page nobody is logged in to.
      *
      * @param before_standard_head_html_generation $hook The hook object.
      */
@@ -109,21 +114,29 @@ class hook_listener {
             return;
         }
 
-        // Behat sites keep the colour mode the server decided on: which mode "auto" resolves to depends on the
-        // machine running the browser, which would make every colour assertion in the suite non-deterministic.
+        // Behat sites keep the colour mode the server decided on, as which mode "auto" resolves to depends on the
+        // machine running the browser, which would make colour assertions non-deterministic.
         if (defined('BEHAT_SITE_RUNNING')) {
             return;
         }
 
-        $js = <<<'EOF'
+        $config = json_encode([
+            'auto' => colour_mode::AUTO,
+            'dark' => colour_mode::DARK,
+            'light' => colour_mode::LIGHT,
+        ]);
+
+        $js = <<<EOF
             (function() {
+                var config = {$config};
+                var root = document.documentElement;
                 var query = window.matchMedia('(prefers-color-scheme: dark)');
                 var resolve = function() {
-                    var root = document.documentElement;
-                    if (root.getAttribute('data-colourmode') !== 'auto') {
-                        return;
-                    }
-                    root.setAttribute('data-bs-theme', query.matches ? 'dark' : 'light');
+                    var mode = root.getAttribute('data-colourmode');
+                    root.setAttribute(
+                        'data-bs-theme',
+                        mode === config.auto ? (query.matches ? config.dark : config.light) : mode
+                    );
                 };
                 resolve();
                 query.addEventListener('change', resolve);

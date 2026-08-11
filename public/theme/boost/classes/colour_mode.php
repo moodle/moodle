@@ -23,6 +23,9 @@ namespace theme_boost;
  * data-bs-theme attribute of the html tag, and the mode chosen by the user is written to data-colourmode so that
  * the "auto" mode can be resolved in the browser.
  *
+ * The mode is stored as a user preference, and mirrored into a cookie of the same name so that a page which nobody
+ * is logged in to can be rendered in it. The preference is authoritative whenever it can be read.
+ *
  * @package    theme_boost
  * @copyright  2026 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,7 +40,11 @@ class colour_mode {
     /** @var string Follow the colour scheme reported by the device or browser. */
     public const AUTO = 'auto';
 
-    /** @var string The name of the user preference storing the chosen colour mode. */
+    /**
+     * @var string The name of the user preference storing the chosen colour mode.
+     *
+     * The cookie which mirrors it for pages where no preference can be read carries the same name.
+     */
     public const PREFERENCE = 'theme_boost_colourmode';
 
     /** @var array<string, string> The Font Awesome icon representing each colour mode. */
@@ -88,6 +95,69 @@ class colour_mode {
     }
 
     /**
+     * The colour mode this browser was last given by somebody who could choose one.
+     *
+     * A page which nobody is logged in to has no preference to read, so without this the login page, and everything
+     * else seen while logged out, would revert to the site default: choose dark, log out, and the login page is
+     * white. The cookie is written by the browser rather than by PHP, because the mode can be changed without
+     * loading a page and the copy has to keep up; see the colourmode AMD module.
+     *
+     * The value comes from the browser and so is not trusted: anything which is not a mode this theme knows about is
+     * discarded.
+     *
+     * @return string|null The stored mode, or null when there is nothing usable to read.
+     */
+    protected static function get_browser_mode(): ?string {
+        // A run started with --colourmode is sweeping the whole suite in one mode, so a cookie left by a scenario
+        // which logged somebody in would quietly render the pages after it in another. Each scenario gets a fresh
+        // browser session, so a cookie cannot reach the next one and a run which forces nothing can be trusted.
+        if (
+            defined('BEHAT_SITE_RUNNING')
+            && function_exists('behat_get_colour_mode')
+            && self::is_valid_mode(behat_get_colour_mode())
+        ) {
+            return null;
+        }
+
+        // A request can present this as an array, so the type is checked before the value is.
+        $mode = $_COOKIE[self::PREFERENCE] ?? null;
+        if (!is_string($mode) || !self::is_valid_mode($mode)) {
+            return null;
+        }
+
+        return $mode;
+    }
+
+    /**
+     * The attributes the browser copy of the colour mode is stored with.
+     *
+     * Decided here, rather than in the browser, so that the cookie follows the same configuration as the ones core
+     * sets: the site's cookie path, domain and secure settings.
+     *
+     * @return string The attribute list to append to the cookie, beginning with a separator.
+     */
+    public static function get_cookie_attributes(): string {
+        global $CFG;
+
+        $attributes = [
+            'Max-Age=' . YEARSECS,
+            // Only ever set on a page of this site, and only ever read when one is loaded.
+            'Path=' . ($CFG->sessioncookiepath ?? '/'),
+            'SameSite=Lax',
+        ];
+
+        if (!empty($CFG->sessioncookiedomain)) {
+            $attributes[] = 'Domain=' . $CFG->sessioncookiedomain;
+        }
+
+        if (is_moodle_cookie_secure()) {
+            $attributes[] = 'Secure';
+        }
+
+        return '; ' . implode('; ', $attributes);
+    }
+
+    /**
      * The colour mode used for users who have not chosen one.
      *
      * A Behat run started with --colourmode takes precedence over the site setting, so that the whole suite can be
@@ -111,8 +181,9 @@ class colour_mode {
     /**
      * The colour mode to render the page with.
      *
-     * Falls back to the site default when the user has not chosen a mode, and to light mode when colour modes have
-     * not been turned on for the site.
+     * The user preference is authoritative whenever it can be read. Where it cannot, the mode this browser was last
+     * given stands in for it, so that logging out does not change the colours. Falls back to the site default when
+     * neither is available, and to light mode when colour modes have not been turned on for the site.
      *
      * @return string One of the self::LIGHT, self::DARK or self::AUTO constants.
      */
@@ -125,6 +196,11 @@ class colour_mode {
             $preference = get_user_preferences(self::PREFERENCE);
             if (self::is_valid_mode($preference)) {
                 return $preference;
+            }
+        } else {
+            $browsermode = self::get_browser_mode();
+            if ($browsermode !== null) {
+                return $browsermode;
             }
         }
 
@@ -185,6 +261,7 @@ class colour_mode {
         }
 
         return $output->render_from_template('theme_boost/colour_mode_menu', [
+            'cookieattributes' => self::get_cookie_attributes(),
             'currenticon' => self::ICONS[$current],
             'currenttogglelabel' => get_string(
                 'colourmodeselected',

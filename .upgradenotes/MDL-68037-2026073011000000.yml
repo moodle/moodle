@@ -83,4 +83,13 @@ notes:
 
         A child theme which renders its own navbar should output
         theme_boost\colour_mode::render_menu() to give its users the switcher.
+
+        The chosen mode is stored as a user preference, and mirrored into a
+        theme_boost_colourmode cookie so that a page which nobody is logged in
+        to, the login page above all, can be rendered in it rather than
+        reverting to the site default. The cookie holds one of light, dark or
+        auto, is written by the browser with the site's own cookie path, domain
+        and secure settings, and is only read when there is no preference to
+        read. Sites which document the cookies they set should add it to their
+        list. No cookie is set until a site turns colour modes on.
       type: improved

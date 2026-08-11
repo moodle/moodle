@@ -59,6 +59,24 @@ const resolveMode = (mode) => {
 };
 
 /**
+ * Remember the chosen mode in this browser.
+ *
+ * The user preference is what the server reads, but it cannot be read on a page where nobody is logged in. The copy
+ * kept in this cookie is what the server falls back to there, so that the login page stays in the mode the person
+ * chose rather than flipping to the site default on the way out and back again on the way in.
+ *
+ * @param {String} mode One of the MODES values.
+ */
+const rememberMode = (mode) => {
+    const menu = document.querySelector(SELECTORS.MENU);
+    if (!menu || !Object.values(MODES).includes(mode)) {
+        return;
+    }
+
+    document.cookie = `${PREFERENCE}=${mode}${menu.dataset.cookieattributes}`;
+};
+
+/**
  * Apply a colour mode to the page and remember it for the next page load.
  *
  * @param {String} mode One of the MODES values.
@@ -90,6 +108,7 @@ const applyMode = (mode) => {
     });
 
     setUserPreference(PREFERENCE, mode);
+    rememberMode(mode);
 };
 
 /**
@@ -100,6 +119,11 @@ export const init = () => {
         return;
     }
     registered = true;
+
+    // Refresh the copy from the mode the server resolved for this page, so that it belongs to whoever is logged in
+    // now. Without this it would still hold the mode of the last person to choose one on this browser, and they
+    // would get it back the moment they logged out.
+    rememberMode(document.documentElement.dataset.colourmode);
 
     document.addEventListener('click', (e) => {
         const option = e.target.closest(SELECTORS.OPTION);
