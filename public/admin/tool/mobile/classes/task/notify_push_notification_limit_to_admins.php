@@ -16,6 +16,8 @@
 
 namespace tool_mobile\task;
 
+use core\clock;
+use core\di;
 use tool_mobile\api;
 use tool_mobile\output\push_notification_limit_message;
 
@@ -50,7 +52,8 @@ class notify_push_notification_limit_to_admins extends \core\task\scheduled_task
         }
 
         $subscriptiondata = api::get_subscription_information(true);
-        $notificationstats = self::get_current_month_notification_stats($subscriptiondata);
+        $now = di::get(clock::class)->now();
+        $notificationstats = self::get_current_month_notification_stats($subscriptiondata, $now);
         if ($notificationstats === null || empty($notificationstats['limitreachedtime'])) {
             return;
         }
@@ -75,9 +78,13 @@ class notify_push_notification_limit_to_admins extends \core\task\scheduled_task
      * Extract the current month notification stats from subscription data.
      *
      * @param ?array $subscriptiondata Subscription information returned by the Apps Portal API.
+     * @param \DateTimeImmutable $now Current time used to identify the matching monthly stats.
      * @return ?array
      */
-    public static function get_current_month_notification_stats(?array $subscriptiondata): ?array {
+    public static function get_current_month_notification_stats(
+        ?array $subscriptiondata,
+        \DateTimeImmutable $now,
+    ): ?array {
         if (
             empty($subscriptiondata['statistics']['notifications']['monthly']) ||
             !is_array($subscriptiondata['statistics']['notifications']['monthly'])
@@ -85,8 +92,8 @@ class notify_push_notification_limit_to_admins extends \core\task\scheduled_task
             return null;
         }
 
-        $currentyear = (int) date('Y');
-        $currentmonth = (int) date('n');
+        $currentyear = (int) $now->format('Y');
+        $currentmonth = (int) $now->format('n');
 
         foreach ($subscriptiondata['statistics']['notifications']['monthly'] as $monthstats) {
             if (!is_array($monthstats)) {

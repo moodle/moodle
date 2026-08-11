@@ -33,9 +33,10 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
+        $clock = $this->mock_clock_with_frozen();
         $CFG->enablemobilewebservice = 1;
 
-        $this->seed_subscription_cache(1234567890);
+        $this->seed_subscription_cache(1234567890, $clock->time());
 
         $sink = $this->redirectMessages();
         $task = new \tool_mobile\task\notify_push_notification_limit_to_admins();
@@ -90,9 +91,10 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
+        $clock = $this->mock_clock_with_frozen();
         $CFG->enablemobilewebservice = 1;
 
-        $this->seed_subscription_cache(1234567890);
+        $this->seed_subscription_cache(1234567890, $clock->time());
 
         $sink = $this->redirectMessages();
         $task = new \tool_mobile\task\notify_push_notification_limit_to_admins();
@@ -111,30 +113,34 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
      * Test that only the current month statistics are considered.
      */
     public function test_get_current_month_notification_stats_ignores_other_months(): void {
-        $currentyear = (int) date('Y');
-        $currentmonth = (int) date('n');
+        $clock = $this->mock_clock_with_frozen();
+        $currentyear = (int) date('Y', $clock->time());
+        $currentmonth = (int) date('n', $clock->time());
         $previousmonth = $currentmonth === 1 ? 12 : $currentmonth - 1;
         $previousyear = $currentmonth === 1 ? $currentyear - 1 : $currentyear;
 
-        $stats = notify_push_notification_limit_to_admins::get_current_month_notification_stats([
-            'statistics' => [
-                'notifications' => [
-                    'monthly' => [
-                        [
-                            'year' => $previousyear,
-                            'month' => $previousmonth,
-                            'limitreachedtime' => 111,
-                        ],
-                        [
-                            'year' => $currentyear,
-                            'month' => $currentmonth,
-                            'limitreachedtime' => 222,
-                            'activedevices' => 60,
+        $stats = notify_push_notification_limit_to_admins::get_current_month_notification_stats(
+            [
+                'statistics' => [
+                    'notifications' => [
+                        'monthly' => [
+                            [
+                                'year' => $previousyear,
+                                'month' => $previousmonth,
+                                'limitreachedtime' => 111,
+                            ],
+                            [
+                                'year' => $currentyear,
+                                'month' => $currentmonth,
+                                'limitreachedtime' => 222,
+                                'activedevices' => 60,
+                            ],
                         ],
                     ],
                 ],
             ],
-        ]);
+            $clock->now(),
+        );
 
         $this->assertNotNull($stats);
         $this->assertSame(222, $stats['limitreachedtime']);
@@ -145,10 +151,11 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
      * Seed the subscription cache with current month notification statistics.
      *
      * @param int $limitreachedtime The timestamp used to identify the limit reached event.
+     * @param int $currenttime The current timestamp used to build matching monthly statistics.
      */
-    private function seed_subscription_cache(int $limitreachedtime): void {
-        $currentyear = (int) date('Y');
-        $currentmonth = (int) date('n');
+    private function seed_subscription_cache(int $limitreachedtime, int $currenttime): void {
+        $currentyear = (int) date('Y', $currenttime);
+        $currentmonth = (int) date('n', $currenttime);
 
         $cache = \cache::make('tool_mobile', 'subscriptioninfo');
         $cache->set(0, [
