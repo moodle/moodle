@@ -26,6 +26,129 @@ namespace tool_mobile;
  */
 final class api_test extends \core_external\tests\externallib_testcase {
     /**
+     * Test subscription plan normalisation.
+     *
+     * @covers \tool_mobile\api::get_normalized_plan
+     */
+    public function test_get_normalized_plan(): void {
+        $this->resetAfterTest(true);
+
+        $this->assertSame('premium', api::get_normalized_plan([
+            'subscription' => ['plan' => ' Premium '],
+        ]));
+        $this->assertSame('bma', api::get_normalized_plan([
+            'subscription' => ['plan' => 'BMA'],
+        ]));
+        $this->assertSame('free', api::get_normalized_plan([
+            'subscription' => ['plan' => ' free '],
+        ]));
+        $this->assertNull(api::get_normalized_plan([
+            'subscription' => [],
+        ], false));
+        $this->assertNull(api::get_normalized_plan(null, false));
+
+        $cache = \cache::make('tool_mobile', 'subscriptioninfo');
+        $cache->set(0, [
+            'subscription' => ['plan' => ' Premium '],
+        ]);
+
+        $this->assertSame('premium', api::get_normalized_plan(null));
+    }
+
+    /**
+     * Test Premium and BMA plan detection.
+     *
+     * @covers \tool_mobile\api::is_premium_or_bma_plan
+     */
+    public function test_is_premium_or_bma_plan(): void {
+        $this->resetAfterTest(true);
+
+        $this->assertTrue(api::is_premium_or_bma_plan([
+            'subscription' => ['plan' => 'premium'],
+        ]));
+        $this->assertTrue(api::is_premium_or_bma_plan([
+            'subscription' => ['plan' => ' BMA '],
+        ]));
+        $this->assertFalse(api::is_premium_or_bma_plan([
+            'subscription' => ['plan' => 'free'],
+        ]));
+        $this->assertFalse(api::is_premium_or_bma_plan([
+            'subscription' => [],
+        ]));
+        $this->assertFalse(api::is_premium_or_bma_plan(null));
+
+        // If the provided data is void or invalid, the function should request cached API data.
+        $cache = \cache::make('tool_mobile', 'subscriptioninfo');
+        $cache->set(0, [
+            'subscription' => ['plan' => ' Premium '],
+        ]);
+        $this->assertTrue(api::is_premium_or_bma_plan(null));
+        $this->assertTrue(api::is_premium_or_bma_plan([
+            'subscription' => ['plan' => 123],
+        ]));
+        $this->assertFalse(api::is_premium_or_bma_plan([
+            'subscription' => ['plan' => 'free'],
+        ]));
+        $this->assertFalse(api::is_premium_or_bma_plan(null, false));
+    }
+
+    /**
+     * Test Matomo detection against common identifiers.
+     *
+     * @covers \tool_mobile\api::contains_matomo_tracking
+     */
+    public function test_contains_matomo_tracking(): void {
+        $samples = [
+            'var _paq = window._paq || [];',
+            '<script src="https://example.com/matomo.js"></script>',
+            '<img src="https://example.com/matomo.php?idsite=1">',
+            '<script src="https://example.com/piwik.js"></script>',
+            '<img src="https://example.com/piwik.php?idsite=1">',
+        ];
+
+        foreach ($samples as $sample) {
+            $this->assertTrue(api::contains_matomo_tracking($sample));
+        }
+
+        $this->assertFalse(api::contains_matomo_tracking('trackPageView'));
+        $this->assertFalse(api::contains_matomo_tracking('enableLinkTracking'));
+        $this->assertFalse(api::contains_matomo_tracking('setTrackerUrl'));
+        $this->assertFalse(api::contains_matomo_tracking('setSiteId'));
+        $this->assertFalse(api::contains_matomo_tracking('Google Analytics content only'));
+        $this->assertFalse(api::contains_matomo_tracking(''));
+        $this->assertFalse(api::contains_matomo_tracking(null));
+    }
+
+    /**
+     * Test Matomo detection in the Additional HTML settings.
+     *
+     * @covers \tool_mobile\api::has_matomo_additional_html
+     */
+    public function test_has_matomo_additional_html(): void {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        set_config('additionalhtmlhead', '<script>console.log("no matomo")</script>');
+        set_config('additionalhtmltopofbody', '<script>var _paq = window._paq || [];</script>');
+        set_config('additionalhtmlfooter', '');
+        $CFG->additionalhtmlhead = '<script>console.log("no matomo")</script>';
+        $CFG->additionalhtmltopofbody = '<script>var _paq = window._paq || [];</script>';
+        $CFG->additionalhtmlfooter = '';
+
+        $this->assertTrue(api::has_matomo_additional_html());
+
+        set_config('additionalhtmlhead', '');
+        set_config('additionalhtmltopofbody', '');
+        set_config('additionalhtmlfooter', '');
+        $CFG->additionalhtmlhead = '';
+        $CFG->additionalhtmltopofbody = '';
+        $CFG->additionalhtmlfooter = '';
+
+        $this->assertFalse(api::has_matomo_additional_html());
+    }
+
+    /**
      * Test get_autologin_key.
      */
     public function test_get_autologin_key(): void {

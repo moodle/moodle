@@ -240,7 +240,7 @@
     {{/messagedeprecation}}
 
     <div class="row g-4 align-items-stretch">
-        <div class="col-12 col-md-6 d-flex mb-4 mb-md-0">
+        <div class="col-12 col-md-6 d-flex flex-column mb-4 mb-md-0">
             <div class="card flex-fill">
                 <div class="card-body p-4">
                     <h4 class="h4 fw-bold card-title">{{#str}} currentusage, tool_mobile {{/str}}</h4>
@@ -283,6 +283,37 @@
                     {{/features}}
                 </div>
             </div>
+            {{#morecurrentsetup}}
+            <div class="card bg-body-secondary border-0 mt-4">
+                <div class="card-body p-4">
+                    <h4 class="h6 fw-bold card-title">{{#str}} getmorefromcurrentsetup, tool_mobile {{/str}}</h4>
+                    {{#logoinapp}}
+                    <div class="d-flex justify-content-between align-items-start mt-3">
+                        <div>
+                            <div class="small">
+                                <i class="icon fa fa-times fa-fw" role="img" aria-label="{{#str}} notincluded {{/str}}"></i>
+                                {{#str}} logointheapp, tool_mobile {{/str}}
+                            </div>
+                            <p class="text-muted small mb-0">{{#str}} logointheapp_description, tool_mobile {{/str}}</p>
+                        </div>
+                        <span class="badge bg-warning text-dark px-2 py-1 small fw-medium">{{#str}} premiumonly, tool_mobile {{/str}}</span>
+                    </div>
+                    {{/logoinapp}}
+                    {{#matomoinapp}}
+                    <div class="d-flex justify-content-between align-items-start mt-3">
+                        <div>
+                            <div class="small">
+                                <i class="icon fa fa-times fa-fw" role="img" aria-label="{{#str}} notincluded {{/str}}"></i>
+                                {{#str}} matomointheapp, tool_mobile {{/str}}
+                            </div>
+                            <p class="text-muted small mb-0">{{#str}} matomointheapp_description, tool_mobile {{/str}}</p>
+                        </div>
+                        <span class="badge bg-warning text-dark px-2 py-1 small fw-medium">{{#str}} premiumonly, tool_mobile {{/str}}</span>
+                    </div>
+                    {{/matomoinapp}}
+                </div>
+            </div>
+            {{/morecurrentsetup}}
         </div>
         {{#tocompareplan}}
         <div class="col-12 col-md-6 d-flex">

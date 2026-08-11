@@ -181,10 +181,18 @@ class settingpage implements
      *
      * Note: each setting in a settingpage must have a unique internal name
      *
+     * By default the new setting is appended after the existing settings. You can specify
+     * an existing setting on this page that the new setting should be inserted before. If the
+     * given sibling is not found, the setting is appended to the end (as it would be by
+     * default) and a developer debugging message is displayed.
+     *
+     * @throws \coding_exception if the $beforesibling is empty string or is not string at all.
      * @param object $setting is the setting object you want to add
+     * @param ?string $beforesibling The name of the existing setting (including the plugin
+     *      prefix if it has one, e.g. 'core_adminlogo') the new setting should be inserted before.
      * @return bool true if successful, false if not
      */
-    public function add($setting) {
+    public function add($setting, ?string $beforesibling = null) {
         if (!($setting instanceof \core_admin\setting)) {
             debugging('error - not a setting instance');
             return false;
@@ -194,7 +202,32 @@ class settingpage implements
         if ($setting->plugin) {
             $name = $setting->plugin . $name;
         }
-        $this->settings->{$name} = $setting;
+
+        if (is_null($beforesibling)) {
+            // Append the setting after the existing ones.
+            $this->settings->{$name} = $setting;
+            return true;
+        }
+
+        if (trim($beforesibling) === '') {
+            throw new \coding_exception('Unexpected value of the beforesibling parameter');
+        }
+
+        if (!property_exists($this->settings, $beforesibling)) {
+            debugging('Sibling ' . $beforesibling . ' not found', DEBUG_DEVELOPER);
+            $this->settings->{$name} = $setting;
+            return true;
+        }
+
+        // Rebuild the settings list, inserting the new setting before the given sibling.
+        $reordered = new \stdClass();
+        foreach ((array) $this->settings as $key => $existing) {
+            if ($key === $beforesibling) {
+                $reordered->{$name} = $setting;
+            }
+            $reordered->{$key} = $existing;
+        }
+        $this->settings = $reordered;
         return true;
     }
 

@@ -31,16 +31,16 @@
     width: 100%;
 }
 
-.tool_mobile-settings-alert a:not(.btn) {
+.tool-mobile-settings-alert a:not(.btn) {
     font-weight: 700;
     text-decoration: underline;
 }
 
-.tool_mobile-settings-alert a:not(.btn):hover {
+.tool-mobile-settings-alert a:not(.btn):hover {
     text-decoration: underline;
 }
 
-.tool_mobile-settings-alert img.icon {
+.tool-mobile-settings-alert img.icon {
     width: 20px;
     height: 20px;
     margin-bottom: .5rem;
@@ -54,3 +54,747 @@
     border-bottom: 0 solid transparent;
     font-size: 1rem;
 }
+
+/* Branding preview animation. */
+#page-admin-setting-premiumfeatures {
+    .tool-mobile-branding-preview {
+        background: #ececed;
+        --tool-mobile-branding-preview-cycle: 4.5s;
+        --tool-mobile-branding-preview-unit: clamp(0.84px, 0.07vw + 0.62px, 1px);
+        padding:
+            calc(16 * var(--tool-mobile-branding-preview-unit)) calc(28 * var(--tool-mobile-branding-preview-unit))
+            calc(16 * var(--tool-mobile-branding-preview-unit)) calc(16 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: calc(28 * var(--tool-mobile-branding-preview-unit));
+        overflow: visible;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .tool-mobile-branding-preview-scene {
+        min-height: calc(320 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: nowrap;
+        gap: calc(20 * var(--tool-mobile-branding-preview-unit));
+        overflow: visible;
+    }
+
+    .tool-mobile-branding-preview-picker {
+        width: calc(153 * var(--tool-mobile-branding-preview-unit));
+        background: #fff;
+        border-radius: calc(16 * var(--tool-mobile-branding-preview-unit));
+        box-shadow:
+            0 calc(12 * var(--tool-mobile-branding-preview-unit)) calc(32 * var(--tool-mobile-branding-preview-unit))
+            rgba(0, 0, 0, 0.12);
+        padding: calc(20 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        flex-direction: column;
+        gap: calc(18 * var(--tool-mobile-branding-preview-unit));
+    }
+
+    .tool-mobile-branding-preview-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .tool-mobile-branding-preview-pill {
+        height: calc(11 * var(--tool-mobile-branding-preview-unit));
+        background: #e3e3e6;
+        border-radius: 999px;
+    }
+
+    .tool-mobile-branding-preview-pill-wide {
+        width: 55%;
+    }
+
+    .tool-mobile-branding-preview-pill-mid {
+        width: 40%;
+    }
+
+    .tool-mobile-branding-preview-pill-small {
+        width: 20%;
+    }
+
+    .tool-mobile-branding-preview-dot {
+        width: calc(22 * var(--tool-mobile-branding-preview-unit));
+        height: calc(22 * var(--tool-mobile-branding-preview-unit));
+        border-radius: calc(8 * var(--tool-mobile-branding-preview-unit));
+        animation: tool-mobile-branding-preview-pickercolour var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-swatches {
+        display: flex;
+        gap: calc(9 * var(--tool-mobile-branding-preview-unit));
+    }
+
+    .tool-mobile-branding-preview-swatch {
+        width: calc(25 * var(--tool-mobile-branding-preview-unit));
+        height: calc(25 * var(--tool-mobile-branding-preview-unit));
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .tool-mobile-branding-preview-swatch-a {
+        background: #3cb878;
+    }
+
+    .tool-mobile-branding-preview-swatch-b {
+        background: #f98012;
+    }
+
+    .tool-mobile-branding-preview-swatch-c {
+        background: #5a48d8;
+    }
+
+    .tool-mobile-branding-preview-swatch::after {
+        content: "";
+        position: absolute;
+        inset: calc(-6 * var(--tool-mobile-branding-preview-unit));
+        border: calc(3 * var(--tool-mobile-branding-preview-unit)) solid #b9b9f0;
+        border-radius: 50%;
+        opacity: 0;
+        animation: tool-mobile-branding-preview-ring var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-swatch-a::after {
+        animation-delay: 1s;
+    }
+
+    .tool-mobile-branding-preview-swatch-c::after {
+        animation-delay: 2.2s;
+    }
+
+    .tool-mobile-branding-preview-swatch-b::after {
+        animation-delay: 3.3s;
+    }
+
+    .tool-mobile-branding-preview-gradient {
+        height: calc(52 * var(--tool-mobile-branding-preview-unit));
+        border-radius: calc(13 * var(--tool-mobile-branding-preview-unit));
+        background: linear-gradient(135deg, #f98012, #ffc371, #3cb878, #38b6ff, #5a48d8);
+        position: relative;
+    }
+
+    .tool-mobile-branding-preview-cursor {
+        position: absolute;
+        top: calc(16 * var(--tool-mobile-branding-preview-unit));
+        left: 40%;
+        width: calc(18 * var(--tool-mobile-branding-preview-unit));
+        height: calc(18 * var(--tool-mobile-branding-preview-unit));
+        border: calc(4 * var(--tool-mobile-branding-preview-unit)) solid #fff;
+        border-radius: 50%;
+        box-shadow:
+            0 calc(3 * var(--tool-mobile-branding-preview-unit)) calc(10 * var(--tool-mobile-branding-preview-unit))
+            rgba(0, 0, 0, 0.3);
+        animation: tool-mobile-branding-preview-slide var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-phone {
+        width: calc(135 * var(--tool-mobile-branding-preview-unit));
+        background: #fff;
+        border-radius: calc(20 * var(--tool-mobile-branding-preview-unit));
+        box-shadow:
+            0 0 0 calc(7 * var(--tool-mobile-branding-preview-unit)) #f7f7f8,
+            0 calc(18 * var(--tool-mobile-branding-preview-unit)) calc(44 * var(--tool-mobile-branding-preview-unit))
+            rgba(0, 0, 0, 0.14);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(calc(2 * var(--tool-mobile-branding-preview-unit)));
+    }
+
+    .tool-mobile-branding-preview-header {
+        height: calc(61 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        align-items: center;
+        gap: calc(9 * var(--tool-mobile-branding-preview-unit));
+        padding: 0 calc(14 * var(--tool-mobile-branding-preview-unit));
+        animation: tool-mobile-branding-preview-paintheader var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-header-pill {
+        width: 40%;
+        height: calc(11 * var(--tool-mobile-branding-preview-unit));
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 999px;
+    }
+
+    .tool-mobile-branding-preview-header-dot {
+        width: calc(22 * var(--tool-mobile-branding-preview-unit));
+        height: calc(22 * var(--tool-mobile-branding-preview-unit));
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.55);
+        margin-left: auto;
+    }
+
+    .tool-mobile-branding-preview-list {
+        padding: calc(14 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        flex-direction: column;
+        gap: calc(13 * var(--tool-mobile-branding-preview-unit));
+    }
+
+    .tool-mobile-branding-preview-card {
+        border: calc(1 * var(--tool-mobile-branding-preview-unit)) solid #ececef;
+        border-radius: calc(11 * var(--tool-mobile-branding-preview-unit));
+        padding: calc(13 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        flex-direction: column;
+        gap: calc(9 * var(--tool-mobile-branding-preview-unit));
+    }
+
+    .tool-mobile-branding-preview-card-pill {
+        height: calc(9 * var(--tool-mobile-branding-preview-unit));
+        background: #e3e3e6;
+        border-radius: 999px;
+        width: 70%;
+    }
+
+    .tool-mobile-branding-preview-card-pill-secondary {
+        background: #efeff1;
+        width: 45%;
+    }
+
+    .tool-mobile-branding-preview-card-pill-secondary-short {
+        width: 35%;
+    }
+
+    .tool-mobile-branding-preview-card-pill-short {
+        width: 60%;
+    }
+
+    .tool-mobile-branding-preview-bar {
+        height: calc(7 * var(--tool-mobile-branding-preview-unit));
+        border-radius: 999px;
+        width: 55%;
+        animation: tool-mobile-branding-preview-paintbars var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-bar-short {
+        width: 40%;
+    }
+
+    .tool-mobile-branding-preview-button {
+        margin: 0 calc(14 * var(--tool-mobile-branding-preview-unit)) calc(14 * var(--tool-mobile-branding-preview-unit));
+        height: calc(36 * var(--tool-mobile-branding-preview-unit));
+        border-radius: calc(11 * var(--tool-mobile-branding-preview-unit));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: tool-mobile-branding-preview-paintbtn var(--tool-mobile-branding-preview-cycle) linear infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-branding-preview-button-label {
+        width: 40%;
+        height: calc(8 * var(--tool-mobile-branding-preview-unit));
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 999px;
+    }
+
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-dot,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-swatch::after,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-cursor,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-header,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-bar,
+    .tool-mobile-branding-preview:hover .tool-mobile-branding-preview-button,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-dot,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-swatch::after,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-cursor,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-header,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-bar,
+    .tool-mobile-branding-preview-wrapper:focus-within .tool-mobile-branding-preview-button {
+        animation-play-state: running;
+    }
+}
+
+/*
+ * Kept outside #page-admin-setting-premiumfeatures on purpose: @keyframes can't be scoped to a
+ * selector, so nesting them inside a page-id rule makes them invalid and silently dropped.
+ */
+@keyframes tool-mobile-branding-preview-pickercolour {
+    0%,
+    20% {
+        background-color: #c9c9ce;
+    }
+
+    24%,
+    42% {
+        background-color: #3cb878;
+    }
+
+    46%,
+    64% {
+        background-color: #5a48d8;
+    }
+
+    68%,
+    95% {
+        background-color: #f98012;
+    }
+
+    100% {
+        background-color: #c9c9ce;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-ring {
+    0%,
+    22% {
+        opacity: 1;
+    }
+
+    31%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-slide {
+    0%,
+    20% {
+        left: 40%;
+        opacity: 0;
+    }
+
+    24%,
+    42% {
+        left: 55%;
+        opacity: 1;
+    }
+
+    46%,
+    64% {
+        left: 78%;
+    }
+
+    68%,
+    94% {
+        left: 8%;
+        opacity: 1;
+    }
+
+    95%,
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-paintheader {
+    0%,
+    24% {
+        background-color: #c9c9ce;
+    }
+
+    28%,
+    97% {
+        background-color: #3cb878;
+    }
+
+    100% {
+        background-color: #c9c9ce;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-paintbars {
+    0%,
+    68% {
+        background-color: #c9c9ce;
+    }
+
+    72%,
+    97% {
+        background-color: #f98012;
+    }
+
+    100% {
+        background-color: #c9c9ce;
+    }
+}
+
+@keyframes tool-mobile-branding-preview-paintbtn {
+    0%,
+    46% {
+        background-color: #c9c9ce;
+    }
+
+    50%,
+    97% {
+        background-color: #5a48d8;
+    }
+
+    100% {
+        background-color: #c9c9ce;
+    }
+}
+/* END Branding preview animation. */
+
+/* Logo system alert animation. */
+#page-admin-setting-logos {
+    .tool-mobile-system-alert-wrapper {
+        border-color: #d5d4dc;
+    }
+
+    .tool-mobile-system-alert-animation {
+        background: #ececed;
+        --tool-mobile-logo-preview-unit: clamp(0.72px, 0.08vw + 0.56px, 1px);
+        --tool-mobile-logo-preview-cycle: 6s;
+        padding: calc(1 * var(--tool-mobile-logo-preview-unit)) calc(1 * var(--tool-mobile-logo-preview-unit)) 0;
+        height: calc(230 * var(--tool-mobile-logo-preview-unit));
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .tool-mobile-logo-preview {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .tool-mobile-logo-preview-phone {
+        width: calc(190 * var(--tool-mobile-logo-preview-unit));
+        background: #fff;
+        border-radius: calc(22 * var(--tool-mobile-logo-preview-unit)) calc(22 * var(--tool-mobile-logo-preview-unit)) 0 0;
+        box-shadow:
+            0 0 0 calc(4 * var(--tool-mobile-logo-preview-unit)) #f7f7f8,
+            0 calc(16 * var(--tool-mobile-logo-preview-unit)) calc(40 * var(--tool-mobile-logo-preview-unit)) rgba(0, 0, 0, 0.10);
+        display: flex;
+        flex-direction: column;
+        padding: calc(10 * var(--tool-mobile-logo-preview-unit)) calc(11 * var(--tool-mobile-logo-preview-unit)) 0;
+        transform: translateY(calc(60 * var(--tool-mobile-logo-preview-unit)));
+    }
+
+    .tool-mobile-logo-preview-statusbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: calc(9 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-notch {
+        width: calc(26 * var(--tool-mobile-logo-preview-unit));
+        height: calc(8 * var(--tool-mobile-logo-preview-unit));
+        background: #2c2c2e;
+        border-radius: calc(5 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-statusicons {
+        display: flex;
+        gap: calc(3 * var(--tool-mobile-logo-preview-unit));
+        align-items: center;
+    }
+
+    .tool-mobile-logo-preview-statusicon {
+        display: block;
+        background: #2c2c2e;
+        border-radius: calc(1 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-statusicon-signal {
+        width: calc(8 * var(--tool-mobile-logo-preview-unit));
+        height: calc(5 * var(--tool-mobile-logo-preview-unit));
+        clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    }
+
+    .tool-mobile-logo-preview-statusicon-wifi {
+        width: calc(7 * var(--tool-mobile-logo-preview-unit));
+        height: calc(5 * var(--tool-mobile-logo-preview-unit));
+        border-radius: 50% 50% 0 0;
+    }
+
+    .tool-mobile-logo-preview-statusicon-battery {
+        width: calc(11 * var(--tool-mobile-logo-preview-unit));
+        height: calc(6 * var(--tool-mobile-logo-preview-unit));
+        border-radius: calc(2 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-navrow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: calc(8 * var(--tool-mobile-logo-preview-unit));
+        border-bottom: 1px solid #eeeef0;
+        margin-bottom: calc(16 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-navleft {
+        display: flex;
+        align-items: center;
+        gap: calc(7 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-backarrow {
+        font-size: calc(10 * var(--tool-mobile-logo-preview-unit));
+        color: #3b3b40;
+    }
+
+    .tool-mobile-logo-preview-navpill {
+        width: calc(38 * var(--tool-mobile-logo-preview-unit));
+        height: calc(7 * var(--tool-mobile-logo-preview-unit));
+        background: #d8d8dc;
+        border-radius: 999px;
+    }
+
+    .tool-mobile-logo-preview-navicons {
+        display: flex;
+        gap: calc(8 * var(--tool-mobile-logo-preview-unit));
+        align-items: center;
+        font-size: calc(10 * var(--tool-mobile-logo-preview-unit));
+        color: #3d3d8f;
+    }
+
+    .tool-mobile-logo-preview-logowrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: calc(15 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-logotile {
+        width: calc(64 * var(--tool-mobile-logo-preview-unit));
+        height: calc(64 * var(--tool-mobile-logo-preview-unit));
+        border-radius: calc(16 * var(--tool-mobile-logo-preview-unit));
+        position: relative;
+        box-shadow: 0 0 0 calc(4 * var(--tool-mobile-logo-preview-unit)) rgba(130, 130, 225, 0.16);
+    }
+
+    .tool-mobile-logo-preview-brand {
+        position: absolute;
+        inset: 0;
+        border-radius: calc(16 * var(--tool-mobile-logo-preview-unit));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        animation: tool-mobile-logo-preview-swap var(--tool-mobile-logo-preview-cycle) infinite;
+        animation-play-state: paused;
+    }
+
+    .tool-mobile-logo-preview-brand-a {
+        background: #3cb878;
+        animation-delay: -1s;
+    }
+
+    .tool-mobile-logo-preview-brand-b {
+        background: linear-gradient(145deg, #e05252, #c23434);
+        animation-delay: -3s;
+    }
+
+    .tool-mobile-logo-preview-brand-c {
+        background: linear-gradient(145deg, #7b6cf0, #5a48d8);
+        animation-delay: -5s;
+    }
+
+    .tool-mobile-logo-preview-mountain {
+        width: calc(33 * var(--tool-mobile-logo-preview-unit));
+        height: calc(21 * var(--tool-mobile-logo-preview-unit));
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tool-mobile-logo-preview-mountain::before,
+    .tool-mobile-logo-preview-mountain::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        border-left: calc(11 * var(--tool-mobile-logo-preview-unit)) solid transparent;
+        border-right: calc(11 * var(--tool-mobile-logo-preview-unit)) solid transparent;
+        border-bottom: calc(17 * var(--tool-mobile-logo-preview-unit)) solid rgba(255, 255, 255, 0.95);
+    }
+
+    .tool-mobile-logo-preview-mountain::before {
+        left: calc(1 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-mountain::after {
+        left: calc(13 * var(--tool-mobile-logo-preview-unit));
+        border-bottom-color: rgba(255, 255, 255, 0.65);
+    }
+
+    .tool-mobile-logo-preview-flower {
+        width: calc(33 * var(--tool-mobile-logo-preview-unit));
+        height: calc(33 * var(--tool-mobile-logo-preview-unit));
+        position: relative;
+    }
+
+    .tool-mobile-logo-preview-petal {
+        position: absolute;
+        width: calc(14 * var(--tool-mobile-logo-preview-unit));
+        height: calc(14 * var(--tool-mobile-logo-preview-unit));
+        background: #fff;
+        border-radius: 50%;
+    }
+
+    .tool-mobile-logo-preview-petal:nth-child(1) {
+        top: 0;
+        left: calc(9 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-petal:nth-child(2) {
+        bottom: 0;
+        left: calc(9 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-petal:nth-child(3) {
+        left: 0;
+        top: calc(9 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-petal:nth-child(4) {
+        right: 0;
+        top: calc(9 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-flowercentre {
+        position: absolute;
+        top: calc(12 * var(--tool-mobile-logo-preview-unit));
+        left: calc(12 * var(--tool-mobile-logo-preview-unit));
+        width: calc(10 * var(--tool-mobile-logo-preview-unit));
+        height: calc(10 * var(--tool-mobile-logo-preview-unit));
+        background: #c23434;
+        border-radius: 50%;
+        box-shadow: 0 0 0 calc(2 * var(--tool-mobile-logo-preview-unit)) #fff;
+    }
+
+    .tool-mobile-logo-preview-orbit {
+        width: calc(33 * var(--tool-mobile-logo-preview-unit));
+        height: calc(33 * var(--tool-mobile-logo-preview-unit));
+        position: relative;
+    }
+
+    .tool-mobile-logo-preview-orbit::before {
+        content: "";
+        position: absolute;
+        inset: calc(6 * var(--tool-mobile-logo-preview-unit));
+        border: calc(3 * var(--tool-mobile-logo-preview-unit)) solid rgba(255, 255, 255, 0.95);
+        border-radius: 50%;
+        transform: rotate(-25deg) scaleY(0.62);
+    }
+
+    .tool-mobile-logo-preview-orbit::after {
+        content: "";
+        position: absolute;
+        top: calc(5 * var(--tool-mobile-logo-preview-unit));
+        right: calc(4 * var(--tool-mobile-logo-preview-unit));
+        width: calc(7 * var(--tool-mobile-logo-preview-unit));
+        height: calc(7 * var(--tool-mobile-logo-preview-unit));
+        background: #fff;
+        border-radius: 50%;
+    }
+
+    .tool-mobile-logo-preview-titles {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: calc(6 * var(--tool-mobile-logo-preview-unit));
+        margin-bottom: calc(16 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-titlepill {
+        height: calc(7 * var(--tool-mobile-logo-preview-unit));
+        background: #d4d4d8;
+        border-radius: 999px;
+        width: 46%;
+    }
+
+    .tool-mobile-logo-preview-titlepill-secondary {
+        height: calc(6 * var(--tool-mobile-logo-preview-unit));
+        background: #e3e3e6;
+        width: 60%;
+    }
+
+    .tool-mobile-logo-preview-form {
+        display: flex;
+        flex-direction: column;
+        gap: calc(15 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-field {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: calc(8 * var(--tool-mobile-logo-preview-unit));
+        border-bottom: 1px solid #e4e4e7;
+    }
+
+    .tool-mobile-logo-preview-fieldhint {
+        width: 34%;
+        height: calc(6 * var(--tool-mobile-logo-preview-unit));
+        background: #d4d4d8;
+        border-radius: 999px;
+    }
+
+    .tool-mobile-logo-preview-fieldhint-short {
+        width: 28%;
+    }
+
+    .tool-mobile-logo-preview-eye {
+        font-size: calc(10 * var(--tool-mobile-logo-preview-unit));
+        color: #6c5ce7;
+    }
+
+    .tool-mobile-logo-preview-loginbtn {
+        height: calc(24 * var(--tool-mobile-logo-preview-unit));
+        border-radius: calc(6 * var(--tool-mobile-logo-preview-unit));
+        background: #4b4bd6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: calc(2 * var(--tool-mobile-logo-preview-unit));
+        margin-bottom: calc(12 * var(--tool-mobile-logo-preview-unit));
+    }
+
+    .tool-mobile-logo-preview-btnlabel {
+        width: 30%;
+        height: calc(5 * var(--tool-mobile-logo-preview-unit));
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 999px;
+    }
+
+    .tool-mobile-system-alert-animation:hover .tool-mobile-logo-preview-brand,
+    .tool-mobile-system-alert-wrapper:focus-within .tool-mobile-logo-preview-brand {
+        animation-play-state: running;
+    }
+}
+
+/* Kept outside #page-admin-setting-logos for the same reason as the branding-preview keyframes above. */
+@keyframes tool-mobile-logo-preview-swap {
+    0% {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+
+    5% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    30% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    36% {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+}
+/* END Logo system alert animation. */

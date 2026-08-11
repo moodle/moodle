@@ -154,6 +154,39 @@ final class settingpage_test extends \advanced_testcase {
     }
 
     /**
+     * Test adding a setting before an existing sibling setting.
+     */
+    public function test_add_before_sibling(): void {
+        $page = new settingpage('page', 'Page');
+        $page->add(new configtext('text1', 'Text 1', '', ''));
+        $page->add(new configtext('myplugin/text2', 'Text 2', '', ''));
+
+        // Insert before the first setting.
+        $this->assertTrue($page->add(new configtext('text0', 'Text 0', '', ''), 'text1'));
+        $this->assertSame(['text0', 'text1', 'myplugintext2'], array_keys((array) $page->settings));
+
+        // Insert before a plugin-prefixed sibling.
+        $this->assertTrue($page->add(new configtext('text15', 'Text 1.5', '', ''), 'myplugintext2'));
+        $this->assertSame(['text0', 'text1', 'text15', 'myplugintext2'], array_keys((array) $page->settings));
+
+        // An unknown sibling appends the setting and emits a debugging message.
+        $this->assertTrue($page->add(new configtext('text3', 'Text 3', '', ''), 'doesnotexist'));
+        $this->assertDebuggingCalled('Sibling doesnotexist not found', DEBUG_DEVELOPER);
+        $this->assertSame(['text0', 'text1', 'text15', 'myplugintext2', 'text3'], array_keys((array) $page->settings));
+    }
+
+    /**
+     * Test adding a setting with an invalid sibling value.
+     */
+    public function test_add_before_sibling_invalid(): void {
+        $page = new settingpage('page', 'Page');
+        $page->add(new configtext('text1', 'Text 1', '', ''));
+
+        $this->expectException(\coding_exception::class);
+        $page->add(new configtext('text2', 'Text 2', '', ''), '   ');
+    }
+
+    /**
      * Helper to save config data via admin settings write flow.
      *
      * @param root $adminroot
