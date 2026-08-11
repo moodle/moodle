@@ -275,6 +275,17 @@ class manager {
         // The following list is defined at:
         // https://www.tiny.cloud/docs/advanced/available-toolbar-buttons/#thecoretoolbarbuttons.
         return [
+            'accordion' => [
+                'buttons' => [
+                    'accordion',
+                    'accordiontoggle',
+                    'accordionremove',
+                ],
+                'menuitems' => [
+                    'accordion' => 'insert',
+                ],
+            ],
+            'advlist' => [],
             'anchor' => [
                 'buttons' => [
                     'anchor',

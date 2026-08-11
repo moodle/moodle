@@ -1107,7 +1107,7 @@ function purify_html($text, $options = array()) {
         $config = HTMLPurifier_Config::createDefault();
 
         $config->set('HTML.DefinitionID', 'moodlehtml');
-        $config->set('HTML.DefinitionRev', 7);
+        $config->set('HTML.DefinitionRev', 8);
         $config->set('CSS.Proprietary', true);
         $config->set('Cache.SerializerPath', $cachedir);
         $config->set('Cache.SerializerPermissions', $CFG->directorypermissions);
@@ -1190,8 +1190,39 @@ function purify_html($text, $options = array()) {
                 'default' => 'Bool',
             ]);
 
+            // Allow <details> and <summary> elements used by the TinyMCE Accordion plugin.
+            // The content model 'Required: summary | Flow' allows <details> elements to
+            // contain any combination of <summary> and Flow content (the | separator adds
+            // both to the allowed-elements set; multiple children of any listed type are
+            // permitted). 'Required' enforces that the element has at least one child,
+            // which is the correct behaviour for an accordion that must have content.
+            $def->addElement('details', 'Block', 'Required: summary | Flow', 'Common', [
+                'open' => 'Bool',
+            ]);
+            $def->addElement('summary', false, 'Flow', 'Common');
+
+            // Note: the advlist plugin stores list styling via the list-style-type CSS
+            // property in inline style attributes on <ul>/<ol> elements (e.g.
+            // style="list-style-type: circle;"). Most of the values advlist offers
+            // (disc, circle, square, decimal, lower/upper-roman, lower/upper-alpha, none)
+            // are already covered by HTMLPurifier's built-in CSS definition
+            // (HTMLPurifier_CSSDefinition). The lower-greek value is not in that
+            // built-in allowlist, even though it is a standard CSS2.1 counter style
+            // (see https://www.w3.org/TR/CSS21/generate.html#propdef-list-style-type),
+            // so it is added explicitly below.
+
             // Use the built-in Ruby module to add annotation support.
             $def->manager->addModule(new HTMLPurifier_HTMLModule_Ruby());
+        }
+
+        // Extend the built-in list-style-type CSS enum with lower-greek so the TinyMCE
+        // advlist plugin's lower-greek list style survives HTMLPurifier filtering. This is
+        // done via the public API (HTMLPurifier_Config::getCSSDefinition()) rather than by
+        // patching the vendored HTMLPurifier library. HTMLPurifier_CSSDefinition::doSetup()
+        // wraps every property definition in an ImportantDecorator, so the underlying
+        // Enum's valid_values list is reached via ->def.
+        if ($cssdef = $config->getCSSDefinition()) {
+            $cssdef->info['list-style-type']->def->valid_values['lower-greek'] = true;
         }
 
         $purifier = new HTMLPurifier($config);
