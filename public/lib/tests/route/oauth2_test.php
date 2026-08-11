@@ -948,4 +948,176 @@ final class oauth2_test extends \advanced_testcase {
 
         $this->assertSame($expectedresponse, $response);
     }
+
+    /**
+     * Build an oauth2 route, with a pending request already stored under a fresh request id,
+     * ready to drive through login()/do_login()/do_approve() in a test.
+     *
+     * @return array{0: oauth2, 1: string} The route, and the request id of the pending request.
+     */
+    protected function get_route_with_pending_request_for_wantsurl_tests(): array {
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->method('completeAuthorizationRequest')->willReturn(new Response(200, [], 'authorized'));
+
+        $route = $this->get_route_with_stubbed_rendering(server: $server, clientrepository: $clientrepository);
+        $route->method('render_page_from_renderable')
+            ->willReturnCallback(fn ($content, ResponseInterface $response): ResponseInterface => $response);
+
+        return [$route, $requestid];
+    }
+
+    /**
+     * Submit valid credentials for the given pending request id, and then submit the approval
+     * form for it, entirely through the route's public methods.
+     *
+     * @param oauth2 $route A route already constructed with a client repository that resolves
+     *      the request's client, and a server that can complete the request.
+     * @param string $requestid
+     * @param bool $approved Whether the approval form is submitted as approved or denied.
+     */
+    protected function submit_valid_login_and_approve(oauth2 $route, string $requestid, bool $approved): void {
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->getMock();
+        $userrepository->method('getUserEntityByUserCredentials')->willReturn($this->make_user_entity(2));
+
+        $dologinrequest = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'secret',
+            ]);
+        $route->do_login($dologinrequest, new Response(), $userrepository);
+
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['store_granted_scopes_for_user'])
+            ->getMock();
+
+        $approverequest = (new ServerRequest('POST', '/approve'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'sesskey' => sesskey(),
+                'approve' => $approved ? '1' : '0',
+                'scopes' => ['moodle'],
+            ]);
+        $route->do_approve($approverequest, new Response(), $grantedscopesrepository);
+    }
+
+    /**
+     * Approving a completed OAuth flow clears $SESSION->wantsurl, when it still holds the
+     * OAuth authorize URL that login() stored for this exact request id.
+     */
+    public function test_do_approve_when_approved_clears_matching_oauth_wantsurl(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        [$route, $requestid] = $this->get_route_with_pending_request_for_wantsurl_tests();
+
+        $route->login(
+            (new ServerRequest('GET', '/login'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+        );
+
+        // login() must have stored something in wantsurl for this to be a meaningful test.
+        $this->assertTrue(isset($SESSION->wantsurl));
+
+        $this->submit_valid_login_and_approve($route, $requestid, approved: true);
+
+        $this->assertFalse(isset($SESSION->wantsurl));
+    }
+
+    /**
+     * The same cleanup happens when the pending request is denied, not just approved:
+     * forget_auth_request() runs regardless of the outcome.
+     */
+    public function test_do_approve_when_denied_clears_matching_oauth_wantsurl(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        [$route, $requestid] = $this->get_route_with_pending_request_for_wantsurl_tests();
+
+        $route->login(
+            (new ServerRequest('GET', '/login'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+        );
+
+        $this->assertTrue(isset($SESSION->wantsurl));
+
+        $this->submit_valid_login_and_approve($route, $requestid, approved: false);
+
+        $this->assertFalse(isset($SESSION->wantsurl));
+    }
+
+    /**
+     * If something else (e.g. an unrelated ordinary login in another tab of the same session)
+     * has since replaced wantsurl with a different destination, completing this OAuth flow must
+     * leave it untouched, rather than assuming it still owns the slot.
+     */
+    public function test_do_approve_leaves_unrelated_newer_wantsurl_untouched(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        [$route, $requestid] = $this->get_route_with_pending_request_for_wantsurl_tests();
+
+        $route->login(
+            (new ServerRequest('GET', '/login'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+        );
+
+        $newerwantsurl = 'https://example.com/course/view.php?id=7';
+        $SESSION->wantsurl = $newerwantsurl;
+
+        $this->submit_valid_login_and_approve($route, $requestid, approved: true);
+
+        $this->assertEquals($newerwantsurl, $SESSION->wantsurl);
+    }
+
+    /**
+     * Completing an OAuth flow for which wantsurl was never set at all (for example, the user
+     * was already logged in and went straight through "continue as current user") must not
+     * error, and must leave wantsurl absent.
+     */
+    public function test_do_approve_with_absent_wantsurl_causes_no_error(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        [$route, $requestid] = $this->get_route_with_pending_request_for_wantsurl_tests();
+
+        unset($SESSION->wantsurl);
+
+        $this->submit_valid_login_and_approve($route, $requestid, approved: true);
+
+        $this->assertFalse(isset($SESSION->wantsurl));
+    }
+
+    /**
+     * A URL that merely happens to carry the same "authrequestid" value as a query parameter,
+     * but is not the OAuth authorize route itself, must not be mistaken for a match by
+     * substring-style checking, and so must not be cleared.
+     */
+    public function test_do_approve_ignores_non_oauth_url_with_matching_authrequestid_param(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        [$route, $requestid] = $this->get_route_with_pending_request_for_wantsurl_tests();
+
+        $unrelatedwantsurl = 'https://example.com/course/view.php?authrequestid=' . $requestid;
+        $SESSION->wantsurl = $unrelatedwantsurl;
+
+        $this->submit_valid_login_and_approve($route, $requestid, approved: true);
+
+        $this->assertEquals($unrelatedwantsurl, $SESSION->wantsurl);
+    }
 }

@@ -599,6 +599,15 @@ class oauth2 {
      * {@see self::store_login_error()}), since it belongs to this same abandoned flow and would
      * otherwise linger in the session indefinitely.
      *
+     * Also clears $SESSION->wantsurl, but only if it is still exactly the OAuth authorize URL
+     * that login() stored for this same request id (see {@see self::wantsurl_is_for_request()}).
+     * login() reuses the site-wide wantsurl slot so that an external IdP-style auth plugin can
+     * redirect back to /authorize after login, but never restores it afterwards; once this
+     * request is forgotten, that URL is dangling and would otherwise be picked up by a later,
+     * unrelated ordinary login and mistaken for its own destination, starting a brand new OAuth
+     * flow. If wantsurl no longer points at this request (another tab or route has since
+     * replaced it with something else, or it was never set) it is left untouched.
+     *
      * @param string $requestid
      */
     private function forget_auth_request(string $requestid): void {
@@ -606,6 +615,43 @@ class oauth2 {
 
         unset($SESSION->oauth2requests[$requestid]);
         unset($SESSION->oauth2loginerrors[$requestid]);
+
+        if (isset($SESSION->wantsurl) && $this->wantsurl_is_for_request($SESSION->wantsurl, $requestid)) {
+            unset($SESSION->wantsurl);
+        }
+    }
+
+    /**
+     * Helper to determine whether the given wantsurl value is the OAuth authorize URL that
+     * login() would have stored for the given request id.
+     *
+     * $SESSION->wantsurl is a site-wide slot that may hold a plain string (as set by
+     * require_login() or login/index.php) or a {@see \core\url} instance (as set by login()), so
+     * it is parsed with the same URL API used to build it, and compared on its route and
+     * "authrequestid" query parameter rather than by substring matching, to avoid mistaking an
+     * unrelated URL that merely happens to contain the same id as a match.
+     *
+     * @param mixed $wantsurl The current value of $SESSION->wantsurl.
+     * @param string $requestid
+     * @return bool
+     */
+    private function wantsurl_is_for_request(mixed $wantsurl, string $requestid): bool {
+        try {
+            $url = new \core\url($wantsurl);
+        } catch (\moodle_exception) {
+            // Not a URL \core\url can parse at all, so it is definitely not the one login()
+            // stored.
+            return false;
+        }
+
+        $authorizeurl = \core\router\util::get_path_for_callable([self::class, 'authorize']);
+        if (!$url->compare($authorizeurl, URL_MATCH_BASE)) {
+            // Some other destination entirely (e.g. the originally-requested protected page, or
+            // a different route), not the OAuth authorize route.
+            return false;
+        }
+
+        return $url->get_param(self::REQUEST_ID_PARAM) === $requestid;
     }
 
     /**
