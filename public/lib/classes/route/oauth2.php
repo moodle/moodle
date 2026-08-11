@@ -207,11 +207,22 @@ class oauth2 {
             $frm = new \stdClass();
         }
 
-        $username = $request->getQueryParams()['username'] ?? '';
-        if ($username !== '') {
-            $frm->username = clean_param($username, PARAM_RAW);
+        // A previous do_login() failure leaves a one-use flash, scoped to this request id,
+        // recording the error to display and the username that was submitted. Consume it (so
+        // it is not shown again on a later render of this same request id) before falling back
+        // to the normal username sources.
+        $requestid = $request->getQueryParams()[self::REQUEST_ID_PARAM] ?? null;
+        $loginerror = $requestid !== null ? $this->consume_login_error($requestid) : null;
+
+        if ($loginerror !== null) {
+            $frm->username = $loginerror['username'];
         } else {
-            $frm->username = get_moodle_cookie();
+            $username = $request->getQueryParams()['username'] ?? '';
+            if ($username !== '') {
+                $frm->username = clean_param($username, PARAM_RAW);
+            } else {
+                $frm->username = get_moodle_cookie();
+            }
         }
 
         $PAGE->set_context(\context_system::instance());
@@ -225,6 +236,13 @@ class oauth2 {
         // Disable guest login and signup for OAuth2 login form.
         $loginform->set_can_login_as_guest(false);
         $loginform->set_signup_allowed(false);
+
+        if ($loginerror !== null) {
+            // Precise authentication failure codes (unauthorised, recaptcha, etc.) are out of
+            // scope here; always show the same generic invalid-login error shown by the
+            // standalone login/index.php flow for a bad username/password.
+            $loginform->set_error('', AUTH_LOGIN_FAILED);
+        }
 
         // Set the wantsurl to the /authorize route.
         // This allows any IDP login page to redirect back to the /authorize route after login.
@@ -312,7 +330,13 @@ class oauth2 {
         }
 
         if ($user === null) {
-            // Login failed, redirect back to login form.
+            // Login failed. Record a one-use flash (error + submitted username), scoped to this
+            // request id, so the redisplayed login form can show it, then redirect back to the
+            // login form using the existing POST-redirect-GET pattern. The pending OAuth
+            // authorization request itself (stored separately under this same request id) is
+            // left untouched, so a subsequent valid login can still continue the flow.
+            $this->store_login_error($requestid, (string) ($parsedbody['username'] ?? ''));
+
             return \core\router\util::redirect_to_callable(
                 $request,
                 $response,
@@ -571,12 +595,61 @@ class oauth2 {
     /**
      * Helper to discard the stored request for the given id, once its flow has completed.
      *
+     * Also discards any pending invalid-login flash for the same request id (see
+     * {@see self::store_login_error()}), since it belongs to this same abandoned flow and would
+     * otherwise linger in the session indefinitely.
+     *
      * @param string $requestid
      */
     private function forget_auth_request(string $requestid): void {
         global $SESSION;
 
         unset($SESSION->oauth2requests[$requestid]);
+        unset($SESSION->oauth2loginerrors[$requestid]);
+    }
+
+    /**
+     * Helper to store a one-use invalid-login flash (the error to display, and the username
+     * that was submitted) for the given request id.
+     *
+     * This is kept in its own session structure, separate from the pending authorization
+     * request data stored by {@see self::store_auth_request()}, and deliberately does not use
+     * the global $SESSION->loginerrormsg/loginerrorcode keys used by the standalone
+     * login/index.php flow, since multiple OAuth2 flows (one per request id) can be in progress
+     * concurrently within the same session.
+     *
+     * The username is cleaned here (the same way as the query-string username is cleaned in
+     * login()), so that whatever later reads it back via {@see self::consume_login_error()} can
+     * use it as-is, without needing to clean it again.
+     *
+     * @param string $requestid
+     * @param string $username The username submitted with the failed attempt.
+     */
+    private function store_login_error(string $requestid, string $username): void {
+        global $SESSION;
+
+        $SESSION->oauth2loginerrors ??= [];
+        $SESSION->oauth2loginerrors[$requestid] = [
+            'username' => clean_param($username, PARAM_RAW),
+        ];
+    }
+
+    /**
+     * Helper to fetch and discard the invalid-login flash for the given request id, if any.
+     *
+     * Callers must treat the returned state as one-use: it is removed from the session as soon
+     * as it is read, so that it is not shown again on a later render of the same request id.
+     *
+     * @param string $requestid
+     * @return array{username: string}|null Null if there is no pending flash for this request id.
+     */
+    private function consume_login_error(string $requestid): ?array {
+        global $SESSION;
+
+        $loginerror = $SESSION->oauth2loginerrors[$requestid] ?? null;
+        unset($SESSION->oauth2loginerrors[$requestid]);
+
+        return $loginerror;
     }
 
     /**

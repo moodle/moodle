@@ -663,6 +663,88 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
+     * A full failed-login redisplay cycle: do_login() with invalid credentials stashes a
+     * one-use flash (error + submitted username) scoped to the request id, without disturbing
+     * the pending OAuth authorization request; login() then consumes and displays that flash
+     * exactly once.
+     *
+     * The submitted username is a plausible extended username (containing an '@' and mixed
+     * case), rather than a plain alphanumeric one, so that the assertion on the redisplayed
+     * value would fail if the route applied an inappropriate filter such as PARAM_USERNAME
+     * (which lowercases and strips characters) instead of the PARAM_RAW cleaning also used by
+     * the existing query-string username path. This test does not otherwise attempt to prove
+     * clean_param()'s internal behaviour, which is covered by Moodle's own parameter tests.
+     */
+    public function test_do_login_invalid_credentials_shows_error_and_retains_username_once(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->getMock();
+        $userrepository->method('getUserEntityByUserCredentials')->willReturn(null);
+
+        $route = $this->get_route_with_stubbed_rendering(clientrepository: $clientrepository);
+
+        $capturedcontent = null;
+        $route->method('render_page_from_renderable')
+            ->willReturnCallback(function ($content, ResponseInterface $response) use (&$capturedcontent): ResponseInterface {
+                $capturedcontent = $content;
+                return $response;
+            });
+
+        $submittedusername = 'Bob@example.com';
+        $dologinrequest = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => $submittedusername,
+                'password' => 'wrong',
+            ]);
+        $response = $route->do_login($dologinrequest, new Response(), $userrepository);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $location = $response->getHeaderLine('Location');
+        $this->assertStringContainsString('/login', $location);
+        $this->assertStringNotContainsString('/approve', $location);
+
+        // Neither the submitted username nor the error message may leak into the redirect URL.
+        $this->assertStringNotContainsString('Bob', $location);
+        $this->assertStringNotContainsString('wrong', $location);
+
+        // The pending OAuth authorization request must survive the failed attempt.
+        $this->assertNotNull($this->get_auth_request_from_session($requestid));
+
+        // Feed the redirect straight back into login(), as the browser would.
+        parse_str((string) parse_url($location, PHP_URL_QUERY), $redirectparams);
+        $loginrequest = (new ServerRequest('GET', '/login'))->withQueryParams($redirectparams);
+
+        $route->login($loginrequest, new Response());
+
+        $this->assertInstanceOf(login::class, $capturedcontent);
+        $data = $capturedcontent->export_for_template($PAGE->get_renderer('core'));
+        $this->assertEquals(get_string('logininvalidlogintitle'), $data->errortitle);
+        $this->assertEquals(get_string('logininvalidlogindetail'), $data->error);
+        // Retained exactly as submitted: same case, and the '@' preserved.
+        $this->assertEquals($submittedusername, $data->username);
+
+        // A second render for the same request id must no longer show the one-use error.
+        $capturedcontent = null;
+        $route->login($loginrequest, new Response());
+
+        $this->assertInstanceOf(login::class, $capturedcontent);
+        $data = $capturedcontent->export_for_template($PAGE->get_renderer('core'));
+        $this->assertEmpty($data->errortitle);
+        $this->assertEmpty($data->error);
+    }
+
+    /**
      * do_login() does not treat an unset 'currentuser' field as "continue as current user".
      */
     public function test_do_login_currentuser_not_set_falls_through_to_credentials(): void {
@@ -741,6 +823,11 @@ final class oauth2_test extends \advanced_testcase {
     /**
      * do_approve() stores the selected scopes and marks the request as approved when the user
      * approves the request.
+     *
+     * This also covers that completing a flow discards any pending invalid-login flash left
+     * over from an earlier failed attempt against the same request id (e.g. the user got their
+     * password wrong once before eventually logging in and approving), alongside the pending
+     * authorization request itself, so it cannot linger in the session.
      */
     public function test_do_approve_when_approved(): void {
         $this->resetAfterTest();
@@ -750,6 +837,13 @@ final class oauth2_test extends \advanced_testcase {
         $authrequest = $this->make_auth_request($client);
         $authrequest->setUser($user);
         $requestid = $this->store_auth_request_in_session($authrequest);
+
+        // Simulate a login-error flash left over from an earlier failed attempt in this same
+        // flow, as do_login() would stash via store_login_error().
+        global $SESSION;
+        $SESSION->oauth2loginerrors[$requestid] = [
+            'username' => 'bob',
+        ];
 
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
         $clientrepository->method('getClientEntity')->willReturn($client);
@@ -786,8 +880,10 @@ final class oauth2_test extends \advanced_testcase {
 
         // The pending request must be discarded once the flow has completed, so that it cannot
         // be replayed (e.g. by resubmitting the approval form).
-        global $SESSION;
         $this->assertArrayNotHasKey($requestid, $SESSION->oauth2requests ?? []);
+
+        // Any leftover login-error flash for this request id must be discarded alongside it.
+        $this->assertArrayNotHasKey($requestid, $SESSION->oauth2loginerrors ?? []);
     }
 
     /**
