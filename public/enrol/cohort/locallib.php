@@ -218,12 +218,13 @@ function enrol_cohort_sync(progress_trace $trace, $courseid = NULL) {
 
 
     // Unenrol as necessary.
+    $suspendedcondition = $unenrolaction == ENROL_EXT_REMOVED_UNENROL ? '' : 'AND ue.status <> :suspended';
     $sql = "SELECT ue.*, e.courseid
               FROM {user_enrolments} ue
               JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'cohort' $onecourse)
          LEFT JOIN {cohort_members} cm ON (cm.cohortid = e.customint1 AND cm.userid = ue.userid)
-             WHERE cm.id IS NULL";
-    $rs = $DB->get_recordset_sql($sql, array('courseid'=>$courseid));
+             WHERE cm.id IS NULL $suspendedcondition";
+    $rs = $DB->get_recordset_sql($sql, ['courseid' => $courseid, 'suspended' => ENROL_USER_SUSPENDED]);
     foreach($rs as $ue) {
         if (!isset($instances[$ue->enrolid])) {
             $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));

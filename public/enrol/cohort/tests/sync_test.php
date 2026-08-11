@@ -31,6 +31,7 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('enrol_cohort_sync')]
 final class sync_test extends \advanced_testcase {
 
     protected function enable_plugin() {
@@ -45,6 +46,60 @@ final class sync_test extends \advanced_testcase {
         unset($enabled['cohort']);
         $enabled = array_keys($enabled);
         set_config('enrol_plugins_enabled', implode(',', $enabled));
+    }
+
+    /**
+     * Suspended external unenrol actions provider.
+     *
+     * @return array
+     */
+    public static function suspended_unenrol_action_provider(): array {
+        return [
+            'keep roles' => [ENROL_EXT_REMOVED_SUSPEND],
+            'remove roles' => [ENROL_EXT_REMOVED_SUSPENDNOROLES],
+        ];
+    }
+
+    /**
+     * Test that sync does not process already suspended enrolments.
+     *
+     * @param int $unenrolaction The external unenrol action.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('suspended_unenrol_action_provider')]
+    public function test_sync_skips_suspended_enrolments(int $unenrolaction): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->enable_plugin();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $cohort = $this->getDataGenerator()->create_cohort();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
+
+        $cohortplugin = enrol_get_plugin('cohort');
+        $cohortplugin->set_config('unenrolaction', $unenrolaction);
+        $instanceid = $cohortplugin->add_instance($course, [
+            'customint1' => $cohort->id,
+            'roleid' => $studentrole->id,
+        ]);
+
+        $trace = new \null_progress_trace();
+        enrol_cohort_sync($trace);
+        $reads = $DB->perf_get_reads();
+        enrol_cohort_sync($trace);
+        $baselinereads = $DB->perf_get_reads() - $reads;
+
+        // Add an already suspended enrolment without triggering event-based sync.
+        $DB->insert_record('user_enrolments', (object) [
+            'status' => ENROL_USER_SUSPENDED,
+            'enrolid' => $instanceid,
+            'userid' => $user->id,
+        ]);
+
+        $reads = $DB->perf_get_reads();
+        enrol_cohort_sync($trace);
+        $this->assertSame($baselinereads, $DB->perf_get_reads() - $reads);
     }
 
     public function test_handler_sync(): void {
