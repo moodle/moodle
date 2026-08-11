@@ -520,9 +520,15 @@ class enrol_manual_plugin extends enrol_plugin {
      * @param int $status default to ENROL_USER_ACTIVE for new enrolments, no change by default in updates
      * @param bool $recovergrades restore grade history
      * @return int The number of enrolled cohort users
+     *
+     * @deprecated since Moodle 5.3 - please do not use this function any more
      */
+    #[\core\attribute\deprecated(reason: 'It is no longer used', mdl: 'MDL-89439', since: '5.3')]
     public function enrol_cohort(stdClass $instance, $cohortid, $roleid = null, $timestart = 0, $timeend = 0, $status = null, $recovergrades = null) {
         global $DB;
+
+        \core\deprecation::emit_deprecation([self::class, __FUNCTION__]);
+
         $context = context_course::instance($instance->courseid);
         list($esql, $params) = get_enrolled_sql($context);
         $sql = "SELECT cm.userid FROM {cohort_members} cm LEFT JOIN ($esql) u ON u.id = cm.userid ".

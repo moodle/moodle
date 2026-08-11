@@ -1,0 +1,7 @@
+issueNumber: MDL-89439
+notes:
+  enrol_manual:
+    - message: >-
+        The manual enrol instance `->enrol_cohort(...)` method is deprecated as
+        it is no longer used/lacked group support
+      type: deprecated
