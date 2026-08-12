@@ -17,6 +17,7 @@ $capabilities = [
     'moodle/cohort:configurecustomfields',
     'moodle/role:safeoverride',
     'moodle/role:override',
+    'moodle/notes:view',
 ];
 
 if ($hassiteconfig || has_any_capability($capabilities, $systemcontext)) { // Speedup for non-admins, all caps used on this page.
@@ -114,6 +115,16 @@ if ($hassiteconfig || has_any_capability($capabilities, $systemcontext)) { // Sp
             new lang_string('cohort_customfield', 'admin'),
             $CFG->wwwroot . '/cohort/customfield.php',
             ['moodle/cohort:configurecustomfields']
+        )
+    );
+    $ADMIN->add(
+        'accounts',
+        new admin_externalpage(
+            'manageusersnotes',
+            new lang_string('manageusersnotes', 'notes'),
+            "$CFG->wwwroot/notes/index.php?filtertype=course&filterselect=0",
+            'moodle/notes:view',
+            empty($CFG->enablenotes)
         )
     );
 

@@ -46,6 +46,7 @@ $string['eventnotedeleted'] = 'Note deleted';
 $string['eventnotesviewed'] = 'Notes viewed';
 $string['invalidid'] = 'Invalid note ID specified';
 $string['invaliduserid'] = 'Invalid user id: {$a}';
+$string['manageusersnotes'] = 'Manage user notes';
 $string['myprofileownnotes'] = 'My notes';
 $string['nocontent'] = 'Note content can not be empty';
 $string['nonotes'] = 'There are no notes of this type yet';
