@@ -222,4 +222,35 @@ describe('DatesView', () => {
 
         expect(screen.getByText('No activities require action')).toBeInTheDocument();
     });
+
+    it('ignores a stale response that resolves after a newer request superseded it', async() => {
+        let resolveFirst!: (value: {events: CalendarEvent[]}) => void;
+        mockGetTimelineEvents
+            .mockImplementationOnce(() => new Promise(resolve => {
+                resolveFirst = resolve;
+            }))
+            .mockResolvedValueOnce({events: [makeEvent(2, MIDNIGHT)]});
+
+        // First render's effect starts a request that never resolves during this test
+        // until resolveFirst() is called below.
+        const {rerender} = render(<DatesView {...defaultProps} searchvalue="" />);
+
+        // A prop change (e.g. the search box) gives `load` a new identity, re-firing the
+        // effect with a second request — before the first one has resolved.
+        await act(async() => {
+            rerender(<DatesView {...defaultProps} searchvalue="foo" />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('Event 2')).toBeInTheDocument();
+        });
+
+        // The stale first request finally resolves — it must not overwrite the newer state.
+        await act(async() => {
+            resolveFirst({events: [makeEvent(1, MIDNIGHT)]});
+        });
+
+        expect(screen.queryByText('Event 1')).not.toBeInTheDocument();
+        expect(screen.getByText('Event 2')).toBeInTheDocument();
+    });
 });

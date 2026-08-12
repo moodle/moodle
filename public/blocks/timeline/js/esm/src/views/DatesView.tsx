@@ -76,8 +76,11 @@ export default function DatesView({
      *
      * @param aftereventid id to page from; 0 for the first load.
      * @param append true to append to the existing days (Show more), false to replace them.
+     * @param isCancelled checked right before committing state, so a request superseded by
+     *                     a newer one (e.g. the effect re-firing on a filter change before
+     *                     this call resolves) doesn't overwrite it with stale results.
      */
-    const load = useCallback(async(aftereventid: number, append: boolean) => {
+    const load = useCallback(async(aftereventid: number, append: boolean, isCancelled: () => boolean = () => false) => {
         const result = await getTimelineEvents({
             timesortfrom: starttime,
             timesortto:   endtime,
@@ -102,6 +105,10 @@ export default function DatesView({
         }
 
         const newDays = groupByDay(filtered);
+
+        if (isCancelled()) {
+            return;
+        }
 
         if (append) {
             setDays(prev => {
@@ -134,10 +141,20 @@ export default function DatesView({
     }, [starttime, endtime, searchvalue, offsets.filteroverdue, midnight, limit]);
 
     useEffect(() => {
+        let cancelled = false;
+
         setLoading(true);
         setDays([]);
         setLastId(0);
-        load(0, false).finally(() => setLoading(false));
+        load(0, false, () => cancelled).finally(() => {
+            if (!cancelled) {
+                setLoading(false);
+            }
+        });
+
+        return () => {
+            cancelled = true;
+        };
     }, [load]);
 
     const handleShowMore = async() => {
