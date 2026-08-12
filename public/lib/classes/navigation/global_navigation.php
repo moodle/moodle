@@ -2053,6 +2053,15 @@ class global_navigation extends navigation_node {
             );
         }
 
+        if ($navoptions->learningoutcomes) {
+            $coursenode->add(
+                text: get_string('learningoutcomes', 'core_course'),
+                action: new url('/course/learningoutcomes.php', ['id' => $course->id]),
+                type: self::TYPE_SETTING,
+                key: 'learningoutcomes',
+            );
+        }
+
         return true;
     }
     /**

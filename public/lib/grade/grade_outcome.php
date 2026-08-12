@@ -205,6 +205,41 @@ class grade_outcome extends grade_object {
     }
 
     /**
+     * Returns all course module IDs mapped to a course outcome.
+     *
+     * Scaled outcomes are mapped via grade_items, while scale-less outcomes are mapped via
+     * grade_outcomes_modules.
+     *
+     * @param int $outcomeid Outcome ID.
+     * @param int $courseid Course ID.
+     * @return int[] List of unique course module IDs.
+     */
+    public static function get_modules_mapped_to_course_outcomes(int $outcomeid, int $courseid): array {
+        global $DB;
+
+        $scaledsql = "SELECT cm.id
+                        FROM {grade_items} gi
+                        JOIN {modules} mo ON mo.name = gi.itemmodule
+                        JOIN {course_modules} cm ON cm.module = mo.id
+                         AND cm.instance = gi.iteminstance
+                         AND cm.course = gi.courseid
+                       WHERE gi.courseid = :courseid
+                         AND gi.itemtype = 'mod'
+                         AND gi.outcomeid = :outcomeid";
+        $scaledcmids = $DB->get_fieldset_sql($scaledsql, ['courseid' => $courseid, 'outcomeid' => $outcomeid]);
+
+        $scalelesssql = "SELECT gom.cmid
+                           FROM {grade_outcomes_modules} gom
+                           JOIN {grade_outcomes_courses} goc ON goc.id = gom.outcomecourseid
+                          WHERE goc.courseid = :courseid
+                            AND goc.outcomeid = :outcomeid";
+        $scalelesscmids = $DB->get_fieldset_sql($scalelesssql, ['courseid' => $courseid, 'outcomeid' => $outcomeid]);
+
+        $cmids = array_merge($scaledcmids, $scalelesscmids);
+        return array_map('intval', array_values(array_unique($cmids)));
+    }
+
+    /**
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * If successful this function also fetches the new object data from database and stores it
      * in object properties.

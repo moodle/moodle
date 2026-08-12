@@ -1,0 +1,135 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_course/learningoutcomes
+
+    Template for displaying course learning outcomes and mapped activities.
+
+    Example context (json):
+    {
+        "manageoutcomesbutton": {
+            "id": "single_button66a0c8a6e4f9f7",
+            "method": "get",
+            "url": "https://example.com/grade/edit/outcome/index.php?id=2",
+            "label": "Manage learning outcomes",
+            "primary": true
+        },
+        "outcomes": [
+            {
+                "id": 1,
+                "name": "Outcome 1",
+                "header": {
+                    "id": 1,
+                    "num": 1,
+                    "name": "Outcome 1",
+                    "title": "Outcome 1",
+                    "headinglevel": 3,
+                    "headerdisplaymultipage": false,
+                    "displayonesection": false,
+                    "sitehome": false,
+                    "contentcollapsed": false,
+                    "sectionbulk": false
+                },
+                "summary": {
+                    "summarytext": "<p>Outcome description</p>"
+                },
+                "cmlist": {
+                    "hascms": true,
+                    "cms": [
+                        {
+                            "cmitem": {
+                                "id": 12,
+                                "cmid": 12,
+                                "module": "assign",
+                                "anchor": "activity-12"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}}
+<div class="course-content" data-for="course_sectionlist">
+    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+        <div>{{#str}} learningoutcomesintro, core_course{{/str}}</div>
+    </div>
+    {{#manageoutcomesbutton}}
+        <div class="singlebutton">{{>core/single_button}}</div>
+    {{/manageoutcomesbutton}}
+    <div class="d-flex justify-content-end mb-1">
+        <button type="button"
+                id="collapsesections"
+                class="section-collapsemenu aabtn"
+                aria-expanded="true"
+                data-toggle="toggleall"
+        >
+            <span class="collapseall text-nowrap">
+                {{#pix}} t/collapseall, core {{/pix}}
+                <span class="collapsemenu-text">{{#str}}collapseall{{/str}}</span>
+            </span>
+            <span class="expandall text-nowrap">
+                {{#pix}} t/expandall, core {{/pix}}
+                <span class="collapsemenu-text">{{#str}}expandall{{/str}}</span>
+            </span>
+        </button>
+    </div>
+    {{#outcomes}}
+        <section class="course-section main clearfix" data-outcomeid="{{id}}" data-for="section" data-id="{{id}}">
+            <div class="section-item">
+                <div class="course-section-header d-flex"
+                     data-for="section_title"
+                     data-id="{{id}}"
+                     data-number="{{id}}">
+                    {{#header}}
+                        {{$ core_courseformat/local/content/section/header }}
+                            {{> core_courseformat/local/content/section/header }}
+                        {{/ core_courseformat/local/content/section/header }}
+                    {{/header}}
+                </div>
+
+                <div id="coursecontentcollapseid{{id}}" class="content course-content-item-content collapse show">
+                    {{#summary}}
+                        <div data-for="sectioninfo">
+                            {{$ core_courseformat/local/content/section/summary }}
+                                {{> core_courseformat/local/content/section/summary }}
+                            {{/ core_courseformat/local/content/section/summary }}
+                        </div>
+                    {{/summary}}
+                    <div class="section-content-inner px-3">
+                        {{#cmlist.hascms}}
+                            {{#cmlist}}
+                                {{$ core_courseformat/local/content/section/cmlist }}
+                                    {{> core_courseformat/local/content/section/cmlist }}
+                                {{/ core_courseformat/local/content/section/cmlist }}
+                            {{/cmlist}}
+                        {{/cmlist.hascms}}
+                        {{^cmlist.hascms}}
+                            <div class="activity-item text-muted">{{#str}} nolearningoutcomeactivities, core_course {{/str}}</div>
+                        {{/cmlist.hascms}}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {{/outcomes}}
+</div>
+
+{{#js}}
+require(['core_course/learningoutcomes'], function(learningOutcomes) {
+    learningOutcomes.init();
+});
+{{/js}}

@@ -91,6 +91,7 @@ class secondary extends view {
                 'badgesview' => 8,
                 'competencies' => 9,
                 'communication' => 15,
+                'learningoutcomes' => 16,
             ],
             self::TYPE_CUSTOM => [
                 'contentbank' => 6,
