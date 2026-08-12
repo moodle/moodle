@@ -1,7 +1,13 @@
 issueNumber: MDL-88287
 notes:
   block_timeline:
-    - message: |-
-        The legacy AMD and Mustache frontend for the Timeline block has been removed and
-        replaced with an ESM + React implementation.
-      type: improved
+    - type: improved
+      message: >-
+        The legacy AMD/Mustache frontend for the Timeline block has been replaced
+        with an ESM + React implementation.
+    - type: removed
+      message: >-
+        block_timeline\output\main, block_timeline\output\renderer, and the block's
+        external service classes (see db/services.php) have been removed entirely,
+        with no deprecation stub — themes overriding the renderer, or code calling
+        the removed external functions, must be updated.
