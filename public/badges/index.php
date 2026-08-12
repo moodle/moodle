@@ -63,10 +63,18 @@ $PAGE->add_body_class('limitedwidth');
 
 if ($type == BADGE_TYPE_SITE) {
     $title = get_string('sitebadges', 'badges');
-    $PAGE->set_context(context_system::instance());
-    $PAGE->set_pagelayout('admin');
-    $PAGE->set_heading(get_string('administrationsite'));
-    navigation_node::override_active_url(new moodle_url('/badges/index.php', ['type' => BADGE_TYPE_SITE]), true);
+    $sitecontext = context_system::instance();
+    $PAGE->set_context($sitecontext);
+    if (badges_can_manage_badges($sitecontext)) {
+        // Badge managers reach this page via Site administration, so keep the admin layout and heading.
+        $PAGE->set_pagelayout('admin');
+        $PAGE->set_heading(get_string('administrationsite'));
+        navigation_node::override_active_url(new moodle_url('/badges/index.php', ['type' => BADGE_TYPE_SITE]), true);
+    } else {
+        // Non-managers reach this page via the profile "Site badges" link, not site administration.
+        $PAGE->set_pagelayout('standard');
+        $PAGE->set_heading($title);
+    }
     $eventotherparams = ['badgetype' => BADGE_TYPE_SITE];
 } else {
     require_login($course);

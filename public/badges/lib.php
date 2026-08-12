@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    global $CFG, $PAGE, $USER, $SITE;
+    global $CFG, $DB, $PAGE, $USER, $SITE;
     require_once($CFG->dirroot . '/badges/renderer.php');
     if (empty($CFG->enablebadges) || (!empty($course) && empty($CFG->badges_allowcoursebadges))) {
         // Y U NO LIKE BADGES ?
@@ -47,6 +47,37 @@ function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree
     $tree->add_category($category);
     $context = context_user::instance($user->id);
     $courseid = empty($course) ? 0 : $course->id;
+
+    // Site badges link - shown on site profile once a site badge exists. Badge managers (who can
+    // create, award, or configure badges) see the link for a badge of any status, so they can
+    // reach it to manage inactive or archived badges. Other users need moodle/badges:viewbadges
+    // and at least one active badge, since that is all they could see on the site badges page.
+    if ($courseid == 0) {
+        $sitecontext = context_system::instance();
+        $ismanager = badges_can_manage_badges($sitecontext);
+        $showsitebadges = false;
+        if ($ismanager || has_capability('moodle/badges:viewbadges', $sitecontext)) {
+            $sql = 'type = :type';
+            $params = ['type' => BADGE_TYPE_SITE];
+            if (!$ismanager) {
+                $sql .= ' AND (status = :active OR status = :activelocked)';
+                $params['active'] = BADGE_STATUS_ACTIVE;
+                $params['activelocked'] = BADGE_STATUS_ACTIVE_LOCKED;
+            }
+            $showsitebadges = $DB->record_exists_select('badge', $sql, $params);
+        }
+        if ($showsitebadges) {
+            $url = new moodle_url('/badges/index.php', ['type' => BADGE_TYPE_SITE]);
+            $sitebadgesnode = new core_user\output\myprofile\node(
+                'badges',
+                'sitebadges',
+                get_string('sitebadges', 'badges'),
+                null,
+                $url
+            );
+            $tree->add_node($sitebadgesnode);
+        }
+    }
 
     if ($USER->id == $user->id || has_capability('moodle/badges:viewotherbadges', $context)) {
         $records = badges_get_user_badges($user->id, $courseid, null, null, null, true);
@@ -66,8 +97,14 @@ function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree
             if (isset($backpack->totalbadges) && $backpack->totalbadges !== 0) {
                 $title = get_string('externalbadgesp', 'badges');
                 $content = $renderer->print_badges_list($backpack->badges, $user->id, true, true);
-                $externalnode = $mybadges = new core_user\output\myprofile\node('badges', 'externalbadges', $title, null, null,
-                    $content);
+                $externalnode = $mybadges = new core_user\output\myprofile\node(
+                    'badges',
+                    'externalbadges',
+                    $title,
+                    null,
+                    null,
+                    $content
+                );
                 $tree->add_node($externalnode);
             }
         }
@@ -87,8 +124,14 @@ function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree
  * @param int $page 0-based number of page being displayed
  * @return \core_tag\output\tagindex
  */
-function badge_get_tagged_badges(object $tag, bool $exclusivemode = false, null|int $fromctx = 0, null|int $ctx = 0,
-                                 bool $rec = true, int $page = 0): object {
+function badge_get_tagged_badges(
+    object $tag,
+    bool $exclusivemode = false,
+    null|int $fromctx = 0,
+    null|int $ctx = 0,
+    bool $rec = true,
+    int $page = 0
+): object {
     global $OUTPUT;
 
     $badgecount = $tag->count_tagged_items('core_badges', 'badge');
@@ -102,8 +145,10 @@ function badge_get_tagged_badges(object $tag, bool $exclusivemode = false, null|
         foreach ($badges as $badge) {
             $badgelink = new moodle_url('/badges/badgeclass.php', ['id' => $badge->id]);
             $fullname = html_writer::link($badgelink, $badge->name);
-            $icon = html_writer::link($badgelink, html_writer::empty_tag('img',
-                ['src' => $OUTPUT->image_url('i/badge')]));
+            $icon = html_writer::link($badgelink, html_writer::empty_tag(
+                'img',
+                ['src' => $OUTPUT->image_url('i/badge')]
+            ));
             $tagfeed->add($icon, $fullname, '<br>');
         }
 
@@ -111,6 +156,16 @@ function badge_get_tagged_badges(object $tag, bool $exclusivemode = false, null|
 
         $content .= $OUTPUT->render_from_template('core_tag/tagfeed', $items);
     }
-    return new core_tag\output\tagindex($tag, 'core_badges', 'badge', $content,
-        $exclusivemode, $fromctx, $ctx, $rec, $page, $totalpages);
+    return new core_tag\output\tagindex(
+        $tag,
+        'core_badges',
+        'badge',
+        $content,
+        $exclusivemode,
+        $fromctx,
+        $ctx,
+        $rec,
+        $page,
+        $totalpages
+    );
 }
