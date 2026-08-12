@@ -16,8 +16,8 @@
 
 namespace qbank_managecategories\privacy;
 
-use advanced_testcase;
 use core_privacy\local\request\writer;
+use core_privacy\tests\provider_testcase;
 use qbank_managecategories\privacy\provider;
 
 /**
@@ -29,7 +29,7 @@ use qbank_managecategories\privacy\provider;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \qbank_managecategories\privacy\provider
  */
-final class provider_test extends advanced_testcase {
+final class provider_test extends provider_testcase {
     /**
      * Test to check export_user_preferences.
      *
