@@ -55,6 +55,7 @@ function makeEvent(overrides: Partial<CalendarEvent> = {}): CalendarEvent {
         timesort: Date.UTC(2026, 0, 1, 9, 30) / 1000,
         timeusermidnight: Date.UTC(2026, 0, 1) / 1000,
         formattedday: 'Thursday, 1 January 2026',
+        formatteddatetime: 'Thursday, 1 January 2026, 9:30 AM',
         overdue: false,
         eventtype: 'due',
         url: '/mod/quiz/view.php?id=1',
@@ -67,9 +68,22 @@ function makeEvent(overrides: Partial<CalendarEvent> = {}): CalendarEvent {
 }
 
 describe('EventListItem', () => {
-    it('renders the activity name as a link to the event url', async() => {
+    it('renders the activity name as visible link text, with the link url', async() => {
         await renderItem(<EventListItem event={makeEvent()} />);
-        const link = screen.getByRole('link', {name: 'Quiz 1'});
+        // No action prop, so this is the only link — the accessible name is covered
+        // separately below, since aria-label overrides it.
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', '/mod/quiz/view.php?id=1');
+        expect(link).toHaveTextContent('Quiz 1');
+    });
+
+    it('gives the event link an accessible name built from ariaeventlistitem', async() => {
+        (globalThis as any).mockString(
+            'ariaeventlistitem', 'block_timeline', 'Quiz 1 activity in Course 2 is due on 1 January 2026'
+        );
+        await renderItem(<EventListItem event={makeEvent()} />);
+
+        const link = await screen.findByRole('link', {name: 'Quiz 1 activity in Course 2 is due on 1 January 2026'});
         expect(link).toHaveAttribute('href', '/mod/quiz/view.php?id=1');
     });
 

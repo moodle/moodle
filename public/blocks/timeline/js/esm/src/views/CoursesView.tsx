@@ -24,7 +24,9 @@ import {useState, useEffect, useCallback, useRef} from 'react';
 import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
-import {getEnrolledCourses, getEventsByCourses, getEventsByCourse, getFormattedDays} from '../repository';
+import {
+    getEnrolledCourses, getEventsByCourses, getEventsByCourse, getFormattedDays, getFormattedEventDateTimes,
+} from '../repository';
 import EventListItem from '@moodle/lms/block_timeline/views/EventListItem';
 import {computeTimeRange, groupByDay, filterEvents} from '../common/utils';
 import type {CalendarEvent, CourseWithEvents, FilterOffsets} from '../common/types';
@@ -138,14 +140,15 @@ export default function CoursesView({
                     searchvalue:  searchvalue || null,
                 });
                 const eventsByCourseId = new Map(eventsResult.groupedbycourse.map(g => [g.courseid, g.events]));
-                const dayMap = await getFormattedDays(
-                    eventsResult.groupedbycourse.flatMap(g => g.events.map(e => e.timeusermidnight))
-                );
+                const allEvents = eventsResult.groupedbycourse.flatMap(g => g.events);
+                const dayMap = await getFormattedDays(allEvents.map(e => e.timeusermidnight));
+                const dateTimeMap = await getFormattedEventDateTimes(allEvents.map(e => e.timesort));
 
                 for (const course of pageCourses) {
                     const events = (eventsByCourseId.get(course.id) ?? []).map(e => ({
                         ...e,
-                        formattedday: dayMap.get(e.timeusermidnight) ?? '',
+                        formattedday:      dayMap.get(e.timeusermidnight) ?? '',
+                        formatteddatetime: dateTimeMap.get(e.timesort) ?? '',
                     }));
                     const {shown, hasMore, lastId} = processInitialEvents(events, midnight, filteroverdue);
                     if (shown.length > 0) {
@@ -260,9 +263,11 @@ export default function CoursesView({
             });
 
             const dayMap = await getFormattedDays(result.events.map(e => e.timeusermidnight));
+            const dateTimeMap = await getFormattedEventDateTimes(result.events.map(e => e.timesort));
             const enriched = result.events.map(e => ({
                 ...e,
-                formattedday: dayMap.get(e.timeusermidnight) ?? '',
+                formattedday:      dayMap.get(e.timeusermidnight) ?? '',
+                formatteddatetime: dateTimeMap.get(e.timesort) ?? '',
             }));
 
             const filtered = filterEvents(enriched, midnight, filteroverdue);

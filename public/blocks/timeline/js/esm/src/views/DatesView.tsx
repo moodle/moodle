@@ -24,7 +24,7 @@ import {useState, useEffect, useCallback} from 'react';
 import String from '@moodle/lms/core/String';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
-import {getTimelineEvents, getFormattedDays} from '../repository';
+import {getTimelineEvents, getFormattedDays, getFormattedEventDateTimes} from '../repository';
 import EventListItem from '@moodle/lms/block_timeline/views/EventListItem';
 import {computeTimeRange, groupByDay, filterEvents} from '../common/utils';
 import type {DayGroup} from '../common/utils';
@@ -87,7 +87,12 @@ export default function DatesView({
         });
 
         const dayMap = await getFormattedDays(result.events.map(e => e.timeusermidnight));
-        const events = result.events.map(e => ({...e, formattedday: dayMap.get(e.timeusermidnight) ?? ''}));
+        const dateTimeMap = await getFormattedEventDateTimes(result.events.map(e => e.timesort));
+        const events = result.events.map(e => ({
+            ...e,
+            formattedday:     dayMap.get(e.timeusermidnight) ?? '',
+            formatteddatetime: dateTimeMap.get(e.timesort) ?? '',
+        }));
 
         let filtered = filterEvents(events, midnight, offsets.filteroverdue);
 

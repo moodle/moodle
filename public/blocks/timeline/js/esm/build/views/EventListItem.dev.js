@@ -16,9 +16,17 @@ import { ActivityIcon } from "@moodle/lms/block_timeline/views/ActivityIcon";
 function EventListItem({ event, courseview = false }) {
   const pxClass = courseview ? "px-0" : "px-2";
   const [overdueLabel, setOverdueLabel] = useState("");
+  const [ariaLabel, setAriaLabel] = useState("");
   useEffect(() => {
     getString("overdue", "block_timeline").then(setOverdueLabel);
   }, []);
+  useEffect(() => {
+    getString("ariaeventlistitem", "block_timeline", {
+      name: event.activityname ?? "",
+      course: event.course.fullnamedisplay,
+      date: event.formatteddatetime
+    }).then(setAriaLabel);
+  }, [event.activityname, event.course.fullnamedisplay, event.formatteddatetime]);
   const time = new Date(event.timesort * 1e3).toLocaleTimeString(void 0, {
     hour: "2-digit",
     minute: "2-digit",
@@ -36,37 +44,37 @@ function EventListItem({ event, courseview = false }) {
           /* @__PURE__ */ jsxDEV("div", { className: "d-flex me-auto pb-1 mw-100 timeline-name", children: [
             /* @__PURE__ */ jsxDEV("small", { className: "text-end text-nowrap align-self-center ms-1", children: time }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-              lineNumber: 67,
+              lineNumber: 76,
               columnNumber: 21
             }, this),
             event.icon && /* @__PURE__ */ jsxDEV("div", { className: iconContainerClass, children: /* @__PURE__ */ jsxDEV(ActivityIcon, { modulename: event.modulename, iconurl: event.icon.iconurl, alt: event.icon.alttext }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-              lineNumber: 71,
+              lineNumber: 80,
               columnNumber: 29
             }, this) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-              lineNumber: 70,
+              lineNumber: 79,
               columnNumber: 25
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "event-name-container flex-grow-1 line-height-4 nowrap text-truncate", children: [
               /* @__PURE__ */ jsxDEV("div", { className: "d-flex", children: /* @__PURE__ */ jsxDEV("h5", { className: "h6 event-name mb-0 pb-1 text-truncate", children: [
-                /* @__PURE__ */ jsxDEV("a", { href: event.url, title: event.name, children: event.activityname }, void 0, false, {
+                /* @__PURE__ */ jsxDEV("a", { href: event.url, title: event.name, "aria-label": ariaLabel || void 0, children: event.activityname }, void 0, false, {
                   fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-                  lineNumber: 78,
+                  lineNumber: 87,
                   columnNumber: 33
                 }, this),
                 event.overdue && /* @__PURE__ */ jsxDEV(Badge, { variant: "danger", pill: true, label: overdueLabel, className: "ms-1" }, void 0, false, {
                   fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-                  lineNumber: 82,
+                  lineNumber: 91,
                   columnNumber: 37
                 }, this)
               ] }, void 0, true, {
                 fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-                lineNumber: 77,
+                lineNumber: 86,
                 columnNumber: 29
               }, this) }, void 0, false, {
                 fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-                lineNumber: 76,
+                lineNumber: 85,
                 columnNumber: 25
               }, this),
               /* @__PURE__ */ jsxDEV("small", { className: "mb-0", children: [
@@ -76,22 +84,22 @@ function EventListItem({ event, courseview = false }) {
                   event.course.fullnamedisplay
                 ] }, void 0, true, {
                   fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-                  lineNumber: 89,
+                  lineNumber: 98,
                   columnNumber: 33
                 }, this)
               ] }, void 0, true, {
                 fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-                lineNumber: 86,
+                lineNumber: 95,
                 columnNumber: 25
               }, this)
             ] }, void 0, true, {
               fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-              lineNumber: 75,
+              lineNumber: 84,
               columnNumber: 21
             }, this)
           ] }, void 0, true, {
             fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-            lineNumber: 66,
+            lineNumber: 75,
             columnNumber: 17
           }, this),
           event.action?.actionable && /* @__PURE__ */ jsxDEV("div", { className: "d-flex timeline-action-button", children: /* @__PURE__ */ jsxDEV("h5", { className: "h6 event-action", children: /* @__PURE__ */ jsxDEV(
@@ -105,7 +113,7 @@ function EventListItem({ event, courseview = false }) {
                 event.action.name,
                 event.action.showitemcount && /* @__PURE__ */ jsxDEV(Badge, { variant: "secondary", label: String(event.action.itemcount) }, void 0, false, {
                   fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-                  lineNumber: 106,
+                  lineNumber: 115,
                   columnNumber: 37
                 }, this)
               ]
@@ -114,27 +122,27 @@ function EventListItem({ event, courseview = false }) {
             true,
             {
               fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-              lineNumber: 98,
+              lineNumber: 107,
               columnNumber: 29
             },
             this
           ) }, void 0, false, {
             fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-            lineNumber: 97,
+            lineNumber: 106,
             columnNumber: 25
           }, this) }, void 0, false, {
             fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-            lineNumber: 96,
+            lineNumber: 105,
             columnNumber: 21
           }, this)
         ] }, void 0, true, {
           fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-          lineNumber: 65,
+          lineNumber: 74,
           columnNumber: 13
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "pt-2 border-bottom" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-          lineNumber: 113,
+          lineNumber: 122,
           columnNumber: 13
         }, this)
       ]
@@ -143,7 +151,7 @@ function EventListItem({ event, courseview = false }) {
     true,
     {
       fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
-      lineNumber: 61,
+      lineNumber: 70,
       columnNumber: 9
     },
     this

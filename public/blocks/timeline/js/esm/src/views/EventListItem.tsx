@@ -42,10 +42,19 @@ interface EventListItemProps {
 export default function EventListItem({event, courseview = false}: EventListItemProps) {
     const pxClass = courseview ? 'px-0' : 'px-2';
     const [overdueLabel, setOverdueLabel] = useState('');
+    const [ariaLabel, setAriaLabel] = useState('');
 
     useEffect(() => {
         getString('overdue', 'block_timeline').then(setOverdueLabel);
     }, []);
+
+    useEffect(() => {
+        getString('ariaeventlistitem', 'block_timeline', {
+            name:   event.activityname ?? '',
+            course: event.course.fullnamedisplay,
+            date:   event.formatteddatetime,
+        }).then(setAriaLabel);
+    }, [event.activityname, event.course.fullnamedisplay, event.formatteddatetime]);
 
     const time = new Date(event.timesort * 1000).toLocaleTimeString(undefined, {
         hour: '2-digit',
@@ -75,7 +84,7 @@ export default function EventListItem({event, courseview = false}: EventListItem
                     <div className="event-name-container flex-grow-1 line-height-4 nowrap text-truncate">
                         <div className="d-flex">
                             <h5 className="h6 event-name mb-0 pb-1 text-truncate">
-                                <a href={event.url} title={event.name}>
+                                <a href={event.url} title={event.name} aria-label={ariaLabel || undefined}>
                                     {event.activityname}
                                 </a>
                                 {event.overdue && (

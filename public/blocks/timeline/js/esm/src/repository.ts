@@ -192,22 +192,24 @@ export const setUserPreference = (name: string, value: string): void => {
 };
 
 /**
- * Fetch server-formatted day strings for the given midnight timestamps.
+ * Fetch server-formatted date strings for the given timestamps, using a langconfig
+ * strftime format string.
  *
  * Calls core_get_user_dates so the format respects the site language and the
  * user's timezone, matching the server-side userdate() output the deleted
  * block-specific web services used to embed directly in their responses.
- * None of the core calendar/course services return a formatted day string,
+ * None of the core calendar/course services return formatted date strings,
  * so every fetch path enriches its events with this afterwards.
  *
- * @param timestamps midnight timestamps to format, one per distinct day.
+ * @param timestamps timestamps to format.
+ * @param formatStringKey langconfig string identifier naming the strftime format to use.
  */
-export async function getFormattedDays(timestamps: number[]): Promise<Map<number, string>> {
+async function getFormattedTimestamps(timestamps: number[], formatStringKey: string): Promise<Map<number, string>> {
     const unique = [...new Set(timestamps)];
     if (unique.length === 0) {
         return new Map();
     }
-    const format = await getString('strftimedaydate', 'langconfig');
+    const format = await getString(formatStringKey, 'langconfig');
     const [result] = await fetchMany<{dates: string[]}>([{
         methodname: 'core_get_user_dates',
         args: {
@@ -217,3 +219,22 @@ export async function getFormattedDays(timestamps: number[]): Promise<Map<number
     }]);
     return new Map(unique.map((ts, i) => [ts, result.dates[i]]));
 }
+
+/**
+ * Fetch server-formatted day strings (no time) for the given midnight timestamps.
+ *
+ * @param timestamps midnight timestamps to format, one per distinct day.
+ */
+export const getFormattedDays = (timestamps: number[]): Promise<Map<number, string>> =>
+    getFormattedTimestamps(timestamps, 'strftimedaydate');
+
+/**
+ * Fetch server-formatted full date+time strings for the given event timestamps.
+ *
+ * Used for the event link's accessible name, matching legacy's use of the
+ * strftimedatetime format in event-list-item.mustache's ariaeventlistitem string.
+ *
+ * @param timestamps event timesort timestamps to format.
+ */
+export const getFormattedEventDateTimes = (timestamps: number[]): Promise<Map<number, string>> =>
+    getFormattedTimestamps(timestamps, 'strftimedatetime');

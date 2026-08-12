@@ -21,7 +21,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {getTimelineEvents, getEnrolledCourses, getEventsByCourses, setUserPreference, getFormattedDays} from '../src/repository';
+import {
+    getTimelineEvents, getEnrolledCourses, getEventsByCourses, setUserPreference,
+    getFormattedDays, getFormattedEventDateTimes,
+} from '../src/repository';
 
 // Mock for fetchOne(request) -> Promise<T> — single request, single response.
 const mockFetchOne = jest.fn();
@@ -32,7 +35,8 @@ jest.mock('@moodle/lms/core/ajax', () => ({
     fetchMany: (...args: unknown[]) => mockFetchMany(...args),
 }));
 jest.mock('@moodle/lms/core/stringUtils', () => ({
-    getString: jest.fn().mockResolvedValue('%A, %d %B %Y'),
+    getString: jest.fn((key: string) =>
+        Promise.resolve(key === 'strftimedatetime' ? '%A, %d %B %Y %I:%M %p' : '%A, %d %B %Y')),
 }));
 jest.mock('@moodle/lms/core/config', () => ({
     __esModule: true,
@@ -173,6 +177,30 @@ describe('repository', () => {
             ]);
             expect(result.get(1000)).toBe('Monday, 1 January 2026');
             expect(result.get(2000)).toBe('Tuesday, 2 January 2026');
+        });
+    });
+
+    describe('getFormattedEventDateTimes', () => {
+        it('returns an empty map for an empty timestamp list', async() => {
+            const result = await getFormattedEventDateTimes([]);
+            expect(result.size).toBe(0);
+            expect(mockFetchMany).not.toHaveBeenCalled();
+        });
+
+        it('maps unique timestamps to formatted date+time strings, using the strftimedatetime format', async() => {
+            mockFetchMany.mockResolvedValue([{dates: ['Monday, 1 January 2026 9:30 AM', 'Tuesday, 2 January 2026 2:00 PM']}]);
+
+            const result = await getFormattedEventDateTimes([1000, 2000, 1000]);
+
+            expect(mockFetchMany).toHaveBeenCalledTimes(1);
+            const [request] = mockFetchMany.mock.calls[0][0];
+            expect(request.methodname).toBe('core_get_user_dates');
+            expect(request.args.timestamps).toEqual([
+                {timestamp: 1000, format: '%A, %d %B %Y %I:%M %p'},
+                {timestamp: 2000, format: '%A, %d %B %Y %I:%M %p'},
+            ]);
+            expect(result.get(1000)).toBe('Monday, 1 January 2026 9:30 AM');
+            expect(result.get(2000)).toBe('Tuesday, 2 January 2026 2:00 PM');
         });
     });
 });

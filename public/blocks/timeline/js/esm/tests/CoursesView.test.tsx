@@ -46,11 +46,13 @@ const mockGetEnrolledCourses = jest.fn();
 const mockGetEventsByCourses = jest.fn();
 const mockGetEventsByCourse = jest.fn();
 const mockGetFormattedDays = jest.fn();
+const mockGetFormattedEventDateTimes = jest.fn();
 jest.mock('../src/repository', () => ({
     getEnrolledCourses: (...args: unknown[]) => mockGetEnrolledCourses(...args),
     getEventsByCourses: (...args: unknown[]) => mockGetEventsByCourses(...args),
     getEventsByCourse: (...args: unknown[]) => mockGetEventsByCourse(...args),
     getFormattedDays: (...args: unknown[]) => mockGetFormattedDays(...args),
+    getFormattedEventDateTimes: (...args: unknown[]) => mockGetFormattedEventDateTimes(...args),
 }));
 
 const MIDNIGHT = 1_700_000_000;
@@ -75,6 +77,7 @@ function makeEvent(id: number, courseId: number): CalendarEvent {
         timesort: MIDNIGHT,
         timeusermidnight: MIDNIGHT,
         formattedday: '',
+        formatteddatetime: '',
         overdue: false,
         eventtype: 'due',
         url: `/event/${id}`,
@@ -125,12 +128,15 @@ beforeEach(() => {
     mockGetEventsByCourses.mockReset();
     mockGetEventsByCourse.mockReset();
     mockGetFormattedDays.mockReset();
+    mockGetFormattedEventDateTimes.mockReset();
     (globalThis as any).mockString('noevents', 'block_timeline', 'No activities require action');
     (globalThis as any).mockString('nocoursesinprogress', 'block_timeline', 'No in-progress courses');
     (globalThis as any).mockString('moreactivities', 'block_timeline', 'Show more activities');
     (globalThis as any).mockString('morecourses', 'block_timeline', 'Show more courses');
     mockGetFormattedDays.mockImplementation(async(timestamps: number[]) =>
         new Map(timestamps.map(ts => [ts, 'Thursday, 1 January 2026'])));
+    mockGetFormattedEventDateTimes.mockImplementation(async(timestamps: number[]) =>
+        new Map(timestamps.map(ts => [ts, 'Thursday, 1 January 2026, 12:00 PM'])));
 });
 
 describe('CoursesView', () => {

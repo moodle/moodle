@@ -37,6 +37,8 @@ export interface CalendarEvent {
     timesort: number;
     timeusermidnight: number;
     formattedday: string;
+    /** Full date+time string, used for the event link's accessible name. */
+    formatteddatetime: string;
     overdue: boolean;
     eventtype: string;
     url: string;

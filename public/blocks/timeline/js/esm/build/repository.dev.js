@@ -68,12 +68,12 @@ const setUserPreference = /* @__PURE__ */ __name((name, value) => {
     args: { preferences: [{ type: name, value }] }
   }).catch(() => void 0);
 }, "setUserPreference");
-async function getFormattedDays(timestamps) {
+async function getFormattedTimestamps(timestamps, formatStringKey) {
   const unique = [...new Set(timestamps)];
   if (unique.length === 0) {
     return /* @__PURE__ */ new Map();
   }
-  const format = await getString("strftimedaydate", "langconfig");
+  const format = await getString(formatStringKey, "langconfig");
   const [result] = await fetchMany([{
     methodname: "core_get_user_dates",
     args: {
@@ -83,12 +83,15 @@ async function getFormattedDays(timestamps) {
   }]);
   return new Map(unique.map((ts, i) => [ts, result.dates[i]]));
 }
-__name(getFormattedDays, "getFormattedDays");
+__name(getFormattedTimestamps, "getFormattedTimestamps");
+const getFormattedDays = /* @__PURE__ */ __name((timestamps) => getFormattedTimestamps(timestamps, "strftimedaydate"), "getFormattedDays");
+const getFormattedEventDateTimes = /* @__PURE__ */ __name((timestamps) => getFormattedTimestamps(timestamps, "strftimedatetime"), "getFormattedEventDateTimes");
 export {
   getEnrolledCourses,
   getEventsByCourse,
   getEventsByCourses,
   getFormattedDays,
+  getFormattedEventDateTimes,
   getTimelineEvents,
   setUserPreference
 };

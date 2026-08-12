@@ -42,9 +42,11 @@ jest.mock('@moodle/lms/block_timeline/views/EventListItem', () => ({
 
 const mockGetTimelineEvents = jest.fn();
 const mockGetFormattedDays = jest.fn();
+const mockGetFormattedEventDateTimes = jest.fn();
 jest.mock('../src/repository', () => ({
     getTimelineEvents: (...args: unknown[]) => mockGetTimelineEvents(...args),
     getFormattedDays: (...args: unknown[]) => mockGetFormattedDays(...args),
+    getFormattedEventDateTimes: (...args: unknown[]) => mockGetFormattedEventDateTimes(...args),
 }));
 
 const MIDNIGHT = 1_700_000_000;
@@ -58,6 +60,7 @@ function makeEvent(id: number, dayTimestamp: number): CalendarEvent {
         timesort: dayTimestamp,
         timeusermidnight: dayTimestamp,
         formattedday: '',
+        formatteddatetime: '',
         overdue: false,
         eventtype: 'due',
         url: `/event/${id}`,
@@ -87,11 +90,14 @@ async function renderView(props: Partial<typeof defaultProps> = {}) {
 beforeEach(() => {
     mockGetTimelineEvents.mockReset();
     mockGetFormattedDays.mockReset();
+    mockGetFormattedEventDateTimes.mockReset();
     (globalThis as any).mockString('nocoursesinprogress', 'block_timeline', 'No in-progress courses');
     (globalThis as any).mockString('noevents', 'block_timeline', 'No activities require action');
     (globalThis as any).mockString('moreactivities', 'block_timeline', 'Show more activities');
     mockGetFormattedDays.mockImplementation(async(timestamps: number[]) =>
         new Map(timestamps.map(ts => [ts, `Day ${ts}`])));
+    mockGetFormattedEventDateTimes.mockImplementation(async(timestamps: number[]) =>
+        new Map(timestamps.map(ts => [ts, `DateTime ${ts}`])));
 });
 
 describe('DatesView', () => {
