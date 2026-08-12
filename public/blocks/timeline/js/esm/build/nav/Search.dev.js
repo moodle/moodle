@@ -21,6 +21,7 @@ function Search({ onSearch, onSearching }) {
   const [label, setLabel] = useState("");
   const [clearLabel, setClearLabel] = useState("");
   const timerRef = useRef(null);
+  const inputRef = useRef(null);
   useEffect(() => {
     getString("searchevents", "block_timeline").then(setLabel);
     getString("clearsearch", "core").then(setClearLabel);
@@ -44,20 +45,22 @@ function Search({ onSearch, onSearching }) {
     }
     onSearching?.(false);
     onSearch("");
+    inputRef.current?.focus();
   }, [onSearch, onSearching]);
   return /* @__PURE__ */ jsxDEV("div", { className: "w-100", children: /* @__PURE__ */ jsxDEV("div", { id: formId, className: "d-flex flex-wrap align-items-center simplesearchform", children: /* @__PURE__ */ jsxDEV("div", { className: "input-group searchbar w-100", role: "search", "aria-labelledby": labelId, children: [
     /* @__PURE__ */ jsxDEV("label", { htmlFor: inputId, id: labelId, children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: label }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-      lineNumber: 90,
+      lineNumber: 94,
       columnNumber: 25
     }, this) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-      lineNumber: 89,
+      lineNumber: 93,
       columnNumber: 21
     }, this),
     /* @__PURE__ */ jsxDEV(
       "input",
       {
+        ref: inputRef,
         type: "text",
         "data-region": "input",
         "data-action": "search",
@@ -73,7 +76,7 @@ function Search({ onSearch, onSearching }) {
       false,
       {
         fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-        lineNumber: 92,
+        lineNumber: 96,
         columnNumber: 21
       },
       this
@@ -88,12 +91,12 @@ function Search({ onSearch, onSearching }) {
         children: [
           /* @__PURE__ */ jsxDEV("i", { className: "icon fa fa-xmark fa-fw", "aria-hidden": "true" }, void 0, false, {
             fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-            lineNumber: 111,
+            lineNumber: 116,
             columnNumber: 29
           }, this),
           /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: clearLabel }, void 0, false, {
             fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-            lineNumber: 112,
+            lineNumber: 117,
             columnNumber: 29
           }, this)
         ]
@@ -102,22 +105,22 @@ function Search({ onSearch, onSearching }) {
       true,
       {
         fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-        lineNumber: 105,
+        lineNumber: 110,
         columnNumber: 25
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-    lineNumber: 88,
+    lineNumber: 92,
     columnNumber: 17
   }, this) }, void 0, false, {
     fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-    lineNumber: 87,
+    lineNumber: 91,
     columnNumber: 13
   }, this) }, void 0, false, {
     fileName: "public/blocks/timeline/js/esm/src/nav/Search.tsx",
-    lineNumber: 86,
+    lineNumber: 90,
     columnNumber: 9
   }, this);
 }

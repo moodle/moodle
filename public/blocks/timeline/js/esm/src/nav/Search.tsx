@@ -49,6 +49,7 @@ export default function Search({onSearch, onSearching}: SearchProps) {
     const [label, setLabel] = useState('');
     const [clearLabel, setClearLabel] = useState('');
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         getString('searchevents', 'block_timeline').then(setLabel);
@@ -80,6 +81,9 @@ export default function Search({onSearch, onSearching}: SearchProps) {
         }
         onSearching?.(false);
         onSearch('');
+        // The clear button unmounts as soon as it's clicked (rendered only while value is
+        // non-empty), which would otherwise drop focus to <body> for keyboard/AT users.
+        inputRef.current?.focus();
     }, [onSearch, onSearching]);
 
     return (
@@ -90,6 +94,7 @@ export default function Search({onSearch, onSearching}: SearchProps) {
                         <span className="visually-hidden">{label}</span>
                     </label>
                     <input
+                        ref={inputRef}
                         type="text"
                         data-region="input"
                         data-action="search"

@@ -125,6 +125,16 @@ describe('Search', () => {
         expect(onSearching).toHaveBeenLastCalledWith(false);
     });
 
+    it('refocuses the input after clearing, since the clear button unmounts on click', async() => {
+        await renderSearch(<Search onSearch={jest.fn()} />);
+        const input = screen.getByRole('textbox');
+
+        fireEvent.change(input, {target: {value: 'quiz'}});
+        fireEvent.click(screen.getByRole('button'));
+
+        expect(input).toHaveFocus();
+    });
+
     it('does not fire a stale debounced onSearch after clearing', async() => {
         const onSearch = jest.fn();
         await renderSearch(<Search onSearch={onSearch} />);
