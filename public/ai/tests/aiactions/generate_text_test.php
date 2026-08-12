@@ -86,7 +86,5 @@ final class generate_text_test extends \advanced_testcase {
         $this->assertEquals($body['fingerprint'], $record->fingerprint);
         $this->assertEquals($body['generatedcontent'], $record->generatedcontent);
         $this->assertEquals($body['finishreason'], $record->finishreason);
-        $this->assertEquals($body['prompttokens'], $record->prompttokens);
-        $this->assertEquals($body['completiontokens'], $record->completiontoken);
     }
 }

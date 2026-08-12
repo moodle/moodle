@@ -298,7 +298,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('This is a test prompt 1', $data->prompt);
                 $this->assertEquals('This is the generated content 1', $data->generatedcontent);
                 $this->assertEquals('9', $data->prompttokens);
-                $this->assertEquals('12', $data->completiontoken);
+                $this->assertEquals('12', $data->completiontokens);
                 $this->assertEquals(get_string('yes'), $data->success);
                 $this->assertEquals('gpt-4o', $data->model);
             }
@@ -316,7 +316,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('This is a test prompt 2', $data->prompt);
                 $this->assertEquals('This is the generated content 2', $data->generatedcontent);
                 $this->assertEquals('10', $data->prompttokens);
-                $this->assertEquals('15', $data->completiontoken);
+                $this->assertEquals('15', $data->completiontokens);
                 $this->assertEquals(get_string('yes'), $data->success);
                 $this->assertEquals('gpt-4o', $data->model);
             }
@@ -514,7 +514,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('This is a test prompt 1', $data->prompt);
                 $this->assertEquals('This is the generated content 1', $data->generatedcontent);
                 $this->assertEquals('9', $data->prompttokens);
-                $this->assertEquals('12', $data->completiontoken);
+                $this->assertEquals('12', $data->completiontokens);
                 $this->assertEquals(get_string('yes'), $data->success);
                 $this->assertEquals('gpt-4o', $data->model);
             }
@@ -532,7 +532,7 @@ final class provider_test extends \advanced_testcase {
                 $this->assertEquals('This is a test prompt 2', $data->prompt);
                 $this->assertEquals('This is the generated content 2', $data->generatedcontent);
                 $this->assertEquals('10', $data->prompttokens);
-                $this->assertEquals('15', $data->completiontoken);
+                $this->assertEquals('15', $data->completiontokens);
                 $this->assertEquals(get_string('yes'), $data->success);
                 $this->assertEquals('gpt-4o', $data->model);
             }

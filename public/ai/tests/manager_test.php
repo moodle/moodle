@@ -675,6 +675,58 @@ final class manager_test extends \advanced_testcase {
         $this->assertEquals($action->get_configuration('timecreated'), $record->timecreated);
         $this->assertEquals($actionresponse->get_timecreated(), $record->timecompleted);
         $this->assertEquals($actionresponse->get_model_used(), $record->model);
+        // The generate image response does not report token counts, so they should not be set.
+        $this->assertNull($record->prompttokens);
+        $this->assertNull($record->completiontokens);
+    }
+
+    /**
+     * Test store_action_result stores the token counts on the register record.
+     */
+    public function test_store_action_result_token_counts(): void {
+        $this->resetAfterTest();
+        global $DB;
+
+        $contextid = 1;
+        $userid = 1;
+        $prompttext = 'This is a test prompt';
+
+        $action = new generate_text(
+            contextid: $contextid,
+            userid: $userid,
+            prompttext: $prompttext,
+        );
+
+        $body = [
+            'id' => 'chatcmpl-123',
+            'fingerprint' => 'fp_44709d6fcb',
+            'generatedcontent' => 'This is the generated content',
+            'finishreason' => 'stop',
+            'prompttokens' => 9,
+            'completiontokens' => 12,
+            'model' => 'gpt-4o',
+        ];
+        $actionresponse = new aiactions\responses\response_generate_text(
+            success: true,
+        );
+        $actionresponse->set_response_data($body);
+
+        $manager = \core\di::get(manager::class);
+        $config = ['data' => 'goeshere'];
+        $provider = $manager->create_provider_instance(
+            classname: '\aiprovider_openai\provider',
+            name: 'dummy',
+            config: $config,
+        );
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($manager, 'store_action_result');
+        $storeresult = $method->invoke($manager, $provider, $action, $actionresponse);
+
+        // Check the token counts were stored on the register record rather than the child table.
+        $record = $DB->get_record('ai_action_register', ['id' => $storeresult], '*', MUST_EXIST);
+        $this->assertEquals($body['prompttokens'], $record->prompttokens);
+        $this->assertEquals($body['completiontokens'], $record->completiontokens);
     }
 
     /**

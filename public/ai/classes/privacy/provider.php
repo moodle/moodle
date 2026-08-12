@@ -57,6 +57,8 @@ class provider implements
             'timecreated' => 'privacy:metadata:ai_action_register:timecreated',
             'timecompleted' => 'privacy:metadata:ai_action_register:timecompleted',
             'model' => 'privacy:metadata:ai_action_register:model',
+            'prompttokens' => 'privacy:metadata:ai_action_register:prompttokens',
+            'completiontokens' => 'privacy:metadata:ai_action_register:completiontokens',
         ], 'privacy:metadata:ai_action_register');
         $collection->add_database_table('ai_action_generate_image', [
             'prompt' => 'privacy:metadata:ai_action_generate_image:prompt',
@@ -72,24 +74,18 @@ class provider implements
             'responseid' => 'privacy:metadata:ai_action_generate_text:responseid',
             'fingerprint' => 'privacy:metadata:ai_action_generate_text:fingerprint',
             'generatedcontent' => 'privacy:metadata:ai_action_generate_text:generatedcontent',
-            'prompttokens' => 'privacy:metadata:ai_action_generate_text:prompttokens',
-            'completiontoken' => 'privacy:metadata:ai_action_generate_text:completiontoken',
         ], 'privacy:metadata:ai_action_generate_text');
         $collection->add_database_table('ai_action_summarise_text', [
             'prompt' => 'privacy:metadata:ai_action_summarise_text:prompt',
             'responseid' => 'privacy:metadata:ai_action_summarise_text:responseid',
             'fingerprint' => 'privacy:metadata:ai_action_summarise_text:fingerprint',
             'generatedcontent' => 'privacy:metadata:ai_action_summarise_text:generatedcontent',
-            'prompttokens' => 'privacy:metadata:ai_action_summarise_text:prompttokens',
-            'completiontoken' => 'privacy:metadata:ai_action_summarise_text:completiontoken',
         ], 'privacy:metadata:ai_action_summarise_text');
         $collection->add_database_table('ai_action_explain_text', [
             'prompt' => 'privacy:metadata:ai_action_explain_text:prompt',
             'responseid' => 'privacy:metadata:ai_action_explain_text:responseid',
             'fingerprint' => 'privacy:metadata:ai_action_explain_text:fingerprint',
             'generatedcontent' => 'privacy:metadata:ai_action_explain_text:generatedcontent',
-            'prompttokens' => 'privacy:metadata:ai_action_explain_text:prompttokens',
-            'completiontoken' => 'privacy:metadata:ai_action_explain_text:completiontoken',
         ], 'privacy:metadata:ai_action_explain_text');
 
         return $collection;
@@ -198,7 +194,7 @@ class provider implements
         // AI action generate text.
         $sql = "SELECT aar.actionname, aar.success, aar.provider, aar.timecreated, aar.timecompleted, aar.contextid,
                        aagt.prompt, aagt.responseid, aagt.fingerprint, aagt.generatedcontent,
-                       aagt.prompttokens, aagt.completiontoken, aar.model
+                       aar.prompttokens, aar.completiontokens, aar.model
                   FROM {ai_action_register} aar
                   JOIN {ai_action_generate_text} aagt
                     ON aar.actionid = aagt.id
@@ -226,7 +222,7 @@ class provider implements
                 'fingerprint' => $textgeneratedetail->fingerprint,
                 'generatedcontent' => $textgeneratedetail->generatedcontent,
                 'prompttokens' => $textgeneratedetail->prompttokens,
-                'completiontoken' => $textgeneratedetail->completiontoken,
+                'completiontokens' => $textgeneratedetail->completiontokens,
                 'model' => $textgeneratedetail->model,
                 'success' => transform::yesno($textgeneratedetail->success),
                 'provider' => $textgeneratedetail->provider,
@@ -287,7 +283,7 @@ class provider implements
         // AI action summarise text.
         $sql = "SELECT aar.actionname, aar.success, aar.provider, aar.timecreated, aar.timecompleted, aar.contextid,
                        aast.prompt, aast.responseid, aast.fingerprint, aast.generatedcontent,
-                       aast.prompttokens, aast.completiontoken, aar.model
+                       aar.prompttokens, aar.completiontokens, aar.model
                   FROM {ai_action_register} aar
                   JOIN {ai_action_summarise_text} aast
                     ON aar.actionid = aast.id
@@ -315,7 +311,7 @@ class provider implements
                 'fingerprint' => $textsummarisedetail->fingerprint,
                 'generatedcontent' => $textsummarisedetail->generatedcontent,
                 'prompttokens' => $textsummarisedetail->prompttokens,
-                'completiontoken' => $textsummarisedetail->completiontoken,
+                'completiontokens' => $textsummarisedetail->completiontokens,
                 'model' => $textsummarisedetail->model,
                 'success' => transform::yesno($textsummarisedetail->success),
                 'provider' => $textsummarisedetail->provider,
@@ -331,7 +327,7 @@ class provider implements
         // AI action explain text.
         $sql = "SELECT aar.actionname, aar.success, aar.provider, aar.timecreated, aar.timecompleted, aar.contextid,
                        aaet.prompt, aaet.responseid, aaet.fingerprint, aaet.generatedcontent,
-                       aaet.prompttokens, aaet.completiontoken, aar.model
+                       aar.prompttokens, aar.completiontokens, aar.model
                   FROM {ai_action_register} aar
                   JOIN {ai_action_explain_text} aaet
                     ON aar.actionid = aaet.id
@@ -359,7 +355,7 @@ class provider implements
                 'fingerprint' => $textexplaindetail->fingerprint,
                 'generatedcontent' => $textexplaindetail->generatedcontent,
                 'prompttokens' => $textexplaindetail->prompttokens,
-                'completiontoken' => $textexplaindetail->completiontoken,
+                'completiontokens' => $textexplaindetail->completiontokens,
                 'model' => $textexplaindetail->model,
                 'success' => transform::yesno($textexplaindetail->success),
                 'provider' => $textexplaindetail->provider,
