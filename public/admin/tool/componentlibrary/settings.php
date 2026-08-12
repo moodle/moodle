@@ -24,14 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die;
-// Component library page.
-$docsdir = '/tool/componentlibrary/docs/';
 
-if (file_exists($CFG->dirroot . '/'. $CFG->admin . $docsdir)) {
-    $temp = new admin_externalpage(
-        'toolcomponentlibrary',
-        get_string('pluginname', 'tool_componentlibrary'),
-        new moodle_url('/admin/tool/componentlibrary/')
-    );
-    $ADMIN->add('development', $temp);
-}
+$temp = new admin_externalpage(
+    'toolcomponentlibrary',
+    get_string('pluginname', 'tool_componentlibrary'),
+    new moodle_url('/admin/tool/componentlibrary/index.php')
+);
+$ADMIN->add('development', $temp);

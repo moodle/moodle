@@ -25,8 +25,9 @@
 $string['copied'] = 'Copied!';
 $string['copy'] = 'Copy';
 $string['copytoclipboard'] = 'Copy to clipboard';
-$string['installer'] = '<h3>Component library setup</h3>
-    <p>Before you can see the content of the component library you will need to have shell access to your Moodle installation and be able to write to folder /admin/tool/componentlibrary and have npm installed on your Moodle server.</p>
+$string['installer'] = '<h1>Component library setup</h1>
+    <div class="alert alert-warning">Before you can see the content of the component library you will need to have shell access to your Moodle installation and be able to write to folder /admin/tool/componentlibrary and have npm installed on your Moodle server.</div>
+    <p>Install NVM and Node: <a target="_blank" href="https://moodledev.io/general/development/tools/nodejs">https://moodledev.io/general/development/tools/nodejs</a></p>
     <p>If you meet these requirements you can navigate to your Moodle root folder and run:</p>
     <pre>$ npm install</pre>
     <pre>$ npm install grunt</pre>
