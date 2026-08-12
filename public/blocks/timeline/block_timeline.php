@@ -55,8 +55,8 @@ class block_timeline extends block_base {
             'filter'             => $filter,
             'order'              => $order,
             'limit'              => (int) $limit,
-            'nocoursesurl'       => $OUTPUT->image_url('courses', 'block_timeline')->out(),
-            'noeventsurl'        => $OUTPUT->image_url('activities', 'block_timeline')->out(),
+            'nocoursesurl'       => $OUTPUT->image_url('courses', 'block_timeline')->out(false),
+            'noeventsurl'        => $OUTPUT->image_url('activities', 'block_timeline')->out(false),
             'hasenrolledcourses' => !empty($courses),
         ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
 

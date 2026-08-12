@@ -34,7 +34,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
  */
 #[CoversClass(\block_timeline::class)]
 final class block_timeline_test extends \advanced_testcase {
-
     /**
      * @var \stdClass enrolled test user, created once per test via setUp.
      */
@@ -44,7 +43,7 @@ final class block_timeline_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
         global $CFG;
-        // get_content() requires these constants; loaded here so tests can reference
+        // The get_content() requires these constants; loaded here so tests can reference
         // them too, mirroring the require_once already present in get_content() itself.
         require_once($CFG->dirroot . '/blocks/timeline/lib.php');
 
@@ -149,5 +148,25 @@ final class block_timeline_test extends \advanced_testcase {
         $second = $block->get_content();
 
         $this->assertSame($first, $second);
+    }
+
+    /**
+     * The image URLs seeded into props are embedded in JSON, then in an HTML attribute —
+     * they must not be pre-escaped for raw HTML (out(true), the default), or a URL with
+     * more than one query parameter ends up double-escaped (&amp;amp;) once the browser's
+     * single level of HTML-entity decoding hands the JSON off to be parsed.
+     */
+    public function test_get_content_does_not_double_escape_image_urls_with_query_params(): void {
+        global $CFG;
+        $CFG->slasharguments = 0;
+
+        $block = \block_instance('timeline');
+        $block->init();
+        $props = $this->decode_props($block->get_content());
+
+        $this->assertStringContainsString('&', $props->nocoursesurl);
+        $this->assertStringNotContainsString('&amp;', $props->nocoursesurl);
+        $this->assertStringContainsString('&', $props->noeventsurl);
+        $this->assertStringNotContainsString('&amp;', $props->noeventsurl);
     }
 }
