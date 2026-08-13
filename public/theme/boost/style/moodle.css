@@ -38189,6 +38189,29 @@ table.question-bank-table .header.checkbox .form-check {
 #page-mod-quiz-edit div.questionbankwindow.block {
   padding: 0;
 }
+#page-mod-quiz-edit ul.slots > li.section > .content {
+  background-color: var(--mds-bg-surface-strong);
+  padding: 1rem;
+}
+#page-mod-quiz-edit ul.slots > li.section:first-child > .content {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+#page-mod-quiz-edit ul.slots > li.section:last-child > .content {
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+}
+#page-mod-quiz-edit ul.slots > li.section li.activity.slot {
+  background-color: var(--mds-bg-surface-default);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+#page-mod-quiz-edit ul.slots > li.section li.activity.slot + li.activity.slot {
+  margin-top: 1rem;
+}
+#page-mod-quiz-edit ul.slots > li.section li.activity.slot .actions {
+  background-color: transparent;
+}
 
 .questionbank .singleselect {
   margin: 0;
