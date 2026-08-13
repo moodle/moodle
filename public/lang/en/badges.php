@@ -590,7 +590,9 @@ $string['variablesubstitution_help'] = 'In a badge message, certain variables ca
 : This will be replaced by the recipient\'s full name.
 
 %badgelink%
-: This will be replaced by the public URL with information about the issued badge.';
+: This will be replaced by the public URL with information about the issued badge.
+
+User-specific values referring to the message recipient can also be used: %firstname%, %lastname%, %fullname%, etc.';
 $string['verifyemail'] = 'Verify email';
 $string['viewbadge'] = 'View issued badge';
 $string['visible'] = 'Visible';

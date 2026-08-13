@@ -176,8 +176,8 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $eventdata->notification      = 1;
     $eventdata->contexturl        = $badgeurl;
     $eventdata->contexturlname    = $badge->name;
-    $eventdata->subject           = badge_message_from_template($badge->messagesubject, $params);
-    $eventdata->fullmessagehtml   = badge_message_from_template($badge->message, $params);
+    $eventdata->subject           = badge_message_from_template($badge->messagesubject, $params, $userto);
+    $eventdata->fullmessagehtml   = badge_message_from_template($badge->message, $params, $userto);
     $eventdata->fullmessage       = html_to_text($eventdata->fullmessagehtml);
     $eventdata->fullmessageformat = FORMAT_HTML;
 
@@ -268,14 +268,19 @@ function badges_calculate_message_schedule($schedule) {
  * Replaces variables in a message template and returns text ready to be emailed to a user.
  *
  * @param string $message Message body.
+ * @param stdClass|string[] $params Variables to replace in the message
+ * @param stdClass|null $user User object to obtain additional user variables
  * @return string Message with replaced values
  */
-function badge_message_from_template($message, $params) {
+function badge_message_from_template(string $message, stdClass|array $params, ?stdClass $user = null): string {
+    $params = (array) $params;
+    if ($user !== null) {
+        $params += \core_user::get_name_placeholders($user);
+    }
     $msg = $message;
     foreach ($params as $key => $value) {
-        $msg = str_replace("%$key%", $value, $msg);
+        $msg = str_replace("%$key%", (string) $value, $msg);
     }
-
     return $msg;
 }
 
