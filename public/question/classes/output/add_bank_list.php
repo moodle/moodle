@@ -67,7 +67,6 @@ class add_bank_list implements \renderable, \templatable {
                     'course' => $this->course->id,
                     'section' => 0,
                     'return' => 0,
-                    'sr' => 0,
                     'beforemod' => 0,
                 ]),
                 get_string('addanotherbank', $plugin),

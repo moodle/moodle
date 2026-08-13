@@ -917,6 +917,15 @@ abstract class moodleform_mod extends moodleform {
         $mform->addElement('hidden', 'sr', -1);
         $mform->setType('sr', PARAM_INT);
 
+        // Return options.
+        foreach ((array)$this->current as $key => $value) {
+            if (!preg_match('/^returnoptions\[\w+\]$/', $key)) {
+                continue;
+            }
+            $mform->addElement('hidden', $key, 0);
+            $mform->setType($key, PARAM_INT);
+        }
+
         $mform->addElement('hidden', 'beforemod', 0);
         $mform->setType('beforemod', PARAM_INT);
 

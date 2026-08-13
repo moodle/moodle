@@ -234,11 +234,16 @@ class content_item_service {
      *
      * @param \stdClass $user the user to check access for.
      * @param \stdClass $course the course to scope the content items to.
-     * @param array $linkparams the desired section to return to.
+     * @param int[] $returnoptions options to pass to course_get_url().
      * @param \section_info|null $sectioninfo the section we want to fetch the modules for.
      * @return \stdClass[] the content items, scoped to a course.
      */
-    public function get_content_items_for_user_in_course(\stdClass $user, \stdClass $course, array $linkparams = [], ?\section_info $sectioninfo = null): array {
+    public function get_content_items_for_user_in_course(
+        \stdClass $user,
+        \stdClass $course,
+        array $returnoptions = [],
+        ?\section_info $sectioninfo = null
+    ): array {
         global $PAGE;
 
         if (!has_capability('moodle/course:manageactivities', \context_course::instance($course->id), $user)) {
@@ -284,10 +289,10 @@ class content_item_service {
             });
         }
 
-        // Add the link params to the link, if any have been provided.
-        if (!empty($linkparams)) {
-            $availablecontentitems = array_map(function ($item) use ($linkparams) {
-                $item->get_link()->params($linkparams);
+        // Add the return options to the link, if any have been provided.
+        if (!empty($returnoptions)) {
+            $availablecontentitems = array_map(function ($item) use ($returnoptions) {
+                $item->get_link()->param('returnoptions', $returnoptions);
                 return $item;
             }, $availablecontentitems);
         }

@@ -136,11 +136,13 @@ class controlmenu extends basecontrolmenu {
             return null;
         }
 
-        $sectionreturn = $this->format->get_sectionnum();
-        $returnparams = !is_null($sectionreturn) ? ['sr' => $sectionreturn] : [];
         $url = new url(
             '/course/editsection.php',
-            array_merge(['id' => $this->section->id], $returnparams)
+            [
+                'id' => $this->section->id,
+                'returnoptions' => $this->returnoptions,
+                'returnurl' => $this->baseurl,
+            ]
         );
 
         return new link_secondary(
@@ -168,6 +170,8 @@ class controlmenu extends basecontrolmenu {
             action: 'section_duplicate',
             ids: [$this->section->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(
@@ -227,6 +231,8 @@ class controlmenu extends basecontrolmenu {
             action: $stateaction,
             ids: [$this->section->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(
@@ -422,6 +428,8 @@ class controlmenu extends basecontrolmenu {
             action: 'section_delete',
             ids: [$this->section->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
         return new link_secondary(
             url: $url,

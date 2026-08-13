@@ -22,6 +22,7 @@
  */
 import ajax from 'core/ajax';
 import emitDeprecation from 'core/deprecated';
+import log from 'core/log';
 
 // A promises map for caching specific section modules data.
 const sectionsModulesPromises = new Map();
@@ -199,11 +200,12 @@ export async function getModulesData(courseId, sectionNum, sectionReturnNum, bef
  *
  * @param {Number} courseId Course ID.
  * @param {Number} sectionId Section ID.
- * @param {Number} sectionReturnNum Section return.
+ * @param {Object|Number|null} returnOptions Options for generating the return URL.
+ *          Alternatively, the section page to return to. Deprecated since Moodle 5.3 (MDL-86284).
  * @param {Number} beforeMod Before module number to be used in the module.
  * @return {Object} Tab data.
  */
-export async function getSectionModulesData(courseId, sectionId, sectionReturnNum, beforeMod) {
+export async function getSectionModulesData(courseId, sectionId, returnOptions, beforeMod) {
     const cacheKey = `${courseId}-${sectionId}`;
     if (!sectionsModulesPromises.has(cacheKey)) {
         sectionsModulesPromises.set(
@@ -225,7 +227,7 @@ export async function getSectionModulesData(courseId, sectionId, sectionReturnNu
     return sectionMapper(
         moduleData,
         sectionId,
-        sectionReturnNum,
+        returnOptions,
         beforeMod,
     );
 }
@@ -238,12 +240,13 @@ export async function getSectionModulesData(courseId, sectionId, sectionReturnNu
  * @TODO remove legacySectionNum param in Moodle 6.0 (MDL-86310)
  * @param {Object} webServiceData Our original data from the Web service call
  * @param {Number} sectionId The number of the section we need to append to the links
- * @param {Number|null} sectionReturnNum The number of the section return we need to append to the links
+ * @param {Object|Number|null} returnOptions Options for generating the return URL
+ *      Alternatively, the number of the section page to return to. Deprecated since Moodle 4.3 (MDL-86284)
  * @param {Number|null} beforeMod The ID of the cm we need to append to the links
  * @param {Number|null} legacySectionNum The legacy section number to append to the links
  * @return {Array} [modules] with URL's built
  */
-function sectionMapper(webServiceData, sectionId, sectionReturnNum, beforeMod, legacySectionNum = null) {
+function sectionMapper(webServiceData, sectionId, returnOptions, beforeMod, legacySectionNum = null) {
     // We need to take a fresh deep copy of the original data as an object is a reference type.
     const newData = JSON.parse(JSON.stringify(webServiceData));
     let urlParams = '&beforemod=' + (beforeMod ?? 0);
@@ -254,8 +257,15 @@ function sectionMapper(webServiceData, sectionId, sectionReturnNum, beforeMod, l
     if (legacySectionNum) {
         urlParams += `&section=${legacySectionNum}`;
     }
-    if (sectionReturnNum) {
-        urlParams += `&sr=${sectionReturnNum}`;
+    if (returnOptions === null) {
+        log.debug("sectionMapper() 3rd parameter as null is deprecated. Use object with return options instead.");
+        returnOptions = {};
+    } else if (!isNaN(returnOptions)) {
+        log.debug("sectionMapper() 3rd parameter as number is deprecated. Use object with return options instead.");
+        returnOptions = {"sr": returnOptions};
+    }
+    for (let key in returnOptions) {
+        urlParams += `&returnoptions[${key}]=${returnOptions[key]}`;
     }
     newData.content_items.forEach((module) => {
         module.link += urlParams;

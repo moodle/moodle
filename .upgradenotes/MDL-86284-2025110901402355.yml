@@ -1,0 +1,7 @@
+issueNumber: MDL-86284
+notes:
+  core_course:
+    - message: >-
+        The core_courseformat\base::get_return_section() function is now
+        deprecated.  Use get_page_section() instead.
+      type: deprecated

@@ -720,18 +720,52 @@ abstract class base {
     }
 
     /**
-     * Returns the section info for the current single section.
+     * Returns the section info for the current section page.
      *
-     * If the course format is not a single section format, this will return null.
+     * If displaying the course main page, this will return null.
+     *
+     * @deprecated since Moodle 5.3
+     * @todo MDL-88498 Final deprecation in Moodle 7.0
+     * @return section_info|null
+     */
+    #[\core\attribute\deprecated(
+        replacement: 'base::get_page_section',
+        since: '5.3',
+        mdl: 'MDL-86284',
+    )]
+    public function get_return_section(): section_info|null {
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
+        return $this->get_page_section();
+    }
+
+    /**
+     * Returns the section info for the current section page.
+     *
+     * If displaying the course main page, this will return null.
      *
      * @return section_info|null
      */
-    public function get_return_section(): section_info|null {
+    public function get_page_section(): section_info|null {
         if ($this->singlesectionid === null) {
             return null;
         }
         $modinfo = get_fast_modinfo($this->courseid);
         return $modinfo->get_section_info_by_id($this->singlesectionid);
+    }
+
+    /**
+     * Returns the get_view_url() options for returning to a section on the page
+     *
+     * @param section_info|stdClass|null $section
+     * @return int[] Option names must consist of only word characters [a-z,A-Z,0-9,_],
+     *               and option values must be integers.
+     */
+    public function get_return_options(section_info|stdClass|null $section): array {
+        $returnoptions = ['pagesectionid' => $this->get_sectionid() ?? 0];
+        if (!is_null($this->get_sectionnum())) {
+            $returnoptions['sr'] = $this->get_sectionnum();
+        }
+        return $returnoptions;
     }
 
     /**
@@ -916,8 +950,9 @@ abstract class base {
      * @param int|stdClass|section_info|null $section Section object from database or just field course_sections.section
      *     if null the course view page is returned
      * @param array $options options for view URL. At the moment core uses:
+     *     'pagesectionid' (int) the section ID of the page to display (null or 0 for course main page)
+     *     'sr' (int) the section number of the page to display (deprecated since Moodle 5.3)
      *     'navigation' (bool) if true and section not empty, the function returns section page; otherwise, it returns course page.
-     *     'sr' (int) used by course formats to specify to which section to return
      *     'expanded' (bool) if true the section will be shown expanded, true by default
      * @return null|moodle_url
      */
@@ -926,7 +961,12 @@ abstract class base {
         $section = (is_object($section) || is_null($section)) ? $section : $this->get_section($section, IGNORE_MISSING);
 
         // Determine page.
-        if (array_key_exists('sr', $options)) {
+        if (array_key_exists('pagesectionid', $options)) {
+            $modinfo = $this->get_modinfo();
+            $pagesectionid = $options['pagesectionid'] ?? null;
+            $pagesection = $pagesectionid ? $modinfo->get_section_info_by_id($pagesectionid, IGNORE_MISSING) : null;
+        } else if (array_key_exists('sr', $options)) {
+            // TODO: Remove this in Moodle 7.0 (MDL-88498).
             $pagesection = !is_null($options['sr']) ? $this->get_section($options['sr'], IGNORE_MISSING) : null;
         } else if ($options['navigation'] ?? false) {
             $pagesection = $section;
@@ -962,6 +1002,8 @@ abstract class base {
      * @param int|null $targetsectionid optional target section id
      * @param int|null $targetcmid optional target cm id
      * @param moodle_url|null $returnurl optional custom return url
+     * @param stdClass|section_info|null $returnsection section to return to
+     * @param int[] $returnoptions options for generating the return URL
      * @return moodle_url
      */
     public function get_update_url(
@@ -969,7 +1011,9 @@ abstract class base {
         array $ids = [],
         ?int $targetsectionid = null,
         ?int $targetcmid = null,
-        ?moodle_url $returnurl = null
+        ?moodle_url $returnurl = null,
+        stdClass|section_info|null $returnsection = null,
+        array $returnoptions = []
     ): moodle_url {
         $params = [
             'courseid' => $this->get_courseid(),
@@ -994,6 +1038,10 @@ abstract class base {
         if ($returnurl) {
             $params['returnurl'] = $returnurl->out_as_local_url();
         }
+        if (!is_null($returnsection)) {
+            $params['returnsectionid'] = $returnsection->id;
+        }
+        $params['returnoptions'] = $returnoptions;
         return new moodle_url('/course/format/update.php', $params);
     }
 
@@ -1033,6 +1081,8 @@ abstract class base {
             action: $nonajaxaction,
             ids: [$cm->id],
             returnurl: $this->get_view_url($this->get_sectionnum(), ['navigation' => true]),
+            returnsection: $cm->get_section_info(),
+            returnoptions: $this->get_return_options($cm->get_section_info()),
         );
     }
 

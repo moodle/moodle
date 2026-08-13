@@ -150,6 +150,8 @@ class visibility implements named_templatable, renderable {
             action: $stateaction,
             ids: [$this->section->id],
             returnurl: $format->get_view_url($format->get_sectionnum(), ['navigation' => true]),
+            returnsection: $this->section,
+            returnoptions: $format->get_return_options($this->section),
         );
 
         return [

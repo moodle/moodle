@@ -35,7 +35,8 @@ $add    = optional_param('add', '', PARAM_ALPHANUM);     // Module name.
 $update = optional_param('update', 0, PARAM_INT);
 $return = optional_param('return', 0, PARAM_BOOL);    //return to course/view.php if false or mod/modname/view.php if true
 $type   = optional_param('type', '', PARAM_ALPHANUM); //TODO: hopefully will be removed in 2.0
-$sectionreturn = optional_param('sr', null, PARAM_INT);
+$sectionreturn = optional_param('sr', null, PARAM_INT); // Deprecated since Moodle 5.3 (MDL-86284).
+$returnoptions = optional_param_array('returnoptions', [], PARAM_INT);
 $beforemod = optional_param('beforemod', 0, PARAM_INT);
 $showonly = optional_param('showonly', '', PARAM_TAGLIST); // Settings group to show expanded and hide the rest.
 
@@ -46,7 +47,17 @@ if ($sectionreturn < 0) {
 
 $url = new moodle_url('/course/modedit.php');
 if (!is_null($sectionreturn)) {
-    $url->param('sr', $sectionreturn);
+    debugging(
+        'The sr parameter has been deprecated. Please use returnoptions[pagesectionid] instead.',
+        DEBUG_DEVELOPER,
+    );
+    if (!isset($returnoptions['sr'])) {
+        // TODO: Remove this in Moodle 7.0 (MDL-88498).
+        $returnoptions['sr'] = $sectionreturn;
+    }
+}
+if (!is_null($returnoptions)) {
+    $url->param('returnoptions', $returnoptions);
 }
 if (!empty($return)) {
     $url->param('return', $return);
@@ -80,8 +91,9 @@ if (!empty($add)) {
 
     [$module, $context, $cw, $cm, $data] = prepare_new_moduleinfo_data($course, $add, $sectionnum);
     $data->return = 0;
-    if (!is_null($sectionreturn)) {
-        $data->sr = $sectionreturn;
+    foreach ($returnoptions as $key => $value) {
+        $datakey = "returnoptions[{$key}]";
+        $data->$datakey = $value;
     }
     $data->add = $add;
     $data->beforemod = $beforemod;
@@ -113,8 +125,9 @@ if (!empty($add)) {
 
     list($cm, $context, $module, $data, $cw) = get_moduleinfo_data($cm, $course);
     $data->return = $return;
-    if (!is_null($sectionreturn)) {
-        $data->sr = $sectionreturn;
+    foreach ($returnoptions as $key => $value) {
+        $datakey = "returnoptions[{$key}]";
+        $data->$datakey = $value;
     }
     $data->update = $update;
     if (!empty($showonly)) {
@@ -168,11 +181,7 @@ if ($mform->is_cancelled()) {
     } else if (plugin_supports('mod', $module->name, FEATURE_PUBLISHES_QUESTIONS)) {
         redirect(\core_question\local\bank\question_bank_helper::get_url_for_qbank_list($course->id));
     } else {
-        $options = [];
-        if (!is_null($sectionreturn)) {
-            $options['sr'] = $sectionreturn;
-        }
-        $url = course_get_url($course, $cw, $options);
+        $url = course_get_url($course, $cw, $returnoptions);
         if (!empty($cm->id)) {
             $url->set_anchor('module-' . $cm->id);
         } else if (!empty($data->beforemod)) {
@@ -200,11 +209,7 @@ if ($mform->is_cancelled()) {
     } else if (plugin_supports('mod', $fromform->modulename, FEATURE_PUBLISHES_QUESTIONS)) {
         $url = \core_question\local\bank\question_bank_helper::get_url_for_qbank_list($course->id);
     } else {
-        $options = [];
-        if (!is_null($sectionreturn)) {
-            $options['sr'] = $sectionreturn;
-        }
-        $url = course_get_url($course, $cw, $options);
+        $url = course_get_url($course, $cw, $returnoptions);
         if (!empty($fromform->coursemodule)) {
             $url->set_anchor('module-' . $fromform->coursemodule);
         }

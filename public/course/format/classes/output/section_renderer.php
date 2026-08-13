@@ -260,7 +260,7 @@ abstract class section_renderer extends core_course_renderer {
         $activitychooserbutton = new $classname(
             section: $section,
             mod: $mod,
-            sectionreturn: $format->get_return_section(),
+            sectionreturn: $format->get_page_section(),
         );
 
         return $this->render_from_template(

@@ -28,7 +28,8 @@ use core_courseformat\formatactions;
 require("../config.php");
 require_once("lib.php");
 
-$sectionreturn = optional_param('sr', null, PARAM_INT);
+$sectionreturn = optional_param('sr', null, PARAM_INT); // Deprecated since Moodle 5.3 (MDL-86284).
+$returnoptions = optional_param_array('returnoptions', [], PARAM_INT);
 $add           = optional_param('add', '', PARAM_ALPHANUM);
 $type          = optional_param('type', '', PARAM_ALPHA);
 $indent        = optional_param('indent', 0, PARAM_INT); // TODO remove this param as part of MDL-83530.
@@ -57,10 +58,18 @@ foreach (compact('indent','update','hide','show','copy','moveto','movetosection'
 if ($sectionreturn < 0) {
     $sectionreturn = null;
 }
-$urloptions = [];
 if (!is_null($sectionreturn)) {
-    $url->param('sr', $sectionreturn);
-    $urloptions['sr'] = $sectionreturn;
+    debugging(
+        'The sr parameter has been deprecated. Please use returnoptions[pagesectionid] instead.',
+        DEBUG_DEVELOPER,
+    );
+    if (!isset($returnoptions['sr'])) {
+        // TODO: Remove this in Moodle 7.0 (MDL-88498).
+        $returnoptions['sr'] = $sectionreturn;
+    }
+}
+if (!empty($returnoptions)) {
+    $url->param('returnoptions', $returnoptions);
 }
 if ($add !== '') {
     $url->param('add', $add);
@@ -96,10 +105,8 @@ if (!empty($add)) {
         'sectionid' => $sectionid,
         'return' => $returntomod,
         'beforemod' => $beforemod,
+        'returnoptions' => $returnoptions,
     ];
-    if (!is_null($sectionreturn)) {
-        $params['sr'] = $sectionreturn;
-    }
 
     redirect(
         new moodle_url(
@@ -115,10 +122,8 @@ if (!empty($add)) {
     $params = [
         'update' => $update,
         'return' => $returntomod,
+        'returnoptions' => $returnoptions,
     ];
-    if (!is_null($sectionreturn)) {
-        $params['sr'] = $sectionreturn;
-    }
     redirect(
         new moodle_url(
             '/course/modedit.php',
@@ -141,7 +146,7 @@ if (!empty($add)) {
     // Duplicate the module.
     $cmaction = \core_courseformat\formatactions::cm($course->id);
     $newcm = $cmaction->duplicate($cm->id);
-    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
+    redirect(course_get_url($course, $cm->sectionnum, $returnoptions));
 
 } else if (!empty($delete)) {
     // TODO remove this else if as part of MDL-83530.
@@ -159,7 +164,7 @@ if (!empty($add)) {
     if (plugin_supports('mod', $cm->modname, FEATURE_PUBLISHES_QUESTIONS)) {
         $return = \core_question\local\bank\question_bank_helper::get_url_for_qbank_list($course->id);
     } else {
-        $return = course_get_url($course, $cm->sectionnum, $urloptions);
+        $return = course_get_url($course, $cm->sectionnum, $returnoptions);
     }
 
     if (!$confirm or !confirm_sesskey()) {
@@ -169,10 +174,8 @@ if (!empty($add)) {
             'confirm' => 1,
             'delete' => $cm->id,
             'sesskey' => sesskey(),
+            'returnoptions' => $returnoptions,
         ];
-        if (!is_null($sectionreturn)) {
-            $optionsyes['sr'] = $sectionreturn;
-        }
         $strdeletecheck = get_string('deletecheck', '', $fullmodulename);
         $strparams = (object)array('type' => $fullmodulename, 'name' => $cm->name);
         $strdeletechecktypename = get_string('deletechecktypename', '', $strparams);
@@ -248,7 +251,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     unset($USER->activitycopyname);
     unset($USER->activitycopysectionreturn);
 
-    redirect(course_get_url($course, $section->section, $urloptions));
+    redirect(course_get_url($course, $section->section, $returnoptions));
 
 } else if (!empty($indent) and confirm_sesskey()) {
     // TODO remove this else if as part of MDL-83530.
@@ -278,7 +281,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     // Rebuild invalidated module cache.
     rebuild_course_cache($cm->course, false, true);
 
-    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
+    redirect(course_get_url($course, $cm->sectionnum, $returnoptions));
 
 } else if (!empty($hide) and confirm_sesskey()) {
     // TODO remove this else if as part of MDL-83530.
@@ -297,7 +300,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (set_coursemodule_visible($cm->id, 0)) {
         \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
     }
-    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
+    redirect(course_get_url($course, $cm->sectionnum, $returnoptions));
 
 } else if (!empty($stealth) and confirm_sesskey()) {
     // TODO remove this else if as part of MDL-83530.
@@ -312,7 +315,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (set_coursemodule_visible($cm->id, 1, 0)) {
         \core\event\course_module_updated::create_from_cm($cm)->trigger();
     }
-    redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $cm->sectionnum, $returnoptions));
 
 } else if (!empty($show) and confirm_sesskey()) {
     // TODO remove this else if as part of MDL-83530.
@@ -328,7 +331,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (set_coursemodule_visible($cm->id, 1)) {
         \core\event\course_module_updated::create_from_cm($cm)->trigger();
     }
-    redirect(course_get_url($course, $section->section, $urloptions));
+    redirect(course_get_url($course, $section->section, $returnoptions));
 
 } else if ($groupmode > -1 and confirm_sesskey()) {
     // TODO remove this else if as part of MDL-83530.
@@ -348,7 +351,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     formatactions::cm($coursecontext->instanceid)->set_groupmode($cm->id, $groupmode);
     \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
-    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
+    redirect(course_get_url($course, $cm->sectionnum, $returnoptions));
 
 } else if (!empty($copy) and confirm_sesskey()) { // value = course module
     // TODO remove this else if as part of MDL-83530.
@@ -369,9 +372,9 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     $USER->activitycopy              = $copy;
     $USER->activitycopycourse        = $cm->course;
     $USER->activitycopyname          = $cm->name;
-    $USER->activitycopysectionreturn = $sectionreturn;
+    $USER->activitycopysectionreturn = $returnoptions['sr'] ?? null;
 
-    redirect(course_get_url($course, $section->section, $urloptions));
+    redirect(course_get_url($course, $section->section, $returnoptions));
 
 } else if (!empty($cancelcopy) and confirm_sesskey()) { // value = course module
     // TODO remove this else if as part of MDL-83530.
@@ -388,7 +391,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     unset($USER->activitycopycourse);
     unset($USER->activitycopyname);
     unset($USER->activitycopysectionreturn);
-    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
+    redirect(course_get_url($course, $cm->sectionnum, $returnoptions));
 } else {
     throw new \moodle_exception('unknowaction');
 }

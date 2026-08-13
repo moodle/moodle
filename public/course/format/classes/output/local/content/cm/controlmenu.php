@@ -75,11 +75,7 @@ class controlmenu extends basecontrolmenu {
         $this->modcontext = context_module::instance($mod->id);
         $this->canmanageactivities = has_capability('moodle/course:manageactivities', $this->modcontext);
 
-        $this->basemodurl = new url('/course/mod.php');
-        $sectionnumreturn = $format->get_sectionnum();
-        if ($sectionnumreturn !== null) {
-            $this->basemodurl->param('sr', $sectionnumreturn);
-        }
+        $this->basemodurl = new url('/course/mod.php', ['returnoptions' => $this->returnoptions]);
     }
 
     /**
@@ -246,6 +242,8 @@ class controlmenu extends basecontrolmenu {
             action: 'cm_moveright',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         $icon = (right_to_left()) ? 't/left' : 't/right';
@@ -278,6 +276,8 @@ class controlmenu extends basecontrolmenu {
             action: 'cm_moveleft',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         $icon = (right_to_left()) ? 't/right' : 't/left';
@@ -332,6 +332,8 @@ class controlmenu extends basecontrolmenu {
             action: 'cm_duplicate',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(
@@ -430,6 +432,8 @@ class controlmenu extends basecontrolmenu {
             action: 'cm_delete',
             ids: [$this->mod->id],
             returnurl: $this->baseurl,
+            returnsection: $this->section,
+            returnoptions: $this->returnoptions,
         );
 
         return new link_secondary(

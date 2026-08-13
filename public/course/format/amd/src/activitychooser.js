@@ -85,7 +85,7 @@ const registerListenerEvents = (courseId) => {
                 modulesDataPromise = Repository.getSectionModulesData(
                     courseId,
                     position.sectionId,
-                    position.sectionReturnNum,
+                    position.returnOptions,
                     position.beforeMod,
                 );
             } else {
@@ -114,8 +114,9 @@ const registerListenerEvents = (courseId) => {
  * @return {Object} The course position of the target.
  * @property {Number} sectionNum The section number.
  * @property {Number|null} sectionId The section id.
- * @property {Number|null} sectionReturnNum The section return number.
- * @property {Number|null} sectionReturnId The section return id.
+ * @property {Number|null} sectionReturnNum The section return number. Deprecated since Moodle 5.3 (MDL-86284).
+ * @property {Number|null} sectionReturnId The section return id. Deprecated since Moodle 5.3 (MDL-86284).
+ * @property {Object} returnOptions Options for generating the return URL.
  * @property {Number|null} beforeMod The ID of the cm to add the modules before.
  */
 function getCoursePositionFromTarget(target) {
@@ -141,6 +142,7 @@ function getCoursePositionFromTarget(target) {
         sectionNum = sectionDiv.getAttribute('data-number');
         sectionId = sectionDiv.getAttribute('data-id');
     } else {
+        // Deprecated since Moodle 5.3 (MDL-86284).
         caller = button;
         if (caller.hasAttribute('data-sectionid')) {
             window.console.warn(
@@ -152,12 +154,18 @@ function getCoursePositionFromTarget(target) {
         sectionNum = caller.dataset.sectionnum;
         sectionId = caller.getAttribute('data-section-id');
     }
+    const sectionReturnNum = caller.dataset?.sectionreturnnum ?? caller.dataset?.sectionreturn ?? null;
+    let returnOptions = JSON.parse(caller.dataset.returnoptions ?? "{}");
+    if (sectionReturnNum !== null && sectionReturnNum !== "" && !returnOptions?.sr) {
+        returnOptions.sr = sectionReturnNum;
+    }
     return {
         sectionNum,
         sectionId,
         // The old data attribute for the section return number was data-sectionreturn.
-        sectionReturnNum: caller.dataset?.sectionreturnnum ?? caller.dataset?.sectionreturn ?? null,
+        sectionReturnNum,
         sectionReturnId: caller.dataset?.sectionreturnid ?? null,
-        beforeMod: caller.dataset?.beforemod ?? null,
+        returnOptions,
+        beforeMod: button.dataset?.beforemod ?? null,
     };
 }

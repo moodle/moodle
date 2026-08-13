@@ -40,7 +40,7 @@ class activitychooserbutton implements named_templatable, renderable {
      * @todo remove $sectionreturn int support in 6.0 (MDL-86310)
      * @param section_info $section the section info
      * @param cm_info|null $mod the course module ionfo
-     * @param int|section_info|null $sectionreturn the section to return to
+     * @param int|section_info|null $sectionreturn the section page to return to. Deprecated since Moodle 5.3 (MDL-86284)
      * @param array|null $actionlinks the action links
      */
     public function __construct(
@@ -55,7 +55,7 @@ class activitychooserbutton implements named_templatable, renderable {
     ) {
         if (is_int($this->sectionreturn)) {
             debugging(
-                'Using int as sectionreturn in activitychooserbutton is deprecated, use a section_info instance instead',
+                'Using sectionreturn in activitychooserbutton is deprecated, pass null instead',
                 DEBUG_DEVELOPER
             );
             $this->sectionreturn = get_fast_modinfo($this->section->course)->get_section_info($this->sectionreturn);
