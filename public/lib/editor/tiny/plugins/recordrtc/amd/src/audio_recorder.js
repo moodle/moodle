@@ -107,24 +107,50 @@ export default class Audio extends BaseClass {
         };
     }
 
-    async uploadRecording() {
-        if (this.getFileExtension() === "mp3") {
-            try {
-                const options = this.getRecordingOptions();
-                this.blob = await convertMp3(this.player.src, options.audioBitsPerSecondInKb);
-                this.player.src = URL.createObjectURL(this.blob);
-            } catch (error) {
-                // Display a user-friendly error message
-                const message = `MP3 conversion failed: ${error.message || 'Unknown error'}. Please try again.`;
-                addToast(message, {type: 'error', delay: 6000});
-
-                // Disable the upload button.
-                this.setUploadButtonState(false);
-
-                return;
-            }
+    /**
+     * Convert the recording to the configured output format, if it is not already in that format.
+     *
+     * This must happen before the recording leaves the browser, whether it is uploaded or downloaded.
+     *
+     * @returns {Promise<boolean>} Whether the recording is ready to be used.
+     */
+    async prepareBlobForOutput() {
+        // If there is nothing to convert, let the caller deal with the missing recording.
+        if (!this.blob || this.getFileExtension() !== 'mp3' || this.blob.type === 'audio/mp3') {
+            return true;
         }
 
-        super.uploadRecording();
+        try {
+            const options = this.getRecordingOptions();
+            this.blob = await convertMp3(this.player.src, options.audioBitsPerSecondInKb);
+            this.player.src = URL.createObjectURL(this.blob);
+        } catch (error) {
+            // Display a user-friendly error message.
+            const message = `MP3 conversion failed: ${error.message || 'Unknown error'}. Please try again.`;
+            await addToast(message, {type: 'error', delay: 6000});
+
+            return false;
+        }
+
+        return true;
+    }
+
+    async uploadRecording() {
+        if (!await this.prepareBlobForOutput()) {
+            // Disable the upload button.
+            this.setUploadButtonState(false);
+
+            return;
+        }
+
+        await super.uploadRecording();
+    }
+
+    async downloadRecording() {
+        if (!await this.prepareBlobForOutput()) {
+            return;
+        }
+
+        await super.downloadRecording();
     }
 }
