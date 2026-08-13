@@ -75,6 +75,8 @@ final class client_repository_test extends \advanced_testcase {
             $this->assertSame($expectedproperties['description'], $client->get_description());
             $this->assertSame($expectedproperties['status'], $client->get_status());
             $this->assertSame($expectedproperties['isconfidential'], $client->isConfidential());
+            $this->assertEqualsCanonicalizing($expectedproperties['granttypes'], $client->get_grant_types());
+            $this->assertEquals($expectedproperties['ispkceenabled'], $client->is_pkce_enabled());
             $this->assertEqualsCanonicalizing($expectedproperties['redirecturi'], array_values($client->getRedirectUri()));
         }
     }
@@ -99,6 +101,8 @@ final class client_repository_test extends \advanced_testcase {
                     'description' => 'A test description',
                     'status' => client_entity::STATUS_ACTIVE,
                     'isconfidential' => 1,
+                    'granttypes' => 'client_credentials',
+                    'ispkceenabled' => false,
                     'timecreated' => time(),
                     'redirecturis' => ['https://example.test/callback'],
                 ],
@@ -110,6 +114,8 @@ final class client_repository_test extends \advanced_testcase {
                     'description' => 'A test description',
                     'status' => client_entity::STATUS_ACTIVE,
                     'isconfidential' => true,
+                    'granttypes' => ['client_credentials'],
+                    'ispkceenabled' => false,
                     'redirecturi' => ['https://example.test/callback'],
                 ],
             ],
@@ -120,6 +126,8 @@ final class client_repository_test extends \advanced_testcase {
                     'description' => null,
                     'status' => client_entity::STATUS_REVOKED,
                     'isconfidential' => 0,
+                    'granttypes' => 'authorization_code,refresh_token',
+                    'ispkceenabled' => true,
                     'timecreated' => time(),
                     'redirecturis' => ['https://example.test/uri1', 'https://example.test/uri2'],
                 ],
@@ -131,6 +139,8 @@ final class client_repository_test extends \advanced_testcase {
                     'description' => null,
                     'status' => client_entity::STATUS_REVOKED,
                     'isconfidential' => false,
+                    'granttypes' => ['authorization_code', 'refresh_token'],
+                    'ispkceenabled' => true,
                     'redirecturi' => ['https://example.test/uri1', 'https://example.test/uri2'],
                 ],
             ],
@@ -211,6 +221,7 @@ final class client_repository_test extends \advanced_testcase {
                     'clientidentifier' => 'client-conf',
                     'status' => client_entity::STATUS_ACTIVE,
                     'isconfidential' => 1,
+                    'granttypes' => 'authorization_code,refresh_token',
                     'timecreated' => time(),
                 ],
                 'supersecret',
@@ -227,6 +238,7 @@ final class client_repository_test extends \advanced_testcase {
                     'clientidentifier' => 'client-conf',
                     'status' => client_entity::STATUS_ACTIVE,
                     'isconfidential' => 1,
+                    'granttypes' => 'authorization_code,refresh_token',
                     'timecreated' => time(),
                 ],
                 'supersecret',
@@ -243,6 +255,7 @@ final class client_repository_test extends \advanced_testcase {
                     'clientidentifier' => 'client-conf',
                     'status' => client_entity::STATUS_ACTIVE,
                     'isconfidential' => 1,
+                    'granttypes' => 'authorization_code,refresh_token',
                     'timecreated' => time(),
                 ],
                 'supersecret',
@@ -259,6 +272,7 @@ final class client_repository_test extends \advanced_testcase {
                     'clientidentifier' => 'client-conf',
                     'status' => client_entity::STATUS_ACTIVE,
                     'isconfidential' => 1,
+                    'granttypes' => 'authorization_code,refresh_token',
                     'timecreated' => time(),
                 ],
                 'supersecret',
@@ -275,6 +289,7 @@ final class client_repository_test extends \advanced_testcase {
                     'clientidentifier' => 'client-conf',
                     'status' => client_entity::STATUS_ACTIVE,
                     'isconfidential' => 1,
+                    'granttypes' => 'authorization_code,refresh_token',
                     'timecreated' => time() - 7200,
                 ],
                 'supersecret',

@@ -63,6 +63,12 @@ class client_entity implements ClientEntityInterface {
     /** @var string|null The description of the client */
     protected ?string $description = null;
 
+    /** @var array The grant types supported by the client */
+    protected array $granttypes;
+
+    /** @var bool Whether PKCE is enabled for the client */
+    protected bool $ispkceenabled;
+
     /**
      * Get the ID of the client.
      *
@@ -91,6 +97,24 @@ class client_entity implements ClientEntityInterface {
     }
 
     /**
+     * Get the grant types supported by the client.
+     *
+     * @return array
+     */
+    public function get_grant_types(): array {
+        return $this->granttypes;
+    }
+
+    /**
+     * Whether PKCE is enabled for the client.
+     *
+     * @return bool
+     */
+    public function is_pkce_enabled(): bool {
+        return $this->ispkceenabled;
+    }
+
+    /**
      * Returns true if the client supports the given grant type.
      *
      * @param string $granttype The grant type to check.
@@ -105,8 +129,13 @@ class client_entity implements ClientEntityInterface {
             }
         }
 
-        // For now, all clients support all grant types.
-        return true;
+        // The Resource Owner Password Credentials grant is deprecated and no longer supported.
+        if ($granttype === 'password') {
+            return false;
+        }
+
+        // Finally, check if the grant type is in the list of supported grant types for this client.
+        return in_array($granttype, $this->granttypes, true);
     }
 
     /**
@@ -137,6 +166,8 @@ class client_entity implements ClientEntityInterface {
         }, $redirecturis);
         $client->status = (int) $clientrecord->status;
         $client->isConfidential = (bool) $clientrecord->isconfidential;
+        $client->granttypes = !empty($clientrecord->granttypes) ? explode(',', $clientrecord->granttypes) : [];
+        $client->ispkceenabled = (bool) $clientrecord->ispkceenabled;
 
         return $client;
     }

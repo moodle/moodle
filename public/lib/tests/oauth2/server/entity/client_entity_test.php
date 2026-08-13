@@ -90,6 +90,30 @@ final class client_entity_test extends \advanced_testcase {
     }
 
     /**
+     * Test the client grant types getter.
+     *
+     * @return void
+     */
+    public function test_grant_types_getter(): void {
+        $client = new client_entity();
+        $this->set_protected_property($client, 'granttypes', ['authorization_code', 'refresh_token']);
+
+        $this->assertSame(['authorization_code', 'refresh_token'], $client->get_grant_types());
+    }
+
+    /**
+     * Test the client grant types getter.
+     *
+     * @return void
+     */
+    public function test_pkce_enabled_getter(): void {
+        $client = new client_entity();
+        $this->set_protected_property($client, 'ispkceenabled', true);
+
+        $this->assertTrue($client->is_pkce_enabled());
+    }
+
+    /**
      * Test the redirect URI getter.
      *
      * @param string|array $redirecturi The redirect URI to set.
@@ -147,6 +171,7 @@ final class client_entity_test extends \advanced_testcase {
      * @param string $granttype The grant type to test.
      * @param bool $isconfidential Whether the client is confidential.
      * @param bool $issystemcontext Whether the client is in the system context.
+     * @param array $clientsupportedgrants The grant types supported by the client.
      * @param bool $expected The expected result.
      * @return void
      */
@@ -155,10 +180,12 @@ final class client_entity_test extends \advanced_testcase {
         string $granttype,
         bool $isconfidential,
         bool $issystemcontext,
+        array $clientsupportedgrants,
         bool $expected
     ): void {
         $client = new client_entity();
         $this->set_protected_property($client, 'isConfidential', $isconfidential);
+        $this->set_protected_property($client, 'granttypes', $clientsupportedgrants);
 
         if ($granttype === 'client_credentials') {
             $ownercontext = $issystemcontext ? \context_system::instance() : \context_course::instance(SITEID);
@@ -175,10 +202,18 @@ final class client_entity_test extends \advanced_testcase {
      */
     public static function grant_type_provider(): array {
         return [
-            'authorization code' => ['authorization_code', false, false, true],
-            'client credentials allowed' => ['client_credentials', true, true, true],
-            'client credentials confidential only' => ['client_credentials', false, true, false],
-            'client credentials system context only' => ['client_credentials', true, false, false],
+            'authorization code' => ['authorization_code', false, false, ['authorization_code'], true],
+            'client credentials allowed' => [
+                'client_credentials',
+                true,
+                true,
+                ['authorization_code', 'client_credentials'],
+                true,
+            ],
+            'client credentials confidential only' => ['client_credentials', false, true, ['client_credentials'], false],
+            'client credentials system context only' => ['client_credentials', true, false, ['client_credentials'], false],
+            'password not allowed' => ['password', true, true, ['client_credentials'], false],
+            'authorization code not supported' => ['authorization_code', true, false, ['client_credentials'], false],
         ];
     }
 
@@ -193,6 +228,8 @@ final class client_entity_test extends \advanced_testcase {
      * @param string|null $expecteddescription The expected description.
      * @param int $expectedstatus The expected status.
      * @param bool $expectedconfidential The expected isConfidential state.
+     * @param array $expectedgranttypes The expected grant types supported by the client.
+     * @param bool $expectedpkceenabled The expected PKCE enabled state.
      * @param array $expectedredirecturis The expected redirect URIs.
      * @return void
      */
@@ -206,6 +243,8 @@ final class client_entity_test extends \advanced_testcase {
         ?string $expecteddescription,
         int $expectedstatus,
         bool $expectedconfidential,
+        array $expectedgranttypes,
+        bool $expectedpkceenabled,
         array $expectedredirecturis
     ): void {
         $this->resetAfterTest();
@@ -221,6 +260,8 @@ final class client_entity_test extends \advanced_testcase {
         $this->assertSame($systemcontext->id, $client->get_owner_context()->id);
         $this->assertSame($expectedstatus, $client->get_status());
         $this->assertSame($expectedconfidential, $client->isConfidential());
+        $this->assertSame($expectedgranttypes, $client->get_grant_types());
+        $this->assertSame($expectedpkceenabled, $client->is_pkce_enabled());
         $this->assertSame($expectedredirecturis, (array)$client->getRedirectUri());
     }
 
@@ -240,6 +281,8 @@ final class client_entity_test extends \advanced_testcase {
                     'ownercontext' => 1,
                     'status' => 1,
                     'isconfidential' => 1,
+                    'granttypes' => 'client_credentials',
+                    'ispkceenabled' => false,
                 ],
                 [(object) ['uri' => 'https://example.test/callback']],
                 10,
@@ -248,6 +291,8 @@ final class client_entity_test extends \advanced_testcase {
                 'Description One',
                 1,
                 true,
+                ['client_credentials'],
+                false,
                 ['https://example.test/callback'],
             ],
             'revoked, public client with multiple redirect uris' => [
@@ -259,6 +304,8 @@ final class client_entity_test extends \advanced_testcase {
                     'ownercontext' => 1,
                     'status' => 2,
                     'isconfidential' => 0,
+                    'granttypes' => 'client_credentials,authorization_code',
+                    'ispkceenabled' => true,
                 ],
                 [
                     (object) ['uri' => 'https://example.test/alt1'],
@@ -270,6 +317,8 @@ final class client_entity_test extends \advanced_testcase {
                 null,
                 2,
                 false,
+                ['client_credentials', 'authorization_code'],
+                true,
                 ['https://example.test/alt1', 'https://example.test/alt2'],
             ],
         ];

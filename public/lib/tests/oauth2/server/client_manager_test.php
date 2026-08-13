@@ -57,12 +57,17 @@ final class client_manager_test extends \advanced_testcase {
      * @param array $redirecturis The redirect URIs to register.
      * @return \stdClass The client record.
      */
-    private function create_fixture_client(client_manager $manager, array $redirecturis = []): \stdClass {
+    private function create_fixture_client(
+        client_manager $manager,
+        array $redirecturis = [],
+        array $supportedgrants = ['authorization_code', 'client_credentials', 'refresh_token'],
+    ): \stdClass {
         global $DB;
 
         $client = $manager->create_client(
             name: 'Test client',
             ownercontext: \core\context\system::instance(),
+            granttypes: $supportedgrants,
             redirecturis: $redirecturis,
         );
 
@@ -149,6 +154,7 @@ final class client_manager_test extends \advanced_testcase {
         $client = $manager->create_client(
             name: 'My integration',
             ownercontext: $context,
+            granttypes: ['authorization_code', 'client_credentials', 'refresh_token'],
             redirecturis: ['https://example.com/callback'],
             description: 'Does something useful',
         );
@@ -160,6 +166,11 @@ final class client_manager_test extends \advanced_testcase {
         $this->assertTrue($client->isConfidential());
         $this->assertSame($context->id, $client->get_owner_context()->id);
         $this->assertSame(['https://example.com/callback'], array_values((array) $client->getRedirectUri()));
+        $this->assertEqualsCanonicalizing(
+            ['authorization_code', 'client_credentials', 'refresh_token'],
+            $client->get_grant_types(),
+        );
+        $this->assertTrue($client->is_pkce_enabled());
 
         $record = $DB->get_record(
             'oauth2_server_clients',
@@ -183,6 +194,7 @@ final class client_manager_test extends \advanced_testcase {
         $created = $manager->create_client(
             name: 'My integration',
             ownercontext: \core\context\system::instance(),
+            granttypes: ['authorization_code', 'client_credentials', 'refresh_token'],
             redirecturis: ['https://example.com/callback', 'https://example.com/other'],
         );
 
@@ -194,6 +206,10 @@ final class client_manager_test extends \advanced_testcase {
         $this->assertEqualsCanonicalizing(
             array_values((array) $created->getRedirectUri()),
             array_values((array) $fetched->getRedirectUri()),
+        );
+        $this->assertEqualsCanonicalizing(
+            $created->get_grant_types(),
+            $fetched->get_grant_types(),
         );
     }
 
@@ -233,6 +249,7 @@ final class client_manager_test extends \advanced_testcase {
             $manager->create_client(
                 name: 'Test client',
                 ownercontext: \core\context\system::instance(),
+                granttypes: ['authorization_code', 'client_credentials', 'refresh_token'],
                 redirecturis: ['http://example.com/callback'],
             );
             $this->fail('A moodle_exception was expected.');
@@ -672,6 +689,7 @@ final class client_manager_test extends \advanced_testcase {
         $manager = $this->get_manager();
         $client = $manager->create_client(
             name: 'Public client',
+            granttypes: ['authorization_code', 'refresh_token'],
             ownercontext: \core\context\system::instance(),
             isconfidential: false,
         );

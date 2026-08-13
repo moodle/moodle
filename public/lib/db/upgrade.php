@@ -2178,5 +2178,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026080700.01);
     }
 
+    if ($oldversion < 2026081800.02) {
+        // Define field granttypes to be added to oauth2_server_clients.
+        $table = new xmldb_table('oauth2_server_clients');
+        $field = new xmldb_field('granttypes', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'isconfidential');
+
+        // Conditionally launch add field granttypes.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field ispkceenabled to be added to oauth2_server_clients.
+        $table = new xmldb_table('oauth2_server_clients');
+        $field = new xmldb_field('ispkceenabled', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'granttypes');
+
+        // Conditionally launch add field ispkceenabled.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026081800.02);
+    }
+
     return true;
 }
