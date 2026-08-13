@@ -43,3 +43,7 @@ input.form-control[readonly][name="guestpassword"],
 input.form-control[readonly][name="guestjoinurl"] {
     background: initial;
 }
+
+body.jsenabled select[data-bbb-tags-select="1"] {
+    display: none;
+}

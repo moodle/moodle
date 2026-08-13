@@ -27,8 +27,11 @@ require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use core\session\manager as session_manager;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\config;
+use mod_bigbluebuttonbn\output\recording_row_playback;
+use mod_bigbluebuttonbn\recording;
 use mod_bigbluebuttonbn\test\subplugins_test_helper_trait;
 use Moodle\BehatExtension\Exception\SkippedException;
 require_once(__DIR__ . '../../../classes/test/subplugins_test_helper_trait.php');
@@ -89,6 +92,7 @@ class behat_mod_bigbluebuttonbn extends behat_base {
                 <<<XPATH
     .//*[@data-identifier=%locator%]
 XPATH
+                ,
             ], false),
         ];
     }
@@ -115,6 +119,117 @@ XPATH
 
         $curl = new \curl();
         $curl->get($url->out_omit_querystring(), $url->params());
+    }
+
+    /**
+     * Create a recording with explicit playback formats for a BigBlueButton activity.
+     *
+     * @Given /^activity "([^"]*)" has processed recording "([^"]*)" with playback formats:$/
+     *
+     * @param string $activityname
+     * @param string $recordingname
+     * @param TableNode $data
+     */
+    public function activity_has_processed_recording_with_playback_formats(
+        string $activityname,
+        string $recordingname,
+        TableNode $data
+    ): void {
+        $rows = $data->getHash();
+        if (empty($rows)) {
+            throw new \coding_exception('At least one playback format row is required.');
+        }
+
+        $formats = [];
+        foreach ($rows as $row) {
+            $type = trim((string)($row['type'] ?? ''));
+            if ($type === '') {
+                throw new \coding_exception('Playback format "type" is required.');
+            }
+
+            $formats[] = [
+                'type' => $type,
+                'url' => $row['url'] ?? ('https://example.invalid/' . rawurlencode($type)),
+                'processingTime' => (int)($row['processingtime'] ?? 0),
+                'length' => (int)($row['length'] ?? 0),
+            ];
+        }
+
+        $cm = $this->get_cm_by_activity_name('bigbluebuttonbn', $activityname);
+        $instanceid = $cm->instance;
+        $generator = \testing_util::get_data_generator()->get_plugin_generator('mod_bigbluebuttonbn');
+        $generator->create_recording([
+            'bigbluebuttonbnid' => $instanceid,
+            'name' => $recordingname,
+            'status' => recording::RECORDING_STATUS_PROCESSED,
+            'playback' => [
+                'format' => $formats,
+            ],
+        ]);
+    }
+
+    /**
+     * Assert which playback formats a specific user can see for an activity recording.
+     *
+     * @Then /^user "([^"]*)" should see playback formats "([^"]*)" for activity "([^"]*)"$/
+     *
+     * @param string $username
+     * @param string $formats
+     * @param string $activityname
+     */
+    public function user_should_see_playback_formats_for_activity(
+        string $username,
+        string $formats,
+        string $activityname
+    ): void {
+        global $DB, $PAGE, $USER;
+
+        $cm = $this->get_cm_by_activity_name('bigbluebuttonbn', $activityname);
+        $instance = instance::get_from_cmid($cm->id);
+        $records = $instance->get_recordings();
+        if (empty($records)) {
+            throw new \coding_exception('No recordings found for activity ' . $activityname . '.');
+        }
+
+        $user = $DB->get_record('user', ['username' => $username, 'deleted' => 0], '*', MUST_EXIST);
+        $previoususer = is_object($USER) ? clone($USER) : null;
+        session_manager::set_user($user);
+
+        try {
+            $recording = reset($records);
+            $rowplayback = new recording_row_playback($recording, $instance);
+            $rowinfo = $rowplayback->export_for_template($PAGE->get_renderer('mod_bigbluebuttonbn'));
+
+            $actualformats = array_values(array_filter(array_map(function ($playback) {
+                foreach ($playback->attributes as $attribute) {
+                    if (($attribute['name'] ?? '') === 'data-target') {
+                        return $attribute['value'] ?? '';
+                    }
+                }
+                return '';
+            }, $rowinfo->playbacks)));
+
+            $expectedformats = array_values(array_filter(
+                array_map('trim', explode(',', $formats)),
+                function (string $format): bool {
+                    return $format !== '';
+                }
+            ));
+
+            sort($actualformats);
+            sort($expectedformats);
+
+            if ($actualformats !== $expectedformats) {
+                throw new \Exception(
+                    'Unexpected playback formats for user ' . $username . '. Expected: ' .
+                    implode(',', $expectedformats) . ' Actual: ' . implode(',', $actualformats)
+                );
+            }
+        } finally {
+            if ($previoususer instanceof \stdClass) {
+                session_manager::set_user($previoususer);
+            }
+        }
     }
 
     /**
@@ -238,7 +353,7 @@ XPATH
         $instance = \mod_bigbluebuttonbn\instance::get_from_instanceid($instanceid);
         $this->send_mock_request('backoffice/sendAllEvents', [
                 'meetingID' => $instance->get_meeting_id(),
-                'sendQuery' => true
+                'sendQuery' => true,
             ]
         );
     }
