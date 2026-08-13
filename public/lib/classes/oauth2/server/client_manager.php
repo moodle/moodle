@@ -545,7 +545,7 @@ class client_manager {
      * @return void
      * @throws moodle_exception If the URI is not usable as a redirect URI.
      */
-    protected function validate_redirect_uri_format(string $uri): void {
+    public function validate_redirect_uri_format(string $uri): void {
         $parts = parse_url($uri);
 
         // A redirect URI must be absolute and must not carry a fragment. See RFC 6749, section 3.1.2.
@@ -554,13 +554,18 @@ class client_manager {
             && !empty($parts['host'])
             && !isset($parts['fragment']);
 
+        if (!$isabsolute) {
+            throw new moodle_exception('oauth2clientinvalidredirecturi', 'error', '', $uri);
+        }
+
+        $scheme = strtolower($parts['scheme']);
+        $host = strtolower($parts['host']);
+
         // HTTPS is required, except on the loopback interface, which native apps rely on during
         // development and cannot serve over HTTPS. See RFC 8252, section 7.3.
-        $scheme = $isabsolute ? strtolower($parts['scheme']) : '';
-        $isallowedscheme = $scheme === 'https'
-            || ($scheme === 'http' && $this->is_loopback_host($parts['host']));
+        $islocal = $this->is_loopback_host($host);
 
-        if (!$isabsolute || !$isallowedscheme) {
+        if ($scheme !== 'https' && !($scheme === 'http' && $islocal)) {
             throw new moodle_exception('oauth2clientinvalidredirecturi', 'error', '', $uri);
         }
     }

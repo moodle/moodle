@@ -18,8 +18,10 @@ namespace core_admin\reportbuilder\local\systemreports;
 
 use core\oauth2\server\entity\client_entity;
 use core\output\help_icon;
+use core_admin\route\controller\oauth2\server\client_management;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
+use core_reportbuilder\output\report_action;
 use core_reportbuilder\system_report;
 use lang_string;
 
@@ -39,6 +41,17 @@ class oauth2_server_clients extends system_report {
         $this->set_main_table('oauth2_server_clients', 'client');
         // Register entity name for columns and filters.
         $this->annotate_entity('client', new lang_string('oauth2server_client', 'admin'));
+        // Create a custom action (button) right above the table that provides navigation to the 'Create client' page.
+        $createclienturl = \core\router\util::get_path_for_callable([client_management::class, 'create_client']);
+        $this->set_report_action(new report_action(
+            get_string('oauth2server_clientcreate', 'admin'),
+            [
+                'href' => ($createclienturl->out(false)),
+                'class' => 'btn btn-primary',
+            ],
+            'a',
+        ));
+
         // Add columns and filters.
         $this->add_columns();
         $this->add_filters();

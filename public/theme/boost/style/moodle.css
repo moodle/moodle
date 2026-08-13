@@ -32998,6 +32998,13 @@ img.icon {
   opacity: 0.65;
 }
 
+#page-admin-oauth2server-client-create [data-groupname=clienttypegroup] fieldset > div:first-of-type,
+#page-admin-oauth2server-client-create [data-groupname=primaryflowsgroup] fieldset > div:first-of-type {
+  padding: 1rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+}
+
 /**
  Blocks
  */
