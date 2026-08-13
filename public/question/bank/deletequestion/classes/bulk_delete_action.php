@@ -54,4 +54,31 @@ class bulk_delete_action extends \core_question\local\bank\bulk_action_base {
             'moodle/question:editall',
         ];
     }
+
+    /**
+     * Initialise the modal js with the current bank context id.
+     */
+    public function initialise_javascript(): void {
+        global $PAGE;
+        $PAGE->requires->js_call_amd(
+            'qbank_deletequestion/bulk_delete',
+            'init',
+            [
+                'contextid' => $this->qbank->contexts->lowest()->id,
+            ],
+        );
+    }
+
+    /**
+     * Body text for the bulk delete questions modal. Gets the list of questions to be deleted, and whether they are in use.
+     *
+     * @param array $args [questionids, deleteall]
+     * @return string
+     */
+    public static function delete_modal_fragment(array $args): string {
+        $questionids = clean_param_array(json_decode($args['questionids']), PARAM_INT);
+        $deleteall = clean_param($args['deleteall'], PARAM_BOOL);
+        [, $message] = helper::get_delete_confirmation_message($questionids, $deleteall);
+        return $message;
+    }
 }
