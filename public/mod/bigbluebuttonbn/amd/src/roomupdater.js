@@ -78,7 +78,7 @@ const poll = () => {
             timerReference = setTimeout(() => poll(), pollInterval * pollIntervalFactor);
             return true;
         })
-        .catch();
+        .catch(() => false);
 };
 
 /**
@@ -106,5 +106,16 @@ export const updateRoom = (updatecache = false) => {
         })
         .then(({html, js}) => Templates.replaceNode(bbbRoomViewElement, html, js))
         .then(() => pendingPromise.resolve())
-        .catch(displayException);
+        .catch((error) => {
+            // If the server is not reachable,
+            // display unconfigured view by reloading the page.
+            if (error?.errorcode === 'general_error_no_answer') {
+                stop();
+                window.location.reload();
+                return false;
+            }
+
+            displayException(error);
+            return false;
+        });
 };

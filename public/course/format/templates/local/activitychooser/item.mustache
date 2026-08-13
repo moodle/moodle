@@ -28,13 +28,16 @@
         },
         "icon": "<img class='icon' src='http://urltooptionicon' alt='icon'>",
         "purpose": "content",
-        "branded": 0
+        "branded": 0,
+        "disabled": false,
+        "disabledreason": "Server not configured"
     }
 }}
-<div role="menuitem"
-    tabindex="-1"
+<div tabindex="-1"
+    role="menuitem"
     aria-label="{{title}}"
-    class="option btn m-sm-1 position-relative"
+    {{#disabled}}aria-disabled="true"{{/disabled}}
+    class="option btn m-sm-1 position-relative{{#disabled}} opacity-50{{/disabled}}"
     data-region="chooser-option-container"
     data-internal="{{name}}"
     data-modname="{{componentname}}_{{link}}"
@@ -45,52 +48,77 @@
             {{{icon}}}
         </div>
         <div>
-            <a href="{{link}}"
-                title="{{#str}} addnew, moodle, {{title}} {{/str}}"
-                tabindex="-1"
-                data-action="add-chooser-option"
-                class="optioninfo text-decoration-none text-body stretched-link"
-            >
-                <div class="optionname clamp-2">{{title}}</div>
-            </a>
+            {{^disabled}}
+                <a href="{{link}}"
+                    title="{{#str}} addnew, moodle, {{title}} {{/str}}"
+                    tabindex="-1"
+                    data-action="add-chooser-option"
+                    class="optioninfo text-decoration-none text-body stretched-link"
+                >
+                    <div class="optionname clamp-2">{{title}}</div>
+                </a>
+            {{/disabled}}
+            {{#disabled}}
+                <span
+                    title="{{disabledreason}}"
+                    tabindex="-1"
+                    data-action="add-chooser-option"
+                    class="optioninfo text-decoration-none text-body stretched-link"
+                >
+                    <div class="optionname clamp-2">{{title}}</div>
+                </span>
+            {{/disabled}}
             <div class="optionactions d-flex align-items-start" role="group" data-region="chooser-option-actions-container">
                 <button class="btn btn-icon m-0 optionaction" data-action="show-option-summary" tabindex="-1" title="{{#str}} informationformodule, core_course, {{title}} {{/str}}">
                     <span aria-hidden="true">{{#pix}} docs, core {{/pix}}</span>
                 </button>
+                {{#disabled}}
+                    <button class="btn btn-icon m-0 optionaction d-none"
+                            data-action="manage-module-favourite"
+                            tabindex="-1"
+                            disabled
+                            aria-hidden="true"
+                    >
+                        <span data-icon="favourite-active"></span>
+                        <span data-icon="favourite-inactive"></span>
+                    </button>
+                {{/disabled}}
                 {{^legacyitem}}
-                <button class="btn btn-icon m-0 optionaction"
-                        data-action="manage-module-favourite"
-                        data-favourited="{{favourite}}"
-                        data-id="{{id}}"
-                        data-name="{{componentname}}"
-                        data-internal="{{name}}"
-                        {{^favourite}}
-                            aria-pressed="false"
-                            aria-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
-                            title="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
-                        {{/favourite}}
-                        {{#favourite}}
-                            aria-pressed="true"
-                            aria-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
-                            title="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
-                        {{/favourite}}
-                        tabindex="-1"
-                >
-                    <span
-                        class="{{^favourite}}d-none{{/favourite}}"
-                        data-icon="favourite-active"
-                        data-action-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
-                    >
-                        {{#pix}} i/star, core {{/pix}}
-                    </span>
-                    <span
-                        class="{{#favourite}}d-none{{/favourite}}"
-                        data-icon="favourite-inactive"
-                        data-action-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
-                    >
-                        {{#pix}} i/star-o, core {{/pix}}
-                    </span>
-                </button>
+                    {{^disabled}}
+                        <button class="btn btn-icon m-0 optionaction"
+                                data-action="manage-module-favourite"
+                                data-favourited="{{favourite}}"
+                                data-id="{{id}}"
+                                data-name="{{componentname}}"
+                                data-internal="{{name}}"
+                                {{^favourite}}
+                                    aria-pressed="false"
+                                    aria-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                                    title="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                                {{/favourite}}
+                                {{#favourite}}
+                                    aria-pressed="true"
+                                    aria-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
+                                    title="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
+                                {{/favourite}}
+                                tabindex="-1"
+                        >
+                            <span
+                                class="{{^favourite}}d-none{{/favourite}}"
+                                data-icon="favourite-active"
+                                data-action-label="{{#str}} aria:moduleunfavourite, core_course, {{title}} {{/str}}"
+                            >
+                                {{#pix}} i/star, core {{/pix}}
+                            </span>
+                            <span
+                                class="{{#favourite}}d-none{{/favourite}}"
+                                data-icon="favourite-inactive"
+                                data-action-label="{{#str}} aria:modulefavourite, core_course, {{title}} {{/str}}"
+                            >
+                                {{#pix}} i/star-o, core {{/pix}}
+                            </span>
+                        </button>
+                    {{/disabled}}
                 {{/legacyitem}}
             </div>
         </div>

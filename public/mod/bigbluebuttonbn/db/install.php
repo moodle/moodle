@@ -26,8 +26,4 @@
  * Perform the post-install procedures.
  */
 function xmldb_bigbluebuttonbn_install() {
-    global $DB;
-
-    // Disable the BigBlueButton activity module on new installs by default.
-    $DB->set_field('modules', 'visible', 0, ['name' => 'bigbluebuttonbn']);
 }
