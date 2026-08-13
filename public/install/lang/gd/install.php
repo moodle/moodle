@@ -55,7 +55,7 @@ $string['pathssubdataroot'] = '<p>Iùl-lann anns an tèid an t-susbaint fhaidhli
 <p>Bu chòir don iùl-lann seo a bhith so-leughte agus so-sgrìobhte le neach-cleachdaidh an fhrithealaiche-lìn (mar as trice ‘www-data’. ‘nobody’, no ‘apache’).</p>
 <p>Chan fhaod gun teid a ruighinn gu dìreach bhon lìon.</p>
 <p>Mura h-eil an iùl-lann ann am bith an-dràsta, feuchaidh am pròiseas ri cur an sàs a chruthachadh.</p>';
-$string['pathssubdirroot'] = '<p>An t-slighe slàn chun iùl-lann anns a bheil còd Moodle.</p>';
+$string['pathssubdirroot'] = '<p>An t-slighe slàn chun iùl-lainn anns a bheil còd Moodle.</p>';
 $string['pathssubwwwroot'] = '<p>An seòladh slàn far an tèid Moodle a ruigheachd, i.e. an seòladh a chuireas luchd-cleachdaidh a-steach ann am bàr-seòlaidh a’ bhrobhsair aca gus Moodle a ruigheachd.</p>
 <p>Chan urrainn Moodle a ruighinn a’ cleachdadh iomadach seòladh.  Mas urrainn an làrach agad a ruighinn tro iomadach seòladh, tagh am fear as fhasa agus stèidhich ath-stiùireadh maireannach airson gach aon de na seòlaidhean eile.</p>
 <p>Mas urrainn an làrach agad a ruighinn an dà chuid bhon eadar-lìon, agus bho lìonra bhon taobh a-staigh (air ainmeachadh uaireannan mar Eadra-lìon), cleachd an seòladh poblach an seo.</p>
