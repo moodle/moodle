@@ -452,11 +452,11 @@ final class file_storage_test extends \advanced_testcase {
             'filearea' => file_storage::LIBRARY_FILEAREA,
             'itemid' => 15,
             'filepath' => $filepath,
-            'filename' => 'upgrade.js'
+            'filename' => 'upgrades.js',
         ];
         $filestorage = new file_storage();
         $fs->create_file_from_string($filerecord, 'test string info');
-        $expectedfilepath = '/' . file_storage::LIBRARY_FILEAREA . $filepath . 'upgrade.js';
+        $expectedfilepath = '/' . file_storage::LIBRARY_FILEAREA . $filepath . 'upgrades.js';
         $this->assertEquals($expectedfilepath, $filestorage->getUpgradeScript($machinename, $majorversion, $minorversion));
         $this->assertNull($filestorage->getUpgradeScript($machinename, $majorversion, 7));
     }

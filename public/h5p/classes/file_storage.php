@@ -562,7 +562,7 @@ class file_storage implements H5PFileStorage {
      */
     public function getUpgradeScript($machinename, $majorversion, $minorversion) {
         $path = '/' . "{$machinename}-{$majorversion}.{$minorversion}" . '/';
-        $file = 'upgrade.js';
+        $file = 'upgrades.js';
         $itemid = $this->get_itemid_for_file(self::LIBRARY_FILEAREA, $path, $file);
         if ($this->fs->get_file($this->context->id, self::COMPONENT, self::LIBRARY_FILEAREA, $itemid, $path, $file)) {
             return '/' . self::LIBRARY_FILEAREA . $path. $file;
