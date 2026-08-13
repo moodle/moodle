@@ -62,7 +62,7 @@ class get_api_key extends external_api {
         self::validate_context($context);
         return [
             'apikey' => get_config('tiny_premium', 'apikey'),
-            'usecloud' => get_config('tiny_premium', 'plugin_source') !== manager::PACKAGE_SELF_HOSTED,
+            'usecloud' => (int) get_config('tiny_premium', 'plugin_source') !== manager::PACKAGE_SELF_HOSTED,
         ];
     }
 
