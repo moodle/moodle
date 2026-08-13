@@ -39,7 +39,6 @@ import AlertModal from 'core/local/modal/alert';
  */
 export default class {
 
-    stopRequested = false;
     buttonTimer = null;
     pauseTime = null;
     startTime = null;
@@ -63,6 +62,7 @@ export default class {
         this.modalRoot = modal.getRoot()[0];
         this.startStopButton = this.modalRoot.querySelector('button[data-action="startstop"]');
         this.uploadButton = this.modalRoot.querySelector('button[data-action="upload"]');
+        this.downloadButton = this.modalRoot.querySelector('button[data-action="download"]');
         this.pauseResumeButton = this.modalRoot.querySelector('button[data-action="pauseresume"]');
 
         // Disable the record button untilt he stream is acquired.
@@ -239,6 +239,10 @@ export default class {
             'uploadfailed',
             'pause',
             'resume',
+            'attachrecording',
+            'downloadrecordinghint',
+            'norecordingfound',
+            'norecordingfound_title',
         ]);
 
         prefetchTemplates([
@@ -340,6 +344,17 @@ export default class {
      */
     setUploadButtonState(enabled) {
         this.uploadButton.disabled = !enabled;
+    }
+
+    /**
+     * Enable the download button.
+     *
+     * @param {boolean|null} enabled Set the button state
+     */
+    setDownloadButtonState(enabled) {
+        if (this.downloadButton) {
+            this.downloadButton.disabled = !enabled;
+        }
     }
 
     /**
@@ -474,6 +489,10 @@ export default class {
                 this.uploadRecording();
             }
 
+            if (action === 'download') {
+                this.downloadRecording();
+            }
+
             if (action === 'pauseresume') {
                 this.handleRecordingPauseResumeRequested();
             }
@@ -512,21 +531,31 @@ export default class {
         this.blob = new Blob(this.data.chunks, {
             type: this.mediaRecorder.mimeType
         });
+        this.recordingFileName = this.getFileName((Math.random() * 1000).toString().replace('.', ''));
         this.player.srcObject = null;
         this.player.src = URL.createObjectURL(this.blob);
 
         // Change the label to "Record again".
         this.setRecordButtonTextFromString('recordagain');
 
-        // Show upload button.
+        // Show upload button, but only enable it if the file size is within the limit.
         this.setUploadButtonVisibility(true);
         this.setPlayerState(true);
-        this.setUploadButtonState(true);
+        this.setDownloadButtonState(true);
+
+        // An over-sized recording cannot be uploaded, so downloading it is the only way to keep it.
+        // Enable that button before anything which could fail, and report the problem last.
+        const oversized = this.getMaxUploadSize() !== -1 && this.data.blobSize >= this.getMaxUploadSize();
+        this.setUploadButtonState(!oversized);
 
         // Hide the pause button.
         this.setPauseButtonVisibility(false);
         if (this.mediaRecorder.state === 'inactive') {
             this.setPauseButtonTextFromString('pause');
+        }
+
+        if (oversized) {
+            await this.displayFileLimitHitMessage();
         }
     }
 
@@ -540,7 +569,7 @@ export default class {
             return;
         }
 
-        const fileName = this.getFileName((Math.random() * 1000).toString().replace('.', ''));
+        const fileName = this.recordingFileName;
 
         // Upload recording to server.
         try {
@@ -549,6 +578,7 @@ export default class {
 
             // Disable the upload button.
             this.setUploadButtonState(false);
+            this.setDownloadButtonState(false);
 
             // Upload the recording.
             const fileURL = await uploadFile(this.editor, 'media', this.blob, fileName, (progress) => {
@@ -560,12 +590,43 @@ export default class {
         } catch (error) {
             // Show a toast and unhide the button.
             this.setUploadButtonState(true);
+            await this.resetUploadButtonText();
+            this.setDownloadButtonState(true);
 
-            addToast(await getString('uploadfailed', component, {error}), {
+            const uploadErrorMessage = error.error ?? error.message ?? error;
+            const errorText = await getString('uploadfailed', component, {
+                error: uploadErrorMessage,
+            });
+            const downloadHint = await getString('downloadrecordinghint', component);
+            await addToast(`${errorText}<br/>${downloadHint}`, {
                 type: 'error',
             });
 
         }
+    }
+
+    /**
+     * Download the recording to the user's device.
+     */
+    async downloadRecording() {
+        if (!this.blob || this.data.chunks.length === 0) {
+            this.displayAlert(
+                getString('norecordingfound_title', component),
+                getString('norecordingfound', component)
+            );
+            return;
+        }
+
+        const fileName = this.recordingFileName;
+        const recordingUrl = URL.createObjectURL(this.blob);
+        const link = document.createElement('a');
+        link.href = recordingUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        // Revoke in the next task to avoid invalidating the object URL before the browser starts the download.
+        window.setTimeout(() => URL.revokeObjectURL(recordingUrl), 0);
     }
 
     /**
@@ -706,7 +767,7 @@ export default class {
     }
 
     async resetUploadButtonText() {
-        this.uploadButton.textContent = await getString('upload', component);
+        this.uploadButton.textContent = await getString('attachrecording', component);
     }
 
     /**
@@ -788,10 +849,7 @@ export default class {
      */
     requestRecordingStop() {
         if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-            this.stopRequested = true;
-            if (this.isPaused()) {
-                this.stopRecorder();
-            }
+            this.stopRecorder();
         } else {
             // There is no recording to stop, but the stream must still be cleaned up.
             this.cleanupStream();
@@ -868,29 +926,15 @@ export default class {
     /**
      * Handle the mediaRecorder `dataavailable` event.
      *
+     * Without timeslice, this event fires once after stop() with all recorded data.
+     * Timeslice is not used because it causes incorrect duration metadata in the recorded file
+     * across browsers (Firefox, Safari).
+     *
      * @param {Event} event
      */
     handleDataAvailable(event) {
-        if (this.isRecording() || this.isPaused()) {
-            const newSize = this.data.blobSize + event.data.size;
-            // Max upload size is -1 mean there is no limit.
-            // Recording stops when either the maximum upload size is reached, or the time limit expires.
-            // The time limit is checked in the `updateButtonTime` function.
-            if (this.getMaxUploadSize() !== -1 && newSize >= this.getMaxUploadSize()) {
-                this.stopRecorder();
-                this.displayFileLimitHitMessage();
-            } else {
-                // Push recording slice to array.
-                this.data.chunks.push(event.data);
-
-                // Size of all recorded data so far.
-                this.data.blobSize = newSize;
-
-                if (this.stopRequested) {
-                    this.stopRecorder();
-                }
-            }
-        }
+        this.data.chunks.push(event.data);
+        this.data.blobSize += event.data.size;
     }
 
     async displayFileLimitHitMessage() {
@@ -967,10 +1011,8 @@ export default class {
             blobSize: 0
         };
         this.setupPlayerSource();
-        this.stopRequested = false;
 
-        // Capture in 50ms chunks.
-        this.mediaRecorder.start(50);
+        this.mediaRecorder.start();
     }
 
     /**
