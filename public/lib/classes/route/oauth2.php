@@ -120,9 +120,11 @@ class oauth2 {
             // All instances of OAuthServerException can be formatted into a HTTP response.
             return $exception->generateHttpResponse($response);
         } catch (\Exception $exception) {
-            // Unknown exception.
+            // Unknown exception. Log the real message server-side, but do not expose internal
+            // details (e.g. database errors, paths, class names) to the OAuth client.
+            debugging('Unhandled exception in OAuth2 token endpoint: ' . $exception->getMessage(), DEBUG_DEVELOPER);
             $body = $response->getBody();
-            $body->write($exception->getMessage());
+            $body->write(get_string('error', 'error'));
             return $response->withStatus(500);
         }
     }
@@ -149,9 +151,11 @@ class oauth2 {
             // All instances of OAuthServerException can be formatted into a HTTP response.
             return $exception->generateHttpResponse($response);
         } catch (\Exception $exception) {
-            // Unknown exception.
+            // Unknown exception. Log the real message server-side, but do not expose internal
+            // details (e.g. database errors, paths, class names) to the OAuth client.
+            debugging('Unhandled exception in OAuth2 token endpoint: ' . $exception->getMessage(), DEBUG_DEVELOPER);
             $body = $response->getBody();
-            $body->write($exception->getMessage());
+            $body->write(get_string('error', 'error'));
             return $response->withStatus(500);
         }
     }

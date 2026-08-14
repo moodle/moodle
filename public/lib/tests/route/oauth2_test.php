@@ -468,8 +468,9 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
-     * token()/access_token() convert any other exception into a HTTP 500 response, with the
-     * exception message written into the response body.
+     * token()/access_token() convert any other exception into a generic HTTP 500 response,
+     * without exposing the unexpected exception's own message (which could contain database
+     * errors, paths, class names, or other internal details) to the OAuth client.
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('token_route_provider')]
     public function test_token_routes_generic_exception(string $method): void {
@@ -487,7 +488,11 @@ final class oauth2_test extends \advanced_testcase {
         );
 
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertStringContainsString('Something went wrong', (string) $response->getBody());
+        $this->assertStringNotContainsString('Something went wrong', (string) $response->getBody());
+
+        // The unexpected exception is still logged server-side (as a developer debugging
+        // message), just not exposed to the client.
+        $this->assertDebuggingCalled();
     }
 
     /**
