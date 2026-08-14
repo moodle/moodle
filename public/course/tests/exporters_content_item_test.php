@@ -179,7 +179,15 @@ final class exporters_content_item_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $cir = new content_item_readonly_repository();
         $contentitems = $cir->find_all_for_course($course, $user);
-        $contentitem = array_shift($contentitems);
+        // Just make sure the item we test is not already disabled.
+        $contentitem = null;
+        foreach ($contentitems as $item) {
+            if (!$item->is_disabled()) {
+                $contentitem = $item;
+                break;
+            }
+        }
+        $this->assertNotNull($contentitem);
 
         $ciexporter = new course_content_item_exporter($contentitem, ['context' => \context_course::instance($course->id)]);
         $renderer = $PAGE->get_renderer('core');
