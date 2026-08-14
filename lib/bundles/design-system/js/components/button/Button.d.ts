@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, ReactElement } from 'react';
-type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline-primary' | 'outline-secondary' | 'outline-danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline-primary' | 'outline-secondary' | 'outline-danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
 type IconElement = ReactElement<'i' | 'svg'>;
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

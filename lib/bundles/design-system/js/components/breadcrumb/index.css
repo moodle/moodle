@@ -1,0 +1,194 @@
+/* ─── List ─────────────────────────────────────────────────────────────────── */
+
+.mds-breadcrumb__list.breadcrumb {
+  /* Never wrap to a second line — labels truncate via flex shrink so the
+     trail always fits inline. */
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-bottom: 0;
+  padding: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Items ─────────────────────────────────────────────────────────────────── */
+
+.breadcrumb-item.items-2 {
+  max-width: 50%;
+}
+.breadcrumb-item.items-3 {
+  max-width: 33.3333%;
+}
+.breadcrumb-item.items-4 {
+  max-width: 25%;
+}
+.breadcrumb-item.mds-breadcrumb__item--current {
+  max-width: 50%;
+}
+
+.breadcrumb-item {
+  /* Each item is its own flex row: the Bootstrap ::before divider and the
+     link/span become flex siblings rather than inline boxes. This eliminates
+     the inline-box strut that previously added 2 px to every link item
+     (making them 26 px while the current-page item was 24 px), and prevents
+     the ::before + span from wrapping to a second line when the <li> is
+     narrower than the span's natural width. Bootstrap's float:left on
+     ::before is ignored inside a flex container - the divider becomes a
+     zero-shrink flex item at its natural content size, which is correct. */
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* --- Link items --------------------------------------------------------------------------- */
+
+/* When a Tooltip wraps a Link it becomes a flex item inside the <li> flex
+   container. Its default min-width:auto prevents the flex algorithm from
+   shrinking the wrapper, causing text overlap on narrow viewports. Overriding
+   to min-width:0 lets the wrapper shrink freely alongside the other items. */
+.breadcrumb-item .mds-tooltip {
+  min-width: 0;
+}
+
+/* The overflow trigger is wrapped by Dropdown's root element (.mds-dropdown,
+   display:inline-flex) so it can reuse Dropdown's floating-ui orchestration.
+   display:contents makes that wrapper transparent to the <li> flex layout,
+   matching the un-wrapped button that used to be the direct flex item. */
+.mds-breadcrumb__item--overflow .mds-dropdown {
+  display: contents;
+}
+
+/* ─── Shared text styles ─────────────────────────────────────────────────────── */
+
+/* The overflow trigger button and current-page label are not rendered by the
+   Link component, so they need explicit typography to match it. Token values
+   mirror those set in link.css so the row stays visually uniform. */
+.mds-breadcrumb__overflow-trigger,
+.mds-breadcrumb__item--current .mds-breadcrumb__label {
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-default);
+  /* paragraph-xs matches the Link component's own line-height token */
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+}
+
+/* ─── Link truncation overrides (on top of the Link component styles) ────────── */
+
+/* Link is inline-flex so min-width:0 is required to allow it to shrink below
+   its natural content width when the breadcrumb row is too narrow. */
+.mds-breadcrumb__link.mds-link {
+  min-width: 0;
+}
+
+/* Truncate the text inside Link's inner label span. min-width:0 lets the flex
+   item shrink below its natural text width (flex default is min-width:auto). */
+.mds-breadcrumb__link.mds-link .mds-link__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  line-height: var(--mds-line-height-paragraph-default);
+}
+
+/* ─── Current page label ─────────────────────────────────────────────────────── */
+
+.mds-breadcrumb__item--current .mds-breadcrumb__label {
+  color: var(--mds-text-subtle);
+  font-weight: var(--mds-typography-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-default);
+
+  /* The span is a flex item inside the current-page <li> flex container.
+     Flex items are blockified, so overflow:hidden + text-overflow:ellipsis
+     work without an explicit display override. flex:1 1 auto fills the
+     remaining space after the ::before divider; min-width:0 allows the span
+     to shrink below its natural text width when the container is narrow. */
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The label is focusable (tabIndex=0) so its truncation tooltip is reachable
+   by keyboard, matching the Link items' focus-visible treatment. */
+.mds-breadcrumb__item--current .mds-breadcrumb__label:focus {
+  outline: none;
+}
+
+.mds-breadcrumb__item--current .mds-breadcrumb__label:focus-visible {
+  outline: none;
+  box-shadow: inset 0 calc(-1 * var(--mds-stroke-weight-md)) 0
+    var(--mds-focus-default);
+}
+
+/* ─── Overflow trigger ───────────────────────────────────────────────────────── */
+
+/* The overflow button is visually styled to match the Link component. */
+.mds-breadcrumb__overflow-trigger {
+  display: inline-flex;
+  align-items: center;
+  line-height: var(--mds-line-height-paragraph-default);
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* Colour and weight to match Link's primary resting state */
+  color: var(--mds-text-link-primary-default);
+  font-weight: var(--mds-font-weight-regular);
+  text-decoration: none;
+}
+
+.mds-breadcrumb__overflow-trigger:hover:not(:focus-visible) {
+  color: var(--mds-text-link-primary-hover);
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+}
+
+.mds-breadcrumb__overflow-trigger:active {
+  color: var(--mds-text-link-primary-hover);
+}
+
+.mds-breadcrumb__overflow-trigger:focus {
+  outline: none;
+}
+
+.mds-breadcrumb__overflow-trigger:focus-visible {
+  /* Use an inset underline so focus does not change layout height. */
+  outline: none;
+  box-shadow: inset 0 calc(-1 * var(--mds-stroke-weight-md)) 0
+    var(--mds-focus-default);
+}
+
+/* Link's base focus style adds border/padding and can shift breadcrumb rows.
+   Override to a non-layout-affecting inset underline within breadcrumb only. */
+.mds-breadcrumb__link.mds-link:focus-visible {
+  padding-bottom: 0;
+  border-bottom: 0;
+  box-shadow: inset 0 calc(-1 * var(--mds-stroke-weight-md)) 0
+    var(--mds-focus-default);
+}
+
+/* ─── Overflow link items (per-element overrides) ────────────────────────────── */
+
+/* Bootstrap's breadcrumb divider is CSS-generated via content: and is therefore
+   read aloud by screen readers (VoiceOver, NVDA, JAWS). Override it here with
+   the CSS content alt-text syntax (content: <value> / "") to keep the visual
+   separator while silencing it for assistive technologies (MDN: Breadcrumb
+   navigation — Accessibility concerns; WCAG 1.3.3). */
+.mds-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  content: '/' / '';
+  color: var(--mds-text-muted);
+  /* Own spacing on both sides of the divider to keep gaps visually even. */
+  margin-inline: var(--mds-spacing-xs);
+  padding: 0;
+  float: none;
+}
+
+.mds-breadcrumb .breadcrumb-item + .breadcrumb-item {
+  /* Neutralize Bootstrap's physical padding so RTL/LTR both rely on the
+     symmetric divider margins above. */
+  padding-inline: 0;
+}

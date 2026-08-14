@@ -1,0 +1,252 @@
+.mds-switch {
+  display: flex;
+  align-self: start;
+}
+
+.mds-switch-control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mds-spacing-xs);
+  padding-block: var(--mds-spacing-xxs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mds-switch--label-start .mds-switch-control {
+  flex-direction: row-reverse;
+}
+
+.mds-switch-label {
+  color: var(--mds-text-default);
+  user-select: none;
+  white-space: nowrap;
+  font-family: var(--mds-font-family-base);
+  font-size: var(--mds-font-size-paragraph-default);
+  font-weight: var(--mds-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-xs);
+  letter-spacing: var(--mds-letter-spacing-default);
+}
+
+.mds-switch-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mds-switch-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px; /* Intentional Figma fixed size (no switch geometry token). */
+  block-size: 18px; /* Intentional Figma fixed size (no switch geometry token). */
+  flex-shrink: 0;
+}
+
+.mds-switch-focus-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  border-radius: var(--mds-border-radius-pill);
+}
+
+.mds-switch-track {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  inline-size: 100%;
+  block-size: 100%;
+  padding: var(--mds-switch-track-padding);
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-switch-track-default);
+  color: var(--mds-bg-switch-track-default);
+  transition:
+    background-color 0.15s linear,
+    color 0.15s linear;
+}
+
+.mds-switch-thumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 14px; /* Intentional Figma fixed size (no switch geometry token). */
+  block-size: 14px; /* Intentional Figma fixed size (no switch geometry token). */
+  border-radius: var(--mds-border-radius-pill);
+  background-color: var(--mds-bg-switch-thumb-default);
+  transform: translateX(0);
+  transition:
+    background-color 0.15s linear,
+    transform 0.15s cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+.mds-switch-icon {
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.mds-switch-icon-item {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  display: block;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  /* auto uses the SVG's declared width/height rather than scaling to fill */
+  mask-size: auto;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: auto;
+  transition: opacity 0.15s linear;
+}
+
+.mds-switch-icon-item--checked {
+  opacity: 0;
+}
+
+.mds-switch--variant-enable .mds-switch-icon-item--unchecked {
+  inline-size: 6px; /* Figma fixed SVG bounds. */
+  block-size: 6px; /* Figma fixed SVG bounds. */
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%226%22%20height%3D%226%22%20viewBox%3D%220%200%206%206%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M5.81747%201.02496L3.85179%202.99064L5.81747%204.97504C6.06084%205.19969%206.06084%205.59282%205.81747%205.81747C5.59282%206.06084%205.19969%206.06084%204.97504%205.81747L3.00936%203.85179L1.02496%205.81747C0.800312%206.06084%200.407176%206.06084%200.182527%205.81747C-0.0608424%205.59282%20-0.0608424%205.19969%200.182527%204.97504L2.14821%202.99064L0.182527%201.02496C-0.0608424%200.800312%20-0.0608424%200.407176%200.182527%200.182527C0.407176%20-0.0608424%200.800312%20-0.0608424%201.02496%200.182527L3.00936%202.14821L4.97504%200.182527C5.19969%20-0.0608424%205.59282%20-0.0608424%205.81747%200.182527C6.06084%200.407176%206.06084%200.800312%205.81747%201.02496Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%226%22%20height%3D%226%22%20viewBox%3D%220%200%206%206%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M5.81747%201.02496L3.85179%202.99064L5.81747%204.97504C6.06084%205.19969%206.06084%205.59282%205.81747%205.81747C5.59282%206.06084%205.19969%206.06084%204.97504%205.81747L3.00936%203.85179L1.02496%205.81747C0.800312%206.06084%200.407176%206.06084%200.182527%205.81747C-0.0608424%205.59282%20-0.0608424%205.19969%200.182527%204.97504L2.14821%202.99064L0.182527%201.02496C-0.0608424%200.800312%20-0.0608424%200.407176%200.182527%200.182527C0.407176%20-0.0608424%200.800312%20-0.0608424%201.02496%200.182527L3.00936%202.14821L4.97504%200.182527C5.19969%20-0.0608424%205.59282%20-0.0608424%205.81747%200.182527C6.06084%200.407176%206.06084%200.800312%205.81747%201.02496Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+}
+
+.mds-switch--variant-enable .mds-switch-icon-item--checked {
+  inline-size: 9px; /* Figma fixed SVG bounds. */
+  block-size: 6px; /* Figma fixed SVG bounds. */
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%229%22%20height%3D%226%22%20viewBox%3D%220%200%209%206%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M8.21373%200.182527C8.4571%200.407176%208.4571%200.800312%208.21373%201.02496L3.42122%205.81747C3.19657%206.06084%202.80343%206.06084%202.57878%205.81747L0.182527%203.42122C-0.0608424%203.19657%20-0.0608424%202.80343%200.182527%202.57878C0.407176%202.33541%200.800312%202.33541%201.02496%202.57878L3.00936%204.54446L7.37129%200.182527C7.59594%20-0.0608424%207.98908%20-0.0608424%208.21373%200.182527Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%229%22%20height%3D%226%22%20viewBox%3D%220%200%209%206%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M8.21373%200.182527C8.4571%200.407176%208.4571%200.800312%208.21373%201.02496L3.42122%205.81747C3.19657%206.06084%202.80343%206.06084%202.57878%205.81747L0.182527%203.42122C-0.0608424%203.19657%20-0.0608424%202.80343%200.182527%202.57878C0.407176%202.33541%200.800312%202.33541%201.02496%202.57878L3.00936%204.54446L7.37129%200.182527C7.59594%20-0.0608424%207.98908%20-0.0608424%208.21373%200.182527Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+}
+
+.mds-switch--variant-visibility .mds-switch-icon-item--unchecked {
+  inline-size: 10px; /* Figma fixed SVG bounds. */
+  block-size: 8px; /* Figma fixed SVG bounds. */
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2210%22%20height%3D%228%22%20viewBox%3D%220%200%2010%208%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M0.60379%200.0885031L2.35264%201.44699C3.05531%200.916085%203.92973%200.494487%205.00715%200.494487C6.25633%200.494487%207.27129%201.07223%208.00518%201.75928C8.73908%202.43072%209.22314%203.24268%209.45736%203.80482C9.5042%203.92973%209.5042%204.07027%209.45736%204.19518C9.25436%204.69486%208.83277%205.41314%208.20818%206.03773L9.84773%207.33375C10.0195%207.45867%2010.0507%207.69289%209.91018%207.84904C9.78527%208.0208%209.55105%208.05203%209.3949%207.9115L0.150962%200.666249C-0.0208002%200.541331%20-0.0520297%200.30711%200.0885031%200.150962C0.213421%20-0.0208002%200.447643%20-0.0520297%200.60379%200.0885031ZM3.49252%202.33703L4.89785%203.44568C4.96031%203.30514%205.00715%203.16461%205.00715%203.00846C5.00715%202.88354%204.97592%202.78986%204.94469%202.68055C4.92908%202.60248%204.97592%202.49318%205.06961%202.50879C5.70982%202.52441%206.27195%202.96162%206.44371%203.61744C6.5374%203.96096%206.50617%204.30449%206.38125%204.60117L6.97461%205.06961C7.14637%204.75732%207.25568%204.38256%207.25568%203.99219C7.25568%202.75863%206.24072%201.74367%205.00715%201.74367C4.41379%201.74367%203.88289%201.97789%203.49252%202.33703ZM5.83473%206.08457L6.97461%206.99023C6.39686%207.30252%205.74104%207.4899%205.00715%207.4899C3.74236%207.4899%202.7274%206.92777%201.9935%206.24072C1.25961%205.55367%200.775552%204.7417%200.541331%204.19518C0.494487%204.07027%200.494487%203.92973%200.541331%203.80482C0.697479%203.44568%200.947315%202.99285%201.30645%202.52441L2.77424%203.6799C2.75863%203.7892%202.75863%203.8985%202.75863%203.99219C2.75863%205.24137%203.75797%206.24072%205.00715%206.24072C5.28822%206.24072%205.56928%206.19387%205.83473%206.08457Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2210%22%20height%3D%228%22%20viewBox%3D%220%200%2010%208%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M0.60379%200.0885031L2.35264%201.44699C3.05531%200.916085%203.92973%200.494487%205.00715%200.494487C6.25633%200.494487%207.27129%201.07223%208.00518%201.75928C8.73908%202.43072%209.22314%203.24268%209.45736%203.80482C9.5042%203.92973%209.5042%204.07027%209.45736%204.19518C9.25436%204.69486%208.83277%205.41314%208.20818%206.03773L9.84773%207.33375C10.0195%207.45867%2010.0507%207.69289%209.91018%207.84904C9.78527%208.0208%209.55105%208.05203%209.3949%207.9115L0.150962%200.666249C-0.0208002%200.541331%20-0.0520297%200.30711%200.0885031%200.150962C0.213421%20-0.0208002%200.447643%20-0.0520297%200.60379%200.0885031ZM3.49252%202.33703L4.89785%203.44568C4.96031%203.30514%205.00715%203.16461%205.00715%203.00846C5.00715%202.88354%204.97592%202.78986%204.94469%202.68055C4.92908%202.60248%204.97592%202.49318%205.06961%202.50879C5.70982%202.52441%206.27195%202.96162%206.44371%203.61744C6.5374%203.96096%206.50617%204.30449%206.38125%204.60117L6.97461%205.06961C7.14637%204.75732%207.25568%204.38256%207.25568%203.99219C7.25568%202.75863%206.24072%201.74367%205.00715%201.74367C4.41379%201.74367%203.88289%201.97789%203.49252%202.33703ZM5.83473%206.08457L6.97461%206.99023C6.39686%207.30252%205.74104%207.4899%205.00715%207.4899C3.74236%207.4899%202.7274%206.92777%201.9935%206.24072C1.25961%205.55367%200.775552%204.7417%200.541331%204.19518C0.494487%204.07027%200.494487%203.92973%200.541331%203.80482C0.697479%203.44568%200.947315%202.99285%201.30645%202.52441L2.77424%203.6799C2.75863%203.7892%202.75863%203.8985%202.75863%203.99219C2.75863%205.24137%203.75797%206.24072%205.00715%206.24072C5.28822%206.24072%205.56928%206.19387%205.83473%206.08457Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+}
+
+.mds-switch--variant-visibility .mds-switch-icon-item--checked {
+  inline-size: 9px; /* Figma fixed SVG bounds. */
+  block-size: 7px; /* Figma fixed SVG bounds. */
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%229%22%20height%3D%227%22%20viewBox%3D%220%200%209%207%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M4.50391%200C5.75391%200%206.76953%200.578125%207.50391%201.26562C8.23828%201.9375%208.72266%202.75%208.95703%203.3125C9.00391%203.4375%209.00391%203.57812%208.95703%203.70312C8.72266%204.25%208.23828%205.0625%207.50391%205.75C6.76953%206.4375%205.75391%207%204.50391%207C3.23828%207%202.22266%206.4375%201.48828%205.75C0.753906%205.0625%200.269531%204.25%200.0351562%203.70312C-0.0117188%203.57812%20-0.0117188%203.4375%200.0351562%203.3125C0.269531%202.75%200.753906%201.9375%201.48828%201.26562C2.22266%200.578125%203.23828%200%204.50391%200ZM2.25391%203.5C2.25391%204.3125%202.67578%205.04688%203.37891%205.45312C4.06641%205.85938%204.92578%205.85938%205.62891%205.45312C6.31641%205.04688%206.75391%204.3125%206.75391%203.5C6.75391%202.70312%206.31641%201.96875%205.62891%201.5625C4.92578%201.15625%204.06641%201.15625%203.37891%201.5625C2.67578%201.96875%202.25391%202.70312%202.25391%203.5ZM4.50391%202.5C4.50391%202.39062%204.47266%202.29688%204.44141%202.1875C4.41016%202.10938%204.47266%202%204.56641%202C5.19141%202.03125%205.76953%202.46875%205.94141%203.125C6.16016%203.92188%205.69141%204.73438%204.87891%204.95312C4.08203%205.17188%203.25391%204.6875%203.05078%203.89062C3.01953%203.78125%203.00391%203.67188%203.00391%203.57812C2.98828%203.48438%203.09766%203.42188%203.17578%203.45312C3.28516%203.48438%203.37891%203.5%203.50391%203.5C4.05078%203.5%204.50391%203.0625%204.50391%202.5Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%229%22%20height%3D%227%22%20viewBox%3D%220%200%209%207%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M4.50391%200C5.75391%200%206.76953%200.578125%207.50391%201.26562C8.23828%201.9375%208.72266%202.75%208.95703%203.3125C9.00391%203.4375%209.00391%203.57812%208.95703%203.70312C8.72266%204.25%208.23828%205.0625%207.50391%205.75C6.76953%206.4375%205.75391%207%204.50391%207C3.23828%207%202.22266%206.4375%201.48828%205.75C0.753906%205.0625%200.269531%204.25%200.0351562%203.70312C-0.0117188%203.57812%20-0.0117188%203.4375%200.0351562%203.3125C0.269531%202.75%200.753906%201.9375%201.48828%201.26562C2.22266%200.578125%203.23828%200%204.50391%200ZM2.25391%203.5C2.25391%204.3125%202.67578%205.04688%203.37891%205.45312C4.06641%205.85938%204.92578%205.85938%205.62891%205.45312C6.31641%205.04688%206.75391%204.3125%206.75391%203.5C6.75391%202.70312%206.31641%201.96875%205.62891%201.5625C4.92578%201.15625%204.06641%201.15625%203.37891%201.5625C2.67578%201.96875%202.25391%202.70312%202.25391%203.5ZM4.50391%202.5C4.50391%202.39062%204.47266%202.29688%204.44141%202.1875C4.41016%202.10938%204.47266%202%204.56641%202C5.19141%202.03125%205.76953%202.46875%205.94141%203.125C6.16016%203.92188%205.69141%204.73438%204.87891%204.95312C4.08203%205.17188%203.25391%204.6875%203.05078%203.89062C3.01953%203.78125%203.00391%203.67188%203.00391%203.57812C2.98828%203.48438%203.09766%203.42188%203.17578%203.45312C3.28516%203.48438%203.37891%203.5%203.50391%203.5C4.05078%203.5%204.50391%203.0625%204.50391%202.5Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+}
+
+.mds-switch--variant-lock .mds-switch-icon-item--unchecked {
+  inline-size: 9px; /* Figma fixed SVG bounds. */
+  block-size: 8px; /* Figma fixed SVG bounds. */
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%229%22%20height%3D%228%22%20viewBox%3D%220%200%209%208%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M5.5%202.25V3H6C6.54688%203%207%203.45312%207%204V7C7%207.5625%206.54688%208%206%208H1C0.4375%208%200%207.5625%200%207V4C0%203.45312%200.4375%203%201%203H4.5V2.25C4.5%201.01562%205.5%200%206.75%200C7.98438%200%209%201.01562%209%202.25V3C9%203.28125%208.76562%203.5%208.5%203.5C8.21875%203.5%208%203.28125%208%203V2.25C8%201.5625%207.4375%201%206.75%201C6.04688%201%205.5%201.5625%205.5%202.25Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%229%22%20height%3D%228%22%20viewBox%3D%220%200%209%208%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M5.5%202.25V3H6C6.54688%203%207%203.45312%207%204V7C7%207.5625%206.54688%208%206%208H1C0.4375%208%200%207.5625%200%207V4C0%203.45312%200.4375%203%201%203H4.5V2.25C4.5%201.01562%205.5%200%206.75%200C7.98438%200%209%201.01562%209%202.25V3C9%203.28125%208.76562%203.5%208.5%203.5C8.21875%203.5%208%203.28125%208%203V2.25C8%201.5625%207.4375%201%206.75%201C6.04688%201%205.5%201.5625%205.5%202.25Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+}
+
+.mds-switch--variant-lock .mds-switch-icon-item--checked {
+  inline-size: 7px; /* Figma fixed SVG bounds. */
+  block-size: 8px; /* Figma fixed SVG bounds. */
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%227%22%20height%3D%228%22%20viewBox%3D%220%200%207%208%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M2.25%202.25V3H4.75V2.25C4.75%201.5625%204.1875%201%203.5%201C2.79688%201%202.25%201.5625%202.25%202.25ZM1.25%203V2.25C1.25%201.01562%202.25%200%203.5%200C4.73438%200%205.75%201.01562%205.75%202.25V3H6C6.54688%203%207%203.45312%207%204V7C7%207.5625%206.54688%208%206%208H1C0.4375%208%200%207.5625%200%207V4C0%203.45312%200.4375%203%201%203H1.25Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%227%22%20height%3D%228%22%20viewBox%3D%220%200%207%208%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M2.25%202.25V3H4.75V2.25C4.75%201.5625%204.1875%201%203.5%201C2.79688%201%202.25%201.5625%202.25%202.25ZM1.25%203V2.25C1.25%201.01562%202.25%200%203.5%200C4.73438%200%205.75%201.01562%205.75%202.25V3H6C6.54688%203%207%203.45312%207%204V7C7%207.5625%206.54688%208%206%208H1C0.4375%208%200%207.5625%200%207V4C0%203.45312%200.4375%203%201%203H1.25Z%22%20fill%3D%22currentColor%22%2F%3E%20%3C%2Fsvg%3E');
+}
+
+.mds-switch-input:not(:disabled) + .mds-switch-control:hover .mds-switch-track {
+  background-color: var(--mds-bg-switch-track-hover);
+  color: var(--mds-bg-switch-track-hover);
+}
+
+.mds-switch-input:not(:disabled) + .mds-switch-control:hover .mds-switch-thumb {
+  background-color: var(--mds-bg-switch-thumb-hover);
+}
+
+.mds-switch-input:checked + .mds-switch-control .mds-switch-track {
+  background-color: var(--mds-bg-interactive-primary-default);
+  color: var(--mds-bg-interactive-primary-default);
+}
+
+.mds-switch-input:checked + .mds-switch-control .mds-switch-thumb {
+  transform: translateX(
+    14px
+  ); /* Intentional Figma fixed travel (following the thumb size, no switch geometry token). */
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+/* RTL: checked state still moves toward inline-end, which is left in RTL contexts. */
+[dir='rtl'] .mds-switch-input:checked + .mds-switch-control .mds-switch-thumb,
+:dir(rtl) .mds-switch-input:checked + .mds-switch-control .mds-switch-thumb {
+  transform: translateX(
+    -14px
+  ); /* RTL mirror of the same intentional Figma fixed travel. */
+}
+
+.mds-switch-input:checked + .mds-switch-control:hover .mds-switch-track {
+  background-color: var(--mds-bg-interactive-primary-hover);
+  color: var(--mds-bg-interactive-primary-hover);
+}
+
+/* Override the generic hover thumb rule — checked+hover thumb stays light blue */
+.mds-switch-input:checked:not(:disabled)
+  + .mds-switch-control:hover
+  .mds-switch-thumb {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-switch-input:checked
+  + .mds-switch-control
+  .mds-switch-icon-item--unchecked {
+  opacity: 0;
+}
+
+.mds-switch-input:checked + .mds-switch-control .mds-switch-icon-item--checked {
+  opacity: 1;
+}
+
+.mds-switch-input:disabled + .mds-switch-control {
+  cursor: not-allowed;
+}
+
+.mds-switch-input:disabled + .mds-switch-control .mds-switch-label {
+  color: var(--mds-text-muted);
+}
+
+.mds-switch-input:disabled + .mds-switch-control .mds-switch-track {
+  background-color: var(--mds-bg-switch-track-disabled);
+  color: var(--mds-bg-switch-track-disabled);
+}
+
+.mds-switch-input:disabled + .mds-switch-control .mds-switch-thumb {
+  background-color: var(--mds-bg-switch-thumb-disabled);
+}
+
+.mds-switch-input:checked:disabled + .mds-switch-control .mds-switch-track {
+  background-color: var(--mds-bg-interactive-primary-disabled);
+  color: var(--mds-bg-interactive-primary-disabled);
+}
+
+.mds-switch-input:checked:disabled + .mds-switch-control .mds-switch-thumb {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-switch-input:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-switch-input:focus-visible + .mds-switch-control .mds-switch-focus-ring {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mds-switch-track,
+  .mds-switch-thumb,
+  .mds-switch-icon-item {
+    transition: none;
+  }
+}

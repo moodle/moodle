@@ -1,0 +1,503 @@
+/*
+ * Dropdown — trigger, menu panel, and item rows.
+ * Figma: "Dropdown" component set (file MvAObVzHaB9QZ5JGaP8sO2).
+ *
+ * The trigger reuses button.css / nav-pill.css via shared classes; rules here
+ * only add what the Dropdown needs on top (chevron, open state, menu, items).
+ * Depends on button.css and nav-pill.css being loaded (both are part of
+ * components/index.css, which precedes this file).
+ */
+
+/* ------------------------------------------------------------------ */
+/* Trigger                                                             */
+/* ------------------------------------------------------------------ */
+
+/* Chevron — masked so the glyph follows the trigger's text color across
+   hover/active/disabled states. md triggers use the 12×8 glyph.
+   Always points downward (no rotation). */
+.mds-dropdown-trigger__chevron {
+  display: inline-block;
+  flex-shrink: 0;
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xxs);
+  background-color: currentColor;
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2212%22%20height%3D%228%22%20viewBox%3D%220%200%2012%208%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M5.47266%206.77734L0.972656%202.27734C0.667969%201.99609%200.667969%201.50391%200.972656%201.22266C1.25391%200.917969%201.74609%200.917969%202.02734%201.22266L6.01172%205.18359L9.97266%201.22266C10.2539%200.917969%2010.7461%200.917969%2011.0273%201.22266C11.332%201.50391%2011.332%201.99609%2011.0273%202.27734L6.52734%206.77734C6.24609%207.08203%205.75391%207.08203%205.47266%206.77734Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2212%22%20height%3D%228%22%20viewBox%3D%220%200%2012%208%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M5.47266%206.77734L0.972656%202.27734C0.667969%201.99609%200.667969%201.50391%200.972656%201.22266C1.25391%200.917969%201.74609%200.917969%202.02734%201.22266L6.01172%205.18359L9.97266%201.22266C10.2539%200.917969%2010.7461%200.917969%2011.0273%201.22266C11.332%201.50391%2011.332%201.99609%2011.0273%202.27734L6.52734%206.77734C6.24609%207.08203%205.75391%207.08203%205.47266%206.77734Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+/* sm and nav-pill triggers use the 8×8 glyph. */
+.mds-dropdown-trigger__chevron--sm {
+  inline-size: var(--mds-icons-xxs);
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%228%22%20viewBox%3D%220%200%208%208%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M3.64844%205.85156L0.648438%202.85156C0.445312%202.66406%200.445312%202.33594%200.648438%202.14844C0.835938%201.94531%201.16406%201.94531%201.35156%202.14844L4.00781%204.78906L6.64844%202.14844C6.83594%201.94531%207.16406%201.94531%207.35156%202.14844C7.55469%202.33594%207.55469%202.66406%207.35156%202.85156L4.35156%205.85156C4.16406%206.05469%203.83594%206.05469%203.64844%205.85156Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%228%22%20height%3D%228%22%20viewBox%3D%220%200%208%208%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M3.64844%205.85156L0.648438%202.85156C0.445312%202.66406%200.445312%202.33594%200.648438%202.14844C0.835938%201.94531%201.16406%201.94531%201.35156%202.14844L4.00781%204.78906L6.64844%202.14844C6.83594%201.94531%207.16406%201.94531%207.35156%202.14844C7.55469%202.33594%207.55469%202.66406%207.35156%202.85156L4.35156%205.85156C4.16406%206.05469%203.83594%206.05469%203.64844%205.85156Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+}
+
+/* Open (Figma State=active): filled appearances keep the active fill and gain
+   a 1px inside ring. The inset box-shadow is a pressed-state ring, not a
+   focus ring — focus rings remain outline-based per the focus ring pattern. */
+.mds-dropdown-trigger--open.mds-btn.btn.btn-secondary,
+.mds-dropdown-trigger--open.mds-btn.btn.btn-ghost {
+  background-color: var(--mds-bg-interactive-secondary-active);
+  color: var(--mds-text-subtle);
+  box-shadow: inset 0 0 0 var(--mds-stroke-weight-sm)
+    var(--mds-border-interactive-secondary-active);
+}
+
+/* Open outlined appearance: solid dark fill with inverse text. */
+.mds-dropdown-trigger--open.mds-btn.btn.btn-outline-secondary {
+  border-color: var(--mds-border-interactive-secondary-active);
+  background-color: var(--mds-border-interactive-secondary-active);
+  color: var(--mds-text-inverse);
+}
+
+/* nav-pill trigger renders a <button>; nav-pill.css already resets border and
+   background for the class, so only layout inherited from Bootstrap's button
+   normalisation needs neutralising. */
+.mds-dropdown-trigger--nav-pill {
+  font-family: var(--mds-font-family-base);
+}
+
+.mds-dropdown-trigger--open.mds-nav-pill {
+  background-color: var(--mds-bg-nav-pill-pressed);
+}
+
+/* ------------------------------------------------------------------ */
+/* Menu panel                                                          */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mds-spacing-xxs);
+  align-items: stretch;
+  min-inline-size: 13.5625rem; /* 217px per Figma; grows with content */
+  padding: var(--mds-spacing-xxs);
+  background-color: var(--mds-bg-surface-default);
+  border: var(--mds-stroke-weight-sm) solid var(--mds-border-default);
+  border-radius: var(--mds-border-radius-md);
+  overflow: clip;
+}
+
+/* ------------------------------------------------------------------ */
+/* Item rows — shared chrome                                           */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-item {
+  display: flex;
+  gap: var(--mds-spacing-xs);
+  align-items: center;
+  inline-size: 100%;
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  border: none;
+  border-radius: var(--mds-border-radius-xs);
+  background: none;
+  margin: 0;
+  text-align: start;
+  cursor: pointer;
+  font-family: var(--mds-font-family-base);
+  color: var(--mds-text-subtle);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.mds-dropdown-item:disabled,
+.mds-dropdown-item[aria-disabled='true'] {
+  cursor: default;
+  pointer-events: none;
+  color: var(--mds-text-muted);
+}
+
+/* Rows with a description top-align their content. */
+.mds-dropdown-item--with-description {
+  align-items: flex-start;
+}
+
+.mds-dropdown-item:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.mds-dropdown-item:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+  box-shadow: none;
+}
+
+.mds-dropdown-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 24px; /* 24px per Figma. */
+  flex-shrink: 0;
+}
+
+.mds-dropdown-item__icon i,
+.mds-dropdown-item__icon svg {
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xs);
+  font-size: var(--mds-icons-xs);
+  line-height: 1;
+}
+
+.mds-dropdown-item__label-wrap {
+  display: flex;
+  flex: 1 0 0;
+  min-inline-size: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.mds-dropdown-item--with-description .mds-dropdown-item__label-wrap {
+  gap: var(--mds-spacing-xxs);
+}
+
+.mds-dropdown-item__label {
+  font-size: var(--mds-font-size-paragraph-default);
+  font-weight: var(--mds-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-default);
+  white-space: nowrap;
+  inline-size: 100%;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mds-dropdown-item__description {
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-regular);
+  line-height: var(--mds-line-height-paragraph-small);
+  color: var(--mds-text-muted);
+  white-space: normal;
+}
+
+/* Figma: on hover (and disabled) the description matches the row color. */
+.mds-dropdown-item:hover .mds-dropdown-item__description,
+.mds-dropdown-item:disabled .mds-dropdown-item__description,
+.mds-dropdown-item[aria-disabled='true'] .mds-dropdown-item__description {
+  color: inherit;
+}
+
+/* ------------------------------------------------------------------ */
+/* Action item                                                         */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-item--action:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-dropdown-item--action:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-dropdown-item--action[role='menuitem'].mds-dropdown-item--danger {
+  color: var(--mds-text-danger);
+}
+
+.mds-dropdown-item--action.mds-dropdown-item--danger:hover:not(:disabled):not(
+    [aria-disabled='true']
+  ) {
+  color: var(--mds-text-danger);
+  background-color: var(--mds-bg-interactive-danger-default-light);
+}
+
+.mds-dropdown-item--action.mds-dropdown-item--danger:active:not(:disabled):not(
+    [aria-disabled='true']
+  ) {
+  background-color: var(--mds-bg-interactive-danger-default-light);
+}
+
+.mds-dropdown-item--action[role='menuitem'].mds-dropdown-item--danger:disabled,
+.mds-dropdown-item--action[role='menuitem'].mds-dropdown-item--danger[aria-disabled='true'] {
+  color: var(--mds-text-danger-disabled);
+}
+
+.mds-dropdown-item--action[role='menuitem'].mds-dropdown-item--danger:focus-visible {
+  outline-color: var(--mds-focus-danger);
+}
+
+/* Link variant: reset default anchor styling to match button appearance */
+.mds-dropdown-item--action[role='menuitem'] {
+  text-decoration: none;
+  color: var(--mds-text-subtle);
+}
+
+.mds-dropdown-item--action[role='menuitem'][aria-disabled='true'] {
+  color: var(--mds-text-muted);
+}
+
+.mds-dropdown-item--action[role='menuitem']:not(
+    .mds-dropdown-item--danger
+  ):hover,
+.mds-dropdown-item--action[role='menuitem']:not(
+    .mds-dropdown-item--danger
+  ):active,
+.mds-dropdown-item--action[role='menuitem']:not(
+    .mds-dropdown-item--danger
+  ):focus,
+.mds-dropdown-item--action[role='menuitem']:not(
+    .mds-dropdown-item--danger
+  ):visited {
+  text-decoration: none;
+  color: var(--mds-text-subtle);
+}
+
+/* ------------------------------------------------------------------ */
+/* Select item                                                         */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-item--select:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-dropdown-item--select:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-dropdown-item--select.mds-dropdown-item--selected {
+  background-color: var(--mds-bg-surface-subtle);
+}
+
+/* Hover wins over the selected fill, matching the Figma state matrix. */
+.mds-dropdown-item--select.mds-dropdown-item--selected:hover:not(:disabled):not(
+    [aria-disabled='true']
+  ) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+/* Check mark — Figma color/theme/primary; text-link token carries the same
+  semantic primary color for glyph-on-surface use. */
+.mds-dropdown-item__check-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: var(--mds-icons-md);
+  flex-shrink: 0;
+}
+
+.mds-dropdown-item__check {
+  display: inline-block;
+  flex-shrink: 0;
+  inline-size: var(--mds-icons-xs);
+  block-size: var(--mds-icons-xxs);
+  background-color: var(--mds-text-link-primary-default);
+  margin: auto 0;
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2210%22%20height%3D%227%22%20viewBox%3D%220%200%209.33333%207%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M2.72458%206.68529C3.13939%207.1049%203.78047%207.1049%204.19529%206.68529L9.02222%201.80245C9.43704%201.38283%209.43704%200.734332%209.02222%200.314714C8.60741%20-0.104905%207.96633%20-0.104905%207.55152%200.314714L3.47879%204.43461L1.78182%202.75613C1.367%202.33651%200.725926%202.33651%200.311111%202.75613C-0.103704%203.17575%20-0.103704%203.82425%200.311111%204.24387L2.72458%206.68529Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2210%22%20height%3D%227%22%20viewBox%3D%220%200%209.33333%207%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M2.72458%206.68529C3.13939%207.1049%203.78047%207.1049%204.19529%206.68529L9.02222%201.80245C9.43704%201.38283%209.43704%200.734332%209.02222%200.314714C8.60741%20-0.104905%207.96633%20-0.104905%207.55152%200.314714L3.47879%204.43461L1.78182%202.75613C1.367%202.33651%200.725926%202.33651%200.311111%202.75613C-0.103704%203.17575%20-0.103704%203.82425%200.311111%204.24387L2.72458%206.68529Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+/* Check is always in the DOM to preserve trailing-column width across
+   selection state changes. Hide it visually when the row is unselected. */
+.mds-dropdown-item--select:not(.mds-dropdown-item--selected)
+  .mds-dropdown-item__check {
+  visibility: hidden;
+}
+
+.mds-dropdown-item:disabled .mds-dropdown-item__check,
+.mds-dropdown-item[aria-disabled='true'] .mds-dropdown-item__check {
+  background-color: var(--mds-text-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Expandable item                                                     */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-item--expandable:hover:not(:disabled):not(
+    [aria-disabled='true']
+  ) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-dropdown-item--expandable:active:not(:disabled):not(
+    [aria-disabled='true']
+  ) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-dropdown-item__chevron-right {
+  display: inline-block;
+  flex-shrink: 0;
+  inline-size: var(--mds-icons-xxs);
+  block-size: var(--mds-icons-xs);
+  background-color: var(--mds-text-subtle);
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%227%22%20height%3D%2211%22%20viewBox%3D%220%200%206.01172%2010.5117%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M5.7832%204.72852C6.08789%205.00977%206.08789%205.50195%205.7832%205.7832L1.2832%2010.2832C1.00195%2010.5879%200.509766%2010.5879%200.228516%2010.2832C-0.0761719%2010.002%20-0.0761719%209.50977%200.228516%209.22852L4.18945%205.24414L0.228516%201.2832C-0.0761719%201.00195%20-0.0761719%200.509766%200.228516%200.228516C0.509766%20-0.0761719%201.00195%20-0.0761719%201.2832%200.228516L5.7832%204.72852Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%227%22%20height%3D%2211%22%20viewBox%3D%220%200%206.01172%2010.5117%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M5.7832%204.72852C6.08789%205.00977%206.08789%205.50195%205.7832%205.7832L1.2832%2010.2832C1.00195%2010.5879%200.509766%2010.5879%200.228516%2010.2832C-0.0761719%2010.002%20-0.0761719%209.50977%200.228516%209.22852L4.18945%205.24414L0.228516%201.2832C-0.0761719%201.00195%20-0.0761719%200.509766%200.228516%200.228516C0.509766%20-0.0761719%201.00195%20-0.0761719%201.2832%200.228516L5.7832%204.72852Z%22%20fill%3D%22%231D2125%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+/* Mirror the submenu chevron under RTL so it keeps pointing towards the
+   inline-end where the submenu opens. */
+[dir='rtl'] .mds-dropdown-item__chevron-right {
+  transform: scaleX(-1);
+}
+
+/* Disabled expandable row: mute the chevron to match the label color. */
+.mds-dropdown-item[aria-disabled='true'] .mds-dropdown-item__chevron-right {
+  background-color: var(--mds-text-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Header item                                                         */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-item--header {
+  cursor: default;
+  gap: var(--mds-spacing-xxs);
+}
+
+.mds-dropdown-item--header .mds-dropdown-item__label {
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-xs);
+  color: var(--mds-text-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Divider                                                             */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-divider {
+  inline-size: 100%;
+  block-size: var(--mds-stroke-weight-sm);
+  background-color: var(--mds-border-default);
+  border-radius: var(--mds-border-radius-pill);
+  flex-shrink: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* List item                                                         */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-item--list {
+  pointer-events: none;
+  align-items: flex-start;
+}
+
+/* List rows can contain longer status text; allow wrapping on narrow menus
+   instead of inheriting the default single-line ellipsis behavior. */
+.mds-dropdown-item--list .mds-dropdown-item__label {
+  color: var(--mds-text-subtle);
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+
+/* Keep the list indicator aligned with the first text line when labels wrap. */
+.mds-dropdown-item--list .mds-dropdown-item__check {
+  /* margin-block-start: var(--mds-spacing-xxs); */
+}
+
+/* Unselected (todo) list items show an empty circle instead of the filled check. */
+.mds-dropdown-item--list:not(.mds-dropdown-item--selected)
+  .mds-dropdown-item__check {
+  background-color: var(--mds-text-subtle);
+  mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M6%2012C2.67188%2012%200%209.32812%200%206C0%202.69531%202.67188%200%206%200C9.30469%200%2012%202.69531%2012%206C12%209.32812%209.30469%2012%206%2012ZM6%201.125C3.28125%201.125%201.125%203.30469%201.125%206C1.125%208.71875%203.28125%2010.875%206%2010.875C8.69531%2010.875%2010.875%208.71875%2010.875%206C10.875%203.30469%208.69531%201.125%206%201.125Z%22%20fill%3D%22%23495057%22%2F%3E%20%3C%2Fsvg%3E');
+  -webkit-mask-image: url('data:image/svg+xml,%3Csvg%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cpath%20d%3D%22M6%2012C2.67188%2012%200%209.32812%200%206C0%202.69531%202.67188%200%206%200C9.30469%200%2012%202.69531%2012%206C12%209.32812%209.30469%2012%206%2012ZM6%201.125C3.28125%201.125%201.125%203.30469%201.125%206C1.125%208.71875%203.28125%2010.875%206%2010.875C8.69531%2010.875%2010.875%208.71875%2010.875%206C10.875%203.30469%208.69531%201.125%206%201.125Z%22%20fill%3D%22%23495057%22%2F%3E%20%3C%2Fsvg%3E');
+}
+
+/* List items are aria-disabled for read-only semantics; keep done state check
+   on the primary token instead of inheriting the generic disabled mute color. */
+.mds-dropdown-item--list.mds-dropdown-item--selected .mds-dropdown-item__check {
+  background-color: var(--mds-text-link-primary-default);
+}
+
+/* ------------------------------------------------------------------ */
+/* Multiselect item                                                    */
+/* ------------------------------------------------------------------ */
+
+/* Keep top/bottom spacing on the XS token while preserving the default
+   horizontal spacing used by other dropdown rows. */
+.mds-dropdown-item.mds-dropdown-item--multiselect {
+  padding-block: var(--mds-spacing-xs);
+  gap: 0; /* Checkbox has its own internal gap. */
+}
+
+.mds-dropdown-item--multiselect:hover:not([aria-disabled='true']) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+.mds-dropdown-item--multiselect:active:not([aria-disabled='true']) {
+  background-color: var(--mds-bg-interactive-primary-default-light);
+}
+
+/* Multiselect rows can include longer option labels; wrap rather than
+   truncating so text does not collide with the trailing indicator area. */
+.mds-dropdown-item--multiselect .mds-dropdown-item__label {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+
+/* The inert wrapper span for the Checkbox visual indicator — remove from
+   layout flow so the Checkbox's own form-check structure sits inline. */
+.mds-dropdown-item__checkbox {
+  display: contents;
+}
+
+/* ------------------------------------------------------------------ */
+/* Custom item (slot)                                                  */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown-item--custom {
+  cursor: default;
+}
+
+.mds-dropdown-item__slot {
+  flex: 1 0 0;
+  min-inline-size: 0;
+}
+
+/* ------------------------------------------------------------------ */
+
+/* Group wrapper                                                       */
+/* ------------------------------------------------------------------ */
+
+/* display:contents removes the wrapper from layout flow so the menu
+   panel's gap applies uniformly across group labels and items. */
+.mds-dropdown-item-group {
+  display: contents;
+}
+
+/* Styled to match DropdownItemHeader visually. */
+.mds-dropdown-item-group__label {
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  padding: var(--mds-spacing-xs) var(--mds-spacing-sm);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  color: var(--mds-text-muted);
+  line-height: var(--mds-line-height-paragraph-xs);
+  box-sizing: border-box;
+  cursor: default;
+}
+
+/* ------------------------------------------------------------------ */
+/* Composed Dropdown                                                   */
+/* ------------------------------------------------------------------ */
+
+.mds-dropdown {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* No position:relative needed — the menu is portaled via FloatingPortal */
+}
