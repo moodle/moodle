@@ -70,4 +70,4 @@ Feature: Light and dark colour modes
       | student1 | theme_boost_colourmode | dark  |
     When I log in as "student1"
     Then "Colour mode" "button" should not exist
-    And the "data-bs-theme" attribute of "html" "css_element" should contain "light"
+    And the "data-bs-theme" attribute of "html" "css_element" should not be set
