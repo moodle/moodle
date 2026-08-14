@@ -173,7 +173,7 @@ class action_form extends action_settings_form {
         ) {
             $defaultmodel = 'custom';
         } else if (empty($this->actionconfig['model'])) {
-            $defaultmodel = ($actionname === 'generate_image') ? 'imagen-4.0-generate-001' : 'gemini-2.5-flash';
+            $defaultmodel = ($actionname === 'generate_image') ? 'gemini-3.1-flash-image' : 'gemini-2.5-flash';
         } else {
             $defaultmodel = $this->actionconfig['model'];
         }

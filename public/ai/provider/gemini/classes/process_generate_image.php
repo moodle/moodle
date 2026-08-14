@@ -33,18 +33,54 @@ class process_generate_image extends abstract_processor {
     /** @var int The number of images to generate. */
     private int $numberimages = 1;
 
+    /**
+     * Whether the configured model speaks the Gemini native image generation
+     * protocol (generateContent), as opposed to the Imagen protocol (predict).
+     *
+     * This is determined from the configured endpoint's method, rather than the
+     * model name, so that it also works for a custom model name that isn't one
+     * of the known model classes: the endpoint is what actually decides which
+     * request/response schema Google expects, and admins configuring a custom
+     * model must already set it correctly for the request to work at all.
+     *
+     * @return bool
+     */
+    private function uses_gemini_image_protocol(): bool {
+        return str_ends_with((string) $this->get_endpoint(), ':generateContent');
+    }
+
     #[\Override]
     /**
      * Create the request object for the Google Gemini API.
      *
      * API reference:
      * (https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/imagen-api)
+     * (https://ai.google.dev/gemini-api/docs/image-generation)
      *
      * @param string $userid User identifier.
      * @return RequestInterface The request object to send to the Gemini API.
      */
     protected function create_request_object(string $userid): RequestInterface {
-        // Create the request object.
+        $requestobj = $this->uses_gemini_image_protocol()
+            ? $this->create_gemini_image_request_object()
+            : $this->create_imagen_request_object();
+
+        return new Request(
+            method: 'POST',
+            uri: '',
+            body: json_encode($requestobj),
+            headers: [
+                'Content-Type' => 'application/json',
+            ],
+        );
+    }
+
+    /**
+     * Build the Imagen "predict" request body.
+     *
+     * @return \stdClass The request object.
+     */
+    private function create_imagen_request_object(): \stdClass {
         $requestobj = new \stdClass();
 
         $requestobj->instances = [
@@ -60,18 +96,50 @@ class process_generate_image extends abstract_processor {
             'languageCode' => 'en', // Force English for best results.
         ];
 
-        return new Request(
-            method: 'POST',
-            uri: '',
-            body: json_encode($requestobj),
-            headers: [
-                'Content-Type' => 'application/json',
+        return $requestobj;
+    }
+
+    /**
+     * Build the Gemini native image "generateContent" request body.
+     *
+     * @return \stdClass The request object.
+     */
+    private function create_gemini_image_request_object(): \stdClass {
+        $requestobj = new \stdClass();
+
+        $requestobj->contents = [
+            (object) [
+                'role' => 'user',
+                'parts' => [
+                    (object) ['text' => $this->action->get_configuration('prompttext')],
+                ],
             ],
-        );
+        ];
+
+        $requestobj->generationConfig = (object) [
+            'responseModalities' => ['IMAGE'],
+            'imageConfig' => (object) [
+                'aspectRatio' => $this->calculate_aspect_ratio($this->action->get_configuration('aspectratio')),
+            ],
+        ];
+
+        return $requestobj;
     }
 
     #[\Override]
     protected function handle_api_success(ResponseInterface $response): array {
+        return $this->uses_gemini_image_protocol()
+            ? $this->handle_gemini_image_api_success($response)
+            : $this->handle_imagen_api_success($response);
+    }
+
+    /**
+     * Handle a successful Imagen "predict" response.
+     *
+     * @param ResponseInterface $response The response object.
+     * @return array The response.
+     */
+    private function handle_imagen_api_success(ResponseInterface $response): array {
         $responsebody = $response->getBody();
         $bodyobj = json_decode($responsebody);
 
@@ -87,6 +155,47 @@ class process_generate_image extends abstract_processor {
             'draftfile' => $this->base64_to_file(
                 $this->action->get_configuration('userid'),
                 $imagebase64,
+            ),
+        ];
+    }
+
+    /**
+     * Handle a successful Gemini native image "generateContent" response.
+     *
+     * Gemini can respond with HTTP 200 even when the prompt was rejected by
+     * safety filtering, so a missing image part is treated as an error here.
+     *
+     * @param ResponseInterface $response The response object.
+     * @return array The response.
+     */
+    private function handle_gemini_image_api_success(ResponseInterface $response): array {
+        $bodyobj = json_decode((string) $response->getBody());
+
+        $candidate = $bodyobj->candidates[0] ?? null;
+        $imagepart = null;
+        foreach ($candidate->content->parts ?? [] as $part) {
+            if (!empty($part->inlineData->data)) {
+                $imagepart = $part->inlineData;
+                break;
+            }
+        }
+
+        if ($imagepart === null) {
+            $blockreason = $bodyobj->promptFeedback->blockReason ?? ($candidate->finishReason ?? 'unknown');
+            return \core_ai\error\factory::create(
+                400,
+                "Image generation was blocked by Gemini safety filtering: {$blockreason}",
+            )->get_error_details();
+        }
+
+        $model = $this->get_model();
+
+        return [
+            'success' => true,
+            'model' => $model,
+            'draftfile' => $this->base64_to_file(
+                $this->action->get_configuration('userid'),
+                $imagepart->data,
             ),
         ];
     }
