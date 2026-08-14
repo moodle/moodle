@@ -449,7 +449,10 @@ class oauth2 {
         [$requestid, $authrequest] = $this->get_auth_request($request);
 
         if ($approved === '1') {
-            $selectedscopes = $request->getParsedBody()['scopes'] ?? [];
+            $selectedscopes = array_map(function ($scope) {
+                return $scope->getIdentifier();
+            }, $authrequest->getScopes());
+
             $grantedscopesrepository->store_granted_scopes_for_user(
                 $authrequest->getClient(),
                 $authrequest->getUser(),

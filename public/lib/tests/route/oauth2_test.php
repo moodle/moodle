@@ -26,6 +26,7 @@ use core_auth\output\oauth2\continue_as_user_page;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -116,10 +117,12 @@ final class oauth2_test extends \advanced_testcase {
      *
      * @param client_entity|null $client
      * @param string|null $state
+     * @param string[] $scopes Scope identifiers to set on the request, if any.
      */
     protected function make_auth_request(
         ?client_entity $client = null,
         ?string $state = null,
+        array $scopes = [],
     ): AuthorizationRequest {
         $authrequest = new AuthorizationRequest();
         $authrequest->setGrantTypeId('authorization_code');
@@ -127,7 +130,24 @@ final class oauth2_test extends \advanced_testcase {
         if ($state !== null) {
             $authrequest->setState($state);
         }
+        if ($scopes !== []) {
+            $authrequest->setScopes(array_map(
+                fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier),
+                $scopes,
+            ));
+        }
         return $authrequest;
+    }
+
+    /**
+     * Create a scope entity fixture with the specified identifier.
+     *
+     * @param string $identifier
+     */
+    protected function make_scope_entity(string $identifier): ScopeEntityInterface {
+        $scope = $this->createStub(ScopeEntityInterface::class);
+        $scope->method('getIdentifier')->willReturn($identifier);
+        return $scope;
     }
 
     /**
@@ -773,6 +793,134 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
+     * do_login() authenticates a user supplying valid username/password credentials together
+     * with a valid Moodle login token (the same CSRF-style token mechanism used to guard the
+     * standard login/index.php form).
+     *
+     * This is exercised through the real user_repository (rather than a mock of it), so that the
+     * login token is actually validated by authenticate_user_login(), not merely assumed to have
+     * been forwarded correctly.
+     */
+    public function test_do_login_valid_credentials_and_valid_logintoken_authenticates(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user([
+            'username' => 'bob',
+            'password' => 'password1',
+        ]);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        $logintoken = \core\session\manager::get_login_token();
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'password1',
+                'logintoken' => $logintoken,
+            ]);
+        $response = $route->do_login($request, new Response(), new user_repository());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $user->id, (string) $storedrequest['userid']);
+    }
+
+    /**
+     * do_login() rejects otherwise-valid username/password credentials when the submitted
+     * Moodle login token does not match the one issued for the current session, exactly as the
+     * standard login form's submission is validated, rather than authenticating on
+     * username/password alone.
+     */
+    public function test_do_login_valid_credentials_with_invalid_logintoken_does_not_authenticate(): void {
+        $this->resetAfterTest();
+
+        // Rejected login-token attempts are logged with the requesting user agent; supply one so
+        // that this does not trigger an unrelated PHP warning for a missing array key.
+        $_SERVER['HTTP_USER_AGENT'] = 'no browser';
+
+        $this->getDataGenerator()->create_user([
+            'username' => 'bob',
+            'password' => 'password1',
+        ]);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        // Ensure a real login token exists for the session, so that this is genuinely a mismatch
+        // rather than there being no token to compare against.
+        \core\session\manager::get_login_token();
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'password1',
+                'logintoken' => 'not-the-real-token',
+            ]);
+        $response = $route->do_login($request, new Response(), new user_repository());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+        $this->assertStringNotContainsString('/approve', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * do_login() does not treat a missing 'logintoken' field in the POST body as an implicit
+     * bypass of login token validation. authenticate_user_login() only skips the login token
+     * check when it is passed the boolean `false`; do_login() must not default a missing
+     * 'logintoken' to something that is treated the same way (e.g. `false` itself), or an
+     * attacker could authenticate with valid credentials simply by omitting the field.
+     */
+    public function test_do_login_valid_credentials_missing_logintoken_does_not_bypass_validation(): void {
+        $this->resetAfterTest();
+
+        // Rejected login-token attempts are logged with the requesting user agent; supply one so
+        // that this does not trigger an unrelated PHP warning for a missing array key.
+        $_SERVER['HTTP_USER_AGENT'] = 'no browser';
+
+        $this->getDataGenerator()->create_user([
+            'username' => 'bob',
+            'password' => 'password1',
+        ]);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'password1',
+                // No 'logintoken' key at all.
+            ]);
+        $response = $route->do_login($request, new Response(), new user_repository());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+        $this->assertStringNotContainsString('/approve', $response->getHeaderLine('Location'));
+    }
+
+    /**
      * approve() renders a confirm_scopes_page with the wiring provided by the route, without
      * asserting on the (as yet unimplemented) scope-diffing behaviour.
      */
@@ -824,6 +972,13 @@ final class oauth2_test extends \advanced_testcase {
      * do_approve() stores the selected scopes and marks the request as approved when the user
      * approves the request.
      *
+     * The granted scopes must be derived solely from the scopes recorded against the stored
+     * AuthorizationRequest ('moodle' here), never from the submitted POST body: the approval
+     * form does not submit a 'scopes' field at all, and this test's POST body carries a crafted
+     * 'scopes' value naming scopes never requested by, or granted to, this authorization request
+     * (a client attempting to widen its own grant). That crafted value must be ignored entirely,
+     * rather than being passed through to store_granted_scopes_for_user() as-is.
+     *
      * This also covers that completing a flow discards any pending invalid-login flash left
      * over from an earlier failed attempt against the same request id (e.g. the user got their
      * password wrong once before eventually logging in and approving), alongside the pending
@@ -834,7 +989,7 @@ final class oauth2_test extends \advanced_testcase {
 
         $client = $this->make_client_entity();
         $user = $this->make_user_entity(2);
-        $authrequest = $this->make_auth_request($client);
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
         $authrequest->setUser($user);
         $requestid = $this->store_auth_request_in_session($authrequest);
 
@@ -847,6 +1002,12 @@ final class oauth2_test extends \advanced_testcase {
 
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
         $clientrepository->method('getClientEntity')->willReturn($client);
+
+        // Needed so that restore_auth_request() can rebuild the 'moodle' scope from the plain
+        // session data when do_approve() re-fetches the pending request.
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
 
         $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
             ->disableOriginalConstructor()
@@ -865,14 +1026,17 @@ final class oauth2_test extends \advanced_testcase {
                 return $expectedresponse;
             });
 
-        $route = $this->get_route($server, $clientrepository);
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
 
         $request = (new ServerRequest('POST', '/approve'))
             ->withQueryParams(['authrequestid' => $requestid])
             ->withParsedBody([
                 'sesskey' => sesskey(),
                 'approve' => '1',
-                'scopes' => ['moodle'],
+                // A crafted/malicious 'scopes' value, entirely different from (and broader
+                // than) the 'moodle' scope actually recorded against the stored authorization
+                // request, must be ignored.
+                'scopes' => ['siteadmin', 'unauthorized_scope'],
             ]);
         $response = $route->do_approve($request, new Response(), $grantedscopesrepository);
 
