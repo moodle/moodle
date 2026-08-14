@@ -79,7 +79,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'name' => 'cohort test 1',
             'idnumber' => 'cohorttest1',
             'description' => 'This is a description for cohorttest1',
-            'theme' => 'classic'
+            'theme' => 'boost',
             );
 
         $cohort2 = array(
@@ -103,7 +103,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'name' => 'cohort test 4',
             'idnumber' => 'cohorttest4',
             'description' => 'This is a description for cohorttest4',
-            'theme' => 'classic'
+            'theme' => 'boost',
             );
 
         $cohort5 = array(
@@ -230,10 +230,15 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
      * Test get_cohorts
      */
     public function test_get_cohorts(): void {
+        global $CFG;
+
         $this->resetAfterTest(true);
 
         // Custom fields.
         $this->create_custom_fields();
+
+        // Use the fixture themes so cohort themes can differ from the site theme.
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes';
 
         set_config('allowcohortthemes', 1);
 
@@ -242,7 +247,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'name' => 'cohortnametest1',
             'idnumber' => 'idnumbertest1',
             'description' => 'This is a description for cohort 1',
-            'theme' => 'classic',
+            'theme' => 'parent',
             'customfield_testfield1' => 'Test value 1',
             'customfield_testfield2' => 'Test value 2',
         );
@@ -313,12 +318,15 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
      * Test update_cohorts
      */
     public function test_update_cohorts(): void {
-        global $DB;
+        global $CFG, $DB;
 
         $this->resetAfterTest(true);
 
         // Custom fields.
         $this->create_custom_fields();
+
+        // Use the fixture themes so cohort themes can differ from the site theme.
+        $CFG->themedir = $CFG->dirroot . '/lib/tests/fixtures/themes';
 
         set_config('allowcohortthemes', 0);
 
@@ -334,7 +342,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'name' => 'cohortnametest1',
             'idnumber' => 'idnumbertest1',
             'description' => 'This is a description for cohort 1',
-            'theme' => 'classic',
+            'theme' => 'parent',
             'customfields' => array(
                 array(
                     'shortname' => 'testfield1',
@@ -374,17 +382,19 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $dbcohort = $DB->get_record('cohort', array('id' => $cohort1['id']));
         $this->assertEquals(1, $dbcohort->visible);
 
-        // Call when $CFG->allowcohortthemes is enabled.
+        // Call when $CFG->allowcohortthemes is enabled: the cohort theme is updated.
         set_config('allowcohortthemes', 1);
-        core_cohort_external::update_cohorts(array($cohort1 + array('theme' => 'classic')));
+        $cohort1['theme'] = 'boost';
+        core_cohort_external::update_cohorts(array($cohort1));
         $dbcohort = $DB->get_record('cohort', array('id' => $cohort1['id']));
-        $this->assertEquals('classic', $dbcohort->theme);
+        $this->assertEquals('boost', $dbcohort->theme);
 
-        // Call when $CFG->allowcohortthemes is disabled.
+        // Call when $CFG->allowcohortthemes is disabled: the given theme is ignored.
         set_config('allowcohortthemes', 0);
-        core_cohort_external::update_cohorts(array($cohort1 + array('theme' => 'boost')));
+        $cohort1['theme'] = 'child';
+        core_cohort_external::update_cohorts(array($cohort1));
         $dbcohort = $DB->get_record('cohort', array('id' => $cohort1['id']));
-        $this->assertEquals('classic', $dbcohort->theme);
+        $this->assertEquals('boost', $dbcohort->theme);
 
         // Updating custom fields.
         $cohort1['customfields'] = array(

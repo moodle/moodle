@@ -48,17 +48,17 @@ final class theme_filter_test extends \advanced_testcase {
                 true,
             ],
             'Multiple values set including matching; Matches' => [
-                ['boost', 'classic'],
+                ['boost', 'artificial'],
                 'boost',
                 true,
             ],
             'Single value set; No match' => [
-                ['classic'],
+                ['artificial'],
                 'boost',
                 false,
             ],
             'Multiple values set; No match' => [
-                ['classic', 'artificial'],
+                ['artificial', 'sandwich'],
                 'boost',
                 false,
             ],

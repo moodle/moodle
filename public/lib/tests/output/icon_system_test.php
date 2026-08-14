@@ -172,11 +172,6 @@ final class icon_system_test extends advanced_testcase {
                 icon_system_fontawesome::class,
                 true,
             ],
-            'icon_system => \theme_classic\output\icon_system_fontawesome' => [
-                icon_system::class,
-                \theme_classic\output\icon_system_fontawesome::class,
-                true,
-            ],
             'icon_system => notification' => [
                 icon_system::class,
                 notification::class,
@@ -191,11 +186,6 @@ final class icon_system_test extends advanced_testcase {
             'icon_system_standard => icon_system_fontawesome' => [
                 icon_system_standard::class,
                 icon_system_fontawesome::class,
-                false,
-            ],
-            'icon_system_standard => \theme_classic\output\icon_system_fontawesome' => [
-                icon_system_standard::class,
-                \theme_classic\output\icon_system_fontawesome::class,
                 false,
             ],
             'icon_system_fontawesome => icon_system_standard' => [

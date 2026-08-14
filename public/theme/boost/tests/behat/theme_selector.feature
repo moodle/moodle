@@ -15,18 +15,6 @@ Feature: Select a theme in Boost theme
     And I should see "Boost is a modern highly-customisable theme." in the "Boost" "dialogue"
     And I should see "Current theme" in the "Boost" "dialogue"
 
-  @javascript
-  Scenario: I am able to change the theme using the modal window select button
-    Given I should see "Current theme" in the "#theme-card-boost" "css_element"
-    When I click on "Preview theme 'Classic'" "button"
-    And I click on "Select theme" "button" in the "Classic" "dialogue"
-    Then I should see "Current theme" in the "#theme-card-classic" "css_element"
-
-  Scenario: I am able to change the theme using the normal select button
-    Given I should see "Current theme" in the "#theme-card-boost" "css_element"
-    When I click on "Select theme 'Classic'" "button"
-    Then I should see "Current theme" in the "#theme-card-classic" "css_element"
-
   Scenario: I am able to view a theme's settings page
     Given I click on "Edit theme settings 'Boost'" "link"
     Then I should see "Boost"

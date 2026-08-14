@@ -118,7 +118,6 @@ Feature: Upload users
     And I press "Upload users"
     Then I should see "Upload users preview"
     And I should see "boost"
-    And I should see "classic"
     And I should see "No theme is defined for this user."
     And I should see "Theme \"somefaketheme\" is not installed and will be ignored."
     And I press "Upload users"
@@ -127,9 +126,9 @@ Feature: Upload users
     # Boost check.
     And I am on the "jonest@example.com" "user > editing" page
     And I should see "Boost"
-    # Classic check.
+    # Boost check for the second user.
     And I am on the "reznor@example.com" "user > editing" page
-    And I should see "Classic"
+    And I should see "Boost"
 
   @javascript
   Scenario: Upload users setting their user theme when allowuserthemes is false
@@ -148,7 +147,6 @@ Feature: Upload users
     And I press "Upload users"
     Then I should see "Upload users preview"
     And I should see "boost"
-    And I should see "classic"
     And I press "Upload users"
     And I should see "User themes are not enabled, so any included in the upload users file will be ignored."
     And I should see "Users created: 4"

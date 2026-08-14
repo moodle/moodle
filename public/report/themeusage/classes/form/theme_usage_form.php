@@ -34,7 +34,7 @@ class theme_usage_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 
-        // Theme choices (e.g. boost, classic).
+        // Theme choices (e.g. boost).
         $themechoice = $this->_customdata['themechoice'];
         $themechoices = array_merge(['' => get_string('select') . '...'], self::get_theme_choices());
         $mform->addElement('select', 'themechoice', get_string('themename', 'report_themeusage'), $themechoices);

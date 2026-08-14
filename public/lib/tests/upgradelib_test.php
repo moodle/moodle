@@ -1840,4 +1840,182 @@ calendar,core_calendar|/calendar/view.php?view=month',
         moodlenet_migrate_profile_field();
         $this->assertCount(1, $DB->get_records('user_info_data', ['fieldid' => $field->id]));
     }
+
+    /**
+     * Test migration of compatible Classic settings and files to Boost.
+     *
+     * @covers ::upgrade_migrate_classic_theme_to_boost
+     */
+    public function test_upgrade_migrate_classic_theme_to_boost(): void {
+        $this->resetAfterTest();
+
+        $systemcontext = context_system::instance();
+        $fs = get_file_storage();
+
+        set_config('theme', 'classic');
+
+        set_config('unaddableblocks', 'calendar_month,html', 'theme_classic');
+        set_config('preset', 'custompreset.scss', 'theme_classic');
+        set_config('brandcolor', '#112233', 'theme_classic');
+        set_config('presetfiles', 'classicpresetfilesvalue', 'theme_classic');
+        set_config('backgroundimage', 'classicbackgroundvalue', 'theme_classic');
+        set_config('loginbackgroundimage', 'classicloginbackgroundvalue', 'theme_classic');
+        set_config('scsspre', '/* classic scss pre */', 'theme_classic');
+        set_config('scss', '/* classic scss */', 'theme_classic');
+
+        set_config('unaddableblocks', 'oldblocks', 'theme_boost');
+        set_config('preset', 'oldpreset.scss', 'theme_boost');
+        set_config('brandcolor', '#aabbcc', 'theme_boost');
+        set_config('presetfiles', 'oldpresetfiles', 'theme_boost');
+        set_config('backgroundimage', 'oldbackground', 'theme_boost');
+        set_config('loginbackgroundimage', 'oldloginbackground', 'theme_boost');
+        set_config('scsspre', '/* boost scss pre */', 'theme_boost');
+        set_config('scss', '/* boost scss */', 'theme_boost');
+
+        $sourcefiles = [
+            'preset' => 'custompreset.scss',
+            'backgroundimage' => 'background.jpg',
+            'loginbackgroundimage' => 'loginbackground.jpg',
+        ];
+
+        foreach ($sourcefiles as $filearea => $filename) {
+            $fs->create_file_from_string([
+                'contextid' => $systemcontext->id,
+                'component' => 'theme_classic',
+                'filearea' => $filearea,
+                'itemid' => 0,
+                'filepath' => '/',
+                'filename' => $filename,
+            ], "classic {$filearea}");
+
+            $fs->create_file_from_string([
+                'contextid' => $systemcontext->id,
+                'component' => 'theme_boost',
+                'filearea' => $filearea,
+                'itemid' => 0,
+                'filepath' => '/',
+                'filename' => "old_{$filename}",
+            ], "old boost {$filearea}");
+        }
+
+        upgrade_migrate_classic_theme_to_boost();
+
+        $this->assertEquals('boost', get_config('core', 'theme'));
+
+        // The Classic value is migrated with the Boost default unaddable blocks appended.
+        $this->assertEquals('calendar_month,html,navigation,settings,course_list',
+            get_config('theme_boost', 'unaddableblocks'));
+        $this->assertEquals('#112233', get_config('theme_boost', 'brandcolor'));
+        $this->assertEquals('classicbackgroundvalue', get_config('theme_boost', 'backgroundimage'));
+        $this->assertEquals('classicloginbackgroundvalue', get_config('theme_boost', 'loginbackgroundimage'));
+
+        $this->assertEquals('/* classic scss pre */', get_config('theme_boost', 'scsspre'));
+        $this->assertEquals('/* classic scss */', get_config('theme_boost', 'scss'));
+
+        // Presets are theme-specific SCSS and are never migrated, so the Boost preset
+        // setting and files must be untouched.
+        $this->assertEquals('oldpreset.scss', get_config('theme_boost', 'preset'));
+        $this->assertEquals('oldpresetfiles', get_config('theme_boost', 'presetfiles'));
+        $files = $fs->get_area_files($systemcontext->id, 'theme_boost', 'preset', 0, 'id', false);
+        $this->assertCount(1, $files);
+        $this->assertEquals('old_custompreset.scss', reset($files)->get_filename());
+
+        foreach (['backgroundimage', 'loginbackgroundimage'] as $filearea) {
+            $filename = $sourcefiles[$filearea];
+            $files = $fs->get_area_files($systemcontext->id, 'theme_boost', $filearea, 0, 'id', false);
+            $this->assertCount(1, $files);
+
+            $file = reset($files);
+            $this->assertEquals($filename, $file->get_filename());
+            $this->assertEquals("classic {$filearea}", $file->get_content());
+        }
+    }
+
+    /**
+     * Test that Boost settings and files are kept when Classic was never customised.
+     *
+     * @covers ::upgrade_migrate_classic_theme_to_boost
+     */
+    public function test_upgrade_migrate_classic_theme_to_boost_unmodified_classic(): void {
+        $this->resetAfterTest();
+
+        $systemcontext = context_system::instance();
+        $fs = get_file_storage();
+
+        set_config('theme', 'classic');
+
+        // Classic settings stored with their default values, as saved by visiting the settings page.
+        set_config('unaddableblocks', '', 'theme_classic');
+        set_config('preset', 'default.scss', 'theme_classic');
+
+        // Existing Boost customisations which must survive the migration.
+        set_config('unaddableblocks', 'boostblocks', 'theme_boost');
+        set_config('preset', 'boostpreset.scss', 'theme_boost');
+        set_config('scss', '/* boost scss */', 'theme_boost');
+        set_config('backgroundimage', '/boostbackground.jpg', 'theme_boost');
+        $fs->create_file_from_string([
+            'contextid' => $systemcontext->id,
+            'component' => 'theme_boost',
+            'filearea' => 'backgroundimage',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'boostbackground.jpg',
+        ], 'boost background');
+
+        upgrade_migrate_classic_theme_to_boost();
+
+        $this->assertEquals('boost', get_config('core', 'theme'));
+
+        // Classic default values must not overwrite the Boost customisations.
+        $this->assertEquals('boostblocks', get_config('theme_boost', 'unaddableblocks'));
+        $this->assertEquals('boostpreset.scss', get_config('theme_boost', 'preset'));
+        $this->assertEquals('/* boost scss */', get_config('theme_boost', 'scss'));
+
+        // Boost files are kept when Classic has none of its own.
+        $this->assertEquals('/boostbackground.jpg', get_config('theme_boost', 'backgroundimage'));
+        $files = $fs->get_area_files($systemcontext->id, 'theme_boost', 'backgroundimage', 0, 'id', false);
+        $this->assertCount(1, $files);
+        $this->assertEquals('boostbackground.jpg', reset($files)->get_filename());
+    }
+
+    /**
+     * Test migration helper no-op behaviour when Classic is not the active site theme.
+     *
+     * @covers ::upgrade_migrate_classic_theme_to_boost
+     */
+    public function test_upgrade_migrate_classic_theme_to_boost_non_classic_theme(): void {
+        $this->resetAfterTest();
+
+        $systemcontext = context_system::instance();
+        $fs = get_file_storage();
+
+        set_config('theme', 'boost');
+        set_config('preset', 'classicpreset.scss', 'theme_classic');
+
+        set_config('preset', 'existingboost.scss', 'theme_boost');
+        $fs->create_file_from_string([
+            'contextid' => $systemcontext->id,
+            'component' => 'theme_classic',
+            'filearea' => 'preset',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'classicpreset.scss',
+        ], 'classic preset');
+        $fs->create_file_from_string([
+            'contextid' => $systemcontext->id,
+            'component' => 'theme_boost',
+            'filearea' => 'preset',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'existingboost.scss',
+        ], 'boost preset');
+
+        upgrade_migrate_classic_theme_to_boost();
+
+        $this->assertEquals('existingboost.scss', get_config('theme_boost', 'preset'));
+
+        $files = $fs->get_area_files($systemcontext->id, 'theme_boost', 'preset', 0, 'id', false);
+        $this->assertCount(1, $files);
+        $this->assertEquals('existingboost.scss', reset($files)->get_filename());
+    }
 }

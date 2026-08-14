@@ -336,7 +336,7 @@ final class courses_test extends core_reportbuilder_testcase {
             ], true],
             'Filter course theme (no match)' => ['course:theme', [
                 'course:theme_operator' => select::EQUAL_TO,
-                'course:theme_value' => 'classic',
+                'course:theme_value' => '',
             ], false],
             'Filter course enablecompletion' => ['course:enablecompletion', [
                 'course:enablecompletion_operator' => boolean_select::NOT_CHECKED,

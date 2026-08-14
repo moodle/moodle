@@ -64,7 +64,6 @@ final class load_fontawesome_map_test extends \core_external\tests\externallib_t
     public static function valid_fontawesome_theme_provider(): array {
         return [
             'Boost theme' => ['boost'],
-            'Classic theme (extends boost)' => ['classic'],
         ];
     }
 }

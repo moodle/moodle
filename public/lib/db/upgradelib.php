@@ -2115,6 +2115,82 @@ function upgrade_create_async_mimetype_upgrade_task(string $mimetype, array $ext
 }
 
 /**
+ * Migrate core theme settings and files from Classic to Boost.
+ *
+ * The migration is only performed when Classic is currently configured as the site default theme.
+ */
+function upgrade_migrate_classic_theme_to_boost(): void {
+    if (get_config('core', 'theme') !== 'classic') {
+        return;
+    }
+    // Only settings explicitly customised in Classic are copied over. When a setting was
+    // never stored, or still holds the Classic default, Boost's own value (or default) is
+    // kept, so any existing Boost customisation survives the migration.
+    // The preset and presetfiles settings are intentionally not migrated: presets are
+    // theme-specific SCSS entry points. Classic compiled them wrapped in its own pre and
+    // post SCSS, so a Classic preset compiled directly by Boost would produce different
+    // CSS, or fail to compile where it relies on Classic variables or partials.
+    $scalarsettings = [
+        'unaddableblocks' => '',
+        'brandcolor' => '',
+        'scsspre' => '',
+        'scss' => '',
+    ];
+    foreach ($scalarsettings as $setting => $classicdefault) {
+        $sourcevalue = get_config('theme_classic', $setting);
+        if ($sourcevalue === false || $sourcevalue === $classicdefault) {
+            continue;
+        }
+        if ($setting === 'unaddableblocks') {
+            // Boost integrates navigation, settings and the course list into its own
+            // interface, so its default unaddable blocks must be kept unaddable
+            // regardless of the blocks configured in Classic.
+            $blocks = array_filter(array_map('trim', explode(',', $sourcevalue)));
+            $boostdefaults = ['navigation', 'settings', 'course_list'];
+            $sourcevalue = implode(',', array_unique(array_merge($blocks, $boostdefaults)));
+        }
+        set_config($setting, $sourcevalue, 'theme_boost');
+    }
+
+    $fileareasettings = [
+        'backgroundimage' => 'backgroundimage',
+        'loginbackgroundimage' => 'loginbackgroundimage',
+    ];
+
+    $systemcontext = \context_system::instance();
+    $fs = get_file_storage();
+    foreach ($fileareasettings as $filearea => $setting) {
+        $sourcefiles = $fs->get_area_files($systemcontext->id, 'theme_classic', $filearea, 0, 'id', false);
+        if (empty($sourcefiles)) {
+            continue;
+        }
+
+        $sourcevalue = get_config('theme_classic', $setting);
+        set_config($setting, $sourcevalue === false ? '' : $sourcevalue, 'theme_boost');
+
+        $fs->delete_area_files($systemcontext->id, 'theme_boost', $filearea, 0);
+        foreach ($sourcefiles as $sourcefile) {
+            $filerecord = [
+                'contextid' => $systemcontext->id,
+                'component' => 'theme_boost',
+                'filearea' => $filearea,
+                'itemid' => $sourcefile->get_itemid(),
+                'filepath' => $sourcefile->get_filepath(),
+                'filename' => $sourcefile->get_filename(),
+                'userid' => $sourcefile->get_userid(),
+                'author' => $sourcefile->get_author(),
+                'license' => $sourcefile->get_license(),
+                'timecreated' => $sourcefile->get_timecreated(),
+                'timemodified' => $sourcefile->get_timemodified(),
+                'sortorder' => $sourcefile->get_sortorder(),
+            ];
+            $fs->create_file_from_storedfile($filerecord, $sourcefile);
+        }
+    }
+    set_config('theme', 'boost');
+}
+
+/**
  * Creates MoodleNet profile field and migrates data from user.moodlenetprofile.
  */
 function moodlenet_migrate_profile_field(): void {

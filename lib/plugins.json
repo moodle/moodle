@@ -455,8 +455,7 @@
             "modica"
         ],
         "theme": [
-            "boost",
-            "classic"
+            "boost"
         ],
         "tiny": [
             "accessibilitychecker",
@@ -668,6 +667,7 @@
             "boxxie",
             "brick",
             "canvas",
+            "classic",
             "clean",
             "formal_white",
             "formfactor",

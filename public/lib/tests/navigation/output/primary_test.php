@@ -422,7 +422,7 @@ final class primary_test extends \advanced_testcase {
         $custommenuitems = <<< ENDMENU
         Theme
         -Boost|/?theme=boost
-        -Classic|/?theme=classic
+        -Custom|/?theme=custom
         -Purge Cache|/admin/purgecaches.php
         Courses
         -All courses|/course/

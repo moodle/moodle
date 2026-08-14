@@ -242,7 +242,7 @@ final class userlib_test extends \advanced_testcase {
         $user->auth = 'shibboleth';
         $user->country = 'AU';
         $user->lang = 'en';
-        $user->theme = 'classic';
+        $user->theme = 'boost';
         $user->timezone = 'Australia/Perth';
         \core\user::update_user($user, true, false);
         $this->assertDebuggingNotCalled();
@@ -323,7 +323,7 @@ final class userlib_test extends \advanced_testcase {
         $user['auth'] = 'shibboleth';
         $user['country'] = 'AU';
         $user['lang'] = 'en';
-        $user['theme'] = 'classic';
+        $user['theme'] = 'boost';
         $user['timezone'] = 'Australia/Perth';
         \core\user::create_user((object) $user, true, false);
         $this->assertDebuggingNotCalled();

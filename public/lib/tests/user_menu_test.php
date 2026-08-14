@@ -88,7 +88,7 @@ test
         // Test using an admin user at the root of Moodle; this way we don't have to create a test user with avatar.
         $this->setAdminUser();
         $PAGE->set_url('/');
-        $CFG->theme = 'classic';
+        $CFG->theme = 'boost';
         $PAGE->reset_theme_and_output();
         $PAGE->initialise_theme_and_output();
 
