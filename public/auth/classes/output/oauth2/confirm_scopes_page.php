@@ -121,6 +121,7 @@ class confirm_scopes_page extends oauth2_page {
                 static fn($scope) => $scope instanceof ScopeEntityInterface && $scope instanceof abstract_scope
             ),
         );
+        $data->hasgrantedscopes = $data->grantedscopes !== [];
 
         return $data;
     }
