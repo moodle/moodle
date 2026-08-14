@@ -34,9 +34,14 @@ class user_repository implements UserRepositoryInterface {
         string $username,
         string $password,
         string $granttype,
-        ClientEntityInterface $cliententity
+        ClientEntityInterface $cliententity,
+        string|bool $logintoken = false,
     ): ?UserEntityInterface {
-        $user = authenticate_user_login($username, $password);
+        $user = authenticate_user_login(
+            username: $username,
+            password: $password,
+            logintoken: $logintoken,
+        );
         if (!$user) {
             return null;
         }

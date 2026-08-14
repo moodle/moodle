@@ -326,6 +326,7 @@ class oauth2 {
                 $parsedbody['password'] ?? '',
                 '',
                 $authrequest->getClient(),
+                $parsedbody['logintoken'] ?? ''
             );
         }
 
