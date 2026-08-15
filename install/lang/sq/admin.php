@@ -29,8 +29,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Gjuha';
-$string['moodlelogo'] = 'Logo e Moodle';
-$string['next'] = 'Tjetra';
-$string['previous'] = 'E mëparshme';
-$string['reload'] = 'Riringarko';
+$string['clianswerno'] = 'j';
+$string['cliansweryes'] = 'p';
+$string['cliincorrectvalueerror'] = 'Gabim, vlerë e pasaktë "{$a->value}" për "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Vlerë e pasaktë, ju lutemi provoni përsëri';
+$string['clitypevalue'] = 'shkruani vlerën';
+$string['clitypevaluedefault'] = 'shkruani vlerën, shtypni Enter për të përdorur vlerën e parazgjedhur ({$a})';
+$string['cliunknowoption'] = 'Opsione të panjohura:
+  {$a}
+Ju lutemi përdorni opsionin --help.';
+$string['cliyesnoprompt'] = 'shtypni p (do të thotë po) ose j (do të thotë jo)';
+$string['environmentrequireinstall'] = 'duhet të instalohet dhe aktivizohet';
+$string['environmentrequireversion'] = 'kërkohet versioni {$a->needed} dhe ju po ekzekutoni {$a->current}';
+$string['upgradekeyset'] = 'Çelësi i përditësimit (lëreni bosh për të mos e vendosur)';
