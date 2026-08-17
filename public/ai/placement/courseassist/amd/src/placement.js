@@ -29,7 +29,7 @@ import Selectors from 'aiplacement_courseassist/selectors';
 import Policy from 'core_ai/policy';
 import AIHelper from 'core_ai/helper';
 import DrawerEvents from 'core/drawer_events';
-import {subscribe} from 'core/pubsub';
+import {subscribe, publish} from 'core/pubsub';
 import * as MessageDrawerHelper from 'core_message/message_drawer_helper';
 import {getString} from 'core/str';
 import * as FocusLock from 'core/local/aria/focuslock';
@@ -244,8 +244,14 @@ const AICourseAssist = class {
      * Open the AI drawer.
      */
     openAIDrawer() {
+        if (this.isAIDrawerOpen()) {
+            return;
+        }
         // Close message drawer if it is shown.
         MessageDrawerHelper.hide();
+        // The AI drawer occupies the same screen region as persistent drawers like the block drawer.
+        // Ask whatever theme is in use to close its own drawers for us; released in closeAIDrawer().
+        publish(DrawerEvents.DRAWER_EXCLUSIVE_REQUESTED, {region: 'right'});
         this.aiDrawerElement.classList.add('show');
         this.aiDrawerElement.setAttribute('tabindex', 0);
         this.aiDrawerBodyElement.setAttribute('aria-live', 'polite');
@@ -281,6 +287,11 @@ const AICourseAssist = class {
         if (this.pageElement.classList.contains('show-drawer-right') && this.aiDrawerBodyElement.dataset.removepadding === '1') {
             this.removePadding();
         }
+
+        // Release the exclusive space requested in openAIDrawer(), so the theme can reopen whatever
+        // drawers it closed for us.
+        publish(DrawerEvents.DRAWER_EXCLUSIVE_RELEASED, {region: 'right'});
+
         this.jumpToElement.setAttribute('tabindex', -1);
 
         // We can enforce a focus-visible state on the focus element using element.focus({focusVisible: true}).

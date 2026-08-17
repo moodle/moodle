@@ -1,17 +1,5 @@
-.ai-drawer {
-    position: fixed;
-    top: 60px;
-    bottom: 0;
-    right: calc(-315px + -10px);
-    width: 315px;
-    background-color: #f8f9fa;
-    z-index: 1016;
-    transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
-    visibility: hidden;
-}
-.ai-drawer.show {
-    right: 0;
-    visibility: visible;
+#ai-drawer.drawer.drawer-right {
+    z-index: 1029;
 }
 
 .ai-drawer-header {
@@ -28,7 +16,9 @@
 
 .ai-drawer-body {
     position: relative;
-    height: calc(100vh - 120px);
+    flex: 1 1 0;
+    min-height: 0;
+    height: auto;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -36,6 +26,13 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #6a737b #f8f9fa;
+}
+
+@media (min-width: 992px) {
+    .pagelayout-standard #ai-drawer.drawer.drawer-right .ai-drawer-body,
+    body.limitedwidth #ai-drawer.drawer.drawer-right .ai-drawer-body {
+        flex-basis: auto;
+    }
 }
 
 .course-assist-response-content {
