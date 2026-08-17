@@ -272,7 +272,7 @@ function badges_calculate_message_schedule($schedule) {
  * @param stdClass|null $user User object to obtain additional user variables
  * @return string Message with replaced values
  */
-function badge_message_from_template(string $message, stdClass|array $params, ?stdClass $user = null): string {
+function badge_message_from_template($message, $params, ?stdClass $user = null) {
     $params = (array) $params;
     if ($user !== null) {
         $params += \core_user::get_name_placeholders($user);
