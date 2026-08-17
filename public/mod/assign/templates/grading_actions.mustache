@@ -39,9 +39,9 @@
         {{#helpicon}}
             {{>core/help_icon}}
         {{/helpicon}}
-        <button type="submit" class="btn btn-primary" name="savechanges">{{#str}}savechanges{{/str}}</button>
-        <button type="submit" class="btn btn-primary" name="saveandshownext">{{#str}}saveandnext{{/str}}</button>
-        <button type="submit" class="btn btn-secondary" name="resetbutton">{{#str}}reset{{/str}}</button>
+        <button type="submit" class="btn btn-primary" id="savechanges-{{uniqid}}" name="savechanges">{{#str}}savechanges{{/str}}</button>
+        <button type="submit" class="btn btn-primary" id="saveandshownext-{{uniqid}}" name="saveandshownext">{{#str}}saveandnext{{/str}}</button>
+        <button type="submit" class="btn btn-secondary" id="resetbutton-{{uniqid}}" name="resetbutton">{{#str}}reset{{/str}}</button>
     </form>
     {{#showreview}}
         <div class="btn-toolbar collapse-buttons">
@@ -60,7 +60,11 @@
     {{/showreview}}
 </div>
 {{#js}}
-require(['mod_assign/grading_actions'], function(GradingActions) {
+require(['mod_assign/grading_actions', 'core_form/submit'], function(GradingActions, Submit) {
     new GradingActions('[data-region="grade-actions"]');
+
+    Submit.init('savechanges-{{uniqid}}');
+    Submit.init('saveandshownext-{{uniqid}}');
+    Submit.init('resetbutton-{{uniqid}}');
 });
 {{/js}}
