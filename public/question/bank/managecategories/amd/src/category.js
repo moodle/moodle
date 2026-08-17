@@ -352,7 +352,7 @@ export default class extends BaseComponent {
     getCategoryDataFromElements(element) {
         const categories = [];
         if (element.children) {
-            element.children.forEach(category => {
+            [...element.children].forEach(category => {
                 // Add this category to the list.
                 let child = {
                     categoryId: category.dataset.categoryid,
