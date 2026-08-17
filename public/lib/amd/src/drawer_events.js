@@ -23,4 +23,23 @@
 export default {
     DRAWER_SHOWN: 'drawer-shown',
     DRAWER_HIDDEN: 'drawer-hidden',
+
+    /**
+     * Published by code that needs persistent drawers on a given side of the screen to get out of the
+     * way while it has its own overlay open there. Drawer implementations may subscribe to close their
+     * open drawers on that side in response, remembering which ones to reopen on
+     * DRAWER_EXCLUSIVE_RELEASED.
+     *
+     * Payload: {region: 'left'|'right'} - which side is being requested.
+     */
+    DRAWER_EXCLUSIVE_REQUESTED: 'drawer-exclusive-requested',
+
+    /**
+     * Published once exclusive space on a side is no longer needed, so drawers closed for
+     * DRAWER_EXCLUSIVE_REQUESTED on that side can reopen.
+     *
+     * Payload: {region: 'left'|'right'} - which side is being released. Must match the region used in
+     * the corresponding DRAWER_EXCLUSIVE_REQUESTED call.
+     */
+    DRAWER_EXCLUSIVE_RELEASED: 'drawer-exclusive-released',
 };

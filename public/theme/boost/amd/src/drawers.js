@@ -29,10 +29,17 @@ import {isSmall, isLarge} from 'core/pagehelpers';
 import Pending from 'core/pending';
 import {setUserPreference} from 'core_user/repository';
 import {Tooltip} from 'bootstrap';
+import {subscribe} from 'core/pubsub';
+import DrawerEvents from 'core/drawer_events';
 
 let backdropPromise = null;
 
 const drawerMap = new Map();
+
+// Drawers closed per-region in response to DrawerEvents.DRAWER_EXCLUSIVE_REQUESTED, to be reopened on
+// DrawerEvents.DRAWER_EXCLUSIVE_RELEASED for that same region. Only one requester per region is
+// supported at a time.
+const drawersClosedForExclusiveRequest = new Map();
 
 const SELECTORS = {
     BUTTONS: '[data-toggler="drawers"]',
@@ -790,6 +797,30 @@ const registerListeners = () => {
             return;
         }
         Drawers.closeOtherDrawers(e.detail.drawerInstance);
+    });
+
+    // Close open drawers on the requested side (left or right) for a requester that needs exclusive
+    // use of the screen space they occupy, and remember which ones to reopen once released.
+    subscribe(DrawerEvents.DRAWER_EXCLUSIVE_REQUESTED, ({region} = {}) => {
+        const closedDrawers = [...drawerMap.values()].filter(
+            drawerInstance => drawerInstance.isOpen && drawerInstance.drawerNode.classList.contains(`drawer-${region}`)
+        );
+        closedDrawers.forEach(drawerInstance => {
+            drawerInstance.closeDrawer({focusOnOpenButton: false, updatePreferences: false});
+        });
+        drawersClosedForExclusiveRequest.set(region, closedDrawers);
+    });
+
+    // Reopen drawers closed for DrawerEvents.DRAWER_EXCLUSIVE_REQUESTED on this region, unless
+    // something else already changed their state in the meantime (e.g. the user opened one manually).
+    subscribe(DrawerEvents.DRAWER_EXCLUSIVE_RELEASED, ({region} = {}) => {
+        const closedDrawers = drawersClosedForExclusiveRequest.get(region) ?? [];
+        closedDrawers.forEach(drawerInstance => {
+            if (!drawerInstance.isOpen) {
+                drawerInstance.openDrawer({focusOnCloseButton: false, setUserPref: false});
+            }
+        });
+        drawersClosedForExclusiveRequest.delete(region);
     });
 
     // Tooglers and openers blur listeners.
