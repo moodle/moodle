@@ -25,6 +25,7 @@
 import * as Fragment from 'core/fragment';
 import {getString} from 'core/str';
 import Notification from 'core/notification';
+import Pending from 'core/pending';
 
 export default class {
     static SELECTORS = {
@@ -71,11 +72,13 @@ export default class {
                 getString(title, 'question'),
                 message
             );
+            const pendingPromise = new Pending('qbank_deletequestion/bulk_delete:submit');
             // Once the user confirms, submit the form with confirmation parameters.
             actionUrl.searchParams.append('confirm', 1);
             actionUrl.searchParams.append('deleteselected', questionIds.join(','));
             form.action = actionUrl.toString();
             form.submit();
+            pendingPromise.resolve();
         });
     }
 }
