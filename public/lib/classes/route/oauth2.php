@@ -233,6 +233,12 @@ class oauth2 {
         $requestid = $request->getQueryParams()[self::REQUEST_ID_PARAM] ?? null;
         $loginerror = $requestid !== null ? $this->consume_login_error($requestid) : null;
 
+        // Retrieve the pending authorization request, if there is one, so that the requesting
+        // client's identity can be shown on the login form before the user enters their
+        // credentials. There may not be one yet (e.g. a request id has never been seen before),
+        // in which case the login form renders exactly as it would outside an OAuth2 flow.
+        $pendingauthrequest = $requestid !== null ? $this->restore_auth_request($requestid) : null;
+
         if ($loginerror !== null) {
             $frm->username = $loginerror['username'];
         } else {
@@ -255,6 +261,10 @@ class oauth2 {
         // Disable guest login and signup for OAuth2 login form.
         $loginform->set_can_login_as_guest(false);
         $loginform->set_signup_allowed(false);
+
+        if ($pendingauthrequest !== null) {
+            $loginform->set_oauth2_client($pendingauthrequest->getClient());
+        }
 
         if ($loginerror !== null) {
             // Precise authentication failure codes (unauthorised, recaptcha, etc.) are out of
@@ -761,9 +771,9 @@ class oauth2 {
     /**
      * Helper to render a page with header and footer.
      *
-     * @param string $title
      * @param renderable $content
      * @param ResponseInterface $response
+     * @param string|null $title
      * @return ResponseInterface
      */
     protected function render_page_from_renderable(

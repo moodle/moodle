@@ -40,7 +40,11 @@
     * logourl - Flag, logo url,
     * sitename - Name of site.,
     * logintoken - Random token to protect login request.,
-    * maintenance - Maintenance message
+    * maintenance - Maintenance message,
+    * hasoauth2client - Flag, set when this login form is part of an OAuth2 authorization flow,
+    * client - The requesting OAuth2 client, if hasoauth2client is true
+      * name - The client's name,
+      * description - The client's description, as formatted HTML.
 
     Example context (json):
     {
@@ -95,7 +99,8 @@
         "maintenance": "For full access to this site, you need to login in as an admin.",
         "languagemenu": "Choose language",
         "togglepassword": true,
-        "smallscreensonly": true
+        "smallscreensonly": true,
+        "hasoauth2client": false
     }
 }}
 
@@ -109,6 +114,14 @@
     {{^logourl}}
         <h1 class="login-heading mb-4">{{#str}} loginto, core, {{sitename}} {{/str}}</h1>
     {{/logourl}}
+    {{#hasoauth2client}}
+        <h2 class="login-heading">{{#str}}oauth2:confirmscopes:clientaccesstitle, moodle, {
+            "clientname": {{#quote}}{{client.name}}{{/quote}},
+            "clientdescription": {{#quote}}{{client.description}}{{/quote}},
+            "sitename": {{#quote}}{{sitename}}{{/quote}}
+        }{{/str}}</h2>
+        {{> core/oauth2/client_description}}
+    {{/hasoauth2client}}
     {{#maintenance}}
         <div class="alert alert-danger login-maintenance">
             {{{maintenance}}}

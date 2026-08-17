@@ -33,7 +33,7 @@ class confirm_scopes_page extends oauth2_page {
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client The client entity
      * @param array $grantedscopes The list of scopes the user has already granted
      * @param array $requestedscopes The list of scopes the client is requesting
-     * @param \core\url $action
+     * @param \core\url $actionurl The URL the scope confirmation form should submit to
      * @param \stdClass $user The user entity
      */
     public function __construct(

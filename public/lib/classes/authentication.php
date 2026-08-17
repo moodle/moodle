@@ -128,7 +128,8 @@ class authentication {
      *
      * This is an interim solution and will be replaced with a proper hook system in the future.
      *
-     * @return array Containing the values of $frm and $user after processing the loginpage_hook() methods of all enabled auth plugins.
+     * @return array Containing the values of $frm and $user after processing the
+     *      loginpage_hook() methods of all enabled auth plugins.
      */
     public function process_loginpage_hooks(): array {
         global $frm, $user;

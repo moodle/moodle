@@ -28,8 +28,8 @@ class continue_as_user_page extends oauth2_page {
      * Create an instance of the form page.
      *
      * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client The client entity
-     * @param \core\url $action The URL the "continue as this user" form should submit to
-     * @param \core\url $logoutaction
+     * @param \core\url $actionurl The URL the "continue as this user" form should submit to
+     * @param \core\url $logoutaction The logout url
      * @param \stdClass $user The user entity
      */
     public function __construct(

@@ -83,6 +83,12 @@ class login implements renderable, templatable {
     public $smallscreensonly;
     /** @var bool Whether $instructions was auto-filled with the sign-up fallback message. */
     private bool $instructionsfromsignupfallback = false;
+    /**
+     * @var \League\OAuth2\Server\Entities\ClientEntityInterface|null The OAuth2 client
+     *      requesting authorization, if this login form is being shown as part of an OAuth2
+     *      authorization flow, or null for an ordinary Moodle login.
+     */
+    private ?\League\OAuth2\Server\Entities\ClientEntityInterface $oauth2client = null;
 
     /**
      * Constructor.
@@ -222,6 +228,19 @@ class login implements renderable, templatable {
     }
 
     /**
+     * Set the OAuth2 client requesting authorization, so its identity can be shown on this
+     * login form instance before the user enters their credentials.
+     *
+     * Optional: ordinary Moodle login (e.g. login/index.php) never calls this, and the
+     * template renders exactly as before when no client has been set.
+     *
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
+     */
+    public function set_oauth2_client(\League\OAuth2\Server\Entities\ClientEntityInterface $client): void {
+        $this->oauth2client = $client;
+    }
+
+    /**
      * Export data for the template
      *
      * @param \core\output\renderer_base $output
@@ -256,6 +275,11 @@ class login implements renderable, templatable {
         $data->togglepassword = $this->togglepassword;
         $data->smallscreensonly = $this->smallscreensonly;
         $data->showloginform = get_config('core', 'showloginform') === false || get_config('core', 'showloginform');
+
+        $data->hasoauth2client = $this->oauth2client !== null;
+        $data->client = $this->oauth2client !== null
+            ? \core_auth\output\oauth2\oauth2_page::describe_client($this->oauth2client)
+            : null;
 
         return $data;
     }

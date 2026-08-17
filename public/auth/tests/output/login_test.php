@@ -26,6 +26,110 @@ namespace core_auth\output;
 #[\PHPUnit\Framework\Attributes\CoversClass(login::class)]
 final class login_test extends \advanced_testcase {
     /**
+     * Create a real client_entity fixture with a name and description, so that
+     * oauth2_page::describe_client() can be exercised without touching an uninitialised typed
+     * property (client_entity's name/description are only ever populated via
+     * create_from_record()).
+     *
+     * @param string $name
+     * @param string $description
+     */
+    protected function make_oauth2_client(
+        string $name = 'Example client',
+        string $description = 'This application would like to access your account.',
+    ): \core\oauth2\server\entity\client_entity {
+        return \core\oauth2\server\entity\client_entity::create_from_record(
+            (object) [
+                'clientidentifier' => 'client1',
+                'name' => $name,
+                'description' => $description,
+                'ownercontext' => \context_system::instance()->id,
+                'status' => \core\oauth2\server\entity\client_entity::STATUS_ACTIVE,
+                'isconfidential' => 1,
+            ],
+            [],
+        );
+    }
+
+    /**
+     * export_for_template() includes the OAuth2 client's identity when set_oauth2_client() has
+     * been called, in the same shape as the other OAuth2 pages (continue_as_user_page,
+     * confirm_scopes_page).
+     */
+    public function test_export_for_template_includes_oauth2_client_when_set(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $client = $this->make_oauth2_client('Example client', 'View your course enrolments.');
+
+        $login = new login([]);
+        $login->set_oauth2_client($client);
+
+        $data = $login->export_for_template($PAGE->get_renderer('core'));
+
+        $this->assertTrue($data->hasoauth2client);
+        $this->assertNotNull($data->client);
+        $this->assertSame('Example client', $data->client->name);
+        $this->assertStringContainsString('View your course enrolments.', $data->client->description);
+        $this->assertSame('client1', $data->client->identifier);
+    }
+
+    /**
+     * export_for_template() does not include any OAuth2 client information when
+     * set_oauth2_client() has never been called, so ordinary Moodle login (login/index.php)
+     * renders exactly as before.
+     */
+    public function test_export_for_template_excludes_oauth2_client_by_default(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $login = new login([]);
+
+        $data = $login->export_for_template($PAGE->get_renderer('core'));
+
+        $this->assertFalse($data->hasoauth2client);
+        $this->assertNull($data->client);
+    }
+
+    /**
+     * The OAuth2 client's identity is actually rendered onto the login screen's HTML when set,
+     * reusing the same heading string and client_description partial as the other OAuth2 pages.
+     */
+    public function test_render_shows_oauth2_client_identity_when_set(): void {
+        global $OUTPUT;
+
+        $this->resetAfterTest();
+
+        $client = $this->make_oauth2_client('Example client', 'View your course enrolments.');
+
+        $login = new login([]);
+        $login->set_oauth2_client($client);
+
+        $html = $OUTPUT->render($login);
+
+        $this->assertStringContainsString('Example client', $html);
+        $this->assertStringContainsString('View your course enrolments.', $html);
+    }
+
+    /**
+     * The ordinary (non-OAuth2) login screen never shows any client identity block, since
+     * set_oauth2_client() was never called.
+     */
+    public function test_render_excludes_oauth2_client_block_by_default(): void {
+        global $OUTPUT;
+
+        $this->resetAfterTest();
+
+        $login = new login([]);
+
+        $html = $OUTPUT->render($login);
+
+        $this->assertStringNotContainsString('wants to access your', $html);
+    }
+
+    /**
      * set_signup_allowed(false) must clear the "don't have an account? sign up" instructions
      * text when that text was only present because it was auto-filled as a fallback for
      * sign-up being enabled site-wide.
