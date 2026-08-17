@@ -88,7 +88,7 @@ Feature: Use the qbank plugin manager page for question history
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
     And I choose "History" action for "First question" in the question bank
     When I choose "Delete" action for "First question" in the question bank
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete selected version?" "dialogue"
     And I should not see "First question"
     Then I should see "All versions of this question have been deleted."
     And I click on "Continue" "button"

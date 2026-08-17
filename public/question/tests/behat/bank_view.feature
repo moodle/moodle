@@ -32,10 +32,10 @@ Feature: A bank view with questions can be managed
     And I should see "Essay test question"
     And I should see "Numerical test question"
     And I choose "Delete" action for "Essay test question" in the question bank
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete question?" "dialogue"
     And I should not see "Essay test question"
     And I choose "Delete" action for "Numerical test question" in the question bank
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete question?" "dialogue"
 
   @javascript
   Scenario: Unknown qtype does not break the view

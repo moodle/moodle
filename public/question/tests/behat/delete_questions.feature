@@ -29,14 +29,14 @@ Feature: A teacher can delete questions in the question bank
   @javascript
   Scenario: A question not used anywhere can really be deleted
     When I choose "Delete" action for "Test question to be deleted" in the question bank
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete question?" "dialogue"
     And I apply question bank filter "Show hidden questions" with value "Yes"
     Then I should not see "Test question to be deleted"
 
   @javascript
   Scenario: Deleting a question can be cancelled
     When I choose "Delete" action for "Test question to be deleted" in the question bank
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Delete question?" "dialogue"
     Then I should see "Test question to be deleted"
 
   @javascript
@@ -59,7 +59,7 @@ Feature: A teacher can delete questions in the question bank
     And I choose "Delete" action for "Test used question to be deleted" in the question bank
     And I should see "This will delete the following question and all its versions:"
     And I should see "* Denotes questions which can't be deleted because they are in use. Instead, they will be hidden in the question bank unless you set 'Show hidden questions' to 'Yes'."
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete question?" "dialogue"
     Then I should not see "Test used question to be deleted"
     And I apply question bank filter "Show hidden questions" with value "Yes"
     And I should see "Test used question to be deleted"
@@ -74,7 +74,7 @@ Feature: A teacher can delete questions in the question bank
       | Test questions   | missingtype | Broken question | Write something |
     And I reload the page
     When I choose "Delete" action for "Broken question" in the question bank
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete question?" "dialogue"
     And I apply question bank filter "Show hidden questions" with value "Yes"
     Then I should not see "Broken question"
 
@@ -86,6 +86,6 @@ Feature: A teacher can delete questions in the question bank
     And I choose "Delete" action for "Test question to be deleted" in the question bank
     And I should see "This will delete the following question and all its versions:"
     And I should not see "* Denotes questions which can't be deleted because they are in use. Instead, they will be hidden in the question bank unless you set 'Show hidden questions' to 'Yes'."
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete question?" "dialogue"
     Then I should not see "Test question to be deleted"
     And I should not see "Test question to be deleted version2"
