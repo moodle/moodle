@@ -367,6 +367,14 @@ $right-drawer-width: 320px;
                 left: $drawer-anchor-none;
                 width: $drawer-right-width;
                 clip-path: inset(0 0 0 0);
+
+                // A focused skip link (.visually-hidden-focusable in core.scss) jumps to
+                // `position: fixed; top: 0; left: 0`, outside this element's box. clip-path
+                // clips the painting of the whole subtree, including that fixed descendant,
+                // so it never becomes visible. Drop the clip while focus is inside.
+                &:focus-within {
+                    clip-path: none;
+                }
             }
 
             &:not(.show) .drawercontent {
