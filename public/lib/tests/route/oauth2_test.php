@@ -151,6 +151,25 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
+     * Create a granted_scopes_repository stub with has_granted_all_scopes() configured to
+     * always return the given value.
+     *
+     * Used by authorize() tests which do not otherwise care about the granted scopes repository's
+     * wiring; tests which do care construct their own mock/real instance instead.
+     *
+     * @param bool $hasgrantedallscopes
+     * @return granted_scopes_repository
+     */
+    protected function make_granted_scopes_repository_stub(bool $hasgrantedallscopes = false): granted_scopes_repository {
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['has_granted_all_scopes'])
+            ->getMock();
+        $grantedscopesrepository->method('has_granted_all_scopes')->willReturn($hasgrantedallscopes);
+        return $grantedscopesrepository;
+    }
+
+    /**
      * Store an AuthorizationRequest in the session, in the same way that
      * oauth2::store_auth_request() does, keyed by request id.
      *
@@ -305,6 +324,7 @@ final class oauth2_test extends \advanced_testcase {
             (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
             new Response(),
             new user_repository(),
+            $this->make_granted_scopes_repository_stub(),
         );
 
         $this->assertEquals(302, $response->getStatusCode());
@@ -343,6 +363,7 @@ final class oauth2_test extends \advanced_testcase {
             (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
             new Response(),
             $userrepository,
+            $this->make_granted_scopes_repository_stub(),
         );
 
         $requestid = $this->get_requestid_from_response($response);
@@ -379,6 +400,7 @@ final class oauth2_test extends \advanced_testcase {
             (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
             new Response(),
             new user_repository(),
+            $this->make_granted_scopes_repository_stub(),
         );
 
         $this->assertEquals(302, $response->getStatusCode());
@@ -401,12 +423,239 @@ final class oauth2_test extends \advanced_testcase {
             new ServerRequest('GET', '/authorize'),
             new Response(),
             new user_repository(),
+            $this->make_granted_scopes_repository_stub(),
         );
 
         $this->assertEquals(
             OAuthServerException::invalidCredentials()->getHttpStatusCode(),
             $response->getStatusCode(),
         );
+    }
+
+    /**
+     * authorize() approves and completes the authorization request immediately, without
+     * redirecting to the login, "continue as user", or scope confirmation screens, when the
+     * logged-in user has already granted every scope this client is requesting.
+     */
+    public function test_authorize_completes_immediately_when_all_requested_scopes_already_granted(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $expectedresponse = new Response(200, [], 'authorized');
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('validateAuthorizationRequest');
+        $server->expects($this->once())
+            ->method('completeAuthorizationRequest')
+            ->willReturnCallback(function (AuthorizationRequest $authrequest) use ($expectedresponse): ResponseInterface {
+                $this->assertTrue($authrequest->isAuthorizationApproved());
+                return $expectedresponse;
+            });
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $userentity = $this->make_user_entity($user->id);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->method('get_current_user')->willReturn($userentity);
+
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['has_granted_all_scopes'])
+            ->getMock();
+        $grantedscopesrepository->expects($this->once())
+            ->method('has_granted_all_scopes')
+            ->with(
+                $this->identicalTo($client),
+                $this->identicalTo($userentity),
+                $this->callback(
+                    fn (array $scopes): bool => array_map(fn ($s) => $s->getIdentifier(), $scopes) === ['moodle'],
+                ),
+            )
+            ->willReturn(true);
+
+        $response = $route->authorize(
+            (new ServerRequest('GET', '/authorize'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+            $userrepository,
+            $grantedscopesrepository,
+        );
+
+        $this->assertSame($expectedresponse, $response);
+
+        // No redirect: the pending request is discarded entirely, rather than being left in the
+        // session for a later leg of the interactive flow (login/continue-as-user/scope
+        // confirmation) to pick up.
+        $this->assertArrayNotHasKey($requestid, $SESSION->oauth2requests ?? []);
+    }
+
+    /**
+     * authorize() preserves the existing interactive flow (redirecting to login()) when the
+     * logged-in user has granted some, but not all, of the scopes this client is requesting.
+     */
+    public function test_authorize_preserves_interactive_flow_when_some_requested_scopes_not_granted(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle', 'email']);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->method('validateAuthorizationRequest')->willReturn($authrequest);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route($server, $clientrepository);
+
+        $userentity = $this->make_user_entity($user->id);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->method('get_current_user')->willReturn($userentity);
+
+        $response = $route->authorize(
+            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            new Response(),
+            $userrepository,
+            $this->make_granted_scopes_repository_stub(hasgrantedallscopes: false),
+        );
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+
+        $requestid = $this->get_requestid_from_response($response);
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $user->id, (string) $storedrequest['userid']);
+    }
+
+    /**
+     * authorize() preserves the existing interactive flow when the logged-in user has never
+     * granted any of the requested scopes, using a real granted_scopes_repository backed by the
+     * (empty) database table, rather than a mocked return value.
+     */
+    public function test_authorize_preserves_interactive_flow_when_no_requested_scopes_granted(): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $client = $this->make_client_entity('client1');
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->method('validateAuthorizationRequest')->willReturn($authrequest);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $userentity = $this->make_user_entity($user->id);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->method('get_current_user')->willReturn($userentity);
+
+        $grantedscopesrepository = new granted_scopes_repository($scoperepository);
+
+        $response = $route->authorize(
+            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            new Response(),
+            $userrepository,
+            $grantedscopesrepository,
+        );
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * authorize()'s already-granted check is scoped to the current user and current client:
+     * a grant belonging to a different user (even for the same client and scope), or to a
+     * different client (even for the same user and scope), must not cause silent authorization.
+     */
+    public function test_authorize_does_not_auto_approve_using_grant_for_different_user_or_client(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $client = $this->make_client_entity('client1');
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
+
+        // A grant already exists for the same client and scope, but a *different* user.
+        $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
+            'clientidentifier' => 'client1',
+            'userid' => $otheruser->id,
+            'scope' => 'moodle',
+            'timecreated' => time(),
+        ]);
+
+        // ...and another for the same user, but a *different* client.
+        $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
+            'clientidentifier' => 'other-client',
+            'userid' => $user->id,
+            'scope' => 'moodle',
+            'timecreated' => time(),
+        ]);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->method('validateAuthorizationRequest')->willReturn($authrequest);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $userentity = $this->make_user_entity($user->id);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->method('get_current_user')->willReturn($userentity);
+
+        $grantedscopesrepository = new granted_scopes_repository($scoperepository);
+
+        $response = $route->authorize(
+            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            new Response(),
+            $userrepository,
+            $grantedscopesrepository,
+        );
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
     }
 
     /**
@@ -580,7 +829,7 @@ final class oauth2_test extends \advanced_testcase {
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
             ->withParsedBody(['currentuser' => '1', 'sesskey' => sesskey()]);
-        $response = $route->do_login($request, new Response(), $userrepository);
+        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
@@ -617,7 +866,7 @@ final class oauth2_test extends \advanced_testcase {
             ->withParsedBody(['currentuser' => '1', 'sesskey' => 'invalid']);
 
         $this->expectException(\moodle_exception::class);
-        $route->do_login($request, new Response(), $userrepository);
+        $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
     }
 
     /**
@@ -649,7 +898,231 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'secret',
             ]);
-        $response = $route->do_login($request, new Response(), $userrepository);
+        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * do_login() approves and completes the authorization request immediately, without
+     * redirecting to approve() or displaying the scope confirmation screen, when the just
+     * authenticated user has already granted every scope this client is requesting.
+     */
+    public function test_do_login_completes_immediately_when_all_requested_scopes_already_granted(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $user = $this->make_user_entity(2);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->getMock();
+        $userrepository->method('getUserEntityByUserCredentials')->willReturn($user);
+
+        $expectedresponse = new Response(200, [], 'authorized');
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->once())
+            ->method('completeAuthorizationRequest')
+            ->willReturnCallback(function (AuthorizationRequest $authrequest) use ($expectedresponse): ResponseInterface {
+                $this->assertTrue($authrequest->isAuthorizationApproved());
+                return $expectedresponse;
+            });
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['has_granted_all_scopes'])
+            ->getMock();
+        $grantedscopesrepository->expects($this->once())
+            ->method('has_granted_all_scopes')
+            ->with(
+                $this->identicalTo($client),
+                $this->identicalTo($user),
+                $this->callback(
+                    fn (array $scopes): bool => array_map(fn ($s) => $s->getIdentifier(), $scopes) === ['moodle'],
+                ),
+            )
+            ->willReturn(true);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'secret',
+            ]);
+        $response = $route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
+
+        $this->assertSame($expectedresponse, $response);
+
+        // No redirect to approve(): the pending request is discarded entirely, rather than being
+        // left in the session for approve()/do_approve() to pick up.
+        $this->assertArrayNotHasKey($requestid, $SESSION->oauth2requests ?? []);
+    }
+
+    /**
+     * do_login() preserves the existing redirect to approve() when the just authenticated user
+     * has granted some, but not all, of the scopes this client is requesting.
+     */
+    public function test_do_login_preserves_approve_redirect_when_some_requested_scopes_not_granted(): void {
+        $this->resetAfterTest();
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session(
+            $this->make_auth_request($client, scopes: ['moodle', 'email']),
+        );
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $user = $this->make_user_entity(2);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->getMock();
+        $userrepository->method('getUserEntityByUserCredentials')->willReturn($user);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'secret',
+            ]);
+        $response = $route->do_login(
+            $request,
+            new Response(),
+            $userrepository,
+            $this->make_granted_scopes_repository_stub(hasgrantedallscopes: false),
+        );
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $user->getIdentifier(), (string) $storedrequest['userid']);
+    }
+
+    /**
+     * do_login() preserves the existing redirect to approve() when the just authenticated user
+     * has never granted any of the requested scopes, using a real granted_scopes_repository
+     * backed by the (empty) database table, rather than a mocked return value.
+     */
+    public function test_do_login_preserves_approve_redirect_when_no_requested_scopes_granted(): void {
+        $this->resetAfterTest();
+
+        $client = $this->make_client_entity('client1');
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $user = $this->make_user_entity(2);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->getMock();
+        $userrepository->method('getUserEntityByUserCredentials')->willReturn($user);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $grantedscopesrepository = new granted_scopes_repository($scoperepository);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'secret',
+            ]);
+        $response = $route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * do_login()'s already-granted check is scoped to the just authenticated user and current
+     * client: a grant belonging to a different user (even for the same client and scope), or to a
+     * different client (even for the same user and scope), must not cause silent authorization.
+     */
+    public function test_do_login_does_not_auto_approve_using_grant_for_different_user_or_client(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $otheruser = $this->getDataGenerator()->create_user();
+
+        $client = $this->make_client_entity('client1');
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $user = $this->make_user_entity(2);
+
+        // A grant already exists for the same client and scope, but a *different* user.
+        $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
+            'clientidentifier' => 'client1',
+            'userid' => $otheruser->id,
+            'scope' => 'moodle',
+            'timecreated' => time(),
+        ]);
+
+        // ...and another for the same user, but a *different* client.
+        $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
+            'clientidentifier' => 'other-client',
+            'userid' => $user->getIdentifier(),
+            'scope' => 'moodle',
+            'timecreated' => time(),
+        ]);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->getMock();
+        $userrepository->method('getUserEntityByUserCredentials')->willReturn($user);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $grantedscopesrepository = new granted_scopes_repository($scoperepository);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'secret',
+            ]);
+        $response = $route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
@@ -680,7 +1153,7 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'wrong',
             ]);
-        $response = $route->do_login($request, new Response(), $userrepository);
+        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -732,7 +1205,7 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => $submittedusername,
                 'password' => 'wrong',
             ]);
-        $response = $route->do_login($dologinrequest, new Response(), $userrepository);
+        $response = $route->do_login($dologinrequest, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
 
         $this->assertEquals(302, $response->getStatusCode());
         $location = $response->getHeaderLine('Location');
@@ -791,7 +1264,7 @@ final class oauth2_test extends \advanced_testcase {
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
             ->withParsedBody([]);
-        $response = $route->do_login($request, new Response(), $userrepository);
+        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -831,7 +1304,7 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'password1',
                 'logintoken' => $logintoken,
             ]);
-        $response = $route->do_login($request, new Response(), new user_repository());
+        $response = $route->do_login($request, new Response(), new user_repository(), $this->make_granted_scopes_repository_stub());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
@@ -877,7 +1350,7 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'password1',
                 'logintoken' => 'not-the-real-token',
             ]);
-        $response = $route->do_login($request, new Response(), new user_repository());
+        $response = $route->do_login($request, new Response(), new user_repository(), $this->make_granted_scopes_repository_stub());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -918,7 +1391,7 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'password1',
                 // No 'logintoken' key at all.
             ]);
-        $response = $route->do_login($request, new Response(), new user_repository());
+        $response = $route->do_login($request, new Response(), new user_repository(), $this->make_granted_scopes_repository_stub());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -1162,7 +1635,7 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'secret',
             ]);
-        $route->do_login($dologinrequest, new Response(), $userrepository);
+        $route->do_login($dologinrequest, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
 
         $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
             ->disableOriginalConstructor()

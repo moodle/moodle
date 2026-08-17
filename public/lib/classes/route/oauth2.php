@@ -64,6 +64,7 @@ class oauth2 {
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param user_repository $userrepository
+     * @param \core\oauth2\server\repository\granted_scopes_repository $grantedscopesrepository
      * @return ResponseInterface
      */
     #[route(
@@ -74,6 +75,7 @@ class oauth2 {
         ServerRequestInterface $request,
         ResponseInterface $response,
         user_repository $userrepository,
+        \core\oauth2\server\repository\granted_scopes_repository $grantedscopesrepository,
     ): ResponseInterface {
         try {
             [$requestid, $authrequest] = $this->get_auth_request($request);
@@ -85,8 +87,21 @@ class oauth2 {
         if (isloggedin() && !isguestuser()) {
             // User is logged in and not guest.
             // Set the user on the auth request.
-            // Redirect to the login page to confirm that the user wishes to continue as this user.
             $authrequest->setUser($userrepository->get_current_user());
+
+            if ($grantedscopesrepository->has_granted_all_scopes(
+                $authrequest->getClient(),
+                $authrequest->getUser(),
+                $authrequest->getScopes(),
+            )) {
+                // This user has already granted every scope this client is requesting for this
+                // authorization request: approve and complete it immediately, without showing any
+                // of the login, "continue as user", or scope confirmation screens.
+                $authrequest->setAuthorizationApproved(true);
+                return $this->complete_authorization_request($requestid, $authrequest, $response);
+            }
+
+            // Redirect to the login page to confirm that the user wishes to continue as this user.
             $this->store_auth_request($requestid, $authrequest);
         }
 
@@ -300,6 +315,7 @@ class oauth2 {
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param user_repository $userrepository
+     * @param \core\oauth2\server\repository\granted_scopes_repository $grantedscopesrepository
      * @return ResponseInterface
      */
     #[route(
@@ -310,6 +326,7 @@ class oauth2 {
         ServerRequestInterface $request,
         ResponseInterface $response,
         user_repository $userrepository,
+        \core\oauth2\server\repository\granted_scopes_repository $grantedscopesrepository,
     ): ResponseInterface {
         // Handle the login form submission.
         [$requestid, $authrequest] = $this->get_auth_request($request);
@@ -351,6 +368,19 @@ class oauth2 {
         }
 
         $authrequest->setUser($user);
+
+        if ($grantedscopesrepository->has_granted_all_scopes(
+            $authrequest->getClient(),
+            $user,
+            $authrequest->getScopes(),
+        )) {
+            // This user has already granted every scope this client is requesting: approve and
+            // complete the authorization request immediately, without showing the scope
+            // confirmation screen.
+            $authrequest->setAuthorizationApproved(true);
+            return $this->complete_authorization_request($requestid, $authrequest, $response);
+        }
+
         $this->store_auth_request($requestid, $authrequest);
 
         return \core\router\util::redirect_to_callable(
@@ -465,6 +495,28 @@ class oauth2 {
             $authrequest->setAuthorizationApproved(true);
         }
 
+        return $this->complete_authorization_request($requestid, $authrequest, $response);
+    }
+
+    /**
+     * Helper to discard the pending request and complete an authorization request against the
+     * OAuth2 server, once it has been either approved or denied.
+     *
+     * Shared by {@see self::do_approve()} (the interactive scope-confirmation flow) and
+     * {@see self::authorize()} (the non-interactive path taken when the user has already granted
+     * every requested scope), so that the final approval/completion step is not duplicated
+     * between them.
+     *
+     * @param string $requestid
+     * @param \League\OAuth2\Server\RequestTypes\AuthorizationRequest $authrequest
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    private function complete_authorization_request(
+        string $requestid,
+        \League\OAuth2\Server\RequestTypes\AuthorizationRequest $authrequest,
+        ResponseInterface $response,
+    ): ResponseInterface {
         // The flow for this request id is now complete, whether it was approved or denied.
         // Discard the pending request rather than leaving it in the session, where a resubmission
         // of this form (e.g. a replayed request) could otherwise re-trigger completion.
