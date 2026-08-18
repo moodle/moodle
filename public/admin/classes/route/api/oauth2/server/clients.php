@@ -105,4 +105,42 @@ class clients {
             response: $response,
         );
     }
+
+    /**
+     * Delete a client.
+     *
+     * @param ServerRequestInterface $request The request object
+     * @param ResponseInterface $response The response object
+     * @param \core\oauth2\server\entity\client_entity $cliententity The client entity
+     * @return payload_response The response payload indicating success
+     */
+    #[route(
+        path: '/oauth2/server/clients/{client}/delete',
+        method: ['POST'],
+        pathtypes: [
+            new \core_admin\route\parameters\oauth2\server\path_client(),
+        ],
+        requirelogin: new require_login(
+            requirelogin: true,
+            autologinguest: false,
+        ),
+    )]
+    public function delete_client(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        \core\oauth2\server\entity\client_entity $cliententity,
+    ): payload_response {
+        require_capability('moodle/site:manageoauth2clients', \core\context\system::instance());
+
+        $manager = \core\di::get(\core\oauth2\server\client_manager::class);
+        $manager->delete_client($cliententity->get_id());
+
+        return new payload_response(
+            payload: [
+                'success' => true,
+            ],
+            request: $request,
+            response: $response,
+        );
+    }
 }
