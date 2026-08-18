@@ -1,0 +1,72 @@
+:root {
+    --aflex-radius: 0.75rem;
+    --aflex-navy: #173f5f;
+    --aflex-teal: #1f8a8a;
+}
+
+body {
+    background-color: #f5f8fb;
+}
+
+.navbar.fixed-top {
+    border-bottom: 0;
+    box-shadow: 0 0.25rem 1rem rgba(17, 38, 55, 0.08);
+}
+
+.btn, .card, .form-control, .dropdown-menu {
+    border-radius: var(--aflex-radius);
+}
+
+.navbar-brand .logo {
+    max-height: 2.25rem;
+    width: auto;
+}
+
+.login-container {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+body.pagelayout-login .login-layout-left {
+    background:
+        radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.18), transparent 28%),
+        linear-gradient(135deg, var(--aflex-navy), var(--aflex-teal));
+}
+
+body.pagelayout-login .login-layout-left-content {
+    padding: 0;
+    margin-bottom: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    text-shadow: 0 2px 12px rgba(5, 25, 39, 0.45);
+}
+
+body.pagelayout-login .login-layout-left-content .text-muted {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+body.pagelayout-login .login-layout-left-content > p,
+body.pagelayout-login .login-layout-stats {
+    display: none;
+}
+
+body.pagelayout-login .login-layout-right {
+    background: #fff;
+}
+
+body.pagelayout-login .login-layout-right-content {
+    max-width: 28rem;
+}
+
+body.pagelayout-login .login-form .form-control {
+    min-height: 3rem;
+    border-color: #d8e1e8;
+    border-radius: 0.5rem;
+    background: #f7f9fb;
+}

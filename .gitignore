@@ -61,3 +61,5 @@ jsconfig.json
 UPGRADING-CURRENT.md
 .phpunit.cache
 tsconfig.aliases.json
+# AFLEX local environment (copy from .env.example).
+.env

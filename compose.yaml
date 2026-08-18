@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${MOODLE_DB_NAME:-moodle}
+      POSTGRES_USER: ${MOODLE_DB_USER:-moodle}
+      POSTGRES_PASSWORD: ${MOODLE_DB_PASSWORD:-change-me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${AFLEX_PORT:-8080}:80"
+    environment:
+      MOODLE_URL: ${MOODLE_URL:-http://localhost:8080}
+      MOODLE_DB_HOST: db
+      MOODLE_DB_NAME: ${MOODLE_DB_NAME:-moodle}
+      MOODLE_DB_USER: ${MOODLE_DB_USER:-moodle}
+      MOODLE_DB_PASSWORD: ${MOODLE_DB_PASSWORD:-change-me}
+    volumes:
+      - .:/var/www/html
+      - moodle_data:/var/www/moodledata
+
+volumes:
+  postgres_data:
+  moodle_data:
