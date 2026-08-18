@@ -114,4 +114,56 @@ class client_secrets {
             response: $response,
         );
     }
+
+    /**
+     * Revoke client secret.
+     *
+     * @param ServerRequestInterface $request The request object
+     * @param ResponseInterface $response The response object
+     * @return payload_response The revocation status
+     */
+    #[route(
+        path: '/oauth2/server/secrets/revoke',
+        method: ['POST'],
+        requestbody: new \core\router\schema\request_body(
+            content: [
+                new \core\router\schema\response\content\json_media_type(
+                    schema: new \core\router\schema\objects\schema_object(
+                        content: [
+                            'secretid' => new \core\router\schema\objects\scalar_type(
+                                type: \core\param::INT,
+                                required: true,
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+            description: 'Revocation parameters payload',
+            required: true,
+        ),
+        requirelogin: new require_login(
+            requirelogin: true,
+            autologinguest: false,
+        ),
+    )]
+    public function revoke_client_secret(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+    ): payload_response {
+        require_capability('moodle/site:manageoauth2clients', \core\context\system::instance());
+
+        $body = $request->getParsedBody();
+        $secretid = (int) $body['secretid'];
+
+        $manager = \core\di::get(\core\oauth2\server\client_manager::class);
+        $manager->revoke_secret($secretid);
+
+        return new payload_response(
+            payload: [
+                'success' => true,
+            ],
+            request: $request,
+            response: $response,
+        );
+    }
 }
