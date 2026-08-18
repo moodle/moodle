@@ -6,6 +6,52 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 5.2.2+
+
+### core
+
+#### Added
+
+- New `flexible_table::set_columnheadersattributes(...)` method for tables to define additional attributes ('class', 'data-X', etc.) for column headers
+
+  For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
+
+### core_reportbuilder
+
+#### Added
+
+- New `add_header_attributes(...)` method on column class instances for defining additional header attributes for the column when rendered in a report
+
+  For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
+
+### mod_assign
+
+#### Changed
+
+- The feedback plugin `get_grading_batch_operation_details()` method can return a `'confirmationyes'` key to define the content of the confirmation save button
+
+  For more information see [MDL-88688](https://tracker.moodle.org/browse/MDL-88688)
+
+### tiny_recordrtc
+
+#### Added
+
+- You can now always download the recorded files.
+
+  For more information see [MDL-88603](https://tracker.moodle.org/browse/MDL-88603)
+
+#### Changed
+
+- When a recording file is too large to upload, users are presented with an option to download the file.
+
+  For more information see [MDL-88603](https://tracker.moodle.org/browse/MDL-88603)
+
+#### Fixed
+
+- Duration metadata is created when recording is stopped to accurately determine the recording duration.
+
+  For more information see [MDL-88603](https://tracker.moodle.org/browse/MDL-88603)
+
 ## 5.2.2
 
 ### core

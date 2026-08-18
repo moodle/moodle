@@ -1,5 +1,13 @@
 # core_reportbuilder (subsystem) Upgrade notes
 
+## 5.2.2+
+
+### Added
+
+- New `add_header_attributes(...)` method on column class instances for defining additional header attributes for the column when rendered in a report
+
+  For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
+
 ## 5.2
 
 ### Added

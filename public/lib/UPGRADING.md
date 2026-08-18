@@ -1,5 +1,13 @@
 # core (subsystem) Upgrade notes
 
+## 5.2.2+
+
+### Added
+
+- New `flexible_table::set_columnheadersattributes(...)` method for tables to define additional attributes ('class', 'data-X', etc.) for column headers
+
+  For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
+
 ## 5.2.2
 
 ### Changed
