@@ -33,6 +33,7 @@ $string['admindirname'] = 'Administrator kataloqu';
 $string['availablelangs'] = 'Mümkün dillərin siyahısı';
 $string['chooselanguagehead'] = 'Dili seçin';
 $string['chooselanguagesub'] = 'İndi ancaq proqramın qurulması üçün dili seçin. İstifadəçi interfeysi üçün dili sonradan, qurulma prosesində seçmək olar.';
+$string['clialreadyconfigured'] = 'config.php konfiqurasiya faylı artıq mövcuddur. Bu saytda Moodle quraşdırmaq üçün admin/cli/install_database.php istifadə edin.';
 $string['clialreadyinstalled'] = ' config.php faylı artıq mövcuddur. Əgər saytı yeniləmək istəyirsinizsə, xahiş edirik, admin/cli/upgrade.php skriptindən istifadə edin.';
 $string['cliinstallheader'] = 'Moodlun {$a} əmr sətri rejimində qurulma proqramı';
 $string['clitablesexist'] = 'Verilənlər bazasının cədvəlləri artıq mövcuddur, əmr sətri rejimində proqramın qurulmasını davam etdirmək mümkün deyil.';
@@ -40,12 +41,11 @@ $string['databasehost'] = 'Verilənlər bazasının serveri';
 $string['databasename'] = 'Verilənlər bazasının adı';
 $string['databasetypehead'] = 'Verilənlər bazasının drayverini seçin';
 $string['dataroot'] = 'Verilənlərin kataloqu';
+$string['datarootpermission'] = 'Verilənlər bazası kataloq icazələri';
 $string['dbprefix'] = 'Cədvəllərin adlarının prefiksi';
 $string['dirroot'] = 'Moodle kataloqu';
 $string['environmenthead'] = 'Mühitin yoxlanması...';
-$string['environmentsub2'] = 'Moodlun hər versiyasında PHP-nin versiyasına minimal tələblər və PHP-nin mütləq olan genişlənmələrinin dəsti var.
-Mühitin tam yoxlanılması hər quraşdırmadan və yenilənmədən əvvəl yerinə yetirilir.
-Xahiş edirik ki, əgər yeni versiyanın necə qurulmasını və PHP genişlənməsinin əlavə edilməsini bilmirsinizsə administratora müraciət edin.';
+$string['environmentsub2'] = 'Hər bir Moodle paylanması bəzi PHP versiya tələblərinə malikdir və bəzi PHP genişləndirmələri quraşdırılmalıdır. Hər quraşdırma və yeniləmədən əvvəl ətraf mühitin tam yoxlanması aparılmalıdır. PHP və ya PHP genişləndirmələrinin yeni versiyasını necə quraşdıracağınızı bilmirsinizsə, lütfən, server administratorunuzla əlaqə saxlayın.';
 $string['errorsinenvironment'] = 'Mühitin yoxlnılması yerinə yetirilmədi!';
 $string['installation'] = 'Quraşdırma';
 $string['langdownloaderror'] = 'Təəssüf ki,  "{$a}" dilini qurmaq mümkün olmadı. Quraşdırma prosesi ingilis dilində davam edəcək.';
@@ -65,12 +65,13 @@ $string['pathsunsecuredataroot'] = 'Verilənlər kataloqunun mövqeyi təhlükə
 $string['pathswrongadmindir'] = 'Admin kataloqu mövcud deyil';
 $string['phpextension'] = '{$a} PHP  geniçlənməsi';
 $string['phpversion'] = 'PHP versiyası';
+$string['webserverconfigproblemdescription'] = 'Veb serveriniz /public kataloqundan kənar fayllara girişin qarşısını almaq üçün konfiqurasiya edilməyib. Veb serverinizi konfiqurasiya etmək haqqında ətraflı məlumat üçün <a href="https://moodledev.io/docs/5.1/guides/restructure">https://moodledev.io/docs/5.1/guides/restructure</a>-ə baxın. Yenidən konfiqurasiya etdikdən sonra <a href="{$a}"></a> veb-kökünü yenidən nəzərdən keçirin.';
+$string['webservernotconfigured'] = 'Veb server konfiqurasiya edilməyib';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Siz bu səhifəni ona görə görürsünüz ki, <strong>{$a->packname} {$a->packversion}</strong> proqram paketini öz kompyüterinizdə müvəffəqiyyətlə qurmusunuz. Təbrik edirik!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>  proqram paketinin bu versiyasında <strong>Moodle</strong>un işləyəcəyi mühiti yaratmaq üçün aşağıdakı proqramlar var:';
 $string['welcomep40'] = 'Paketə həmçinin <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong> daxildir.';
-$string['welcomep50'] = 'Bu paketə daxil olan əlavələrdən istifadə edilmə ardıcıllığı, müvafiq lisenziyalarla müəyyən edilir. <strong>{$a->installername}</strong>  tam proqram paketi
- <a href="http://www.opensource.org/docs/definition_plain.html">mənbəni açır</a> və <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> lisenziyasının şərtlərinə uyğun olaraq yayılır.';
+$string['welcomep50'] = 'Bu paketdəki bütün proqramların istifadəsi onların müvafiq lisenziyalarına tabedir.  Tam <strong>{$a->installername}</strong> paketi <a href="https://www.opensource.org/docs/definition_plain.html">açıq mənbə</a>-dir və <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> lisenziyası altında paylanır.';
 $string['welcomep60'] = 'Növbəti səhifələrdə Siz, bir neçə sadə addımla öz kompyüterinizdə <strong>Moodle</strong>-un parametrlərini sazlaya və quraşdıra bilərsiniz. Siz sazlama parametrlərini susmaya görə qəbul edə və ya öz tələblərinizdən asılı olaraq dəyişə bilərsiniz.';
 $string['welcomep70'] = '<strong>Moodle</strong> quraşdırma prosesini davam etmək üçün "Növbəti" düyməsini sıxın.';
 $string['wwwroot'] = 'Veb-ünvan';
