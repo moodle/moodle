@@ -29,6 +29,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p> </p><p> istifadə etmək üçün heç bir dəyişiklik yoxdur. </p><p> bəzi məlumatlar. </p>';
+$string['cannotcreatelangdir'] = 'Dil kataloqu yaratmaq mümkün deyil';
+$string['cannotcreatetempdir'] = 'Müvəqqəti kataloq yaratmaq mümkün deyil';
+$string['cannotdownloadcomponents'] = 'Komponentləri endirmək mümkün olmadı';
+$string['cannotdownloadzipfile'] = 'ZIP faylı endirmək mümkün olmadı';
+$string['cannotfindcomponent'] = 'Komponent tapılmadı';
+$string['cannotsavemd5file'] = 'md5 faylı saxlamaq mümkün olmadı';
+$string['cannotsavezipfile'] = 'ZIP faylı saxlamaq mümkün olmadı';
+$string['cannotunzipfile'] = 'Fayl arxivini açmaq mümkün olmadı';
+$string['componentisuptodate'] = 'Yenilənmiş komponent';
+$string['dmlexceptiononinstall'] = '<p>A verilənlər bazası xətası baş verdi [{$a->errorcode}].<br />{$a->debuginfo}</p>';
+$string['downloadedfilecheckfailed'] = 'Yüklənmiş fayl yoxlama xətası';
+$string['invalidmd5'] = 'Nəzarət dəyişəni yanlışdır - yenidən cəhd edin';
+$string['missingrequiredfield'] = 'Bəzi tələb olunan sahələr yoxdur';
 $string['wrongdestpath'] = 'Səhv təyinat yolu';
 $string['wrongsourcebase'] = 'Baza URL-in səhv mənbəyi';
 $string['wrongzipfilename'] = 'ZİP faylın səhv adı';
