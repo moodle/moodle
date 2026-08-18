@@ -1,5 +1,13 @@
 # mod_assign Upgrade notes
 
+## 5.1.6+
+
+### Changed
+
+- The feedback plugin `get_grading_batch_operation_details()` method can return a `'confirmationyes'` key to define the content of the confirmation save button
+
+  For more information see [MDL-88688](https://tracker.moodle.org/browse/MDL-88688)
+
 ## 5.1.6
 
 ### Changed
