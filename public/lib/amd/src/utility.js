@@ -104,6 +104,7 @@ const displayConfirmation = (source, type) => {
         );
     }
     return confirmationPromise.then(() => {
+        const pendingPromise = new Pending('core/utility:displayConfirmation');
         if (source.dataset[`${type}Toast`] === 'true') {
             const stringForToast = getModalString(source.dataset, type, 'ToastConfirmation');
             if (typeof stringForToast === "string") {
@@ -113,12 +114,11 @@ const displayConfirmation = (source, type) => {
             }
         }
 
+        const link = source.closest('a');
+        const button = source.closest('button, input[type="submit"], input[type="button"], input[type="reset"]');
         if (source.dataset[`${type}Destination`]) {
             window.location.href = source.dataset[`${type}Destination`];
-            return;
-        }
-
-        if (source.closest('form')) {
+        } else if (source.closest('form')) {
             // Update the modal and confirmation data fields so that we don't loop.
             source.dataset.confirmation = 'none';
             source.dataset.modal = 'none';
@@ -126,23 +126,15 @@ const displayConfirmation = (source, type) => {
             // Click on the button again.
             // Note: Do not use the form.submit() because it will not work for cancel buttons.
             source.click();
-            return;
-        }
-
-        const link = source.closest('a');
-        if (link && link.href && link.href !== '#') {
+        } else if (link && link.href && link.href !== '#') {
             window.location.href = link.href;
-            return;
-        }
-
-        const button = source.closest('button, input[type="submit"], input[type="button"], input[type="reset"]');
-        if (button) {
+        } else if (button) {
             source.dataset.modalSubmitting = true;
             source.click();
-            return;
+        } else {
+            window.console.error(`No destination found for ${type} modal`);
         }
-
-        window.console.error(`No destination found for ${type} modal`);
+        pendingPromise.resolve();
         return;
     }).catch(() => {
         return;

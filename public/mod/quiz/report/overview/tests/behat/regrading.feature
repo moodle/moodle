@@ -281,7 +281,7 @@ Feature: Regrading quiz attempts using the Grades report
     And I am on the "Quiz for testing regrading" "mod_quiz > question bank" page
     And I apply question bank filter "Category" with value "Test questions"
     And I choose "Delete" action for "SA" in the question bank
-    And I press "Delete"
+    And I click on "Delete" "button" in the "Delete question?" "dialogue"
     And I am on the "Quiz for testing regrading" "mod_quiz > edit" page
     And I click on "Delete" "link" in the "TF" "list_item"
     And I click on "Yes" "button" in the "Confirm" "dialogue"

@@ -112,7 +112,7 @@ Feature: Display the course linear navigation in the quiz pages
     And I click on "Close" "link"
     And I choose "Delete" action for "E1" in the question bank
     And the course linear navigation should not be visible
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Delete question?" "dialogue"
     And I set the field "Question bank tertiary navigation" to "Export"
     And the course linear navigation should not be visible
     And I set the field "Question bank tertiary navigation" to "Import"
