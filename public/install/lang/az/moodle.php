@@ -30,6 +30,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Dil';
+$string['moodlelogo'] = 'moodle loqosu';
 $string['next'] = 'Növbəti';
 $string['previous'] = 'Əvvələ';
 $string['reload'] = 'Yenilə';
