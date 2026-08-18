@@ -2968,14 +2968,17 @@ class core_course_external extends external_api {
 
         $cm = get_coursemodule_from_id(null, $params['cmid'], 0, true, MUST_EXIST);
 
-        $course = get_course($cm->course);
-        $instances = get_all_instances_in_courses($cm->modname, [$course->id => $course]);
-        $instance = null;
-        foreach ($instances as $ins) {
-            if ($ins->id == $cm->instance) {
-                $instance = $ins;
-                break;
-            }
+        $instance = $DB->get_record($cm->modname, ['id' => $cm->instance]);
+        if ($instance) {
+            $instance->coursemodule = $cm->id;
+            $instance->course = $cm->course;
+            $instance->section = $cm->section;
+            $instance->visible = $cm->visible;
+            $instance->groupmode = $cm->groupmode;
+            $instance->groupingid = $cm->groupingid;
+            $instance->lang = property_exists($cm, 'lang') ? $cm->lang : null;
+            $instance->enableaitools = property_exists($cm, 'enableaitools') ? $cm->enableaitools : null;
+            $instance->enabledaiactions = property_exists($cm, 'enabledaiactions') ? $cm->enabledaiactions : null;
         }
 
         $context = context_module::instance($cm->id);
@@ -3049,7 +3052,7 @@ class core_course_external extends external_api {
                 'mod_' . $cm->modname,
             );
             foreach ($instancedetails as $field => $value) {
-                if ($field === 'id') {
+                if ($field === 'id' || $field === 'section') {
                     continue;
                 }
                 $info->{$field} = $value;
@@ -3060,6 +3063,7 @@ class core_course_external extends external_api {
             $info->introformat = FORMAT_HTML;
             $info->introfiles = [];
         }
+        $info->section = $cm->section;
         $info->coursemodule = $cm->id;
         $result = array();
         $result['cm'] = $info;

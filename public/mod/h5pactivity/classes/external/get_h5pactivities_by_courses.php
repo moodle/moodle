@@ -85,6 +85,17 @@ class get_h5pactivities_by_courses extends external_api {
             foreach ($h5pactivities as $h5pactivity) {
                 $context = context_module::instance($h5pactivity->coursemodule);
 
+                if (!has_capability('moodle/course:manageactivities', $context)) {
+                    unset(
+                        $h5pactivity->section,
+                        $h5pactivity->visible,
+                        $h5pactivity->groupmode,
+                        $h5pactivity->groupingid,
+                        $h5pactivity->enableaitools,
+                        $h5pactivity->enabledaiactions,
+                    );
+                }
+
                 $exporter = new h5pactivity_summary_exporter($h5pactivity,
                     ['context' => $context, 'factory' => $factory]);
                 $summary = $exporter->export($output);

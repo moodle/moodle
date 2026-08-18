@@ -213,14 +213,13 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->assertEquals($forum1->unreadpostscount, $returnedforum1['unreadpostscount']);
         $this->assertEquals($forum1->lang, $returnedforum1['lang']);
         $this->assertEquals($forum1->introfiles, $returnedforum1['introfiles']);
-        // New fields added in get_forums_by_courses.
         $this->assertEquals($forum1cm->id, $returnedforum1['coursemodule']);
-        $this->assertEquals((int) $forum1section->section, $returnedforum1['section']);
-        $this->assertEquals((bool) $forum1cm->visible, $returnedforum1['visible']);
-        $this->assertEquals((int) $forum1cm->groupmode, $returnedforum1['groupmode']);
-        $this->assertEquals((int) $forum1cm->groupingid, $returnedforum1['groupingid']);
-        $this->assertArrayHasKey('enableaitools', $returnedforum1);
-        $this->assertArrayHasKey('enabledaiactions', $returnedforum1);
+        $this->assertArrayNotHasKey('section', $returnedforum1);
+        $this->assertArrayNotHasKey('visible', $returnedforum1);
+        $this->assertArrayNotHasKey('groupmode', $returnedforum1);
+        $this->assertArrayNotHasKey('groupingid', $returnedforum1);
+        $this->assertArrayNotHasKey('enableaitools', $returnedforum1);
+        $this->assertArrayNotHasKey('enabledaiactions', $returnedforum1);
 
         $returnedforum2 = $forumsbyid[$forum2->id];
         $this->assertEquals($forum2->id, $returnedforum2['id']);
@@ -234,14 +233,13 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->assertEquals($forum2->istracked, $returnedforum2['istracked']);
         $this->assertEquals($forum2->lang, $returnedforum2['lang']);
         $this->assertEquals($forum2->introfiles, $returnedforum2['introfiles']);
-        // New fields added in get_forums_by_courses.
         $this->assertEquals($forum2cm->id, $returnedforum2['coursemodule']);
-        $this->assertEquals((int) $forum2section->section, $returnedforum2['section']);
-        $this->assertEquals((bool) $forum2cm->visible, $returnedforum2['visible']);
-        $this->assertEquals((int) $forum2cm->groupmode, $returnedforum2['groupmode']);
-        $this->assertEquals((int) $forum2cm->groupingid, $returnedforum2['groupingid']);
-        $this->assertArrayHasKey('enableaitools', $returnedforum2);
-        $this->assertArrayHasKey('enabledaiactions', $returnedforum2);
+        $this->assertArrayNotHasKey('section', $returnedforum2);
+        $this->assertArrayNotHasKey('visible', $returnedforum2);
+        $this->assertArrayNotHasKey('groupmode', $returnedforum2);
+        $this->assertArrayNotHasKey('groupingid', $returnedforum2);
+        $this->assertArrayNotHasKey('enableaitools', $returnedforum2);
+        $this->assertArrayNotHasKey('enabledaiactions', $returnedforum2);
 
         // Unenrol user from second course and verify only the first forum is returned.
         $enrol->unenrol_user($instance2, $user->id);

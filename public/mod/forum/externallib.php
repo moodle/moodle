@@ -101,6 +101,15 @@ class mod_forum_external extends external_api {
                     'mod_forum',
                 );
 
+                unset(
+                    $forum->section,
+                    $forum->visible,
+                    $forum->groupmode,
+                    $forum->groupingid,
+                    $forum->enableaitools,
+                    $forum->enabledaiactions,
+                );
+
                 // Merge all forum instance fields on top of the standard course-module data.
                 $forumdetails = array_merge((array) $forum, $forumdetails);
 

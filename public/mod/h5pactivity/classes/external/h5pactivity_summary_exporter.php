@@ -87,18 +87,22 @@ class h5pactivity_summary_exporter extends exporter {
             'section' => [
                 'type' => PARAM_INT,
                 'description' => 'Course section id.',
+                'optional' => true,
             ],
             'visible' => [
                 'type' => PARAM_INT,
                 'description' => 'Visible',
+                'optional' => true,
             ],
             'groupmode' => [
                 'type' => PARAM_INT,
                 'description' => 'Group mode',
+                'optional' => true,
             ],
             'groupingid' => [
                 'type' => PARAM_INT,
                 'description' => 'Grouping id',
+                'optional' => true,
             ],
             'lang' => [
                 'type' => PARAM_LANG,
@@ -113,7 +117,7 @@ class h5pactivity_summary_exporter extends exporter {
                 'null' => NULL_ALLOWED,
             ],
             'enabledaiactions' => [
-                'type' => PARAM_ALPHANUM,
+                'type' => PARAM_RAW,
                 'description' => 'Enabled AI actions.',
                 'optional' => true,
                 'null' => NULL_ALLOWED,

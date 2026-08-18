@@ -2641,6 +2641,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         );
         // Hidden activity.
         $assign = self::getDataGenerator()->create_module('assign', $record, $options);
+        $cm = get_coursemodule_from_id('assign', $assign->cmid, 0, false, MUST_EXIST);
+        $section = $DB->get_record('course_sections', ['id' => $cm->section], 'id,section', MUST_EXIST);
 
         $outcomescale = 'Distinction, Very Good, Good, Pass, Fail';
 
@@ -2708,6 +2710,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->assertArrayHasKey('course', $result['cm']);
         $this->assertEquals($course->id, $result['cm']['course']);
         $this->assertArrayHasKey('lang', $result['cm']);
+        $this->assertEquals($cm->section, $result['cm']['section']);
+        $this->assertEquals($section->section, $result['cm']['sectionnum']);
 
         $student = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -2737,6 +2741,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->assertEquals($course->id, $result['cm']['course']);
         $this->assertEquals('assign', $result['cm']['modname']);
         $this->assertEquals($assign->id, $result['cm']['instance']);
+        $this->assertEquals($cm->section, $result['cm']['section']);
+        $this->assertEquals($section->section, $result['cm']['sectionnum']);
 
     }
 
