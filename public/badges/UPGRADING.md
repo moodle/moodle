@@ -1,5 +1,13 @@
 # core_badges (subsystem) Upgrade notes
 
+## 5.3dev
+
+### Changed
+
+- The `badge_message_from_template()` method accepts an additional `$user` argument, if specified then additional user name placeholders will also be interpolated in the returned message content
+
+  For more information see [MDL-87859](https://tracker.moodle.org/browse/MDL-87859)
+
 ## 5.2
 
 ### Added

@@ -4,6 +4,9 @@
 
 ### Added
 
+- Activity chooser items can now be disabled by adding the `disabled` and `disabledreason` parameters to the `content_item` class.
+
+  For more information see [MDL-87373](https://tracker.moodle.org/browse/MDL-87373)
 - New get_all_section_cms function has been added to course_navigation class to get all course modules of the given section in order, including also activities inside subsections
 
   For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
@@ -19,6 +22,15 @@
 - New get_section() function has been added to get the main section (not delegated) of a course module in the course_navigation class.
 
   For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+
+### Deprecated
+
+- The core_courseformat\base:get_view_url() $options sr is now deprecated.  Use pagesectionid instead.
+
+  For more information see [MDL-86284](https://tracker.moodle.org/browse/MDL-86284)
+- The core_courseformat\base::get_return_section() function is now deprecated.  Use get_page_section() instead.
+
+  For more information see [MDL-86284](https://tracker.moodle.org/browse/MDL-86284)
 
 ## 5.2
 

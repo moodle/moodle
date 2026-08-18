@@ -96,6 +96,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `moodle_page` class now includes `set_supplementary_content()` and `get_supplementary_content()` methods to inject and retrieve secondary content within the sticky footer.
 
   For more information see [MDL-88601](https://tracker.moodle.org/browse/MDL-88601)
+- A new `\core\oauth2\server\client_manager` class manages the lifecycle of OAuth2 server clients, their secrets and their redirect URIs.
+
+  For more information see [MDL-89181](https://tracker.moodle.org/browse/MDL-89181)
+- New `flexible_table::set_columnheadersattributes(...)` method for tables to define additional attributes ('class', 'data-X', etc.) for column headers
+
+  For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
 
 #### Changed
 
@@ -298,10 +304,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-88580](https://tracker.moodle.org/browse/MDL-88580)
 
+### core_badges
+
+#### Changed
+
+- The `badge_message_from_template()` method accepts an additional `$user` argument, if specified then additional user name placeholders will also be interpolated in the returned message content
+
+  For more information see [MDL-87859](https://tracker.moodle.org/browse/MDL-87859)
+
 ### core_course
 
 #### Added
 
+- Activity chooser items can now be disabled by adding the `disabled` and `disabledreason` parameters to the `content_item` class.
+
+  For more information see [MDL-87373](https://tracker.moodle.org/browse/MDL-87373)
 - New get_all_section_cms function has been added to course_navigation class to get all course modules of the given section in order, including also activities inside subsections
 
   For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
@@ -317,6 +334,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New get_section() function has been added to get the main section (not delegated) of a course module in the course_navigation class.
 
   For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+
+#### Deprecated
+
+- The core_courseformat\base:get_view_url() $options sr is now deprecated.  Use pagesectionid instead.
+
+  For more information see [MDL-86284](https://tracker.moodle.org/browse/MDL-86284)
+- The core_courseformat\base::get_return_section() function is now deprecated.  Use get_page_section() instead.
+
+  For more information see [MDL-86284](https://tracker.moodle.org/browse/MDL-86284)
 
 ### core_courseformat
 
@@ -397,6 +423,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   Entity implementations no longer have to manually add boilerplace to add the same joins to their own columns, filters and conditions
 
   For more information see [MDL-87405](https://tracker.moodle.org/browse/MDL-87405)
+- New `add_header_attributes(...)` method on column class instances for defining additional header attributes for the column when rendered in a report
+
+  For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
 
 #### Changed
 
@@ -508,6 +537,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `assign::calculate_penalised_grade()` method now applies grade-item scaling so the returned value now matches the `finalgrade` stored in the gradebook. It also accepts an optional `\grade_grade $usergraderecord` parameter to avoid redundant database lookups. Callers that previously applied their own grade-item scaling to the returned value should remove it to avoid double scaling.
 
   For more information see [MDL-88407](https://tracker.moodle.org/browse/MDL-88407)
+- The feedback plugin `get_grading_batch_operation_details()` method can return a `'confirmationyes'` key to define the content of the confirmation save button
+
+  For more information see [MDL-88688](https://tracker.moodle.org/browse/MDL-88688)
 
 #### Deprecated
 
@@ -537,7 +569,27 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-89069](https://tracker.moodle.org/browse/MDL-89069)
 
+### theme
+
+#### Removed
+
+- Classic theme has been removed from core. During the upgrade, if the Classic theme files are not present, compatible Classic settings are migrated to the Boost theme and the Classic theme is uninstalled. The uninstallation removes all Classic theme settings, and any course, course category, cohort and user themes that referenced Classic are reset. To keep using the Classic theme with all its settings and theme selections intact, install it manually from the Moodle github repository BEFORE running the upgrade: the migration and uninstallation are then skipped entirely. Installing Classic after the upgrade results in a clean-slate theme, previous Classic settings and course/user theme selections are not restored and have to be configured again manually.
+  The upgrade cannot change values forced in config.php: sites with $CFG->theme set to 'classic' there must update or remove that line manually, otherwise the site keeps requesting the removed theme and falls back to the default theme with a warning on every page.
+  The migration copies the settings that were explicitly customised in Classic (unaddable blocks, brand colour, raw initial/pre SCSS, background and login background images) to Boost, keeping any existing Boost customisation where Classic held its default value. On sites where both themes had been customised, the resulting Boost configuration is therefore a mix of migrated Classic values and pre-existing Boost values, and should be reviewed after the upgrade. Theme presets and uploaded preset files are not migrated: presets are theme-specific SCSS entry points which Classic compiled wrapped in its own pre and post SCSS, so they would compile differently (or fail to compile) under Boost. Sites using a custom Classic preset should create an equivalent Boost preset after the upgrade. Migrated raw SCSS snippets that reference Classic variables or partials may also need to be reviewed. The Classic-only navbardark setting (dark navbar) has no Boost equivalent and is not migrated.
+  Block positions are not migrated. Classic provided two block columns (side-pre and side-post) while Boost provides one (side-pre): blocks placed in regions that do not exist in Boost are not lost, they are displayed at the end of the default block region of each page, but their previous column placement and ordering are not preserved. Sites and courses relying on specific block positioning should review their block layout after the upgrade.
+
+  For more information see [MDL-88351](https://tracker.moodle.org/browse/MDL-88351)
+
 ### theme_boost
+
+#### Added
+
+- The Noto Sans variable font's cyrillic and cyrillic-ext subsets (normal and italic styles, weights 100-900) are now included in `theme/boost/fonts/noto-sans/`. As a result, sites using cyrillic text will now render in Noto Sans.
+
+  For more information see [MDL-89024](https://tracker.moodle.org/browse/MDL-89024)
+- The Noto Sans JP variable font (weights 100-900) has been added to `theme/boost/fonts/noto-sans-jp/`. Noto Sans JP is scoped to `:lang(ja)` so that it is only served when the content language is Japanese, rather than being loaded as part of the global font stack. For sites using Japanese (`ja`, `ja_kids`, or `ja_wp`), the `<html>` element will have `lang="ja"` set. As a result, Japanese content on these sites will be rendered using Noto Sans JP. If the content language is not Japanese and Japanese text is not explicitly marked with `lang="ja"`, Noto Sans JP will not be served and the system font will be used instead.
+
+  For more information see [MDL-89024](https://tracker.moodle.org/browse/MDL-89024)
 
 #### Changed
 
@@ -591,6 +643,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   ```
 
   For more information see [MDL-88766](https://tracker.moodle.org/browse/MDL-88766)
+
+### tiny_recordrtc
+
+#### Added
+
+- You can now always download the recorded files.
+
+  For more information see [MDL-88603](https://tracker.moodle.org/browse/MDL-88603)
+
+#### Changed
+
+- When a recording file is too large to upload, users are presented with an option to download the file.
+
+  For more information see [MDL-88603](https://tracker.moodle.org/browse/MDL-88603)
+
+#### Fixed
+
+- Duration metadata is created when recording is stopped to accurately determine the recording duration.
+
+  For more information see [MDL-88603](https://tracker.moodle.org/browse/MDL-88603)
 
 ## 5.2
 

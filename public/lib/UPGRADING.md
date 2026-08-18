@@ -88,6 +88,12 @@
 - The `moodle_page` class now includes `set_supplementary_content()` and `get_supplementary_content()` methods to inject and retrieve secondary content within the sticky footer.
 
   For more information see [MDL-88601](https://tracker.moodle.org/browse/MDL-88601)
+- A new `\core\oauth2\server\client_manager` class manages the lifecycle of OAuth2 server clients, their secrets and their redirect URIs.
+
+  For more information see [MDL-89181](https://tracker.moodle.org/browse/MDL-89181)
+- New `flexible_table::set_columnheadersattributes(...)` method for tables to define additional attributes ('class', 'data-X', etc.) for column headers
+
+  For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
 
 ### Changed
 

@@ -2,6 +2,15 @@
 
 ## 5.3dev
 
+### Added
+
+- The Noto Sans variable font's cyrillic and cyrillic-ext subsets (normal and italic styles, weights 100-900) are now included in `theme/boost/fonts/noto-sans/`. As a result, sites using cyrillic text will now render in Noto Sans.
+
+  For more information see [MDL-89024](https://tracker.moodle.org/browse/MDL-89024)
+- The Noto Sans JP variable font (weights 100-900) has been added to `theme/boost/fonts/noto-sans-jp/`. Noto Sans JP is scoped to `:lang(ja)` so that it is only served when the content language is Japanese, rather than being loaded as part of the global font stack. For sites using Japanese (`ja`, `ja_kids`, or `ja_wp`), the `<html>` element will have `lang="ja"` set. As a result, Japanese content on these sites will be rendered using Noto Sans JP. If the content language is not Japanese and Japanese text is not explicitly marked with `lang="ja"`, Noto Sans JP will not be served and the system font will be used instead.
+
+  For more information see [MDL-89024](https://tracker.moodle.org/browse/MDL-89024)
+
 ### Changed
 
 - The default UI typeface for Boost has changed from the system-ui font stack to Noto Sans. Noto Sans is now self-hosted under `theme/boost/fonts/` and declared via `@font-face` in `theme/boost/scss/moodle/fonts.scss`. The latin and latin-ext subsets are included (normal and italic, weight 100-900). The `$font-family-sans-serif` Bootstrap variable is now set from the `$mds-font-family-base` MDS token. Child themes that override `$font-family-sans-serif` are unaffected. Child themes that rely on the system-ui fallback behaviour will now render Noto Sans instead.

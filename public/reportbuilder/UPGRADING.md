@@ -9,6 +9,9 @@
   Entity implementations no longer have to manually add boilerplace to add the same joins to their own columns, filters and conditions
 
   For more information see [MDL-87405](https://tracker.moodle.org/browse/MDL-87405)
+- New `add_header_attributes(...)` method on column class instances for defining additional header attributes for the column when rendered in a report
+
+  For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
 
 ### Changed
 
