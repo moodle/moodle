@@ -118,6 +118,39 @@ final class api_token_entity_test extends \advanced_testcase {
     }
 
     /**
+     * The expiry decision is inclusive of the lapsing second, and reads the container's clock.
+     *
+     * @param int|null $offset Seconds from now until expiry, or null for a token that never expires.
+     * @param bool $expected Whether the expiry should count as passed.
+     */
+    #[DataProvider('expiry_has_passed_provider')]
+    public function test_expiry_has_passed(?int $offset, bool $expected): void {
+        $now = 1786000000;
+        $this->mock_clock_with_frozen($now);
+
+        $this->assertSame(
+            $expected,
+            api_token_entity::expiry_has_passed($offset === null ? null : $now + $offset),
+        );
+    }
+
+    /**
+     * Cases for {@see test_expiry_has_passed}.
+     *
+     * @return array
+     */
+    public static function expiry_has_passed_provider(): array {
+        return [
+            'never expires' => [null, false],
+            'lapsed yesterday' => [-DAYSECS, true],
+            'lapsed a second ago' => [-1, true],
+            'lapsing on this very second' => [0, true],
+            'due in a second' => [1, false],
+            'due in a year' => [YEARSECS, false],
+        ];
+    }
+
+    /**
      * Data provider for has_expired.
      */
     public static function has_expired_provider(): array {

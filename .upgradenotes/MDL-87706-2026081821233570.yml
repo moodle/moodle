@@ -1,0 +1,15 @@
+issueNumber: MDL-87706
+notes:
+  core:
+    - type: improved
+      message: >-
+        A new `\core\api\token_manager` class mints personal access tokens for the REST API,
+        applying the secret format and maximum lifetime that the `\core\api\repository`
+        classes deliberately leave to policy. Users manage their own tokens at
+        `/user/personalaccesstokens.php`, gated by the new `moodle/api:createtoken` capability.
+    - type: fixed
+      message: >-
+        The `core_course` scope classes for course content and course structure now resolve
+        their summary and description language strings. The string identifiers in
+        `lang/en/course.php` were missing the leading `course_` identifier segment, so
+        `\core\router\scope\abstract_scope::get_summary()` failed for six scopes.

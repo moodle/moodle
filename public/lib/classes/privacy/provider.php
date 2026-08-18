@@ -156,6 +156,8 @@ class provider implements
         // The rest_api_tokens table stores manually created REST API tokens by users.
         $collection->add_database_table('rest_api_tokens', [
             'userid' => 'privacy:metadata:rest_api_tokens:userid',
+            'lastaccessed' => 'privacy:metadata:rest_api_tokens:lastaccessed',
+            'lastaccessip' => 'privacy:metadata:rest_api_tokens:lastaccessip',
         ], 'privacy:metadata:rest_api_tokens');
 
         return $collection;

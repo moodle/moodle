@@ -252,6 +252,33 @@ final class api_token_repository_test extends \advanced_testcase {
     }
 
     /**
+     * Logging access records where the token was used from, not just when.
+     */
+    public function test_log_token_access_records_the_address(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $repository = new api_token_repository();
+        $token = $repository->create_token('Token', 'secret', $user->id, 'scope');
+
+        $_SERVER['REMOTE_ADDR'] = '203.0.113.42';
+        $repository->log_token_access($token->get_id());
+
+        $record = $DB->get_record('rest_api_tokens', ['id' => $token->get_id()], '*', MUST_EXIST);
+
+        $this->assertEquals('203.0.113.42', $record->lastaccessip);
+        $this->assertNotEmpty($record->lastaccessed);
+
+        // Written as one partial update, so the fields it does not name must survive untouched.
+        $this->assertEquals('Token', $record->name);
+        $this->assertEquals('scope', $record->scopes);
+        $this->assertEquals($user->id, $record->userid);
+        $this->assertNotEmpty($record->token);
+    }
+
+    /**
      * Test logging token access.
      */
     public function test_log_token_access(): void {

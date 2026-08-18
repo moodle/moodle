@@ -2178,5 +2178,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026080700.01);
     }
 
+    if ($oldversion < 2026081800.01) {
+        // Define field lastaccessip to be added to rest_api_tokens.
+        $table = new xmldb_table('rest_api_tokens');
+        $field = new xmldb_field('lastaccessip', XMLDB_TYPE_CHAR, '45', null, null, null, null, 'lastaccessed');
+
+        // Conditionally launch add field lastaccessip.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026081800.01);
+    }
+
     return true;
 }

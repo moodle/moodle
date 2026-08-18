@@ -1365,6 +1365,15 @@ class settings_navigation extends navigation_node {
             $useraccount->add(get_string('securitykeys', 'webservice'), $url, self::TYPE_SETTING);
         }
 
+        // Personal access tokens. Own tokens only, so there is nothing to show on another user.
+        if ($currentuser && has_capability('moodle/api:createtoken', $systemcontext)) {
+            $useraccount->add(
+                get_string('personalaccesstokens'),
+                new url('/user/personalaccesstokens.php'),
+                self::TYPE_SETTING,
+            );
+        }
+
         // Messaging.
         if (
             ($currentuser && has_capability('moodle/user:editownmessageprofile', $systemcontext)) || (!isguestuser($user) &&

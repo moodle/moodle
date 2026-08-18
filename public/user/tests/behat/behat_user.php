@@ -105,8 +105,9 @@ class behat_user extends behat_base {
      * Convert page names to URLs for steps like 'When I am on the "[page name]" page'.
      *
      * Recognised page names are:
-     * | Page name            | Description                                                 |
-     * | Contact Site Support | The Contact Site Support page (user/contactsitesupport.php) |
+     * | Page name              | Description                                                       |
+     * | Contact Site Support   | The Contact Site Support page (user/contactsitesupport.php)        |
+     * | Personal access tokens | The personal access tokens page (user/personalaccesstokens.php)    |
      *
      * @param string $page name of the page, with the component name removed e.g. 'Admin notification'.
      * @return moodle_url the corresponding URL.
@@ -117,6 +118,9 @@ class behat_user extends behat_base {
         switch (strtolower($page)) {
             case 'contact site support':
                 return new moodle_url('/user/contactsitesupport.php');
+
+            case 'personal access tokens':
+                return new moodle_url('/user/personalaccesstokens.php');
 
             default:
                 throw new Exception("Unrecognised core_user page type '{$page}'.");
