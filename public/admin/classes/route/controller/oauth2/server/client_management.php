@@ -57,6 +57,7 @@ class client_management {
         $this->setup_admin_page(null, \core\router\util::get_path_for_callable([self::class, 'list_clients']));
 
         $PAGE->requires->js_call_amd('core_admin/oauth2/server/client/actions/client_revoke', 'init');
+        $PAGE->requires->js_call_amd('core_admin/oauth2/server/client/actions/client_reactivate', 'init');
 
         $response->getBody()->write($OUTPUT->header());
         $response->getBody()->write(
