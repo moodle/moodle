@@ -434,12 +434,12 @@ $string['modenested'] = 'Display replies in nested form';
 $string['modenestedv2'] = 'Display replies in experimental nested form';
 $string['modethreaded'] = 'Display replies in threaded form';
 $string['modulename'] = 'Forum';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Include text, images, or files in forum posts
 * Allow participants to subscribe to forums so they receive notifications of new posts
 * Grade a student\'s overall participation across the forum, or grade individual posts separately
 
-###### Ways to use it
+#### Ways to use it
 * Run a question and answer board where students ask and answer each other\'s questions
 * Host discussions linked to course readings
 * Create a social space where students get to know each other

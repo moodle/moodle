@@ -278,11 +278,11 @@ $string['missingparam'] = 'A required parameter is missing or wrong';
 $string['missing_tag'] = 'Missing tag {$a->tag}';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'SCORM package';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Add SCORM content packages as zip files
 * Track student progress, completion, and grades
 
-###### Ways to use it
+#### Ways to use it
 * Import a commercial e-learning SCORM module and track student performance
 * Provide an interactive tutorial and track whether students complete it
 * Deliver a simulation packaged in SCORM format';

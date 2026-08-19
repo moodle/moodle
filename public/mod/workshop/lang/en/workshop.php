@@ -209,14 +209,14 @@ $string['latesubmissions_help'] = 'If enabled, an author may submit their work a
 $string['latesubmissionsallowed'] = 'Late submissions are allowed';
 $string['maxbytes'] = 'Maximum submission attachment size';
 $string['modulename'] = 'Workshop';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Allow students to submit any kind of file or type directly into an online text editor
 * Create an assessment guide for students to review each other\'s work
 * Provide example submissions so students can practise reviewing before assessing peers
 * Assign reviewers yourself, or let the system do it automatically
 * Give students two grades: one for their own work and one for their reviews of other students\' work
 
-###### Ways to use it
+#### Ways to use it
 * Run a peer review exercise for essays or reports
 * Facilitate peer evaluation of presentations, designs, or portfolios
 * Use in a large class or a Massive Open Online Course (MOOC) to manage feedback and grading at a large scale';

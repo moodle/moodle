@@ -449,14 +449,14 @@ $string['messageprovider:assign_due_soon'] = 'Assignment due soon notification';
 $string['messageprovider:assign_overdue'] = 'Assignment overdue notification';
 $string['messageprovider:assign_notification'] = 'Assignment notifications';
 $string['modulename'] = 'Assignment';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 *  Provide instructions and requirements for the assignment
 *  Allow students to submit any kind of file or type directly into an online text editor
 *  Manage deadlines and control whether late submissions are accepted
 *  Use rubrics or marking guides to give grades and feedback
 *  Students can submit individually or in groups
 
-###### Ways to use it
+#### Ways to use it
 *  Collect essays or coursework for feedback and grading
 *  Set group tasks where students submit one shared presentation
 *  Record and grade offline work, such as a classroom performance or field trips';
