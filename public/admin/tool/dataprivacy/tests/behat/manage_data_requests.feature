@@ -144,3 +144,18 @@ Feature: Manage data requests
     When I press "Deny requests"
     Then I should see "Rejected" in the "John Doe" "table_row"
     And I should see "Rejected" in the "Jane Doe" "table_row"
+
+  @javascript @accessibility
+  Scenario: The request details dialogue has a valid heading structure
+    Given I log in as "student1"
+    And I follow "Profile" in the user menu
+    And I click on "Contact the privacy officer" "link"
+    And I set the field "Message" to "Can others access my information on your site?"
+    And I click on "Send" "button" in the "Contact the privacy officer" "dialogue"
+    And I log out
+    When I log in as "admin"
+    And I navigate to "Users > Privacy and policies > Data requests" in site administration
+    And I open the action menu in "John Doe" "table_row"
+    And I choose "View the request" in the open action menu
+    Then "h3" "css_element" should exist in the "General enquiry" "dialogue"
+    And the "General enquiry" "dialogue" should meet accessibility standards with "best-practice" extra tests
