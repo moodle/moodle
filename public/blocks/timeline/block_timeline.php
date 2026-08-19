@@ -51,7 +51,7 @@ class block_timeline extends block_base {
         $limit = get_user_preferences('block_timeline_user_limit_preference') ?: BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT;
 
         $props = json_encode([
-            'midnight'           => usergetmidnight(time()),
+            'midnight'           => usergetmidnight(\core\di::get(\core\clock::class)->time()),
             'filter'             => $filter,
             'order'              => $order,
             'limit'              => (int) $limit,
