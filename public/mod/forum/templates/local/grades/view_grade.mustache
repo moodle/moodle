@@ -40,11 +40,11 @@
 <div class="container-fluid grade-display" data-region="view-grade">
     {{#grade}}
         <div class="d-flex flex-wrap px-3">
-            <h5 class="fw-bold description">{{#str}}gradenoun{{/str}}:</h5>
+            <h3 class="fw-bold description">{{#str}}gradenoun{{/str}}:</h3>
             <p class="ms-auto">{{usergrade}}</p>
         </div>
         <div class="d-flex flex-wrap px-3">
-            <h5 class="fw-bold description">{{#str}}gradedby, forum{{/str}}:</h5>
+            <h3 class="fw-bold description">{{#str}}gradedby, forum{{/str}}:</h3>
             <p class="ms-auto">
                 {{#gradedby}}
                     {{gradedby}}
@@ -55,14 +55,14 @@
             </p>
         </div>
         <div class="d-flex flex-wrap px-3">
-            <h5 class="fw-bold description">{{#str}}date{{/str}}:</h5>
+            <h3 class="fw-bold description">{{#str}}date{{/str}}:</h3>
             <p class="ms-auto">{{#userdate}}{{timemodified}}, {{#str}} strftimedate, langconfig {{/str}}{{/userdate}}</p>
         </div>
     {{/grade}}
     <div class="d-flex flex-wrap px-3">
-        <h5 class="fw-bold description">
+        <h3 class="fw-bold description">
             {{#str}}gradingstatus, forum{{/str}}
-        </h5>
+        </h3>
         <p class="ms-auto">
             {{#hasgrade}}
                 {{#str}}graded, forum{{/str}}
