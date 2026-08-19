@@ -35649,6 +35649,9 @@ body:not(.editing) [id^=module-]:target, body.editing [id^=module-]:target .acti
 .modchooser .optionsummary .optionsummary-summary {
   font-size: larger;
 }
+.modchooser .optionsummary .optionsummary-help h4, .modchooser .optionsummary .optionsummary-help .h4 {
+  font-size: 1rem;
+}
 
 /* Make modchooser modal full height and scrollable on small screens. */
 @media (max-width: 575.98px) {
