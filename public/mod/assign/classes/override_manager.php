@@ -414,6 +414,12 @@ class override_manager {
         $id = $datatoset->id ?? 0;
         if (!empty($id)) {
             // Update existing record.
+            if ($groupmode && !isset($datatoset->sortorder) && $existingoverride) {
+                // Keep the existing sort order, otherwise assign_update_events() below will clear the
+                // calendar event's priority, making the override event indistinguishable from the base
+                // event and causing both to show up in the timeline.
+                $datatoset->sortorder = $existingoverride->sortorder;
+            }
             $DB->update_record('assign_overrides', $datatoset);
         } else {
             // Insert new record.

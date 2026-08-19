@@ -16,6 +16,7 @@
 
 namespace mod_assign;
 
+use core_calendar\local\api as calendar_local_api;
 use invalid_parameter_exception;
 use mod_assign_override_test_trait;
 use mod_assign_test_generator;
@@ -469,6 +470,54 @@ final class override_manager_test extends externallib_advanced_testcase {
         // Verify update.
         $updated = $DB->get_record('assign_overrides', ['id' => $overrideid]);
         $this->assertEquals($newduedate, $updated->duedate);
+    }
+
+    /**
+     * Regression test: editing an existing group override must not clear the calendar event's priority.
+     */
+    public function test_editing_group_override_keeps_single_due_event(): void {
+        $this->resetAfterTest();
+
+        $data = $this->create_test_data();
+        $manager = $data['manager'];
+        $this->setUser($data['teacher']);
+
+        $now = time();
+
+        // Create a group override with a due date later than the assignment default.
+        $firstduedate = $now + (10 * DAYSECS);
+        $ids = $manager->save_overrides([['groupid' => $data['group1']->id, 'duedate' => $firstduedate]]);
+        $overrideid = $ids[0];
+
+        // Edit the existing override to a different due date. Deliberately omit 'sortorder',
+        // matching what real callers actually send.
+        $secondduedate = $now + (12 * DAYSECS);
+        $manager->save_overrides([[
+            'id' => $overrideid,
+            'groupid' => $data['group1']->id,
+            'duedate' => $secondduedate,
+        ]]);
+
+        // Retrieve the calendar events for student1, a member of group1.
+        $this->setUser($data['student1']);
+        $events = calendar_local_api::get_action_events_by_course($data['course'], $now, $now + (14 * DAYSECS));
+
+        // Only events belonging to this assignment.
+        $dueevents = array_values(array_filter(
+            $events,
+            fn($event) => $event->get_course_module()->get('id') == $data['cm']->id,
+        ));
+
+        $this->assertCount(
+            1,
+            $dueevents,
+            'Editing the group override left more than one due date visible for the assignment.'
+        );
+        $this->assertEquals(
+            $secondduedate,
+            $dueevents[0]->get_times()->get_start_time()->getTimestamp(),
+            'The visible due date does not match the edited group override date.'
+        );
     }
 
     /**
