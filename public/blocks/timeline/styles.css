@@ -30,3 +30,14 @@
         margin-left: 0;
     }
 }
+
+.block_timeline .timeline-course-image {
+    width: 2rem; /* $mds-icons-xl */
+    height: 2rem; /* $mds-icons-xl */
+    object-fit: cover;
+}
+
+.block_timeline .timeline-empty-icon {
+    width: 70px;
+    height: 70px;
+}

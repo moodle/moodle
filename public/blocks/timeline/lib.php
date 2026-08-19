@@ -21,7 +21,6 @@
  * @copyright 2018 Peter Dias
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Define constants to store the SORT user preference
@@ -48,35 +47,35 @@ define('BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT', 5);
  * @return array[]
  */
 function block_timeline_user_preferences(): array {
-    $preferences['block_timeline_user_sort_preference'] = array(
+    $preferences['block_timeline_user_sort_preference'] = [
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_TIMELINE_SORT_BY_DATES,
         'type' => PARAM_ALPHA,
-        'choices' => array(BLOCK_TIMELINE_SORT_BY_DATES, BLOCK_TIMELINE_SORT_BY_COURSES),
+        'choices' => [BLOCK_TIMELINE_SORT_BY_DATES, BLOCK_TIMELINE_SORT_BY_COURSES],
         'permissioncallback' => [core_user::class, 'is_current_user'],
-    );
+    ];
 
-    $preferences['block_timeline_user_filter_preference'] = array(
+    $preferences['block_timeline_user_filter_preference'] = [
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_TIMELINE_FILTER_BY_30_DAYS,
         'type' => PARAM_ALPHANUM,
-        'choices' => array(
-                BLOCK_TIMELINE_FILTER_BY_NONE,
-                BLOCK_TIMELINE_FILTER_BY_OVERDUE,
-                BLOCK_TIMELINE_FILTER_BY_7_DAYS,
-                BLOCK_TIMELINE_FILTER_BY_30_DAYS,
-                BLOCK_TIMELINE_FILTER_BY_3_MONTHS,
-                BLOCK_TIMELINE_FILTER_BY_6_MONTHS
-        ),
+        'choices' => [
+            BLOCK_TIMELINE_FILTER_BY_NONE,
+            BLOCK_TIMELINE_FILTER_BY_OVERDUE,
+            BLOCK_TIMELINE_FILTER_BY_7_DAYS,
+            BLOCK_TIMELINE_FILTER_BY_30_DAYS,
+            BLOCK_TIMELINE_FILTER_BY_3_MONTHS,
+            BLOCK_TIMELINE_FILTER_BY_6_MONTHS,
+        ],
         'permissioncallback' => [core_user::class, 'is_current_user'],
-    );
+    ];
 
-    $preferences['block_timeline_user_limit_preference'] = array(
+    $preferences['block_timeline_user_limit_preference'] = [
         'null' => NULL_NOT_ALLOWED,
         'default' => BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT,
         'type' => PARAM_INT,
         'permissioncallback' => [core_user::class, 'is_current_user'],
-    );
+    ];
 
     return $preferences;
 }

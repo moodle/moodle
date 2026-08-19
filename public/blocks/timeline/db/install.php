@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
  /**
   * Add the timeline block to the dashboard for all users by default
   * when it is installed.
@@ -37,7 +35,7 @@ function xmldb_block_timeline_install() {
         return;
     }
 
-    if ($defaultmypage = $DB->get_record('my_pages', array('userid' => null, 'name' => '__default', 'private' => 1))) {
+    if ($defaultmypage = $DB->get_record('my_pages', ['userid' => null, 'name' => '__default', 'private' => 1])) {
         $subpagepattern = $defaultmypage->id;
     } else {
         $subpagepattern = null;

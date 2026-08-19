@@ -1,0 +1,34 @@
+{
+  "Timeline": {
+    "eject": "safe",
+    "wrap": "safe"
+  },
+  "nav/DayFilter": {
+    "eject": "safe",
+    "wrap": "safe"
+  },
+  "nav/ViewSelector": {
+    "eject": "safe",
+    "wrap": "safe"
+  },
+  "nav/Search": {
+    "eject": "safe",
+    "wrap": "safe"
+  },
+  "views/EventListItem": {
+    "eject": "safe",
+    "wrap": "safe"
+  },
+  "views/ActivityIcon": {
+    "eject": "safe",
+    "wrap": "safe"
+  },
+  "views/DatesView": {
+    "eject": "prohibited",
+    "wrap": "risky"
+  },
+  "views/CoursesView": {
+    "eject": "prohibited",
+    "wrap": "risky"
+  }
+}
