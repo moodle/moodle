@@ -243,12 +243,12 @@ $string['mainglossary'] = 'Main glossary';
 $string['maxtimehaspassed'] = 'Sorry, but the maximum time for editing this comment ({$a}) has passed!';
 $string['myentries'] = 'My entries';
 $string['modulename'] = 'Glossary';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Create entries with text, images, video, and other embedded media
 * Browse entries alphabetically, by category, or by author
 * Allow students to create, comment on, and rate entries
 
-###### Ways to use it
+#### Ways to use it
 * Build a collection of key concepts for a course
 * Collect vocabulary words and definitions in a language class
 * Develop a collaborative glossary of technical terms';

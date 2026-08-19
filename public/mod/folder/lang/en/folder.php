@@ -45,11 +45,11 @@ $string['indicator:socialbreadthdef'] = 'Folder social';
 $string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the Folder resources during this analysis interval (Levels = No participation, Participant alone)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['modulename'] = 'Folder';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Organise files in folders and subfolders
 * Allow students to download the entire folder as a zip file
 
-###### Ways to use it
+#### Ways to use it
 * Share a set of past documents for revision
 * Provide readings (articles, slides, PDF files) in one spot
 * Share downloadable images for an art or design project';

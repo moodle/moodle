@@ -45,10 +45,10 @@ $string['labelname'] = 'Title in course index';
 $string['labelname_help'] = 'The title is only used to identify the Text and media area in the course index and for activity completion. If you leave it empty,  a title will be automatically generated using the first characters of the text.';
 $string['labeltext'] = 'Text';
 $string['modulename'] = 'Text and media area';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Display text and multimedia embedded in the course page
 
-###### Ways to use it
+#### Ways to use it
 * Add banners or images to change the look and feel of the course page
 * Break up long lists of activities on your course page with visuals or labels';
 $string['modulename_link'] = 'mod/label/view';

@@ -89,12 +89,12 @@ $string['limita'] = 'Limit: {$a}';
 $string['limitno'] = 'Limit {no}';
 $string['limitanswers'] = 'Limit the number of responses allowed';
 $string['modulename'] = 'Choice';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Limit how many people can choose each option
 * Publish results or keep them hidden
 * Make results anonymous or show student names
 
-###### Ways to use it
+#### Ways to use it
 * Let students select a seminar group or project team
 * Ask students to vote for a preferred date or topic
 * Check the understanding of a concept with a quick, anonymous question';
