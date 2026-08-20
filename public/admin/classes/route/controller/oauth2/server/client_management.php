@@ -161,6 +161,107 @@ class client_management {
     }
 
     /**
+     * Edit client route.
+     *
+     * @param ResponseInterface $response The response object
+     * @param \core\oauth2\server\entity\client_entity $cliententity The client entity
+     * @return ResponseInterface The response object
+     */
+    #[\core\router\route(
+        path: '/{client}/edit',
+        pathtypes: [
+            new \core_admin\route\parameters\oauth2\server\path_client(),
+        ],
+        method: ['GET', 'POST'],
+        requirelogin: new require_login(
+            requirelogin: true,
+            autologinguest: false,
+        ),
+    )]
+    public function edit_client(
+        ResponseInterface $response,
+        \core\oauth2\server\entity\client_entity $cliententity,
+    ): ResponseInterface {
+        global $OUTPUT, $PAGE, $DB;
+
+        require_capability('moodle/site:manageoauth2clients', \core\context\system::instance());
+
+        $this->setup_admin_page(
+            get_string('oauth2server_clientedit', 'admin'),
+            \core\router\util::get_path_for_callable([self::class, 'edit_client'], ['client' => $cliententity->get_id()]),
+        );
+
+        $PAGE->set_pagetype('admin-oauth2server-client-edit');
+
+        $clientmanager = \core\di::get(\core\oauth2\server\client_manager::class);
+
+        $mform = new \core_admin\form\oauth2\server\edit_client_form(null, ['cliententity' => $cliententity]);
+
+        // Handle form cancellation.
+        if ($mform->is_cancelled()) {
+            redirect(\core\router\util::get_path_for_callable([self::class, 'list_clients']));
+        }
+
+        // Process the form data.
+        if ($data = $mform->get_data()) {
+            $transaction = $DB->start_delegated_transaction();
+
+            $clientmanager->update_client(
+                $cliententity->get_id(),
+                [
+                    'name' => $data->name,
+                    'description' => $data->description,
+                ],
+            );
+
+            // Sanitize the redirect URIs by trimming whitespace and removing empty entries.
+            $redirecturis = array_values(array_filter(array_map('trim', $data->redirecturi ?? [])));
+            // Fetch the current records from the database.
+            $existingredirecturis = $clientmanager->get_redirect_uris($cliententity->get_id());
+
+            // Find URIs that are in db, but missing from form and delete them.
+            $redirecturistodelete = array_diff($existingredirecturis, $redirecturis);
+            foreach ($redirecturistodelete as $redirecturi) {
+                $clientmanager->remove_redirect_uri($cliententity->get_id(), $redirecturi);
+            }
+
+            // Find URIs that are in the form, but missing from the database and add them.
+            $redirecturistoadd = array_diff($redirecturis, $existingredirecturis);
+            foreach ($redirecturistoadd as $redirecturi) {
+                $clientmanager->add_redirect_uri($cliententity->get_id(), $redirecturi);
+            }
+
+            $transaction->allow_commit();
+
+            redirect(\core\router\util::get_path_for_callable([self::class, 'list_clients']));
+        }
+
+        $response->getBody()->write($OUTPUT->header());
+
+        $isclientactive = $cliententity->get_status() === client_entity::STATUS_ACTIVE;
+
+        $editclienthtml = $OUTPUT->render_from_template(
+            'core_admin/oauth2/server/edit_client',
+            [
+                'title' => $cliententity->getName(),
+                'clientidentifier' => $cliententity->getIdentifier(),
+                'isactive' => $isclientactive,
+                'isconfidential' => $cliententity->isConfidential(),
+                'isauthcodesupported' => in_array('authorization_code', $cliententity->get_grant_types(), true),
+                'isclientcredentialssupported' => in_array('client_credentials', $cliententity->get_grant_types(), true),
+                'backurl' => \core\router\util::get_path_for_callable([self::class, 'list_clients'])->out(),
+                'editclientform' => $mform->render(),
+            ],
+        );
+
+        // Render the page content.
+        $response->getBody()->write($editclienthtml);
+        $response->getBody()->write($OUTPUT->footer());
+
+        return $response;
+    }
+
+    /**
      * Helper method to set up the admin page.
      *
      * @param string|null $title The title of the page. If not set, defaults to 'OAuth 2 clients'

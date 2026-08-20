@@ -236,6 +236,14 @@ class oauth2_server_clients extends system_report {
             ->add_callback(function ($value, \stdClass $row): string {
                 $actions = [];
 
+                // Edit link.
+                $editurl = \core\router\util::get_path_for_callable(
+                    [\core_admin\route\controller\oauth2\server\client_management::class, 'edit_client'],
+                    ['client' => $row->id],
+                );
+
+                $actions[] = \html_writer::link($editurl, get_string('edit', 'moodle'));
+
                 // Display the relevant actions when the client status is active.
                 if ((int) $row->status === client_entity::STATUS_ACTIVE) {
                     // Revoke link.
