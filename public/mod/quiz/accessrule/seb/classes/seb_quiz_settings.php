@@ -144,6 +144,11 @@ class seb_quiz_settings extends persistent {
                 'default' => 0,
                 'null' => NULL_ALLOWED,
             ],
+            'allowscreencapture' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'null' => NULL_ALLOWED,
+            ],
             'allowspellchecking' => [
                 'type' => PARAM_INT,
                 'default' => 0,
@@ -656,6 +661,7 @@ class seb_quiz_settings extends persistent {
             'enableaudiocontrol' => 'audioControlEnabled',
             'allowcapturecamera' => 'browserMediaCaptureCamera',
             'allowcapturemicrophone' => 'browserMediaCaptureMicrophone',
+            'allowscreencapture' => 'enablePrintScreen',
             'filterembeddedcontent' => 'URLFilterEnableContentFilter',
             'muteonstartup' => 'audioMute',
             'showkeyboardlayout' => 'showInputLanguage',

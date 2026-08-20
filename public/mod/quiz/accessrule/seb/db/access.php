@@ -214,6 +214,14 @@ $capabilities = [
             'editingteacher' => CAP_ALLOW,
         ],
     ],
+    'quizaccess/seb:manage_seb_allowscreencapture' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ],
+    ],
     'quizaccess/seb:manage_seb_allowspellchecking' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
