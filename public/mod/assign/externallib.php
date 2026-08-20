@@ -444,13 +444,13 @@ class mod_assign_external extends \mod_assign\external\external_api {
                     $assignment['sendnotifications'] = $module->sendnotifications;
                     $assignment['sendlatenotifications'] = $module->sendlatenotifications;
                     $assignment['sendstudentnotifications'] = $module->sendstudentnotifications;
-                    $assignment['duedate'] = $assigninstance->duedate;
-                    $assignment['allowsubmissionsfromdate'] = $assigninstance->allowsubmissionsfromdate;
+                    $assignment['duedate'] = $assign->get_instance()->duedate;
+                    $assignment['allowsubmissionsfromdate'] = $assign->get_instance()->allowsubmissionsfromdate;
                     $assignment['grade'] = $module->grade;
                     $assignment['gradepenalty'] = $module->gradepenalty;
                     $assignment['timemodified'] = $module->timemodified;
                     $assignment['completionsubmit'] = $module->completionsubmit;
-                    $assignment['cutoffdate'] = $assigninstance->cutoffdate;
+                    $assignment['cutoffdate'] = $assign->get_instance()->cutoffdate;
                     $assignment['gradingduedate'] = $assigninstance->gradingduedate;
                     $assignment['teamsubmission'] = $module->teamsubmission;
                     $assignment['requireallteammemberssubmit'] = $module->requireallteammemberssubmit;
@@ -468,7 +468,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                     $assignment['markinganonymous'] = $module->markinganonymous;
                     $assignment['requiresubmissionstatement'] = $module->requiresubmissionstatement;
                     $assignment['preventsubmissionnotingroup'] = $module->preventsubmissionnotingroup;
-                    $assignment['timelimit'] = $module->timelimit;
+                    $assignment['timelimit'] = $assign->get_instance()->timelimit;
                     $assignment['submissionattachments'] = $module->submissionattachments;
                     $assignment['configs'] = $configarray;
 

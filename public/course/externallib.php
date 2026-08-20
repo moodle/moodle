@@ -484,7 +484,7 @@ class core_course_external extends external_api {
                                 'url' => new external_value(PARAM_URL, 'activity url', VALUE_OPTIONAL),
                                 'name' => new external_value(PARAM_RAW, 'activity module name'),
                                 'instance' => new external_value(PARAM_INT, 'instance id', VALUE_OPTIONAL),
-                                'lang' => new external_value(PARAM_SAFEDIR, 'Forced activity language', VALUE_OPTIONAL),
+                                'lang' => new external_value(PARAM_LANG, 'Forced activity language', VALUE_OPTIONAL),
                                 'contextid' => new external_value(PARAM_INT, 'Activity context id.', VALUE_OPTIONAL),
                                 'description' => new external_value(PARAM_RAW, 'activity description', VALUE_OPTIONAL),
                                 'visible' => new external_value(PARAM_INT, 'is the module visible', VALUE_OPTIONAL),
@@ -3083,8 +3083,6 @@ class core_course_external extends external_api {
                 'cm' => new external_single_structure(array_merge(
                     helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(true),
                     [
-                        'id' => new external_value(PARAM_INT, 'The course module id'),
-                        'visible' => new external_value(PARAM_INT, 'Visible', VALUE_OPTIONAL),
                         'module' => new external_value(PARAM_INT, 'The module type id'),
                         'modname' => new external_value(PARAM_COMPONENT, 'The module component name (forum, assign, etc..)'),
                         'instance' => new external_value(PARAM_INT, 'The activity instance id'),
