@@ -32,7 +32,7 @@ class di {
     /**
      * Get the DI Container.
      *
-     * @return ContainerInterface
+     * @return \DI\Container
      */
     public static function get_container(): ContainerInterface {
         if (!isset(self::$container)) {
@@ -78,6 +78,31 @@ class di {
         $container->set($id, $value);
     }
 
+
+    /**
+     * Build an entry of the container by its name.
+     *
+     * This method behave like get() except resolves the entry again every time.
+     * For example if the entry is a class then a new instance will be created each time.
+     *
+     * This method makes the container behave like a factory.
+     *
+     * @param string $name      Entry name or a class name.
+     * @param array  $params    Optional parameters to use to build the entry. Use this to force
+     *                          specific parameters to specific values. Parameters not defined in this
+     *                          array will be resolved using the container.
+     * @return mixed
+     */
+    public static function make(
+        string $name,
+        array $params = [],
+    ): mixed {
+        return self::get_container()->make(
+            $name,
+            $params,
+        );
+    }
+
     /**
      * Create a new Container Instance.
      *
@@ -89,9 +114,11 @@ class di {
         // Configure the Container builder.
         $builder = new \DI\ContainerBuilder();
 
-        // At the moment we are using autowiring, but not automatic attribute injection.
-        // Automatic attribute injection is a php-di specific feature.
+        // Enable autowiring.
         $builder->useAutowiring(true);
+
+        // Enable the use of attributes for autowiring. This is a php-di specific feature.
+        $builder->useAttributes(true);
 
         if (!$CFG->debugdeveloper) {
             // Enable compilation of the container and write proxies to disk in production.
