@@ -231,7 +231,7 @@ class oauth2_server_clients extends system_report {
         ))
             ->set_type(column::TYPE_TEXT)
             // Add all fields needed to build the action URLs.
-            ->add_fields('client.id, client.name, client.status')
+            ->add_fields('client.id, client.name, client.status, client.isconfidential')
             ->set_is_sortable(false)
             ->add_callback(function ($value, \stdClass $row): string {
                 $actions = [];
@@ -246,6 +246,16 @@ class oauth2_server_clients extends system_report {
 
                 // Display the relevant actions when the client status is active.
                 if ((int) $row->status === client_entity::STATUS_ACTIVE) {
+                    if ($row->isconfidential) {
+                        // Manage secrets link.
+                        $editurl = \core\router\util::get_path_for_callable(
+                            [\core_admin\route\controller\oauth2\server\client_management::class, 'manage_client_secrets'],
+                            ['client' => $row->id],
+                        );
+
+                        $actions[] = \html_writer::link($editurl, get_string('oauth2server_managesecrets', 'admin'));
+                    }
+
                     // Revoke link.
                     $actions[] = \html_writer::tag(
                         'button',

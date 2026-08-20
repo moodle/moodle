@@ -18,6 +18,8 @@
     * isclientcredentialssupported - Whether the client supports the client credentials flow.
     * backurl - The URL to return to the clients list.
     * editclientform - The rendered form for editing the client.
+    * activesecretscount - The number of active secrets for the client.
+    * managesecretsurl - The URL to manage the client's secrets.
 
     Example context (json):
     {
@@ -29,11 +31,13 @@
         "isclientcredentialssupported": true,
         "backurl": "/admin/oauth2/clients.php",
         "editclientform": "<form>...</form>",
+        "activesecretscount": 0,
+        "managesecretsurl": "http://example.com/admin/oauth2server/clients/1/secrets"
     }
 }}
 <div class="oauth2-client-header mb-4">
     {{>core_admin/oauth2/server/client_heading}}
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 w-100 mb-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 {{#isconfidential}} {{#isactive}} row-cols-lg-5 {{/isactive}} {{/isconfidential}} g-3 w-100 mb-4">
         <!-- Status card -->
         <div class="col">
             <div id="client-status" class="p-3 border rounded bg-light h-100" role="group" aria-labelledby="client-status-label">
@@ -103,6 +107,26 @@
                 </div>
             </div>
         </div>
+        {{#isconfidential}}
+            {{#isactive}}
+                <!-- Active secrets card -->
+                <div class="col">
+                    <div id="client-active-secrets" class="p-3 border rounded bg-light h-100" role="group" aria-labelledby="active-secrets-id-label">
+                        <span id="active-secrets-id-label" class="text-body-secondary small d-block mb-1">
+                            {{#str}} oauth2server_activesecrets, admin {{/str}}
+                        </span>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-info-subtle text-info-emphasis rounded-pill px-2 py-1">
+                                {{activesecretscount}}
+                            </span>
+                            <a href="{{managesecretsurl}}" class="small ms-auto">
+                                {{#str}} oauth2server_managesecrets, admin {{/str}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {{/isactive}}
+        {{/isconfidential}}
     </div>
     <div data-region="client-details" class="mt-5">
         <h3 class="fs-4 fw-bold mb-2"> {{#str}} details, core {{/str}}</h3>

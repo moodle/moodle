@@ -18,6 +18,7 @@ namespace core_admin\route\controller\oauth2\server;
 
 use core\router\require_login;
 use core\oauth2\server\entity\client_entity;
+use core_admin\reportbuilder\local\systemreports\oauth2_server_client_secrets;
 use core_admin\reportbuilder\local\systemreports\oauth2_server_clients;
 use Psr\Http\Message\ResponseInterface;
 
@@ -133,7 +134,7 @@ class client_management {
             }
 
             $clientmanager = \core\di::get(\core\oauth2\server\client_manager::class);
-            $clientmanager->create_client(
+            $cliententity = $clientmanager->create_client(
                 $data->name,
                 \core\context\system::instance(),
                 $granttypes,
@@ -143,6 +144,12 @@ class client_management {
                 $ispublicclient || !empty($data->enablepkce),
             );
 
+            if ($cliententity->isConfidential()) {
+                redirect(\core\router\util::get_path_for_callable(
+                    [self::class, 'manage_client_secrets'],
+                    ['client' => $cliententity->get_id()],
+                ));
+            }
             redirect(\core\router\util::get_path_for_callable([self::class, 'list_clients']));
         }
 
@@ -240,22 +247,121 @@ class client_management {
 
         $isclientactive = $cliententity->get_status() === client_entity::STATUS_ACTIVE;
 
+        $templatedata = [
+            'title' => $cliententity->getName(),
+            'clientidentifier' => $cliententity->getIdentifier(),
+            'isactive' => $isclientactive,
+            'isconfidential' => $cliententity->isConfidential(),
+            'isauthcodesupported' => in_array('authorization_code', $cliententity->get_grant_types(), true),
+            'isclientcredentialssupported' => in_array('client_credentials', $cliententity->get_grant_types(), true),
+            'backurl' => \core\router\util::get_path_for_callable([self::class, 'list_clients'])->out(),
+            'editclientform' => $mform->render(),
+        ];
+
+        if ($cliententity->isConfidential()) {
+            $clientactivesecrets = $clientmanager->get_secrets($cliententity->get_id());
+            $templatedata['activesecretscount'] = count($clientactivesecrets);
+            $templatedata['managesecretsurl'] = \core\router\util::get_path_for_callable(
+                [self::class, 'manage_client_secrets'],
+                ['client' => $cliententity->get_id()],
+            )->out();
+        }
+
         $editclienthtml = $OUTPUT->render_from_template(
             'core_admin/oauth2/server/edit_client',
-            [
-                'title' => $cliententity->getName(),
-                'clientidentifier' => $cliententity->getIdentifier(),
-                'isactive' => $isclientactive,
-                'isconfidential' => $cliententity->isConfidential(),
-                'isauthcodesupported' => in_array('authorization_code', $cliententity->get_grant_types(), true),
-                'isclientcredentialssupported' => in_array('client_credentials', $cliententity->get_grant_types(), true),
-                'backurl' => \core\router\util::get_path_for_callable([self::class, 'list_clients'])->out(),
-                'editclientform' => $mform->render(),
-            ],
+            $templatedata,
         );
 
         // Render the page content.
         $response->getBody()->write($editclienthtml);
+        $response->getBody()->write($OUTPUT->footer());
+
+        return $response;
+    }
+
+    /**
+     * Manage client secrets route.
+     *
+     * @param ResponseInterface $response The response object
+     * @param \core\oauth2\server\entity\client_entity $cliententity The client entity
+     * @return ResponseInterface The response object
+     */
+    #[\core\router\route(
+        path: '/{client}/secrets',
+        pathtypes: [
+            new \core_admin\route\parameters\oauth2\server\path_client(),
+        ],
+        method: ['GET'],
+        requirelogin: new require_login(
+            requirelogin: true,
+            autologinguest: false,
+        ),
+    )]
+    public function manage_client_secrets(
+        ResponseInterface $response,
+        \core\oauth2\server\entity\client_entity $cliententity,
+    ): ResponseInterface {
+        global $OUTPUT, $PAGE;
+
+        require_capability('moodle/site:manageoauth2clients', \core\context\system::instance());
+
+        if (!$cliententity->isConfidential()) {
+            throw new \moodle_exception('oauth2server_secretsnotavailablepublicclient', 'admin');
+        }
+
+        if ($cliententity->get_status() !== client_entity::STATUS_ACTIVE) {
+            throw new \moodle_exception('oauth2server_secretsnotavailablerevokedclient', 'admin');
+        }
+
+        $this->setup_admin_page(
+            get_string('oauth2server_managesecrets', 'admin'),
+            \core\router\util::get_path_for_callable(
+                [self::class, 'manage_client_secrets'],
+                ['client' => $cliententity->get_id()],
+            ),
+        );
+
+        $response->getBody()->write($OUTPUT->header());
+
+        $clientmanager = \core\di::get(\core\oauth2\server\client_manager::class);
+        // Secrets can be created if the client is active and the total number of currently active secrets is not
+        // exceeding the defined limit.
+        $isclientactive = $cliententity->get_status() === client_entity::STATUS_ACTIVE;
+        $clientactivesecrets = $clientmanager->get_secrets($cliententity->get_id());
+        $cancreatesecret = $isclientactive && (count($clientactivesecrets) < $clientmanager::MAX_ACTIVE_SECRETS);
+
+        // Generate the OAuth2 client secrets table.
+        $report = \core_reportbuilder\system_report_factory::create(
+            oauth2_server_client_secrets::class,
+            \core\context\system::instance(),
+            parameters: [
+                'clientidentifier' => $cliententity->getIdentifier(),
+            ]
+        );
+
+        $managesecretshtml = $OUTPUT->render_from_template(
+            'core_admin/oauth2/server/manage_client_secrets',
+            [
+                'id' => $cliententity->get_id(),
+                'title' => $cliententity->getName(),
+                'clientidentifier' => $cliententity->getIdentifier(),
+                'isactive' => $isclientactive,
+                'backurl' => \core\router\util::get_path_for_callable([self::class, 'list_clients'])->out(),
+                'clientsecretstable' => $report->output(),
+                'cancreatesecret' => $cancreatesecret,
+                'maxsecretsnumber' => $clientmanager::MAX_ACTIVE_SECRETS,
+            ],
+        );
+
+        // Render the page content.
+        $response->getBody()->write($managesecretshtml);
+
+        $PAGE->requires->js_call_amd(
+            'core_admin/oauth2/server/client/client_secrets',
+            'init',
+            [$clientmanager::MAX_ACTIVE_SECRETS],
+        );
+
         $response->getBody()->write($OUTPUT->footer());
 
         return $response;
