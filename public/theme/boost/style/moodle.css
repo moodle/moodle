@@ -46902,6 +46902,22 @@ div.editor_atto_toolbar button .icon {
   content: "\f00c";
 }
 
+.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu {
+  position: static;
+  padding: 0;
+  border: 0;
+}
+.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item {
+  background-color: #f8f9fa;
+}
+.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item:hover, .dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item:focus {
+  color: #ffffff;
+  background-color: #0f6cbf;
+}
+.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-divider {
+  display: none;
+}
+
 .primary-navigation .navigation {
   height: 60px;
 }

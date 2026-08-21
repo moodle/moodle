@@ -160,6 +160,61 @@ const useActionLinkBehavior = (items: NavNode[]): void => {
 };
 
 /**
+ * Keeps the enclosing "More" dropdown open when a nested submenu inside it is clicked, as legacy
+ * moremenu.js did with a capturing listener on each nested .dropdown. Bootstrap's own toggle
+ * handler is delegated from the document in the capture phase, so it has already opened the
+ * submenu by the time this runs; only its bubble-phase clearMenus() is cut off.
+ *
+ * @param event The click event.
+ */
+const keepParentMenuOpen = (event: MouseEvent): void => event.stopPropagation();
+
+/**
+ * A submenu nested inside the "More" dropdown, for a node whose children belong in a submenu but
+ * which has itself been collapsed into the overflow. Legacy moremenu.js moved the whole
+ * <li class="dropdown"> into the "More" dropdown rather than flattening it, because such a node
+ * has no url of its own: a plain link would be a dead entry with its children unreachable.
+ *
+ * @param props Component props.
+ * @param props.node The collapsed node whose children belong in a submenu.
+ * @param props.istablist Whether the navigation is rendered as an ARIA tablist.
+ * @returns The rendered submenu toggle and dropdown.
+ */
+function DropdownSubmenu({node, istablist = false}: {node: NavNode; istablist?: boolean}) {
+    const id = useId();
+    const toggleId = `${id}-toggle`;
+    const menuId = `${id}-menu`;
+
+    return (
+        // The wrapper only exists to give Bootstrap's dropdown JS a container, so role="none"
+        // keeps the toggle a valid child of the enclosing role="menu", as the legacy <li> did.
+        <div className="dropdown dropdown-submenu" role="none" onClickCapture={keepParentMenuOpen}>
+            <a
+                id={toggleId}
+                className={`dropdown-item dropdown-toggle${isNodeActive(node) ? ' active' : ''}`}
+                href="#"
+                title={node.title ?? undefined}
+                role="menuitem"
+                data-bs-toggle="dropdown"
+                // Bootstrap only skips Popper's absolute positioning by itself inside a .navbar,
+                // so ask for it explicitly: the submenu expands in place (see moremenu.scss)
+                // rather than floating over the "More" menu it belongs to.
+                data-bs-display="static"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls={menuId}
+                aria-current={isNodeActive(node) ? 'page' : undefined}
+            >
+                {node.text}
+            </a>
+            <div className="dropdown-menu" id={menuId} role="menu" aria-labelledby={toggleId}>
+                <DropdownItems items={node.children} istablist={istablist} />
+            </div>
+        </div>
+    );
+}
+
+/**
  * Plain dropdown-item links for the "More" overflow menu and submenu dropdowns.
  *
  * @moodlehq/design-system has no menu/dropdown component yet, so this reuses Bootstrap's
@@ -170,9 +225,15 @@ const useActionLinkBehavior = (items: NavNode[]): void => {
  * @param props.items The nodes to render as dropdown items.
  * @param props.istablist Whether these items belong to an istablist nav's top-level overflow
  *                        dropdown (as opposed to a SubmenuTrigger's nested dropdown).
+ * @param props.submenus Whether a node whose children belong in a submenu renders as a nested
+ *                        submenu rather than a plain link. Only set for the "More" dropdown
+ *                        itself: legacy moremenu_children.mustache went no deeper either.
  * @returns The rendered dropdown items.
  */
-function DropdownItems({items, istablist = false}: {items: NavNode[]; istablist?: boolean}) {
+function DropdownItems(
+    {items, istablist = false, submenus = false}:
+    {items: NavNode[]; istablist?: boolean; submenus?: boolean},
+) {
     useActionLinkBehavior(items);
 
     return (
@@ -180,6 +241,10 @@ function DropdownItems({items, istablist = false}: {items: NavNode[]; istablist?
             {items.map((item) => {
                 if (item.divider) {
                     return <div key={item.key} className="dropdown-divider" />;
+                }
+
+                if (submenus && item.showchildreninsubmenu && item.children.length > 0) {
+                    return <DropdownSubmenu key={item.key} node={item} istablist={istablist} />;
                 }
 
                 return (
@@ -541,24 +606,36 @@ export default function Nav(
         setMeasured(true);
     });
 
-    // Re-measures when the container's width changes (resize, drawer toggle, etc). Observes the
-    // container, not the <ul>, so it doesn't fire from the measurement effect's own re-renders.
+    // Re-measures whenever the space available to the menu may have changed. Both triggers are
+    // needed:
+    //
+    // - The ResizeObserver catches width changes that don't come from the viewport, e.g. a drawer
+    //   opening beside the navigation. It observes the container, not the <ul>, so it doesn't
+    //   fire from the measurement effect's own re-renders.
+    // - The window resize listener, as legacy moremenu.js used, catches viewport changes that
+    //   leave the container's box untouched. The primary navigation's mount point is a
+    //   shrink-to-fit flex item, so once items have collapsed into "More" it is only as wide as
+    //   what's left: widening the window resizes it by nothing, and they would never come back out.
     useEffect(() => {
-        const container = menuRef.current?.parentElement;
-        if (!container || typeof ResizeObserver === 'undefined') {
-            return undefined;
-        }
-
-        const observer = new ResizeObserver(() => {
+        const remeasure = () => {
             stepsRef.current = 0;
             lastActionRef.current = null;
             shrinkExhaustedRef.current = false;
             forceRemeasure((tick) => tick + 1);
-        });
-        observer.observe(container);
+        };
+
+        window.addEventListener('resize', remeasure);
+
+        const container = menuRef.current?.parentElement;
+        let observer: ResizeObserver | null = null;
+        if (container && typeof ResizeObserver !== 'undefined') {
+            observer = new ResizeObserver(remeasure);
+            observer.observe(container);
+        }
 
         return () => {
-            observer.disconnect();
+            window.removeEventListener('resize', remeasure);
+            observer?.disconnect();
         };
     }, []);
 
@@ -597,7 +674,7 @@ export default function Nav(
             >
                 <PillDropdownToggle label={morelabel} selected={overflow.some(isNodeActive)} istablist={istablist}>
                     <div className="dropdown-menu dropdown-menu-start" data-region="moredropdown">
-                        <DropdownItems items={overflow} istablist={istablist} />
+                        <DropdownItems items={overflow} istablist={istablist} submenus />
                     </div>
                 </PillDropdownToggle>
             </li>

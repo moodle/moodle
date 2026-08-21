@@ -114,3 +114,35 @@
         }
     }
 }
+
+// A submenu nested inside the React-rendered "More" dropdown (core/nav/Nav's
+// DropdownSubmenu), e.g. a custom menu parent item collapsed into the overflow. Mirrors the
+// ".dropdownmoremenu > .dropdown-menu .dropdown-menu" rules above, which the React mount points
+// cannot reuse because they deliberately do not carry the .moremenu class (see
+// primarymoremenu.mustache). Positioning it here rather than leaving it to Popper, so that it
+// expands in place, is what the toggle's data-bs-display="static" is for.
+//
+// Qualified by the enclosing ".dropdownmoremenu > .dropdown-menu" purely for specificity: the
+// primary navigation's <ul> is a .navbar-nav inside the .navbar-expand navbar, so a bare
+// ".dropdown-submenu > .dropdown-menu" would lose "position" to bootstrap's own
+// ".navbar-expand .navbar-nav .dropdown-menu { position: absolute; }". Left absolute, the submenu
+// takes up no room in the flow, so the "More" dropdown never grows to fit it and its items only
+// scroll into view inside the dropdown's existing height.
+.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu {
+    position: static;
+    padding: 0;
+    border: 0;
+
+    .dropdown-item {
+        background-color: $gray-100;
+        &:hover,
+        &:focus {
+            color: $dropdown-link-hover-color;
+            @include gradient-bg($dropdown-link-active-bg);
+        }
+    }
+
+    .dropdown-divider {
+        display: none;
+    }
+}
