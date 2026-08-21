@@ -16,6 +16,7 @@
 
 namespace qtype_multianswer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use qtype_multianswer;
 use qtype_multianswer_edit_form;
 use qtype_multichoice_base;
@@ -398,6 +399,143 @@ final class question_type_test extends \advanced_testcase {
                 }
             }
         }
+    }
+
+    /**
+     * Run asserts for each cloze question.
+     * @param string $text
+     * @param int $format
+     * @param array $answers
+     * @param array $fractions
+     * @param array $feedback
+     * @param array $tolerance
+     */
+    #[DataProvider('provider_qtype_multianswer_extract_questions')]
+    public function test_qtype_multianswer_extract_question(
+        string $text,
+        int $format,
+        array $answers,
+        array $fractions,
+        array $feedback,
+        array $tolerance
+    ): void {
+        $textskeleton = 'Test sentence for cloze question #no #cloze in a question.';
+        $questiontext = [
+            'format' => $format ?? FORMAT_MOODLE,
+            'id' => '',
+            'text' => str_replace('#cloze', $text, $textskeleton),
+        ];
+        $q = qtype_multianswer_extract_question($questiontext);
+        $sub = reset($q->options->questions);
+        $this->assertEquals(count($sub->answer), count($answers));
+        foreach ($sub->answer as $k => $answer) {
+            // All questions with selections have an answer array with text, format, id.
+            // The shorttext question type has the plain answer value and no array.
+            $answertext = is_array($answer) ? $answer['text'] : $answer;
+            $this->assertEquals($answertext, $answers[$k]);
+            $this->assertEquals($sub->fraction[$k], $fractions[$k]);
+        }
+        if (!empty($feedback)) {
+            foreach ($feedback as $k => $feedbackitem) {
+                $this->assertEquals($feedbackitem, $sub->feedback[$k]['text']);
+            }
+        }
+        if (!empty($tolerance)) {
+            foreach ($tolerance as $k => $toleranceitem) {
+                $this->assertEquals($toleranceitem, $sub->tolerance[$k]);
+            }
+        }
+    }
+
+    /**
+     * Test data for various cloze questions.
+     * @return \Generator
+     */
+    public static function provider_qtype_multianswer_extract_questions(): \Generator {
+        yield '#1' => [
+            'text' => '{1:MULTIRESPONSE:=&&~|~=||}',
+            'format' => (int)FORMAT_MOODLE,
+            'answers' => ['&&', '|', '||'],
+            'fractions' => [0.5, -0.5, 0.5],
+            'feedback' => [],
+            'tolerance' => [],
+        ];
+        yield '#2' => [
+            'text' => '{1:MULTICHOICE_V:=\\(\\frac{1\\}{2\\}\\)~\\(\\frac{2\\}{3\\}\\)}',
+            'format' => (int)FORMAT_MOODLE,
+            'answers' => ['\\(\\frac{1}{2}\\)', '\\(\\frac{2}{3}\\)'],
+            'fractions' => [1, 0],
+            'feedback' => [],
+            'tolerance' => [],
+        ];
+        yield '#3' => [
+            'text' => '{1:MULTICHOICE:Wrong answer#Feedback for this wrong answer'
+                        . '~Another wrong answer#Feedback for the other wrong answer'
+                        . '~=Correct answer#Feedback for correct answer'
+                        . '~%50%Answer that gives half the credit#Feedback for half credit answer}',
+            'format' => (int)FORMAT_MOODLE,
+            'answers' => ['Wrong answer', 'Another wrong answer', 'Correct answer', 'Answer that gives half the credit'],
+            'fractions' => [0, 0, 1, 0.5],
+            'feedback' => [
+                'Feedback for this wrong answer',
+                'Feedback for the other wrong answer',
+                'Feedback for correct answer',
+                'Feedback for half credit answer',
+            ],
+            'tolerance' => [],
+        ];
+        yield '#4' => [
+            'text' =>
+                '{1:MCV:&nbsp; <img src="https://moodleformulas.org/pluginfile.php/11393/'
+                . 'mod_folder/content/0/Public%20domain%20-%20Tunisia%20-%20200x114.jpg">&nbsp; Sousse, Tunisia &nbsp;'
+                . '#That was the second'
+                . '~&nbsp; <img src="https://moodleformulas.org/pluginfile.php/11393/'
+                . 'mod_folder/content/0/Public%20domain%20-%20California%20-%20200x114.jpg">&nbsp; California, USA &nbsp;'
+                . '#That was the third'
+                . '~=&nbsp; <img src="https://moodleformulas.org/pluginfile.php/11393/'
+                . 'mod_folder/content/0/Public%20domain%20-%20Crete%20-%20200x114.jpg">&nbsp; Crete, Greece &nbsp;'
+                . '#Correct!'
+                . '~%50%&nbsp; <img src="https://moodleformulas.org/pluginfile.php/11393/'
+                . 'mod_folder/content/0/Public%20domain%20-%20Greece%20-%20200x114.jpg">&nbsp; Greece &nbsp;'
+                . '#Yes but not close enough so you only get half the credit.}',
+            'format' => (int)FORMAT_HTML,
+            'answers' => [
+                "\u{00A0} <img src=\"https://moodleformulas.org/pluginfile.php/11393/"
+                    . 'mod_folder/content/0/Public%20domain%20-%20Tunisia%20-%20200x114.jpg">'
+                    . "\u{00A0} Sousse, Tunisia \u{00A0}",
+                "\u{00A0} <img src=\"https://moodleformulas.org/pluginfile.php/11393/"
+                    . 'mod_folder/content/0/Public%20domain%20-%20California%20-%20200x114.jpg">'
+                    . "\u{00A0} California, USA \u{00A0}",
+                "\u{00A0} <img src=\"https://moodleformulas.org/pluginfile.php/11393/"
+                    . "mod_folder/content/0/Public%20domain%20-%20Crete%20-%20200x114.jpg\">\u{00A0} Crete, Greece \u{00A0}",
+                "\u{00A0} <img src=\"https://moodleformulas.org/pluginfile.php/11393/"
+                    . "mod_folder/content/0/Public%20domain%20-%20Greece%20-%20200x114.jpg\">\u{00A0} Greece \u{00A0}",
+            ],
+            'fractions' => [0, 0, 1, 0.5],
+            'feedback' => [
+                'That was the second',
+                'That was the third',
+                'Correct!',
+                'Yes but not close enough so you only get half the credit.',
+            ],
+            'tolerance' => [],
+        ];
+        yield '#5' => [
+            'text' => '{1:SHORTANSWER:%100%4Zn + 10HNO₃ → 4Zn²⁺ + NH₄⁺ + 3H₂O~*}',
+            'format' => (int)FORMAT_MOODLE,
+            'answers' => ['4Zn + 10HNO₃ → 4Zn²⁺ + NH₄⁺ + 3H₂O', '*'],
+            'fractions' => [1, 0],
+            'feedback' => [],
+            'tolerance' => [],
+        ];
+        yield '#6' => [
+            'text' => '{5:NM:=703.7:0.1#Feedback for correct answer}',
+            'format' => (int)FORMAT_MOODLE,
+            'answers' => [703.7],
+            'fractions' => [1],
+            'feedback' => ['Feedback for correct answer'],
+            'tolerance' => [0.1],
+        ];
     }
 
     /**
