@@ -17,6 +17,7 @@
 namespace core_ai\aiactions;
 
 use core_ai\aiactions\responses\response_base;
+use core_ai\aiactions\responses\response_generate_text;
 use core_ai\aiactions;
 use ReflectionClass;
 
@@ -55,6 +56,39 @@ final class base_test extends \advanced_testcase {
             get_string('action_generate_text_desc', 'core_ai'),
             aiactions\generate_text::get_description()
         );
+    }
+
+    /**
+     * Test that static overrides are honoured from base class methods.
+     */
+    public function test_static_overrides_are_honoured(): void {
+        $action = new class (1) extends base {
+            /**
+             * Return the generate_text basename to exercise static method overriding.
+             *
+             * @return string
+             */
+            public static function get_basename(): string {
+                return 'generate_text';
+            }
+
+            /**
+             * Store the response.
+             *
+             * @param response_base $response
+             * @return int
+             */
+            public function store(response_base $response): int {
+                return 0;
+            }
+        };
+
+        $actionclass = $action::class;
+
+        $this->assertSame(get_string('action_generate_text', 'core_ai'), $actionclass::get_name());
+        $this->assertSame(get_string('action_generate_text_desc', 'core_ai'), $actionclass::get_description());
+        $this->assertSame(get_string('action_generate_text_instruction', 'core_ai'), $actionclass::get_system_instruction());
+        $this->assertSame(response_generate_text::class, $actionclass::get_response_classname());
     }
 
     /**

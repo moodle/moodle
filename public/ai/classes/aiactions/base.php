@@ -68,7 +68,7 @@ abstract class base {
      * @return string
      */
     public static function get_name(): string {
-        $stringid = 'action_' . self::get_basename();
+        $stringid = 'action_' . static::get_basename();
         return get_string($stringid, 'core_ai');
     }
 
@@ -80,7 +80,7 @@ abstract class base {
      * @return string
      */
     public static function get_description(): string {
-        $stringid = 'action_' . self::get_basename() . '_desc';
+        $stringid = 'action_' . static::get_basename() . '_desc';
         return get_string($stringid, 'core_ai');
     }
 
@@ -90,7 +90,7 @@ abstract class base {
      * @return string The system instruction for the action.
      */
     public static function get_system_instruction(): string {
-        $stringid = 'action_' . self::get_basename() . '_instruction';
+        $stringid = 'action_' . static::get_basename() . '_instruction';
 
         // If the string doesn't exist, return an empty string.
         if (!get_string_manager()->string_exists($stringid, 'core_ai')) {
@@ -126,6 +126,6 @@ abstract class base {
      * @return string The class name of the response object.
      */
     public static function get_response_classname(): string {
-        return responses::class . '\\response_' . self::get_basename();
+        return responses::class . '\\response_' . static::get_basename();
     }
 }
