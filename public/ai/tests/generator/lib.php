@@ -62,8 +62,6 @@ class core_ai_generator extends component_generator_base {
         } else {
             // Generate text (and variants).
             $child->generatedcontent = 'Your generated content';
-            $child->prompttokens = $data['prompttokens'] ?? 111;
-            $child->completiontoken = $data['completiontokens'] ?? 222;
         }
 
         // Simulate an error.
@@ -73,8 +71,15 @@ class core_ai_generator extends component_generator_base {
             // Unset some values that won't be present with an error.
             unset($child->generatedcontent);
             unset($child->revisedprompt);
-            unset($child->prompttokens);
-            unset($child->completiontoken);
+            unset($data['prompttokens']);
+            unset($data['completiontokens']);
+        } else if ($data['actionname'] !== 'generate_image') {
+            // Token counts describe the AI provider call, so they are stored on the register record.
+            $data['prompttokens'] = $data['prompttokens'] ?? 111;
+            $data['completiontokens'] = $data['completiontokens'] ?? 222;
+        } else {
+            unset($data['prompttokens']);
+            unset($data['completiontokens']);
         }
 
         $childid = $DB->insert_record("ai_action_{$data['actionname']}", $child);

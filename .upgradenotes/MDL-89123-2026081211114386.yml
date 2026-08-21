@@ -1,0 +1,13 @@
+issueNumber: MDL-89123
+notes:
+  core_ai:
+    - message: >-
+        The `prompttokens` and `completiontokens` fields have been moved from the
+        AI action child tables (`ai_action_generate_text`,
+        `ai_action_summarise_text`, `ai_action_explain_text`) up to the parent
+        `ai_action_register` table, since they describe the AI provider call
+        rather than the action-specific content. The token counts are now
+        written to the register record by
+        `core_ai\manager::store_action_result()`. Any code querying these
+        columns directly on the child tables will need to be updated.
+      type: changed

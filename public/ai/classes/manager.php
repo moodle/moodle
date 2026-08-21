@@ -230,6 +230,8 @@ class manager {
         responses\response_base $response,
     ): int {
         global $DB;
+        $responsedata = $response->get_response_data();
+
         // Store the action result.
         $record = (object) [
             'actionname' => $action->get_basename(),
@@ -243,6 +245,8 @@ class manager {
             'timecreated' => $action->get_configuration('timecreated'),
             'timecompleted' => $response->get_timecreated(),
             'model' => $response->get_model_used(),
+            'prompttokens' => $responsedata['prompttokens'] ?? null,
+            'completiontokens' => $responsedata['completiontokens'] ?? null,
         ];
 
         try {

@@ -58,8 +58,6 @@ class explain_text extends base {
         $record->fingerprint = $responsearr['fingerprint']; // Can be null.
         $record->generatedcontent = $responsearr['generatedcontent']; // Can be null.
         $record->finishreason = $responsearr['finishreason']; // Can be null.
-        $record->prompttokens = $responsearr['prompttokens']; // Can be null.
-        $record->completiontoken = $responsearr['completiontokens']; // Can be null.
 
         return $DB->insert_record($this->get_tablename(), $record);
     }

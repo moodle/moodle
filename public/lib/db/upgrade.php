@@ -2178,5 +2178,48 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026080700.01);
     }
 
+    if ($oldversion < 2026081800.01) {
+        // Define table ai_action_register.
+        $table = new xmldb_table('ai_action_register');
+
+        // Conditionally launch add field prompttokens.
+        $field = new xmldb_field('prompttokens', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'model');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Conditionally launch add field completiontokens.
+        $field = new xmldb_field('completiontokens', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'prompttokens');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Move the token counts from the action child tables to ai_action_register.
+        foreach (['generate_text', 'summarise_text', 'explain_text'] as $actionname) {
+            $actiontable = new xmldb_table("ai_action_{$actionname}");
+
+            $tokenfields = ['prompttokens' => 'prompttokens', 'completiontoken' => 'completiontokens'];
+            foreach ($tokenfields as $childfieldname => $registerfieldname) {
+                $field = new xmldb_field($childfieldname);
+
+                if ($dbman->field_exists($actiontable, $field)) {
+                    $sql = "UPDATE {ai_action_register}
+                            SET {$registerfieldname} = (
+                                SELECT child.{$childfieldname}
+                                    FROM {{$actiontable->getName()}} child
+                                    WHERE child.id = {ai_action_register}.actionid
+                            )
+                            WHERE actionname = :actionname";
+                    $DB->execute($sql, ['actionname' => $actionname]);
+
+                    $dbman->drop_field($actiontable, $field);
+                }
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026081800.01);
+    }
+
     return true;
 }
