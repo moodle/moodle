@@ -47,31 +47,46 @@ class notify_push_notification_limit_to_admins extends \core\task\scheduled_task
     public function execute() {
         global $CFG;
 
+        mtrace('tool_mobile: Running scheduled push notification limit check task...');
         if (empty($CFG->enablemobilewebservice)) {
+            mtrace('tool_mobile: task not running, mobile app is not enabled.');
             return;
         }
 
         $subscriptiondata = api::get_subscription_information(true);
+        $ispremiumplan = api::is_premium_or_bma_plan($subscriptiondata);
+        if ($ispremiumplan) {
+            mtrace('tool_mobile: premium or BMA plans, no push notifications limits.');
+            return;
+        }
+
         $now = di::get(clock::class)->now();
         $notificationstats = self::get_current_month_notification_stats($subscriptiondata, $now);
-        if ($notificationstats === null || empty($notificationstats['limitreachedtime'])) {
+        if ($notificationstats === null || !array_key_exists('limitreachedtime', $notificationstats)) {
+            mtrace('tool_mobile: no notification information for this month, no notification sent to admins.');
             return;
         }
 
         $limitreachedtime = (int) $notificationstats['limitreachedtime'];
         if ($limitreachedtime <= 0) {
+            mtrace('tool_mobile: no limit reached this month, no notification sent to admins.');
             return;
         }
 
+        $limitreacheddate = date('Y-m-d H:i:s', $limitreachedtime);
         if ((int) get_config('tool_mobile', self::LAST_NOTIFIED_CONFIG) === $limitreachedtime) {
+            mtrace('tool_mobile: limit reached this month at ' . $limitreacheddate
+                . ' and previously notified, no notification sent to admins.');
             return;
         }
 
         if (!self::notify_admins($subscriptiondata, $notificationstats)) {
+            mtrace('tool_mobile: limit reached this month at ' . $limitreacheddate . ' but failed to notify admins.');
             return;
         }
 
         set_config(self::LAST_NOTIFIED_CONFIG, (string) $limitreachedtime, 'tool_mobile');
+        mtrace('tool_mobile: push notification limit check completed successfully.');
     }
 
     /**
@@ -107,7 +122,6 @@ class notify_push_notification_limit_to_admins extends \core\task\scheduled_task
             if ((int) ($monthstats['month'] ?? 0) !== $currentmonth) {
                 continue;
             }
-
             return $monthstats;
         }
 
@@ -160,6 +174,8 @@ class notify_push_notification_limit_to_admins extends \core\task\scheduled_task
 
             message_send($message);
         }
+        $limitreacheddate = date('Y-m-d H:i:s', (int) $notificationstats['limitreachedtime']);
+        mtrace('tool_mobile: limit reached this month at ' . $limitreacheddate . ', notification sent to admins.');
 
         return true;
     }

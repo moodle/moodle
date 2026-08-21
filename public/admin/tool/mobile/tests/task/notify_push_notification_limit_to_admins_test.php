@@ -21,10 +21,63 @@ namespace tool_mobile\task;
  *
  * @covers \tool_mobile\task\notify_push_notification_limit_to_admins
  * @package    tool_mobile
- * @copyright  2026
+ * @copyright  2026 Daniel Ureña <daniel.urena@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class notify_push_notification_limit_to_admins_test extends \advanced_testcase {
+    /**
+     * Test that no notification is sent when there is no stats entry for this month.
+     */
+    public function test_execute_logs_no_notification_information_for_current_month(): void {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $clock = $this->mock_clock_with_frozen();
+        $CFG->enablemobilewebservice = 1;
+
+        $this->seed_subscription_cache_with_monthly_data([
+            [
+                'year' => (int) $clock->now()->modify('-1 month')->format('Y'),
+                'month' => (int) $clock->now()->modify('-1 month')->format('n'),
+                'limitreachedtime' => 1234567890,
+            ],
+        ]);
+
+        $sink = $this->redirectMessages();
+        $task = new \tool_mobile\task\notify_push_notification_limit_to_admins();
+        $output = $this->capture_task_output($task);
+
+        $this->assertCount(0, $sink->get_messages());
+        $this->assertStringContainsString('tool_mobile: Running scheduled push notification limit check task...', $output);
+        $this->assertStringContainsString(
+            'tool_mobile: no notification information for this month, no notification sent to admins.',
+            $output,
+        );
+    }
+
+    /**
+     * Test that no notification is sent when the limit has not been reached.
+     */
+    public function test_execute_logs_no_limit_reached_for_current_month(): void {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $clock = $this->mock_clock_with_frozen();
+        $CFG->enablemobilewebservice = 1;
+
+        $this->seed_subscription_cache(0, $clock->time());
+
+        $sink = $this->redirectMessages();
+        $task = new \tool_mobile\task\notify_push_notification_limit_to_admins();
+        $output = $this->capture_task_output($task);
+
+        $this->assertCount(0, $sink->get_messages());
+        $this->assertStringContainsString('tool_mobile: Running scheduled push notification limit check task...', $output);
+        $this->assertStringContainsString('tool_mobile: no limit reached this month, no notification sent to admins.', $output);
+    }
+
     /**
      * Test that a message is sent to admins when the monthly limit has been reached.
      */
@@ -40,7 +93,7 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
 
         $sink = $this->redirectMessages();
         $task = new \tool_mobile\task\notify_push_notification_limit_to_admins();
-        $task->execute();
+        $output = $this->capture_task_output($task);
 
         $messages = $sink->get_messages();
         $expectedrecipientids = array_map(static function ($admin) {
@@ -81,6 +134,12 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
         sort($actualrecipientids);
         $this->assertSame($expectedrecipientids, $actualrecipientids);
         $this->assertEquals('1234567890', get_config('tool_mobile', 'pushnotificationlimitlastnotified'));
+        $this->assertStringContainsString('tool_mobile: Running scheduled push notification limit check task...', $output);
+        $this->assertStringContainsString(
+            'tool_mobile: limit reached this month at ' . date('Y-m-d H:i:s', 1234567890) . ', notification sent to admins.',
+            $output,
+        );
+        $this->assertStringContainsString('tool_mobile: push notification limit check completed successfully.', $output);
     }
 
     /**
@@ -98,15 +157,50 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
 
         $sink = $this->redirectMessages();
         $task = new \tool_mobile\task\notify_push_notification_limit_to_admins();
-        $task->execute();
+        $firstoutput = $this->capture_task_output($task);
 
         $this->assertEquals('1234567890', get_config('tool_mobile', 'pushnotificationlimitlastnotified'));
+        $this->assertStringContainsString(
+            'tool_mobile: limit reached this month at ' . date('Y-m-d H:i:s', 1234567890) . ', notification sent to admins.',
+            $firstoutput,
+        );
 
-        $task->execute();
+        $output = $this->capture_task_output($task);
 
         $messages = $sink->get_messages();
         $this->assertCount(count(get_admins()), $messages);
         $this->assertEquals('1234567890', get_config('tool_mobile', 'pushnotificationlimitlastnotified'));
+        $this->assertStringContainsString(
+            'tool_mobile: limit reached this month at ' . date('Y-m-d H:i:s', 1234567890) .
+                ' and previously notified, no notification sent to admins.',
+            $output,
+        );
+    }
+
+    /**
+     * Test that premium and BMA plans do not trigger limit checks.
+     */
+    public function test_execute_skips_premium_and_bma_plans(): void {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $CFG->enablemobilewebservice = 1;
+
+        foreach (['premium', 'bma'] as $plan) {
+            set_config('pushnotificationlimitlastnotified', '', 'tool_mobile');
+            $cache = \cache::make('tool_mobile', 'subscriptioninfo');
+            $cache->set(0, [
+                'subscription' => ['plan' => $plan],
+            ]);
+
+            $sink = $this->redirectMessages();
+            $task = new \tool_mobile\task\notify_push_notification_limit_to_admins();
+            $output = $this->capture_task_output($task);
+
+            $this->assertCount(0, $sink->get_messages());
+            $this->assertStringContainsString('tool_mobile: premium or BMA plans, no push notifications limits.', $output);
+        }
     }
 
     /**
@@ -157,27 +251,50 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
         $currentyear = (int) date('Y', $currenttime);
         $currentmonth = (int) date('n', $currenttime);
 
+        $this->seed_subscription_cache_with_monthly_data([[
+            'year' => $currentyear,
+            'month' => $currentmonth,
+            'sentnotifications' => 120,
+            'ignorednotifications' => 15,
+            'newdevices' => 8,
+            'activedevices' => 60,
+            'limitreachedtime' => $limitreachedtime,
+        ]]);
+    }
+
+    /**
+     * Seed the subscription cache with current plan and provided monthly stats.
+     *
+     * @param array $monthlystats
+     */
+    private function seed_subscription_cache_with_monthly_data(array $monthlystats): void {
         $cache = \cache::make('tool_mobile', 'subscriptioninfo');
         $cache->set(0, [
             'statistics' => [
                 'notifications' => [
-                    'monthly' => [[
-                        'year' => $currentyear,
-                        'month' => $currentmonth,
-                        'sentnotifications' => 120,
-                        'ignorednotifications' => 15,
-                        'newdevices' => 8,
-                        'activedevices' => 60,
-                        'limitreachedtime' => $limitreachedtime,
-                    ]],
+                    'monthly' => $monthlystats,
                 ],
             ],
             'subscription' => [
+                'plan' => 'free',
                 'features' => [[
                     'name' => 'pushnotificationsdevices',
                     'limit' => 50,
                 ]],
             ],
         ]);
+    }
+
+    /**
+     * Capture the output produced by a task execute call.
+     *
+     * @param \core\task\task_base $task
+     * @return string
+     */
+    private function capture_task_output(\core\task\task_base $task): string {
+        ob_start();
+        $task->execute();
+
+        return (string) ob_get_clean();
     }
 }

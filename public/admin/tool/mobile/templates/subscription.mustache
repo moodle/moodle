@@ -194,11 +194,11 @@
     {{#subscription}}
     {{#isfree}}
     <div class="d-flex align-items-center gap-3 mt-3 mb-3">
-        <h3 class="fw-bold ml-2">{{name}}</h3>
-        <span class="ml-2 badge fw-normal bg-secondary fs-6 text-dark">{{#str}} limitedfeatures, tool_mobile {{/str}}</span>
+        <h3 class="fw-bold ms-2">{{name}}</h3>
+        <span class="ms-2 badge fw-normal bg-secondary fs-6 text-dark">{{#str}} limitedfeatures, tool_mobile {{/str}}</span>
     </div>
     {{#messageoldcache}}
-        <span class="ml-2 text-muted">{{{messageoldcache}}} {{{messagelivedata}}}</span>
+        <span class="ms-2 text-muted">{{{messageoldcache}}} {{{messagelivedata}}}</span>
     {{/messageoldcache}}
     {{#messageunregisteredsite}}
     {{> tool_mobile/subscribe_alert}}
@@ -207,7 +207,7 @@
     {{^isfree}}
     <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
         <div>
-            <h3 class="fw-bold ml-2"
+            <h3 class="fw-bold ms-2"
                 {{#messageoldcache}}
                     title="{{messageoldcache}}"
                 {{/messageoldcache}}
@@ -215,7 +215,7 @@
                 {{name}}
             </h3>
             {{#expiretime}}
-            <div class="ml-2 text-muted">
+            <div class="ms-2 text-muted">
                 {{planexpiresontext}}
                 {{#messageoldcache}}
                     {{{messagelivedata}}}
@@ -528,7 +528,7 @@
                         </a>
                     </div>
                     {{#messagenosubscriptioninfo}}
-                        {{> tool_mobile/notification_info}}
+                        {{> core/notification_info}}
                     {{/messagenosubscriptioninfo}}
                 </div>
             </div>

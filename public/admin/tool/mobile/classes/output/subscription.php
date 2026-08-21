@@ -73,6 +73,7 @@ class subscription implements \renderable, \templatable {
             $datanosub['messagenosubscriptioninfo'][] = [
                 'message' => get_string('nosubsblocked', 'tool_mobile', $datanosub['appsportalurl']),
                 'title' => get_string('nosubswhyhappen', 'tool_mobile'),
+                'headinglevel' => 4,
                 'extraclasses' => 'mt-4 mb-0',
             ];
             return $datanosub;
@@ -128,7 +129,7 @@ class subscription implements \renderable, \templatable {
                         break;
                     case "missingcredentials":
                         $data['messagemissingcredentials'][] = [
-                            'message' => $msg['message'],
+                            'message' => get_string('statisticstemporarilyunavailable', 'tool_mobile'),
                             'extraclasses' => 'mt-4',
                         ];
                         break;
@@ -158,7 +159,7 @@ class subscription implements \renderable, \templatable {
         $currentplan = api::get_normalized_plan($data, false);
         $data['subscription']['isfree'] = ($currentplan === 'free');
         $data['subscription']['ispremium'] = api::is_premium_or_bma_plan($data, false);
-        if (!empty($data['subscription']['isfree'])) {
+        if (!$data['subscription']['ispremium']) {
             if (api::has_matomo_additional_html()) {
                 $data['morecurrentsetup']['matomoinapp'] = 1;
             }

@@ -49,16 +49,36 @@ class refresh_subscription_cache extends \core\task\scheduled_task {
     public function execute() {
         global $CFG;
 
+        mtrace('tool_mobile: Running scheduled subscription cache refresh task...');
         if (empty($CFG->enablemobilewebservice)) {
             mtrace('tool_mobile: task not running, mobile app is not enabled.');
             return;
         }
 
-        $data = api::get_subscription_information(false, true);
+        $cache = \cache::make('tool_mobile', 'subscriptioninfo');
+        $cachedata = $cache->get(0);
+        if (is_array($cachedata) && isset($cachedata['subscription']['plan'])) {
+            mtrace('tool_mobile: previous cache plan: ' . $cachedata['subscription']['plan'] . '.');
+        } else {
+            mtrace('tool_mobile: previous cache plan: unknown.');
+        }
+
+        $errormessage = '';
+        $data = api::get_subscription_information(false, true, 10, $errormessage);
         if ($data === null) {
             mtrace('tool_mobile: subscription cache refresh failed.');
+            if (!empty($errormessage)) {
+                mtrace('tool_mobile: ' . $errormessage);
+            }
+        } else if (!empty($errormessage)) {
+            mtrace('tool_mobile: ' . $errormessage);
+            mtrace('tool_mobile: scheduled subscription cache refresh failed, serving previously cached data.');
         } else {
-            mtrace('tool_mobile: subscription cache refreshed.');
+            mtrace(
+                'tool_mobile: scheduled subscription cache refreshed. ' .
+                'Plan: ' . ($data['subscription']['plan'] ?? 'unknown')
+            );
+            mtrace('tool_mobile: scheduled subscription cache refresh completed successfully.');
         }
     }
 }
