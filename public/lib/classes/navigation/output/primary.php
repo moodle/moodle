@@ -16,6 +16,7 @@
 
 namespace core\navigation\output;
 
+use core\url;
 use renderable;
 use renderer_base;
 use templatable;
@@ -56,18 +57,176 @@ class primary implements renderable, templatable {
             $output = $this->page->get_renderer('core');
         }
 
-        $menudata = (object) $this->merge_primary_and_custom($this->get_primary_nav(), $this->get_custom_menu($output));
+        $primarynav = $this->merge_primary_and_custom($this->get_primary_nav(), $this->get_custom_menu($output));
+        $menudata = (object) $primarynav;
         $moremenu = new \core\navigation\output\more_menu($menudata, 'navbar-nav', false);
+        $moremenudata = $moremenu->export_for_template($output);
+        if (!empty($moremenudata)) {
+            $moremenudata['reactprops'] = $this->export_react_props($primarynav, $moremenudata);
+        }
         $mobileprimarynav = $this->merge_primary_and_custom($this->get_primary_nav(), $this->get_custom_menu($output), true);
 
         $languagemenu = new \core\output\language_menu($this->page);
 
         return [
             'mobileprimarynav' => $mobileprimarynav,
-            'moremenu' => $moremenu->export_for_template($output),
+            'moremenu' => $moremenudata,
             'lang' => !isloggedin() || isguestuser() ? $languagemenu->export_for_template($output) : [],
             'user' => $this->get_user_menu($output),
         ];
+    }
+
+    /**
+     * Build the JSON props consumed by the core/nav/PrimaryNav component.
+     *
+     * @param array $nodes Standardised primary/custom nav items.
+     * @param array $moremenudata The more_menu export these props render alongside.
+     * @return string JSON-encoded props.
+     */
+    protected function export_react_props(array $nodes, array $moremenudata): string {
+        return json_encode([
+            'items' => $this->export_nodes_for_react($nodes, false),
+            'morelabel' => get_string('moremenu', 'core'),
+            // Taken from the more_menu export rather than repeated as literals, so the React
+            // markup and the NonJS fallback markup can never disagree about either.
+            'navbarstyle' => $moremenudata['navbarstyle'],
+            'istablist' => $moremenudata['istablist'],
+            'measuredclass' => 'primarynav-measured',
+        ], JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Flatten a list of standardised menu items into JSON-safe structures for React.
+     *
+     * Dividers are only meaningful inside a dropdown: legacy moremenu_children.mustache rendered a
+     * child divider, but a top level one fell through to its ordinary <li> branch and became an
+     * empty nav item. They are dropped here rather than reproduced.
+     *
+     * @param iterable $nodes The nodes to flatten.
+     * @param bool $keepdividers Whether divider records should be preserved.
+     * @return array
+     */
+    protected function export_nodes_for_react(iterable $nodes, bool $keepdividers): array {
+        $items = [];
+        $index = 0;
+        foreach ($nodes as $node) {
+            $item = (array) $node;
+            if (!empty($item['divider']) && !$keepdividers) {
+                continue;
+            }
+            $items[] = $this->export_node_for_react($item, $index);
+            $index++;
+        }
+
+        return $items;
+    }
+
+    /**
+     * Flatten a standardised menu item into a JSON-safe structure for React.
+     *
+     * @param array $node The node to flatten.
+     * @param int $index The node's position among its siblings.
+     * @return array
+     */
+    protected function export_node_for_react(array $node, int $index): array {
+        $item = [
+            'key' => $this->resolve_node_key($node, $index),
+            'text' => '',
+            'title' => null,
+            'href' => null,
+            'active' => false,
+            'forceintomoremenu' => false,
+            'showchildreninsubmenu' => false,
+            // Primary nav nodes are never action links, so there is nothing to fill these with.
+            // They are still emitted so the payload matches NavNode's shape exactly.
+            'id' => null,
+            'attributes' => [],
+            'actions' => [],
+            'divider' => !empty($node['divider']),
+            'children' => [],
+        ];
+
+        if ($item['divider']) {
+            return $item;
+        }
+
+        $text = $this->decode_node_text($node['text'] ?? '');
+        $title = $this->decode_node_text($node['title'] ?? '');
+
+        $item['text'] = $text;
+        // Only export a title that differs from the text, as the legacy pair of
+        // custom_menu_item::export_for_template() and moremenu_children.mustache did, so a title
+        // never just repeats the visible label.
+        $item['title'] = ($title !== '' && $title !== $text) ? $title : null;
+        $item['href'] = $this->resolve_node_href($node);
+        $item['active'] = !empty($node['isactive']);
+        $item['forceintomoremenu'] = !empty($node['forceintomoremenu']);
+        $item['showchildreninsubmenu'] = !empty($node['showchildreninsubmenu']) || !empty($node['haschildren']);
+        $item['children'] = $this->export_nodes_for_react($node['children'] ?? [], true);
+
+        return $item;
+    }
+
+    /**
+     * Decode an already escaped value for handing to React.
+     *
+     * Legacy moremenu_children.mustache printed these raw ({{{text}}}, href="{{{url}}}"), so the
+     * HTML parser decoded them into the DOM and custom_menu_item::export_for_template() escapes
+     * accordingly. React decodes neither its text nodes nor an href set with setAttribute(), so
+     * "Terms & Conditions" would show as "Terms &amp; Conditions" and "?id=2&mode=all" would be
+     * requested with a second parameter of "amp;mode".
+     *
+     * @param mixed $value The escaped label, title or url.
+     * @return string
+     */
+    protected function decode_node_text($value): string {
+        return html_entity_decode((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+    /**
+     * Resolve a stable key for React list rendering.
+     *
+     * Keys only have to be unique among siblings, so the node's position is a safe last resort:
+     * unlike a hash of the label it survives the label changing, and so never remounts the item.
+     *
+     * @param array $node The menu node.
+     * @param int $index The node's position among its siblings.
+     * @return string
+     */
+    protected function resolve_node_key(array $node, int $index): string {
+        // The get_primary_nav() function sets both key and sort; custom_menu_item::export_for_template()
+        // sets only sort. Test with isset() rather than !empty() because a sort of 0 is still a key.
+        foreach (['key', 'sort'] as $candidate) {
+            if (isset($node[$candidate]) && $node[$candidate] !== '') {
+                return (string) $node[$candidate];
+            }
+        }
+
+        return 'node-' . $index;
+    }
+
+    /**
+     * Resolve the href used by the React component.
+     *
+     * @param array $node The menu node.
+     * @return string|null
+     */
+    protected function resolve_node_href(array $node): ?string {
+        // The get_primary_nav() function exports navigation_node::action(), i.e. a url object or null, while
+        // custom_menu_item::export_for_template() exports an already stringified url.
+        $url = $node['url'] ?? null;
+
+        if ($url instanceof url) {
+            return $url->out(false);
+        }
+
+        if (!empty($url)) {
+            // That string comes from url::out(), i.e. HTML escaped ready for the legacy template's
+            // raw href="{{{url}}}", where the HTML parser decoded it again. React does not.
+            return $this->decode_node_text($url);
+        }
+
+        return null;
     }
 
     /**

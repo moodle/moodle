@@ -92,6 +92,21 @@ final class primary_test extends \advanced_testcase {
         foreach ($data as $menutype => $value) {
             $this->assertTrue(in_array($menutype, $expecteditems));
         }
+
+        // Every provider case expects a more menu, so assert the React props unconditionally.
+        $this->assertArrayHasKey('moremenu', $data);
+        $this->assertArrayHasKey('reactprops', $data['moremenu']);
+        $this->assertIsString($data['moremenu']['reactprops']);
+        $reactprops = json_decode($data['moremenu']['reactprops'], true);
+        $this->assertIsArray($reactprops);
+        $this->assertNotEmpty($reactprops['items']);
+        $this->assertSame(get_string('moremenu'), $reactprops['morelabel']);
+        // These two must be taken from the more_menu export, so that the React markup and the
+        // NonJS fallback markup can never disagree about them.
+        $this->assertSame($data['moremenu']['navbarstyle'], $reactprops['navbarstyle']);
+        $this->assertSame($data['moremenu']['istablist'], $reactprops['istablist']);
+        $this->assertSame('primarynav-measured', $reactprops['measuredclass']);
+
         // When the user is logged in (excluding guest access), assert that lang menu is included as a part of the
         // user menu when multiple languages are installed.
         if (isloggedin() && !isguestuser()) {
@@ -145,6 +160,233 @@ final class primary_test extends \advanced_testcase {
                 false, false, '', ['mobileprimarynav', 'moremenu', 'user']
             ],
         ];
+    }
+
+    /**
+     * Helper to call one of the protected React export methods on a primary renderable.
+     *
+     * @param string $method The method name.
+     * @param array $args The arguments to pass.
+     * @return mixed
+     */
+    protected function call_react_export(string $method, array $args) {
+        global $PAGE;
+
+        $reflection = new ReflectionMethod(primary::class, $method);
+
+        return $reflection->invokeArgs(new primary($PAGE), $args);
+    }
+
+    /**
+     * A primary nav node's url object and key should survive into the React props.
+     *
+     * @covers \core\navigation\output\primary::export_node_for_react
+     * @covers \core\navigation\output\primary::resolve_node_href
+     * @covers \core\navigation\output\primary::resolve_node_key
+     */
+    public function test_export_node_for_react_flattens_a_primary_nav_node(): void {
+        $url = new \core\url('/course/index.php', ['id' => 7]);
+        $node = $this->call_react_export('export_node_for_react', [
+            [
+                'key' => 'courses',
+                'sort' => 'courses',
+                'text' => 'Courses',
+                'title' => 'Courses',
+                'url' => $url,
+                'isactive' => true,
+                'haschildren' => 0,
+                'children' => [],
+            ],
+            0,
+        ]);
+
+        $this->assertSame('courses', $node['key']);
+        $this->assertSame('Courses', $node['text']);
+        $this->assertSame($url->out(false), $node['href']);
+        $this->assertTrue($node['active']);
+        $this->assertFalse($node['divider']);
+        $this->assertFalse($node['showchildreninsubmenu']);
+        $this->assertSame([], $node['children']);
+        // A title identical to the label adds nothing, so it is not emitted.
+        $this->assertNull($node['title']);
+        // Primary nav nodes are never action links, but the keys are still present so that the
+        // payload matches the component's NavNode shape.
+        $this->assertNull($node['id']);
+        $this->assertSame([], $node['attributes']);
+        $this->assertSame([], $node['actions']);
+    }
+
+    /**
+     * A node with children should be flagged to render them in a submenu.
+     *
+     * @covers \core\navigation\output\primary::export_node_for_react
+     */
+    public function test_export_node_for_react_flags_nodes_with_children(): void {
+        $node = $this->call_react_export('export_node_for_react', [
+            [
+                'text' => 'Parent',
+                'url' => 'https://example.com/parent.php',
+                'haschildren' => 1,
+                'children' => [
+                    ['text' => 'Child', 'url' => 'https://example.com/child.php', 'sort' => 1],
+                ],
+            ],
+            3,
+        ]);
+
+        $this->assertTrue($node['showchildreninsubmenu']);
+        $this->assertCount(1, $node['children']);
+        $this->assertSame('Child', $node['children'][0]['text']);
+        $this->assertSame('https://example.com/child.php', $node['children'][0]['href']);
+        // Neither key nor sort is set on the parent, so it falls back to its sibling position.
+        $this->assertSame('node-3', $node['key']);
+    }
+
+    /**
+     * Dividers are a dropdown-only concept: kept for children, dropped at the top level.
+     *
+     * @covers \core\navigation\output\primary::export_nodes_for_react
+     */
+    public function test_export_nodes_for_react_only_keeps_dividers_in_submenus(): void {
+        $nodes = [
+            ['text' => 'One', 'url' => 'https://example.com/one.php'],
+            ['divider' => true],
+            [
+                'text' => 'Two',
+                'url' => 'https://example.com/two.php',
+                'haschildren' => 1,
+                'children' => [
+                    ['text' => 'Child one', 'url' => 'https://example.com/c1.php'],
+                    ['divider' => true],
+                    ['text' => 'Child two', 'url' => 'https://example.com/c2.php'],
+                ],
+            ],
+        ];
+
+        $items = $this->call_react_export('export_nodes_for_react', [$nodes, false]);
+
+        // The top level divider is dropped: the legacy template had no markup for one there.
+        $this->assertCount(2, $items);
+        $this->assertSame(['One', 'Two'], array_column($items, 'text'));
+
+        // The submenu divider is preserved so DropdownItems can render a dropdown-divider.
+        $children = $items[1]['children'];
+        $this->assertCount(3, $children);
+        $this->assertFalse($children[0]['divider']);
+        $this->assertTrue($children[1]['divider']);
+        $this->assertFalse($children[2]['divider']);
+        // Divider records still carry a key, so React never renders siblings with a duplicate one.
+        $this->assertNotSame($children[0]['key'], $children[1]['key']);
+    }
+
+    /**
+     * Labels arrive already formatted, so they must be decoded before React escapes them again.
+     *
+     * @covers \core\navigation\output\primary::decode_node_text
+     * @covers \core\navigation\output\primary::export_node_for_react
+     */
+    public function test_export_node_for_react_decodes_formatted_labels(): void {
+        global $CFG, $PAGE;
+
+        // The format_string() function encodes the bare ampersand. React escapes its own text
+        // nodes, so without decoding the item would render as "Terms &amp; Conditions".
+        $CFG->custommenuitems = "Terms & Conditions|/terms.php|Read the terms & conditions";
+        $this->setUser(0);
+
+        $primary = new primary($PAGE);
+        $data = $primary->export_for_template($PAGE->get_renderer('core'));
+        $reactprops = json_decode($data['moremenu']['reactprops'], true);
+
+        $texts = array_column($reactprops['items'], 'text');
+        $this->assertContains('Terms & Conditions', $texts);
+        $this->assertNotContains('Terms &amp; Conditions', $texts);
+
+        $terms = $reactprops['items'][array_search('Terms & Conditions', $texts, true)];
+        // A custom menu title differing from the label is preserved, and decoded the same way.
+        $this->assertSame('Read the terms & conditions', $terms['title']);
+    }
+
+    /**
+     * Custom menu nodes export a stringified url rather than a url object.
+     *
+     * @covers \core\navigation\output\primary::resolve_node_href
+     */
+    public function test_resolve_node_href_handles_both_node_shapes(): void {
+        $url = new \core\url('/my/courses.php');
+
+        $this->assertSame(
+            $url->out(false),
+            $this->call_react_export('resolve_node_href', [['url' => $url]]),
+        );
+
+        $this->assertSame(
+            'https://example.com/custom.php',
+            $this->call_react_export('resolve_node_href', [['url' => 'https://example.com/custom.php']]),
+        );
+
+        $this->assertNull($this->call_react_export('resolve_node_href', [['url' => null]]));
+        $this->assertNull($this->call_react_export('resolve_node_href', [[]]));
+    }
+
+    /**
+     * A stringified url arrives HTML escaped and must be decoded before React sets it as an href.
+     *
+     * @covers \core\navigation\output\primary::resolve_node_href
+     */
+    public function test_resolve_node_href_decodes_an_escaped_custom_menu_url(): void {
+        // The url arrives escaped for the legacy template's raw href="{{{url}}}". React sets href
+        // with setAttribute(), so left alone the second parameter below would be "amp;mode".
+        $this->assertSame(
+            'https://example.com/report/log/index.php?id=2&mode=all',
+            $this->call_react_export(
+                'resolve_node_href',
+                [['url' => 'https://example.com/report/log/index.php?id=2&amp;mode=all']],
+            ),
+        );
+    }
+
+    /**
+     * The whole custom menu pipeline, from admin setting to React prop, keeps a usable url.
+     *
+     * @covers \core\navigation\output\primary::export_react_props
+     * @covers \core\navigation\output\primary::resolve_node_href
+     */
+    public function test_export_react_props_keeps_custom_menu_urls_navigable(): void {
+        global $CFG, $PAGE;
+
+        $CFG->custommenuitems = "Log report|/report/log/index.php?id=2&mode=all";
+        $this->setUser(0);
+
+        $primary = new primary($PAGE);
+        $data = $primary->export_for_template($PAGE->get_renderer('core'));
+        $reactprops = json_decode($data['moremenu']['reactprops'], true);
+
+        $hrefs = array_column($reactprops['items'], 'href');
+        $this->assertContains(
+            (new \core\url('/report/log/index.php', ['id' => 2, 'mode' => 'all']))->out(false),
+            $hrefs,
+        );
+        foreach ($hrefs as $href) {
+            $this->assertStringNotContainsString('&amp;', (string) $href);
+        }
+    }
+
+    /**
+     * Keys only need to be unique among siblings, and must not depend on the label.
+     *
+     * @covers \core\navigation\output\primary::resolve_node_key
+     */
+    public function test_resolve_node_key_prefers_key_then_sort_then_position(): void {
+        $this->assertSame(
+            'myhome',
+            $this->call_react_export('resolve_node_key', [['key' => 'myhome', 'sort' => 'myhome'], 0]),
+        );
+        // Custom menu items carry only a sort, and its values start at 1.
+        $this->assertSame('2', $this->call_react_export('resolve_node_key', [['sort' => 2], 5]));
+        // A sort of 0 is still a usable key, so it must not be treated as absent.
+        $this->assertSame('0', $this->call_react_export('resolve_node_key', [['sort' => 0], 5]));
+        // Nothing identifying at all: fall back to the sibling position.
+        $this->assertSame('node-4', $this->call_react_export('resolve_node_key', [['text' => 'Anything'], 4]));
     }
 
     /**

@@ -19,14 +19,14 @@ Feature: Primary navigation
     And the following config values are set as admin:
       | defaulthomepage | <defaulthomepageset> |
     And I am on homepage
-    And I should see "<homepage>" in the "a.nav-link.active:not([tabindex])" "css_element"
+    And I should see "<homepage>" in the ".primary-navigation a.mds-nav-pill--selected" "css_element"
     And I should see "<sitehome>" in the "<linkelement>" "css_element"
 
     Examples:
-      | defaulthomepageset | homepage    |  sitehome  |  linkelement                                                  |
-      |   0                | Home        |   Home     |  a.nav-link.active:not([tabindex]):not([href*='redirect=0'])  |
-      |   1                | Dashboard   |   Home     |  a.nav-link[tabindex='-1'][href$='redirect=0']                |
-      |   3                | My courses  |   Home     |  a.nav-link[tabindex='-1'][href$='redirect=0']                |
+      | defaulthomepageset | homepage   | sitehome | linkelement                                                                         |
+      | 0                  | Home       | Home     | .primary-navigation a.mds-nav-pill--selected:not([href*='redirect=0'])              |
+      | 1                  | Dashboard  | Home     | .primary-navigation a.mds-nav-pill[href$='redirect=0']:not(.mds-nav-pill--selected) |
+      | 3                  | My courses | Home     | .primary-navigation a.mds-nav-pill[href$='redirect=0']:not(.mds-nav-pill--selected) |
 
   @javascript @theme_boost
   Scenario Outline: Admin sets defaulthomepage to user preference and verifies the landing page based on it
@@ -42,7 +42,7 @@ Feature: Primary navigation
       | defaulthomepage | 2 |
     And I log out
     And I log in as "admin"
-    And I should see "<homepage>" in the "a.nav-link.active:not([tabindex])" "css_element"
+    And I should see "<homepage>" in the ".primary-navigation a.mds-nav-pill--selected" "css_element"
 
     Examples:
       | userpreference | homepage    |

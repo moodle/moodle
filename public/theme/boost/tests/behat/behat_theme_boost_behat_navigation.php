@@ -41,8 +41,12 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
      * @return void
      */
     public function i_should_see_is_active_in_navigation($element) {
-        $this->execute("behat_general::assert_element_contains_text",
-            [$element, '.navbar .nav-link.active', 'css_element']);
+        // Accept both shapes of active item: the React NavPill under JavaScript, and the
+        // server-rendered core/moremenu_children fallback without it.
+        $this->execute(
+            "behat_general::assert_element_contains_text",
+            [$element, '.navbar .mds-nav-pill--selected, .navbar .nav-link.active', 'css_element']
+        );
     }
     /**
      * Checks whether a node is active in the secondary nav.

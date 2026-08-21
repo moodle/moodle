@@ -46927,6 +46927,29 @@ div.editor_atto_toolbar button .icon {
   border-top: 3px solid transparent;
 }
 
+.primary-navigation .navigation.primarynav-navbar .more-nav {
+  gap: var(--mds-spacing-xs);
+}
+.primary-navigation .navigation.primarynav-navbar .nav-item {
+  height: 60px;
+}
+.primary-navigation .navigation.primarynav-navbar .mds-nav-pill {
+  color: #1d2125;
+}
+.primary-navigation .navigation.primarynav-navbar .mds-nav-pill.dropdown-toggle:focus {
+  box-shadow: none;
+}
+.primary-navigation .navigation.primarynav-navbar .mds-nav-pill.dropdown-toggle:focus-visible {
+  outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+  outline-offset: var(--mds-spacing-offset);
+}
+.primary-navigation .navigation.primarynav-navbar .mds-nav-pill--selected:visited {
+  background-color: var(--mds-bg-nav-pill-selected);
+}
+.jsenabled .primary-navigation .navigation.primarynav-navbar:not(.primarynav-measured) {
+  opacity: 0;
+}
+
 @media (max-width: 767.98px) {
   .primary-navigation {
     display: none;
