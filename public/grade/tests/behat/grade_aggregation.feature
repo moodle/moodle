@@ -247,9 +247,9 @@ Feature: We can use calculated grade totals
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
-      | Aggregation                     | Natural |
-      | Include outcomes in aggregation | 1       |
-      | Exclude empty grades            | 0       |
+      | Aggregation                              | Natural |
+      | Include learning outcomes in aggregation | 1       |
+      | Exclude empty grades                     | 0       |
     # Change window size to ultra-wide to avoid 'element-click-intercepted' failures.
     And I change window size to "5120x2160"
     And I navigate to "View > Grader report" in the course gradebook
@@ -276,8 +276,8 @@ Feature: We can use calculated grade totals
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I am on the "Course 1" "grades > gradebook setup" page logged in as "teacher1"
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
-      | Aggregation                     | Natural |
-      | Include outcomes in aggregation | 0       |
+      | Aggregation                              | Natural |
+      | Include learning outcomes in aggregation | 0       |
     And I press "Save"
     And I log out
     And I log in as "student1"
@@ -300,9 +300,9 @@ Feature: We can use calculated grade totals
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
-      | Aggregation                     | Natural |
-      | Include outcomes in aggregation | 1       |
-      | Exclude empty grades            | 0       |
+      | Aggregation                              | Natural |
+      | Include learning outcomes in aggregation | 1       |
+      | Exclude empty grades                     | 0       |
     And I set the following settings for grade item "Test outcome item one" of type "gradeitem" on "setup" page:
       | Weight adjusted  | 1   |
       | aggregationcoef2 | 100 |

@@ -123,7 +123,7 @@ if ($courseid) {
 
 
 $outcomes_tables = array();
-$heading = get_string('outcomes', 'grades');
+$heading = get_string('manageoutcomes', 'grades');
 
 if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
     $return = $OUTPUT->heading($strcustomoutcomes, 3, 'main mt-3');

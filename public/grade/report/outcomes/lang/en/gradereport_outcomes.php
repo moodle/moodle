@@ -23,11 +23,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addoutcome'] = 'Add an outcome';
-$string['courseoutcomes'] = 'Course outcomes';
-$string['coursespecoutcome'] = 'Course outcomes';
-$string['eventgradereportviewed'] = 'Grade outcomes report viewed';
-$string['pluginname'] = 'Outcomes report';
-$string['privacy:metadata'] = 'The Grade outcomes report only shows data stored in other locations.';
-$string['outcomes:view'] = 'View outcomes report';
+$string['addoutcome'] = 'Add a learning outcome';
+$string['courseoutcomes'] = 'Course learning outcomes';
+$string['eventgradereportviewed'] = 'Grade learning outcomes report viewed';
+$string['pluginname'] = 'Learning outcomes report';
+$string['privacy:metadata'] = 'The Grade learning outcomes report only shows data stored in other locations.';
+$string['outcomes:view'] = 'View learning outcomes report';
 $string['usedgradeitem'] = 'Number of grade items';
+
+// Deprecated since Moodle 5.3.
+$string['coursespecoutcome'] = 'Course learning outcomes';

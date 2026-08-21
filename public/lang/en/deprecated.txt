@@ -105,3 +105,4 @@ moodlenetprofile_help,core_user
 privacy:metadata:moodlenetprofile,core_user
 categorymove,core_question
 courseindexoptions,core_courseformat
+noscales,core_grades

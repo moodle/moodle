@@ -1,4 +1,4 @@
-@core @core_grades @javascript @testtt
+@core @core_grades @javascript
 Feature: We carry over data from modal to advanced grade item settings
   In order to setup grade items quickly
   As an teacher
@@ -58,11 +58,11 @@ Feature: We carry over data from modal to advanced grade item settings
       | Parent category              | Course 1 |
     And I press "Cancel"
     And I wait until the page is ready
-    And I choose the "Add outcome item" item in the "Add" action menu
+    And I choose the "Add learning outcome item" item in the "Add" action menu
     And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     And the following fields match these values:
       | Item name         |                          |
-      | Outcome           | Outcome 1                |
+      | Learning outcome  | Outcome 1                |
       | Linked activity   | None                     |
       | Grade category    | Course 1                 |
 
@@ -123,13 +123,13 @@ Feature: We carry over data from modal to advanced grade item settings
       | Parent category              | Some cool grade category |
     And I press "Cancel"
     And I wait until the page is ready
-    And I choose the "Add outcome item" item in the "Add" action menu
+    And I choose the "Add learning outcome item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name         | Outcome item 1           |
-      | Outcome           | Outcome 2                |
+      | Learning outcome  | Outcome 2                |
       | Linked activity   | Test assignment 1        |
     And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     And the following fields match these values:
       | Item name         | Outcome item 1           |
-      | Outcome           | Outcome 2                |
+      | Learning outcome  | Outcome 2                |
       | Linked activity   | Test assignment 1        |
