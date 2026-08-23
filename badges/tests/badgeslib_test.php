@@ -973,6 +973,34 @@ final class badgeslib_test extends badges_testcase {
     }
 
     /**
+     * Test save_alignment() only updates alignments of the same badge.
+     */
+    public function test_save_alignment_scoped_to_badge(): void {
+        global $DB;
+
+        $coursebadge = new badge($this->coursebadge);
+        $coursealignments = $coursebadge->get_alignments();
+        $this->assertCount(1, $coursealignments);
+        $coursealignment = reset($coursealignments);
+
+        $sitebadge = new badge($this->badgeid);
+        $alignment = new stdClass();
+        $alignment->badgeid = $sitebadge->id;
+        $alignment->targetname = 'Site badge alignment';
+        $alignment->targeturl = 'https://example.com/site';
+        $newid = $sitebadge->save_alignment($alignment, $coursealignment->id);
+
+        // A new alignment is created for the site badge, the course badge alignment is unchanged.
+        $this->assertNotEquals($coursealignment->id, $newid);
+        $this->assertEquals($coursealignment, $DB->get_record('badge_alignment', ['id' => $coursealignment->id]));
+        $this->assertCount(1, $coursebadge->get_alignments());
+
+        $sitealignments = $sitebadge->get_alignments();
+        $this->assertCount(1, $sitealignments);
+        $this->assertEquals('Site badge alignment', $sitealignments[$newid]->targetname);
+    }
+
+    /**
      * Test badges_delete_site_backpack().
      *
      */
