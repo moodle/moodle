@@ -37,3 +37,4 @@ RUN mkdir -p /var/moodledata \
     && chown -R www-data:www-data /var/moodledata
 
 WORKDIR /var/www
+COPY php.ini /usr/local/etc/php/conf.d/moodle.ini

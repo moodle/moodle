@@ -1,6 +1,6 @@
-﻿services:
+services:
   db:
-    image: mariadb:10.11
+    image: mariadb:11.4
     container_name: moodle-db
     restart: unless-stopped
     environment:
@@ -21,8 +21,10 @@
       - "8080:80"
     volumes:
       - ./:/var/www
+      - moodle-data:/var/moodledata
     depends_on:
       - db
 
 volumes:
   moodle-db-data:
+  moodle-data:
