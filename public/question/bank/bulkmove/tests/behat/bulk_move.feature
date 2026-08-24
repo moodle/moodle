@@ -50,16 +50,10 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I should see "Bulk move questions"
     And I click on "Disable" "link" in the "Bulk move questions" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I apply question bank filter "Category" with value "Test questions 1"
-    And I click on "First question" "checkbox"
-    And I click on "With selected" "button"
     Then I should not see question bulk action "move"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "Bulk move questions" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I apply question bank filter "Category" with value "Test questions 1"
-    And I click on "First question" "checkbox"
-    And I click on "With selected" "button"
     And I should see question bulk action "move"
 
   @javascript
@@ -68,7 +62,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I am on the "Test quiz" "mod_quiz > question bank" page
     And I apply question bank filter "Category" with value "Test questions 1"
     And I click on "First question" "checkbox"
-    And I click on "With selected" "button"
     And I click on "move" "button"
     And I open the autocomplete suggestions list in the ".search-categories" "css_element"
     And "Test questions 1" "autocomplete_suggestions" should exist
@@ -94,7 +87,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I am on the "Test quiz" "mod_quiz > question bank" page
     And I apply question bank filter "Category" with value "Test questions 1"
     And I click on "First question" "checkbox"
-    And I click on "With selected" "button"
     And I click on "move" "button"
     And I open the autocomplete suggestions list in the ".search-categories" "css_element"
     And I click on "Test questions 6 (1)" item in the autocomplete list
@@ -116,7 +108,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     # Select questions to be moved.
     And I click on "Question 1" "checkbox"
     And I click on "Question 2" "checkbox"
-    And I click on "With selected" "button"
     When I press "Move to"
     # Select a different category to move the questions into.
     And I open the autocomplete suggestions list in the ".search-categories" "css_element"
@@ -143,7 +134,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     # Select questions to be moved.
     And I click on "Question 1" "checkbox"
     And I click on "Question 2" "checkbox"
-    And I click on "With selected" "button"
     When I press "Move to"
     # Select a different question bank to move the questions into.
     And I open the autocomplete suggestions list in the ".search-banks" "css_element"
@@ -166,7 +156,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I am on the "Course 1" "core_question > course question bank" page logged in as teacher1
     And I apply question bank filter "Category" with value "Test questions"
     And I click on "Question 1" "checkbox"
-    And I click on "With selected" "button"
     And I click on "move" "button"
     And I open the autocomplete suggestions list in the ".search-banks" "css_element"
     And I click on "C2 - Question bank 2" item in the autocomplete list
@@ -188,7 +177,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I apply question bank filter "Category" with value "Test questions 1"
     And I choose "History" action for "First question" in the question bank
     And I click on "First question" "checkbox"
-    And I click on "With selected" "button"
     Then I should see question bulk action "deleteselected"
     And I should not see question bulk action "move"
 
@@ -229,7 +217,6 @@ Feature: Use the qbank plugin manager page for bulkmove
       | Question text | test             |
     And I press "id_submitbutton"
     And I click on "Seventh question" "checkbox"
-    And I click on "With selected" "button"
     And I click on "move" "button"
     And the field "searchbanks" matches value "C1 - Test quiz"
     And the field "selectcategory" matches value "Test questions 1 (2)"
@@ -247,7 +234,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     Then I should see "Questions successfully moved"
     # The move dialogue should default to the new bank and category.
     And I click on "Seventh question" "checkbox"
-    And I click on "With selected" "button"
     And I click on "move" "button"
     And the field "searchbanks" matches value "C1 - Question bank 1"
     And the field "selectcategory" matches value "Test questions 2 (2)"
@@ -267,7 +253,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I am on the "Test quiz" "mod_quiz > question bank" page
     And I apply question bank filter "Category" with value "Test questions 1"
     And I click on "First question" "checkbox"
-    And I click on "With selected" "button"
     And I click on "move" "button"
     And I open the autocomplete suggestions list in the ".search-banks" "css_element"
     Then "New question bank" "autocomplete_suggestions" should exist
@@ -315,7 +300,6 @@ Feature: Use the qbank plugin manager page for bulkmove
     And I select "Categories" from the "Question bank tertiary navigation" singleselect
     And I follow "Test questions 5"
     And I click on "Fifth question" "checkbox"
-    And I click on "With selected" "button"
     And I click on "move" "button"
     And I wait until the page is ready
     And "Question bank" "autocomplete_selection" should exist

@@ -81,4 +81,9 @@ class bulk_delete_action extends \core_question\local\bank\bulk_action_base {
         [, $message] = helper::get_delete_confirmation_message($questionids, $deleteall);
         return $message;
     }
+
+    #[\Override]
+    public function get_action_icon(): string {
+        return 'i/delete';
+    }
 }

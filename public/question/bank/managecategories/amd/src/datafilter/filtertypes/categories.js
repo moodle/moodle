@@ -56,7 +56,7 @@ export default class extends GenericFilter {
         if (checked === null || checked === undefined || checked === "") {
             checked = await getUserPreference('qbank_managecategories_includesubcategories_filter_default');
         } else {
-            setUserPreference('qbank_managecategories_includesubcategories_filter_default', checked);
+            setUserPreference('qbank_managecategories_includesubcategories_filter_default', checked ? 1 : 0);
         }
         const {html} = await Templates.renderForPromise('qbank_managecategories/include_subcategories_checkbox', {
             checked: checked && checked !== '0',

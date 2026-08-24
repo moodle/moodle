@@ -49,7 +49,8 @@ export default class ModalQuestionBankBulkmove extends Modal {
         CATEGORY_SUGGESTION: '.search-categories span.form-autocomplete-downarrow',
         CATEGORY_SELECTION: '.search-categories span[role="option"][data-active-selection="true"]',
         CONFIRM_BUTTON: '.bulk-move-footer button[data-action="save"]',
-        CANCEL_BUTTON: '.bulk-move-footer button[data-action="cancel"]'
+        CANCEL_BUTTON: '.bulk-move-footer button[data-action="cancel"]',
+        MOVE_TO_BUTTON: '.bulkactions button[name="move"]',
     };
 
     /**
@@ -58,8 +59,8 @@ export default class ModalQuestionBankBulkmove extends Modal {
      */
     static init(contextId, categoryId) {
         document.addEventListener('click', (e) => {
-            const trigger = e.target;
-            if (trigger.classList.contains('dropdown-item') && trigger.getAttribute('name') === 'move') {
+            const trigger = e.target.closest(this.SELECTORS.MOVE_TO_BUTTON);
+            if (trigger) {
                 e.preventDefault();
                 ModalQuestionBankBulkmove.create({
                     contextId,

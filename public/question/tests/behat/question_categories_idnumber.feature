@@ -80,7 +80,6 @@ Feature: A teacher can put questions with idnumbers in categories in the questio
     And I press "submitbutton"
     # Javascript is required for the next step.
     And I click on "Test question 3" "checkbox" in the "Test question 3" "table_row"
-    And I click on "With selected" "button"
     And I click on question bulk action "move"
     And I open the autocomplete suggestions list in the ".search-categories" "css_element"
     And I click on "Used category" "list_item" in the "Move the selected questions to..." "dialogue"

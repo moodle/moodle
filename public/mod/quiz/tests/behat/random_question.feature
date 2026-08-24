@@ -45,7 +45,6 @@ Feature: Moving a question to another category should not affect random question
     And I click on "Qbank 1" "link"
     And I apply question bank filter "Category" with value "Used category"
     And I click on "Test question to be moved" "checkbox" in the "Test question to be moved" "table_row"
-    And I click on "With selected" "button"
     And I click on question bulk action "move"
     And I open the autocomplete suggestions list in the ".search-categories" "css_element"
     And I click on "Subcategory" "list_item" in the "Move the selected questions to..." "dialogue"

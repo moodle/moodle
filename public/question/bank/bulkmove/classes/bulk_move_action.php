@@ -73,4 +73,9 @@ class bulk_move_action extends \core_question\local\bank\bulk_action_base {
             ]
         );
     }
+
+    #[\Override]
+    public function get_action_icon(): string {
+        return 'i/move_2d';
+    }
 }
