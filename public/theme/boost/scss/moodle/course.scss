@@ -119,15 +119,6 @@ $divider-hover-color: $primary !default;
         }
     }
 
-    &.hidden,
-    &.orphaned {
-        .section-item {
-            .course-section-header {
-                background-color: $gray-100;
-            }
-        }
-    }
-
     // Highlighted section.
     &.current {
         > .section-item {
@@ -748,16 +739,57 @@ $divider-hover-color: $primary !default;
             border: none;
             // No rounded borders
             border-radius: 0;
-            // Add bottom border back to last activity in section in non editing mode.
-            body:not(.editing) & .activity:last-child {
-                border-bottom: $border-width solid $border-color;
-            }
+            background-color: transparent;
 
+            .course-section-header {
+                padding: 0;
+            }
+        }
+
+        .delegated-section .section-item {
+            border: $mds-stroke-weight-sm solid var(--mds-border-subtle);
+            @include border-radius($mds-border-radius-xl);
+            background-color: var(--mds-bg-surface-default);
+
+            .course-section-header {
+                padding: $mds-spacing-md;
+                @include border-radius($mds-border-radius-xl);
+            }
+        }
+
+        .section_availability .availabilityinfo {
+            body:not(.editing) & {
+                margin-bottom: $mds-spacing-md;
+            }
+        }
+
+        .sectionbadges .badge {
+            margin-left: 0;
+            margin-bottom: $mds-spacing-md;
+        }
+
+        .delegated-section .sectionbadges .badge {
+            margin-left: map-get($spacers, 2);
+            margin-bottom: 0;
         }
     }
 }
 
 .single-section-page {
+    #page.drawers #topofscroll {
+        background-color: var(--#{$prefix}body-bg);
+        @include border-radius($mds-border-radius-xl);
+        padding: $mds-spacing-md;
+    }
+
+    #page-header {
+        padding: 0;
+    }
+
+    #page.drawers div[role="main"] {
+        padding: 0;
+    }
+
     .header-action {
         display: inline-block;
     }

@@ -34142,9 +34142,6 @@ table.calendartable caption {
   border-bottom-right-radius: 1rem;
   border-bottom-left-radius: 1rem;
 }
-.course-section.hidden .section-item .course-section-header, .course-section.orphaned .section-item .course-section-header {
-  background-color: #f8f9fa;
-}
 .course-section.current > .section-item {
   position: relative;
 }
@@ -34650,11 +34647,43 @@ table.calendartable caption {
   padding: 0;
   border: none;
   border-radius: 0;
+  background-color: transparent;
 }
-body:not(.editing) .single-section > ul > .course-section .section-item .activity:last-child {
-  border-bottom: 1px solid #dee2e6;
+.single-section > ul > .course-section .section-item .course-section-header {
+  padding: 0;
+}
+.single-section > ul > .course-section .delegated-section .section-item {
+  border: 0.0625rem solid var(--mds-border-subtle);
+  border-radius: 1rem;
+  background-color: var(--mds-bg-surface-default);
+}
+.single-section > ul > .course-section .delegated-section .section-item .course-section-header {
+  padding: 1rem;
+  border-radius: 1rem;
+}
+body:not(.editing) .single-section > ul > .course-section .section_availability .availabilityinfo {
+  margin-bottom: 1rem;
+}
+.single-section > ul > .course-section .sectionbadges .badge {
+  margin-left: 0;
+  margin-bottom: 1rem;
+}
+.single-section > ul > .course-section .delegated-section .sectionbadges .badge {
+  margin-left: 0.5rem;
+  margin-bottom: 0;
 }
 
+.single-section-page #page.drawers #topofscroll {
+  background-color: var(--bs-body-bg);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+.single-section-page #page-header {
+  padding: 0;
+}
+.single-section-page #page.drawers div[role=main] {
+  padding: 0;
+}
 .single-section-page .header-action {
   display: inline-block;
 }
