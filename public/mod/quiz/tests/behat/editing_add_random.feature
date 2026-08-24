@@ -232,3 +232,86 @@ Feature: Adding random questions to a quiz based on category and tags
     And I should see "\"listen\" & \"answer\""
     And I should not see "bar"
     And I should not see "question 2 name"
+
+  Scenario: User cannot add random questions from a bank they can't see
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
+    And the following "role" exists:
+      | shortname               | noquestions          |
+      | name                    | Cannot use questions |
+      | moodle/question:usemine | prohibit             |
+      | moodle/question:useall  | prohibit             |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher2 | C1     | editingteacher |
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher2"
+    And I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
+    And I select "1" from the "randomcount" singleselect
+    And I press "Add random question"
+    When the following "role assigns" exist:
+      | user     | role        | contextlevel    | reference |
+      | teacher2 | noquestions | Activity module | qbank1    |
+    And I open the "Page 1" add to quiz menu
+    And I follow "a random question"
+    And I click on "Switch bank" "button"
+    Then "Qbank 1" "link" should not exist in the "Select question bank" "dialogue"
+
+  Scenario: Add random question modal remembers the last selected bank after adding a question
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I should see "Current bank: Quiz 1"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
+    And I should see "Current bank: Qbank 1"
+    And I apply question bank filter "Category" with value "Qbank Questions"
+    And I should see "Qbank question 1"
+    And I press "Add random question"
+    And I should not see "Current bank: Qbank 1"
+    When I open the "Page 1" add to quiz menu
+    And I follow "a random question"
+    Then I should not see "Current bank: Quiz 1"
+    And I should see "Current bank: Qbank 1"
+
+  Scenario: Add random question modal remembers the last selected bank after closing the modal
+    Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I should see "Current bank: Quiz 1"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
+    And I should see "Current bank: Qbank 1"
+    And I apply question bank filter "Category" with value "Qbank Questions"
+    And I should see "Qbank question 1"
+    And I click on "Close" "button" in the "Add a random question at the end" "dialogue"
+    And I should not see "Current bank: Qbank 1"
+    When I open the "last" add to quiz menu
+    And I follow "a random question"
+    Then I should not see "Current bank: Quiz 1"
+    And I should see "Current bank: Qbank 1"
+
+  @javascript
+  Scenario: You cannot see the questions from one quiz in another
+    Given the following "activities" exist:
+      | activity | name   | course | idnumber |
+      | quiz     | Quiz 2 | C1     | quiz2    |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1" "link" in the "Select question bank" "dialogue"
+    And I click on "Switch bank" "button"
+    And I click on "Quiz 1" "link" in the "Select question bank" "dialogue"
+    And I should see "Current bank: Quiz 1"
+    And I click on "Close" "button" in the "Add a random question at the end" "dialogue"
+    When I am on the "Quiz 2" "mod_quiz > Edit" page
+    And I open the "last" add to quiz menu
+    And I follow "a random question"
+    And I should not see "Current bank: Quiz 1"
+    And I should see "Current bank: Quiz 2"

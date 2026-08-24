@@ -277,3 +277,68 @@ Feature: Adding questions to a quiz from the question bank
     And "Question Bank A" "link" should exist
     And "Shared question" "link" should not exist
     And "Question Bank C" "link" should not exist
+
+  @javascript
+  Scenario: Add from question bank modal remembers the last selected bank after adding a question
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I should see "Current bank: Quiz 1"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
+    And I should see "Current bank: Qbank 1"
+    And I apply question bank filter "Category" with value "Qbank Questions"
+    And I should see "question 03 name"
+    And I should see "question 04 name"
+    And I click on "Select" "checkbox" in the "question 03 name" "table_row"
+    And I press "Add selected questions to the quiz"
+    And I should not see "Current bank: Qbank 1"
+    When I open the "Page 1" add to quiz menu
+    And I follow "from question bank"
+    Then I should not see "Current bank: Quiz 1"
+    And I should see "Current bank: Qbank 1"
+
+  @javascript
+  Scenario: Add from question bank modal remembers the last selected bank after closing the modal
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I should see "Current bank: Quiz 1"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
+    And I should see "Current bank: Qbank 1"
+    And I apply question bank filter "Category" with value "Qbank Questions"
+    And I should see "question 03 name"
+    And I should see "question 04 name"
+    And I click on "Close" "button" in the "Add from the question bank at the end" "dialogue"
+    And I should not see "Current bank: Qbank 1"
+    When I open the "last" add to quiz menu
+    And I follow "from question bank"
+    Then I should not see "Current bank: Quiz 1"
+    And I should see "Current bank: Qbank 1"
+
+  @javascript
+  Scenario: You cannot see the questions from one quiz in another
+    Given the following "activities" exist:
+      | activity | name   | course | idnumber |
+      | quiz     | Quiz 2 | C1     | quiz2    |
+    And the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And I am on the "Quiz 1" "mod_quiz > Edit" page logged in as teacher1
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I click on "Switch bank" "button"
+    And I click on "Qbank 1 & < > \" ' &amp;" "link" in the "Select question bank" "dialogue"
+    And I click on "Switch bank" "button"
+    And I click on "Quiz 1" "link" in the "Select question bank" "dialogue"
+    And I should see "Current bank: Quiz 1"
+    And I click on "Close" "button" in the "Add from the question bank at the end" "dialogue"
+    When I am on the "Quiz 2" "mod_quiz > Edit" page
+    And I open the "last" add to quiz menu
+    And I follow "from question bank"
+    And I should not see "Current bank: Quiz 1"
+    And I should see "Current bank: Quiz 2"

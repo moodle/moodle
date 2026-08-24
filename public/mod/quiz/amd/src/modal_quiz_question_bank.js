@@ -93,6 +93,25 @@ export default class ModalQuizQuestionBank extends Modal {
     }
 
     /**
+     * Set the modal body to an updated fragment.
+     *
+     * @param {string} querystring URL encoded string.
+     * @param {Number} bankcmid The CMID of the question bank to load.
+     */
+    bodyFragment(querystring, bankcmid) {
+        return Fragment.loadFragment(
+            'mod_quiz',
+            'quiz_question_bank',
+            this.getContextId(),
+            {
+                querystring,
+                quizcmid: this.quizCmId,
+                bankcmid,
+            },
+        );
+    }
+
+    /**
      * Replaces the current body contents with a new version of the question
      * bank.
      *
@@ -106,16 +125,21 @@ export default class ModalQuizQuestionBank extends Modal {
         // Load the question bank fragment to be displayed in the modal and hide the 'go back' button.
         this.hideFooter();
         this.setTitle(this.originalTitle);
-        this.setBody(Fragment.loadFragment(
-            'mod_quiz',
-            'quiz_question_bank',
-            this.getContextId(),
-            {
-                querystring,
-                quizcmid: this.quizCmId,
-                bankcmid: this.bankCmId,
-            }
-        ));
+        const lastBankCmid = window.sessionStorage.getItem('lastBankCmid');
+        let bankCmid = lastBankCmid ? lastBankCmid : this.bankCmId;
+        const bodyFragment = this.bodyFragment(querystring, bankCmid)
+            .catch((ex) => {
+                if (lastBankCmid && (ex.errorcode === 'nopermissions' || ex.errorcode === 'invalidcoursemodule')) {
+                    // The user has lost access to their last accessed bank, try again with the current bank.
+                    window.sessionStorage.removeItem('lastBankCmid');
+                    bankCmid = this.bankCmId;
+                    return this.bodyFragment(querystring, this.bankCmId);
+                } else {
+                    Notification.exception(ex);
+                    return '';
+                }
+            });
+        this.setBody(bodyFragment);
     }
 
     /**
@@ -173,6 +197,7 @@ export default class ModalQuizQuestionBank extends Modal {
         this.getModal().get(0).addEventListener('bankSwitched', (e) => {
             const bankCmId = e.detail.cmid;
             if (bankCmId > 0) {
+                window.sessionStorage.setItem('lastBankCmid', bankCmId);
                 // We need to clear the filter as we are about to reload the content.
                 const url = new URL(location.href);
                 url.searchParams.delete('filter');
