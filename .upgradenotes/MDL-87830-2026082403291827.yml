@@ -1,0 +1,17 @@
+issueNumber: MDL-87830
+notes:
+  core:
+    - message: >
+        The secondary navigation bar (and, via `core/nav/PrimaryNav`, the
+        primary navigation) is now rendered by the `core/nav/Nav` React
+        component, using `@moodlehq/design-system`'s `NavPill` instead of legacy
+        Bootstrap `.nav-link`/`.moremenu` markup.
+
+        Plugins or themes that targeted the old markup, classes, or IDs directly
+        for the secondary/primary navigation bar should verify their CSS/JS
+        still applies, as the DOM structure has changed (e.g. `.mds-nav-pill`
+        instead of `.nav-link`).
+
+        Keyboard support (arrow keys, Home/End, and a single roving Tab stop per
+        bar) is unchanged and continues to be driven by `core/menu_navigation`.
+      type: changed
