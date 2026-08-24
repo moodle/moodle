@@ -3,8 +3,7 @@
         "requires": [
             "node",
             "base",
-            "selector-css3",
-            "moodle-core-event"
+            "selector-css3"
         ]
     }
 }
