@@ -16,16 +16,13 @@ function SHORTFORMS() {
 }
 
 var SELECTORS = {
-        COLLAPSED: '.collapsed',
         FIELDSETCOLLAPSIBLE: 'fieldset.collapsible',
-        FIELDSETLEGENDLINK: 'fieldset.collapsible .fheader',
         FHEADER: '.fheader',
+        FCONTAINER: '.fcontainer',
         LEGENDFTOGGLER: 'legend.ftoggler'
     },
     CSS = {
-        COLLAPSEALL: 'collapse-all',
-        COLLAPSED: 'collapsed',
-        FHEADER: 'fheader'
+        SHOW: 'show'
     },
     ATTRS = {};
 
@@ -67,74 +64,100 @@ Y.extend(SHORTFORMS, Y.Base, {
         // Stores the form in the object.
         this.form = form;
 
-        // Subscribe collapsible fieldsets and buttons to click events.
-        form.delegate('click', this.switch_state, SELECTORS.FIELDSETLEGENDLINK, this);
+        // Keep each fieldset's hidden "is it expanded" status field in sync with its actual
+        // container visibility. This observes the container's own "show" class directly,
+        // rather than reacting to a click or to a Bootstrap collapse event, so it works no
+        // matter how the section was expanded/collapsed (a direct click, or "Expand
+        // all"/"Collapse all") and regardless of Bootstrap version. Bootstrap 5 delegates its
+        // own collapse click handling in the capture phase, so it always runs before a
+        // bubble-phase handler attached here on the same click - but Bootstrap 4 (jQuery)
+        // delegates in the bubble phase, where that order is reversed. Reacting to the click
+        // itself is therefore not reliable across versions, whereas the "show" class, and what
+        // it means, has been stable since Bootstrap 3.
+        form.all(SELECTORS.FIELDSETCOLLAPSIBLE).each(function(fieldset) {
+            var container = fieldset.one(SELECTORS.FCONTAINER);
+            if (!container) {
+                return;
+            }
+            var observer = new MutationObserver(function() {
+                this.set_state(fieldset, !container.hasClass(CSS.SHOW));
+            }.bind(this));
+            observer.observe(container.getDOMNode(), {attributes: true, attributeFilter: ['class']});
+        }, this);
 
-        // Handle event, when there's an error in collapsed section.
-        Y.Global.on(M.core.globalEvents.FORM_ERROR, this.expand_fieldset, this);
+        // Expand a section if it contains a field which failed validation.
+        require(['core_form/events'], function(FormEvents) {
+            form.getDOMNode().addEventListener(FormEvents.eventTypes.formError, this.expand_fieldset.bind(this));
+        }.bind(this));
     },
 
     /**
-     * Set the collapsed state for the specified fieldset.
+     * Record the expanded state for the specified fieldset in its hidden status field.
      *
      * @method set_state
      * @param {Node} fieldset The Node relating to the fieldset to set state on.
-     * @param {Boolean} [collapsed] Whether the fieldset is collapsed.
-     * @chainable
+     * @param {Boolean} collapsed Whether the fieldset is now collapsed.
      */
     set_state: function(fieldset, collapsed) {
-        var headerlink = fieldset.one(SELECTORS.FHEADER);
-        if (collapsed) {
-            fieldset.addClass(CSS.COLLAPSED);
-            if (headerlink) {
-                headerlink.setAttribute('aria-expanded', 'false');
-            }
-        } else {
-            fieldset.removeClass(CSS.COLLAPSED);
-            if (headerlink) {
-                headerlink.setAttribute('aria-expanded', 'true');
-            }
-        }
         var statuselement = this.form.one('input[name=mform_isexpanded_' + fieldset.get('id') + ']');
         if (!statuselement) {
-            Y.log("M.form.shortforms::switch_state was called on an fieldset without a status field: '" +
+            Y.log("M.form.shortforms::set_state was called on an fieldset without a status field: '" +
                 fieldset.get('id') + "'", 'debug', 'moodle-form-shortforms');
-            return this;
+            return;
         }
         statuselement.set('value', collapsed ? 0 : 1);
-
-        return this;
     },
 
     /**
-     * Toggle the state for the fieldset that was clicked.
-     *
-     * @method switch_state
-     * @param {EventFacade} e
-     */
-    switch_state: function(e) {
-        e.preventDefault();
-        var fieldset = e.target.ancestor(SELECTORS.FIELDSETCOLLAPSIBLE);
-        this.set_state(fieldset, !fieldset.hasClass(CSS.COLLAPSED));
-    },
-
-    /**
-     * Expand the fieldset, which contains an error.
+     * Expand the fieldset which contains an errored field, using Bootstrap's own collapse API
+     * so that the container's real visibility (and hence the hidden status field, via the
+     * observer set up in initializer) stays correctly in sync.
      *
      * @method expand_fieldset
-     * @param {EventFacade} e
+     * @param {CustomEvent} e The core_form/events "formError" event; e.target is the errored field.
      */
     expand_fieldset: function(e) {
-        e.stopPropagation();
-        var formid = e.formid;
-        if (formid === this.form.getAttribute('id')) {
-            var errorfieldset = Y.one('#' + e.elementid).ancestor('fieldset');
-            if (errorfieldset) {
-                this.set_state(errorfieldset, false);
+        var errorfieldset = this.get_error_fieldset(e);
+        if (errorfieldset) {
+            var container = errorfieldset.one(SELECTORS.FCONTAINER);
+            var headerlink = errorfieldset.one(SELECTORS.FHEADER);
+            // Check the container's own "show" class directly: it's the one thing that
+            // reliably reflects whether the section is actually visible, regardless of how it
+            // last got that way (a direct click, or "Expand all"/"Collapse all") and regardless
+            // of Bootstrap version (see the note in initializer).
+            if (container && !container.hasClass(CSS.SHOW) && headerlink) {
+                headerlink.getDOMNode().click();
+                return;
             }
-
+            this.set_state(errorfieldset, false);
         }
-   }
+    },
+
+    /**
+     * Get a fieldset containing an error from a DOM event.
+     *
+     * @method get_error_fieldset
+     * @param {CustomEvent} e
+     * @return {Node|null}
+     */
+    get_error_fieldset: function(e) {
+        var formid = this.form.getAttribute('id');
+        if (e.target) {
+            var errorelementdom = Y.one(e.target);
+            if (!errorelementdom) {
+                return null;
+            }
+            var errorfieldset = errorelementdom.ancestor('fieldset');
+            if (!errorfieldset) {
+                return null;
+            }
+            var errorform = errorfieldset.ancestor('form');
+            if (errorform && errorform.getAttribute('id') === formid) {
+                return errorfieldset;
+            }
+        }
+        return null;
+    }
 }, {
     NAME: 'moodle-form-shortforms',
     ATTRS: ATTRS
