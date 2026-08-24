@@ -536,6 +536,22 @@ final class question_type_test extends \advanced_testcase {
             'feedback' => ['Feedback for correct answer'],
             'tolerance' => [0.1],
         ];
+        yield '#7' => [
+            'text' => '{1:SHORTANSWER:=C&#35;~*}',
+            'format' => (int)FORMAT_MOODLE,
+            'answers' => ['C#', '*'],
+            'fractions' => [1, 0],
+            'feedback' => [],
+            'tolerance' => [],
+        ];
+        yield '#8' => [
+            'text' => '{1:SHORTANSWER:=A#B~*}',
+            'format' => (int)FORMAT_MOODLE,
+            'answers' => ['A', '*'],
+            'fractions' => [1, 0],
+            'feedback' => ['B'],
+            'tolerance' => [],
+        ];
     }
 
     /**
