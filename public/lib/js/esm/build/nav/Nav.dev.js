@@ -120,7 +120,7 @@ function DropdownItems({ items, istablist = false, submenus = false }) {
   useActionLinkBehavior(items);
   return /* @__PURE__ */ jsxDEV(Fragment, { children: items.map((item) => {
     if (item.divider) {
-      return /* @__PURE__ */ jsxDEV("div", { className: "dropdown-divider" }, item.key, false, {
+      return /* @__PURE__ */ jsxDEV("div", { className: "dropdown-divider", role: "separator" }, item.key, false, {
         fileName: "public/lib/js/esm/src/nav/Nav.tsx",
         lineNumber: 243,
         columnNumber: 28

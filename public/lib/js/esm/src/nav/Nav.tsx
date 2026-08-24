@@ -240,7 +240,7 @@ function DropdownItems(
         <>
             {items.map((item) => {
                 if (item.divider) {
-                    return <div key={item.key} className="dropdown-divider" />;
+                    return <div key={item.key} className="dropdown-divider" role="separator" />;
                 }
 
                 if (submenus && item.showchildreninsubmenu && item.children.length > 0) {
