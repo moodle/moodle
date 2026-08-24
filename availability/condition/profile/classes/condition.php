@@ -408,6 +408,10 @@ class condition extends \core_availability\condition {
             $field = $this->customfield;
         } else {
             $field = $this->standardfield;
+            $standardfields = self::get_standard_profile_fields();
+            if (!array_key_exists($field, $standardfields)) {
+                return false;
+            }
         }
 
         // If its the current user than most likely we will be able to get this information from $USER.

@@ -212,6 +212,11 @@ final class condition_test extends \advanced_testcase {
         $this->setAdminUser();
         $info = new \core_availability\mock_info();
 
+        // Unknown standard field - condition should not match any user.
+        $structure = (object)['sf' => 'notastandardfield', 'op' => condition::OP_IS_EQUAL_TO, 'v' => 'x'];
+        $cond = new condition($structure);
+        $this->assertFalse($cond->is_available(false, $info, true, $USER->id));
+
         // Prepare to test with all operators against custom field using all
         // combinations of NOT and true/false states..
         $information = 'x';
