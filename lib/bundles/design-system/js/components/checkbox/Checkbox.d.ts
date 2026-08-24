@@ -10,14 +10,14 @@ export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
     /** Marks the input as invalid: applies danger border/label colour and sets aria-invalid.
      *  Independent of invalidFeedback — invalid styling can be shown without a message. */
     invalid?: boolean;
+    /** Pre-translated error message rendered below the label. Requires invalid={true} and
+     *  hideLabel={false} to be displayed. */
+    invalidFeedback?: string;
     /** Renders the checkbox in a mixed state, typically for "select all" parent controls.
      *  This state is visual/semantic and should usually be controlled by parent logic. */
     indeterminate?: boolean;
     /** Optional supporting/helper text shown below the label in non-error state.
      *  Hidden when hideLabel is true. */
     supportingText?: string;
-    /** Pre-translated error message rendered below the label. Requires invalid={true} and
-     *  hideLabel={false} to be displayed. */
-    invalidFeedback?: string;
 }
 export declare const Checkbox: import('react').ForwardRefExoticComponent<CheckboxProps & import('react').RefAttributes<HTMLInputElement>>;

@@ -1,0 +1,102 @@
+/* ─── Host wrapper ─────────────────────────────────────────────────────────── */
+
+.mds-tooltip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Bubble ───────────────────────────────────────────────────────────────── */
+
+/*
+ * The bubble is rendered with FloatingPortal into document.body. This avoids
+ * clipping from overflow/transform ancestors while Floating UI controls
+ * placement via inline top/left styles.
+ */
+.mds-tooltip__bubble {
+  z-index: 1080;
+
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.1s ease,
+    visibility 0.1s ease;
+
+  white-space: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mds-tooltip__bubble {
+    transition: none;
+  }
+}
+
+/*
+ * data-positioned appears once Floating UI computes a final position, preventing
+ * a top-left flash before the first measurement pass completes.
+ *
+ * data-forced-open is an internal story/test hook that bypasses interaction timing.
+ */
+.mds-tooltip__bubble[data-positioned],
+.mds-tooltip__bubble[data-forced-open] {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ─── Content box ───────────────────────────────────────────────────────────── */
+
+.mds-tooltip__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: max-content;
+  max-width: 200px;
+  min-inline-size: 0;
+  padding: var(--mds-spacing-xxs) var(--mds-spacing-xs);
+  border-radius: var(--mds-border-radius-sm);
+  background-color: var(--mds-bg-feedback-secondary-dark);
+}
+
+.mds-tooltip__bubble--light .mds-tooltip__content {
+  background-color: var(--mds-bg-feedback-secondary-default);
+}
+
+/* ─── Text ──────────────────────────────────────────────────────────────────── */
+
+.mds-tooltip__text {
+  display: block;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  font-family: var(--mds-font-family-base);
+  font-weight: var(--mds-font-weight-regular);
+  font-size: var(--mds-font-size-paragraph-small);
+  line-height: var(--mds-line-height-paragraph-small);
+  letter-spacing: var(--mds-letter-spacing-default);
+  /*
+   * Keep natural word boundaries for readable text, but still force wrapping
+   * for long unbroken tokens (for example URLs) so the bubble never overflows.
+   */
+  word-break: normal;
+  overflow-wrap: anywhere;
+
+  color: var(--mds-text-inverse);
+  text-align: center;
+}
+
+.mds-tooltip__bubble--light .mds-tooltip__text {
+  color: var(--mds-text-default);
+}
+
+/* ─── Arrow ─────────────────────────────────────────────────────────────────── */
+
+/* FloatingArrow writes an SVG path; fill must target the path nodes directly. */
+.mds-tooltip__arrow path {
+  fill: var(--mds-bg-feedback-secondary-dark);
+}
+
+.mds-tooltip__bubble--light .mds-tooltip__arrow path {
+  fill: var(--mds-bg-feedback-secondary-default);
+}
