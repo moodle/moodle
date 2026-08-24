@@ -95,5 +95,7 @@ abstract class bulk_action_base extends view_component {
      *
      * @return string
      */
-    abstract public function get_action_icon(): string;
+    public function get_action_icon(): string {
+        return 'i/empty';
+    }
 }
