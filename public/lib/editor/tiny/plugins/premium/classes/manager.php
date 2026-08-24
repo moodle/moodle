@@ -28,9 +28,8 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
-
     /** @var string Tiny Premium plugin prefix. */
-    const PLUGIN_NAME_PREFIX = 'tiny_premium_';
+    public const PLUGIN_NAME_PREFIX = 'tiny_premium_';
     /** @var int Indicates usage of self-hosted TinyMCE packages. */
     public const PACKAGE_SELF_HOSTED = 2;
     /** @var int Indicates usage of cloud-hosted TinyMCE packages. */
@@ -55,6 +54,7 @@ class manager {
             'footnotes',
             'formatpainter',
             'linkchecker',
+            'markdown',
             'math',
             'pageembed',
             'permanentpen',

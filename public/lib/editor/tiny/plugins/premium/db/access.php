@@ -103,6 +103,13 @@ $capabilities = [
             'user' => CAP_ALLOW,
         ],
     ],
+    'tiny/premium:usemarkdown' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
     'tiny/premium:usepageembed' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,

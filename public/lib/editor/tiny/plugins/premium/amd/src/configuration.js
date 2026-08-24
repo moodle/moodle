@@ -142,6 +142,10 @@ export const configure = (instanceConfig, options) => {
     if (enabledPremiumPlugins.indexOf('powerpaste') !== -1) {
         plugins += ` powerpaste`;
     }
+    // Markdown.
+    if (enabledPremiumPlugins.indexOf('markdown') !== -1) {
+        plugins += ` markdown`;
+    }
     // Accessibility Checker.
     if (enabledPremiumPlugins.indexOf('a11ychecker') !== -1) {
         plugins += ` a11ychecker`;

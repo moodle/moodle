@@ -25,7 +25,6 @@ namespace tiny_premium;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class manager_test extends \advanced_testcase {
-
     /**
      * Test the getting of all available Tiny Premium plugins.
      *
@@ -37,7 +36,7 @@ final class manager_test extends \advanced_testcase {
 
         // Check all Tiny Premium plugins are returned.
         $premiumplugins = manager::get_plugins();
-        $this->assertCount(17, $premiumplugins);
+        $this->assertCount(18, $premiumplugins);
     }
 
     /**

@@ -1,0 +1,7 @@
+issueNumber: MDL-88547
+notes:
+  tiny_premium:
+    - message: >-
+        Added support for the TinyMCE Premium Markdown plugin, including
+        per-plugin capability and editor configuration.
+      type: improved
