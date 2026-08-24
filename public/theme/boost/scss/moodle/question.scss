@@ -238,6 +238,35 @@ table.question-bank-table {
     div.questionbankwindow.block {
         padding: 0;
     }
+
+    ul.slots > li.section {
+        > .content {
+            background-color: var(--mds-bg-surface-strong);
+            padding: $mds-spacing-md;
+        }
+
+        &:first-child > .content {
+            @include border-top-radius($mds-border-radius-xl);
+        }
+
+        &:last-child > .content {
+            @include border-bottom-radius($mds-border-radius-xl);
+        }
+
+        li.activity.slot {
+            background-color: var(--mds-bg-surface-default);
+            border-radius: $mds-border-radius-md;
+            padding: $mds-spacing-xs;
+
+            + li.activity.slot {
+                margin-top: $mds-spacing-md;
+            }
+
+            .actions {
+                background-color: transparent;
+            }
+        }
+    }
 }
 
 .questionbank .singleselect {
