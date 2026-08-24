@@ -5,8 +5,6 @@
 // Variables.
 $activity-item-padding: 1.25rem !default;
 $activity-border-radius: 1rem !default;
-$activity-border-width: 2px !default;
-$activity-hover-border-color: $primary !default;
 $divider-color: $gray-200 !default;
 $divider-width: 1px !default;
 $divider-hover-color: $primary !default;
@@ -113,7 +111,7 @@ $divider-hover-color: $primary !default;
             }
 
             .section-content-inner {
-                padding: map-get($spacers, 2);
+                padding: $mds-spacing-md;
                 border-top: $border-width solid $gray-200;
                 background-color: $gray-100;
                 @include border-bottom-radius($activity-border-radius);
@@ -256,6 +254,7 @@ $divider-hover-color: $primary !default;
 
 .activity {
     list-style: none;
+    margin-top: $mds-spacing-md;
     &.indented {
         .activity-item {
             margin-left: map-get($spacers, 3);
@@ -273,10 +272,28 @@ $divider-hover-color: $primary !default;
 .activity-item {
     padding: $activity-item-padding;
     @include border-radius($activity-border-radius);
+
+    border: $mds-stroke-weight-sm solid var(--mds-border-subtle);
+
+    background-color: var(--mds-bg-surface-subtle);
+
+    &:hover:not(:has(.delegated-section)) {
+        background-color: var(--mds-bg-surface-default);
+    }
+
+    &:focus-within:not(:has(.delegated-section)) {
+        outline: $mds-stroke-weight-md solid var(--mds-border-interactive-primary-default);
+    }
+
     &.hiddenactivity {
-        background-color: $gray-200;
         .activityiconcontainer {
             mix-blend-mode: multiply;
+        }
+        .activity-name-area .activityname {
+            color: var(--mds-text-muted);
+            .aalink {
+                color: var(--mds-text-muted);
+            }
         }
         .badge {
             background-color: transparent;
@@ -284,7 +301,7 @@ $divider-hover-color: $primary !default;
             border: $border-width solid $gray-300;
         }
         .activity-altcontent.activity-description {
-            color: $gray-700;
+            color: var(--mds-text-muted);
         }
     }
     // Custom styles for activity cards while editing.
@@ -296,8 +313,6 @@ $divider-hover-color: $primary !default;
         // Add a border on hover to the activity card (avoiding hover effect in inner activities).
         &:hover:not(:has(.activity:hover)),
         &.selected {
-            // We use outline here to avoid changing the layout everytime we hover.
-            outline: $activity-border-width solid $activity-hover-border-color;
             .activityiconcontainer,
             .badge {
                 mix-blend-mode: multiply;
@@ -305,7 +320,7 @@ $divider-hover-color: $primary !default;
         }
     }
     .activity.dragging & {
-        border: $activity-border-width solid $activity-hover-border-color;
+        border: $mds-stroke-weight-md solid var(--mds-border-interactive-primary-default);
         .editing &:hover {
             // We cancel the outline when dragging because it is not taken into account
             // in the element/image representing the drag and drop and it cuts out part of the
@@ -840,19 +855,18 @@ $divider-hover-color: $primary !default;
 
 .activity.subsection {
     > .activity-item {
-        padding: $activity-item-padding map-get($spacers, 2);
+        padding: 0;
+        border: 0;
 
         > .activity-grid > .activity-altcontent {
             margin-top: 0;
         }
     }
+    &.dragging > .activity-item {
+        border: $mds-stroke-weight-md solid var(--mds-border-interactive-primary-default);
+    }
     .section {
         margin-top: 0;
-        .icons-collapse-expand:has(+ h4) {
-            height: map-get($iconsizes, 4);
-            width: map-get($iconsizes, 4);
-            font-size: $font-size-sm;
-        }
         h4 {
             font-size: $h5-font-size;
         }
@@ -1041,15 +1055,15 @@ $highlight-style: highlight-fade 2s ease-in-out;
 @keyframes highlight-fade {
     0% {
         @include border-radius($activity-border-radius);
-        outline: $activity-border-width solid $activity-hover-border-color;
+        outline: $mds-stroke-weight-md solid var(--mds-border-interactive-primary-default);
     }
     70% {
         @include border-radius($activity-border-radius);
-        outline: $activity-border-width solid $activity-hover-border-color;
+        outline: $mds-stroke-weight-md solid var(--mds-border-interactive-primary-default);
     }
     100% {
         @include border-radius($activity-border-radius);
-        outline: $activity-border-width solid transparent;
+        outline: $mds-stroke-weight-md solid transparent;
     }
 }
 

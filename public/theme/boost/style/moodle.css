@@ -34136,7 +34136,7 @@ table.calendartable caption {
   padding-bottom: 1rem;
 }
 .course-section .section-item .course-content-item-content .section-content-inner {
-  padding: 0.5rem;
+  padding: 1rem;
   border-top: 1px solid #e9ecef;
   background-color: #f8f9fa;
   border-bottom-right-radius: 1rem;
@@ -34241,6 +34241,7 @@ table.calendartable caption {
 /* Activities */
 .activity {
   list-style: none;
+  margin-top: 1rem;
 }
 .activity.indented .activity-item {
   margin-left: 1rem;
@@ -34253,12 +34254,23 @@ table.calendartable caption {
 .activity-item {
   padding: 1.25rem;
   border-radius: 1rem;
+  border: 0.0625rem solid var(--mds-border-subtle);
+  background-color: var(--mds-bg-surface-subtle);
 }
-.activity-item.hiddenactivity {
-  background-color: #e9ecef;
+.activity-item:hover:not(:has(.delegated-section)) {
+  background-color: var(--mds-bg-surface-default);
+}
+.activity-item:focus-within:not(:has(.delegated-section)) {
+  outline: 0.125rem solid var(--mds-border-interactive-primary-default);
 }
 .activity-item.hiddenactivity .activityiconcontainer {
   mix-blend-mode: multiply;
+}
+.activity-item.hiddenactivity .activity-name-area .activityname {
+  color: var(--mds-text-muted);
+}
+.activity-item.hiddenactivity .activity-name-area .activityname .aalink, .activity-item.hiddenactivity .activity-name-area .activityname a.autolink {
+  color: var(--mds-text-muted);
 }
 .activity-item.hiddenactivity .badge {
   background-color: transparent;
@@ -34266,7 +34278,7 @@ table.calendartable caption {
   border: 1px solid #dee2e6;
 }
 .activity-item.hiddenactivity .activity-altcontent.activity-description {
-  color: #495057;
+  color: var(--mds-text-muted);
 }
 .editing .activity-item {
   cursor: move;
@@ -34274,16 +34286,13 @@ table.calendartable caption {
 .editing .activity-item .a {
   cursor: pointer;
 }
-.editing .activity-item:hover:not(:has(.activity:hover)), .editing .activity-item.selected {
-  outline: 2px solid #0f6cbf;
-}
 .editing .activity-item:hover:not(:has(.activity:hover)) .activityiconcontainer,
 .editing .activity-item:hover:not(:has(.activity:hover)) .badge, .editing .activity-item.selected .activityiconcontainer,
 .editing .activity-item.selected .badge {
   mix-blend-mode: multiply;
 }
 .activity.dragging .activity-item {
-  border: 2px solid #0f6cbf;
+  border: 0.125rem solid var(--mds-border-interactive-primary-default);
 }
 .editing .activity.dragging .activity-item:hover {
   outline: none;
@@ -34735,18 +34744,17 @@ body:not(.editing) .single-section > ul > .course-section .section-item .activit
 
 /* Subsections */
 .activity.subsection > .activity-item {
-  padding: 1.25rem 0.5rem;
+  padding: 0;
+  border: 0;
 }
 .activity.subsection > .activity-item > .activity-grid > .activity-altcontent {
   margin-top: 0;
 }
+.activity.subsection.dragging > .activity-item {
+  border: 0.125rem solid var(--mds-border-interactive-primary-default);
+}
 .activity.subsection .section {
   margin-top: 0;
-}
-.activity.subsection .section .icons-collapse-expand:has(+ h4, + .h4) {
-  height: 24px;
-  width: 24px;
-  font-size: 0.875rem;
 }
 .activity.subsection .section h4, .activity.subsection .section .h4 {
   font-size: 1.25rem;
@@ -34925,15 +34933,15 @@ body:not(.editing) [id^=module-]:target, body.editing [id^=module-]:target .acti
 @keyframes highlight-fade {
   0% {
     border-radius: 1rem;
-    outline: 2px solid #0f6cbf;
+    outline: 0.125rem solid var(--mds-border-interactive-primary-default);
   }
   70% {
     border-radius: 1rem;
-    outline: 2px solid #0f6cbf;
+    outline: 0.125rem solid var(--mds-border-interactive-primary-default);
   }
   100% {
     border-radius: 1rem;
-    outline: 2px solid transparent;
+    outline: 0.125rem solid transparent;
   }
 }
 #course-addsection .btn-add-content {
