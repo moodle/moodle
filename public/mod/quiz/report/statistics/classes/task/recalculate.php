@@ -19,6 +19,7 @@ namespace quiz_statistics\task;
 use core\dml\sql_join;
 use mod_quiz\quiz_attempt;
 use quiz_statistics_report;
+use core\task\manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,9 +38,15 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
  */
 class recalculate extends \core\task\adhoc_task {
     /**
-     * The time to delay queued runs by, to prevent repeated recalculations.
+     * Get the time to delay queued runs by, to prevent repeated recalculations.
+     *
+     * @return int Delay in seconds.
      */
-    const DELAY = HOURSECS;
+    protected static function get_delay(): int {
+        $delay = get_config('quiz_statistics', 'recalculatedebounce');
+        return is_numeric($delay) ? (int)$delay : HOURSECS;
+    }
+
 
     /**
      * Create a new instance of the task.
@@ -107,11 +114,37 @@ class recalculate extends \core\task\adhoc_task {
      * within the delay period.
      *
      * @param int $quizid The quiz to run the recalculation for.
-     * @return bool true of the task was queued.
+     * @param bool $now If true, the task will be queued to run immediately, ignoring the delay.
+     * @return void
      */
-    public static function queue_future_run(int $quizid): bool {
+    public static function queue_future_run(int $quizid, bool $now = false): void {
+        $delay = self::get_delay();
+        if ($delay === 0 && !$now) {
+            return;
+        }
+        $nextrun = \core\di::get(\core\clock::class)->time();
+        if (!$now) {
+            $nextrun += $delay;
+        }
+
         $task = self::instance($quizid);
-        $task->set_next_run_time(time() + self::DELAY);
-        return \core\task\manager::queue_adhoc_task($task, true);
+        $task->set_next_run_time($nextrun);
+        manager::reschedule_or_queue_adhoc_task($task);
     }
+
+    /**
+     * Check if there is a pending task for a given quiz.
+     *
+     * @param int $quizid
+     * @return ?int Null for no task, or number of seconds until the task is scheduled to run.
+     */
+    public static function task_due_in(int $quizid): ?int {
+        $task = self::instance($quizid);
+        $scheduledtask = manager::get_queued_adhoc_task_record($task);
+        if (!$scheduledtask) {
+            return null;
+        }
+        return (int)$scheduledtask->nextruntime - \core\di::get(\core\clock::class)->time();
+    }
+
 }

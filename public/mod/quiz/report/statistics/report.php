@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 use core_question\statistics\responses\analyser;
 use mod_quiz\local\reports\report_base;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
+use quiz_statistics\task\recalculate;
 
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_form.php');
@@ -129,7 +130,7 @@ class quiz_statistics_report extends report_base {
 
         // If recalculate was requested, handle that.
         if ($recalculate && confirm_sesskey()) {
-            $this->clear_cached_data($qubaids);
+            recalculate::queue_future_run($quiz->id, true);
             redirect($reporturl);
         }
 
@@ -859,10 +860,21 @@ class quiz_statistics_report extends report_base {
         $output .= $OUTPUT->box_start(
                 'boxaligncenter generalbox boxwidthnormal mdl-align', 'cachingnotice');
         $output .= get_string('lastcalculated', 'quiz_statistics', $a);
-        $output .= $OUTPUT->single_button($recalcualteurl,
-                get_string('recalculatenow', 'quiz_statistics'));
-        $output .= $OUTPUT->box_end(true);
+        $pending = recalculate::task_due_in($quizid);
 
+        if ($pending > 0 || $pending === null) {
+            $output .= $OUTPUT->single_button(
+                $recalcualteurl,
+                get_string('recalculatenow', 'quiz_statistics')
+            );
+        }
+
+        if ($pending !== null) {
+            $string = $pending > 0 ? 'recalculatepending' : 'recalculatependingpast';
+            $output .= $OUTPUT->notification(get_string($string, 'quiz_statistics', $pending), 'info');
+        }
+
+        $output .= $OUTPUT->box_end(true);
         return $output;
     }
 

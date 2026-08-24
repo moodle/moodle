@@ -32,4 +32,11 @@ if ($ADMIN->fulltree) {
         get_string('getstatslocktimeoutdesc', 'quiz_statistics'),
         MINSECS * 15
     ));
+
+    $settings->add(new admin_setting_configduration(
+        'quiz_statistics/recalculatedebounce',
+        new lang_string('recalculatedebounce', 'quiz_statistics'),
+        new lang_string('recalculatedebouncedesc', 'quiz_statistics'),
+        HOURSECS
+    ));
 }

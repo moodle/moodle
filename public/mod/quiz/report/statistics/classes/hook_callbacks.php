@@ -62,7 +62,8 @@ class hook_callbacks {
         $updatedattempt = $hook->get_updated_attempt();
         if (is_null($updatedattempt) || $updatedattempt->state === quiz_attempt::FINISHED) {
             // Only recalculate on deletion or submission.
-            return recalculate::queue_future_run($originalattempt->quiz);
+            recalculate::queue_future_run($originalattempt->quiz);
+            return true;
         }
         return false;
     }
