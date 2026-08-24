@@ -131,9 +131,24 @@ $courseindex-item-current: $primary !default;
         // Completion.
         .completioninfo {
             min-width: 24px;
+            display: inline-flex;
+            align-items: center;
 
             &.completion_complete {
                 color: $success;
+                .icon {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 1rem;
+                    height: 1rem;
+                    border-radius: 50%;
+                    line-height: 1;
+                }
+                .icon:not(img)::before {
+                    outline: 2px solid $drawer-bg-color;
+                    border-radius: 50%;
+                }
             }
 
             &.completion_fail {

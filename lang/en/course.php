@@ -107,6 +107,7 @@ $string['filterlastactive'] = 'Last ({$a->last})';
 $string['gradetopassnotset'] = 'This course does not have a grade to pass set. It may be set in the grade item of the course (Gradebook setup).';
 $string['hideendedcoursestask'] = 'Hide courses on end date';
 $string['informationformodule'] = 'Information about the {$a} activity';
+$string['locked'] = 'Locked';
 $string['module'] = 'Activity';
 $string['namewithlink'] = 'Category name with link';
 $string['nocourseactivity'] = 'Not enough course activity between the start and the end of the course';

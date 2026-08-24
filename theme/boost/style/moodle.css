@@ -38805,9 +38805,24 @@ div.editor_atto_toolbar button .icon {
 }
 .courseindex .courseindex-item .completioninfo {
   min-width: 24px;
+  display: inline-flex;
+  align-items: center;
 }
 .courseindex .courseindex-item .completioninfo.completion_complete {
   color: #357a32;
+}
+.courseindex .courseindex-item .completioninfo.completion_complete .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  line-height: 1;
+}
+.courseindex .courseindex-item .completioninfo.completion_complete .icon:not(img)::before {
+  outline: 2px solid #f8f9fa;
+  border-radius: 50%;
 }
 .courseindex .courseindex-item .completioninfo.completion_fail {
   color: #ca3120;
