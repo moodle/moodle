@@ -241,7 +241,10 @@ class login implements renderable, templatable {
     /**
      * Export data for the template
      *
-     * @param \core\output\renderer_base $output
+     * The supported rendering path always provides a core_renderer. The method signature uses renderer_base to
+     * satisfy the templatable interface.
+     *
+     * @param \core\output\core_renderer $output
      * @return stdClass
      */
     public function export_for_template(\core\output\renderer_base $output) {
