@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\report_helper;
 use core_reportbuilder\system_report_factory;
 use report_aiusage\reportbuilder\local\systemreports\course_usage;
 
@@ -69,6 +70,10 @@ $report = system_report_factory::create(
 );
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'report_aiusage'));
+
+// Print selector drop down.
+$pluginname = get_string('pluginname', 'report_aiusage');
+report_helper::print_report_selector($pluginname);
+
 echo $report->output();
 echo $OUTPUT->footer();

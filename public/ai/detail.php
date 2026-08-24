@@ -26,6 +26,7 @@ use core_ai\manager;
 use core_ai\output\action_detail;
 
 require(__DIR__ . '/../config.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $id = required_param('id', PARAM_INT);
 
@@ -54,16 +55,32 @@ $actioncontext = context::instance_by_id($record->contextid, IGNORE_MISSING);
 // the rest of this page relies on null-coalescing to fall back to the system context.
 $coursecontext = $actioncontext ? ($actioncontext->get_course_context(false) ?: null) : null;
 
-if ($coursecontext) {
+$hassitewideaccess = has_capability('moodle/ai:viewaiusagereport', $systemcontext);
+
+// The report this page was actually linked from is not necessarily the report matching the action's own
+// context: a sitewide-report viewer can open the detail of a course-context action. The reportbuilder
+// "Detail" column passes its own page URL as returnurl, so prefer that; fall back to a context-based
+// guess only when it is missing (for example a bookmarked or hand-built link).
+$returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
+$camefromsitewidereport = $returnurl !== ''
+    && (new moodle_url($returnurl))->compare(new moodle_url('/ai/usage_report.php'), URL_MATCH_BASE);
+
+// The returnurl is client-supplied, so require $hassitewideaccess too before trusting it for chrome -
+// otherwise a crafted returnurl could deny a course-only viewer who never needed that capability.
+$showsitewidechrome = $camefromsitewidereport && $hassitewideaccess;
+
+if ($coursecontext && !$showsitewidechrome) {
     require_login($coursecontext->instanceid);
 } else {
+    // No course-scoped require_login() here, matching ai/usage_report.php: it also sets $PAGE->course,
+    // which would override the sitewide chrome set up below with course-flavoured navigation instead.
     require_login();
 }
 
 // Access mirrors the visibility of the reports this page is linked from: the sitewide report capability
 // can view any entry; the course report's "view all" capability can view any entry in that course; the
 // course report's "view own" capability can only view the signed-in user's own entries.
-$canview = has_capability('moodle/ai:viewaiusagereport', $systemcontext);
+$canview = $hassitewideaccess;
 if (!$canview && $coursecontext) {
     if (has_capability('report/aiusage:view', $coursecontext)) {
         $canview = true;
@@ -75,23 +92,27 @@ if (!$canview && $coursecontext) {
     }
 }
 
-$PAGE->set_context($coursecontext ?? $systemcontext);
+$displaycoursecontext = $showsitewidechrome ? null : $coursecontext;
+
+if ($displaycoursecontext) {
+    $PAGE->set_context($displaycoursecontext);
+} else if ($showsitewidechrome) {
+    // Reuse ai/usage_report.php's own setup for identical admin chrome.
+    admin_externalpage_setup('aiusagereport');
+} else {
+    $PAGE->set_context($systemcontext);
+}
+
 $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('detailpagetitle', 'core_ai'));
 
-// Mirror the heading shown on the report this page is linked from: the course-level report shows the
-// course full name as its page heading, so do the same here rather than falling back to the site name.
-if ($coursecontext) {
-    $course = get_course($coursecontext->instanceid);
+// Sitewide heading is already set by admin_externalpage_setup() above.
+if ($displaycoursecontext) {
+    $course = get_course($displaycoursecontext->instanceid);
     $PAGE->set_heading($course->fullname);
 }
 
-// The report this page was actually linked from is not necessarily the report matching the action's own
-// context: a sitewide-report viewer can open the detail of a course-context action. The reportbuilder
-// "Detail" column passes its own page URL as returnurl, so prefer that; fall back to a context-based
-// guess only when it is missing (for example a bookmarked or hand-built link).
-$returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 if ($returnurl !== '') {
     $backurl = new moodle_url($returnurl);
 } else if ($coursecontext) {
