@@ -165,11 +165,31 @@ $courseindex-item-current: $primary !default;
             a {
                 color: $courseindex-link-color-selected;
             }
+            .completioninfo {
+                .icon {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 1rem;
+                    height: 1rem;
+                    border-radius: 50%;
+                    line-height: 1;
+                }
+                img.icon {
+                    background-color: $drawer-bg-color;
+                }
+                .icon:not(img)::before {
+                    outline: 2px solid $drawer-bg-color;
+                    border-radius: 50%;
+                }
+            }
         }
 
         // Completion.
         .completioninfo {
             min-width: 20px;
+            display: inline-flex;
+            align-items: center;
 
             &.completion_complete {
                 color: $success;
