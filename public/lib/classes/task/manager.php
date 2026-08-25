@@ -1048,6 +1048,10 @@ class manager {
         global $DB;
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
 
+        // Force reads to the writer to prevent a stale replica read selecting a
+        // scheduled task multiple times.
+        $DB->mark_tables_for_primary('task_scheduled');
+
         $where = "(lastruntime IS NULL OR lastruntime < :timestart1)
                   AND (nextruntime IS NULL OR nextruntime < :timestart2)
                   ORDER BY lastruntime, id ASC";
