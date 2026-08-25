@@ -96,9 +96,12 @@ $displaycoursecontext = $showsitewidechrome ? null : $coursecontext;
 
 if ($displaycoursecontext) {
     $PAGE->set_context($displaycoursecontext);
+    $PAGE->set_secondary_active_tab('coursereports');
 } else if ($showsitewidechrome) {
     // Reuse ai/usage_report.php's own setup for identical admin chrome.
     admin_externalpage_setup('aiusagereport');
+    $PAGE->set_primary_active_tab('siteadminnode');
+    $PAGE->set_secondary_active_tab('reports');
 } else {
     $PAGE->set_context($systemcontext);
 }
