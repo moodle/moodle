@@ -17,12 +17,13 @@ Feature: Users view subsections on course page
       | teacher1    | C1        | editingteacher    |
       | student1    | C1        | student           |
     And the following "activities" exist:
-      | activity   | name             		| course    | idnumber | section |
-      | subsection | Subsection1      		| C1        | sub1     | 1       |
-      | page       | Page1 in Subsection1 | C1        | page11   | 4       |
-      | subsection | Subsection2      		| C1        | sub2     | 1       |
-      | data       | New database         | C1        | data1    | 3       |
-      | page       | New page             | C1        | page1    | 3       |
+      | activity   | name                 | course | idnumber | section |
+      | subsection | Subsection1          | C1     | sub1     | 1       |
+      | page       | Page1 in Subsection1 | C1     | page11   | 4       |
+      | subsection | Subsection2          | C1     | sub2     | 1       |
+      | data       | New database         | C1     | data1    | 3       |
+      | page       | New page             | C1     | page1    | 3       |
+
   @javascript
   Scenario: Student can view, expand and collapse subsections on course page
     When I log in as "student1"

@@ -43,6 +43,8 @@ export default class Component extends DndSection {
             SECTION_TITLE: `[data-for='section_title']`,
             CM_LAST: `[data-for="cm"]:last-child`,
             DND_ALLOWED: `[data-courseindexdndallowed='true']`,
+            COLLAPSE: `[data-bs-toggle="collapse"]`,
+            TREE_ITEM: `[role="treeitem"]`,
         };
         // Default classes to toggle on refresh.
         this.classes = {
@@ -52,6 +54,7 @@ export default class Component extends DndSection {
             RESTRICTIONS: 'restrictions',
             PAGEITEM: 'pageitem',
             OVERLAYBORDERS: 'overlay-preview-borders',
+            SHOW: 'show',
         };
 
         // We need our id to watch specific events.
@@ -86,6 +89,7 @@ export default class Component extends DndSection {
      */
     stateReady(state) {
         this.configState(state);
+        this._setupExpandedState();
         const sectionItem = this.getElement(this.selectors.SECTION_ITEM);
         // Drag and drop is only available for components compatible course formats.
         if (this.reactive.isEditing && this.reactive.supportComponents && document.querySelector(this.selectors.DND_ALLOWED)) {
@@ -100,6 +104,41 @@ export default class Component extends DndSection {
             this.reactive.dispatch('setPageItem', 'section', this.id);
             sectionItem.scrollIntoView();
         }
+    }
+
+    /**
+     * Keep the section tree item aria-expanded attribute in sync with its collapsible content.
+     *
+     * The tree item and the Bootstrap collapsible are not the same element, so the expanded
+     * state must be replicated on the tree item to expose it to assistive technologies.
+     * For delegated sections the tree item is the activity element wrapping the section.
+     */
+    _setupExpandedState() {
+        const treeItem = this.element.closest(this.selectors.TREE_ITEM);
+        const toggler = this.getElement(this.selectors.COLLAPSE);
+        const collapsibleId = toggler?.dataset.target ?? toggler?.getAttribute('href');
+        if (!treeItem || !collapsibleId) {
+            return;
+        }
+        const collapsible = document.getElementById(collapsibleId.replace('#', ''));
+        if (!collapsible) {
+            return;
+        }
+        // The section can be expanded before this component is ready, so the initial
+        // value is taken from the collapsible itself instead of the state.
+        this._refreshExpandedState(treeItem, collapsible);
+        this.addEventListener(collapsible, 'shown.bs.collapse', () => this._refreshExpandedState(treeItem, collapsible));
+        this.addEventListener(collapsible, 'hidden.bs.collapse', () => this._refreshExpandedState(treeItem, collapsible));
+    }
+
+    /**
+     * Update the tree item aria-expanded attribute using the collapsible current state.
+     *
+     * @param {Element} treeItem the section tree item element
+     * @param {Element} collapsible the section collapsible element
+     */
+    _refreshExpandedState(treeItem, collapsible) {
+        treeItem.setAttribute('aria-expanded', collapsible.classList.contains(this.classes.SHOW));
     }
 
     /**
