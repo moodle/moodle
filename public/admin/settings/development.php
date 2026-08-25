@@ -109,7 +109,9 @@ if ($hassiteconfig) { // Speedup for non-admins, add all caps used on this page.
         something: new admin_externalpage(
             name: 'swaggerui',
             visiblename: new lang_string('swaggerui', 'admin'),
-            url: "$CFG->wwwroot/admin/swaggerui.php",
+            url: \core\router\util::get_path_for_callable(
+                [\core_admin\route\controller\swagger_controller::class, 'display']
+            ),
         ),
     );
 
