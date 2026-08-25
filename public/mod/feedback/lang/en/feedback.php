@@ -179,12 +179,12 @@ $string['messageprovider:message'] = 'Feedback reminder';
 $string['messageprovider:submission'] = 'Feedback notifications';
 $string['mode'] = 'Mode';
 $string['modulename'] = 'Feedback';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Build surveys with a variety of question types, including multiple choice, scales, and open text
 * Collect responses anonymously or with names
 * View responses as a summary, a detailed analysis, or by individual student
 
-###### Ways to use it
+#### Ways to use it
 * Check for expectations and previous knowledge before starting a course
 * Run an end-of-course evaluation to gather student feedback
 * Provide a safe, anonymous way for students to report concerns';

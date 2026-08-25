@@ -567,7 +567,7 @@ $string['missingcorrectanswer'] = 'Correct answer must be specified';
 $string['missingitemtypename'] = 'Missing name';
 $string['missingquestion'] = 'This question no longer seems to exist';
 $string['modulename'] = 'Quiz';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Use different question types, such as multiple choice, true/false, matching, essay, and more
 * Grade most question types automatically, with manual grading for essays
 * Make each attempt unique by randomising questions and shuffling answer choices
@@ -575,7 +575,7 @@ $string['modulename_help'] = '###### Key features
 * Save and reuse questions across different quiz activities and courses
 * Create secure online exam environments
 
-###### Ways to use it
+#### Ways to use it
 * Deliver a timed exam with automatic grading
 * Provide a practice test with questions randomly drawn from a pool
 * Create a self-assessment with detailed feedback for each answer

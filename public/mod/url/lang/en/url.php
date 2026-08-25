@@ -59,10 +59,10 @@ $string['indicator:socialbreadthdef_help'] = 'The participant has reached this p
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['invalidurl'] = 'Entered URL is invalid';
 $string['modulename'] = 'URL';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Link to any online content
 
-###### Ways to use it
+#### Ways to use it
 * Link to an online article
 * Link to a video hosted on an external platform';
 $string['modulename_link'] = 'mod/url/view';

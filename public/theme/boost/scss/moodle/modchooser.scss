@@ -278,6 +278,13 @@
     .optionsummary-summary {
         font-size: larger;
     }
+    // The help text comes from each module's modulename_help string, whose markdown headings
+    // are levelled to nest below the dialogue title rather than to set their appearance.
+    .optionsummary-help {
+        h4 {
+            font-size: $h6-font-size;
+        }
+    }
 }
 
 /* Make modchooser modal full height and scrollable on small screens. */
