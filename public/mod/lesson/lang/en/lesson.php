@@ -348,12 +348,12 @@ $string['modattempts'] = 'Allow student review';
 $string['modattempts_help'] = 'If enabled, students can navigate through the lesson again from the start.';
 $string['modattemptsnoteacher'] = 'Student review only works for students.';
 $string['modulename'] = 'Lesson';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Create pages with text, images, video, and questions
 * Design lessons that are either linear or have multiple paths
 * Direct students along different paths depending on their answers
 
-###### Ways to use it
+#### Ways to use it
 * Develop scenario-based exercises for problem solving
 * Build an interactive case study where students\' choices lead to different outcomes
 * Create a tutorial that adapts depending on correct or incorrect answers';

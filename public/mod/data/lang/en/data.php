@@ -290,13 +290,13 @@ $string['menuchoose'] = 'Choose...';
 $string['missingdata'] = 'Data ID or object must be provided for field class.';
 $string['missingfield'] = 'Programmer error: You must specify field and/or data when defining field class.';
 $string['modulename'] = 'Database';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Define the information each entry should include, such as text, dates, images, or links
 * Customise how entries are displayed
 * Let students add entries, rate, or comment on each other\'s work
 * Approve entries before they are visible, or publish them directly
 
-###### Ways to use it
+#### Ways to use it
 * Create a collection of articles with summaries written by students
 * Build a gallery of images with captions
 * Develop a set of resources that can be searched by author, topic, or keyword

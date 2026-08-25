@@ -61,6 +61,26 @@ Feature: Display and choose from the available activities in course
     And I should see "Gradable" in the "help" "core_course > Activity chooser screen"
     And I should see "No" in the "help" "core_course > Activity chooser screen"
 
+  @accessibility
+  Scenario: The activity chooser dialogue has a valid heading structure
+    Given I open the activity chooser
+    # The title is a semantic h2. Its font size is set by a utility class, which is left out of
+    # the selector here so that the assertion does not depend on presentation.
+    Then "h2.modal-title" "css_element" should exist in the "Add an activity or resource" "dialogue"
+    And the "Add an activity or resource" "dialogue" should meet accessibility standards with "best-practice" extra tests
+    # The summary screen renders the activity name, then the headings which come from the
+    # module's "modulename_help" language string.
+    And I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
+    And I should see "Key features" in the "Add an activity or resource" "dialogue"
+    And the "Add an activity or resource" "dialogue" should meet accessibility standards with "best-practice" extra tests
+    # The search results screen renders its own heading.
+    And I click on "Back" "button" in the "Add an activity or resource" "dialogue"
+    And I set the field "search" to "Database"
+    And the "Add an activity or resource" "dialogue" should meet accessibility standards with "best-practice" extra tests
+    # As does the "no results" variant of it.
+    And I set the field "search" to "Random search query"
+    And the "Add an activity or resource" "dialogue" should meet accessibility standards with "best-practice" extra tests
+
   Scenario: The teacher use the activity chooser help panel to go to the specific purpose category
     Given I open the activity chooser
     When I click on "Information about the Forum activity" "button" in the "Add an activity or resource" "dialogue"

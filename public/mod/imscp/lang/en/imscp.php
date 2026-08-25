@@ -41,11 +41,11 @@ $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Soci
 $string['imscp:addinstance'] = 'Add a new IMS content package';
 $string['imscp:view'] = 'View IMS content';
 $string['modulename'] = 'IMS content package';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Add IMS content packages as zip files
 * Display content across multiple pages with navigation
 
-###### Ways to use it
+#### Ways to use it
 * Display a multimedia learning module created with IMS authoring software
 * Import a vendor-provided interactive lesson';
 $string['modulename_link'] = 'mod/imscp/view';

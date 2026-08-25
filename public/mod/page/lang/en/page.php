@@ -44,12 +44,12 @@ $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
 $string['modulename'] = 'Page';
-$string['modulename_help'] = '###### Key features
+$string['modulename_help'] = '#### Key features
 * Add text, lists, tables, images, and other embedded media such as videos, maps, charts, or presentations
 * Edit and update content quickly
 * Present information that students can read online, without needing to download a file
 
-###### Ways to use it
+#### Ways to use it
 * Present a course syllabus or unit overview
 * Create a list of reading and reference materials
 * Maintain an up-to-date list of office hours or an ongoing project schedule';
