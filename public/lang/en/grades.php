@@ -90,6 +90,7 @@ $string['aggregationsvisiblehelp'] = 'Select all aggregation types that should b
 $string['allgrades'] = 'All grades by category';
 $string['allstudents'] = 'All students';
 $string['allusers'] = 'All users';
+$string['assignsitewidelearningoutcomes'] = 'Assign site-wide learning outcomes';
 $string['autosort'] = 'Auto-sort';
 $string['availableidnumbers'] = 'Available ID numbers';
 $string['average'] = 'Average';

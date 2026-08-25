@@ -17,14 +17,14 @@
     Actions bar for the manage outcomes page.
 
     Context variables required for this template:
-    * backbutton - The data object containing the required properties to render the 'back' button.
+    * assignoutcomesbutton - The data object containing the required properties to render the 'Assign site-wide...' button.
     * addoutcomebutton - The data object containing the required properties to render the 'add a new outcome' button.
     * importoutcomesbutton - The data object containing the required properties to render the 'import outcomes' button.
     * exportoutcomesbutton - The data object containing the required properties to render the 'export outcomes' button.
 
     Example context (json):
     {
-        "backbutton": {
+        "assignoutcomesbutton": {
             "id": "single_button12345",
             "method" : "get",
             "classes": "singlebutton",
@@ -32,7 +32,7 @@
             "url" : "#",
             "primary" : false,
             "tooltip" : null,
-            "label" : "Back",
+            "label" : "Assign site-wide learning outcomes",
             "attributes": []
         },
         "addoutcomebutton": {
@@ -47,37 +47,40 @@
             "attributes": []
         },
         "importoutcomesbutton": {
-            "id": "single_button14325",
-            "method" : "get",
-            "classes": "singlebutton",
-            "formid": null,
+            "id": "action_link14325",
+            "disabled": false,
             "url" : "#",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Import outcomes",
-            "attributes": []
+            "classes": "btn btn-outline-secondary",
+            "attributes": [],
+            "icon": {
+                "key": "t/down",
+                "component": "core",
+                "title": "Import outcomes"
+            },
+            "text": "Import outcomes"
         },
         "exportoutcomesbutton": {
-            "id": "single_button15245",
-            "method" : "get",
-            "classes": "singlebutton",
-            "formid": null,
+            "id": "action_link15245",
+            "disabled": false,
             "url" : "#",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Export all outcomes",
-            "attributes": []
+            "classes": "btn btn-outline-secondary",
+            "attributes": [],
+            "icon": {
+                "key": "t/up",
+                "component": "core",
+                "title": "Export all outcomes"
+            },
+            "text": "Export all outcomes"
         }
     }
 }}
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
     <div class="d-flex">
-        {{#backbutton}}
+        {{#assignoutcomesbutton}}
             <div class="navitem">
                 {{>core/single_button}}
             </div>
-            <div class="navitem-divider"></div>
-        {{/backbutton}}
+        {{/assignoutcomesbutton}}
         {{#addoutcomebutton}}
             <div class="navitem">
                 {{>core/single_button}}
@@ -86,12 +89,12 @@
         <div class="ms-auto d-flex">
             {{#importoutcomesbutton}}
                 <div class="navitem">
-                    {{>core/single_button}}
+                    {{>core/action_link}}
                 </div>
             {{/importoutcomesbutton}}
             {{#exportoutcomesbutton}}
                 <div class="navitem">
-                    {{>core/single_button}}
+                    {{>core/action_link}}
                 </div>
             {{/exportoutcomesbutton}}
         </div>

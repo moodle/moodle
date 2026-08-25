@@ -18,7 +18,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 
 /**
- * Steps definitions to verify a file downloaded from a grade outcomes form submission.
+ * Steps definitions to verify a file downloaded from grade outcomes controls.
  *
  * @package    core_grades
  * @category   test
@@ -27,42 +27,60 @@ use Behat\Mink\Exception\ExpectationException;
  */
 class behat_grade_outcome extends behat_base {
     /**
-     * Downloads the file by submitting the named button and verifies its type and content.
+     * Downloads the file from a named button or link and verifies its type and content.
      *
      * Supported assertions:
      *   | Has mimetype  | text/plain  |
      *   | Contains text | some string |
      *
      * @Then following :buttontext button should download an outcome file that:
+     * @Then following :linktext link should download an outcome file that:
      *
-     * @param string $buttontext the text of the button.
+     * @param string $text the text of the button or link.
      * @param TableNode $table the table of assertions used to check the file contents.
      * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
      */
-    public function following_button_should_download_an_outcome_file_that(string $buttontext, TableNode $table): void {
-        // Find the submit button by its accessible name.
-        $button = $this->find('named_exact', ['button', $buttontext]);
-        if (!$button) {
-            throw new ExpectationException("Button '{$buttontext}' not found.", $this->getSession());
-        }
+    public function following_button_should_download_an_outcome_file_that(string $text, TableNode $table): void {
+        $fullurl = null;
 
-        // The button is a direct child of its form.
-        $form = $button->getParent();
+        try {
+            // First try a submit button (legacy behavior).
+            $button = $this->find('named_exact', ['button', $text]);
+            if ($button) {
+                // The button is a direct child of its form.
+                $form = $button->getParent();
 
-        // The form action is an absolute URL.
-        $actionurl = $form->getAttribute('action');
+                // The form action is an absolute URL.
+                $actionurl = $form->getAttribute('action');
 
-        // Collect GET params from hidden inputs.
-        $params = [];
-        foreach ($form->findAll('css', 'input[type="hidden"]') as $input) {
-            $name = $input->getAttribute('name');
-            if ($name !== null && $name !== '') {
-                $params[$name] = (string)$input->getAttribute('value');
+                // Collect GET params from hidden inputs.
+                $params = [];
+                foreach ($form->findAll('css', 'input[type="hidden"]') as $input) {
+                    $name = $input->getAttribute('name');
+                    if ($name !== null && $name !== '') {
+                        $params[$name] = (string)$input->getAttribute('value');
+                    }
+                }
+
+                $separator = str_contains($actionurl, '?') ? '&' : '?';
+                $fullurl = $actionurl . ($params ? $separator . http_build_query($params) : '');
             }
+        } catch (ExpectationException $e) {
+            // Button not found, will try link below.
         }
 
-        $separator = str_contains($actionurl, '?') ? '&' : '?';
-        $fullurl = $actionurl . ($params ? $separator . http_build_query($params) : '');
+        // If button path didn't work, try link-based controls.
+        if ($fullurl === null) {
+            $link = $this->find('named_exact', ['link', $text]);
+            if (!$link) {
+                throw new ExpectationException(
+                    "Control '{$text}' not found as either button or link.",
+                    $this->getSession()
+                );
+            }
+
+            $fullurl = (string)$link->getAttribute('href');
+        }
 
         // Fetch the file content directly, reusing the session cookie.
         $session = $this->getSession()->getCookie('MoodleSession');

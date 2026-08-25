@@ -1,4 +1,4 @@
-@core_grades @javascript
+@core_grades @core_outcome @javascript
 Feature: Outcomes reports handle outcomes without scales
   In order to use outcomes that are not associated with scales
   As a teacher
@@ -58,7 +58,7 @@ Feature: Outcomes reports handle outcomes without scales
     Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "More > Learning outcomes" in the course gradebook
     When I click on "Manage learning outcomes" "button"
-    Then following "Export all learning outcomes" button should download an outcome file that:
+    Then following "Export" link should download an outcome file that:
       | Contains text | Outcome with scale    |
       | Contains text | Outcome without scale |
       | Contains text | Test Scale 1          |
@@ -70,7 +70,7 @@ Feature: Outcomes reports handle outcomes without scales
     Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "More > Learning outcomes" in the course gradebook
     And I click on "Manage learning outcomes" "button"
-    And I click on "Import learning outcomes" "button"
+    And I click on "Import" "link"
     When I click on "Choose a file..." "button"
     And I select "Upload a file" repository in file picker
     And I set the field "Attachment" to "#dirroot#/grade/tests/fixtures/outcomes.csv"
