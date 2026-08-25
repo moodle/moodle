@@ -176,3 +176,19 @@ Feature: I can grade a students interaction across a forum
     And I press "Save changes and proceed to the next user"
     And I should see "Student 1"
     And I should not see "Teacher 1"
+
+  @accessibility
+  Scenario: The grade viewing dialogue has a valid heading structure
+    Given I am on the "Test Forum 1" "forum activity editing" page logged in as "admin"
+    And I expand all fieldsets
+    And I set the field "Whole forum grading > Type" to "Point"
+    And I set the field "Whole forum grading > Maximum grade" to "10"
+    And I press "Save and display"
+    And I press "Grade users"
+    And I set the field "grade" to "7"
+    And I press "Save"
+    And I press "Close grader"
+    When I am on the "Test Forum 1" "forum activity" page logged in as "student1"
+    And I press "View grades"
+    Then "h3.description" "css_element" should exist in the "Test Forum 1" "dialogue"
+    And the "Test Forum 1" "dialogue" should meet accessibility standards with "best-practice" extra tests
