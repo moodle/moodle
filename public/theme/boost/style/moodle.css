@@ -37011,6 +37011,10 @@ body.drawer-ease {
     width: 315px;
     clip-path: inset(0 0 0 0);
   }
+  .pagelayout-standard .drawer.drawer-right.show:focus-within,
+  body.limitedwidth .drawer.drawer-right.show:focus-within {
+    clip-path: none;
+  }
 }
 @media (min-width: 992px) {
   .pagelayout-standard .drawer.drawer-right:not(.show) .drawercontent,
