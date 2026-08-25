@@ -54,8 +54,14 @@ p.arrow_button {
  */
 
 @mixin button-focus($background, $innershadow) {
+    // The `&:focus.focus` (rather than plain `&.focus`) selector is required so that this rule
+    // out-specifies Bootstrap's own reboot `button:focus:not(:focus-visible) { outline: 0; }`
+    // reset. `.focus` is added via JS in places where we deliberately force the focus ring to
+    // show even though the browser's own `:focus-visible` heuristic says it shouldn't (e.g.
+    // core/modal restoring focus to a mouse-clicked trigger on close); without the extra
+    // specificity here, that reset silently cancels our outline again.
     &:focus-visible,
-    &.focus {
+    &:focus.focus {
         outline: $btn-focus-width solid darken($background, 40%);
         box-shadow: inset 0 0 0 2px $innershadow;
     }
