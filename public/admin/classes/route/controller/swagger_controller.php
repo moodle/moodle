@@ -87,6 +87,8 @@ class swagger_controller {
         ));
 
         $openapipath = util::get_path_for_callable([\core\router\apidocs::class, 'openapi_docs'])->out();
+        $oauth2redirect = util::get_path_for_callable([self::class, 'oauth2_redirect'])->out();
+        $oauthtitle = get_string('swaggerui', 'admin');
         $swaggerinit = <<<JS
             window.ui = SwaggerUIBundle({
                 url: "{$openapipath}",
@@ -105,6 +107,13 @@ class swagger_controller {
                 ],
 
                 hierarchicalTagSeparator: /[_]/,
+
+                oauth2RedirectUrl: "{$oauth2redirect}",
+            });
+
+            window.ui.initOAuth({
+                clientId: "openapi",
+                appName: "{$oauthtitle}",
             });
         JS;
 
@@ -116,6 +125,42 @@ class swagger_controller {
         $response->getBody()->write(html_writer::div('', '', [
             'id' => 'swagger-ui',
         ]));
+
+        $response->getBody()->write($OUTPUT->footer());
+
+        return $response;
+    }
+
+    /**
+     * Handle Swagger UI OAuth2 Redirect.
+     *
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    #[route(
+        path: '/swagger/oauth2-redirect',
+        method: ['GET'],
+    )]
+    public function oauth2_redirect(
+        ResponseInterface $response,
+    ): ResponseInterface {
+        global $OUTPUT, $PAGE;
+
+        $PAGE->set_url(util::get_path_for_callable(__METHOD__));
+
+        admin_externalpage_setup('swaggerui');
+
+        $response->getBody()->write($OUTPUT->header());
+
+        // These have to be manually added for now because they must be made cross-origin. The `js` method does not yet support this.
+        $response->getBody()->write(html_writer::tag(
+            tagname: 'script',
+            contents: '',
+            attributes: [
+                'src' => $this->get_cdn_url('swagger-ui-dist', 'oauth2-redirect.js'),
+                'crossorigin' => 'crossorigin',
+            ],
+        ));
 
         $response->getBody()->write($OUTPUT->footer());
 
