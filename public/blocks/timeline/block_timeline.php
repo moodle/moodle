@@ -50,7 +50,7 @@ class block_timeline extends block_base {
         $order = get_user_preferences('block_timeline_user_sort_preference') ?: BLOCK_TIMELINE_SORT_BY_DATES;
         $limit = get_user_preferences('block_timeline_user_limit_preference') ?: BLOCK_TIMELINE_ACTIVITIES_LIMIT_DEFAULT;
 
-        $props = json_encode([
+        $props = [
             'midnight'           => usergetmidnight(time()),
             'filter'             => $filter,
             'order'              => $order,
@@ -58,17 +58,14 @@ class block_timeline extends block_base {
             'nocoursesurl'       => $OUTPUT->image_url('courses', 'block_timeline')->out(false),
             'noeventsurl'        => $OUTPUT->image_url('activities', 'block_timeline')->out(false),
             'hasenrolledcourses' => !empty($courses),
-        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+        ];
 
         // Mount the React Timeline component directly — no renderer, no template.
-        // core/react_autoinit mounts any element carrying these two attributes.
-        $mount = \html_writer::div('', '', [
-            'data-react-component' => '@moodle/lms/block_timeline/Timeline',
-            'data-react-props'     => $props,
-        ]);
-
         $this->content = (object) [
-            'text' => $mount,
+            'text' => \core\output\html_writer::react_component(
+                '@moodle/lms/block_timeline/Timeline',
+                $props,
+            ),
             'footer' => '',
         ];
 
