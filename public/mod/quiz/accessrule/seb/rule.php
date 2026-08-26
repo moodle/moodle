@@ -255,6 +255,7 @@ class quizaccess_seb extends access_rule_base {
                 . 'seb.allowcapturecamera AS seb_allowcapturecamera, '
                 . 'seb.allowcapturemicrophone AS seb_allowcapturemicrophone, '
                 . 'seb.allowscreencapture AS seb_allowscreencapture, '
+                . 'seb.alloweddisplaysmaxnumber AS seb_alloweddisplaysmaxnumber, '
                 . 'seb.allowspellchecking AS seb_allowspellchecking, '
                 . 'seb.allowreloadinexam AS seb_allowreloadinexam, '
                 . 'seb.activateurlfiltering AS seb_activateurlfiltering, '

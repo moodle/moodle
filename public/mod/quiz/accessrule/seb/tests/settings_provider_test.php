@@ -177,7 +177,7 @@ final class settings_provider_test extends \advanced_testcase {
     public function test_hideifs(): void {
         $settinghideifs = settings_provider::get_quiz_hideifs();
 
-        $this->assertCount(26, $settinghideifs);
+        $this->assertCount(27, $settinghideifs);
 
         $this->assertArrayHasKey('seb_templateid', $settinghideifs);
         $this->assertCount(1, $settinghideifs['seb_templateid']);
@@ -387,6 +387,16 @@ final class settings_provider_test extends \advanced_testcase {
         $this->assert_hide_if(
             $settinghideifs['seb_allowscreencapture'][0],
             'seb_allowscreencapture',
+            'seb_requiresafeexambrowser',
+            'noteq',
+            settings_provider::USE_SEB_CONFIG_MANUALLY
+        );
+
+        $this->assertArrayHasKey('seb_alloweddisplaysmaxnumber', $settinghideifs);
+        $this->assertCount(1, $settinghideifs['seb_alloweddisplaysmaxnumber']);
+        $this->assert_hide_if(
+            $settinghideifs['seb_alloweddisplaysmaxnumber'][0],
+            'seb_alloweddisplaysmaxnumber',
             'seb_requiresafeexambrowser',
             'noteq',
             settings_provider::USE_SEB_CONFIG_MANUALLY
@@ -1352,6 +1362,7 @@ final class settings_provider_test extends \advanced_testcase {
         $allsettings->seb_allowcapturecamera = 23;
         $allsettings->seb_allowcapturemicrophone = 24;
         $allsettings->seb_allowscreencapture = 25;
+        $allsettings->seb_alloweddisplaysmaxnumber = 26;
 
         return $allsettings;
     }
@@ -1458,6 +1469,7 @@ final class settings_provider_test extends \advanced_testcase {
                 'seb_allowcapturecamera' => [],
                 'seb_allowcapturemicrophone' => [],
                 'seb_allowscreencapture' => [],
+                'seb_alloweddisplaysmaxnumber' => [],
                 'seb_allowspellchecking' => [],
                 'seb_activateurlfiltering' => [
                     'seb_filterembeddedcontent' => [],
