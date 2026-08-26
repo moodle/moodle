@@ -86,7 +86,10 @@ class oauth2 {
 
         if (isloggedin() && !isguestuser()) {
             // User is logged in and not guest.
-            // Set the user on the auth request.
+            // Set the user on the auth request. This is always freshly derived from the live
+            // session ($USER) here, never from any previously stored request, so
+            // has_granted_all_scopes() below can only silently complete this request for the
+            // actual logged-in, non-guest user - never a guest or some other, stale identity.
             $authrequest->setUser($userrepository->get_current_user());
 
             if ($grantedscopesrepository->has_granted_all_scopes(
@@ -105,12 +108,7 @@ class oauth2 {
             $this->store_auth_request($requestid, $authrequest);
         }
 
-        return \core\router\util::redirect_to_callable(
-            $request,
-            $response,
-            [self::class, 'login'],
-            queryparams: array_merge($request->getQueryParams(), [self::REQUEST_ID_PARAM => $requestid]),
-        );
+        return $this->redirect_to_login($request, $response, $requestid);
     }
 
     /**
@@ -349,7 +347,15 @@ class oauth2 {
             // This is a state-changing action performed using only the ambient session cookie, so it must be
             // protected against CSRF. The continue_as_user_page always includes a sesskey field for this purpose.
             \core\router\util::require_sesskey($request);
-            $user = $userrepository->get_current_user();
+
+            // A valid sesskey alone does not prove there is a genuine, non-guest session to
+            // continue as: guest sessions carry a valid sesskey too, and the session may since
+            // have been logged out entirely. Leave $user as null (falling through to the same
+            // failed-login handling used below) rather than trusting get_current_user() to
+            // return some other default identity in either case.
+            if (isloggedin() && !isguestuser()) {
+                $user = $userrepository->get_current_user();
+            }
         } else if (!empty($parsedbody['username']) && !empty($parsedbody['password'])) {
             // Validate the user credentials and, on success, establish a full Moodle session for
             // the authenticated user (as the standard login form does), rather than only
@@ -382,6 +388,11 @@ class oauth2 {
             );
         }
 
+        // The authenticated user is always the live session user here: either just established
+        // via complete_user_login() above, or (for 'continue as current user') only ever
+        // assigned once isloggedin() && !isguestuser() has been confirmed. has_granted_all_scopes()
+        // below can therefore only silently complete this request for that same real,
+        // logged-in, non-guest user.
         $authrequest->setUser($user);
 
         if ($grantedscopesrepository->has_granted_all_scopes(
@@ -444,6 +455,16 @@ class oauth2 {
     ): ResponseInterface {
         [$requestid, $authrequest] = $this->get_auth_request($request);
 
+        if (!$this->session_matches_authrequest_user($authrequest)) {
+            // The live session can no longer be trusted to view this pending request's consent
+            // screen - it may have been logged out, be a guest session, or (e.g. another tab)
+            // now belong to a different user than the one this request was authenticated for.
+            // Send it back to log in again, rather than rendering another user's consent
+            // screen; the pending request itself is left in the session, so a subsequent valid
+            // login can still continue this same flow.
+            return $this->redirect_to_login($request, $response, $requestid);
+        }
+
         $requestedscopes = array_map(fn($scope): string => $scope->getIdentifier(), $authrequest->getScopes());
         $client = $authrequest->getClient();
         $grantedscopes = $grantedscopesrepository->get_granted_scopes_for_user(
@@ -492,10 +513,26 @@ class oauth2 {
         ResponseInterface $response,
         \core\oauth2\server\repository\granted_scopes_repository $grantedscopesrepository,
     ): ResponseInterface {
+        // The sesskey and the session-identity check below protect different things: sesskey
+        // proves this submission was not forged by another site (CSRF), while the check below
+        // proves the session submitting it is still a real, logged-in session for the exact
+        // user this pending request was authenticated for. Neither substitutes for the other -
+        // a forged-but-otherwise-valid sesskey could still be replayed from a session that has
+        // since been logged out, switched to guest, or switched to a different user entirely.
         \core\router\util::require_sesskey($request);
 
-        $approved = $request->getParsedBody()['approve'] ?? '0';
         [$requestid, $authrequest] = $this->get_auth_request($request);
+
+        if (!$this->session_matches_authrequest_user($authrequest)) {
+            // Never store granted scopes, mark the request approved, or complete it - for
+            // either an approval or a denial - on behalf of a session that cannot be proven to
+            // still be this user. Send it back to log in again instead; the pending request
+            // itself is left in the session, so a subsequent valid login can still continue
+            // this same flow.
+            return $this->redirect_to_login($request, $response, $requestid);
+        }
+
+        $approved = $request->getParsedBody()['approve'] ?? '0';
 
         if ($approved === '1') {
             $selectedscopes = array_map(function ($scope) {
@@ -511,6 +548,67 @@ class oauth2 {
         }
 
         return $this->complete_authorization_request($requestid, $authrequest, $response);
+    }
+
+    /**
+     * Confirm that the live Moodle session is logged in, is not the guest user, and is logged
+     * in as the exact user recorded on the given authorization request.
+     *
+     * This is the boundary that stops a stale, logged-out, guest, or different-user session
+     * from being trusted to view or act on someone else's pending authorization request (used
+     * by {@see self::approve()} and {@see self::do_approve()}). It deliberately checks only
+     * session validity and user-identity matching; it does not check account-policy state
+     * (forced password change, incomplete profile, password expiry, etc.), which is out of
+     * scope here and left for separate handling.
+     *
+     * @param \League\OAuth2\Server\RequestTypes\AuthorizationRequest $authrequest
+     * @return bool
+     */
+    private function session_matches_authrequest_user(
+        \League\OAuth2\Server\RequestTypes\AuthorizationRequest $authrequest,
+    ): bool {
+        global $USER;
+
+        if (!isloggedin() || isguestuser()) {
+            return false;
+        }
+
+        $requestuser = $authrequest->getUser();
+        if ($requestuser === null) {
+            return false;
+        }
+
+        // Identifiers are compared as strings: $USER->id is an int, while
+        // UserEntityInterface::getIdentifier() is declared to return a string, so this avoids
+        // relying on PHP's loose (==) numeric/string comparison rules.
+        return (string) $USER->id === (string) $requestuser->getIdentifier();
+    }
+
+    /**
+     * Helper to redirect back to the login page for the given pending request id, preserving it
+     * (rather than discarding it), so the user can (re-)authenticate and continue the same flow.
+     *
+     * Used by {@see self::authorize()}, {@see self::approve()} and {@see self::do_approve()}
+     * whenever the live session cannot be trusted to continue a pending authorization request -
+     * for example, there is no session at all, it is a guest session, or it belongs to a
+     * different user than the one recorded on the request.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param string $requestid
+     * @return ResponseInterface
+     */
+    private function redirect_to_login(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        string $requestid,
+    ): ResponseInterface {
+        return \core\router\util::redirect_to_callable(
+            $request,
+            $response,
+            [self::class, 'login'],
+            queryparams: array_merge($request->getQueryParams(), [self::REQUEST_ID_PARAM => $requestid]),
+        );
     }
 
     /**

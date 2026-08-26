@@ -957,6 +957,69 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
+     * A valid sesskey alone does not prove there is a genuine session to continue as: do_login()
+     * rejects a 'continue as current user' submission with a valid sesskey but no live logged-in
+     * session at all, rather than falling through to some other default identity.
+     */
+    public function test_do_login_continue_as_current_user_rejects_logged_out_session(): void {
+        $this->resetAfterTest();
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->expects($this->never())->method('get_current_user');
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody(['currentuser' => '1', 'sesskey' => sesskey()]);
+        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+        $this->assertStringNotContainsString('/approve', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * do_login() rejects a 'continue as current user' submission with a valid sesskey when the
+     * live session is the guest user: guest sessions carry a valid sesskey too, so the sesskey
+     * check alone would not otherwise catch this.
+     */
+    public function test_do_login_continue_as_current_user_rejects_guest_session(): void {
+        $this->resetAfterTest();
+        $this->setGuestUser();
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->expects($this->never())->method('get_current_user');
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody(['currentuser' => '1', 'sesskey' => sesskey()]);
+        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+        $this->assertStringNotContainsString('/approve', $response->getHeaderLine('Location'));
+    }
+
+    /**
      * do_login() redirects to approve() when valid credentials are supplied.
      */
     public function test_do_login_valid_credentials(): void {
@@ -1539,9 +1602,15 @@ final class oauth2_test extends \advanced_testcase {
     public function test_approve_renders_confirm_scopes_page(): void {
         $this->resetAfterTest();
 
+        // The route now requires the live session to be logged in as the exact user recorded on
+        // the pending request, so a real user is both stored on the request and set as the
+        // current session user here.
+        $moodleuser = $this->getDataGenerator()->create_user();
+        $this->setUser($moodleuser);
+
         $client = $this->make_client_entity();
         $authrequest = $this->make_auth_request($client);
-        $authrequest->setUser($this->make_user_entity(2));
+        $authrequest->setUser($this->make_user_entity($moodleuser->id));
         $requestid = $this->store_auth_request_in_session($authrequest);
 
         $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
@@ -1599,8 +1668,14 @@ final class oauth2_test extends \advanced_testcase {
     public function test_do_approve_when_approved(): void {
         $this->resetAfterTest();
 
+        // The route now requires the live session to be logged in as the exact user recorded
+        // on the pending request, so a real user is both stored on the request and set as the
+        // current session user here.
+        $moodleuser = $this->getDataGenerator()->create_user();
+        $this->setUser($moodleuser);
+
         $client = $this->make_client_entity();
-        $user = $this->make_user_entity(2);
+        $user = $this->make_user_entity($moodleuser->id);
         $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
         $authrequest->setUser($user);
         $requestid = $this->store_auth_request_in_session($authrequest);
@@ -1691,8 +1766,14 @@ final class oauth2_test extends \advanced_testcase {
     public function test_do_approve_when_not_approved(): void {
         $this->resetAfterTest();
 
+        // The route now requires the live session to be logged in as the exact user recorded
+        // on the pending request, so a real user is both stored on the request and set as the
+        // current session user here.
+        $moodleuser = $this->getDataGenerator()->create_user();
+        $this->setUser($moodleuser);
+
         $client = $this->make_client_entity();
-        $user = $this->make_user_entity(2);
+        $user = $this->make_user_entity($moodleuser->id);
         $authrequest = $this->make_auth_request($client);
         $authrequest->setUser($user);
         $requestid = $this->store_auth_request_in_session($authrequest);
@@ -1723,6 +1804,270 @@ final class oauth2_test extends \advanced_testcase {
         $response = $route->do_approve($request, new Response(), $grantedscopesrepository);
 
         $this->assertSame($expectedresponse, $response);
+    }
+
+    /**
+     * approve() redirects back to the login page, instead of rendering the consent screen, when
+     * there is no live logged-in session at all.
+     */
+    public function test_approve_redirects_to_login_when_logged_out(): void {
+        $this->resetAfterTest();
+
+        $targetuser = $this->getDataGenerator()->create_user();
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client);
+        $authrequest->setUser($this->make_user_entity($targetuser->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+
+        $route = $this->get_route(clientrepository: $clientrepository, scoperepository: $scoperepository);
+
+        $response = $route->approve(
+            (new ServerRequest('GET', '/approve'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+            $scoperepository,
+            $this->make_granted_scopes_repository_stub(),
+        );
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+
+        // The pending request must survive, unmodified, so a subsequent valid login can still
+        // continue this same flow.
+        $requestidfromresponse = $this->get_requestid_from_response($response);
+        $this->assertEquals($requestid, $requestidfromresponse);
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $targetuser->id, (string) $storedrequest['userid']);
+    }
+
+    /**
+     * approve() redirects back to the login page, instead of rendering the consent screen, when
+     * the live session is the guest user.
+     */
+    public function test_approve_redirects_to_login_when_guest(): void {
+        $this->resetAfterTest();
+        $this->setGuestUser();
+
+        $targetuser = $this->getDataGenerator()->create_user();
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client);
+        $authrequest->setUser($this->make_user_entity($targetuser->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+
+        $route = $this->get_route(clientrepository: $clientrepository, scoperepository: $scoperepository);
+
+        $response = $route->approve(
+            (new ServerRequest('GET', '/approve'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+            $scoperepository,
+            $this->make_granted_scopes_repository_stub(),
+        );
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * approve() redirects back to the login page, instead of rendering another user's consent
+     * screen, when the live session is logged in as a real, different user than the one recorded
+     * on the pending request.
+     */
+    public function test_approve_redirects_to_login_for_different_logged_in_user(): void {
+        $this->resetAfterTest();
+
+        $targetuser = $this->getDataGenerator()->create_user();
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->setUser($otheruser);
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client);
+        $authrequest->setUser($this->make_user_entity($targetuser->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+
+        $route = $this->get_route(clientrepository: $clientrepository, scoperepository: $scoperepository);
+
+        $response = $route->approve(
+            (new ServerRequest('GET', '/approve'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+            $scoperepository,
+            $this->make_granted_scopes_repository_stub(),
+        );
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+
+        // The pending request must still record the original target user: it must not be
+        // silently replaced with the different, currently logged-in user.
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $targetuser->id, (string) $storedrequest['userid']);
+    }
+
+    /**
+     * do_approve() redirects back to the login page - without storing any granted scopes or
+     * completing the authorization request - when there is no live logged-in session at all,
+     * even though a valid sesskey is presented.
+     */
+    public function test_do_approve_redirects_to_login_when_logged_out(): void {
+        $this->resetAfterTest();
+
+        $targetuser = $this->getDataGenerator()->create_user();
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
+        $authrequest->setUser($this->make_user_entity($targetuser->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['store_granted_scopes_for_user'])
+            ->getMock();
+        $grantedscopesrepository->expects($this->never())->method('store_granted_scopes_for_user');
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $request = (new ServerRequest('POST', '/approve'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'sesskey' => sesskey(),
+                'approve' => '1',
+            ]);
+        $response = $route->do_approve($request, new Response(), $grantedscopesrepository);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+
+        // The pending request must survive, unmodified and unapproved, so a subsequent valid
+        // login can still continue this same flow.
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertFalse($storedrequest['authorizationapproved']);
+        $this->assertEquals((string) $targetuser->id, (string) $storedrequest['userid']);
+    }
+
+    /**
+     * do_approve() redirects back to the login page - without storing any granted scopes or
+     * completing the authorization request - when the live session is the guest user, even
+     * though a valid sesskey is presented.
+     */
+    public function test_do_approve_redirects_to_login_when_guest(): void {
+        $this->resetAfterTest();
+        $this->setGuestUser();
+
+        $targetuser = $this->getDataGenerator()->create_user();
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
+        $authrequest->setUser($this->make_user_entity($targetuser->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['store_granted_scopes_for_user'])
+            ->getMock();
+        $grantedscopesrepository->expects($this->never())->method('store_granted_scopes_for_user');
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $request = (new ServerRequest('POST', '/approve'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'sesskey' => sesskey(),
+                'approve' => '1',
+            ]);
+        $response = $route->do_approve($request, new Response(), $grantedscopesrepository);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * do_approve() redirects back to the login page - without storing any granted scopes or
+     * completing the authorization request - when the live session is logged in as a real,
+     * different user than the one recorded on the pending request, even though a valid sesskey
+     * is presented (sesskey proves the submission was not forged; it does not prove the session
+     * belongs to the stored user).
+     */
+    public function test_do_approve_redirects_to_login_for_different_logged_in_user(): void {
+        $this->resetAfterTest();
+
+        $targetuser = $this->getDataGenerator()->create_user();
+        $otheruser = $this->getDataGenerator()->create_user();
+        $this->setUser($otheruser);
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
+        $authrequest->setUser($this->make_user_entity($targetuser->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['store_granted_scopes_for_user'])
+            ->getMock();
+        $grantedscopesrepository->expects($this->never())->method('store_granted_scopes_for_user');
+
+        $route = $this->get_route($server, $clientrepository, $scoperepository);
+
+        $request = (new ServerRequest('POST', '/approve'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'sesskey' => sesskey(),
+                'approve' => '1',
+            ]);
+        $response = $route->do_approve($request, new Response(), $grantedscopesrepository);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+
+        // The pending request must still record the original target user: it must not be
+        // silently approved for the different, currently logged-in user.
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertFalse($storedrequest['authorizationapproved']);
+        $this->assertEquals((string) $targetuser->id, (string) $storedrequest['userid']);
     }
 
     /**
