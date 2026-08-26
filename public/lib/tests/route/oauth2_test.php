@@ -1713,6 +1713,220 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
+     * do_login() rejects valid credentials for an unconfirmed account before ever establishing a
+     * Moodle session, matching login/index.php's own ordering (confirmation is checked before
+     * complete_user_login() is called). Uses the real user_repository and real
+     * authenticate_user_login(), rather than mocking the confirmation property being tested, so
+     * this also proves authenticate_user_login() itself does not already reject unconfirmed
+     * users (confirmed here, since the OAuth route's own confirmation check is the only thing
+     * standing between valid credentials and a live session).
+     */
+    public function test_do_login_unconfirmed_account_does_not_establish_session(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $moodleuser = $this->getDataGenerator()->create_user([
+            'username' => 'bob',
+            'password' => 'password1',
+            'confirmed' => 0,
+        ]);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        // Never reached: proof that the flow cannot be silently completed for an unconfirmed
+        // account, however scopes happen to be configured.
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $route = $this->get_route($server, $clientrepository);
+
+        $logintoken = \core\session\manager::get_login_token();
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'password1',
+                'logintoken' => $logintoken,
+            ]);
+        $response = $route->do_login($request, new Response(), new user_repository());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+        $this->assertStringNotContainsString('/approve', $response->getHeaderLine('Location'));
+
+        // No Moodle session was established: authenticate_user_login() returned the full
+        // (unconfirmed) user record, but complete_user_login() was never reached.
+        $this->assertFalse(isloggedin());
+
+        // The pending request is preserved (not discarded), with no user attached to it, so a
+        // subsequent valid login (once the account is confirmed) can still continue this same
+        // flow.
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertNotNull($storedrequest);
+        $this->assertNull($storedrequest['userid']);
+        $this->assertFalse($storedrequest['authorizationapproved']);
+
+        // No scopes were stored for this user against this client.
+        $this->assertFalse($DB->record_exists('oauth2_server_client_granted_scopes', ['userid' => $moodleuser->id]));
+    }
+
+    /**
+     * A full unconfirmed-account redisplay cycle: do_login() with valid credentials for an
+     * unconfirmed account stashes a one-use flash distinguishing this from invalid credentials,
+     * without disturbing the pending OAuth authorization request; login() then consumes and
+     * displays the confirmation-required message - not the generic invalid-login one - exactly
+     * once.
+     */
+    public function test_do_login_unconfirmed_account_shows_confirmation_message_once(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $moodleuser = $this->getDataGenerator()->create_user(['confirmed' => 0]);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['authenticate_user'])
+            ->getMock();
+        $userrepository->method('authenticate_user')->willReturn($moodleuser);
+
+        $route = $this->get_route_with_stubbed_rendering(clientrepository: $clientrepository);
+
+        $capturedcontent = null;
+        $route->method('render_page_from_renderable')
+            ->willReturnCallback(function ($content, ResponseInterface $response) use (&$capturedcontent): ResponseInterface {
+                $capturedcontent = $content;
+                return $response;
+            });
+
+        $submittedusername = 'unconfirmeduser';
+        $dologinrequest = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => $submittedusername,
+                'password' => 'whatever',
+            ]);
+        $response = $route->do_login($dologinrequest, new Response(), $userrepository);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $location = $response->getHeaderLine('Location');
+        $this->assertStringContainsString('/login', $location);
+        $this->assertStringNotContainsString('/approve', $location);
+        $this->assertFalse(isloggedin());
+
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertNotNull($storedrequest);
+        $this->assertNull($storedrequest['userid']);
+
+        // Feed the redirect straight back into login(), as the browser would.
+        parse_str((string) parse_url($location, PHP_URL_QUERY), $redirectparams);
+        $loginrequest = (new ServerRequest('GET', '/login'))->withQueryParams($redirectparams);
+
+        $route->login($loginrequest, new Response());
+
+        $this->assertInstanceOf(login::class, $capturedcontent);
+        $data = $capturedcontent->export_for_template($PAGE->get_renderer('core'));
+        $this->assertEquals(get_string('confirmednot'), $data->error);
+        // Not the generic invalid-login message.
+        $this->assertEmpty($data->errortitle);
+        $this->assertNotEquals(get_string('logininvalidlogindetail'), $data->error);
+        // Retained exactly as submitted.
+        $this->assertEquals($submittedusername, $data->username);
+
+        // A second render for the same request id must no longer show the one-use message.
+        $capturedcontent = null;
+        $route->login($loginrequest, new Response());
+
+        $this->assertInstanceOf(login::class, $capturedcontent);
+        $data = $capturedcontent->export_for_template($PAGE->get_renderer('core'));
+        $this->assertEmpty($data->errortitle);
+        $this->assertEmpty($data->error);
+    }
+
+    /**
+     * After the account is marked confirmed, retrying with the same credentials against the same
+     * pending request establishes the session and proceeds through the central authorize() gate
+     * normally - the user does not need to do anything OAuth-specific to resume; they simply log
+     * in again, exactly as they would be expected to on the standalone login/index.php flow after
+     * confirming their account.
+     */
+    public function test_do_login_can_retry_after_account_confirmed(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $moodleuser = $this->getDataGenerator()->create_user([
+            'username' => 'bob',
+            'password' => 'password1',
+            'confirmed' => 0,
+        ]);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        $logintoken = \core\session\manager::get_login_token();
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'password1',
+                'logintoken' => $logintoken,
+            ]);
+
+        // First attempt: valid credentials, but the account is not yet confirmed - rejected.
+        $response = $route->do_login($request, new Response(), new user_repository());
+        $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
+        $this->assertFalse(isloggedin());
+
+        // Confirm the account, exactly as clicking the link in the confirmation email would.
+        $DB->set_field('user', 'confirmed', 1, ['id' => $moodleuser->id]);
+
+        // Retry with the same credentials, against the same pending request.
+        $logintoken = \core\session\manager::get_login_token();
+        $retryrequest = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'password1',
+                'logintoken' => $logintoken,
+            ]);
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        $response = @$route->do_login($retryrequest, new Response(), new user_repository());
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
+        $this->assertTrue(isloggedin());
+        $this->assertEquals($requestid, $this->get_requestid_from_response($response));
+
+        // The flow now proceeds through the central authorize() gate normally.
+        $this->set_page_url_for_authorize($requestid);
+        $authorizeresponse = $route->authorize(
+            (new ServerRequest('GET', '/authorize'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+            new user_repository(),
+            $this->make_granted_scopes_repository_stub(),
+        );
+
+        $this->assertEquals(302, $authorizeresponse->getStatusCode());
+        $this->assertStringContainsString('/approve', $authorizeresponse->getHeaderLine('Location'));
+    }
+
+    /**
      * do_login() does not treat an unset 'currentuser' field as "continue as current user".
      */
     public function test_do_login_currentuser_not_set_falls_through_to_credentials(): void {

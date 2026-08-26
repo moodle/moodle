@@ -315,10 +315,20 @@ class oauth2 {
         }
 
         if ($loginerror !== null) {
-            // Precise authentication failure codes (unauthorised, recaptcha, etc.) are out of
-            // scope here; always show the same generic invalid-login error shown by the
-            // standalone login/index.php flow for a bad username/password.
-            $loginform->set_error('', AUTH_LOGIN_FAILED);
+            if (!empty($loginerror['unconfirmed'])) {
+                // Correct credentials, but this account has never been confirmed - materially
+                // different from a bad username/password, so show a message that reflects that,
+                // reusing the same string login/lib.php already uses for exactly this situation
+                // elsewhere (unlike login/index.php's own full unconfirmed-account handling,
+                // this deliberately does not expose the account's email address or offer to
+                // resend the confirmation email - both are out of scope here).
+                $loginform->set_error(get_string('confirmednot'));
+            } else {
+                // Precise authentication failure codes (unauthorised, recaptcha, etc.) are out of
+                // scope here; always show the same generic invalid-login error shown by the
+                // standalone login/index.php flow for a bad username/password.
+                $loginform->set_error('', AUTH_LOGIN_FAILED);
+            }
         }
 
         // Set the wantsurl to the /authorize route.
@@ -390,6 +400,7 @@ class oauth2 {
         $parsedbody = $request->getParsedBody();
 
         $user = null;
+        $unconfirmed = false;
         if (($parsedbody['currentuser'] ?? '') === '1') {
             // Continue as the current user.
             // This is a state-changing action performed using only the ambient session cookie, so it must be
@@ -400,7 +411,10 @@ class oauth2 {
             // continue as: guest sessions carry a valid sesskey too, and the session may since
             // have been logged out entirely. Leave $user as null (falling through to the same
             // failed-login handling used below) rather than trusting get_current_user() to
-            // return some other default identity in either case.
+            // return some other default identity in either case. A genuinely logged-in session
+            // should not normally exist for an unconfirmed account in the first place, so - unlike
+            // the credential branch below - this path does not need its own confirmation check;
+            // the live-session checks above remain authoritative.
             if (isloggedin() && !isguestuser()) {
                 $user = $userrepository->get_current_user();
             }
@@ -415,18 +429,32 @@ class oauth2 {
             );
 
             if ($moodleuser !== false) {
-                complete_user_login($moodleuser);
-                $user = $userrepository->get_current_user();
+                if (empty($moodleuser->confirmed)) {
+                    // Valid credentials, but this account has never been confirmed. Matching
+                    // login/index.php's own ordering, this must be checked before
+                    // complete_user_login() is ever called: correct credentials alone do not
+                    // establish a session through OAuth if the standalone login form would not
+                    // have allowed it either. Leave $user as null, falling through to the same
+                    // failed-login handling used below, but flagged so that handling can show an
+                    // accurate message rather than the generic invalid-login one.
+                    $unconfirmed = true;
+                } else {
+                    complete_user_login($moodleuser);
+                    $user = $userrepository->get_current_user();
+                }
             }
         }
 
         if ($user === null) {
-            // Login failed. Record a one-use flash (error + submitted username), scoped to this
-            // request id, so the redisplayed login form can show it, then redirect back to the
-            // login form using the existing POST-redirect-GET pattern. The pending OAuth
-            // authorization request itself (stored separately under this same request id) is
-            // left untouched, so a subsequent valid login can still continue the flow.
-            $this->store_login_error($requestid, (string) ($parsedbody['username'] ?? ''));
+            // Login failed (either invalid credentials, or valid credentials for an unconfirmed
+            // account). Record a one-use flash (error + submitted username + whether this was
+            // specifically the unconfirmed-account case), scoped to this request id, so the
+            // redisplayed login form can show the right message, then redirect back to the login
+            // form using the existing POST-redirect-GET pattern. The pending OAuth authorization
+            // request itself (stored separately under this same request id) is left completely
+            // untouched - no user is attached to it - so a subsequent valid login can still
+            // continue the flow.
+            $this->store_login_error($requestid, (string) ($parsedbody['username'] ?? ''), $unconfirmed);
 
             return \core\router\util::redirect_to_callable(
                 $request,
@@ -899,8 +927,9 @@ class oauth2 {
     }
 
     /**
-     * Helper to store a one-use invalid-login flash (the error to display, and the username
-     * that was submitted) for the given request id.
+     * Helper to store a one-use invalid-login flash (the error to display, the username that was
+     * submitted, and whether this was specifically valid credentials for an unconfirmed account
+     * rather than invalid credentials) for the given request id.
      *
      * This is kept in its own session structure, separate from the pending authorization
      * request data stored by {@see self::store_auth_request()}, and deliberately does not use
@@ -914,13 +943,16 @@ class oauth2 {
      *
      * @param string $requestid
      * @param string $username The username submitted with the failed attempt.
+     * @param bool $unconfirmed Whether this was valid credentials for an unconfirmed account,
+     *      rather than invalid credentials.
      */
-    private function store_login_error(string $requestid, string $username): void {
+    private function store_login_error(string $requestid, string $username, bool $unconfirmed = false): void {
         global $SESSION;
 
         $SESSION->oauth2loginerrors ??= [];
         $SESSION->oauth2loginerrors[$requestid] = [
             'username' => clean_param($username, PARAM_RAW),
+            'unconfirmed' => $unconfirmed,
         ];
     }
 
@@ -931,7 +963,8 @@ class oauth2 {
      * as it is read, so that it is not shown again on a later render of the same request id.
      *
      * @param string $requestid
-     * @return array{username: string}|null Null if there is no pending flash for this request id.
+     * @return array{username: string, unconfirmed: bool}|null Null if there is no pending flash
+     *      for this request id.
      */
     private function consume_login_error(string $requestid): ?array {
         global $SESSION;
