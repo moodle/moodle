@@ -968,14 +968,16 @@ final class oauth2_test extends \advanced_testcase {
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
         $clientrepository->method('getClientEntity')->willReturn($client);
 
-        $user = $this->make_user_entity(2);
+        $moodleuser = $this->getDataGenerator()->create_user();
+        $user = $this->make_user_entity($moodleuser->id);
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user', 'get_current_user'])
             ->getMock();
         $userrepository->expects($this->once())
-            ->method('getUserEntityByUserCredentials')
-            ->with('bob', 'secret', '', $client)
-            ->willReturn($user);
+            ->method('authenticate_user')
+            ->with('bob', 'secret', '')
+            ->willReturn($moodleuser);
+        $userrepository->method('get_current_user')->willReturn($user);
 
         $route = $this->get_route(clientrepository: $clientrepository);
 
@@ -985,7 +987,9 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'secret',
             ]);
-        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        // The '@' suppresses a session_regenerate_id() warning from complete_user_login(),
+        // which only occurs because there is no real active PHP session in this test environment.
+        $response = @$route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
@@ -1011,11 +1015,13 @@ final class oauth2_test extends \advanced_testcase {
         $scoperepository->method('getScopeEntityByIdentifier')
             ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
 
-        $user = $this->make_user_entity(2);
+        $moodleuser = $this->getDataGenerator()->create_user();
+        $user = $this->make_user_entity($moodleuser->id);
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user', 'get_current_user'])
             ->getMock();
-        $userrepository->method('getUserEntityByUserCredentials')->willReturn($user);
+        $userrepository->method('authenticate_user')->willReturn($moodleuser);
+        $userrepository->method('get_current_user')->willReturn($user);
 
         $expectedresponse = new Response(200, [], 'authorized');
         $server = $this->createMock(AuthorizationServer::class);
@@ -1049,7 +1055,8 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'secret',
             ]);
-        $response = $route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        $response = @$route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
 
         $this->assertSame($expectedresponse, $response);
 
@@ -1077,11 +1084,13 @@ final class oauth2_test extends \advanced_testcase {
         $scoperepository->method('getScopeEntityByIdentifier')
             ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
 
-        $user = $this->make_user_entity(2);
+        $moodleuser = $this->getDataGenerator()->create_user();
+        $user = $this->make_user_entity($moodleuser->id);
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user', 'get_current_user'])
             ->getMock();
-        $userrepository->method('getUserEntityByUserCredentials')->willReturn($user);
+        $userrepository->method('authenticate_user')->willReturn($moodleuser);
+        $userrepository->method('get_current_user')->willReturn($user);
 
         $server = $this->createMock(AuthorizationServer::class);
         $server->expects($this->never())->method('completeAuthorizationRequest');
@@ -1094,7 +1103,8 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'secret',
             ]);
-        $response = $route->do_login(
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        $response = @$route->do_login(
             $request,
             new Response(),
             $userrepository,
@@ -1126,11 +1136,13 @@ final class oauth2_test extends \advanced_testcase {
         $scoperepository->method('getScopeEntityByIdentifier')
             ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
 
-        $user = $this->make_user_entity(2);
+        $moodleuser = $this->getDataGenerator()->create_user();
+        $user = $this->make_user_entity($moodleuser->id);
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user', 'get_current_user'])
             ->getMock();
-        $userrepository->method('getUserEntityByUserCredentials')->willReturn($user);
+        $userrepository->method('authenticate_user')->willReturn($moodleuser);
+        $userrepository->method('get_current_user')->willReturn($user);
 
         $server = $this->createMock(AuthorizationServer::class);
         $server->expects($this->never())->method('completeAuthorizationRequest');
@@ -1145,7 +1157,8 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'secret',
             ]);
-        $response = $route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        $response = @$route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
@@ -1166,7 +1179,8 @@ final class oauth2_test extends \advanced_testcase {
         $client = $this->make_client_entity('client1');
         $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
 
-        $user = $this->make_user_entity(2);
+        $moodleuser = $this->getDataGenerator()->create_user();
+        $user = $this->make_user_entity($moodleuser->id);
 
         // A grant already exists for the same client and scope, but a *different* user.
         $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
@@ -1192,9 +1206,10 @@ final class oauth2_test extends \advanced_testcase {
             ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
 
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user', 'get_current_user'])
             ->getMock();
-        $userrepository->method('getUserEntityByUserCredentials')->willReturn($user);
+        $userrepository->method('authenticate_user')->willReturn($moodleuser);
+        $userrepository->method('get_current_user')->willReturn($user);
 
         $server = $this->createMock(AuthorizationServer::class);
         $server->expects($this->never())->method('completeAuthorizationRequest');
@@ -1209,14 +1224,16 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'secret',
             ]);
-        $response = $route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        $response = @$route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
     }
 
     /**
-     * do_login() redirects back to the login form when the supplied credentials are invalid.
+     * do_login() redirects back to the login form when the supplied credentials are invalid, and
+     * does not establish a Moodle session for the request's ambient session.
      */
     public function test_do_login_invalid_credentials(): void {
         $this->resetAfterTest();
@@ -1228,9 +1245,9 @@ final class oauth2_test extends \advanced_testcase {
         $clientrepository->method('getClientEntity')->willReturn($client);
 
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user'])
             ->getMock();
-        $userrepository->method('getUserEntityByUserCredentials')->willReturn(null);
+        $userrepository->method('authenticate_user')->willReturn(false);
 
         $route = $this->get_route(clientrepository: $clientrepository);
 
@@ -1245,6 +1262,7 @@ final class oauth2_test extends \advanced_testcase {
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
         $this->assertStringNotContainsString('/approve', $response->getHeaderLine('Location'));
+        $this->assertFalse(isloggedin());
     }
 
     /**
@@ -1272,9 +1290,9 @@ final class oauth2_test extends \advanced_testcase {
         $clientrepository->method('getClientEntity')->willReturn($client);
 
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user'])
             ->getMock();
-        $userrepository->method('getUserEntityByUserCredentials')->willReturn(null);
+        $userrepository->method('authenticate_user')->willReturn(false);
 
         $route = $this->get_route_with_stubbed_rendering(clientrepository: $clientrepository);
 
@@ -1347,9 +1365,9 @@ final class oauth2_test extends \advanced_testcase {
         $clientrepository->method('getClientEntity')->willReturn($client);
 
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user'])
             ->getMock();
-        $userrepository->expects($this->never())->method('getUserEntityByUserCredentials');
+        $userrepository->expects($this->never())->method('authenticate_user');
 
         $route = $this->get_route(clientrepository: $clientrepository);
 
@@ -1365,13 +1383,18 @@ final class oauth2_test extends \advanced_testcase {
     /**
      * do_login() authenticates a user supplying valid username/password credentials together
      * with a valid Moodle login token (the same CSRF-style token mechanism used to guard the
-     * standard login/index.php form).
+     * standard login/index.php form), and, on success, establishes a full, persistent Moodle
+     * session for that user (via complete_user_login()) rather than only accepting the
+     * credentials for the OAuth2 flow.
      *
      * This is exercised through the real user_repository (rather than a mock of it), so that the
      * login token is actually validated by authenticate_user_login(), not merely assumed to have
-     * been forwarded correctly.
+     * been forwarded correctly, and against a real generated Moodle user, so that the resulting
+     * Moodle session is genuine rather than merely asserted to have been requested.
      */
     public function test_do_login_valid_credentials_and_valid_logintoken_authenticates(): void {
+        global $USER;
+
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user([
@@ -1389,6 +1412,8 @@ final class oauth2_test extends \advanced_testcase {
 
         $logintoken = \core\session\manager::get_login_token();
 
+        $this->assertFalse(isloggedin());
+
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
             ->withParsedBody([
@@ -1396,13 +1421,24 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'password1',
                 'logintoken' => $logintoken,
             ]);
-        $response = $route->do_login($request, new Response(), new user_repository(), $this->make_granted_scopes_repository_stub());
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        $response = @$route->do_login(
+            $request,
+            new Response(),
+            new user_repository(),
+            $this->make_granted_scopes_repository_stub(),
+        );
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
 
         $storedrequest = $this->get_auth_request_from_session($requestid);
         $this->assertEquals((string) $user->id, (string) $storedrequest['userid']);
+
+        // A real, persistent Moodle session has been established for the authenticated user, not
+        // merely a League user entity accepted for the OAuth2 flow.
+        $this->assertTrue(isloggedin());
+        $this->assertEquals($user->id, $USER->id);
     }
 
     /**
@@ -1447,6 +1483,9 @@ final class oauth2_test extends \advanced_testcase {
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
         $this->assertStringNotContainsString('/approve', $response->getHeaderLine('Location'));
+
+        // No Moodle session was established for the rejected credentials.
+        $this->assertFalse(isloggedin());
     }
 
     /**
@@ -1488,6 +1527,9 @@ final class oauth2_test extends \advanced_testcase {
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
         $this->assertStringNotContainsString('/approve', $response->getHeaderLine('Location'));
+
+        // No Moodle session was established for the rejected credentials.
+        $this->assertFalse(isloggedin());
     }
 
     /**
@@ -1716,10 +1758,12 @@ final class oauth2_test extends \advanced_testcase {
      * @param bool $approved Whether the approval form is submitted as approved or denied.
      */
     protected function submit_valid_login_and_approve(oauth2 $route, string $requestid, bool $approved): void {
+        $moodleuser = $this->getDataGenerator()->create_user();
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['getUserEntityByUserCredentials'])
+            ->onlyMethods(['authenticate_user', 'get_current_user'])
             ->getMock();
-        $userrepository->method('getUserEntityByUserCredentials')->willReturn($this->make_user_entity(2));
+        $userrepository->method('authenticate_user')->willReturn($moodleuser);
+        $userrepository->method('get_current_user')->willReturn($this->make_user_entity($moodleuser->id));
 
         $dologinrequest = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
@@ -1727,7 +1771,8 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'secret',
             ]);
-        $route->do_login($dologinrequest, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        @$route->do_login($dologinrequest, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
 
         $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
             ->disableOriginalConstructor()

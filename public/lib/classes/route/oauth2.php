@@ -351,14 +351,19 @@ class oauth2 {
             \core\router\util::require_sesskey($request);
             $user = $userrepository->get_current_user();
         } else if (!empty($parsedbody['username']) && !empty($parsedbody['password'])) {
-            // Validate the user credentials.
-            $user = $userrepository->getUserEntityByUserCredentials(
+            // Validate the user credentials and, on success, establish a full Moodle session for
+            // the authenticated user (as the standard login form does), rather than only
+            // accepting the credentials for the OAuth2 flow itself.
+            $moodleuser = $userrepository->authenticate_user(
                 $parsedbody['username'] ?? '',
                 $parsedbody['password'] ?? '',
-                '',
-                $authrequest->getClient(),
-                $parsedbody['logintoken'] ?? ''
+                $parsedbody['logintoken'] ?? '',
             );
+
+            if ($moodleuser !== false) {
+                complete_user_login($moodleuser);
+                $user = $userrepository->get_current_user();
+            }
         }
 
         if ($user === null) {
