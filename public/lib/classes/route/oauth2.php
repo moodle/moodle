@@ -188,7 +188,7 @@ class oauth2 {
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
-        global $SESSION, $PAGE;
+        global $SESSION, $PAGE, $USER;
 
         // If the user is already logged in, make this selectable.
         $loginurl = \core\router\util::get_path_for_callable([self::class, 'do_login']);
@@ -200,11 +200,18 @@ class oauth2 {
             $logouturl = \core\router\util::get_path_for_callable([self::class, 'logout']);
             $logouturl->params($request->getQueryParams());
 
+            // The user shown here is the live session user ($USER), not the user stored on the
+            // pending authorization request: the request may have been authenticated as a
+            // different user (e.g. in another tab) since it was first created, and submitting
+            // this form always continues as the live session user via get_current_user() in
+            // do_login(), never the one recorded on the request. Showing anything else here
+            // would display incorrect security-relevant information. The request itself is left
+            // untouched - it is only updated once the user actually submits this form.
             $continueform = new \core_auth\output\oauth2\continue_as_user_page(
                 $authrequest->getClient(),
                 $loginurl,
                 $logouturl,
-                \core\user::get_user($authrequest->getUser()->getIdentifier()),
+                \core\user::get_user($USER->id),
             );
 
             return $this->render_page_from_renderable(

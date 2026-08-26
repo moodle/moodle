@@ -321,6 +321,64 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
+     * login() displays the live session user on the "continue as this user" page, not the user
+     * stored on the pending authorization request: the request may have been authenticated as a
+     * different user (e.g. in another browser tab) since it was first created, and submitting
+     * the form always continues as the live session user, never the one recorded on the request.
+     * Showing the stored request's user here would display incorrect security-relevant
+     * information, even though it is not itself an authorization bypass.
+     *
+     * The requesting client's identity must still come from the pending request.
+     */
+    public function test_login_continue_as_user_page_shows_live_session_user_not_stored_request_user(): void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        // Two clearly different users: usera is recorded on the pending request, userb is who
+        // is actually logged in when login() is reached.
+        $usera = $this->getDataGenerator()->create_user(['username' => 'usera']);
+        $userb = $this->getDataGenerator()->create_user(['username' => 'userb']);
+        $this->setUser($userb);
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client);
+        $authrequest->setUser($this->make_user_entity($usera->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route_with_stubbed_rendering(clientrepository: $clientrepository);
+
+        $capturedcontent = null;
+        $route->method('render_page_from_renderable')
+            ->willReturnCallback(function ($content, ResponseInterface $response) use (&$capturedcontent): ResponseInterface {
+                $capturedcontent = $content;
+                return $response;
+            });
+
+        $route->login(
+            (new ServerRequest('GET', '/login'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+        );
+
+        $this->assertInstanceOf(continue_as_user_page::class, $capturedcontent);
+
+        $data = $capturedcontent->export_for_template($PAGE->get_renderer('core'));
+        $this->assertEquals('userb', $data->userinfo->username);
+        $this->assertStringContainsString('/user/profile.php?id=' . $userb->id, $data->userinfo->profileurl);
+
+        // The requesting client's identity must still come from the pending request.
+        $this->assertSame('Example client', $data->client->name);
+        $this->assertSame('client1', $data->client->identifier);
+
+        // Rendering the page must not itself have modified the pending request's stored user.
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $usera->id, (string) $storedrequest['userid']);
+    }
+
+    /**
      * login() supplies the requesting client from the pending authorization request to the
      * login renderable, so its identity can be shown before the user enters their credentials.
      */
@@ -889,17 +947,25 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
-     * do_login() redirects to approve() and stores the current user on the auth request when
-     * the user chooses to continue as their existing session's user.
+     * do_login() redirects to approve() and stores the live session user on the auth request
+     * when the user chooses to continue as their existing session's user - even when the
+     * pending request was previously recorded (e.g. from an earlier session) for a different
+     * user, submitting 'continue as current user' always uses and stores the live session user,
+     * never the one previously on the request.
      */
     public function test_do_login_continue_as_current_user(): void {
         $this->resetAfterTest();
 
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
+        // Two clearly different users: usera is initially recorded on the pending request,
+        // userb is the live session user who actually submits the form.
+        $usera = $this->getDataGenerator()->create_user(['username' => 'usera']);
+        $userb = $this->getDataGenerator()->create_user(['username' => 'userb']);
+        $this->setUser($userb);
 
         $client = $this->make_client_entity();
-        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+        $authrequest = $this->make_auth_request($client);
+        $authrequest->setUser($this->make_user_entity($usera->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
 
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
         $clientrepository->method('getClientEntity')->willReturn($client);
@@ -909,7 +975,7 @@ final class oauth2_test extends \advanced_testcase {
             ->getMock();
         $userrepository->expects($this->once())
             ->method('get_current_user')
-            ->willReturn($this->make_user_entity($user->id));
+            ->willReturn($this->make_user_entity($userb->id));
 
         $route = $this->get_route(clientrepository: $clientrepository);
 
@@ -921,8 +987,10 @@ final class oauth2_test extends \advanced_testcase {
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
 
+        // The pending request must now record userb (the live session user who submitted the
+        // form), not usera (whoever it was previously recorded for).
         $storedrequest = $this->get_auth_request_from_session($requestid);
-        $this->assertEquals((string) $user->id, (string) $storedrequest['userid']);
+        $this->assertEquals((string) $userb->id, (string) $storedrequest['userid']);
     }
 
     /**
