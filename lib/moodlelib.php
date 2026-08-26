@@ -4140,15 +4140,17 @@ function complete_user_login($user, array $extrauserinfo = []) {
     // Allow plugins to callback as soon possible after user has completed login.
     di::get(\core\hook\manager::class)->dispatch(new \core_user\hook\after_login_completed());
 
-    // Check if the user is using a new browser or session (a new MoodleSession cookie is set in that case).
-    // If the user is accessing from the same IP, ignore everything (most of the time will be a new session in the same browser).
-    // Skip Web Service requests, CLI scripts, AJAX scripts, and request from the mobile app itself.
+    // Send a new login notification when the IP address has changed since the last login,
+    // unless the same user is logging in again (identified via the MOODLEID1_ cookie).
+    // Skip Web Service requests, CLI scripts, and environments that don't support cookies.
     $loginip = getremoteaddr();
     $isnewip = isset($SESSION->userpreviousip) && $SESSION->userpreviousip != $loginip;
     $isvalidenv = (!WS_SERVER && !CLI_SCRIPT && !NO_MOODLE_COOKIES) || PHPUNIT_TEST;
 
-    if (!empty($SESSION->isnewsessioncookie) && $isnewip && $isvalidenv && !\core_useragent::is_moodle_app()) {
+    $prevusername = get_moodle_cookie();
+    $issameuser = !empty($prevusername) && $prevusername == $USER->username;
 
+    if (!$issameuser && $isnewip && $isvalidenv) {
         $logintime = time();
         $ismoodleapp = false;
         $useragent = \core_useragent::get_user_agent_string();
