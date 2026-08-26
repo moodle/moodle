@@ -48,13 +48,15 @@ Feature: Test editing a Calculated multichoice question
     And I set the following fields to these values:
       | Question name | Edited question name |
     And I press "id_submitbutton"
+    Then the field "Wild card {A}" matches value "will use the same existing private dataset as before"
+    But I should not see "will use a new private dataset"
     And I should see "Choose wildcards dataset properties"
     And I press "id_submitbutton"
     And I press "id_savechanges"
     And I should see "Edited question name"
     # Preview it.
     And I choose "Preview" action for "Edited question name" in the question bank
-    Then I should not see "<sup>"
+    And I should not see "<sup>"
 
   Scenario: Add, edit and preview a Calculated multichoice question with plain-text answers
     When I am on the "Course 1" "core_question > course question bank" page logged in as teacher

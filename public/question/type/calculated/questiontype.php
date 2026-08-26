@@ -1511,15 +1511,28 @@ class qtype_calculated extends question_type {
                 FROM {question_dataset_definitions} a, {question_datasets} b
                WHERE a.id = b.datasetdefinition AND a.type = '1' AND b.question = ? AND " . $DB->sql_equal('a.name', '?');
             $currentdatasetdef = $DB->get_record_sql($sql, [$form->id, $name]);
-            if (!$currentdatasetdef) {
+            if ($currentdatasetdef) {
+                // At least a record set already exists for this question.
+                $currentdatasetdef->hasitems = $DB->record_exists(
+                    'question_dataset_items',
+                    ['definition' => $currentdatasetdef->id]
+                );
+            } else {
+                // There exist no record set yet for this question. At least one has to be built.
                 $currentdatasetdef = new stdClass();
+                $currentdatasetdef->hasitems = false;
                 $currentdatasetdef->type = '0';
             }
             $key = "{$type}-0-{$name}";
-            if ($currentdatasetdef->type == $type
-                    && $currentdatasetdef->category == 0) {
+            if (
+                $currentdatasetdef->type == $type
+                && $currentdatasetdef->category == 0
+                && $currentdatasetdef->hasitems
+            ) {
+                // At least one record set exists.
                 $options[$key] = get_string($prefix."keptlocal{$type}", $langfile);
             } else {
+                // No record set exists yet.
                 $options[$key] = get_string($prefix."newlocal{$type}", $langfile);
             }
         }
