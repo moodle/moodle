@@ -84,6 +84,13 @@ class file_handlers extends external_api {
                 'extension' => new external_value(PARAM_TEXT, 'File extension'),
                 'module' => new external_value(PARAM_TEXT, 'Target module'),
                 'message' => new external_value(PARAM_TEXT, 'Output message'),
+                'imagedetails' => new external_value(
+                    PARAM_BOOL,
+                    'Whether this handler wants the image-details dialogue (alternative text, decorative '
+                        . 'flag, display size) collected for a matching file before it is uploaded',
+                    VALUE_DEFAULT,
+                    false,
+                ),
             ])
         );
     }

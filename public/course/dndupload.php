@@ -34,7 +34,20 @@ $modulename = required_param('module', PARAM_PLUGIN);
 $displayname = optional_param('displayname', null, PARAM_TEXT);
 $contents = optional_param('contents', null, PARAM_RAW); // It will be up to each plugin to clean this data, before saving it.
 
+// Optional image details, collected by the "Add media to course page" shortcut before an image is added
+// to a Text and media activity, so the author can set alternative text, mark the image decorative and
+// choose its display size. Handlers that do not deal with images simply ignore these.
+$imagedetails = null;
+if (optional_param('imagedetailsset', 0, PARAM_BOOL)) {
+    $imagedetails = [
+        'alt' => optional_param('imagealt', '', PARAM_TEXT),
+        'presentation' => optional_param('imagepresentation', 0, PARAM_BOOL),
+        'width' => optional_param('imagewidth', 0, PARAM_INT),
+        'height' => optional_param('imageheight', 0, PARAM_INT),
+    ];
+}
+
 $PAGE->set_url('/course/dndupload.php');
 
 $dndproc = new \core_course\dndupload_ajax_processor($courseid, $section, $type, $modulename);
-$dndproc->process($displayname, $contents);
+$dndproc->process($displayname, $contents, $imagedetails);

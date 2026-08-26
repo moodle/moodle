@@ -28,6 +28,8 @@
  * @property {String} extension the handled extension or * for any
  * @property {String} message the handler message
  * @property {String} module the module name
+ * @property {Boolean} imagedetails whether this handler wants the image-details dialogue (alternative
+ *                                  text, decorative flag, display size) collected before upload
  */
 
 import Config from 'core/config';
@@ -38,6 +40,7 @@ import {getFirst} from 'core/normalise';
 import {prefetchStrings} from 'core/prefetch';
 import {getString, getStrings} from 'core/str';
 import {getCourseEditor} from 'core_courseformat/courseeditor';
+import {getImageDetails} from 'core/imagedetails/modal';
 import {processMonitor} from 'core/process_monitor';
 import {debounce} from 'core/utils';
 
@@ -72,13 +75,15 @@ class FileUploader {
      * @param {number} sectionNum the section number
      * @param {File} fileInfo the file information object
      * @param {Handler} handler the file selected file handler
+     * @param {?Object} imageDetails optional image details (alt, presentation, width, height) for image uploads
      */
-    constructor(courseId, sectionId, sectionNum, fileInfo, handler) {
+    constructor(courseId, sectionId, sectionNum, fileInfo, handler, imageDetails = null) {
         this.courseId = courseId;
         this.sectionId = sectionId;
         this.sectionNum = sectionNum;
         this.fileInfo = fileInfo;
         this.handler = handler;
+        this.imageDetails = imageDetails;
     }
 
     /**
@@ -186,6 +191,15 @@ class FileUploader {
         formData.append('section', this.sectionNum);
         formData.append('module', this.handler.module);
         formData.append('type', 'Files');
+        // Image details supplied by the "Add media to course page" shortcut, so the author can set
+        // alternative text, mark the image decorative and choose its display size before it is added.
+        if (this.imageDetails !== null) {
+            formData.append('imagedetailsset', 1);
+            formData.append('imagealt', this.imageDetails.alt);
+            formData.append('imagepresentation', this.imageDetails.presentation ? 1 : 0);
+            formData.append('imagewidth', this.imageDetails.width);
+            formData.append('imageheight', this.imageDetails.height);
+        }
         return formData;
     }
 
@@ -524,7 +538,17 @@ const queueFileUpload = async function(courseId, sectionId, sectionNum, fileInfo
     if (!handler) {
         return;
     }
-    const fileProcessor = new FileUploader(courseId, sectionId, sectionNum, fileInfo, handler);
+    // For a handler that wants image details (alt text, decorative flag and display size) for the
+    // matching file, collect them before uploading, so the author can make the image accessible.
+    // Cancelling the image-details modal abandons the shortcut and creates no activity.
+    let imageDetails = null;
+    if (handler.imagedetails) {
+        imageDetails = await getImageDetails(fileInfo);
+        if (imageDetails === null) {
+            return;
+        }
+    }
+    const fileProcessor = new FileUploader(courseId, sectionId, sectionNum, fileInfo, handler, imageDetails);
     uploadQueue.addPending(fileInfo.name, fileProcessor.getExecutionFunction());
 };
 

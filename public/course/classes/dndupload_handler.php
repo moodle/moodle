@@ -104,7 +104,12 @@ class dndupload_handler {
             }
             if (isset($resp['files'])) {
                 foreach ($resp['files'] as $file) {
-                    $this->register_file_handler($file['extension'], $modname, $file['message']);
+                    $this->register_file_handler(
+                        $file['extension'],
+                        $modname,
+                        $file['message'],
+                        !empty($file['imagedetails']),
+                    );
                 }
             }
             if (isset($resp['addtypes'])) {
@@ -204,14 +209,18 @@ class dndupload_handler {
      * @param string $module The name of the module to handle this type
      * @param string $message The message to show the user if more than one handler is registered
      *                        for a type and the user needs to make a choice between them
+     * @param bool $imagedetails Whether this handler wants the author-supplied image details
+     *                           (alternative text, decorative flag, display size) collected for a
+     *                           matching file before it is uploaded
      */
-    protected function register_file_handler($extension, $module, $message) {
+    protected function register_file_handler($extension, $module, $message, $imagedetails = false) {
         $extension = strtolower($extension);
 
         $add = (object) [
             'extension' => $extension,
             'module' => $module,
             'message' => $message,
+            'imagedetails' => $imagedetails,
         ];
 
         $this->filehandlers[] = $add;

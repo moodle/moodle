@@ -1,0 +1,172 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/imagedetails/form
+
+    Image details form, shown before an author-supplied image is embedded. Lets the author provide
+    alternative text, mark the image decorative and choose its display size.
+
+    Rendered by the core/imagedetails/form module, which owns the form's behaviour. Callers that want
+    the form in a modal of its own should use core/imagedetails/modal instead of rendering this directly.
+
+    Set showpreview when the caller has no preview of its own; a caller that already shows the image
+    (for example an editor that offers replace and delete alongside it) leaves it unset and the controls
+    take the full width.
+
+    Context variables required for this template:
+    * uniqid - Unique string used to build ids, so the form can be rendered more than once on a page.
+    * alt - Initial alternative text.
+    * presentation - Whether the image is initially marked decorative.
+    * width - Initial value of the width field, in pixels.
+    * height - Initial value of the height field, in pixels.
+    * hasdimensions - Whether the image has known pixel dimensions (enables the size controls).
+    * custom - Whether the "Custom" size is initially selected, rather than "Original".
+    * maxlengthalt - Maximum number of characters allowed for the alternative text.
+    * decorativehelpicon - Context for core/help_icon, explaining when an image is decorative.
+    * showpreview - Whether to render the image preview column.
+    * previewurl - URL of the image, used for the preview. Only needed when showpreview is set.
+    * filename - The image file name. Only needed when showpreview is set.
+
+    Example context (json):
+    {
+        "uniqid": "68b3f1a2c4d5e",
+        "alt": "",
+        "presentation": false,
+        "width": 800,
+        "height": 600,
+        "hasdimensions": true,
+        "custom": false,
+        "maxlengthalt": 750,
+        "decorativehelpicon": {"text": "Select if alternative text description isn't required for this image."},
+        "showpreview": true,
+        "previewurl": "https://example.com/image.png",
+        "filename": "image.png"
+    }
+}}
+<div class="imagedetails" data-region="imagedetails">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="{{#showpreview}}col-lg-5{{/showpreview}}{{^showpreview}}col-12{{/showpreview}}">
+                <div class="mb-3">
+                    <h6 class="fw-bold">{{#str}} imagealternativetext {{/str}}</h6>
+                    <label for="{{uniqid}}_imagedetails_alt" class="form-label">
+                        {{#str}} imagealtdescription {{/str}}
+                    </label>
+                    <textarea
+                        id="{{uniqid}}_imagedetails_alt"
+                        class="form-control"
+                        rows="4"
+                        maxlength="{{maxlengthalt}}"
+                        data-region="alt"
+                        aria-errormessage="{{uniqid}}_imagedetails_altwarning"
+                        {{#presentation}}disabled{{/presentation}}
+                    >{{alt}}</textarea>
+                    <div class="d-flex justify-content-end small text-muted mt-1">
+                        <span data-region="altcount">0</span>
+                        <span class="mx-1">/</span>
+                        <span>{{maxlengthalt}}</span>
+                        {{! Announces the limit being reached, which the character count alone does not convey. }}
+                        <span class="visually-hidden" role="status" data-region="altmaxlengthfeedback"></span>
+                    </div>
+                    <div class="text-danger small d-none" id="{{uniqid}}_imagedetails_altwarning" data-region="altwarning">
+                        {{#str}} imagealtrequired, error {{/str}}
+                    </div>
+                </div>
+                <div class="form-check mb-3">
+                    <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="{{uniqid}}_imagedetails_decorative"
+                        data-region="presentation"
+                        {{#presentation}}checked{{/presentation}}
+                    >
+                    <label class="form-check-label" for="{{uniqid}}_imagedetails_decorative">
+                        {{#str}} imagedecorative {{/str}}
+                    </label>
+                    <span>{{#decorativehelpicon}}{{> core/help_icon }}{{/decorativehelpicon}}</span>
+                </div>
+                {{#hasdimensions}}
+                    <hr>
+                    <h6 class="fw-bold">{{#str}} imagesize {{/str}}</h6>
+                    <div class="btn-group mb-2" role="group" aria-label="{{#str}} imagesize {{/str}}">
+                        <button
+                            type="button"
+                            class="btn {{#custom}}btn-outline-primary{{/custom}}{{^custom}}btn-primary{{/custom}}"
+                            data-action="size-original"
+                            aria-pressed="{{^custom}}true{{/custom}}{{#custom}}false{{/custom}}"
+                        >
+                            {{#str}} imagesizeoriginal {{/str}}
+                        </button>
+                        <button
+                            type="button"
+                            class="btn {{#custom}}btn-primary{{/custom}}{{^custom}}btn-outline-primary{{/custom}}"
+                            data-action="size-custom"
+                            aria-pressed="{{#custom}}true{{/custom}}{{^custom}}false{{/custom}}"
+                        >
+                            {{#str}} imagecustomsize {{/str}}
+                        </button>
+                    </div>
+                    <div class="{{^custom}}d-none{{/custom}}" data-region="customsize">
+                        <div class="d-flex flex-wrap">
+                            <div class="me-3 mb-2">
+                                <label for="{{uniqid}}_imagedetails_width" class="form-label">
+                                    {{#str}} imagewidth {{/str}}
+                                </label>
+                                <div class="input-group">
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control"
+                                        id="{{uniqid}}_imagedetails_width"
+                                        data-region="width"
+                                        value="{{width}}"
+                                    >
+                                    <span class="input-group-text">px</span>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="{{uniqid}}_imagedetails_height" class="form-label">
+                                    {{#str}} imageheight {{/str}}
+                                </label>
+                                <div class="input-group">
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        class="form-control"
+                                        id="{{uniqid}}_imagedetails_height"
+                                        data-region="height"
+                                        value="{{height}}"
+                                    >
+                                    <span class="input-group-text">px</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-text">{{#str}} imagesizehint {{/str}}</div>
+                    </div>
+                {{/hasdimensions}}
+            </div>
+            {{#showpreview}}
+                <div class="col-lg-7">
+                    <div class="border rounded p-2 d-flex align-items-center justify-content-center">
+                        <img src="{{previewurl}}" alt="" class="img-fluid rounded" data-region="preview">
+                    </div>
+                    <div class="text-center text-muted small mt-1 text-truncate" title="{{filename}}">{{filename}}</div>
+                </div>
+            {{/showpreview}}
+        </div>
+    </div>
+</div>

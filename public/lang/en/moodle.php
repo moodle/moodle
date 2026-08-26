@@ -1116,6 +1116,17 @@ $string['idnumbermod_help'] = 'Setting an ID number provides a way of identifyin
 For gradable activities, the ID number can also be set in the gradebook, though it can only be edited on the activity settings page.';
 $string['idnumbertaken'] = 'This ID number is already taken';
 $string['imagealt'] = 'Picture description';
+$string['imagealtdescription'] = 'How would you describe this image to someone who cannot see it?';
+$string['imagealternativetext'] = 'Alternative text';
+$string['imagecustomsize'] = 'Custom';
+$string['imagedecorative'] = 'Decorative image';
+$string['imagedecorative_help'] = 'Select if alternative text description isn\'t required for this image.';
+$string['imagedetails'] = 'Image details';
+$string['imageheight'] = 'Height';
+$string['imagesize'] = 'Image size';
+$string['imagesizehint'] = 'Width and height adjust together to keep the original proportions.';
+$string['imagesizeoriginal'] = 'Original';
+$string['imagewidth'] = 'Width';
 $string['import'] = 'Import';
 $string['importdata'] = 'Import course data';
 $string['importdataexported'] = 'Exported data from \'from\' course successfully.<br /> Continue to import into your \'to\' course.';
