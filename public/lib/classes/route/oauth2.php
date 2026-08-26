@@ -86,11 +86,41 @@ class oauth2 {
 
         if (isloggedin() && !isguestuser()) {
             // User is logged in and not guest.
+            // Whether the live session user has already been confirmed for this exact pending
+            // request - i.e. do_login() has already run for this authrequestid and this user,
+            // either via a fresh credential login or a 'continue as current user' submission.
+            // This is checked against the request as restored from the session, before it is
+            // overwritten below: do_login() always persists the user it just confirmed before
+            // redirecting back here, so a match here means this visit to authorize() is that
+            // same redirect coming back, not a fresh, unconfirmed arrival.
+            $currentuser = $userrepository->get_current_user();
+            $previoususer = $authrequest->getUser();
+            $userconfirmedforthisrequest = $previoususer !== null
+                && $previoususer->getIdentifier() === $currentuser->getIdentifier();
+
             // Set the user on the auth request. This is always freshly derived from the live
-            // session ($USER) here, never from any previously stored request, so
+            // session ($USER) here, never trusted from the previously stored request, so
             // has_granted_all_scopes() below can only silently complete this request for the
             // actual logged-in, non-guest user - never a guest or some other, stale identity.
-            $authrequest->setUser($userrepository->get_current_user());
+            $authrequest->setUser($currentuser);
+
+            // Persist the freshly-derived user before require_login() runs, so that if it
+            // redirects away, the pending request already reflects this user when the browser
+            // is eventually brought back here.
+            $this->store_auth_request($requestid, $authrequest);
+
+            // This method is the single gate every logged-in visit to this flow passes through
+            // (do_login() always redirects back here rather than completing anything itself),
+            // so this is the one place that needs to confirm the live session satisfies
+            // Moodle's mandatory account-policy requirements (forced password change,
+            // incomplete profile, site policy agreement) before anything - silent completion or
+            // the consent screen - is allowed to proceed. If any apply, require_login() redirects
+            // the browser away and sets $SESSION->wantsurl to this exact
+            // /authorize?authrequestid=... URL, so the user is brought straight back here, with
+            // the same authrequestid, once the requirement is resolved. Called with no course
+            // (site-level check only) and autologinguest disabled (a session already confirmed
+            // logged-in and non-guest above must never be silently replaced with a guest one).
+            require_login(null, false);
 
             if ($grantedscopesrepository->has_granted_all_scopes(
                 $authrequest->getClient(),
@@ -104,8 +134,21 @@ class oauth2 {
                 return $this->complete_authorization_request($requestid, $authrequest, $response);
             }
 
+            if ($userconfirmedforthisrequest) {
+                // This user has already confirmed (via do_login()) that they wish to continue as
+                // themselves for this exact request: proceed straight to the scope-consent
+                // screen, rather than showing that same "continue as this user?" confirmation
+                // again - which, for a 'continue as current user' submission, would otherwise
+                // redirect back here in an endless loop.
+                return \core\router\util::redirect_to_callable(
+                    $request,
+                    $response,
+                    [self::class, 'approve'],
+                    queryparams: array_merge($request->getQueryParams(), [self::REQUEST_ID_PARAM => $requestid]),
+                );
+            }
+
             // Redirect to the login page to confirm that the user wishes to continue as this user.
-            $this->store_auth_request($requestid, $authrequest);
         }
 
         return $this->redirect_to_login($request, $response, $requestid);
@@ -330,7 +373,6 @@ class oauth2 {
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param user_repository $userrepository
-     * @param \core\oauth2\server\repository\granted_scopes_repository $grantedscopesrepository
      * @return ResponseInterface
      */
     #[route(
@@ -341,7 +383,6 @@ class oauth2 {
         ServerRequestInterface $request,
         ResponseInterface $response,
         user_repository $userrepository,
-        \core\oauth2\server\repository\granted_scopes_repository $grantedscopesrepository,
     ): ResponseInterface {
         // Handle the login form submission.
         [$requestid, $authrequest] = $this->get_auth_request($request);
@@ -397,29 +438,22 @@ class oauth2 {
 
         // The authenticated user is always the live session user here: either just established
         // via complete_user_login() above, or (for 'continue as current user') only ever
-        // assigned once isloggedin() && !isguestuser() has been confirmed. has_granted_all_scopes()
-        // below can therefore only silently complete this request for that same real,
-        // logged-in, non-guest user.
+        // assigned once isloggedin() && !isguestuser() has been confirmed.
         $authrequest->setUser($user);
-
-        if ($grantedscopesrepository->has_granted_all_scopes(
-            $authrequest->getClient(),
-            $user,
-            $authrequest->getScopes(),
-        )) {
-            // This user has already granted every scope this client is requesting: approve and
-            // complete the authorization request immediately, without showing the scope
-            // confirmation screen.
-            $authrequest->setAuthorizationApproved(true);
-            return $this->complete_authorization_request($requestid, $authrequest, $response);
-        }
-
         $this->store_auth_request($requestid, $authrequest);
 
+        // This method never completes authorization, silently or otherwise, itself: every
+        // successful login (both the username/password and 'continue as current user' paths)
+        // returns through authorize(), which is the single place that checks account-policy
+        // requirements (via require_login()) and already-granted scopes before anything can
+        // proceed. This also means at least one further request always happens after
+        // complete_user_login() before a token can be issued, which gives hooks that only fire
+        // on ordinary page loads (e.g. MFA's bootstrap-time hook) a chance to run - though
+        // nothing here depends on or calls into MFA directly.
         return \core\router\util::redirect_to_callable(
             $request,
             $response,
-            [self::class, 'approve'],
+            [self::class, 'authorize'],
             queryparams: array_merge($request->getQueryParams(), [self::REQUEST_ID_PARAM => $requestid]),
         );
     }
@@ -471,6 +505,15 @@ class oauth2 {
             // login can still continue this same flow.
             return $this->redirect_to_login($request, $response, $requestid);
         }
+
+        // Defensive gate: authorize() already checked this when the flow first reached a
+        // logged-in session, but this request could be reached again later (or hit directly),
+        // and an account-policy requirement (forced password change, incomplete profile, site
+        // policy) could have newly arisen for this same, still-correctly-identified user since
+        // then - for example, an admin force-flagging a password change mid-flow. See
+        // authorize() for how require_login() sets $SESSION->wantsurl to bring the browser back
+        // here, to this exact /approve?authrequestid=... URL, once resolved.
+        require_login(null, false);
 
         $requestedscopes = array_map(fn($scope): string => $scope->getIdentifier(), $authrequest->getScopes());
         $client = $authrequest->getClient();
@@ -538,6 +581,10 @@ class oauth2 {
             // this same flow.
             return $this->redirect_to_login($request, $response, $requestid);
         }
+
+        // Defensive gate: see approve() for why this is needed here too, even though
+        // authorize() already checked it earlier in the same flow.
+        require_login(null, false);
 
         $approved = $request->getParsedBody()['approve'] ?? '0';
 
@@ -779,14 +826,17 @@ class oauth2 {
      * {@see self::store_login_error()}), since it belongs to this same abandoned flow and would
      * otherwise linger in the session indefinitely.
      *
-     * Also clears $SESSION->wantsurl, but only if it is still exactly the OAuth authorize URL
-     * that login() stored for this same request id (see {@see self::wantsurl_is_for_request()}).
-     * login() reuses the site-wide wantsurl slot so that an external IdP-style auth plugin can
-     * redirect back to /authorize after login, but never restores it afterwards; once this
-     * request is forgotten, that URL is dangling and would otherwise be picked up by a later,
-     * unrelated ordinary login and mistaken for its own destination, starting a brand new OAuth
-     * flow. If wantsurl no longer points at this request (another tab or route has since
-     * replaced it with something else, or it was never set) it is left untouched.
+     * Also clears $SESSION->wantsurl, but only if it is still exactly one of this same request's
+     * own OAuth URLs (see {@see self::wantsurl_is_for_request()}) - either the authorize URL that
+     * login() stored (reusing the site-wide wantsurl slot so that an external IdP-style auth
+     * plugin can redirect back to /authorize after login, but never restoring it afterwards), or
+     * an authorize/approve URL that require_login() stored while resolving a mandatory
+     * account-policy requirement (forced password change, incomplete profile, site policy) for
+     * this request's user. Once this request is forgotten, any such URL is dangling and would
+     * otherwise be picked up by a later, unrelated ordinary login and mistaken for its own
+     * destination, starting a brand new OAuth flow. If wantsurl no longer points at this request
+     * (another tab or route has since replaced it with something else, or it was never set) it is
+     * left untouched.
      *
      * @param string $requestid
      */
@@ -802,8 +852,10 @@ class oauth2 {
     }
 
     /**
-     * Helper to determine whether the given wantsurl value is the OAuth authorize URL that
-     * login() would have stored for the given request id.
+     * Helper to determine whether the given wantsurl value is one of this flow's own OAuth URLs
+     * for the given request id - either the authorize URL that login() would have stored, or the
+     * authorize/approve URL that require_login() would have stored while resolving a mandatory
+     * account-policy requirement partway through the flow.
      *
      * $SESSION->wantsurl is a site-wide slot that may hold a plain string (as set by
      * require_login() or login/index.php) or a {@see \core\url} instance (as set by login()), so
@@ -819,15 +871,27 @@ class oauth2 {
         try {
             $url = new \core\url($wantsurl);
         } catch (\moodle_exception) {
-            // Not a URL \core\url can parse at all, so it is definitely not the one login()
-            // stored.
+            // Not a URL \core\url can parse at all, so it is definitely not one of the ones
+            // this flow itself would have stored.
             return false;
         }
 
-        $authorizeurl = \core\router\util::get_path_for_callable([self::class, 'authorize']);
-        if (!$url->compare($authorizeurl, URL_MATCH_BASE)) {
+        $oauthurls = [
+            \core\router\util::get_path_for_callable([self::class, 'authorize']),
+            \core\router\util::get_path_for_callable([self::class, 'approve']),
+        ];
+
+        $matchesownurl = false;
+        foreach ($oauthurls as $oauthurl) {
+            if ($url->compare($oauthurl, URL_MATCH_BASE)) {
+                $matchesownurl = true;
+                break;
+            }
+        }
+
+        if (!$matchesownurl) {
             // Some other destination entirely (e.g. the originally-requested protected page, or
-            // a different route), not the OAuth authorize route.
+            // a different route), not one of this flow's own OAuth routes.
             return false;
         }
 

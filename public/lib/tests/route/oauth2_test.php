@@ -247,6 +247,33 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
+     * Set $PAGE->url as moodle_bootstrap_middleware would for a real routed GET request to
+     * /authorize?authrequestid=$requestid, so that require_login()'s wantsurl mechanism (via
+     * qualified_me(), which prefers $PAGE->url when set) resolves the same way it would in
+     * production. Needed by tests that call authorize() directly, bypassing the router's own
+     * middleware stack.
+     *
+     * @param string $requestid
+     */
+    protected function set_page_url_for_authorize(string $requestid): void {
+        global $PAGE;
+
+        $PAGE->set_url('/authorize', ['authrequestid' => $requestid]);
+    }
+
+    /**
+     * Set $PAGE->url as moodle_bootstrap_middleware would for a real routed request to
+     * /approve?authrequestid=$requestid. See {@see self::set_page_url_for_authorize()}.
+     *
+     * @param string $requestid
+     */
+    protected function set_page_url_for_approve(string $requestid): void {
+        global $PAGE;
+
+        $PAGE->set_url('/approve', ['authrequestid' => $requestid]);
+    }
+
+    /**
      * The OAuth2 login page never offers guest login or signup, regardless of the site's
      * standard login settings.
      */
@@ -947,7 +974,7 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
-     * do_login() redirects to approve() and stores the live session user on the auth request
+     * do_login() redirects to authorize() and stores the live session user on the auth request
      * when the user chooses to continue as their existing session's user - even when the
      * pending request was previously recorded (e.g. from an earlier session) for a different
      * user, submitting 'continue as current user' always uses and stores the live session user,
@@ -982,10 +1009,10 @@ final class oauth2_test extends \advanced_testcase {
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
             ->withParsedBody(['currentuser' => '1', 'sesskey' => sesskey()]);
-        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        $response = $route->do_login($request, new Response(), $userrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
 
         // The pending request must now record userb (the live session user who submitted the
         // form), not usera (whoever it was previously recorded for).
@@ -1021,7 +1048,7 @@ final class oauth2_test extends \advanced_testcase {
             ->withParsedBody(['currentuser' => '1', 'sesskey' => 'invalid']);
 
         $this->expectException(\moodle_exception::class);
-        $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        $route->do_login($request, new Response(), $userrepository);
     }
 
     /**
@@ -1048,7 +1075,7 @@ final class oauth2_test extends \advanced_testcase {
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
             ->withParsedBody(['currentuser' => '1', 'sesskey' => sesskey()]);
-        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        $response = $route->do_login($request, new Response(), $userrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -1080,7 +1107,7 @@ final class oauth2_test extends \advanced_testcase {
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
             ->withParsedBody(['currentuser' => '1', 'sesskey' => sesskey()]);
-        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        $response = $route->do_login($request, new Response(), $userrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -1088,7 +1115,7 @@ final class oauth2_test extends \advanced_testcase {
     }
 
     /**
-     * do_login() redirects to approve() when valid credentials are supplied.
+     * do_login() redirects to authorize() when valid credentials are supplied.
      */
     public function test_do_login_valid_credentials(): void {
         $this->resetAfterTest();
@@ -1120,18 +1147,24 @@ final class oauth2_test extends \advanced_testcase {
             ]);
         // The '@' suppresses a session_regenerate_id() warning from complete_user_login(),
         // which only occurs because there is no real active PHP session in this test environment.
-        $response = @$route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        $response = @$route->do_login($request, new Response(), $userrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
+
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $moodleuser->id, (string) $storedrequest['userid']);
     }
 
     /**
-     * do_login() approves and completes the authorization request immediately, without
-     * redirecting to approve() or displaying the scope confirmation screen, when the just
-     * authenticated user has already granted every scope this client is requesting.
+     * do_login() never completes the authorization request itself, silently or otherwise, even
+     * when the just authenticated user has already granted every scope this client is
+     * requesting: it always redirects to authorize(), which is the only place that decision is
+     * made (see test_authorize_completes_immediately_when_all_requested_scopes_already_granted()
+     * and test_do_login_then_authorize_completes_silently_when_all_scopes_already_granted() for
+     * that decision, and the full round trip, respectively).
      */
-    public function test_do_login_completes_immediately_when_all_requested_scopes_already_granted(): void {
+    public function test_do_login_does_not_complete_authorization_itself(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -1142,10 +1175,6 @@ final class oauth2_test extends \advanced_testcase {
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
         $clientrepository->method('getClientEntity')->willReturn($client);
 
-        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
-        $scoperepository->method('getScopeEntityByIdentifier')
-            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
-
         $moodleuser = $this->getDataGenerator()->create_user();
         $user = $this->make_user_entity($moodleuser->id);
         $userrepository = $this->getMockBuilder(user_repository::class)
@@ -1153,6 +1182,68 @@ final class oauth2_test extends \advanced_testcase {
             ->getMock();
         $userrepository->method('authenticate_user')->willReturn($moodleuser);
         $userrepository->method('get_current_user')->willReturn($user);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $route = $this->get_route($server, $clientrepository);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'secret',
+            ]);
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        $response = @$route->do_login($request, new Response(), $userrepository);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
+
+        // The pending request is preserved (not discarded), unlike a genuine completion, so
+        // authorize() can pick it up and make the actual completion decision.
+        $this->assertArrayHasKey($requestid, $SESSION->oauth2requests ?? []);
+    }
+
+    /**
+     * The full round trip - do_login() followed by the authorize() redirect it produces -
+     * completes the authorization request silently, without displaying the scope confirmation
+     * screen, when the just authenticated user has already granted every scope this client is
+     * requesting. Uses a real granted_scopes_repository (backed by the database), not a mock of
+     * the value being checked, so this proves the two routes actually cooperate correctly, not
+     * just that each one individually contains the right logic.
+     */
+    public function test_do_login_then_authorize_completes_silently_when_all_scopes_already_granted(): void {
+        global $SESSION, $DB;
+
+        $this->resetAfterTest();
+
+        $client = $this->make_client_entity('client1');
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $scoperepository->method('getScopeEntityByIdentifier')
+            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+
+        $moodleuser = $this->getDataGenerator()->create_user();
+
+        // This scope has already been granted, by this exact user, to this exact client.
+        $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
+            'clientidentifier' => 'client1',
+            'userid' => $moodleuser->id,
+            'scope' => 'moodle',
+            'timecreated' => time(),
+        ]);
+
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['authenticate_user', 'get_current_user'])
+            ->getMock();
+        $userrepository->method('authenticate_user')->willReturn($moodleuser);
+        $userrepository->method('get_current_user')
+            ->willReturn($this->make_user_entity($moodleuser->id));
 
         $expectedresponse = new Response(200, [], 'authorized');
         $server = $this->createMock(AuthorizationServer::class);
@@ -1164,21 +1255,7 @@ final class oauth2_test extends \advanced_testcase {
             });
 
         $route = $this->get_route($server, $clientrepository, $scoperepository);
-
-        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['has_granted_all_scopes'])
-            ->getMock();
-        $grantedscopesrepository->expects($this->once())
-            ->method('has_granted_all_scopes')
-            ->with(
-                $this->identicalTo($client),
-                $this->identicalTo($user),
-                $this->callback(
-                    fn (array $scopes): bool => array_map(fn ($s) => $s->getIdentifier(), $scopes) === ['moodle'],
-                ),
-            )
-            ->willReturn(true);
+        $grantedscopesrepository = new granted_scopes_repository($scoperepository);
 
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
@@ -1187,20 +1264,35 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'secret',
             ]);
         // See test_do_login_valid_credentials() for why '@' is used here.
-        $response = @$route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
+        $dologinresponse = @$route->do_login($request, new Response(), $userrepository);
 
-        $this->assertSame($expectedresponse, $response);
+        $this->assertEquals(302, $dologinresponse->getStatusCode());
+        $authorizerequestid = $this->get_requestid_from_response($dologinresponse);
+        $this->assertEquals($requestid, $authorizerequestid);
 
-        // No redirect to approve(): the pending request is discarded entirely, rather than being
-        // left in the session for approve()/do_approve() to pick up.
+        $authorizerequest = (new ServerRequest('GET', '/authorize'))
+            ->withQueryParams(['authrequestid' => $authorizerequestid]);
+        $authorizeresponse = $route->authorize(
+            $authorizerequest,
+            new Response(),
+            $userrepository,
+            $grantedscopesrepository,
+        );
+
+        $this->assertSame($expectedresponse, $authorizeresponse);
+
+        // No pending request left behind: the flow has genuinely completed.
         $this->assertArrayNotHasKey($requestid, $SESSION->oauth2requests ?? []);
     }
 
     /**
-     * do_login() preserves the existing redirect to approve() when the just authenticated user
-     * has granted some, but not all, of the scopes this client is requesting.
+     * do_login() redirects to authorize() with the same request id regardless of the
+     * authenticated user's scope-grant state: that decision (silent completion vs. the consent
+     * screen) is made entirely by authorize() (see test_authorize_preserves_interactive_flow_*()
+     * and test_authorize_does_not_auto_approve_using_grant_for_different_user_or_client() for
+     * that decision itself), not by do_login().
      */
-    public function test_do_login_preserves_approve_redirect_when_some_requested_scopes_not_granted(): void {
+    public function test_do_login_redirects_to_authorize_regardless_of_scope_grant_state(): void {
         $this->resetAfterTest();
 
         $client = $this->make_client_entity();
@@ -1211,10 +1303,6 @@ final class oauth2_test extends \advanced_testcase {
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
         $clientrepository->method('getClientEntity')->willReturn($client);
 
-        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
-        $scoperepository->method('getScopeEntityByIdentifier')
-            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
-
         $moodleuser = $this->getDataGenerator()->create_user();
         $user = $this->make_user_entity($moodleuser->id);
         $userrepository = $this->getMockBuilder(user_repository::class)
@@ -1226,7 +1314,7 @@ final class oauth2_test extends \advanced_testcase {
         $server = $this->createMock(AuthorizationServer::class);
         $server->expects($this->never())->method('completeAuthorizationRequest');
 
-        $route = $this->get_route($server, $clientrepository, $scoperepository);
+        $route = $this->get_route($server, $clientrepository);
 
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
@@ -1235,131 +1323,273 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'secret',
             ]);
         // See test_do_login_valid_credentials() for why '@' is used here.
-        $response = @$route->do_login(
-            $request,
-            new Response(),
-            $userrepository,
-            $this->make_granted_scopes_repository_stub(hasgrantedallscopes: false),
-        );
+        $response = @$route->do_login($request, new Response(), $userrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
 
         $storedrequest = $this->get_auth_request_from_session($requestid);
         $this->assertEquals((string) $user->getIdentifier(), (string) $storedrequest['userid']);
     }
 
     /**
-     * do_login() preserves the existing redirect to approve() when the just authenticated user
-     * has never granted any of the requested scopes, using a real granted_scopes_repository
-     * backed by the (empty) database table, rather than a mocked return value.
+     * authorize() requires a live session that satisfies Moodle's mandatory account-policy
+     * requirements (via require_login()) before consent or silent completion can proceed. A
+     * forced password change interrupts the flow, preserves the pending request, and points
+     * $SESSION->wantsurl at the exact same /authorize?authrequestid=... URL so the flow can
+     * resume once the requirement is resolved.
+     *
+     * require_login()'s redirect is observed here as the moodle_exception redirect() throws,
+     * rather than a real HTTP redirect, because PHPUnit runs as CLI_SCRIPT, which redirect()
+     * refuses to run under (see test_require_login_without_course() in
+     * moodle_authentication_middleware_test.php for the same pattern against the equivalent
+     * router middleware). $SESSION->wantsurl is still set by the time it does so.
      */
-    public function test_do_login_preserves_approve_redirect_when_no_requested_scopes_granted(): void {
+    public function test_authorize_redirects_for_forced_password_change_and_preserves_request(): void {
+        global $SESSION;
+
         $this->resetAfterTest();
 
-        $client = $this->make_client_entity('client1');
+        $moodleuser = $this->getDataGenerator()->create_user(['auth' => 'manual']);
+        set_user_preference('auth_forcepasswordchange', 1, $moodleuser);
+        // Calling setUser() re-initialises $SESSION as a side effect, so it must run before the
+        // pending request is stored below, not after.
+        $this->setUser($moodleuser);
+
+        $client = $this->make_client_entity();
         $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
 
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
         $clientrepository->method('getClientEntity')->willReturn($client);
 
-        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
-        $scoperepository->method('getScopeEntityByIdentifier')
-            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
-
-        $moodleuser = $this->getDataGenerator()->create_user();
-        $user = $this->make_user_entity($moodleuser->id);
-        $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['authenticate_user', 'get_current_user'])
-            ->getMock();
-        $userrepository->method('authenticate_user')->willReturn($moodleuser);
-        $userrepository->method('get_current_user')->willReturn($user);
-
         $server = $this->createMock(AuthorizationServer::class);
         $server->expects($this->never())->method('completeAuthorizationRequest');
 
-        $route = $this->get_route($server, $clientrepository, $scoperepository);
+        $route = $this->get_route($server, $clientrepository);
 
-        $grantedscopesrepository = new granted_scopes_repository($scoperepository);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->method('get_current_user')->willReturn($this->make_user_entity($moodleuser->id));
 
-        $request = (new ServerRequest('POST', '/login'))
-            ->withQueryParams(['authrequestid' => $requestid])
-            ->withParsedBody([
-                'username' => 'bob',
-                'password' => 'secret',
-            ]);
-        // See test_do_login_valid_credentials() for why '@' is used here.
-        $response = @$route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
+        // In production, moodle_bootstrap_middleware sets $PAGE->url from the routed request's
+        // URI before the route handler runs, which is what require_login()'s wantsurl mechanism
+        // (via qualified_me()) relies on. Reproduce that here, since this test drives authorize()
+        // directly rather than through the full router middleware stack.
+        $this->set_page_url_for_authorize($requestid);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+        $request = (new ServerRequest('GET', '/authorize'))
+            ->withQueryParams(['authrequestid' => $requestid]);
+
+        try {
+            $route->authorize($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $this->fail('Expected require_login() to attempt a redirect for the forced password change.');
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (\core\exception\moodle_exception $e) {
+            // Expected: see this test's docblock.
+        }
+
+        $this->assertStringContainsString('/authorize', (string) ($SESSION->wantsurl ?? ''));
+        $this->assertStringContainsString($requestid, (string) ($SESSION->wantsurl ?? ''));
+
+        // The pending request itself is preserved (not discarded), so a subsequent visit (once
+        // the password is changed) can still continue this same flow.
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $moodleuser->id, (string) $storedrequest['userid']);
+        $this->assertFalse($storedrequest['authorizationapproved']);
     }
 
     /**
-     * do_login()'s already-granted check is scoped to the just authenticated user and current
-     * client: a grant belonging to a different user (even for the same client and scope), or to a
-     * different client (even for the same user and scope), must not cause silent authorization.
+     * authorize() redirects for an incomplete profile, exactly as it does for a forced password
+     * change (see test_authorize_redirects_for_forced_password_change_and_preserves_request()),
+     * preserving the pending request and pointing $SESSION->wantsurl at this same request.
      */
-    public function test_do_login_does_not_auto_approve_using_grant_for_different_user_or_client(): void {
-        global $DB;
+    public function test_authorize_redirects_for_incomplete_profile_and_preserves_request(): void {
+        global $SESSION;
 
         $this->resetAfterTest();
 
-        $otheruser = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'house',
+            'name' => 'House',
+            'required' => 1,
+            'visible' => 1,
+            'locked' => 0,
+            'datatype' => 'text',
+        ]);
 
-        $client = $this->make_client_entity('client1');
-        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
-
+        // Created without profile_field_house, so this user is missing a required field.
         $moodleuser = $this->getDataGenerator()->create_user();
-        $user = $this->make_user_entity($moodleuser->id);
+        // Calling setUser() re-initialises $SESSION as a side effect, so it must run before the
+        // pending request is stored below, not after.
+        $this->setUser($moodleuser);
 
-        // A grant already exists for the same client and scope, but a *different* user.
-        $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
-            'clientidentifier' => 'client1',
-            'userid' => $otheruser->id,
-            'scope' => 'moodle',
-            'timecreated' => time(),
-        ]);
-
-        // ...and another for the same user, but a *different* client.
-        $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
-            'clientidentifier' => 'other-client',
-            'userid' => $user->getIdentifier(),
-            'scope' => 'moodle',
-            'timecreated' => time(),
-        ]);
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
 
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
         $clientrepository->method('getClientEntity')->willReturn($client);
 
-        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
-        $scoperepository->method('getScopeEntityByIdentifier')
-            ->willReturnCallback(fn (string $identifier): ScopeEntityInterface => $this->make_scope_entity($identifier));
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $route = $this->get_route($server, $clientrepository);
 
         $userrepository = $this->getMockBuilder(user_repository::class)
-            ->onlyMethods(['authenticate_user', 'get_current_user'])
+            ->onlyMethods(['get_current_user'])
             ->getMock();
-        $userrepository->method('authenticate_user')->willReturn($moodleuser);
-        $userrepository->method('get_current_user')->willReturn($user);
+        $userrepository->method('get_current_user')->willReturn($this->make_user_entity($moodleuser->id));
+
+        $this->set_page_url_for_authorize($requestid);
+
+        $request = (new ServerRequest('GET', '/authorize'))
+            ->withQueryParams(['authrequestid' => $requestid]);
+
+        try {
+            $route->authorize($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $this->fail('Expected require_login() to attempt a redirect for the incomplete profile.');
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (\core\exception\moodle_exception $e) {
+            // Expected: see test_authorize_redirects_for_forced_password_change_and_preserves_request().
+        }
+
+        $this->assertStringContainsString('/authorize', (string) ($SESSION->wantsurl ?? ''));
+        $this->assertStringContainsString($requestid, (string) ($SESSION->wantsurl ?? ''));
+
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $moodleuser->id, (string) $storedrequest['userid']);
+        $this->assertFalse($storedrequest['authorizationapproved']);
+    }
+
+    /**
+     * authorize() redirects when a site policy is defined and not yet agreed to, exactly as it
+     * does for a forced password change (see
+     * test_authorize_redirects_for_forced_password_change_and_preserves_request()), preserving
+     * the pending request and pointing $SESSION->wantsurl at this same request.
+     */
+    public function test_authorize_redirects_for_site_policy_not_agreed_and_preserves_request(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        set_config('sitepolicy', 'https://example.com/sitepolicy.html');
+
+        // A freshly created user has not agreed to anything (policyagreed defaults to 0).
+        $moodleuser = $this->getDataGenerator()->create_user();
+        // Calling setUser() re-initialises $SESSION as a side effect, so it must run before the
+        // pending request is stored below, not after.
+        $this->setUser($moodleuser);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
 
         $server = $this->createMock(AuthorizationServer::class);
         $server->expects($this->never())->method('completeAuthorizationRequest');
 
-        $route = $this->get_route($server, $clientrepository, $scoperepository);
+        $route = $this->get_route($server, $clientrepository);
 
-        $grantedscopesrepository = new granted_scopes_repository($scoperepository);
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->method('get_current_user')->willReturn($this->make_user_entity($moodleuser->id));
 
-        $request = (new ServerRequest('POST', '/login'))
-            ->withQueryParams(['authrequestid' => $requestid])
-            ->withParsedBody([
-                'username' => 'bob',
-                'password' => 'secret',
-            ]);
-        // See test_do_login_valid_credentials() for why '@' is used here.
-        $response = @$route->do_login($request, new Response(), $userrepository, $grantedscopesrepository);
+        $this->set_page_url_for_authorize($requestid);
 
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+        $request = (new ServerRequest('GET', '/authorize'))
+            ->withQueryParams(['authrequestid' => $requestid]);
+
+        try {
+            $route->authorize($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $this->fail('Expected require_login() to attempt a redirect for the unagreed site policy.');
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (\core\exception\moodle_exception $e) {
+            // Expected: see test_authorize_redirects_for_forced_password_change_and_preserves_request().
+        }
+
+        $this->assertStringContainsString('/authorize', (string) ($SESSION->wantsurl ?? ''));
+        $this->assertStringContainsString($requestid, (string) ($SESSION->wantsurl ?? ''));
+
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $moodleuser->id, (string) $storedrequest['userid']);
+        $this->assertFalse($storedrequest['authorizationapproved']);
+    }
+
+    /**
+     * Once the account-policy requirement blocking authorize() is resolved (here, the forced
+     * password change preference is cleared, exactly as login/change_password.php clears it on
+     * success), resuming the same authrequestid completes the flow normally - proving the
+     * "resume via $SESSION->wantsurl" story actually round-trips, not just that the initial
+     * redirect looks right.
+     */
+    public function test_authorize_resumes_and_completes_after_forced_password_change_resolved(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        $moodleuser = $this->getDataGenerator()->create_user(['auth' => 'manual']);
+        set_user_preference('auth_forcepasswordchange', 1, $moodleuser);
+        // Calling setUser() re-initialises $SESSION as a side effect, so it must run before the
+        // pending request is stored below, not after.
+        $this->setUser($moodleuser);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $expectedresponse = new Response(200, [], 'authorized');
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->once())
+            ->method('completeAuthorizationRequest')
+            ->willReturn($expectedresponse);
+
+        $route = $this->get_route($server, $clientrepository);
+
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->method('get_current_user')->willReturn($this->make_user_entity($moodleuser->id));
+
+        $this->set_page_url_for_authorize($requestid);
+
+        $request = (new ServerRequest('GET', '/authorize'))
+            ->withQueryParams(['authrequestid' => $requestid]);
+
+        try {
+            $route->authorize($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $this->fail('Expected require_login() to attempt a redirect for the forced password change.');
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (\core\exception\moodle_exception $e) {
+            // Expected on the first visit.
+        }
+
+        // Simulate login/change_password.php's own success behaviour: it clears the preference
+        // (see unset_user_preference('auth_forcepasswordchange', ...) there) and returns the
+        // browser to $SESSION->wantsurl, which require_login() has already pointed at this exact
+        // authorize() URL.
+        unset_user_preference('auth_forcepasswordchange', $moodleuser);
+        $wantsurl = $SESSION->wantsurl;
+        unset($SESSION->wantsurl);
+
+        $resumedrequest = new ServerRequest('GET', $wantsurl);
+        parse_str((string) parse_url($wantsurl, PHP_URL_QUERY), $resumedparams);
+        $resumedrequest = $resumedrequest->withQueryParams($resumedparams);
+
+        $this->assertEquals($requestid, $resumedparams['authrequestid']);
+
+        $response = $route->authorize(
+            $resumedrequest,
+            new Response(),
+            $userrepository,
+            $this->make_granted_scopes_repository_stub(hasgrantedallscopes: true),
+        );
+
+        $this->assertSame($expectedresponse, $response);
+        $this->assertArrayNotHasKey($requestid, $SESSION->oauth2requests ?? []);
     }
 
     /**
@@ -1388,7 +1618,7 @@ final class oauth2_test extends \advanced_testcase {
                 'username' => 'bob',
                 'password' => 'wrong',
             ]);
-        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        $response = $route->do_login($request, new Response(), $userrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -1445,7 +1675,6 @@ final class oauth2_test extends \advanced_testcase {
             $dologinrequest,
             new Response(),
             $userrepository,
-            $this->make_granted_scopes_repository_stub(),
         );
 
         $this->assertEquals(302, $response->getStatusCode());
@@ -1505,7 +1734,7 @@ final class oauth2_test extends \advanced_testcase {
         $request = (new ServerRequest('POST', '/login'))
             ->withQueryParams(['authrequestid' => $requestid])
             ->withParsedBody([]);
-        $response = $route->do_login($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        $response = $route->do_login($request, new Response(), $userrepository);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -1557,11 +1786,10 @@ final class oauth2_test extends \advanced_testcase {
             $request,
             new Response(),
             new user_repository(),
-            $this->make_granted_scopes_repository_stub(),
         );
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertStringContainsString('/approve', $response->getHeaderLine('Location'));
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
 
         $storedrequest = $this->get_auth_request_from_session($requestid);
         $this->assertEquals((string) $user->id, (string) $storedrequest['userid']);
@@ -1609,7 +1837,7 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'password1',
                 'logintoken' => 'not-the-real-token',
             ]);
-        $response = $route->do_login($request, new Response(), new user_repository(), $this->make_granted_scopes_repository_stub());
+        $response = $route->do_login($request, new Response(), new user_repository());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -1653,7 +1881,7 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'password1',
                 // No 'logintoken' key at all.
             ]);
-        $response = $route->do_login($request, new Response(), new user_repository(), $this->make_granted_scopes_repository_stub());
+        $response = $route->do_login($request, new Response(), new user_repository());
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertStringContainsString('/login', $response->getHeaderLine('Location'));
@@ -1715,6 +1943,123 @@ final class oauth2_test extends \advanced_testcase {
         );
 
         $this->assertInstanceOf(confirm_scopes_page::class, $capturedcontent);
+    }
+
+    /**
+     * approve()'s defensive require_login() gate blocks display of the consent screen for a
+     * forced password change, even though session_matches_authrequest_user() passes (a real,
+     * correctly-identified, live session for exactly the user this request was authenticated
+     * for) - this can happen if the requirement arose after the flow first reached authorize(),
+     * e.g. an admin force-flagging a password change while the user still has the consent screen
+     * open in their browser.
+     */
+    public function test_approve_defensive_gate_blocks_for_forced_password_change(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        $moodleuser = $this->getDataGenerator()->create_user(['auth' => 'manual']);
+        set_user_preference('auth_forcepasswordchange', 1, $moodleuser);
+        // Calling setUser() re-initialises $SESSION as a side effect, so it must run before the
+        // pending request is stored below, not after.
+        $this->setUser($moodleuser);
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
+        $authrequest->setUser($this->make_user_entity($moodleuser->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $scoperepository = $this->createStub(ScopeRepositoryInterface::class);
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['get_granted_scopes_for_user'])
+            ->getMock();
+        $grantedscopesrepository->expects($this->never())->method('get_granted_scopes_for_user');
+
+        $route = $this->get_route(clientrepository: $clientrepository, scoperepository: $scoperepository);
+
+        $this->set_page_url_for_approve($requestid);
+
+        $request = (new ServerRequest('GET', '/approve'))
+            ->withQueryParams(['authrequestid' => $requestid]);
+
+        try {
+            $route->approve($request, new Response(), $scoperepository, $grantedscopesrepository);
+            $this->fail('Expected require_login() to attempt a redirect for the forced password change.');
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (\core\exception\moodle_exception $e) {
+            // Expected: see test_authorize_redirects_for_forced_password_change_and_preserves_request().
+        }
+
+        $this->assertStringContainsString('/approve', (string) ($SESSION->wantsurl ?? ''));
+        $this->assertStringContainsString($requestid, (string) ($SESSION->wantsurl ?? ''));
+
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertFalse($storedrequest['authorizationapproved']);
+    }
+
+    /**
+     * do_approve()'s defensive require_login() gate blocks a forced-password-change session from
+     * approving (or denying) the request - it must never store granted scopes, mark the request
+     * approved, or complete it - even though session_matches_authrequest_user() and the sesskey
+     * check both pass.
+     */
+    public function test_do_approve_defensive_gate_blocks_for_forced_password_change(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        $moodleuser = $this->getDataGenerator()->create_user(['auth' => 'manual']);
+        set_user_preference('auth_forcepasswordchange', 1, $moodleuser);
+        // Calling setUser() re-initialises $SESSION as a side effect, so it must run before the
+        // pending request is stored below, not after.
+        $this->setUser($moodleuser);
+
+        $client = $this->make_client_entity();
+        $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
+        $authrequest->setUser($this->make_user_entity($moodleuser->id));
+        $requestid = $this->store_auth_request_in_session($authrequest);
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['store_granted_scopes_for_user'])
+            ->getMock();
+        $grantedscopesrepository->expects($this->never())->method('store_granted_scopes_for_user');
+
+        $route = $this->get_route($server, $clientrepository);
+
+        $this->set_page_url_for_approve($requestid);
+
+        $request = (new ServerRequest('POST', '/approve'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'sesskey' => sesskey(),
+                'approve' => '1',
+            ]);
+
+        try {
+            $route->do_approve($request, new Response(), $grantedscopesrepository);
+            $this->fail('Expected require_login() to attempt a redirect for the forced password change.');
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (\core\exception\moodle_exception $e) {
+            // Expected: see test_authorize_redirects_for_forced_password_change_and_preserves_request().
+        }
+
+        $this->assertStringContainsString('/approve', (string) ($SESSION->wantsurl ?? ''));
+        $this->assertStringContainsString($requestid, (string) ($SESSION->wantsurl ?? ''));
+
+        // Never approved, never completed: the requirement was not resolved.
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertFalse($storedrequest['authorizationapproved']);
     }
 
     /**
@@ -2185,7 +2530,19 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'secret',
             ]);
         // See test_do_login_valid_credentials() for why '@' is used here.
-        @$route->do_login($dologinrequest, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+        @$route->do_login($dologinrequest, new Response(), $userrepository);
+
+        // This always redirects to authorize() now, rather than completing (or redirecting to
+        // approve()) itself; drive that next request too, exactly as the browser would, so this
+        // helper ends up on the approval screen for do_approve() to act on below.
+        $authorizerequest = (new ServerRequest('GET', '/authorize'))
+            ->withQueryParams(['authrequestid' => $requestid]);
+        $route->authorize(
+            $authorizerequest,
+            new Response(),
+            $userrepository,
+            $this->make_granted_scopes_repository_stub(),
+        );
 
         $grantedscopesrepository = $this->getMockBuilder(granted_scopes_repository::class)
             ->disableOriginalConstructor()
