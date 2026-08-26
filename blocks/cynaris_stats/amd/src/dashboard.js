@@ -7,6 +7,11 @@ define(['core/chartjs'], function(Chart) {
                 return;
             }
 
+            canvas.setAttribute(
+                'aria-label',
+                'Course grade progress chart'
+            );
+
             new Chart(canvas, {
                 type: 'bar',
                 data: {
@@ -18,10 +23,16 @@ define(['core/chartjs'], function(Chart) {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             beginAtZero: true,
-                            max: 100
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
                         }
                     }
                 }

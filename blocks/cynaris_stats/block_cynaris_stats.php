@@ -58,7 +58,7 @@ class block_cynaris_stats extends block_base {
         } else {
             $this->content->text .= html_writer::empty_tag('canvas', [
                 'id' => $chartid,
-                'height' => '250'
+                'height' => '300', 'style' => 'min-height: 300px;'
             ]);
 
             $this->page->requires->js_call_amd(
