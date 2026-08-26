@@ -94,6 +94,12 @@ class attempts_report_options {
     /** @var bool whether the report table should have a column of checkboxes. */
     public $checkboxcolumn = false;
 
+    /** @var string user search data used to filter user. */
+    public $usersearch = '';
+
+    /** @var int userid data used to filter user. */
+    public $userid = -1;
+
     /**
      * Constructor.
      *
@@ -121,6 +127,7 @@ class attempts_report_options {
             'mode'       => $this->mode,
             'attempts'   => $this->attempts,
             'onlygraded' => $this->onlygraded,
+            'search'     => $this->usersearch,
         ];
 
         if ($this->states) {
@@ -207,6 +214,8 @@ class attempts_report_options {
         $this->group      = groups_get_activity_group($this->cm, true);
         $this->onlygraded = optional_param('onlygraded', $this->onlygraded, PARAM_BOOL);
         $this->pagesize   = optional_param('pagesize', $this->pagesize, PARAM_INT);
+        $this->usersearch = optional_param('search', '', PARAM_NOTAGS);
+        $this->userid     = optional_param('userid', -1, PARAM_INT);
 
         $states = optional_param('states', '', PARAM_ALPHAEXT);
         if (!empty($states)) {
@@ -214,6 +223,29 @@ class attempts_report_options {
         }
 
         $this->download   = optional_param('download', $this->download, PARAM_ALPHA);
+    }
+
+    /**
+     * Set the fields of this object from the data parameters.
+     *
+     * @param stdClass $data Addition parameter.
+     */
+    public function setup_from_params_array(stdClass $data): void {
+        $this->attempts   = $data->attempts ?? $this->attempts;
+        // This is called from the get_users_in_report web service, which is a separate request from the
+        // page that renders the group selector. groups_get_activity_group() still works here because,
+        // with $update = true, it falls back to the group already cached in $SESSION by that page load
+        // (or by an earlier call in the same request) when there is no 'group' param on this request.
+        $this->group      = groups_get_activity_group($this->cm, true);
+        $this->onlygraded = $data->onlygraded ?? $this->onlygraded;
+        $this->pagesize   = $data->pagesize ?? $this->pagesize;
+
+        $states = $data->states ?? '';
+        if (!empty($states)) {
+            $this->states = explode('-', $states);
+        }
+
+        $this->download = $data->download ?? $this->download;
     }
 
     /**

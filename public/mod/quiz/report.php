@@ -33,6 +33,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 $id = optional_param('id', 0, PARAM_INT);
 $q = optional_param('q', 0, PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA);
+$reportsifirst = optional_param('sifirst', null, PARAM_NOTAGS);
+$reportsilast = optional_param('silast', null, PARAM_NOTAGS);
 
 if ($id) {
     $quizobj = quiz_settings::create_for_cmid($id);
@@ -52,6 +54,9 @@ $PAGE->set_url($url);
 require_login($course, false, $cm);
 $PAGE->set_pagelayout('report');
 $PAGE->activityheader->disable();
+// Disable default tertiary overflow navigation. Quiz reports render a custom
+// quiz_report_navigation_bar, while keeping settingsnav intact for legacy blocks.
+$PAGE->set_navigation_overflow_state(false);
 $PAGE->set_show_navigation_footer(false);
 $reportlist = quiz_report_list($quizobj->get_context());
 if (empty($reportlist)) {
@@ -70,7 +75,7 @@ if (!is_readable("report/$mode/report.php")) {
     throw new \moodle_exception('reportnotfound', 'quiz', '', $mode);
 }
 
-// Open the selected quiz report and display it.
+// Load the class definition for the requested report.
 $file = $CFG->dirroot . '/mod/quiz/report/' . $mode . '/report.php';
 if (is_readable($file)) {
     include_once($file);
@@ -80,6 +85,17 @@ if (!class_exists($reportclassname)) {
     throw new \moodle_exception('preprocesserror', 'quiz');
 }
 
+$context = $quizobj->get_context();
+
+// The report object is recreated on every request, so the initials filter values are stashed in
+// $SESSION (matching standard Moodle behaviour, e.g. the gradebook initials bar) rather than being
+// passed through every report URL. attempts_report_table::base_sql() reads them back from here.
+if (isset($reportsifirst)) {
+    $SESSION->{$mode . 'report'}["filterfirstname-{$context->id}"] = $reportsifirst;
+}
+if (isset($reportsilast)) {
+    $SESSION->{$mode . 'report'}["filtersurname-{$context->id}"] = $reportsilast;
+}
 $report = new $reportclassname();
 $report->display($quiz, $cm, $course);
 
@@ -88,7 +104,7 @@ echo $OUTPUT->footer();
 
 // Log that this report was viewed.
 $params = [
-    'context' => $quizobj->get_context(),
+    'context' => $context,
     'other' => [
         'quizid' => $quiz->id,
         'reportname' => $mode

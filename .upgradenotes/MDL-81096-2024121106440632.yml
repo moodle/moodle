@@ -1,0 +1,13 @@
+issueNumber: MDL-81096
+notes:
+  core_grades:
+    - message: >-
+        - The `grade/classes/output/general_action_bar.php` now uses the template name `core/navigation_action_bar`
+        instead of `core_grades/general_action_bar`.
+        - The `grade/templates/general_action_bar.mustache` file will be relocated to
+        `lib/templates/navigation_action_bar.mustache` to enable usage across multiple components.
+        - The `grade/report/grader/classes/output/action_bar.php` now uses the template name `core/action_bar`
+        instead of `gradereport_grader/action_bar`.
+        - The `grade/report/grader/templates/action_bar.mustache` file will be relocated to
+              `lib/templates/action_bar.mustache` to enable usage across multiple components.
+      type: changed
