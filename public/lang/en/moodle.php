@@ -1611,6 +1611,7 @@ $string['oauth2:confirmscopes:moodleaccount'] = 'To make changes at any time, go
 $string['oauth2:continueasuser'] = 'Continue as {$a}';
 $string['oauth2:continueasuser:changeuser'] = 'Change user';
 $string['oauth2:continueasuserinfo'] = 'You are currently logged in as {$a}';
+$string['oauth2:passwordexpiredexternal'] = 'Your password has expired and must be changed on an external site before you can sign in. Once you have changed it, return to {$a} and start signing in again.';
 $string['ok'] = 'OK';
 $string['oldpassword'] = 'Current password';
 $string['olduserdirectory'] = 'This is the OLD users directory, and is no longer needed. You may safely delete it. The files it contains have been copied to the NEW user directory.';

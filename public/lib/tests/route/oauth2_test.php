@@ -23,6 +23,8 @@ use core\oauth2\server\repository\user_repository;
 use core_auth\output\login;
 use core_auth\output\oauth2\confirm_scopes_page;
 use core_auth\output\oauth2\continue_as_user_page;
+use core_auth\password_expiry_check;
+use core_auth\password_expiry_checker;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use League\OAuth2\Server\AuthorizationServer;
@@ -66,7 +68,7 @@ final class oauth2_test extends \advanced_testcase {
                 $clientrepository ?? $this->createStub(ClientRepositoryInterface::class),
                 $scoperepository ?? $this->createStub(ScopeRepositoryInterface::class),
             ])
-            ->onlyMethods(['render_page_from_renderable'])
+            ->onlyMethods(['render_page_from_renderable', 'render_external_password_expiry_page'])
             ->getMock();
     }
 
@@ -2103,6 +2105,451 @@ final class oauth2_test extends \advanced_testcase {
 
         // No Moodle session was established for the rejected credentials.
         $this->assertFalse(isloggedin());
+    }
+
+    /**
+     * Create a manual-auth user ('bob'/'password1'), with password expiration configured on
+     * auth_manual, and their own password last updated far enough in the past that
+     * $daystoexpire days remain until it is next due to expire (negative for already
+     * hard-expired). Uses auth_manual's own real password_expire() implementation (via its
+     * config and the auth_manual_passwordupdatetime user preference), rather than mocking the
+     * expiry calculation being tested.
+     *
+     * @param int $daystoexpire
+     * @param int $expirationtime Days configured on auth_manual before a password is due to expire.
+     * @return \stdClass
+     */
+    protected function create_manual_user_with_password_expiry(int $daystoexpire, int $expirationtime = 30): \stdClass {
+        set_config('expiration', 1, 'auth_manual');
+        set_config('expirationtime', $expirationtime, 'auth_manual');
+
+        $moodleuser = $this->getDataGenerator()->create_user([
+            'auth' => 'manual',
+            'username' => 'bob',
+            'password' => 'password1',
+        ]);
+        set_user_preference(
+            'auth_manual_passwordupdatetime',
+            time() - ($expirationtime - $daystoexpire) * DAYSECS,
+            $moodleuser,
+        );
+
+        return $moodleuser;
+    }
+
+    /**
+     * Submit a do_login() POST for the given pending request id, using the real user_repository
+     * (so credentials are genuinely validated), and a real login token.
+     *
+     * @param oauth2 $route
+     * @param string $requestid
+     * @param string $username
+     * @param string $password
+     * @return ResponseInterface
+     */
+    protected function submit_do_login_credentials(
+        oauth2 $route,
+        string $requestid,
+        string $username = 'bob',
+        string $password = 'password1',
+    ): ResponseInterface {
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => $username,
+                'password' => $password,
+                'logintoken' => \core\session\manager::get_login_token(),
+            ]);
+        // See test_do_login_valid_credentials() for why '@' is used here.
+        return @$route->do_login($request, new Response(), new user_repository());
+    }
+
+    /**
+     * do_login() proceeds normally (establishing a session and redirecting to authorize(),
+     * without setting the forced-password-change preference) when password expiration is not
+     * enabled on the user's authentication plugin at all - even though, were it enabled, this
+     * same password would already be hard-expired.
+     */
+    public function test_do_login_proceeds_normally_when_expiration_disabled(): void {
+        $this->resetAfterTest();
+
+        set_config('expiration', 0, 'auth_manual');
+        $moodleuser = $this->getDataGenerator()->create_user([
+            'auth' => 'manual',
+            'username' => 'bob',
+            'password' => 'password1',
+        ]);
+        set_user_preference('auth_manual_passwordupdatetime', time() - 60 * DAYSECS, $moodleuser);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        $response = $this->submit_do_login_credentials($route, $requestid);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
+        $this->assertTrue(isloggedin());
+        $this->assertEquals(0, (int) get_user_preferences('auth_forcepasswordchange', 0, $moodleuser->id));
+    }
+
+    /**
+     * do_login() proceeds normally when the password is not yet due to expire.
+     */
+    public function test_do_login_proceeds_normally_when_not_expired(): void {
+        $this->resetAfterTest();
+
+        $moodleuser = $this->create_manual_user_with_password_expiry(daystoexpire: 25);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        $response = $this->submit_do_login_credentials($route, $requestid);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
+        $this->assertTrue(isloggedin());
+        $this->assertEquals(0, (int) get_user_preferences('auth_forcepasswordchange', 0, $moodleuser->id));
+    }
+
+    /**
+     * do_login() proceeds normally, without blocking, while a password is only within the
+     * non-blocking warning period (not yet hard-expired) - the warning notice itself is out of
+     * scope for this route.
+     */
+    public function test_do_login_proceeds_normally_during_warning_period(): void {
+        $this->resetAfterTest();
+
+        set_config('expiration_warning', 10, 'auth_manual');
+        $moodleuser = $this->create_manual_user_with_password_expiry(daystoexpire: 5);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $route = $this->get_route(clientrepository: $clientrepository);
+
+        $response = $this->submit_do_login_credentials($route, $requestid);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
+        $this->assertTrue(isloggedin());
+        $this->assertEquals(0, (int) get_user_preferences('auth_forcepasswordchange', 0, $moodleuser->id));
+    }
+
+    /**
+     * A full internal hard-expiry round trip: do_login() detects the hard expiry on a plugin
+     * with no external change-password destination (auth_manual), sets the same
+     * auth_forcepasswordchange preference login/index.php would for this same situation, and
+     * redirects to authorize() without completing anything. authorize()'s own,
+     * already-integrated require_login() gate (see
+     * test_authorize_redirects_for_forced_password_change_and_preserves_request()) then
+     * redirects for the password change and preserves the pending request, pointing
+     * $SESSION->wantsurl at this exact /authorize?authrequestid=... URL; once the preference is
+     * cleared (as login/change_password.php does on success) and the flow resumes via
+     * $SESSION->wantsurl, it completes normally (see
+     * test_authorize_resumes_and_completes_after_forced_password_change_resolved()).
+     */
+    public function test_do_login_hard_expiry_internal_forces_password_change_and_resumes(): void {
+        global $SESSION, $DB;
+
+        $this->resetAfterTest();
+
+        $moodleuser = $this->create_manual_user_with_password_expiry(daystoexpire: -5);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $expectedresponse = new Response(200, [], 'authorized');
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->once())
+            ->method('completeAuthorizationRequest')
+            ->willReturn($expectedresponse);
+
+        $route = $this->get_route($server, $clientrepository);
+
+        $response = $this->submit_do_login_credentials($route, $requestid);
+
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertStringContainsString('/authorize', $response->getHeaderLine('Location'));
+
+        // A session was established, but the forced-password-change preference is now set.
+        $this->assertTrue(isloggedin());
+        $this->assertEquals(1, (int) get_user_preferences('auth_forcepasswordchange', 0, $moodleuser->id));
+
+        // The pending request survives, with this user attached, but is not yet approved.
+        $storedrequest = $this->get_auth_request_from_session($requestid);
+        $this->assertEquals((string) $moodleuser->id, (string) $storedrequest['userid']);
+        $this->assertFalse($storedrequest['authorizationapproved']);
+
+        $userrepository = $this->getMockBuilder(user_repository::class)
+            ->onlyMethods(['get_current_user'])
+            ->getMock();
+        $userrepository->method('get_current_user')->willReturn($this->make_user_entity($moodleuser->id));
+
+        $this->set_page_url_for_authorize($requestid);
+
+        $authorizerequest = (new ServerRequest('GET', '/authorize'))
+            ->withQueryParams(['authrequestid' => $requestid]);
+
+        try {
+            $route->authorize($authorizerequest, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $this->fail('Expected require_login() to attempt a redirect for the forced password change.');
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (\core\exception\moodle_exception $e) {
+            // Expected: see test_authorize_redirects_for_forced_password_change_and_preserves_request().
+        }
+
+        $this->assertStringContainsString('/authorize', (string) ($SESSION->wantsurl ?? ''));
+        $this->assertStringContainsString($requestid, (string) ($SESSION->wantsurl ?? ''));
+
+        // Authorization has not completed: no scopes were stored for this user against this client.
+        $this->assertFalse($DB->record_exists('oauth2_server_client_granted_scopes', ['userid' => $moodleuser->id]));
+
+        // Simulate login/change_password.php's own success behaviour: it clears the preference
+        // and returns the browser to $SESSION->wantsurl, which require_login() has already
+        // pointed at this exact authorize() URL.
+        unset_user_preference('auth_forcepasswordchange', $moodleuser);
+        $wantsurl = $SESSION->wantsurl;
+        unset($SESSION->wantsurl);
+
+        $resumedrequest = new ServerRequest('GET', $wantsurl);
+        parse_str((string) parse_url($wantsurl, PHP_URL_QUERY), $resumedparams);
+        $resumedrequest = $resumedrequest->withQueryParams($resumedparams);
+        $this->assertEquals($requestid, $resumedparams['authrequestid']);
+
+        $resumedresponse = $route->authorize(
+            $resumedrequest,
+            new Response(),
+            $userrepository,
+            $this->make_granted_scopes_repository_stub(hasgrantedallscopes: true),
+        );
+
+        $this->assertSame($expectedresponse, $resumedresponse);
+        $this->assertArrayNotHasKey($requestid, $SESSION->oauth2requests ?? []);
+    }
+
+    /**
+     * do_login() terminates the pending request outright, without ever establishing a session,
+     * when the authentication plugin's password-expiry state is hard-expired with an external
+     * change-password destination - directing the user to that exact, unmodified destination.
+     * Uses a mocked password_expiry_checker (substituted via the DI container, the same
+     * mechanism other tests in this codebase use for test doubles - see authlib_test.php), since
+     * no bundled authentication plugin both supports real, testable expiry configuration and
+     * exposes an external change_password_url() at the same time. Real page rendering (and so
+     * the actual wording shown, which reuses get_string('oauth2:passwordexpiredexternal',
+     * 'moodle') - see render_external_password_expiry_page()) is out of scope here, exactly as
+     * for every other page this route renders (see get_route_with_stubbed_rendering()).
+     */
+    public function test_do_login_hard_expiry_external_terminates_request(): void {
+        global $SESSION, $DB;
+
+        $this->resetAfterTest();
+
+        $moodleuser = $this->getDataGenerator()->create_user(['username' => 'bob', 'password' => 'password1']);
+
+        $client = $this->make_client_entity(name: 'Example client');
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $externalurl = new \core\url('https://example.com/change-password');
+        $checker = $this->createMock(password_expiry_checker::class);
+        $checker->method('check')->willReturn(password_expiry_check::expired_external($externalurl));
+        \core\di::set(password_expiry_checker::class, $checker);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        // Real page rendering is exercised separately by login_test.php (see
+        // get_route_with_stubbed_rendering()); stub it here so this test can focus on the
+        // wiring - which client and destination URL reach it, not how they are drawn.
+        $route = $this->get_route_with_stubbed_rendering(server: $server, clientrepository: $clientrepository);
+
+        $capturedclient = null;
+        $capturedurl = null;
+        $capture = function (
+            ResponseInterface $response,
+            $client,
+            \core\url $url,
+        ) use (&$capturedclient, &$capturedurl): ResponseInterface {
+            $capturedclient = $client;
+            $capturedurl = $url;
+            return $response;
+        };
+        $route->method('render_external_password_expiry_page')->willReturnCallback($capture);
+
+        $response = $this->submit_do_login_credentials($route, $requestid);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        // User directed to the plugin's own external URL, unmodified - no return URL appended.
+        $this->assertSame($client->getIdentifier(), $capturedclient->getIdentifier());
+        $this->assertTrue($capturedurl->compare($externalurl, URL_MATCH_BASE));
+        $this->assertEmpty($capturedurl->params());
+
+        // No session was established at all, so nothing here could go on to authorize the client.
+        $this->assertFalse(isloggedin());
+
+        // The pending request is discarded outright, not preserved for a later retry.
+        $this->assertArrayNotHasKey($requestid, $SESSION->oauth2requests ?? []);
+
+        // Authorization was not completed: no scopes were stored for this user against this client.
+        $this->assertFalse($DB->record_exists('oauth2_server_client_granted_scopes', ['userid' => $moodleuser->id]));
+    }
+
+    /**
+     * do_login()'s external-hard-expiry termination clears $SESSION->wantsurl when it still
+     * holds this same request's own OAuth URL (as login() would have stored it), exactly as
+     * forget_auth_request() already does for a genuine completion (see
+     * test_do_approve_when_approved_clears_matching_oauth_wantsurl()).
+     */
+    public function test_do_login_hard_expiry_external_clears_matching_oauth_wantsurl(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        $this->getDataGenerator()->create_user(['username' => 'bob', 'password' => 'password1']);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $checker = $this->createMock(password_expiry_checker::class);
+        $checker->method('check')->willReturn(
+            password_expiry_check::expired_external(new \core\url('https://example.com/change-password')),
+        );
+        \core\di::set(password_expiry_checker::class, $checker);
+
+        // See test_do_login_hard_expiry_external_terminates_request() for why rendering is
+        // stubbed here.
+        $route = $this->get_route_with_stubbed_rendering(clientrepository: $clientrepository);
+        $route->method('render_page_from_renderable')
+            ->willReturnCallback(fn ($content, ResponseInterface $response): ResponseInterface => $response);
+        $route->method('render_external_password_expiry_page')
+            ->willReturnCallback(fn (ResponseInterface $response): ResponseInterface => $response);
+
+        // Matches what login() would have stored for this exact pending request.
+        $route->login(
+            (new ServerRequest('GET', '/login'))->withQueryParams(['authrequestid' => $requestid]),
+            new Response(),
+        );
+        $this->assertTrue(isset($SESSION->wantsurl));
+
+        $this->submit_do_login_credentials($route, $requestid);
+
+        $this->assertFalse(isset($SESSION->wantsurl));
+    }
+
+    /**
+     * do_login()'s external-hard-expiry termination leaves $SESSION->wantsurl untouched when it
+     * holds an unrelated, newer destination - for example, another in-progress flow's own - not
+     * one of this request's own OAuth URLs.
+     */
+    public function test_do_login_hard_expiry_external_leaves_unrelated_wantsurl(): void {
+        global $SESSION;
+
+        $this->resetAfterTest();
+
+        $this->getDataGenerator()->create_user(['username' => 'bob', 'password' => 'password1']);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $checker = $this->createMock(password_expiry_checker::class);
+        $checker->method('check')->willReturn(
+            password_expiry_check::expired_external(new \core\url('https://example.com/change-password')),
+        );
+        \core\di::set(password_expiry_checker::class, $checker);
+
+        // See test_do_login_hard_expiry_external_terminates_request() for why rendering is
+        // stubbed here.
+        $route = $this->get_route_with_stubbed_rendering(clientrepository: $clientrepository);
+        $route->method('render_external_password_expiry_page')
+            ->willReturnCallback(fn (ResponseInterface $response): ResponseInterface => $response);
+
+        $unrelatedwantsurl = new \core\url('/course/view.php', ['id' => 2]);
+        $SESSION->wantsurl = $unrelatedwantsurl;
+
+        $this->submit_do_login_credentials($route, $requestid);
+
+        $this->assertTrue(isset($SESSION->wantsurl));
+        $this->assertTrue($SESSION->wantsurl->compare($unrelatedwantsurl, URL_MATCH_BASE));
+    }
+
+    /**
+     * do_login() fails closed - without establishing a session, and discarding the pending
+     * request outright rather than preserving it - when the authentication plugin's password is
+     * hard-expired but the plugin cannot change it at all, internally or externally. Reuses the
+     * same error message Moodle's own require_login() would show for this exact plugin
+     * configuration elsewhere in this flow (see authlib.php's can_change_password()), so nothing
+     * about the plugin's internal state is exposed beyond that established, generic message.
+     */
+    public function test_do_login_hard_expiry_unsupported_fails_closed_and_cleans_up_request(): void {
+        global $SESSION, $DB;
+
+        $this->resetAfterTest();
+
+        $moodleuser = $this->getDataGenerator()->create_user(['username' => 'bob', 'password' => 'password1']);
+
+        $client = $this->make_client_entity();
+        $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
+
+        $clientrepository = $this->createStub(ClientRepositoryInterface::class);
+        $clientrepository->method('getClientEntity')->willReturn($client);
+
+        $checker = $this->createMock(password_expiry_checker::class);
+        $checker->method('check')->willReturn(password_expiry_check::expired_unsupported());
+        \core\di::set(password_expiry_checker::class, $checker);
+
+        $server = $this->createMock(AuthorizationServer::class);
+        $server->expects($this->never())->method('completeAuthorizationRequest');
+
+        $route = $this->get_route($server, $clientrepository);
+
+        $request = (new ServerRequest('POST', '/login'))
+            ->withQueryParams(['authrequestid' => $requestid])
+            ->withParsedBody([
+                'username' => 'bob',
+                'password' => 'password1',
+                'logintoken' => \core\session\manager::get_login_token(),
+            ]);
+
+        try {
+            $route->do_login($request, new Response(), new user_repository());
+            $this->fail('Expected an unsupported password-expiry configuration to fail closed.');
+        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (\core\exception\moodle_exception $e) {
+            $this->assertEquals(get_string('nopasswordchangeforced', 'auth'), $e->getMessage());
+        }
+
+        // No session was established at all.
+        $this->assertFalse(isloggedin());
+
+        // The pending request is discarded outright, not preserved for a later retry.
+        $this->assertArrayNotHasKey($requestid, $SESSION->oauth2requests ?? []);
+
+        // Authorization was not completed: no scopes were stored for this user against this client.
+        $this->assertFalse($DB->record_exists('oauth2_server_client_granted_scopes', ['userid' => $moodleuser->id]));
     }
 
     /**

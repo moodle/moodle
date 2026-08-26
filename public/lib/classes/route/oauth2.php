@@ -20,6 +20,7 @@ use core\oauth2\server\repository\user_repository;
 use core\output\renderable;
 use core\router\route;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -394,6 +395,8 @@ class oauth2 {
         ResponseInterface $response,
         user_repository $userrepository,
     ): ResponseInterface {
+        global $USER;
+
         // Handle the login form submission.
         [$requestid, $authrequest] = $this->get_auth_request($request);
 
@@ -439,7 +442,60 @@ class oauth2 {
                     // accurate message rather than the generic invalid-login one.
                     $unconfirmed = true;
                 } else {
+                    // Determine whether this user's password is hard-expired (and, if so, how it
+                    // can be changed) before establishing a session, exactly as login/index.php
+                    // determines the same thing before showing its own expiry notice. This is
+                    // deliberately checked here, ahead of complete_user_login(), for the two
+                    // outcomes below that must never establish a usable session at all.
+                    $passwordexpiry = \core\di::get(\core_auth\password_expiry_checker::class)->check($moodleuser);
+
+                    if ($passwordexpiry->state === \core_auth\password_expiry_state::HARD_EXPIRED_UNSUPPORTED) {
+                        // The plugin cannot change this password at all, internally or
+                        // externally: there is no requirement this flow can wait to be resolved,
+                        // so - unlike every other failure path here - the pending request is
+                        // discarded outright rather than preserved for a later retry, and no
+                        // session is established at all. This reuses the same error Moodle's own
+                        // require_login() would throw for this exact plugin configuration
+                        // elsewhere in this flow (see authorize()), so the message shown is
+                        // already an established, generic one that does not expose plugin
+                        // internals.
+                        $this->forget_auth_request($requestid);
+                        throw new \moodle_exception('nopasswordchangeforced', 'auth');
+                    }
+
+                    if ($passwordexpiry->state === \core_auth\password_expiry_state::HARD_EXPIRED_EXTERNAL) {
+                        // Deliberately never establish a session for this login attempt at all
+                        // (unlike login/index.php, which always logs in first and only ends the
+                        // session again afterwards): a full require_logout() would discard the
+                        // *entire* session, including anything unrelated to this request (for
+                        // example, another pending flow's own wantsurl), which is more than this
+                        // situation calls for. Not logging in in the first place achieves the
+                        // same outcome - no session capable of authorizing this client - without
+                        // that collateral effect. There is no way for Moodle to know when, or
+                        // whether, the user actually changes their password on the external site,
+                        // so - unlike every other failure path here - the pending request is not
+                        // preserved for a later retry; the user must restart authorization from
+                        // the client instead.
+                        return $this->terminate_for_external_password_expiry(
+                            $response,
+                            $requestid,
+                            $authrequest->getClient(),
+                            $passwordexpiry->externalchangepasswordurl,
+                        );
+                    }
+
                     complete_user_login($moodleuser);
+
+                    if ($passwordexpiry->state === \core_auth\password_expiry_state::HARD_EXPIRED_INTERNAL) {
+                        // Set the same preference login/index.php would for this same situation,
+                        // then let authorize()'s own, already-integrated require_login() call
+                        // (see authorize()) take over from here: it will redirect to Moodle's
+                        // internal change-password page, pointing $SESSION->wantsurl at this
+                        // exact /authorize?authrequestid=... URL first, so the flow resumes
+                        // automatically once the password has been changed.
+                        set_user_preference('auth_forcepasswordchange', 1, $USER);
+                    }
+
                     $user = $userrepository->get_current_user();
                 }
             }
@@ -691,6 +747,73 @@ class oauth2 {
             [self::class, 'login'],
             queryparams: array_merge($request->getQueryParams(), [self::REQUEST_ID_PARAM => $requestid]),
         );
+    }
+
+    /**
+     * Helper to end the given pending request for a user whose password has hard-expired on a
+     * plugin with an external change-password destination, and show them where to go next.
+     *
+     * Unlike {@see self::complete_authorization_request()}, this never approves or completes the
+     * request against the OAuth2 server - it only discards it (see {@see self::forget_auth_request()})
+     * so it cannot later be replayed, since there is no way for Moodle to know when, or whether,
+     * the user actually changes their password on the external site. No Moodle session is ever
+     * established for this login attempt in the first place (see {@see self::do_login()}), so
+     * there is nothing left afterwards that could be used to authorize the client.
+     *
+     * @param ResponseInterface $response
+     * @param string $requestid
+     * @param ClientEntityInterface $client
+     * @param \core\url $externalchangepasswordurl
+     * @return ResponseInterface
+     */
+    private function terminate_for_external_password_expiry(
+        ResponseInterface $response,
+        string $requestid,
+        ClientEntityInterface $client,
+        \core\url $externalchangepasswordurl,
+    ): ResponseInterface {
+        $this->forget_auth_request($requestid);
+
+        return $this->render_external_password_expiry_page($response, $client, $externalchangepasswordurl);
+    }
+
+    /**
+     * Helper to render the notice shown when {@see self::terminate_for_external_password_expiry()}
+     * has ended a pending request because the user's password is hard-expired on a plugin with an
+     * external change-password destination.
+     *
+     * Reuses $OUTPUT->confirm(), exactly as login/index.php does for its own external-hard-expiry
+     * notice: a "Continue" button to the plugin's own change-password destination, and a
+     * "Cancel" button back to the site front page.
+     *
+     * A separate, protected (and so overridable/stubbable in tests) method for exactly the same
+     * reason {@see self::render_page_from_renderable()} is: real page rendering is exercised
+     * separately by login_test.php, so tests of this route's own wiring can stub this out.
+     *
+     * @param ResponseInterface $response
+     * @param ClientEntityInterface $client
+     * @param \core\url $externalchangepasswordurl
+     * @return ResponseInterface
+     */
+    protected function render_external_password_expiry_page(
+        ResponseInterface $response,
+        ClientEntityInterface $client,
+        \core\url $externalchangepasswordurl,
+    ): ResponseInterface {
+        global $OUTPUT, $PAGE;
+
+        $PAGE->set_pagelayout('login');
+        $PAGE->set_context(\core\context\system::instance());
+
+        $response->getBody()->write($OUTPUT->header());
+        $response->getBody()->write($OUTPUT->confirm(
+            get_string('oauth2:passwordexpiredexternal', 'moodle', $client->getName()),
+            $externalchangepasswordurl,
+            new \core\url('/'),
+        ));
+        $response->getBody()->write($OUTPUT->footer());
+
+        return $response;
     }
 
     /**
