@@ -132,6 +132,7 @@ class manager {
             new security\crawlers(),
             new security\passwordpolicy(),
             new security\emailchangeconfirmation(),
+            new security\securitymessages(),
             new security\webcron(),
             new http\cookiesecure(),
             new access\riskadmin(),
