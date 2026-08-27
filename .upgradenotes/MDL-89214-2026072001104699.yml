@@ -1,0 +1,10 @@
+issueNumber: MDL-89214
+notes:
+  core:
+    - message: >-
+        A new `core/imagedetails/modal` JavaScript module presents an
+        image-details dialogue for an image the user is about to embed,
+        collecting alternative text, a decorative flag and a display size. Any
+        component that embeds an author-supplied image can use it to collect an
+        accessible description before the image is stored.
+      type: improved

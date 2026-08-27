@@ -55,7 +55,24 @@ final class file_handlers_test extends \core_external\tests\externallib_testcase
         foreach ($expected->filehandlers as $key => $handler) {
             $tocompare = $result[$key];
             $this->assertEquals($handler->extension, $tocompare['extension']);
+            $this->assertEquals($handler->imagedetails, $tocompare['imagedetails']);
         }
+
+        // The label handler wants image details collected for web images (e.g. png), but not for other
+        // media types it also handles (e.g. mp4), so the client only offers the modal where it applies.
+        $pngresult = array_values(array_filter(
+            $result,
+            fn($handler) => $handler['module'] === 'label' && $handler['extension'] === 'png',
+        ));
+        $this->assertNotEmpty($pngresult);
+        $this->assertTrue($pngresult[0]['imagedetails']);
+
+        $mp4result = array_values(array_filter(
+            $result,
+            fn($handler) => $handler['module'] === 'label' && $handler['extension'] === 'mp4',
+        ));
+        $this->assertNotEmpty($mp4result);
+        $this->assertFalse($mp4result[0]['imagedetails']);
     }
 
     /**

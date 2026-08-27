@@ -2242,6 +2242,54 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Drops an image file onto a course section, triggering the drag-and-drop upload handler flow.
+     *
+     * A browser will not let a script synthesise a real file drop for security reasons, so this drives
+     * the same public course editor entry point (uploadFiles) that the drop handler uses, with a PNG of
+     * the given size generated in the browser. This exercises the handler chooser and, for the "Add media
+     * to course page" shortcut, the image-details modal, exactly as a real drop would.
+     *
+     * @Given /^I drop the image "([^"]*)" sized "(\d+)"x"(\d+)" onto course section "(\d+)"$/
+     * @param string $filename the file name to give the dropped image
+     * @param int $width the pixel width of the generated image
+     * @param int $height the pixel height of the generated image
+     * @param int $sectionnumber the target section number
+     */
+    public function i_drop_the_image_onto_course_section(string $filename, int $width, int $height, int $sectionnumber): void {
+        $this->require_javascript();
+        $filename = clean_param($filename, PARAM_FILE);
+        $encodedfilename = json_encode($filename);
+        $js = <<<JS
+            (function() {
+                const selector = '[data-for="section"][data-number="{$sectionnumber}"]';
+                const section = document.querySelector(selector);
+                if (!section) {
+                    throw new Error('Course section {$sectionnumber} not found');
+                }
+                const sectionId = section.getAttribute('data-id');
+                require(['core_courseformat/courseeditor'], function(editor) {
+                    const courseEditor = editor.getCurrentCourseEditor();
+                    const canvas = document.createElement('canvas');
+                    canvas.width = {$width};
+                    canvas.height = {$height};
+                    const context = canvas.getContext('2d');
+                    context.fillStyle = '#3366cc';
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+                    const binary = atob(canvas.toDataURL('image/png').split(',')[1]);
+                    let length = binary.length;
+                    const bytes = new Uint8Array(length);
+                    while (length--) {
+                        bytes[length] = binary.charCodeAt(length);
+                    }
+                    const file = new File([bytes], {$encodedfilename}, {type: 'image/png'});
+                    courseEditor.uploadFiles(sectionId, {$sectionnumber}, [file]);
+                });
+            })();
+JS;
+        $this->execute_script($js);
+    }
+
+    /**
      * Get the section id from an identifier.
      *
      * The section name and summary are checked.

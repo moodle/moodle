@@ -16,6 +16,8 @@
 
 namespace mod_label;
 
+use PHPUnit\Framework\Attributes\CoversFunction;
+
 /**
  * Unit tests for the activity label's lib.
  *
@@ -24,6 +26,8 @@ namespace mod_label;
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversFunction('label_generate_image_from_details')]
+#[CoversFunction('label_dndupload_handle')]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -341,6 +345,242 @@ final class lib_test extends \advanced_testcase {
                 'expectedname' => 'Simple plain title with plain text'
             ],
         ];
+    }
+
+    /**
+     * A custom size within the admin resize limits is honoured as-is on the img tag.
+     */
+    public function test_label_generate_image_from_details_with_alt_and_size(): void {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . '/mod/label/lib.php');
+
+        // Well below the default 400x400 resize cap.
+        set_config('dndresizewidth', 400, 'label');
+        set_config('dndresizeheight', 400, 'label');
+        $file = $this->create_draft_image_file($USER->id, 'photo.png', null, 600, 450);
+
+        $html = label_generate_image_from_details($file, [
+            'alt' => 'A photo of a beach',
+            'presentation' => false,
+            'width' => 320,
+            'height' => 240,
+        ]);
+
+        $this->assertStringContainsString('alt="A photo of a beach"', $html);
+        $this->assertStringContainsString('width="320"', $html);
+        $this->assertStringContainsString('height="240"', $html);
+        $this->assertStringContainsString('class="img-fluid"', $html);
+        $this->assertStringNotContainsString('role="presentation"', $html);
+    }
+
+    /**
+     * A decorative image gets an empty alt text and the presentation role.
+     */
+    public function test_label_generate_image_from_details_decorative(): void {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . '/mod/label/lib.php');
+
+        $file = $this->create_draft_image_file($USER->id, 'photo.png');
+
+        $html = label_generate_image_from_details($file, [
+            'alt' => 'This should be ignored for a decorative image',
+            'presentation' => true,
+            'width' => 0,
+            'height' => 0,
+        ]);
+
+        $this->assertStringContainsString('alt=""', $html);
+        $this->assertStringContainsString('role="presentation"', $html);
+        $this->assertStringNotContainsString('This should be ignored', $html);
+    }
+
+    /**
+     * A decorative image that is resized still gets a smaller physical file, but is not wrapped in a link
+     * to the original: its empty alt text would leave that link with no accessible name.
+     */
+    public function test_label_generate_image_from_details_decorative_resized_not_linked(): void {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . '/mod/label/lib.php');
+
+        set_config('dndresizewidth', 400, 'label');
+        set_config('dndresizeheight', 400, 'label');
+        $file = $this->create_draft_image_file($USER->id, 'big.png', null, 800, 600);
+
+        $html = label_generate_image_from_details($file, [
+            'alt' => 'This should be ignored for a decorative image',
+            'presentation' => true,
+            'width' => 0,
+            'height' => 0,
+        ]);
+
+        $this->assertStringContainsString('role="presentation"', $html);
+        // A smaller physical file is still generated so the full-resolution original is not embedded.
+        $this->assertStringContainsString('s_big.png', $html);
+        // But it is not wrapped in a link: an empty-alt image link has no accessible name.
+        $this->assertStringNotContainsString('<a href=', $html);
+    }
+
+    /**
+     * A custom size larger than the admin resize limits is capped, keeping the aspect ratio, and a
+     * smaller physical file is generated and linked to the original.
+     */
+    public function test_label_generate_image_from_details_caps_oversized_custom_size(): void {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . '/mod/label/lib.php');
+
+        set_config('dndresizewidth', 400, 'label');
+        set_config('dndresizeheight', 400, 'label');
+        $file = $this->create_draft_image_file($USER->id, 'big.png', null, 800, 600);
+
+        $html = label_generate_image_from_details($file, [
+            'alt' => 'A large photo',
+            'presentation' => false,
+            'width' => 800,
+            'height' => 600,
+        ]);
+
+        // 800x600 capped to the 400 width limit, keeping proportions.
+        $this->assertStringContainsString('width="400"', $html);
+        $this->assertStringContainsString('height="300"', $html);
+        // A smaller physical file is generated and the original is linked.
+        $this->assertStringContainsString('s_big.png', $html);
+        $this->assertStringContainsString('<a href=', $html);
+    }
+
+    /**
+     * The "Original" size (no explicit width/height) still caps the embedded file at the admin limits
+     * and leaves the display size implicit on the img tag.
+     */
+    public function test_label_generate_image_from_details_original_caps_embedded_file(): void {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . '/mod/label/lib.php');
+
+        set_config('dndresizewidth', 400, 'label');
+        set_config('dndresizeheight', 400, 'label');
+        $file = $this->create_draft_image_file($USER->id, 'orig.png', null, 800, 600);
+
+        $html = label_generate_image_from_details($file, [
+            'alt' => 'A large photo shown at its original size',
+            'presentation' => false,
+            'width' => 0,
+            'height' => 0,
+        ]);
+
+        // Original mode does not force explicit dimensions on the tag.
+        $this->assertStringNotContainsString('width=', $html);
+        $this->assertStringNotContainsString('height=', $html);
+        // But the embedded file is still capped: a smaller file is generated and the original linked.
+        $this->assertStringContainsString('s_orig.png', $html);
+        $this->assertStringContainsString('<a href=', $html);
+    }
+
+    /**
+     * When the dnd upload carries image details, the created label uses them for the embedded image.
+     */
+    public function test_label_dndupload_handle_uses_image_details(): void {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . '/mod/label/lib.php');
+        require_once($CFG->dirroot . '/course/modlib.php');
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create an empty label course module, exactly as the dnd ajax processor does before handing over.
+        [$module, $context, $cw, $cm, $data] = prepare_new_moduleinfo_data($course, 'label', 0);
+        $data->coursemodule = $data->id = add_course_module($data);
+
+        set_config('dndresizewidth', 400, 'label');
+        set_config('dndresizeheight', 400, 'label');
+        $draftitemid = file_get_unused_draft_itemid();
+        $this->create_draft_image_file($USER->id, 'beach.png', $draftitemid, 600, 450);
+
+        $uploadinfo = (object) [
+            'type' => 'Files',
+            'course' => $course,
+            'coursemodule' => $data->coursemodule,
+            'displayname' => 'beach',
+            'draftitemid' => $draftitemid,
+            'imagedetails' => [
+                'alt' => 'A quiet beach at sunset',
+                'presentation' => false,
+                'width' => 300,
+                'height' => 200,
+            ],
+        ];
+
+        $instanceid = label_dndupload_handle($uploadinfo);
+
+        $label = $DB->get_record('label', ['id' => $instanceid], '*', MUST_EXIST);
+        $this->assertStringContainsString('alt="A quiet beach at sunset"', $label->intro);
+        $this->assertStringContainsString('width="300"', $label->intro);
+        $this->assertStringContainsString('height="200"', $label->intro);
+    }
+
+    /**
+     * Without image details, the dnd upload keeps its existing resized-image behaviour.
+     */
+    public function test_label_dndupload_handle_without_image_details(): void {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . '/mod/label/lib.php');
+        require_once($CFG->dirroot . '/course/modlib.php');
+
+        $course = $this->getDataGenerator()->create_course();
+
+        [$module, $context, $cw, $cm, $data] = prepare_new_moduleinfo_data($course, 'label', 0);
+        $data->coursemodule = $data->id = add_course_module($data);
+
+        $draftitemid = file_get_unused_draft_itemid();
+        $this->create_draft_image_file($USER->id, 'beach.png', $draftitemid);
+
+        $uploadinfo = (object) [
+            'type' => 'Files',
+            'course' => $course,
+            'coursemodule' => $data->coursemodule,
+            'displayname' => 'beach',
+            'draftitemid' => $draftitemid,
+        ];
+
+        $instanceid = label_dndupload_handle($uploadinfo);
+
+        $label = $DB->get_record('label', ['id' => $instanceid], '*', MUST_EXIST);
+        // The existing behaviour derives the alt text from the file name.
+        $this->assertStringContainsString('alt="beach.png"', $label->intro);
+    }
+
+    /**
+     * Create an image file of a given size in a user's draft file area for dnd upload tests.
+     *
+     * @param int $userid the owner of the draft area
+     * @param string $filename the file name to give the image
+     * @param int|null $draftitemid the draft item id to use (a new one is generated when null)
+     * @param int $width the pixel width of the generated PNG
+     * @param int $height the pixel height of the generated PNG
+     * @return \stored_file the created draft file
+     */
+    private function create_draft_image_file(
+        int $userid,
+        string $filename,
+        ?int $draftitemid = null,
+        int $width = 1,
+        int $height = 1,
+    ): \stored_file {
+        // Generate a real PNG of the requested size so get_imageinfo() and thumbnail generation work.
+        $image = imagecreatetruecolor($width, $height);
+        imagefill($image, 0, 0, imagecolorallocate($image, 200, 150, 100));
+        ob_start();
+        imagepng($image);
+        $png = ob_get_clean();
+        imagedestroy($image);
+
+        $fs = get_file_storage();
+        $record = [
+            'contextid' => \context_user::instance($userid)->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => $draftitemid ?? file_get_unused_draft_itemid(),
+            'filepath' => '/',
+            'filename' => $filename,
+        ];
+        return $fs->create_file_from_string($record, $png);
     }
 
     /**

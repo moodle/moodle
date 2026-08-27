@@ -314,6 +314,7 @@ $string['hashpoolproblem'] = 'Incorrect pool file content {$a}.';
 $string['headersent'] = 'Headers already sent';
 $string['idnumbertaken'] = 'This ID number is already in use';
 $string['idnumbertoolong'] = 'ID number is too long';
+$string['imagealtrequired'] = 'An image must have a description, unless it is marked as decorative only.';
 $string['importformatnotimplement'] = 'Sorry, importing this format is not yet implemented!';
 $string['incorrectext'] = 'File has an incorrect extension';
 $string['inplaceeditableerror'] = 'Error calling update processor';

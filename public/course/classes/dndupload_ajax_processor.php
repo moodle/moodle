@@ -37,6 +37,9 @@ class dndupload_ajax_processor {
     /** @var int Returned when no error has occurred */
     public const ERROR_OK = 0;
 
+    /** @var int Maximum length of image alternative text, matching the core/imagedetails/modal limit */
+    public const IMAGE_ALT_MAXLENGTH = 750;
+
     /** @var object The course that we are uploading to */
     protected $course = null;
 
@@ -60,6 +63,9 @@ class dndupload_ajax_processor {
 
     /** @var string The name to give the new activity instance */
     protected $displayname = null;
+
+    /** @var array|null Optional image details (alt, presentation, width, height) for image file uploads */
+    protected $imagedetails = null;
 
     /**
      * Set up some basic information needed to handle the upload
@@ -108,8 +114,9 @@ class dndupload_ajax_processor {
      *
      * @param string $displayname optional the name (from the browser) to give the course module instance
      * @param string $content optional the content of the upload (for non-file uploads)
+     * @param ?array $imagedetails optional image details (alt, presentation, width, height) for image file uploads
      */
-    public function process($displayname = null, $content = null) {
+    public function process($displayname = null, $content = null, ?array $imagedetails = null) {
         require_capability('moodle/course:manageactivities', $this->context);
 
         if ($this->is_file_upload()) {
@@ -126,12 +133,39 @@ class dndupload_ajax_processor {
         require_sesskey();
 
         $this->displayname = $displayname;
+        $this->imagedetails = ($imagedetails === null) ? null : self::sanitise_image_details($imagedetails);
 
         if ($this->is_file_upload()) {
             $this->handle_file_upload();
         } else {
             $this->handle_other_upload($content);
         }
+    }
+
+    /**
+     * Validate and sanitise the optional image details supplied with a file upload.
+     *
+     * Mirrors the client-side rules of the "Add media to course page" shortcut so that a crafted or
+     * replayed request cannot store an inaccessible image: the alternative text is capped to
+     * IMAGE_ALT_MAXLENGTH characters, and it is required unless the image is marked as decorative.
+     *
+     * @param array $imagedetails the raw image details (alt, presentation, width, height)
+     * @return array the sanitised image details
+     * @throws moodle_exception if a non-decorative image has no alternative text
+     */
+    public static function sanitise_image_details(array $imagedetails): array {
+        $presentation = !empty($imagedetails['presentation']);
+        $alt = isset($imagedetails['alt']) ? trim((string) $imagedetails['alt']) : '';
+        $alt = core_text::substr($alt, 0, self::IMAGE_ALT_MAXLENGTH);
+
+        // A non-decorative image must have alternative text; a decorative one is exposed with an empty alt.
+        if (!$presentation && $alt === '') {
+            throw new moodle_exception('imagealtrequired');
+        }
+
+        $imagedetails['presentation'] = $presentation;
+        $imagedetails['alt'] = $presentation ? '' : $alt;
+        return $imagedetails;
     }
 
     /**
@@ -259,6 +293,9 @@ class dndupload_ajax_processor {
         }
         $data->coursemodule = $this->cm->id;
         $data->displayname = $this->displayname;
+        if ($this->imagedetails !== null) {
+            $data->imagedetails = $this->imagedetails;
+        }
         return $data;
     }
 
