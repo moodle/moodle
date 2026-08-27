@@ -53516,7 +53516,7 @@ input[type=button].btn-block {
   --bs-gray-900: #f8f9fa;
   --bs-black: #f8f9fa;
   --mds-bg-surface-default: #343a40;
-  --mds-bg-surface-strong: #495057;
+  --mds-bg-surface-strong: #292e33;
   --mds-bg-surface-subtle: #292e33;
   --mds-bg-interactive-secondary-default: #495057;
   --mds-bg-interactive-secondary-hover: #6a737b;
@@ -53535,6 +53535,10 @@ input[type=button].btn-block {
   --mds-border-interactive-secondary-hover: #8f959e;
   --mds-border-interactive-secondary-active: #8f959e;
   --mds-border-interactive-secondary-disabled: #495057;
+  --mds-border-interactive-primary-default: #3f89cc;
+  --mds-border-interactive-primary-hover: #3f89cc;
+  --mds-border-interactive-primary-active: #7baedc;
+  --mds-border-interactive-primary-disabled: #3a658d;
   --mds-text-default: #dee2e6;
   --mds-text-emphasis: #f8f9fa;
   --mds-text-subtle: #ced4da;

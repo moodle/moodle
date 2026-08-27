@@ -33,7 +33,11 @@
 
     // Design system tokens. These are emitted as custom properties on :root, so they only need re-pointing.
     --mds-bg-surface-default: #{$dark-surface-raised};
-    --mds-bg-surface-strong: #{$gray-700};
+    // Gray 700 would make this the lightest of the three surfaces, but in light mode it is the darkest: the ramp
+    // runs default (white), subtle (gray 100), strong (gray 200). Mirroring that ordering keeps it recessed
+    // behind the cards drawn on it, and keeps the derived colours readable, since they are all derived against
+    // the raised surface and fall short on anything lighter.
+    --mds-bg-surface-strong: #{$dark-surface-recessed};
     --mds-bg-surface-subtle: #{$dark-surface-recessed};
     --mds-bg-interactive-secondary-default: #{$gray-700};
     --mds-bg-interactive-secondary-hover: #{$gray-600};
@@ -52,6 +56,18 @@
     --mds-border-interactive-secondary-hover: #{$gray-500};
     --mds-border-interactive-secondary-active: #{$gray-500};
     --mds-border-interactive-secondary-disabled: #{$gray-700};
+
+    // The primary interactive borders are the one part of the primary family which cannot keep the brand colour. The
+    // fills below are left alone because they carry their own inverse text, but a border is read against whatever is
+    // behind it, and these draw the focus outline and the dragging border of an activity card. Moodle blue only
+    // manages 2.56:1 on a card and 2.15:1 on a hovered one, short of the 3:1 WCAG 2.2 asks of a non-text element
+    // (1.4.11) and of a focus indicator (2.4.11), so they are lifted the same way the focus ring above is.
+    --mds-border-interactive-primary-default: #{dark-readable($primary, $min: 3)};
+    --mds-border-interactive-primary-hover: #{dark-readable($primary, $min: 3)};
+    --mds-border-interactive-primary-active: #{dark-readable($primary, $min: 4.5)};
+    // A disabled control is exempt from 1.4.11, and the light value is a tint of the brand towards the page behind
+    // it, so the dark one is the same idea in the other direction: faded into the surface, but still visible.
+    --mds-border-interactive-primary-disabled: #{mix(dark-readable($primary, $min: 3), $dark-surface-raised, 55%)};
     --mds-text-default: #{$gray-300};
     --mds-text-emphasis: #{$gray-100};
     --mds-text-subtle: #{$gray-400};
