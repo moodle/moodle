@@ -43,6 +43,12 @@
     data-for="cm"
     data-id="{{id}}"
     role="treeitem"
+    {{! Activities with a delegated section are the tree item of that section, so they own its content. }}
+    {{#hasdelegatedsection}}{{#sectioninfo}}
+    aria-owns="courseindexcollapse{{number}}"
+    aria-labelledby="courseindexsection{{number}}-title"
+    aria-expanded="{{^indexcollapsed}}true{{/indexcollapsed}}{{#indexcollapsed}}false{{/indexcollapsed}}"
+    {{/sectioninfo}}{{/hasdelegatedsection}}
 >
     {{^hasdelegatedsection}}
         <span class="completioninfo" data-for="cm_completion" data-value="NaN"></span>
