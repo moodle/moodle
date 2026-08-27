@@ -69,7 +69,7 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
 
                 // Special case: if the active item is inside the secondary navigation 'More' menu, then the 'More'
                 // toggle itself is the only visible active element.
-                $moretoggle = $page->find('css', '.secondary-navigation [data-region="morebutton"] > .dropdown-toggle');
+                $moretoggle = $page->find('css', '.secondary-navigation .dropdownmoremenu .dropdown-toggle');
                 if ($moretoggle && trim($moretoggle->getText()) === $element) {
                     $ariacurrent = $moretoggle->getAttribute('aria-current');
                     return $moretoggle->hasClass('active') || $ariacurrent === 'true' || $ariacurrent === 'page';
@@ -77,9 +77,10 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
 
                 // First, check the visible secondary navigation items (excluding the 'More' toggle).
                 $selectors = [
-                    '.nav-item:not(.dropdownmoremenu) .nav-link.active',
-                    '.nav-item:not(.dropdownmoremenu) .nav-link[aria-current="true"]',
-                    '.nav-item:not(.dropdownmoremenu) .nav-link[aria-current="page"]',
+                    '.mds-nav-pill.active',
+                    '.mds-nav-pill--selected',
+                    '.mds-nav-pill[aria-current="true"]',
+                    '.mds-nav-pill[aria-current="page"]',
                 ];
                 foreach ($selectors as $selector) {
                     if ($this->node_list_contains_text($secondarynav->findAll('css', $selector), $element)) {

@@ -1,8 +1,15 @@
 .moremenu {
-    opacity: 0;
     height: $moremenu-height;
-    &.observed {
-        opacity: 1;
+
+    // Hides the menu until moremenu.js has measured and settled the overflow split, to avoid a
+    // flash of the unmeasured/wrapped state. Scoped to .jsenabled: without JS there is no
+    // measurement pass to add .observed again, and any NonJS fallback markup rendered inside is
+    // already final content.
+    .jsenabled & {
+        opacity: 0;
+        &.observed {
+            opacity: 1;
+        }
     }
     .nav-link {
         height: $moremenu-height;

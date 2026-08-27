@@ -119,8 +119,19 @@ const keyboardListenerEvents = e => {
         const arrowNext = rtl ? 'ArrowLeft' : 'ArrowRight';
         const arrowPrevious = rtl ? 'ArrowRight' : 'ArrowLeft';
 
-        if (src.getAttribute('role') === 'menuitem') {
-            // When not rendered within a dropdown menu, handle keyboard navigation if the element is rendered as a menu item.
+        const containerRole = e.currentTarget.getAttribute('role');
+        const isTabList = containerRole === 'tablist';
+        // Some consumers (e.g. core/nav/SecondaryNav's plain, non-tablist pills) render their
+        // top-level items via a component that can't carry an explicit role="menuitem"/"tab" of
+        // its own. Still treat a plain link as navigable when it's a direct item of a
+        // role="menubar"/"tablist" list, so keyboard nav isn't silently dropped for those.
+        const isPlainMenuListItem = (containerRole === 'menubar' || isTabList) && src.matches('a');
+
+        if (src.matches(`${SELECTORS.tab},${SELECTORS.menuitem}`) || isPlainMenuListItem) {
+            // When not rendered within a dropdown menu, handle keyboard navigation if the element is rendered as a
+            // menu item or a tab (e.g. within a tablist such as the secondary navigation).
+            const itemSelector = isTabList ? SELECTORS.tab : SELECTORS.menuitem;
+
             if (e.key == arrowNext) {
                 e.preventDefault();
                 setFocusNext(src, firstNode);
@@ -137,18 +148,21 @@ const keyboardListenerEvents = e => {
             }
             if (e.key == 'Home') {
                 e.preventDefault();
-                setFocusHomeEnd(firstNode);
+                setFocusHomeEnd(firstNode, itemSelector);
             }
             if (e.key == 'End') {
                 e.preventDefault();
-                setFocusHomeEnd(lastNode);
+                setFocusHomeEnd(lastNode, itemSelector);
             }
         }
 
         if (e.key == ' ' ||
             e.key == 'Enter') {
             e.preventDefault();
-            // Aria.js handles dropdowns etc.
+            // theme_boost/aria.js's dropdownFix already calls .click() on Space/Enter for any
+            // [data-bs-toggle="dropdown"] element, so skip dropdown toggles here to avoid a
+            // double .click() (open then immediately close again). Only fire it ourselves for
+            // plain, non-dropdown items, which aria.js does not handle.
             if (!src.parentElement.classList.contains('dropdown')) {
                 src.click();
             }
@@ -181,6 +195,30 @@ export default elementRoot => {
 };
 
 /**
+ * Focus the focusable menu item/tab within the given node, trying the given (preferred) selector
+ * first, falling back to the other role's selector, and finally to any link/button, before
+ * giving up.
+ *
+ * A node's nominal role is normally derived from its containing list (SELECTORS.tab within a
+ * tablist, SELECTORS.menuitem otherwise), but an individual node may not follow that: e.g. the
+ * secondary nav's overflow "More" toggle is always rendered with role="menuitem" even when it is
+ * a child of a role="tablist" list of otherwise role="tab" items. The final any-link/button
+ * fallback covers items that carry neither role at all, e.g. core/nav/SecondaryNav's plain,
+ * non-tablist pills. Falling back avoids focus() being called on null when the preferred selector
+ * doesn't match what's actually inside the node.
+ *
+ * @param {HTMLElement} node The node to search within and focus.
+ * @param {string} itemSelector The preferred selector to use (SELECTORS.tab or SELECTORS.menuitem).
+ */
+const focusMenuItem = (node, itemSelector) => {
+    const fallbackSelector = itemSelector === SELECTORS.tab ? SELECTORS.menuitem : SELECTORS.tab;
+    const menuItem = node.querySelector(itemSelector) || node.querySelector(fallbackSelector) || node.querySelector('a, button');
+    if (menuItem) {
+        menuItem.focus();
+    }
+};
+
+/**
  * Handle the focusing to the next element in the dropdown.
  *
  * @param {HTMLElement|null} currentNode The node that we want to take action on.
@@ -198,8 +236,7 @@ const setFocusNext = (currentNode, firstNode) => {
     const parent = listElement.parentElement;
     const isTabList = parent.getAttribute('role') === 'tablist';
     const itemSelector = isTabList ? SELECTORS.tab : SELECTORS.menuitem;
-    const menuItem = nodeToSelect.querySelector(itemSelector);
-    menuItem.focus();
+    focusMenuItem(nodeToSelect, itemSelector);
 };
 
 /**
@@ -220,17 +257,18 @@ const setFocusPrev = (currentNode, lastNode) => {
     const parent = listElement.parentElement;
     const isTabList = parent.getAttribute('role') === 'tablist';
     const itemSelector = isTabList ? SELECTORS.tab : SELECTORS.menuitem;
-    const menuItem = nodeToSelect.querySelector(itemSelector);
-    menuItem.focus();
+    focusMenuItem(nodeToSelect, itemSelector);
 };
 
 /**
  * Focus on either the start or end of a nav list.
  *
  * @param {HTMLElement} node The element to focus on.
+ * @param {string} itemSelector The selector to use to find the focusable item within the node
+ *                               (SELECTORS.tab for a tablist, SELECTORS.menuitem otherwise).
  */
-const setFocusHomeEnd = node => {
-    node.querySelector(SELECTORS.menuitem).focus();
+const setFocusHomeEnd = (node, itemSelector) => {
+    focusMenuItem(node, itemSelector);
 };
 
 /**

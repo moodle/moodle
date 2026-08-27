@@ -20,6 +20,7 @@ Feature: Menu navigation has accurate checkmarks in single activity course forma
       | activity   | name   | intro                           | course | idnumber |
       | quiz       | Quiz 1 | Quiz 1 for testing the Add menu | C1     | quiz1    |
 
+  @javascript
   Scenario: Admin can see checkmark beside menu item they are currently on in a single activity format course
     Given I log in as "admin"
     And I am on "Course 1" course homepage
@@ -39,6 +40,7 @@ Feature: Menu navigation has accurate checkmarks in single activity course forma
     And menu item "Permissions" should not be active
     And menu item "Participants" should not be active
 
+  @javascript
   Scenario: Admin can see checkmark beside menu item they are currently on after pressing browser back button in a single
   activity format course
     Given I log in as "admin"
@@ -52,6 +54,7 @@ Feature: Menu navigation has accurate checkmarks in single activity course forma
     Then menu item "Backup" should be active
     And menu item "Permissions" should not be active
 
+  @javascript
   Scenario: Admin can see checkmark beside menu item they are currently on after pressing browser back button when
   jumping between course and activity menu in a single activity format course
     Given I log in as "admin"
@@ -69,10 +72,10 @@ Feature: Menu navigation has accurate checkmarks in single activity course forma
   Scenario: Admin should not see checkmark if link is not navigated to in current browser for single activity format quiz
     Given I log in as "admin"
     And I am on "Course 1" course homepage
-    And I update the href of the "//*//a/following-sibling::*//a[contains(text(), 'Participants')]" "xpath" link to "#"
+    And I update the href of the "//*//a/following-sibling::*//a[contains(normalize-space(.), 'Participants')]" "xpath" link to "#"
     When I navigate to "Participants" in current page administration
     Then menu item "Participants" should not be active
-    And I update the href of the "//*//a/following-sibling::*//a[contains(text(), 'Backup')]" "xpath" link to "#"
-    When I click on "//*//a[contains(text(),'Activity')]" "xpath"
-    And I click on "//*//a/following-sibling::*//a[contains(text(), 'Backup')]" "xpath"
+    And I update the href of the "//*//a/following-sibling::*//a[contains(normalize-space(.), 'Backup')]" "xpath" link to "#"
+    When I click on "//*//a[contains(normalize-space(.),'Activity')]" "xpath"
+    And I click on "//*//a/following-sibling::*//a[contains(normalize-space(.), 'Backup')]" "xpath"
     Then menu item "Backup" should not be active
