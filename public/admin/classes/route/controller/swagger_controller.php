@@ -31,7 +31,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class swagger_controller {
     /** @var string The Swagger UI version. */
-    public const SWAGGER_UI_VERSION = '5.32.5';
+    public const SWAGGER_UI_VERSION = '5.32.14';
 
     /** @var string The Swagger UI Hierarchical Tags Plugin version. */
     public const SWAGGER_UI_HIERARCHICAL_TAGS_PLUGIN_VERSION = '1.0.4';
