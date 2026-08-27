@@ -612,6 +612,15 @@ export const handleCourseChange = async(courseId, courseName) => {
         element.setAttribute('data-courseid', courseId);
     });
 
+    // Update the course parameter on the calendar footer links (e.g. "Import or export calendars") so that they
+    // keep pointing at the currently selected course. Otherwise those links stay on the course they were rendered
+    // with, making course-specific pages (subscriptions, import, export) unreachable via the UI.
+    document.querySelectorAll(CalendarSelectors.footerLinks).forEach((link) => {
+        const url = new URL(link.href, window.location.origin);
+        url.searchParams.set('course', courseId);
+        link.href = url.toString();
+    });
+
     const calendar = await getString('calendar', 'calendar');
     const pageHeaderHeadingsElement = document.querySelector(CalendarSelectors.pageHeaderHeadings);
     const courseUrl = Url.relativeUrl('/course/view.php', {id: courseId});
