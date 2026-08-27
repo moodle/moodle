@@ -69,7 +69,6 @@ class admin_preset extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$apalias}.id, {$apalias}.name, {$apalias}.iscore")
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $value, \stdClass $row): string {
                 global $OUTPUT;
                 $edithint = get_string('editadminpresetname', 'tool_admin_presets');
@@ -89,7 +88,6 @@ class admin_preset extends base {
         ))
             ->set_type(column::TYPE_LONGTEXT)
             ->add_field("{$apalias}.comments")
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $description): string {
                 return format_text($description, FORMAT_HTML, ['context' => \context_system::instance()]);
             });

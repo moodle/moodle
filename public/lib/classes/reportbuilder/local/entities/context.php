@@ -73,7 +73,6 @@ class context extends base {
         ))
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
-            ->set_is_sortable(true)
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($context->ctxid === null) {
                     return '';
@@ -93,7 +92,6 @@ class context extends base {
         ))
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
-            ->set_is_sortable(true)
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($context->ctxid === null) {
                     return '';
@@ -112,7 +110,6 @@ class context extends base {
             $this->get_entity_name()
         ))
             ->add_fields("{$contextalias}.contextlevel")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $level): string {
                 if ($level === null) {
                     return '';
@@ -127,8 +124,7 @@ class context extends base {
             new lang_string('path'),
             $this->get_entity_name()
         ))
-            ->add_field("{$contextalias}.path")
-            ->set_is_sortable(true);
+            ->add_field("{$contextalias}.path");
 
         // Parent (note we select the parent path in SQL, so that aggregation/grouping is on the parent data itself).
         $columns[] = (new column(
@@ -146,7 +142,6 @@ class context extends base {
                 )", 'parent'
             )
             // Sorting may not order alphabetically, but will at least group contexts together.
-            ->set_is_sortable(true)
             ->add_callback(static function (?string $parent): string {
 
                 // System level (no parent) or null.

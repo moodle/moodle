@@ -94,7 +94,6 @@ class grouping extends base {
         ))
             ->add_field("{$groupingsalias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $name, stdClass $grouping): string {
                 if ($name === null || $grouping->ctxid === null) {
                     return '';
@@ -112,8 +111,7 @@ class grouping extends base {
             new lang_string('idnumber'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$groupingsalias}.idnumber")
-            ->set_is_sortable(true);
+            ->add_fields("{$groupingsalias}.idnumber");
 
         // Description column.
         $columns[] = (new column(
@@ -124,7 +122,6 @@ class grouping extends base {
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$groupingsalias}.description, {$groupingsalias}.descriptionformat, {$groupingsalias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $description, stdClass $grouping): string {
                 global $CFG;
 
@@ -151,7 +148,6 @@ class grouping extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$groupingsalias}.timecreated")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Time modified column.
@@ -162,7 +158,6 @@ class grouping extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$groupingsalias}.timemodified")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Merge with custom field columns.

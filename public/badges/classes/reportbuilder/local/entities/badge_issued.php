@@ -69,7 +69,6 @@ class badge_issued extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$badgeissuedalias}.dateissued")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Date expires.
@@ -80,7 +79,6 @@ class badge_issued extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$badgeissuedalias}.dateexpire")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Visible.
@@ -91,7 +89,6 @@ class badge_issued extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$badgeissuedalias}.visible")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         return $columns;

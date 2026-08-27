@@ -70,7 +70,6 @@ class service extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tokenalias}.name, {$tokenalias}.shortname")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $value, \stdClass $row): string {
                 $output = $value;
                 $output .= \html_writer::tag('div', format_text($row->shortname), [

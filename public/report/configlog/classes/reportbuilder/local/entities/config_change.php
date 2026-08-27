@@ -71,7 +71,6 @@ class config_change extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timemodified")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Plugin column.
@@ -82,7 +81,6 @@ class config_change extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.plugin")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $plugin): string {
                 return $plugin ?? 'core';
             });
@@ -94,8 +92,7 @@ class config_change extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$tablealias}.name")
-            ->set_is_sortable(true);
+            ->add_field("{$tablealias}.name");
 
         // New value column.
         $columns[] = (new column(
@@ -105,7 +102,6 @@ class config_change extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.value")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $value): string {
                 return format_text($value, FORMAT_PLAIN);
             });
@@ -118,7 +114,6 @@ class config_change extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.oldvalue")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $oldvalue): string {
                 return format_text($oldvalue, FORMAT_PLAIN);
             });

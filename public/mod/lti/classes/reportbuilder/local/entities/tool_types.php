@@ -71,7 +71,6 @@ class tool_types extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.icon")
-            ->set_is_sortable(true)
             ->add_callback(static function(string $name, \stdClass $data) {
                 global $OUTPUT;
 
@@ -92,8 +91,7 @@ class tool_types extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$tablealias}.description")
-            ->set_is_sortable(true);
+            ->add_field("{$tablealias}.description");
 
         // Course column.
         $columns[] = (new column(
@@ -102,8 +100,7 @@ class tool_types extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_INTEGER)
-            ->add_field("{$tablealias}.course")
-            ->set_is_sortable(true);
+            ->add_field("{$tablealias}.course");
 
         // LTI Version column.
         $columns[] = (new column(
@@ -112,8 +109,7 @@ class tool_types extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$tablealias}.ltiversion")
-            ->set_is_sortable(true);
+            ->add_field("{$tablealias}.ltiversion");
 
         return $columns;
     }

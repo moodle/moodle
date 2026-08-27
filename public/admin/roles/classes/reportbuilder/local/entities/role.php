@@ -115,8 +115,7 @@ class role extends base {
             new lang_string('roleshortname', 'core_role'),
             $this->get_entity_name()
         ))
-            ->add_field("{$rolealias}.shortname")
-            ->set_is_sortable(true);
+            ->add_field("{$rolealias}.shortname");
 
         // Archetype column.
         $columns[] = (new column(
@@ -129,8 +128,7 @@ class role extends base {
                 null => '',
                 '' => get_string('none'),
                 default => get_string("archetype{$archetype}", 'core_role'),
-            })
-            ->set_is_sortable(true);
+            });
 
         // Description column.
         $columns[] = (new column(
@@ -140,7 +138,6 @@ class role extends base {
         ))
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$rolealias}.description, {$rolealias}.shortname")
-            ->set_is_sortable(true)
             ->add_callback(fn(?string $description, stdClass $role) => match ($description) {
                 null => '',
                 default => role_get_description($role),

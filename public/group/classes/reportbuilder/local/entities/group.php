@@ -101,7 +101,6 @@ class group extends base {
         ))
             ->add_field("{$groupsalias}.name")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $name, stdClass $group): string {
                 if ($name === null || $group->ctxid === null) {
                     return '';
@@ -119,8 +118,7 @@ class group extends base {
             new lang_string('idnumber'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$groupsalias}.idnumber")
-            ->set_is_sortable(true);
+            ->add_fields("{$groupsalias}.idnumber");
 
         // Description column.
         $columns[] = (new column(
@@ -131,7 +129,6 @@ class group extends base {
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$groupsalias}.description, {$groupsalias}.descriptionformat, {$groupsalias}.id")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $description, stdClass $group): string {
                 global $CFG;
 
@@ -156,8 +153,7 @@ class group extends base {
             new lang_string('enrolmentkey', 'core_group'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$groupsalias}.enrolmentkey")
-            ->set_is_sortable(true);
+            ->add_fields("{$groupsalias}.enrolmentkey");
 
         // Visibility column.
         $columns[] = (new column(
@@ -166,7 +162,6 @@ class group extends base {
             $this->get_entity_name()
         ))
             ->add_fields("{$groupsalias}.visibility")
-            ->set_is_sortable(true)
             ->set_callback(static function(?string $visibility): string {
                 if ($visibility === null) {
                     return '';
@@ -190,7 +185,6 @@ class group extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_fields("{$groupsalias}.participation")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'boolean_as_text']);
 
         // Picture column.
@@ -220,7 +214,6 @@ class group extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$groupsalias}.timecreated")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Time modified column.
@@ -231,7 +224,6 @@ class group extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$groupsalias}.timemodified")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         // Merge with custom field columns.

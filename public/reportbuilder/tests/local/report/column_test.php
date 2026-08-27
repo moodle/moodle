@@ -558,6 +558,9 @@ final class column_test extends advanced_testcase {
      */
     public function test_is_sortable(): void {
         $column = $this->create_column('test');
+        $this->assertTrue($column->get_is_sortable());
+
+        $column->set_is_sortable(false);
         $this->assertFalse($column->get_is_sortable());
 
         $column->set_is_sortable(true);

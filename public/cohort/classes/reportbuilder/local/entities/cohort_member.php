@@ -70,7 +70,6 @@ class cohort_member extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timeadded")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'userdate']);
 
         return $columns;

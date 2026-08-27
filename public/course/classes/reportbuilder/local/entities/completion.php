@@ -103,7 +103,6 @@ class completion extends base {
                     WHEN {$coursecompletion}.timecompleted > 0 THEN 1
                     ELSE 0
                 END", 'completed')
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'boolean_as_text']);
 
         // Completion criteria column.
@@ -123,6 +122,7 @@ class completion extends base {
             ->add_field("{$course}.enablecompletion")
             ->add_field("{$user}.id", 'userid')
             ->set_disabled_aggregation_all()
+            ->set_is_sortable(false)
             ->add_callback(static function($id, stdClass $record): string {
                 if (!$record->courseid) {
                     return '';
@@ -168,7 +168,6 @@ class completion extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$coursecompletion}.timeenrolled")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Time started.
@@ -179,7 +178,6 @@ class completion extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$coursecompletion}.timestarted")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Time completed.
@@ -190,7 +188,6 @@ class completion extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$coursecompletion}.timecompleted")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Time reaggregated.
@@ -201,7 +198,6 @@ class completion extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$coursecompletion}.reaggregate")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Days taking course (days since course start date until completion or until current date if not completed).
@@ -221,7 +217,6 @@ class completion extends base {
                         {$currenttime}
                     END - {$course}.startdate)
                 END)", 'dayscourse')
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'format_time']);
 
         // Days since last completion (days since last enrolment date until completion or until current date if not completed).
@@ -240,7 +235,6 @@ class completion extends base {
                         {$currenttime}
                     END - {$coursecompletion}.timeenrolled)
                 END)", 'daysuntilcompletion')
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'format_time']);
 
         // Student course grade.
@@ -259,7 +253,6 @@ class completion extends base {
             ")
             ->set_type(column::TYPE_FLOAT)
             ->add_fields("{$grade}.finalgrade")
-            ->set_is_sortable(true)
             ->add_callback(function(?float $value): string {
                 if ($value === null) {
                     return '';

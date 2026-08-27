@@ -145,7 +145,6 @@ class custom_fields {
                     ->add_field($customdatasql, $datafield)
                     ->add_fields($customdatasqlextra)
                     ->add_field($this->tablefieldalias, 'tablefieldalias')
-                    ->set_is_sortable(true)
                     ->add_callback(static function($value, stdClass $row, field_controller $field, ?string $aggregation): string {
                         if ($row->tablefieldalias === null && $value === null) {
                             return '';

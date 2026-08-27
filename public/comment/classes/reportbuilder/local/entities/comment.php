@@ -75,7 +75,6 @@ class comment extends base {
             ->add_join($this->get_context_join())
             ->add_fields("{$commentalias}.content, {$commentalias}.format")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $content, stdClass $comment): string {
                 if ($content === null || $comment->ctxid === null) {
                     return '';
@@ -93,8 +92,7 @@ class comment extends base {
             new lang_string('plugin'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$commentalias}.component")
-            ->set_is_sortable(true);
+            ->add_fields("{$commentalias}.component");
 
         // Area.
         $columns[] = (new column(
@@ -102,8 +100,7 @@ class comment extends base {
             new lang_string('pluginarea'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$commentalias}.commentarea")
-            ->set_is_sortable(true);
+            ->add_fields("{$commentalias}.commentarea");
 
         // Item ID.
         $columns[] = (new column(
@@ -111,8 +108,7 @@ class comment extends base {
             new lang_string('pluginitemid'),
             $this->get_entity_name()
         ))
-            ->add_fields("{$commentalias}.itemid")
-            ->set_is_sortable(true);
+            ->add_fields("{$commentalias}.itemid");
 
         // Time created.
         $columns[] = (new column(
@@ -122,7 +118,6 @@ class comment extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$commentalias}.timecreated")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

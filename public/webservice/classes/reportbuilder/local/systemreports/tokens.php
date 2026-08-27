@@ -140,6 +140,7 @@ class tokens extends system_report {
                 "{$entityservicealias}.id",
                 "{$entityservicealias}.shortname",
             ])
+            ->set_is_sortable(false)
             ->add_callback(static function($value, \stdClass $row): string {
                 global $OUTPUT;
 

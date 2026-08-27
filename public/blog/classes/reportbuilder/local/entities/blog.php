@@ -76,8 +76,7 @@ class blog extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$postalias}.subject")
-            ->set_is_sortable(true);
+            ->add_fields("{$postalias}.subject");
 
         // Title with link.
         $columns[] = (new column(
@@ -87,7 +86,6 @@ class blog extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$postalias}.subject, {$postalias}.id")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $subject, stdClass $post): string {
                 if ($subject === null) {
                     return '';
@@ -103,7 +101,6 @@ class blog extends base {
         ))
             ->set_type(column::TYPE_LONGTEXT)
             ->add_fields("{$postalias}.summary, {$postalias}.summaryformat, {$postalias}.id")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $summary, stdClass $post): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
@@ -147,7 +144,8 @@ class blog extends base {
 
                 return $attachments;
             })
-            ->set_disabled_aggregation_all();
+            ->set_disabled_aggregation_all()
+            ->set_is_sortable(false);
 
         // Publish state.
         $columns[] = (new column(
@@ -157,7 +155,6 @@ class blog extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$postalias}.publishstate")
-            ->set_is_sortable(true)
             ->add_callback(static function(?string $publishstate): string {
                 $states = [
                     'draft' => new lang_string('publishtodraft', 'core_blog'),
@@ -180,7 +177,6 @@ class blog extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.created")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Time modified.
@@ -191,7 +187,6 @@ class blog extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$postalias}.lastmodified")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         return $columns;

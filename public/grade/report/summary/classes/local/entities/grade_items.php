@@ -120,6 +120,7 @@ class grade_items extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields($selectsql)
+            ->set_is_sortable(false)
             ->add_callback(static function($value, $row): string {
                 $gradeitem = grade_item::fetch(['id' => $row->id, 'courseid' => $row->courseid]);
                 $element = ['type' => 'item', 'object' => $gradeitem, 'modinfo' => get_fast_modinfo($row->courseid)];
@@ -150,6 +151,7 @@ class grade_items extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("$tablealias.id")
+            ->set_is_sortable(false)
             ->add_callback(static function($value) use ($report): string {
 
                 $gradeitem = grade_item::fetch(['id' => $value]);

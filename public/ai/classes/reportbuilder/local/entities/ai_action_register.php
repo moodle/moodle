@@ -69,7 +69,6 @@ class ai_action_register extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$mainalias}.actionname")
-            ->set_is_sortable(true)
             ->add_callback(static function(string $actionname): string {
                 return get_string("action_{$actionname}", 'core_ai');
             });
@@ -82,7 +81,6 @@ class ai_action_register extends base {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$mainalias}.provider")
-            ->set_is_sortable(true)
             ->add_callback(static function(string $provider): string {
                 if (get_string_manager()->string_exists('pluginname', $provider)) {
                     return get_string('pluginname', $provider);
@@ -100,7 +98,6 @@ class ai_action_register extends base {
         ))
             ->set_type(column::TYPE_BOOLEAN)
             ->add_field("{$mainalias}.success")
-            ->set_is_sortable(true)
             ->set_callback([format::class, 'boolean_as_text']);
 
         // Time created column.
@@ -111,7 +108,6 @@ class ai_action_register extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$mainalias}.timecreated")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate']);
 
         // Prompt tokens column.
@@ -122,7 +118,6 @@ class ai_action_register extends base {
         ))
             ->set_type(column::TYPE_INTEGER)
             ->add_field("{$mainalias}.prompttokens")
-            ->set_is_sortable(true)
             ->set_help_icon(new help_icon('prompttokens', 'core_ai'))
             ->add_callback(static function(?int $value): string {
                 return $value ?? get_string('unknownvalue', 'core_ai');
@@ -136,7 +131,6 @@ class ai_action_register extends base {
         ))
             ->set_type(column::TYPE_INTEGER)
             ->add_field("{$mainalias}.completiontokens")
-            ->set_is_sortable(true)
             ->set_help_icon(new help_icon('completiontokens', 'core_ai'))
             ->add_callback(static function(?int $value): string {
                 return $value ?? get_string('unknownvalue', 'core_ai');

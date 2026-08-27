@@ -68,8 +68,7 @@ class token extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$tokenalias}.name")
-            ->set_is_sortable(true);
+            ->add_field("{$tokenalias}.name");
 
         // IP restriction column.
         $columnns[] = (new column(
@@ -78,7 +77,8 @@ class token extends base {
             $this->get_entity_name()
         ))
             ->set_type(column::TYPE_TEXT)
-            ->add_field("{$tokenalias}.iprestriction");
+            ->add_field("{$tokenalias}.iprestriction")
+            ->set_is_sortable(false);
 
         // Valid until column.
         $columnns[] = (new column(
@@ -88,7 +88,6 @@ class token extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$tokenalias}.validuntil")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate'], get_string('strftimedatetime', 'core_langconfig'))
             ->add_callback(fn($value) => $value ?: get_string('validuntil_empty', 'core_webservice'));
 
@@ -100,7 +99,6 @@ class token extends base {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_field("{$tokenalias}.lastaccess")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate'])
             ->add_callback(fn($value) => $value ?: get_string('never'));
 

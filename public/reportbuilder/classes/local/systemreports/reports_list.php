@@ -150,7 +150,6 @@ class reports_list extends system_report {
         ))
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.source")
-            ->set_is_sortable(true)
             ->add_callback(function(string $value, stdClass $row) {
                 if (!$this->report_source_valid($value)) {
                     // Add danger badge if report source is not valid (either it's missing, or has errors).
@@ -175,7 +174,6 @@ class reports_list extends system_report {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timecreated")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate'])
         );
 
@@ -187,7 +185,6 @@ class reports_list extends system_report {
         ))
             ->set_type(column::TYPE_TIMESTAMP)
             ->add_fields("{$tablealias}.timemodified")
-            ->set_is_sortable(true)
             ->add_callback([format::class, 'userdate'])
         );
 
