@@ -35,7 +35,7 @@ class action_generate_image_form extends action_form {
 
         // API endpoint.
         $defaultendpoint = $this->actionconfig['endpoint']
-                ?? 'https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict';
+                ?? 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent';
         $mform->addElement(
             'text',
             'endpoint',
