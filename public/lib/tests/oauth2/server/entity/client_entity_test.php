@@ -96,9 +96,21 @@ final class client_entity_test extends \advanced_testcase {
      */
     public function test_grant_types_getter(): void {
         $client = new client_entity();
-        $this->set_protected_property($client, 'granttypes', ['authorization_code', 'refresh_token']);
+        $this->set_protected_property(
+            $client,
+            'granttypes',
+            [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
+            ],
+        );
 
-        $this->assertSame(['authorization_code', 'refresh_token'], $client->get_grant_types());
+        $this->assertSame(
+            [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
+            ],
+            $client->get_grant_types());
     }
 
     /**
@@ -187,7 +199,7 @@ final class client_entity_test extends \advanced_testcase {
         $this->set_protected_property($client, 'isConfidential', $isconfidential);
         $this->set_protected_property($client, 'granttypes', $clientsupportedgrants);
 
-        if ($granttype === 'client_credentials') {
+        if ($granttype === client_entity::GRANT_TYPE_CLIENT_CREDENTIALS) {
             $ownercontext = $issystemcontext ? \context_system::instance() : \context_course::instance(SITEID);
             $this->set_protected_property($client, 'ownercontext', $ownercontext);
         }
@@ -202,18 +214,48 @@ final class client_entity_test extends \advanced_testcase {
      */
     public static function grant_type_provider(): array {
         return [
-            'authorization code' => ['authorization_code', false, false, ['authorization_code'], true],
-            'client credentials allowed' => [
-                'client_credentials',
-                true,
-                true,
-                ['authorization_code', 'client_credentials'],
+            'authorization code' => [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                false,
+                false,
+                [client_entity::GRANT_TYPE_AUTHORIZATION_CODE],
                 true,
             ],
-            'client credentials confidential only' => ['client_credentials', false, true, ['client_credentials'], false],
-            'client credentials system context only' => ['client_credentials', true, false, ['client_credentials'], false],
-            'password not allowed' => ['password', true, true, ['client_credentials'], false],
-            'authorization code not supported' => ['authorization_code', true, false, ['client_credentials'], false],
+            'client credentials allowed' => [
+                client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                true,
+                true,
+                [client_entity::GRANT_TYPE_AUTHORIZATION_CODE, client_entity::GRANT_TYPE_CLIENT_CREDENTIALS],
+                true,
+            ],
+            'client credentials confidential only' => [
+                client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                false,
+                true,
+                [client_entity::GRANT_TYPE_CLIENT_CREDENTIALS],
+                false,
+            ],
+            'client credentials system context only' => [
+                client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                true,
+                false,
+                [client_entity::GRANT_TYPE_CLIENT_CREDENTIALS],
+                false,
+            ],
+            'password not allowed' => [
+                client_entity::GRANT_TYPE_PASSWORD,
+                true,
+                true,
+                [client_entity::GRANT_TYPE_CLIENT_CREDENTIALS],
+                false,
+            ],
+            'authorization code not supported' => [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                true,
+                false,
+                [client_entity::GRANT_TYPE_CLIENT_CREDENTIALS],
+                false,
+            ],
         ];
     }
 
@@ -281,7 +323,7 @@ final class client_entity_test extends \advanced_testcase {
                     'ownercontext' => 1,
                     'status' => 1,
                     'isconfidential' => 1,
-                    'granttypes' => 'client_credentials',
+                    'granttypes' => client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
                     'ispkceenabled' => false,
                 ],
                 [(object) ['uri' => 'https://example.test/callback']],
@@ -291,7 +333,7 @@ final class client_entity_test extends \advanced_testcase {
                 'Description One',
                 1,
                 true,
-                ['client_credentials'],
+                [client_entity::GRANT_TYPE_CLIENT_CREDENTIALS],
                 false,
                 ['https://example.test/callback'],
             ],
@@ -304,7 +346,13 @@ final class client_entity_test extends \advanced_testcase {
                     'ownercontext' => 1,
                     'status' => 2,
                     'isconfidential' => 0,
-                    'granttypes' => 'client_credentials,authorization_code',
+                    'granttypes' => implode(
+                        ',',
+                        [
+                            client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                            client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                        ],
+                    ),
                     'ispkceenabled' => true,
                 ],
                 [
@@ -317,7 +365,10 @@ final class client_entity_test extends \advanced_testcase {
                 null,
                 2,
                 false,
-                ['client_credentials', 'authorization_code'],
+                [
+                    client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                    client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                ],
                 true,
                 ['https://example.test/alt1', 'https://example.test/alt2'],
             ],

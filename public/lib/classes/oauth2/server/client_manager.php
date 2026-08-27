@@ -584,7 +584,11 @@ class client_manager {
         $granttypes = array_values(array_unique(array_filter($granttypes)));
 
         // Define all valid grant types allowed.
-        $validgrants = ['authorization_code', 'client_credentials', 'refresh_token'];
+        $validgrants = [
+            client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+            client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+            client_entity::GRANT_TYPE_REFRESH_TOKEN,
+        ];
 
         foreach ($granttypes as $grant) {
             if (!in_array($grant, $validgrants, true)) {
@@ -593,19 +597,22 @@ class client_manager {
         }
 
         // Public clients cannot use Client Credential flows.
-        if (!$isconfidential && in_array('client_credentials', $granttypes, true)) {
+        if (!$isconfidential && in_array(client_entity::GRANT_TYPE_CLIENT_CREDENTIALS, $granttypes, true)) {
             throw new \coding_exception('Public clients cannot support the client_credentials grant type.');
         }
 
         // Client Credentials grant is restricted strictly to the system context.
-        if (in_array('client_credentials', $granttypes, true)) {
+        if (in_array(client_entity::GRANT_TYPE_CLIENT_CREDENTIALS, $granttypes, true)) {
             if ($ownercontext->contextlevel !== CONTEXT_SYSTEM) {
                 throw new \coding_exception('The client_credentials grant type is only allowed for system-owned clients.');
             }
         }
 
+        $isauthorizationcodesupported = in_array(client_entity::GRANT_TYPE_AUTHORIZATION_CODE, $granttypes, true);
+        $isrefreshtokensupported = in_array(client_entity::GRANT_TYPE_REFRESH_TOKEN, $granttypes, true);
+
         // Authorization code and Refresh tokens grants must be supported together.
-        if (in_array('authorization_code', $granttypes, true) !== in_array('refresh_token', $granttypes, true)) {
+        if ($isauthorizationcodesupported !== $isrefreshtokensupported) {
             throw new \coding_exception('The authorization_code and refresh_token grants must be supported together.');
         }
 

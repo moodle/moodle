@@ -51,6 +51,18 @@ class client_entity implements ClientEntityInterface {
     /** @var int Confidential client type */
     public const int TYPE_CONFIDENTIAL = 1;
 
+    /** @var string Authorization code grant type */
+    public const string GRANT_TYPE_AUTHORIZATION_CODE = 'authorization_code';
+
+    /** @var string Refresh token grant type */
+    public const string GRANT_TYPE_REFRESH_TOKEN = 'refresh_token';
+
+    /** @var string Client credentials grant type */
+    public const string GRANT_TYPE_CLIENT_CREDENTIALS = 'client_credentials';
+
+    /** @var string Password grant type */
+    public const string GRANT_TYPE_PASSWORD = 'password';
+
     /** @var int The ID of the client */
     protected int $id;
 
@@ -123,14 +135,14 @@ class client_entity implements ClientEntityInterface {
     public function supportsGrantType(string $granttype): bool {
         // If Client Credentials grant is requested (Machine-to-machine communication), the client must be confidential
         // and owned by system context.
-        if ($granttype === 'client_credentials') {
+        if ($granttype === self::GRANT_TYPE_CLIENT_CREDENTIALS) {
             if (!$this->isConfidential() || $this->ownercontext->contextlevel !== CONTEXT_SYSTEM) {
                 return false;
             }
         }
 
         // The Resource Owner Password Credentials grant is deprecated and no longer supported.
-        if ($granttype === 'password') {
+        if ($granttype === self::GRANT_TYPE_PASSWORD) {
             return false;
         }
 

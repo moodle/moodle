@@ -191,7 +191,7 @@ final class scope_repository_test extends \advanced_testcase {
             'no user identifier (null)' => [
                 false,
                 ['profile', 'email'],
-                'refresh_token',
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
                 null,
                 null,
                 null,
@@ -200,7 +200,7 @@ final class scope_repository_test extends \advanced_testcase {
             'no granted scopes during authorization code grant' => [
                 true,
                 ['profile', 'email'],
-                'authorization_code',
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
                 'authcode-123',
                 null,
                 null,
@@ -209,7 +209,7 @@ final class scope_repository_test extends \advanced_testcase {
             'session granted scopes only during authorization code grant' => [
                 true,
                 ['profile', 'email'],
-                'authorization_code',
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
                 'authcode-123',
                 'profile email',
                 null,
@@ -218,7 +218,7 @@ final class scope_repository_test extends \advanced_testcase {
             'global granted scopes only during authorization code grant' => [
                 true,
                 ['profile', 'email'],
-                'authorization_code',
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
                 'authcode-123',
                 null,
                 'profile',
@@ -227,7 +227,7 @@ final class scope_repository_test extends \advanced_testcase {
             'session and global granted scopes during authorization code grant' => [
                 true,
                 ['profile', 'email'],
-                'authorization_code',
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
                 'authcode-123',
                 'email',
                 'profile email',
@@ -236,7 +236,7 @@ final class scope_repository_test extends \advanced_testcase {
             'no granted scopes during refresh token grant' => [
                 true,
                 ['profile', 'email'],
-                'refresh_token',
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
                 null,
                 null,
                 null,
@@ -245,7 +245,7 @@ final class scope_repository_test extends \advanced_testcase {
             'session granted scopes only during refresh token grant' => [
                 true,
                 ['profile', 'email'],
-                'refresh_token',
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
                 null,
                 'profile email',
                 null,
@@ -254,7 +254,7 @@ final class scope_repository_test extends \advanced_testcase {
             'global granted scopes only during refresh token grant' => [
                 true,
                 ['profile', 'email'],
-                'refresh_token',
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
                 null,
                 null,
                 'profile',
@@ -263,7 +263,7 @@ final class scope_repository_test extends \advanced_testcase {
             'session and global granted scopes during refresh token grant' => [
                 true,
                 ['profile', 'email'],
-                'refresh_token',
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
                 null,
                 'email',
                 'profile email',

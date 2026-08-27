@@ -128,11 +128,14 @@ class client_management {
             // If Authorization Code flow is selected or the client type is Public, add both Authorization Code and
             // Refresh Token grant types.
             if ($ispublicclient || !empty($data->flow_auth_code)) {
-                $granttypes = ['authorization_code', 'refresh_token'];
+                $granttypes = [
+                    client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                    client_entity::GRANT_TYPE_REFRESH_TOKEN,
+                ];
             }
             // If Client Credentials flow is selected, add the Client Credentials grant type.
             if (!empty($data->flow_client_credentials)) {
-                $granttypes[] = 'client_credentials';
+                $granttypes[] = client_entity::GRANT_TYPE_CLIENT_CREDENTIALS;
             }
 
             $clientmanager = \core\di::get(\core\oauth2\server\client_manager::class);
@@ -254,8 +257,16 @@ class client_management {
             'clientidentifier' => $cliententity->getIdentifier(),
             'isactive' => $isclientactive,
             'isconfidential' => $cliententity->isConfidential(),
-            'isauthcodesupported' => in_array('authorization_code', $cliententity->get_grant_types(), true),
-            'isclientcredentialssupported' => in_array('client_credentials', $cliententity->get_grant_types(), true),
+            'isauthcodesupported' => in_array(
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                $cliententity->get_grant_types(),
+                true,
+            ),
+            'isclientcredentialssupported' => in_array(
+                client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                $cliententity->get_grant_types(),
+                true,
+            ),
             'backurl' => \core\router\util::get_path_for_callable([self::class, 'list_clients'])->out(),
             'editclientform' => $mform->render(),
         ];

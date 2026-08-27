@@ -16,6 +16,8 @@
 
 namespace core_admin\form\oauth2\server;
 
+use core\oauth2\server\entity\client_entity;
+
 /**
  * OAuth 2 Client edit form.
  *
@@ -40,7 +42,7 @@ class edit_client_form extends base_client_form {
         ]);
 
         // Redirect URIs only apply to Authorization Code clients.
-        if (in_array('authorization_code', $cliententity->get_grant_types(), true)) {
+        if (in_array(client_entity::GRANT_TYPE_AUTHORIZATION_CODE, $cliententity->get_grant_types(), true)) {
             $clientmanager = \core\di::get(\core\oauth2\server\client_manager::class);
             $redirecturis = $clientmanager->get_redirect_uris($cliententity->get_id());
 
@@ -68,7 +70,7 @@ class edit_client_form extends base_client_form {
         $errors = parent::validation($data, $files);
 
         $cliententity = $this->_customdata['cliententity'];
-        $hasauthorizationcode = in_array('authorization_code', $cliententity->get_grant_types(), true);
+        $hasauthorizationcode = in_array(client_entity::GRANT_TYPE_AUTHORIZATION_CODE, $cliententity->get_grant_types(), true);
 
         // Only validate redirect URIs when this client uses the Authorization Code grant.
         if ($hasauthorizationcode) {
