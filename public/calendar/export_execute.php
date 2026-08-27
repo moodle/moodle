@@ -34,6 +34,7 @@ $userid = optional_param('userid', 0, PARAM_INT);
 $username = optional_param('username', '', PARAM_TEXT);
 $authtoken = required_param('authtoken', PARAM_ALPHANUM);
 $generateurl = optional_param('generateurl', '', PARAM_TEXT);
+$courseid = optional_param('course', 0, PARAM_INT);
 
 if (empty($CFG->enablecalendarexport)) {
     die('no export');
@@ -80,6 +81,9 @@ if (!empty($generateurl)) {
     $params['userid'] = $userid;
     $params['authtoken'] = $authtoken;
     $params['generateurl'] = true;
+    if (!empty($courseid) && $courseid != SITEID) {
+        $params['course'] = $courseid;
+    }
 
     $link = new moodle_url('/calendar/export.php', $params);
     redirect($link->out());
@@ -123,6 +127,49 @@ if(!empty($what) && !empty($time)) {
         } else {
             $users = false;
             $groups = false;
+        }
+
+        // If the export was launched from a specific course calendar, restrict the exported events to
+        // that course so the export matches what the course calendar displays. Without this, a course
+        // calendar export would include events from every course the user is enrolled in, making the
+        // course context on the export page purely cosmetic (MDL-74915).
+        if (!empty($courseid) && $courseid != SITEID) {
+            // Resolve access to the selected course once and apply the same answer to the course,
+            // group and category events below, so that the export cannot end up in an inconsistent
+            // state such as excluding a course's events while still exporting its category events.
+            // Note that access is not the same as enrolment: the calendar of a course is visible to
+            // managers and admins who are not enrolled in it, and its export must match.
+            $selectedcourse = $DB->get_record('course', ['id' => $courseid], 'id, visible, shortname, category');
+            $hasaccess = $selectedcourse && can_access_course($selectedcourse, $user);
+
+            // Drop every other course, but keep the site, which provides the site events that are
+            // shown in course calendars too. SITEID is only present when site events were requested.
+            $paramcourses = array_intersect_key($paramcourses, [SITEID => true]);
+
+            if ($hasaccess && in_array($what, ['all', 'courses'])) {
+                // Export the selected course even if the user is not enrolled in it, as long as they
+                // can access it. $courses is indexed by id and is also used to label the exported
+                // events, so the course has to be added to both.
+                $paramcourses[$courseid] = $selectedcourse;
+                $courses[$courseid] = $selectedcourse;
+            }
+
+            if ($groups !== false) {
+                // Keep only the user's groups within the selected course.
+                $coursegroupids = $hasaccess ? array_keys(groups_get_all_groups($courseid, $user->id)) : [];
+                $groups = array_values(array_intersect((array) $groups, $coursegroupids));
+                if (empty($groups)) {
+                    $groups = false;
+                }
+            }
+
+            if ($paramcategory === true) {
+                // Limit category events to the course category and its parents, as the calendar does.
+                $categorypath = $hasaccess
+                    ? $DB->get_field('course_categories', 'path', ['id' => $selectedcourse->category])
+                    : false;
+                $paramcategory = $categorypath ? array_map('intval', array_filter(explode('/', $categorypath))) : [];
+            }
         }
 
         // Store the number of days in the week.
