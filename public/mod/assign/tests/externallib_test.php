@@ -244,6 +244,8 @@ final class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $assignment = $course['assignments'][0];
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
+        $this->assertArrayHasKey('coursemodule', $assignment);
+        $this->assertEquals($assign1->cmid, $assignment['coursemodule']);
         $this->assertEquals('English', $assignment['name']);
         $this->assertStringContainsString('the assignment intro text here', $assignment['intro']);
         $this->assertNotEmpty($assignment['configs']);
@@ -330,6 +332,58 @@ final class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->assertEquals(1, $assignment['blindmarking']);
         $this->assertEquals(1, $assignment['markinganonymous']);
         $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
+    }
+
+    /**
+     * Test that get_assignments returns the effective override-adjusted dates for a student with an override,
+     * not the assignment's default dates.
+     */
+    public function test_get_assignments_with_override(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+        $now = time();
+        $assign = self::getDataGenerator()->create_module('assign', [
+            'course' => $course->id,
+            'duedate' => $now + DAYSECS,
+            'cutoffdate' => $now + (2 * DAYSECS),
+            'allowsubmissionsfromdate' => $now,
+        ]);
+
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        self::getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+
+        // Give this student a personal override extending their dates and time limit.
+        $override = new \stdClass();
+        $override->assignid = $assign->id;
+        $override->userid = $student->id;
+        $override->duedate = $now + (10 * DAYSECS);
+        $override->cutoffdate = $now + (11 * DAYSECS);
+        $override->allowsubmissionsfromdate = $now + (5 * DAYSECS);
+        $override->timelimit = 3600;
+        $DB->insert_record('assign_overrides', $override);
+
+        $this->setUser($student);
+
+        $result = mod_assign_external::get_assignments([$course->id]);
+        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['courses']);
+        $assignment = $result['courses'][0]['assignments'][0];
+
+        // The webservice must return this student's overridden dates and time limit, not the assignment defaults.
+        $this->assertEquals($override->duedate, $assignment['duedate']);
+        $this->assertEquals($override->cutoffdate, $assignment['cutoffdate']);
+        $this->assertEquals($override->allowsubmissionsfromdate, $assignment['allowsubmissionsfromdate']);
+        $this->assertEquals($override->timelimit, $assignment['timelimit']);
+        $this->assertNotEquals($assign->duedate, $assignment['duedate']);
+        $this->assertNotEquals($assign->cutoffdate, $assignment['cutoffdate']);
+        $this->assertNotEquals($assign->allowsubmissionsfromdate, $assignment['allowsubmissionsfromdate']);
+        $this->assertNotEquals(0, $assignment['timelimit']);
     }
 
     /**

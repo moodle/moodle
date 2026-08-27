@@ -1,0 +1,8 @@
+issueNumber: MDL-87241
+notes:
+  core_course:
+    - message: >-
+        Web services returning course modules now use
+        standard_coursemodule_elements consistently, aligning core_course and
+        module web services (forum, h5p, assign).
+      type: changed

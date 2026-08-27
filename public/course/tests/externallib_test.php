@@ -1182,7 +1182,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
      * Test get_course_contents
      */
     public function test_get_course_contents(): void {
-        global $CFG;
+        global $CFG, $DB;
         $this->resetAfterTest(true);
 
         $CFG->forum_allowforcedreadtracking = 1;
@@ -1196,10 +1196,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             'showdate' => 1,
         ];
         $resource = self::getDataGenerator()->create_module('resource', $record);
-        $h5pactivity = self::getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
 
         // We first run the test as admin.
         $this->setAdminUser();
+        $h5pactivity = self::getDataGenerator()->create_module('h5pactivity', ['course' => $course, 'lang' => 'en']);
         $sections = core_course_external::get_course_contents($course->id, array());
         // We need to execute the return values cleaning process to simulate the web service server.
         $sections = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $sections);
@@ -1292,6 +1292,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
                     ), $module['purpose']
                 );
                 $this->assertTrue($module['branded']);
+                $this->assertEquals('en', $module['lang']);
                 $testexecuted = $testexecuted + 1;
             }
         }
@@ -2640,6 +2641,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         );
         // Hidden activity.
         $assign = self::getDataGenerator()->create_module('assign', $record, $options);
+        $cm = get_coursemodule_from_id('assign', $assign->cmid, 0, false, MUST_EXIST);
+        $section = $DB->get_record('course_sections', ['id' => $cm->section], 'id,section', MUST_EXIST);
 
         $outcomescale = 'Distinction, Very Good, Good, Pass, Fail';
 
@@ -2693,7 +2696,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(30, $result['cm']);
+        $this->assertCount(37, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
         $this->assertEquals(100, $result['cm']['grade']);
@@ -2702,6 +2705,13 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
         $this->assertEmpty($result['cm']['advancedgrading'][0]['method']);
         $this->assertEquals($outcomescale, $result['cm']['outcomes'][0]['scale']);
         $this->assertEquals(DOWNLOAD_COURSE_CONTENT_ENABLED, $result['cm']['downloadcontent']);
+        $this->assertArrayHasKey('coursemodule', $result['cm']);
+        $this->assertEquals($assign->cmid, $result['cm']['coursemodule']);
+        $this->assertArrayHasKey('course', $result['cm']);
+        $this->assertEquals($course->id, $result['cm']['course']);
+        $this->assertArrayHasKey('lang', $result['cm']);
+        $this->assertEquals($cm->section, $result['cm']['section']);
+        $this->assertEquals($section->section, $result['cm']['sectionnum']);
 
         $student = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
@@ -2726,11 +2736,13 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve only the few files we can see.
-        $this->assertCount(12, $result['cm']);
+        $this->assertCount(17, $result['cm']);
         $this->assertEquals($assign->cmid, $result['cm']['id']);
         $this->assertEquals($course->id, $result['cm']['course']);
         $this->assertEquals('assign', $result['cm']['modname']);
         $this->assertEquals($assign->id, $result['cm']['instance']);
+        $this->assertEquals($cm->section, $result['cm']['section']);
+        $this->assertEquals($section->section, $result['cm']['sectionnum']);
 
     }
 
@@ -2762,7 +2774,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(28, $result['cm']);
+        $this->assertCount(35, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($record['grade'], $result['cm']['grade']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
@@ -2791,7 +2803,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve only the few files we can see.
-        $this->assertCount(12, $result['cm']);
+        $this->assertCount(17, $result['cm']);
         $this->assertEquals($quiz->cmid, $result['cm']['id']);
         $this->assertEquals($course->id, $result['cm']['course']);
         $this->assertEquals('quiz', $result['cm']['modname']);

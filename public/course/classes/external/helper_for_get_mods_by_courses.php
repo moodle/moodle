@@ -133,7 +133,7 @@ abstract class helper_for_get_mods_by_courses {
             'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
             'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
             'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
-            'lang' => new external_value(PARAM_SAFEDIR, 'Forced activity language', VALUE_OPTIONAL),
+            'lang' => new external_value(PARAM_LANG, 'Forced activity language', VALUE_OPTIONAL),
             'enableaitools' => new external_value(PARAM_INT, 'AI tools status', VALUE_OPTIONAL),
             'enabledaiactions' => new external_value(PARAM_TEXT, 'Enabled AI actions', VALUE_OPTIONAL),
         ];

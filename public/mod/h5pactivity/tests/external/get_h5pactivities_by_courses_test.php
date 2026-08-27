@@ -50,6 +50,8 @@ final class get_h5pactivities_by_courses_test extends \core_external\tests\exter
         $activities[0]->filename = 'filltheblanks.h5p';
         $context = context_module::instance($activities[0]->cmid);
         $activities[0]->contextid = $context->id;
+        $activities[0]->enabledaiactions = '{"summarise_text":1,"explain_text":0}';
+        $DB->set_field('course_modules', 'enabledaiactions', $activities[0]->enabledaiactions, ['id' => $activities[0]->cmid]);
 
         $params = [
             'course' => $course1->id,
@@ -89,6 +91,26 @@ final class get_h5pactivities_by_courses_test extends \core_external\tests\exter
         // Set admin settings.
         set_config('enablesavestate', 1, 'mod_h5pactivity');
         set_config('savestatefreq', 120, 'mod_h5pactivity');
+
+        // Check admin users receive course-module metadata.
+        $result = get_h5pactivities_by_courses::execute([$course1->id]);
+        $result = external_api::clean_returnvalue(get_h5pactivities_by_courses::execute_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['h5pactivities']);
+        $adminactivities = [];
+        foreach ($result['h5pactivities'] as $activity) {
+            $adminactivities[$activity['id']] = $activity;
+        }
+        $this->assertArrayHasKey($activities[0]->id, $adminactivities);
+        $this->assertArrayHasKey('section', $adminactivities[$activities[0]->id]);
+        $this->assertArrayHasKey('visible', $adminactivities[$activities[0]->id]);
+        $this->assertArrayHasKey('groupmode', $adminactivities[$activities[0]->id]);
+        $this->assertArrayHasKey('groupingid', $adminactivities[$activities[0]->id]);
+        $this->assertArrayHasKey('enableaitools', $adminactivities[$activities[0]->id]);
+        $this->assertSame(
+            $activities[0]->enabledaiactions,
+            $adminactivities[$activities[0]->id]['enabledaiactions'] ?? null,
+        );
 
         // Check the activities returned by the first course.
         $this->setUser($user);
@@ -178,6 +200,14 @@ final class get_h5pactivities_by_courses_test extends \core_external\tests\exter
             $this->assertEquals($activities[$i]->cmid, $result['h5pactivities'][$i]['coursemodule']);
             $this->assertEquals($activities[$i]->contextid, $result['h5pactivities'][$i]['context']);
             $this->assertEquals($activities[$i]->filename, $result['h5pactivities'][$i]['package'][0]['filename']);
+            $this->assertArrayHasKey('lang', $result['h5pactivities'][$i]);
+            $this->assertNull($result['h5pactivities'][$i]['lang']);
+            $this->assertArrayNotHasKey('section', $result['h5pactivities'][$i]);
+            $this->assertArrayNotHasKey('visible', $result['h5pactivities'][$i]);
+            $this->assertArrayNotHasKey('groupmode', $result['h5pactivities'][$i]);
+            $this->assertArrayNotHasKey('groupingid', $result['h5pactivities'][$i]);
+            $this->assertArrayNotHasKey('enableaitools', $result['h5pactivities'][$i]);
+            $this->assertArrayNotHasKey('enabledaiactions', $result['h5pactivities'][$i]);
         }
     }
 }
