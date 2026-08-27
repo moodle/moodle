@@ -39,7 +39,7 @@ class overviewfactory {
             $classname = resourceoverview::class;
         }
 
-        $result = \core\di::get_container()->make($classname, ['cm' => $cm]);
+        $result = \core\di::make($classname, ['cm' => $cm]);
         if (!($result instanceof activityoverviewbase)) {
             throw new \coding_exception("Class $classname must extend " . activityoverviewbase::class);
         }
