@@ -73,7 +73,7 @@ class task_log extends base {
     public static function format_classname(string $classname): string {
         $output = '';
         if (class_exists($classname)) {
-            $task = new $classname();
+            $task = \core\di::make($classname);
             if ($task instanceof \core\task\task_base) {
                 $output = $task->get_name();
             }
