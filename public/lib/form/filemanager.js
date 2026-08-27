@@ -1321,9 +1321,7 @@ M.form_filemanager.init = function(Y, options) {
          * Hide the element showing upload in progress.
          */
         hideProgress: function() {
-            if (!Object.keys(this.progressBars).length) {
-                this.filemanager.removeClass('fpupload-inprogress');
-            }
+            this.filemanager.removeClass('fpupload-inprogress');
         },
         /**
          * Clear the all progress bars.
@@ -1366,8 +1364,13 @@ M.form_filemanager.init = function(Y, options) {
                 return;
             }
             let displayFileName = fileName;
-            if (displayFileName.length > 50) {
-                displayFileName = `${displayFileName.slice(0, 49)}&hellip;`;
+            const truncated = displayFileName.length > 50;
+            if (truncated) {
+                displayFileName = displayFileName.slice(0, 49);
+            }
+            displayFileName = Y.Escape.html(displayFileName);
+            if (truncated) {
+                displayFileName += '&hellip;';
             }
             const progressOuter = Y.Node.create(`
                 <div>${displayFileName}
@@ -1381,7 +1384,7 @@ M.form_filemanager.init = function(Y, options) {
             const progressInner = progressOuter.one('.progress-bar');
             const progressInnerText = progressInner.one('.visually-hidden');
             let progressContainer = this.filemanager.one('.fpupload-progressbars');
-            progressContainer.setContent(progressOuter);
+            progressContainer.append(progressOuter);
 
             this.progressBars[fileName] = {
                 progressOuter: progressOuter,

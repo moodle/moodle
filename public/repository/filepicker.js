@@ -681,14 +681,6 @@ M.core_filepicker.init = function(Y, options) {
                 args.callbackStartUpload();
             }
 
-            xhr.upload.addEventListener('loadstart', () => {
-                M.util.js_pending('core_filepicker/request');
-            });
-
-            xhr.upload.addEventListener('loadend', () => {
-                M.util.js_complete('core_filepicker/request');
-            });
-
             // Update the progress bar.
             xhr.upload.addEventListener('progress', e => {
                 if (e.lengthComputable && args.callbackProgress) {
@@ -702,6 +694,7 @@ M.core_filepicker.init = function(Y, options) {
                 if (xhr.readyState !== 4) {
                     return;
                 }
+                M.util.js_complete('core_filepicker/request');
                 if (xhr.status === 200) {
                     let data = null;
                     try {
@@ -731,6 +724,9 @@ M.core_filepicker.init = function(Y, options) {
                             }
                             if (args.hasOwnProperty('onerror')) {
                                 args.onerror(null, data, {scope: scope});
+                            } else {
+                                // Blank the dialogue to ensure it is not left in an inconsistent state.
+                                scope.fpnode.one('.fp-content').setContent('');
                             }
                             return;
                         }
@@ -760,6 +756,7 @@ M.core_filepicker.init = function(Y, options) {
             if (!args.form && args.action != 'upload' && scope.cached_responses[dataString]) {
                 args.callback(null, scope.cached_responses[dataString], {scope: scope});
             } else {
+                M.util.js_pending('core_filepicker/request');
                 xhr.open("POST", url, true);
                 xhr.send(formData);
                 if (redraw) {
