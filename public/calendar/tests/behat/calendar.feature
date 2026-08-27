@@ -482,3 +482,14 @@ Feature: Perform basic calendar functionality
     And I set the following fields to these values:
       | Date | ##today midnight +2 days## |
     Then the field "Until" matches value "##today midnight +3 days##"
+
+  @javascript
+  Scenario: Selecting a course in the calendar keeps the course when opening import or export calendars
+    Given I log in as "teacher1"
+    And I am viewing site calendar
+    When I set the field "List of courses" to "Course 1"
+    # Wait for the course change to be applied to the page before continuing.
+    And I should see "Calendar: Course 1" in the ".page-header-headings" "css_element"
+    And I click on "Import or export calendars" "link"
+    # Without the course being retained, the heading would be the site calendar ("Calendar").
+    Then I should see "Calendar: C1" in the ".page-header-headings" "css_element"

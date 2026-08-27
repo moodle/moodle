@@ -57,6 +57,7 @@ define([], function() {
             dateContent: '[data-region="day-content"]',
             monthDetailed: '.calendarmonth.calendartable',
         },
+        footerLinks: '[data-region="calendar-footer"] [data-region="footer-link"]',
         today: '.today',
         day: '[data-region="day"]',
         calendarMain: '[data-region="calendar"]',
