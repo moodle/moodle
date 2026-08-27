@@ -59,6 +59,7 @@ list($options, $unrecognized) = cli_get_params(
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
         'axe'      => null,
+        'colourmode' => '',
         'disable-composer' => false,
         'composer-upgrade' => true,
         'composer-self-update' => true,
@@ -80,7 +81,8 @@ Behat utilities to initialise behat tests
 
 Usage:
   php init.php      [--parallel=value [--maxruns=value] [--fromrun=value --torun=value]]
-                    [--no-axe] [--scss-deprecations] [--no-icon-deprecations] [-o | --optimize-runs]
+                    [--no-axe] [--colourmode=value] [--scss-deprecations] [--no-icon-deprecations]
+                    [-o | --optimize-runs]
                     [-a | --add-core-features-to-theme]
                     [--no-composer-self-update] [--no-composer-upgrade]
                     [--disable-composer]
@@ -92,6 +94,7 @@ Options:
 --fromrun              Execute run starting from (Used for parallel runs on different vms)
 --torun                Execute run till (Used for parallel runs on different vms)
 --no-axe               Disable axe accessibility tests.
+--colourmode           Colour mode to run the tests in, for themes which support them, e.g. light or dark.
 --scss-deprecations    Enable SCSS deprecation checks.
 --no-icon-deprecations Disable icon deprecation checks.
 
@@ -145,6 +148,7 @@ if ($options['parallel'] && $options['parallel'] > 1) {
     $cmdoptionsforsinglerun = [
         'add-core-features-to-theme',
         'axe',
+        'colourmode',
         'scss-deprecations',
         'no-icon-deprecations',
     ];

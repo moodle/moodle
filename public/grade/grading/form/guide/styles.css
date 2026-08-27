@@ -57,7 +57,7 @@
 }
 
 .gradingform_guide .criterion.even {
-    background: #f0f0f0;
+    background: var(--bs-secondary-bg);
 }
 
 .gradingform_guide .criterion .description {

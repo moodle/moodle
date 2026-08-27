@@ -92,6 +92,10 @@
                 {{> theme_boost/language_menu }}
                 <div class="divider border-start h-75 align-self-center mx-1"></div>
             {{/langmenu}}
+            {{# output.colour_mode_menu }}
+                {{{ . }}}
+                <div class="divider border-start h-75 align-self-center mx-1"></div>
+            {{/ output.colour_mode_menu }}
             {{{ output.edit_switch }}}
             {{# output.navbar_plugin_output }}
             {{{ . }}}

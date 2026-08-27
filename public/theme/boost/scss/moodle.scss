@@ -1,6 +1,8 @@
 // Old Moodle stuff from base theme.
 // Massive, needs broken up.
 @import "moodle/variables";
+// Must stay before the component partials, which use the dark-mode mixin to carry their own overrides.
+@import "moodle/colour-mode";
 @import "moodle/core";
 @import "moodle/action-menu";
 @import "moodle/icons";
@@ -51,3 +53,5 @@
 @import "moodle/dropdown";
 @import "moodle/deprecated";
 @import "moodle/task-indicator";
+// Must stay last so that the dark colour mode can override anything above it.
+@import "moodle/dark";

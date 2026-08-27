@@ -5,7 +5,7 @@
         width: calc(100% + 1rem + 30px);
         margin-left: calc(-0.5rem - 15px);
         margin-right: calc(-0.5rem - 15px);
-        border-bottom: 1px solid $gray-300;
+        border-bottom: 1px solid var(--#{$prefix}gray-300);
         margin-bottom: 25px;
 
         @include media-breakpoint-down(md) {
@@ -29,7 +29,7 @@
 
     .navitem-divider {
         width: 1px;
-        background-color: $gray-300;
+        background-color: var(--#{$prefix}gray-300);
     }
 
     & > a.btn,

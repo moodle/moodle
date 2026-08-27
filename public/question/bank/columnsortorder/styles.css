@@ -2,7 +2,7 @@
     display: inline-block;
 }
 .qbank-sortable-column {
-    background-color: white;
+    background-color: var(--bs-white);
     position: relative;
 }
 .jsenabled .qbank-column-list button.savewidths {

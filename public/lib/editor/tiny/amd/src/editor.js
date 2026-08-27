@@ -47,6 +47,16 @@ const instanceMap = new Map();
 let defaultOptions = {};
 
 /**
+ * The colour mode the page is being displayed in.
+ *
+ * Read from the document rather than passed in as an editor option, because it is the Bootstrap attribute that any
+ * theme supporting colour modes sets, so this does not tie the editor to one theme.
+ *
+ * @returns {String} The colour mode name, defaulting to light when the theme does not set one.
+ */
+const getColourMode = () => document.documentElement.getAttribute('data-bs-theme') ?? 'light';
+
+/**
  * Require the modules for the named set of TinyMCE plugins.
  *
  * @param {string[]} pluginList The list of plugins
@@ -218,6 +228,9 @@ const adjustEditorSize = (editor, target) => {
  */
 const getStandardConfig = async(target, tinyMCE, options, plugins) => {
     const lang = document.querySelector('html').lang;
+    // Captured once, and used for the skin, the editor's own colour mode attribute and the content document, so that
+    // the three cannot disagree if the page changes mode while this editor is being set up.
+    const colourMode = getColourMode();
 
     let label = null;
     if (target.id) {
@@ -312,8 +325,10 @@ const getStandardConfig = async(target, tinyMCE, options, plugins) => {
             ...plugins,
         ],
 
-        // Skins
-        skin: 'oxide',
+        // Skins. The dark skin is picked when the page is in a dark colour mode. TinyMCE cannot swap a skin on a
+        // live instance, so an editor which is already open keeps the skin it started with until the page is
+        // loaded again.
+        skin: colourMode === 'dark' ? 'oxide-dark' : 'oxide',
 
         // Do not show the help link in the status bar.
         // https://www.tiny.cloud/docs/tinymce/latest/accessibility/#help_accessibility
@@ -387,6 +402,28 @@ const getStandardConfig = async(target, tinyMCE, options, plugins) => {
                 removeSubmenuItem(editor, 'align', 'tiny:justify');
                 // Adjust the editor size.
                 adjustEditorSize(editor, target);
+
+                // The mode this editor was built for, recorded on the editor itself. Styles which describe the
+                // toolbar have to key off this rather than off the page: the skin cannot be swapped on a live
+                // instance, so an editor which is open when the page switches mode keeps the skin it started with,
+                // and a style following the page would then describe a skin which is not loaded. The sink is where
+                // TinyMCE renders menus, and is appended to the body rather than to the editor.
+                const container = editor.getContainer();
+                if (container) {
+                    container.setAttribute('data-bs-theme', colourMode);
+                }
+                document.querySelectorAll('.tox-silver-sink').forEach((sink) => {
+                    sink.setAttribute('data-bs-theme', colourMode);
+                });
+
+                // The content lives in an iframe, which is a separate document. Themes key their colour modes off
+                // an attribute on the root element, so it has to be repeated on the iframe's own root for the styles
+                // loaded through content_css to take effect. Kept after the setup above so that it cannot stop the
+                // editor from finishing initialisation.
+                const contentDocument = editor.getDoc();
+                if (contentDocument) {
+                    contentDocument.documentElement.setAttribute('data-bs-theme', colourMode);
+                }
 
                 // Associate the iframe with the field's label using aria-labelledby as iframes are not labelable elements.
                 // The iframe title is set via the iframe_aria_text option.

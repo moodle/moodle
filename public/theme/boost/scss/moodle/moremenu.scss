@@ -25,12 +25,12 @@
         }
 
         &.active {
-            background-color: $gray-100;
+            background-color: var(--#{$prefix}gray-100);
             border-color: transparent;
             border-bottom-color: $primary;
             &:focus,
             &:hover {
-                background-color: $gray-100;
+                background-color: var(--#{$prefix}gray-100);
                 border-bottom-color: $primary;
             }
         }
@@ -61,7 +61,7 @@
     }
     .nav-tabs {
         margin-left: 0;
-        background-color: $body-bg;
+        background-color: var(--#{$prefix}body-bg);
     }
     .show > .nav-link,
     .active > .nav-link,
@@ -83,7 +83,7 @@
                 display: block;
             }
             .dropdown-item {
-                background-color: $gray-100;
+                background-color: var(--#{$prefix}gray-100);
                 &:hover,
                 &:focus {
                     color: $dropdown-link-hover-color;

@@ -21,6 +21,7 @@ use context_system;
 use moodle_url;
 use html_writer;
 use get_string;
+use theme_boost\colour_mode;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -57,6 +58,15 @@ class core_renderer extends \core_renderer {
         ];
 
         return $this->render_from_template('core/search_input_navbar_inline', $data);
+    }
+
+    /**
+     * Returns the navbar menu for switching between the light and dark colour modes.
+     *
+     * @return string HTML for the colour mode menu, or an empty string.
+     */
+    public function colour_mode_menu(): string {
+        return colour_mode::render_menu($this);
     }
 
     /**

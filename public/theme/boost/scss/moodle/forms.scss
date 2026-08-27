@@ -293,7 +293,7 @@ $form-select-disabled-bg: $gray-200 !default;
     padding: $dropdown-item-padding-y $dropdown-item-padding-x;
     margin: 0;
     cursor: pointer;
-    color: $body-color;
+    color: var(--#{$prefix}body-color);
     word-break: normal;
     overflow-wrap: anywhere;
     white-space: normal;
@@ -311,8 +311,8 @@ $form-select-disabled-bg: $gray-200 !default;
     &.suggestions-heading {
         pointer-events: none;
         font-weight: bold;
-        color: $body-color;
-        background-color: $body-bg;
+        color: var(--#{$prefix}body-color);
+        background-color: var(--#{$prefix}body-bg);
         padding-left: calc(#{$dropdown-item-padding-x} / 2);
     }
     &::before {
@@ -321,7 +321,7 @@ $form-select-disabled-bg: $gray-200 !default;
 }
 
 .form-autocomplete-downarrow {
-    color: $body-color;
+    color: var(--#{$prefix}body-color);
     top: 0.2rem;
     right: 0.5rem;
     cursor: pointer;
@@ -329,7 +329,7 @@ $form-select-disabled-bg: $gray-200 !default;
         position: absolute;
         top: 0;
         left: 0;
-        background-color: $white;
+        background-color: var(--#{$prefix}white);
     }
 }
 
@@ -531,4 +531,15 @@ textarea[data-auto-rows] {
     // Follows disabled styles in bootstrap/forms/_form-control.scss.
     // iOS fix for unreadable content.
     opacity: 1;
+}
+
+// Bootstrap draws the knob of an unchecked switch at 25% white, which does not reach the 3:1 that WCAG asks of a
+// control's visual state. Boost already darkens the light mode knob for the same reason.
+$form-switch-color-dark-boost: rgba($white, .55) !default;
+$form-switch-bg-image-dark-boost: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$form-switch-color-dark-boost}'/></svg>") !default;
+
+.form-switch .form-check-input:not(:checked):not(:focus) {
+    @include dark-mode {
+        --#{$prefix}form-switch-bg: #{escape-svg($form-switch-bg-image-dark-boost)};
+    }
 }

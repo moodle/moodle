@@ -50,9 +50,8 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
      * @param string $preference
      * @param bool $value
      * @param string $expectdescription
-     *
-     * @dataProvider export_user_preference_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_user_preference_provider')]
     public function test_export_user_preferences(string $preference, bool $value, string $expectdescription): void {
         $this->resetAfterTest();
 
@@ -72,5 +71,43 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertCount(1, (array) $exportedpreferences);
         $this->assertEquals($value, (bool) $exportedpreferences->{$preference}->value);
         $this->assertEquals(get_string($expectdescription, 'theme_boost'), $exportedpreferences->{$preference}->description);
+    }
+
+    /**
+     * Data provider for {@see test_export_colour_mode_preference}
+     *
+     * @return array[]
+     */
+    public static function export_colour_mode_provider(): array {
+        return [
+            'Light' => [\theme_boost\colour_mode::LIGHT],
+            'Dark' => [\theme_boost\colour_mode::DARK],
+            'System' => [\theme_boost\colour_mode::AUTO],
+        ];
+    }
+
+    /**
+     * Test that the chosen colour mode is exported.
+     *
+     * @param string $mode
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_colour_mode_provider')]
+    public function test_export_colour_mode_preference(string $mode): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        set_user_preference(provider::COLOUR_MODE, $mode, $user);
+
+        provider::export_user_preferences($user->id);
+        $writer = writer::with_context(context_user::instance($user->id));
+
+        $exportedpreferences = $writer->get_user_preferences('theme_boost');
+        $this->assertEquals($mode, $exportedpreferences->{provider::COLOUR_MODE}->value);
+        $this->assertEquals(
+            get_string('privacy:colourmode:' . $mode, 'theme_boost'),
+            $exportedpreferences->{provider::COLOUR_MODE}->description,
+        );
     }
 }

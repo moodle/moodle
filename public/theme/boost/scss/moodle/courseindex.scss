@@ -1,11 +1,11 @@
 $courseindex-link-color: $list-group-action-color !default;
 $courseindex-link-color-selected: color-contrast($primary) !default;
-$courseindex-link-dimmed-color: $gray-600 !default;
-$courseindex-link-hover-color: black !default;
+$courseindex-link-dimmed-color: var(--#{$prefix}gray-600) !default;
+$courseindex-link-hover-color: var(--#{$prefix}black) !default;
 $courseindex-item-dragging-bg: shift-color($info, -90%) !default;
 $courseindex-item-dragging-border: shift-color($info, -70%) !default;
-$courseindex-item-active-border: $gray-300 !default;
-$courseindex-item-active-bg: $gray-100 !default;
+$courseindex-item-active-border: var(--#{$prefix}gray-300) !default;
+$courseindex-item-active-bg: var(--#{$prefix}gray-100) !default;
 $courseindex-item-page-bg: $primary !default;
 $courseindex-item-padding-y: 0.5rem;
 $courseindex-item-padding-x: 0.5rem;
@@ -186,12 +186,23 @@ $courseindex-item-current: $primary !default;
             display: inline-flex;
             align-items: center;
 
+            // The emphasis colours rather than the raw theme ones: these sit on the drawer surface, which follows
+            // the mode, and $success only reaches 2.2:1 against it once the page is dark. The light values are
+            // unchanged, since the emphasis colours are what the theme already uses for coloured text.
             &.completion_complete {
                 color: $success;
+
+                @include dark-mode {
+                    color: var(--#{$prefix}success-text-emphasis);
+                }
             }
 
             &.completion_fail {
                 color: $danger;
+
+                @include dark-mode {
+                    color: var(--#{$prefix}danger-text-emphasis);
+                }
             }
         }
 

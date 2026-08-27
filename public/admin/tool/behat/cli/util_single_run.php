@@ -58,6 +58,7 @@ list($options, $unrecognized) = cli_get_params(
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
         'axe'         => true,
+        'colourmode'  => '',
         'scss-deprecations' => false,
         'no-icon-deprecations' => false,
     ),
@@ -197,6 +198,9 @@ if ($options['install']) {
 
     // Configure axe according to option.
     behat_config_manager::set_behat_run_config_value('axe', $options['axe']);
+
+    // Define the colour mode the tests run in, for themes which support them.
+    behat_config_manager::set_behat_run_config_value('colourmode', $options['colourmode']);
 
     // Define whether to run Behat with SCSS deprecation checks.
     behat_config_manager::set_behat_run_config_value('scss-deprecations', $options['scss-deprecations']);

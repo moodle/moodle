@@ -64,7 +64,7 @@
             font-size: 26px;
             text-align: center;
             opacity: 0.9;
-            text-shadow: 0 0 10px $body-bg;
+            text-shadow: 0 0 10px var(--#{$prefix}body-bg);
         }
 
         .cb-heading,

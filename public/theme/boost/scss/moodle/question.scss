@@ -150,7 +150,7 @@
 
 table.question-bank-table {
     margin: 0;
-    background-color: $white;
+    background-color: var(--#{$prefix}white);
     table-layout: fixed;
     overflow-x: scroll;
     width: min-content;
@@ -213,7 +213,7 @@ table.question-bank-table {
             background-color: lighten($primary, 40%);
         }
         &.sortable-list-is-dragged {
-            background-color: $white;
+            background-color: var(--#{$prefix}white);
             opacity: 0.85;
         }
 
@@ -320,7 +320,7 @@ body.path-question-type {
     flex-shrink: 0;
     width: 7em;
     padding: 0.5em;
-    background-color: $gray-100;
+    background-color: var(--#{$prefix}gray-100);
     border: 1px solid darken($gray-300, 7%);
 
     @include border-radius(2px);
@@ -383,12 +383,30 @@ body.path-question-type {
     a {
         color: darken($link-color, 30%);
     }
+
+    // The tint is mixed towards white for a light page, and the contents take the body colour, so the tint is
+    // shaded towards black instead once the page is dark.
+    @include dark-mode {
+        @include gradient-bg(shade-color($warning, 70%));
+        border-color: shade-color($warning, 40%);
+        color: var(--#{$prefix}body-color);
+
+        a {
+            color: var(--#{$prefix}link-color);
+        }
+    }
 }
 
 .que .formulation {
     color: shift-color($info, $alert-color-scale + 40%);
     border-color: shift-color($info, $alert-border-scale);
     @include gradient-bg(shift-color($info, $alert-bg-scale - 10%));
+
+    @include dark-mode {
+        @include gradient-bg(shade-color($info, 70%));
+        border-color: shade-color($info, 40%);
+        color: var(--#{$prefix}body-color);
+    }
 }
 
 .que.multichoice .answer div.r0 .icon.fa-check,
@@ -595,7 +613,7 @@ body.jsenabled .questionflag input[type=checkbox] {
 }
 
 #page-mod-quiz-edit .questionbankwindow div.header .title {
-    color: $body-color;
+    color: var(--#{$prefix}body-color);
 }
 
 #page-mod-quiz-edit div.container div.generalbox {
@@ -629,14 +647,14 @@ body.jsenabled .questionflag input[type=checkbox] {
 }
 
 #page-mod-quiz-edit div.question div.content div.questioncontrols {
-    background-color: $body-bg;
+    background-color: var(--#{$prefix}body-bg);
 }
 
 #page-mod-quiz-edit div.question div.content div.points {
     margin-top: -0.5em;
     padding-bottom: 0;
     border: none;
-    background-color: $body-bg;
+    background-color: var(--#{$prefix}body-bg);
     position: static;
     width: 12.1em;
     float: right;
@@ -652,7 +670,7 @@ body.jsenabled .questionflag input[type=checkbox] {
 }
 
 #page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {
-    background-color: $body-bg;
+    background-color: var(--#{$prefix}body-bg);
 }
 
 #page-mod-quiz-edit .quizpagedelete,
@@ -680,7 +698,7 @@ body.jsenabled .questionflag input[type=checkbox] {
 }
 
 #page-mod-quiz-edit div.editq div.question div.content {
-    background-color: $body-bg;
+    background-color: var(--#{$prefix}body-bg);
     border: 1px solid $question-quiz-edit-border-color;
 
     @include border-radius(2px);

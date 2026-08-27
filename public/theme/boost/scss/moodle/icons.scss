@@ -158,7 +158,7 @@ img.icon {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    background-color: $gray-100;
+    background-color: var(--#{$prefix}gray-100);
     border-radius: 12px;
     padding: 0.7rem;
 
@@ -232,6 +232,12 @@ img.icon {
             .icon {
                 &:not(.nofilter) {
                     @include recolor-icon($value, 1);
+
+                    // Recoloured with an SVG filter rather than a CSS colour, so the filter has to be reapplied with
+                    // a lighter tint. Several of the activity hues are unreadable against a dark page otherwise.
+                    @include dark-mode {
+                        @include recolor-icon(tint-color($value, 30%), 1);
+                    }
                 }
             }
         }
@@ -242,5 +248,32 @@ img.icon {
 :root {
     @each $type, $value in $activity-icon-colors {
         --activity#{$type}: #{$value};
+    }
+}
+
+@include color-mode(dark) {
+    @each $type, $value in $activity-icon-colors {
+        --activity#{$type}: #{tint-color($value, 30%)};
+    }
+}
+
+// Icons in Moodle's monochrome pix namespaces carry no fill, so as an <img> they paint black whatever the colour
+// mode. Most reach the page as font icons through the icon system, but the ones with no Font Awesome equivalent, and
+// the few emitted as an <img> so that JavaScript can swap the src, need inverting. The activity icons above set
+// their own filter, which is more specific and so is not affected.
+//
+// The /i/ namespace is a mixed one, so it is listed icon by icon rather than whole: inverting a coloured icon would
+// change its hue. The group mode icons are drawn in gray 900 and have no Font Awesome equivalent, so they arrive as
+// an <img> and would otherwise stay black on a dark page.
+img.icon {
+    @include dark-mode {
+        &[src*="/t/"],
+        &[src*="/e/"],
+        &[src*="/a/"],
+        &[src*="/i/groupn"],
+        &[src*="/i/groups"],
+        &[src*="/i/groupv"] {
+            filter: invert(1);
+        }
     }
 }

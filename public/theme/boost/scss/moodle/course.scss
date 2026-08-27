@@ -5,7 +5,8 @@
 // Variables.
 $activity-item-padding: 1.25rem !default;
 $activity-border-radius: 1rem !default;
-$divider-color: $gray-200 !default;
+$divider-color: var(--#{$prefix}gray-200) !default;
+$divider-stripe-color: var(--#{$prefix}gray-100) !default;
 $divider-width: 1px !default;
 $divider-hover-color: $primary !default;
 
@@ -55,7 +56,9 @@ $divider-hover-color: $primary !default;
 .section-collapsemenu {
     @include collapsemenu-toggle;
     padding: map-get($spacers, 2) .75rem;
-    color: $gray-600;
+    // The custom property, not the SCSS variable: this toggle sits on the page rather than in a card, and gray 600
+    // only reaches 3.35:1 there once the page is dark. The light value is unchanged.
+    color: var(--#{$prefix}gray-600);
     line-height: 1;
     background: none;
     border: 0;
@@ -68,7 +71,7 @@ $divider-hover-color: $primary !default;
 // Expand all/Collapse all toggle in the course index drawer.
 .courseindex-collapsemenu {
     @include collapsemenu-toggle;
-    color: $gray-700;
+    color: var(--#{$prefix}gray-700);
 }
 
 // Max sections reached alert.
@@ -76,7 +79,7 @@ $divider-hover-color: $primary !default;
     border-top: $divider-width solid $border-color;
     font-size: $font-size-sm;
     font-weight: normal;
-    color: $gray-600;
+    color: var(--#{$prefix}gray-600);
 }
 
 /* Sections */
@@ -90,16 +93,16 @@ $divider-hover-color: $primary !default;
     }
 
     .section-item {
-        border: $border-width solid $gray-200;
+        border: $border-width solid var(--#{$prefix}gray-200);
         @include border-radius($activity-border-radius);
-        background-color: $white;
+        background-color: var(--#{$prefix}white);
 
         .course-section-header {
             padding: map-get($spacers, 3);
             @include border-radius($activity-border-radius);
 
             .section-restrictionlock .icon {
-                color: $gray-600;
+                color: var(--#{$prefix}gray-600);
             }
         }
 
@@ -112,8 +115,8 @@ $divider-hover-color: $primary !default;
 
             .section-content-inner {
                 padding: $mds-spacing-md;
-                border-top: $border-width solid $gray-200;
-                background-color: $gray-100;
+                border-top: $border-width solid var(--#{$prefix}gray-200);
+                background-color: var(--#{$prefix}gray-100);
                 @include border-bottom-radius($activity-border-radius);
             }
         }
@@ -135,7 +138,7 @@ $divider-hover-color: $primary !default;
     }
 
     .sectionname a {
-        color: $gray-900;
+        color: var(--#{$prefix}gray-900);
         font-size: $h5-font-size;
         &:hover {
             text-decoration: none;
@@ -163,7 +166,7 @@ $divider-hover-color: $primary !default;
     }
 
     .summarytext {
-        color: $gray-600;
+        color: var(--#{$prefix}gray-600);
         // Add rounded borders to images.
         img {
             @include border-radius($activity-border-radius);
@@ -174,20 +177,20 @@ $divider-hover-color: $primary !default;
     .availabilityinfo {
         margin-top: map-get($spacers, 2);
         padding: map-get($spacers, 3);
-        background-color: $gray-200;
-        border: $border-width solid $gray-300;
-        color: $gray-700;
+        background-color: var(--#{$prefix}gray-200);
+        border: $border-width solid var(--#{$prefix}gray-300);
+        color: var(--#{$prefix}gray-700);
         @include font-size($small-font-size);
         @include border-radius($activity-border-radius);
         .icon {
-            color: $gray-600;
+            color: var(--#{$prefix}gray-600);
         }
         .editavailability {
             a {
                 @include border-radius();
                 font-weight: bold;
                 &:hover {
-                    background-color: $gray-400;
+                    background-color: var(--#{$prefix}gray-400);
                 }
                 .icon {
                     font-size: inherit;
@@ -238,7 +241,7 @@ $divider-hover-color: $primary !default;
     display: block;
     width: 100%;
     height: 2rem;
-    border: 2px dashed $gray-800;
+    border: 2px dashed var(--#{$prefix}gray-800);
 }
 
 /* Activities */
@@ -279,6 +282,12 @@ $divider-hover-color: $primary !default;
     &.hiddenactivity {
         .activityiconcontainer {
             mix-blend-mode: multiply;
+
+            // Multiplying with a dark surface takes everything to black. Screen is the counterpart which blends
+            // into a dark surface the way multiply blends into a light one.
+            @include dark-mode {
+                mix-blend-mode: screen;
+            }
         }
         .activity-name-area .activityname {
             color: var(--mds-text-muted);
@@ -288,8 +297,8 @@ $divider-hover-color: $primary !default;
         }
         .badge {
             background-color: transparent;
-            color: $gray-700;
-            border: $border-width solid $gray-300;
+            color: var(--#{$prefix}gray-700);
+            border: $border-width solid var(--#{$prefix}gray-300);
         }
         .activity-altcontent.activity-description {
             color: var(--mds-text-muted);
@@ -307,6 +316,11 @@ $divider-hover-color: $primary !default;
             .activityiconcontainer,
             .badge {
                 mix-blend-mode: multiply;
+
+                // See the hidden activity icon above: multiply hides an icon on a dark card.
+                @include dark-mode {
+                    mix-blend-mode: screen;
+                }
             }
         }
     }
@@ -381,7 +395,7 @@ $divider-hover-color: $primary !default;
     .activity-dates {
         grid-area: dates;
         @include font-size($small-font-size);
-        color: $gray-700;
+        color: var(--#{$prefix}gray-700);
         display: flex;
         flex-wrap: wrap;
         column-gap: 0.75rem;
@@ -397,10 +411,10 @@ $divider-hover-color: $primary !default;
         grid-area: name;
         // Prevent bootstrap strech-link from covering the inplace editable button using z-index.
         .activityname {
-            color: $gray-700;
+            color: var(--#{$prefix}gray-700);
             font-weight: $font-weight-medium;
             .aalink {
-                color: $gray-900;
+                color: var(--#{$prefix}gray-900);
             }
             .afterlink {
                 margin-left: map-get($spacers, 2);
@@ -414,9 +428,9 @@ $divider-hover-color: $primary !default;
         .activitybadge {
             &.badge-none {
                 font-weight: normal;
-                background-color: $white;
-                color: $gray-600;
-                border: $border-width solid $gray-200;
+                background-color: var(--#{$prefix}white);
+                color: var(--#{$prefix}gray-600);
+                border: $border-width solid var(--#{$prefix}gray-200);
                 font-size: 12px;
                 // Override the 'rounded-pill' class from the markup, which is shared with other badge styles.
                 border-radius: $border-radius-sm !important; // stylelint-disable-line declaration-no-important
@@ -440,7 +454,7 @@ $divider-hover-color: $primary !default;
             }
         }
         .completion-dialog {
-            color: $gray-700;
+            color: var(--#{$prefix}gray-700);
             font-size: $font-size-sm;
             min-width: 12rem;
             .icon {
@@ -451,11 +465,11 @@ $divider-hover-color: $primary !default;
             }
             .editcompletion a {
                 @include border-radius();
-                color: $gray-700;
+                color: var(--#{$prefix}gray-700);
                 font-weight: bold;
                 text-decoration: none;
                 &:hover {
-                    background-color: $gray-200;
+                    background-color: var(--#{$prefix}gray-200);
                 }
             }
         }
@@ -513,7 +527,7 @@ $divider-hover-color: $primary !default;
         grid-area: altcontent;
         margin-top: map-get($spacers, 1);
         &.activity-description {
-            color: $gray-600;
+            color: var(--#{$prefix}gray-600);
             @include font-size($small-font-size);
             // Fix activity description bottom margin for first level-lists.
             ul:not(.activity-description ul ul) {
@@ -564,9 +578,9 @@ $divider-hover-color: $primary !default;
         visibility: hidden;
         transition: visibility 0.1s;
         position: absolute;
-        background: linear-gradient(transparent 40%, $gray-100 40%, $gray-100 60%, transparent 60%);
+        background: linear-gradient(transparent 40%, $divider-stripe-color 40%, $divider-stripe-color 60%, transparent 60%);
         .section.hidden & {
-            background: linear-gradient(transparent 40%, $gray-100 40%, $gray-100 60%, transparent 60%);
+            background: linear-gradient(transparent 40%, $divider-stripe-color 40%, $divider-stripe-color 60%, transparent 60%);
         }
     }
     &.always-visible {
@@ -598,7 +612,7 @@ $divider-hover-color: $primary !default;
         hr {
             border-color: $divider-hover-color;
             .changenumsections.disabled & {
-                border-color: $gray-200;
+                border-color: var(--#{$prefix}gray-200);
             }
         }
     }
@@ -623,8 +637,8 @@ $divider-hover-color: $primary !default;
     position: relative;
     z-index: 1;
     @include border-radius($border-radius-lg);
-    color: $gray-700;
-    background-color: $gray-300;
+    color: var(--#{$prefix}gray-700);
+    background-color: var(--#{$prefix}gray-300);
     padding: map-get($spacers, 2) ($spacer * 0.75);
     line-height: 1;
     &:hover,
@@ -638,14 +652,14 @@ $divider-hover-color: $primary !default;
         font-size: 14px;
     }
     .changenumsections.disabled & {
-        color: $gray-500;
-        background-color: $gray-200;
+        color: var(--#{$prefix}gray-500);
+        background-color: var(--#{$prefix}gray-200);
         outline: none;
         box-shadow: none;
         &:hover,
         &:focus {
-            color: $gray-500;
-            background-color: $gray-200;
+            color: var(--#{$prefix}gray-500);
+            background-color: var(--#{$prefix}gray-200);
             outline: none;
             box-shadow: none;
         }
@@ -803,7 +817,7 @@ $divider-hover-color: $primary !default;
 
 .defaultactivitycompletion-item {
     a {
-        color: $black;
+        color: var(--#{$prefix}black);
         text-decoration: none;
     }
     .activityicon {
@@ -963,7 +977,7 @@ $divider-hover-color: $primary !default;
             font: var(--fa-font-solid);
             position: absolute;
             font-size: 20px;
-            color: $gray-600;
+            color: var(--#{$prefix}gray-600);
             content: fa-content($fa-var-spinner);
             display: flex;
             justify-content: center;

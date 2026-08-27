@@ -69,3 +69,17 @@
 .course-assist-controls.show .ai-action:not([disabled]) .ai-course-assist-sparkles-icon {
     display: none;
 }
+
+/* The sparkles swap above assumes the button is light until it fills with colour. In dark mode the button starts
+   dark and fills with a light colour on hover, so the two images trade places. */
+[data-bs-theme="dark"] .course-assist-controls .ai-action .ai-course-assist-sparkles-icon.white,
+[data-bs-theme="dark"] .course-assist-controls .ai-action:not([disabled]):hover .ai-course-assist-sparkles-icon,
+[data-bs-theme="dark"] .course-assist-controls.show .ai-action:not([disabled]) .ai-course-assist-sparkles-icon {
+    display: inline-block;
+}
+
+[data-bs-theme="dark"] .course-assist-controls .ai-action .ai-course-assist-sparkles-icon,
+[data-bs-theme="dark"] .course-assist-controls .ai-action:not([disabled]):hover .ai-course-assist-sparkles-icon.white,
+[data-bs-theme="dark"] .course-assist-controls.show .ai-action:not([disabled]) .ai-course-assist-sparkles-icon.white {
+    display: none;
+}

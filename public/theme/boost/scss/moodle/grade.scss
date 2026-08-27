@@ -326,7 +326,7 @@
                 }
 
                 .collapse-list-link {
-                    color: $gray-900;
+                    color: var(--#{$prefix}gray-900);
                     padding: 0 0.2rem;
                     margin-right: 0.3rem;
 
@@ -343,7 +343,7 @@
 
     .gradetree-wrapper {
         padding: 10px 10px;
-        background-color: $gray-100;
+        background-color: var(--#{$prefix}gray-100);
 
         .setup-grades {
             h4 {
@@ -381,7 +381,7 @@
                         vertical-align: bottom;
                         border: none;
                         text-align: left;
-                        background-color: $gray-100;
+                        background-color: var(--#{$prefix}gray-100);
 
                         &.rowspan {
                             padding: 0;
@@ -392,7 +392,7 @@
 
                     td {
                         min-width: 4.5em;
-                        background-color: $gray-100;
+                        background-color: var(--#{$prefix}gray-100);
                         border: none;
                         vertical-align: middle;
 
@@ -429,7 +429,7 @@
                                 padding: 3px 0 3px 0;
 
                                 hr {
-                                    border-top: 2px dashed $gray-500;
+                                    border-top: 2px dashed var(--#{$prefix}gray-500);
                                     margin: 0;
                                 }
 
@@ -446,15 +446,15 @@
                     &.category {
                         td {
                             background-color: $grade-table-td-bg;
-                            border-top: 1px solid $gray-300;
-                            border-bottom: 1px solid $gray-300;
+                            border-top: 1px solid var(--#{$prefix}gray-300);
+                            border-bottom: 1px solid var(--#{$prefix}gray-300);
 
                             &:first-child {
-                                border-left: 1px solid $gray-300;
+                                border-left: 1px solid var(--#{$prefix}gray-300);
                             }
 
                             &:last-child {
-                                border-right: 1px solid $gray-300;
+                                border-right: 1px solid var(--#{$prefix}gray-300);
                             }
 
                             &.column-name {
@@ -495,14 +495,14 @@
                     &.item {
                         td {
                             background-color: $grade-table-td-bg;
-                            border-top: 3px solid $gray-100;
+                            border-top: 3px solid var(--#{$prefix}gray-100);
                         }
 
                         &.categoryitem,
                         &.courseitem {
                             td {
                                 min-width: 4.5em;
-                                background-color: $gray-100;
+                                background-color: var(--#{$prefix}gray-100);
                                 border: none;
                                 vertical-align: middle;
 
@@ -556,7 +556,7 @@
         .heading .cell,
         .cell.category,
         .avg .cell {
-            background-color: $gray-100;
+            background-color: var(--#{$prefix}gray-100);
         }
 
         table .clickable {

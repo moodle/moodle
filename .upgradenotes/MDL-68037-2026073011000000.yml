@@ -1,0 +1,95 @@
+issueNumber: MDL-68037
+notes:
+  core:
+    - message: >-
+        Boost now has a dark colour mode, which a site turns on with the
+        experimental theme_boost | enablecolourmodes setting, so a plugin's
+        styles.css can no longer assume the page is light. Styles work in both
+        modes if they take their colours from the Bootstrap custom properties
+        (--bs-body-bg, --bs-body-color, --bs-secondary-bg, --bs-tertiary-bg,
+        --bs-border-color, --bs-emphasis-color, --bs-link-color) or the design
+        system tokens (--mds-bg-surface-*, --mds-text-*, --mds-border-*), all of
+        which change with the mode. The equivalent utility classes (bg-body,
+        bg-body-secondary, bg-body-tertiary, text-body, text-body-secondary,
+        text-bg-*, border) do the same, and are safer than bg-white or text-dark.
+        Where a colour genuinely has to differ between the modes, scope it with
+        the [data-bs-theme="dark"] attribute selector, which is the Bootstrap
+        standard rather than anything Boost-specific.
+
+        Two things to watch for. A literal colour is a problem when it is only
+        half of a pair: a fixed light background behind text that follows the
+        mode, or fixed dark text on a surface that follows the mode, will lose
+        its contrast. Where a colour carries meaning and has to stay, such as a
+        status tint, fix the other half of the pair alongside it rather than
+        letting it follow the mode. And an SVG rendered through an <img> tag
+        paints with the fill baked into the file, so icons should go through the
+        icon API in order to inherit currentColor.
+      type: improved
+  core_behat:
+    - message: >-
+        The Behat CLI tools take a --colourmode option, so that a whole run can
+        be exercised in a given colour mode without every feature having to set
+        a user preference, for example
+        `php admin/tool/behat/cli/init.php --colourmode=dark`. The chosen mode is
+        reported in the run header, and behat_get_colour_mode() exposes it to
+        themes.
+
+        Precedence is user preference, then the run option, then the site
+        settings, so a scenario which asserts a particular colour mode must pin
+        it with a user preference rather than relying on the site default. See
+        theme/boost/tests/behat/colour_mode_accessibility.feature. The option
+        also turns colour modes on for the run, as they are off until a site
+        opts in, so a scenario about them being off has to skip itself with
+        "Given the run is not using a colour mode".
+      type: added
+  editor_tiny:
+    - message: >-
+        The editor follows the colour mode of the page it is on. The skin is
+        chosen when the editor is set up, so an editor which is already open
+        keeps the skin it started with until the page is loaded again, and the
+        colour mode attribute is repeated on the root of the content iframe so
+        that styles loaded through content_css can respond to it.
+
+        A plugin which styles the editor content, or its own dialogs, should
+        take its colours the same way any other plugin does rather than
+        assuming a light editor. Icons supplied to the toolbar are referenced
+        by URL inside an <image> element, so they are an isolated document that
+        neither currentColor nor a fill from the page stylesheet can reach; a
+        monochrome icon drawn in a dark colour is lightened for dark mode by a
+        filter on the svg[data-buttonsource="moodle"] wrapper.
+      type: improved
+  theme_boost:
+    - message: >-
+        Boost supports a light and a dark colour mode, built on the Bootstrap 5.3
+        colour modes API. The mode in use is written to the data-bs-theme
+        attribute of the html tag, and theme_boost\colour_mode is the entry point
+        for reading or rendering it. The feature is experimental, so it is off
+        until a site turns on enablecolourmodes on the new Experimental tab of
+        the Boost settings, which is also where the default mode is chosen.
+
+        Themes inheriting from Boost need to be aware of three changes. Boost's
+        stylesheets now refer to the greyscale and the body colours through
+        var(--#{$prefix}gray-*), var(--#{$prefix}white),
+        var(--#{$prefix}black), var(--#{$prefix}body-bg) and
+        var(--#{$prefix}body-color) instead of the matching SCSS variables, so
+        that they follow the mode; the light mode values are unchanged.
+        $card-bg, $card-border-color and the $state-*-bg and $state-*-border
+        variables now default to custom properties rather than literal colours,
+        so a preset overriding them should set a colour that the dark mode can
+        re-point, or override the custom property directly. The dark palette
+        lives in scss/moodle/dark.scss, which is emitted through Bootstrap's
+        color-mode mixin and must stay the last import so that it can override
+        what comes before it.
+
+        A child theme which renders its own navbar should output
+        theme_boost\colour_mode::render_menu() to give its users the switcher.
+
+        The chosen mode is stored as a user preference, and mirrored into a
+        theme_boost_colourmode cookie so that a page which nobody is logged in
+        to, the login page above all, can be rendered in it rather than
+        reverting to the site default. The cookie holds one of light, dark or
+        auto, is written by the browser with the site's own cookie path, domain
+        and secure settings, and is only read when there is no preference to
+        read. Sites which document the cookies they set should add it to their
+        list. No cookie is set until a site turns colour modes on.
+      type: improved

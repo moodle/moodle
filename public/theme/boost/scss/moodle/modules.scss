@@ -15,7 +15,7 @@ select {
         margin: 0 auto !important; /* stylelint-disable-line declaration-no-important */
     }
     .activity-details:not(:empty) {
-        background-color: $gray-100;
+        background-color: var(--#{$prefix}gray-100);
         margin-bottom: map-get($spacers, 3);
         padding-left: map-get($spacers, 3);
         padding-right: map-get($spacers, 3);
@@ -35,7 +35,7 @@ select {
         width: 100%;
         align-items: center;
         .date-item {
-            color: $gray-700;
+            color: var(--#{$prefix}gray-700);
             display: flex;
             align-items: center;
             white-space: nowrap;
@@ -96,8 +96,14 @@ select {
         padding: map-get($spacers, 2);
         margin-top: map-get($spacers, 1);
         mix-blend-mode: multiply;
+
+        // Multiplying with a dark surface takes everything to black, so blend the other way once the page is dark.
+        @include dark-mode {
+            mix-blend-mode: screen;
+        }
+
         &.badge-light {
-            background-color: $gray-200 !important; /* stylelint-disable-line declaration-no-important */
+            background-color: var(--#{$prefix}gray-200) !important; /* stylelint-disable-line declaration-no-important */
         }
 
         .icon {
@@ -465,6 +471,11 @@ $author-image-margin-sm: 8px;
     .text-muted,
     .dimmed_text {
         color: $modules-forum-muted-color !important; /* stylelint-disable-line declaration-no-important */
+
+        // Darkened for a white page, so it falls below the threshold once the page is dark.
+        @include dark-mode {
+            color: var(--#{$prefix}gray-600) !important; /* stylelint-disable-line declaration-no-important */
+        }
     }
 
     .author-header {
@@ -610,7 +621,7 @@ $input-line-height-lg:  1.5 !default;
         height: $grading-icon-button-size;
         width: $grading-icon-button-size;
         border-radius: $grading-icon-button-size * 0.5;
-        background-color: $gray-200;
+        background-color: var(--#{$prefix}gray-200);
     }
     to {
         width: 100%;
@@ -645,7 +656,7 @@ $input-line-height-lg:  1.5 !default;
         height: $grading-icon-button-size;
         width: $grading-icon-button-size;
         border-radius: $grading-icon-button-size * 0.5;
-        background-color: $gray-200;
+        background-color: var(--#{$prefix}gray-200);
     }
 }
 
@@ -1049,7 +1060,7 @@ $input-line-height-lg:  1.5 !default;
                     position: absolute;
                     top: calc(#{$author-image-width} + #{map-get($spacers, 2)});
                     content: "";
-                    background-color: $gray-200;
+                    background-color: var(--#{$prefix}gray-200);
                     width: 2px;
                     height: calc(100% - #{$author-image-width} + #{map-get($spacers, 2)});
                 }
@@ -1241,7 +1252,7 @@ div#dock {
                     width: 20px;
                     height: 20px;
                     border: $border-width solid $border-color;
-                    background-color: $white;
+                    background-color: var(--#{$prefix}white);
                     font-size: $font-size-base * .6;
                 }
             }
@@ -1259,13 +1270,13 @@ div#dock {
 }
 
 .userinitials {
-    background-color: $gray-200;
+    background-color: var(--#{$prefix}gray-200);
     vertical-align: middle;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    color: $gray-800;
+    color: var(--#{$prefix}gray-800);
     font-weight: normal;
     margin-right: $spacer * 0.25;
     &.size-16,
@@ -1353,7 +1364,7 @@ img.userpicture {
     span.qnbutton {
         cursor: default;
         background-color: $input-disabled-bg;
-        color: $gray-700;
+        color: var(--#{$prefix}gray-700);
     }
 
     a.qnbutton:hover,
@@ -1396,14 +1407,35 @@ img.userpicture {
         border-color: shift-color($warning, 40%);
     }
 
+    .qnbutton.correct {
+        // The tint colour-codes the answer state, so it stays and the label goes dark rather than following the mode.
+        @include dark-mode {
+            color: $gray-900;
+        }
+    }
+
     .qnbutton.correct,
     .qnbutton.correct .trafficlight {
         background-color: #dff4d8; /* light green */
     }
 
+    .qnbutton.incorrect {
+        // The tint colour-codes the answer state, so it stays and the label goes dark rather than following the mode.
+        @include dark-mode {
+            color: $gray-900;
+        }
+    }
+
     .qnbutton.incorrect,
     .qnbutton.incorrect .trafficlight {
         background-color: #fdd; /* light red */
+    }
+
+    .qnbutton.partiallycorrect {
+        // The tint colour-codes the answer state, so it stays and the label goes dark rather than following the mode.
+        @include dark-mode {
+            color: $gray-900;
+        }
     }
 
     .qnbutton.partiallycorrect,
@@ -1419,7 +1451,7 @@ img.userpicture {
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading,
     .qnbutton.requiresgrading .trafficlight {
-        background-color: $gray-300;
+        background-color: var(--#{$prefix}gray-300);
     }
 
     .qnbutton.notyetanswered .trafficlight,
@@ -1453,7 +1485,7 @@ img.userpicture {
     .qnbutton.complete .trafficlight,
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading .trafficlight {
-        background-color: $gray-300;
+        background-color: var(--#{$prefix}gray-300);
     }
 }
 
@@ -1494,7 +1526,7 @@ img.userpicture {
     z-index: $zindex-sticky;
     #quiz-timer {
         border: $border-width solid $red;
-        background-color: $white;
+        background-color: var(--#{$prefix}white);
     }
 }
 .pagelayout-embedded #quiz-timer-wrapper {
@@ -1695,11 +1727,16 @@ $popout-header-height: 4rem;
     }
     span.feedback_depend {
         color: $danger;
+
+        // The danger colour itself is picked for a white page.
+        @include dark-mode {
+            color: var(--#{$prefix}danger-text-emphasis);
+        }
     }
     hr.feedback_pagebreak {
         height: 4px;
-        color: $gray-600;
-        background-color: $gray-600;
+        color: var(--#{$prefix}gray-600);
+        background-color: var(--#{$prefix}gray-600);
         border: 0;
         margin: 0;
     }
@@ -1728,7 +1765,7 @@ $popout-header-height: 4rem;
         .feedback_itemlist.sortable-list-is-dragged {
             padding: map-get($spacers, 3);
             border: $border-width solid $border-color;
-            background-color: $white;
+            background-color: var(--#{$prefix}white);
             position: relative;
             @include border-radius();
             .itemname {
@@ -1779,7 +1816,7 @@ $popout-header-height: 4rem;
             padding-top: 10px;
         }
         tr:hover {
-            background: $gray-300;
+            background: var(--#{$prefix}gray-300);
         }
         td.singlevalue:before,
         td.optionname:before {

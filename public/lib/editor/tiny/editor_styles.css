@@ -28,3 +28,16 @@ body.mce-content-body a {
     display: inline-block;
     outline: 3px solid #b4d7ff;
 }
+
+/* The editor content is a separate document, and editor_tiny repeats the colour mode attribute on its root. These
+   colours are chosen for a white page, so they need dark counterparts; the values above are left alone so that light
+   mode is unchanged. The theme's editor stylesheet is compiled from Bootstrap alone and so does not carry Moodle's
+   own palette, which is why the light values here are literals in the first place. */
+[data-bs-theme="dark"] body.mce-content-body a {
+    color: var(--bs-link-color);
+}
+
+[data-bs-theme="dark"] .mce-content-body blockquote {
+    color: var(--bs-gray-700);
+    border-left-color: var(--bs-gray-500);
+}

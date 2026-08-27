@@ -97,8 +97,9 @@ $popover-max-width: 300px !default;
 $body-bg: $gray-100 !default;
 
 // Cards
-$card-bg: $white !default;
-$card-border-color: $gray-200 !default;
+// These are CSS custom properties so that cards follow the current colour mode, see scss/moodle/dark.scss.
+$card-bg: var(--#{$prefix}white) !default;
+$card-border-color: var(--#{$prefix}gray-200) !default;
 
 // Spacers
 $spacer: 1rem !default;

@@ -703,6 +703,11 @@ a.ygtvspacer:hover {
         border-bottom: 1px solid $filemanager-yui-table-header-border-bottom-color !important;
         border-left: 0 solid $filemanager-yui-table-header-border-left-color !important;
         color: $filemanager-yui-table-header-color !important;
+
+        // The header sits on a raised surface, which is dark once the page is, so its label cannot stay a dark grey.
+        @include dark-mode {
+            color: var(--#{$prefix}gray-700) !important;
+        }
     }
 
     .yui3-datatable-odd .yui3-datatable-cell {
@@ -844,7 +849,7 @@ a.ygtvspacer:hover {
     height: 80px;
     position: absolute;
     top: 5px;
-    color: $gray-500;
+    color: var(--#{$prefix}gray-500);
 }
 
 .fitem.disabled .filepicker-container,

@@ -1,13 +1,13 @@
 @mixin hover-navbar {
     border-color: transparent;
-    background-color: $gray-100;
+    background-color: var(--#{$prefix}gray-100);
 }
 
 .navbar.fixed-top {
     padding-top: 0;
     padding-bottom: 0;
     box-shadow: none;
-    border-bottom: $gray-300 1px solid;
+    border-bottom: var(--#{$prefix}gray-300) 1px solid;
     align-items: stretch;
     height: $navbar-height + 1px;
 
@@ -24,7 +24,7 @@
     }
     .divider {
         width: 1px;
-        background-color: $gray-300;
+        background-color: var(--#{$prefix}gray-300);
     }
 
     #usernavigation .nav-link {
@@ -115,7 +115,8 @@
         }
     }
     .usermenu,
-    .langmenu {
+    .langmenu,
+    .colourmodemenu {
         .dropdown {
             display: flex;
             align-items: center;
@@ -212,11 +213,11 @@
 
         .input-group-text,
         .form-control {
-            background-color: $gray-200;
+            background-color: var(--#{$prefix}gray-200);
         }
         .input-group-text,
         .form-control::placeholder {
-            color: $gray-700;
+            color: var(--#{$prefix}gray-700);
         }
         .input-group > .form-control {
             @include border-end-radius($input-border-radius);
@@ -230,7 +231,7 @@
             padding: 0 0.5rem;
             background: none;
             border: 0;
-            color: $gray-700;
+            color: var(--#{$prefix}gray-700);
             z-index: 6;
 
             .icon {
@@ -264,7 +265,7 @@
             width: 100%;
             height: $navbar-height;
             padding: 0 $primary-nav-padding-x;
-            background-color: $white;
+            background-color: var(--#{$prefix}white);
             z-index: $zindex-popover;
 
             .search-toggle {

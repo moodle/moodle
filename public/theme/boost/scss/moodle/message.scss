@@ -389,6 +389,13 @@ $message-day-color: color-contrast($message-app-bg) !default;
     flex-direction: column;
     background-color: $message-app-bg;
 
+    // The surface, the bubbles and the text on them are all mixes of two literals, resolved when this file is
+    // compiled, so the whole drawer stays light unless the dark values are given here. It sits between the two
+    // bubble colours in both modes.
+    @include dark-mode {
+        background-color: var(--#{$prefix}tertiary-bg);
+    }
+
     .icon-back-in-drawer {
         display: none;
     }
@@ -469,7 +476,9 @@ $message-day-color: color-contrast($message-app-bg) !default;
     .btn-link {
         &:hover,
         &:focus {
-            background-color: rgba($black, .035);
+            // The emphasis colour rather than black, so the wash lightens the surface once the page is dark. The
+            // light mode value is unchanged: the emphasis colour is black there.
+            background-color: rgba(var(--#{$prefix}emphasis-color-rgb), .035);
             text-decoration: none;
         }
     }
@@ -563,6 +572,19 @@ $message-day-color: color-contrast($message-app-bg) !default;
                 margin-right: -0.5rem;
                 border-bottom-color: $message-send-bg;
             }
+
+            @include dark-mode {
+                background-color: var(--#{$prefix}gray-300);
+                color: var(--#{$prefix}body-color);
+                // The light mode value mixes the send colour at 100%, so this timestamp is not muted: the muted
+                // colour only reaches 4.36:1 on the bubble, where the body colour reaches 6.28:1.
+                .time {
+                    color: var(--#{$prefix}body-color);
+                }
+                .tail {
+                    border-bottom-color: var(--#{$prefix}gray-300);
+                }
+            }
         }
         &.received {
             background-color: $message-received-bg;
@@ -574,6 +596,17 @@ $message-day-color: color-contrast($message-app-bg) !default;
                 left: 0;
                 margin-left: -0.5rem;
                 border-bottom-color: $message-received-bg;
+            }
+
+            @include dark-mode {
+                background-color: var(--#{$prefix}body-bg);
+                color: var(--#{$prefix}body-color);
+                .time {
+                    color: var(--#{$prefix}secondary-color);
+                }
+                .tail {
+                    border-bottom-color: var(--#{$prefix}body-bg);
+                }
             }
         }
         .tail {
@@ -587,6 +620,10 @@ $message-day-color: color-contrast($message-app-bg) !default;
     }
     .day {
         color: $message-day-color;
+
+        @include dark-mode {
+            color: var(--#{$prefix}body-color);
+        }
     }
     .lazy-load-list {
         overflow-y: inherit;

@@ -3,7 +3,7 @@ $login-layout-panel-bg: darken($login-layout-left-bg, 25%);
 $login-layout-panel-padding: 3rem !default;
 $login-layout-content-width: 576px !default;
 $login-layout-copy-width: 450px !default;
-$login-input-bg: $gray-100 !default;
+$login-input-bg: var(--#{$prefix}gray-100) !default;
 
 .pagelayout-login {
     #region-main,
@@ -15,12 +15,18 @@ $login-input-bg: $gray-100 !default;
     #page {
         margin: 0;
         min-height: 100vh;
-        background-color: $white;
+        background-color: var(--#{$prefix}white);
     }
 }
 
 .login-layout-left {
     background-color: $login-layout-left-bg;
+
+    // A photographic panel in both colour modes, so its content stays light whatever the mode.
+    @include dark-mode {
+        color: $white;
+    }
+
     position: sticky;
     top: 0;
     align-self: flex-start;
@@ -113,14 +119,14 @@ $login-input-bg: $gray-100 !default;
         }
 
         .toggle-sensitive-wrapper .toggle-sensitive-btn {
-            --bs-btn-bg: #{$login-input-bg};
+            --#{$prefix}btn-bg: #{$login-input-bg};
             --bs-btn-border-color: #{$input-border-color};
-            --bs-btn-hover-bg: #{$login-input-bg};
+            --#{$prefix}btn-hover-bg: #{$login-input-bg};
             --bs-btn-hover-border-color: #{$input-border-color};
-            --bs-btn-active-bg: #{$login-input-bg};
+            --#{$prefix}btn-active-bg: #{$login-input-bg};
             --bs-btn-active-border-color: #{$input-border-color};
             border-inline-start: none;
-            color: $gray-700;
+            color: var(--#{$prefix}gray-700);
 
             &:focus,
             &:focus-visible {
@@ -135,7 +141,7 @@ $login-input-bg: $gray-100 !default;
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        color: $gray-600;
+        color: var(--#{$prefix}gray-600);
         font-size: $font-size-sm;
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -150,25 +156,25 @@ $login-input-bg: $gray-100 !default;
 
     .login-identityprovider-btn {
         width: 100%;
-        background-color: $white;
-        border-color: $gray-400;
-        color: $gray-600;
+        background-color: var(--#{$prefix}white);
+        border-color: var(--#{$prefix}gray-400);
+        color: var(--#{$prefix}gray-600);
 
         &:hover,
         &:focus {
-            background-color: $gray-100;
-            border-color: $gray-500;
+            background-color: var(--#{$prefix}gray-100);
+            border-color: var(--#{$prefix}gray-500);
         }
     }
 
     .login-cookiesnotice {
         .btn-link {
             font-size: $font-size-sm;
-            color: $gray-600;
+            color: var(--#{$prefix}gray-600);
 
             &:hover,
             &:focus {
-                color: $gray-700;
+                color: var(--#{$prefix}gray-700);
             }
         }
     }

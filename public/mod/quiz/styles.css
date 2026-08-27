@@ -162,7 +162,7 @@
 .path-mod-quiz .qnbutton.notyetanswered,
 .path-mod-quiz .qnbutton.requiresgrading,
 .path-mod-quiz .qnbutton.invalidanswer {
-    background-color: white;
+    background-color: var(--bs-white);
 }
 
 .path-mod-quiz .qnbutton.correct {
@@ -320,7 +320,7 @@ body.path-mod-quiz table tbody tr.gradedattempt > td.sticky-column {
 body.path-mod-quiz table tbody tr > td.sticky-column,
 body.path-mod-quiz table thead tr > th.sticky-column,
 body.path-mod-quiz table tbody tr:not(.gradedattempt):hover td.sticky-column {
-    background-color: #fff;
+    background-color: var(--bs-white);
 }
 
 /** Mod quiz summary **/
@@ -353,13 +353,13 @@ table.quizreviewsummary th.cell {
     font-weight: bold;
     text-align: right;
     width: 10em;
-    background: #f0f0f0;
+    background: var(--bs-secondary-bg);
 }
 
 table.quizreviewsummary td.cell {
     padding: 1px 1em 1px 0.5em;
     text-align: left;
-    background: #fafafa;
+    background: var(--bs-tertiary-bg);
 }
 
 /** Mod quiz make comment or override grade popup. **/
@@ -582,7 +582,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit .section-heading .instancesectioncontainer h3 {
     display: inline;
-    color: #555;
+    color: var(--bs-gray-700);
 }
 
 #page-mod-quiz-edit .section-heading .editing_section,
@@ -641,7 +641,7 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit ul.slots li.section .content {
-    background-color: #fafafa;
+    background-color: var(--bs-tertiary-bg);
     padding: 1px 0;
 }
 
@@ -677,7 +677,7 @@ table.quizreviewsummary td.cell {
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
-    background: white;
+    background: var(--bs-white);
     padding: 0.5em 0 0.5em 0.1em;
     margin: 2px;
 }
@@ -800,13 +800,13 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .question-bank-table .questionname,
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .questionname {
     font-weight: bold;
-    color: #555;
+    color: var(--bs-gray-700);
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .questiontext {
-    color: #555;
+    color: var(--bs-gray-700);
 }
 
 #page-mod-quiz-edit .sharedbank .badge {
@@ -971,7 +971,7 @@ table.quizreviewsummary td.cell {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #fff;
+    background: var(--bs-white);
     text-align: center;
     opacity: 0.5;
     padding-top: 50px;
@@ -1040,7 +1040,7 @@ table.quizreviewsummary td.cell {
 .questionbank .categorysortopotionscontainer,
 .questionbank .categorypagingbarcontainer,
 .questionbank .categoryselectallcontainer {
-    background-color: #fff;
+    background-color: var(--bs-white);
 }
 
 /* Bulk edit actions */

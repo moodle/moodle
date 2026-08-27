@@ -29,4 +29,12 @@ $callbacks = [
         'hook' => \core\hook\output\before_requirejs_config::class,
         'callback' => [\theme_boost\hook_listener::class, 'before_requirejs_config_listener'],
     ],
+    [
+        'hook' => \core\hook\output\before_html_attributes::class,
+        'callback' => [\theme_boost\hook_listener::class, 'before_html_attributes_listener'],
+    ],
+    [
+        'hook' => \core\hook\output\before_standard_head_html_generation::class,
+        'callback' => [\theme_boost\hook_listener::class, 'before_standard_head_html_generation_listener'],
+    ],
 ];
