@@ -305,6 +305,27 @@ final class override_manager_test extends \advanced_testcase {
                 'expectedrecordscreated' => 0,
                 'expectedeventclass' => user_override_updated::class,
             ],
+            'update user override - disabled due date' => [
+                'existingdata' => [
+                    'userid' => ':userid',
+                    'groupid' => null,
+                    'duedate' => 52,
+                    'timelimit' => null,
+                    'attempts' => null,
+                    'password' => null,
+                ],
+                'formdata' => [
+                    'id' => ':existingid',
+                    'userid' => ':userid',
+                    'groupid' => null,
+                    'duedate' => 0,
+                    'timelimit' => null,
+                    'attempts' => null,
+                    'password' => null,
+                ],
+                'expectedrecordscreated' => 0,
+                'expectedeventclass' => user_override_updated::class,
+            ],
             'create group override - no existing data' => [
                 'existingdata' => [],
                 'formdata' => [

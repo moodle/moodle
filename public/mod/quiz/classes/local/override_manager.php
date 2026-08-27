@@ -39,7 +39,7 @@ class override_manager {
     private const OVERRIDEABLE_QUIZ_SETTINGS = ['timeopen', 'timeclose', 'duedate', 'timelimit', 'attempts', 'password'];
 
     /** @var array override fields that are numeric and can validly be 0 **/
-    private const OVERRIDE_NUMERIC_FIELDS = ['attempts', 'timelimit', 'timeopen', 'timeclose'];
+    private const OVERRIDE_NUMERIC_FIELDS = ['attempts', 'timelimit', 'timeopen', 'timeclose', 'duedate'];
 
     /**
      * Create override manager

@@ -209,7 +209,7 @@ foreach ($overrides as $override) {
     if (isset($override->duedate)) {
         $fields[] = get_string('duedate', 'quiz');
         $values[] = $override->duedate > 0 ?
-            userdate($override->duedate) : get_string('noclose', 'quiz');
+            userdate($override->duedate) : get_string('noduedate', 'quiz');
     }
     // Format timeclose.
     if (isset($override->timeclose)) {
