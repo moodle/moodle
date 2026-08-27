@@ -30094,6 +30094,8 @@ textarea.form-control-lg {
   --bs-state-danger-border: #efc1bc;
   --bs-collapse-list-item-hover-bg: #e6f2f5;
   --bs-collapse-list-item-hover-border: #b3d9e0;
+  --bs-link-focus-bg: #d2e8fb;
+  --bs-link-focus-underline: #343a40;
 }
 
 #region-main {
@@ -30191,9 +30193,9 @@ a:not([class]):focus,
 .activityinstance > a.focus,
 .activityinstance > a:focus {
   outline: 0.25rem solid transparent;
-  color: #1d2125;
-  background-color: #d2e8fb;
-  box-shadow: 0 -0.25rem #d2e8fb, 0 0.25rem #343a40;
+  color: var(--bs-gray-900);
+  background-color: var(--bs-link-focus-bg);
+  box-shadow: 0 -0.25rem var(--bs-link-focus-bg), 0 0.25rem var(--bs-link-focus-underline);
 }
 .aalink:focus:hover, a.autolink:focus:hover,
 #page-footer a:not([class]):focus:hover,
@@ -53592,6 +53594,8 @@ input[type=button].btn-block {
   --bs-state-danger-border: #791d13;
   --bs-collapse-list-item-hover-bg: #00272d;
   --bs-collapse-list-item-hover-border: #004d5a;
+  --bs-link-focus-bg: #083660;
+  --bs-link-focus-underline: #dee2e6;
 }
 [data-bs-theme=dark] .text-primary {
   --bs-primary-rgb: 123, 174, 220;

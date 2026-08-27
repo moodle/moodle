@@ -126,6 +126,12 @@
     --#{$prefix}collapse-list-item-hover-bg: #{shade-color($info, 70%)};
     --#{$prefix}collapse-list-item-hover-border: #{shade-color($info, 40%)};
 
+    // The link focus fill carries body text, so it is shaded rather than tinted, the same as the state tints above.
+    // The underline is what marks the focus out against the page, since a fill dark enough to take light text cannot
+    // also reach 3:1 against a dark page, so it takes a light value here rather than the near black of light mode.
+    --#{$prefix}link-focus-bg: #{shade-color($primary, 50%)};
+    --#{$prefix}link-focus-underline: #{$gray-300};
+
     // The .text-* utilities take the raw theme colour, which is chosen for a white page. Re-pointing the colour
     // inside the utility itself leaves .bg-* and the other consumers of the same variable alone.
     @each $name in ("primary", "success", "info", "warning", "danger") {

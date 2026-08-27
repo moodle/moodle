@@ -26,6 +26,9 @@ $font-size-xs: ($font-size-base * .75) !default;
     }
     --#{$prefix}collapse-list-item-hover-bg: #{shift-color($info, -90%)};
     --#{$prefix}collapse-list-item-hover-border: #{shift-color($info, -70%)};
+    // The fill and the underline of the accessible link focus style below.
+    --#{$prefix}link-focus-bg: #{lighten($primary, 50%)};
+    --#{$prefix}link-focus-underline: #{$gray-800};
 }
 
 #region-main {
@@ -137,11 +140,14 @@ a:not([class]),
     &.focus,
     &:focus {
         outline: $btn-focus-width solid transparent;
-        // Not custom properties: the focus background is a fixed light blue in both colour modes, so what sits on
-        // top of it has to stay dark in both.
-        color: $gray-900;
-        background-color: lighten($primary, 50%);
-        box-shadow: 0 -#{$btn-focus-width} lighten($primary, 50%), 0 $btn-focus-width $gray-800;
+        // The fill follows the colour mode rather than staying a fixed light blue. Pinning it meant pinning the text
+        // on top of it as well, and that only holds while nothing outruns this rule: a link named by three classes,
+        // as the activity and section names are, is more specific than .aalink:focus and puts its own colour back.
+        // In dark mode that colour is near white, which on the light fill was 1.19:1. Moving the fill instead means
+        // whichever colour wins is the right one for the mode.
+        color: var(--#{$prefix}gray-900);
+        background-color: var(--#{$prefix}link-focus-bg);
+        box-shadow: 0 -#{$btn-focus-width} var(--#{$prefix}link-focus-bg), 0 $btn-focus-width var(--#{$prefix}link-focus-underline);
     }
     &:focus:hover {
         text-decoration: none;
