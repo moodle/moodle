@@ -144,4 +144,38 @@ final class refresh_token_repository_test extends \advanced_testcase {
         $this->expectException(\dml_missing_record_exception::class);
         $this->assertTrue($repository->isRefreshTokenRevoked('non-existent-token'));
     }
+
+    /**
+     * Test that a refresh token resolves to its access token only for the owning client.
+     *
+     * @return void
+     */
+    public function test_get_owning_access_token_identifier(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $DB->insert_record('oauth2_server_client_access_tokens', (object) [
+            'identifier' => 'access-1',
+            'userid' => 123,
+            'clientidentifier' => 'client-a',
+            'scopes' => 'profile',
+            'expirytime' => time() + HOURSECS,
+            'revoked' => 0,
+            'timecreated' => time(),
+        ]);
+        $DB->insert_record('oauth2_server_client_refresh_tokens', (object) [
+            'identifier' => 'refresh-1',
+            'accesstokenidentifier' => 'access-1',
+            'expirytime' => time() + DAYSECS,
+            'revoked' => 0,
+            'timecreated' => time(),
+        ]);
+
+        $repository = new refresh_token_repository();
+
+        $this->assertEquals('access-1', $repository->get_owning_access_token_identifier('refresh-1', 'client-a'));
+        $this->assertNull($repository->get_owning_access_token_identifier('refresh-1', 'client-b'));
+        $this->assertNull($repository->get_owning_access_token_identifier('no-such-token', 'client-a'));
+    }
 }

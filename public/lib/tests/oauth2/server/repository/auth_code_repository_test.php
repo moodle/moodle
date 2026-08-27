@@ -136,4 +136,32 @@ final class auth_code_repository_test extends \advanced_testcase {
         $this->expectException(\dml_missing_record_exception::class);
         $repository->isAuthCodeRevoked('non-existent-code');
     }
+
+    /**
+     * Test that ownership of an authorisation code is resolved against the issuing client.
+     *
+     * @return void
+     */
+    public function test_is_owned_by_client(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $DB->insert_record('oauth2_server_client_auth_codes', (object) [
+            'identifier' => 'code-1',
+            'userid' => 123,
+            'clientidentifier' => 'client-a',
+            'redirecturi' => 'https://example.com/callback',
+            'scopes' => 'profile',
+            'expirytime' => time() + MINSECS,
+            'revoked' => auth_code_entity::REVOKED_NO,
+            'timecreated' => time(),
+        ]);
+
+        $repository = new auth_code_repository();
+
+        $this->assertTrue($repository->is_owned_by_client('code-1', 'client-a'));
+        $this->assertFalse($repository->is_owned_by_client('code-1', 'client-b'));
+        $this->assertFalse($repository->is_owned_by_client('no-such-code', 'client-a'));
+    }
 }

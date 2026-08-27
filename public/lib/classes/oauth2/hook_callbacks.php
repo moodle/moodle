@@ -145,5 +145,14 @@ class hook_callbacks {
             UserRepositoryInterface::class,
             \DI\get(\core\oauth2\server\repository\user_repository::class),
         );
+
+        $hook->add_definition(
+            \core\oauth2\server\token_revoker::class,
+            \DI\autowire()
+                ->constructorParameter(
+                    'parser',
+                    new \Lcobucci\JWT\Token\Parser(new \Lcobucci\JWT\Encoding\JoseEncoder()),
+                ),
+        );
     }
 }

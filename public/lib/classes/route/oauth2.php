@@ -17,6 +17,7 @@
 namespace core\route;
 
 use core\oauth2\server\repository\user_repository;
+use core\oauth2\server\token_revoker;
 use core\output\renderable;
 use core\router\route;
 use League\OAuth2\Server\AuthorizationServer;
@@ -211,6 +212,77 @@ class oauth2 {
             // Unknown exception. Log the real message server-side, but do not expose internal
             // details (e.g. database errors, paths, class names) to the OAuth client.
             debugging('Unhandled exception in OAuth2 token endpoint: ' . $exception->getMessage(), DEBUG_DEVELOPER);
+            $body = $response->getBody();
+            $body->write(get_string('error', 'error'));
+            return $response->withStatus(500);
+        }
+    }
+
+    /**
+     * Revoke a credential, per RFC 7009. Only problems with the caller are reported.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @param token_revoker $revoker
+     * @return ResponseInterface
+     */
+    #[route(
+        path: '/revoke',
+        method: ['POST'],
+    )]
+    public function revoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        token_revoker $revoker,
+    ): ResponseInterface {
+        try {
+            // RFC 7009 section 2.1 fixes the wire format, so a body in any other format is refused
+            // rather than guessed at. The header may carry parameters such as "; charset=UTF-8".
+            $mediatype = explode(';', $request->getHeaderLine('Content-Type'), 2)[0];
+
+            if (strtolower(trim($mediatype)) !== 'application/x-www-form-urlencoded') {
+                throw OAuthServerException::invalidRequest('Content-Type');
+            }
+
+            $body = $this->get_form_parameters($request);
+            [$clientidentifier, $clientsecret] = $this->get_client_credentials($request, $body);
+
+            if ($clientidentifier === null || $clientidentifier === '') {
+                throw OAuthServerException::invalidClient($request);
+            }
+
+            $client = $this->clientrepository->getClientEntity($clientidentifier);
+
+            if ($client === null) {
+                throw OAuthServerException::invalidClient($request);
+            }
+
+            // Only a confidential client holds a secret to prove itself with. A public client cannot,
+            // so it is taken at its word here and constrained instead by ownership: the revoker will
+            // not touch a credential that was not issued to this client identifier.
+            if (
+                $client->isConfidential()
+                && !$this->clientrepository->validateClient($clientidentifier, $clientsecret, null)
+            ) {
+                throw OAuthServerException::invalidClient($request);
+            }
+
+            $token = $this->get_string_parameter($body, 'token');
+
+            if ($token === null || $token === '') {
+                throw OAuthServerException::invalidRequest('token');
+            }
+
+            $revoker->revoke($token, $clientidentifier, $this->get_string_parameter($body, 'token_type_hint'));
+
+            return $response;
+        } catch (OAuthServerException $exception) {
+            // All instances of OAuthServerException can be formatted into a HTTP response.
+            return $exception->generateHttpResponse($response);
+        } catch (\Exception $exception) {
+            // Unknown exception. Log the real message server-side, but do not expose internal
+            // details (e.g. database errors, paths, class names) to the OAuth client.
+            debugging('Unhandled exception in OAuth2 revocation endpoint: ' . $exception->getMessage(), DEBUG_DEVELOPER);
             $body = $response->getBody();
             $body->write(get_string('error', 'error'));
             return $response->withStatus(500);
@@ -845,6 +917,61 @@ class oauth2 {
         } catch (OAuthServerException $exception) {
             return $exception->generateHttpResponse($response);
         }
+    }
+
+    /**
+     * Read the form-urlencoded parameters from a request body.
+     *
+     * The route declares no request body schema, so the parsed body is discarded and the raw body
+     * is read instead.
+     *
+     * @param ServerRequestInterface $request
+     * @return array The submitted parameters.
+     */
+    private function get_form_parameters(ServerRequestInterface $request): array {
+        parse_str((string) $request->getBody(), $parameters);
+
+        return $parameters;
+    }
+
+    /**
+     * Read a single string parameter from a submitted body, treating a non-string as absent.
+     *
+     * @param array $body The submitted parameters.
+     * @param string $name The parameter to read.
+     * @return string|null The value, or null if it was absent or not a string.
+     */
+    private function get_string_parameter(array $body, string $name): ?string {
+        return isset($body[$name]) && is_string($body[$name]) ? $body[$name] : null;
+    }
+
+    /**
+     * Read the calling client's credentials, preferring HTTP Basic per RFC 6749 section 2.3.1.
+     *
+     * @param ServerRequestInterface $request
+     * @param array $body The submitted parameters.
+     * @return array{0: string|null, 1: string|null} The client identifier and secret, either of which may be null.
+     */
+    private function get_client_credentials(ServerRequestInterface $request, array $body): array {
+        $header = $request->getHeaderLine('Authorization');
+
+        if (stripos($header, 'Basic ') === 0) {
+            $decoded = base64_decode(substr($header, 6), true);
+
+            if ($decoded === false || !str_contains($decoded, ':')) {
+                return [null, null];
+            }
+
+            // RFC 6749 section 2.3.1 form-encodes both halves before they are base64 encoded.
+            [$identifier, $secret] = explode(':', $decoded, 2);
+
+            return [urldecode($identifier), urldecode($secret)];
+        }
+
+        return [
+            $this->get_string_parameter($body, 'client_id'),
+            $this->get_string_parameter($body, 'client_secret'),
+        ];
     }
 
     /**

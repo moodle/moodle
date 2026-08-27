@@ -79,4 +79,20 @@ class auth_code_repository implements AuthCodeRepositoryInterface {
 
         return (int) $revoked === auth_code_entity::REVOKED_YES;
     }
+
+    /**
+     * Whether an authorisation code was issued to a given client.
+     *
+     * @param string $codeid
+     * @param string $clientidentifier
+     * @return bool
+     */
+    public function is_owned_by_client(string $codeid, string $clientidentifier): bool {
+        global $DB;
+
+        return $DB->record_exists('oauth2_server_client_auth_codes', [
+            'identifier' => $codeid,
+            'clientidentifier' => $clientidentifier,
+        ]);
+    }
 }

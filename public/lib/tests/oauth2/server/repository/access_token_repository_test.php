@@ -208,4 +208,31 @@ final class access_token_repository_test extends \advanced_testcase {
         $this->expectException(\dml_missing_record_exception::class);
         $repository->isAccessTokenRevoked('non-existent-token');
     }
+
+    /**
+     * Test that ownership of an access token is resolved against the issuing client.
+     *
+     * @return void
+     */
+    public function test_is_owned_by_client(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $DB->insert_record('oauth2_server_client_access_tokens', (object) [
+            'identifier' => 'token-1',
+            'userid' => 123,
+            'clientidentifier' => 'client-a',
+            'scopes' => 'profile',
+            'expirytime' => time() + HOURSECS,
+            'revoked' => access_token_entity::REVOKED_NO,
+            'timecreated' => time(),
+        ]);
+
+        $repository = new access_token_repository();
+
+        $this->assertTrue($repository->is_owned_by_client('token-1', 'client-a'));
+        $this->assertFalse($repository->is_owned_by_client('token-1', 'client-b'));
+        $this->assertFalse($repository->is_owned_by_client('no-such-token', 'client-a'));
+    }
 }

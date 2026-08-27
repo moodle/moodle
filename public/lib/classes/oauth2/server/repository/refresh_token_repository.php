@@ -72,4 +72,31 @@ class refresh_token_repository implements RefreshTokenRepositoryInterface {
 
         return (int) $revoked === refresh_token_entity::REVOKED_YES;
     }
+
+    /**
+     * Get the access token a refresh token was issued alongside, if it belongs to a given client.
+     *
+     * Refresh tokens carry no client identifier of their own, so ownership is established through
+     * that access token.
+     *
+     * @param string $tokenid
+     * @param string $clientidentifier
+     * @return string|null Null if the refresh token is unknown or belongs to another client.
+     */
+    public function get_owning_access_token_identifier(string $tokenid, string $clientidentifier): ?string {
+        global $DB;
+
+        $sql = "SELECT rtok.accesstokenidentifier
+                  FROM {oauth2_server_client_refresh_tokens} rtok
+                  JOIN {oauth2_server_client_access_tokens} atok ON atok.identifier = rtok.accesstokenidentifier
+                 WHERE rtok.identifier = :identifier
+                   AND atok.clientidentifier = :clientidentifier";
+
+        $identifier = $DB->get_field_sql($sql, [
+            'identifier' => $tokenid,
+            'clientidentifier' => $clientidentifier,
+        ]);
+
+        return $identifier === false ? null : $identifier;
+    }
 }

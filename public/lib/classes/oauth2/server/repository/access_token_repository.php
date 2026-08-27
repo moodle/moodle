@@ -98,4 +98,20 @@ class access_token_repository implements AccessTokenRepositoryInterface {
 
         return (int) $revoked === access_token_entity::REVOKED_YES;
     }
+
+    /**
+     * Whether an access token was issued to a given client.
+     *
+     * @param string $tokenid
+     * @param string $clientidentifier
+     * @return bool
+     */
+    public function is_owned_by_client(string $tokenid, string $clientidentifier): bool {
+        global $DB;
+
+        return $DB->record_exists('oauth2_server_client_access_tokens', [
+            'identifier' => $tokenid,
+            'clientidentifier' => $clientidentifier,
+        ]);
+    }
 }
