@@ -34597,6 +34597,9 @@ table.calendartable caption {
 .bulkenabled .section:not(:first-child) {
   margin-top: 1.5rem;
 }
+.bulkenabled .activity.subsection .section {
+  margin-left: 0rem;
+}
 .bulkenabled .activity {
   margin-top: 0.5rem;
   margin-left: 2rem;
@@ -34604,11 +34607,12 @@ table.calendartable caption {
   border-top: 1px solid #e9ecef;
 }
 .bulkenabled .activity:first-child {
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
 }
 .bulkenabled .activity-item .bulkselect {
   float: left;
-  margin-left: -2rem;
+  margin-left: calc(-1.25rem - 1.75rem);
 }
 .bulkenabled .activity-item:has(.delegated-section):hover {
   outline: none !important;
