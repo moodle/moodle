@@ -165,6 +165,10 @@ if ($data = $exportform->get_data()) {
     $params['authtoken']   = calendar_get_export_token($USER);
     $params['preset_what'] = $data->events['exportevents'];
     $params['preset_time'] = $data->period['timeperiod'];
+    if ($courseid != SITEID && !empty($courseid)) {
+        // Exporting from a specific course calendar: keep the export scoped to that course.
+        $params['course'] = $courseid;
+    }
 
     $link = new moodle_url('/calendar/export_execute.php', $params);
     if (!empty($data->generateurl)) {

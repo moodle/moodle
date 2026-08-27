@@ -19,6 +19,13 @@
 
     Displays export options on the calendar footer.
 
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-region="calendar-footer"
+    * data-region="footer-link"
+
     Example context (json):
     {
         "footerlinks": [
@@ -33,10 +40,10 @@
         ]
     }
 }}
-<div class="bottom">
+<div class="bottom" data-region="calendar-footer">
     {{#footerlinks}}
         <span class="footer-link">
-            <a href="{{url}}">{{linkname}}</a>
+            <a href="{{url}}" data-region="footer-link">{{linkname}}</a>
         </span>
     {{/footerlinks}}
 </div>
