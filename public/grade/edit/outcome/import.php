@@ -35,6 +35,7 @@ $scope    = optional_param('scope', 'custom', PARAM_ALPHA);
 $url = new moodle_url('/grade/edit/outcome/import.php', array('courseid' => $courseid));
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+$heading = get_string('importoutcomes', 'grades');
 
 /// Make sure they can even access this course
 if ($courseid) {
@@ -47,17 +48,25 @@ if ($courseid) {
     if (empty($CFG->enableoutcomes)) {
         redirect('../../index.php?id='.$courseid);
     }
-    navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', ['id' => $courseid]));
-    $PAGE->navbar->add(get_string('manageoutcomes', 'grades'),
-        new moodle_url('/grade/edit/outcome/index.php', ['id' => $courseid]));
-    $PAGE->navbar->add(get_string('importoutcomes', 'grades'),
-        new moodle_url('/grade/edit/outcome/import.php', ['courseid' => $courseid]));
-
+    // In course context we set a custom breadcrumb trail for learning outcomes flows.
+    $PAGE->navbar->ignore_active();
+    // The action param is only necessary to overcome the limitation of duplicate URLs preventing breadcrumbs
+    // being added when they exist in the secondary nav. See remove_items_that_exist_in_navigation().
+    $PAGE->navbar->add(
+        get_string('learningoutcomes', 'core_course'),
+        new moodle_url('/course/learningoutcomes.php', ['id' => $courseid, 'action' => 'back'])
+    );
+    $PAGE->navbar->add(
+        get_string('manageoutcomes', 'grades'),
+        new moodle_url('/grade/edit/outcome/index.php', ['id' => $courseid])
+    );
 } else {
     require_once $CFG->libdir.'/adminlib.php';
     admin_externalpage_setup('outcomes');
     $context = context_system::instance();
 }
+
+$PAGE->navbar->add($heading, $url);
 
 require_capability('moodle/grade:manageoutcomes', $context);
 
@@ -68,8 +77,13 @@ if ($upload_form->is_cancelled()) {
     die;
 }
 
-print_grade_page_head($courseid, 'outcome', 'import', get_string('importoutcomes', 'grades'),
-    false, false, false);
+print_grade_page_head(
+    courseid: $courseid,
+    active_type: 'outcome',
+    active_plugin: 'import',
+    heading: $heading,
+    shownavigation: false,
+);
 
 if (!$upload_form->get_data()) { // Display the import form.
     $upload_form->display();
