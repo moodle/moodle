@@ -121,6 +121,39 @@ class authentication {
     }
 
     /**
+     * Process the login page 'hooks'.
+     *
+     * Note: These are not normal hooks. This is an antiquated system making use of
+     * global vars.
+     *
+     * This is an interim solution and will be replaced with a proper hook system in the future.
+     *
+     * @return array Containing the values of $frm and $user after processing the
+     *      loginpage_hook() methods of all enabled auth plugins.
+     */
+    public function process_loginpage_hooks(): array {
+        global $frm, $user;
+        // This is really nasty.
+        // Some older auth plugins (like CAS) have a loginpage_hook() method which can set $frm and/or $user using `global`.
+        // This is a hack to support those plugins and migrate to a more supported API.
+        // The longer term solution is to migrate to the new callback system when it is complete.
+        $frm = false;
+        $user = false;
+
+        $authsequence = $this->get_enabled_plugins(); // Auths, in sequence.
+        foreach ($authsequence as $authname) {
+            $authplugin = $this->get_plugin($authname);
+            // The auth plugin's loginpage_hook() can eventually set $frm and/or $user.
+            $authplugin->loginpage_hook();
+        }
+
+        return [
+            'frm' => $frm,
+            'user' => $user,
+        ];
+    }
+
+    /**
      * Returns true if an internal authentication method is being used.
      *
      * @param string $auth Form of authentication required

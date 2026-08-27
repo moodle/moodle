@@ -286,6 +286,9 @@ function xmldb_main_install() {
     set_role_contextlevels($guestrole,          get_default_contextlevels('guest'));
     set_role_contextlevels($userrole,           get_default_contextlevels('user'));
 
+    // Configure OAuth2 keys.
+    \core\di::get(\core\oauth2\setup::class)->configure_keys();
+
     // Init theme, JS and template revisions.
     set_config('themerev', time());
     set_config('jsrev', time());

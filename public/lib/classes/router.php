@@ -245,6 +245,7 @@ class router {
             match ($name) {
                 route_loader_interface::ROUTE_GROUP_API => $this->configure_api_route($collection),
                 route_loader_interface::ROUTE_GROUP_PAGE => $this->configure_standard_route($collection),
+                route_loader_interface::ROUTE_GROUP_OAUTH2 => $this->configure_oauth2_route($collection),
                 route_loader_interface::ROUTE_GROUP_SHIM => $this->configure_shim_route($collection),
                 route_loader_interface::ROUTE_GROUP_SHORTLINK => array_walk($collection, [$this, 'configure_shortlink_route']),
                 default => null,
@@ -264,6 +265,18 @@ class router {
             ->add(di::get(cors_middleware::class))
             ->add(di::get(moodle_api_authentication_middleware::class))
             ->add(di::get(api_validation_middleware::class));
+    }
+
+    /**
+     * Configure the OAUth2 Route Middleware.
+     *
+     * @param RouteGroupInterface $group
+     * @return void
+     */
+    protected function configure_oauth2_route(RouteGroupInterface $group): void {
+        $group
+            ->add(di::get(cors_middleware::class))
+            ->add(di::get(moodle_authentication_middleware::class));
     }
 
     /**

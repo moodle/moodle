@@ -34,10 +34,10 @@ final class util_test extends route_testcase {
     /**
      * Ensure that redirecting works as expected.
      *
-     * @dataProvider redirect_provider
      * @param string|url $url The URL to redirect to, as a string or a \core\url instance.
      * @param string|null $expectedurl The expected URL in the Location header of the response.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('redirect_provider')]
     public function test_redirect(
         string|url $url,
         ?string $expectedurl = null,
@@ -220,5 +220,99 @@ final class util_test extends route_testcase {
         $secondroute = util::get_route_instance_for_request($request);
         $this->assertInstanceOf(route::class, $secondroute);
         $this->assertEquals('/method/path', $secondroute->get_path());
+    }
+
+    /**
+     * confirm_sesskey() returns true when a valid sesskey is submitted in the parsed body.
+     */
+    public function test_confirm_sesskey_valid_in_parsed_body(): void {
+        $this->resetAfterTest();
+
+        $request = (new ServerRequest('POST', '/'))->withParsedBody(['sesskey' => sesskey()]);
+
+        $this->assertTrue(util::confirm_sesskey($request));
+    }
+
+    /**
+     * confirm_sesskey() returns true when a valid sesskey is submitted as a query parameter.
+     */
+    public function test_confirm_sesskey_valid_in_query_params(): void {
+        $this->resetAfterTest();
+
+        $request = (new ServerRequest('GET', '/'))->withQueryParams(['sesskey' => sesskey()]);
+
+        $this->assertTrue(util::confirm_sesskey($request));
+    }
+
+    /**
+     * confirm_sesskey() returns false when an incorrect sesskey is submitted.
+     */
+    public function test_confirm_sesskey_invalid(): void {
+        $this->resetAfterTest();
+
+        $request = (new ServerRequest('POST', '/'))->withParsedBody(['sesskey' => 'not-the-real-sesskey']);
+
+        $this->assertFalse(util::confirm_sesskey($request));
+    }
+
+    /**
+     * confirm_sesskey() returns false when no sesskey is submitted at all.
+     */
+    public function test_confirm_sesskey_missing(): void {
+        $this->resetAfterTest();
+
+        $request = new ServerRequest('POST', '/');
+
+        $this->assertFalse(util::confirm_sesskey($request));
+    }
+
+    /**
+     * confirm_sesskey() always returns true when the current user has the ignoresesskey flag set.
+     */
+    public function test_confirm_sesskey_ignoresesskey(): void {
+        global $USER;
+
+        $this->resetAfterTest();
+
+        $USER->ignoresesskey = true;
+
+        $request = new ServerRequest('POST', '/');
+
+        $this->assertTrue(util::confirm_sesskey($request));
+    }
+
+    /**
+     * confirm_sesskey() uses an explicitly-supplied sesskey in preference to the request content.
+     */
+    public function test_confirm_sesskey_explicit_value(): void {
+        $this->resetAfterTest();
+
+        $request = (new ServerRequest('POST', '/'))->withParsedBody(['sesskey' => 'not-the-real-sesskey']);
+
+        $this->assertTrue(util::confirm_sesskey($request, sesskey()));
+    }
+
+    /**
+     * require_sesskey() does not throw when the sesskey is valid.
+     */
+    public function test_require_sesskey_valid(): void {
+        $this->resetAfterTest();
+
+        $request = (new ServerRequest('POST', '/'))->withParsedBody(['sesskey' => sesskey()]);
+
+        util::require_sesskey($request);
+        $this->assertTrue(true);
+    }
+
+    /**
+     * require_sesskey() throws a moodle_exception when the sesskey is invalid.
+     */
+    public function test_require_sesskey_invalid(): void {
+        $this->resetAfterTest();
+
+        $request = new ServerRequest('POST', '/');
+
+        $this->expectException(\moodle_exception::class);
+        util::require_sesskey($request);
     }
 }

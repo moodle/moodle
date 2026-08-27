@@ -361,4 +361,49 @@ class util {
             require($CFG->dirroot . '/lib/setup.php');
         }
     }
+
+    /**
+     * Check the sesskey submitted with the request and return true or false for whether it is valid.
+     *
+     * This is the Router equivalent of the global confirm_sesskey() function, except that the sesskey
+     * value is fetched from the parsed body or query parameters of the supplied Request, rather than
+     * from the PHP superglobals.
+     *
+     * @param ServerRequestInterface $request
+     * @param null|string $sesskey The sesskey value to check (optional). Normally leave this blank
+     *      and this function will fetch the value from the request.
+     * @return bool whether the sesskey sent in the request matches the one stored in the session.
+     */
+    public static function confirm_sesskey(
+        ServerRequestInterface $request,
+        ?string $sesskey = null,
+    ): bool {
+        global $USER;
+
+        if (!empty($USER->ignoresesskey)) {
+            return true;
+        }
+
+        if (empty($sesskey)) {
+            $parsedbody = (array) $request->getParsedBody();
+            $sesskey = $parsedbody['sesskey'] ?? $request->getQueryParams()['sesskey'] ?? null;
+        }
+
+        return $sesskey !== null && sesskey() === $sesskey;
+    }
+
+    /**
+     * Check the sesskey submitted with the request using confirm_sesskey(), and cause a fatal error
+     * if it does not match.
+     *
+     * @param ServerRequestInterface $request
+     * @throws \moodle_exception
+     */
+    public static function require_sesskey(
+        ServerRequestInterface $request,
+    ): void {
+        if (!self::confirm_sesskey($request)) {
+            throw new \moodle_exception('invalidsesskey');
+        }
+    }
 }

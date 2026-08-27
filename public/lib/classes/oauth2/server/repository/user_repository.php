@@ -34,15 +34,55 @@ class user_repository implements UserRepositoryInterface {
         string $username,
         string $password,
         string $granttype,
-        ClientEntityInterface $cliententity
+        ClientEntityInterface $cliententity,
+        string|bool $logintoken = false,
     ): ?UserEntityInterface {
-        $user = authenticate_user_login($username, $password);
+        $user = $this->authenticate_user($username, $password, $logintoken);
         if (!$user) {
             return null;
         }
 
         $userentity = new user_entity();
         $userentity->setIdentifier((string) $user->id);
+
+        return $userentity;
+    }
+
+    /**
+     * Authenticate a user against Moodle's authentication mechanism.
+     *
+     * Unlike {@see self::getUserEntityByUserCredentials()}, this returns the full Moodle user
+     * record (rather than a League user entity), so that callers which need to establish a real
+     * Moodle session (via complete_user_login()) do not need to re-authenticate or reload the
+     * user from the database.
+     *
+     * @param string $username
+     * @param string $password
+     * @param string|bool $logintoken If this is set to a string it is validated against the login token for the session.
+     * @return \stdClass|false A {@see $USER} object or false if authentication failed.
+     */
+    public function authenticate_user(
+        string $username,
+        string $password,
+        string|bool $logintoken = false,
+    ): \stdClass|false {
+        return authenticate_user_login(
+            username: $username,
+            password: $password,
+            logintoken: $logintoken,
+        );
+    }
+
+    /**
+     * Get the current logged-in user as a user entity.
+     *
+     * @return user_entity
+     */
+    public function get_current_user(): user_entity {
+        global $USER;
+
+        $userentity = new user_entity();
+        $userentity->setIdentifier($USER->id);
 
         return $userentity;
     }

@@ -82,17 +82,11 @@ if (!empty($SESSION->has_timed_out)) {
     $session_has_timed_out = false;
 }
 
-$frm  = false;
-$user = false;
-
 $authentication = \core\di::get(\core\authentication::class);
-$authsequence = $authentication->get_enabled_plugins(); // Auths, in sequence.
-foreach($authsequence as $authname) {
-    $authplugin = $authentication->get_plugin($authname);
-    // The auth plugin's loginpage_hook() can eventually set $frm and/or $user.
-    $authplugin->loginpage_hook();
-}
-
+[
+    'frm' => $frm,
+    'user' => $user,
+] = $authentication->process_loginpage_hooks();
 
 /// Define variables used in page
 $site = get_site();
@@ -350,6 +344,8 @@ if (!empty($CFG->alternateloginurl) && $loginredirect) {
 if (!isset($frm) or !is_object($frm)) {
     $frm = new stdClass();
 }
+
+$authsequence = $authentication->get_enabled_plugins();
 
 if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
     if (!empty($_GET["username"])) {

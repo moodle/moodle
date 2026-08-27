@@ -81,6 +81,14 @@ class login implements renderable, templatable {
     public $togglepassword;
     /** @var bool Toggle the password visibility icon for small screens only. */
     public $smallscreensonly;
+    /** @var bool Whether $instructions was auto-filled with the sign-up fallback message. */
+    private bool $instructionsfromsignupfallback = false;
+    /**
+     * @var \League\OAuth2\Server\Entities\ClientEntityInterface|null The OAuth2 client
+     *      requesting authorization, if this login form is being shown as part of an OAuth2
+     *      authorization flow, or null for an ordinary Moodle login.
+     */
+    private ?\League\OAuth2\Server\Entities\ClientEntityInterface $oauth2client = null;
 
     /**
      * Constructor.
@@ -89,13 +97,18 @@ class login implements renderable, templatable {
      * @param string $username The username to display.
      */
     public function __construct(array $authsequence, $username = '') {
-        global $CFG, $OUTPUT, $PAGE;
+        global $CFG, $PAGE;
 
         $this->username = $username;
 
         $languagedata = new \core\output\language_menu($PAGE);
 
-        $this->languagemenu = $languagedata->export_for_action_menu($OUTPUT);
+        // Fetch the renderer directly, rather than using the global $OUTPUT, since $OUTPUT may
+        // still be the bootstrap_renderer stub at this point (it only resolves to the real
+        // renderer the first time a method is *called on* it, and this constructor may run
+        // before that has happened, e.g. when building this renderable from a router-based
+        // page such as the OAuth2 authorisation flow).
+        $this->languagemenu = $languagedata->export_for_action_menu($PAGE->get_renderer('core'));
         $this->canloginasguest = $CFG->guestloginbutton && !isguestuser();
         $this->canloginbyemail = !empty($CFG->authloginviaemail);
         $this->cansignup = $CFG->registerauth == 'email' || !empty($CFG->registerauth);
@@ -117,6 +130,7 @@ class login implements renderable, templatable {
             $this->instructions = get_string('loginstepsnone');
         } else if ($CFG->registerauth == 'email' && empty($this->instructions)) {
             $this->instructions = get_string('logindonthaveaccount');
+            $this->instructionsfromsignupfallback = true;
         }
 
         if ($CFG->maintenance_enabled == true) {
@@ -168,7 +182,72 @@ class login implements renderable, templatable {
         $this->info = $info;
     }
 
-    public function export_for_template(renderer_base $output) {
+    /**
+     * Override whether guest login is offered on this login form instance.
+     *
+     * Site-wide guest login may be enabled, but a specific flow (for example, the
+     * OAuth2 authorisation login screen) may need to suppress it regardless.
+     *
+     * @param bool $canloginasguest Whether guest login should be offered.
+     */
+    public function set_can_login_as_guest(bool $canloginasguest): void {
+        $this->canloginasguest = $canloginasguest;
+    }
+
+    /**
+     * Override whether sign-up is offered on this login form instance.
+     *
+     * Site-wide registration may be open, but a specific flow (for example, the
+     * OAuth2 authorisation login screen) may need to suppress it regardless. If the
+     * "don't have an account? sign up" instructions text was auto-generated because
+     * sign-up is enabled site-wide, it is cleared here too, so the form doesn't point
+     * users at sign-up while also hiding the option to do it.
+     *
+     * @param bool $signupallowed Whether sign-up should be offered.
+     */
+    public function set_signup_allowed(bool $signupallowed): void {
+        $this->cansignup = $signupallowed;
+        if (!$signupallowed && $this->instructionsfromsignupfallback) {
+            $this->instructions = '';
+            $this->instructionsfromsignupfallback = false;
+        }
+    }
+
+    /**
+     * Override the form action URL for this login form instance.
+     *
+     * Some flows (for example, the OAuth2 authorisation login screen) need the
+     * credentials form to post back to a different endpoint than the standard
+     * login/index.php, so the flow can be resumed once the user has authenticated,
+     * rather than landing on the default post-login destination.
+     *
+     * @param moodle_url $loginurl The URL the login form should submit to.
+     */
+    public function set_login_url(moodle_url $loginurl): void {
+        $this->loginurl = $loginurl;
+    }
+
+    /**
+     * Set the OAuth2 client requesting authorization, so its identity can be shown on this
+     * login form instance before the user enters their credentials.
+     *
+     * Optional: ordinary Moodle login (e.g. login/index.php) never calls this, and the
+     * template renders exactly as before when no client has been set.
+     *
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $client
+     */
+    public function set_oauth2_client(\League\OAuth2\Server\Entities\ClientEntityInterface $client): void {
+        $this->oauth2client = $client;
+    }
+
+    /**
+     * Export data for the template
+     *
+     * @param \core\output\renderer_base $output
+     * @return stdClass
+     */
+    public function export_for_template(\core\output\renderer_base $output) {
+        global $CFG, $SITE;
 
         $identityproviders = \auth_plugin_base::prepare_identity_providers_for_output($this->identityproviders, $output);
 
@@ -196,6 +275,11 @@ class login implements renderable, templatable {
         $data->togglepassword = $this->togglepassword;
         $data->smallscreensonly = $this->smallscreensonly;
         $data->showloginform = get_config('core', 'showloginform') === false || get_config('core', 'showloginform');
+
+        $data->hasoauth2client = $this->oauth2client !== null;
+        $data->client = $this->oauth2client !== null
+            ? \core_auth\output\oauth2\oauth2_page::describe_client($this->oauth2client)
+            : null;
 
         return $data;
     }

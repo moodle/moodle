@@ -1,0 +1,51 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/oauth2/continue/form
+
+    The "continue as this user" and "change user" buttons shown when a user is already logged in
+    during an OAuth2 authorization flow.
+
+    Context variables required for this template:
+    * actionurl - The URL to submit to in order to continue as the current user,
+    * logouturl - The URL to submit to in order to log out and change user,
+    * sesskey - The current session key,
+    * userinfo - Information about the current user
+      * fullname - The user's full name.
+
+    Example context (json):
+    {
+        "actionurl": "https://example.com/moodle/oauth2/login",
+        "logouturl": "https://example.com/moodle/oauth2/logout",
+        "sesskey": "abcdef1234",
+        "userinfo": {
+            "fullname": "Jane Doe"
+        }
+    }
+}}
+<div class="d-flex d-inline p-2">
+    <form method="POST" action="{{actionurl}}" class="w-50 m-1">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="currentuser" value="1">
+        <button type="submit" name="approve" value="1" class="btn btn-primary w-100">{{#str}} oauth2:continueasuser, core, {{userinfo.fullname}} {{/str}}</button>
+    </form>
+
+    <form method="POST" action="{{logouturl}}" class="w-50 m-1">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <button type="submit" class="btn btn-primary w-100">{{#str}} oauth2:continueasuser:changeuser, core {{/str}}</button>
+    </form>
+</div>

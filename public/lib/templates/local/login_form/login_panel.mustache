@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/login_form/login_panel
+
+    Default content for the left panel of the split-screen login layout.
+
+    When authinstructions is provided (i.e. the site has custom auth instructions configured),
+    it fully replaces the entire default welcome section (title, tagline, and stats).
+
+    Example context (json):
+    {
+        "authinstructions": "<p>Welcome to our learning platform. Please log in to continue.</p>"
+    }
+}}
+<div class="login-layout-left-content">
+    {{^authinstructions}}
+        <h1 class="h2 mb-3">{{#str}}loginwelcometitle{{/str}}</h1>
+        <div class="mx-auto mb-4 text-start">
+            {{#str}}loginwelcomedescription{{/str}}
+        </div>
+        <p class="mx-auto mb-4">{{#str}}loginpaneltagline{{/str}}</p>
+        <div class="login-layout-stats">
+            <div class="login-layout-stat">
+                <strong class="login-layout-stat-value">{{#str}}loginstatusers_value{{/str}}</strong>
+                <span>{{#str}}loginstatusers{{/str}}</span>
+            </div>
+            <div class="login-layout-stat">
+                <strong class="login-layout-stat-value">{{#str}}loginstatsites_value{{/str}}</strong>
+                <span>{{#str}}loginstatsites{{/str}}</span>
+            </div>
+            <div class="login-layout-stat">
+                <strong class="login-layout-stat-value">{{#str}}loginstatcountries_value{{/str}}</strong>
+                <span>{{#str}}loginstatcountries{{/str}}</span>
+            </div>
+        </div>
+    {{/authinstructions}}
+    {{#authinstructions}}
+        <div class="mx-auto text-start">
+            {{{authinstructions}}}
+        </div>
+    {{/authinstructions}}
+</div>

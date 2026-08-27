@@ -32,7 +32,14 @@ class client_repository implements ClientRepositoryInterface {
     public function getClientEntity(string $clientidentifier): ?ClientEntityInterface {
         global $DB;
 
-        $clientrecord = $DB->get_record('oauth2_server_clients', ['clientidentifier' => $clientidentifier]);
+        $clientrecord = $DB->get_record_select(
+            'oauth2_server_clients',
+            'clientidentifier = :clientidentifier AND status = :active',
+            [
+                'clientidentifier' => $clientidentifier,
+                'active' => client_entity::STATUS_ACTIVE,
+            ],
+        );
 
         if (!$clientrecord) {
             return null;

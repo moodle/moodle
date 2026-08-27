@@ -32,11 +32,26 @@ use Slim\Routing\RouteContext;
 class cors_middleware implements MiddlewareInterface {
     #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+        $acceptheader = $request->getHeaderLine('Accept');
+        $accepted = array_map(
+            fn (string $mimetype): string => trim(strtok($mimetype, ';')),
+            explode(',', $acceptheader),
+        );
+
+        $response = $handler->handle($request);
+
+        $cors = in_array('application/json', $accepted);
+        $cors = $cors || $request->getMethod() === 'OPTIONS';
+        $cors = $cors || $request->getMethod() === 'HEAD';
+
+        if (!$cors) {
+            return $response;
+        }
+
         $routecontext = RouteContext::fromRequest($request);
         $routingresults = $routecontext->getRoutingResults();
         $methods = $routingresults->getAllowedMethods();
 
-        $response = $handler->handle($request);
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withHeader('Content-Disposition', 'inline')

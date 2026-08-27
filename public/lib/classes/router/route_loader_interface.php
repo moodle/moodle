@@ -31,6 +31,9 @@ interface route_loader_interface {
     /** @var string The route path prefix to use for API calls */
     public const ROUTE_GROUP_API = '/api/rest/v2';
 
+    /** @var string The OAuth2 Server endpoint */
+    public const ROUTE_GROUP_OAUTH2 = '/oauth2';
+
     /** @var string The route path prefix to use for shims */
     public const ROUTE_GROUP_SHIM = 'shim';
 

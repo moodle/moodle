@@ -16,6 +16,7 @@
 
 namespace core\router;
 
+use core\route\oauth2;
 use core\route\shortlink;
 use Slim\App;
 use Slim\Interfaces\RouteGroupInterface;
@@ -34,6 +35,7 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
     public function configure_routes(App $app): array {
         return [
             route_loader_interface::ROUTE_GROUP_API => $this->configure_api_routes($app, route_loader_interface::ROUTE_GROUP_API),
+            route_loader_interface::ROUTE_GROUP_OAUTH2 => $this->configure_oauth2_auth($app),
             route_loader_interface::ROUTE_GROUP_PAGE => $this->configure_standard_routes($app),
             route_loader_interface::ROUTE_GROUP_SHIM => $this->configure_shim_routes($app),
             route_loader_interface::ROUTE_GROUP_SHORTLINK => $this->configure_shortlink_routes($app),
@@ -61,6 +63,21 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
             $callable = [apidocs::class, 'openapi_docs'];
             $slimroute = $group->get('/openapi.json', $callable);
             $this->set_route_name_for_callable($slimroute, $callable);
+        });
+    }
+
+    /**
+     * Configure all OAuth2 authentication routes.
+     *
+     * @param App $app
+     * @return RouteGroupInterface
+     */
+    protected function configure_oauth2_auth(App $app): RouteGroupInterface {
+        return $app->group(self::ROUTE_GROUP_OAUTH2, function (RouteCollectorProxy $group): void {
+            foreach ($this->get_all_oauth2_authentication_routes() as $moodleroute) {
+                $slimroute = $group->map(...$moodleroute);
+                $this->set_route_name_for_callable($slimroute, $moodleroute['callable']);
+            }
         });
     }
 
@@ -131,6 +148,28 @@ class route_loader extends abstract_route_loader implements route_loader_interfa
         }
 
         return $routes;
+    }
+
+    /**
+     * Fetch all OAuth2 authentication routes.
+     *
+     * Note: This method caches results in MUC.
+     *
+     * @return array[]
+     */
+    protected function get_all_oauth2_authentication_routes(): array {
+        $cache = \cache::make('core', 'routes');
+
+        if (!($cachedata = $cache->get('oauth2_auth_routes'))) {
+            $cachedata = $this->get_all_routes_in_class(
+                componentpath: '/',
+                classinfo: new \ReflectionClass(oauth2::class),
+            );
+
+            $cache->set('oauth2_auth_routes', $cachedata);
+        }
+
+        return $cachedata;
     }
 
     /**
