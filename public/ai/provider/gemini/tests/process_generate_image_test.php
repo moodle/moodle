@@ -41,6 +41,9 @@ final class process_generate_image_test extends \advanced_testcase {
     /** @var string A successful response in JSON format. */
     protected string $responsebodyjson;
 
+    /** @var string A successful Gemini native image protocol response in JSON format. */
+    protected string $geminiimageresponsebodyjson;
+
     /** @var \core_ai\manager */
     private $manager;
 
@@ -61,11 +64,15 @@ final class process_generate_image_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Load a response body from a file.
         $this->responsebodyjson = file_get_contents(self::get_fixture_path('aiprovider_gemini', 'image_request_success.json'));
+        $this->geminiimageresponsebodyjson = file_get_contents(
+            self::get_fixture_path('aiprovider_gemini', 'gemini_image_request_success.json'),
+        );
         $this->manager = \core\di::get(\core_ai\manager::class);
         $this->provider = $this->create_provider(
             actionclass: \core_ai\aiactions\generate_image::class,
             actionconfig: [
                 'model' => 'imagen-4.0-generate-001',
+                'endpoint' => 'https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict',
             ],
         );
         $this->create_action();
@@ -127,6 +134,50 @@ final class process_generate_image_test extends \advanced_testcase {
     }
 
     /**
+     * Create a provider configured to use a Gemini native image protocol model.
+     *
+     * @return provider The provider that will process the action.
+     */
+    private function create_gemini_image_protocol_provider(): provider {
+        return $this->create_provider(
+            actionclass: \core_ai\aiactions\generate_image::class,
+            actionconfig: [
+                'model' => 'gemini-3.1-flash-image',
+                'endpoint' => 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent',
+            ],
+        );
+    }
+
+    /**
+     * Mock a successful Gemini native image protocol response.
+     */
+    private function mock_gemini_image_protocol_response(): void {
+        ['mock' => $mock] = $this->get_mocked_http_client();
+        $stream = Utils::streamFor($this->geminiimageresponsebodyjson);
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            $stream,
+        ));
+    }
+
+    /**
+     * Mock a Gemini native image protocol response that was blocked by safety filtering.
+     */
+    private function mock_gemini_image_protocol_blocked_response(): void {
+        ['mock' => $mock] = $this->get_mocked_http_client();
+        $mock->append(new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'promptFeedback' => [
+                    'blockReason' => 'SAFETY',
+                ],
+            ]),
+        ));
+    }
+
+    /**
      * Test calculate_aspect_ratio.
      */
     public function test_calculate_aspect_ratio(): void {
@@ -184,6 +235,75 @@ final class process_generate_image_test extends \advanced_testcase {
     }
 
     /**
+     * Test create_request_object builds a generateContent-shaped body for Gemini native image models.
+     */
+    public function test_create_request_object_gemini_image_protocol(): void {
+        $provider = $this->create_gemini_image_protocol_provider();
+        $processor = new process_generate_image($provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $requestdata = json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('This is a test prompt', $requestdata->contents[0]->parts[0]->text);
+        $this->assertEquals(['IMAGE'], $requestdata->generationConfig->responseModalities);
+        $this->assertEquals('1:1', $requestdata->generationConfig->imageConfig->aspectRatio);
+        $this->assertObjectNotHasProperty('instances', $requestdata);
+        $this->assertObjectNotHasProperty('parameters', $requestdata);
+    }
+
+    /**
+     * Test create_request_object builds a generateContent-shaped body for a custom model name
+     * that is not one of the known model classes, based on the configured endpoint's method.
+     */
+    public function test_create_request_object_custom_model_generatecontent_endpoint(): void {
+        $provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\generate_image::class,
+            actionconfig: [
+                'model' => 'some-future-gemini-image-model',
+                'endpoint' => 'https://generativelanguage.googleapis.com/v1beta/models/'
+                    . 'some-future-gemini-image-model:generateContent',
+            ],
+        );
+        $processor = new process_generate_image($provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $requestdata = json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('This is a test prompt', $requestdata->contents[0]->parts[0]->text);
+        $this->assertObjectNotHasProperty('instances', $requestdata);
+    }
+
+    /**
+     * Test create_request_object still builds an Imagen predict-shaped body for a custom model
+     * name whose configured endpoint uses the predict method.
+     */
+    public function test_create_request_object_custom_model_predict_endpoint(): void {
+        $provider = $this->create_provider(
+            actionclass: \core_ai\aiactions\generate_image::class,
+            actionconfig: [
+                'model' => 'some-custom-imagen-model',
+                'endpoint' => 'https://generativelanguage.googleapis.com/v1beta/models/some-custom-imagen-model:predict',
+            ],
+        );
+        $processor = new process_generate_image($provider, $this->action);
+
+        // We're working with a private method here, so we need to use reflection.
+        $method = new \ReflectionMethod($processor, 'create_request_object');
+        $request = $method->invoke($processor, 1);
+
+        $requestdata = json_decode($request->getBody()->getContents());
+
+        $this->assertEquals('This is a test prompt', $requestdata->instances[0]->prompt);
+        $this->assertObjectNotHasProperty('contents', $requestdata);
+    }
+
+    /**
      * Test the API error response handler method.
      */
     public function test_handle_api_error(): void {
@@ -230,6 +350,54 @@ final class process_generate_image_test extends \advanced_testcase {
     }
 
     /**
+     * Test the API success response handler method for Gemini native image models.
+     */
+    public function test_handle_api_success_gemini_image_protocol(): void {
+        $stream = Utils::streamFor($this->geminiimageresponsebodyjson);
+        $response = new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            $stream,
+        );
+
+        // Log in user.
+        $this->setAdminUser();
+
+        $provider = $this->create_gemini_image_protocol_provider();
+        $processor = new process_generate_image($provider, $this->action);
+        $method = new \ReflectionMethod($processor, 'handle_api_success');
+
+        $result = $method->invoke($processor, $response);
+
+        $this->assertTrue($result['success']);
+        $this->assertEquals('7cc6025f8a6ce71a.png', $result['draftfile']->get_filename());
+    }
+
+    /**
+     * Test the API success response handler method treats a safety-blocked Gemini response as an error.
+     */
+    public function test_handle_api_success_gemini_image_protocol_blocked(): void {
+        $response = new Response(
+            200,
+            ['Content-Type' => 'application/json'],
+            json_encode([
+                'promptFeedback' => [
+                    'blockReason' => 'SAFETY',
+                ],
+            ]),
+        );
+
+        $provider = $this->create_gemini_image_protocol_provider();
+        $processor = new process_generate_image($provider, $this->action);
+        $method = new \ReflectionMethod($processor, 'handle_api_success');
+
+        $result = $method->invoke($processor, $response);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('SAFETY', $result['errormessage']);
+    }
+
+    /**
      * Test query_ai_api for a successful call.
      */
     public function test_query_ai_api_success(): void {
@@ -245,6 +413,44 @@ final class process_generate_image_test extends \advanced_testcase {
 
         $this->assertTrue($result['success']);
         $this->assertEquals('7cc6025f8a6ce71a.png', $result['draftfile']->get_filename());
+    }
+
+    /**
+     * Test query_ai_api for a successful call using a Gemini native image model.
+     */
+    public function test_query_ai_api_success_gemini_image_protocol(): void {
+        // Mock successful response from Gemini.
+        $this->mock_gemini_image_protocol_response();
+
+        // Log in user.
+        $this->setAdminUser();
+
+        $provider = $this->create_gemini_image_protocol_provider();
+        $processor = new process_generate_image($provider, $this->action);
+        $method = new \ReflectionMethod($processor, 'query_ai_api');
+        $result = $method->invoke($processor);
+
+        $this->assertTrue($result['success']);
+        $this->assertEquals('7cc6025f8a6ce71a.png', $result['draftfile']->get_filename());
+    }
+
+    /**
+     * Test query_ai_api surfaces a safety-blocked Gemini native image response as an error.
+     */
+    public function test_query_ai_api_blocked_gemini_image_protocol(): void {
+        // Mock a blocked response from Gemini.
+        $this->mock_gemini_image_protocol_blocked_response();
+
+        // Log in user.
+        $this->setAdminUser();
+
+        $provider = $this->create_gemini_image_protocol_provider();
+        $processor = new process_generate_image($provider, $this->action);
+        $method = new \ReflectionMethod($processor, 'query_ai_api');
+        $result = $method->invoke($processor);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('SAFETY', $result['errormessage']);
     }
 
     /**
