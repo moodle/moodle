@@ -3083,6 +3083,7 @@ class core_course_external extends external_api {
                 'cm' => new external_single_structure(array_merge(
                     helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(true),
                     [
+                        'id' => new external_value(PARAM_INT, 'The course module id'),
                         'module' => new external_value(PARAM_INT, 'The module type id'),
                         'modname' => new external_value(PARAM_COMPONENT, 'The module component name (forum, assign, etc..)'),
                         'instance' => new external_value(PARAM_INT, 'The activity instance id'),
@@ -3092,6 +3093,7 @@ class core_course_external extends external_api {
                         'added' => new external_value(PARAM_INT, 'Time added', VALUE_OPTIONAL),
                         'score' => new external_value(PARAM_INT, 'Score', VALUE_OPTIONAL),
                         'indent' => new external_value(PARAM_INT, 'Indentation', VALUE_OPTIONAL),
+                        'visible' => new external_value(PARAM_INT, 'If visible', VALUE_OPTIONAL),
                         'visibleoncoursepage' => new external_value(PARAM_INT, 'If visible on course page', VALUE_OPTIONAL),
                         'visibleold' => new external_value(PARAM_INT, 'Visible old', VALUE_OPTIONAL),
                         'completiongradeitemnumber' => new external_value(PARAM_INT, 'Completion grade item', VALUE_OPTIONAL),
