@@ -1,0 +1,19 @@
+issueNumber: MDL-87709
+notes:
+  mod_assign:
+    - message: >-
+        The ASSIGN_MULTIMARKING_MAX_MARKERS constant has been deprecated.
+        Use ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS instead.
+      type: deprecated
+    - message: >-
+        The assign::get_allocated_markers() and
+        assign::update_allocated_markers() functions are now deprecated. Use
+        assign::get_marker_allocations() and assign::update_marker_allocations()
+        instead.
+      type: deprecated
+    - message: >-
+        Event mod_assign\event\marker_updated is no longer triggered.
+        Observers listening to this event should instead listen to
+        mod_assign\event\marker_added and mod_assign\event\marker_removed
+        instead.
+      type: deprecated

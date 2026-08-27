@@ -92,6 +92,7 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                   'markingworkflow',
                                                   'markingallocation',
                                                   'markercount',
+                                                  'optionalmarkercount',
                                                   'multimarkmethod',
                                                   'markinganonymous',
                                                   'preventsubmissionnotingroup',
@@ -125,6 +126,8 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                 'student',
                 'assignment',
                 'marker',
+                'optional',
+                'enabled',
             ]
         );
 

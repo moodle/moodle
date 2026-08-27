@@ -277,6 +277,9 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | assign       | user     | marker   |
       | Assignment 1 | student1 | teacher1 |
       | Assignment 1 | student1 | teacher2 |
+    And the following "role capability" exists:
+      | role                              | editingteacher |
+      | mod/assign:managerestrictedgrades | allow          |
     # Marker 1 (Teacher 1) annotates the PDF.
     And I am on the "A1" "assign activity" page logged in as teacher1
     And I change window size to "large"

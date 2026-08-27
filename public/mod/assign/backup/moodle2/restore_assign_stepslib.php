@@ -245,12 +245,14 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         global $DB;
 
         $data = (object)$data;
+        $oldid = $data->id;
 
         $data->assignment = $this->get_new_parentid('assign');
         $data->student = $this->get_mappingid('user', $data->student);
         $data->marker = $this->get_mappingid('user', $data->marker);
 
-        $DB->insert_record('assign_allocated_marker', $data);
+        $newitemid = $DB->insert_record('assign_allocated_marker', $data);
+        $this->set_mapping('allocatedmarker', $oldid, $newitemid);
     }
 
     /**
@@ -262,12 +264,14 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         global $DB;
 
         $data = (object)$data;
+        $oldid = $data->id;
 
         $data->assignment = $this->get_new_parentid('assign');
         $data->marker = $this->get_mappingid('user', $data->marker);
         $data->gradeid = $this->get_mappingid('grade', $data->gradeid);
 
-        $DB->insert_record('assign_mark', $data);
+        $newitemid = $DB->insert_record('assign_mark', $data);
+        $this->set_mapping('mark', $oldid, $newitemid);
     }
 
     /**

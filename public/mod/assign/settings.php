@@ -111,6 +111,34 @@ if ($ADMIN->fulltree) {
                                                     -1,
                                                     $options));
 
+    // Max total markers.
+    $name = new lang_string('maxmarkercount', 'mod_assign');
+    $description = new lang_string('maxmarkercount_help', 'mod_assign');
+    $setting = new admin_setting_configtext_with_maxlength(
+        'assign/maxmarkercount',
+        $name,
+        $description,
+        ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS,
+        PARAM_INT,
+        null,
+        2,
+    );
+    $settings->add($setting);
+
+    // Max optional markers.
+    $name = new lang_string('maxoptionalmarkercount', 'mod_assign');
+    $description = new lang_string('maxoptionalmarkercount_help', 'mod_assign');
+    $setting = new admin_setting_configtext_with_maxlength(
+        'assign/maxoptionalmarkercount',
+        $name,
+        $description,
+        ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS - 1,
+        PARAM_INT,
+        null,
+        2,
+    );
+    $settings->add($setting);
+
     $name = new lang_string('defaultsettings', 'mod_assign');
     $description = new lang_string('defaultsettings_help', 'mod_assign');
     $settings->add(new admin_setting_heading('defaultsettings', $name, $description));
@@ -360,17 +388,44 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
-    // Default setting for number of markers.
+    // Default setting for maximum number of markers.
     $name = new lang_string('markercount', 'mod_assign');
     $description = new lang_string('markercount_help', 'mod_assign');
+    $maxmarkers = get_config('assign', 'maxmarkercount');
+    if ($maxmarkers === false) {
+        $maxmarkers = ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS;
+    }
+    $maxmarkers = max($maxmarkers, 1);
     $setting = new admin_setting_configselect(
         'assign/markercount',
         $name,
         $description,
         ASSIGN_MULTIMARKING_DEFAULT_MARKERS,
         array_combine(
-            range(1, ASSIGN_MULTIMARKING_MAX_MARKERS),
-            range(1, ASSIGN_MULTIMARKING_MAX_MARKERS)
+            range(1, $maxmarkers),
+            range(1, $maxmarkers)
+        ),
+    );
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
+    // Default setting for number of optional markers.
+    $name = new lang_string('optionalmarkercount', 'mod_assign');
+    $description = new lang_string('optionalmarkercount_help', 'mod_assign');
+    $maxoptionalmarkers = get_config('assign', 'maxoptionalmarkercount');
+    if ($maxoptionalmarkers === false) {
+        $maxoptionalmarkers = $maxmarkers - 1;
+    }
+    $maxoptionalmarkers = max($maxoptionalmarkers, 0);
+    $setting = new admin_setting_configselect(
+        'assign/optionalmarkercount',
+        $name,
+        $description,
+        ASSIGN_MULTIMARKING_DEFAULT_OPTIONAL_MARKERS,
+        array_combine(
+            range(0, $maxoptionalmarkers),
+            range(0, $maxoptionalmarkers)
         ),
     );
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);

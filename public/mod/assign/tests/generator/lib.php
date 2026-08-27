@@ -60,6 +60,7 @@ class mod_assign_generator extends testing_module_generator {
             'markingworkflow'                   => 0,
             'markingallocation'                 => 0,
             'markercount'                       => 0,
+            'optionalmarkercount'               => 0,
             'multimarkmethod'                   => null,
             'multimarkrounding'                 => null,
             'markinganonymous'                  => 0,
@@ -139,6 +140,12 @@ class mod_assign_generator extends testing_module_generator {
         $assign->save_submission($submission, $notices);
 
         $this->set_user($currentuser);
+
+        if (isset($data['workflowstate'])) {
+            $flags = $assign->get_user_flags($data['userid'], true);
+            $flags->workflowstate = $data['workflowstate'];
+            $assign->update_user_flags($flags);
+        }
     }
 
     /**
@@ -236,11 +243,47 @@ class mod_assign_generator extends testing_module_generator {
         $context = context_module::instance($cm->id);
         $assign = new assign($context, $cm, $course);
 
+        $position = count($assign->get_marker_allocations($data['userid'])) + 1;
+        $enabled = $data['enabled'] ?? null;
+        if ($enabled === '') {
+            $enabled = null;
+        }
+
         $DB->insert_record('assign_allocated_marker', [
             'student' => $data['userid'],
             'assignment' => $assign->get_instance()->id,
             'marker' => $data['markerid'],
+            'optional' => $assign->is_marker_optional($position),
+            'enabled' => $enabled,
         ]);
     }
 
+    /**
+     * Create a mark record.
+     *
+     * @param array $data Array containing: ['assignid', 'userid', 'markerid']
+     */
+    public function create_mark(array $data): void {
+        global $DB;
+
+        if (!isset($data['cmid'])) {
+            throw new coding_exception('Must specify assign when creating a mark.');
+        }
+
+        if (!isset($data['userid'])) {
+            throw new coding_exception('Must specify user when creating a mark.');
+        }
+
+        if (!isset($data['markerid'])) {
+            throw new coding_exception('Must specify marker when creating a mark.');
+        }
+
+        [$course, $cm] = get_course_and_cm_from_cmid($data['cmid'], 'assign');
+        $context = context_module::instance($cm->id);
+        $assign = new assign($context, $cm, $course);
+
+        $grade = $assign->get_user_grade($data['userid'], true);
+        $grade->grader = $data['markerid'];
+        $assign->update_mark($grade, $data['mark'] ?? null, $data['workflowstate'] ?? null);
+    }
 }

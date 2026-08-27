@@ -101,6 +101,7 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
             }
             // Note: we lose the seconds when converting to user date format - so must not count seconds in comparision.
             $skip = false;
+            $restricted = false;
 
             $stalemodificationdate = ($usergrade && $usergrade->timemodified > ($modified + 60));
 
@@ -139,10 +140,13 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
                       (($grade < 0) || ($grade > $assignment->get_instance()->grade))) {
                 // Out of range.
                 $skip = true;
+            } else if ($assignment->grading_restricted($usergrade ? $usergrade->id : null, $record->user->id)) {
+                // Skip grade but allow marks when grading is restricted.
+                $restricted = true;
             }
 
             // Work out which (or both) of the changes to display - grade and/or mark.
-            $grademodified = ($grade && $grade !== '' && $grade >= 0);
+            $grademodified = (!$restricted && $grade && $grade !== '' && $grade >= 0);
             if ($usergrade) {
                 $grademodified = ($grademodified && $grade != $usergrade->grade);
             }
@@ -184,7 +188,7 @@ class assignfeedback_offline_import_grades_form extends moodleform implements re
                     if (isset($feedback['markernumber'])) {
                         $ismarkercol = true;
                         // Get the mark record or create it if it doesn't exist.
-                        $marker = $assignment->get_marker_number($user->id, $feedback['markernumber'] - 1);
+                        $marker = $assignment->get_marker_number($user->id, $feedback['markernumber']);
                         if ($marker && $marker->id == $USER->id) {
                             $isourmarkercol = true;
                             if ($usermark) {

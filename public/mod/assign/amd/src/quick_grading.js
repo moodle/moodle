@@ -14,6 +14,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as formSubmit from 'core_form/submit';
+import Notification from 'core/notification';
+import OptionalMarker from 'mod_assign/optional_marker';
 
 /**
  * Module for the quick grading functionality on the submissions page.
@@ -26,9 +28,11 @@ import * as formSubmit from 'core_form/submit';
 /** @constant {Object} The object containing the relevant selectors. */
 const Selectors = {
     quickGradingSaveRegion: '[data-region="quick-grading-save"]',
+    quickGradingTable: 'table#submissions',
+    markerEnabledCheckbox: 'input[type="checkbox"][name*="allocatedmarkerenabled"]',
     notifyStudentsCheckbox: 'input[type="checkbox"][name="sendstudentnotifications"]',
     notifyStudentsHidden: 'input[type="hidden"][name="sendstudentnotifications"]',
-    saveButton: 'button[type="submit"]'
+    saveButton: 'button[type="submit"]',
 };
 
 /**
@@ -51,6 +55,45 @@ export const init = () => {
                 const notifyStudentsHidden = notifyStudentsCheckbox.parentNode.querySelector(Selectors.notifyStudentsHidden);
                 notifyStudentsHidden.disabled = notifyStudentsCheckbox.checked;
             }
+        });
+    }
+
+    const quickGradingTable = document.querySelector(Selectors.quickGradingTable);
+    if (quickGradingTable) {
+        quickGradingTable.addEventListener('change', e => {
+            const markerCheckbox = e.target;
+            if (!markerCheckbox.matches(Selectors.markerEnabledCheckbox)) {
+                return;
+            }
+
+            const markerSelect = markerCheckbox.closest('td').querySelector('select');
+            if (!markerSelect) {
+                return;
+            }
+
+            if (!markerCheckbox.checked) {
+                // Indicate that the marker will be removed when the checkbox is disabled.
+                markerSelect.value = 0;
+                markerSelect.disabled = true;
+                return;
+            }
+
+            if (!OptionalMarker.shouldConfirmEnable(markerCheckbox)) {
+                markerSelect.disabled = false;
+                return;
+            }
+
+            // Revert the checkbox change until it is confirmed.
+            markerCheckbox.checked = false;
+
+            // Add a notification that enabling the marker will clear the current grade.
+            OptionalMarker.showConfirm(false).then(function(confirmed) {
+                if (confirmed) {
+                    markerCheckbox.checked = true;
+                    markerSelect.disabled = false;
+                }
+                return confirmed;
+            }).catch(Notification.exception);
         });
     }
 };

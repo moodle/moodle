@@ -22,6 +22,9 @@ Feature: Allocate marks to student submissions
       | teacher1 | C1     | editingteacher |
       | teacher2 | C1     | editingteacher |
       | teacher3 | C1     | editingteacher |
+    And the following "permission overrides" exist:
+      | capability                         | permission | role           | contextlevel | reference |
+      | mod/assign:managemarkedallocations | Allow      | editingteacher | Course       | C1        |
     And the following "activity" exists:
       | activity                        | assign       |
       | course                          | C1           |
@@ -86,12 +89,12 @@ Feature: Allocate marks to student submissions
     And I click on "Change marking state" "button" in the "sticky-footer" "region"
     And I click on "Change marking state" "button" in the ".modal-footer" "css_element"
     And I select "Mark" from the "Workflow context" singleselect
-    When I select "Marking completed" from the "Marking workflow state" singleselect
+    When I select "In marking" from the "Marking workflow state" singleselect
     And I press "Save changes"
     Then the following should exist in the "submissions" table:
-      | First name  | Marker 1          | Marker 2   | Status     |
-      | Student One | Marking completed | Not marked | In marking |
-      | Student Two | Marking completed | Not marked | In marking |
+      | First name  | Marker 1   | Marker 2   | Status     |
+      | Student One | In marking | Not marked | In marking |
+      | Student Two | In marking | Not marked | In marking |
     # Log in as the other teacher and change their workflow status too.
     And I am on the "A1" "assign activity" page logged in as teacher2
     And I navigate to "Submissions" in current page administration
@@ -99,12 +102,35 @@ Feature: Allocate marks to student submissions
     And I click on "Change marking state" "button" in the "sticky-footer" "region"
     And I click on "Change marking state" "button" in the ".modal-footer" "css_element"
     And I select "Mark" from the "Workflow context" singleselect
-    And I select "Marking completed" from the "Marking workflow state" singleselect
+    And I select "In marking" from the "Marking workflow state" singleselect
     And I press "Save changes"
-    And the following should exist in the "submissions" table:
-      | First name  | Marker 1          | Marker 2          | Status            |
-      | Student One | Marking completed | Marking completed | Marking completed |
-      | Student Two | Marking completed | Marking completed | Marking completed |
+    Then the following should exist in the "submissions" table:
+      | First name  | Marker 1   | Marker 2   | Status     |
+      | Student One | In marking | In marking | In marking |
+      | Student Two | In marking | In marking | In marking |
+
+  Scenario: Bulk set workflow state can only set marking completed when a marker already has a mark
+    Given I am on the "A1" "assign activity" page logged in as teacher1
+    And I go to "Student One" "Assignment 1" activity advanced marking page
+    When I set the field "Mark out of 100" to "42"
+    And I press "Save changes"
+    And I am on the "A1" "assign activity" page
+    And I navigate to "Submissions" in current page administration
+    Then the following should exist in the "submissions" table:
+      | First name  | Marker 1   | Marker 2   | Status     |
+      | Student One | Not marked | Not marked | Not marked |
+      | Student Two | Not marked | Not marked | Not marked |
+    And I navigate to "Submissions" in current page administration
+    And I set the field "selectall" to "1"
+    And I click on "Change marking state" "button" in the "sticky-footer" "region"
+    And I click on "Change marking state" "button" in the ".modal-footer" "css_element"
+    And I select "Mark" from the "Workflow context" singleselect
+    When I select "Marking completed" from the "Marking workflow state" singleselect
+    And I press "Save changes"
+    Then the following should exist in the "submissions" table:
+      | First name  | Marker 1          | Marker 2   | Status     |
+      | Student One | Marking completed | Not marked | In marking |
+      | Student Two | Not marked        | Not marked | Not marked |
 
   Scenario: Grades are only calculated after all marks are given
     Given I am on the "A1" "assign activity" page logged in as teacher1

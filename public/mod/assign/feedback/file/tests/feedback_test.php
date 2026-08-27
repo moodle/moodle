@@ -200,7 +200,7 @@ final class feedback_test extends \advanced_testcase {
         ]);
 
         // Allocate teacher as marker.
-        $assign->update_allocated_markers($student->id, [$teacher->id]);
+        $assign->update_marker_allocations($student->id, [1 => [$teacher->id]]);
 
         // Create feedback as mark.
         $commenttext = '<p>Comment for this test</p>';

@@ -42,7 +42,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG, $COURSE, $OUTPUT;;
+        global $CFG, $COURSE, $OUTPUT, $PAGE;
         $mform = $this->_form;
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -73,7 +73,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'submissionattachments', get_string('submissionattachments', 'assign'));
         $mform->addHelpButton('submissionattachments', 'submissionattachments', 'assign');
 
-        [$assignment] = $this->get_assign();
+        [$assignment, $ctx] = $this->get_assign();
 
         $mform->addElement('header', 'availability', get_string('availability', 'assign'));
         $mform->setExpanded('availability', true);
@@ -85,9 +85,11 @@ class mod_assign_mod_form extends moodleform_mod {
 
         // Add the option to recalculate the penalty if there is existing grade.
         $penaltysettingmessage = '';
+        $gradecount = $assignment->count_grades();
         if ($assignment->has_instance()
             && \mod_assign\penalty\helper::is_penalty_enabled($assignment->get_instance()->id)
-            && $assignment->count_grades() > 0) {
+            && $gradecount > 0
+        ) {
             // Create notification.
             $penaltysettingmessage = $OUTPUT->notification(get_string('penaltyduedatechangemessage', 'assign'), 'warning', false);
             $mform->addElement('html', $penaltysettingmessage);
@@ -243,14 +245,60 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addHelpButton('markingallocation', 'markingallocation', 'assign');
         $mform->hideIf('markingallocation', 'markingworkflow', 'eq', 0);
 
+        // Add hidden total marker count field for multiple marking conditions.
+        $mform->addElement('hidden', 'totalmarkercount');
+        $mform->setType('totalmarkercount', PARAM_INT);
+        $mform->setDefault('totalmarkercount', $assignment->has_instance() ? $assignment->total_marker_count() : 1);
+
         $name = get_string('markercount', 'assign');
-        $markercount = range(1, ASSIGN_MULTIMARKING_MAX_MARKERS);
+        $configmaxmarkers = get_config('assign', 'maxmarkercount');
+        if ($configmaxmarkers === false) {
+            $configmaxmarkers = ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS;
+        }
+        // Existing values should always remain selectable if the global limit changes.
+        $maxmarkers = max($configmaxmarkers, $this->current->markercount ?? 1, 1);
+        $markercount = range(1, $maxmarkers);
         $mform->addElement('select', 'markercount', $name, array_combine($markercount, $markercount));
         $mform->addHelpButton('markercount', 'markercount', 'assign');
-        $mform->disabledIf('markercount', 'advancedgradingmethod_submissions', 'neq', '');
-        $mform->hideIf('markercount', 'advancedgradingmethod_submissions', 'neq', '');
-        $mform->hideIf('markercount', 'markingallocation', 'neq', '1');
-        $mform->hideIf('markercount', 'markingworkflow', 'neq', '1');
+        $this->apply_multimark_conditions('markercount');
+
+        $name = get_string('optionalmarkercount', 'assign');
+        $configmaxoptionalmarkers = get_config('assign', 'maxoptionalmarkercount');
+        if ($configmaxoptionalmarkers === false) {
+            $configmaxoptionalmarkers = $configmaxmarkers - 1;
+        }
+        $maxoptionalmarkers = max($configmaxoptionalmarkers, $this->current->optionalmarkercount ?? 0);
+        $optionalmarkercount = range(0, $maxoptionalmarkers);
+        $mform->addElement('select', 'optionalmarkercount', $name, array_combine($optionalmarkercount, $optionalmarkercount));
+        $mform->addHelpButton('optionalmarkercount', 'optionalmarkercount', 'assign');
+        $this->apply_multimark_conditions('optionalmarkercount');
+        if (!has_capability('mod/assign:manageoptionalallocations', $ctx)) {
+            $mform->freeze('optionalmarkercount');
+        }
+
+        // Require an explicit confirmation for recalculating agreed grades.
+        // Only display this when agreed grades or grades that would be converted to agreed grades exist.
+        if ($gradecount > 0 && $assignment->has_agreed_grade([], false)) {
+            // Show a different message when enabling multiple marking.
+            $messagename = $assignment->is_using_multiple_marking() ? 'multimarkupdatemessage' : 'multimarkupdateenable';
+            $message = $OUTPUT->notification(get_string($messagename, 'assign'), 'warning', false);
+            $mform->addElement('static', 'multimarkupdatemessage', '', $message);
+            $this->apply_multimark_conditions('multimarkupdatemessage', true);
+
+            $actions = [
+                ASSIGN_MULTIMARKING_ACTION_NONE,
+                ASSIGN_MULTIMARKING_ACTION_RECALCULATE,
+                ASSIGN_MULTIMARKING_ACTION_CLEAR,
+            ];
+            $options = new core\output\choicelist();
+            $options->add_option('', get_string('choosedots'));
+            foreach ($actions as $action) {
+                $name = "multimarkupdate:$action";
+                $options->add_option($action, get_string($name, 'assign'), ['description' => get_string("{$name}_help", 'assign')]);
+            }
+            $mform->addElement('choicedropdown', 'multimarkupdate', get_string('multimarkupdate', 'assign'), $options);
+            $this->apply_multimark_conditions('multimarkupdate', true);
+        }
 
         $name = get_string('multimarkmethod', 'assign');
         $options = new core\output\choicelist();
@@ -276,10 +324,7 @@ class mod_assign_mod_form extends moodleform_mod {
             ]
         );
         $mform->addElement('choicedropdown', 'multimarkmethod', $name, $options);
-        $mform->hideIf('multimarkmethod', 'markingallocation', 'eq', '0');
-        $mform->hideIf('multimarkmethod', 'markercount', 'eq', '1');
-        $mform->disabledIf('multimarkmethod', 'advancedgradingmethod_submissions', 'neq', '');
-        $mform->hideIf('multimarkmethod', 'advancedgradingmethod_submissions', 'neq', '');
+        $this->apply_multimark_conditions('multimarkmethod', true, true);
 
         $name = get_string('multimarkrounding', 'assign');
         $options = new core\output\choicelist();
@@ -312,12 +357,8 @@ class mod_assign_mod_form extends moodleform_mod {
             ]
         );
         $mform->addElement('choicedropdown', 'multimarkrounding', $name, $options);
-        $mform->hideIf('multimarkrounding', 'markingallocation', 'eq', '0');
-        $mform->hideIf('multimarkrounding', 'markercount', 'eq', '1');
+        $this->apply_multimark_conditions('multimarkrounding', true, true);
         $mform->hideIf('multimarkrounding', 'multimarkmethod', 'neq', 'average');
-        $mform->disabledIf('multimarkrounding', 'multimarkmethod', 'neq', 'average');
-        $mform->disabledIf('multimarkrounding', 'advancedgradingmethod_submissions', 'neq', '');
-        $mform->hideIf('multimarkrounding', 'advancedgradingmethod_submissions', 'neq', '');
 
         $name = get_string('markinganonymous', 'assign');
         $mform->addElement('selectyesno', 'markinganonymous', $name);
@@ -351,6 +392,31 @@ class mod_assign_mod_form extends moodleform_mod {
         $this->apply_admin_defaults();
 
         $this->add_action_buttons();
+
+        $PAGE->requires->js_call_amd('mod_assign/mod_form', 'init');
+    }
+
+    /**
+     * Applies multiple marking hide and disabled conditions.
+     *
+     * @param string $elementname The element to apply the condition to.
+     * @param bool $markercount Apply marker count conditions.
+     * @param bool $recalculate Apply recalculate conditions.
+     */
+    private function apply_multimark_conditions(string $elementname, bool $markercount = false, bool $recalculate = false): void {
+        $mform = $this->_form;
+        $mform->hideIf($elementname, 'markingworkflow', 'neq', '1');
+        $mform->hideIf($elementname, 'markingallocation', 'neq', '1');
+        $mform->disabledIf($elementname, 'markingallocation', 'neq', '1');
+        $mform->hideIf($elementname, 'advancedgradingmethod_submissions', 'neq', '');
+
+        if ($markercount) {
+            $mform->hideIf($elementname, 'totalmarkercount', 'eq', '1');
+        }
+
+        if ($recalculate) {
+            $mform->disabledIf($elementname, 'multimarkupdate', 'eq', '');
+        }
     }
 
     /**
@@ -411,6 +477,36 @@ class mod_assign_mod_form extends moodleform_mod {
 
         [$assignment] = $this->get_assign();
         $errors = array_merge($errors, $assignment->plugin_settings_validation($data, $files));
+
+        if (!$assignment->has_instance()) {
+            return $errors;
+        }
+
+        // Update only validation.
+        $instance = $assignment->get_instance();
+        $multimarkenabled = !empty($data['markingworkflow']) && !empty($data['markingallocation']) &&
+            (($data['markercount'] ?? 1) + ($data['optionalmarkercount'] ?? 0)) > 1;
+        $multimarkupdatemissing = $multimarkenabled && isset($data['multimarkupdate']) && $data['multimarkupdate'] === '';
+        if (isset($data['markercount'])) {
+            if (!$assignment->can_change_marker_count($data['markercount'], false)) {
+                $errors['markercount'] = get_string('markercountdecreasevalidation', 'assign');
+            }
+
+            if ($multimarkupdatemissing && $data['markercount'] > $assignment->required_marker_count()) {
+                $errors['multimarkupdate'] = get_string('multimarkupdatemarkervalidation', 'assign');
+            }
+        }
+
+        if (isset($data['optionalmarkercount']) && !$assignment->can_change_marker_count($data['optionalmarkercount'], true)) {
+            $errors['optionalmarkercount'] = get_string('optionalmarkercountdecreasevalidation', 'assign');
+        }
+
+        // Note that the comparison of defaults when multi marking is not enabled is not accurate.
+        $methodchanged = isset($data['multimarkmethod']) && $data['multimarkmethod'] !== $instance->multimarkmethod;
+        $roundingchanged = isset($data['multimarkrounding']) && $data['multimarkrounding'] !== $instance->multimarkrounding;
+        if ($multimarkupdatemissing && ($methodchanged || $roundingchanged)) {
+            $errors['multimarkupdate'] = get_string('multimarkupdatecalculatevalidation', 'assign');
+        }
 
         return $errors;
     }

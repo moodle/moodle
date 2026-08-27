@@ -135,6 +135,24 @@ Feature: Complete multi-marking workflow
       | First name    | Marker 1    | Marker 2    | Status     | Final grade |
       | Student One   | 99          | 88          | Released   | 94          |
       | Student Two   | 11          | 22          | Released   | 17          |
+      | Student Three |             |             | Not marked |             |
+      | Student Four  |             |             | Not marked |             |
+    # Marks can be released without all markers having marked with the capability to manage restricted grades.
+    When the following "role capability" exists:
+      | role                              | editingteacher |
+      | mod/assign:managerestrictedgrades | allow          |
+    And I am on the "A1" "assign activity" page logged in as teacher1
+    And I navigate to "Submissions" in current page administration
+    And I set the field "selectall" to "1"
+    And I click on "Change marking state" "button" in the "sticky-footer" "region"
+    And I click on "Change marking state" "button" in the "Set marking workflow state" "dialogue"
+    And I set the field "Workflow context" to "Grade"
+    And I set the field "Marking workflow state" to "Released"
+    And I press "Save changes"
+    And the following should exist in the "submissions" table:
+      | First name    | Marker 1    | Marker 2    | Status     | Final grade |
+      | Student One   | 99          | 88          | Released   | 94          |
+      | Student Two   | 11          | 22          | Released   | 17          |
       | Student Three |             |             | Released   |             |
       | Student Four  |             |             | Released   |             |
 
