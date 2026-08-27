@@ -16,6 +16,7 @@
 
 namespace core\check;
 
+use core_table\output\html_table_row;
 use core\output\html_writer;
 
 /**
@@ -27,6 +28,7 @@ use core\output\html_writer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class table implements \core\output\renderable {
+
     /**
      * @var \moodle_url $url
      */
@@ -84,13 +86,15 @@ class table implements \core\output\renderable {
     /**
      * Render a table of checks
      *
-     * @param \core\output\renderer $output to use
+     * @param \core\output\core_renderer $output to use
      * @return string html output
      */
     public function render($output) {
         $html = '';
 
         $table = new \core_table\output\html_table();
+        $waiting = $output->pix_icon('i/loading', get_string('loading'));
+
         $table->data = [];
         $table->head = [get_string('status')];
         $table->colclasses = ['rightalign status'];
@@ -108,72 +112,149 @@ class table implements \core\output\renderable {
         $table->colclasses[] = 'leftalign action';
 
         $table->id = $this->type . 'reporttable';
-        $table->attributes = ['class' => 'admintable ' . $this->type . 'report table generaltable'];
+        $table->attributes = ['class' => 'admintable ' . $this->type . 'report table generaltable checktable'];
 
         foreach ($this->checks as $check) {
             $ref = $check->get_ref();
+            $actionlink = $check->get_action_link();
 
             $link = new \moodle_url($this->url, ['detail' => $ref]);
 
-            $results = empty($this->checkname)
-                ? [$check->get_result()]
-                : $check->get_results();
+            // Each placeholder is marked as busy and is replaced outright by run_checks(),
+            // which is how the busy state gets removed once the real content arrives.
+            $row = [];
+            $row[] = html_writer::tag('span', $waiting, ['class' => 'statustext', 'aria-busy' => 'true']);
 
-            foreach ($results as $result) {
-                $row = [];
-                $row[] = $output->check_result($result);
-
-                if (empty($this->checkname)) {
-                    $row[] = $output->action_link($link, $check->get_name());
-                }
-
-                $row[] = $result->get_summary()
-                    . '<br>'
-                    . \html_writer::start_tag('small')
-                    . $output->action_link($link, get_string('moreinfo'))
-                    . \html_writer::end_tag('small');
-
-                $actionlink = $result->get_action_link() ?? $check->get_action_link();
-                if ($actionlink) {
-                    $row[] = $output->render($actionlink);
-                } else {
-                    $row[] = '';
-                }
-
-                $table->data[] = $row;
+            if (empty($this->checkname)) {
+                $row[] = $output->action_link($link, $check->get_name());
             }
+
+            $row[] = html_writer::tag('span', $waiting, ['class' => 'summarytext', 'aria-busy' => 'true'])
+                . '<br>'
+                . html_writer::start_tag('small')
+                . $output->action_link($link, get_string('moreinfo'))
+                . html_writer::end_tag('small');
+
+            // The check level link is only a placeholder, a result may supply a more specific one.
+            $row[] = html_writer::tag(
+                'span',
+                $actionlink ? $output->render($actionlink) : '',
+                ['class' => 'actiontext', 'aria-busy' => 'true'],
+            );
+
+            $tablerow = new html_table_row($row);
+            $tablerow->id = 'row_' . $ref;
+            $table->data[] = $tablerow;
         }
-        $html .= \html_writer::table($table);
+
+        $html .= html_writer::table($table);
+
+        // A live region so the streamed updates are announced to screen readers.
+        $html .= html_writer::div('', 'visually-hidden', [
+            'id' => 'checkprogress',
+            'role' => 'status',
+            'aria-live' => 'polite',
+        ]);
 
         if ($this->detail) {
-            $results = [];
-            foreach ($this->checks as $check) {
-                $results = array_merge($results, $check->get_results());
-            }
-            $details = array_filter(
-                array_map(
-                    fn ($results) => $results->get_details(),
-                    $results,
-                ),
-            );
-            if (count($details) > 0) {
-                $html .= $output->heading(get_string('details'), 3);
-
-                if (count($details) === 1) {
-                    $result = reset($details);
-                    $html .= $output->box($result, 'generalbox boxwidthnormal boxaligncenter');
-                } else {
-                    $html .= html_writer::start_tag('ul');
-                    foreach ($details as $detail) {
-                        $html .= html_writer::tag('li', $detail);
-                    }
-                    $html .= html_writer::end_tag('ul');
-                }
-            }
+            // Just render a placeholder for the details. The whole section is removed
+            // again by run_checks() when there are no details to show.
+            $loading = html_writer::div('', 'bg-pulse-grey check-details-placeholder', ['aria-busy' => 'true']);
+            $details = $output->heading(get_string('details'), 3)
+                . $output->box($loading, 'generalbox boxwidthnormal boxaligncenter', 'checkdetails');
+            $html .= html_writer::div($details, '', ['id' => 'checkdetailscontainer']);
 
             $html .= $output->continue_button($this->url);
         }
 
         return $html;
+    }
+
+
+    /**
+     * Runs the checks asynchronously
+     * @param \core\output\core_renderer $output page renderer
+     * @return void
+     */
+    public function run_checks($output): void {
+        foreach ($this->checks as $check) {
+            $ref = $check->get_ref();
+            $id = 'row_' . $ref;
+            $link = new \moodle_url($this->url, ['detail' => $ref]);
+
+            if ($this->detail) {
+                // Detail page: call get_results() to preserve the per-sub-result breakdown.
+                // The placeholder has one <tr>; replace its outerHTML with one row per result.
+                $results = $check->get_results();
+                $fails = [];
+                $rowshtml = '';
+
+                foreach ($results as $result) {
+                    if ($result->get_status() !== result::OK) {
+                        $fails[] = $result;
+                    }
+
+                    $actionlink = $result->get_action_link() ?? $check->get_action_link();
+                    $cells  = html_writer::tag('td', $output->check_result($result), ['class' => 'rightalign status']);
+                    $cells .= html_writer::tag(
+                        'td',
+                        $result->get_summary()
+                        . '<br>'
+                        . html_writer::start_tag('small')
+                        . $output->action_link($link, get_string('moreinfo'))
+                        . html_writer::end_tag('small'),
+                        ['class' => 'leftalign summary'],
+                    );
+                    $cells .= html_writer::tag(
+                        'td',
+                        $actionlink ? $output->render($actionlink) : '',
+                        ['class' => 'leftalign action'],
+                    );
+                    $rowshtml .= html_writer::tag('tr', $cells);
+                }
+
+                // Replace the single placeholder row with all sub-result rows.
+                echo $output->select_element_for_replace("#$id", $rowshtml, true);
+
+                // Build and stream the details section from all failing sub-results.
+                $details = array_filter(array_map(fn($r) => $r->get_details(), $fails));
+                if (count($details) === 1) {
+                    $detailhtml = reset($details);
+                } else if (count($details) > 1) {
+                    $detailhtml  = html_writer::start_tag('ul');
+                    foreach ($details as $detail) {
+                        $detailhtml .= html_writer::tag('li', $detail);
+                    }
+                    $detailhtml .= html_writer::end_tag('ul');
+                } else {
+                    $detailhtml = '';
+                }
+                if ($detailhtml === '') {
+                    // Nothing to show, remove the details heading and box entirely.
+                    echo $output->select_element_for_replace('#checkdetailscontainer', '', true);
+                } else {
+                    echo $output->select_element_for_replace('#checkdetails', $detailhtml);
+                }
+            } else {
+                // On the summary page all checks has one result, even if an aggregate result
+                // of many results like the router check.
+                $result = $check->get_result();
+
+                // A result may carry a more specific action link than the check itself.
+                $actionlink = $result->get_action_link() ?? $check->get_action_link();
+
+                // Each placeholder is replaced outright so that its busy state goes with it.
+                echo $output->select_element_for_replace("#$id .statustext", $output->check_result($result), true);
+                echo $output->select_element_for_replace("#$id .summarytext", $result->get_summary(), true);
+                $actionhtml = $actionlink ? $output->render($actionlink) : '';
+                echo $output->select_element_for_replace("#$id .actiontext", $actionhtml, true);
+            }
+
+            flush();
+        }
+
+        // Announce that every check has now been streamed in.
+        echo $output->select_element_for_replace('#checkprogress', get_string('complete'));
+        flush();
     }
 }

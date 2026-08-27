@@ -44,3 +44,6 @@ echo $OUTPUT->heading(get_string('pluginname', 'report_performance'));
 echo $table->render($OUTPUT);
 echo $OUTPUT->footer();
 
+// The page is fully rendered, the session is no longer needed while the checks stream in.
+\core\session\manager::write_close();
+$table->run_checks($OUTPUT);
