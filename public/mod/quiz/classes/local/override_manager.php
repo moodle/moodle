@@ -673,13 +673,13 @@ class override_manager {
                     $timeopen = min($opens);
                 }
 
-                // Get the latest close time, unless any are 0 which takes precedence.
+                // Get the latest close/due date, unless any are 0 which takes precedence.
                 if ($timeclose === null && count($closes)) {
-                    $timeclose = in_array(0, $closes) ? 0 : max($closes);
+                    $timeclose = self::resolve_latest_group_override_date($closes);
                 }
 
                 if ($duedate === null && count($duedates)) {
-                    $duedate = in_array(0, $duedates) ? 0 : max($duedates);
+                    $duedate = self::resolve_latest_group_override_date($duedates);
                 }
             }
         }
@@ -696,6 +696,17 @@ class override_manager {
         }
 
         return $result;
+    }
+
+    /**
+     * Resolves a set of group override dates (for timeclose or duedate) to a single effective
+     * date: the latest of them, unless one of them is 0 ("no date"), which takes precedence.
+     *
+     * @param array $dates non-empty array of timestamps from group overrides.
+     * @return int the effective date.
+     */
+    private static function resolve_latest_group_override_date(array $dates): int {
+        return in_array(0, $dates) ? 0 : max($dates);
     }
 
     /**

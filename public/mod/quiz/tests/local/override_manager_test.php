@@ -1099,6 +1099,125 @@ final class override_manager_test extends \advanced_testcase {
     }
 
     /**
+     * Test get_effective_times() returns an empty array when there are no overrides.
+     */
+    public function test_get_effective_times_no_overrides(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+
+        $this->assertSame([], override_manager::get_effective_times($quizobj->get_quizid(), $user->id));
+    }
+
+    /**
+     * Test get_effective_times() returns a user override's values, and that it takes
+     * precedence over a group override the user is also a member of.
+     */
+    public function test_get_effective_times_user_override_takes_precedence(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user->id]);
+
+        $manager = $quizobj->get_override_manager();
+        $manager->save_override([
+            'groupid' => $group->id,
+            'timeopen' => 200,
+            'timeclose' => 300,
+            'duedate' => 250,
+        ]);
+        $manager->save_override([
+            'userid' => $user->id,
+            'timeopen' => 400,
+        ]);
+
+        // User's timeopen override wins; the group's timeclose/duedate fill in the rest.
+        $this->assertEquals([
+            'timeopen' => 400,
+            'timeclose' => 300,
+            'duedate' => 250,
+        ], override_manager::get_effective_times($quizobj->get_quizid(), $user->id));
+    }
+
+    /**
+     * Test get_effective_times() applies a group override to its members.
+     */
+    public function test_get_effective_times_group_override(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user->id]);
+
+        $manager = $quizobj->get_override_manager();
+        $manager->save_override([
+            'groupid' => $group->id,
+            'timeclose' => 300,
+            'duedate' => 250,
+        ]);
+
+        $this->assertEquals([
+            'timeclose' => 300,
+            'duedate' => 250,
+        ], override_manager::get_effective_times($quizobj->get_quizid(), $user->id));
+    }
+
+    /**
+     * Test get_effective_times() resolves multiple group overrides to the latest date,
+     * for both timeclose and duedate.
+     */
+    public function test_get_effective_times_multiple_group_overrides_latest_wins(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user->id]);
+
+        $manager = $quizobj->get_override_manager();
+        $manager->save_override(['groupid' => $group1->id, 'timeclose' => 300, 'duedate' => 250]);
+        $manager->save_override(['groupid' => $group2->id, 'timeclose' => 500, 'duedate' => 450]);
+
+        $result = override_manager::get_effective_times($quizobj->get_quizid(), $user->id);
+        $this->assertEquals(500, $result['timeclose']);
+        $this->assertEquals(450, $result['duedate']);
+    }
+
+    /**
+     * Test get_effective_times() gives precedence to a "no date" (0) group override over any
+     * other group's set date, for both timeclose and duedate.
+     */
+    public function test_get_effective_times_multiple_group_overrides_zero_takes_precedence(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user->id]);
+
+        $manager = $quizobj->get_override_manager();
+        $manager->save_override(['groupid' => $group1->id, 'timeclose' => 300, 'duedate' => 250]);
+        $manager->save_override(['groupid' => $group2->id, 'timeclose' => 0, 'duedate' => 0]);
+
+        $result = override_manager::get_effective_times($quizobj->get_quizid(), $user->id);
+        $this->assertEquals(0, $result['timeclose']);
+        $this->assertEquals(0, $result['duedate']);
+    }
+
+    /**
      * Provide delete functions to test
      *
      * @return array
