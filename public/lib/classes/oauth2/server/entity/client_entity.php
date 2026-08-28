@@ -45,6 +45,27 @@ class client_entity implements ClientEntityInterface {
     /** @var int Client secret is revoked */
     public const int SECRET_REVOKED_YES = 1;
 
+    /** @var int Public client type */
+    public const int TYPE_PUBLIC = 0;
+
+    /** @var int Confidential client type */
+    public const int TYPE_CONFIDENTIAL = 1;
+
+    /** @var string Authorization code grant type */
+    public const string GRANT_TYPE_AUTHORIZATION_CODE = 'authorization_code';
+
+    /** @var string Refresh token grant type */
+    public const string GRANT_TYPE_REFRESH_TOKEN = 'refresh_token';
+
+    /** @var string Client credentials grant type */
+    public const string GRANT_TYPE_CLIENT_CREDENTIALS = 'client_credentials';
+
+    /** @var string Password grant type */
+    public const string GRANT_TYPE_PASSWORD = 'password';
+
+    /** @var int The ID of the client */
+    protected int $id;
+
     /** @var \core\context The owner context */
     protected \core\context $ownercontext;
 
@@ -53,6 +74,21 @@ class client_entity implements ClientEntityInterface {
 
     /** @var string|null The description of the client */
     protected ?string $description = null;
+
+    /** @var array The grant types supported by the client */
+    protected array $granttypes;
+
+    /** @var bool Whether PKCE is enabled for the client */
+    protected bool $ispkceenabled;
+
+    /**
+     * Get the ID of the client.
+     *
+     * @return int
+     */
+    public function get_id(): int {
+        return $this->id;
+    }
 
     /**
      * Get the context of the client owner.
@@ -73,6 +109,24 @@ class client_entity implements ClientEntityInterface {
     }
 
     /**
+     * Get the grant types supported by the client.
+     *
+     * @return array
+     */
+    public function get_grant_types(): array {
+        return $this->granttypes;
+    }
+
+    /**
+     * Whether PKCE is enabled for the client.
+     *
+     * @return bool
+     */
+    public function is_pkce_enabled(): bool {
+        return $this->ispkceenabled;
+    }
+
+    /**
      * Returns true if the client supports the given grant type.
      *
      * @param string $granttype The grant type to check.
@@ -81,14 +135,19 @@ class client_entity implements ClientEntityInterface {
     public function supportsGrantType(string $granttype): bool {
         // If Client Credentials grant is requested (Machine-to-machine communication), the client must be confidential
         // and owned by system context.
-        if ($granttype === 'client_credentials') {
+        if ($granttype === self::GRANT_TYPE_CLIENT_CREDENTIALS) {
             if (!$this->isConfidential() || $this->ownercontext->contextlevel !== CONTEXT_SYSTEM) {
                 return false;
             }
         }
 
-        // For now, all clients support all grant types.
-        return true;
+        // The Resource Owner Password Credentials grant is deprecated and no longer supported.
+        if ($granttype === self::GRANT_TYPE_PASSWORD) {
+            return false;
+        }
+
+        // Finally, check if the grant type is in the list of supported grant types for this client.
+        return in_array($granttype, $this->granttypes, true);
     }
 
     /**
@@ -109,6 +168,7 @@ class client_entity implements ClientEntityInterface {
      */
     public static function create_from_record(\stdClass $clientrecord, array $redirecturis): self {
         $client = new self();
+        $client->id = (int) $clientrecord->id;
         $client->setIdentifier($clientrecord->clientidentifier);
         $client->name = $clientrecord->name;
         $client->description = $clientrecord->description;
@@ -118,6 +178,8 @@ class client_entity implements ClientEntityInterface {
         }, $redirecturis);
         $client->status = (int) $clientrecord->status;
         $client->isConfidential = (bool) $clientrecord->isconfidential;
+        $client->granttypes = !empty($clientrecord->granttypes) ? explode(',', $clientrecord->granttypes) : [];
+        $client->ispkceenabled = (bool) $clientrecord->ispkceenabled;
 
         return $client;
     }

@@ -688,3 +688,15 @@
         }
     }
 }
+
+#page-admin-oauth2server-client-create {
+    [data-groupname="clienttypegroup"] fieldset,
+    [data-groupname="primaryflowsgroup"] fieldset {
+        // Targets the very first div inside the fieldset.
+        > div:first-of-type {
+            padding: 1rem;
+            border: 1px solid $table-border-color;
+            border-radius: $input-border-radius;
+        }
+    }
+}

@@ -91,24 +91,30 @@ class client_manager {
      *
      * @param string $name The human-readable name of the client.
      * @param \core\context $ownercontext The context which owns the client.
+     * @param array $granttypes The grant types supported by the client.
      * @param array $redirecturis The redirect URIs to register, as strings. Duplicates are ignored.
      * @param string|null $description An optional human-readable description.
      * @param bool $isconfidential Whether the client can keep a secret confidential.
+     * @param bool $ispkceenabled Whether PKCE is enabled for this client.
      * @return client_entity The client that was created.
      * @throws moodle_exception If any of the redirect URIs is not usable.
      */
     public function create_client(
         string $name,
         \core\context $ownercontext,
+        array $granttypes,
         array $redirecturis = [],
         ?string $description = null,
         bool $isconfidential = true,
+        bool $ispkceenabled = true,
     ): client_entity {
         $redirecturis = array_values(array_unique($redirecturis));
 
         foreach ($redirecturis as $uri) {
             $this->validate_redirect_uri_format($uri);
         }
+
+        $granttypes = $this->validate_grant_types($granttypes, $isconfidential, $ownercontext);
 
         $now = $this->clock->time();
         $record = (object) [
@@ -118,6 +124,8 @@ class client_manager {
             'ownercontext' => $ownercontext->id,
             'status' => client_entity::STATUS_ACTIVE,
             'isconfidential' => (int) $isconfidential,
+            'granttypes' => implode(',', $granttypes),
+            'ispkceenabled' => (int) $ispkceenabled,
             'timecreated' => $now,
             'timemodified' => $now,
         ];
@@ -537,7 +545,7 @@ class client_manager {
      * @return void
      * @throws moodle_exception If the URI is not usable as a redirect URI.
      */
-    protected function validate_redirect_uri_format(string $uri): void {
+    public function validate_redirect_uri_format(string $uri): void {
         $parts = parse_url($uri);
 
         // A redirect URI must be absolute and must not carry a fragment. See RFC 6749, section 3.1.2.
@@ -546,15 +554,69 @@ class client_manager {
             && !empty($parts['host'])
             && !isset($parts['fragment']);
 
-        // HTTPS is required, except on the loopback interface, which native apps rely on during
-        // development and cannot serve over HTTPS. See RFC 8252, section 7.3.
-        $scheme = $isabsolute ? strtolower($parts['scheme']) : '';
-        $isallowedscheme = $scheme === 'https'
-            || ($scheme === 'http' && $this->is_loopback_host($parts['host']));
-
-        if (!$isabsolute || !$isallowedscheme) {
+        if (!$isabsolute) {
             throw new moodle_exception('oauth2clientinvalidredirecturi', 'error', '', $uri);
         }
+
+        $scheme = strtolower($parts['scheme']);
+        $host = strtolower($parts['host']);
+
+        // HTTPS is required, except on the loopback interface, which native apps rely on during
+        // development and cannot serve over HTTPS. See RFC 8252, section 7.3.
+        $islocal = $this->is_loopback_host($host);
+
+        if ($scheme !== 'https' && !($scheme === 'http' && $islocal)) {
+            throw new moodle_exception('oauth2clientinvalidredirecturi', 'error', '', $uri);
+        }
+    }
+
+    /**
+     * Validate that the requested grant types are allowed based on the client settings.
+     *
+     * @param array $granttypes The list of requested grant types.
+     * @param bool $isconfidential Whether the client is confidential or public.
+     * @param \core\context $ownercontext The context owning this client.
+     * @return array The sanitized and normalized list of grant types.
+     * @throws \coding_exception If any validation rule is violated.
+     */
+    private function validate_grant_types(array $granttypes, bool $isconfidential, \core\context $ownercontext): array {
+        // Clean up the array (remove duplicates and empty values).
+        $granttypes = array_values(array_unique(array_filter($granttypes)));
+
+        // Define all valid grant types allowed.
+        $validgrants = [
+            client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+            client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+            client_entity::GRANT_TYPE_REFRESH_TOKEN,
+        ];
+
+        foreach ($granttypes as $grant) {
+            if (!in_array($grant, $validgrants, true)) {
+                throw new \coding_exception("Unsupported grant type specified: {$grant}");
+            }
+        }
+
+        // Public clients cannot use Client Credential flows.
+        if (!$isconfidential && in_array(client_entity::GRANT_TYPE_CLIENT_CREDENTIALS, $granttypes, true)) {
+            throw new \coding_exception('Public clients cannot support the client_credentials grant type.');
+        }
+
+        // Client Credentials grant is restricted strictly to the system context.
+        if (in_array(client_entity::GRANT_TYPE_CLIENT_CREDENTIALS, $granttypes, true)) {
+            if ($ownercontext->contextlevel !== CONTEXT_SYSTEM) {
+                throw new \coding_exception('The client_credentials grant type is only allowed for system-owned clients.');
+            }
+        }
+
+        $isauthorizationcodesupported = in_array(client_entity::GRANT_TYPE_AUTHORIZATION_CODE, $granttypes, true);
+        $isrefreshtokensupported = in_array(client_entity::GRANT_TYPE_REFRESH_TOKEN, $granttypes, true);
+
+        // Authorization code and Refresh tokens grants must be supported together.
+        if ($isauthorizationcodesupported !== $isrefreshtokensupported) {
+            throw new \coding_exception('The authorization_code and refresh_token grants must be supported together.');
+        }
+
+        return $granttypes;
     }
 
     /**

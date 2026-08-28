@@ -57,12 +57,21 @@ final class client_manager_test extends \advanced_testcase {
      * @param array $redirecturis The redirect URIs to register.
      * @return \stdClass The client record.
      */
-    private function create_fixture_client(client_manager $manager, array $redirecturis = []): \stdClass {
+    private function create_fixture_client(
+        client_manager $manager,
+        array $redirecturis = [],
+        array $supportedgrants = [
+            client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+            client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+            client_entity::GRANT_TYPE_REFRESH_TOKEN,
+        ],
+    ): \stdClass {
         global $DB;
 
         $client = $manager->create_client(
             name: 'Test client',
             ownercontext: \core\context\system::instance(),
+            granttypes: $supportedgrants,
             redirecturis: $redirecturis,
         );
 
@@ -149,6 +158,11 @@ final class client_manager_test extends \advanced_testcase {
         $client = $manager->create_client(
             name: 'My integration',
             ownercontext: $context,
+            granttypes: [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
+            ],
             redirecturis: ['https://example.com/callback'],
             description: 'Does something useful',
         );
@@ -160,6 +174,15 @@ final class client_manager_test extends \advanced_testcase {
         $this->assertTrue($client->isConfidential());
         $this->assertSame($context->id, $client->get_owner_context()->id);
         $this->assertSame(['https://example.com/callback'], array_values((array) $client->getRedirectUri()));
+        $this->assertEqualsCanonicalizing(
+            [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
+            ],
+            $client->get_grant_types(),
+        );
+        $this->assertTrue($client->is_pkce_enabled());
 
         $record = $DB->get_record(
             'oauth2_server_clients',
@@ -183,6 +206,11 @@ final class client_manager_test extends \advanced_testcase {
         $created = $manager->create_client(
             name: 'My integration',
             ownercontext: \core\context\system::instance(),
+            granttypes: [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
+            ],
             redirecturis: ['https://example.com/callback', 'https://example.com/other'],
         );
 
@@ -194,6 +222,10 @@ final class client_manager_test extends \advanced_testcase {
         $this->assertEqualsCanonicalizing(
             array_values((array) $created->getRedirectUri()),
             array_values((array) $fetched->getRedirectUri()),
+        );
+        $this->assertEqualsCanonicalizing(
+            $created->get_grant_types(),
+            $fetched->get_grant_types(),
         );
     }
 
@@ -233,6 +265,11 @@ final class client_manager_test extends \advanced_testcase {
             $manager->create_client(
                 name: 'Test client',
                 ownercontext: \core\context\system::instance(),
+                granttypes: [
+                    client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                    client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
+                    client_entity::GRANT_TYPE_REFRESH_TOKEN,
+                ],
                 redirecturis: ['http://example.com/callback'],
             );
             $this->fail('A moodle_exception was expected.');
@@ -672,6 +709,10 @@ final class client_manager_test extends \advanced_testcase {
         $manager = $this->get_manager();
         $client = $manager->create_client(
             name: 'Public client',
+            granttypes: [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
+            ],
             ownercontext: \core\context\system::instance(),
             isconfidential: false,
         );

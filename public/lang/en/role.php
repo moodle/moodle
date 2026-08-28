@@ -463,6 +463,7 @@ $string['site:manageallmessaging'] = 'Add, remove, block and unblock contacts fo
 $string['site:manageblocks'] = 'Manage blocks on a page';
 $string['site:messageanyuser'] = 'Bypass user privacy preferences for messaging any user';
 $string['site:managecontextlocks'] = 'Manage freezing of contexts';
+$string['site:manageoauth2clients'] = 'Manage OAuth2 clients';
 $string['site:mnetloginfromremote'] = 'Login from a remote application via MNet';
 $string['site:mnetlogintoremote'] = 'Roam to a remote application via MNet';
 $string['site:readallmessages'] = 'Read all messages on site';

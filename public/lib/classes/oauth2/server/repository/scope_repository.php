@@ -16,6 +16,7 @@
 
 namespace core\oauth2\server\repository;
 
+use core\oauth2\server\entity\client_entity;
 use core\router\scope\abstract_scope;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
@@ -59,7 +60,7 @@ class scope_repository implements ScopeRepositoryInterface {
         }
 
         // Validate against the specific session if exchanging an authorization code.
-        if ($granttype === 'authorization_code' && $authcodeid !== null) {
+        if ($granttype === client_entity::GRANT_TYPE_AUTHORIZATION_CODE && $authcodeid !== null) {
             $approvedscopes = $DB->get_field(
                 'oauth2_server_client_auth_codes',
                 'scopes',

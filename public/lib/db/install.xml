@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20260707" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20260826" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -5066,6 +5066,8 @@
         <FIELD NAME="ownercontext" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context ID representing the owner of the OAuth client"/>
         <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Current lifecycle status of the OAuth2 client"/>
         <FIELD NAME="isconfidential" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Indicates if the OAuth2 client can securely maintain a secret"/>
+        <FIELD NAME="granttypes" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The OAuth2 grant types supported by the client, represented as comma-separated values"/>
+        <FIELD NAME="ispkceenabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Indicates whether PKCE is enabled for the OAuth2 client"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last modification timestamp"/>
         <FIELD NAME="lastaccessed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last accessed timestamp"/>
