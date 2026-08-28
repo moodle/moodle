@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+const {lintTypescript} = require('./xo');
+
 module.exports = grunt => {
     /**
      * Register ESM task — build or watch ESM components.
@@ -46,18 +48,15 @@ module.exports = grunt => {
 
         if (isWatch) {
             const path = require('path');
-            const {spawn} = require('child_process');
 
-            // Run ESLint on the rebuilt source files in check-only mode (no --fix)
-            // to avoid writing changes that would re-trigger esbuild.
-            const eslintBin = path.join(grunt.moodleEnv.gruntFilePath, 'node_modules', '.bin', 'eslint');
+            // Lint the rebuilt source files in check-only mode (no --fix) to avoid
+            // writing changes that would re-trigger esbuild.
             const onRebuild = (srcFiles) => {
                 if (srcFiles.length === 0) {
                     return;
                 }
                 const absSrcFiles = srcFiles.map(f => path.join(grunt.moodleEnv.gruntFilePath, f));
-                spawn(eslintBin, absSrcFiles, {stdio: 'inherit'})
-                    .on('error', err => grunt.log.error(`ESLint: ${err.message}`));
+                lintTypescript(grunt, absSrcFiles).catch(err => grunt.log.error(err.message));
             };
 
             (async() => {
@@ -102,6 +101,10 @@ module.exports = grunt => {
                 const {applyDefaultSwizzleSafety} = await import('../../scripts/lib/swizzle/index.mjs');
 
                 generateAliases();
+
+                // Lint before building.
+                await lintTypescript(grunt);
+
                 await buildPluginComponents();
 
                 const defaulted = applyDefaultSwizzleSafety(grunt.moodleEnv.gruntFilePath);

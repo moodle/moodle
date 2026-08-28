@@ -3,7 +3,7 @@
   "private": true,
   "description": "Moodle",
   "scripts": {
-    "postinstall": "npm run update-packages",
+    "postinstall": "npm run update-packages && grunt ignorefiles",
     "update-packages": "node scripts/update-packages.mjs",
     "upgradenote": "node .grunt/upgradenotes.mjs create",
     "pretest": "grunt jsconfig",
@@ -34,7 +34,6 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/requirejs": "^2.1.37",
-    "@typescript-eslint/parser": "^8.53.1",
     "@xmldom/xmldom": "^0.8.7",
     "ajv": "^8.12.0",
     "async": "^3.2.5",
@@ -83,6 +82,7 @@
     "ts-jest": "^29.4.9",
     "typescript": "^5.7.3",
     "winston": "^3.13.0",
+    "xo": "^4.0.0",
     "xpath": "0.0.32"
   },
   "overrides": {

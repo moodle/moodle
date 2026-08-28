@@ -1,0 +1,19 @@
+issueNumber: MDL-87988
+notes:
+  core:
+    - type: changed
+      message: >-
+        TypeScript sources under js/esm/src are now linted with XO. The linter runs before
+        the bundles are built, so grunt esm and grunt js fail when it reports a problem in
+        a plugin's TypeScript. Run grunt xo to lint on its own, or grunt xo --fix to apply
+        the fixes XO can make automatically. Rules live in xo.config.mjs. JavaScript is
+        unaffected and stays on ESLint.
+
+        For the rules and Moodle's overrides, see
+        https://moodledev.io/general/development/policies/codingstyle/typescript
+    - type: removed
+      message: >-
+        The grunt eslint:react task has been removed. Use grunt xo instead.
+
+        For full documentation, see
+        https://moodledev.io/general/development/policies/codingstyle/typescript

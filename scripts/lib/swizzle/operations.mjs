@@ -208,7 +208,7 @@ function resolveParentImport(specifier, target, rootDir) {
  * @returns {string}
  */
 function generateWrapScaffold(specifier, target, parentImport, componentExport) {
-    const {component, module} = parseSpecifier(specifier);
+    const {module} = parseSpecifier(specifier);
 
     const isNamedParent = !parentImport.includes('/theme-original/');
     const chainNote = '// component, preserving the full theme override chain.';
@@ -217,7 +217,6 @@ function generateWrapScaffold(specifier, target, parentImport, componentExport) 
         ? `// ${parentImport} resolves to the nearest ancestor theme's version of this\n${chainNote}`
         : `// ${parentImport} resolves to the core (upstream) version of this\n${bypassNote}`;
 
-    const moduleTag = `theme_${target.name}/${component}/${module}`;
     const label = `${target.name} theme`;
 
     // Mirror the original's export shape, so importers of the specifier are
@@ -243,19 +242,16 @@ ${originalImport}
 type Props = ComponentProps<typeof OriginalComponent>;
 
 /**
- * ${label} wrapper for ${module}.
+ * Wrapper for ${module} in the ${label}.
  *
- * Renders the original component unchanged. Add your customisations here:
- *   - Extra markup before or after the original
- *   - Additional props or context
- *   - Side-effects (analytics, logging, etc.)
- *
- * @module     ${moduleTag}
+ * Renders the original component unchanged. Add your customisations here, such as
+ * extra markup before or after the original, additional props or context, or side
+ * effects like analytics and logging.
  */
 ${declaration}(props: Props) {
     return (
         <>
-            {/* TODO: add your customisation around the original */}
+            {/* Add your customisation around the original. */}
             <OriginalComponent {...props} />
         </>
     );

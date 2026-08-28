@@ -214,7 +214,8 @@ const getThirdPartyPaths = () => {
     const libs = ['node_modules/', 'vendor/'];
 
     const addLibToList = lib => {
-        if (!lib.match('\\*') && fs.statSync(lib).isDirectory()) {
+        // A location that does not exist is kept as written rather than stopping the build.
+        if (!lib.match('\\*') && fs.statSync(lib, {throwIfNoEntry: false})?.isDirectory()) {
             // Ensure trailing slash on dirs.
             lib = lib.replace(/\/?$/, '/');
         }
@@ -447,11 +448,41 @@ const getThirdPartyLibsData = () => {
     return libraryList.sort((a, b) => a.location.localeCompare(b.location));
 };
 
+/**
+ * Get the paths that components list in their own ignore file.
+ *
+ * @param {string} fileName The ignore file to read in each component, such as .eslintignore
+ * @returns {string[]} Paths relative to the code base directory
+ */
+const getLocalIgnorePaths = fileName => {
+    const fs = require('fs');
+
+    const ignorePaths = [];
+    getComponentPaths(process.cwd() + '/').forEach(componentPath => {
+        const ignoreFilePath = `${componentPath}/${fileName}`;
+        if (!fs.existsSync(ignoreFilePath)) {
+            return;
+        }
+        fs.readFileSync(ignoreFilePath, 'utf8').split('\n').forEach(entry => {
+            entry = entry.trim();
+            if (entry.length > 0 && !entry.startsWith('#') && !entry.startsWith('!')) {
+                while (entry.startsWith('/')) {
+                    entry = entry.substring(1);
+                }
+                ignorePaths.push(componentPath + '/' + entry);
+            }
+        });
+    });
+
+    return ignorePaths;
+};
+
 module.exports = {
     fetchComponentData,
     getAmdSrcGlobList,
     getComponentFromPath,
     getComponentPaths,
+    getLocalIgnorePaths,
     getOwningComponentDirectory,
     getYuiSrcGlobList,
     getThirdPartyLibsList,
