@@ -128,6 +128,7 @@ final class quiz_attempt_submitted_test extends \advanced_testcase {
 
         $tasks = manager::get_adhoc_tasks(recalculate::class);
         $this->assertCount(2, $tasks);
+        usort($tasks, fn(recalculate $a, recalculate $b): int => $a->get_custom_data()->quizid <=> $b->get_custom_data()->quizid);
         $task1 = array_shift($tasks);
         $this->assert_task_is_queued_for_quiz($task1, $quiz1);
         $task2 = array_shift($tasks);
