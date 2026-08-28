@@ -102,6 +102,33 @@ final class colour_mode_test extends \advanced_testcase {
     }
 
     /**
+     * Colour modes are off while the site is being installed.
+     *
+     * The output hooks run on the installer's own pages, before there is any configuration to read. Reading one there
+     * throws, which used to take the web installer down with a 500 on the licence page.
+     */
+    public function test_disabled_during_initial_install(): void {
+        global $CFG, $PAGE;
+
+        $PAGE->set_url('/');
+        $PAGE->force_theme('boost');
+        set_config('defaultcolourmode', colour_mode::DARK, 'theme_boost');
+
+        unset($CFG->rolesactive);
+        $this->assertTrue(during_initial_install());
+
+        $this->assertFalse(colour_mode::is_enabled());
+        $this->assertFalse(colour_mode::can_choose_mode());
+        $this->assertEquals(colour_mode::LIGHT, colour_mode::get_current_mode());
+        $this->assertEquals(colour_mode::LIGHT, colour_mode::get_site_default());
+
+        // And so the html tag is left exactly as it was, rather than the page failing to render at all.
+        $hook = new \core\hook\output\before_html_attributes($PAGE->get_renderer('core'));
+        hook_listener::before_html_attributes_listener($hook);
+        $this->assertEquals([], $hook->get_attributes());
+    }
+
+    /**
      * Guests and users who are not logged in cannot store a preference, so they get the site default.
      */
     public function test_can_choose_mode(): void {
