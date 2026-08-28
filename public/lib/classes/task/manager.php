@@ -376,7 +376,7 @@ class manager {
         if (!class_exists($classname)) {
             throw new \moodle_exception('invalidtaskclassname', '', '', $record->classname);
         }
-        $task = new $classname();
+        $task = \core\di::make($classname);
         if (isset($record->nextruntime)) {
             $task->set_next_run_time($record->nextruntime);
         }
@@ -428,7 +428,7 @@ class manager {
             return false;
         }
         /** @var \core\task\scheduled_task $task */
-        $task = new $classname();
+        $task = \core\di::make($classname);
 
         if ($override) {
             // Update values with those defined in the config, if any are set.

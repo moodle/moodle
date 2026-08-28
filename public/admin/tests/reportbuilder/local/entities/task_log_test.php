@@ -68,7 +68,7 @@ final class task_log_test extends advanced_testcase {
         );
 
         if ($expectname) {
-            $task = new $classname();
+            $task = \core\di::make($classname);
             $this->assertStringContainsString($task->get_name(), $result);
             // Task name should appear before the classname div.
             $this->assertLessThan(

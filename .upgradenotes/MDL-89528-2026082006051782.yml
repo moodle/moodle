@@ -1,0 +1,32 @@
+issueNumber: MDL-89528
+notes:
+  core:
+    - message: >
+        Support for Attribute-based Dependency Injection has been added:
+
+
+        ```php
+
+        class example_class {
+            #[\DI\Attribute\Inject]
+            private \core\formatting $formatter;
+        }
+
+        // Fetch the example class using the `get` method for entries
+        // stored in the container.
+        $example1 = di::get(\core\tests\di\example_class::class);
+        // Fetch the example class using the `make` method for entries
+        // built on each call.
+        $example2 = di::make(\core\tests\di\example_class::class);
+
+        ```
+
+
+        Attribute-based Dependency Injection is the best practice and
+        recommended approach for use in controllers.
+
+
+        This also makes it easier to support the use of Dependency
+        Injection in other areas of the codebase, such as legacy code,
+        and factories using the `make` method.
+      type: improved
