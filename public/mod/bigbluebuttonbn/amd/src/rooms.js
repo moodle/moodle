@@ -40,20 +40,22 @@ import {eventTypes, notifyCurrentSessionEnded} from './events';
  * @param {Number} pollInterval poll interval in miliseconds
  */
 export const init = (bigbluebuttonbnid, pollInterval) => {
-    const completionElement = document.querySelector('a[href*=completion_validate]');
-    if (completionElement) {
-        completionElement.addEventListener("click", event => {
-            event.preventDefault();
+    // Delegated on document, rather than looked up and bound once here.
+    document.addEventListener('click', event => {
+        const completionElement = event.target.closest('a[href*=completion_validate]');
+        if (!completionElement) {
+            return;
+        }
+        event.preventDefault();
 
-            const pendingPromise = new Pending('mod_bigbluebuttonbn/completion:validate');
+        const pendingPromise = new Pending('mod_bigbluebuttonbn/completion:validate');
 
-            repository.completionValidate(bigbluebuttonbnid)
-                .then(() => getString('completionvalidatestatetriggered', 'mod_bigbluebuttonbn'))
-                .then(str => addToast(str))
-                .then(() => pendingPromise.resolve())
-                .catch(displayException);
-        });
-    }
+        repository.completionValidate(bigbluebuttonbnid)
+            .then(() => getString('completionvalidatestatetriggered', 'mod_bigbluebuttonbn'))
+            .then(str => addToast(str))
+            .then(() => pendingPromise.resolve())
+            .catch(displayException);
+    });
 
     document.addEventListener('click', e => {
         const joinButton = e.target.closest('[data-action="join"]');
