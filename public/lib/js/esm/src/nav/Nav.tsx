@@ -193,7 +193,12 @@ function DropdownItems({items, istablist = false}: {items: NavNode[]; istablist?
                         role="menuitem"
                         data-bs-toggle={istablist ? 'tab' : undefined}
                         data-text={istablist ? item.text : undefined}
-                        data-disableactive={istablist ? 'true' : undefined}
+                        // React owns this item's active state via item.active above regardless of
+                        // istablist: without this, core/menu_navigation's legacy click handler
+                        // forces aria-current onto whichever dropdown item was clicked even when
+                        // the click doesn't actually navigate anywhere (e.g. a stubbed-out href in
+                        // tests, or any other no-op link).
+                        data-disableactive="true"
                         {...toAttributeRecord(item.attributes)}
                         // Item.text is exported raw HTML (e.g. an icon plus a visually-hidden "opens in
                         // a new window" span), matching the legacy moremenu_children.mustache's unescaped {{{text}}}.
@@ -379,6 +384,13 @@ const renderPill = (item: NavNode, istablist: boolean) => {
             // Tab stop, so keyboard users Tab past the whole bar in one step and rely on
             // core/menu_navigation's arrow-key handling to move within it.
             tabIndex={selected ? 0 : -1}
+            // React owns this pill's active state via the `selected` prop above; without this,
+            // core/menu_navigation's legacy click handler forces aria-current onto the clicked
+            // pill regardless of whether the click actually navigates anywhere (e.g. a stubbed-out
+            // href in tests, or any other no-op link), leaving the old and new active items both
+            // (or neither) marked correctly. TabPill and DropdownItems' istablist items already opt
+            // out the same way.
+            data-disableactive="true"
         />
     );
 };
