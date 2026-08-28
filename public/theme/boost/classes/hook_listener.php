@@ -82,7 +82,7 @@ class hook_listener {
      * @param before_html_attributes $hook The hook object.
      */
     public static function before_html_attributes_listener(before_html_attributes $hook): void {
-        if (!colour_mode::is_enabled() || !colour_mode::is_boost_theme()) {
+        if (!colour_mode::is_boost_theme() || !colour_mode::is_enabled()) {
             return;
         }
 
@@ -110,7 +110,7 @@ class hook_listener {
     public static function before_standard_head_html_generation_listener(
         before_standard_head_html_generation $hook,
     ): void {
-        if (!colour_mode::is_enabled() || !colour_mode::is_boost_theme()) {
+        if (!colour_mode::is_boost_theme() || !colour_mode::is_enabled()) {
             return;
         }
 

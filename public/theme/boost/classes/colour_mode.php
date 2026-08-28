@@ -83,6 +83,13 @@ class colour_mode {
      * @return bool
      */
     public static function is_enabled(): bool {
+        // The output hooks that this method gates run on the installer's own pages, where there is no configuration to read yet:
+        // get_config() throws until the database has been installed, and that exception is how core detects that it
+        // still needs to be. Every other entry point to this class goes through here.
+        if (during_initial_install()) {
+            return false;
+        }
+
         if (
             defined('BEHAT_SITE_RUNNING')
             && function_exists('behat_get_colour_mode')
@@ -167,6 +174,12 @@ class colour_mode {
      * @return string One of the self::LIGHT, self::DARK or self::AUTO constants.
      */
     public static function get_site_default(): string {
+        // Reached through is_enabled() in every path there is today, so this only guards against a future caller
+        // reaching it directly on an installer page, where get_config() would throw.
+        if (during_initial_install()) {
+            return self::LIGHT;
+        }
+
         if (defined('BEHAT_SITE_RUNNING')) {
             $behatmode = behat_get_colour_mode();
             if (self::is_valid_mode($behatmode)) {
