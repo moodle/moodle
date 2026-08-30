@@ -1,0 +1,49 @@
+issueNumber: MDL-89296
+notes:
+  core:
+    - message: >
+        A new `\core\output\html_writer::react_component()` method has been
+        added to assist with rendering a react component.
+
+
+        This should be used instead of manually writing the div.
+
+
+        Parameters should not be json-serialized before being passed into the
+        method.
+      type: improved
+    - message: >
+        A new `\core\output\react_component_renderable` interface has been
+        created to
+
+        support rendering a renderable using React.
+
+
+        ```php
+
+        final class my_renderable implements
+        \core\output\react_component_renderable {
+            #[\Override]
+            public function get_react_component_name(): string {
+                return 'block_timeline/Timeline';
+            }
+
+            #[\Override]
+            public function get_react_component_props(
+                \core\output\renderer_base $renderer,
+            ): \stdClass {
+                return (object) [
+                    // ...
+                ];
+            }
+        }
+
+
+        // Create and prepare the renderable for React rendering.
+
+        $renderable = new my_renderable(...);
+
+        echo $OUTPUT->render($renderable);
+
+        ```
+      type: improved

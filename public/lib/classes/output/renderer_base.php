@@ -151,6 +151,27 @@ class renderer_base {
     }
 
     /**
+     * Render a React component with the given context
+     *
+     * The module name will be prefixed with the `@moodle/lms/` namespace,
+     * so the component name should be the path to the component within the
+     * `lms` package.
+     *
+     * @param string $modulename
+     * @param stdClass $props
+     * @return string
+     */
+    public function render_react_component(
+        string $modulename,
+        stdClass $props,
+    ): string {
+        return html_writer::react_component(
+            "@moodle/lms/{$modulename}",
+            $props,
+        );
+    }
+
+    /**
      * Renders a template by name with the given context.
      *
      * The provided data needs to be array/stdClass made up of only simple types.
@@ -240,6 +261,15 @@ class renderer_base {
                 // Note: This has a higher priority than the named_templatable to allow the theme to override the template.
                 return $this->$rendermethod($widget);
             }
+        }
+
+        if ($widget instanceof react_component_renderable) {
+            // This is a react renderable.
+            // Render the react component with the provided props.
+            return $this->render_react_component(
+                $widget->get_react_component_name(),
+                $widget->get_react_component_props($this),
+            );
         }
 
         if ($widget instanceof named_templatable) {
