@@ -18,6 +18,7 @@ namespace core\route;
 
 use core\oauth2\server\client_manager;
 use core\oauth2\server\entity\access_token_entity;
+use core\oauth2\server\entity\client_entity;
 use core\oauth2\server\entity\refresh_token_entity;
 use core\oauth2\server\repository\client_repository;
 use core\oauth2\server\token_revoker;
@@ -76,6 +77,10 @@ final class oauth2_revoke_test extends \advanced_testcase {
             name: $isconfidential ? 'Confidential client' : 'Public client',
             ownercontext: \core\context\system::instance(),
             isconfidential: $isconfidential,
+            granttypes: [
+                client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
+                client_entity::GRANT_TYPE_REFRESH_TOKEN,
+            ],
         );
 
         $identifier = $client->getIdentifier();
