@@ -28,8 +28,8 @@ Feature: Create OAuth2 clients
       | Test Confidential Client | Confidential | Active |
     And "Edit" "link" should exist in the "Test Confidential Client" "table_row"
     And "Manage secrets" "link" should exist in the "Test Confidential Client" "table_row"
-    And "Revoke" "link" should exist in the "Test Confidential Client" "table_row"
-    And "Delete" "link" should not exist in the "Test Confidential Client" "table_row"
+    And "Revoke" "button" should exist in the "Test Confidential Client" "table_row"
+    And "Delete" "button" should not exist in the "Test Confidential Client" "table_row"
 
   Scenario: Create a confidential OAuth2 client supporting client credentials flow only
     Given I click on "Create client" "link"
@@ -50,8 +50,8 @@ Feature: Create OAuth2 clients
       | Test Confidential Client | Confidential | Active |
     And "Edit" "link" should exist in the "Test Confidential Client" "table_row"
     And "Manage secrets" "link" should exist in the "Test Confidential Client" "table_row"
-    And "Revoke" "link" should exist in the "Test Confidential Client" "table_row"
-    And "Delete" "link" should not exist in the "Test Confidential Client" "table_row"
+    And "Revoke" "button" should exist in the "Test Confidential Client" "table_row"
+    And "Delete" "button" should not exist in the "Test Confidential Client" "table_row"
 
   Scenario: Create a confidential OAuth2 client supporting authorization code flow only
     Given I click on "Create client" "link"
@@ -73,8 +73,8 @@ Feature: Create OAuth2 clients
       | Test Confidential Client | Confidential | Active |
     And "Edit" "link" should exist in the "Test Confidential Client" "table_row"
     And "Manage secrets" "link" should exist in the "Test Confidential Client" "table_row"
-    And "Revoke" "link" should exist in the "Test Confidential Client" "table_row"
-    And "Delete" "link" should not exist in the "Test Confidential Client" "table_row"
+    And "Revoke" "button" should exist in the "Test Confidential Client" "table_row"
+    And "Delete" "button" should not exist in the "Test Confidential Client" "table_row"
 
   Scenario: Create a public OAuth2 client
     Given I click on "Create client" "link"
@@ -93,9 +93,9 @@ Feature: Create OAuth2 clients
       | Name               | Type   | Status |
       | Test Public Client | Public | Active |
     And "Edit" "link" should exist in the "Test Public Client" "table_row"
-    And "Revoke" "link" should exist in the "Test Public Client" "table_row"
+    And "Revoke" "button" should exist in the "Test Public Client" "table_row"
     And "Manage secrets" "link" should not exist in the "Test Public Client" "table_row"
-    And "Delete" "link" should not exist in the "Test Public Client" "table_row"
+    And "Delete" "button" should not exist in the "Test Public Client" "table_row"
 
   Scenario: Validation checks prevent creating an invalid client
     Given I click on "Create client" "link"
@@ -116,11 +116,11 @@ Feature: Create OAuth2 clients
     # Invalid callback URI is provided.
     And I set the field "redirecturi[0]" to "invalid-uri"
     And I press "Create client"
-    And I should see "Must be a valid URL (e.g., https://example.com/callback)." in the "Callback URIs" "form_row"
+    And I should see "Must be a valid HTTPS URL (e.g., https://example.com/callback). HTTP is only allowed for loopback addresses." in the "Callback URIs" "form_row"
     # Invalid callback URI is provided (no https or localhost).
     And I set the field "redirecturi[0]" to "http://example.com/callback"
     And I press "Create client"
-    And I should see "Callback URIs must use HTTPS (http:// is only allowed for localhost)." in the "Callback URIs" "form_row"
+    And I should see "Must be a valid HTTPS URL (e.g., https://example.com/callback). HTTP is only allowed for loopback addresses." in the "Callback URIs" "form_row"
 
   Scenario: Generate secrets for a confidential OAuth2 client
     Given I click on "Create client" "link"
@@ -140,8 +140,8 @@ Feature: Create OAuth2 clients
     And I should see "This secret is shown only once. Copy it now - it can't be retrieved again after you close this dialog." in the "Secret generated" "dialogue"
     And I should see "Client identifier" in the "Secret generated" "dialogue"
     And "Secret value" "field" should exist in the "Secret generated" "dialogue"
-    And "Copy to clipboard" "button" should exist in the "Secret generated" "dialogue"
-    And I click on "Copy to clipboard" "button" in the "Secret generated" "dialogue"
+    And "Copy" "button" should exist in the "Secret generated" "dialogue"
+    And I click on "Copy" "button" in the "Secret generated" "dialogue"
     And I should see "Client secret copied to clipboard."
     And I click on "Close" "button" in the "Secret generated" "dialogue"
     And "reportbuilder-table" "table" should exist
@@ -162,7 +162,7 @@ Feature: Create OAuth2 clients
     And the following should exist in the "reportbuilder-table" table:
       | Status  | Actions |
       | Active  | Revoke  |
-    When I click on "Revoke" "link" in the "reportbuilder-table" "table"
+    When I click on "Revoke" "button" in the "reportbuilder-table" "table"
     Then "Revoke client secret?" "dialogue" should exist
     And I should see "Any external applications or active integrations using this specific credential will instantly lose API access. This action is permanent and cannot be undone." in the "Revoke client secret?" "dialogue"
     And I click on "Revoke" "button" in the "Revoke client secret?" "dialogue"
@@ -189,7 +189,7 @@ Feature: Create OAuth2 clients
       | Active | Revoke  |
     And "Generate secret" "button" should not be visible
     And I should see "Maximum of 2 active secrets reached. Revoke one before generating another."
-    And I click on "Revoke" "link" in the "reportbuilder-table" "table"
+    And I click on "Revoke" "button" in the "reportbuilder-table" "table"
     And I click on "Revoke" "button" in the "Revoke client secret?" "dialogue"
     And "Generate secret" "button" should be visible
     And I should not see "Maximum of 2 active secrets reached. Revoke one before generating another."
@@ -230,7 +230,6 @@ Feature: Create OAuth2 clients
     And I set the field "Name" to "Updated Confidential Client"
     And I set the field "Description" to "Updated confidential OAuth2 client"
     When I press "Save changes"
-    And I click on "Go back to OAuth 2 clients" "link"
     Then the following should exist in the "reportbuilder-table" table:
       | Name                             |
       | Updated Confidential Client |
@@ -284,7 +283,6 @@ Feature: Create OAuth2 clients
     And I set the field "redirecturi[0]" to "https://example.com/callback-updated"
     And I set the field "redirecturi[1]" to "https://example.com/another-callback"
     When I press "Save changes"
-    And I click on "Go back to OAuth 2 clients" "link"
     Then the following should exist in the "reportbuilder-table" table:
       | Name                             |
       | Updated Confidential Client |
@@ -334,7 +332,6 @@ Feature: Create OAuth2 clients
     And I set the field "redirecturi[0]" to "https://example.com/callback-updated"
     And I set the field "redirecturi[1]" to "https://example.com/another-callback"
     When I press "Save changes"
-    And I click on "Go back to OAuth 2 clients" "link"
     Then the following should exist in the "reportbuilder-table" table:
       | Name                  |
       | Updated Public Client |
@@ -366,14 +363,14 @@ Feature: Create OAuth2 clients
       | Active  | Revoke  |
     And I click on "Go back to OAuth 2 clients" "link"
     # Revoke the client.
-    And I click on "Revoke" "link" in the "Test Confidential Client" "table_row"
+    And I click on "Revoke" "button" in the "Test Confidential Client" "table_row"
     And "Revoke \"Test Confidential Client\"?" "dialogue" should exist
     And I should see "This immediately revokes all active secrets and stops the client from authenticating. The client and its configuration are kept, and it can be re-enabled later. To permanently remove it instead, revoke it first, then delete." in the "Revoke \"Test Confidential Client\"?" "dialogue"
     When I click on "Revoke" "button" in the "Revoke \"Test Confidential Client\"?" "dialogue"
     Then the following should exist in the "reportbuilder-table" table:
       | Name                     | Status  |
       | Test Confidential Client | Revoked |
-    And "Revoke" "link" should not exist in the "Test Confidential Client" "table_row"
+    And "Revoke" "button" should not exist in the "Test Confidential Client" "table_row"
     # Client secrets should be revoked and not longer managed when the client is revoked and cannot be .
     And "Manage secrets" "link" should not exist in the "Test Confidential Client" "table_row"
     And I click on "Edit" "link" in the "Test Confidential Client" "table_row"
@@ -397,18 +394,18 @@ Feature: Create OAuth2 clients
       | Active  | Revoke  |
     And I click on "Go back to OAuth 2 clients" "link"
     # Revoke the client.
-    And I click on "Revoke" "link" in the "Test Confidential Client" "table_row"
+    And I click on "Revoke" "button" in the "Test Confidential Client" "table_row"
     And I click on "Revoke" "button" in the "Revoke \"Test Confidential Client\"?" "dialogue"
     # Enable the client.
-    And "Enable" "link" should exist in the "Test Confidential Client" "table_row"
-    And I click on "Enable" "link" in the "Test Confidential Client" "table_row"
+    And "Enable" "button" should exist in the "Test Confidential Client" "table_row"
+    And I click on "Enable" "button" in the "Test Confidential Client" "table_row"
     And "Re-enable \"Test Confidential Client\"?" "dialogue" should exist
     And I should see "This will restore this application's access to the authorization server. Any previously issued tokens remain invalid, and the client will need to re-authenticate or generate a new secret to resume normal operations." in the "Re-enable \"Test Confidential Client\"?" "dialogue"
     When I click on "Enable" "button" in the "Re-enable \"Test Confidential Client\"?" "dialogue"
     Then the following should exist in the "reportbuilder-table" table:
       | Name                     | Status  |
       | Test Confidential Client | Active  |
-    And "Revoke" "link" should exist in the "Test Confidential Client" "table_row"
+    And "Revoke" "button" should exist in the "Test Confidential Client" "table_row"
     And "Manage secrets" "link" should exist in the "Test Confidential Client" "table_row"
     And I click on "Edit" "link" in the "Test Confidential Client" "table_row"
     And "#client-active-secrets" "css_element" should exist
@@ -431,13 +428,13 @@ Feature: Create OAuth2 clients
     And I click on "Public" "radio"
     And I set the field "redirecturi[0]" to "https://example.com/callback"
     And I press "Create client"
-    And "Delete" "link" should not exist in the "Test Public Client" "table_row"
+    And "Delete" "button" should not exist in the "Test Public Client" "table_row"
     # Revoke the client.
-    And I click on "Revoke" "link" in the "Test Public Client" "table_row"
+    And I click on "Revoke" "button" in the "Test Public Client" "table_row"
     And I click on "Revoke" "button" in the "Revoke \"Test Public Client\"?" "dialogue"
     # Delete the client.
-    And "Delete" "link" should exist in the "Test Public Client" "table_row"
-    And I click on "Delete" "link" in the "Test Public Client" "table_row"
+    And "Delete" "button" should exist in the "Test Public Client" "table_row"
+    And I click on "Delete" "button" in the "Test Public Client" "table_row"
     And "Delete \"Test Public Client\"?" "dialogue" should exist
     And I should see "This permanently removes the client, its secrets, and its redirect URIs. Unlike revoking, this can't be undone. Any integration using this client will stop working immediately." in the "Delete \"Test Public Client\"?" "dialogue"
     When I click on "Delete" "button" in the "Delete \"Test Public Client\"?" "dialogue"
