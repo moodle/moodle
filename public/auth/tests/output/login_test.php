@@ -38,17 +38,17 @@ final class login_test extends \advanced_testcase {
         string $name = 'Example client',
         string $description = 'This application would like to access your account.',
     ): \core\oauth2\server\entity\client_entity {
-        return \core\oauth2\server\entity\client_entity::create_from_record(
-            (object) [
-                'clientidentifier' => 'client1',
-                'name' => $name,
-                'description' => $description,
-                'ownercontext' => \context_system::instance()->id,
-                'status' => \core\oauth2\server\entity\client_entity::STATUS_ACTIVE,
-                'isconfidential' => 1,
-            ],
-            [],
+        $clientmanager = \core\di::get(\core\oauth2\server\client_manager::class);
+
+        $client = $clientmanager->create_client(
+            name: $name,
+            ownercontext: \core\context\system::instance(),
+            granttypes: [],
+            description: $description,
+            isconfidential: true,
         );
+
+        return $client;
     }
 
     /**
@@ -72,7 +72,7 @@ final class login_test extends \advanced_testcase {
         $this->assertNotNull($data->client);
         $this->assertSame('Example client', $data->client->name);
         $this->assertStringContainsString('View your course enrolments.', $data->client->description);
-        $this->assertSame('client1', $data->client->identifier);
+        $this->assertSame($client->getIdentifier(), $data->client->identifier);
     }
 
     /**
