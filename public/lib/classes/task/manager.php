@@ -1501,17 +1501,37 @@ class manager {
      *
      * @param scheduled_task $task Task to modify
      * @param int $nextruntime timestamp
+     * @return bool Whether the next run time was updated
      * @throws \dml_exception If there is a database error
      * @since Moodle 5.3
      */
-    public static function set_scheduled_task_nextruntime(scheduled_task $task, int $nextruntime): void {
+    public static function set_scheduled_task_nextruntime(scheduled_task $task, int $nextruntime): bool {
         global $DB;
-        $DB->set_field(
-            'task_scheduled',
-            'nextruntime',
-            $nextruntime,
-            ['classname' => self::get_canonical_class_name($task)]
-        );
+
+        $classname = self::get_canonical_class_name($task);
+        $lockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        $tasklock = $lockfactory->get_lock($classname, 0);
+        if (!$tasklock) {
+            return false;
+        }
+
+        try {
+            $record = $DB->get_record(
+                'task_scheduled',
+                ['classname' => $classname],
+                'id, timestarted',
+                MUST_EXIST,
+            );
+            if ($record->timestarted) {
+                return false;
+            }
+
+            $DB->set_field('task_scheduled', 'nextruntime', $nextruntime, ['id' => $record->id]);
+        } finally {
+            $tasklock->release();
+        }
+
+        return true;
     }
 
     /**

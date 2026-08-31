@@ -53,6 +53,16 @@ Feature: Run scheduled tasks from the administration UI
     When I reload the page
     Then I should not see "Run ASAP" in the "Send new user passwords" "table_row"
 
+  Scenario: A running task shows its status instead of run actions
+    Given the scheduled task "\core\task\send_new_user_passwords_task" has a next run time in the future
+    And the following "tool_task > scheduled tasks" exist:
+      | classname                               | seconds | hostname     | pid  |
+      | \core\task\send_new_user_passwords_task | 60      | c69335460f7f | 1914 |
+    When I reload the page
+    Then I should see "Running" in the "Send new user passwords" "table_row"
+    And I should not see "Run now" in the "Send new user passwords" "table_row"
+    And I should not see "Run ASAP" in the "Send new user passwords" "table_row"
+
   @javascript
   Scenario: Confirming Run ASAP schedules the task and shows a success message
     Given the scheduled task "\core\task\send_new_user_passwords_task" has a next run time in the future
@@ -62,6 +72,18 @@ Feature: Run scheduled tasks from the administration UI
     And I should see "The task will run via cron at the next available time." in the ".modal-dialog" "css_element"
     And I click on "Run ASAP" "button" in the ".modal-dialog" "css_element"
     And I should see "has been scheduled to run ASAP"
+
+  @javascript
+  Scenario: Run ASAP is rejected if the task starts after the page loads
+    Given the scheduled task "\core\task\send_new_user_passwords_task" has a next run time in the future
+    When I reload the page
+    And I click on "Run ASAP" "link" in the "Send new user passwords" "table_row"
+    And the following "tool_task > scheduled tasks" exist:
+      | classname                               | seconds | hostname     | pid  |
+      | \core\task\send_new_user_passwords_task | 60      | c69335460f7f | 1914 |
+    And I click on "Run ASAP" "button" in the "Run ASAP" "dialogue"
+    Then I should see "is already running and cannot be scheduled to run ASAP"
+    But I should not see "has been scheduled to run ASAP"
 
   @javascript
   Scenario: Cancelling Run ASAP returns to the scheduled tasks list without changes

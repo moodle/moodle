@@ -435,7 +435,7 @@ class tool_task_renderer extends plugin_renderer_base {
 
             $runnow = '';
             $canrunthistask = $canruntasks && $task->can_run();
-            if ($canrunthistask) {
+            if ($canrunthistask && !$task->get_timestarted()) {
                 $runnow .= html_writer::div(
                     html_writer::link(
                         new moodle_url('/admin/tool/task/schedule_task.php', [
@@ -583,7 +583,9 @@ class tool_task_renderer extends plugin_renderer_base {
     public function next_run_time(scheduled_task $task): string {
         $nextrun = $task->get_next_run_time();
 
-        if (!$task->is_component_enabled() && !$task->get_run_if_component_disabled()) {
+        if ($task->get_timestarted()) {
+            $nextrun = get_string('running', 'tool_task');
+        } else if (!$task->is_component_enabled() && !$task->get_run_if_component_disabled()) {
             $nextrun = get_string('plugindisabled', 'tool_task');
         } else if ($task->get_disabled()) {
             $nextrun = get_string('taskdisabled', 'tool_task');

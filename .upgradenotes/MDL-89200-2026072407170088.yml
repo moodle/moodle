@@ -1,0 +1,8 @@
+issueNumber: MDL-89200
+notes:
+  core:
+    - message: >-
+        The `\core\task\manager::set_scheduled_task_nextruntime()` method now
+        returns a boolean indicating whether the next run time was updated. It
+        returns `false` when the scheduled task is already running.
+      type: changed
