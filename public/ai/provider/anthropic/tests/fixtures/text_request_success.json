@@ -1,0 +1,18 @@
+{
+  "id": "msg_01XFDUDYJgAACzvnptvVoYEL",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "Photosynthesis is the process plants use to make their own food using sunlight, water, and carbon dioxide. Inside plant cells, a green pigment called chlorophyll captures energy from sunlight. This energy powers a chemical reaction that converts water (from the soil) and carbon dioxide (from the air) into glucose (a sugar the plant uses for energy) and oxygen (released as a byproduct). The overall process can be summarised as: carbon dioxide plus water, with light energy, produces glucose plus oxygen. Photosynthesis is essential for life on Earth, as it produces the oxygen we breathe and forms the base of most food chains."
+    }
+  ],
+  "model": "claude-sonnet-4-5-20250929",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 120
+  }
+}
