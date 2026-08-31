@@ -1200,13 +1200,18 @@ $CFG->admin = 'admin';
 //      $CFG->alternative_file_system_class = '\\local_myfilestorage\\file_system';
 //
 //=========================================================================
-// 15. CAMPAIGN CONTENT
+// 15. NOTIFICATION CTAS
 //=========================================================================
 //
-// We have added a campaign content to the notifications page, in case you want to hide that from your site you just
-// need to set showcampaigncontent setting to false.
+// The admin Notifications page (/admin/index.php) shows a "From Moodle" section with CTA cards for
+// the Marketplace, MoodleCloud, Certified Moodle Partners and the site feedback survey. Individual
+// cards can be hidden by key. There is no admin settings UI for this - config.php only.
 //
-//      $CFG->showcampaigncontent = true;
+// $CFG->disablenotificationctas = ['marketplace', 'moodlecloud', 'partners', 'feedback'];
+//
+// Any key present in the array hides that card. Omit the setting, or use an empty array, to show all cards.
+// The feedback card is also hidden automatically once $CFG->enableuserfeedback is on; the 'feedback'
+// key above still force-hides it regardless of that setting.
 //
 //=========================================================================
 // 16. ALTERNATIVE CACHE CONFIG SETTINGS
@@ -1276,16 +1281,16 @@ $CFG->admin = 'admin';
 //
 // This setting is only used during the installation process. So once the Moodle site is installed, it is ignored.
 //
-//=========================================================================
-// 19. SERVICES AND SUPPORT CONTENT
-//=========================================================================
+// =========================================================================
+// 19. SERVICES AND SUPPORT LINK
+// =========================================================================
 //
-// We have added services and support content to the notifications page, in case you want to hide that from your site
-// you just need to set showservicesandsupportcontent setting to false.
+// The help popover shown throughout the site can include a "Services and support" link. In case you
+// want to hide that link you just need to set showservicesandsupportcontent setting to false.
 //
-//      $CFG->showservicesandsupportcontent = false;
+// $CFG->showservicesandsupportcontent = false;
 //
-//=========================================================================
+// =========================================================================
 // 20. NON HTTP ONLY COOKIES
 //=========================================================================
 //
