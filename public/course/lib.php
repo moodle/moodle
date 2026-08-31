@@ -3037,6 +3037,7 @@ function course_get_user_navigation_options($context, $course = null) {
         'blogs' => false,
         'competencies' => false,
         'grades' => false,
+        'learningoutcomes' => false,
         'notes' => false,
         'participants' => false,
         'search' => false,
@@ -3125,6 +3126,7 @@ function course_get_user_navigation_options($context, $course = null) {
 
     if ($isloggedin && !$isfrontpage) {
         $options->overview = has_capability('moodle/course:viewoverview', $context);
+        $options->learningoutcomes = !empty($CFG->enableoutcomes);
     }
 
     return $options;

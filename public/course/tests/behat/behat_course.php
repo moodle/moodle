@@ -2331,4 +2331,64 @@ JS;
         $courseformat = course_get_format($courseid);
         return $courseformat->get_section($sectionnum);
     }
+
+    /**
+     * Maps learning outcomes to activities using outcome shortname and activity idnumber.
+     *
+     * This bypasses editing forms and applies the same post-actions used when saving module settings.
+     *
+     * @Given I map the following outcomes to activities:
+     * @param TableNode $table Table with 'outcome' and 'activity idnumber' columns.
+     */
+    public function i_map_the_following_outcomes_to_activities(TableNode $table): void {
+        foreach ($table->getHash() as $row) {
+            $this->map_outcome_to_activity_idnumber($row['outcome'], $row['activity idnumber']);
+        }
+    }
+
+    /**
+     * Maps a learning outcome to an activity using shortname and activity idnumber.
+     *
+     * @param string $outcomeshortname The outcome shortname.
+     * @param string $activityidnumber The course module idnumber.
+     */
+    protected function map_outcome_to_activity_idnumber(string $outcomeshortname, string $activityidnumber): void {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/course/modlib.php');
+
+        $cm = $DB->get_record_sql(
+            "SELECT cm.id, cm.idnumber, cm.course, cm.instance, m.name AS modulename
+               FROM {course_modules} cm
+               JOIN {modules} m ON m.id = cm.module
+              WHERE cm.idnumber = ?",
+            [$activityidnumber],
+            MUST_EXIST
+        );
+
+        $outcomes = $DB->get_records_select(
+            'grade_outcomes',
+            'shortname = ? AND (courseid = ? OR courseid IS NULL)',
+            [$outcomeshortname, $cm->course],
+            'courseid DESC, id ASC'
+        );
+        if (empty($outcomes)) {
+            throw new \Exception(
+                "Could not find outcome with shortname '{$outcomeshortname}' in course {$cm->course} or site-wide outcomes."
+            );
+        }
+        $outcome = reset($outcomes);
+
+        $course = get_course($cm->course);
+        $moduleinfo = (object) [
+            'coursemodule' => $cm->id,
+            'cmidnumber' => $cm->idnumber,
+            'instance' => $cm->instance,
+            'modulename' => $cm->modulename,
+        ];
+        $fieldname = 'outcome_' . $outcome->id;
+        $moduleinfo->{$fieldname} = 1;
+
+        edit_module_post_actions($moduleinfo, $course);
+    }
 }

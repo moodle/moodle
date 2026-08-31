@@ -338,6 +338,13 @@ function edit_module_post_actions($moduleinfo, $course) {
             $elname = 'outcome_'.$outcome->id;
 
             if (property_exists($moduleinfo, $elname) and $moduleinfo->$elname) {
+                // No grade item is created for scale-less outcomes.
+                // Store the module association in grade_outcomes_modules instead.
+                if (empty($outcome->scaleid)) {
+                    $outcome->add_outcome_to_module($course->id, $moduleinfo->coursemodule);
+                    continue;
+                }
+
                 // Check if this is a new outcome grade item.
                 $outcomeexists = false;
                 if ($items) {
@@ -381,6 +388,9 @@ function edit_module_post_actions($moduleinfo, $course) {
                         $outcomeitem->update();
                     }
                 }
+            } else if (empty($outcome->scaleid)) {
+                // Scale-less outcome was deselected (or absent from the submitted form).
+                $outcome->remove_outcome_from_module($course->id, $moduleinfo->coursemodule);
             }
         }
     }
@@ -931,7 +941,13 @@ function get_moduleinfo_data($cm, $course) {
             }
         }
     }
-    return array($cm, $context, $module, $data, $cw);
+
+    // Pre-select checkboxes for scale-less outcomes associated with this module.
+    foreach (grade_outcome::get_outcomes_in_module($cm->id, $course->id) as $oid) {
+        $data->{'outcome_' . $oid} = 1;
+    }
+
+    return [$cm, $context, $module, $data, $cw];
 }
 
 /**

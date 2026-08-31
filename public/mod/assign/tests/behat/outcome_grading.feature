@@ -27,7 +27,7 @@ Feature: Outcome grading
       | fullname        | shortname | scale      |
       | Outcome Test    | OT        | Test Scale |
     And I am on the "Course 1" "grades > outcomes" page logged in as admin
-    And I set the field "Available standard outcomes" to "Outcome Test"
+    And I set the field "Available site-wide learning outcomes" to "Outcome Test"
     And I click on "#add" "css_element"
     And I log out
 

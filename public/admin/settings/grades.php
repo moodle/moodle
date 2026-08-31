@@ -179,7 +179,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
     $scales = new admin_externalpage('scales', new lang_string('scales'), $CFG->wwwroot.'/grade/edit/scale/index.php', 'moodle/grade:manage');
     $ADMIN->add('grades', $scales);
     if (!empty($CFG->enableoutcomes)) {
-        $outcomes = new admin_externalpage('outcomes', new lang_string('outcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/index.php', 'moodle/grade:manage');
+        $outcomes = new admin_externalpage('outcomes', new lang_string('manageoutcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/index.php', 'moodle/grade:manage');
         $ADMIN->add('grades', $outcomes);
     }
     $letters = new admin_externalpage('letters', new lang_string('letters', 'grades'), $CFG->wwwroot.'/grade/edit/letter/index.php', 'moodle/grade:manageletters');

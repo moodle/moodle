@@ -115,3 +115,4 @@ campaign,core_admin
 marketplaceavailablenotice,core_admin
 supportandservices,core_admin
 userfeedbackencouragement,core_admin
+noscales,core_grades

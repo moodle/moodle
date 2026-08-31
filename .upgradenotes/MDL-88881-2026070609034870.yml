@@ -1,0 +1,12 @@
+issueNumber: MDL-88881
+notes:
+  core_grades:
+    - message: >-
+        Outcomes can now be created without an associated scale and linked to
+        course modules. The `grade_outcome` class now provides the methods
+        `add_outcome_to_module()`,
+        `remove_outcome_from_module()`,
+        `get_outcomes_in_module()`, and
+        `get_used_outcomes_in_course()` to manage and query scale-less outcomes
+        in course modules.
+      type: improved

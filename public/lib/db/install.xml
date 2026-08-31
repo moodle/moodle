@@ -1976,6 +1976,24 @@
         <KEY NAME="courseid-outcomeid" TYPE="unique" FIELDS="courseid, outcomeid"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="grade_outcomes_modules" COMMENT="Associates scale-less outcomes with course modules.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="outcomecourseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to grade_outcomes_courses."/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key to course_modules."/>
+        <FIELD NAME="usercreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID of the person who created this association."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="outcomecourseid" TYPE="foreign" FIELDS="outcomecourseid" REFTABLE="grade_outcomes_courses" REFFIELDS="id"/>
+        <KEY NAME="cmid" TYPE="foreign" FIELDS="cmid" REFTABLE="course_modules" REFFIELDS="id"/>
+        <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="outcomecourseid-cmid" UNIQUE="true" FIELDS="outcomecourseid, cmid" COMMENT="Prevents duplicate outcome-module associations."/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="grade_categories" COMMENT="This table keeps information about categories, used for grouping items.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

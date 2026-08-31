@@ -100,10 +100,21 @@ if (!$courseid) {
 
     $PAGE->set_primary_active_tab('siteadminnode');
 } else {
-    navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', ['id' => $courseid]));
-    $PAGE->navbar->add(get_string('manageoutcomes', 'grades'),
-        new moodle_url('/grade/edit/outcome/index.php', ['id' => $courseid]));
+    // In course context we set a custom breadcrumb trail for learning outcomes flows.
+    $PAGE->navbar->ignore_active();
+    // The action param is only necessary to overcome the limitation of duplicate URLs preventing breadcrumbs
+    // being added when they exist in the secondary nav. See remove_items_that_exist_in_navigation().
+    $PAGE->navbar->add(
+        get_string('learningoutcomes', 'core_course'),
+        new moodle_url('/course/learningoutcomes.php', ['id' => $courseid, 'action' => 'back'])
+    );
+    $PAGE->navbar->add(
+        get_string('manageoutcomes', 'grades'),
+        new moodle_url('/grade/edit/outcome/index.php', ['id' => $courseid])
+    );
 }
+
+$PAGE->navbar->add($heading, $url);
 
 // default return url
 $gpr = new grade_plugin_return();
@@ -163,15 +174,13 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$PAGE->navbar->add($heading, $url);
-
-print_grade_page_head($courseid ?: SITEID, 'outcome', 'edit', $heading, false, false, false);
-
-if (!grade_scale::fetch_all_local($courseid) && !grade_scale::fetch_all_global()) {
-    echo $OUTPUT->confirm(get_string('noscales', 'grades'), $CFG->wwwroot.'/grade/edit/scale/edit.php?courseid='.$courseid, $returnurl);
-    echo $OUTPUT->footer();
-    die();
-}
+print_grade_page_head(
+    courseid: $courseid ?: SITEID,
+    active_type: 'outcome',
+    active_plugin: 'edit',
+    heading: $heading,
+    shownavigation: false,
+);
 
 $mform->display();
 echo $OUTPUT->footer();

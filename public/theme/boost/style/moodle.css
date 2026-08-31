@@ -36306,6 +36306,14 @@ body:not(.editing) [id^=module-]:target, body.editing [id^=module-]:target .acti
   border-radius: 1rem;
 }
 
+/* Learning outcomes page */
+body.editing#page-course-learningoutcomes .activity-item {
+  cursor: auto;
+}
+body.editing#page-course-learningoutcomes .activity-item:hover:not(:has(.activity:hover)), body.editing#page-course-learningoutcomes .activity-item.selected {
+  outline: none;
+}
+
 /*
  * Course management page styles.
  */

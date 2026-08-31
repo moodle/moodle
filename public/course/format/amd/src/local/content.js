@@ -36,6 +36,7 @@ import DispatchActions from 'core_courseformat/local/content/actions';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import log from "core/log";
+import * as CollapseControls from 'core_courseformat/local/collapse';
 
 export default class Component extends BaseComponent {
 
@@ -123,13 +124,14 @@ export default class Component extends BaseComponent {
         // Collapse/Expand all sections button.
         const toogleAll = this.getElement(this.selectors.TOGGLEALL);
         if (toogleAll) {
-
-            // Ensure collapse menu button adds aria-controls attribute referring to each collapsible element.
-            const collapseElements = this.getElements(this.selectors.COLLAPSE);
-            const collapseElementIds = [...collapseElements].map(element => element.id);
-            toogleAll.setAttribute('aria-controls', collapseElementIds.join(' '));
-
-            this.addEventListener(toogleAll, 'click', this._allSectionToggler);
+            const onToggleAll = (event, collapse) => {
+                this._allSectionToggler(event, collapse);
+            };
+            CollapseControls.init(this.element, {
+                toggleAllSelector: this.selectors.TOGGLEALL,
+                collapseSelector: this.selectors.COLLAPSE,
+                onToggleAll,
+            });
             this._refreshAllSectionsToggler(state);
         }
 
@@ -199,18 +201,14 @@ export default class Component extends BaseComponent {
      * appear at any moment and this way we prevent accidental double bindings.
      *
      * @param {Event} event the triggered event
+     * @param {boolean} collapse whether all sections should be collapsed
      */
-    _allSectionToggler(event) {
-        event.preventDefault();
-
-        const target = event.target.closest(this.selectors.TOGGLEALL);
-        const isAllCollapsed = target.classList.contains(this.classes.COLLAPSED);
-
+    _allSectionToggler(event, collapse) {
         const course = this.reactive.get('course');
         this.reactive.dispatch(
             'sectionContentCollapsed',
             course.sectionlist ?? [],
-            !isAllCollapsed
+            collapse
         );
     }
 

@@ -1581,11 +1581,161 @@ final class provider_test extends provider_testcase {
         $data = writer::with_context($context)->get_related_data($rootpath, 'history');
         $this->assertEmpty($data);
 
-        $files = ['categories_history', 'items_history', 'outcomes', 'outcomes_history', 'grades', 'grades_history', 'history'];
+        $files = ['categories_history', 'items_history', 'outcomes', 'outcomes_history', 'outcomes_modules', 'grades',
+            'grades_history', 'history'];
         foreach ($files as $file) {
             $data = writer::with_context($context)->get_related_data($relatedtomepath, $file);
             $this->assertEmpty($data);
         }
+    }
+
+    /**
+     * Creates a course with two assignments and a scale-less outcome associated
+     * with both activities by the first user.
+     *
+     * @return array [$course, $outcome, $u1, $u2, $cm1, $cm2, $cm1ctx, $cm2ctx]
+     */
+    private function create_outcomes_modules_fixture(): array {
+        $dg = $this->getDataGenerator();
+
+        $course = $dg->create_course();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+
+        $assign1 = $dg->create_module('assign', ['course' => $course->id]);
+        $assign2 = $dg->create_module('assign', ['course' => $course->id]);
+
+        $cm1 = get_coursemodule_from_instance('assign', $assign1->id, $course->id);
+        $cm2 = get_coursemodule_from_instance('assign', $assign2->id, $course->id);
+
+        $cm1ctx = \context_module::instance($cm1->id);
+        $cm2ctx = \context_module::instance($cm2->id);
+
+        $outcome = new \grade_outcome();
+        $outcome->courseid = $course->id;
+        $outcome->shortname = 'noscale';
+        $outcome->fullname = 'No scale outcome';
+        $outcome->insert();
+
+        $this->setUser($u1);
+        $outcome->add_outcome_to_module($course->id, $cm1->id);
+        $outcome->add_outcome_to_module($course->id, $cm2->id);
+
+        return [$course, $outcome, $u1, $u2, $cm1, $cm2, $cm1ctx, $cm2ctx];
+    }
+
+    /**
+     * Verifies contexts and exported data for outcome-module associations.
+     *
+     * @covers \core_grades\privacy\provider::get_contexts_for_userid
+     * @covers \core_grades\privacy\provider::export_user_data
+     */
+    public function test_outcomes_modules_contexts_and_export(): void {
+        [$course, $outcome, $u1, $u2, $cm1, $cm2, $cm1ctx, $cm2ctx] =
+            $this->create_outcomes_modules_fixture();
+
+        $this->assertContainsEquals(
+            $cm1ctx->id,
+            provider::get_contexts_for_userid($u1->id)->get_contextids()
+        );
+
+        $this->assertContainsEquals(
+            $cm2ctx->id,
+            provider::get_contexts_for_userid($u1->id)->get_contextids()
+        );
+
+        $this->assertEmpty(
+            provider::get_contexts_for_userid($u2->id)->get_contextids()
+        );
+
+        provider::export_user_data(
+            new approved_contextlist($u1, 'core_grades', [$cm1ctx->id])
+        );
+
+        $path = [
+            get_string('grades', 'core_grades'),
+            get_string('privacy:path:relatedtome', 'core_grades'),
+        ];
+
+        $data = writer::with_context($cm1ctx)->get_related_data($path, 'outcomes_modules');
+
+        $this->assertNotEmpty($data);
+        $this->assertEquals($outcome->shortname, $data->outcomes[0]['shortname']);
+
+        $this->assert_context_has_no_data($cm2ctx);
+    }
+
+    /**
+     * Verifies users are correctly identified for outcome-module associations.
+     *
+     * @covers \core_grades\privacy\provider::get_users_in_context
+     */
+    public function test_outcomes_modules_get_users_in_context(): void {
+        [$course, $outcome, $u1, $u2, $cm1, $cm2, $cm1ctx, $cm2ctx] =
+            $this->create_outcomes_modules_fixture();
+
+        // Associate a second outcome with only the second activity as user2.
+        $this->setUser($u2);
+        $outcome2 = new \grade_outcome();
+        $outcome2->courseid = $course->id;
+        $outcome2->shortname = 'noscale2';
+        $outcome2->fullname = 'Second outcome';
+        $outcome2->insert();
+        $outcome2->add_outcome_to_module($course->id, $cm2->id);
+
+        // Context 1 should only contain user1.
+        $userlist = new \core_privacy\local\request\userlist($cm1ctx, 'core_grades');
+        provider::get_users_in_context($userlist);
+        $this->assertEqualsCanonicalizing([$u1->id], $userlist->get_userids());
+
+        // Context 2 should contain both users.
+        $userlist = new \core_privacy\local\request\userlist($cm2ctx, 'core_grades');
+        provider::get_users_in_context($userlist);
+        $this->assertEqualsCanonicalizing([$u1->id, $u2->id], $userlist->get_userids());
+    }
+
+    /**
+     * Verifies that the privacy deletion methods remove outcome-module associations.
+     *
+     * @covers \core_grades\privacy\provider::delete_data_for_user
+     * @covers \core_grades\privacy\provider::delete_data_for_users
+     * @covers \core_grades\privacy\provider::delete_data_for_all_users_in_context
+     */
+    public function test_outcomes_modules_deletion(): void {
+        global $DB;
+
+        [$course, $outcome, $u1, , $cm1, $cm2, $cm1ctx, $cm2ctx] =
+            $this->create_outcomes_modules_fixture();
+
+        // Precondition: associations exist for both activities.
+        $this->assertTrue($DB->record_exists('grade_outcomes_modules', ['cmid' => $cm1->id]));
+        $this->assertTrue($DB->record_exists('grade_outcomes_modules', ['cmid' => $cm2->id]));
+
+        // Delete data for the specified user in the given context.
+        provider::delete_data_for_user(
+            new approved_contextlist($u1, 'core_grades', [$cm1ctx->id])
+        );
+
+        $this->assertFalse($DB->record_exists('grade_outcomes_modules', ['cmid' => $cm1->id]));
+        $this->assertTrue($DB->record_exists('grade_outcomes_modules', ['cmid' => $cm2->id]));
+
+        // Delete data for the specified users in the given context.
+        provider::delete_data_for_users(
+            new \core_privacy\local\request\approved_userlist($cm2ctx, 'core_grades', [$u1->id])
+        );
+
+        $this->assertFalse($DB->record_exists('grade_outcomes_modules', ['cmid' => $cm2->id]));
+
+        // Recreate an association to verify delete_data_for_all_users_in_context().
+        $outcome->add_outcome_to_module($course->id, $cm1->id);
+
+        // Precondition: the association has been recreated.
+        $this->assertTrue($DB->record_exists('grade_outcomes_modules', ['cmid' => $cm1->id]));
+
+        // Delete all data in the given context.
+        provider::delete_data_for_all_users_in_context($cm1ctx);
+
+        $this->assertFalse($DB->record_exists('grade_outcomes_modules', ['cmid' => $cm1->id]));
     }
 
     /**

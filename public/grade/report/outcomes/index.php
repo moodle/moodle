@@ -122,6 +122,12 @@ $html .= '<th class="header c5" scope="col">' . get_string('numberofgrades', 'gr
 $row = 0;
 foreach ($report_info as $outcomeid => $outcomedata) {
     $rowspan = count($outcomedata['items']);
+
+    // Skip scale-less outcomes, as they are not displayed in the report.
+    if (empty($outcomedata['outcome']->scaleid)) {
+        continue;
+    }
+
     // If there are no items for this outcome, rowspan will equal 0, which is not good.
     if ($rowspan == 0) {
         $rowspan = 1;
@@ -136,7 +142,7 @@ foreach ($report_info as $outcomeid => $outcomedata) {
 
     $sitewide_html = '<td class="cell c2" rowspan="' . $rowspan . '">' . $sitewide . "</td>\n";
 
-    $outcomedata['outcome']->sum = 0;
+    $outcomedata['sum'] = 0;
     $scale = new grade_scale(array('id' => $outcomedata['outcome']->scaleid), false);
 
     $print_tr = false;
@@ -158,7 +164,7 @@ foreach ($report_info as $outcomeid => $outcomedata) {
                 $itemname = $grade_item->get_name();
             }
 
-            $outcomedata['outcome']->sum += $item->avg;
+            $outcomedata['sum'] += $item->avg;
             $gradehtml = $scale->get_nearest_item($item->avg);
 
             $items_html .= "<td class=\"cell c3\">$itemname</td>"
@@ -174,9 +180,9 @@ foreach ($report_info as $outcomeid => $outcomedata) {
     if (is_array($outcomedata['items'])) {
         $count = count($outcomedata['items']);
         if ($count > 0) {
-            $avg = $outcomedata['outcome']->sum / $count;
+            $avg = $outcomedata['sum'] / $count;
         } else {
-            $avg = $outcomedata['outcome']->sum;
+            $avg = $outcomedata['sum'];
         }
         $avg_html = $scale->get_nearest_item($avg) . " (" . round($avg, 2) . ")\n";
     } else {

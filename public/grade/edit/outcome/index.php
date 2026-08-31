@@ -32,6 +32,7 @@ $action   = optional_param('action', '', PARAM_ALPHA);
 $url = new moodle_url('/grade/edit/outcome/index.php', ['id' => $courseid]);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+$heading = get_string('manageoutcomes', 'grades');
 
 /// Make sure they can even access this course
 if ($courseid) {
@@ -43,9 +44,14 @@ if ($courseid) {
     if (empty($CFG->enableoutcomes)) {
         redirect('../../index.php?id='.$courseid);
     }
-    // This page doesn't exist on the navigation so map it to another
-    navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid)));
-    $PAGE->navbar->add(get_string('manageoutcomes', 'grades'), $url);
+    // In course context we set a custom breadcrumb trail for learning outcomes flows.
+    $PAGE->navbar->ignore_active();
+    // The action param is only necessary to overcome the limitation of duplicate URLs preventing breadcrumbs
+    // being added when they exist in the secondary nav. See remove_items_that_exist_in_navigation().
+    $PAGE->navbar->add(
+        get_string('learningoutcomes', 'core_course'),
+        new moodle_url('/course/learningoutcomes.php', ['id' => $courseid, 'action' => 'back'])
+    );
 } else {
     if (empty($CFG->enableoutcomes)) {
         redirect('../../../');
@@ -55,6 +61,8 @@ if ($courseid) {
     $context = context_system::instance();
     $PAGE->set_primary_active_tab('siteadminnode');
 }
+
+$PAGE->navbar->add($heading, $url);
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcome', 'courseid'=>$courseid));
@@ -94,7 +102,13 @@ switch ($action) {
         if(!$deleteconfirmed){
             $PAGE->set_title(get_string('outcomedelete', 'grades'));
             $PAGE->navbar->add(get_string('outcomedelete', 'grades'));
-            echo $OUTPUT->header();
+            print_grade_page_head(
+                courseid: $courseid ?: SITEID,
+                active_type: 'outcome',
+                active_plugin: 'edit',
+                shownavigation: false,
+            );
+
             $confirmurl = new moodle_url('index.php', array(
                     'id' => $courseid, 'outcomeid' => $outcome->id,
                     'action'=> 'delete',
@@ -123,7 +137,6 @@ if ($courseid) {
 
 
 $outcomes_tables = array();
-$heading = get_string('outcomes', 'grades');
 
 if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
     $return = $OUTPUT->heading($strcustomoutcomes, 3, 'main mt-3');
@@ -134,9 +147,8 @@ if ($courseid and $outcomes = grade_outcome::fetch_all_local($courseid)) {
         $line[] = $outcome->get_shortname();
 
         $scale = $outcome->load_scale();
-        if (empty($scale->id)) {   // hopefully never happens
-            $line[] = $scale->get_name();
-            debugging("Found a scale with no ID ({$scale->get_name()}) while outputting course outcomes", DEBUG_DEVELOPER);
+        if (!$scale || empty($scale->id)) {
+            $line[] = get_string('none');
         } else {
             if (empty($scale->courseid)) {
                 $caneditthisscale = $caneditsystemscales;
@@ -184,9 +196,8 @@ if ($outcomes = grade_outcome::fetch_all_global()) {
         $line[] = $outcome->get_shortname();
 
         $scale = $outcome->load_scale();
-        if (empty($scale->id)) {   // hopefully never happens
-            $line[] = $scale->get_name();
-            debugging("Found a scale with no ID ({$scale->get_name()}) while outputting global outcomes", DEBUG_DEVELOPER);
+        if (!$scale || empty($scale->id)) {
+            $line[] = get_string('none');
         } else {
             if (empty($scale->courseid)) {
                 $caneditthisscale = $caneditsystemscales;

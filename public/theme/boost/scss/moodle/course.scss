@@ -1124,3 +1124,14 @@ $highlight-style: highlight-fade 2s ease-in-out;
     }
 }
 
+/* Learning outcomes page */
+
+// This page reuses the activity item markup in a read-only context,
+// so suppress the editing-mode hover cursor/outline styles.
+body.editing#page-course-learningoutcomes .activity-item {
+    cursor: auto;
+    &:hover:not(:has(.activity:hover)),
+    &.selected {
+        outline: none;
+    }
+}

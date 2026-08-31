@@ -1,5 +1,3 @@
-<?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,20 +14,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'gradereport_outcomes', language 'en'
+ * JS module for the course learning outcomes page.
  *
- * @package   gradereport_outcomes
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @module    core_course/learningoutcomes
+ * @copyright 2026 David Woloszyn <david.woloszyn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addoutcome'] = 'Add a learning outcome';
-$string['courseoutcomes'] = 'Course learning outcomes';
-$string['eventgradereportviewed'] = 'Grade learning outcomes report viewed';
-$string['pluginname'] = 'Learning outcomes report';
-$string['privacy:metadata'] = 'The Grade learning outcomes report only shows data stored in other locations.';
-$string['outcomes:view'] = 'View learning outcomes report';
-$string['usedgradeitem'] = 'Number of grade items';
+import * as Collapse from 'core_courseformat/local/collapse';
 
-// Deprecated since Moodle 5.3.
-$string['coursespecoutcome'] = 'Course learning outcomes';
+/**
+ * Initialise collapse/expand behaviour for learning outcomes sections.
+ */
+export const init = () => {
+    Collapse.init(document.querySelector('[data-for="course_sectionlist"]'), {
+        toggleAllSelector: '#collapsesections',
+        collapseSelector: '[id^="coursecontentcollapseid"]',
+    });
+};

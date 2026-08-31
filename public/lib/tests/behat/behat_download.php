@@ -89,7 +89,7 @@ class behat_download extends behat_base {
      * @param TableNode $table the table of assertions to check.
      * @throws ExpectationException if the file content does not pass all the checks.
      */
-    private function verify_file_content(string $filecontent, TableNode $table): void {
+    public function verify_file_content(string $filecontent, TableNode $table): void {
         foreach ($table->getRows() as $row) {
             switch (strtolower(trim($row[0]))) {
                 case 'contains text':

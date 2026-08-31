@@ -53,16 +53,16 @@ Feature: In an assignment, teachers grade multiple students on one page
     And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I am on the "Course 1" "grades > outcomes" page logged in as teacher1
-    And I press "Manage outcomes"
-    And I press "Add a new outcome"
+    And I press "Manage learning outcomes"
+    And I press "Add a new learning outcome"
     And I follow "Add a new scale"
     And I set the following fields to these values:
       | Name | 1337dom scale |
       | Scale | Noob, Nub, 1337, HaXor |
     And I press "Save changes"
     And I am on the "Course 1" "grades > outcomes" page
-    And I press "Manage outcomes"
-    And I press "Add a new outcome"
+    And I press "Manage learning outcomes"
+    And I press "Add a new learning outcome"
     And I set the following fields to these values:
       | Full name | M8d skillZ! |
       | Short name | skillZ! |
@@ -121,7 +121,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I click on "Hide Last modified (grade)" "link"
     And I click on "Hide Feedback comments" "link"
     And I click on "Hide Final grade" "link"
-    And I click on "Hide Outcomes" "link"
+    And I click on "Hide Learning outcomes" "link"
     And I click on "Save" "button" in the "sticky-footer" "region"
     And I should see "The grade changes were saved"
     And I press "Continue"

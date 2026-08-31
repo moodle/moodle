@@ -76,8 +76,8 @@ class grade_outcome extends grade_object {
     public $scale;
 
     /**
-     * The id of the scale referenced by this outcome.
-     * @var int $scaleid
+     * The id of the scale referenced by this outcome, or null if this outcome has no scale.
+     * @var int|null $scaleid
      */
     public $scaleid;
 
@@ -105,6 +105,11 @@ class grade_outcome extends grade_object {
      */
     public function delete($source=null) {
         global $DB;
+        $gocids = $DB->get_fieldset_select('grade_outcomes_courses', 'id', 'outcomeid = ?', [$this->id]);
+        if (!empty($gocids)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($gocids);
+            $DB->delete_records_select('grade_outcomes_modules', "outcomecourseid $insql", $inparams);
+        }
         if (!empty($this->courseid)) {
             $DB->delete_records('grade_outcomes_courses', array('outcomeid' => $this->id, 'courseid' => $this->courseid));
         }
@@ -121,6 +126,120 @@ class grade_outcome extends grade_object {
     }
 
     /**
+     * Records this scale-less outcome as used by a course module in grade_outcomes_modules.
+     *
+     * @param int $courseid The course ID.
+     * @param int $cmid The course-module ID.
+     * @return bool True on success, false if the outcome has a scale.
+     * @throws \dml_exception If any database errors are encountered.
+     */
+    public function add_outcome_to_module(int $courseid, int $cmid): bool {
+        global $DB, $USER;
+
+        if (!empty($this->scaleid)) {
+            // Scaled outcomes are tracked via grade_items; do not use this table.
+            return false;
+        }
+
+        // Ensure the outcome is registered in this course (creates a grade_outcomes_courses row if
+        // needed) and retrieve its id for use as the FK in grade_outcomes_modules.
+        $this->use_in($courseid);
+        $goc = $DB->get_record('grade_outcomes_courses', ['courseid' => $courseid, 'outcomeid' => $this->id], 'id', MUST_EXIST);
+
+        if ($DB->record_exists('grade_outcomes_modules', ['outcomecourseid' => $goc->id, 'cmid' => $cmid])) {
+            return true; // Already associated.
+        }
+
+        $record                  = new stdClass();
+        $record->outcomecourseid = $goc->id;
+        $record->cmid            = $cmid;
+        $record->usercreated     = $USER->id;
+        $record->timecreated     = time();
+        $DB->insert_record('grade_outcomes_modules', $record);
+
+        return true;
+    }
+
+    /**
+     * Removes this scale-less outcome's record for a course module from grade_outcomes_modules.
+     *
+     * @param int $courseid The course ID.
+     * @param int $cmid The course-module ID.
+     */
+    public function remove_outcome_from_module(int $courseid, int $cmid): void {
+        global $DB;
+
+        $goc = $DB->get_record(
+            'grade_outcomes_courses',
+            ['courseid' => $courseid, 'outcomeid' => $this->id],
+            'id',
+            IGNORE_MISSING
+        );
+
+        if (!$goc) {
+            return;
+        }
+
+        $DB->delete_records('grade_outcomes_modules', [
+            'outcomecourseid' => $goc->id,
+            'cmid' => $cmid,
+        ]);
+    }
+
+    /**
+     * Returns the IDs of all scale-less outcomes associated with a course module.
+     *
+     * @param int $cmid Course module ID.
+     * @param int $courseid Course ID.
+     * @return int[] List of outcome IDs.
+     */
+    public static function get_outcomes_in_module(int $cmid, int $courseid): array {
+        global $DB;
+
+        $sql = "SELECT goc.outcomeid
+                  FROM {grade_outcomes_modules} gom
+                  JOIN {grade_outcomes_courses} goc ON goc.id = gom.outcomecourseid
+                 WHERE gom.cmid = :cmid AND goc.courseid = :courseid";
+        $ids = $DB->get_fieldset_sql($sql, ['cmid' => $cmid, 'courseid' => $courseid]);
+        return array_map('intval', $ids);
+    }
+
+    /**
+     * Returns all course module IDs mapped to a course outcome.
+     *
+     * Scaled outcomes are mapped via grade_items, while scale-less outcomes are mapped via
+     * grade_outcomes_modules.
+     *
+     * @param int $outcomeid Outcome ID.
+     * @param int $courseid Course ID.
+     * @return int[] List of unique course module IDs.
+     */
+    public static function get_modules_mapped_to_course_outcomes(int $outcomeid, int $courseid): array {
+        global $DB;
+
+        $scaledsql = "SELECT cm.id
+                        FROM {grade_items} gi
+                        JOIN {modules} mo ON mo.name = gi.itemmodule
+                        JOIN {course_modules} cm ON cm.module = mo.id
+                         AND cm.instance = gi.iteminstance
+                         AND cm.course = gi.courseid
+                       WHERE gi.courseid = :courseid
+                         AND gi.itemtype = 'mod'
+                         AND gi.outcomeid = :outcomeid";
+        $scaledcmids = $DB->get_fieldset_sql($scaledsql, ['courseid' => $courseid, 'outcomeid' => $outcomeid]);
+
+        $scalelesssql = "SELECT gom.cmid
+                           FROM {grade_outcomes_modules} gom
+                           JOIN {grade_outcomes_courses} goc ON goc.id = gom.outcomecourseid
+                          WHERE goc.courseid = :courseid
+                            AND goc.outcomeid = :outcomeid";
+        $scalelesscmids = $DB->get_fieldset_sql($scalelesssql, ['courseid' => $courseid, 'outcomeid' => $outcomeid]);
+
+        $cmids = array_merge($scaledcmids, $scalelesscmids);
+        return array_map('intval', array_values(array_unique($cmids)));
+    }
+
+    /**
      * Records this object in the Database, sets its id to the returned value, and returns that value.
      * If successful this function also fetches the new object data from database and stores it
      * in object properties.
@@ -133,6 +252,9 @@ class grade_outcome extends grade_object {
         global $DB;
 
         $this->timecreated = $this->timemodified = time();
+        if (empty($this->scaleid)) {
+            $this->scaleid = null;
+        }
 
         if ($result = parent::insert($source)) {
             if (!empty($this->courseid)) {
@@ -154,6 +276,9 @@ class grade_outcome extends grade_object {
      */
     public function update($source = null, $isbulkupdate = false) {
         $this->timemodified = time();
+        if (empty($this->scaleid)) {
+            $this->scaleid = null;
+        }
 
         if ($result = parent::update($source)) {
             if (!empty($this->courseid)) {
@@ -214,9 +339,41 @@ class grade_outcome extends grade_object {
     public function load_scale() {
         if (empty($this->scale->id) or $this->scale->id != $this->scaleid) {
             $this->scale = grade_scale::fetch(array('id'=>$this->scaleid));
-            $this->scale->load_items();
+            if ($this->scale) {
+                $this->scale->load_items();
+            }
         }
         return $this->scale;
+    }
+
+    /**
+     * Finds and returns all used outcome IDs in a course.
+     *
+     * @param int $courseid The course ID.
+     * @return int[] Flat array of outcome IDs in use (unique, values only).
+     */
+    public static function get_used_outcomes_in_course(int $courseid): array {
+        global $DB;
+
+        $scaled = $DB->get_fieldset_sql(
+            "SELECT outcomeid
+               FROM {grade_items}
+              WHERE courseid = ?
+                    AND outcomeid IS NOT NULL",
+            [$courseid]
+        );
+
+        $scaleless = $DB->get_fieldset_sql(
+            "SELECT goc.outcomeid
+               FROM {grade_outcomes_modules} gom
+               JOIN {grade_outcomes_courses} goc ON goc.id = gom.outcomecourseid
+              WHERE goc.courseid = ?",
+            [$courseid]
+        );
+
+        $ids = array_merge($scaled, $scaleless);
+
+        return array_map('intval', array_unique($ids));
     }
 
     /**
@@ -344,13 +501,24 @@ class grade_outcome extends grade_object {
     }
 
     /**
-     * Returns the number of grade items that use this grade outcome
+     * Returns the number of activities that use this outcome.
      *
      * @return int
      */
     public function get_item_uses_count() {
         global $DB;
-        return $DB->count_records('grade_items', array('outcomeid' => $this->id));
+
+        if (!empty($this->scaleid)) {
+            // Scaled outcomes are tracked through grade items.
+            return $DB->count_records('grade_items', ['outcomeid' => $this->id]);
+        }
+
+        // Scale-less outcomes are tracked through outcome-module associations.
+        $sql = "SELECT COUNT(gom.id)
+                  FROM {grade_outcomes_modules} gom
+                  JOIN {grade_outcomes_courses} goc ON goc.id = gom.outcomecourseid
+                 WHERE goc.outcomeid = :outcomeid";
+        return $DB->count_records_sql($sql, ['outcomeid' => $this->id]);
     }
 
     /**

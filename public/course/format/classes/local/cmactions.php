@@ -344,6 +344,9 @@ class cmactions extends baseactions {
             }
         }
 
+        // Delete scale-less outcome module associations for this course module.
+        $DB->delete_records('grade_outcomes_modules', ['cmid' => $cm->id]);
+
         // Delete associated blogs and blog tag instances.
         blog_remove_associations_for_module($modcontext->id);
 

@@ -43,7 +43,7 @@ $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcomes', 'cour
 // first of all fix the state of outcomes_course table
 $standardoutcomes    = grade_outcome::fetch_all_global();
 $co_custom           = grade_outcome::fetch_all_local($courseid);
-$co_standard_used    = array();
+$usedstandardoutcomes = [];
 $co_standard_notused = array();
 
 if ($courseused = $DB->get_records('grade_outcomes_courses', array('courseid' => $courseid), '', 'outcomeid')) {
@@ -70,26 +70,18 @@ foreach($co_custom as $oid=>$outcome) {
     }
 }
 
-// now check all used standard outcomes are in outcomes_course too
-$params = array($courseid);
-$sql = "SELECT DISTINCT outcomeid
-          FROM {grade_items}
-         WHERE courseid=? and outcomeid IS NOT NULL";
-if ($realused = $DB->get_records_sql($sql, $params)) {
-    $realused = array_keys($realused);
-    foreach ($realused as $oid) {
-        if (array_key_exists($oid, $standardoutcomes)) {
+// Check all used standard outcomes.
+foreach (grade_outcome::get_used_outcomes_in_course($courseid) as $oid) {
+    if (array_key_exists($oid, $standardoutcomes)) {
+        $usedstandardoutcomes[$oid] = $standardoutcomes[$oid];
+        unset($standardoutcomes[$oid]);
 
-            $co_standard_used[$oid] = $standardoutcomes[$oid];
-            unset($standardoutcomes[$oid]);
-
-            if (!in_array($oid, $courseused)) {
-                $courseused[$oid] = $oid;
-                $goc = new stdClass();
-                $goc->courseid = $courseid;
-                $goc->outcomeid = $oid;
-                $DB->insert_record('grade_outcomes_courses', $goc);
-            }
+        if (!in_array($oid, $courseused)) {
+            $courseused[$oid] = $oid;
+            $goc = new stdClass();
+            $goc->courseid = $courseid;
+            $goc->outcomeid = $oid;
+            $DB->insert_record('grade_outcomes_courses', $goc);
         }
     }
 }

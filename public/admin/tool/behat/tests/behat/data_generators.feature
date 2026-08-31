@@ -367,7 +367,7 @@ Feature: Set up contextual data for tests
     When I am on the "Course 1" "grades > outcomes" page logged in as admin
     Then I should see "Grade outcome 1" in the "#addoutcomes" "css_element"
     And I should see "Grade outcome 2" in the "#removeoutcomes" "css_element"
-    And I press "Manage outcomes"
+    And I press "Manage learning outcomes"
     And the following should exist in the "generaltable" table:
       | Full name       | Short name | Scale        |
       | Grade outcome 2 | OT2        | Test Scale 1 |
@@ -394,8 +394,8 @@ Feature: Set up contextual data for tests
     Then I should see "Test Outcome Grade Item 1"
     And I click on grade item menu "Test Outcome Grade Item 1" of type "gradeitem" on "setup" page
     And I choose "Edit grade item" in the open action menu
-    And I click on "Show more..." "link" in the "Edit outcome item" "dialogue"
-    And the field "Outcome" matches value "Grade outcome 1"
+    And I click on "Show more..." "link" in the "Edit learning outcome item" "dialogue"
+    And the field "Learning outcome" matches value "Grade outcome 1"
     And I should see "Grade category 1" in the "Grade category" "form_row"
     And I press "Cancel"
 

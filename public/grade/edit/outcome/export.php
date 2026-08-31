@@ -73,10 +73,15 @@ foreach($outcomes as $outcome) {
     $line[] = $outcome->get_description();
 
     $scale = $outcome->load_scale();
-    $line[] = $scale->get_name();
-    $line[] = $scale->compact_items();
-    $line[] = $scale->get_description();
-
+    if (!$scale) {
+        $line[] = '';
+        $line[] = '';
+        $line[] = '';
+    } else {
+        $line[] = $scale->get_name();
+        $line[] = $scale->compact_items();
+        $line[] = $scale->get_description();
+    }
     echo format_csv($line, ';', '"');
 }
 
