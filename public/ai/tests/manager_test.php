@@ -826,8 +826,6 @@ final class manager_test extends \advanced_testcase {
         $childid = $DB->insert_record('ai_action_generate_text', (object) [
             'prompt' => 'This is a test prompt',
             'generatedcontent' => 'This is the generated content',
-            'prompttokens' => 12,
-            'completiontoken' => 34,
         ]);
 
         $registerid = $DB->insert_record('ai_action_register', (object) [
@@ -841,6 +839,8 @@ final class manager_test extends \advanced_testcase {
             'timecompleted' => time(),
             'model' => 'gpt-test',
             'courseid' => -1,
+            'prompttokens' => 12,
+            'completiontokens' => 34,
         ]);
 
         $detail = manager::get_action_detail($registerid);
@@ -848,7 +848,7 @@ final class manager_test extends \advanced_testcase {
         $this->assertEquals('generate_text', $detail->actionname);
         $this->assertEquals('This is a test prompt', $detail->typedata->prompt);
         $this->assertEquals('This is the generated content', $detail->typedata->generatedcontent);
-        $this->assertEquals(12, $detail->typedata->prompttokens);
+        $this->assertEquals(12, $detail->prompttokens);
     }
 
     /**

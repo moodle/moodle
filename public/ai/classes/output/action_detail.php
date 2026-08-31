@@ -75,8 +75,8 @@ class action_detail implements \renderable, \templatable {
         if ($data['istext']) {
             $data['prompt'] = $typedata->prompt;
             $data['generatedcontent'] = $typedata->generatedcontent;
-            $data['prompttokens'] = $typedata->prompttokens;
-            $data['completiontokens'] = $typedata->completiontoken;
+            $data['prompttokens'] = $record->prompttokens;
+            $data['completiontokens'] = $record->completiontokens;
         }
 
         if ($data['isimage']) {
