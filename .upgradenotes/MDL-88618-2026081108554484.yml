@@ -1,0 +1,10 @@
+issueNumber: MDL-88618
+notes:
+  editor_tiny:
+    - message: >-
+        The Accordion and List Styles (advlist) bundled TinyMCE plugins have
+        been enabled by default. HTMLPurifier now also allows the HTML5
+        <details> and <summary> elements, and the lower-greek CSS
+        list-style-type value, so content produced by these plugins is preserved
+        when saved.
+      type: improved

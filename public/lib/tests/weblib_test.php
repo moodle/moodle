@@ -642,6 +642,54 @@ EXPECTED;
     }
 
     /**
+     * Tests that the details and summary elements used by the TinyMCE accordion plugin survive
+     * HTMLPurifier filtering (MDL-88618).
+     *
+     * HTMLPurifier removes disallowed elements but keeps their text content, so asserting on the
+     * text alone would not detect a regression here. The elements themselves must be asserted.
+     *
+     * @covers \purify_html
+     */
+    public function test_purify_html_accordion_elements(): void {
+        $this->resetAfterTest();
+
+        $html = '<details class="mce-accordion"><summary class="mce-accordion-summary">Accordion heading</summary>'
+            . '<div class="mce-accordion-body"><p>Accordion content</p></div></details>';
+        $cleaned = purify_html($html);
+
+        $this->assertStringContainsString('<details class="mce-accordion">', $cleaned);
+        $this->assertStringContainsString('<summary class="mce-accordion-summary">', $cleaned);
+        $this->assertStringContainsString('</details>', $cleaned);
+        $this->assertStringContainsString('</summary>', $cleaned);
+    }
+
+    /**
+     * Tests that all TinyMCE advlist list-style-type values, including lower-greek, survive
+     * HTMLPurifier filtering (MDL-88618).
+     *
+     * @covers \purify_html
+     */
+    public function test_purify_html_list_style_type(): void {
+        $this->resetAfterTest();
+
+        $styles = [
+            'disc', 'circle', 'square', 'decimal',
+            'lower-alpha', 'upper-alpha', 'lower-roman', 'upper-roman',
+            'lower-greek',
+        ];
+
+        foreach ($styles as $style) {
+            $html = '<ul style="list-style-type: ' . $style . ';"><li>Test item</li></ul>';
+            $cleaned = purify_html($html);
+            $this->assertStringContainsString(
+                'list-style-type:' . $style,
+                $cleaned,
+                "list-style-type '$style' was stripped by HTMLPurifier"
+            );
+        }
+    }
+
+    /**
      * Tests for content_to_text.
      *
      * @param string    $content   The content
