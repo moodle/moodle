@@ -1,0 +1,5 @@
+issueNumber: MDL-82521
+notes:
+  mod_quiz:
+    - message: A new duedate field added to 'quiz' and 'quiz_overrides' tables
+      type: improved

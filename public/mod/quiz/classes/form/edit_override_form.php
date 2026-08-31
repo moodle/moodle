@@ -204,6 +204,13 @@ class edit_override_form extends moodleform {
                 get_string('quizopen', 'quiz'), mod_quiz_mod_form::$datefieldoptions);
         $mform->setDefault('timeopen', $this->quiz->timeopen);
 
+        $mform->addElement(
+            'date_time_selector',
+            'duedate',
+            get_string('duedate', 'quiz'),
+            mod_quiz_mod_form::$datefieldoptions
+        );
+
         $mform->addElement('date_time_selector', 'timeclose',
                 get_string('quizclose', 'quiz'), mod_quiz_mod_form::$datefieldoptions);
         $mform->setDefault('timeclose', $this->quiz->timeclose);

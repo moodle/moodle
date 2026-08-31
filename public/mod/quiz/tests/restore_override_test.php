@@ -51,6 +51,7 @@ final class restore_override_test extends \restore_date_testcase {
             'quiz' => $quiz->id,
             'groupid' => $group1->id,
             'timeopen' => $now,
+            'duedate' => $now + 10,
             'timeclose' => $now + 20
         ];
         $DB->insert_record('quiz_overrides', $groupoverride1);
@@ -59,6 +60,7 @@ final class restore_override_test extends \restore_date_testcase {
             'quiz' => $quiz->id,
             'groupid' => $group2->id,
             'timeopen' => $now,
+            'duedate' => $now + 20,
             'timeclose' => $now + 40
         ];
         $DB->insert_record('quiz_overrides', $groupoverride2);
@@ -73,6 +75,7 @@ final class restore_override_test extends \restore_date_testcase {
             'userid' => $USER->id,
             'sortorder' => 1,
             'timeopen' => 100,
+            'duedate' => 150,
             'timeclose' => 200
         ];
         $DB->insert_record('quiz_overrides', $useroverride);

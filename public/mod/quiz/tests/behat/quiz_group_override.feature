@@ -64,6 +64,46 @@ Feature: Quiz group override
     Then I should see "There are no groups in this course."
     And the "Add group override" "button" should be disabled
 
+  Scenario: Due date before open date
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
+    And I press "Add group override"
+    And I set the following fields to these values:
+      | Override group      | Group 1              |
+      | Open the quiz       | ##5 Jan 2020 08:00## |
+      | Due date            | ##1 Jan 2020 08:00## |
+    And I press "Save"
+    Then I should see "The due date must be after the open date."
+
+  Scenario: Due date same as open date
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
+    And I press "Add group override"
+    And I set the following fields to these values:
+      | Override group      | Group 1              |
+      | Open the quiz       | ##5 Jan 2020 08:00## |
+      | Due date            | ##5 Jan 2020 08:00## |
+    And I press "Save"
+    Then I should see "The due date must be after the open date."
+
+  Scenario: Due date after close date
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
+    And I press "Add group override"
+    And I set the following fields to these values:
+      | Override group      | Group 1              |
+      | Close the quiz      | ##1 Jan 2020 08:00## |
+      | Due date            | ##5 Jan 2020 08:00## |
+    And I press "Save"
+    Then I should see "The due date must be before the close date."
+
+  Scenario: Due date same as close date
+    When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
+    And I press "Add group override"
+    And I set the following fields to these values:
+      | Override group      | Group 1              |
+      | Close the quiz      | ##1 Jan 2020 08:00## |
+      | Due date            | ##1 Jan 2020 08:00## |
+    And I press "Save"
+    Then I should not see "The due date must be before the close date."
+
   Scenario: A teacher can create an override
     When I am on the "Test quiz" "mod_quiz > Group overrides" page logged in as "teacher1"
     And I press "Add group override"

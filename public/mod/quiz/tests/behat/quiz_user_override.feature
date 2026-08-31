@@ -27,6 +27,70 @@ Feature: Quiz user override
       | student3 | C1     | student        |
 
   @javascript
+  Scenario: Due date before open date
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
+    And I change window size to "large"
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user       | Student One (student1@example.com) |
+      | Open the quiz       | ##5 Jan 2020 08:00## |
+      | Due date            | ##1 Jan 2020 08:00## |
+    And I press "Save"
+    Then I should see "The due date must be after the open date."
+
+  @javascript
+  Scenario: Due date same as open date
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
+    And I change window size to "large"
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user       | Student One (student1@example.com) |
+      | Open the quiz       | ##5 Jan 2020 08:00## |
+      | Due date            | ##5 Jan 2020 08:00## |
+    And I press "Save"
+    Then I should see "The due date must be after the open date."
+
+  @javascript
+  Scenario: Due date after close date
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
+    And I change window size to "large"
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user        | Student One (student1@example.com) |
+      | Close the quiz       | ##1 Jan 2020 08:00## |
+      | Due date             | ##5 Jan 2020 08:00## |
+    And I press "Save"
+    Then I should see "The due date must be before the close date."
+
+  @javascript
+  Scenario: Due date same as close date
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
+    And I change window size to "large"
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user        | Student One (student1@example.com) |
+      | Close the quiz       | ##5 Jan 2020 08:00## |
+      | Due date             | ##5 Jan 2020 08:00## |
+    And I press "Save"
+    Then I should not see "The due date must be before the close date."
+
+  @javascript
   Scenario: Add, modify then delete a user override
     Given the following "activities" exist:
       | activity   | name      | course | idnumber |

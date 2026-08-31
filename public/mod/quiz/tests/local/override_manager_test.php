@@ -36,7 +36,8 @@ final class override_manager_test extends \advanced_testcase {
     private const TEST_QUIZ_SETTINGS = [
         'attempts' => 5,
         'timeopen' => 100000000,
-        'timeclose' => 10000001,
+        'timeclose' => 10000002,
+        'duedate' => 10000001,
         'timelimit' => 10,
     ];
 
@@ -219,7 +220,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 1,
                     'attempts' => 999,
                     'password' => 'test',
@@ -234,6 +236,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => null,
                     'timeclose' => null,
+                    'duedate' => null,
                     'timelimit' => 1,
                     'attempts' => 999,
                     'password' => 'test',
@@ -249,6 +252,7 @@ final class override_manager_test extends \advanced_testcase {
                     'timeopen' => 50,
                     'timeclose' => null,
                     'timelimit' => null,
+                    'duedate' => null,
                     'attempts' => null,
                     'password' => 'test',
                 ],
@@ -301,13 +305,35 @@ final class override_manager_test extends \advanced_testcase {
                 'expectedrecordscreated' => 0,
                 'expectedeventclass' => user_override_updated::class,
             ],
+            'update user override - disabled due date' => [
+                'existingdata' => [
+                    'userid' => ':userid',
+                    'groupid' => null,
+                    'duedate' => 52,
+                    'timelimit' => null,
+                    'attempts' => null,
+                    'password' => null,
+                ],
+                'formdata' => [
+                    'id' => ':existingid',
+                    'userid' => ':userid',
+                    'groupid' => null,
+                    'duedate' => 0,
+                    'timelimit' => null,
+                    'attempts' => null,
+                    'password' => null,
+                ],
+                'expectedrecordscreated' => 0,
+                'expectedeventclass' => user_override_updated::class,
+            ],
             'create group override - no existing data' => [
                 'existingdata' => [],
                 'formdata' => [
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 1,
                     'attempts' => 999,
                     'password' => 'test',
@@ -322,6 +348,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => ':groupid',
                     'timeopen' => null,
                     'timeclose' => null,
+                    'duedate' => null,
                     'timelimit' => 1,
                     'attempts' => 999,
                     'password' => 'test',
@@ -337,6 +364,7 @@ final class override_manager_test extends \advanced_testcase {
                     'timeopen' => 50,
                     'timeclose' => null,
                     'timelimit' => null,
+                    'duedate' => null,
                     'attempts' => null,
                     'password' => null,
                 ],
@@ -394,7 +422,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -404,7 +433,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 52,
-                    'timeclose' => 53,
+                    'timeclose' => 55,
+                    'duedate' => 54,
                     'timelimit' => 1,
                     'attempts' => 999,
                     'password' => 'test',
@@ -417,7 +447,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -427,7 +458,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 52,
-                    'timeclose' => 53,
+                    'timeclose' => 55,
+                    'duedate' => 54,
                     'timelimit' => 1,
                     'attempts' => 999,
                     'password' => 'test',
@@ -442,6 +474,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => null,
                     'timeclose' => null,
+                    'duedate' => null,
                     'timelimit' => null,
                     // This checks we are using empty() carefully, since this is valid.
                     'attempts' => 0,
@@ -458,6 +491,7 @@ final class override_manager_test extends \advanced_testcase {
                     // Make these the same, they should be ignored.
                     'timeopen' => self::TEST_QUIZ_SETTINGS['timeopen'],
                     'timeclose' => self::TEST_QUIZ_SETTINGS['timeclose'],
+                    'duedate' => self::TEST_QUIZ_SETTINGS['duedate'],
                     'attempts' => self::TEST_QUIZ_SETTINGS['attempts'],
                     // However change this, this should still get updated.
                     'timelimit' => self::TEST_QUIZ_SETTINGS['timelimit'] + 5,
@@ -536,6 +570,10 @@ final class override_manager_test extends \advanced_testcase {
             $expectedcount += 1;
         }
 
+        if (!empty($formdata['duedate']) && $formdata['duedate'] != self::TEST_QUIZ_SETTINGS['duedate']) {
+            $expectedcount += 1;
+        }
+
         // Find all events. We assume the test event times do not exceed a time of 999.
         $events = calendar_get_events(0, 999, [$test->user1->id], [$test->groupid1], false);
         $this->assertCount($expectedcount, $events);
@@ -578,7 +616,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'duedate' => 51,
+                    'timeclose' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -591,7 +630,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'duedate' => 51,
+                    'timeclose' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -603,7 +643,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -613,7 +654,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -625,7 +667,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -635,7 +678,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -647,7 +691,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -657,7 +702,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => null,
                     'timeopen' => 52,
-                    'timeclose' => 53,
+                    'timeclose' => 55,
+                    'duedate' => 54,
                     'timelimit' => 1,
                     'attempts' => 999,
                     'password' => 'test',
@@ -673,6 +719,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => ':groupid',
                     'timeopen' => 50,
                     'timeclose' => 100,
+                    'duedate' => 70,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
@@ -688,6 +735,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => 50,
                     'timeclose' => 100,
+                    'duedate' => 70,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
@@ -710,6 +758,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => null,
                     'timeclose' => null,
+                    'duedate' => null,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
@@ -725,6 +774,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => null,
                     'timeclose' => null,
+                    'duedate' => null,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
@@ -756,6 +806,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => self::TEST_QUIZ_SETTINGS['timeopen'],
                     'timeclose' => self::TEST_QUIZ_SETTINGS['timeclose'],
+                    'duedate' => self::TEST_QUIZ_SETTINGS['duedate'],
                     'attempts' => self::TEST_QUIZ_SETTINGS['attempts'],
                     'timelimit' => self::TEST_QUIZ_SETTINGS['timelimit'],
                     'password' => null,
@@ -771,6 +822,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => null,
                     'timeclose' => null,
+                    'duedate' => null,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => 'mypass',
@@ -786,6 +838,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => -1,
                     'timeopen' => null,
                     'timeclose' => null,
+                    'duedate' => null,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => 'mypass',
@@ -801,6 +854,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => 50,
                     'timeclose' => 10,
+                    'duedate' => null,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
@@ -816,12 +870,45 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => 50,
                     'timeclose' => 50,
+                    'duedate' => null,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
                 ],
                 'expectedreturn' => [
                     'timeclose' => get_string('closebeforeopen', 'quiz'),
+                ],
+            ],
+            'duedate before timeopen' => [
+                'existingdata' => [],
+                'formdata' => [
+                    'userid' => ':userid',
+                    'groupid' => null,
+                    'timeopen' => 50,
+                    'timeclose' => 51,
+                    'duedate' => 49,
+                    'timelimit' => null,
+                    'attempts' => null,
+                    'password' => null,
+                ],
+                'expectedreturn' => [
+                    'duedate' => get_string('duedatebeforeopen', 'quiz'),
+                ],
+            ],
+            'duedate after timecloese' => [
+                'existingdata' => [],
+                'formdata' => [
+                    'userid' => ':userid',
+                    'groupid' => null,
+                    'timeopen' => 50,
+                    'timeclose' => 51,
+                    'duedate' => 52,
+                    'timelimit' => null,
+                    'attempts' => null,
+                    'password' => null,
+                ],
+                'expectedreturn' => [
+                    'duedate' => get_string('duedateafterclose', 'quiz'),
                 ],
             ],
             'timelimit is negative' => [
@@ -831,6 +918,7 @@ final class override_manager_test extends \advanced_testcase {
                     'groupid' => null,
                     'timeopen' => null,
                     'timeclose' => null,
+                    'duedate' => null,
                     'timelimit' => -1,
                     'attempts' => null,
                     'password' => null,
@@ -847,6 +935,7 @@ final class override_manager_test extends \advanced_testcase {
                     'timeopen' => null,
                     'timeclose' => null,
                     'timelimit' => null,
+                    'duedate' => null,
                     'attempts' => -1,
                     'password' => null,
                 ],
@@ -861,7 +950,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
@@ -875,7 +965,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ":userid",
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -885,7 +976,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ":user2id",
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
@@ -899,7 +991,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -909,7 +1002,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':group2id',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => null,
                     'attempts' => null,
                     'password' => null,
@@ -923,7 +1017,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -932,7 +1027,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -946,7 +1042,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -955,7 +1052,8 @@ final class override_manager_test extends \advanced_testcase {
                     'userid' => null,
                     'groupid' => ':groupid',
                     'timeopen' => 50,
-                    'timeclose' => 51,
+                    'timeclose' => 53,
+                    'duedate' => 52,
                     'timelimit' => 2,
                     'attempts' => 2,
                     'password' => 'test2',
@@ -998,6 +1096,125 @@ final class override_manager_test extends \advanced_testcase {
         // Ensure there are no extra returned errors than what was expected.
         $extra = array_diff_key($result, $expectedreturn);
         $this->assertEmpty($extra, 'More validation errors were returned than expected');
+    }
+
+    /**
+     * Test get_effective_times() returns an empty array when there are no overrides.
+     */
+    public function test_get_effective_times_no_overrides(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+
+        $this->assertSame([], override_manager::get_effective_times($quizobj->get_quizid(), $user->id));
+    }
+
+    /**
+     * Test get_effective_times() returns a user override's values, and that it takes
+     * precedence over a group override the user is also a member of.
+     */
+    public function test_get_effective_times_user_override_takes_precedence(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user->id]);
+
+        $manager = $quizobj->get_override_manager();
+        $manager->save_override([
+            'groupid' => $group->id,
+            'timeopen' => 200,
+            'timeclose' => 300,
+            'duedate' => 250,
+        ]);
+        $manager->save_override([
+            'userid' => $user->id,
+            'timeopen' => 400,
+        ]);
+
+        // User's timeopen override wins; the group's timeclose/duedate fill in the rest.
+        $this->assertEquals([
+            'timeopen' => 400,
+            'timeclose' => 300,
+            'duedate' => 250,
+        ], override_manager::get_effective_times($quizobj->get_quizid(), $user->id));
+    }
+
+    /**
+     * Test get_effective_times() applies a group override to its members.
+     */
+    public function test_get_effective_times_group_override(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user->id]);
+
+        $manager = $quizobj->get_override_manager();
+        $manager->save_override([
+            'groupid' => $group->id,
+            'timeclose' => 300,
+            'duedate' => 250,
+        ]);
+
+        $this->assertEquals([
+            'timeclose' => 300,
+            'duedate' => 250,
+        ], override_manager::get_effective_times($quizobj->get_quizid(), $user->id));
+    }
+
+    /**
+     * Test get_effective_times() resolves multiple group overrides to the latest date,
+     * for both timeclose and duedate.
+     */
+    public function test_get_effective_times_multiple_group_overrides_latest_wins(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user->id]);
+
+        $manager = $quizobj->get_override_manager();
+        $manager->save_override(['groupid' => $group1->id, 'timeclose' => 300, 'duedate' => 250]);
+        $manager->save_override(['groupid' => $group2->id, 'timeclose' => 500, 'duedate' => 450]);
+
+        $result = override_manager::get_effective_times($quizobj->get_quizid(), $user->id);
+        $this->assertEquals(500, $result['timeclose']);
+        $this->assertEquals(450, $result['duedate']);
+    }
+
+    /**
+     * Test get_effective_times() gives precedence to a "no date" (0) group override over any
+     * other group's set date, for both timeclose and duedate.
+     */
+    public function test_get_effective_times_multiple_group_overrides_zero_takes_precedence(): void {
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        [$quizobj, $course] = $this->create_quiz_and_course();
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user->id]);
+
+        $manager = $quizobj->get_override_manager();
+        $manager->save_override(['groupid' => $group1->id, 'timeclose' => 300, 'duedate' => 250]);
+        $manager->save_override(['groupid' => $group2->id, 'timeclose' => 0, 'duedate' => 0]);
+
+        $result = override_manager::get_effective_times($quizobj->get_quizid(), $user->id);
+        $this->assertEquals(0, $result['timeclose']);
+        $this->assertEquals(0, $result['duedate']);
     }
 
     /**

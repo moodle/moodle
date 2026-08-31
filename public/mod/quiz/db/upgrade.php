@@ -109,5 +109,28 @@ function xmldb_quiz_upgrade($oldversion) {
     // Automatically generated Moodle v5.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2026083100) {
+        // Define field duedate to be added to quiz.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('duedate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'precreateattempts');
+
+        // Conditionally launch add field duedate.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field duedate to be added to quiz_overrides.
+        $table = new xmldb_table('quiz_overrides');
+        $field = new xmldb_field('duedate', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'password');
+
+        // Conditionally launch add field duedate.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2026083100, 'quiz');
+    }
+
     return true;
 }

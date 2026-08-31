@@ -205,6 +205,12 @@ foreach ($overrides as $override) {
         $values[] = $override->timeopen > 0 ?
                 userdate($override->timeopen) : get_string('noopen', 'quiz');
     }
+    // Format duedate.
+    if (isset($override->duedate)) {
+        $fields[] = get_string('duedate', 'quiz');
+        $values[] = $override->duedate > 0 ?
+            userdate($override->duedate) : get_string('noduedate', 'quiz');
+    }
     // Format timeclose.
     if (isset($override->timeclose)) {
         $fields[] = get_string('quizcloses', 'quiz');
@@ -217,6 +223,7 @@ foreach ($overrides as $override) {
         $values[] = $override->timelimit > 0 ?
                 format_time($override->timelimit) : get_string('none', 'quiz');
     }
+
     // Format number of attempts.
     if (isset($override->attempts)) {
         $fields[] = get_string('attempts', 'quiz');

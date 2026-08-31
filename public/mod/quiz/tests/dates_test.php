@@ -38,7 +38,6 @@ use core\activity_dates;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class dates_test extends advanced_testcase {
-
     /**
      * Data provider for get_dates_for_module().
      * @return array[]
@@ -52,53 +51,63 @@ final class dates_test extends advanced_testcase {
 
         return [
             'without any dates' => [
-                null, null, null, null, null, null, []
+                null, null, null, null, null, null, null, null, null, [],
             ],
             'only with opening time' => [
-                $after, null, null, null, null, null, [
+                $after, null, null, null, null, null, null, null, null, [
                     ['label' => get_string('activitydate:opens', 'course'), 'timestamp' => $after, 'dataid' => 'timeopen'],
-                ]
+                ],
             ],
             'only with closing time' => [
-                null, $after, null, null, null, null, [
+                null, $after, null, null, null, null, null, null, null, [
                     ['label' => get_string('activitydate:closes', 'course'), 'timestamp' => $after, 'dataid' => 'timeclose'],
-                ]
+                ],
             ],
-            'with both times' => [
-                $after, $later, null, null, null, null, [
+            'only with due date' => [
+                null, null, $after, null, null, null, null, null, null, [
+                    ['label' => get_string('activitydate:due', 'mod_quiz'), 'timestamp' => $after, 'dataid' => 'duedate'],
+                ],
+            ],
+            'with all times' => [
+                $after, $later, $later, null, null, null, null, null, null, [
                     ['label' => get_string('activitydate:opens', 'course'), 'timestamp' => $after, 'dataid' => 'timeopen'],
+                    ['label' => get_string('activitydate:due', 'mod_quiz'), 'timestamp' => $later, 'dataid' => 'duedate'],
                     ['label' => get_string('activitydate:closes', 'course'), 'timestamp' => $later, 'dataid' => 'timeclose'],
-                ]
+                ],
             ],
             'between the dates' => [
-                $before, $after, null, null, null, null, [
+                $before, $after, null, null, null, null, null, null, null, [
                     ['label' => get_string('activitydate:opened', 'course'), 'timestamp' => $before, 'dataid' => 'timeopen'],
                     ['label' => get_string('activitydate:closes', 'course'), 'timestamp' => $after, 'dataid' => 'timeclose'],
-                ]
+                ],
             ],
             'dates are past' => [
-                $earlier, $before, null, null, null, null, [
+                $earlier, $before, $before, null, null, null, null, null, null, [
                     ['label' => get_string('activitydate:opened', 'course'), 'timestamp' => $earlier, 'dataid' => 'timeopen'],
+                    ['label' => get_string('activitydate:due', 'mod_quiz'), 'timestamp' => $before, 'dataid' => 'duedate'],
                     ['label' => get_string('activitydate:closed', 'course'), 'timestamp' => $before, 'dataid' => 'timeclose'],
-                ]
+                ],
             ],
             'with user override' => [
-                $before, $after, $earlier, $later, null, null, [
+                $before, $after, null, $earlier, $later, $later, null, null, null, [
                     ['label' => get_string('activitydate:opened', 'course'), 'timestamp' => $earlier, 'dataid' => 'timeopen'],
+                    ['label' => get_string('activitydate:due', 'mod_quiz'), 'timestamp' => $later, 'dataid' => 'duedate'],
                     ['label' => get_string('activitydate:closes', 'course'), 'timestamp' => $later, 'dataid' => 'timeclose'],
-                ]
+                ],
             ],
             'with group override' => [
-                $before, $after, null, null, $earlier, $later, [
+                $before, $after, null, null, null, null, $earlier, $later, $later, [
                     ['label' => get_string('activitydate:opened', 'course'), 'timestamp' => $earlier, 'dataid' => 'timeopen'],
+                    ['label' => get_string('activitydate:due', 'mod_quiz'), 'timestamp' => $later, 'dataid' => 'duedate'],
                     ['label' => get_string('activitydate:closes', 'course'), 'timestamp' => $later, 'dataid' => 'timeclose'],
-                ]
+                ],
             ],
             'with both user and group overrides' => [
-                $before, $after, $earlier, $later, $earlier - DAYSECS, $later + DAYSECS, [
+                $before, $after, null, $earlier, $later, $later, $earlier - DAYSECS, $later + DAYSECS, $later + DAYSECS, [
                     ['label' => get_string('activitydate:opened', 'course'), 'timestamp' => $earlier, 'dataid' => 'timeopen'],
+                    ['label' => get_string('activitydate:due', 'mod_quiz'), 'timestamp' => $later, 'dataid' => 'duedate'],
                     ['label' => get_string('activitydate:closes', 'course'), 'timestamp' => $later, 'dataid' => 'timeclose'],
-                ]
+                ],
             ],
         ];
     }
@@ -106,19 +115,32 @@ final class dates_test extends advanced_testcase {
     /**
      * Test for get_dates_for_module().
      *
+     * @covers \mod_quiz\dates::get_dates
+     *
      * @dataProvider get_dates_for_module_provider
      * @param int|null $timeopen Time of opening the quiz.
      * @param int|null $timeclose Time of closing the quiz.
+     * @param int|null $duedate Due date of the quiz.
      * @param int|null $usertimeopen The user override for opening the quiz.
      * @param int|null $usertimeclose The user override for closing the quiz.
+     * @param int|null $userduedate The user override for due date of the quiz.
      * @param int|null $grouptimeopen The group override for opening the quiz.
      * @param int|null $grouptimeclose The group override for closing the quiz.
+     * @param int|null $groupduedate The group override for duedate of the quiz.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
-    public function test_get_dates_for_module(?int $timeopen, ?int $timeclose,
-            ?int $usertimeopen, ?int $usertimeclose,
-            ?int $grouptimeopen, ?int $grouptimeclose,
-            array $expected): void {
+    public function test_get_dates_for_module(
+        ?int $timeopen,
+        ?int $timeclose,
+        ?int $duedate,
+        ?int $usertimeopen,
+        ?int $usertimeclose,
+        ?int $userduedate,
+        ?int $grouptimeopen,
+        ?int $grouptimeclose,
+        ?int $groupduedate,
+        array $expected
+    ): void {
 
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
@@ -136,6 +158,9 @@ final class dates_test extends advanced_testcase {
         if ($timeclose) {
             $data['timeclose'] = $timeclose;
         }
+        if ($duedate) {
+            $data['duedate'] = $duedate;
+        }
         $quiz = $quizgenerator->create_instance($data);
 
         if ($usertimeopen || $usertimeclose || $grouptimeopen || $grouptimeclose) {
@@ -143,21 +168,23 @@ final class dates_test extends advanced_testcase {
             $group = $generator->create_group(['courseid' => $course->id]);
             $generator->create_group_member(['groupid' => $group->id, 'userid' => $user->id]);
 
-            if ($usertimeopen || $usertimeclose) {
+            if ($usertimeopen || $usertimeclose || $userduedate) {
                 $quizgenerator->create_override([
                     'quiz' => $quiz->id,
                     'userid' => $user->id,
                     'timeopen' => $usertimeopen,
                     'timeclose' => $usertimeclose,
+                    'duedate' => $userduedate,
                 ]);
             }
 
-            if ($grouptimeopen || $grouptimeclose) {
+            if ($grouptimeopen || $grouptimeclose || $groupduedate) {
                 $quizgenerator->create_override([
                     'quiz' => $quiz->id,
                     'groupid' => $group->id,
                     'timeopen' => $grouptimeopen,
                     'timeclose' => $grouptimeclose,
+                    'duedate' => $groupduedate,
                 ]);
             }
         }

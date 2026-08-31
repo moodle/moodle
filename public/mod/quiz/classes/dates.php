@@ -47,6 +47,8 @@ class dates extends activity_dates {
     protected function get_dates(): array {
         $timeopen = $this->cm->customdata['timeopen'] ?? null;
         $timeclose = $this->cm->customdata['timeclose'] ?? null;
+        $duedate = $this->cm->customdata['duedate'] ?? null;
+
         $this->timeclose = $timeclose ? (int) $timeclose : null;
 
         $now = time();
@@ -58,6 +60,14 @@ class dates extends activity_dates {
                 'dataid' => 'timeopen',
                 'label' => get_string($openlabelid, 'core_course'),
                 'timestamp' => (int) $timeopen,
+            ];
+        }
+
+        if ($duedate) {
+            $dates[] = [
+                'dataid' => 'duedate',
+                'label' => get_string('activitydate:due', 'mod_quiz'),
+                'timestamp' => (int) $duedate,
             ];
         }
 

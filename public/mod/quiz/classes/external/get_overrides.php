@@ -83,6 +83,7 @@ class get_overrides extends external_api {
             'groupid' => new external_value(PARAM_INT, 'Group ID', VALUE_DEFAULT, null),
             'timeopen' => new external_value(PARAM_INT, 'Override time open value', VALUE_DEFAULT, null),
             'timeclose' => new external_value(PARAM_INT, 'Override time close value', VALUE_DEFAULT, null),
+            'duedate' => new external_value(PARAM_INT, 'Override due date value', VALUE_DEFAULT, null),
             'timelimit' => new external_value(PARAM_INT, 'Override time limit value', VALUE_DEFAULT, null),
             'attempts' => new external_value(PARAM_INT, 'Override attempts value', VALUE_DEFAULT, null),
             'password' => new external_value(PARAM_TEXT, 'Override password', VALUE_DEFAULT, null),

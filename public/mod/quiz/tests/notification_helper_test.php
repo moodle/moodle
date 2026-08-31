@@ -200,6 +200,67 @@ final class notification_helper_test extends \advanced_testcase {
     }
 
     /**
+     * Test that get_users_within_quiz() correctly resolves each user's effective due date,
+     * including from user and group overrides.
+     */
+    public function test_get_users_within_quiz_sets_duedate(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $helper = \core\di::get(notification_helper::class);
+        $clock = $this->mock_clock_with_frozen();
+
+        // Create a course and enrol some users.
+        $course = $generator->create_course();
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user4 = $generator->create_user();
+        $generator->enrol_user($user1->id, $course->id, 'student');
+        $generator->enrol_user($user2->id, $course->id, 'student');
+        $generator->enrol_user($user4->id, $course->id, 'student');
+
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+
+        // Create a quiz with an open date < 48 hours, and a due date.
+        $timeopen = $clock->time() + DAYSECS;
+        $duedate = $timeopen + WEEKSECS;
+        $quiz = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'timeopen' => $timeopen,
+            'duedate' => $duedate,
+        ]);
+
+        // User1 will have a user specific override, giving them a different due date.
+        $userduedate = $duedate + HOURSECS;
+        $quizgenerator->create_override([
+            'quiz' => $quiz->id,
+            'userid' => $user1->id,
+            'duedate' => $userduedate,
+        ]);
+
+        // User2 will have a group override, giving them a different due date.
+        $groupduedate = $duedate + (HOURSECS * 2);
+        $group = $generator->create_group(['courseid' => $course->id]);
+        $generator->create_group_member(['groupid' => $group->id, 'userid' => $user2->id]);
+        $quizgenerator->create_override([
+            'quiz' => $quiz->id,
+            'groupid' => $group->id,
+            'duedate' => $groupduedate,
+        ]);
+
+        $users = $helper::get_users_within_quiz($quiz->id);
+
+        // User1 has the 'user' override due date.
+        $this->assertEquals($userduedate, $users[$user1->id]->duedate);
+
+        // User2 has the 'group' override due date.
+        $this->assertEquals($groupduedate, $users[$user2->id]->duedate);
+
+        // User4 has no override, so gets the quiz's base due date.
+        $this->assertEquals($duedate, $users[$user4->id]->duedate);
+    }
+
+    /**
      * Test users failing a grade condition are excluded from open-soon notifications.
      */
     public function test_get_users_within_quiz_with_grade_restriction(): void {
@@ -368,6 +429,51 @@ final class notification_helper_test extends \advanced_testcase {
     }
 
     /**
+     * Test that the 'opening soon' notification email shows the user's effective due date,
+     * including when it comes from a user override, instead of always showing "N/A".
+     */
+    public function test_send_notification_to_user_includes_effective_duedate(): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $clock = $this->mock_clock_with_frozen();
+        $sink = $this->redirectMessages();
+
+        $course = $generator->create_course();
+        $student = $generator->create_user();
+        $generator->enrol_user($student->id, $course->id, 'student');
+
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+
+        $timeopen = $clock->time() + DAYSECS;
+        $duedate = $timeopen + WEEKSECS;
+        $quiz = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'timeopen' => $timeopen,
+            'duedate' => $duedate,
+        ]);
+
+        // Give this student a due date override, which should take precedence.
+        $userduedate = $duedate + HOURSECS;
+        $quizgenerator->create_override([
+            'quiz' => $quiz->id,
+            'userid' => $student->id,
+            'duedate' => $userduedate,
+        ]);
+
+        $clock->bump(5);
+        $this->run_notification_helper_tasks();
+
+        $messages = $sink->get_messages_by_component('mod_quiz');
+        $this->assertCount(1, $messages);
+        $message = reset($messages);
+
+        $this->assertStringContainsString(userdate($userduedate), $message->fullmessagehtml);
+        $this->assertStringNotContainsString('Due: ' . get_string('statusna'), $message->fullmessagehtml);
+    }
+
+    /**
      * Test content filtering in the quiz open soon notification.
      */
     public function test_send_notification_to_user_filter_content(): void {
@@ -415,6 +521,7 @@ final class notification_helper_test extends \advanced_testcase {
             'firstname' => $student->firstname,
             'coursename' => 'A&B (en)',
             'timeclose' => !empty($quiz->timeclose) ? userdate($quiz->timeclose) : get_string('statusna'),
+            'duedate' => !empty($quiz->duedate) ? userdate($quiz->duedate) : get_string('statusna'),
             'url' => new \moodle_url('/mod/quiz/view.php', ['id' => $quiz->cmid])
         ]);
         $expectedfullmessage = get_string('quizopendatesoonhtml', 'mod_quiz', $fullmessagestringparams);

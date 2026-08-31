@@ -99,10 +99,11 @@ class notification_helper {
                 continue;
             }
 
-            // Time open and time close dates can be user specific with an override.
+            // Time open, time close, and due dates can be user specific with an override.
             // We begin by assuming it is the same as recorded in the quiz.
             $user->timeopen = $quiz->timeopen;
             $user->timeclose = $quiz->timeclose;
+            $user->duedate = $quiz->duedate;
 
             // Set the override type to 'none' to begin with.
             $user->overridetype = 'none';
@@ -164,6 +165,7 @@ class notification_helper {
                 options: ['context' => \context_course::instance($quizobj->get_course()->id), 'escape' => false]),
             'timeopen' => userdate($user->timeopen),
             'timeclose' => !empty($user->timeclose) ? userdate($user->timeclose) : get_string('statusna'),
+            'duedate' => !empty($user->duedate) ? userdate($user->duedate) : get_string('statusna'),
             'url' => $url,
         ];
 
@@ -243,6 +245,7 @@ class notification_helper {
             if ($override->userid === $user->id) {
                 $user->timeopen = !empty($override->timeopen) ? $override->timeopen : $user->timeopen;
                 $user->timeclose = !empty($override->timeclose) ? $override->timeclose : $user->timeclose;
+                $user->duedate = !empty($override->duedate) ? $override->duedate : $user->duedate;
                 $user->overridetype = 'user';
                 // User override has precedence over group. Return here.
                 return;
@@ -261,6 +264,7 @@ class notification_helper {
                 }
                 $user->timeopen = !empty($override->timeopen) ? $override->timeopen : $user->timeopen;
                 $user->timeclose = !empty($override->timeclose) ? $override->timeclose : $user->timeclose;
+                $user->duedate = !empty($override->duedate) ? $override->duedate : $user->duedate;
                 $user->overridetype = 'group';
             }
         }

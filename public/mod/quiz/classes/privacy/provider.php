@@ -105,6 +105,7 @@ class provider implements
                 'timeclose'             => 'privacy:metadata:quiz_overrides:timeclose',
                 'timelimit'             => 'privacy:metadata:quiz_overrides:timelimit',
                 'reason'                => 'privacy:metadata:quiz_overrides:reason',
+                'duedate'               => 'privacy:metadata:quiz_overrides:duedate',
             ], 'privacy:metadata:quiz_overrides');
 
         // These define the structure of the quiz.
@@ -258,6 +259,7 @@ class provider implements
                     qo.timelimit AS override_timelimit,
                     qo.reason AS override_reason,
                     qo.reasonformat AS override_reasonformat,
+                    qo.duedate AS override_duedate,
                     c.id AS contextid,
                     cm.id AS cmid
                   FROM {context} c
@@ -292,6 +294,9 @@ class provider implements
             if (!empty($quizdata->timeclose)) {
                 $quizdata->timeclose = transform::datetime($quiz->timeclose);
             }
+            if (!empty($quizdata->duedate)) {
+                $quizdata->duedate = transform::datetime($quiz->duedate);
+            }
             if (!empty($quizdata->timelimit)) {
                 $quizdata->timelimit = $quiz->timelimit;
             }
@@ -304,6 +309,9 @@ class provider implements
                 }
                 if (!empty($quizdata->override_timeclose)) {
                     $quizdata->override->timeclose = transform::datetime($quiz->override_timeclose);
+                }
+                if (!empty($quizdata->override_duedate)) {
+                    $quizdata->override->duedate = transform::datetime($quiz->override_duedate);
                 }
                 if (!empty($quizdata->override_timelimit)) {
                     $quizdata->override->timelimit = $quiz->override_timelimit;

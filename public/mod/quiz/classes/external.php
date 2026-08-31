@@ -114,7 +114,7 @@ class mod_quiz_external extends external_api {
 
                 if (has_capability('mod/quiz:view', $context)) {
                     $quizdetails['introfiles'] = util::get_area_files($context->id, 'mod_quiz', 'intro', false, false);
-                    $viewablefields = ['timeopen', 'timeclose', 'attempts', 'timelimit', 'grademethod', 'decimalpoints',
+                    $viewablefields = ['timeopen', 'timeclose', 'duedate', 'attempts', 'timelimit', 'grademethod', 'decimalpoints',
                                             'questiondecimalpoints', 'sumgrades', 'grade', 'preferredbehaviour'];
 
                     // Sometimes this function returns just empty.
@@ -276,6 +276,11 @@ class mod_quiz_external extends external_api {
                             'hasquestions' => new external_value(PARAM_INT, 'Whether the quiz has questions', VALUE_OPTIONAL),
                             'precreateattempts' => new external_value(PARAM_INT, 'Whether attempt pre-creation is enabled',
                                 VALUE_OPTIONAL),
+                            'duedate' => new external_value(
+                                PARAM_INT,
+                                'The due date for the quiz. (0 = no due date.)',
+                                VALUE_OPTIONAL
+                            ),
                         ]
                     ))
                 ),

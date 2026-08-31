@@ -495,6 +495,7 @@ final class custom_completion_test extends advanced_testcase {
         $moduleinfo->name = $quiz->name;
         $moduleinfo->timeopen = $quiz->timeopen;
         $moduleinfo->timeclose = $quiz->timeclose;
+        $moduleinfo->duedate = $quiz->duedate;
         $moduleinfo->timelimit = $quiz->timelimit;
         $moduleinfo->graceperiod = $quiz->graceperiod;
         $moduleinfo->decimalpoints = $quiz->decimalpoints;

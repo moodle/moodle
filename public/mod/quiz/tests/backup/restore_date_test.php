@@ -39,6 +39,7 @@ final class restore_date_test extends \restore_date_testcase {
         // Create quiz data.
         $record = [
             'timeopen' => 100,
+            'duedate' => 100,
             'timeclose' => 100,
             'timemodified' => 100,
             'timecreated' => 100,
@@ -80,7 +81,8 @@ final class restore_date_test extends \restore_date_testcase {
             'userid' => $USER->id,
             'sortorder' => 1,
             'timeopen' => 100,
-            'timeclose' => 200
+            'timeclose' => 200,
+            'duedate' => 300,
         ];
         $DB->insert_record('quiz_overrides', $override);
 
@@ -111,6 +113,7 @@ final class restore_date_test extends \restore_date_testcase {
         $diff = $this->get_diff();
         $this->assertEquals($override->timeopen + $diff, $newoverride->timeopen);
         $this->assertEquals($override->timeclose + $diff, $newoverride->timeclose);
+        $this->assertEquals($override->duedate + $diff, $newoverride->duedate);
 
         // Quiz grade time checks.
         $this->assertEquals($grade->timemodified, $newgrade->timemodified);

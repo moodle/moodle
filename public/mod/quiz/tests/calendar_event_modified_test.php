@@ -100,8 +100,9 @@ final class calendar_event_modified_test extends \advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $timeopen = time();
+        $duedate = $timeopen + HOURSECS;
         $timeclose = $timeopen + DAYSECS;
-        $quiz = $this->create_quiz_instance(['timeopen' => $timeopen, 'timeclose' => $timeclose]);
+        $quiz = $this->create_quiz_instance(['timeopen' => $timeopen, 'timeclose' => $timeclose, 'duedate' => $duedate]);
         $event = $this->create_quiz_calendar_event($quiz, [
             'eventtype' => QUIZ_EVENT_TYPE_OPEN . "SOMETHING ELSE",
             'timestart' => 1
@@ -112,6 +113,7 @@ final class calendar_event_modified_test extends \advanced_testcase {
         $quiz = $DB->get_record('quiz', ['id' => $quiz->id]);
         $this->assertEquals($timeopen, $quiz->timeopen);
         $this->assertEquals($timeclose, $quiz->timeclose);
+        $this->assertEquals($duedate, $quiz->duedate);
     }
 
     /**
@@ -124,11 +126,13 @@ final class calendar_event_modified_test extends \advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $timeopen = time();
+        $duedate = $timeopen + HOURSECS;
         $timeclose = $timeopen + DAYSECS;
         $timemodified = 1;
         $newtimeopen = $timeopen - DAYSECS;
         $quiz = $this->create_quiz_instance([
             'timeopen' => $timeopen,
+            'duedate' => $duedate,
             'timeclose' => $timeclose,
             'timemodified' => $timemodified
         ]);
@@ -144,6 +148,8 @@ final class calendar_event_modified_test extends \advanced_testcase {
         $this->assertEquals($newtimeopen, $quiz->timeopen);
         // Ensure the timeclose isn't changed.
         $this->assertEquals($timeclose, $quiz->timeclose);
+        // Ensure the duedate isn't changed.
+        $this->assertEquals($duedate, $quiz->duedate);
         // Ensure the timemodified property has been changed.
         $this->assertNotEquals($timemodified, $quiz->timemodified);
     }
@@ -158,11 +164,13 @@ final class calendar_event_modified_test extends \advanced_testcase {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $timeopen = time();
+        $duedate = $timeopen + HOURSECS;
         $timeclose = $timeopen + DAYSECS;
         $timemodified = 1;
         $newtimeclose = $timeclose + DAYSECS;
         $quiz = $this->create_quiz_instance([
             'timeopen' => $timeopen,
+            'duedate' => $duedate,
             'timeclose' => $timeclose,
             'timemodified' => $timemodified
         ]);
@@ -178,6 +186,46 @@ final class calendar_event_modified_test extends \advanced_testcase {
         $this->assertEquals($newtimeclose, $quiz->timeclose);
         // Ensure the timeopen isn't changed.
         $this->assertEquals($timeopen, $quiz->timeopen);
+        // Ensure the duedate isn't changed.
+        $this->assertEquals($duedate, $quiz->duedate);
+        // Ensure the timemodified property has been changed.
+        $this->assertNotEquals($timemodified, $quiz->timemodified);
+    }
+
+    /**
+     * A QUIZ_EVENT_TYPE_DUE event should update the due date property of the quiz activity.
+     * @covers ::mod_quiz_core_calendar_event_timestart_updated
+     */
+    public function test_mod_quiz_core_calendar_event_timestart_updated_due_event(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $timeopen = time();
+        $duedate = $timeopen + HOURSECS;
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newduedate = $duedate + DAYSECS;
+        $quiz = $this->create_quiz_instance([
+            'timeopen' => $timeopen,
+            'duedate' => $duedate,
+            'timeclose' => $timeclose,
+            'timemodified' => $timemodified,
+        ]);
+        $event = $this->create_quiz_calendar_event($quiz, [
+            'eventtype' => QUIZ_EVENT_TYPE_DUE,
+            'timestart' => $newduedate,
+        ]);
+
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
+
+        $quiz = $DB->get_record('quiz', ['id' => $quiz->id]);
+        // Ensure the timeclose property isn't changed.
+        $this->assertEquals($timeclose, $quiz->timeclose);
+        // Ensure the timeopen isn't changed.
+        $this->assertEquals($timeopen, $quiz->timeopen);
+        // Ensure the duedate is matching event time.
+        $this->assertEquals($newduedate, $quiz->duedate);
         // Ensure the timemodified property has been changed.
         $this->assertNotEquals($timemodified, $quiz->timemodified);
     }
@@ -193,22 +241,24 @@ final class calendar_event_modified_test extends \advanced_testcase {
         $this->setAdminUser();
         $user = $this->getDataGenerator()->create_user();
         $timeopen = time();
+        $duedate = $timeopen + HOURSECS;
         $timeclose = $timeopen + DAYSECS;
         $timemodified = 1;
         $newtimeopen = $timeopen - DAYSECS;
         $quiz = $this->create_quiz_instance([
             'timeopen' => $timeopen,
             'timeclose' => $timeclose,
-            'timemodified' => $timemodified
+            'duedate' => $duedate,
+            'timemodified' => $timemodified,
         ]);
         $event = $this->create_quiz_calendar_event($quiz, [
             'userid' => $user->id,
             'eventtype' => QUIZ_EVENT_TYPE_OPEN,
-            'timestart' => $newtimeopen
+            'timestart' => $newtimeopen,
         ]);
         $record = (object) [
             'quiz' => $quiz->id,
-            'userid' => $user->id
+            'userid' => $user->id,
         ];
 
         $DB->insert_record('quiz_overrides', $record);
@@ -220,6 +270,54 @@ final class calendar_event_modified_test extends \advanced_testcase {
         $this->assertEquals($timeopen, $quiz->timeopen);
         // Ensure the timeclose isn't changed.
         $this->assertEquals($timeclose, $quiz->timeclose);
+        // Ensure the duedate isn't changed.
+        $this->assertEquals($duedate, $quiz->duedate);
+        // Ensure the timemodified property has not been changed.
+        $this->assertEquals($timemodified, $quiz->timemodified);
+    }
+
+    /**
+     * A QUIZ_EVENT_TYPE_DUE event should not update the duedate property of the quiz activity if it's an override.
+     * @covers ::mod_quiz_core_calendar_event_timestart_updated
+     */
+    public function test_mod_quiz_core_calendar_event_timestart_updated_due_event_override(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $user = $this->getDataGenerator()->create_user();
+        $timeopen = time();
+        $duedate = $timeopen + HOURSECS;
+        $timeclose = $timeopen + DAYSECS;
+        $timemodified = 1;
+        $newtimestart = $duedate - HOURSECS;
+        $quiz = $this->create_quiz_instance([
+            'timeopen' => $timeopen,
+            'timeclose' => $timeclose,
+            'duedate' => $duedate,
+            'timemodified' => $timemodified,
+        ]);
+        $event = $this->create_quiz_calendar_event($quiz, [
+            'userid' => $user->id,
+            'eventtype' => QUIZ_EVENT_TYPE_DUE,
+            'timestart' => $newtimestart,
+        ]);
+        $record = (object) [
+            'quiz' => $quiz->id,
+            'userid' => $user->id,
+        ];
+
+        $DB->insert_record('quiz_overrides', $record);
+
+        mod_quiz_core_calendar_event_timestart_updated($event, $quiz);
+
+        $quiz = $DB->get_record('quiz', ['id' => $quiz->id]);
+        // Ensure the timeopen property doesn't change.
+        $this->assertEquals($timeopen, $quiz->timeopen);
+        // Ensure the timeclose isn't changed.
+        $this->assertEquals($timeclose, $quiz->timeclose);
+        // Ensure the duedate isn't changed.
+        $this->assertEquals($duedate, $quiz->duedate);
         // Ensure the timemodified property has not been changed.
         $this->assertEquals($timemodified, $quiz->timemodified);
     }
@@ -445,6 +543,45 @@ final class calendar_event_modified_test extends \advanced_testcase {
         // No timeclose value should result in no upper limit.
         $quiz->timeopen = 0;
         list ($min, $max) = mod_quiz_core_calendar_get_valid_event_timestart_range($event, $quiz);
+
+        $this->assertNull($min);
+        $this->assertNull($max);
+    }
+
+    /**
+     * The due event should be limited by the quiz's timeopen and timeclose properties, if set.
+     * @covers ::mod_quiz_core_calendar_get_valid_event_timestart_range
+     */
+    public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_due_event(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $timeopen = time();
+        $timeclose = $timeopen + DAYSECS;
+        $quiz = $this->create_quiz_instance([
+            'timeopen' => $timeopen,
+            'timeclose' => $timeclose,
+        ]);
+        $event = $this->create_quiz_calendar_event($quiz, [
+            'eventtype' => QUIZ_EVENT_TYPE_DUE,
+            'timestart' => 1,
+        ]);
+
+        // The limit should be bounded by the the timeopen and timeclose values.
+        [$min, $max] = mod_quiz_core_calendar_get_valid_event_timestart_range($event, $quiz);
+
+        $this->assertEquals($timeopen, $min[0]);
+        $this->assertEquals($timeclose, $max[0]);
+
+        // No timeopen value should result in no min limit.
+        $quiz->timeopen = 0;
+        [$min, $max] = mod_quiz_core_calendar_get_valid_event_timestart_range($event, $quiz);
+
+        $this->assertNull($min);
+        $this->assertEquals($timeclose, $max[0]);
+
+        // No timeclose value should result in max limit.
+        $quiz->timeclose = 0;
+        [$min, $max] = mod_quiz_core_calendar_get_valid_event_timestart_range($event, $quiz);
 
         $this->assertNull($min);
         $this->assertNull($max);
