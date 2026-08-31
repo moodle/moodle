@@ -700,3 +700,203 @@
         }
     }
 }
+
+/**
+ * "From Moodle" CTA card brand colours (MDL-89290).
+ *
+ * Moodle brand values rather than theme colours, so they are literals here rather than being derived from the
+ * palette. They live in the theme, not in core_admin\output\notification_ctas, because colours emitted from PHP
+ * land in a style attribute and no stylesheet rule can override one: the dark colour mode overrides below would
+ * have no way to take effect.
+ *
+ *   band         The header strip the brand logo sits on.
+ *   button       The CTA button fill. Not always the band colour: the Partners and feedback bands are light,
+ *                so their buttons are near black instead.
+ *   button-hover The hover and active fill. Given rather than derived, because it does not move in one
+ *                direction across the four cards: the two brand fills darken, and the two near black ones
+ *                lighten, having no room left to darken.
+ *   tick         The check icons in the card body.
+ */
+$notification-cta-brands: (
+    "marketplace": (band: #570d82, button: #570d82, button-hover: #32064c, tick: #570d82),
+    "moodlecloud": (band: #194866, button: #194866, button-hover: #102f42, tick: #194866),
+    "partners":    (band: #fedfc1, button: #282828, button-hover: #545454, tick: #194866),
+    "feedback":    (band: #f98012, button: #282828, button-hover: #545454, tick: shade-color(#f98012, 12%)),
+) !default;
+
+/* "From Moodle" CTA card grid on the admin notifications page (MDL-89290). */
+.admin-notification-ctas {
+    margin-top: var(--mds-spacing-xl, 2rem);
+    padding: var(--mds-spacing-xl, 2rem) 0;
+    background-color: var(--mds-bg-surface-subtle, #{$gray-100});
+    border-top: 1px solid var(--mds-border-subtle, #{$gray-200});
+
+    .admin-notification-ctas-heading {
+        margin-bottom: var(--mds-spacing-lg, 1.25rem);
+
+        h3 {
+            margin-bottom: var(--mds-spacing-xxs, .25rem);
+        }
+    }
+
+    .admin-notification-ctas-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--mds-spacing-xl, 2rem);
+
+        @include media-breakpoint-down(sm) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .admin-notification-cta {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--mds-bg-surface-default, #{$white});
+        border: 1px solid var(--mds-border-subtle, #{$gray-200});
+        border-radius: var(--mds-border-radius-lg, .75rem);
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+
+        // The subtle border and the drop shadow both disappear against a dark page, so the card leans on the
+        // same border the dark palette gives .card, modals and dropdowns.
+        @include dark-mode {
+            border-color: var(--#{$prefix}gray-300);
+        }
+
+        @each $key, $brand in $notification-cta-brands {
+            &[data-cta-key="#{$key}"] {
+                --cta-band: #{map-get($brand, band)};
+                --cta-button: #{map-get($brand, button)};
+                --cta-button-hover: #{map-get($brand, button-hover)};
+                --cta-tick: #{map-get($brand, tick)};
+
+                // The button fills are picked for a white page and are darker than the card behind them once
+                // that page is dark: 1.02:1 to 1.28:1, so the button stops reading as a button at all (WCAG
+                // 1.4.11 asks 3:1 of the fill that identifies it). Lifting the fill is what .btn-secondary does
+                // in dark.scss for the same reason, and a fill light enough to clear 3:1 there takes dark text,
+                // which is where the label colour below comes from. Hover goes lighter still rather than darker,
+                // the same inversion the link colours make.
+                //
+                // Derived against the label rather than against the card, because the label is the tighter of
+                // the two constraints: 4.5:1 for text on the fill lands the fill at 3.2:1 or better against the
+                // card anyway, whereas deriving against the card at 3:1 leaves the label as low as 4.33:1.
+                //
+                // The ticks are drawn on the card rather than on a fill, so they are lifted as text.
+                @include dark-mode {
+                    --cta-button: #{dark-readable(map-get($brand, button), $gray-900)};
+                    --cta-button-hover: #{dark-readable(map-get($brand, button), $gray-900, 7)};
+                    --cta-tick: #{dark-readable(map-get($brand, tick))};
+                }
+            }
+        }
+
+        .admin-notification-cta-band {
+            display: flex;
+            align-items: center;
+            height: 6rem;
+            padding: 0 var(--mds-spacing-lg, 1.25rem);
+            background-color: var(--cta-band);
+        }
+
+        .admin-notification-cta-logo {
+            width: auto;
+            max-height: 100%;
+        }
+
+        // $white rather than --mds-bg-surface-default: the pill exists to back the orange and dark grey ink of
+        // the Moodle logo against the orange band, so it has to stay light when the surface token goes dark.
+        .admin-notification-cta-logo-pill {
+            display: inline-flex;
+            padding: var(--mds-spacing-xs, .5rem) var(--mds-spacing-sm, .75rem);
+            background-color: $white;
+            border-radius: var(--mds-border-radius-sm, .375rem);
+        }
+
+        .admin-notification-cta-body {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: var(--mds-spacing-sm, .5rem);
+            padding: var(--mds-spacing-lg, 1.25rem);
+        }
+
+        .admin-notification-cta-ticks {
+            display: flex;
+            flex-direction: column;
+            gap: var(--mds-spacing-xxs, .25rem);
+            margin: 0;
+
+            li {
+                display: flex;
+                align-items: flex-start;
+                gap: var(--mds-spacing-xxs, .25rem);
+            }
+
+            .admin-notification-cta-tick {
+                color: var(--cta-tick);
+            }
+        }
+
+        .admin-notification-cta-action {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--mds-spacing-xs, .5rem);
+            margin-top: auto;
+            padding-top: var(--mds-spacing-xxs, .25rem);
+
+            // The Bootstrap button custom properties rather than the declarations themselves, so that the
+            // hover, focus, active and disabled states all follow the brand fill instead of only the two
+            // states named here. This is how dark.scss re-points .btn-secondary.
+            //
+            // --cta-button-text rather than --mds-text-inverse: the label is read against the button's own
+            // fill, not against the page, and the inverse token flips to near black in dark mode, which took
+            // these labels down to 1.10:1 - 1.67:1 on fills that had not moved with it.
+            .admin-notification-cta-button {
+                --cta-button-text: #{$white};
+                --#{$prefix}btn-color: var(--cta-button-text);
+                --#{$prefix}btn-bg: var(--cta-button);
+                --#{$prefix}btn-border-color: var(--cta-button);
+                --#{$prefix}btn-hover-color: var(--cta-button-text);
+                --#{$prefix}btn-hover-bg: var(--cta-button-hover);
+                --#{$prefix}btn-hover-border-color: var(--cta-button-hover);
+                --#{$prefix}btn-active-color: var(--cta-button-text);
+                --#{$prefix}btn-active-bg: var(--cta-button-hover);
+                --#{$prefix}btn-active-border-color: var(--cta-button-hover);
+
+                @include dark-mode {
+                    --cta-button-text: #{$gray-900};
+                }
+
+                // The .btn default outlines focus in darken($secondary, 40%), a compile time dark grey which
+                // is drawn on the card behind the button and disappears once that card is dark. The emphasis
+                // token is near black on a light card and near white on a dark one, so the indicator keeps its
+                // 3:1 (WCAG 2.4.11) either way, and the inset ring follows the label colour so that it stays
+                // visible on the fill.
+                &:focus-visible,
+                &:focus.focus {
+                    outline: $btn-focus-width solid var(--mds-text-emphasis);
+                    box-shadow: inset 0 0 0 2px var(--cta-button-text);
+                }
+            }
+        }
+
+        .admin-notification-cta-caption {
+            font-size: var(--mds-font-size-paragraph-small, .875rem);
+        }
+    }
+}
+
+/* Bold category label prefix on admin notification items (MDL-89290). */
+.notification-label-danger {
+    color: var(--mds-text-feedback-danger, #791d13);
+}
+
+.notification-label-warning {
+    color: var(--mds-text-feedback-warning, #60451f);
+}
+
+.notification-label-notice {
+    color: var(--mds-text-feedback-info, #00475a);
+}

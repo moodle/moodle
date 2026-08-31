@@ -969,21 +969,6 @@ if (empty($CFG->disabledevlibdirscheck)) {
 // Check if the site is being foced onto ssl.
 $overridetossl = !empty($CFG->overridetossl);
 
-if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
-    // We need to add this in order to be able to verify the showcampaigncontent setting behaviour during behat tests.
-    $showcampaigncontent = get_config('core', 'showcampaigncontent');
-    $showcampaigncontent = $showcampaigncontent === 'true';
-} else {
-    // Check if moodle campaign content setting is enabled or not.
-    $showcampaigncontent = !isset($CFG->showcampaigncontent) || $CFG->showcampaigncontent;
-}
-
-// Encourage admins to enable the user feedback feature if it is not enabled already.
-$showfeedbackencouragement = empty($CFG->enableuserfeedback);
-
-// Check if the service and support content setting is enabled or not.
-$servicesandsupportcontent = !isset($CFG->showservicesandsupportcontent) || $CFG->showservicesandsupportcontent;
-
 // Check whether the XML-RPC protocol is enabled or not.
 require_once($CFG->libdir . '/environmentlib.php');
 $result = new environment_results('custom_checks');
@@ -994,7 +979,7 @@ admin_externalpage_setup('adminnotifications');
 
 $output = $PAGE->get_renderer('core', 'admin');
 
-echo $output->admin_notifications_page(
+echo $output->notifications_page(
     $maturity,
     $insecuredataroot,
     $errorsdisplayed,
@@ -1013,8 +998,5 @@ echo $output->admin_notifications_page(
     $overridetossl,
     $invalidforgottenpasswordurl,
     $croninfrequent,
-    $showcampaigncontent,
-    $showfeedbackencouragement,
-    $servicesandsupportcontent,
     $xmlrpcwarning
 );

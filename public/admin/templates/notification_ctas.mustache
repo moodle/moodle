@@ -1,0 +1,94 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/notification_ctas
+
+    The "From Moodle" CTA card grid shown at the bottom of the admin notifications page.
+
+    Context variables required for this template:
+    * heading - string, the section heading
+    * subtitle - string, the section subtitle
+    * hasctas - bool, whether there is at least one card to display
+    * ctas - array of {key, logourl, logoheight, logopill, title, body, ticks, cta, caption, href, newwindow}
+
+    Each card's brand colours are keyed off its data-cta-key attribute in the theme, so that the dark
+    colour mode can correct them. They are deliberately not part of this context.
+
+    Example context (json):
+    {
+        "heading": "From Moodle",
+        "subtitle": "Services, plugins and ways to shape the software you're running.",
+        "hasctas": true,
+        "ctas": [
+            {
+                "key": "marketplace",
+                "logourl": "https://example.com/logo.png",
+                "logoheight": 26,
+                "logopill": false,
+                "title": "Moodle Marketplace",
+                "body": "The new home for Moodle plugins and integrations.",
+                "ticks": [{"text": "1,500+ plugins, themes and integrations"}],
+                "cta": "Browse the Marketplace",
+                "caption": "Opens marketplace.moodle.com in a new window.",
+                "href": "https://marketplace.moodle.com/?site=eyJmdWxsbmFtZSI6Ik15IFNpdGUifQ%3D%3D&utm_source=moodle_admin&utm_campaign=marketplace",
+                "newwindow": true
+            }
+        ]
+    }
+}}
+{{#hasctas}}
+<div class="admin-notification-ctas">
+    <div class="admin-notification-ctas-heading">
+        <h3>{{heading}}</h3>
+        <p class="text-muted">{{subtitle}}</p>
+    </div>
+    <div class="admin-notification-ctas-grid">
+        {{#ctas}}
+        <div class="admin-notification-cta" data-cta-key="{{key}}">
+            <div class="admin-notification-cta-band">
+                {{#logopill}}
+                <span class="admin-notification-cta-logo-pill">
+                    <img src="{{logourl}}" alt="" class="admin-notification-cta-logo" style="height: {{logoheight}}px;">
+                </span>
+                {{/logopill}}
+                {{^logopill}}
+                <img src="{{logourl}}" alt="" class="admin-notification-cta-logo" style="height: {{logoheight}}px;">
+                {{/logopill}}
+            </div>
+            <div class="admin-notification-cta-body">
+                <h4>{{title}}</h4>
+                <p class="text-muted">{{body}}</p>
+                <ul class="admin-notification-cta-ticks list-unstyled">
+                    {{#ticks}}
+                    <li><i class="icon fa fa-check-circle admin-notification-cta-tick" aria-hidden="true"></i> {{text}}</li>
+                    {{/ticks}}
+                </ul>
+                <div class="admin-notification-cta-action">
+                    <a href="{{href}}" class="btn admin-notification-cta-button"
+                        {{#newwindow}}target="_blank" rel="noopener noreferrer"{{/newwindow}}>
+                        {{cta}}
+                        <i class="icon fa fa-arrow-right ms-1" aria-hidden="true"></i>
+                        {{#newwindow}}<span class="visually-hidden">{{#str}}opensinnewwindowbracketed, moodle{{/str}}</span>{{/newwindow}}
+                    </a>
+                    <span class="admin-notification-cta-caption text-muted">{{caption}}</span>
+                </div>
+            </div>
+        </div>
+        {{/ctas}}
+    </div>
+</div>
+{{/hasctas}}

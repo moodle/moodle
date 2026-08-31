@@ -111,3 +111,7 @@ privacy:metadata:ai_action_generate_text:completiontoken,core_ai
 privacy:metadata:ai_action_generate_text:prompttokens,core_ai
 privacy:metadata:ai_action_summarise_text:completiontoken,core_ai
 privacy:metadata:ai_action_summarise_text:prompttokens,core_ai
+campaign,core_admin
+marketplaceavailablenotice,core_admin
+supportandservices,core_admin
+userfeedbackencouragement,core_admin

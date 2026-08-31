@@ -34081,6 +34081,189 @@ img.icon {
 }
 
 /**
+ * "From Moodle" CTA card brand colours (MDL-89290).
+ *
+ * Moodle brand values rather than theme colours, so they are literals here rather than being derived from the
+ * palette. They live in the theme, not in core_admin\output\notification_ctas, because colours emitted from PHP
+ * land in a style attribute and no stylesheet rule can override one: the dark colour mode overrides below would
+ * have no way to take effect.
+ *
+ *   band         The header strip the brand logo sits on.
+ *   button       The CTA button fill. Not always the band colour: the Partners and feedback bands are light,
+ *                so their buttons are near black instead.
+ *   button-hover The hover and active fill. Given rather than derived, because it does not move in one
+ *                direction across the four cards: the two brand fills darken, and the two near black ones
+ *                lighten, having no room left to darken.
+ *   tick         The check icons in the card body.
+ */
+/* "From Moodle" CTA card grid on the admin notifications page (MDL-89290). */
+.admin-notification-ctas {
+  margin-top: var(--mds-spacing-xl, 2rem);
+  padding: var(--mds-spacing-xl, 2rem) 0;
+  background-color: var(--mds-bg-surface-subtle, #f8f9fa);
+  border-top: 1px solid var(--mds-border-subtle, #e9ecef);
+}
+.admin-notification-ctas .admin-notification-ctas-heading {
+  margin-bottom: var(--mds-spacing-lg, 1.25rem);
+}
+.admin-notification-ctas .admin-notification-ctas-heading h3, .admin-notification-ctas .admin-notification-ctas-heading .h3 {
+  margin-bottom: var(--mds-spacing-xxs, 0.25rem);
+}
+.admin-notification-ctas .admin-notification-ctas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--mds-spacing-xl, 2rem);
+}
+@media (max-width: 575.98px) {
+  .admin-notification-ctas .admin-notification-ctas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.admin-notification-ctas .admin-notification-cta {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--mds-bg-surface-default, #ffffff);
+  border: 1px solid var(--mds-border-subtle, #e9ecef);
+  border-radius: var(--mds-border-radius-lg, 0.75rem);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+[data-bs-theme=dark] .admin-notification-ctas .admin-notification-cta {
+  border-color: var(--bs-gray-300);
+}
+
+.admin-notification-ctas .admin-notification-cta[data-cta-key=marketplace] {
+  --cta-band: #570d82;
+  --cta-button: #570d82;
+  --cta-button-hover: #32064c;
+  --cta-tick: #570d82;
+}
+[data-bs-theme=dark] .admin-notification-ctas .admin-notification-cta[data-cta-key=marketplace] {
+  --cta-button: #a37aba;
+  --cta-button-hover: #c4aad3;
+  --cta-tick: #bc9ecd;
+}
+
+.admin-notification-ctas .admin-notification-cta[data-cta-key=moodlecloud] {
+  --cta-band: #194866;
+  --cta-button: #194866;
+  --cta-button-hover: #102f42;
+  --cta-tick: #194866;
+}
+[data-bs-theme=dark] .admin-notification-ctas .admin-notification-cta[data-cta-key=moodlecloud] {
+  --cta-button: #7591a3;
+  --cta-button-hover: #a3b6c2;
+  --cta-tick: #98adba;
+}
+
+.admin-notification-ctas .admin-notification-cta[data-cta-key=partners] {
+  --cta-band: #fedfc1;
+  --cta-button: #282828;
+  --cta-button-hover: #545454;
+  --cta-tick: #194866;
+}
+[data-bs-theme=dark] .admin-notification-ctas .admin-notification-cta[data-cta-key=partners] {
+  --cta-button: #898989;
+  --cta-button-hover: #b4b4b4;
+  --cta-tick: #98adba;
+}
+
+.admin-notification-ctas .admin-notification-cta[data-cta-key=feedback] {
+  --cta-band: #f98012;
+  --cta-button: #282828;
+  --cta-button-hover: #545454;
+  --cta-tick: #db7110;
+}
+[data-bs-theme=dark] .admin-notification-ctas .admin-notification-cta[data-cta-key=feedback] {
+  --cta-button: #898989;
+  --cta-button-hover: #b4b4b4;
+  --cta-tick: #e4954c;
+}
+
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-band {
+  display: flex;
+  align-items: center;
+  height: 6rem;
+  padding: 0 var(--mds-spacing-lg, 1.25rem);
+  background-color: var(--cta-band);
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-logo {
+  width: auto;
+  max-height: 100%;
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-logo-pill {
+  display: inline-flex;
+  padding: var(--mds-spacing-xs, 0.5rem) var(--mds-spacing-sm, 0.75rem);
+  background-color: #ffffff;
+  border-radius: var(--mds-border-radius-sm, 0.375rem);
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--mds-spacing-sm, 0.5rem);
+  padding: var(--mds-spacing-lg, 1.25rem);
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-ticks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mds-spacing-xxs, 0.25rem);
+  margin: 0;
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-ticks li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mds-spacing-xxs, 0.25rem);
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-ticks .admin-notification-cta-tick {
+  color: var(--cta-tick);
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--mds-spacing-xs, 0.5rem);
+  margin-top: auto;
+  padding-top: var(--mds-spacing-xxs, 0.25rem);
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-action .admin-notification-cta-button {
+  --cta-button-text: #ffffff;
+  --bs-btn-color: var(--cta-button-text);
+  --bs-btn-bg: var(--cta-button);
+  --bs-btn-border-color: var(--cta-button);
+  --bs-btn-hover-color: var(--cta-button-text);
+  --bs-btn-hover-bg: var(--cta-button-hover);
+  --bs-btn-hover-border-color: var(--cta-button-hover);
+  --bs-btn-active-color: var(--cta-button-text);
+  --bs-btn-active-bg: var(--cta-button-hover);
+  --bs-btn-active-border-color: var(--cta-button-hover);
+}
+[data-bs-theme=dark] .admin-notification-ctas .admin-notification-cta .admin-notification-cta-action .admin-notification-cta-button {
+  --cta-button-text: #1d2125;
+}
+
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-action .admin-notification-cta-button:focus-visible, .admin-notification-ctas .admin-notification-cta .admin-notification-cta-action .admin-notification-cta-button:focus.focus {
+  outline: 0.25rem solid var(--mds-text-emphasis);
+  box-shadow: inset 0 0 0 2px var(--cta-button-text);
+}
+.admin-notification-ctas .admin-notification-cta .admin-notification-cta-caption {
+  font-size: var(--mds-font-size-paragraph-small, 0.875rem);
+}
+
+/* Bold category label prefix on admin notification items (MDL-89290). */
+.notification-label-danger {
+  color: var(--mds-text-feedback-danger, #791d13);
+}
+
+.notification-label-warning {
+  color: var(--mds-text-feedback-warning, #60451f);
+}
+
+.notification-label-notice {
+  color: var(--mds-text-feedback-info, #00475a);
+}
+
+/**
  Blocks
  */
 .blockmovetarget .accesshide {
