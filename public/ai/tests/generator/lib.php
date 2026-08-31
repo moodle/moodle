@@ -40,11 +40,15 @@ class core_ai_generator extends component_generator_base {
         if (!isset($data['userid'])) {
             throw new Exception('\'ai actions\' requires the field \'user\' to be specified');
         }
-        if (!isset($data['contextid'])) {
-            throw new Exception('\'ai actions\' requires the field \'contextid\' to be specified');
-        }
         if (!isset($data['provider'])) {
             throw new Exception('\'ai actions\' requires the field \'provider\' to be specified');
+        }
+        if (!isset($data['contextid']) && !isset($data['courseid'])) {
+            throw new Exception('\'ai actions\' requires either the field \'contextid\' or \'course\' to be specified');
+        }
+        if (!isset($data['contextid'])) {
+            // Derive the context from the given course, so course-level scenarios don't need to know context ids.
+            $data['contextid'] = \context_course::instance($data['courseid'])->id;
         }
 
         // Create the child action record.

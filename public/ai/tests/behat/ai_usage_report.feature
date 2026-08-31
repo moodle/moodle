@@ -55,3 +55,12 @@ Feature: AI usage report displays recorded AI data
       | Generate text  | Student One | OpenAI API provider | Yes     | 22            | 33                |
     And I should not see "Summarise text" in the "AI usage" "table"
     And I should not see "Azure AI API Provider" in the "AI usage" "table"
+
+  Scenario: Managers can view the detail of a logged AI action, without the user's prompt or generated content
+    Given I am logged in as "manager1"
+    When I navigate to "Reports > AI reports > AI usage" in site administration
+    And I click on "View detail" "link" in the "Generate text" "table_row"
+    Then I should see "AI action detail"
+    And I should see "Generate text"
+    But I should not see "Prompt text"
+    And I should not see "Your generated content"

@@ -396,6 +396,7 @@
             "timelimit"
         ],
         "report": [
+            "aiusage",
             "backups",
             "competency",
             "completion",

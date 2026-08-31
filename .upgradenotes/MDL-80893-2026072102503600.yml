@@ -1,0 +1,10 @@
+issueNumber: MDL-80893
+notes:
+  core_ai:
+    - message: >-
+        The ai_action_register table now includes a courseid column, populated
+        at log time (and backfilled in the background for existing rows) by
+        resolving the action's context to a course. A new report_aiusage plugin
+        adds a course-level AI usage report, with new report/aiusage:view and
+        report/aiusage:viewown capabilities.
+      type: improved

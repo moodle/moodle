@@ -4960,10 +4960,12 @@
         <FIELD NAME="model" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The model used to generate the response"/>
         <FIELD NAME="prompttokens" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Number of tokens in the prompt."/>
         <FIELD NAME="completiontokens" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Number of tokens in the generated completion."/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The id of the course the action's context resolves to; -1 if the context does not resolve to a course; 0 is the not-yet-backfilled default for rows created before this column existed"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="Relationship to user table"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" COMMENT="Relationship to course table"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="action" UNIQUE="true" FIELDS="actionname, actionid" COMMENT="Unique index of actionname and actionid"/>

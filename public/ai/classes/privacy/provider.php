@@ -59,6 +59,7 @@ class provider implements
             'model' => 'privacy:metadata:ai_action_register:model',
             'prompttokens' => 'privacy:metadata:ai_action_register:prompttokens',
             'completiontokens' => 'privacy:metadata:ai_action_register:completiontokens',
+            'courseid' => 'privacy:metadata:ai_action_register:courseid',
         ], 'privacy:metadata:ai_action_register');
         $collection->add_database_table('ai_action_generate_image', [
             'prompt' => 'privacy:metadata:ai_action_generate_image:prompt',

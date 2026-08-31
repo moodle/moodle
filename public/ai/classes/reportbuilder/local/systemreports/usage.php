@@ -70,6 +70,12 @@ class usage extends system_report {
         return get_string('aiusage', 'core_ai');
     }
 
+    #[\Override]
+    public function get_exclude_columns_for_download(): array {
+        // The detail column is a link to the detail page, which is meaningless in a download.
+        return ['ai_action_register:detail'];
+    }
+
     /**
      * Adds the columns we want to display in the report.
      *
@@ -84,9 +90,17 @@ class usage extends system_report {
             'ai_action_register:prompttokens',
             'ai_action_register:completiontokens',
             'ai_action_register:success',
-            'context:name',
-            'user:fullnamewithlink',
         ]);
+
+        // Link the context column to the closest context (e.g. the course activity the action relates to)
+        // rather than just showing its name as plain text.
+        $this->add_column_from_entity('context:link')
+            ->set_title(new \lang_string('contextname'));
+
+        $this->add_column_from_entity('user:fullnamewithlink');
+
+        // Link to the full detail of the action (full prompt, full generated response, etc), shown last.
+        $this->add_column_from_entity('ai_action_register:detail');
 
         // It's possible to set a default initial sort direction for one column.
         $this->set_initial_sort_column('ai_action_register:timecreated', SORT_DESC);
