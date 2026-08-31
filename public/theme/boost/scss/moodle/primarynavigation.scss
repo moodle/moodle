@@ -9,6 +9,52 @@
     }
 }
 
+.primary-navigation .navigation.primarynav-navbar {
+    .more-nav {
+        gap: var(--mds-spacing-xs);
+    }
+
+    .nav-item {
+        height: $navbar-height;
+    }
+
+    // The navbar sits on $body-bg rather than the page background the design system's nav-pill was
+    // drawn against, where --mds-text-subtle reads as washed out. Match the navbar links instead.
+    .mds-nav-pill {
+        color: $gray-900;
+    }
+
+    // The "More" toggle keeps Bootstrap's .dropdown-toggle class (for the caret and dropdown JS),
+    // which makes it match core.scss's `a.dropdown-toggle:focus`. That rule's box-shadow would
+    // stack with the design system's own focus ring, and its outline: 0 outweighs
+    // `.mds-nav-pill:focus-visible` on specificity, leaving no focus indicator at all. Undo both.
+    .mds-nav-pill.dropdown-toggle:focus {
+        box-shadow: none;
+    }
+
+    .mds-nav-pill.dropdown-toggle:focus-visible {
+        outline: var(--mds-stroke-weight-md) solid var(--mds-focus-default);
+        outline-offset: var(--mds-spacing-offset);
+    }
+
+    // Works around a cascade quirk in @moodlehq/design-system's nav-pill CSS: its
+    // `.mds-nav-pill:visited { background-color: transparent; }` outweighs
+    // `.mds-nav-pill--selected`, and the active pill links to the current page so is always
+    // visited, leaving its selected background transparent in some browsers.
+    .mds-nav-pill--selected:visited {
+        background-color: var(--mds-bg-nav-pill-selected);
+    }
+
+    // Hidden until core/nav/Nav adds .primarynav-measured (its `measuredclass` prop), so the first
+    // paint never shows items that are about to be collapsed into "More". Scoped to body.jsenabled
+    // because otherwise it also hides the NonJS fallback nested inside the mount point, which
+    // nothing would ever reveal: the navigation would stay invisible but clickable whenever React
+    // does not run.
+    .jsenabled &:not(.primarynav-measured) {
+        opacity: 0;
+    }
+}
+
 @include media-breakpoint-down(md) {
     .primary-navigation {
         display: none;

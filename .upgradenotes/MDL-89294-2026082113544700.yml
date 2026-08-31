@@ -1,0 +1,16 @@
+issueNumber: MDL-89294
+notes:
+  core:
+    - message: >-
+        The primary navigation in the Boost navbar is now rendered by the
+        `core/nav/PrimaryNav` React component via the new
+        `core/primarymoremenu` template, replacing `core/moremenu`. With
+        JavaScript enabled the markup no longer includes the `.moremenu`
+        wrapper, and navigation items are rendered as `a.mds-nav-pill`
+        (selected items carry `.mds-nav-pill--selected` and
+        `aria-current="page"`) instead of `a.nav-link.active`. Themes and
+        plugins that style or script `.primary-navigation .moremenu` or
+        `.primary-navigation .nav-link` need updating. A server-rendered
+        `core/moremenu_children` fallback is still emitted inside the mount
+        point for non-JavaScript clients.
+      type: changed

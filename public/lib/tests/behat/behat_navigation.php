@@ -1130,7 +1130,7 @@ class behat_navigation extends behat_base {
      */
     public function i_select_from_primary_navigation(string $link) {
         $this->execute('behat_general::i_click_on_in_the',
-            [$link, 'link', '.primary-navigation .moremenu.navigation', 'css_element']
+            [$link, 'link', '.primary-navigation .navigation.primarynav-navbar', 'css_element']
         );
     }
 
