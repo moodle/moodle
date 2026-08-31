@@ -104,21 +104,20 @@ final class oauth2_test extends \advanced_testcase {
      * @param string $description
      */
     protected function make_client_entity(
-        string $identifier = 'client1',
         string $name = 'Example client',
         string $description = 'This application would like to access your account.',
     ): client_entity {
-        return client_entity::create_from_record(
-            (object) [
-                'clientidentifier' => $identifier,
-                'name' => $name,
-                'description' => $description,
-                'ownercontext' => \context_system::instance()->id,
-                'status' => client_entity::STATUS_ACTIVE,
-                'isconfidential' => 1,
-            ],
-            [],
+        $clientmanager = \core\di::get(\core\oauth2\server\client_manager::class);
+
+        $client = $clientmanager->create_client(
+            name: $name,
+            ownercontext: \core\context\system::instance(),
+            granttypes: [],
+            description: $description,
+            isconfidential: true,
         );
+
+        return $client;
     }
 
     /**
@@ -400,7 +399,7 @@ final class oauth2_test extends \advanced_testcase {
 
         // The requesting client's identity must still come from the pending request.
         $this->assertSame('Example client', $data->client->name);
-        $this->assertSame('client1', $data->client->identifier);
+        $this->assertSame($client->getIdentifier(), $data->client->identifier);
 
         // Rendering the page must not itself have modified the pending request's stored user.
         $storedrequest = $this->get_auth_request_from_session($requestid);
@@ -442,7 +441,7 @@ final class oauth2_test extends \advanced_testcase {
         $this->assertTrue($data->hasoauth2client);
         $this->assertNotNull($data->client);
         $this->assertSame('Example client', $data->client->name);
-        $this->assertSame('client1', $data->client->identifier);
+        $this->assertSame($client->getIdentifier(), $data->client->identifier);
     }
 
     /**
@@ -495,7 +494,9 @@ final class oauth2_test extends \advanced_testcase {
         $route = $this->get_route($server, $clientrepository);
 
         $response = $route->authorize(
-            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            (new ServerRequest('GET', '/authorize'))->withQueryParams([
+                'client_id' => $client->getIdentifier(),
+            ]),
             new Response(),
             new user_repository(),
             $this->make_granted_scopes_repository_stub(),
@@ -534,7 +535,9 @@ final class oauth2_test extends \advanced_testcase {
             ->willReturn($userentity);
 
         $response = $route->authorize(
-            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            (new ServerRequest('GET', '/authorize'))->withQueryParams([
+                'client_id' => $client->getIdentifier(),
+            ]),
             new Response(),
             $userrepository,
             $this->make_granted_scopes_repository_stub(),
@@ -571,7 +574,9 @@ final class oauth2_test extends \advanced_testcase {
         $route = $this->get_route($server, $clientrepository);
 
         $response = $route->authorize(
-            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            (new ServerRequest('GET', '/authorize'))->withQueryParams([
+                'client_id' => $client->getIdentifier(),
+            ]),
             new Response(),
             new user_repository(),
             $this->make_granted_scopes_repository_stub(),
@@ -707,7 +712,9 @@ final class oauth2_test extends \advanced_testcase {
         $userrepository->method('get_current_user')->willReturn($userentity);
 
         $response = $route->authorize(
-            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            (new ServerRequest('GET', '/authorize'))->withQueryParams([
+                'client_id' => $client->getIdentifier(),
+            ]),
             new Response(),
             $userrepository,
             $this->make_granted_scopes_repository_stub(hasgrantedallscopes: false),
@@ -732,7 +739,7 @@ final class oauth2_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $client = $this->make_client_entity('client1');
+        $client = $this->make_client_entity();
         $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
 
         $server = $this->createMock(AuthorizationServer::class);
@@ -757,7 +764,9 @@ final class oauth2_test extends \advanced_testcase {
         $grantedscopesrepository = new granted_scopes_repository($scoperepository);
 
         $response = $route->authorize(
-            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            (new ServerRequest('GET', '/authorize'))->withQueryParams([
+                'client_id' => $client->getIdentifier(),
+            ]),
             new Response(),
             $userrepository,
             $grantedscopesrepository,
@@ -781,12 +790,12 @@ final class oauth2_test extends \advanced_testcase {
         $otheruser = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $client = $this->make_client_entity('client1');
+        $client = $this->make_client_entity();
         $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
 
         // A grant already exists for the same client and scope, but a *different* user.
         $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
-            'clientidentifier' => 'client1',
+            'clientidentifier' => $client->getIdentifier(),
             'userid' => $otheruser->id,
             'scope' => 'moodle',
             'timecreated' => time(),
@@ -822,7 +831,9 @@ final class oauth2_test extends \advanced_testcase {
         $grantedscopesrepository = new granted_scopes_repository($scoperepository);
 
         $response = $route->authorize(
-            (new ServerRequest('GET', '/authorize'))->withQueryParams(['client_id' => 'client1']),
+            (new ServerRequest('GET', '/authorize'))->withQueryParams([
+                'client_id' => $client->getIdentifier(),
+            ]),
             new Response(),
             $userrepository,
             $grantedscopesrepository,
@@ -1220,7 +1231,7 @@ final class oauth2_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $client = $this->make_client_entity('client1');
+        $client = $this->make_client_entity();
         $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
 
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
@@ -1234,7 +1245,7 @@ final class oauth2_test extends \advanced_testcase {
 
         // This scope has already been granted, by this exact user, to this exact client.
         $DB->insert_record('oauth2_server_client_granted_scopes', (object) [
-            'clientidentifier' => 'client1',
+            'clientidentifier' => $client->getIdentifier(),
             'userid' => $moodleuser->id,
             'scope' => 'moodle',
             'timecreated' => time(),
@@ -2053,6 +2064,7 @@ final class oauth2_test extends \advanced_testcase {
                 'password' => 'password1',
                 'logintoken' => 'not-the-real-token',
             ]);
+
         $response = $route->do_login($request, new Response(), new user_repository());
 
         $this->assertEquals(302, $response->getStatusCode());
@@ -2362,7 +2374,7 @@ final class oauth2_test extends \advanced_testcase {
 
         $moodleuser = $this->getDataGenerator()->create_user(['username' => 'bob', 'password' => 'password1']);
 
-        $client = $this->make_client_entity(name: 'Example client');
+        $client = $this->make_client_entity();
         $requestid = $this->store_auth_request_in_session($this->make_auth_request($client, scopes: ['moodle']));
 
         $clientrepository = $this->createStub(ClientRepositoryInterface::class);
@@ -2595,7 +2607,7 @@ final class oauth2_test extends \advanced_testcase {
 
         $route->approve(
             (new ServerRequest('GET', '/approve'))->withQueryParams([
-                'client_id' => 'client1',
+                'client_id' => $client->getIdentifier(),
                 'authrequestid' => $requestid,
             ]),
             new Response(),
