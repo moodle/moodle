@@ -92,7 +92,8 @@
         "redeyeventures/geopattern": "1.1.2",
         "phpxmlrpc/phpxmlrpc": "4.11.1",
         "ralouphie/getallheaders": "3.0.3",
-        "league/oauth2-server": "^9.4"
+        "league/oauth2-server": "^9.4",
+        "symfony/console": "^7.3"
     },
     "suggest": {
         "ext-mysqli": "Needed when Moodle uses MySQL or MariaDB database.",

@@ -840,4 +840,18 @@ abstract class advanced_testcase extends base_testcase {
 
         return get_string_manager(true);
     }
+
+    /**
+     * Get a testable CLI Command.
+     *
+     * @param string $commandname
+     * @return \Symfony\Component\Console\Tester\CommandTester
+     */
+    protected function get_testable_command(
+        string $commandname,
+    ): \Symfony\Component\Console\Tester\CommandTester {
+        return new \Symfony\Component\Console\Tester\CommandTester(
+            di::get(\core\cli\application::class)->find($commandname),
+        );
+    }
 }

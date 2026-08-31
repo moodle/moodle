@@ -160,8 +160,28 @@ class di {
             },
             \Psr\Clock\ClockInterface::class => \DI\get(\core\clock::class),
 
+            \Symfony\Component\Console\CommandLoader\CommandLoaderInterface::class => \DI\get(\core\cli\command_loader::class),
+
+            \core\cli\application::class => \DI\create()
+                ->constructor(name: 'Moodle CLI Application', version: self::get_moodle_version())
+                ->method(
+                    'setCommandLoader',
+                    commandLoader: \DI\get(\Symfony\Component\Console\CommandLoader\CommandLoaderInterface::class)
+                )
+                ->method(
+                    'addCommand',
+                    command: \DI\create(\Symfony\Component\Console\Command\CompleteCommand::class)
+                )
+                ->method(
+                    'addCommand',
+                    command: \DI\create(\Symfony\Component\Console\Command\DumpCompletionCommand::class)
+                ),
+
             // Note: libphonenumber PhoneNumberUtil uses a singleton.
             \libphonenumber\PhoneNumberUtil::class => fn() => \libphonenumber\PhoneNumberUtil::getInstance(),
+
+            // Note: plugin_manager uses a singleton.
+            \core\plugin_manager::class => fn() => \core\plugin_manager::instance(),
         ]);
 
         // Add any additional definitions using hooks.
@@ -169,5 +189,18 @@ class di {
 
         // Build the container and return.
         return $builder->build();
+    }
+
+    /**
+     * Get the Moodle version number.
+     *
+     * @return string
+     */
+    protected static function get_moodle_version(): string {
+        global $CFG;
+
+        require($CFG->dirroot . '/version.php');
+
+        return $version;
     }
 }
