@@ -16,6 +16,9 @@
 
 namespace core\api\entity;
 
+use core\clock;
+use core\di;
+
 /**
  * Entity representing a REST API token.
  *
@@ -187,11 +190,19 @@ class api_token_entity {
      * @return bool
      */
     public function has_expired(): bool {
-        if ($this->expirytime === null) {
-            return false;
-        }
+        return self::expiry_has_passed($this->expirytime);
+    }
 
-        return $this->expirytime < time();
+    /**
+     * Whether an expiry timestamp has passed, for callers holding a raw value rather than a token.
+     *
+     * @param int|null $expirytime The expiry to judge, or null for a token that never expires.
+     * @return bool
+     */
+    public static function expiry_has_passed(?int $expirytime): bool {
+        // Read from the clock in the container, so a frozen clock reaches this too, and inclusive
+        // of the expiry second itself: a token is not still valid during the second it lapses.
+        return $expirytime !== null && $expirytime <= di::get(clock::class)->time();
     }
 
     /**

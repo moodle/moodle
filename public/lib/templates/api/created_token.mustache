@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/api/created_token
+
+    Reveals a freshly created personal access token, which cannot be shown again.
+
+    Context variables required for this template:
+    * token - The token value to reveal.
+    * tokenelementid - The id of the field holding the token, for the copy button to target.
+    * name - The name given to the token.
+
+    Example context (json):
+    {
+        "token": "pat_42_7hQ2vXk9L4mR8pT1wZaJf3nB6cYs0uEg",
+        "tokenelementid": "pat_token_1",
+        "name": "Attendance export"
+    }
+}}
+{{! Boxed so the value does not read as part of the page heading above it, and held to a
+    width that fits a token rather than stretching across a full width page. }}
+<div class="row">
+    <div class="col-12 col-md-9 col-xl-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                {{! The warning leads: it is the reason the rest of this screen is urgent. }}
+                <div class="alert alert-warning" role="alert">{{#str}}pat_createdwarning{{/str}}</div>
+
+                {{! Scopes and the expiry are not repeated here: the row for this token is
+                    directly below, and it carries both. }}
+                <label for="{{tokenelementid}}" class="form-label fw-bold">{{#str}}pat_newtoken, core, {{name}}{{/str}}</label>
+                <div class="input-group">
+                    <input type="text"
+                           id="{{tokenelementid}}"
+                           class="form-control font-monospace"
+                           value="{{token}}"
+                           readonly>
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-action="copytoclipboard"
+                            data-clipboard-target="#{{tokenelementid}}"
+                            data-clipboard-success-message="{{#str}}pat_copied{{/str}}">
+                        {{#pix}}t/copy, core{{/pix}}
+                        {{#str}}pat_copytoken{{/str}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#js}}
+    require(['core/copy_to_clipboard']);
+{{/js}}

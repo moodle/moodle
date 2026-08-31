@@ -44,6 +44,7 @@ $string['allsiteusers'] = 'All site users';
 $string['analytics:listinsights'] = 'List insights';
 $string['analytics:listowninsights'] = 'List own insights';
 $string['analytics:managemodels'] = 'Manage models';
+$string['api:createtoken'] = 'Create a personal access token';
 $string['archetype'] = 'Role archetype';
 $string['archetype_help'] = 'The role archetype determines the permissions when a role is reset to default. It also determines any new permissions for the role when the site is upgraded.';
 $string['archetypecoursecreator'] = 'ARCHETYPE: Course creator';

@@ -17,6 +17,8 @@
 namespace core\api\repository;
 
 use core\api\entity\api_token_entity;
+use core\clock;
+use core\di;
 
 /**
  * Repository for REST API tokens.
@@ -55,7 +57,7 @@ class api_token_repository {
         $record->description = $description;
         $record->expirytime = $expirytime;
         $record->revoked = api_token_entity::REVOKED_NO;
-        $record->timecreated = time();
+        $record->timecreated = di::get(clock::class)->time();
 
         $record->id = $DB->insert_record('rest_api_tokens', $record);
 
@@ -163,7 +165,7 @@ class api_token_repository {
     }
 
     /**
-     * Update the last accessed timestamp for a token to the current time.
+     * Record that a token was just used, and where from.
      *
      * @param int $tokenid The token ID.
      * @return void
@@ -171,7 +173,13 @@ class api_token_repository {
     public function log_token_access(int $tokenid): void {
         global $DB;
 
-        $DB->set_field('rest_api_tokens', 'lastaccessed', time(), ['id' => $tokenid]);
+        // The address is stored alongside the time because "last used yesterday" on its own does
+        // not tell the owner whether it was them.
+        $DB->update_record('rest_api_tokens', (object) [
+            'id' => $tokenid,
+            'lastaccessed' => di::get(clock::class)->time(),
+            'lastaccessip' => getremoteaddr(null),
+        ]);
     }
 
     /**
@@ -191,7 +199,7 @@ class api_token_repository {
             $select .= " AND revoked = :revoked AND (expirytime IS NULL OR expirytime > :now)";
             $params += [
                 'revoked' => api_token_entity::REVOKED_NO,
-                'now' => time(),
+                'now' => di::get(clock::class)->time(),
             ];
         }
 
