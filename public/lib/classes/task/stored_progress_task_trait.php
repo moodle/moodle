@@ -48,11 +48,17 @@ trait stored_progress_task_trait {
     }
 
     /**
-     * Initialise a stored progress record.
+     * Initialise a stored progress record if one does not already exist.
      */
     public function initialise_stored_progress(): void {
+        $idnumber = stored_progress_bar::convert_to_idnumber($this->get_progress_name());
+        $this->progress = stored_progress_bar::get_by_idnumber($idnumber);
+        if ($this->progress) {
+            return;
+        }
+
         $this->progress = new stored_progress_bar(
-            stored_progress_bar::convert_to_idnumber($this->get_progress_name()),
+            $idnumber,
             autostart: false,
         );
         $this->progress->store_pending();
@@ -85,5 +91,4 @@ trait stored_progress_task_trait {
         // Start the progress.
         $this->progress->start();
     }
-
 }
