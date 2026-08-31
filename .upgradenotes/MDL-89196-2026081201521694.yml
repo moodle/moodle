@@ -1,0 +1,12 @@
+issueNumber: MDL-89196
+notes:
+  theme_boost:
+    - message: >
+        The `core/loginform` template from the Boost theme has been moved to
+        core.
+
+
+        The previously used core version has not been used in core for some
+
+        time, and was not tested or validated.
+      type: changed
