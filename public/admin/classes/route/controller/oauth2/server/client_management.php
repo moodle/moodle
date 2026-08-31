@@ -26,12 +26,12 @@ use Psr\Http\Message\ResponseInterface;
  * Class client_management.
  *
  * @package    core_admin
- * @copyright  2026 Mihail Gehoski <mihailgesoski@gmail.com>
+ * @copyright  2026 Mihail Geshoski <mihailgesoski@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\core\router\route(
     title: 'OAuth2 Client Management',
-    path: '/oauth2server/clients',
+    path: '/oauth2/server/clients',
 )]
 class client_management {
     /**
