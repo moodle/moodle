@@ -63,7 +63,7 @@ class DefinitionArray implements DefinitionSource, MutableDefinitionSource
         $this->wildcardDefinitions = null;
     }
 
-    public function getDefinition(string $name) : Definition|null
+    public function getDefinition(string $name) : ?Definition
     {
         // Look for the definition by name
         if (array_key_exists($name, $this->definitions)) {

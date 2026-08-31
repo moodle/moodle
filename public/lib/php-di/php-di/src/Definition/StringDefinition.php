@@ -65,7 +65,7 @@ class StringDefinition implements Definition, SelfResolvingDefinition
     public static function resolveExpression(
         string $entryName,
         string $expression,
-        ContainerInterface $container
+        ContainerInterface $container,
     ) : string {
         $callback = function (array $matches) use ($entryName, $container) {
             /** @psalm-suppress InvalidCatch */

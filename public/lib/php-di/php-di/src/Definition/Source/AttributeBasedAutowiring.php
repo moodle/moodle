@@ -31,7 +31,7 @@ class AttributeBasedAutowiring implements DefinitionSource, Autowiring
     /**
      * @throws InvalidAttribute
      */
-    public function autowire(string $name, ?ObjectDefinition $definition = null) : ObjectDefinition|null
+    public function autowire(string $name, ?ObjectDefinition $definition = null) : ?ObjectDefinition
     {
         $className = $definition ? $definition->getClassName() : $name;
 
@@ -58,7 +58,7 @@ class AttributeBasedAutowiring implements DefinitionSource, Autowiring
      * @throws InvalidAttribute
      * @throws InvalidArgumentException The class doesn't exist
      */
-    public function getDefinition(string $name) : ObjectDefinition|null
+    public function getDefinition(string $name) : ?ObjectDefinition
     {
         return $this->autowire($name);
     }

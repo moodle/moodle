@@ -23,7 +23,7 @@ class ArrayResolver implements DefinitionResolver
      * @param DefinitionResolver $definitionResolver Used to resolve nested definitions.
      */
     public function __construct(
-        private DefinitionResolver $definitionResolver
+        private DefinitionResolver $definitionResolver,
     ) {
     }
 

@@ -27,7 +27,7 @@ class DecoratorResolver implements DefinitionResolver
      */
     public function __construct(
         private ContainerInterface $container,
-        private DefinitionResolver $definitionResolver
+        private DefinitionResolver $definitionResolver,
     ) {
     }
 

@@ -17,7 +17,7 @@ use DI\Definition\Source\DefinitionSource;
 use DI\Definition\StringDefinition;
 use DI\Definition\ValueDefinition;
 use DI\DependencyException;
-use DI\Proxy\ProxyFactory;
+use DI\Proxy\ProxyFactoryInterface;
 use function dirname;
 use function file_put_contents;
 use InvalidArgumentException;
@@ -78,11 +78,11 @@ class Compiler
     private bool $autowiringEnabled;
 
     public function __construct(
-        private ProxyFactory $proxyFactory,
+        private ProxyFactoryInterface $proxyFactory,
     ) {
     }
 
-    public function getProxyFactory() : ProxyFactory
+    public function getProxyFactory() : ProxyFactoryInterface
     {
         return $this->proxyFactory;
     }
@@ -97,7 +97,7 @@ class Compiler
         string $directory,
         string $className,
         string $parentClassName,
-        bool $autowiringEnabled
+        bool $autowiringEnabled,
     ) : string {
         $fileName = rtrim($directory, '/') . '/' . $className . '.php';
 
