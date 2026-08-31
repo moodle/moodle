@@ -123,24 +123,9 @@ final class plugins_uninstall_test extends \advanced_testcase {
      * @return plugins_uninstall
      */
     private function build_command(\core\plugin_manager $manager): plugins_uninstall {
-        $command = new class ($manager) extends plugins_uninstall {
-            /**
-             * Constructor.
-             *
-             * @param \core\plugin_manager $mockmanager Mock plugin manager.
-             */
-            public function __construct(
-                /** @var \core\plugin_manager Mock plugin manager. */
-                private \core\plugin_manager $mockmanager,
-            ) {
-                parent::__construct();
-            }
+        \core\di::set(\core\plugin_manager::class, $manager);
 
-            #[\Override]
-            protected function get_plugin_manager(): \core_plugin_manager {
-                return $this->mockmanager;
-            }
-        };
+        $command = \core\di::get(plugins_uninstall::class);
 
         // Normally the Application provides the HelperSet (and its QuestionHelper) when the
         // command is run. These tests construct the command directly, bypassing the

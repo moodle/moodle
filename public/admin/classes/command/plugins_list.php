@@ -35,6 +35,18 @@ use Symfony\Component\Console\Output\OutputInterface;
     description: 'List installed Moodle plugins',
 )]
 class plugins_list extends Command {
+    /**
+     * Constructor.
+     *
+     * @param \core\plugin_manager $pluginmanager The plugin manager.
+     */
+    public function __construct(
+        /** @var \core\plugin_manager The plugin manager. */
+        protected \core\plugin_manager $pluginmanager,
+    ) {
+        parent::__construct();
+    }
+
     #[\Override]
     protected function configure(): void {
         $this
@@ -72,7 +84,7 @@ class plugins_list extends Command {
         $contribonly = $input->getOption('contrib');
         $missingonly = $input->getOption('missing');
 
-        $pluginman = $this->get_plugin_manager();
+        $pluginman = $this->pluginmanager;
 
         $rows = [];
         foreach ($pluginman->get_plugins() as $type => $plugins) {
@@ -104,16 +116,5 @@ class plugins_list extends Command {
         $output->writeln(sprintf('<info>%d plugin(s) listed.</info>', count($rows)));
 
         return Command::SUCCESS;
-    }
-
-    /**
-     * Return the plugin manager instance.
-     *
-     * Overridable in tests to inject a mock.
-     *
-     * @return \core\plugin_manager
-     */
-    protected function get_plugin_manager(): \core\plugin_manager {
-        return \core\plugin_manager::instance();
     }
 }

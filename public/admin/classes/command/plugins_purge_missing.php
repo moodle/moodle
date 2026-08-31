@@ -35,6 +35,18 @@ use Symfony\Component\Console\Output\OutputInterface;
     description: 'Uninstall all plugins whose source directory is missing from disk',
 )]
 class plugins_purge_missing extends Command {
+    /**
+     * Constructor.
+     *
+     * @param \core\plugin_manager $pluginmanager The plugin manager.
+     */
+    public function __construct(
+        /** @var \core\plugin_manager The plugin manager. */
+        protected \core\plugin_manager $pluginmanager,
+    ) {
+        parent::__construct();
+    }
+
     #[\Override]
     protected function configure(): void {
         $this
@@ -51,7 +63,7 @@ class plugins_purge_missing extends Command {
 
     #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int {
-        $pluginman = $this->get_plugin_manager();
+        $pluginman = $this->pluginmanager;
         $missingplugins = [];
         $exitcode = Command::SUCCESS;
 
@@ -106,17 +118,6 @@ class plugins_purge_missing extends Command {
         }
 
         return $exitcode;
-    }
-
-    /**
-     * Return the plugin manager instance.
-     *
-     * Overridable in tests to inject a mock.
-     *
-     * @return \core\plugin_manager
-     */
-    protected function get_plugin_manager(): \core\plugin_manager {
-        return \core\plugin_manager::instance();
     }
 
     /**

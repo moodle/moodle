@@ -38,6 +38,18 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
     description: 'Uninstall one or more Moodle plugins',
 )]
 class plugins_uninstall extends Command {
+    /**
+     * Constructor.
+     *
+     * @param \core\plugin_manager $pluginmanager The plugin manager.
+     */
+    public function __construct(
+        /** @var \core\plugin_manager The plugin manager. */
+        protected \core\plugin_manager $pluginmanager,
+    ) {
+        parent::__construct();
+    }
+
     #[\Override]
     protected function configure(): void {
         $this
@@ -78,7 +90,7 @@ class plugins_uninstall extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int {
         $assumeyes = $input->getOption('assume-yes');
         $components = $input->getArgument('plugin');
-        $pluginman = $this->get_plugin_manager();
+        $pluginman = $this->pluginmanager;
         $plugins = [];
 
         foreach ($components as $component) {
@@ -144,17 +156,6 @@ class plugins_uninstall extends Command {
         }
 
         return $exitcode;
-    }
-
-    /**
-     * Return the plugin manager instance.
-     *
-     * Overridable in tests to inject a mock.
-     *
-     * @return \core\plugin_manager
-     */
-    protected function get_plugin_manager(): \core\plugin_manager {
-        return \core\plugin_manager::instance();
     }
 
     /**

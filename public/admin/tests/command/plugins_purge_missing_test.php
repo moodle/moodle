@@ -131,24 +131,9 @@ final class plugins_purge_missing_test extends \advanced_testcase {
      * @return plugins_purge_missing
      */
     private function build_command(\core\plugin_manager $manager): plugins_purge_missing {
-        return new class ($manager) extends plugins_purge_missing {
-            /**
-             * Constructor.
-             *
-             * @param \core\plugin_manager $mockmanager Mock plugin manager.
-             */
-            public function __construct(
-                /** @var \core\plugin_manager Mock plugin manager. */
-                private \core\plugin_manager $mockmanager,
-            ) {
-                parent::__construct();
-            }
+        \core\di::set(\core\plugin_manager::class, $manager);
 
-            #[\Override]
-            protected function get_plugin_manager(): \core_plugin_manager {
-                return $this->mockmanager;
-            }
-        };
+        return \core\di::get(plugins_purge_missing::class);
     }
 
     /**

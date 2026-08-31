@@ -152,6 +152,9 @@ class di {
 
             // Note: libphonenumber PhoneNumberUtil uses a singleton.
             \libphonenumber\PhoneNumberUtil::class => fn() => \libphonenumber\PhoneNumberUtil::getInstance(),
+
+            // Note: plugin_manager uses a singleton.
+            \core\plugin_manager::class => fn() => \core\plugin_manager::instance(),
         ]);
 
         // Add any additional definitions using hooks.
