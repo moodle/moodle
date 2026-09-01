@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -464,12 +464,12 @@
     const listSelector = listNames.join(',');
     const getParentList = (editor, node) => {
         const selectionStart = node || editor.selection.getStart(true);
-        return editor.dom.getParent(selectionStart, listSelector, getClosestListHost(editor, selectionStart));
+        return editor.dom.getParent(selectionStart, listSelector, getClosestListHost(editor, selectionStart, editor.selection.isCollapsed()));
     };
-    const getClosestListHost = (editor, elm) => {
+    const getClosestListHost = (editor, elm, isCollapsed) => {
         const parentBlocks = editor.dom.getParents(elm, editor.dom.isBlock);
         const isNotForcedRootBlock = (elm) => elm.nodeName.toLowerCase() !== getForcedRootBlock(editor);
-        const parentBlock = find(parentBlocks, (elm) => isNotForcedRootBlock(elm) && isListHost(editor.schema, elm));
+        const parentBlock = find(parentBlocks, (elm) => (!isCollapsed || isNotForcedRootBlock(elm)) && isListHost(editor.schema, elm));
         return parentBlock.getOr(editor.getBody());
     };
     const isListHost = (schema, node) => !isListNode(node) && !isListItemNode(node) && exists(listNames, (listName) => schema.isValidChild(node.nodeName, listName));
@@ -583,12 +583,16 @@
         });
     };
 
+    const PLUGIN_CODE = 'lists';
     var Plugin = () => {
-        global.add('lists', (editor) => {
+        global.add(PLUGIN_CODE, (editor) => {
             register$2(editor);
             register$1(editor);
             register(editor);
-            return get(editor);
+            return {
+                ...get(editor),
+                getMetadata: () => ({ name: 'Lists', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

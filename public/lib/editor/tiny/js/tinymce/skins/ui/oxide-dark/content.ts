@@ -1,4 +1,24 @@
 export interface Classes {
+  "tox-tinymceai__annotation--added": string;
+  "tox-tinymceai__annotation--modified": string;
+  "tox-tinymceai__annotation--removed": string;
+  "tox-tinymceai__annotation--added__highlight": string;
+  "tox-tinymceai__annotation--added__selected": string;
+  "tox-tinymceai__annotation--modified__highlight": string;
+  "tox-tinymceai__annotation--modified__selected": string;
+  "tox-tinymceai__annotation--removed__highlight": string;
+  "tox-tinymceai__annotation--removed__selected": string;
+  "tox-tinymceai__annotation--added__hidden": string;
+  "tox-tinymceai__annotation--modified__hidden": string;
+  "tox-tinymceai__annotation--removed__hidden": string;
+  "tox-tinymceai__annotation": string;
+  "mce-pagebreak": string;
+  "tox-tinymceai": string;
+  "tox-tinymceai-preview": string;
+  "tox-tinymceai__annotation--preview-highlight": string;
+  "tox-tinymceai-preview--selectable": string;
+  "tox-tinymceai__diff-focus-overlay": string;
+  "tox-tinymceai__diff-focus-overlay-dim": string;
   "mce-content-body": string;
   "mce-item-anchor": string;
   "tox-comments-visible": string;
@@ -57,7 +77,6 @@ export interface Classes {
   "mce-mergetag": string;
   "mce-mergetag-affix": string;
   "mce-object": string;
-  "mce-pagebreak": string;
   "tiny-pageembed": string;
   "tiny-pageembed--21by9": string;
   "tiny-pageembed--16by9": string;
@@ -113,4 +132,5 @@ export interface Classes {
   "tox-uploadcare-placeholder": string;
   "mce-nbsp": string;
   "mce-shy": string;
+  "tox-bouncing-dots": string;
 };

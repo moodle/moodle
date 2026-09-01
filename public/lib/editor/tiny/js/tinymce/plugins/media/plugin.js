@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -1287,13 +1287,74 @@
         }
     };
 
-    const parseAndSanitize = (editor, context, html) => {
+    const parseAndSanitize = (editor, html) => {
         const getEditorOption = editor.options.get;
         const sanitize = getEditorOption('xss_sanitization');
         const validate = shouldFilterHtml(editor);
-        return Parser(editor.schema, { sanitize, validate }).parse(html, { context });
+        return Parser(editor.schema, { sanitize, validate }).parse(html);
     };
 
+    const buildMediaElement = (editor, node) => {
+        const realElmName = node.attr('data-mce-object');
+        const element = document.createElement(realElmName);
+        // Add width/height to everything but audio
+        if (realElmName !== 'audio') {
+            const className = node.attr('class');
+            const firstChild = node.firstChild;
+            if (className && className.indexOf('mce-preview-object') !== -1 && firstChild) {
+                const width = firstChild.attr('width');
+                const height = firstChild.attr('height');
+                if (isString(width)) {
+                    element.setAttribute('width', width);
+                }
+                if (isString(height)) {
+                    element.setAttribute('height', height);
+                }
+            }
+            else {
+                const width = node.attr('width');
+                const height = node.attr('height');
+                if (isString(width)) {
+                    element.setAttribute('width', width);
+                }
+                if (isString(height)) {
+                    element.setAttribute('height', height);
+                }
+            }
+        }
+        const style = node.attr('style');
+        if (isString(style)) {
+            element.setAttribute('style', style);
+        }
+        // Unprefix all placeholder attributes
+        const attribs = node.attributes ?? [];
+        let ai = attribs.length;
+        while (ai--) {
+            const attrName = attribs[ai].name;
+            if (attrName.indexOf('data-mce-p-') === 0) {
+                element.setAttribute(attrName.substr(11), attribs[ai].value);
+            }
+        }
+        // Inject innerhtml
+        const innerHtml = node.attr('data-mce-html');
+        if (isString(innerHtml)) {
+            element.innerHTML = unescape(innerHtml);
+        }
+        else {
+            element.innerHTML = '\u00a0';
+        }
+        const fragment = parseAndSanitize(editor, element.outerHTML);
+        const newElement = fragment.getAll(realElmName)[0];
+        if (isNonNullable(newElement)) {
+            if (!isString(innerHtml)) {
+                newElement.empty();
+            }
+            return Optional.some(newElement);
+        }
+        else {
+            return Optional.none();
+        }
+    };
     const setup$1 = (editor) => {
         editor.on('PreInit', () => {
             const { schema, serializer, parser } = editor;
@@ -1317,50 +1378,14 @@
             // Converts iframe, video etc into placeholder images
             parser.addNodeFilter('iframe,video,audio,object,embed', placeHolderConverter(editor));
             // Replaces placeholder images with real elements for video, object, iframe etc
-            serializer.addAttributeFilter('data-mce-object', (nodes, name) => {
+            serializer.addAttributeFilter('data-mce-object', (nodes) => {
                 let i = nodes.length;
                 while (i--) {
                     const node = nodes[i];
                     if (!node.parent) {
                         continue;
                     }
-                    const realElmName = node.attr(name);
-                    const realElm = new global$2(realElmName, 1);
-                    // Add width/height to everything but audio
-                    if (realElmName !== 'audio') {
-                        const className = node.attr('class');
-                        if (className && className.indexOf('mce-preview-object') !== -1 && node.firstChild) {
-                            realElm.attr({
-                                width: node.firstChild.attr('width'),
-                                height: node.firstChild.attr('height')
-                            });
-                        }
-                        else {
-                            realElm.attr({
-                                width: node.attr('width'),
-                                height: node.attr('height')
-                            });
-                        }
-                    }
-                    realElm.attr({
-                        style: node.attr('style')
-                    });
-                    // Unprefix all placeholder attributes
-                    const attribs = node.attributes ?? [];
-                    let ai = attribs.length;
-                    while (ai--) {
-                        const attrName = attribs[ai].name;
-                        if (attrName.indexOf('data-mce-p-') === 0) {
-                            realElm.attr(attrName.substr(11), attribs[ai].value);
-                        }
-                    }
-                    // Inject innerhtml
-                    const innerHtml = node.attr('data-mce-html');
-                    if (innerHtml) {
-                        const fragment = parseAndSanitize(editor, realElmName, unescape(innerHtml));
-                        each$1(fragment.children(), (child) => realElm.append(child));
-                    }
-                    node.replace(realElm);
+                    buildMediaElement(editor, node).fold(() => node.remove(), (realElm) => node.replace(realElm));
                 }
             });
         });
@@ -1420,15 +1445,19 @@
         });
     };
 
+    const PLUGIN_CODE = 'media';
     var Plugin = () => {
-        global$6.add('media', (editor) => {
+        global$6.add(PLUGIN_CODE, (editor) => {
             register$2(editor);
             register$1(editor);
             register(editor);
             setup(editor);
             setup$1(editor);
             setup$2(editor);
-            return get(editor);
+            return {
+                ...get(editor),
+                getMetadata: () => ({ name: 'Media', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

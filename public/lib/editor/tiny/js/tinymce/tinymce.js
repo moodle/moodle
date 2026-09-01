@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -573,14 +573,16 @@
         }
         return Optional.none();
     };
-    const findLastIndex = (arr, pred) => {
+    const findLastByPredicate = (arr, pred) => {
         for (let i = arr.length - 1; i >= 0; i--) {
             if (pred(arr[i], i)) {
-                return Optional.some(i);
+                return Optional.some({ v: arr[i], i });
             }
         }
         return Optional.none();
     };
+    const findLast = (arr, pred) => findLastByPredicate(arr, pred).map((r) => r.v);
+    const findLastIndex = (arr, pred) => findLastByPredicate(arr, pred).map((r) => r.i);
     const flatten$1 = (xs) => {
         // Note, this is possible because push supports multiple arguments:
         // http://jsperf.com/concat-push/6
@@ -625,9 +627,9 @@
         copy.sort(comparator);
         return copy;
     };
-    const get$b = (xs, i) => i >= 0 && i < xs.length ? Optional.some(xs[i]) : Optional.none();
-    const head = (xs) => get$b(xs, 0);
-    const last$2 = (xs) => get$b(xs, xs.length - 1);
+    const get$c = (xs, i) => i >= 0 && i < xs.length ? Optional.some(xs[i]) : Optional.none();
+    const head = (xs) => get$c(xs, 0);
+    const last$2 = (xs) => get$c(xs, xs.length - 1);
     const from = isFunction(Array.from) ? Array.from : (x) => nativeSlice.call(x);
     const findMap = (arr, f) => {
         for (let i = 0; i < arr.length; i++) {
@@ -709,7 +711,7 @@
     const values = (obj) => {
         return mapToArray(obj, identity);
     };
-    const get$a = (obj, key) => {
+    const get$b = (obj, key) => {
         return has$2(obj, key) ? Optional.from(obj[key]) : Optional.none();
     };
     const has$2 = (obj, key) => hasOwnProperty$1.call(obj, key);
@@ -2198,14 +2200,14 @@
     const siblings = (element) => {
         // TODO: Refactor out children so we can just not add self instead of filtering afterwards
         const filterSelf = (elements) => filter$5(elements, (x) => !eq(element, x));
-        return parent(element).map(children$1).map(filterSelf).getOr([]);
+        return parent(element).map(children$2).map(filterSelf).getOr([]);
     };
     const prevSibling = (element) => Optional.from(element.dom.previousSibling).map(SugarElement.fromDom);
     const nextSibling = (element) => Optional.from(element.dom.nextSibling).map(SugarElement.fromDom);
     // This one needs to be reversed, so they're still in DOM order
     const prevSiblings = (element) => reverse(toArray(element, prevSibling));
     const nextSiblings = (element) => toArray(element, nextSibling);
-    const children$1 = (element) => map$3(element.dom.childNodes, SugarElement.fromDom);
+    const children$2 = (element) => map$3(element.dom.childNodes, SugarElement.fromDom);
     const child$1 = (element, index) => {
         const cs = element.dom.childNodes;
         return Optional.from(cs[index]).map(SugarElement.fromDom);
@@ -2403,7 +2405,7 @@
             throw new Error('Attribute value was not simple');
         }
     };
-    const set$4 = (element, key, value) => {
+    const set$5 = (element, key, value) => {
         rawSet(element.dom, key, value);
     };
     const setAll$1 = (element, attrs) => {
@@ -2412,12 +2414,12 @@
             rawSet(dom, k, v);
         });
     };
-    const get$9 = (element, key) => {
+    const get$a = (element, key) => {
         const v = element.dom.getAttribute(key);
         // undefined is the more appropriate value for JS, and this matches JQuery
         return v === null ? undefined : v;
     };
-    const getOpt = (element, key) => Optional.from(get$9(element, key));
+    const getOpt = (element, key) => Optional.from(get$a(element, key));
     const has$1 = (element, key) => {
         const dom = element.dom;
         // return false for non-element nodes, no point in throwing an error
@@ -2442,7 +2444,7 @@
         // than removing every child node manually.
         // The following is (probably) safe for performance as 99.9% of the time the trick works and
         // Traverse.children will return an empty array.
-        each$e(children$1(element), (rogue) => {
+        each$e(children$2(element), (rogue) => {
             remove$8(rogue);
         });
     };
@@ -2453,7 +2455,7 @@
         }
     };
     const unwrap = (wrapper) => {
-        const children = children$1(wrapper);
+        const children = children$2(wrapper);
         if (children.length > 0) {
             after$3(wrapper, children);
         }
@@ -2476,7 +2478,7 @@
     const mutate = (original, tag) => {
         const nu = shallowAs(original, tag);
         after$4(original, nu);
-        const children = children$1(original);
+        const children = children$2(original);
         append(nu, children);
         remove$8(original);
         return nu;
@@ -2486,12 +2488,12 @@
         const doc = scope || document;
         const div = doc.createElement('div');
         div.innerHTML = html;
-        return children$1(SugarElement.fromDom(div));
+        return children$2(SugarElement.fromDom(div));
     };
     const fromDom$1 = (nodes) => map$3(nodes, SugarElement.fromDom);
 
-    const get$8 = (element) => element.dom.innerHTML;
-    const set$3 = (element, content) => {
+    const get$9 = (element) => element.dom.innerHTML;
+    const set$4 = (element, content) => {
         const owner = owner$1(element);
         const docDom = owner.dom;
         // FireFox has *terrible* performance when using innerHTML = x
@@ -2505,7 +2507,7 @@
         const container = SugarElement.fromTag('div');
         const clone = SugarElement.fromDom(element.dom.cloneNode(true));
         append$1(container, clone);
-        return get$8(container);
+        return get$9(container);
     };
 
     // some elements, such as mathml, don't have style attributes
@@ -2525,6 +2527,14 @@
         }
         const doc = dom.ownerDocument;
         return getShadowRoot(SugarElement.fromDom(dom)).fold(() => doc.body.contains(dom), compose1(inBody, getShadowHost));
+    };
+    const body = () => getBody(SugarElement.fromDom(document));
+    const getBody = (doc) => {
+        const b = doc.dom.body;
+        if (b === null || b === undefined) {
+            throw new Error('Body is not available yet');
+        }
+        return SugarElement.fromDom(b);
     };
 
     const internalSet = (dom, property, value) => {
@@ -2552,7 +2562,7 @@
             dom.style.removeProperty(property);
         }
     };
-    const set$2 = (element, property, value) => {
+    const set$3 = (element, property, value) => {
         const dom = element.dom;
         internalSet(dom, property, value);
     };
@@ -2568,7 +2578,7 @@
      *
      * https://developer.mozilla.org/en-US/docs/Web/CSS/used_value
      */
-    const get$7 = (element, property) => {
+    const get$8 = (element, property) => {
         const dom = element.dom;
         /*
          * IE9 and above per
@@ -2667,7 +2677,7 @@
             const r = getOffset(element);
             // zero or null means non-standard or disconnected, fall back to CSS
             if (r <= 0 || r === null) {
-                const css = get$7(element, name);
+                const css = get$8(element, name);
                 // ugh this feels dirty, but it saves cycles
                 return parseFloat(css) || 0;
             }
@@ -2677,7 +2687,7 @@
         // although these calculations only seem relevant for quirks mode, and edge cases TBIO doesn't rely on
         const getOuter = get;
         const aggregate = (element, properties) => foldl(properties, (acc, property) => {
-            const val = get$7(element, property);
+            const val = get$8(element, property);
             const value = val === undefined ? 0 : parseInt(val, 10);
             return isNaN(value) ? acc : acc + value;
         }, 0);
@@ -2701,7 +2711,7 @@
         const dom = element.dom;
         return inBody(element) ? dom.getBoundingClientRect().height : dom.offsetHeight;
     });
-    const get$6 = (element) => api$1.get(element);
+    const get$7 = (element) => api$1.get(element);
 
     const r = (left, top) => {
         const translate = (x, y) => r(left + x, top + y);
@@ -2755,7 +2765,7 @@
     };
 
     // get scroll position (x,y) relative to document _doc (or global if not supplied)
-    const get$5 = (_DOC) => {
+    const get$6 = (_DOC) => {
         const doc = _DOC !== undefined ? _DOC.dom : document;
         // ASSUMPTION: This is for cross-browser support, body works for Safari & EDGE, and when we have an iframe body scroller
         const x = doc.body.scrollLeft || doc.documentElement.scrollLeft;
@@ -2813,25 +2823,25 @@
     };
 
     const api = NodeValue(isText$c, 'text');
-    const get$4 = (element) => api.get(element);
+    const get$5 = (element) => api.get(element);
     const getOption = (element) => api.getOption(element);
-    const set$1 = (element, value) => api.set(element, value);
+    const set$2 = (element, value) => api.set(element, value);
 
     // Methods for handling attributes that contain a list of values <div foo="alpha beta theta">
     const read$4 = (element, attr) => {
-        const value = get$9(element, attr);
+        const value = get$a(element, attr);
         return value === undefined || value === '' ? [] : value.split(' ');
     };
     const add$4 = (element, attr, id) => {
         const old = read$4(element, attr);
         const nu = old.concat([id]);
-        set$4(element, attr, nu.join(' '));
+        set$5(element, attr, nu.join(' '));
         return true;
     };
     const remove$6 = (element, attr, id) => {
         const nu = filter$5(read$4(element, attr), (v) => v !== id);
         if (nu.length > 0) {
-            set$4(element, attr, nu.join(' '));
+            set$5(element, attr, nu.join(' '));
         }
         else {
             remove$9(element, attr);
@@ -2866,7 +2876,7 @@
         }
         return Optional.none();
     };
-    const closest$4 = (scope, predicate, isRoot) => {
+    const closest$5 = (scope, predicate, isRoot) => {
         // This is required to avoid ClosestOrAncestor passing the predicate to itself
         const is = (s, test) => test(s);
         return ClosestOrAncestor(is, ancestor$5, scope, predicate, isRoot);
@@ -2904,18 +2914,18 @@
     const ancestor$4 = (scope, selector, isRoot) => ancestor$5(scope, (e) => is$2(e, selector), isRoot);
     const descendant$1 = (scope, selector) => one(selector, scope);
     // Returns Some(closest ancestor element (sugared)) matching 'selector' up to isRoot, or None() otherwise
-    const closest$3 = (scope, selector, isRoot) => {
+    const closest$4 = (scope, selector, isRoot) => {
         const is = (element, selector) => is$2(element, selector);
         return ClosestOrAncestor(is, ancestor$4, scope, selector, isRoot);
     };
 
     // IE11 Can return undefined for a classList on elements such as math, so we make sure it's not undefined before attempting to use it.
     const supports = (element) => element.dom.classList !== undefined;
-    const get$3 = (element) => read$4(element, 'class');
+    const get$4 = (element) => read$4(element, 'class');
     const add$3 = (element, clazz) => add$4(element, 'class', clazz);
     const remove$5 = (element, clazz) => remove$6(element, 'class', clazz);
     const toggle$2 = (element, clazz) => {
-        if (contains$2(get$3(element), clazz)) {
+        if (contains$2(get$4(element), clazz)) {
             return remove$5(element, clazz);
         }
         else {
@@ -2939,7 +2949,7 @@
         }
     };
     const cleanClass = (element) => {
-        const classList = supports(element) ? element.dom.classList : get$3(element);
+        const classList = supports(element) ? element.dom.classList : get$4(element);
         // classList is a "live list", so this is up to date already
         if (classList.length === 0) {
             // No more classes left, remove the class attribute as well
@@ -2978,27 +2988,32 @@
         });
     };
 
-    const closest$2 = (target) => closest$3(target, '[contenteditable]');
+    const closest$3 = (target) => closest$4(target, '[contenteditable]');
     const isEditable$2 = (element, assumeEditable = false) => {
         if (inBody(element)) {
             return element.dom.isContentEditable;
         }
         else {
             // Find the closest contenteditable element and check if it's editable
-            return closest$2(element).fold(constant(assumeEditable), (editable) => getRaw(editable) === 'true');
+            return closest$3(element).fold(constant(assumeEditable), (editable) => getRaw(editable) === 'true');
         }
     };
     const getRaw = (element) => element.dom.contentEditable;
-    const set = (element, editable) => {
+    const set$1 = (element, editable) => {
         element.dom.contentEditable = editable ? 'true' : 'false';
     };
 
+    const get$3 = (element) => element.dom.textContent;
+    const set = (element, value) => {
+        element.dom.textContent = value;
+    };
+
     const ancestors$1 = (scope, predicate, isRoot) => filter$5(parents$1(scope, isRoot), predicate);
-    const children = (scope, predicate) => filter$5(children$1(scope), predicate);
+    const children$1 = (scope, predicate) => filter$5(children$2(scope), predicate);
     const descendants$1 = (scope, predicate) => {
         let result = [];
         // Recurse.toArray() might help here
-        each$e(children$1(scope), (x) => {
+        each$e(children$2(scope), (x) => {
             if (predicate(x)) {
                 result = result.concat([x]);
             }
@@ -3016,6 +3031,10 @@
     // It may surprise you to learn this is exactly what JQuery does
     // TODO: Avoid all this wrapping and unwrapping
     ancestors$1(scope, (e) => is$2(e, selector), isRoot);
+    const children = (scope, selector) => 
+    // It may surprise you to learn this is exactly what JQuery does
+    // TODO: Avoid all the wrapping and unwrapping
+    children$1(scope, (e) => is$2(e, selector));
     const descendants = (scope, selector) => all(selector, scope);
 
     const ancestor$3 = (scope, predicate, isRoot) => ancestor$5(scope, predicate, isRoot).isSome();
@@ -3025,6 +3044,7 @@
     const ancestor$2 = (element, target) => ancestor$3(element, curry(eq, target));
 
     const ancestor$1 = (scope, selector, isRoot) => ancestor$4(scope, selector, isRoot).isSome();
+    const closest$2 = (scope, selector, isRoot) => closest$4(scope, selector, isRoot).isSome();
 
     const ensureIsRoot = (isRoot) => isFunction(isRoot) ? isRoot : never;
     const ancestor = (scope, transform, isRoot) => {
@@ -3053,7 +3073,7 @@
     // For the purposes of finding cursor positions only allow text nodes with content,
     // but trim removes &nbsp; and that's allowed
     text.trim().length !== 0 || text.indexOf(nbsp) > -1).isSome();
-    const isContentEditableFalse$b = (elem) => isHTMLElement$1(elem) && (get$9(elem, 'contenteditable') === 'false');
+    const isContentEditableFalse$b = (elem) => isHTMLElement$1(elem) && (get$a(elem, 'contenteditable') === 'false');
     const elementsWithCursorPosition = ['img', 'br'];
     const isCursorPosition = (elem) => {
         const hasCursorPosition = isTextNodeWithCursorPosition(elem);
@@ -3199,6 +3219,20 @@
     };
     const getAtPoint = (win, x, y) => fromPoint$1(win, x, y);
 
+    const getImageSize = (url) => new Promise((resolve, reject) => {
+        const img = document.createElement('img');
+        img.addEventListener('load', () => {
+            resolve({
+                width: img.naturalWidth,
+                height: img.naturalHeight
+            });
+        });
+        img.addEventListener('error', () => {
+            reject(`Failed to get image dimensions for: ${url}`);
+        });
+        img.src = url;
+    });
+
     const get$2 = (_win) => {
         const win = _win === undefined ? window : _win;
         if (detect$1().browser.isFirefox()) {
@@ -3220,7 +3254,7 @@
     const getBounds = (_win) => {
         const win = _win === undefined ? window : _win;
         const doc = win.document;
-        const scroll = get$5(SugarElement.fromDom(doc));
+        const scroll = get$6(SugarElement.fromDom(doc));
         return get$2(win).fold(() => {
             const html = win.document.documentElement;
             // Don't use window.innerWidth/innerHeight here, as we don't want to include scrollbars
@@ -3466,7 +3500,7 @@
     const isDetails = matchNodeName$1('details');
     const isSummary$1 = matchNodeName$1('summary');
     const ucVideoNodeName = 'uc-video';
-    const isUcVideo = (el) => el.nodeName.toLowerCase() === ucVideoNodeName;
+    const isUcVideo = matchNodeName$1(ucVideoNodeName);
 
     const defaultOptionValues = {
         skipBogus: true,
@@ -3654,7 +3688,7 @@
         const isRoot = (el) => eq(el, rootNode);
         each$e(fromDom$1(transparentBlocks), (transparentBlock) => {
             ancestor$5(transparentBlock, isBlock, isRoot).each((parentBlock) => {
-                const invalidChildren = children(transparentBlock, (el) => isBlock(el) && !schema.isValidChild(name(parentBlock), name(el)));
+                const invalidChildren = children$1(transparentBlock, (el) => isBlock(el) && !schema.isValidChild(name(parentBlock), name(el)));
                 if (invalidChildren.length > 0) {
                     const stateScope = parentElement(parentBlock);
                     each$e(invalidChildren, (child) => {
@@ -3690,7 +3724,7 @@
         const parents = parents$1(SugarElement.fromDom(caretParent), isRoot);
         // Check the element just above below the root so in if caretParent is I in this
         // case <body><p><b><i>|</i></b></p></body> it would use the P as the scope
-        get$b(parents, parents.length - 2).filter(isElement$8).fold(() => updateChildren(schema, root), (scope) => updateChildren(schema, scope.dom));
+        get$c(parents, parents.length - 2).filter(isElement$8).fold(() => updateChildren(schema, root), (scope) => updateChildren(schema, scope.dom));
     };
     const hasBlockAttr = (el) => el.hasAttribute(transparentBlockAttr);
     const isTransparentElementName = (schema, name) => has$2(schema.getTransparentElements(), name);
@@ -3705,7 +3739,7 @@
     // this tries to compensate for that by detecting if that offsets are incorrect and then remove the height
     const getTableCaptionDeltaY = (elm) => {
         if (browser$2.isFirefox() && name(elm) === 'table') {
-            return firstElement(children$1(elm)).filter((elm) => {
+            return firstElement(children$2(elm)).filter((elm) => {
                 return name(elm) === 'caption';
             }).bind((caption) => {
                 return firstElement(nextSiblings(caption)).map((body) => {
@@ -3728,7 +3762,7 @@
         if (elm) {
             // Use getBoundingClientRect if it exists since it's faster than looping offset nodes
             // Fallback to offsetParent calculations if the body isn't static better since it stops at the body root
-            if (rootElm === body && elm.getBoundingClientRect && get$7(SugarElement.fromDom(body), 'position') === 'static') {
+            if (rootElm === body && elm.getBoundingClientRect && get$8(SugarElement.fromDom(body), 'position') === 'static') {
                 const pos = elm.getBoundingClientRect();
                 // Add scroll offsets from documentElement or body since IE with the wrong box model will use d.body and so do WebKit
                 // Also remove the body/documentelement clientTop/clientLeft on IE 6, 7 since they offset the position
@@ -3787,7 +3821,7 @@
             const styleContainer = getStyleContainer(edos);
             descendant$1(styleContainer, '#' + id).each(remove$8);
         };
-        const getOrCreateState = (url) => get$a(loadedStates, url).getOrThunk(() => ({
+        const getOrCreateState = (url) => get$b(loadedStates, url).getOrThunk(() => ({
             id: 'mce-u' + (idCount++),
             passed: [],
             failed: [],
@@ -3849,17 +3883,17 @@
             });
             const crossorigin = getCrossOrigin$1(url, settings);
             if (crossorigin !== undefined) {
-                set$4(linkElem, 'crossOrigin', crossorigin);
+                set$5(linkElem, 'crossOrigin', crossorigin);
             }
             if (settings.referrerPolicy) {
                 // Note: Don't use link.referrerPolicy = ... here as it doesn't work on Safari
-                set$4(linkElem, 'referrerpolicy', settings.referrerPolicy);
+                set$5(linkElem, 'referrerpolicy', settings.referrerPolicy);
             }
             link = linkElem.dom;
             link.onload = passed;
             link.onerror = failed;
             addStyle(linkElem);
-            set$4(linkElem, 'href', urlWithSuffix);
+            set$5(linkElem, 'href', urlWithSuffix);
         });
         /**
          * Loads the specified css string in as a style element with an unique key.
@@ -3910,7 +3944,7 @@
          */
         const unload = (url) => {
             const urlWithSuffix = Tools._addCacheSuffix(url);
-            get$a(loadedStates, urlWithSuffix).each((state) => {
+            get$b(loadedStates, urlWithSuffix).each((state) => {
                 const count = --state.count;
                 if (count === 0) {
                     delete loadedStates[urlWithSuffix];
@@ -3925,7 +3959,7 @@
          * @param {String} key Key of CSS style resource to unload.
          */
         const unloadRawCss = (key) => {
-            get$a(loadedStates, key).each((state) => {
+            get$b(loadedStates, key).each((state) => {
                 const count = --state.count;
                 if (count === 0) {
                     delete loadedStates[key];
@@ -5588,12 +5622,16 @@
                     let matches;
                     while ((matches = styleRegExp.exec(css))) {
                         styleRegExp.lastIndex = matches.index + matches[0].length;
-                        let name = matches[1].replace(trimRightRegExp, '').toLowerCase();
+                        let name = matches[1].replace(trimRightRegExp, '');
                         let value = matches[2].replace(trimRightRegExp, '');
                         if (name && value) {
                             // Decode escaped sequences like \65 -> e
                             name = decodeHexSequences(name);
                             value = decodeHexSequences(value);
+                            // Custom properties (--*) keep user case; standard names normalize to lowercase
+                            if (!name.startsWith('--')) {
+                                name = name.toLowerCase();
+                            }
                             // Skip properties with double quotes and sequences like \" \' in their names
                             // See 'mXSS Attacks: Attacking well-secured Web-Applications by using innerHTML Mutations'
                             // https://cure53.de/fp170.pdf
@@ -5607,9 +5645,6 @@
                             // Opera will produce 700 instead of bold in their style values
                             if (name === 'font-weight' && value === '700') {
                                 value = 'bold';
-                            }
-                            else if (name === 'color' || name === 'background-color') { // Lowercase colors like RED
-                                value = value.toLowerCase();
                             }
                             // Convert RGB colors to HEX
                             if (getColorFormat(value) === 'rgb') {
@@ -5629,7 +5664,9 @@
                     compress('border', '-style');
                     compress('padding', '');
                     compress('margin', '');
-                    compress2('border', 'border-width', 'border-style', 'border-color');
+                    if (!/(#.* rgb(a?)\(.*)|(rgb(a?)\(.*\) )/.test(styles['border-color'])) {
+                        compress2('border', 'border-width', 'border-style', 'border-color');
+                    }
                     // Remove pointless border, IE produces these
                     if (styles.border === 'medium none') {
                         delete styles.border;
@@ -5704,7 +5741,8 @@
         webkitMovementX: true,
         webkitMovementY: true,
         keyIdentifier: true,
-        mozPressure: true
+        mozPressure: true,
+        mozInputSource: true,
     };
     // Note: We can't rely on `instanceof` here as it won't work if the event was fired from another window.
     // Additionally, the constructor name might be `MouseEvent` or similar so we can't rely on the constructor name.
@@ -6159,7 +6197,7 @@
             remove$9(elm, name);
         }
         else {
-            set$4(elm, name, value);
+            set$5(elm, name, value);
         }
     };
     // Convert camel cased names back to hyphenated names
@@ -6182,7 +6220,7 @@
         return idx;
     };
     const updateInternalStyleAttr = (styles, elm) => {
-        const rawValue = get$9(elm, 'style');
+        const rawValue = get$a(elm, 'style');
         const value = styles.serialize(styles.parse(rawValue), name(elm));
         legacySetAttribute(elm, internalStyleName, value);
     };
@@ -6200,7 +6238,7 @@
             remove$7($elm, normalizedName);
         }
         else {
-            set$2($elm, normalizedName, convertStyleToString(cssValue, normalizedName));
+            set$3($elm, normalizedName, convertStyleToString(cssValue, normalizedName));
         }
     };
     const setupAttrHooks = (styles, settings, getContext) => {
@@ -6217,7 +6255,7 @@
             },
             get: (elm, name) => {
                 const sugarElm = SugarElement.fromDom(elm);
-                return get$9(sugarElm, 'data-mce-' + name) || get$9(sugarElm, name);
+                return get$a(sugarElm, 'data-mce-' + name) || get$a(sugarElm, name);
             }
         };
         const attrHooks = {
@@ -6236,7 +6274,7 @@
                 },
                 get: (elm) => {
                     const sugarElm = SugarElement.fromDom(elm);
-                    const value = get$9(sugarElm, internalStyleName) || get$9(sugarElm, 'style');
+                    const value = get$a(sugarElm, internalStyleName) || get$a(sugarElm, 'style');
                     return styles.serialize(styles.parse(value), name(sugarElm));
                 }
             }
@@ -6314,7 +6352,7 @@
                     value = hook.get($elm.dom, name);
                 }
                 else {
-                    value = get$9($elm, name);
+                    value = get$a($elm, name);
                 }
             }
             return isNonNullable(value) ? value : defaultVal;
@@ -6328,7 +6366,7 @@
                 if (isElement$7(e)) {
                     const $elm = SugarElement.fromDom(e);
                     const val = value === '' ? null : value;
-                    const originalValue = get$9($elm, name);
+                    const originalValue = get$a($elm, name);
                     const hook = attrHooks[name];
                     if (hook && hook.set) {
                         hook.set($elm.dom, val, name);
@@ -6387,7 +6425,7 @@
                 return undefined;
             }
             if (computed) {
-                return get$7(SugarElement.fromDom($elm), camelCaseToHyphens(name));
+                return get$8(SugarElement.fromDom($elm), camelCaseToHyphens(name));
             }
             else {
                 // Camelcase it, if needed
@@ -6525,7 +6563,7 @@
         const setHTML = (elm, html) => {
             run(elm, (e) => {
                 const $elm = SugarElement.fromDom(e);
-                set$3($elm, html);
+                set$4($elm, html);
             });
         };
         const add = (parentElm, name, attrs, html, create) => run(parentElm, (parentElm) => {
@@ -6582,7 +6620,7 @@
                 const $node = SugarElement.fromDom(n);
                 if (keepChildren) {
                     // Unwrap but don't keep any empty text nodes
-                    each$e(children$1($node), (child) => {
+                    each$e(children$2($node), (child) => {
                         if (isText$c(child) && child.dom.length === 0) {
                             remove$8(child);
                         }
@@ -6678,7 +6716,7 @@
             run(elm, (e) => remove$7(SugarElement.fromDom(e), 'display'));
         };
         const hide = (elm) => {
-            run(elm, (e) => set$2(SugarElement.fromDom(e), 'display', 'none'));
+            run(elm, (e) => set$3(SugarElement.fromDom(e), 'display', 'none'));
         };
         const isHidden = (elm) => {
             const $elm = _get(elm);
@@ -7734,7 +7772,7 @@
             const self = this;
             const execCallbacks = (name, url) => {
                 // Execute URL callback functions
-                get$a(self.scriptLoadedCallbacks, url).each((callbacks) => {
+                get$b(self.scriptLoadedCallbacks, url).each((callbacks) => {
                     each$e(callbacks, (callback) => callback[name](url));
                 });
                 delete self.scriptLoadedCallbacks[url];
@@ -7834,7 +7872,7 @@
     const isTokenised = (str) => isArray$1(str) && str.length > 1;
     const data = {};
     const currentCode = Cell('en');
-    const getLanguageData = () => get$a(data, currentCode.get());
+    const getLanguageData = () => get$b(data, currentCode.get());
     const getData$1 = () => map$2(data, (value) => ({ ...value }));
     /**
      * Sets the current language code.
@@ -7914,7 +7952,7 @@
             const textStr = toString(text);
             return has$2(langData, textStr)
                 ? toString(langData[textStr])
-                : get$a(langData, textStr.toLowerCase()).map(toString).getOr(textStr);
+                : get$b(langData, textStr.toLowerCase()).map(toString).getOr(textStr);
         };
         const removeContext = (str) => str.replace(/{context:\w+}$/, '');
         const replaceWithEllipsisChar = (text) => text.replaceAll('...', ellipsis);
@@ -7942,7 +7980,7 @@
      * @return {Boolean} True if the current language pack is rtl.
      */
     const isRtl$1 = () => getLanguageData()
-        .bind((items) => get$a(items, '_dir'))
+        .bind((items) => get$b(items, '_dir'))
         .exists((dir) => dir === 'rtl');
     /**
      * Returns true/false if specified language pack exists.
@@ -8142,7 +8180,7 @@
         const root = SugarElement.fromDom(editor.getBody());
         const selector = annotationName.fold(() => '.' + annotation(), (an) => `[${dataAnnotation()}="${an}"]`);
         const newStart = child$1(start, rng.startOffset).getOr(start);
-        const closest = closest$3(newStart, selector, isRoot$1(root));
+        const closest = closest$4(newStart, selector, isRoot$1(root));
         return closest.bind((c) => getOpt(c, `${dataAnnotationId()}`).bind((uid) => getOpt(c, `${dataAnnotation()}`).map((name) => {
             const elements = findMarkers(editor, uid);
             return {
@@ -8165,8 +8203,8 @@
         const directory = {};
         each$e(markers, (m) => {
             if (!isBogusElement(m, body)) {
-                const uid = get$9(m, dataAnnotationId());
-                const nodesAlready = get$a(directory, uid).getOr([]);
+                const uid = get$a(m, dataAnnotationId());
+                const nodesAlready = get$b(directory, uid).getOr([]);
                 directory[uid] = nodesAlready.concat([m]);
             }
         });
@@ -8187,7 +8225,7 @@
         };
         const updateCallbacks = (name, f) => {
             const callbackMap = changeCallbacks.get();
-            const data = get$a(callbackMap, name).getOrThunk(initData);
+            const data = get$b(callbackMap, name).getOrThunk(initData);
             const outputData = f(data);
             callbackMap[name] = outputData;
             changeCallbacks.set(callbackMap);
@@ -8208,7 +8246,7 @@
         const toggleActiveAttr = (uid, state) => {
             each$e(findMarkers(editor, uid), (elem) => {
                 if (state) {
-                    set$4(elem, dataAnnotationActive(), 'true');
+                    set$5(elem, dataAnnotationActive(), 'true');
                 }
                 else {
                     remove$9(elem, dataAnnotationActive());
@@ -8302,7 +8340,7 @@
                 settings
             };
         };
-        const lookup = (name) => get$a(annotations, name).map((a) => a.settings);
+        const lookup = (name) => get$b(annotations, name).map((a) => a.settings);
         const getNames = () => keys(annotations);
         return {
             register,
@@ -8416,6 +8454,9 @@
     // WARNING: don't add anything to this file, the intention is to move these checks into the Schema
     const isTable$1 = (node) => name(node) === 'table';
     const isBr$6 = (node) => isElement$8(node) && name(node) === 'br';
+    const isScript = (node) => isElement$8(node) && name(node) === 'script';
+    const isStyle = (node) => isElement$8(node) && name(node) === 'style';
+    const isIframe = (node) => isElement$8(node) && name(node) === 'iframe';
     const isTextBlock$3 = lazyLookup(textBlocks);
     const isList$1 = lazyLookup(lists);
     const isListItem$2 = lazyLookup(listItems$1);
@@ -8441,7 +8482,7 @@
     };
     const createPaddingBr = () => {
         const br = SugarElement.fromTag('br');
-        set$4(br, 'data-mce-bogus', '1');
+        set$5(br, 'data-mce-bogus', '1');
         return br;
     };
     const fillWithPaddingBr = (elm) => {
@@ -9503,6 +9544,251 @@
      */
     const isBackwards = (direction) => direction === -1 /* HDirection.Backwards */;
 
+    var SimpleResultType;
+    (function (SimpleResultType) {
+        SimpleResultType[SimpleResultType["Error"] = 0] = "Error";
+        SimpleResultType[SimpleResultType["Value"] = 1] = "Value";
+    })(SimpleResultType || (SimpleResultType = {}));
+    const fold$1 = (res, onError, onValue) => res.stype === SimpleResultType.Error ? onError(res.serror) : onValue(res.svalue);
+    const partition = (results) => {
+        const values = [];
+        const errors = [];
+        each$e(results, (obj) => {
+            fold$1(obj, (err) => errors.push(err), (val) => values.push(val));
+        });
+        return { values, errors };
+    };
+    const mapError = (res, f) => {
+        if (res.stype === SimpleResultType.Error) {
+            return { stype: SimpleResultType.Error, serror: f(res.serror) };
+        }
+        else {
+            return res;
+        }
+    };
+    const map = (res, f) => {
+        if (res.stype === SimpleResultType.Value) {
+            return { stype: SimpleResultType.Value, svalue: f(res.svalue) };
+        }
+        else {
+            return res;
+        }
+    };
+    const bind = (res, f) => {
+        if (res.stype === SimpleResultType.Value) {
+            return f(res.svalue);
+        }
+        else {
+            return res;
+        }
+    };
+    const bindError = (res, f) => {
+        if (res.stype === SimpleResultType.Error) {
+            return f(res.serror);
+        }
+        else {
+            return res;
+        }
+    };
+    const svalue = (v) => ({ stype: SimpleResultType.Value, svalue: v });
+    const serror = (e) => ({ stype: SimpleResultType.Error, serror: e });
+    const toResult = (res) => fold$1(res, Result.error, Result.value);
+    const fromResult = (res) => res.fold(serror, svalue);
+    const SimpleResult = {
+        fromResult,
+        toResult,
+        svalue,
+        partition,
+        serror,
+        bind,
+        bindError,
+        map,
+        mapError,
+        fold: fold$1
+    };
+
+    const formatObj = (input) => {
+        return isObject(input) && keys(input).length > 100 ? ' removed due to size' : JSON.stringify(input, null, 2);
+    };
+    const formatErrors = (errors) => {
+        const es = errors.length > 10 ? errors.slice(0, 10).concat([
+            {
+                path: [],
+                getErrorInfo: constant('... (only showing first ten failures)')
+            }
+        ]) : errors;
+        // TODO: Work out a better split between PrettyPrinter and SchemaError
+        return map$3(es, (e) => {
+            return 'Failed path: (' + e.path.join(' > ') + ')\n' + e.getErrorInfo();
+        });
+    };
+
+    const nu = (path, getErrorInfo) => {
+        return SimpleResult.serror([{
+                path,
+                // This is lazy so that it isn't calculated unnecessarily
+                getErrorInfo
+            }]);
+    };
+    const missingRequired = (path, key, obj) => nu(path, () => 'Could not find valid *required* value for "' + key + '" in ' + formatObj(obj));
+    const custom = (path, err) => nu(path, constant(err));
+
+    const value = (validator) => {
+        const extract = (path, val) => {
+            return SimpleResult.bindError(validator(val), (err) => custom(path, err));
+        };
+        const toString = constant('val');
+        return {
+            extract,
+            toString
+        };
+    };
+    const anyValue$1 = value(SimpleResult.svalue);
+
+    const anyValue = constant(anyValue$1);
+    const typedValue = (validator, expectedType) => value((a) => {
+        const actualType = typeof a;
+        return validator(a) ? SimpleResult.svalue(a) : SimpleResult.serror(`Expected type: ${expectedType} but got: ${actualType}`);
+    });
+    const number = typedValue(isNumber, 'number');
+    const string = typedValue(isString, 'string');
+    const functionProcessor = typedValue(isFunction, 'function');
+
+    const required$1 = () => ({ tag: "required" /* FieldPresenceTag.Required */, process: {} });
+    const defaultedThunk = (fallbackThunk) => ({ tag: "defaultedThunk" /* FieldPresenceTag.DefaultedThunk */, process: fallbackThunk });
+    const defaulted$1 = (fallback) => defaultedThunk(constant(fallback));
+    const asOption = () => ({ tag: "option" /* FieldPresenceTag.Option */, process: {} });
+
+    const field$1 = (key, newKey, presence, prop) => ({ tag: "field" /* FieldTag.Field */, key, newKey, presence, prop });
+    const fold = (value, ifField, ifCustom) => {
+        switch (value.tag) {
+            case "field" /* FieldTag.Field */:
+                return ifField(value.key, value.newKey, value.presence, value.prop);
+            case "custom" /* FieldTag.CustomField */:
+                return ifCustom(value.newKey, value.instantiator);
+        }
+    };
+
+    const mergeValues = (values, base) => {
+        return SimpleResult.svalue(deepMerge(base, merge$1.apply(undefined, values)));
+    };
+    const mergeErrors = (errors) => compose(SimpleResult.serror, flatten$1)(errors);
+    const consolidateObj = (objects, base) => {
+        const partition = SimpleResult.partition(objects);
+        return partition.errors.length > 0 ? mergeErrors(partition.errors) : mergeValues(partition.values, base);
+    };
+    const consolidateArr = (objects) => {
+        const partitions = SimpleResult.partition(objects);
+        return partitions.errors.length > 0 ? mergeErrors(partitions.errors) : SimpleResult.svalue(partitions.values);
+    };
+    const ResultCombine = {
+        consolidateObj,
+        consolidateArr
+    };
+
+    const requiredAccess = (path, obj, key, bundle) => 
+    // In required mode, if it is undefined, it is an error.
+    get$b(obj, key).fold(() => missingRequired(path, key, obj), bundle);
+    const fallbackAccess = (obj, key, fallback, bundle) => {
+        const v = get$b(obj, key).getOrThunk(() => fallback(obj));
+        return bundle(v);
+    };
+    const optionAccess = (obj, key, bundle) => bundle(get$b(obj, key));
+    const optionDefaultedAccess = (obj, key, fallback, bundle) => {
+        const opt = get$b(obj, key).map((val) => val === true ? fallback(obj) : val);
+        return bundle(opt);
+    };
+    const extractField = (field, path, obj, key, prop) => {
+        const bundle = (av) => prop.extract(path.concat([key]), av);
+        const bundleAsOption = (optValue) => optValue.fold(() => SimpleResult.svalue(Optional.none()), (ov) => {
+            const result = prop.extract(path.concat([key]), ov);
+            return SimpleResult.map(result, Optional.some);
+        });
+        switch (field.tag) {
+            case "required" /* FieldPresenceTag.Required */:
+                return requiredAccess(path, obj, key, bundle);
+            case "defaultedThunk" /* FieldPresenceTag.DefaultedThunk */:
+                return fallbackAccess(obj, key, field.process, bundle);
+            case "option" /* FieldPresenceTag.Option */:
+                return optionAccess(obj, key, bundleAsOption);
+            case "defaultedOptionThunk" /* FieldPresenceTag.DefaultedOptionThunk */:
+                return optionDefaultedAccess(obj, key, field.process, bundleAsOption);
+            case "mergeWithThunk" /* FieldPresenceTag.MergeWithThunk */: {
+                return fallbackAccess(obj, key, constant({}), (v) => {
+                    const result = deepMerge(field.process(obj), v);
+                    return bundle(result);
+                });
+            }
+        }
+    };
+    const extractFields = (path, obj, fields) => {
+        const success = {};
+        const errors = [];
+        // PERFORMANCE: We use a for loop here instead of Arr.each as this is a hot code path
+        for (const field of fields) {
+            fold(field, (key, newKey, presence, prop) => {
+                const result = extractField(presence, path, obj, key, prop);
+                SimpleResult.fold(result, (err) => {
+                    errors.push(...err);
+                }, (res) => {
+                    success[newKey] = res;
+                });
+            }, (newKey, instantiator) => {
+                success[newKey] = instantiator(obj);
+            });
+        }
+        return errors.length > 0 ? SimpleResult.serror(errors) : SimpleResult.svalue(success);
+    };
+    const objOf = (values) => {
+        const extract = (path, o) => extractFields(path, o, values);
+        const toString = () => {
+            const fieldStrings = map$3(values, (value) => fold(value, (key, _okey, _presence, prop) => key + ' -> ' + prop.toString(), (newKey, _instantiator) => 'state(' + newKey + ')'));
+            return 'obj{\n' + fieldStrings.join('\n') + '}';
+        };
+        return {
+            extract,
+            toString
+        };
+    };
+    const arrOf = (prop) => {
+        const extract = (path, array) => {
+            const results = map$3(array, (a, i) => prop.extract(path.concat(['[' + i + ']']), a));
+            return ResultCombine.consolidateArr(results);
+        };
+        const toString = () => 'array(' + prop.toString() + ')';
+        return {
+            extract,
+            toString
+        };
+    };
+    const arrOfObj = compose(arrOf, objOf);
+
+    const valueOf = (validator) => value((v) => validator(v).fold(SimpleResult.serror, SimpleResult.svalue));
+    const extractValue = (label, prop, obj) => {
+        const res = prop.extract([label], obj);
+        return SimpleResult.mapError(res, (errs) => ({ input: obj, errors: errs }));
+    };
+    const asRaw = (label, prop, obj) => SimpleResult.toResult(extractValue(label, prop, obj));
+    const formatError = (errInfo) => {
+        return 'Errors: \n' + formatErrors(errInfo.errors).join('\n') +
+            '\n\nInput object: ' + formatObj(errInfo.input);
+    };
+
+    const field = field$1;
+    const required = (key) => field(key, key, required$1(), anyValue());
+    const requiredOf = (key, schema) => field(key, key, required$1(), schema);
+    const requiredString = (key) => requiredOf(key, string);
+    const requiredFunction = (key) => requiredOf(key, functionProcessor);
+    const requiredArrayOf = (key, schema) => field(key, key, required$1(), arrOf(schema));
+    const option$1 = (key) => field(key, key, asOption(), anyValue());
+    const optionOf = (key, schema) => field(key, key, asOption(), schema);
+    const optionString = (key) => optionOf(key, string);
+    const optionFunction = (key) => optionOf(key, functionProcessor);
+    const defaulted = (key, fallback) => field(key, key, defaulted$1(fallback), anyValue());
+    const defaultedOf = (key, fallback, schema) => field(key, key, defaulted$1(fallback), schema);
+    const defaultedNumber = (key, fallback) => defaultedOf(key, fallback, number);
+    const defaultedArrayOf = (key, fallback, schema) => defaultedOf(key, fallback, arrOf(schema));
+
     const isInlinePattern = (pattern) => pattern.type === 'inline-command' || pattern.type === 'inline-format';
     const isBlockPattern = (pattern) => pattern.type === 'block-command' || pattern.type === 'block-format';
     const hasBlockTrigger = (pattern, trigger) => (pattern.type === 'block-command' || pattern.type === 'block-format') && pattern.trigger === trigger;
@@ -9695,14 +9981,14 @@
         }, {});
     };
     const isRegExp = (x) => is$5(x, RegExp);
-    const option$1 = (name) => (editor) => editor.options.get(name);
+    const option = (name) => (editor) => editor.options.get(name);
     const stringOrObjectProcessor = (value) => isString(value) || isObject(value);
     const bodyOptionProcessor = (editor, defaultValue = '') => (value) => {
         const valid = isString(value);
         if (valid) {
             if (value.indexOf('=') !== -1) {
                 const bodyObj = getHash(value);
-                return { value: get$a(bodyObj, editor.id).getOr(defaultValue), valid };
+                return { value: get$b(bodyObj, editor.id).getOr(defaultValue), valid };
             }
             else {
                 return { value, valid };
@@ -9932,6 +10218,9 @@
             default: isInline$2(editor) ? [] : ['default']
         });
         registerOption('content_style', {
+            processor: 'string'
+        });
+        registerOption('content_language', {
             processor: 'string'
         });
         registerOption('content_css_cors', {
@@ -10359,6 +10648,10 @@
             },
             default: (_ctx) => []
         });
+        registerOption('allow_noneditable', {
+            processor: 'boolean',
+            default: true
+        });
         registerOption('noneditable_class', {
             processor: 'string',
             default: 'mceNonEditable'
@@ -10442,6 +10735,9 @@
             processor: 'string',
             default: 'Anonymous'
         });
+        registerOption('content_id', {
+            processor: 'string',
+        });
         registerOption('fetch_users', {
             processor: (value) => {
                 if (value === undefined) {
@@ -10455,6 +10751,23 @@
                     message: 'fetch_users must be a function that returns a Promise<ExpectedUser[]>'
                 };
             }
+        });
+        const documentsFileTypesOptionsSchema = arrOfObj([
+            requiredString('mimeType'),
+            requiredArrayOf('extensions', valueOf((ext) => {
+                if (isString(ext)) {
+                    return Result.value(ext);
+                }
+                else {
+                    return Result.error('Extensions must be an array of strings');
+                }
+            })),
+        ]);
+        registerOption('documents_file_types', {
+            processor: (value) => asRaw('documents_file_types', documentsFileTypesOptionsSchema, value).fold((_err) => ({
+                valid: false,
+                message: 'Must be a non-empty array of objects matching the configuration schema: https://www.tiny.cloud/docs/tinymce/latest/uploadcare-documents/#documents-file-types'
+            }), (val) => ({ valid: true, value: val }))
         });
         // These options must be registered later in the init sequence due to their default values
         editor.on('ScriptsLoaded', () => {
@@ -10487,117 +10800,119 @@
             },
         });
     };
-    const getIframeAttrs = option$1('iframe_attrs');
-    const getDocType = option$1('doctype');
-    const getDocumentBaseUrl = option$1('document_base_url');
-    const getBodyId = option$1('body_id');
-    const getBodyClass = option$1('body_class');
-    const getContentSecurityPolicy = option$1('content_security_policy');
-    const shouldPutBrInPre$1 = option$1('br_in_pre');
-    const getForcedRootBlock = option$1('forced_root_block');
-    const getForcedRootBlockAttrs = option$1('forced_root_block_attrs');
-    const getNewlineBehavior = option$1('newline_behavior');
-    const getBrNewLineSelector = option$1('br_newline_selector');
-    const getNoNewLineSelector = option$1('no_newline_selector');
-    const shouldKeepStyles = option$1('keep_styles');
-    const shouldEndContainerOnEmptyBlock = option$1('end_container_on_empty_block');
-    const isAutomaticUploadsEnabled = option$1('automatic_uploads');
-    const shouldReuseFileName = option$1('images_reuse_filename');
-    const shouldReplaceBlobUris = option$1('images_replace_blob_uris');
-    const getIconPackName = option$1('icons');
-    const getIconsUrl = option$1('icons_url');
-    const getImageUploadUrl = option$1('images_upload_url');
-    const getImageUploadBasePath = option$1('images_upload_base_path');
-    const getImagesUploadCredentials = option$1('images_upload_credentials');
-    const getImagesUploadHandler = option$1('images_upload_handler');
-    const shouldUseContentCssCors = option$1('content_css_cors');
-    const getReferrerPolicy = option$1('referrer_policy');
-    const getCrossOrigin = option$1('crossorigin');
-    const getLanguageCode = option$1('language');
-    const getLanguageUrl = option$1('language_url');
-    const shouldIndentUseMargin = option$1('indent_use_margin');
-    const getIndentation = option$1('indentation');
-    const getContentCss = option$1('content_css');
-    const getContentStyle = option$1('content_style');
-    const getFontCss = option$1('font_css');
-    const getDirectionality = option$1('directionality');
-    const getInlineBoundarySelector = option$1('inline_boundaries_selector');
-    const getObjectResizing = option$1('object_resizing');
-    const getResizeImgProportional = option$1('resize_img_proportional');
-    const getPlaceholder = option$1('placeholder');
-    const getEventRoot = option$1('event_root');
-    const getServiceMessage = option$1('service_message');
-    const getTheme = option$1('theme');
-    const getThemeUrl = option$1('theme_url');
-    const getModel = option$1('model');
-    const getModelUrl = option$1('model_url');
-    const isInlineBoundariesEnabled = option$1('inline_boundaries');
-    const getFormats = option$1('formats');
-    const getPreviewStyles = option$1('preview_styles');
-    const canFormatEmptyLines = option$1('format_empty_lines');
-    const getFormatNoneditableSelector = option$1('format_noneditable_selector');
-    const getCustomUiSelector = option$1('custom_ui_selector');
-    const isInline$2 = option$1('inline');
-    const hasHiddenInput = option$1('hidden_input');
-    const shouldPatchSubmit = option$1('submit_patch');
-    const shouldAddFormSubmitTrigger = option$1('add_form_submit_trigger');
-    const shouldAddUnloadTrigger = option$1('add_unload_trigger');
-    const getCustomUndoRedoLevels = option$1('custom_undo_redo_levels');
-    const shouldDisableNodeChange = option$1('disable_nodechange');
-    const isReadOnly$1 = option$1('readonly');
-    const hasEditableRoot$1 = option$1('editable_root');
-    const hasContentCssCors = option$1('content_css_cors');
-    const getPlugins = option$1('plugins');
-    const getExternalPlugins$1 = option$1('external_plugins');
-    const shouldBlockUnsupportedDrop = option$1('block_unsupported_drop');
-    const isVisualAidsEnabled = option$1('visual');
-    const getVisualAidsTableClass = option$1('visual_table_class');
-    const getVisualAidsAnchorClass = option$1('visual_anchor_class');
-    const getIframeAriaText = option$1('iframe_aria_text');
-    const getSetupCallback = option$1('setup');
-    const getInitInstanceCallback = option$1('init_instance_callback');
-    const getUrlConverterCallback = option$1('urlconverter_callback');
-    const getAutoFocus = option$1('auto_focus');
-    const shouldBrowserSpellcheck = option$1('browser_spellcheck');
-    const getProtect = option$1('protect');
-    const shouldPasteBlockDrop = option$1('paste_block_drop');
-    const shouldPasteDataImages = option$1('paste_data_images');
-    const getPastePreProcess = option$1('paste_preprocess');
-    const getPastePostProcess = option$1('paste_postprocess');
-    const getNewDocumentContent = option$1('newdocument_content');
-    const getPasteWebkitStyles = option$1('paste_webkit_styles');
-    const shouldPasteRemoveWebKitStyles = option$1('paste_remove_styles_if_webkit');
-    const shouldPasteMergeFormats = option$1('paste_merge_formats');
-    const isSmartPasteEnabled = option$1('smart_paste');
-    const isPasteAsTextEnabled = option$1('paste_as_text');
-    const getPasteTabSpaces = option$1('paste_tab_spaces');
-    const shouldAllowHtmlDataUrls = option$1('allow_html_data_urls');
-    const getTextPatterns = option$1('text_patterns');
-    const getTextPatternsLookup = option$1('text_patterns_lookup');
-    const getNonEditableClass = option$1('noneditable_class');
-    const getEditableClass = option$1('editable_class');
-    const getNonEditableRegExps = option$1('noneditable_regexp');
-    const shouldPreserveCData = option$1('preserve_cdata');
-    const shouldHighlightOnFocus = option$1('highlight_on_focus');
-    const shouldSanitizeXss = option$1('xss_sanitization');
-    const shouldUseDocumentWrite = option$1('init_content_sync');
+    const getIframeAttrs = option('iframe_attrs');
+    const getDocType = option('doctype');
+    const getDocumentBaseUrl = option('document_base_url');
+    const getBodyId = option('body_id');
+    const getBodyClass = option('body_class');
+    const getContentSecurityPolicy = option('content_security_policy');
+    const shouldPutBrInPre$1 = option('br_in_pre');
+    const getForcedRootBlock = option('forced_root_block');
+    const getForcedRootBlockAttrs = option('forced_root_block_attrs');
+    const getNewlineBehavior = option('newline_behavior');
+    const getBrNewLineSelector = option('br_newline_selector');
+    const getNoNewLineSelector = option('no_newline_selector');
+    const shouldKeepStyles = option('keep_styles');
+    const shouldEndContainerOnEmptyBlock = option('end_container_on_empty_block');
+    const isAutomaticUploadsEnabled = option('automatic_uploads');
+    const shouldReuseFileName = option('images_reuse_filename');
+    const shouldReplaceBlobUris = option('images_replace_blob_uris');
+    const getIconPackName = option('icons');
+    const getIconsUrl = option('icons_url');
+    const getImageUploadUrl = option('images_upload_url');
+    const getImageUploadBasePath = option('images_upload_base_path');
+    const getImagesUploadCredentials = option('images_upload_credentials');
+    const getImagesUploadHandler = option('images_upload_handler');
+    const shouldUseContentCssCors = option('content_css_cors');
+    const getReferrerPolicy = option('referrer_policy');
+    const getCrossOrigin = option('crossorigin');
+    const getLanguageCode = option('language');
+    const getLanguageUrl = option('language_url');
+    const shouldIndentUseMargin = option('indent_use_margin');
+    const getIndentation = option('indentation');
+    const getContentCss = option('content_css');
+    const getContentStyle = option('content_style');
+    const getContentLanguage = option('content_language');
+    const getFontCss = option('font_css');
+    const getDirectionality = option('directionality');
+    const getInlineBoundarySelector = option('inline_boundaries_selector');
+    const getObjectResizing = option('object_resizing');
+    const getResizeImgProportional = option('resize_img_proportional');
+    const getPlaceholder = option('placeholder');
+    const getEventRoot = option('event_root');
+    const getServiceMessage = option('service_message');
+    const getTheme = option('theme');
+    const getThemeUrl = option('theme_url');
+    const getModel = option('model');
+    const getModelUrl = option('model_url');
+    const isInlineBoundariesEnabled = option('inline_boundaries');
+    const getFormats = option('formats');
+    const getPreviewStyles = option('preview_styles');
+    const canFormatEmptyLines = option('format_empty_lines');
+    const getFormatNoneditableSelector = option('format_noneditable_selector');
+    const getCustomUiSelector = option('custom_ui_selector');
+    const isInline$2 = option('inline');
+    const hasHiddenInput = option('hidden_input');
+    const shouldPatchSubmit = option('submit_patch');
+    const shouldAddFormSubmitTrigger = option('add_form_submit_trigger');
+    const shouldAddUnloadTrigger = option('add_unload_trigger');
+    const getCustomUndoRedoLevels = option('custom_undo_redo_levels');
+    const shouldDisableNodeChange = option('disable_nodechange');
+    const isReadOnly$1 = option('readonly');
+    const hasEditableRoot$1 = option('editable_root');
+    const hasContentCssCors = option('content_css_cors');
+    const getPlugins = option('plugins');
+    const getExternalPlugins$1 = option('external_plugins');
+    const shouldBlockUnsupportedDrop = option('block_unsupported_drop');
+    const isVisualAidsEnabled = option('visual');
+    const getVisualAidsTableClass = option('visual_table_class');
+    const getVisualAidsAnchorClass = option('visual_anchor_class');
+    const getIframeAriaText = option('iframe_aria_text');
+    const getSetupCallback = option('setup');
+    const getInitInstanceCallback = option('init_instance_callback');
+    const getUrlConverterCallback = option('urlconverter_callback');
+    const getAutoFocus = option('auto_focus');
+    const shouldBrowserSpellcheck = option('browser_spellcheck');
+    const getProtect = option('protect');
+    const shouldPasteBlockDrop = option('paste_block_drop');
+    const shouldPasteDataImages = option('paste_data_images');
+    const getPastePreProcess = option('paste_preprocess');
+    const getPastePostProcess = option('paste_postprocess');
+    const getNewDocumentContent = option('newdocument_content');
+    const getPasteWebkitStyles = option('paste_webkit_styles');
+    const shouldPasteRemoveWebKitStyles = option('paste_remove_styles_if_webkit');
+    const shouldPasteMergeFormats = option('paste_merge_formats');
+    const isSmartPasteEnabled = option('smart_paste');
+    const isPasteAsTextEnabled = option('paste_as_text');
+    const getPasteTabSpaces = option('paste_tab_spaces');
+    const shouldAllowHtmlDataUrls = option('allow_html_data_urls');
+    const getTextPatterns = option('text_patterns');
+    const getTextPatternsLookup = option('text_patterns_lookup');
+    const shouldAllowNonEditable = option('allow_noneditable');
+    const getNonEditableClass = option('noneditable_class');
+    const getEditableClass = option('editable_class');
+    const getNonEditableRegExps = option('noneditable_regexp');
+    const shouldPreserveCData = option('preserve_cdata');
+    const shouldHighlightOnFocus = option('highlight_on_focus');
+    const shouldSanitizeXss = option('xss_sanitization');
+    const shouldUseDocumentWrite = option('init_content_sync');
     const hasTextPatternsLookup = (editor) => editor.options.isSet('text_patterns_lookup');
     const getFontStyleValues = (editor) => Tools.explode(editor.options.get('font_size_style_values'));
     const getFontSizeClasses = (editor) => Tools.explode(editor.options.get('font_size_classes'));
     const isEncodingXml = (editor) => editor.options.get('encoding') === 'xml';
     const getAllowedImageFileTypes = (editor) => Tools.explode(editor.options.get('images_file_types'));
-    const hasTableTabNavigation = option$1('table_tab_navigation');
-    const getDetailsInitialState = option$1('details_initial_state');
-    const getDetailsSerializedState = option$1('details_serialized_state');
-    const shouldSandboxIframes = option$1('sandbox_iframes');
+    const hasTableTabNavigation = option('table_tab_navigation');
+    const getDetailsInitialState = option('details_initial_state');
+    const getDetailsSerializedState = option('details_serialized_state');
+    const shouldSandboxIframes = option('sandbox_iframes');
     const getSandboxIframesExclusions = (editor) => editor.options.get('sandbox_iframes_exclusions');
-    const shouldConvertUnsafeEmbeds = option$1('convert_unsafe_embeds');
-    const getLicenseKey = option$1('license_key');
-    const getApiKey = option$1('api_key');
-    const isDisabled$1 = option$1('disabled');
-    const getUserId = option$1('user_id');
-    const getFetchUsers = option$1('fetch_users');
-    const shouldIndentOnTab = option$1('lists_indent_on_tab');
+    const shouldConvertUnsafeEmbeds = option('convert_unsafe_embeds');
+    const getLicenseKey = option('license_key');
+    const getApiKey = option('api_key');
+    const isDisabled$1 = option('disabled');
+    const getUserId = option('user_id');
+    const getFetchUsers = option('fetch_users');
+    const shouldIndentOnTab = option('lists_indent_on_tab');
     const getListMaxDepth = (editor) => Optional.from(editor.options.get('list_max_depth'));
 
     const isElement$4 = isElement$7;
@@ -10896,7 +11211,7 @@
             .map((elm) => elm.dom)
             .getOr(rootNode);
     };
-    const isAbsPositionedElement = (node) => isElement$7(node) && get$7(SugarElement.fromDom(node), 'position') === 'absolute';
+    const isAbsPositionedElement = (node) => isElement$7(node) && get$8(SugarElement.fromDom(node), 'position') === 'absolute';
     const isInlineBlock = (node, rootNode) => node.parentNode !== rootNode;
     const isInlineAbsPositionedCEF = (node, rootNode) => isContentEditableFalse$6(node) && isAbsPositionedElement(node) && isInlineBlock(node, rootNode);
     const getParentBlock$3 = (node, rootNode) => {
@@ -11838,6 +12153,13 @@
         const selector = isEmpty$5(formatNoneditableSelector) ? baseDataSelector : `${baseDataSelector},${formatNoneditableSelector}`;
         return is$2(SugarElement.fromDom(node), selector);
     };
+    const hasEditableDescendants = (dom, node) => dom.select('[contenteditable="true"]', node).length > 0;
+    const getEditableDescendants = (dom, parent) => foldl(from(parent.childNodes), (editableDescendants, child) => [
+        ...editableDescendants,
+        ...(isElement$7(child) && dom.getContentEditable(child) === 'true'
+            ? [child]
+            : getEditableDescendants(dom, child))
+    ], []);
     // A noneditable element is wrappable if it:
     // - is valid target (has data-mce-cef-wrappable attribute or matches selector from option)
     // - has no editable descendants - removing formats in the editable region can result in the wrapped noneditable being split which is undesirable
@@ -11846,7 +12168,7 @@
         return (isElementNode$1(node) &&
             dom.getContentEditable(node) === 'false' &&
             isWrapNoneditableTarget(editor, node) &&
-            dom.select('[contenteditable="true"]', node).length === 0);
+            !hasEditableDescendants(dom, node));
     };
     /**
      * Replaces variables in the value. The variable format is %var.
@@ -11930,7 +12252,7 @@
     const isVariableFormatName = (editor, formatName) => {
         const hasVariableValues = (format) => {
             const isVariableValue = (val) => isFunction(val) || val.length > 1 && val.charAt(0) === '%';
-            return exists(['styles', 'attributes'], (key) => get$a(format, key).exists((field) => {
+            return exists(['styles', 'attributes'], (key) => get$b(format, key).exists((field) => {
                 const fieldValues = isArray$1(field) ? field : values(field);
                 return exists(fieldValues, isVariableValue);
             }));
@@ -11958,7 +12280,7 @@
     const isNonWrappingBlockFormat = (format) => isBlockFormat(format) && format.wrapper !== true;
     const isSelectorFormat = (format) => hasNonNullableKey(format, 'selector');
     const isInlineFormat = (format) => hasNonNullableKey(format, 'inline');
-    const isMixedFormat = (format) => isSelectorFormat(format) && isInlineFormat(format) && is$4(get$a(format, 'mixed'), true);
+    const isMixedFormat = (format) => isSelectorFormat(format) && isInlineFormat(format) && is$4(get$b(format, 'mixed'), true);
     const shouldExpandToSelector = (format) => isSelectorFormat(format) && format.expand !== false && !isInlineFormat(format);
     const getEmptyCaretContainers = (node) => {
         const nodes = [];
@@ -12358,7 +12680,7 @@
         // Footnootes plugin
         'div.mce-footnotes'
     ];
-    const isZeroWidth = (elem) => isText$c(elem) && get$4(elem) === ZWSP$1;
+    const isZeroWidth = (elem) => isText$c(elem) && get$5(elem) === ZWSP$1;
     const context = (editor, elem, wrapName, nodeName) => parentElement(elem).fold(() => "skipping" /* ChildContext.Skipping */, (parent) => {
         // We used to skip these, but given that they might be representing empty paragraphs, it probably
         // makes sense to treat them just like text nodes
@@ -12391,18 +12713,18 @@
     const applyAnnotation = (elem, masterUId, data, annotationName, decorate, directAnnotation) => {
         const { uid = masterUId, ...otherData } = data;
         add$2(elem, annotation());
-        set$4(elem, `${dataAnnotationId()}`, uid);
-        set$4(elem, `${dataAnnotation()}`, annotationName);
+        set$5(elem, `${dataAnnotationId()}`, uid);
+        set$5(elem, `${dataAnnotation()}`, annotationName);
         const { attributes = {}, classes = [] } = decorate(uid, otherData);
         setAll$1(elem, attributes);
         add$1(elem, classes);
         if (directAnnotation) {
             if (classes.length > 0) {
-                set$4(elem, `${dataAnnotationClasses()}`, classes.join(','));
+                set$5(elem, `${dataAnnotationClasses()}`, classes.join(','));
             }
             const attributeNames = keys(attributes);
             if (attributeNames.length > 0) {
-                set$4(elem, `${dataAnnotationAttributes()}`, attributeNames.join(','));
+                set$5(elem, `${dataAnnotationAttributes()}`, attributeNames.join(','));
             }
         }
     };
@@ -12450,7 +12772,7 @@
             switch (ctx) {
                 case "invalid-child" /* ChildContext.InvalidChild */: {
                     finishWrapper();
-                    const children = children$1(elem);
+                    const children = children$2(elem);
                     processElements(children);
                     finishWrapper();
                     break;
@@ -12491,7 +12813,7 @@
             if (selection.getRng().collapsed && !hasFakeSelection) {
                 const wrapper = makeAnnotation(editor.getDoc(), masterUid, data, name, settings.decorate);
                 // Put something visible in the marker
-                set$3(wrapper, nbsp);
+                set$4(wrapper, nbsp);
                 selection.getRng().insertNode(wrapper.dom);
                 selection.select(wrapper.dom);
             }
@@ -12604,6 +12926,113 @@
         };
     };
 
+    const announcerContainerId = generate('tiny-aria-announcer');
+    const POLITE_MESSAGE_TTL_MS = 600000; // 10 minutes
+    const CREATE_DELAY_MS = 100; // Delay before creating announcer regions to avoid interfering with screen readers initial announcements.
+    const politeTimestampAttr = 'data-mce-announced-at';
+    const OFFSCREEN_STYLES = {
+        position: 'absolute',
+        left: '-9999px',
+        width: '1px',
+        height: '1px',
+        overflow: 'hidden'
+    };
+    const createRegion = (live) => {
+        const region = SugarElement.fromTag('div');
+        setAll$1(region, {
+            'aria-live': live,
+            'aria-atomic': 'false',
+            'aria-relevant': 'additions'
+        });
+        return region;
+    };
+    const isConnected = (element) => element.dom.isConnected;
+    const createNewState = () => {
+        const container = SugarElement.fromTag('div');
+        const politeRegion = createRegion('polite');
+        const assertiveRegion = createRegion('assertive');
+        set$5(container, 'id', announcerContainerId);
+        setAll(container, OFFSCREEN_STYLES);
+        append$1(container, politeRegion);
+        append$1(container, assertiveRegion);
+        append$1(body(), container);
+        return { container, politeRegion, assertiveRegion };
+    };
+    const cleanupExpiredMessages = (polite, now) => {
+        each$e(children(polite, `div[${politeTimestampAttr}]`), (messageDiv) => {
+            getOpt(messageDiv, politeTimestampAttr)
+                .bind((value) => toInt(value))
+                .filter((announcedAt) => now - announcedAt > POLITE_MESSAGE_TTL_MS)
+                .each(() => remove$8(messageDiv));
+        });
+    };
+    const createAnnouncer = () => {
+        const state = value$1();
+        const mountRegions = async () => {
+            const createNewPendingState = async () => {
+                const promise = new Promise((resolve) => {
+                    const newState = createNewState();
+                    setTimeout(() => resolve(newState), CREATE_DELAY_MS);
+                });
+                state.set(promise);
+                return promise;
+            };
+            return state.get().fold(createNewPendingState, async (existingPromise) => {
+                const { container } = await existingPromise;
+                if (isConnected(container)) {
+                    return existingPromise;
+                }
+                else {
+                    // A concurrent caller may have already replaced the stale state while we awaited.
+                    // The block after the await runs atomically, so reuse that state if present and
+                    // only create a fresh one when the state is still the stale promise we observed.
+                    return state.get().filter((current) => current !== existingPromise).getOrThunk(createNewPendingState);
+                }
+            });
+        };
+        const addMessage = (region, message) => {
+            const now = Date.now();
+            cleanupExpiredMessages(region, now);
+            const messageDiv = SugarElement.fromTag('div');
+            set$5(messageDiv, politeTimestampAttr, String(now));
+            append$1(messageDiv, SugarElement.fromText(message));
+            append$1(region, messageDiv);
+        };
+        const polite = async (message) => {
+            const { politeRegion } = await mountRegions();
+            addMessage(politeRegion, message);
+        };
+        const assertive = async (message) => {
+            const { assertiveRegion } = await mountRegions();
+            addMessage(assertiveRegion, message);
+        };
+        return { polite, assertive };
+    };
+
+    const announcer = createAnnouncer();
+    /**
+     * Announces a message to screen readers via an aria-live region, without shifting focus.
+     *
+     * @method announce
+     * @param {String} message The message to announce to screen readers.
+     * @param {Object} options Optional settings.
+     * @param {Boolean} options.assertive If true, uses aria-live="assertive" instead of polite.
+     * @example
+     * tinymce.dom.AriaAnnouncer.announce('Bold on');
+     * tinymce.dom.AriaAnnouncer.announce('Error occurred', { assertive: true });
+     */
+    const announce = (message, options) => {
+        if (options?.assertive === true) {
+            announcer.assertive(message).catch(noop);
+        }
+        else {
+            announcer.polite(message).catch(noop);
+        }
+    };
+    const AriaAnnouncer = {
+        announce
+    };
+
     /**
      * Constructs a new BookmarkManager instance for a specific selection instance.
      *
@@ -12668,7 +13097,7 @@
     };
 
     const clamp$1 = (offset, element) => {
-        const max = isText$c(element) ? get$4(element).length : children$1(element).length + 1;
+        const max = isText$c(element) ? get$5(element).length : children$2(element).length + 1;
         if (offset > max) {
             return max;
         }
@@ -12977,7 +13406,11 @@
             editor.selection.normalize();
         }, (caretPos) => editor.selection.setRng(caretPos.toRange()));
     };
-    const focusBody = (body) => {
+    const focusBody = (body, preventScroll = false) => {
+        if (preventScroll) {
+            body.focus({ preventScroll: true });
+            return;
+        }
         if (body.setActive) {
             // IE 11 sometimes throws "Invalid function" then fallback to focus
             // setActive is better since it doesn't scroll to the element being focused
@@ -13008,7 +13441,7 @@
     };
     const hasFocus = (editor) => editor.inline ? hasInlineFocus(editor) : hasIframeFocus(editor);
     const hasEditorOrUiFocus = (editor) => hasFocus(editor) || hasUiFocus(editor);
-    const focusEditor = (editor) => {
+    const focusEditor = (editor, preventScroll) => {
         const selection = editor.selection;
         const body = editor.getBody();
         let rng = selection.getRng();
@@ -13026,9 +13459,9 @@
         const contentEditableHost = getContentEditableHost(editor, selection.getNode());
         if (contentEditableHost && editor.dom.isChildOf(contentEditableHost, body)) {
             if (!hasContentEditableFalseParent$1(editor, contentEditableHost)) {
-                focusBody(body);
+                focusBody(body, preventScroll);
             }
-            focusBody(contentEditableHost);
+            focusBody(contentEditableHost, preventScroll);
             if (!editor.hasEditableRoot()) {
                 restoreBookmark(editor);
             }
@@ -13039,30 +13472,40 @@
         // Focus the window iframe
         if (!editor.inline) {
             // WebKit needs this call to fire focusin event properly see #5948
-            // But Opera pre Blink engine will produce an empty selection so skip Opera
-            if (!Env.browser.isOpera()) {
-                focusBody(body);
+            focusBody(body, preventScroll);
+            if (preventScroll) {
+                if (isNonNullable(editor.iframeElement)) {
+                    editor.iframeElement.focus({ preventScroll: true });
+                }
             }
-            editor.getWin().focus();
+            else {
+                editor.getWin().focus();
+            }
         }
         // Focus the body as well since it's contentEditable
         if (Env.browser.isFirefox() || editor.inline) {
-            focusBody(body);
+            focusBody(body, preventScroll);
             normalizeSelection(editor, rng);
         }
         activateEditor(editor);
     };
     const activateEditor = (editor) => editor.editorManager.setActive(editor);
-    const focus = (editor, skipFocus) => {
+    const normalizeFocusOptions = (args) => {
+        if (isNonNullable(args) && !isBoolean(args)) {
+            return args;
+        }
+        return { scrollToSelection: true };
+    };
+    const focus = (editor, args) => {
         if (editor.removed) {
             return;
         }
-        if (skipFocus) {
+        if (args === true) {
             activateEditor(editor);
+            return;
         }
-        else {
-            focusEditor(editor);
-        }
+        const options = normalizeFocusOptions(args);
+        focusEditor(editor, options.scrollToSelection === false);
     };
 
     /**
@@ -13191,28 +13634,31 @@
                 return elm.cloneNode(true);
             }
         };
+        const setUcVideoSizeProp = (element, name, value) => {
+            // this is needed because otherwise the ghost for `uc-video` is not correctly rendered
+            element[name] = value;
+            const minimumWidth = 400;
+            if (element.width > minimumWidth && !(name === 'width' && value < minimumWidth)) {
+                element[name] = value;
+                dom.setStyle(element, name, value);
+            }
+            else {
+                const valueConsideringMinWidth = name === 'height' ? minimumWidth * (ratio ?? 1) : minimumWidth;
+                element[name] = valueConsideringMinWidth;
+                dom.setStyle(element, name, valueConsideringMinWidth);
+            }
+        };
         const setSizeProp = (element, name, value) => {
             if (isNonNullable(value)) {
                 // Resize by using style or attribute
                 const targets = getResizeTargets(element);
                 each$e(targets, (target) => {
-                    if (target.style[name] || !editor.schema.isValid(target.nodeName.toLowerCase(), name)) {
-                        dom.setStyle(target, name, value);
+                    if (isUcVideo(target)) {
+                        setUcVideoSizeProp(target, name, value);
                     }
                     else {
-                        if (isUcVideo(target)) {
-                            // this is needed because otherwise the ghost for `uc-video` is not correctly rendered
-                            target[name] = value;
-                            const minimumWidth = 400;
-                            if (target.width > minimumWidth && !(name === 'width' && value < minimumWidth)) {
-                                target[name] = value;
-                                dom.setAttrib(target, name, '' + value);
-                            }
-                            else {
-                                const value = name === 'height' ? minimumWidth * ratio : minimumWidth;
-                                target[name] = value;
-                                dom.setAttrib(target, name, '' + value);
-                            }
+                        if (target.style[name] || !editor.schema.isValid(target.nodeName.toLowerCase(), name)) {
+                            dom.setStyle(target, name, value);
                         }
                         else {
                             dom.setAttrib(target, name, '' + value);
@@ -13439,7 +13885,7 @@
                 return;
             }
             const targetElm = e.type === 'mousedown' ? e.target : selection.getNode();
-            const controlElm = closest$3(SugarElement.fromDom(targetElm), controlElmSelector)
+            const controlElm = closest$4(SugarElement.fromDom(targetElm), controlElmSelector)
                 .map((e) => e.dom)
                 .filter((e) => dom.isEditable(e.parentElement) || (e.nodeName === 'IMG' && dom.isEditable(e)))
                 .getOrUndefined();
@@ -13915,7 +14361,7 @@
 
     const find = (element) => {
         const doc = getDocument();
-        const scroll = get$5(doc);
+        const scroll = get$6(doc);
         const frames = pathTo(element, Navigation);
         const offset = viewport(element);
         const r = foldr(frames, (b, a) => {
@@ -13937,7 +14383,7 @@
         editor.dispatch('AfterScrollIntoView', data);
     };
     const descend = (element, offset) => {
-        const children = children$1(element);
+        const children = children$2(element);
         if (children.length === 0 || excludeFromDescend(element)) {
             return { element, offset };
         }
@@ -13954,17 +14400,17 @@
                     return { element: last, offset: 1 };
                 }
                 else if (isText$c(last)) {
-                    return { element: last, offset: get$4(last).length };
+                    return { element: last, offset: get$5(last).length };
                 }
                 else {
-                    return { element: last, offset: children$1(last).length };
+                    return { element: last, offset: children$2(last).length };
                 }
             }
         }
     };
     const markerInfo = (element, cleanupFun) => {
         const pos = absolute(element);
-        const height = get$6(element);
+        const height = get$7(element);
         return {
             element,
             bottom: pos.top + height,
@@ -13988,7 +14434,7 @@
         if (fireScrollIntoViewEvent(editor, data)) {
             return;
         }
-        const scrollTop = get$5(doc).top;
+        const scrollTop = get$6(doc).top;
         f(editor, doc, scrollTop, marker, alignToTop);
         fireAfterScrollIntoViewEvent(editor, data);
     };
@@ -14671,7 +15117,7 @@
     const trimTemporaryNodes = (tempAttrs, body) => {
         each$e(getTemporaryNodes(tempAttrs, body), (elm) => {
             const element = SugarElement.fromDom(elm);
-            if (get$9(element, 'data-mce-bogus') === 'all') {
+            if (get$a(element, 'data-mce-bogus') === 'all') {
                 remove$8(element);
             }
             else {
@@ -14724,7 +15170,7 @@
     const cleanupBogusElements = (parent) => {
         const bogusElements = descendants(parent, '[data-mce-bogus]');
         each$e(bogusElements, (elem) => {
-            const bogusValue = get$9(elem, 'data-mce-bogus');
+            const bogusValue = get$a(elem, 'data-mce-bogus');
             if (bogusValue === 'all') {
                 remove$8(elem);
             }
@@ -14754,13 +15200,13 @@
         const doc = editor.getDoc();
         const dos = getRootNode(SugarElement.fromDom(editor.getBody()));
         const offscreenDiv = SugarElement.fromTag('div', doc);
-        set$4(offscreenDiv, 'data-mce-bogus', 'all');
+        set$5(offscreenDiv, 'data-mce-bogus', 'all');
         setAll(offscreenDiv, {
             position: 'fixed',
             left: '-9999999px',
             top: '0'
         });
-        set$3(offscreenDiv, body.innerHTML);
+        set$4(offscreenDiv, body.innerHTML);
         cleanupBogusElements(offscreenDiv);
         cleanupInputNames(offscreenDiv);
         // Append the wrapper element so that the browser will evaluate styles when getting the `innerText`
@@ -15152,7 +15598,7 @@
         return isText$b(container) && (container.data.length === 0 || isZwsp(container.data) && BookmarkManager.isBookmarkNode(container.parentNode));
     };
     const matchesElementPosition = (before, predicate) => (pos) => getChildNodeAtRelativeOffset(before ? 0 : -1, pos).filter(predicate).isSome();
-    const isImageBlock = (node) => isImg(node) && get$7(SugarElement.fromDom(node), 'display') === 'block';
+    const isImageBlock = (node) => isImg(node) && get$8(SugarElement.fromDom(node), 'display') === 'block';
     const isCefNode = (node) => isContentEditableFalse$a(node) && !isBogusAll(node);
     const isBeforeImageBlock = matchesElementPosition(true, isImageBlock);
     const isAfterImageBlock = matchesElementPosition(false, isImageBlock);
@@ -15222,8 +15668,8 @@
     };
     const isPreValue = (value) => contains$2(['pre', 'pre-wrap'], value);
     const isInPre = (pos) => getElementFromPosition(pos)
-        .bind((elm) => closest$4(elm, isElement$8))
-        .exists((elm) => isPreValue(get$7(elm, 'white-space')));
+        .bind((elm) => closest$5(elm, isElement$8))
+        .exists((elm) => isPreValue(get$8(elm, 'white-space')));
     const isAtBeginningOfBody = (root, pos) => prevPosition(root.dom, pos).isNone();
     const isAtEndOfBody = (root, pos) => nextPosition(root.dom, pos).isNone();
     const isAtLineBoundary = (root, pos, schema) => (isAtBeginningOfBody(root, pos) ||
@@ -15461,7 +15907,7 @@
             const br = SugarElement.fromHtml('<br data-mce-bogus="1">');
             // Remove all bogus elements except caret
             if (preserveEmptyCaret) {
-                each$e(children$1(elm), (node) => {
+                each$e(children$2(elm), (node) => {
                     if (!isEmptyCaretFormatElement(node)) {
                         remove$8(node);
                     }
@@ -15589,7 +16035,7 @@
     const isTextBlockOrListItem = (element) => isTextBlock$3(element) || isListItem$2(element);
     const getParentBlock$2 = (rootNode, elm) => {
         if (contains(rootNode, elm)) {
-            return closest$4(elm, isTextBlockOrListItem, isBeforeRoot(rootNode));
+            return closest$5(elm, isTextBlockOrListItem, isBeforeRoot(rootNode));
         }
         else {
             return Optional.none();
@@ -15633,7 +16079,7 @@
         // Clean up any additional leftover nodes. If the last block wasn't a direct child, then we also need to clean up siblings
         if (!eq(root, lastBlock)) {
             const additionalCleanupNodes = is$4(parent(lastBlock), root) ? [] : siblings(lastBlock);
-            each$e(additionalCleanupNodes.concat(children$1(root)), (node) => {
+            each$e(additionalCleanupNodes.concat(children$2(root)), (node) => {
                 if (!eq(node, lastBlock) && !contains(node, lastBlock) && isEmpty$4(editor.schema, node)) {
                     remove$8(node);
                 }
@@ -15693,7 +16139,7 @@
         { partialTable: ['cells', 'outsideDetails'] },
         { multiTable: ['startTableCells', 'endTableCells', 'betweenRng'] },
     ]);
-    const getClosestCell$1 = (container, isRoot) => closest$3(SugarElement.fromDom(container), 'td,th', isRoot);
+    const getClosestCell$1 = (container, isRoot) => closest$4(SugarElement.fromDom(container), 'td,th', isRoot);
     const isExpandedCellRng = (cellRng) => !eq(cellRng.start, cellRng.end);
     const getTableFromCellRng = (cellRng, isRoot) => getClosestTable(cellRng.start, isRoot)
         .bind((startParentTable) => getClosestTable(cellRng.end, isRoot)
@@ -15846,7 +16292,7 @@
         // Restore the data-mce-selected attribute if multiple cells were selected, as if it was a cef element
         // then selection overrides would remove it as it was using an offscreen selection clone.
         if (selectedCells.length > 1 && exists(selectedCells, (cell) => eq(cell, selectedNode))) {
-            set$4(selectedNode, 'data-mce-selected', '1');
+            set$5(selectedNode, 'data-mce-selected', '1');
         }
     };
     /*
@@ -16344,14 +16790,23 @@
         }
         return undefined;
     };
+    const containsFormatDeep = (editor, root, name, vars, similar) => isNonNullable(matchNode$1(editor, root, name, vars, similar)) ||
+        exists(from(root.childNodes), (child) => containsFormatDeep(editor, child, name, vars, similar));
+    const matchEditableDescendants = (editor, node, name, vars, similar) => {
+        const dom = editor.dom;
+        if (!isElement$7(node) || dom.getContentEditable(node) !== 'false' || isWrappableNoneditable(editor, node)) {
+            return false;
+        }
+        return exists(getEditableDescendants(dom, node), (descendant) => containsFormatDeep(editor, descendant, name, vars, similar));
+    };
     const match$2 = (editor, name, vars, node, similar) => {
         // Check specified node
         if (node) {
-            return matchParents(editor, node, name, vars, similar);
+            return matchParents(editor, node, name, vars, similar) || matchEditableDescendants(editor, node, name, vars, similar);
         }
         // Check selected node
         node = editor.selection.getNode();
-        if (matchParents(editor, node, name, vars, similar)) {
+        if (matchParents(editor, node, name, vars, similar) || matchEditableDescendants(editor, node, name, vars, similar)) {
             return true;
         }
         // Check start node if it's different
@@ -16545,7 +17000,7 @@
             return Optional.none();
         }
     };
-    const normalizeNbsps = (node) => set$1(node, get$4(node).replace(new RegExp(`${nbsp}$`), ' '));
+    const normalizeNbsps = (node) => set$2(node, get$5(node).replace(new RegExp(`${nbsp}$`), ' '));
     const normalizeNbspsBetween = (editor, caretContainer) => {
         const handler = () => {
             if (caretContainer !== null && !editor.dom.isEmpty(caretContainer)) {
@@ -16746,12 +17201,34 @@
             .exists((pos) => !isBr$7(pos.getNode()) || nextPosition(elm, pos).isSome()) === false;
     };
     const isEditableListItem = (dom) => (elm) => isListItem$3(elm) && dom.isEditable(elm);
+    // TINY-13197: If the content is wrapped inside a block element, the first block returned by getSelectedBlocks() is not LI, even when the content is fully selected.
+    // However, the second and subsequent do return LI as the selected block so only the first block needs to be adjusted
+    const getAndOnlyNormalizeFirstBlockIf = (selection, pred) => map$3(selection.getSelectedBlocks(), (block, i) => {
+        if (i === 0 && pred(block)) {
+            return selection.dom.getParent(block, isListItem$3) ?? block;
+        }
+        else {
+            return block;
+        }
+    });
+    // Resolve list items from the
+    // selected cells directly instead, matching how SelectionUtils.runOnRanges resolves fake selections.
+    const getCellSelectionListItems = (editor) => {
+        const fakeSelectionNodes = getCellsFromEditor(editor);
+        if (fakeSelectionNodes.length > 0) {
+            const listItems = bind$3(fakeSelectionNodes, (cell) => descendants(cell, 'li'));
+            return Optional.some(map$3(listItems, (item) => item.dom));
+        }
+        else {
+            return Optional.none();
+        }
+    };
     const getFullySelectedBlocks = (selection) => {
-        const blocks = selection.getSelectedBlocks();
-        const rng = selection.getRng();
         if (selection.isCollapsed()) {
             return [];
         }
+        const rng = selection.getRng();
+        const blocks = getAndOnlyNormalizeFirstBlockIf(selection, (el) => isRngStartAtStartOfElement(rng, el) && !isListItem$3(el));
         if (blocks.length === 1) {
             return isRngStartAtStartOfElement(rng, blocks[0]) && isRngEndAtEndOfElement(rng, blocks[0]) ? blocks : [];
         }
@@ -16762,8 +17239,15 @@
             return first.concat(middle).concat(last);
         }
     };
-    const getFullySelectedListItems = (selection) => filter$5(getFullySelectedBlocks(selection), isEditableListItem(selection.dom));
-    const getPartiallySelectedListItems = (selection) => filter$5(selection.getSelectedBlocks(), isEditableListItem(selection.dom));
+    const getFullySelectedListItems = (editor) => {
+        const items = getCellSelectionListItems(editor).getOrThunk(() => getFullySelectedBlocks(editor.selection));
+        return filter$5(items, isEditableListItem(editor.selection.dom));
+    };
+    const getPartiallySelectedListItems = (editor) => {
+        const items = getCellSelectionListItems(editor)
+            .getOrThunk(() => getAndOnlyNormalizeFirstBlockIf(editor.selection, (el) => !isListItem$3(el)));
+        return filter$5(items, isEditableListItem(editor.selection.dom));
+    };
 
     const each$8 = Tools.each;
     const isElementNode = (node) => isElement$7(node) && !isBookmarkNode$1(node) && !isCaretNode(node) && !isBogus$1(node);
@@ -17005,14 +17489,14 @@
     };
     const removeListStyleFormats = (editor, name, vars) => {
         if (name === 'removeformat') {
-            each$e(getPartiallySelectedListItems(editor.selection), (li) => {
+            each$e(getPartiallySelectedListItems(editor), (li) => {
                 each$e(listItemStyles, (name) => editor.dom.setStyle(li, name, ''));
                 removeEmptyStyleAttributeIfNeeded(editor.dom, li);
             });
         }
         else {
             getExpandedListItemFormat(editor.formatter, name).each((liFmt) => {
-                each$e(getPartiallySelectedListItems(editor.selection), (li) => removeStyles$1(editor.dom, li, liFmt, vars, null));
+                each$e(getPartiallySelectedListItems(editor), (li) => removeStyles$1(editor.dom, li, liFmt, vars, null));
             });
         }
     };
@@ -17396,14 +17880,14 @@
         });
     };
     const wrapChildrenInInnerWrapper = (target, wrapper, hasFormat, removeFormatFromElement) => {
-        each$e(children$1(target), (child) => {
+        each$e(children$2(target), (child) => {
             if (isElement$8(child) && hasFormat(child)) {
                 if (removeFormatFromElement(child).isNone()) {
                     unwrap(child);
                 }
             }
         });
-        each$e(children$1(target), (child) => append$1(wrapper, child));
+        each$e(children$2(target), (child) => append$1(wrapper, child));
         prepend(target, wrapper);
     };
     const wrapInOuterWrappers = (target, wrappers) => {
@@ -17972,13 +18456,14 @@
     const uniqueId$1 = (prefix) => {
         return (prefix || 'blobid') + (count$1++);
     };
+    const utf8Encode = (str) => foldl(new window.TextEncoder().encode(str), (acc, charCode) => acc + String.fromCharCode(charCode), '');
     const processDataUri = (dataUri, base64Only, generateBlobInfo) => {
         return parseDataUri(dataUri).bind(({ data, type, base64Encoded }) => {
             if (base64Only && !base64Encoded) {
                 return Optional.none();
             }
             else {
-                const base64 = base64Encoded ? data : btoa(data);
+                const base64 = base64Encoded ? data : btoa(utf8Encode(data));
                 return generateBlobInfo(base64, type);
             }
         });
@@ -18020,7 +18505,7 @@
     // TINY-10350: A modification of the Regexes.link regex to specifically capture host.
     // eslint-disable-next-line max-len
     const hostCaptureRegex = /^(?:(?:(?:[A-Za-z][A-Za-z\d.+-]{0,14}:\/\/(?:[-.~*+=!&;:'%@?^${}(),\w]+@)?|www\.|[-;:&=+$,.\w]+@)([A-Za-z\d-]+(?:\.[A-Za-z\d-]+)*))(?::\d+)?(?:\/(?:[-.~*+=!;:'%@$(),\/\w]*[-~*+=%@$()\/\w])?)?(?:\?(?:[-.~*+=!&;:'%@?^${}(),\/\w]+)?)?(?:#(?:[-.~*+=!&;:'%@?^${}(),\/\w]+)?)?)$/;
-    const extractHost = (url) => Optional.from(url.match(hostCaptureRegex)).bind((ms) => get$b(ms, 1)).map((h) => startsWith(h, 'www.') ? h.substring(4) : h);
+    const extractHost = (url) => Optional.from(url.match(hostCaptureRegex)).bind((ms) => get$c(ms, 1)).map((h) => startsWith(h, 'www.') ? h.substring(4) : h);
 
     const sandboxIframe = (iframeNode, exclusions) => {
         if (Optional.from(iframeNode.attr('src')).bind(extractHost).forall((host) => !contains$2(exclusions, host))) {
@@ -18192,24 +18677,65 @@
         }
     };
 
-    /*! @license DOMPurify 3.2.6 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.2.6/LICENSE */
+    /*! @license DOMPurify 3.4.12 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.12/LICENSE */
 
-    const {
-      entries,
-      setPrototypeOf,
-      isFrozen,
-      getPrototypeOf,
-      getOwnPropertyDescriptor
-    } = Object;
-    let {
-      freeze,
-      seal,
-      create: create$7
-    } = Object; // eslint-disable-line import/no-mutable-exports
-    let {
-      apply,
-      construct
-    } = typeof Reflect !== 'undefined' && Reflect;
+    function _arrayLikeToArray(r, a) {
+      (null == a || a > r.length) && (a = r.length);
+      for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+      return n;
+    }
+    function _arrayWithHoles(r) {
+      if (Array.isArray(r)) return r;
+    }
+    function _iterableToArrayLimit(r, l) {
+      var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+      if (null != t) {
+        var e,
+          n,
+          i,
+          u,
+          a = [],
+          f = true,
+          o = false;
+        try {
+          if (i = (t = t.call(r)).next, 0 === l) ; else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+        } catch (r) {
+          o = true, n = r;
+        } finally {
+          try {
+            if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return;
+          } finally {
+            if (o) throw n;
+          }
+        }
+        return a;
+      }
+    }
+    function _nonIterableRest() {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    function _slicedToArray(r, e) {
+      return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+    }
+    function _unsupportedIterableToArray(r, a) {
+      if (r) {
+        if ("string" == typeof r) return _arrayLikeToArray(r, a);
+        var t = {}.toString.call(r).slice(8, -1);
+        return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+      }
+    }
+
+    const entries = Object.entries,
+      setPrototypeOf = Object.setPrototypeOf,
+      isFrozen = Object.isFrozen,
+      getPrototypeOf = Object.getPrototypeOf,
+      getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+    let freeze = Object.freeze,
+      seal = Object.seal,
+      create$7 = Object.create; // eslint-disable-line import/no-mutable-exports
+    let _ref = typeof Reflect !== 'undefined' && Reflect,
+      apply = _ref.apply,
+      construct = _ref.construct;
     if (!freeze) {
       freeze = function freeze(x) {
         return x;
@@ -18221,12 +18747,18 @@
       };
     }
     if (!apply) {
-      apply = function apply(fun, thisValue, args) {
-        return fun.apply(thisValue, args);
+      apply = function apply(func, thisArg) {
+        for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+          args[_key - 2] = arguments[_key];
+        }
+        return func.apply(thisArg, args);
       };
     }
     if (!construct) {
-      construct = function construct(Func, args) {
+      construct = function construct(Func) {
+        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+          args[_key2 - 1] = arguments[_key2];
+        }
         return new Func(...args);
       };
     }
@@ -18235,13 +18767,19 @@
     const arrayPop = unapply(Array.prototype.pop);
     const arrayPush = unapply(Array.prototype.push);
     const arraySplice = unapply(Array.prototype.splice);
+    const arrayIsArray = Array.isArray;
     const stringToLowerCase = unapply(String.prototype.toLowerCase);
     const stringToString = unapply(String.prototype.toString);
     const stringMatch = unapply(String.prototype.match);
     const stringReplace = unapply(String.prototype.replace);
     const stringIndexOf = unapply(String.prototype.indexOf);
     const stringTrim = unapply(String.prototype.trim);
+    const numberToString = unapply(Number.prototype.toString);
+    const booleanToString = unapply(Boolean.prototype.toString);
+    const bigintToString = typeof BigInt === 'undefined' ? null : unapply(BigInt.prototype.toString);
+    const symbolToString = typeof Symbol === 'undefined' ? null : unapply(Symbol.prototype.toString);
     const objectHasOwnProperty = unapply(Object.prototype.hasOwnProperty);
+    const objectToString = unapply(Object.prototype.toString);
     const regExpTest = unapply(RegExp.prototype.test);
     const typeErrorCreate = unconstruct(TypeError);
     /**
@@ -18255,8 +18793,8 @@
         if (thisArg instanceof RegExp) {
           thisArg.lastIndex = 0;
         }
-        for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-          args[_key - 1] = arguments[_key];
+        for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+          args[_key3 - 1] = arguments[_key3];
         }
         return apply(func, thisArg, args);
       };
@@ -18267,12 +18805,12 @@
      * @param func - The constructor function to be wrapped and called.
      * @returns A new function that constructs an instance of the given constructor function with the provided arguments.
      */
-    function unconstruct(func) {
+    function unconstruct(Func) {
       return function () {
-        for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
+        for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
-        return construct(func, args);
+        return construct(Func, args);
       };
     }
     /**
@@ -18290,6 +18828,9 @@
         // independent of any properties defined on Object.prototype.
         // Prevent prototype setters from intercepting set as a this value.
         setPrototypeOf(set, null);
+      }
+      if (!arrayIsArray(array)) {
+        return set;
       }
       let l = array.length;
       while (l--) {
@@ -18331,10 +18872,13 @@
      */
     function clone(object) {
       const newObject = create$7(null);
-      for (const [property, value] of entries(object)) {
+      for (const _ref2 of entries(object)) {
+        var _ref3 = _slicedToArray(_ref2, 2);
+        const property = _ref3[0];
+        const value = _ref3[1];
         const isPropertyExist = objectHasOwnProperty(object, property);
         if (isPropertyExist) {
-          if (Array.isArray(value)) {
+          if (arrayIsArray(value)) {
             newObject[property] = cleanArray(value);
           } else if (value && typeof value === 'object' && value.constructor === Object) {
             newObject[property] = clone(value);
@@ -18344,6 +18888,58 @@
         }
       }
       return newObject;
+    }
+    /**
+     * Convert non-node values into strings without depending on direct property access.
+     *
+     * @param value - The value to stringify.
+     * @returns A string representation of the provided value.
+     */
+    function stringifyValue(value) {
+      switch (typeof value) {
+        case 'string':
+          {
+            return value;
+          }
+        case 'number':
+          {
+            return numberToString(value);
+          }
+        case 'boolean':
+          {
+            return booleanToString(value);
+          }
+        case 'bigint':
+          {
+            return bigintToString ? bigintToString(value) : '0';
+          }
+        case 'symbol':
+          {
+            return symbolToString ? symbolToString(value) : 'Symbol()';
+          }
+        case 'undefined':
+          {
+            return objectToString(value);
+          }
+        case 'function':
+        case 'object':
+          {
+            if (value === null) {
+              return objectToString(value);
+            }
+            const valueAsRecord = value;
+            const valueToString = lookupGetter(valueAsRecord, 'toString');
+            if (typeof valueToString === 'function') {
+              const stringified = valueToString(valueAsRecord);
+              return typeof stringified === 'string' ? stringified : objectToString(stringified);
+            }
+            return objectToString(value);
+          }
+        default:
+          {
+            return objectToString(value);
+          }
+      }
     }
     /**
      * This method automatically checks if the prop is function or getter and behaves accordingly.
@@ -18370,9 +18966,17 @@
       }
       return fallbackValue;
     }
+    function isRegex(value) {
+      try {
+        regExpTest(value, '');
+        return true;
+      } catch (_unused) {
+        return false;
+      }
+    }
 
-    const html$1 = freeze(['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blink', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'dialog', 'dir', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meter', 'nav', 'nobr', 'ol', 'optgroup', 'option', 'output', 'p', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'section', 'select', 'shadow', 'small', 'source', 'spacer', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr']);
-    const svg$1 = freeze(['svg', 'a', 'altglyph', 'altglyphdef', 'altglyphitem', 'animatecolor', 'animatemotion', 'animatetransform', 'circle', 'clippath', 'defs', 'desc', 'ellipse', 'filter', 'font', 'g', 'glyph', 'glyphref', 'hkern', 'image', 'line', 'lineargradient', 'marker', 'mask', 'metadata', 'mpath', 'path', 'pattern', 'polygon', 'polyline', 'radialgradient', 'rect', 'stop', 'style', 'switch', 'symbol', 'text', 'textpath', 'title', 'tref', 'tspan', 'view', 'vkern']);
+    const html$1 = freeze(['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blink', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'dialog', 'dir', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meter', 'nav', 'nobr', 'ol', 'optgroup', 'option', 'output', 'p', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'search', 'section', 'select', 'shadow', 'slot', 'small', 'source', 'spacer', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr']);
+    const svg$1 = freeze(['svg', 'a', 'altglyph', 'altglyphdef', 'altglyphitem', 'animatecolor', 'animatemotion', 'animatetransform', 'circle', 'clippath', 'defs', 'desc', 'ellipse', 'enterkeyhint', 'exportparts', 'filter', 'font', 'g', 'glyph', 'glyphref', 'hkern', 'image', 'inputmode', 'line', 'lineargradient', 'marker', 'mask', 'metadata', 'mpath', 'part', 'path', 'pattern', 'polygon', 'polyline', 'radialgradient', 'rect', 'stop', 'style', 'switch', 'symbol', 'text', 'textpath', 'title', 'tref', 'tspan', 'view', 'vkern']);
     const svgFilters = freeze(['feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feDistantLight', 'feDropShadow', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG', 'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology', 'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence']);
     // List of SVG elements that are disallowed by default.
     // We still need to know them so that we can do namespace
@@ -18385,15 +18989,14 @@
     const mathMlDisallowed = freeze(['maction', 'maligngroup', 'malignmark', 'mlongdiv', 'mscarries', 'mscarry', 'msgroup', 'mstack', 'msline', 'msrow', 'semantics', 'annotation', 'annotation-xml', 'mprescripts', 'none']);
     const text = freeze(['#text']);
 
-    const html = freeze(['accept', 'action', 'align', 'alt', 'autocapitalize', 'autocomplete', 'autopictureinpicture', 'autoplay', 'background', 'bgcolor', 'border', 'capture', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'controlslist', 'coords', 'crossorigin', 'datetime', 'decoding', 'default', 'dir', 'disabled', 'disablepictureinpicture', 'disableremoteplayback', 'download', 'draggable', 'enctype', 'enterkeyhint', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'inputmode', 'integrity', 'ismap', 'kind', 'label', 'lang', 'list', 'loading', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'muted', 'name', 'nonce', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'playsinline', 'popover', 'popovertarget', 'popovertargetaction', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'translate', 'type', 'usemap', 'valign', 'value', 'width', 'wrap', 'xmlns', 'slot']);
-    const svg = freeze(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'amplitude', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clippathunits', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'exponent', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterunits', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'intercept', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'primitiveunits', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'slope', 'specularconstant', 'specularexponent', 'spreadmethod', 'startoffset', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'systemlanguage', 'tabindex', 'tablevalues', 'targetx', 'targety', 'transform', 'transform-origin', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
-    const mathMl = freeze(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'encoding', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
+    const html = freeze(['accept', 'action', 'align', 'alt', 'autocapitalize', 'autocomplete', 'autopictureinpicture', 'autoplay', 'background', 'bgcolor', 'border', 'capture', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'command', 'commandfor', 'controls', 'controlslist', 'coords', 'crossorigin', 'datetime', 'decoding', 'default', 'dir', 'disabled', 'disablepictureinpicture', 'disableremoteplayback', 'download', 'draggable', 'enctype', 'enterkeyhint', 'exportparts', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'inert', 'inputmode', 'integrity', 'ismap', 'kind', 'label', 'lang', 'list', 'loading', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'muted', 'name', 'nonce', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'part', 'pattern', 'placeholder', 'playsinline', 'popover', 'popovertarget', 'popovertargetaction', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'slot', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'translate', 'type', 'usemap', 'valign', 'value', 'width', 'wrap', 'xmlns']);
+    const svg = freeze(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'amplitude', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clippathunits', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dominant-baseline', 'dur', 'edgemode', 'elevation', 'end', 'exponent', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterunits', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'intercept', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'mask-type', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'primitiveunits', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'slope', 'specularconstant', 'specularexponent', 'spreadmethod', 'startoffset', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'systemlanguage', 'tabindex', 'tablevalues', 'targetx', 'targety', 'transform', 'transform-origin', 'text-anchor', 'text-decoration', 'text-orientation', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
+    const mathMl = freeze(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnalign', 'columnlines', 'columnspacing', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'encoding', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lquote', 'lspace', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
     const xml = freeze(['xlink:href', 'xml:id', 'xlink:title', 'xml:space', 'xmlns:xlink']);
 
-    // eslint-disable-next-line unicorn/better-regex
-    const MUSTACHE_EXPR = seal(/\{\{[\w\W]*|[\w\W]*\}\}/gm); // Specify template detection regex for SAFE_FOR_TEMPLATES mode
-    const ERB_EXPR = seal(/<%[\w\W]*|[\w\W]*%>/gm);
-    const TMPLIT_EXPR = seal(/\$\{[\w\W]*/gm); // eslint-disable-line unicorn/better-regex
+    const MUSTACHE_EXPR = seal(/{{[\w\W]*|^[\w\W]*}}/g);
+    const ERB_EXPR = seal(/<%[\w\W]*|^[\w\W]*%>/g);
+    const TMPLIT_EXPR = seal(/\${[\w\W]*/g);
     const DATA_ATTR = seal(/^data-[\-\w.\u00B7-\uFFFF]+$/); // eslint-disable-line no-useless-escape
     const ARIA_ATTR = seal(/^aria-[\-\w]+$/); // eslint-disable-line no-useless-escape
     const IS_ALLOWED_URI = seal(/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|matrix):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i // eslint-disable-line no-useless-escape
@@ -18403,22 +19006,14 @@
     );
     const DOCTYPE_NAME = seal(/^html$/i);
     const CUSTOM_ELEMENT = seal(/^[a-z][.\w]*(-[.\w]+)+$/i);
+    // Markup-significant character probes used by _sanitizeElements.
+    // Shared module-level instances are safe despite the sticky /g flags:
+    // unapply() resets lastIndex for RegExp receivers before every call.
+    const ELEMENT_MARKUP_PROBE = seal(/<[/\w!]/g);
+    const COMMENT_MARKUP_PROBE = seal(/<[/\w]/g);
+    const FALLBACK_TAG_CLOSE = seal(/<\/no(script|embed|frames)/i);
+    const SELF_CLOSING_TAG = seal(/\/>/i);
 
-    var EXPRESSIONS = /*#__PURE__*/Object.freeze({
-      __proto__: null,
-      ARIA_ATTR: ARIA_ATTR,
-      ATTR_WHITESPACE: ATTR_WHITESPACE,
-      CUSTOM_ELEMENT: CUSTOM_ELEMENT,
-      DATA_ATTR: DATA_ATTR,
-      DOCTYPE_NAME: DOCTYPE_NAME,
-      ERB_EXPR: ERB_EXPR,
-      IS_ALLOWED_URI: IS_ALLOWED_URI,
-      IS_SCRIPT_OR_DATA: IS_SCRIPT_OR_DATA,
-      MUSTACHE_EXPR: MUSTACHE_EXPR,
-      TMPLIT_EXPR: TMPLIT_EXPR
-    });
-
-    /* eslint-disable @typescript-eslint/indent */
     // https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
     const NODE_TYPE = {
       element: 1,
@@ -18429,7 +19024,7 @@
       // Deprecated
       entityNode: 6,
       // Deprecated
-      progressingInstruction: 7,
+      processingInstruction: 7,
       comment: 8,
       document: 9,
       documentType: 10,
@@ -18490,10 +19085,25 @@
         uponSanitizeShadowNode: []
       };
     };
+    /**
+     * Resolve a set-valued configuration option: a fresh set built from
+     * cfg[key] when it is an own array property (seeded with a clone of
+     * options.base when given, case-normalized via options.transform),
+     * the fallback set otherwise.
+     *
+     * @param cfg the cloned, prototype-free configuration object
+     * @param key the configuration property to read
+     * @param fallback the set to use when the option is absent or not an array
+     * @param options transform and optional base set to merge into
+     * @returns the resolved set
+     */
+    const _resolveSetOption = function _resolveSetOption(cfg, key, fallback, options) {
+      return objectHasOwnProperty(cfg, key) && arrayIsArray(cfg[key]) ? addToSet(options.base ? clone(options.base) : {}, cfg[key], options.transform) : fallback;
+    };
     function createDOMPurify() {
       let window = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getGlobal();
       const DOMPurify = root => createDOMPurify(root);
-      DOMPurify.version = '3.2.6';
+      DOMPurify.version = '3.4.12';
       DOMPurify.removed = [];
       if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
         // Not running in a browser, provide a factory function
@@ -18501,28 +19111,29 @@
         DOMPurify.isSupported = false;
         return DOMPurify;
       }
-      let {
-        document
-      } = window;
+      let document = window.document;
       const originalDocument = document;
       const currentScript = originalDocument.currentScript;
-      const {
-        DocumentFragment,
-        HTMLTemplateElement,
-        Node,
-        Element,
-        NodeFilter,
-        NamedNodeMap = window.NamedNodeMap || window.MozNamedAttrMap,
-        HTMLFormElement,
-        DOMParser,
-        trustedTypes
-      } = window;
+      window.DocumentFragment;
+        const HTMLTemplateElement = window.HTMLTemplateElement,
+        Node = window.Node,
+        Element = window.Element,
+        NodeFilter = window.NodeFilter,
+        _window$NamedNodeMap = window.NamedNodeMap;
+        _window$NamedNodeMap === void 0 ? window.NamedNodeMap || window.MozNamedAttrMap : _window$NamedNodeMap;
+        window.HTMLFormElement;
+        const DOMParser = window.DOMParser,
+        trustedTypes = window.trustedTypes;
       const ElementPrototype = Element.prototype;
       const cloneNode = lookupGetter(ElementPrototype, 'cloneNode');
       const remove = lookupGetter(ElementPrototype, 'remove');
       const getNextSibling = lookupGetter(ElementPrototype, 'nextSibling');
       const getChildNodes = lookupGetter(ElementPrototype, 'childNodes');
       const getParentNode = lookupGetter(ElementPrototype, 'parentNode');
+      const getShadowRoot = lookupGetter(ElementPrototype, 'shadowRoot');
+      const getAttributes = lookupGetter(ElementPrototype, 'attributes');
+      const getNodeType = Node && Node.prototype ? lookupGetter(Node.prototype, 'nodeType') : null;
+      const getNodeName = Node && Node.prototype ? lookupGetter(Node.prototype, 'nodeName') : null;
       // As per issue #47, the web-components registry is inherited by a
       // new document created via createHTMLDocument. As per the spec
       // (http://w3c.github.io/webcomponents/spec/custom/#creating-and-passing-registries)
@@ -18537,33 +19148,74 @@
       }
       let trustedTypesPolicy;
       let emptyHTML = '';
-      const {
-        implementation,
-        createNodeIterator,
-        createDocumentFragment,
-        getElementsByTagName
-      } = document;
-      const {
-        importNode
-      } = originalDocument;
+      // The instance's own internal Trusted Types policy. Unlike a caller-supplied
+      // `TRUSTED_TYPES_POLICY`, this is created at most once — Trusted Types throws
+      // on duplicate policy names — and is the only policy allowed to persist
+      // across configurations and survive `clearConfig()`.
+      let defaultTrustedTypesPolicy;
+      let defaultTrustedTypesPolicyResolved = false;
+      // Tracks whether we are already inside a call to the configured Trusted Types
+      // policy (`createHTML` or `createScriptURL`). If a supplied policy callback
+      // itself calls `DOMPurify.sanitize` (the cause of #1422), `sanitize` would
+      // re-enter the policy and recurse until the stack overflows. We detect that
+      // re-entry and throw a clear, actionable error instead. The guard is shared
+      // across both callbacks, because either one re-entering `sanitize` triggers
+      // the same unbounded recursion.
+      let IN_TRUSTED_TYPES_POLICY = 0;
+      const _assertNotInTrustedTypesPolicy = function _assertNotInTrustedTypesPolicy() {
+        if (IN_TRUSTED_TYPES_POLICY > 0) {
+          throw typeErrorCreate('A configured TRUSTED_TYPES_POLICY callback (createHTML or ' + 'createScriptURL) must not call DOMPurify.sanitize, as that causes ' + 'infinite recursion. Do not pass a policy whose callbacks wrap ' + 'DOMPurify as TRUSTED_TYPES_POLICY; see the "DOMPurify and Trusted ' + 'Types" section of the README.');
+        }
+      };
+      const _createTrustedHTML = function _createTrustedHTML(html) {
+        _assertNotInTrustedTypesPolicy();
+        IN_TRUSTED_TYPES_POLICY++;
+        try {
+          return trustedTypesPolicy.createHTML(html);
+        } finally {
+          IN_TRUSTED_TYPES_POLICY--;
+        }
+      };
+      const _createTrustedScriptURL = function _createTrustedScriptURL(scriptUrl) {
+        _assertNotInTrustedTypesPolicy();
+        IN_TRUSTED_TYPES_POLICY++;
+        try {
+          return trustedTypesPolicy.createScriptURL(scriptUrl);
+        } finally {
+          IN_TRUSTED_TYPES_POLICY--;
+        }
+      };
+      // Lazily resolve (and cache) the instance's internal default policy.
+      // Resolution is attempted at most once: a successful `createPolicy` cannot be
+      // repeated (Trusted Types throws on duplicate names), and a failed or
+      // unsupported attempt must not be retried on every parse.
+      const _getDefaultTrustedTypesPolicy = function _getDefaultTrustedTypesPolicy() {
+        if (!defaultTrustedTypesPolicyResolved) {
+          defaultTrustedTypesPolicy = _createTrustedTypesPolicy(trustedTypes, currentScript);
+          defaultTrustedTypesPolicyResolved = true;
+        }
+        return defaultTrustedTypesPolicy;
+      };
+      const _document = document,
+        implementation = _document.implementation,
+        createNodeIterator = _document.createNodeIterator,
+        createDocumentFragment = _document.createDocumentFragment,
+        getElementsByTagName = _document.getElementsByTagName;
+      const importNode = originalDocument.importNode;
       let hooks = _createHooksMap();
       /**
        * Expose whether this browser supports running the full DOMPurify.
        */
       DOMPurify.isSupported = typeof entries === 'function' && typeof getParentNode === 'function' && implementation && implementation.createHTMLDocument !== undefined;
-      const {
-        MUSTACHE_EXPR,
-        ERB_EXPR,
-        TMPLIT_EXPR,
-        DATA_ATTR,
-        ARIA_ATTR,
-        IS_SCRIPT_OR_DATA,
-        ATTR_WHITESPACE,
-        CUSTOM_ELEMENT
-      } = EXPRESSIONS;
-      let {
-        IS_ALLOWED_URI: IS_ALLOWED_URI$1
-      } = EXPRESSIONS;
+      const MUSTACHE_EXPR$1 = MUSTACHE_EXPR,
+        ERB_EXPR$1 = ERB_EXPR,
+        TMPLIT_EXPR$1 = TMPLIT_EXPR,
+        DATA_ATTR$1 = DATA_ATTR,
+        ARIA_ATTR$1 = ARIA_ATTR,
+        IS_SCRIPT_OR_DATA$1 = IS_SCRIPT_OR_DATA,
+        ATTR_WHITESPACE$1 = ATTR_WHITESPACE,
+        CUSTOM_ELEMENT$1 = CUSTOM_ELEMENT;
+      let IS_ALLOWED_URI$1 = IS_ALLOWED_URI;
       /**
        * We consider the elements and attributes below to be safe. Ideally
        * don't add any new ones but feel free to remove unwanted ones.
@@ -18604,6 +19256,21 @@
       let FORBID_TAGS = null;
       /* Explicitly forbidden attributes (overrides ALLOWED_ATTR/ADD_ATTR) */
       let FORBID_ATTR = null;
+      /* Config object to store ADD_TAGS/ADD_ATTR functions (when used as functions) */
+      const EXTRA_ELEMENT_HANDLING = Object.seal(create$7(null, {
+        tagCheck: {
+          writable: true,
+          configurable: false,
+          enumerable: true,
+          value: null
+        },
+        attributeCheck: {
+          writable: true,
+          configurable: false,
+          enumerable: true,
+          value: null
+        }
+      }));
       /* Decide if ARIA attributes are okay */
       let ALLOW_ARIA_ATTR = true;
       /* Decide if custom data attributes are okay */
@@ -18625,6 +19292,13 @@
       let WHOLE_DOCUMENT = false;
       /* Track whether config is already set on this instance of DOMPurify. */
       let SET_CONFIG = false;
+      /* Pristine allowlist bindings captured at setConfig() time. On the
+       * persistent-config path sanitize() restores the sets from these before
+       * the per-walk hook clone-guard, so a hook's in-call widening cannot
+       * carry across calls. Null until setConfig() is called; reset by
+       * clearConfig(). */
+      let SET_CONFIG_ALLOWED_TAGS = null;
+      let SET_CONFIG_ALLOWED_ATTR = null;
       /* Decide if all elements (e.g. style, script) must be children of
        * document.body. By default, browsers might move them to document.head */
       let FORCE_BODY = false;
@@ -18667,7 +19341,17 @@
       let USE_PROFILES = {};
       /* Tags to ignore content of when KEEP_CONTENT is true */
       let FORBID_CONTENTS = null;
-      const DEFAULT_FORBID_CONTENTS = addToSet({}, ['annotation-xml', 'audio', 'colgroup', 'desc', 'foreignobject', 'head', 'iframe', 'math', 'mi', 'mn', 'mo', 'ms', 'mtext', 'noembed', 'noframes', 'noscript', 'plaintext', 'script', 'style', 'svg', 'template', 'thead', 'title', 'video', 'xmp']);
+      const DEFAULT_FORBID_CONTENTS = addToSet({}, ['annotation-xml', 'audio', 'colgroup', 'desc', 'foreignobject', 'head', 'iframe', 'math', 'mi', 'mn', 'mo', 'ms', 'mtext', 'noembed', 'noframes', 'noscript', 'plaintext', 'script',
+      // <selectedcontent> mirrors the selected <option>'s subtree, cloned by
+      // the UA (customizable <select>) — including any on* handlers — and the
+      // engine re-mirrors synchronously whenever a removal changes which
+      // option/selectedcontent is current, even inside DOMPurify's inert
+      // DOMParser document. Hoisting its children on removal re-inserts a fresh
+      // mirror target ahead of the walk, which the engine refills, looping
+      // forever (DoS) and amplifying output. Dropping its content on removal
+      // (rather than hoisting) breaks that cascade; the content is a duplicate
+      // of the option, which is sanitized on its own. See campaign-3 F1/F6.
+      'selectedcontent', 'style', 'svg', 'template', 'thead', 'title', 'video', 'xmp']);
       /* Tags that are safe for data: URIs */
       let DATA_URI_TAGS = null;
       const DEFAULT_DATA_URI_TAGS = addToSet({}, ['audio', 'video', 'img', 'source', 'image', 'track']);
@@ -18683,8 +19367,10 @@
       /* Allowed XHTML+XML namespaces */
       let ALLOWED_NAMESPACES = null;
       const DEFAULT_ALLOWED_NAMESPACES = addToSet({}, [MATHML_NAMESPACE, SVG_NAMESPACE, HTML_NAMESPACE], stringToString);
-      let MATHML_TEXT_INTEGRATION_POINTS = addToSet({}, ['mi', 'mo', 'mn', 'ms', 'mtext']);
-      let HTML_INTEGRATION_POINTS = addToSet({}, ['annotation-xml']);
+      const DEFAULT_MATHML_TEXT_INTEGRATION_POINTS = freeze(['mi', 'mo', 'mn', 'ms', 'mtext']);
+      let MATHML_TEXT_INTEGRATION_POINTS = addToSet({}, DEFAULT_MATHML_TEXT_INTEGRATION_POINTS);
+      const DEFAULT_HTML_INTEGRATION_POINTS = freeze(['annotation-xml']);
+      let HTML_INTEGRATION_POINTS = addToSet({}, DEFAULT_HTML_INTEGRATION_POINTS);
       // Certain elements are allowed in both SVG and HTML
       // namespace. We need to specify them explicitly
       // so that they don't get erroneously deleted from
@@ -18726,15 +19412,33 @@
         // HTML tags and attributes are not case-sensitive, converting to lowercase. Keeping XHTML as is.
         transformCaseFunc = PARSER_MEDIA_TYPE === 'application/xhtml+xml' ? stringToString : stringToLowerCase;
         /* Set configuration parameters */
-        ALLOWED_TAGS = objectHasOwnProperty(cfg, 'ALLOWED_TAGS') ? addToSet({}, cfg.ALLOWED_TAGS, transformCaseFunc) : DEFAULT_ALLOWED_TAGS;
-        ALLOWED_ATTR = objectHasOwnProperty(cfg, 'ALLOWED_ATTR') ? addToSet({}, cfg.ALLOWED_ATTR, transformCaseFunc) : DEFAULT_ALLOWED_ATTR;
-        ALLOWED_NAMESPACES = objectHasOwnProperty(cfg, 'ALLOWED_NAMESPACES') ? addToSet({}, cfg.ALLOWED_NAMESPACES, stringToString) : DEFAULT_ALLOWED_NAMESPACES;
-        URI_SAFE_ATTRIBUTES = objectHasOwnProperty(cfg, 'ADD_URI_SAFE_ATTR') ? addToSet(clone(DEFAULT_URI_SAFE_ATTRIBUTES), cfg.ADD_URI_SAFE_ATTR, transformCaseFunc) : DEFAULT_URI_SAFE_ATTRIBUTES;
-        DATA_URI_TAGS = objectHasOwnProperty(cfg, 'ADD_DATA_URI_TAGS') ? addToSet(clone(DEFAULT_DATA_URI_TAGS), cfg.ADD_DATA_URI_TAGS, transformCaseFunc) : DEFAULT_DATA_URI_TAGS;
-        FORBID_CONTENTS = objectHasOwnProperty(cfg, 'FORBID_CONTENTS') ? addToSet({}, cfg.FORBID_CONTENTS, transformCaseFunc) : DEFAULT_FORBID_CONTENTS;
-        FORBID_TAGS = objectHasOwnProperty(cfg, 'FORBID_TAGS') ? addToSet({}, cfg.FORBID_TAGS, transformCaseFunc) : clone({});
-        FORBID_ATTR = objectHasOwnProperty(cfg, 'FORBID_ATTR') ? addToSet({}, cfg.FORBID_ATTR, transformCaseFunc) : clone({});
-        USE_PROFILES = objectHasOwnProperty(cfg, 'USE_PROFILES') ? cfg.USE_PROFILES : false;
+        ALLOWED_TAGS = _resolveSetOption(cfg, 'ALLOWED_TAGS', DEFAULT_ALLOWED_TAGS, {
+          transform: transformCaseFunc
+        });
+        ALLOWED_ATTR = _resolveSetOption(cfg, 'ALLOWED_ATTR', DEFAULT_ALLOWED_ATTR, {
+          transform: transformCaseFunc
+        });
+        ALLOWED_NAMESPACES = _resolveSetOption(cfg, 'ALLOWED_NAMESPACES', DEFAULT_ALLOWED_NAMESPACES, {
+          transform: stringToString
+        });
+        URI_SAFE_ATTRIBUTES = _resolveSetOption(cfg, 'ADD_URI_SAFE_ATTR', DEFAULT_URI_SAFE_ATTRIBUTES, {
+          transform: transformCaseFunc,
+          base: DEFAULT_URI_SAFE_ATTRIBUTES
+        });
+        DATA_URI_TAGS = _resolveSetOption(cfg, 'ADD_DATA_URI_TAGS', DEFAULT_DATA_URI_TAGS, {
+          transform: transformCaseFunc,
+          base: DEFAULT_DATA_URI_TAGS
+        });
+        FORBID_CONTENTS = _resolveSetOption(cfg, 'FORBID_CONTENTS', DEFAULT_FORBID_CONTENTS, {
+          transform: transformCaseFunc
+        });
+        FORBID_TAGS = _resolveSetOption(cfg, 'FORBID_TAGS', clone({}), {
+          transform: transformCaseFunc
+        });
+        FORBID_ATTR = _resolveSetOption(cfg, 'FORBID_ATTR', clone({}), {
+          transform: transformCaseFunc
+        });
+        USE_PROFILES = objectHasOwnProperty(cfg, 'USE_PROFILES') ? cfg.USE_PROFILES && typeof cfg.USE_PROFILES === 'object' ? clone(cfg.USE_PROFILES) : cfg.USE_PROFILES : false;
         ALLOW_ARIA_ATTR = cfg.ALLOW_ARIA_ATTR !== false; // Default true
         ALLOW_DATA_ATTR = cfg.ALLOW_DATA_ATTR !== false; // Default true
         ALLOW_UNKNOWN_PROTOCOLS = cfg.ALLOW_UNKNOWN_PROTOCOLS || false; // Default false
@@ -18750,20 +19454,22 @@
         SANITIZE_NAMED_PROPS = cfg.SANITIZE_NAMED_PROPS || false; // Default false
         KEEP_CONTENT = cfg.KEEP_CONTENT !== false; // Default true
         IN_PLACE = cfg.IN_PLACE || false; // Default false
-        IS_ALLOWED_URI$1 = cfg.ALLOWED_URI_REGEXP || IS_ALLOWED_URI;
-        NAMESPACE = cfg.NAMESPACE || HTML_NAMESPACE;
-        MATHML_TEXT_INTEGRATION_POINTS = cfg.MATHML_TEXT_INTEGRATION_POINTS || MATHML_TEXT_INTEGRATION_POINTS;
-        HTML_INTEGRATION_POINTS = cfg.HTML_INTEGRATION_POINTS || HTML_INTEGRATION_POINTS;
-        CUSTOM_ELEMENT_HANDLING = cfg.CUSTOM_ELEMENT_HANDLING || {};
-        if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck)) {
-          CUSTOM_ELEMENT_HANDLING.tagNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck;
+        IS_ALLOWED_URI$1 = isRegex(cfg.ALLOWED_URI_REGEXP) ? cfg.ALLOWED_URI_REGEXP : IS_ALLOWED_URI; // Default regexp
+        NAMESPACE = typeof cfg.NAMESPACE === 'string' ? cfg.NAMESPACE : HTML_NAMESPACE; // Default HTML namespace
+        MATHML_TEXT_INTEGRATION_POINTS = objectHasOwnProperty(cfg, 'MATHML_TEXT_INTEGRATION_POINTS') && cfg.MATHML_TEXT_INTEGRATION_POINTS && typeof cfg.MATHML_TEXT_INTEGRATION_POINTS === 'object' ? clone(cfg.MATHML_TEXT_INTEGRATION_POINTS) : addToSet({}, DEFAULT_MATHML_TEXT_INTEGRATION_POINTS); // Default built-in map
+        HTML_INTEGRATION_POINTS = objectHasOwnProperty(cfg, 'HTML_INTEGRATION_POINTS') && cfg.HTML_INTEGRATION_POINTS && typeof cfg.HTML_INTEGRATION_POINTS === 'object' ? clone(cfg.HTML_INTEGRATION_POINTS) : addToSet({}, DEFAULT_HTML_INTEGRATION_POINTS); // Default built-in map
+        const customElementHandling = objectHasOwnProperty(cfg, 'CUSTOM_ELEMENT_HANDLING') && cfg.CUSTOM_ELEMENT_HANDLING && typeof cfg.CUSTOM_ELEMENT_HANDLING === 'object' ? clone(cfg.CUSTOM_ELEMENT_HANDLING) : create$7(null);
+        CUSTOM_ELEMENT_HANDLING = create$7(null);
+        if (objectHasOwnProperty(customElementHandling, 'tagNameCheck') && isRegexOrFunction(customElementHandling.tagNameCheck)) {
+          CUSTOM_ELEMENT_HANDLING.tagNameCheck = customElementHandling.tagNameCheck; // Default undefined
         }
-        if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck)) {
-          CUSTOM_ELEMENT_HANDLING.attributeNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck;
+        if (objectHasOwnProperty(customElementHandling, 'attributeNameCheck') && isRegexOrFunction(customElementHandling.attributeNameCheck)) {
+          CUSTOM_ELEMENT_HANDLING.attributeNameCheck = customElementHandling.attributeNameCheck; // Default undefined
         }
-        if (cfg.CUSTOM_ELEMENT_HANDLING && typeof cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements === 'boolean') {
-          CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements = cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements;
+        if (objectHasOwnProperty(customElementHandling, 'allowCustomizedBuiltInElements') && typeof customElementHandling.allowCustomizedBuiltInElements === 'boolean') {
+          CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements = customElementHandling.allowCustomizedBuiltInElements; // Default undefined
         }
+        seal(CUSTOM_ELEMENT_HANDLING);
         if (SAFE_FOR_TEMPLATES) {
           ALLOW_DATA_ATTR = false;
         }
@@ -18773,7 +19479,7 @@
         /* Parse profile info */
         if (USE_PROFILES) {
           ALLOWED_TAGS = addToSet({}, text);
-          ALLOWED_ATTR = [];
+          ALLOWED_ATTR = create$7(null);
           if (USE_PROFILES.html === true) {
             addToSet(ALLOWED_TAGS, html$1);
             addToSet(ALLOWED_ATTR, html);
@@ -18794,27 +19500,45 @@
             addToSet(ALLOWED_ATTR, xml);
           }
         }
+        /* Always reset function-based ADD_TAGS / ADD_ATTR checks to prevent
+         * leaking across calls when switching from function to array config */
+        EXTRA_ELEMENT_HANDLING.tagCheck = null;
+        EXTRA_ELEMENT_HANDLING.attributeCheck = null;
         /* Merge configuration parameters */
-        if (cfg.ADD_TAGS) {
-          if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
-            ALLOWED_TAGS = clone(ALLOWED_TAGS);
+        if (objectHasOwnProperty(cfg, 'ADD_TAGS')) {
+          if (typeof cfg.ADD_TAGS === 'function') {
+            EXTRA_ELEMENT_HANDLING.tagCheck = cfg.ADD_TAGS;
+          } else if (arrayIsArray(cfg.ADD_TAGS)) {
+            if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
+              ALLOWED_TAGS = clone(ALLOWED_TAGS);
+            }
+            addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
           }
-          addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
         }
-        if (cfg.ADD_ATTR) {
-          if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
-            ALLOWED_ATTR = clone(ALLOWED_ATTR);
+        if (objectHasOwnProperty(cfg, 'ADD_ATTR')) {
+          if (typeof cfg.ADD_ATTR === 'function') {
+            EXTRA_ELEMENT_HANDLING.attributeCheck = cfg.ADD_ATTR;
+          } else if (arrayIsArray(cfg.ADD_ATTR)) {
+            if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
+              ALLOWED_ATTR = clone(ALLOWED_ATTR);
+            }
+            addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
           }
-          addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
         }
-        if (cfg.ADD_URI_SAFE_ATTR) {
+        if (objectHasOwnProperty(cfg, 'ADD_URI_SAFE_ATTR') && arrayIsArray(cfg.ADD_URI_SAFE_ATTR)) {
           addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR, transformCaseFunc);
         }
-        if (cfg.FORBID_CONTENTS) {
+        if (objectHasOwnProperty(cfg, 'FORBID_CONTENTS') && arrayIsArray(cfg.FORBID_CONTENTS)) {
           if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) {
             FORBID_CONTENTS = clone(FORBID_CONTENTS);
           }
           addToSet(FORBID_CONTENTS, cfg.FORBID_CONTENTS, transformCaseFunc);
+        }
+        if (objectHasOwnProperty(cfg, 'ADD_FORBID_CONTENTS') && arrayIsArray(cfg.ADD_FORBID_CONTENTS)) {
+          if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) {
+            FORBID_CONTENTS = clone(FORBID_CONTENTS);
+          }
+          addToSet(FORBID_CONTENTS, cfg.ADD_FORBID_CONTENTS, transformCaseFunc);
         }
         /* Add #text in case KEEP_CONTENT is set to true */
         if (KEEP_CONTENT) {
@@ -18829,6 +19553,13 @@
           addToSet(ALLOWED_TAGS, ['tbody']);
           delete FORBID_TAGS.tbody;
         }
+        // Re-derive the active Trusted Types policy from this configuration on
+        // every parse. The active policy must never be sticky closure state that
+        // outlives the config that set it: a caller-supplied policy left in place
+        // after `clearConfig()` — or after a later call that supplied none, or
+        // `TRUSTED_TYPES_POLICY: null` — could sign a subsequent "default"
+        // `RETURN_TRUSTED_TYPE` result with a foreign, possibly unsafe policy.
+        // See GHSA-vxr8-fq34-vvx9.
         if (cfg.TRUSTED_TYPES_POLICY) {
           if (typeof cfg.TRUSTED_TYPES_POLICY.createHTML !== 'function') {
             throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createHTML" hook.');
@@ -18836,18 +19567,45 @@
           if (typeof cfg.TRUSTED_TYPES_POLICY.createScriptURL !== 'function') {
             throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createScriptURL" hook.');
           }
-          // Overwrite existing TrustedTypes policy.
+          // A caller-supplied policy applies to this configuration only.
+          const previousTrustedTypesPolicy = trustedTypesPolicy;
           trustedTypesPolicy = cfg.TRUSTED_TYPES_POLICY;
-          // Sign local variables required by `sanitize`.
-          emptyHTML = trustedTypesPolicy.createHTML('');
-        } else {
-          // Uninitialized policy, attempt to initialize the internal dompurify policy.
-          if (trustedTypesPolicy === undefined) {
-            trustedTypesPolicy = _createTrustedTypesPolicy(trustedTypes, currentScript);
+          // Sign local variables required by `sanitize`. If the supplied policy's
+          // `createHTML` is circular (i.e. it calls `DOMPurify.sanitize`), this
+          // throws via the re-entrancy guard. Restore the previous policy first so
+          // the instance is not left in a poisoned state. See #1422.
+          try {
+            emptyHTML = _createTrustedHTML('');
+          } catch (error) {
+            trustedTypesPolicy = previousTrustedTypesPolicy;
+            throw error;
           }
-          // If creating the internal policy succeeded sign internal variables.
-          if (trustedTypesPolicy !== null && typeof emptyHTML === 'string') {
-            emptyHTML = trustedTypesPolicy.createHTML('');
+        } else if (cfg.TRUSTED_TYPES_POLICY === null) {
+          // Explicit opt-out for this call: perform no Trusted Types signing and
+          // create nothing (so a strict `trusted-types` CSP that disallows a
+          // `dompurify` policy can still call `sanitize` from inside its own
+          // policy — see #1422). Resetting to `undefined` rather than a sticky
+          // `null` also drops any previously retained caller policy, so it cannot
+          // resurface on a later call, while still allowing the next config-less
+          // call to restore the internal default policy. See GHSA-vxr8-fq34-vvx9.
+          trustedTypesPolicy = undefined;
+          emptyHTML = '';
+        } else {
+          // No policy supplied: keep the currently active policy if one is set — a
+          // previously supplied policy is intentionally sticky across config-less
+          // calls — otherwise fall back to the instance's own internal policy,
+          // created at most once. (A policy supplied for a *single* call still
+          // lingers by design; what must not linger is a policy whose configuration
+          // has been torn down via `clearConfig()`, which restores the default.)
+          if (trustedTypesPolicy === undefined) {
+            trustedTypesPolicy = _getDefaultTrustedTypesPolicy();
+          }
+          // Sign internal variables only when a policy is active. A falsy policy
+          // (Trusted Types unsupported, creation failed, or an explicit opt-out)
+          // leaves `emptyHTML` as a plain string, so we never call `.createHTML` on
+          // a non-policy and throw. See #1422.
+          if (trustedTypesPolicy && typeof emptyHTML === 'string') {
+            emptyHTML = _createTrustedHTML('');
           }
         }
         // Prevent further manipulation of configuration.
@@ -18862,6 +19620,77 @@
        * correctly. */
       const ALL_SVG_TAGS = addToSet({}, [...svg$1, ...svgFilters, ...svgDisallowed]);
       const ALL_MATHML_TAGS = addToSet({}, [...mathMl$1, ...mathMlDisallowed]);
+      /**
+       * Namespace rules for an element in the SVG namespace.
+       *
+       * @param tagName the element's lowercase tag name
+       * @param parent the (possibly simulated) parent node
+       * @param parentTagName the parent's lowercase tag name
+       * @returns true if a spec-compliant parser could produce this element
+       */
+      const _checkSvgNamespace = function _checkSvgNamespace(tagName, parent, parentTagName) {
+        // The only way to switch from HTML namespace to SVG
+        // is via <svg>. If it happens via any other tag, then
+        // it should be killed.
+        if (parent.namespaceURI === HTML_NAMESPACE) {
+          return tagName === 'svg';
+        }
+        // The only way to switch from MathML to SVG is via <svg>
+        // if the parent is either <annotation-xml> or a MathML
+        // text integration point.
+        if (parent.namespaceURI === MATHML_NAMESPACE) {
+          return tagName === 'svg' && (parentTagName === 'annotation-xml' || MATHML_TEXT_INTEGRATION_POINTS[parentTagName]);
+        }
+        // We only allow elements that are defined in SVG
+        // spec. All others are disallowed in SVG namespace.
+        return Boolean(ALL_SVG_TAGS[tagName]);
+      };
+      /**
+       * Namespace rules for an element in the MathML namespace.
+       *
+       * @param tagName the element's lowercase tag name
+       * @param parent the (possibly simulated) parent node
+       * @param parentTagName the parent's lowercase tag name
+       * @returns true if a spec-compliant parser could produce this element
+       */
+      const _checkMathMlNamespace = function _checkMathMlNamespace(tagName, parent, parentTagName) {
+        // The only way to switch from HTML namespace to MathML
+        // is via <math>. If it happens via any other tag, then
+        // it should be killed.
+        if (parent.namespaceURI === HTML_NAMESPACE) {
+          return tagName === 'math';
+        }
+        // The only way to switch from SVG to MathML is via
+        // <math> and HTML integration points
+        if (parent.namespaceURI === SVG_NAMESPACE) {
+          return tagName === 'math' && HTML_INTEGRATION_POINTS[parentTagName];
+        }
+        // We only allow elements that are defined in MathML
+        // spec. All others are disallowed in MathML namespace.
+        return Boolean(ALL_MATHML_TAGS[tagName]);
+      };
+      /**
+       * Namespace rules for an element in the HTML namespace.
+       *
+       * @param tagName the element's lowercase tag name
+       * @param parent the (possibly simulated) parent node
+       * @param parentTagName the parent's lowercase tag name
+       * @returns true if a spec-compliant parser could produce this element
+       */
+      const _checkHtmlNamespace = function _checkHtmlNamespace(tagName, parent, parentTagName) {
+        // The only way to switch from SVG to HTML is via
+        // HTML integration points, and from MathML to HTML
+        // is via MathML text integration points
+        if (parent.namespaceURI === SVG_NAMESPACE && !HTML_INTEGRATION_POINTS[parentTagName]) {
+          return false;
+        }
+        if (parent.namespaceURI === MATHML_NAMESPACE && !MATHML_TEXT_INTEGRATION_POINTS[parentTagName]) {
+          return false;
+        }
+        // We disallow tags that are specific for MathML
+        // or SVG and should never appear in HTML namespace
+        return !ALL_MATHML_TAGS[tagName] && (COMMON_SVG_AND_HTML_ELEMENTS[tagName] || !ALL_SVG_TAGS[tagName]);
+      };
       /**
        * @param element a DOM element whose namespace is being checked
        * @returns Return false if the element has a
@@ -18884,51 +19713,13 @@
           return false;
         }
         if (element.namespaceURI === SVG_NAMESPACE) {
-          // The only way to switch from HTML namespace to SVG
-          // is via <svg>. If it happens via any other tag, then
-          // it should be killed.
-          if (parent.namespaceURI === HTML_NAMESPACE) {
-            return tagName === 'svg';
-          }
-          // The only way to switch from MathML to SVG is via`
-          // svg if parent is either <annotation-xml> or MathML
-          // text integration points.
-          if (parent.namespaceURI === MATHML_NAMESPACE) {
-            return tagName === 'svg' && (parentTagName === 'annotation-xml' || MATHML_TEXT_INTEGRATION_POINTS[parentTagName]);
-          }
-          // We only allow elements that are defined in SVG
-          // spec. All others are disallowed in SVG namespace.
-          return Boolean(ALL_SVG_TAGS[tagName]);
+          return _checkSvgNamespace(tagName, parent, parentTagName);
         }
         if (element.namespaceURI === MATHML_NAMESPACE) {
-          // The only way to switch from HTML namespace to MathML
-          // is via <math>. If it happens via any other tag, then
-          // it should be killed.
-          if (parent.namespaceURI === HTML_NAMESPACE) {
-            return tagName === 'math';
-          }
-          // The only way to switch from SVG to MathML is via
-          // <math> and HTML integration points
-          if (parent.namespaceURI === SVG_NAMESPACE) {
-            return tagName === 'math' && HTML_INTEGRATION_POINTS[parentTagName];
-          }
-          // We only allow elements that are defined in MathML
-          // spec. All others are disallowed in MathML namespace.
-          return Boolean(ALL_MATHML_TAGS[tagName]);
+          return _checkMathMlNamespace(tagName, parent, parentTagName);
         }
         if (element.namespaceURI === HTML_NAMESPACE) {
-          // The only way to switch from SVG to HTML is via
-          // HTML integration points, and from MathML to HTML
-          // is via MathML text integration points
-          if (parent.namespaceURI === SVG_NAMESPACE && !HTML_INTEGRATION_POINTS[parentTagName]) {
-            return false;
-          }
-          if (parent.namespaceURI === MATHML_NAMESPACE && !MATHML_TEXT_INTEGRATION_POINTS[parentTagName]) {
-            return false;
-          }
-          // We disallow tags that are specific for MathML
-          // or SVG and should never appear in HTML namespace
-          return !ALL_MATHML_TAGS[tagName] && (COMMON_SVG_AND_HTML_ELEMENTS[tagName] || !ALL_SVG_TAGS[tagName]);
+          return _checkHtmlNamespace(tagName, parent, parentTagName);
         }
         // For XHTML and XML documents that support custom namespaces
         if (PARSER_MEDIA_TYPE === 'application/xhtml+xml' && ALLOWED_NAMESPACES[element.namespaceURI]) {
@@ -18953,7 +19744,81 @@
           // eslint-disable-next-line unicorn/prefer-dom-node-remove
           getParentNode(node).removeChild(node);
         } catch (_) {
+          /* The normal detach failed — this is reached for a parentless node
+             (getParentNode() is null, so .removeChild throws). Element.prototype
+             .remove() is itself a spec no-op on a parentless node, so a recorded
+             "removal" would otherwise hand the caller back an intact,
+             payload-bearing node (e.g. a detached IN_PLACE root the mXSS canary or
+             the style-with-element-child rule decided to kill). Fail closed by
+             throwing — exactly as a clobbered root does at the IN_PLACE entry —
+             rather than trying to "neutralize" the node via its own methods.
+             Neutralizing would mean calling getAttributeNames()/removeAttribute()
+             on the node, both of which a <form> root can clobber via a named child
+             (and _isClobbered does not even probe getAttributeNames), so the
+             neutralize step could itself be silently defeated, leaving the payload
+             intact. A throw touches only the cached, clobber-safe remove() and
+             getParentNode(). Generalizes GHSA-r47g-fvhr-h676 (clobbered-form root)
+             to every root-kill reason. REPORT-3.
+                    This lives inside the catch, so it never fires for a normally-removed
+             in-tree node: those have a parent, removeChild() succeeds, and the
+             catch is not entered. Only a kept (parentless) root reaches here. */
           remove(node);
+          if (!getParentNode(node)) {
+            throw typeErrorCreate('a node selected for removal could not be detached from its tree ' + 'and cannot be safely returned; refusing to sanitize in place');
+          }
+        }
+      };
+      /**
+       * _neutralizeRoot
+       *
+       * Fail-closed teardown of an in-place root after the sanitize walk aborts
+       * (campaign-3 F2). An internal throw mid-walk — e.g. a page-registered
+       * custom element's reaction detaches a node so `_forceRemove`'s deliberate
+       * parentless guard throws, or any other re-entrant engine mutation — would
+       * otherwise leave the caller's *live* tree half-sanitized, with everything
+       * after the abort point still carrying its handlers. There is no safe way
+       * to resume the walk (the tree mutated under us), so we strip the root bare:
+       * remove every child and every attribute, then let the caller's catch see
+       * the original error. Clobber-safe (cached `remove`/`childNodes`/`attributes`
+       * getters; the root was already clobber-pre-flighted at the IN_PLACE entry).
+       *
+       * @param root the in-place root to empty
+       */
+      const _neutralizeRoot = function _neutralizeRoot(root) {
+        /* Strip every disallowed attribute (on* handlers included) off the whole
+           subtree BEFORE detaching anything. Detaching first would hand back
+           handler-bearing originals (e.g. an already-loading `<img onerror>`)
+           whose queued resource event still fires in page scope after we throw.
+           Clobber-safe reads; a doomed clobbered node's own attributes are
+           irrelevant while its non-clobbered descendants are reached and scrubbed. */
+        _neutralizeSubtree(root);
+        const childNodes = getChildNodes(root);
+        if (childNodes) {
+          const snapshot = [];
+          arrayForEach(childNodes, child => {
+            arrayPush(snapshot, child);
+          });
+          arrayForEach(snapshot, child => {
+            try {
+              remove(child);
+            } catch (_) {
+              /* Best-effort teardown; a still-attached child is handled below */
+            }
+          });
+        }
+        const attributes = getAttributes(root);
+        if (attributes) {
+          for (let i = attributes.length - 1; i >= 0; --i) {
+            const attribute = attributes[i];
+            const name = attribute && attribute.name;
+            if (typeof name === 'string') {
+              try {
+                root.removeAttribute(name);
+              } catch (_) {
+                /* Clobbered removeAttribute — ignore (fail-closed best effort) */
+              }
+            }
+          }
         }
       };
       /**
@@ -18989,6 +19854,148 @@
         }
       };
       /**
+       * _stripDisallowedAttributes
+       *
+       * Removes every attribute the active configuration does not allow from a
+       * single element, using the same allowlist as the main attribute pass (so
+       * `on*` handlers go, but no `/^on/` blocklist is introduced). Used only to
+       * neutralise nodes that are being discarded from an in-place tree.
+       *
+       * @param element the element to strip
+       */
+      const _stripDisallowedAttributes = function _stripDisallowedAttributes(element) {
+        const attributes = getAttributes(element);
+        if (!attributes) {
+          return;
+        }
+        for (let i = attributes.length - 1; i >= 0; --i) {
+          const attribute = attributes[i];
+          const name = attribute && attribute.name;
+          if (typeof name !== 'string' || ALLOWED_ATTR[transformCaseFunc(name)]) {
+            continue;
+          }
+          try {
+            element.removeAttribute(name);
+          } catch (_) {
+            /* Clobbered removeAttribute on a doomed node — ignore */
+          }
+        }
+      };
+      /**
+       * _neutralizeSubtree
+       *
+       * Completes the audit-5 F1 fix across every removal path. The KEEP_CONTENT
+       * move-hoist neutralises only disallowed-tag removals; clobber, mXSS-canary,
+       * namespace, comment, processing-instruction and KEEP_CONTENT:false removals
+       * all drop their subtree wholesale via `_forceRemove`. On the IN_PLACE path
+       * those dropped nodes are detached from the caller's LIVE tree but a
+       * handler-bearing original among them (an `<img onerror>`/`<video>` that was
+       * loading) keeps its queued resource event, which fires in page scope after
+       * sanitize returns. This walks a removed subtree and strips every attribute
+       * the active configuration does not allow — so `on*` handlers are cancelled
+       * through the SAME allowlist that governs kept nodes, not a separate `/^on/`
+       * blocklist. Run synchronously before sanitize returns, i.e. before any
+       * queued event can fire. Hook-free by design: these nodes leave the output,
+       * so firing attribute hooks for them would be surprising. Clobber-safe reads;
+       * a doomed clobbered node may shadow `removeAttribute` (its own attributes are
+       * irrelevant — it is discarded — while its non-clobbered descendants, e.g.
+       * the `<img>`, are reached and scrubbed).
+       *
+       * @param root the root of a removed subtree to neutralise
+       */
+      const _neutralizeSubtree = function _neutralizeSubtree(root) {
+        const stack = [root];
+        while (stack.length > 0) {
+          const node = stack.pop();
+          const nodeType = getNodeType ? getNodeType(node) : node.nodeType;
+          if (nodeType === NODE_TYPE.element) {
+            _stripDisallowedAttributes(node);
+          }
+          const childNodes = getChildNodes(node);
+          if (childNodes) {
+            for (let i = childNodes.length - 1; i >= 0; --i) {
+              stack.push(childNodes[i]);
+            }
+          }
+        }
+      };
+      /**
+       * _neutralizePatchLinkage
+       *
+       * IN_PLACE entry pre-pass (declarative-partial-updates / streaming
+       * hardening, https://github.com/WICG/declarative-partial-updates).
+       *
+       * The main walk strips patch linkage (`for`/`patchsrc`) and removes range
+       * markers (PIs / markup comments) node-by-node, in document order, AS it
+       * reaches each node. On a live in-place root that leaves a window: from the
+       * moment the root is connected until the walk arrives at a given node, that
+       * node's linkage is live. A patch applied on connection/stream can fire as
+       * a microtask during the walk and inject or teleport an unsanitized DOM
+       * range into a region the iterator has already passed and will not revisit,
+       * so the post-return "tree is sanitized" contract is violated. Sweep the
+       * whole tree once up front and sever every linkage before the walk begins,
+       * closing that window.
+       *
+       * This CANNOT undo a patch that already fired before sanitize ran — that is
+       * the irreducible "do not IN_PLACE a live-connected attacker tree" caveat —
+       * but it closes everything from sanitize-start onward. Gated on SAFE_FOR_XML
+       * to group with the rest of the declarative-partial-updates handling and
+       * stay overridable, consistent with the codebase.
+       *
+       * Clobber-safe traversal (cached childNodes getter); per-node try/catch so a
+       * clobbered root cannot defeat the sweep of its non-clobbered descendants.
+       *
+       * NOTE (pending real-Chrome confirmation, see test/declarative-patch-probe
+       * .html Q1): this mirrors the existing policy of keeping `for` on
+       * <label>/<output>. If the shipping feature can drive a patch through a
+       * surviving `for`-on-label/output + `id` pair, this pre-pass and the
+       * attribute check at _isBasicCustomElement's caller must additionally drop
+       * that pair on the IN_PLACE path. Left as-is until the taxonomy is verified.
+       *
+       * @param root the in-place root to sweep
+       */
+      const _neutralizePatchLinkage = function _neutralizePatchLinkage(root) {
+        if (!SAFE_FOR_XML) {
+          return;
+        }
+        const stack = [root];
+        while (stack.length > 0) {
+          const node = stack.pop();
+          const nodeType = getNodeType ? getNodeType(node) : node.nodeType;
+          /* Remove range markers (the target side of a patch linkage): every
+             processing instruction, and any markup-bearing comment. */
+          if (nodeType === NODE_TYPE.processingInstruction || nodeType === NODE_TYPE.comment && regExpTest(COMMENT_MARKUP_PROBE, node.data)) {
+            try {
+              remove(node);
+            } catch (_) {
+              /* Best-effort */
+            }
+            continue;
+          }
+          /* Strip patch-source attributes (the source side) off elements. */
+          if (nodeType === NODE_TYPE.element) {
+            const element = node;
+            const lcTag = transformCaseFunc(getNodeName ? getNodeName(node) : node.nodeName);
+            try {
+              if (element.hasAttribute && element.hasAttribute('patchsrc')) {
+                element.removeAttribute('patchsrc');
+              }
+              if (element.hasAttribute && element.hasAttribute('for') && lcTag !== 'label' && lcTag !== 'output') {
+                element.removeAttribute('for');
+              }
+            } catch (_) {
+              /* Clobbered removeAttribute/hasAttribute on a doomed node — ignore */
+            }
+          }
+          const childNodes = getChildNodes(node);
+          if (childNodes) {
+            for (let i = childNodes.length - 1; i >= 0; --i) {
+              stack.push(childNodes[i]);
+            }
+          }
+        }
+      };
+      /**
        * _initDocument
        *
        * @param dirty - a string of dirty markup
@@ -19009,7 +20016,7 @@
           // Root of XHTML doc must contain xmlns declaration (see https://www.w3.org/TR/xhtml1/normative.html#strict)
           dirty = '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>' + dirty + '</body></html>';
         }
-        const dirtyPayload = trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
+        const dirtyPayload = trustedTypesPolicy ? _createTrustedHTML(dirty) : dirty;
         /*
          * Use the DOMParser API by default, fallback later if needs be
          * DOMParser not work for svg when has multiple root element.
@@ -19050,28 +20057,259 @@
         NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_PROCESSING_INSTRUCTION | NodeFilter.SHOW_CDATA_SECTION, null);
       };
       /**
+       * Replace template expression syntax (mustache, ERB, template
+       * literal) with a space; shared by all SAFE_FOR_TEMPLATES scrub
+       * sites. Order matters: mustache, then ERB, then template literal.
+       *
+       * @param value the string to scrub
+       * @returns the scrubbed string
+       */
+      const _stripTemplateExpressions = function _stripTemplateExpressions(value) {
+        value = stringReplace(value, MUSTACHE_EXPR$1, ' ');
+        value = stringReplace(value, ERB_EXPR$1, ' ');
+        value = stringReplace(value, TMPLIT_EXPR$1, ' ');
+        return value;
+      };
+      /**
+       * Strip template-engine expressions ({{...}}, ${...}, <%...%>) from the
+       * character data of an element subtree. Used as the final safety net for
+       * SAFE_FOR_TEMPLATES on every DOM-returning code path so that expressions
+       * which only form after text-node normalization (e.g. fragments split across
+       * stripped elements) cannot survive into a template-evaluating framework.
+       *
+       * Walks text/comment/CDATA/processing-instruction nodes and mutates `.data`
+       * in place rather than round-tripping through innerHTML. This preserves
+       * descendant node references (important for IN_PLACE callers), avoids a
+       * serialize/reparse cycle, and reads literal character data — which means
+       * `<%...%>` in text content matches the ERB regex against its real bytes
+       * instead of the HTML-entity-escaped form innerHTML would produce.
+       *
+       * Attribute values are not visited here; SAFE_FOR_TEMPLATES handling for
+       * attributes is performed during the per-node `_sanitizeAttributes` pass.
+       *
+       * @param node The root element whose character data should be scrubbed.
+       */
+      const _scrubTemplateExpressions2 = function _scrubTemplateExpressions(node) {
+        var _node$querySelectorAl;
+        node.normalize();
+        const walker = createNodeIterator.call(node.ownerDocument || node, node,
+        // eslint-disable-next-line no-bitwise
+        NodeFilter.SHOW_TEXT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_CDATA_SECTION | NodeFilter.SHOW_PROCESSING_INSTRUCTION, null);
+        let currentNode = walker.nextNode();
+        while (currentNode) {
+          currentNode.data = _stripTemplateExpressions(currentNode.data);
+          currentNode = walker.nextNode();
+        }
+        // NodeIterator does not descend into <template>.content per the DOM spec,
+        // so we must explicitly recurse into each template's content fragment,
+        // mirroring the approach used by _sanitizeShadowDOM.
+        const templates = (_node$querySelectorAl = node.querySelectorAll) === null || _node$querySelectorAl === void 0 ? void 0 : _node$querySelectorAl.call(node, 'template');
+        if (templates) {
+          arrayForEach(templates, tmpl => {
+            if (_isDocumentFragment(tmpl.content)) {
+              _scrubTemplateExpressions2(tmpl.content);
+            }
+          });
+        }
+      };
+      /**
        * _isClobbered
+       *
+       * Detect DOM-clobbering on HTMLFormElement nodes. Form is the only HTML
+       * interface with [LegacyOverrideBuiltIns]; a descendant element with a
+       * `name` attribute matching a prototype property shadows that property
+       * on direct reads. We use this check at the IN_PLACE entry-point and
+       * during attribute sanitization to refuse clobbered forms.
        *
        * @param element element to check for clobbering attacks
        * @return true if clobbered, false if safe
        */
       const _isClobbered = function _isClobbered(element) {
-        return element instanceof HTMLFormElement && (typeof element.nodeName !== 'string' || typeof element.textContent !== 'string' || typeof element.removeChild !== 'function' || !(element.attributes instanceof NamedNodeMap) || typeof element.removeAttribute !== 'function' || typeof element.setAttribute !== 'function' || typeof element.namespaceURI !== 'string' || typeof element.insertBefore !== 'function' || typeof element.hasChildNodes !== 'function');
+        // Realm-independent tag-name probe. If we can't determine the tag
+        // name at all, we can't reason about clobbering — return false
+        // (the caller's other defences still apply).
+        const realTagName = getNodeName ? getNodeName(element) : null;
+        if (typeof realTagName !== 'string') {
+          return false;
+        }
+        if (transformCaseFunc(realTagName) !== 'form') {
+          return false;
+        }
+        return typeof element.nodeName !== 'string' || typeof element.textContent !== 'string' || typeof element.removeChild !== 'function' ||
+        // Realm-safe NamedNodeMap detection: equality against the cached
+        // prototype getter. Clobbered .attributes (e.g. <input name="attributes">)
+        // makes the direct read diverge from the cached read; a clean form
+        // (same-realm OR foreign-realm) has both reads pointing at the same
+        // canonical NamedNodeMap.
+        element.attributes !== getAttributes(element) || typeof element.removeAttribute !== 'function' || typeof element.setAttribute !== 'function' || typeof element.namespaceURI !== 'string' || typeof element.insertBefore !== 'function' || typeof element.hasChildNodes !== 'function' ||
+        // NodeType clobbering probe. Cached Node.prototype.nodeType getter
+        // returns the integer 1 for any Element regardless of realm; direct
+        // read on a clobbered form (e.g. <input name="nodeType">) returns
+        // the named child element. Cheap addition — nodeType is read from
+        // an internal slot, no serialization cost — and removes a residual
+        // clobbering surface used by several mXSS / PI / comment branches
+        // in _sanitizeElements that compare currentNode.nodeType directly.
+        element.nodeType !== getNodeType(element) ||
+        // HTMLFormElement has [LegacyOverrideBuiltIns]: a descendant named
+        // "childNodes" shadows the prototype getter. Direct reads of
+        // form.childNodes from a clobbered form return the named child
+        // instead of the real NodeList, so any walk that reads it directly
+        // skips the form's real children. Compare the direct read to the
+        // cached Node.prototype getter — when the form's named-property
+        // getter intercepts the read, the two values differ and we flag
+        // the form. This catches every clobbering child type (input,
+        // select, etc.) regardless of whether the named child happens to
+        // carry a numeric .length, which a typeof-based probe would miss
+        // (e.g. HTMLSelectElement.length is a defined unsigned-long).
+        element.childNodes !== getChildNodes(element);
       };
       /**
-       * Checks whether the given object is a DOM node.
+       * Checks whether the given value is a DocumentFragment from any realm.
+       *
+       * The realm-independent replacement reads `nodeType` through the cached
+       * Node.prototype getter and compares to the DOCUMENT_FRAGMENT_NODE
+       * constant (11). nodeType is a numeric value resolved from the node's
+       * internal slot, identical across realms for the same kind of node.
+       *
+       * @param value object to check
+       * @return true if value is a DocumentFragment-shaped node from any realm
+       */
+      const _isDocumentFragment = function _isDocumentFragment(value) {
+        if (!getNodeType || typeof value !== 'object' || value === null) {
+          return false;
+        }
+        try {
+          return getNodeType(value) === NODE_TYPE.documentFragment;
+        } catch (_) {
+          return false;
+        }
+      };
+      /**
+       * Checks whether the given object is a DOM node, including nodes that
+       * originate from a different window/realm (e.g. an iframe's
+       * contentDocument). The previous `value instanceof Node` check was
+       * realm-bound: nodes from a different window failed it, causing
+       * sanitize() to silently stringify them and reset IN_PLACE to false,
+       * returning the original node unsanitized. See GHSA-4w3q-35jp-p934.
        *
        * @param value object to check whether it's a DOM node
-       * @return true is object is a DOM node
+       * @return true if value is a DOM node from any realm
        */
       const _isNode = function _isNode(value) {
-        return typeof Node === 'function' && value instanceof Node;
+        if (!getNodeType || typeof value !== 'object' || value === null) {
+          return false;
+        }
+        try {
+          return typeof getNodeType(value) === 'number';
+        } catch (_) {
+          return false;
+        }
       };
       function _executeHooks(hooks, currentNode, data) {
+        if (hooks.length === 0) {
+          return;
+        }
         arrayForEach(hooks, hook => {
           hook.call(DOMPurify, currentNode, data, CONFIG);
         });
       }
+      /**
+       * Structural-threat checks that condemn a node regardless of the
+       * allowlists: mXSS via namespace confusion, risky CSS construction,
+       * processing instructions, markup-bearing comments. Pure predicate;
+       * the caller removes. Check order is load-bearing.
+       *
+       * @param currentNode the node to inspect
+       * @param tagName the node's transformCaseFunc'd tag name
+       * @return true if the node must be removed
+       */
+      const _isUnsafeNode = function _isUnsafeNode(currentNode, tagName) {
+        /* Detect mXSS attempts abusing namespace confusion */
+        if (SAFE_FOR_XML && currentNode.hasChildNodes() && !_isNode(currentNode.firstElementChild) && regExpTest(ELEMENT_MARKUP_PROBE, currentNode.textContent) && regExpTest(ELEMENT_MARKUP_PROBE, currentNode.innerHTML)) {
+          return true;
+        }
+        /* Remove risky CSS construction leading to mXSS */
+        if (SAFE_FOR_XML && currentNode.namespaceURI === HTML_NAMESPACE && tagName === 'style' && _isNode(currentNode.firstElementChild)) {
+          return true;
+        }
+        /* Remove any occurrence of processing instructions */
+        if (currentNode.nodeType === NODE_TYPE.processingInstruction) {
+          return true;
+        }
+        /* Remove any kind of possibly harmful comments */
+        if (SAFE_FOR_XML && currentNode.nodeType === NODE_TYPE.comment && regExpTest(COMMENT_MARKUP_PROBE, currentNode.data)) {
+          return true;
+        }
+        return false;
+      };
+      /**
+       * Handle a node whose tag is forbidden or not allowlisted: keep
+       * allowed custom elements (false return exits _sanitizeElements
+       * early - the namespace and fallback-tag removal checks are
+       * intentionally skipped for kept custom elements), else hoist
+       * content per KEEP_CONTENT and remove.
+       *
+       * A kept custom element is the ONLY case in which this function
+       * returns false, so the caller uses that return value to run the
+       * afterSanitizeElements hook on the kept element and keep the
+       * element-hook lifecycle consistent with normal allowlisted
+       * elements (GHSA-c2j3-45gr-mqc4).
+       *
+       * @param currentNode the disallowed node
+       * @param tagName the node's transformCaseFunc'd tag name
+       * @return true if the node was removed, false if kept
+       */
+      const _sanitizeDisallowedNode = function _sanitizeDisallowedNode(currentNode, tagName) {
+        /* Check if we have a custom element to handle */
+        if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName)) {
+          if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) {
+            return false;
+          }
+          if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) {
+            return false;
+          }
+        }
+        /* Keep content except for bad-listed elements.
+             Use the cached prototype getters exclusively — the previous code
+             had `|| currentNode.parentNode` / `|| currentNode.childNodes`
+             fallbacks, but the cached getters always return the canonical
+             value (or null for a real parent-less node), so the fallback
+             path was dead in safe cases and a clobbering surface in unsafe
+             ones. Falsy cached results stay falsy; the `if (childNodes &&
+             parentNode)` check already gates correctly. */
+        if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
+          const parentNode = getParentNode(currentNode);
+          const childNodes = getChildNodes(currentNode);
+          if (childNodes && parentNode) {
+            const childCount = childNodes.length;
+            /* In-place: hoist the *original* children so the iterator visits
+                 and sanitises them through the same allowlist pass as every other
+                 node. The caller built the tree in the live document, so the
+                 originals carry already-queued resource events (`<img onerror>`,
+                 `<video>`/`<audio>` error, lazy/`onload`, …); cloning would leave
+                 those originals detached but still armed, firing in page scope
+                 while the returned tree looked clean. Moving is safe in-place: the
+                 root is pre-validated as an allowed tag and so is never the node
+                 being removed, which keeps `parentNode` inside the iterator root
+                 and the relocated child inside the serialised tree.
+                          Otherwise (string / DOM-copy paths): clone. The iterator is rooted
+                 at — and the result serialised from — `body`, so a restrictive
+                 ALLOWED_TAGS that removes `body` itself must leave its content in
+                 place, which only cloning does; and those paths parse into an
+                 inert document, so their discarded originals never had a queued
+                 event to neutralise.
+                          `childNodes` is live; a tail-to-head walk keeps `childNodes[i]`
+                 valid whether we move (drops the trailing entry) or clone (leaves
+                 the list intact). */
+            for (let i = childCount - 1; i >= 0; --i) {
+              const hoisted = IN_PLACE ? childNodes[i] : cloneNode(childNodes[i], true);
+              parentNode.insertBefore(hoisted, getNextSibling(currentNode));
+            }
+          }
+        }
+        _forceRemove(currentNode);
+        return true;
+      };
       /**
        * _sanitizeElements
        *
@@ -19081,81 +20319,89 @@
        * @param currentNode to check for permission to exist
        * @return true if node was killed, false if left alive
        */
-      const _sanitizeElements = function _sanitizeElements(currentNode) {
-        let content = null;
+      // eslint-disable-next-line complexity
+      const _sanitizeElements = function _sanitizeElements(currentNode, root) {
         /* Execute a hook if present */
         _executeHooks(hooks.beforeSanitizeElements, currentNode, null);
+        /* A hook may have detached the node — treat it as removed (see the
+           detached-node comment after the uponSanitizeElement hook below). */
+        if (currentNode !== root && getParentNode(currentNode) === null) {
+          return true;
+        }
         /* Check if element is clobbered or can clobber */
         if (_isClobbered(currentNode)) {
           _forceRemove(currentNode);
           return true;
         }
         /* Now let's check the element's type and name */
-        const tagName = transformCaseFunc(currentNode.nodeName);
+        const tagName = transformCaseFunc(getNodeName ? getNodeName(currentNode) : currentNode.nodeName);
         /* Execute a hook if present */
         _executeHooks(hooks.uponSanitizeElement, currentNode, {
           tagName,
           allowedTags: ALLOWED_TAGS
         });
-        /* Detect mXSS attempts abusing namespace confusion */
-        if (SAFE_FOR_XML && currentNode.hasChildNodes() && !_isNode(currentNode.firstElementChild) && regExpTest(/<[/\w!]/g, currentNode.innerHTML) && regExpTest(/<[/\w!]/g, currentNode.textContent)) {
-          _forceRemove(currentNode);
+        /* A hook may have detached the node from the tree — a long-standing
+           user pattern (issue #469; draw.io-style foreignObject filtering).
+           Per the cached, unclobberable parentNode getter the node is
+           genuinely out of the tree, so it can reach neither the serialized
+           output nor an IN_PLACE live tree; treat it as removed and stop
+           processing it. Without this guard, the unsafe-node / namespace
+           checks below would call _forceRemove on a parentless node and hit
+           the REPORT-3 fail-closed throw — which exists for nodes DOMPurify
+           wants gone but *cannot* detach (clobbered / parentless roots), the
+           opposite of a node that is already safely gone. The walk root is
+           exempt: a detached IN_PLACE root is legitimate input and must still
+           be fully sanitized, and a kill-decision on it must keep hitting the
+           REPORT-3 throw. Nodes detached by hooks are the hook's
+           responsibility: they are not recorded in DOMPurify.removed and are
+           not neutralized by the post-walk IN_PLACE pass. */
+        if (currentNode !== root && getParentNode(currentNode) === null) {
           return true;
         }
-        /* Remove any occurrence of processing instructions */
-        if (currentNode.nodeType === NODE_TYPE.progressingInstruction) {
-          _forceRemove(currentNode);
-          return true;
-        }
-        /* Remove any kind of possibly harmful comments */
-        if (SAFE_FOR_XML && currentNode.nodeType === NODE_TYPE.comment && regExpTest(/<[/\w]/g, currentNode.data)) {
+        /* Remove mXSS vectors, processing instructions and risky comments */
+        if (_isUnsafeNode(currentNode, tagName)) {
           _forceRemove(currentNode);
           return true;
         }
         /* Remove element if anything forbids its presence */
-        if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
-          /* Check if we have a custom element to handle */
-          if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName)) {
-            if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) {
-              return false;
-            }
-            if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) {
-              return false;
-            }
+        if (FORBID_TAGS[tagName] || !(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && !ALLOWED_TAGS[tagName]) {
+          const removed = _sanitizeDisallowedNode(currentNode, tagName);
+          /* A false return means the node is a custom element kept via
+             CUSTOM_ELEMENT_HANDLING - the only keep path through
+             _sanitizeDisallowedNode. Run afterSanitizeElements on it so the
+             element-hook lifecycle matches normal allowlisted elements: a
+             security policy applied in this hook (e.g. stripping an attribute
+             from every surviving element) must not silently skip kept custom
+             elements (GHSA-c2j3-45gr-mqc4). This mirrors the normal-element
+             tail below - the hook runs, then the walker's subsequent
+             _sanitizeAttributes pass sanitizes the element's attributes. The
+             deliberately skipped namespace and fallback-tag removal checks stay
+             skipped; they are removal decisions, not the hook contract. */
+          if (removed === false) {
+            _executeHooks(hooks.afterSanitizeElements, currentNode, null);
           }
-          /* Keep content except for bad-listed elements */
-          if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
-            const parentNode = getParentNode(currentNode) || currentNode.parentNode;
-            const childNodes = getChildNodes(currentNode) || currentNode.childNodes;
-            if (childNodes && parentNode) {
-              const childCount = childNodes.length;
-              for (let i = childCount - 1; i >= 0; --i) {
-                const childClone = cloneNode(childNodes[i], true);
-                childClone.__removalCount = (currentNode.__removalCount || 0) + 1;
-                parentNode.insertBefore(childClone, getNextSibling(currentNode));
-              }
-            }
-          }
-          _forceRemove(currentNode);
-          return true;
+          return removed;
         }
-        /* Check whether element has a valid namespace */
-        if (currentNode instanceof Element && !_checkValidNamespace(currentNode)) {
+        /* Check whether element has a valid namespace.
+           Realm-safe check (GHSA-hpcv-96wg-7vj8): use the cached Node.prototype
+           nodeType getter rather than `instanceof Element`, which is realm-
+           bound and short-circuits to false for any node minted in a different
+           realm — letting a foreign-realm element with a forbidden namespace
+           slip past the namespace check entirely. */
+        const nt = getNodeType ? getNodeType(currentNode) : currentNode.nodeType;
+        if (nt === NODE_TYPE.element && !_checkValidNamespace(currentNode)) {
           _forceRemove(currentNode);
           return true;
         }
         /* Make sure that older browsers don't get fallback-tag mXSS */
-        if ((tagName === 'noscript' || tagName === 'noembed' || tagName === 'noframes') && regExpTest(/<\/no(script|embed|frames)/i, currentNode.innerHTML)) {
+        if ((tagName === 'noscript' || tagName === 'noembed' || tagName === 'noframes') && regExpTest(FALLBACK_TAG_CLOSE, currentNode.innerHTML)) {
           _forceRemove(currentNode);
           return true;
         }
         /* Sanitize element content to be template-safe */
         if (SAFE_FOR_TEMPLATES && currentNode.nodeType === NODE_TYPE.text) {
           /* Get the element's text content */
-          content = currentNode.textContent;
-          arrayForEach([MUSTACHE_EXPR, ERB_EXPR, TMPLIT_EXPR], expr => {
-            content = stringReplace(content, expr, ' ');
-          });
+          const content = _stripTemplateExpressions(currentNode.textContent);
           if (currentNode.textContent !== content) {
             arrayPush(DOMPurify.removed, {
               element: currentNode.cloneNode()
@@ -19177,31 +20423,67 @@
        */
       // eslint-disable-next-line complexity
       const _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
+        /* FORBID_ATTR must always win, even if ADD_ATTR predicate would allow it */
+        if (FORBID_ATTR[lcName]) {
+          return false;
+        }
+        /* Reject declarative-partial-updates patch-linkage attributes
+           (https://github.com/WICG/declarative-partial-updates).
+                Empirical note (Chrome 150, verified — see
+           test/declarative-patch-probe-v3.html): expansion is NOT applied after
+           sanitization. For the string path it fires during sanitize()'s own
+           parse, so the walk sees and sanitizes the fully materialized expanded
+           tree — teleports into MathML/SVG integration points included; a
+           weaponized `<template for>`->`<img onerror>` comes back with the handler
+           stripped. For the IN_PLACE path it fires on connection, before the walk.
+           Either way DOMPurify is NOT blind to the patch.
+                This removal is therefore defense-in-depth rather than the sole barrier:
+           it prevents live linkage from surviving into the OUTPUT and re-expanding
+           in the caller's context, and keeps behaviour deterministic if a future
+           engine defers expansion. `for` is legitimate only on <label>/<output>;
+           anywhere else (notably <template for>) it links the element to a patch
+           target and teleports or removes an arbitrary DOM range by id/marker name.
+           `patchsrc` fetches remote markup and is treated as a script-loading
+           mechanism (CSP). Gated on SAFE_FOR_XML so the removal groups with the
+           other structural-threat checks and stays overridable, consistent with
+           the rest of the codebase. PI range markers are already removed by
+           _isUnsafeNode. */
+        if (SAFE_FOR_XML && lcName === 'patchsrc') {
+          return false;
+        }
+        if (SAFE_FOR_XML && lcName === 'for' && lcTag !== 'label' && lcTag !== 'output') {
+          return false;
+        }
         /* Make sure attribute cannot clobber */
         if (SANITIZE_DOM && (lcName === 'id' || lcName === 'name') && (value in document || value in formElement)) {
           return false;
         }
+        const nameIsPermitted = ALLOWED_ATTR[lcName] || EXTRA_ELEMENT_HANDLING.attributeCheck instanceof Function && EXTRA_ELEMENT_HANDLING.attributeCheck(lcName, lcTag);
         /* Allow valid data-* attributes: At least one character after "-"
             (https://html.spec.whatwg.org/multipage/dom.html#embedding-custom-non-visible-data-with-the-data-*-attributes)
             XML-compatible (https://html.spec.whatwg.org/multipage/infrastructure.html#xml-compatible and http://www.w3.org/TR/xml/#d0e804)
             We don't need to check the value; it's always URI safe. */
-        if (ALLOW_DATA_ATTR && !FORBID_ATTR[lcName] && regExpTest(DATA_ATTR, lcName)) ; else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR, lcName)) ; else if (!ALLOWED_ATTR[lcName] || FORBID_ATTR[lcName]) {
+        if (ALLOW_DATA_ATTR && regExpTest(DATA_ATTR$1, lcName)) ; else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR$1, lcName)) ; else if (!nameIsPermitted) {
           if (
           // First condition does a very basic check if a) it's basically a valid custom element tagname AND
           // b) if the tagName passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
           // and c) if the attribute name passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.attributeNameCheck
-          _isBasicCustomElement(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName)) ||
+          _isBasicCustomElement(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName, lcTag)) ||
           // Alternative, second condition checks if it's an `is`-attribute, AND
           // the value passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
           lcName === 'is' && CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, value) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(value))) ; else {
             return false;
           }
           /* Check value is safe. First, is attr inert? If so, is safe */
-        } else if (URI_SAFE_ATTRIBUTES[lcName]) ; else if (regExpTest(IS_ALLOWED_URI$1, stringReplace(value, ATTR_WHITESPACE, ''))) ; else if ((lcName === 'src' || lcName === 'xlink:href' || lcName === 'href') && lcTag !== 'script' && stringIndexOf(value, 'data:') === 0 && DATA_URI_TAGS[lcTag]) ; else if (ALLOW_UNKNOWN_PROTOCOLS && !regExpTest(IS_SCRIPT_OR_DATA, stringReplace(value, ATTR_WHITESPACE, ''))) ; else if (value) {
+        } else if (URI_SAFE_ATTRIBUTES[lcName]) ; else if (regExpTest(IS_ALLOWED_URI$1, stringReplace(value, ATTR_WHITESPACE$1, ''))) ; else if ((lcName === 'src' || lcName === 'xlink:href' || lcName === 'href') && lcTag !== 'script' && stringIndexOf(value, 'data:') === 0 && DATA_URI_TAGS[lcTag]) ; else if (ALLOW_UNKNOWN_PROTOCOLS && !regExpTest(IS_SCRIPT_OR_DATA$1, stringReplace(value, ATTR_WHITESPACE$1, ''))) ; else if (value) {
           return false;
         } else ;
         return true;
       };
+      /* Names the HTML spec reserves from valid-custom-element-name; these must
+       * never be treated as basic custom elements even when a permissive
+       * CUSTOM_ELEMENT_HANDLING.tagNameCheck is configured. */
+      const RESERVED_CUSTOM_ELEMENT_NAMES = addToSet({}, ['annotation-xml', 'color-profile', 'font-face', 'font-face-format', 'font-face-name', 'font-face-src', 'font-face-uri', 'missing-glyph']);
       /**
        * _isBasicCustomElement
        * checks if at least one dash is included in tagName, and it's not the first char
@@ -19211,7 +20493,64 @@
        * @returns Returns true if the tag name meets the basic criteria for a custom element, otherwise false.
        */
       const _isBasicCustomElement = function _isBasicCustomElement(tagName) {
-        return tagName !== 'annotation-xml' && stringMatch(tagName, CUSTOM_ELEMENT);
+        return !RESERVED_CUSTOM_ELEMENT_NAMES[stringToLowerCase(tagName)] && regExpTest(CUSTOM_ELEMENT$1, tagName);
+      };
+      /**
+       * Wrap an attribute value in the matching Trusted Types object when
+       * the active policy requires it. Namespaced attributes pass through
+       * unchanged (no TT support yet, see
+       * https://bugs.chromium.org/p/chromium/issues/detail?id=1305293).
+       *
+       * @param lcTag lowercase tag name of the containing element
+       * @param lcName lowercase attribute name
+       * @param namespaceURI the attribute's namespace, if any
+       * @param value the attribute value to wrap
+       * @return the value, wrapped when Trusted Types demand it
+       */
+      const _applyTrustedTypesToAttribute = function _applyTrustedTypesToAttribute(lcTag, lcName, namespaceURI, value) {
+        if (trustedTypesPolicy && typeof trustedTypes === 'object' && typeof trustedTypes.getAttributeType === 'function' && !namespaceURI) {
+          switch (trustedTypes.getAttributeType(lcTag, lcName)) {
+            case 'TrustedHTML':
+              {
+                return _createTrustedHTML(value);
+              }
+            case 'TrustedScriptURL':
+              {
+                return _createTrustedScriptURL(value);
+              }
+          }
+        }
+        return value;
+      };
+      /**
+       * Write a modified attribute value back onto the element. On
+       * success, re-probe for clobbering introduced by the new value and
+       * remove the element when found; otherwise pop the removal entry
+       * recorded by the earlier _removeAttribute (long-standing pairing
+       * with the SANITIZE_NAMED_PROPS path - do not "fix" casually). On
+       * failure, remove the attribute instead.
+       *
+       * @param currentNode the element carrying the attribute
+       * @param name the attribute name as present on the element
+       * @param namespaceURI the attribute's namespace, if any
+       * @param value the new attribute value
+       */
+      const _setAttributeValue = function _setAttributeValue(currentNode, name, namespaceURI, value) {
+        try {
+          if (namespaceURI) {
+            currentNode.setAttributeNS(namespaceURI, name, value);
+          } else {
+            /* Fallback to setAttribute() for browser-unrecognized namespaces e.g. "x-schema". */
+            currentNode.setAttribute(name, value);
+          }
+          if (_isClobbered(currentNode)) {
+            _forceRemove(currentNode);
+          } else {
+            arrayPop(DOMPurify.removed);
+          }
+        } catch (_) {
+          _removeAttribute(name, currentNode);
+        }
       };
       /**
        * _sanitizeAttributes
@@ -19226,9 +20565,7 @@
       const _sanitizeAttributes = function _sanitizeAttributes(currentNode) {
         /* Execute a hook if present */
         _executeHooks(hooks.beforeSanitizeAttributes, currentNode, null);
-        const {
-          attributes
-        } = currentNode;
+        const attributes = currentNode.attributes;
         /* Check if we have attributes; if not we might have a text node */
         if (!attributes || _isClobbered(currentNode)) {
           return;
@@ -19241,14 +20578,13 @@
           forceKeepAttr: undefined
         };
         let l = attributes.length;
+        const lcTag = transformCaseFunc(currentNode.nodeName);
         /* Go backwards over all attributes; safely remove bad ones */
         while (l--) {
           const attr = attributes[l];
-          const {
-            name,
-            namespaceURI,
-            value: attrValue
-          } = attr;
+          const name = attr.name,
+            namespaceURI = attr.namespaceURI,
+            attrValue = attr.value;
           const lcName = transformCaseFunc(name);
           const initValue = attrValue;
           let value = name === 'value' ? initValue : stringTrim(initValue);
@@ -19262,18 +20598,25 @@
           /* Full DOM Clobbering protection via namespace isolation,
            * Prefix id and name attributes with `user-content-`
            */
-          if (SANITIZE_NAMED_PROPS && (lcName === 'id' || lcName === 'name')) {
+          if (SANITIZE_NAMED_PROPS && (lcName === 'id' || lcName === 'name') && stringIndexOf(value, SANITIZE_NAMED_PROPS_PREFIX) !== 0) {
             // Remove the attribute with this value
             _removeAttribute(name, currentNode);
             // Prefix the value and later re-create the attribute with the sanitized value
             value = SANITIZE_NAMED_PROPS_PREFIX + value;
           }
+          // Else: already prefixed, leave the attribute alone — the prefix is
+          // itself the clobbering protection, and re-applying it is incorrect.
           /* Work around a security issue with comments inside attributes */
-          if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|title)/i, value)) {
+          if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|script|title|xmp|textarea|noscript|iframe|noembed|noframes)/i, value)) {
             _removeAttribute(name, currentNode);
             continue;
           }
-          /* Did the hooks approve of the attribute? */
+          /* Make sure we cannot easily use animated hrefs, even if animations are allowed */
+          if (lcName === 'attributename' && stringMatch(value, 'href')) {
+            _removeAttribute(name, currentNode);
+            continue;
+          }
+          /* Did the hooks force-keep the attribute? */
           if (hookEvent.forceKeepAttr) {
             continue;
           }
@@ -19283,56 +20626,24 @@
             continue;
           }
           /* Work around a security issue in jQuery 3.0 */
-          if (!ALLOW_SELF_CLOSE_IN_ATTR && regExpTest(/\/>/i, value)) {
+          if (!ALLOW_SELF_CLOSE_IN_ATTR && regExpTest(SELF_CLOSING_TAG, value)) {
             _removeAttribute(name, currentNode);
             continue;
           }
           /* Sanitize attribute content to be template-safe */
           if (SAFE_FOR_TEMPLATES) {
-            arrayForEach([MUSTACHE_EXPR, ERB_EXPR, TMPLIT_EXPR], expr => {
-              value = stringReplace(value, expr, ' ');
-            });
+            value = _stripTemplateExpressions(value);
           }
           /* Is `value` valid for this attribute? */
-          const lcTag = transformCaseFunc(currentNode.nodeName);
           if (!_isValidAttribute(lcTag, lcName, value)) {
             _removeAttribute(name, currentNode);
             continue;
           }
           /* Handle attributes that require Trusted Types */
-          if (trustedTypesPolicy && typeof trustedTypes === 'object' && typeof trustedTypes.getAttributeType === 'function') {
-            if (namespaceURI) ; else {
-              switch (trustedTypes.getAttributeType(lcTag, lcName)) {
-                case 'TrustedHTML':
-                  {
-                    value = trustedTypesPolicy.createHTML(value);
-                    break;
-                  }
-                case 'TrustedScriptURL':
-                  {
-                    value = trustedTypesPolicy.createScriptURL(value);
-                    break;
-                  }
-              }
-            }
-          }
+          value = _applyTrustedTypesToAttribute(lcTag, lcName, namespaceURI, value);
           /* Handle invalid data-* attribute set by try-catching it */
           if (value !== initValue) {
-            try {
-              if (namespaceURI) {
-                currentNode.setAttributeNS(namespaceURI, name, value);
-              } else {
-                /* Fallback to setAttribute() for browser-unrecognized namespaces e.g. "x-schema". */
-                currentNode.setAttribute(name, value);
-              }
-              if (_isClobbered(currentNode)) {
-                _forceRemove(currentNode);
-              } else {
-                arrayPop(DOMPurify.removed);
-              }
-            } catch (_) {
-              _removeAttribute(name, currentNode);
-            }
+            _setAttributeValue(currentNode, name, namespaceURI, value);
           }
         }
         /* Execute a hook if present */
@@ -19343,7 +20654,7 @@
        *
        * @param fragment to iterate over recursively
        */
-      const _sanitizeShadowDOM = function _sanitizeShadowDOM(fragment) {
+      const _sanitizeShadowDOM2 = function _sanitizeShadowDOM(fragment) {
         let shadowNode = null;
         const shadowIterator = _createNodeIterator(fragment);
         /* Execute a hook if present */
@@ -19352,16 +20663,135 @@
           /* Execute a hook if present */
           _executeHooks(hooks.uponSanitizeShadowNode, shadowNode, null);
           /* Sanitize tags and elements */
-          _sanitizeElements(shadowNode);
+          _sanitizeElements(shadowNode, fragment);
           /* Check attributes next */
           _sanitizeAttributes(shadowNode);
-          /* Deep shadow DOM detected */
-          if (shadowNode.content instanceof DocumentFragment) {
-            _sanitizeShadowDOM(shadowNode.content);
+          /* Deep shadow DOM detected.
+             Realm-safe check (GHSA-hpcv-96wg-7vj8): use nodeType against the
+             DOCUMENT_FRAGMENT_NODE constant rather than instanceof, so we
+             recurse into <template>.content from foreign realms too. */
+          if (_isDocumentFragment(shadowNode.content)) {
+            _sanitizeShadowDOM2(shadowNode.content);
+          }
+          /* An element iterated here may itself host an attached
+             shadow root. The default NodeIterator does not enter shadow
+             trees, so a shadow root nested inside template.content was
+             previously reached by no walk at all (the pre-pass at
+             _sanitizeAttachedShadowRoots descends via childNodes, which
+             doesn't enter template.content; the template-content recursion
+             above iterates the content but never inspected shadowRoot).
+             Walk it explicitly. The nodeType guard avoids reading
+             shadowRoot off text / comment / CDATA / PI nodes that the
+             iterator also surfaces. */
+          const shadowNodeType = getNodeType ? getNodeType(shadowNode) : shadowNode.nodeType;
+          if (shadowNodeType === NODE_TYPE.element) {
+            const innerSr = getShadowRoot(shadowNode);
+            if (_isDocumentFragment(innerSr)) {
+              _sanitizeAttachedShadowRoots(innerSr);
+              _sanitizeShadowDOM2(innerSr);
+            }
           }
         }
         /* Execute a hook if present */
         _executeHooks(hooks.afterSanitizeShadowDOM, fragment, null);
+      };
+      /**
+       * _sanitizeAttachedShadowRoots
+       *
+       * Walks `root` and feeds every attached shadow root we encounter into
+       * the existing _sanitizeShadowDOM pipeline. The default node iterator
+       * does not descend into shadow trees, so nodes inside an attached
+       * shadow root would otherwise be skipped entirely.
+       *
+       * Two real input paths put attached shadow roots in front of us:
+       *   1. IN_PLACE on a DOM node that already has shadow roots attached.
+       *   2. DOM-node input where importNode(dirty, true) deep-clones the
+       *      shadow root because it was created with `clonable: true`.
+       *
+       * This pass runs once, up front, so the main iteration loop (and the
+       * existing _sanitizeShadowDOM template-content recursion) stay
+       * untouched — string-input paths are not affected.
+       *
+       * @param root the subtree root to walk for attached shadow roots
+       */
+      const _sanitizeAttachedShadowRoots = function _sanitizeAttachedShadowRoots(root) {
+        /* Iterative (explicit stack) rather than per-child recursion. DOM APIs
+           impose no depth cap, so an attacker-shaped tree (JSON/CRDT/editor data
+           built straight into the DOM — the IN_PLACE surface) deeper than the JS
+           call-stack budget would otherwise overflow native recursion here and
+           throw at the IN_PLACE entry pre-pass, before a single node is
+           sanitized, leaving the caller's live tree untouched (fail-open). See
+           campaign-3 F4. A heap stack keeps depth off the call stack.
+                Each work item is either a node to descend into, or a deferred
+           `_sanitizeShadowDOM` for an already-walked shadow root. The deferred
+           form preserves the original post-order discipline: a shadow root's
+           nested shadow roots are discovered before the outer shadow is
+           sanitized (which may remove hosts). Pushes are in reverse of the
+           desired processing order (LIFO): template content, then children, then
+           the shadow-sanitize, then the shadow walk — so the order matches the
+           previous recursion exactly. */
+        const stack = [{
+          node: root,
+          shadow: null
+        }];
+        while (stack.length > 0) {
+          const item = stack.pop();
+          /* Deferred shadow-DOM sanitisation: runs after its subtree was walked. */
+          if (item.shadow) {
+            _sanitizeShadowDOM2(item.shadow);
+            continue;
+          }
+          const node = item.node;
+          const nodeType = getNodeType ? getNodeType(node) : node.nodeType;
+          const isElement = nodeType === NODE_TYPE.element;
+          /* (pushed last → processed first) Children, snapshotted in reverse so
+             the first child is processed first. Snapshotting matters because a
+             hook may detach siblings mid-walk. */
+          const childNodes = getChildNodes(node);
+          if (childNodes) {
+            for (let i = childNodes.length - 1; i >= 0; --i) {
+              stack.push({
+                node: childNodes[i],
+                shadow: null
+              });
+            }
+          }
+          /* (pushed before children → processed after them, matching the old
+             "template content last" order) When the node is a <template>,
+             descend into its content. */
+          if (isElement) {
+            const rootName = getNodeName ? getNodeName(node) : null;
+            if (typeof rootName === 'string' && transformCaseFunc(rootName) === 'template') {
+              const content = node.content;
+              if (_isDocumentFragment(content)) {
+                stack.push({
+                  node: content,
+                  shadow: null
+                });
+              }
+            }
+          }
+          /* Shadow root (processed first): walk its subtree, then sanitise it.
+             Realm-safe check (GHSA-hpcv-96wg-7vj8): nodeType-based detection
+             rather than `instanceof DocumentFragment`, which is realm-bound and
+             silently skipped foreign-realm shadow roots (e.g.
+             iframe.contentDocument attachShadow). */
+          if (isElement) {
+            const sr = getShadowRoot(node);
+            if (_isDocumentFragment(sr)) {
+              /* Push the deferred sanitise first so it pops after the shadow
+                 walk we push next, i.e. nested shadow roots are discovered
+                 before this one is sanitised. */
+              stack.push({
+                node: null,
+                shadow: sr
+              }, {
+                node: sr,
+                shadow: null
+              });
+            }
+          }
+        }
       };
       // eslint-disable-next-line complexity
       DOMPurify.sanitize = function (dirty) {
@@ -19379,13 +20809,9 @@
         }
         /* Stringify, in case dirty is an object */
         if (typeof dirty !== 'string' && !_isNode(dirty)) {
-          if (typeof dirty.toString === 'function') {
-            dirty = dirty.toString();
-            if (typeof dirty !== 'string') {
-              throw typeErrorCreate('dirty is not a string, aborting');
-            }
-          } else {
-            throw typeErrorCreate('toString is not a function');
+          dirty = stringifyValue(dirty);
+          if (typeof dirty !== 'string') {
+            throw typeErrorCreate('dirty is not a string, aborting');
           }
         }
         /* Return dirty HTML if DOMPurify cannot run */
@@ -19393,24 +20819,90 @@
           return dirty;
         }
         /* Assign config vars */
-        if (!SET_CONFIG) {
+        if (SET_CONFIG) {
+          /* Persistent setConfig() path: _parseConfig is skipped, so the sets are
+           * not re-derived per call. Restore them from the pristine bindings
+           * captured at setConfig() time so a previous call's hook clone (mutated
+           * below) does not carry over. */
+          ALLOWED_TAGS = SET_CONFIG_ALLOWED_TAGS;
+          ALLOWED_ATTR = SET_CONFIG_ALLOWED_ATTR;
+        } else {
           _parseConfig(cfg);
+        }
+        /* Clone the hook-mutable allowlists before the walk whenever an
+         * uponSanitize* hook is registered. The hook event exposes ALLOWED_TAGS
+         * and ALLOWED_ATTR by reference (as allowedTags / allowedAttributes), so
+         * a hook that widens them would otherwise mutate the shared set
+         * permanently: across later calls and across every element. Cloning per
+         * walk keeps documented in-call widening working while scoping it to the
+         * call. A single guard for both config paths - the per-call path rebinds
+         * the sets in _parseConfig each call, the persistent path restores them
+         * from the captured bindings just above - so the two cannot diverge. */
+        if (hooks.uponSanitizeElement.length > 0 || hooks.uponSanitizeAttribute.length > 0) {
+          ALLOWED_TAGS = clone(ALLOWED_TAGS);
+        }
+        if (hooks.uponSanitizeAttribute.length > 0) {
+          ALLOWED_ATTR = clone(ALLOWED_ATTR);
         }
         /* Clean up removed elements */
         DOMPurify.removed = [];
-        /* Check if dirty is correctly typed for IN_PLACE */
-        if (typeof dirty === 'string') {
-          IN_PLACE = false;
-        }
-        if (IN_PLACE) {
-          /* Do some early pre-sanitization to avoid unsafe root nodes */
-          if (dirty.nodeName) {
-            const tagName = transformCaseFunc(dirty.nodeName);
+        /* Resolve IN_PLACE for this call without mutating persistent config.
+           Writing the IN_PLACE closure variable here leaks under setConfig(),
+           where _parseConfig is skipped on later calls: a single string call would
+           disable in-place mode for every subsequent node call, returning a
+           sanitized copy while leaving the caller's node — which in-place callers
+           keep using and whose return value they ignore — unsanitized. REPORT-2. */
+        const inPlace = IN_PLACE && typeof dirty !== 'string' && _isNode(dirty);
+        if (inPlace) {
+          /* Declarative-partial-updates / streaming pre-pass: sever every patch
+             linkage across the live tree BEFORE the walk, so no patch can fire
+             mid-walk and inject into an already-processed region. Runs first, so
+             it also covers the forbidden/clobbered roots that throw below. */
+          _neutralizePatchLinkage(dirty);
+          /* Do some early pre-sanitization to avoid unsafe root nodes.
+             Read nodeName through the cached prototype getter — a clobbering
+             child named "nodeName" on the form root would otherwise shadow
+             the property and let this check skip the root-allowlist
+             validation entirely. */
+          const nn = getNodeName ? getNodeName(dirty) : dirty.nodeName;
+          if (typeof nn === 'string') {
+            const tagName = transformCaseFunc(nn);
             if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
+              /* Fail closed on a live root: neutralize handlers/children before
+                 throwing, exactly as the mid-walk abort path does. */
+              _neutralizeRoot(dirty);
               throw typeErrorCreate('root node is forbidden and cannot be sanitized in-place');
             }
           }
-        } else if (dirty instanceof Node) {
+          /* Pre-flight the root through _isClobbered. The iterator-driven
+             removal path can not detach a parent-less root: _forceRemove
+             falls through to Element.prototype.remove(), which per spec
+             is a no-op on a node with no parent. A clobbered root would
+             then survive the main loop with its attributes uninspected,
+             because _sanitizeAttributes early-returns on _isClobbered. The
+             result would be an attacker-controlled form, complete with any
+             event-handler attributes the caller passed in, handed back to
+             the application unsanitized. Refuse to sanitize such a root
+             the same way we refuse a forbidden tag. GHSA-r47g-fvhr-h676. */
+          if (_isClobbered(dirty)) {
+            /* Fail closed on a live clobbered root before throwing.
+               _neutralizeRoot's reads are clobber-safe (cached getters); the
+               form's non-clobbered descendants, e.g. an armed <img>, are scrubbed. */
+            _neutralizeRoot(dirty);
+            throw typeErrorCreate('root node is clobbered and cannot be sanitized in-place');
+          }
+          /* Sanitize attached shadow roots before the main iterator runs.
+             The iterator does not descend into shadow trees. Same fail-closed
+             barrier as the main walk (campaign-3 F2): a custom-element reaction
+             inside a shadow root could abort this pre-pass before the walk runs,
+             which would otherwise leave the entire live tree unsanitized. */
+          try {
+            _sanitizeAttachedShadowRoots(dirty);
+          } catch (error) {
+            _neutralizeRoot(dirty);
+            throw error;
+          }
+        } else if (_isNode(dirty)) {
           /* If dirty is a DOM element, append to an empty document to avoid
              elements being stripped by the parser */
           body = _initDocument('<!---->');
@@ -19424,12 +20916,18 @@
             // eslint-disable-next-line unicorn/prefer-dom-node-append
             body.appendChild(importedNode);
           }
+          /* Clonable shadow roots are deep-cloned by importNode(); sanitize
+             them before the main iterator runs, since the iterator does not
+             descend into shadow trees. The walk routes every read through a
+             cached prototype getter so clobbering descendants on a form root
+             cannot hide a shadow host from this pass. */
+          _sanitizeAttachedShadowRoots(importedNode);
         } else {
           /* Exit directly if we have nothing to do */
           if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT &&
           // eslint-disable-next-line unicorn/prefer-includes
           dirty.indexOf('<') === -1) {
-            return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(dirty) : dirty;
+            return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? _createTrustedHTML(dirty) : dirty;
           }
           /* Initialize the document to work on */
           body = _initDocument(dirty);
@@ -19443,24 +20941,69 @@
           _forceRemove(body.firstChild);
         }
         /* Get node iterator */
-        const nodeIterator = _createNodeIterator(IN_PLACE ? dirty : body);
-        /* Now start iterating over the created document */
-        while (currentNode = nodeIterator.nextNode()) {
-          /* Sanitize tags and elements */
-          _sanitizeElements(currentNode);
-          /* Check attributes next */
-          _sanitizeAttributes(currentNode);
-          /* Shadow DOM detected, sanitize it */
-          if (currentNode.content instanceof DocumentFragment) {
-            _sanitizeShadowDOM(currentNode.content);
+        const walkRoot = inPlace ? dirty : body;
+        const nodeIterator = _createNodeIterator(walkRoot);
+        /* Now start iterating over the created document.
+           The walk runs inside an exception barrier (campaign-3 F2): a re-entrant
+           engine/custom-element mutation can detach a node mid-walk so
+           `_forceRemove`'s parentless guard throws, aborting the loop. Without the
+           barrier the caller's in-place tree would be left half-sanitized with the
+           unvisited tail still armed. On any throw we fail closed — strip the
+           in-place root bare — then rethrow so the existing throw contract is
+           preserved. (String/DOM-copy paths never return the partial body, so the
+           propagating throw is already fail-closed there.) */
+        try {
+          while (currentNode = nodeIterator.nextNode()) {
+            /* Sanitize tags and elements */
+            _sanitizeElements(currentNode, walkRoot);
+            /* Check attributes next */
+            _sanitizeAttributes(currentNode);
+            /* Shadow DOM detected, sanitize it.
+               Realm-safe check (GHSA-hpcv-96wg-7vj8): nodeType-based detection
+               instead of instanceof, so foreign-realm <template>.content is
+               walked correctly. */
+            if (_isDocumentFragment(currentNode.content)) {
+              _sanitizeShadowDOM2(currentNode.content);
+            }
           }
+        } catch (error) {
+          if (inPlace) {
+            _neutralizeRoot(dirty);
+            /* Nodes _forceRemove'd earlier in the aborted walk are already
+               detached from the root, so _neutralizeRoot's subtree pass does not
+               reach them. Defuse them too, mirroring the success-path loop below. */
+            arrayForEach(DOMPurify.removed, entry => {
+              if (entry.element) {
+                _neutralizeSubtree(entry.element);
+              }
+            });
+          }
+          throw error;
         }
         /* If we sanitized `dirty` in-place, return it. */
-        if (IN_PLACE) {
+        if (inPlace) {
+          /* Fail-closed completion of the audit-5 F1 fix: every node removed from
+             the caller's live tree is detached but may still hold a queued
+             resource-event handler that fires in page scope after we return. The
+             move-hoist covers only disallowed-tag KEEP_CONTENT removals; strip the
+             non-allow-listed attributes off every other removed subtree (clobber,
+             mXSS, namespace, comments, KEEP_CONTENT:false, …) so those handlers are
+             cancelled before any event can fire. Runs synchronously, pre-return. */
+          arrayForEach(DOMPurify.removed, entry => {
+            if (entry.element) {
+              _neutralizeSubtree(entry.element);
+            }
+          });
+          if (SAFE_FOR_TEMPLATES) {
+            _scrubTemplateExpressions2(dirty);
+          }
           return dirty;
         }
         /* Return sanitized string or DOM */
         if (RETURN_DOM) {
+          if (SAFE_FOR_TEMPLATES) {
+            _scrubTemplateExpressions2(body);
+          }
           if (RETURN_DOM_FRAGMENT) {
             returnNode = createDocumentFragment.call(body.ownerDocument);
             while (body.firstChild) {
@@ -19489,20 +21032,28 @@
         }
         /* Sanitize final string template-safe */
         if (SAFE_FOR_TEMPLATES) {
-          arrayForEach([MUSTACHE_EXPR, ERB_EXPR, TMPLIT_EXPR], expr => {
-            serializedHTML = stringReplace(serializedHTML, expr, ' ');
-          });
+          serializedHTML = _stripTemplateExpressions(serializedHTML);
         }
-        return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
+        return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? _createTrustedHTML(serializedHTML) : serializedHTML;
       };
       DOMPurify.setConfig = function () {
         let cfg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         _parseConfig(cfg);
         SET_CONFIG = true;
+        SET_CONFIG_ALLOWED_TAGS = ALLOWED_TAGS;
+        SET_CONFIG_ALLOWED_ATTR = ALLOWED_ATTR;
       };
       DOMPurify.clearConfig = function () {
         CONFIG = null;
         SET_CONFIG = false;
+        SET_CONFIG_ALLOWED_TAGS = null;
+        SET_CONFIG_ALLOWED_ATTR = null;
+        // Drop any caller-supplied Trusted Types policy so it cannot poison later
+        // `RETURN_TRUSTED_TYPE` output. The internal default policy (cached, and
+        // never recreated — Trusted Types throws on duplicate names) is restored by
+        // the next `_parseConfig`. See GHSA-vxr8-fq34-vvx9.
+        trustedTypesPolicy = defaultTrustedTypesPolicy;
+        emptyHTML = '';
       };
       DOMPurify.isValidAttribute = function (tag, attr, value) {
         /* Initialize shared config vars if necessary. */
@@ -19517,9 +21068,19 @@
         if (typeof hookFunction !== 'function') {
           return;
         }
+        /* Reject unknown entry points. Without this, a non-hook key (e.g.
+         * '__proto__') indexes off the prototype chain rather than a real
+         * hook array, and arrayPush then writes to Object.prototype. Guard
+         * with an own-property check against the known hook names. */
+        if (!objectHasOwnProperty(hooks, entryPoint)) {
+          return;
+        }
         arrayPush(hooks[entryPoint], hookFunction);
       };
       DOMPurify.removeHook = function (entryPoint, hookFunction) {
+        if (!objectHasOwnProperty(hooks, entryPoint)) {
+          return undefined;
+        }
         if (hookFunction !== undefined) {
           const index = arrayLastIndexOf(hooks[entryPoint], hookFunction);
           return index === -1 ? undefined : arraySplice(hooks[entryPoint], index, 1)[0];
@@ -19527,6 +21088,9 @@
         return arrayPop(hooks[entryPoint]);
       };
       DOMPurify.removeHooks = function (entryPoint) {
+        if (!objectHasOwnProperty(hooks, entryPoint)) {
+          return;
+        }
         hooks[entryPoint] = [];
       };
       DOMPurify.removeAllHooks = function () {
@@ -19992,10 +21556,22 @@
         }
         // Construct the sugar element wrapper
         const element = SugarElement.fromDom(node);
+        if (settings.sanitize) {
+            // TINY-9655: Preserve the content of script and style tags if they are valid elements in the schema
+            const shouldKeepContent = (isScript(element) && schema.isValid('script')) || (isStyle(element) && schema.isValid('style'));
+            if (shouldKeepContent) {
+                Optional.from(get$3(element)).each((content) => set$5(element, 'data-mce-tmp', content));
+            }
+            // TINY-9655: Clear innerHTML of script and iframe tags to prevent DOMPurify from removing them entirely
+            const shouldClearContent = isIframe(element) && schema.isValid('iframe');
+            if (shouldKeepContent || shouldClearContent) {
+                empty(element);
+            }
+        }
         // Determine if we're dealing with an internal attribute
         const isInternalElement = has$1(element, internalElementAttr);
         // Cleanup bogus elements
-        const bogus = get$9(element, 'data-mce-bogus');
+        const bogus = get$a(element, 'data-mce-bogus');
         if (!isInternalElement && isString(bogus)) {
             if (bogus === 'all') {
                 remove$8(element);
@@ -20026,11 +21602,11 @@
         if (validate && rule && !isInternalElement) {
             // Fix the attributes for the element, unwrapping it if we have to
             each$e(rule.attributesForced ?? [], (attr) => {
-                set$4(element, attr.name, attr.value === '{$uid}' ? `mce_${uid++}` : attr.value);
+                set$5(element, attr.name, attr.value === '{$uid}' ? `mce_${uid++}` : attr.value);
             });
             each$e(rule.attributesDefault ?? [], (attr) => {
                 if (!has$1(element, attr.name)) {
-                    set$4(element, attr.name, attr.value === '{$uid}' ? `mce_${uid++}` : attr.value);
+                    set$5(element, attr.name, attr.value === '{$uid}' ? `mce_${uid++}` : attr.value);
                 }
             });
             // If none of the required attributes were found then remove
@@ -20092,11 +21668,24 @@
             }
         }
     };
+    const restoreValidContent = (node) => {
+        // Construct the sugar element wrapper
+        const element = SugarElement.fromDom(node);
+        if (isScript(element) || isStyle(element)) {
+            getOpt(element, 'data-mce-tmp').each((content) => {
+                set(element, content);
+                remove$9(element, 'data-mce-tmp');
+            });
+        }
+    };
     const setupPurify = (settings, schema, namespaceTracker) => {
         const purify$1 = purify();
         // We use this to add new tags to the allow-list as we parse, if we notice that a tag has been banned but it's still in the schema
         purify$1.addHook('uponSanitizeElement', (ele, evt) => {
             processNode(ele, settings, schema, namespaceTracker.track(ele), evt);
+        });
+        purify$1.addHook('afterSanitizeElements', (ele) => {
+            restoreValidContent(ele);
         });
         // Let's do the same thing for attributes
         purify$1.addHook('uponSanitizeAttribute', (ele, evt) => {
@@ -21502,7 +23091,7 @@
             append(SugarElement.fromDom(pre1), [
                 SugarElement.fromTag('br', doc),
                 SugarElement.fromTag('br', doc),
-                ...children$1(sPre2)
+                ...children$2(sPre2)
             ]);
         };
         if (!rng.collapsed) {
@@ -21649,10 +23238,12 @@
             const wrapName = format.inline || format.block;
             const wrapElm = createWrapElement(wrapName);
             const isMatchingWrappingBlock = (node) => isWrappingBlockFormat(format) && matchNode$1(ed, node, name, vars);
+            const canRenameChildBlocks = (node) => forall(node.childNodes, (child) => !isTextBlock$2(ed.schema, child) || isValid(ed, wrapName, child.nodeName.toLowerCase()));
             const canRenameBlock = (node, parentName, isEditableDescendant) => {
                 const isValidBlockFormatForNode = isNonWrappingBlockFormat(format) &&
                     isTextBlock$2(ed.schema, node) &&
-                    isValid(ed, parentName, wrapName);
+                    isValid(ed, parentName, wrapName) &&
+                    canRenameChildBlocks(node);
                 return isEditableDescendant && isValidBlockFormatForNode;
             };
             const canWrapNode = (node, parentName, isEditableDescendant, isWrappableNoneditableElm) => {
@@ -21803,12 +23394,38 @@
                 }
             });
         };
-        // TODO: TINY-9142: Remove this to make nested noneditable formatting work
         const targetNode = isNode(node) ? node : selection.getNode();
         if (dom.getContentEditable(targetNode) === 'false' && !isWrappableNoneditable(ed, targetNode)) {
             // node variable is used by other functions above in the same scope so need to set it here
             node = targetNode;
             applyNodeStyle(formatList, node);
+            if (hasEditableDescendants(dom, node)) {
+                each$e(getEditableDescendants(dom, node), (island) => {
+                    const rng = dom.createRng();
+                    rng.selectNodeContents(island);
+                    applyRngStyle(dom, rng, true);
+                });
+                return;
+            }
+            if (isBlockFormat(format) && !dom.isBlock(node)) {
+                const parentBlock = dom.getParent(node, dom.isBlock);
+                if (dom.isEditable(parentBlock)) {
+                    const wrapperElementName = format.block;
+                    if (parentBlock.nodeName.toLowerCase() === wrapperElementName.toLowerCase()) {
+                        setElementFormat(ed, parentBlock, format, vars, node);
+                    }
+                    else if (!isWrappingBlockFormat(format)) {
+                        const elm = dom.rename(parentBlock, wrapperElementName);
+                        setElementFormat(ed, elm, format, vars, node);
+                    }
+                }
+            }
+            else {
+                const selectorFormats = filter$5(formatList, isSelectorFormat);
+                Optional.from(dom.getParent(node, (candidate) => exists(selectorFormats, (fmt) => dom.is(candidate, fmt.selector))))
+                    .filter(dom.isEditable)
+                    .each((parent) => applyNodeStyle(formatList, parent));
+            }
             fireFormatApply(ed, name, node, vars);
             return;
         }
@@ -21842,7 +23459,8 @@
                     applyCaretFormat(ed, name, vars);
                 }
                 getExpandedListItemFormat(ed.formatter, name).each((liFmt) => {
-                    each$e(getFullySelectedListItems(ed.selection), (li) => applyStyles(dom, li, liFmt, vars));
+                    const list = getFullySelectedListItems(ed);
+                    each$e(list, (li) => applyStyles(dom, li, liFmt, vars));
                 });
             }
             postProcess$1(name, ed);
@@ -21920,7 +23538,7 @@
     const addListeners = (editor, registeredFormatListeners, formats, callback, similar, vars) => {
         const formatChangeItems = registeredFormatListeners.get();
         each$e(formats.split(','), (format) => {
-            const group = get$a(formatChangeItems, format).getOrThunk(() => {
+            const group = get$b(formatChangeItems, format).getOrThunk(() => {
                 const base = {
                     withSimilar: {
                         state: Cell(false),
@@ -21961,7 +23579,7 @@
     };
     const removeListeners = (registeredFormatListeners, formats, callback) => {
         const formatChangeItems = registeredFormatListeners.get();
-        each$e(formats.split(','), (format) => get$a(formatChangeItems, format).each((group) => {
+        each$e(formats.split(','), (format) => get$b(formatChangeItems, format).each((group) => {
             formatChangeItems[format] = {
                 withSimilar: {
                     ...group.withSimilar,
@@ -22436,7 +24054,7 @@
     // We need to create a temporary document instead of using the global document since
     // innerHTML on a detached element will still make http requests to the images
     const lazyTempDocument = cached(() => document.implementation.createHTMLDocument('undo'));
-    const hasIframes = (body) => body.querySelector('iframe') !== null;
+    const shouldBeFragmented = (body) => body.querySelector(`iframe, ${ucVideoNodeName}`) !== null;
     const createFragmentedLevel = (fragments) => {
         return {
             type: 'fragmented',
@@ -22458,7 +24076,7 @@
     const createFromEditor = (editor) => {
         const tempAttrs = editor.serializer.getTempAttrs();
         const body = trim$1(editor.getBody(), tempAttrs);
-        return hasIframes(body) ? createFragmentedLevel(read$2(body, true)) : createCompleteLevel(trim$2(body.innerHTML));
+        return shouldBeFragmented(body) ? createFragmentedLevel(read$2(body, true)) : createCompleteLevel(trim$2(body.innerHTML));
     };
     const applyToEditor = (editor, level, before) => {
         const bookmark = before ? level.beforeBookmark : level.bookmark;
@@ -22483,16 +24101,19 @@
     const getLevelContent = (level) => {
         return level.type === 'fragmented' ? level.fragments.join('') : level.content;
     };
-    const getCleanLevelContent = (level) => {
+    const getCleanLevelContent = (isReadonly, level) => {
         const elm = SugarElement.fromTag('body', lazyTempDocument());
-        set$3(elm, getLevelContent(level));
+        set$4(elm, getLevelContent(level));
         each$e(descendants(elm, '*[data-mce-bogus]'), unwrap);
-        return get$8(elm);
+        if (isReadonly) {
+            each$e(descendants(elm, 'details[open]'), (element) => remove$9(element, 'open'));
+        }
+        return get$9(elm);
     };
     const hasEqualContent = (level1, level2) => getLevelContent(level1) === getLevelContent(level2);
-    const hasEqualCleanedContent = (level1, level2) => getCleanLevelContent(level1) === getCleanLevelContent(level2);
+    const hasEqualCleanedContent = (isReadonly, level1, level2) => getCleanLevelContent(isReadonly, level1) === getCleanLevelContent(isReadonly, level2);
     // Most of the time the contents is equal so it's faster to first check that using strings then fallback to a cleaned dom comparison
-    const isEq$1 = (level1, level2) => {
+    const isEq$1 = (isReadonly, level1, level2) => {
         if (!level1 || !level2) {
             return false;
         }
@@ -22500,7 +24121,7 @@
             return true;
         }
         else {
-            return hasEqualCleanedContent(level1, level2);
+            return hasEqualCleanedContent(isReadonly, level1, level2);
         }
     };
 
@@ -22540,7 +24161,7 @@
             return null;
         }
         // Add undo level if needed
-        if (lastLevel && isEq$1(lastLevel, newLevel)) {
+        if (lastLevel && isEq$1(editor.readonly, lastLevel, newLevel)) {
             return null;
         }
         // Set before bookmark on previous level
@@ -22628,7 +24249,7 @@
     };
     const hasUndo$1 = (editor, undoManager, index) => 
     // Has undo levels or typing and content isn't the same as the initial level
-    index.get() > 0 || (undoManager.typing && undoManager.data[0] && !isEq$1(createFromEditor(editor), undoManager.data[0]));
+    index.get() > 0 || (undoManager.typing && undoManager.data[0] && !isEq$1(editor.readonly, createFromEditor(editor), undoManager.data[0]));
     const hasRedo$1 = (undoManager, index) => index.get() < undoManager.data.length - 1 && !undoManager.typing;
     const transact$1 = (undoManager, locks, callback) => {
         endTyping(undoManager, locks);
@@ -22828,7 +24449,7 @@
         };
     };
     const isRtc = (editor) => has$2(editor.plugins, 'rtc');
-    const getRtcSetup = (editor) => get$a(editor.plugins, 'rtc').bind((rtcPlugin) => 
+    const getRtcSetup = (editor) => get$b(editor.plugins, 'rtc').bind((rtcPlugin) => 
     // This might not exist if the stub plugin is loaded on cloud
     Optional.from(rtcPlugin.setup));
     const setup$z = (editor) => {
@@ -23616,7 +25237,7 @@
                 }
             }
         });
-        // Convert comments to cdata and handle protected comments
+        // Convert comments to cdata
         htmlParser.addNodeFilter('#comment', (nodes) => {
             let i = nodes.length;
             while (i--) {
@@ -23626,12 +25247,6 @@
                     node.name = '#cdata';
                     node.type = 4;
                     node.value = dom.decode(value.replace(/^\[CDATA\[|\]\]$/g, ''));
-                }
-                else if (value?.indexOf('mce:protected ') === 0) {
-                    node.name = '#text';
-                    node.type = 3;
-                    node.raw = true;
-                    node.value = unescape(value).substr(14);
                 }
             }
         });
@@ -24079,7 +25694,7 @@
         const rawElm = elm.dom;
         return rawElm[propName];
     };
-    const getComputedSizeProp = (propName, elm) => parseInt(get$7(elm, propName), 10);
+    const getComputedSizeProp = (propName, elm) => parseInt(get$8(elm, propName), 10);
     const getClientWidth = curry(getProp, 'clientWidth');
     const getClientHeight = curry(getProp, 'clientHeight');
     const getMarginTop = curry(getComputedSizeProp, 'margin-top');
@@ -24610,7 +26225,7 @@
             }
         });
     };
-    const reportInvalidPlugin = (editor, pluginCode) => {
+    const reportInvalidPlugin = (editor, pluginCode, hasShownPluginNotification) => {
         const baseMessage = `The "${pluginCode}" plugin requires a valid TinyMCE license key.`;
         reportMessage(editor, {
             console: {
@@ -24619,6 +26234,12 @@
                     `${baseMessage}`,
                     DOCS_URL_MESSAGE
                 ].join(' ')
+            },
+            ...hasShownPluginNotification ? {} : {
+                editor: {
+                    type: 'warning',
+                    message: `One or more premium plugins are disabled due to license key restrictions.`
+                }
             }
         });
     };
@@ -24665,28 +26286,23 @@
         }
     };
 
-    const NoLicenseKeyManager = (editor) => ({
-        validate: (data) => {
-            const { plugin } = data;
-            const hasPlugin = isString(plugin);
-            // Premium plugins are not allowed
-            if (hasPlugin) {
-                reportInvalidPlugin(editor, plugin);
-            }
-            return Promise.resolve(false);
-        },
-    });
-    const GplLicenseKeyManager = (editor) => ({
-        validate: (data) => {
-            const { plugin } = data;
-            const hasPlugin = isString(plugin);
-            // Premium plugins are not allowed if 'gpl' is given as the license_key
-            if (hasPlugin) {
-                reportInvalidPlugin(editor, plugin);
-            }
-            return Promise.resolve(!hasPlugin);
-        },
-    });
+    const createFallbackLicenseKeyManager = (canValidate) => (editor) => {
+        let hasShownPluginNotification = false;
+        return {
+            validate: (data) => {
+                const { plugin } = data;
+                const hasPlugin = isString(plugin);
+                // Premium plugins are not allowed
+                if (hasPlugin) {
+                    reportInvalidPlugin(editor, plugin, hasShownPluginNotification);
+                    hasShownPluginNotification = true;
+                }
+                return Promise.resolve(canValidate && !hasPlugin);
+            },
+        };
+    };
+    const NoLicenseKeyManager = createFallbackLicenseKeyManager(false);
+    const GplLicenseKeyManager = createFallbackLicenseKeyManager(true);
     const ADDON_KEY = 'manager';
     const PLUGIN_CODE = PLUGIN_CODE$1;
     const setup$y = () => {
@@ -24697,7 +26313,7 @@
         const load = (editor, suffix) => {
             const strategy = determineStrategy(editor);
             if (strategy.type === 'use_plugin') {
-                const externalUrl = get$a(getExternalPlugins$1(editor), PLUGIN_CODE).map(trim$4).filter(isNotEmpty);
+                const externalUrl = get$b(getExternalPlugins$1(editor), PLUGIN_CODE).map(trim$4).filter(isNotEmpty);
                 const url = externalUrl.getOr(`plugins/${PLUGIN_CODE}/plugin${suffix}.js`);
                 addOnManager.load(ADDON_KEY, url).catch(() => {
                     licenseKeyManagerLoadError(editor, url);
@@ -24798,7 +26414,7 @@
         const body = SugarElement.fromDom(editor.getBody());
         toggleClass(body, 'mce-content-readonly', false);
         if (editor.hasEditableRoot()) {
-            set(body, true);
+            set$1(body, true);
         }
         setCommonEditorCommands(editor, false);
         if (hasEditorOrUiFocus(editor)) {
@@ -24812,21 +26428,21 @@
     const internalContentEditableAttr = 'data-mce-contenteditable';
     const switchOffContentEditableTrue = (elm) => {
         each$e(descendants(elm, '*[contenteditable="true"]'), (elm) => {
-            set$4(elm, internalContentEditableAttr, 'true');
-            set(elm, false);
+            set$5(elm, internalContentEditableAttr, 'true');
+            set$1(elm, false);
         });
     };
     const switchOnContentEditableTrue = (elm) => {
         each$e(descendants(elm, `*[${internalContentEditableAttr}="true"]`), (elm) => {
             remove$9(elm, internalContentEditableAttr);
-            set(elm, true);
+            set$1(elm, true);
         });
     };
     const toggleDisabled = (editor, state) => {
         const body = SugarElement.fromDom(editor.getBody());
         if (state) {
             disableEditor(editor);
-            set(body, false);
+            set$1(body, false);
             switchOffContentEditableTrue(body);
         }
         else {
@@ -24867,7 +26483,11 @@
     const isAllowedEventInDisabledMode = (e) => contains$2(allowedEvents, e.type);
     const getAnchorHrefOpt = (editor, elm) => {
         const isRoot = (elm) => eq(elm, SugarElement.fromDom(editor.getBody()));
-        return closest$3(elm, 'a', isRoot).bind((a) => getOpt(a, 'href'));
+        return closest$4(elm, 'a', isRoot).bind((a) => getOpt(a, 'href'));
+    };
+    const hasAccordion = (editor, elm) => {
+        const isRoot = (elm) => eq(elm, SugarElement.fromDom(editor.getBody()));
+        return closest$2(elm, 'details', isRoot);
     };
     const processDisabledEvents = (editor, e) => {
         /*
@@ -24878,10 +26498,15 @@
         */
         if (isClickEvent(e) && !VK.metaKeyPressed(e)) {
             const elm = SugarElement.fromDom(e.target);
-            getAnchorHrefOpt(editor, elm).each((href) => {
+            getAnchorHrefOpt(editor, elm).fold(() => {
+                if (hasAccordion(editor, elm)) {
+                    e.preventDefault();
+                }
+            }, (href) => {
                 e.preventDefault();
                 if (/^#/.test(href)) {
-                    const targetEl = editor.dom.select(`${href},[name="${removeLeading(href, '#')}"]`);
+                    const id = removeLeading(href, '#');
+                    const targetEl = editor.dom.select(`[id="${id}"],[name="${id}"]`);
                     if (targetEl.length) {
                         editor.selection.scrollIntoView(targetEl[0], true);
                     }
@@ -24914,8 +26539,8 @@
     };
 
     const isContentCssSkinName = (url) => /^[a-z0-9\-]+$/i.test(url);
-    const toContentSkinResourceName = (url) => 'content/' + url + '/content.css';
-    const isBundledCssSkinName = (url) => tinymce.Resource.has(toContentSkinResourceName(url));
+    const toContentSkinResourceName = (name) => 'content/' + name + '/content.css';
+    const isBundledCssSkinName = (name) => tinymce.Resource.has(toContentSkinResourceName(name));
     const getContentCssUrls = (editor) => {
         return transformToUrls(editor, getContentCss(editor));
     };
@@ -24928,7 +26553,7 @@
         const contentCssFile = `content${suffix}.css`;
         return map$3(cssLinks, (url) => {
             if (isBundledCssSkinName(url)) {
-                return url;
+                return toContentSkinResourceName(url);
             }
             else if (isContentCssSkinName(url) && !editor.inline) {
                 return `${skinUrl}/${url}/${contentCssFile}`;
@@ -25116,7 +26741,7 @@
             }
         };
         const toBlobInfo = (o) => {
-            if (!o.blob || !o.base64) {
+            if (isNullable(o.blob) || isNullable(o.base64) || (o.base64 === '' && !o.allowEmptyFile)) {
                 throw new Error('blob and base64 representations of the image are required for BlobInfo to be created');
             }
             const id = o.id || uuid('blobid');
@@ -25235,8 +26860,9 @@
                             progress = noop; // Once it's closed it's closed
                         }
                     };
-                    const success = (url) => {
+                    const success = (data) => {
                         closeNotification();
+                        const url = isString(data) ? data : data.url;
                         uploadStatus.markUploaded(blobInfo.blobUri(), url);
                         resolvePending(blobInfo.blobUri(), handlerSuccess(blobInfo, url));
                         resolve(handlerSuccess(blobInfo, url));
@@ -25590,7 +27216,7 @@
                     preview: 'font-family font-size'
                 },
                 {
-                    selector: '.mce-preview-object,[data-ephox-embed-iri]',
+                    selector: '.mce-preview-object,[data-ephox-embed-iri],.tiny-pageembed',
                     ceFalseOverride: true,
                     styles: {
                         float: 'left'
@@ -25642,7 +27268,7 @@
                     preview: 'font-family font-size'
                 },
                 {
-                    selector: '.mce-preview-object',
+                    selector: '.mce-preview-object,.tiny-pageembed',
                     ceFalseOverride: true,
                     styles: {
                         display: 'table', // Needs to be `table` to properly render while editing
@@ -25706,7 +27332,7 @@
                     preview: 'font-family font-size'
                 },
                 {
-                    selector: '.mce-preview-object,[data-ephox-embed-iri]',
+                    selector: '.mce-preview-object,[data-ephox-embed-iri],.tiny-pageembed',
                     ceFalseOverride: true,
                     styles: {
                         float: 'right'
@@ -25748,7 +27374,7 @@
             hilitecolor: { inline: 'span', styles: { backgroundColor: '%value' }, links: true, remove_similar: true, clear_child_styles: true },
             fontname: { inline: 'span', toggle: false, styles: { fontFamily: '%value' }, clear_child_styles: true },
             fontsize: { inline: 'span', toggle: false, styles: { fontSize: '%value' }, clear_child_styles: true },
-            lineheight: { selector: 'h1,h2,h3,h4,h5,h6,p,li,td,th,div', styles: { lineHeight: '%value' } },
+            lineheight: { selector: 'h1,h2,h3,h4,h5,h6,p,li,td,th,div', styles: { lineHeight: '%value' }, remove_similar: true },
             fontsize_class: { inline: 'span', attributes: { class: '%value' } },
             blockquote: { block: 'blockquote', wrapper: true, remove: 'all' },
             subscript: { inline: 'sub' },
@@ -26361,7 +27987,7 @@
                 editor.nodeChanged();
             }
             // Fire a TypingUndo event on the first character entered
-            if (isFirstTypedCharacter.get() && undoManager.typing && !isEq$1(createFromEditor(editor), undoManager.data[0])) {
+            if (isFirstTypedCharacter.get() && undoManager.typing && !isEq$1(editor.readonly, createFromEditor(editor), undoManager.data[0])) {
                 if (!editor.isDirty()) {
                     editor.setDirty(true);
                 }
@@ -26393,8 +28019,8 @@
                 isFirstTypedCharacter.set(true);
                 return;
             }
-            const hasOnlyMetaOrCtrlModifier = Env.os.isMacOS() ? e.metaKey : e.ctrlKey && !e.altKey;
-            if (hasOnlyMetaOrCtrlModifier) {
+            const hasMetaOrCtrlModifier = Env.os.isMacOS() ? e.metaKey : e.ctrlKey && !e.altKey;
+            if (hasMetaOrCtrlModifier && (e.key === 'Backspace' || e.key === 'Delete')) {
                 undoManager.beforeChange();
             }
         });
@@ -26475,7 +28101,7 @@
                 level.bookmark = getUndoBookmark(editor.selection);
                 editor.dispatch('change', {
                     level,
-                    lastLevel: get$b(undoManager.data, index.get()).getOrUndefined()
+                    lastLevel: get$c(undoManager.data, index.get()).getOrUndefined()
                 });
             },
             /**
@@ -26662,6 +28288,53 @@
         }
     };
 
+    const createAndFireInputEvent = (eventType) => (editor, inputType, specifics = {}) => {
+        const target = editor.getBody();
+        const overrides = {
+            bubbles: true,
+            composed: true,
+            data: null,
+            isComposing: false,
+            detail: 0,
+            view: null,
+            target,
+            currentTarget: target,
+            eventPhase: Event.AT_TARGET,
+            originalTarget: target,
+            explicitOriginalTarget: target,
+            isTrusted: false,
+            srcElement: target,
+            cancelable: false,
+            preventDefault: noop,
+            inputType
+        };
+        const input = clone$2(new InputEvent(eventType));
+        return editor.dispatch(eventType, { ...input, ...overrides, ...specifics });
+    };
+    const fireInputEvent = createAndFireInputEvent('input');
+    const fireBeforeInputEvent = createAndFireInputEvent('beforeinput');
+
+    const symulateDelete = (editor, isForward, deleteFun) => {
+        // Some delete actions may prevent the input event from being fired. If we do not detect it, we fire it ourselves.
+        let shouldFireInput = true;
+        const inputHandler = () => shouldFireInput = false;
+        const beforeInputEvent = fireBeforeInputEvent(editor, isForward ? 'deleteContentForward' : 'deleteContentBackward');
+        if (beforeInputEvent.isDefaultPrevented()) {
+            return false;
+        }
+        editor.on('input', inputHandler);
+        try {
+            deleteFun();
+        }
+        finally {
+            editor.off('input', inputHandler);
+        }
+        if (shouldFireInput) {
+            editor.dispatch('input');
+        }
+        return true;
+    };
+
     const matchNodeName = (name) => (node) => isNonNullable(node) && node.nodeName.toLowerCase() === name;
     const matchNodeNames = (regex) => (node) => isNonNullable(node) && regex.test(node.nodeName);
     const isTextNode$1 = (node) => isNonNullable(node) && node.nodeType === 3;
@@ -26670,6 +28343,7 @@
     const isOlUlNode = matchNodeNames(/^(OL|UL)$/);
     const isListItemNode = matchNodeNames(/^(LI|DT|DD)$/);
     const isDlItemNode = matchNodeNames(/^(DT|DD)$/);
+    const isTableCellNode = matchNodeNames(/^(TH|TD)$/);
     const isBr$1 = matchNodeName('br');
     const isFirstChild$1 = (node) => node.parentNode?.firstChild === node;
     const isTextBlock = (editor, node) => isNonNullable(node) && node.nodeName in editor.schema.getTextBlockElements();
@@ -26755,11 +28429,19 @@
         return outRng;
     };
 
+    const isList = (el) => is$1(el, 'OL,UL');
+    const isListItem$1 = (el) => is$1(el, 'LI');
+    const hasFirstChildList = (el) => firstChild(el).exists(isList);
+    const hasLastChildList = (el) => lastChild(el).exists(isList);
+    const canIncreaseDepthOfList = (editor, amount) => {
+        return getListMaxDepth(editor).map((max) => max >= amount).getOr(true);
+    };
+
     const listNames = ['OL', 'UL', 'DL'];
     const listSelector = listNames.join(',');
     const getParentList = (editor, node) => {
         const selectionStart = node || editor.selection.getStart(true);
-        return editor.dom.getParent(selectionStart, listSelector, getClosestListHost(editor, selectionStart));
+        return editor.dom.getParent(selectionStart, listSelector, getClosestListHost(editor, selectionStart, editor.selection.isCollapsed()));
     };
     const isParentListSelected = (parentList, selectedBlocks) => isNonNullable(parentList) && selectedBlocks.length === 1 && selectedBlocks[0] === parentList;
     const findSubLists = (parentList) => filter$5(parentList.querySelectorAll(listSelector), isListNode);
@@ -26775,16 +28457,16 @@
             });
         }
     };
-    const findParentListItemsNodes = (editor, elms) => {
+    const findParentListItemsNodes = (editor, elms, isCollapsed) => {
         const listItemsElms = Tools.map(elms, (elm) => {
-            const parentLi = editor.dom.getParent(elm, 'li,dd,dt', getClosestListHost(editor, elm));
+            const parentLi = editor.dom.getParent(elm, 'li,dd,dt', getClosestListHost(editor, elm, isCollapsed));
             return parentLi ? parentLi : elm;
         });
         return unique$1(listItemsElms);
     };
     const getSelectedListItems = (editor) => {
         const selectedBlocks = editor.selection.getSelectedBlocks();
-        return filter$5(findParentListItemsNodes(editor, selectedBlocks), isListItemNode);
+        return filter$5(findParentListItemsNodes(editor, selectedBlocks, editor.selection.isCollapsed()), isListItemNode);
     };
     const getSelectedDlItems = (editor) => filter$5(getSelectedListItems(editor), isDlItemNode);
     const getClosestEditingHost = (editor, elm) => {
@@ -26792,17 +28474,36 @@
         return parentTableCell.length > 0 ? parentTableCell[0] : editor.getBody();
     };
     const isListHost = (schema, node) => !isListNode(node) && !isListItemNode(node) && exists(listNames, (listName) => schema.isValidChild(node.nodeName, listName));
-    const getClosestListHost = (editor, elm) => {
+    const requireLiElementFirst = (parentBlocks) => {
+        const result = findMap(parentBlocks, (element) => {
+            if (isListItem$1(SugarElement.fromDom(element))) {
+                return Optional.some(true);
+            }
+            if (isTableCellNode(element)) {
+                return Optional.some(false);
+            }
+            return Optional.none();
+        });
+        return result.getOr(false);
+    };
+    const getClosestListHost = (editor, elm, isCollapsed) => {
         const parentBlocks = editor.dom.getParents(elm, editor.dom.isBlock);
+        let foundListBlock = !requireLiElementFirst(parentBlocks);
         const isNotForcedRootBlock = (elm) => elm.nodeName.toLowerCase() !== getForcedRootBlock(editor);
-        const parentBlock = find$2(parentBlocks, (elm) => isNotForcedRootBlock(elm) && isListHost(editor.schema, elm));
+        const checkListRequirement = (element) => {
+            if (isListItem$1(SugarElement.fromDom(element)) || isList(SugarElement.fromDom(element))) {
+                foundListBlock = true;
+            }
+            return foundListBlock;
+        };
+        const parentBlock = find$2(parentBlocks, (elm) => checkListRequirement(elm) && (!isCollapsed || isNotForcedRootBlock(elm)) && isListHost(editor.schema, elm));
         return parentBlock.getOr(editor.getBody());
     };
     const isListInsideAnLiWithFirstAndLastNotListElement = (list) => parent(list).exists((parent) => isListItemNode(parent.dom)
         && firstChild(parent).exists((firstChild) => !isListNode(firstChild.dom))
         && lastChild(parent).exists((lastChild) => !isListNode(lastChild.dom)));
     const findLastParentListNode = (editor, elm) => {
-        const parentLists = editor.dom.getParents(elm, 'ol,ul', getClosestListHost(editor, elm));
+        const parentLists = editor.dom.getParents(elm, 'ol,ul', getClosestListHost(editor, elm, true));
         return last$2(parentLists);
     };
     const getSelectedLists = (editor) => {
@@ -26812,7 +28513,7 @@
     };
     const getParentLists = (editor) => {
         const elm = editor.selection.getStart();
-        return editor.dom.getParents(elm, 'ol,ul', getClosestListHost(editor, elm));
+        return editor.dom.getParents(elm, 'ol,ul', getClosestListHost(editor, elm, editor.selection.isCollapsed()));
     };
     const getSelectedListRoots = (editor) => {
         const selectedLists = getSelectedLists(editor);
@@ -26878,21 +28579,13 @@
         return fragment;
     };
 
-    const isList = (el) => is$1(el, 'OL,UL');
-    const isListItem$1 = (el) => is$1(el, 'LI');
-    const hasFirstChildList = (el) => firstChild(el).exists(isList);
-    const hasLastChildList = (el) => lastChild(el).exists(isList);
-    const canIncreaseDepthOfList = (editor, amount) => {
-        return getListMaxDepth(editor).map((max) => max >= amount).getOr(true);
-    };
-
     const isEntryList = (entry) => 'listAttributes' in entry;
     const isEntryComment = (entry) => 'isComment' in entry;
     const isEntryFragment = (entry) => 'isFragment' in entry;
     const isIndented = (entry) => entry.depth > 0;
     const isSelected = (entry) => entry.isSelected;
     const cloneItemContent = (li) => {
-        const children = children$1(li);
+        const children = children$2(li);
         const content = hasLastChildList(li) ? children.slice(0, -1) : children;
         return map$3(content, deep);
     };
@@ -26935,7 +28628,7 @@
     };
     const populateSegments = (segments, entry) => {
         for (let i = 0; i < segments.length - 1; i++) {
-            set$2(segments[i].item, 'list-style-type', 'none');
+            set$3(segments[i].item, 'list-style-type', 'none');
         }
         last$2(segments).each((segment) => {
             if (isEntryList(entry)) {
@@ -27090,7 +28783,7 @@
         return currentItemEntry.toArray().concat(childListEntries);
     };
     const parseItem = (depth, itemSelection, selectionState, item) => firstChild(item).filter(isList).fold(() => parseSingleItem(depth, itemSelection, selectionState, item), (list) => {
-        const parsedSiblings = foldl(children$1(item), (acc, liChild, i) => {
+        const parsedSiblings = foldl(children$2(item), (acc, liChild, i) => {
             if (i === 0) {
                 return acc;
             }
@@ -27113,7 +28806,7 @@
         }, []);
         return parseList(depth, itemSelection, selectionState, list).concat(parsedSiblings);
     });
-    const parseList = (depth, itemSelection, selectionState, list) => bind$3(children$1(list), (element) => {
+    const parseList = (depth, itemSelection, selectionState, list) => bind$3(children$2(list), (element) => {
         const parser = isList(element) ? parseList : parseItem;
         const newDepth = depth + 1;
         return parser(newDepth, itemSelection, selectionState, element);
@@ -27167,7 +28860,7 @@
     const canIndent$1 = (editor) => getListMaxDepth(editor).forall((max) => {
         const blocks = editor.selection.getSelectedBlocks();
         return exists(blocks, (element) => {
-            return closest$3(SugarElement.fromDom(element), 'li').forall((sugarElement) => ancestors(sugarElement, 'ol,ul').length <= max);
+            return closest$4(SugarElement.fromDom(element), 'li').forall((sugarElement) => ancestors(sugarElement, 'ol,ul').length <= max);
         });
     });
 
@@ -27425,7 +29118,7 @@
     const applyList = (editor, listName, detail) => {
         const rng = editor.selection.getRng();
         let listItemName = 'LI';
-        const root = getClosestListHost(editor, getRootSearchStart(editor, rng));
+        const root = getClosestListHost(editor, getRootSearchStart(editor, rng), rng.collapsed);
         const dom = editor.dom;
         if (dom.getContentEditable(editor.selection.getNode()) === 'false') {
             return;
@@ -27776,11 +29469,11 @@
             const rng = normalizeRange(editor.selection.getRng());
             const nextCaretContainer = findNextCaretContainer(editor, rng, isForward, root);
             const otherLi = dom.getParent(nextCaretContainer, 'LI', root);
-            if (nextCaretContainer && otherLi) {
+            if (nextCaretContainer && otherLi && (isForward || !dom.isChildOf(nextCaretContainer, block))) {
                 const findValidElement = (element) => contains$2(['td', 'th', 'caption'], name(element));
                 const findRoot = (node) => node.dom === root;
-                const otherLiCell = closest$4(SugarElement.fromDom(otherLi), findValidElement, findRoot);
-                const caretCell = closest$4(SugarElement.fromDom(rng.startContainer), findValidElement, findRoot);
+                const otherLiCell = closest$5(SugarElement.fromDom(otherLi), findValidElement, findRoot);
+                const caretCell = closest$5(SugarElement.fromDom(rng.startContainer), findValidElement, findRoot);
                 if (!equals(otherLiCell, caretCell, eq)) {
                     return false;
                 }
@@ -27805,19 +29498,12 @@
         const startListParent = editor.dom.getParent(selectionStartElm, 'LI,DT,DD', root);
         return isNonNullable(startListParent) || getSelectedListItems(editor).length > 0;
     };
-    const backspaceDeleteRange$1 = (editor) => {
+    const backspaceDeleteRange$1 = (editor, isForward) => {
         if (hasListSelection(editor)) {
             editor.undoManager.transact(() => {
-                // Some delete actions may prevent the input event from being fired. If we do not detect it, we fire it ourselves.
-                let shouldFireInput = true;
-                const inputHandler = () => shouldFireInput = false;
-                editor.on('input', inputHandler);
-                editor.execCommand('Delete');
-                editor.off('input', inputHandler);
-                if (shouldFireInput) {
-                    editor.dispatch('input');
+                if (symulateDelete(editor, isForward, () => editor.execCommand('Delete'))) {
+                    normalizeLists(editor.dom, editor.getBody());
                 }
-                normalizeLists(editor.dom, editor.getBody());
             });
             return true;
         }
@@ -27826,7 +29512,7 @@
     const backspaceDelete$c = (editor, isForward) => {
         const selection = editor.selection;
         return !isWithinNonEditableList$1(editor, selection.getNode()) && (selection.isCollapsed() ?
-            backspaceDeleteCaret$1(editor, isForward) : backspaceDeleteRange$1(editor));
+            backspaceDeleteCaret$1(editor, isForward) : backspaceDeleteRange$1(editor, isForward));
     };
 
     const blockPosition = (block, position) => ({
@@ -27847,7 +29533,7 @@
     const getClosestHost = (root, scope) => {
         const isRoot = (node) => eq(node, root);
         const isHost = (node) => isTableCell$2(node) || isContentEditableTrue$3(node.dom);
-        return closest$4(scope, isHost, isRoot).filter(isElement$8).getOr(root);
+        return closest$5(scope, isHost, isRoot).filter(isElement$8).getOr(root);
     };
     const hasSameHost = (rootNode, blockBoundary) => {
         const root = SugarElement.fromDom(rootNode);
@@ -27881,7 +29567,7 @@
     const read$1 = (schema, rootNode, forward, rng) => rng.collapsed ? readFromRange(schema, rootNode, forward, rng) : Optional.none();
 
     const getChildrenUntilBlockBoundary = (block, schema) => {
-        const children = children$1(block);
+        const children = children$2(block);
         return findIndex$2(children, (el) => schema.isBlock(name(el))).fold(constant(children), (index) => children.slice(0, index));
     };
     const extractChildren = (block, schema) => {
@@ -29243,12 +30929,12 @@
     };
     const backspaceDelete$3 = (editor, forward) => editor.selection.isCollapsed() ? deleteCaret(editor, forward) : deleteRange$1(editor, forward);
 
-    const isEditable = (target) => closest$4(target, (elm) => isContentEditableTrue$3(elm.dom) || isContentEditableFalse$a(elm.dom))
+    const isEditable = (target) => closest$5(target, (elm) => isContentEditableTrue$3(elm.dom) || isContentEditableFalse$a(elm.dom))
         .exists((elm) => isContentEditableTrue$3(elm.dom));
     const parseIndentValue = (value) => toInt(value ?? '').getOr(0);
     const getIndentStyleName = (useMargin, element) => {
         const indentStyleName = useMargin || isTable$1(element) ? 'margin' : 'padding';
-        const suffix = get$7(element, 'direction') === 'rtl' ? '-right' : '-left';
+        const suffix = get$8(element, 'direction') === 'rtl' ? '-right' : '-left';
         return indentStyleName + suffix;
     };
     const indentElement = (dom, command, useMargin, value, unit, element) => {
@@ -29276,7 +30962,11 @@
     const canIndent = (editor) => !editor.mode.isReadOnly() && canIndent$1(editor);
     const isListComponent = (el) => isList$1(el) || isListItem$2(el);
     const parentIsListComponent = (el) => parent(el).exists(isListComponent);
-    const getBlocksToIndent = (editor) => filter$5(fromDom$1(editor.selection.getSelectedBlocks()), (el) => !isListComponent(el) && !parentIsListComponent(el) && isEditable(el));
+    const getBlocksToIndent = (editor) => {
+        const selectedCells = getCellsFromEditor(editor);
+        return selectedCells.length === 0 ?
+            filter$5(fromDom$1(editor.selection.getSelectedBlocks()), (el) => !isListComponent(el) && !parentIsListComponent(el) && isEditable(el)) : selectedCells;
+    };
     const handle = (editor, command) => {
         if (editor.mode.isReadOnly()) {
             return;
@@ -29313,9 +31003,10 @@
     };
 
     const deleteRange = (editor, forward) => {
-        const rng = normalize(editor.selection.getRng());
+        const range = editor.selection.getRng();
+        const rng = normalize(range);
         return isSelectionOverWholeHTMLElement(rng)
-            ? Optional.some(() => deleteElement$2(editor, forward, SugarElement.fromDom(editor.selection.getNode())))
+            ? Optional.some(() => deleteElement$2(editor, forward, SugarElement.fromDom(range.startContainer.childNodes[range.startOffset])))
             : Optional.none();
     };
     const backspaceDelete$1 = (editor, forward) => editor.selection.isCollapsed() ? Optional.none() : deleteRange(editor, forward);
@@ -29643,6 +31334,45 @@
         });
     };
 
+    const setupInputFiltering = (editor, protect) => {
+        editor.on('BeforeSetContent', (e) => {
+            each$e(protect, (pattern) => {
+                e.content = e.content.replace(pattern, (str) => {
+                    return '<!--mce:protected ' + escape(str) + '-->';
+                });
+            });
+        });
+    };
+    const setupOutputFiltering = (editor, protect) => {
+        editor.serializer.addNodeFilter('#comment', (nodes) => {
+            let i = nodes.length;
+            while (i--) {
+                const node = nodes[i];
+                const value = node.value;
+                if (value?.indexOf('mce:protected ') === 0) {
+                    const protectedHtml = unescape(value).substr(14);
+                    const valid = exists(protect, (pattern) => {
+                        const matches = protectedHtml.match(pattern);
+                        return matches !== null && matches[0].length === protectedHtml.length;
+                    });
+                    if (valid) {
+                        node.name = '#text';
+                        node.type = 3;
+                        node.raw = true;
+                        node.value = protectedHtml;
+                    }
+                    else {
+                        node.remove();
+                    }
+                }
+            }
+        });
+    };
+    const registerProtectedHtmlFilters = (editor, protect) => {
+        setupInputFiltering(editor, protect);
+        setupOutputFiltering(editor, protect);
+    };
+
     /**
      * This module shows the invisible block that the caret is currently in when contents is added to that block.
      */
@@ -29763,7 +31493,7 @@
         const isRoot = (el) => eq(el, root);
         const isCet = (el) => isContentEditableTrue$3(el.dom);
         const startNode = SugarElement.fromDom(position.container());
-        const closestCetBlock = closest$4(startNode, isCet, isRoot);
+        const closestCetBlock = closest$5(startNode, isCet, isRoot);
         return closestCetBlock.filter((b) => !isRoot(b));
     };
     const moveVertically = (editor, position, down) => {
@@ -29795,7 +31525,7 @@
     const isTarget = (node) => contains$2(['figcaption'], name(node));
     const getClosestTargetBlock = (pos, root, schema) => {
         const isRoot = curry(eq, root);
-        return closest$4(SugarElement.fromDom(pos.container()), (el) => schema.isBlock(name(el)), isRoot).filter(isTarget);
+        return closest$5(SugarElement.fromDom(pos.container()), (el) => schema.isBlock(name(el)), isRoot).filter(isTarget);
     };
     const isAtFirstOrLastLine = (root, forward, pos) => forward ? isAtLastLine(root.dom, pos) : isAtFirstLine(root.dom, pos);
     const moveCaretToNewEmptyLine = (editor, forward) => {
@@ -29911,7 +31641,7 @@
         return filterFirstLayer(scope, selector, always);
     };
     const filterFirstLayer = (scope, selector, predicate) => {
-        return bind$3(children$1(scope), (x) => {
+        return bind$3(children$2(scope), (x) => {
             if (is$2(x, selector)) {
                 return predicate(x) ? [x] : [];
             }
@@ -29940,7 +31670,7 @@
      */
     const cell = (element, isRoot) => lookup$1(['td', 'th'], element, isRoot);
     const cells = (ancestor) => firstLayer(ancestor, 'th,td');
-    const table = (element, isRoot) => closest$3(element, 'table', isRoot);
+    const table = (element, isRoot) => closest$4(element, 'table', isRoot);
 
     const adt = Adt.generate([
         { none: ['current'] },
@@ -30059,7 +31789,7 @@
             }
             return contains$2(['br', 'img', 'hr', 'input'], name(element));
         };
-        const isNonEditable = (element) => isElement$8(element) && get$9(element, 'contenteditable') === 'false';
+        const isNonEditable = (element) => isElement$8(element) && get$a(element, 'contenteditable') === 'false';
         const comparePosition = (element, other) => {
             return element.dom.compareDocumentPosition(other.dom);
         };
@@ -30077,7 +31807,7 @@
         return {
             up: constant({
                 selector: ancestor$4,
-                closest: closest$3,
+                closest: closest$4,
                 predicate: ancestor$5,
                 all: parents$1
             }),
@@ -30086,14 +31816,14 @@
                 predicate: descendants$1
             }),
             styles: constant({
-                get: get$7,
+                get: get$8,
                 getRaw: getRaw$1,
-                set: set$2,
+                set: set$3,
                 remove: remove$7
             }),
             attrs: constant({
-                get: get$9,
-                set: set$4,
+                get: get$a,
+                set: set$5,
                 remove: remove$9,
                 copyTo: copyAttributesTo
             }),
@@ -30121,7 +31851,7 @@
                 nextSibling: nextSibling
             }),
             property: constant({
-                children: children$1,
+                children: children$2,
                 name: name,
                 parent: parent,
                 document,
@@ -30130,8 +31860,8 @@
                 isElement: isElement$8,
                 isSpecial,
                 getLanguage,
-                getText: get$4,
-                setText: set$1,
+                getText: get$5,
+                setText: set$2,
                 isBoundary,
                 isEmptyTag,
                 isNonEditable
@@ -30211,10 +31941,14 @@
     };
     const isInDragStartEvent = checkEvent(0 /* Event.Dragstart */);
 
-    const createEmptyFileList = () => Object.freeze({
-        length: 0,
-        item: (_) => null
-    });
+    const createEmptyFileList = () => {
+        const empty = [];
+        return Object.freeze({
+            length: 0,
+            item: (_) => null,
+            [Symbol.iterator]: () => empty[Symbol.iterator]()
+        });
+    };
 
     const modeId = generate('mode');
     const getMode = (transfer) => {
@@ -30499,7 +32233,7 @@
             return tabForward(editor, isRoot, current);
         });
     };
-    const isCellInEditableTable = (cell) => closest$4(cell, isTag('table')).exists(isEditable$2);
+    const isCellInEditableTable = (cell) => closest$5(cell, isTag('table')).exists(isEditable$2);
     const tabForward = (editor, isRoot, cell) => tabGo(editor, isRoot, next(cell, isCellEditable));
     const tabBackward = (editor, isRoot, cell) => tabGo(editor, isRoot, prev(cell, isCellEditable));
     const isCellEditable = (cell) => isEditable$2(cell) || descendant(cell, isEditableHTMLElement);
@@ -30759,283 +32493,6 @@
             context
         });
     };
-
-    var SimpleResultType;
-    (function (SimpleResultType) {
-        SimpleResultType[SimpleResultType["Error"] = 0] = "Error";
-        SimpleResultType[SimpleResultType["Value"] = 1] = "Value";
-    })(SimpleResultType || (SimpleResultType = {}));
-    const fold$1 = (res, onError, onValue) => res.stype === SimpleResultType.Error ? onError(res.serror) : onValue(res.svalue);
-    const partition = (results) => {
-        const values = [];
-        const errors = [];
-        each$e(results, (obj) => {
-            fold$1(obj, (err) => errors.push(err), (val) => values.push(val));
-        });
-        return { values, errors };
-    };
-    const mapError = (res, f) => {
-        if (res.stype === SimpleResultType.Error) {
-            return { stype: SimpleResultType.Error, serror: f(res.serror) };
-        }
-        else {
-            return res;
-        }
-    };
-    const map = (res, f) => {
-        if (res.stype === SimpleResultType.Value) {
-            return { stype: SimpleResultType.Value, svalue: f(res.svalue) };
-        }
-        else {
-            return res;
-        }
-    };
-    const bind = (res, f) => {
-        if (res.stype === SimpleResultType.Value) {
-            return f(res.svalue);
-        }
-        else {
-            return res;
-        }
-    };
-    const bindError = (res, f) => {
-        if (res.stype === SimpleResultType.Error) {
-            return f(res.serror);
-        }
-        else {
-            return res;
-        }
-    };
-    const svalue = (v) => ({ stype: SimpleResultType.Value, svalue: v });
-    const serror = (e) => ({ stype: SimpleResultType.Error, serror: e });
-    const toResult = (res) => fold$1(res, Result.error, Result.value);
-    const fromResult = (res) => res.fold(serror, svalue);
-    const SimpleResult = {
-        fromResult,
-        toResult,
-        svalue,
-        partition,
-        serror,
-        bind,
-        bindError,
-        map,
-        mapError,
-        fold: fold$1
-    };
-
-    const formatObj = (input) => {
-        return isObject(input) && keys(input).length > 100 ? ' removed due to size' : JSON.stringify(input, null, 2);
-    };
-    const formatErrors = (errors) => {
-        const es = errors.length > 10 ? errors.slice(0, 10).concat([
-            {
-                path: [],
-                getErrorInfo: constant('... (only showing first ten failures)')
-            }
-        ]) : errors;
-        // TODO: Work out a better split between PrettyPrinter and SchemaError
-        return map$3(es, (e) => {
-            return 'Failed path: (' + e.path.join(' > ') + ')\n' + e.getErrorInfo();
-        });
-    };
-
-    const nu = (path, getErrorInfo) => {
-        return SimpleResult.serror([{
-                path,
-                // This is lazy so that it isn't calculated unnecessarily
-                getErrorInfo
-            }]);
-    };
-    const missingRequired = (path, key, obj) => nu(path, () => 'Could not find valid *required* value for "' + key + '" in ' + formatObj(obj));
-    const custom = (path, err) => nu(path, constant(err));
-
-    const value = (validator) => {
-        const extract = (path, val) => {
-            return SimpleResult.bindError(validator(val), (err) => custom(path, err));
-        };
-        const toString = constant('val');
-        return {
-            extract,
-            toString
-        };
-    };
-    const anyValue$1 = value(SimpleResult.svalue);
-
-    const anyValue = constant(anyValue$1);
-    const typedValue = (validator, expectedType) => value((a) => {
-        const actualType = typeof a;
-        return validator(a) ? SimpleResult.svalue(a) : SimpleResult.serror(`Expected type: ${expectedType} but got: ${actualType}`);
-    });
-    const number = typedValue(isNumber, 'number');
-    const string = typedValue(isString, 'string');
-    typedValue(isBoolean, 'boolean');
-    const functionProcessor = typedValue(isFunction, 'function');
-    // Test if a value can be copied by the structured clone algorithm and hence sendable via postMessage
-    // https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
-    // from https://stackoverflow.com/a/32673910/7377237 with adjustments for typescript
-    const isPostMessageable = (val) => {
-        if (Object(val) !== val) { // Primitive value
-            return true;
-        }
-        switch ({}.toString.call(val).slice(8, -1)) { // Class
-            case 'Boolean':
-            case 'Number':
-            case 'String':
-            case 'Date':
-            case 'RegExp':
-            case 'Blob':
-            case 'FileList':
-            case 'ImageData':
-            case 'ImageBitmap':
-            case 'ArrayBuffer':
-                return true;
-            case 'Array':
-            case 'Object':
-                return Object.keys(val).every((prop) => isPostMessageable(val[prop]));
-            default:
-                return false;
-        }
-    };
-    value((a) => {
-        if (isPostMessageable(a)) {
-            return SimpleResult.svalue(a);
-        }
-        else {
-            return SimpleResult.serror('Expected value to be acceptable for sending via postMessage');
-        }
-    });
-
-    const required$1 = () => ({ tag: "required" /* FieldPresenceTag.Required */, process: {} });
-    const defaultedThunk = (fallbackThunk) => ({ tag: "defaultedThunk" /* FieldPresenceTag.DefaultedThunk */, process: fallbackThunk });
-    const defaulted$1 = (fallback) => defaultedThunk(constant(fallback));
-    const asOption = () => ({ tag: "option" /* FieldPresenceTag.Option */, process: {} });
-
-    const field$1 = (key, newKey, presence, prop) => ({ tag: "field" /* FieldTag.Field */, key, newKey, presence, prop });
-    const fold = (value, ifField, ifCustom) => {
-        switch (value.tag) {
-            case "field" /* FieldTag.Field */:
-                return ifField(value.key, value.newKey, value.presence, value.prop);
-            case "custom" /* FieldTag.CustomField */:
-                return ifCustom(value.newKey, value.instantiator);
-        }
-    };
-
-    const mergeValues = (values, base) => {
-        return SimpleResult.svalue(deepMerge(base, merge$1.apply(undefined, values)));
-    };
-    const mergeErrors = (errors) => compose(SimpleResult.serror, flatten$1)(errors);
-    const consolidateObj = (objects, base) => {
-        const partition = SimpleResult.partition(objects);
-        return partition.errors.length > 0 ? mergeErrors(partition.errors) : mergeValues(partition.values, base);
-    };
-    const consolidateArr = (objects) => {
-        const partitions = SimpleResult.partition(objects);
-        return partitions.errors.length > 0 ? mergeErrors(partitions.errors) : SimpleResult.svalue(partitions.values);
-    };
-    const ResultCombine = {
-        consolidateObj,
-        consolidateArr
-    };
-
-    const requiredAccess = (path, obj, key, bundle) => 
-    // In required mode, if it is undefined, it is an error.
-    get$a(obj, key).fold(() => missingRequired(path, key, obj), bundle);
-    const fallbackAccess = (obj, key, fallback, bundle) => {
-        const v = get$a(obj, key).getOrThunk(() => fallback(obj));
-        return bundle(v);
-    };
-    const optionAccess = (obj, key, bundle) => bundle(get$a(obj, key));
-    const optionDefaultedAccess = (obj, key, fallback, bundle) => {
-        const opt = get$a(obj, key).map((val) => val === true ? fallback(obj) : val);
-        return bundle(opt);
-    };
-    const extractField = (field, path, obj, key, prop) => {
-        const bundle = (av) => prop.extract(path.concat([key]), av);
-        const bundleAsOption = (optValue) => optValue.fold(() => SimpleResult.svalue(Optional.none()), (ov) => {
-            const result = prop.extract(path.concat([key]), ov);
-            return SimpleResult.map(result, Optional.some);
-        });
-        switch (field.tag) {
-            case "required" /* FieldPresenceTag.Required */:
-                return requiredAccess(path, obj, key, bundle);
-            case "defaultedThunk" /* FieldPresenceTag.DefaultedThunk */:
-                return fallbackAccess(obj, key, field.process, bundle);
-            case "option" /* FieldPresenceTag.Option */:
-                return optionAccess(obj, key, bundleAsOption);
-            case "defaultedOptionThunk" /* FieldPresenceTag.DefaultedOptionThunk */:
-                return optionDefaultedAccess(obj, key, field.process, bundleAsOption);
-            case "mergeWithThunk" /* FieldPresenceTag.MergeWithThunk */: {
-                return fallbackAccess(obj, key, constant({}), (v) => {
-                    const result = deepMerge(field.process(obj), v);
-                    return bundle(result);
-                });
-            }
-        }
-    };
-    const extractFields = (path, obj, fields) => {
-        const success = {};
-        const errors = [];
-        // PERFORMANCE: We use a for loop here instead of Arr.each as this is a hot code path
-        for (const field of fields) {
-            fold(field, (key, newKey, presence, prop) => {
-                const result = extractField(presence, path, obj, key, prop);
-                SimpleResult.fold(result, (err) => {
-                    errors.push(...err);
-                }, (res) => {
-                    success[newKey] = res;
-                });
-            }, (newKey, instantiator) => {
-                success[newKey] = instantiator(obj);
-            });
-        }
-        return errors.length > 0 ? SimpleResult.serror(errors) : SimpleResult.svalue(success);
-    };
-    const objOf = (values) => {
-        const extract = (path, o) => extractFields(path, o, values);
-        const toString = () => {
-            const fieldStrings = map$3(values, (value) => fold(value, (key, _okey, _presence, prop) => key + ' -> ' + prop.toString(), (newKey, _instantiator) => 'state(' + newKey + ')'));
-            return 'obj{\n' + fieldStrings.join('\n') + '}';
-        };
-        return {
-            extract,
-            toString
-        };
-    };
-    const arrOf = (prop) => {
-        const extract = (path, array) => {
-            const results = map$3(array, (a, i) => prop.extract(path.concat(['[' + i + ']']), a));
-            return ResultCombine.consolidateArr(results);
-        };
-        const toString = () => 'array(' + prop.toString() + ')';
-        return {
-            extract,
-            toString
-        };
-    };
-
-    const extractValue = (label, prop, obj) => {
-        const res = prop.extract([label], obj);
-        return SimpleResult.mapError(res, (errs) => ({ input: obj, errors: errs }));
-    };
-    const asRaw = (label, prop, obj) => SimpleResult.toResult(extractValue(label, prop, obj));
-    const formatError = (errInfo) => {
-        return 'Errors: \n' + formatErrors(errInfo.errors).join('\n') +
-            '\n\nInput object: ' + formatObj(errInfo.input);
-    };
-
-    const field = field$1;
-    const required = (key) => field(key, key, required$1(), anyValue());
-    const requiredOf = (key, schema) => field(key, key, required$1(), schema);
-    const requiredString = (key) => requiredOf(key, string);
-    const requiredFunction = (key) => requiredOf(key, functionProcessor);
-    const option = (key) => field(key, key, asOption(), anyValue());
-    const optionOf = (key, schema) => field(key, key, asOption(), schema);
-    const optionString = (key) => optionOf(key, string);
-    const optionFunction = (key) => optionOf(key, functionProcessor);
-    const defaulted = (key, fallback) => field(key, key, defaulted$1(fallback), anyValue());
-    const defaultedOf = (key, fallback, schema) => field(key, key, defaulted$1(fallback), schema);
-    const defaultedNumber = (key, fallback) => defaultedOf(key, fallback, number);
-    const defaultedArrayOf = (key, fallback, schema) => defaultedOf(key, fallback, arrOf(schema));
 
     const type = requiredString('type');
     const fetch$1 = requiredFunction('fetch');
@@ -31436,32 +32893,6 @@
     const backspaceDelete = (editor, forward, granularity) => shouldPreventDeleteAction(editor, forward, granularity) || isSafari && handleDeleteActionSafari(editor, forward, granularity)
         ? Optional.some(noop) : Optional.none();
 
-    const createAndFireInputEvent = (eventType) => (editor, inputType, specifics = {}) => {
-        const target = editor.getBody();
-        const overrides = {
-            bubbles: true,
-            composed: true,
-            data: null,
-            isComposing: false,
-            detail: 0,
-            view: null,
-            target,
-            currentTarget: target,
-            eventPhase: Event.AT_TARGET,
-            originalTarget: target,
-            explicitOriginalTarget: target,
-            isTrusted: false,
-            srcElement: target,
-            cancelable: false,
-            preventDefault: noop,
-            inputType
-        };
-        const input = clone$2(new InputEvent(eventType));
-        return editor.dispatch(eventType, { ...input, ...overrides, ...specifics });
-    };
-    const fireInputEvent = createAndFireInputEvent('input');
-    const fireBeforeInputEvent = createAndFireInputEvent('beforeinput');
-
     const platform$2 = detect$1();
     const os = platform$2.os;
     const isMacOSOriOS = os.isMacOS() || os.isiOS();
@@ -31550,19 +32981,21 @@
         // track backspace keydown state for emulating Meta + Backspace keyup detection on macOS
         let isBackspaceKeydown = false;
         let formatNodes = [];
-        editor.on('keydown', (evt) => {
-            isBackspaceKeydown = evt.keyCode === VK.BACKSPACE;
-            formatNodes = getFormatNodesAtStart(editor);
-            if (!evt.isDefaultPrevented()) {
-                executeKeydownOverride$3(editor, caret, evt);
-            }
-        });
-        editor.on('keyup', (evt) => {
-            if (!evt.isDefaultPrevented()) {
-                executeKeyupOverride(editor, evt, isBackspaceKeydown, formatNodes);
-                formatNodes.length = 0;
-            }
-            isBackspaceKeydown = false;
+        editor.on('init', () => {
+            editor.on('keydown', (evt) => {
+                isBackspaceKeydown = evt.keyCode === VK.BACKSPACE;
+                formatNodes = getFormatNodesAtStart(editor);
+                if (!evt.isDefaultPrevented()) {
+                    executeKeydownOverride$3(editor, caret, evt);
+                }
+            });
+            editor.on('keyup', (evt) => {
+                if (!evt.isDefaultPrevented()) {
+                    executeKeyupOverride(editor, evt, isBackspaceKeydown, formatNodes);
+                    formatNodes.length = 0;
+                }
+                isBackspaceKeydown = false;
+            });
         });
     };
 
@@ -31600,16 +33033,15 @@
         if (!root) {
             return;
         }
-        if (/^(LI|DT|DD)$/.test(root.nodeName)) {
-            const isList = (e) => /^(ul|ol|dl)$/.test(name(e));
-            const findFirstList = (e) => isList(e) ? Optional.from(e) : descendant$2(e, isList);
+        if (isListItem$2(SugarElement.fromDom(root))) {
+            const findFirstList = (e) => isList$1(e) ? Optional.from(e) : descendant$2(e, isList$1);
             const isEmpty = (e) => dom.isEmpty(e.dom);
             firstNonWhiteSpaceNodeSibling(root.firstChild).each((firstChild) => {
                 findFirstList(firstChild).fold(() => {
                     if (isEmpty(firstChild)) {
                         const element = toLeaf$1(firstChild, 0).element;
                         if (isElement$8(element) && !isBr$6(element)) {
-                            append$1(element, SugarElement.fromText(nbsp));
+                            append$1(element, SugarElement.fromHtml('<br data-mce-bogus="1" />'));
                         }
                     }
                 }, (firstList) => {
@@ -31762,7 +33194,10 @@
                     }
                 }
             } while ((node = node.parentNode) && node !== editableRoot);
-            reduceFontStyleNesting(block, caretNode);
+            // Not omitting font sizes of list items otherwise their font size doesn't match its content
+            if (block.nodeName !== 'LI') {
+                reduceFontStyleNesting(block, caretNode);
+            }
         }
         setForcedBlockAttrs(editor, block);
         emptyBlock(caretNode);
@@ -32138,6 +33573,16 @@
             }
             return true;
         };
+        const isInsideLiBeforeAList = (newBlock) => {
+            const nextSibling$1 = firstChild(newBlock).bind(nextSibling);
+            return isListItem$2(newBlock) && nextSibling$1.exists(isList$1);
+        };
+        const trimEmptySpacesInLeftLeaf = (newBlock) => {
+            const leaf = toLeaf$1(SugarElement.fromDom(newBlock), 0).element;
+            if (isText$c(leaf) && dom.isEmpty(leaf.dom)) {
+                leaf.dom.remove();
+            }
+        };
         const insertNewBlockAfter = () => {
             let block;
             // If the caret is at the end of a header we produce a P tag after it similar to Word unless we are in a hgroup
@@ -32273,8 +33718,13 @@
             else {
                 dom.insertAfter(fragment, parentBlock);
             }
-            trimInlineElementsOnLeftSideOfBlock(dom, nonEmptyElementsMap, newBlock);
-            addBrToBlockIfNeeded(dom, parentBlock);
+            if (!isInsideLiBeforeAList(SugarElement.fromDom(newBlock))) {
+                trimInlineElementsOnLeftSideOfBlock(dom, nonEmptyElementsMap, newBlock);
+                addBrToBlockIfNeeded(dom, parentBlock);
+            }
+            else {
+                trimEmptySpacesInLeftLeaf(newBlock);
+            }
             if (dom.isEmpty(parentBlock)) {
                 emptyBlock(parentBlock);
             }
@@ -32894,17 +34344,23 @@
     };
 
     const setup$e = (editor) => {
-        editor.on('keydown', (e) => {
-            if (e.keyCode === VK.BACKSPACE) {
-                if (backspaceDelete$c(editor, false)) {
-                    e.preventDefault();
+        editor.on('init', () => {
+            // Init is done after the editor's setup. This places our keydown after any keydowns registered in the setup function, so they can do default prevent.
+            editor.on('keydown', (e) => {
+                if (e.defaultPrevented) {
+                    return;
                 }
-            }
-            else if (e.keyCode === VK.DELETE) {
-                if (backspaceDelete$c(editor, true)) {
-                    e.preventDefault();
+                if (e.keyCode === VK.BACKSPACE) {
+                    if (backspaceDelete$c(editor, false)) {
+                        e.preventDefault();
+                    }
                 }
-            }
+                else if (e.keyCode === VK.DELETE) {
+                    if (backspaceDelete$c(editor, true)) {
+                        e.preventDefault();
+                    }
+                }
+            });
         });
     };
 
@@ -33506,15 +34962,20 @@
         blobCache.add(blobInfo);
         return blobInfo;
     };
-    const pasteImage = (editor, imageItem) => {
-        parseDataUri(imageItem.uri).each(({ data, type, base64Encoded }) => {
+    const pasteImage = async (editor, imageItem) => {
+        return parseDataUri(imageItem.uri).fold(() => Promise.resolve(), ({ data, type, base64Encoded }) => {
             const base64 = base64Encoded ? data : btoa(data);
             const file = imageItem.file;
             // TODO: Move the bulk of the cache logic to EditorUpload
             const blobCache = editor.editorUpload.blobCache;
             const existingBlobInfo = blobCache.getByData(base64, type);
             const blobInfo = existingBlobInfo ?? createBlobInfo(editor, blobCache, file, base64);
-            pasteHtml(editor, `<img src="${blobInfo.blobUri()}">`, false, true);
+            const imgUrl = blobInfo.blobUri();
+            return getImageSize(imgUrl).then(({ width, height }) => {
+                pasteHtml(editor, `<img width="${width}" height="${height}" src="${imgUrl}">`, false, true);
+            }).catch(() => {
+                pasteHtml(editor, `<img src="${imgUrl}">`, false, true);
+            });
         });
     };
     const isClipboardEvent = (event) => event.type === 'paste';
@@ -33545,13 +35006,13 @@
             if (images.length > 0) {
                 e.preventDefault();
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                readFilesAsDataUris(images).then((fileResults) => {
+                readFilesAsDataUris(images).then(async (fileResults) => {
                     if (rng) {
                         editor.selection.setRng(rng);
                     }
-                    each$e(fileResults, (result) => {
-                        pasteImage(editor, result);
-                    });
+                    for (const result of fileResults) {
+                        await pasteImage(editor, result);
+                    }
                 });
                 return true;
             }
@@ -34057,9 +35518,9 @@
     const isContentEditableFalse$2 = (elm) => isContentEditableFalse$a(elm.dom);
     const isContentEditableTrue = (elm) => isContentEditableTrue$3(elm.dom);
     const isRoot = (rootNode) => (elm) => eq(SugarElement.fromDom(rootNode), elm);
-    const getClosestScope = (node, rootNode, schema) => closest$4(SugarElement.fromDom(node), (elm) => isContentEditableTrue(elm) || schema.isBlock(name(elm)), isRoot(rootNode))
+    const getClosestScope = (node, rootNode, schema) => closest$5(SugarElement.fromDom(node), (elm) => isContentEditableTrue(elm) || schema.isBlock(name(elm)), isRoot(rootNode))
         .getOr(SugarElement.fromDom(rootNode)).dom;
-    const getClosestCef = (node, rootNode) => closest$4(SugarElement.fromDom(node), isContentEditableFalse$2, isRoot(rootNode));
+    const getClosestCef = (node, rootNode) => closest$5(SugarElement.fromDom(node), isContentEditableFalse$2, isRoot(rootNode));
     const findEdgeCaretCandidate = (startNode, scope, forward) => {
         const walker = new DomTreeWalker(startNode, scope);
         const next = forward ? walker.next.bind(walker) : walker.prev.bind(walker);
@@ -34934,7 +36395,7 @@
             const doc = editor.getDoc();
             const realSelectionContainer = descendant$1(body, '#' + realSelectionId).getOrThunk(() => {
                 const newContainer = SugarElement.fromHtml('<div data-mce-bogus="all" class="mce-offscreen-selection"></div>', doc);
-                set$4(newContainer, 'id', realSelectionId);
+                set$5(newContainer, 'id', realSelectionId);
                 append$1(body, newContainer);
                 return newContainer;
             });
@@ -35526,9 +36987,9 @@
              * as it feels to be the expected behavior.
              */
             const text = SugarElement.fromDom(node);
-            const textContent = get$4(text);
+            const textContent = get$5(text);
             if (startsWithSingleSpace(textContent)) {
-                set$1(text, textContent.slice(1));
+                set$2(text, textContent.slice(1));
             }
         });
     };
@@ -35699,6 +37160,7 @@
         const browser = Env.browser;
         const isGecko = browser.isFirefox();
         const isWebKit = browser.isChromium() || browser.isSafari();
+        const isSafari = browser.isSafari();
         const isiOS = Env.deviceType.isiPhone() || Env.deviceType.isiPad();
         const isMac = Env.os.isMacOS() || Env.os.isiOS();
         /**
@@ -35764,14 +37226,14 @@
                     }
                     // Manually empty the editor
                     e.preventDefault();
-                    editor.setContent('');
-                    if (body.firstChild && dom.isBlock(body.firstChild)) {
-                        editor.selection.setCursorLocation(body.firstChild, 0);
+                    if (symulateDelete(editor, keyCode === DELETE, () => editor.setContent(''))) {
+                        if (body.firstChild && dom.isBlock(body.firstChild)) {
+                            editor.selection.setCursorLocation(body.firstChild, 0);
+                        }
+                        else {
+                            editor.selection.setCursorLocation(body, 0);
+                        }
                     }
-                    else {
-                        editor.selection.setCursorLocation(body, 0);
-                    }
-                    editor.nodeChanged();
                 }
             });
         };
@@ -36305,6 +37767,51 @@
                 }
             });
         };
+        /**
+         * this is needed to manage the difference between
+         * ```
+         * <li><span class="fake">a</span><div>b</div></li>
+         * ```
+         * and
+         * ```
+         * <li><span class="fake">a</span> <div>b</div></li>
+         * ```
+         * since if the indentation of the HTML has a new line it creates a fake child in the `li` that is an empty text
+         * it's check it trying to get the rects and if it can't it means that it's the false unwanted new line
+        **/
+        const isValidSibling = (el) => getClientRects([el.dom]).length > 0;
+        const firstBlockChildOrNewLine = (target) => child(target, (child) => isBr$6(child) || isElement$8(child) && get$8(child, 'display') === 'block');
+        const clickAfterEl = (clientX, clientY, el) => get$c(getClientRects([el.dom]), 0).exists((rect) => clientX >= rect.right && clientY >= rect.top && clientY <= rect.bottom);
+        const selectPos = (editor, e, pos) => {
+            e.preventDefault();
+            editor.focus();
+            editor.selection.setRng(pos.toRange());
+        };
+        /**
+         * In Chrome in a `LI` that contains a block element and where the first child is an inline element
+         * clicking on the right side of the first child the carret goes at the start of the element instead that in the end of it
+         * issue: https://issues.chromium.org/issues/40767343
+        **/
+        const fixInLISelection = () => {
+            editor.on('mousedown', (e) => {
+                const target = SugarElement.fromDom(e.target);
+                if (isListItem$2(target)) {
+                    firstBlockChildOrNewLine(target).fold(() => {
+                        lastChild(target).each((lastChild) => {
+                            if (clickAfterEl(e.clientX, e.clientY, lastChild)) {
+                                lastPositionIn(target.dom).each((pos) => selectPos(editor, e, pos));
+                            }
+                        });
+                    }, (firstBlock) => {
+                        findLast(prevSiblings(firstBlock), isValidSibling).each((lastInlineBeforeBlock) => {
+                            if (clickAfterEl(e.clientX, e.clientY, lastInlineBeforeBlock)) {
+                                prevPosition(target.dom, CaretPosition(firstBlock.dom, 0)).each((pos) => selectPos(editor, e, pos));
+                            }
+                        });
+                    });
+                }
+            });
+        };
         // No-op since Mozilla seems to have fixed the caret repaint issues
         const refreshContentEditable = noop;
         const isHidden = () => {
@@ -36351,6 +37858,9 @@
                 blockFormSubmitInsideEditor();
                 disableBackspaceIntoATable();
                 removeAppleInterchangeBrs();
+                if (!isSafari) {
+                    fixInLISelection();
+                }
                 // touchClickEvent();
                 // iOS
                 if (isiOS) {
@@ -36425,7 +37935,7 @@
     };
     const loadComponentsForInlineEditor = (componentUrls) => {
         return mapToArray(componentUrls, (url, elementName) => {
-            return get$a(hostWindowComponentScripts, url).getOrThunk(() => {
+            return get$b(hostWindowComponentScripts, url).getOrThunk(() => {
                 // Only load the component if it hasn't already been loaded in inline mode the page might have already loaded it
                 if (isNullable(window.customElements.get(elementName))) {
                     const loadPromise = loadComponent(url, getDocument());
@@ -36478,7 +37988,7 @@
         const body = SugarElement.fromDom(editor.getBody());
         const container = getStyleContainer(getRootNode(body));
         const style = SugarElement.fromTag('style');
-        set$4(style, 'type', 'text/css');
+        set$5(style, 'type', 'text/css');
         append$1(style, SugarElement.fromText(text));
         append$1(container, style);
         editor.on('remove', () => {
@@ -36557,6 +38067,11 @@
     };
     const createParser = (editor) => {
         const parser = DomParser(mkParserSettings(editor), editor.schema);
+        parser.addAttributeFilter('data-mce-src,data-mce-href,data-mce-style', (nodes, name) => {
+            for (let i = 0; i < nodes.length; i++) {
+                nodes[i].attr(name, null);
+            }
+        });
         // Convert src and href into data-mce-src, data-mce-href and data-mce-style
         parser.addAttributeFilter('src,href,style,tabindex', (nodes, name) => {
             const dom = editor.dom;
@@ -36673,11 +38188,11 @@
     };
     const getStyleSheetLoader$1 = (editor) => editor.inline ? editor.ui.styleSheetLoader : editor.dom.styleSheetLoader;
     const makeStylesheetLoadingPromises = (editor, css, framedFonts) => {
-        const { pass: bundledCss, fail: normalCss } = partition$2(css, (name) => tinymce.Resource.has(toContentSkinResourceName(name)));
-        const bundledPromises = bundledCss.map((url) => {
-            const css = tinymce.Resource.get(toContentSkinResourceName(url));
+        const { pass: bundledCss, fail: normalCss } = partition$2(css, (key) => tinymce.Resource.has(key));
+        const bundledPromises = bundledCss.map((key) => {
+            const css = tinymce.Resource.get(key);
             if (isString(css)) {
-                return Promise.resolve(getStyleSheetLoader$1(editor).loadRawCss(url, css));
+                return Promise.resolve(getStyleSheetLoader$1(editor).loadRawCss(key, css));
             }
             return Promise.resolve();
         });
@@ -36743,13 +38258,7 @@
         }
         const protect = getProtect(editor);
         if (protect) {
-            editor.on('BeforeSetContent', (e) => {
-                Tools.each(protect, (pattern) => {
-                    e.content = e.content.replace(pattern, (str) => {
-                        return '<!--mce:protected ' + escape(str) + '-->';
-                    });
-                });
-            });
+            registerProtectedHtmlFilters(editor, protect);
         }
         editor.on('SetContent', () => {
             editor.addVisual(editor.getBody());
@@ -36792,6 +38301,11 @@
             editor.contentWindow = window;
             editor.bodyElement = targetElm;
             editor.contentAreaContainer = targetElm;
+        }
+        const contentLanguage = getContentLanguage(editor);
+        if (contentLanguage) {
+            const langTarget = editor.inline ? targetElm : doc.documentElement;
+            DOM$6.setAttrib(langTarget, 'lang', contentLanguage);
         }
         // It will not steal focus while setting contentEditable
         const body = editor.getBody();
@@ -36837,7 +38351,9 @@
         setup$b(editor);
         setup$u(editor);
         setup$6(editor);
-        setup$s(editor);
+        if (shouldAllowNonEditable(editor)) {
+            setup$s(editor);
+        }
         if (!isRtc(editor)) {
             setup$5(editor);
             setup$1(editor);
@@ -36878,7 +38394,7 @@
     const createIframeElement = (id, title, customAttrs, tabindex) => {
         const iframe = SugarElement.fromTag('iframe');
         // This can also be explicitly set by customAttrs, so do this first
-        tabindex.each((t) => set$4(iframe, 'tabindex', t));
+        tabindex.each((t) => set$5(iframe, 'tabindex', t));
         setAll$1(iframe, customAttrs);
         setAll$1(iframe, {
             id: id + '_ifr',
@@ -36988,9 +38504,11 @@
     const initTooltipClosing = (editor) => {
         const closeTooltipsListener = (event) => {
             if (event.keyCode === VK.ESC && !event.defaultPrevented) {
-                if (fireCloseTooltips(editor).isDefaultPrevented()) {
-                    event.preventDefault();
-                }
+                each$e(editor.editorManager.get(), (ed) => {
+                    if (fireCloseTooltips(ed).isDefaultPrevented()) {
+                        event.preventDefault();
+                    }
+                });
             }
         };
         document.addEventListener('keyup', closeTooltipsListener);
@@ -37426,7 +38944,7 @@
         required('id'),
         optionString('name'),
         optionString('avatar'),
-        option('custom')
+        option$1('custom')
     ]);
     const objectCat = (obj) => {
         const result = {};
@@ -37568,7 +39086,7 @@
     };
     const getSection = (sectionResult, name, defaults = {}) => {
         const sections = sectionResult.sections();
-        const sectionOptions = get$a(sections, name).getOr({});
+        const sectionOptions = get$b(sections, name).getOr({});
         return Tools.extend({}, defaults, sectionOptions);
     };
     const hasSection = (sectionResult, name) => {
@@ -37583,7 +39101,7 @@
             table_grid: false, // Table grid relies on hover, which isn't available for touch devices so use the dialog instead
             object_resizing: false, // No nice way to do object resizing at this stage
             resize: false, // Editor resize doesn't make sense on mobile
-            toolbar_mode: get$a(mobileOptions, 'toolbar_mode').getOr('scrolling'), // Use the default side-scrolling toolbar for tablets/phones
+            toolbar_mode: get$b(mobileOptions, 'toolbar_mode').getOr('scrolling'), // Use the default side-scrolling toolbar for tablets/phones
             toolbar_sticky: false // Only enable sticky toolbar on desktop by default
         };
         const defaultPhoneOptions = {
@@ -37831,7 +39349,7 @@
     const getSpecifiedFontProp = (propName, rootElm, elm) => {
         const getProperty = (elm) => getRaw$1(elm, propName).orThunk(() => {
             if (isFont(elm)) {
-                return get$a(legacyPropNames, propName).bind((legacyPropName) => getOpt(elm, legacyPropName));
+                return get$b(legacyPropNames, propName).bind((legacyPropName) => getOpt(elm, legacyPropName));
             }
             else {
                 return Optional.none();
@@ -37922,8 +39440,8 @@
         const specifiedStyle = closest$1(elm, (elm) => getRaw$1(elm, 'line-height'), curry(eq, root));
         const computedStyle = () => {
             // Css.get returns computed values (in px), and parseFloat will strip any non-number suffix
-            const lineHeight = parseFloat(get$7(elm, 'line-height'));
-            const fontSize = parseFloat(get$7(elm, 'font-size'));
+            const lineHeight = parseFloat(get$8(elm, 'line-height'));
+            const fontSize = parseFloat(get$8(elm, 'font-size'));
             return String(lineHeight / fontSize);
         };
         return specifiedStyle.getOrThunk(computedStyle);
@@ -38158,7 +39676,7 @@
                 editor.getWin().print();
             },
             mceFocus: (_command, _ui, value) => {
-                focus(editor, value === true);
+                focus(editor, value);
             },
             mceToggleVisualAid: () => {
                 editor.hasVisual = !editor.hasVisual;
@@ -38274,6 +39792,24 @@
         addCommand(command, callback, scope) {
             const lowerCaseCommand = command.toLowerCase();
             this.commands.exec[lowerCaseCommand] = (_command, ui, value, args) => callback.call(scope ?? this.editor, ui, value, args);
+        }
+        /**
+         * Removes a command from the command collection.
+         *
+         * @method removeCommand
+         * @param {String} command Command name to remove.
+         * @param {String} type Optional type to remove, defaults to removing all types. Can be 'exec', 'state', 'value', or omitted for all.
+         */
+        removeCommand(command, type) {
+            const lowerCaseCommand = command.toLowerCase();
+            if (type) {
+                delete this.commands[type][lowerCaseCommand];
+            }
+            else {
+                delete this.commands.exec[lowerCaseCommand];
+                delete this.commands.state[lowerCaseCommand];
+                delete this.commands.value[lowerCaseCommand];
+            }
         }
         /**
          * Returns true/false if the command is supported or not.
@@ -38933,12 +40469,12 @@
                 processor
             };
             // Setup the initial values
-            const initValue = get$a(values, name).orThunk(() => get$a(initialOptions, name));
+            const initValue = get$b(values, name).orThunk(() => get$b(initialOptions, name));
             initValue.each((value) => setValue(name, value, processor));
         };
         const isRegistered = (name) => has$2(registry, name);
-        const get = (name) => get$a(values, name)
-            .orThunk(() => get$a(registry, name).map((spec) => spec.default))
+        const get = (name) => get$b(values, name)
+            .orThunk(() => get$b(registry, name).map((spec) => spec.default))
             .getOrUndefined();
         const set = (name, value) => {
             if (!isRegistered(name)) {
@@ -39866,7 +41402,12 @@
          * it will also place DOM focus inside the editor.
          *
          * @method focus
-         * @param {Boolean} skipFocus Skip DOM focus. Just set is as the active editor.
+         * @param {Boolean/Object} skipFocus If true, skip DOM focus and only set this editor as the active editor. If an object, focus the editor and optionally control scrolling.
+         * @param {Boolean} skipFocus.scrollToSelection If false, focuses the editor without scrolling the selection into view. Defaults to true.
+         * @example
+         * tinymce.activeEditor.focus();
+         * tinymce.activeEditor.focus(true);
+         * tinymce.activeEditor.focus({ scrollToSelection: false });
          */
         focus(skipFocus) {
             this.execCommand('mceFocus', false, skipFocus);
@@ -40424,6 +41965,21 @@
             return hasEditableRoot(this);
         }
         /**
+         * Announces a message to screen readers via the page-wide aria-live region, without shifting focus.
+         * Delegates to {@link tinymce.dom.AriaAnnouncer#announce}.
+         *
+         * @method announce
+         * @param {String} message The message to announce to screen readers.
+         * @param {Object} options Optional settings.
+         * @param {Boolean} options.assertive If true, uses aria-live="assertive" (role="alert") instead of polite.
+         * @example
+         * tinymce.activeEditor.announce('Bold on');
+         * tinymce.activeEditor.announce('Error occurred', { assertive: true });
+         */
+        announce(message, options) {
+            AriaAnnouncer.announce(message, options);
+        }
+        /**
          * Removes the editor from the dom and tinymce collection.
          *
          * @method remove
@@ -40547,14 +42103,14 @@
          * @property minorVersion
          * @type String
          */
-        minorVersion: '2.2',
+        minorVersion: '9.0',
         /**
          * Release date of TinyMCE build.
          *
          * @property releaseDate
          * @type String
          */
-        releaseDate: '2025-11-17',
+        releaseDate: '2026-08-27',
         /**
          * Collection of language pack data.
          *
@@ -40726,7 +42282,7 @@
             const createId = (elm) => {
                 let id = elm.id;
                 if (!id) {
-                    id = get$a(elm, 'name').filter((name) => !DOM.get(name)).getOrThunk(DOM.uniqueId);
+                    id = get$b(elm, 'name').filter((name) => !DOM.get(name)).getOrThunk(DOM.uniqueId);
                     elm.setAttribute('id', id);
                 }
                 return id;
@@ -41066,7 +42622,7 @@
         const FakeClipboardItem = (items) => ({
             items,
             types: keys(items),
-            getType: (type) => get$a(items, type).getOrUndefined()
+            getType: (type) => get$b(items, type).getOrUndefined()
         });
         const write = (data) => {
             dataValue.set(data);
@@ -41412,6 +42968,7 @@
             ControlSelection,
             BookmarkManager,
             Selection: EditorSelection,
+            AriaAnnouncer,
             Event: EventUtils.Event
         },
         html: {
@@ -41470,7 +43027,7 @@
             }
             catch {
                 // It will thrown an error when running this module
-                // within webpack where the module.exports object is sealed
+                // within rspack where the module.exports object is sealed
             }
         }
     };

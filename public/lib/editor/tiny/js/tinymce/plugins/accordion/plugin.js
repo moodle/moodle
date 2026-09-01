@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -1004,11 +1004,15 @@
     const fireToggleAccordionEvent = (editor, element, state) => editor.dispatch('ToggledAccordion', { element, state });
     const fireToggleAllAccordionsEvent = (editor, elements, state) => editor.dispatch('ToggledAllAccordions', { elements, state });
 
+    const option = (name) => (editor) => editor.options.get(name);
+    const isDisabled = option('disabled');
+
     const accordionTag = 'details';
     const accordionDetailsClass = 'mce-accordion';
     const accordionSummaryClass = 'mce-accordion-summary';
     const accordionBodyWrapperClass = 'mce-accordion-body';
     const accordionBodyWrapperTag = 'div';
+    const accordionReadonlyCompensationAttribute = 'data-mce-accordion-open';
 
     var global$3 = tinymce.util.Tools.resolve('tinymce.util.Tools');
 
@@ -1091,8 +1095,11 @@
             });
         });
     };
-    const toggleDetailsElement = (details, state) => {
+    const toggleDetailsElement = (isReadonly, details, state) => {
         const shouldOpen = state ?? !isOpen(details);
+        if (!isReadonly) {
+            details.setAttribute(accordionReadonlyCompensationAttribute, shouldOpen ? 'open' : 'closed');
+        }
         if (shouldOpen) {
             details.setAttribute('open', 'open');
         }
@@ -1102,8 +1109,11 @@
         return shouldOpen;
     };
     const toggleAccordion = (editor, state) => {
+        if (isDisabled(editor)) {
+            return;
+        }
         getSelectedDetails(editor).each((details) => {
-            fireToggleAccordionEvent(editor, details, toggleDetailsElement(details, state));
+            fireToggleAccordionEvent(editor, details, toggleDetailsElement(editor.readonly, details, state));
         });
     };
     const removeAccordion = (editor) => {
@@ -1127,7 +1137,7 @@
         if (accordions.length === 0) {
             return;
         }
-        each$1(accordions, (accordion) => toggleDetailsElement(accordion, state ?? !isOpen(accordion)));
+        each$1(accordions, (accordion) => toggleDetailsElement(editor.readonly, accordion, state ?? !isOpen(accordion)));
         fireToggleAllAccordionsEvent(editor, accordions, state);
     };
 
@@ -1210,6 +1220,7 @@
                     normalizeOpenAttribute(node);
                     if (isAccordionDetailsNode(node)) {
                         const accordionNode = node;
+                        accordionNode.attr(accordionReadonlyCompensationAttribute, accordionNode.attr('open') === 'open' ? 'open' : 'closed');
                         const { summaryNode, wrapperNode, otherNodes } = getAccordionChildren(accordionNode);
                         const hasSummaryNode = isNonNullable(summaryNode);
                         const newSummaryNode = hasSummaryNode ? summaryNode : new global$2('summary', 1);
@@ -1260,6 +1271,8 @@
                     const node = nodes[i];
                     if (isAccordionDetailsNode(node)) {
                         const accordionNode = node;
+                        accordionNode.attr('open', accordionNode.attr(accordionReadonlyCompensationAttribute) === 'open' ? 'open' : null);
+                        accordionNode.attr(accordionReadonlyCompensationAttribute, null);
                         const { summaryNode, wrapperNode } = getAccordionChildren(accordionNode);
                         if (isNonNullable(summaryNode)) {
                             removeClasses(summaryNode, summaryClassRemoveSet);
@@ -1324,7 +1337,8 @@
         editor.ui.registry.addToggleButton('accordiontoggle', {
             icon: 'accordion-toggle',
             tooltip: 'Toggle accordion',
-            onAction: () => editor.execCommand('ToggleAccordion')
+            onAction: () => editor.execCommand('ToggleAccordion'),
+            context: 'any',
         });
         editor.ui.registry.addToggleButton('accordionremove', {
             icon: 'remove',
@@ -1339,13 +1353,17 @@
         });
     };
 
+    const PLUGIN_CODE = 'accordion';
     var Plugin = () => {
-        global$4.add('accordion', (editor) => {
+        global$4.add(PLUGIN_CODE, (editor) => {
             register(editor);
             register$1(editor);
             setup$1(editor);
             setup$2(editor);
             setup(editor);
+            return {
+                getMetadata: () => ({ name: 'Accordion', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

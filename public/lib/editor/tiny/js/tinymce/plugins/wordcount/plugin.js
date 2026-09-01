@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -26,6 +26,97 @@
         }
         return r;
     };
+    const filter = (xs, pred) => {
+        const r = [];
+        for (let i = 0, len = xs.length; i < len; i++) {
+            const x = xs[i];
+            if (pred(x, i)) {
+                r.push(x);
+            }
+        }
+        return r;
+    };
+
+    /**
+     * HashSet - Immutable Set Operations
+     *
+     * An immutable, unordered collection of unique values built on JavaScript's native Set.
+     * All operations return new Sets, leaving the original unchanged.
+     *
+     * ## When to Use HashSet
+     *
+     * Choose HashSet over other collections when:
+     * - You need to ensure elements are unique
+     * - You frequently need to check if an element exists in the collection
+     * - You need to perform set operations like union, intersection, and difference
+     * - The order of elements doesn't matter to your use case
+     * - You want immutable, side-effect-free operations
+     *
+     * Choose other collections when:
+     * - You need to maintain insertion order (use arrays)
+     * - You need key-value associations (use objects or Map)
+     * - You need to frequently access elements by index (use arrays)
+     * - You need maximum performance with many modifications (consider direct Set mutation)
+     *
+     * ## Common Use Cases
+     *
+     * - Tracking unique items (e.g., users who have completed an action)
+     * - Efficiently testing for membership in a collection
+     * - Performing set theory operations (union, intersection, difference)
+     * - Eliminating duplicates from a collection
+     * - Functional programming patterns where immutability is important
+     *
+     * ## Performance Characteristics
+     *
+     * - Lookup: O(1) average - Check if a value exists
+     * - Insertion: O(1) average - Add a value (returns new Set)
+     * - Removal: O(1) average - Remove a value (returns new Set)
+     * - Iteration: O(n) - Iterate over all values
+     * - Set operations: O(n) - Union, intersection, difference
+     *
+     * Note: Because this is an immutable implementation, each modification creates a new Set.
+     * If you need to perform many sequential modifications, consider using native Set directly
+     * and converting to/from HashSet operations as needed.
+     *
+     * @example
+     * ```typescript
+     * import * as HashSet from './HashSet';
+     *
+     * // Create a Set
+     * const tags = HashSet.make('javascript', 'typescript', 'react');
+     *
+     * // Add an element (immutable - returns new Set)
+     * const moreTags = HashSet.add(tags, 'node');
+     *
+     * // Check membership
+     * const hasReact = HashSet.contains(moreTags, 'react'); // true
+     *
+     * // Set operations
+     * const frontendTags = HashSet.make('react', 'vue', 'angular');
+     * const common = HashSet.intersection(moreTags, frontendTags); // Set { 'react' }
+     *
+     * // Get unique values from array
+     * const unique = HashSet.fromArray([1, 2, 2, 3, 3, 3]); // Set { 1, 2, 3 }
+     * ```
+     *
+     * @module HashSet
+     */
+    /**
+     * Creates a Set from multiple values.
+     * Duplicate values will be automatically removed.
+     *
+     * @param values - The values to include in the set
+     * @returns A new Set containing all unique values
+     */
+    const make = (...values) => new Set(values);
+    /**
+     * Checks if a value exists in the set.
+     *
+     * @param set - The set to search
+     * @param value - The value to look for
+     * @returns true if the value is in the set, false otherwise
+     */
+    const contains = (set, value) => set.has(value);
 
     // Run a function fn after rate ms. If another invocation occurs
     // during the time it is waiting, ignore it completely.
@@ -256,6 +347,7 @@
         const words = [];
         const indices = [];
         let word = [];
+        const specialCharSet = make(...(options.specialChars ?? []));
         // Loop through each character in the classification map and determine whether
         // it precedes a word boundary, building an array of distinct words as we go.
         for (let i = 0; i < characterMap.length; ++i) {
@@ -265,8 +357,9 @@
             // append the current word to the words array and start building a new word.
             if (isWordBoundary(characterMap, i)) {
                 const ch = sChars[i];
-                if ((options.includeWhitespace || !WHITESPACE.test(ch)) &&
-                    (options.includePunctuation || !PUNCTUATION.test(ch))) {
+                if (contains(specialCharSet, ch) ||
+                    (options.includeWhitespace || !WHITESPACE.test(ch)) &&
+                        (options.includePunctuation || !PUNCTUATION.test(ch))) {
                     const startOfWord = i - word.length + 1;
                     const endOfWord = i + 1;
                     const str = sChars.slice(startOfWord, endOfWord).join(EMPTY_STRING);
@@ -301,6 +394,10 @@
         includeWhitespace: false,
         includePunctuation: false
     });
+    const overwrittenCharacterMap = (characterMap, extractedChars, specialChars) => {
+        const specialCharSet = make(...specialChars);
+        return map(characterMap, (v, i) => contains(specialCharSet, extractedChars[i]) ? characterIndices.ALETTER : v);
+    };
     const getWordsWithIndices = (chars, extract, options) => {
         options = {
             ...getDefaultOptions(),
@@ -308,7 +405,16 @@
         };
         const extractedChars = map(chars, extract);
         const characterMap = classify(extractedChars);
-        return findWordsWithIndices(chars, extractedChars, characterMap, options);
+        const specialChars = filter(options.specialChars ?? [], (ch) => ch.length === 1);
+        if (specialChars.length > 0) {
+            return findWordsWithIndices(chars, extractedChars, overwrittenCharacterMap(characterMap, extractedChars, specialChars), {
+                ...options,
+                specialChars
+            });
+        }
+        else {
+            return findWordsWithIndices(chars, extractedChars, characterMap, options);
+        }
     };
     const getWords$1 = (chars, extract, options) => getWordsWithIndices(chars, extract, options).words;
 
@@ -460,13 +566,17 @@
         });
     };
 
+    const PLUGIN_CODE = 'wordcount';
     var Plugin = (delay = 300) => {
-        global$2.add('wordcount', (editor) => {
+        global$2.add(PLUGIN_CODE, (editor) => {
             const api = get(editor);
             register$1(editor, api);
             register(editor);
             setup(editor, api, delay);
-            return api;
+            return {
+                ...api,
+                getMetadata: () => ({ name: 'Word Count', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

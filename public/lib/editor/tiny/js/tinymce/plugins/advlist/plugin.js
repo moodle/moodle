@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -396,7 +396,7 @@
         const stylesContainsAliasMap = map(listStyleTypeAliases, (alias) => contains(styles, alias));
         editor.ui.registry.addSplitButton(id, {
             tooltip,
-            chevronTooltip: `${tooltip} menu`,
+            chevronTooltip: tooltip,
             icon: nodeName === "OL" /* ListType.OrderedList */ ? 'ordered-list' : 'unordered-list',
             presets: 'listpreview',
             columns: nodeName === "OL" /* ListType.OrderedList */ ? 3 : 4,
@@ -449,8 +449,9 @@
         addControl(editor, 'bullist', 'Bullet list', 'InsertUnorderedList', "UL" /* ListType.UnorderedList */, getBulletStyles(editor));
     };
 
+    const PLUGIN_CODE = 'advlist';
     var Plugin = () => {
-        global$1.add('advlist', (editor) => {
+        global$1.add(PLUGIN_CODE, (editor) => {
             if (editor.hasPlugin('lists')) {
                 register$1(editor);
                 register(editor);
@@ -460,6 +461,9 @@
                 // eslint-disable-next-line no-console
                 console.error('Please use the Lists plugin together with the List Styles plugin.');
             }
+            return {
+                getMetadata: () => ({ name: 'List Styles', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

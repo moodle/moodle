@@ -1,15 +1,39 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
     'use strict';
 
-    var global$2 = tinymce.util.Tools.resolve('tinymce.PluginManager');
-
     /* eslint-disable @typescript-eslint/no-wrapper-object-types */
+    const hasProto = (v, constructor, predicate) => {
+        if (predicate(v, constructor.prototype)) {
+            return true;
+        }
+        else {
+            // String-based fallback time
+            return v.constructor?.name === constructor.name;
+        }
+    };
+    const typeOf = (x) => {
+        const t = typeof x;
+        if (x === null) {
+            return 'null';
+        }
+        else if (t === 'object' && Array.isArray(x)) {
+            return 'array';
+        }
+        else if (t === 'object' && hasProto(x, String, (o, proto) => proto.isPrototypeOf(o))) {
+            return 'string';
+        }
+        else {
+            return t;
+        }
+    };
+    const isType = (type) => (value) => typeOf(value) === type;
     const isSimpleType = (type) => (value) => typeof value === type;
     const eq = (t) => (a) => t === a;
+    const isString = isType('string');
     const isUndefined = eq(undefined);
     const isNullable = (a) => a === null || a === undefined;
     const isNonNullable = (a) => !isNullable(a);
@@ -387,6 +411,8 @@
         };
     };
 
+    var global$2 = tinymce.util.Tools.resolve('tinymce.PluginManager');
+
     const DeviceType = (os, browser, userAgent, mediaMatch) => {
         const isiPad = os.isiOS() && /ipad/i.test(userAgent) === true;
         const isiPhone = os.isiOS() && !isiPad;
@@ -731,6 +757,7 @@
     const option = (name) => (editor) => editor.options.get(name);
     const getContentStyle = option('content_style');
     const shouldUseContentCssCors = option('content_css_cors');
+    const getCrossOrigin = option('crossorigin');
     const getBodyClass = option('body_class');
     const getBodyId = option('body_id');
 
@@ -741,14 +768,28 @@
             return `<script src="${editor.dom.encode(url)}"${attrs.join('')}></script>`;
         }).join('');
     };
-    const getPreviewHtml = (editor) => {
+    const getStyleSheetCrossOrigin = (editor) => {
+        if (shouldUseContentCssCors(editor)) {
+            return constant('anonymous');
+        }
+        const crossOrigin = getCrossOrigin(editor);
+        return (url) => crossOrigin(url, 'stylesheet');
+    };
+    const getPreviewHtml = (editor, contentCssResources) => {
         let headHtml = '';
         const encode = editor.dom.encode;
         const contentStyle = getContentStyle(editor) ?? '';
         headHtml += `<base href="${encode(editor.documentBaseURI.getURI())}">`;
-        const cors = shouldUseContentCssCors(editor) ? ' crossorigin="anonymous"' : '';
-        global.each(editor.contentCSS, (url) => {
-            headHtml += '<link type="text/css" rel="stylesheet" href="' + encode(editor.documentBaseURI.toAbsolute(url)) + '"' + cors + '>';
+        const styleSheetCrossOrigin = getStyleSheetCrossOrigin(editor);
+        global.each(contentCssResources, (resource) => {
+            if (resource.type === 'bundled') {
+                headHtml += '<style type="text/css">' + resource.content + '</style>';
+            }
+            else {
+                const corsValue = styleSheetCrossOrigin(resource.url);
+                const cors = corsValue ? ' crossorigin="' + encode(corsValue) + '"' : '';
+                headHtml += '<link type="text/css" rel="stylesheet" href="' + encode(resource.url) + '"' + cors + '>';
+            }
         });
         if (contentStyle) {
             headHtml += '<style type="text/css">' + contentStyle + '</style>';
@@ -771,8 +812,8 @@
         return previewHtml;
     };
 
-    const open = (editor) => {
-        const content = getPreviewHtml(editor);
+    const open = (editor, contentCssResources) => {
+        const content = getPreviewHtml(editor, contentCssResources);
         const dataApi = editor.windowManager.open({
             title: 'Preview',
             size: 'large',
@@ -804,9 +845,9 @@
         dataApi.focus('close');
     };
 
-    const register$1 = (editor) => {
+    const register$1 = (editor, getContentCssResources) => {
         editor.addCommand('mcePreview', () => {
-            open(editor);
+            open(editor, getContentCssResources());
         });
     };
 
@@ -826,10 +867,18 @@
         });
     };
 
+    const PLUGIN_CODE = 'preview';
     var Plugin = () => {
-        global$2.add('preview', (editor) => {
-            register$1(editor);
+        global$2.add(PLUGIN_CODE, (editor) => {
+            const getContentCssResources = () => map(editor.contentCSS, (key) => Optional.from(tinymce.Resource.get(key))
+                .filter(isString)
+                .map((content) => ({ type: 'bundled', content }))
+                .getOr({ type: 'link', url: editor.documentBaseURI.toAbsolute(key) }));
+            register$1(editor, getContentCssResources);
             register(editor);
+            return {
+                getMetadata: () => ({ name: 'Preview', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

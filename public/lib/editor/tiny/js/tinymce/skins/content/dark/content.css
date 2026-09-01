@@ -17,6 +17,9 @@ body {
 a {
   color: #4099ff;
 }
+a[data-mce-selected="inline-boundary"] {
+  color: #fff;
+}
 table {
   border-collapse: collapse;
 }

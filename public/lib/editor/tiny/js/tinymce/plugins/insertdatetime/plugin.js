@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -169,11 +169,15 @@
         });
     };
 
+    const PLUGIN_CODE = 'insertdatetime';
     var Plugin = () => {
-        global$1.add('insertdatetime', (editor) => {
+        global$1.add(PLUGIN_CODE, (editor) => {
             register$2(editor);
             register$1(editor);
             register(editor);
+            return {
+                getMetadata: () => ({ name: 'Insert Date/Time', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

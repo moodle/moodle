@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -118,11 +118,15 @@
         editor.addShortcut('Meta+S', '', 'mceSave');
     };
 
+    const PLUGIN_CODE = 'save';
     var Plugin = () => {
-        global$2.add('save', (editor) => {
+        global$2.add(PLUGIN_CODE, (editor) => {
             register$2(editor);
             register(editor);
             register$1(editor);
+            return {
+                getMetadata: () => ({ name: 'Save', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -512,7 +512,7 @@
     				if (typeof document === 'undefined') {
     					return null;
     				}
-    				if ('currentScript' in document && 1 < 2 /* hack to trip TS' flow analysis */) {
+    				if (document.currentScript && document.currentScript.tagName === 'SCRIPT' && 1 < 2 /* hack to trip TS' flow analysis */) {
     					return /** @type {any} */ (document.currentScript);
     				}
 
@@ -3631,8 +3631,9 @@
         });
     };
 
+    const PLUGIN_CODE = 'codesample';
     var Plugin = () => {
-        global$2.add('codesample', (editor) => {
+        global$2.add(PLUGIN_CODE, (editor) => {
             register$2(editor);
             setup(editor);
             register(editor);
@@ -3642,6 +3643,9 @@
                     open(editor);
                 }
             });
+            return {
+                getMetadata: () => ({ name: 'Code Sample', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

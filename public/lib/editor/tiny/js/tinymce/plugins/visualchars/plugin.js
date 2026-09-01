@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -786,15 +786,19 @@
         });
     };
 
+    const PLUGIN_CODE = 'visualchars';
     var Plugin = () => {
-        global.add('visualchars', (editor) => {
+        global.add(PLUGIN_CODE, (editor) => {
             register$1(editor);
             const toggleState = Cell(isEnabledByDefault(editor));
             register$2(editor, toggleState);
             register(editor, toggleState);
             setup(editor, toggleState);
             setup$1(editor, toggleState);
-            return get$2(toggleState);
+            return {
+                ...get$2(toggleState),
+                getMetadata: () => ({ name: 'Visual Characters', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

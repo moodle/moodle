@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -191,8 +191,9 @@
      * @class tinymce.autoresize.Plugin
      * @private
      */
+    const PLUGIN_CODE = 'autoresize';
     var Plugin = () => {
-        global$1.add('autoresize', (editor) => {
+        global$1.add(PLUGIN_CODE, (editor) => {
             register$1(editor);
             // If autoresize is enabled, disable resize if the user hasn't explicitly enabled it
             // TINY-8288: This currently does nothing because of a bug in the theme
@@ -208,6 +209,9 @@
                 register(editor, oldSize);
                 setup(editor, oldSize);
             }
+            return {
+                getMetadata: () => ({ name: 'Autoresize', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 

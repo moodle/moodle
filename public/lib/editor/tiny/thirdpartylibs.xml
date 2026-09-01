@@ -4,7 +4,7 @@
     <location>js/tinymce</location>
     <name>Tiny</name>
     <license>MIT</license>
-    <version>8.2.2</version>
+    <version>8.9.0</version>
     <repository>https://github.com/tinymce/tinymce</repository>
   </library>
 </libraries>

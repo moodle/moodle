@@ -1,4 +1,4 @@
-@editor @editor_tiny @MDL-88618
+@editor @editor_tiny
 Feature: TinyMCE bundled plugins - Accordion and List Styles (advlist)
   In order to create richer content
   As a teacher
@@ -36,16 +36,18 @@ Feature: TinyMCE bundled plugins - Accordion and List Styles (advlist)
   @javascript
   Scenario: The advlist plugin provides extended bullet list style options
     Given I expand all toolbars for the "Description" TinyMCE editor
-    Then "Bullet list menu" button should exist in the "Description" TinyMCE editor
-    When I click on the "Bullet list menu" button for the "Description" TinyMCE editor
+    Then "[data-mce-name='bullist-chevron']" "css_element" should exist
+    And I press the escape key
+    And I click on "[data-mce-name='bullist-chevron']" "css_element"
     Then "[role='menuitemradio'][aria-label='Circle']" "css_element" should exist
     And "[role='menuitemradio'][aria-label='Square']" "css_element" should exist
 
   @javascript
   Scenario: The advlist plugin provides extended numbered list style options
     Given I expand all toolbars for the "Description" TinyMCE editor
-    Then "Numbered list menu" button should exist in the "Description" TinyMCE editor
-    When I click on the "Numbered list menu" button for the "Description" TinyMCE editor
+    Then "[data-mce-name='numlist-chevron']" "css_element" should exist
+    And I press the escape key
+    And I click on "[data-mce-name='numlist-chevron']" "css_element"
     Then "[role='menuitemradio'][aria-label='Lower Alpha']" "css_element" should exist
     And "[role='menuitemradio'][aria-label='Upper Roman']" "css_element" should exist
 

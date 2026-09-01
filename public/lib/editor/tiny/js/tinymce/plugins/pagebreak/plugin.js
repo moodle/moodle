@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 8.2.2 (2025-11-17)
+ * TinyMCE version 8.9.0 (2026-08-27)
  */
 
 (function () {
@@ -103,13 +103,17 @@
         });
     };
 
+    const PLUGIN_CODE = 'pagebreak';
     var Plugin = () => {
-        global$1.add('pagebreak', (editor) => {
+        global$1.add(PLUGIN_CODE, (editor) => {
             register$2(editor);
             register$1(editor);
             register(editor);
             setup$1(editor);
             setup(editor);
+            return {
+                getMetadata: () => ({ name: 'Page Break', type: 'opensource', slug: PLUGIN_CODE })
+            };
         });
     };
 
