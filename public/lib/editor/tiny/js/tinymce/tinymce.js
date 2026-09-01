@@ -23616,7 +23616,7 @@
                 }
             }
         });
-        // Convert comments to cdata and handle protected comments
+        // Convert comments to cdata
         htmlParser.addNodeFilter('#comment', (nodes) => {
             let i = nodes.length;
             while (i--) {
@@ -23626,12 +23626,6 @@
                     node.name = '#cdata';
                     node.type = 4;
                     node.value = dom.decode(value.replace(/^\[CDATA\[|\]\]$/g, ''));
-                }
-                else if (value?.indexOf('mce:protected ') === 0) {
-                    node.name = '#text';
-                    node.type = 3;
-                    node.raw = true;
-                    node.value = unescape(value).substr(14);
                 }
             }
         });
@@ -29641,6 +29635,45 @@
                 }
             }
         });
+    };
+
+    const setupInputFiltering = (editor, protect) => {
+        editor.on('BeforeSetContent', (e) => {
+            each$e(protect, (pattern) => {
+                e.content = e.content.replace(pattern, (str) => {
+                    return '<!--mce:protected ' + escape(str) + '-->';
+                });
+            });
+        });
+    };
+    const setupOutputFiltering = (editor, protect) => {
+        editor.serializer.addNodeFilter('#comment', (nodes) => {
+            let i = nodes.length;
+            while (i--) {
+                const node = nodes[i];
+                const value = node.value;
+                if (value?.indexOf('mce:protected ') === 0) {
+                    const protectedHtml = unescape(value).substr(14);
+                    const valid = exists(protect, (pattern) => {
+                        const matches = protectedHtml.match(pattern);
+                        return matches !== null && matches[0].length === protectedHtml.length;
+                    });
+                    if (valid) {
+                        node.name = '#text';
+                        node.type = 3;
+                        node.raw = true;
+                        node.value = protectedHtml;
+                    }
+                    else {
+                        node.remove();
+                    }
+                }
+            }
+        });
+    };
+    const registerProtectedHtmlFilters = (editor, protect) => {
+        setupInputFiltering(editor, protect);
+        setupOutputFiltering(editor, protect);
     };
 
     /**
@@ -36557,6 +36590,11 @@
     };
     const createParser = (editor) => {
         const parser = DomParser(mkParserSettings(editor), editor.schema);
+        parser.addAttributeFilter('data-mce-src,data-mce-href,data-mce-style', (nodes, name) => {
+            for (let i = 0; i < nodes.length; i++) {
+                nodes[i].attr(name, null);
+            }
+        });
         // Convert src and href into data-mce-src, data-mce-href and data-mce-style
         parser.addAttributeFilter('src,href,style,tabindex', (nodes, name) => {
             const dom = editor.dom;
@@ -36743,13 +36781,7 @@
         }
         const protect = getProtect(editor);
         if (protect) {
-            editor.on('BeforeSetContent', (e) => {
-                Tools.each(protect, (pattern) => {
-                    e.content = e.content.replace(pattern, (str) => {
-                        return '<!--mce:protected ' + escape(str) + '-->';
-                    });
-                });
-            });
+            registerProtectedHtmlFilters(editor, protect);
         }
         editor.on('SetContent', () => {
             editor.addVisual(editor.getBody());
