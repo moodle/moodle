@@ -69,6 +69,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'fieldset' => 'fieldset',
         'icon' => 'icon',
         'list_item' => 'list_item',
+        'navigation' => 'navigation',
         'question' => 'question',
         'region' => 'region',
         'section' => 'section',
@@ -116,6 +117,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'link_or_button' => 'link_or_button',
         'list_item' => 'list_item',
         'menuitem' => 'menuitem',
+        'navigation' => 'navigation',
         'optgroup' => 'optgroup',
         'option' => 'option',
         'option_role' => 'option_role',
@@ -252,6 +254,9 @@ XPATH
 XPATH
         , 'menuitem' => <<<XPATH
 .//*[@role='menuitem'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
+XPATH
+        , 'navigation' => <<<XPATH
+.//*[self::nav or @role='navigation'][%ariaLabelMatch%]
 XPATH
     , 'option_role' => <<<XPATH
 .//*[@role='option'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]] |
