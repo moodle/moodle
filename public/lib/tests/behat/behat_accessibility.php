@@ -268,7 +268,7 @@ EOF;
 
         return json_encode([
             'runOnly' => [
-                'type' > 'tag',
+                'type' => 'tag',
                 'values' => array_merge($standardtags, $extratags),
             ],
         ]);
