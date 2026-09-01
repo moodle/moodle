@@ -25,5 +25,11 @@ if (!is_file(dirname(__DIR__) . '/config.php')) {
 
 require_once(dirname(__DIR__) . '/public/config.php');
 
+$composer = \core\di::get(\core\composer::class);
+
+if (!$composer->get_package_status('symfony/console')->installed) {
+    throw new LogicException('Symfony console has not been installed via composer. Please run composer install.');
+}
+
 \core\di::get(\core\cli\application::class)
     ->run();

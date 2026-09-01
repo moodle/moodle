@@ -160,7 +160,17 @@ class di {
             },
             \Psr\Clock\ClockInterface::class => \DI\get(\core\clock::class),
 
-            \Symfony\Component\Console\CommandLoader\CommandLoaderInterface::class => \DI\get(\core\cli\command_loader::class),
+            // Note: libphonenumber PhoneNumberUtil uses a singleton.
+            \libphonenumber\PhoneNumberUtil::class => fn() => \libphonenumber\PhoneNumberUtil::getInstance(),
+
+            // Note: plugin_manager uses a singleton.
+            \core\plugin_manager::class => fn() => \core\plugin_manager::instance(),
+        ]);
+
+        // This library is optional, so only add it if it exists. This allows Moodle to be installed without composer.
+        if (class_exists(\Symfony\Component\Console\Application::class)) {
+            $builder->addDefinitions([
+                \Symfony\Component\Console\CommandLoader\CommandLoaderInterface::class => \DI\get(\core\cli\command_loader::class),
 
             \core\cli\application::class => \DI\create()
                 ->constructor(name: 'Moodle CLI Application', version: self::get_moodle_version())
@@ -176,13 +186,8 @@ class di {
                     'addCommand',
                     command: \DI\create(\Symfony\Component\Console\Command\DumpCompletionCommand::class)
                 ),
-
-            // Note: libphonenumber PhoneNumberUtil uses a singleton.
-            \libphonenumber\PhoneNumberUtil::class => fn() => \libphonenumber\PhoneNumberUtil::getInstance(),
-
-            // Note: plugin_manager uses a singleton.
-            \core\plugin_manager::class => fn() => \core\plugin_manager::instance(),
-        ]);
+            ]);
+        }
 
         // Add any additional definitions using hooks.
         $hookmanager->dispatch(new \core\hook\di_configuration($builder));
