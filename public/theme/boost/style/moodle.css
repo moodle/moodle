@@ -46911,10 +46911,10 @@ div.editor_atto_toolbar button .icon {
   padding: 0;
   border: 0;
 }
-.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item {
+.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item:not(.active) {
   background-color: #f8f9fa;
 }
-.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item:hover, .dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item:focus {
+.dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item:not(.active):hover, .dropdownmoremenu > .dropdown-menu .dropdown-submenu > .dropdown-menu .dropdown-item:not(.active):focus {
   color: #ffffff;
   background-color: #0f6cbf;
 }

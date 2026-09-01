@@ -133,7 +133,10 @@
     padding: 0;
     border: 0;
 
-    .dropdown-item {
+    // Skips the active item: bootstrap's ".dropdown-item.active" pairs its background with a white
+    // text colour, so overriding only the background here would leave white text on grey. Left
+    // alone, the active child keeps the same highlight as the active submenu toggle above it.
+    .dropdown-item:not(.active) {
         background-color: $gray-100;
         &:hover,
         &:focus {
