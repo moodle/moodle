@@ -98,6 +98,11 @@ final class more_menu_test extends advanced_testcase {
         // The haschildren=true path does not export a nodearray (that's only for haschildren=false).
         $this->assertArrayNotHasKey('nodearray', $data);
 
+        // This content has no headertitle, so no accessible name is exported for the landmark and
+        // the Nav component renders a bare <ul> rather than a named <nav>.
+        $this->assertArrayNotHasKey('navlabel', $data);
+        $this->assertArrayNotHasKey('navlabel', json_decode($data['reactprops'], true));
+
         // The legacy nodecollection structure must be present: it's rendered as the static
         // server-side fallback inside the React mount point (see secondarymoremenu.mustache),
         // so the menu still works for NonJS Behat and no-JS browsers.
@@ -115,6 +120,36 @@ final class more_menu_test extends advanced_testcase {
         $this->assertTrue($reactprops['items'][0]['active']);
         $this->assertSame('beta', $reactprops['items'][1]['key']);
         $this->assertFalse($reactprops['items'][1]['active']);
+    }
+
+    /**
+     * Checks that export_for_template() exports the content's headertitle as 'navlabel', both as a
+     * template variable (for secondarymoremenu.mustache's NonJS fallback landmark) and inside the
+     * React props (for the landmark the Nav component renders once mounted). Both paths must carry
+     * the same name, or the landmark would be renamed on hydration.
+     *
+     * Without a name the secondary navigation cannot be told apart from the navbar's own
+     * "Site navigation" landmark when navigating by landmark.
+     *
+     * @return void
+     */
+    public function test_export_for_template_exports_headertitle_as_navlabel(): void {
+        $root = $this->create_node('Root');
+        $root->add_node($this->create_node('Alpha', new url('/alpha.php'), 'alpha'));
+
+        $content = new stdClass();
+        $content->children = $root->children;
+        $content->headertitle = 'Course menu';
+
+        $moremenu = new more_menu($content, 'nav-tabs', true, true);
+        $data = $moremenu->export_for_template($this->createStub(renderer_base::class));
+
+        $this->assertArrayHasKey('navlabel', $data);
+        $this->assertSame('Course menu', $data['navlabel']);
+
+        $reactprops = json_decode($data['reactprops'], true);
+        $this->assertArrayHasKey('navlabel', $reactprops);
+        $this->assertSame('Course menu', $reactprops['navlabel']);
     }
 
     /**

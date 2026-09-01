@@ -19,12 +19,27 @@
 
     React-rendered secondary navigation tab bar (course/module/category/admin).
 
-    Includes a server-rendered <nav> fallback (core/moremenu_children) inside the mount point,
-    used by NonJS Behat and no-JS browsers before/without React hydration.
+    The <nav> landmark is rendered by the Nav component itself, so the menu carries its own
+    semantics wherever it is mounted. The NonJS fallback below renders the same landmark, and
+    React replaces the fallback on hydration, so the page has exactly one navigation landmark
+    on either path. Themes must not wrap this template in a <nav> of their own.
+
+    The fallback (core/moremenu_children) is used by NonJS Behat and no-JS browsers
+    before/without React hydration.
+
+    Context variables required for this template:
+    * reactprops - JSON-encoded props for the core/nav/Nav component.
+    * navlabel - Accessible name for the navigation landmark, e.g. "Course menu". Passed to the
+      Nav component inside reactprops as well, for the landmark it renders once mounted.
+    * moremenuid - Unique id used to tie the fallback's more menu toggle to its dropdown.
+    * navbarstyle - Class name applied to the menu.
+    * istablist - Whether the menu is a tablist rather than a menubar.
+    * nodecollection - Navigation nodes rendered as the NonJS fallback.
 
     Example context (json):
     {
-        "reactprops": "{\"items\":[{\"key\":\"coursehome\",\"text\":\"Course\",\"href\":\"https://example.com\",\"active\":true,\"forceintomoremenu\":false,\"showchildreninsubmenu\":false,\"children\":[]}],\"morelabel\":\"More\",\"istablist\":true}"
+        "reactprops": "{\"items\":[{\"key\":\"coursehome\",\"text\":\"Course\",\"href\":\"https://example.com\",\"active\":true,\"forceintomoremenu\":false,\"showchildreninsubmenu\":false,\"children\":[]}],\"morelabel\":\"More\",\"istablist\":true,\"navlabel\":\"Course menu\"}",
+        "navlabel": "Course menu"
     }
 }}
 {{#reactprops}}
@@ -34,7 +49,7 @@
     "class": "secondarynav-tabbar navigation",
     "props": {{{reactprops}}}
 }
-<nav class="moremenu navigation">
+<nav class="moremenu navigation"{{#navlabel}} aria-label="{{.}}"{{/navlabel}}>
     <ul id="moremenu-{{moremenuid}}-{{navbarstyle}}" role="{{#istablist}}tablist{{/istablist}}{{^istablist}}menubar{{/istablist}}" class="nav more-nav {{navbarstyle}}">
         {{#nodecollection}}
             {{#children}}

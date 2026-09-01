@@ -130,14 +130,20 @@ beforeEach(() => {
 
     // JSDom performs no layout, so every offsetHeight is 0 and the component could never detect a
     // wrap. Stub it: the <ul> reports two rows once it holds more <li> children than fit, and
-    // everything else, including the container it is measured against, a single row.
+    // everything else, including the mount point it is measured against, a single row.
+    //
+    // The landmark <nav> is the exception: it is a plain block wrapper which grows with the menu
+    // inside it, as in a real browser, where only the mount point's height is fixed by CSS. That
+    // is why the measurement must resolve its container past the landmark rather than from the
+    // <ul>'s immediate parent, and modelling it here is what makes that observable in a test.
     Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
         configurable: true,
         get(this: HTMLElement) {
-            if (!this.matches('ul.more-nav')) {
+            const menu = this.matches('nav') ? this.querySelector(':scope > ul.more-nav') : this;
+            if (!menu?.matches('ul.more-nav')) {
                 return ROW_HEIGHT;
             }
-            const shown = this.querySelectorAll(':scope > li:not(.d-none)').length;
+            const shown = menu.querySelectorAll(':scope > li:not(.d-none)').length;
             return shown > rowCapacity ? ROW_HEIGHT * 2 : ROW_HEIGHT;
         },
     });
@@ -173,12 +179,18 @@ afterEach(() => {
  * @param items The top-level nodes.
  * @param capacity How many items fit on one row.
  * @param istablist Whether to render as an ARIA tablist.
+ * @param navlabel Accessible name for the navigation landmark, or undefined for no landmark.
  * @returns The render result container.
  */
-const renderItems = (items: NavNode[], capacity: number, istablist = false): HTMLElement => {
+const renderItems = (
+    items: NavNode[],
+    capacity: number,
+    istablist = false,
+    navlabel?: string,
+): HTMLElement => {
     rowCapacity = capacity;
     return render(
-        <Nav items={items} morelabel="More" istablist={istablist} />,
+        <Nav items={items} morelabel="More" istablist={istablist} navlabel={navlabel} />,
     ).container;
 };
 
@@ -240,6 +252,48 @@ describe('@moodle/lms/core/nav/Nav overflow', () => {
         fireWindowResize();
 
         expect(visibleLabels(container)).toEqual(ITEMS.map((item) => item.text));
+    });
+});
+
+// The menu carries its own landmark semantics, rather than relying on whoever mounts it to wrap
+// it in one, so that the React and NonJS paths cannot drift apart the way they did in MDL-87830.
+// It is opt-in: the primary navigation already sits inside the navbar's landmark and must not
+// nest a second one inside it.
+describe('@moodle/lms/core/nav/Nav landmark', () => {
+    it('renders a bare menu when no landmark name is given', () => {
+        const container = renderItems(ITEMS, 10);
+
+        expect(container.querySelector('nav')).toBeNull();
+        expect(container.querySelector(':scope > ul.more-nav')).not.toBeNull();
+    });
+
+    it('wraps the menu in a navigation landmark named by navlabel', () => {
+        const container = renderItems(ITEMS, 10, false, 'Course menu');
+
+        const landmark = container.querySelector('nav');
+        expect(landmark).not.toBeNull();
+        expect(landmark).toHaveAttribute('aria-label', 'Course menu');
+        expect(landmark?.querySelector(':scope > ul.more-nav')).not.toBeNull();
+    });
+
+    it('does not nest a second landmark inside the first', () => {
+        const container = renderItems(ITEMS, 10, false, 'Course menu');
+
+        expect(container.querySelectorAll('nav')).toHaveLength(1);
+    });
+
+    // The overflow measurement sizes the menu against the mount point, whose height is fixed. With
+    // a landmark in place the <ul>'s parent is the landmark, which grows with the menu, so
+    // measuring against it would report "fits" forever and nothing would ever collapse into More.
+    it('still collapses items into the More menu when a landmark is rendered', () => {
+        const container = renderItems(ITEMS, 10, false, 'Course menu');
+        expect(visibleLabels(container)).toEqual(ITEMS.map((item) => item.text));
+
+        rowCapacity = 4;
+        fireContainerResize();
+
+        expect(visibleLabels(container)).toEqual(['Home', 'Dashboard', 'My courses']);
+        expect(overflowLabels(container)).toEqual(['Reports', 'Badges', 'Competencies']);
     });
 });
 

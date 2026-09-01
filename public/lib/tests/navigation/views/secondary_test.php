@@ -147,7 +147,7 @@ final class secondary_test extends \advanced_testcase {
             'Testing in a module context' => ['module', 'modulepage', 'activityheader', 'Assignment'],
             'Testing in a module context using a single activity course format' =>
                 ['module', 'course', 'activityheader', 'Activity', 'singleactivity'],
-            'Testing in a site admin' => ['system', 'siteadminnode', 'homeheader', 'General'],
+            'Testing in a site admin' => ['system', 'siteadminnode', 'adminheader', 'General'],
         ];
     }
 
