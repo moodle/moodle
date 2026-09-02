@@ -662,10 +662,10 @@ final class advanced_test extends \advanced_testcase {
         $this->assertSame('English_Australia.1252', get_string('localewin', 'langconfig'));
 
         if ($CFG->ostype === 'WINDOWS') {
-            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
+            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, '0'));
             setlocale(LC_TIME, 'English_USA.1252');
         } else {
-            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
+            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, '0'));
             setlocale(LC_TIME, 'en_US.UTF-8');
         }
 
@@ -676,25 +676,25 @@ final class advanced_test extends \advanced_testcase {
         }
 
         if ($CFG->ostype === 'WINDOWS') {
-            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
+            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, '0'));
         } else {
-            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
+            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, '0'));
         }
 
         if ($CFG->ostype === 'WINDOWS') {
-            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
+            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, '0'));
             setlocale(LC_TIME, 'English_USA.1252');
         } else {
-            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
+            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, '0'));
             setlocale(LC_TIME, 'en_US.UTF-8');
         }
 
         self::resetAllData(false);
 
         if ($CFG->ostype === 'WINDOWS') {
-            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
+            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, '0'));
         } else {
-            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
+            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, '0'));
         }
     }
 

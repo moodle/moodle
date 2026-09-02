@@ -7772,11 +7772,11 @@ function moodle_setlocale($locale='') {
     // Some day, numeric, monetary and other categories should be set too, I think. :-/.
 
     // Get current values.
-    $monetary= setlocale (LC_MONETARY, 0);
-    $numeric = setlocale (LC_NUMERIC, 0);
-    $ctype   = setlocale (LC_CTYPE, 0);
+    $monetary = setlocale(LC_MONETARY, '0');
+    $numeric  = setlocale(LC_NUMERIC, '0');
+    $ctype    = setlocale(LC_CTYPE, '0');
     if ($CFG->ostype != 'WINDOWS') {
-        $messages= setlocale (LC_MESSAGES, 0);
+        $messages = setlocale(LC_MESSAGES, '0');
     }
     // Set locale to all.
     $result = setlocale (LC_ALL, $currentlocale);
