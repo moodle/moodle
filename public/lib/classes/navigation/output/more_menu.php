@@ -64,12 +64,25 @@ class more_menu implements renderable, templatable {
             'navbarstyle' => $this->navbarstyle,
             'istablist' => $this->istablist,
         ];
+
+        // The secondary navigation view sets a context-aware menu title (Course menu, Activity
+        // menu, Category menu, ...). It names the navigation landmark around this menu, which the
+        // Nav component renders once mounted and secondarymoremenu.mustache's NonJS fallback
+        // renders before that. The page already exposes a "Site navigation" landmark for the
+        // navbar, and two navigation landmarks cannot be told apart when navigating by landmark
+        // unless each is named. Menus built from a plain object (the primary navigation) have no
+        // title and are already inside the navbar's landmark, so they get no landmark at all.
+        $navlabel = !empty($this->content->headertitle) ? $this->content->headertitle : null;
+        if ($navlabel !== null) {
+            $data['navlabel'] = $navlabel;
+        }
+
         if ($this->haschildren) {
             // The node collection doesn't have anything to render so exit now.
             if (!isset($this->content->children) || count($this->content->children) == 0) {
                 return [];
             }
-            $data['reactprops'] = $this->export_react_props($this->content->children);
+            $data['reactprops'] = $this->export_react_props($this->content->children, $navlabel);
 
             // Also export the legacy node-collection structure. This is rendered as static
             // server-side fallback markup inside the React mount point (see
@@ -100,17 +113,24 @@ class more_menu implements renderable, templatable {
      * Build the JSON props consumed by the core/nav/Nav component.
      *
      * @param iterable $nodes The top-level navigation_node children to flatten.
-     * @return string JSON-encoded {items, morelabel, istablist} props.
+     * @param string|null $navlabel Accessible name for the navigation landmark the component
+     *                              renders around the menu. Null renders no landmark.
+     * @return string JSON-encoded {items, morelabel, istablist, navlabel} props.
      */
-    protected function export_react_props(iterable $nodes): string {
-        return json_encode([
+    protected function export_react_props(iterable $nodes, ?string $navlabel = null): string {
+        $props = [
             'items' => array_map(
                 fn(navigation_node $node): array => $this->export_node_for_react($node),
                 iterator_to_array($nodes, false),
             ),
             'morelabel' => get_string('moremenu', 'core'),
             'istablist' => $this->istablist,
-        ], JSON_UNESCAPED_UNICODE);
+        ];
+        if ($navlabel !== null) {
+            $props['navlabel'] = $navlabel;
+        }
+
+        return json_encode($props, JSON_UNESCAPED_UNICODE);
     }
 
     /**

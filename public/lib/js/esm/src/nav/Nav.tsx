@@ -62,6 +62,14 @@ export interface NavProps {
     navbarstyle?: string;
     /** Class added to the mount point once the overflow split has settled. */
     measuredclass?: string;
+    /**
+     * Accessible name for the navigation landmark wrapping the menu, e.g. "Course menu".
+     *
+     * When set, the menu is wrapped in a named <nav>. When omitted, a bare <ul> is rendered and
+     * the caller is responsible for whatever landmark the menu belongs to: the primary navigation
+     * already sits inside the navbar's own landmark and must not nest a second one inside it.
+     */
+    navlabel?: string;
 }
 
 /**
@@ -475,10 +483,11 @@ const MEASURED_CLASS = 'secondarynav-measured';
  * @param props.istablist Whether the nav is rendered as an ARIA tablist.
  * @param props.navbarstyle Extra class for the <ul>, e.g. "navbar-nav" for the primary navigation.
  * @param props.measuredclass Class added to the mount point once the overflow split has settled.
+ * @param props.navlabel Accessible name for the navigation landmark wrapping the menu.
  * @returns The rendered navigation pill.
  */
 export default function Nav(
-    {items, morelabel, istablist, navbarstyle, measuredclass = MEASURED_CLASS}: NavProps,
+    {items, morelabel, istablist, navbarstyle, measuredclass = MEASURED_CLASS, navlabel}: NavProps,
 ) {
     // Dividers are a dropdown-only concept (see DropdownItems); the server side export already
     // drops them at the top level, but guard here too so one could never render as a bare pill.
@@ -487,6 +496,10 @@ export default function Nav(
     const rest = toplevel.filter((item) => !item.forceintomoremenu);
 
     const menuRef = useRef<HTMLUListElement>(null);
+    // The landmark, when one is rendered. The measurement below sizes the menu against the React
+    // mount point, so it must resolve the container from whichever element is outermost here
+    // rather than from the <ul>, whose parent is the landmark once there is one.
+    const landmarkRef = useRef<HTMLElement>(null);
     const [autoOverflowCount, setAutoOverflowCount] = useState(0);
     const [measured, setMeasured] = useState(false);
 
@@ -552,7 +565,7 @@ export default function Nav(
         }
 
         const menu = menuRef.current;
-        const container = menu?.parentElement;
+        const container = (landmarkRef.current ?? menu)?.parentElement;
         if (!menu || !container) {
             // Fail open: show the tab bar unmeasured rather than hide it forever.
             setMeasured(true);
@@ -626,7 +639,7 @@ export default function Nav(
 
         window.addEventListener('resize', remeasure);
 
-        const container = menuRef.current?.parentElement;
+        const container = (landmarkRef.current ?? menuRef.current)?.parentElement;
         let observer: ResizeObserver | null = null;
         if (container && typeof ResizeObserver !== 'undefined') {
             observer = new ResizeObserver(remeasure);
@@ -650,7 +663,7 @@ export default function Nav(
     // //ul[@role='menubar']/li/a[...] for non-tablist navs) keep working under JS.
     const itemRole = 'none';
 
-    return (
+    const menu = (
         <ul
             ref={menuRef}
             className={['nav', 'more-nav', navbarstyle].filter(Boolean).join(' ')}
@@ -679,5 +692,23 @@ export default function Nav(
                 </PillDropdownToggle>
             </li>
         </ul>
+    );
+
+    if (!navlabel) {
+        return menu;
+    }
+
+    // The landmark is rendered here rather than around the mount point, so that the menu carries
+    // its own semantics wherever it is mounted. It stands in for the <nav> in the NonJS fallback
+    // of secondarymoremenu.mustache, which this replaces on hydration, so the page has exactly one
+    // navigation landmark either way.
+    //
+    // Deliberately unstyled: the fallback's wrapper carries "moremenu navigation", but
+    // .secondary-navigation .navigation sets padding on a descendant match, so repeating those
+    // classes inside the mount point (which already has .navigation) would indent the menu twice.
+    return (
+        <nav ref={landmarkRef} aria-label={navlabel}>
+            {menu}
+        </nav>
     );
 }
