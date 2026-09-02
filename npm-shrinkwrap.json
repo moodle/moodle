@@ -37,6 +37,7 @@
         "babel-plugin-transform-es2015-modules-amd-lazy": "2.0.1",
         "babel-preset-minify": "0.5.1",
         "chalk": "^5.3.0",
+        "chokidar": "^4.0.3",
         "commander": "^12.0.0",
         "cross-env": "^7.0.3",
         "current-git-branch": "^2.0.2",
@@ -6478,11 +6479,16 @@
       }
     },
     "node_modules/binary-extensions": {
-      "version": "2.2.0",
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz",
+      "integrity": "sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==",
       "dev": true,
       "license": "MIT",
       "engines": {
         "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
       }
     },
     "node_modules/bl": {
@@ -6935,29 +6941,19 @@
       "license": "MIT"
     },
     "node_modules/chokidar": {
-      "version": "3.5.3",
+      "version": "4.0.3",
+      "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-4.0.3.tgz",
+      "integrity": "sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==",
       "dev": true,
-      "funding": [
-        {
-          "type": "individual",
-          "url": "https://paulmillr.com/funding/"
-        }
-      ],
       "license": "MIT",
       "dependencies": {
-        "anymatch": "~3.1.2",
-        "braces": "~3.0.2",
-        "glob-parent": "~5.1.2",
-        "is-binary-path": "~2.1.0",
-        "is-glob": "~4.0.1",
-        "normalize-path": "~3.0.0",
-        "readdirp": "~3.6.0"
+        "readdirp": "^4.0.1"
       },
       "engines": {
-        "node": ">= 8.10.0"
+        "node": ">= 14.16.0"
       },
-      "optionalDependencies": {
-        "fsevents": "~2.3.2"
+      "funding": {
+        "url": "https://paulmillr.com/funding/"
       }
     },
     "node_modules/ci-info": {
@@ -12877,6 +12873,8 @@
     },
     "node_modules/is-binary-path": {
       "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz",
+      "integrity": "sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==",
       "dev": true,
       "license": "MIT",
       "dependencies": {
@@ -20067,14 +20065,17 @@
       }
     },
     "node_modules/readdirp": {
-      "version": "3.6.0",
+      "version": "4.1.2",
+      "resolved": "https://registry.npmjs.org/readdirp/-/readdirp-4.1.2.tgz",
+      "integrity": "sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==",
       "dev": true,
       "license": "MIT",
-      "dependencies": {
-        "picomatch": "^2.2.1"
-      },
       "engines": {
-        "node": ">=8.10.0"
+        "node": ">= 14.18.0"
+      },
+      "funding": {
+        "type": "individual",
+        "url": "https://paulmillr.com/funding/"
       }
     },
     "node_modules/rechoir": {
@@ -20737,6 +20738,44 @@
       },
       "engines": {
         "node": ">=12.0.0"
+      }
+    },
+    "node_modules/sass/node_modules/chokidar": {
+      "version": "3.6.0",
+      "resolved": "https://registry.npmjs.org/chokidar/-/chokidar-3.6.0.tgz",
+      "integrity": "sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "anymatch": "~3.1.2",
+        "braces": "~3.0.2",
+        "glob-parent": "~5.1.2",
+        "is-binary-path": "~2.1.0",
+        "is-glob": "~4.0.1",
+        "normalize-path": "~3.0.0",
+        "readdirp": "~3.6.0"
+      },
+      "engines": {
+        "node": ">= 8.10.0"
+      },
+      "funding": {
+        "url": "https://paulmillr.com/funding/"
+      },
+      "optionalDependencies": {
+        "fsevents": "~2.3.2"
+      }
+    },
+    "node_modules/sass/node_modules/readdirp": {
+      "version": "3.6.0",
+      "resolved": "https://registry.npmjs.org/readdirp/-/readdirp-3.6.0.tgz",
+      "integrity": "sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "picomatch": "^2.2.1"
+      },
+      "engines": {
+        "node": ">=8.10.0"
       }
     },
     "node_modules/sax": {
