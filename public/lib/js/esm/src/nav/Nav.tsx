@@ -221,6 +221,7 @@ const useActionLinkBehavior = (items: NavNode[]): void => {
             }
         };
         // The signature captures everything about `items` this effect cares about (see above).
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- Keyed off the signature so a new items array does not rebind.
     }, [actionSignature]);
 };
 
@@ -659,6 +660,7 @@ export default function Nav({items, morelabel, istablist, navbarstyle, measuredc
     // Measures the real DOM after every commit (deliberately no dependency array) and nudges
     // autoOverflowCount by one step per pass until the split converges. Runs pre-paint, so
     // intermediate states are never visible; measuredclass/opacity cover the first convergence.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Must rerun after every commit; see above.
     useLayoutEffect(() => {
         if (previousItemsKeyReference.current !== itemsKey) {
             previousItemsKeyReference.current = itemsKey;

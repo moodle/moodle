@@ -28,6 +28,7 @@
  */
 
 import {createRequire} from 'node:module';
+import reactHooks from 'eslint-plugin-react-hooks';
 
 const require = createRequire(import.meta.url);
 const ComponentList = require('./.grunt/components.js');
@@ -41,7 +42,16 @@ const xoConfig = [
     {
         files: ['**/js/esm/src/**/*.ts', '**/js/esm/src/**/*.tsx'],
         space: 4,
+        plugins: {'react-hooks': reactHooks},
         rules: {
+            // The hooks rules only. eslint-plugin-react, which XO's own React config also
+            // pulls in, calls context.getFilename() and so crashes on the ESLint 10 that XO
+            // bundles. Most of what it checks — prop types, display names — TypeScript
+            // already covers. Revisit when it supports ESLint 10. The plugin's presets also
+            // carry the React Compiler rules, which are left for a separate decision.
+            'react-hooks/rules-of-hooks': 'error',
+            'react-hooks/exhaustive-deps': 'warn',
+
             // Moodle docblocks prefix continuation lines with an asterisk; XO defaults to 'never'.
             'jsdoc/require-asterisk-prefix': ['error', 'always'],
 

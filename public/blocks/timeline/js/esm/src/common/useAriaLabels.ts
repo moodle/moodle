@@ -55,6 +55,7 @@ export function useAriaLabels<T extends string>(
                     setItemLabels(previous => ({...previous, [opt.name]: ariaLabel}));
                 });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- Callers pass constants, so the labels are fetched once.
     }, []);
 
     return {buttonLabel, itemLabels};
