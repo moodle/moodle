@@ -29,9 +29,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2026081800.06;              // YYYYMMDD      = weekly release date of this DEV branch.
+$version  = 2026090300.00;              // YYYYMMDD      = weekly release date of this DEV branch.
                                         //         RR    = release increments - 00 in DEV branches.
                                         //           .XX = incremental changes.
-$release  = '5.3dev (Build: 20260818)';    // Human-friendly version name
+$release  = '5.3dev (Build: 20260903)';    // Human-friendly version name
 $branch   = '503';                      // This version's branch.
 $maturity = MATURITY_ALPHA;             // This version's maturity level.
