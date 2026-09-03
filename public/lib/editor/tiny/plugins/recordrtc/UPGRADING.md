@@ -19,4 +19,3 @@
 - Duration metadata is created when recording is stopped to accurately determine the recording duration.
 
   For more information see [MDL-88603](https://tracker.moodle.org/browse/MDL-88603)
-

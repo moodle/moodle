@@ -16,6 +16,32 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
 
+#### Changed
+
+- The title of a modal dialogue rendered by the `core/modal` template is now an `<h2>` element instead of an `<h5>`, so that dialogue titles no longer break the page's heading hierarchy for assistive technology users.
+
+  The element carries the Bootstrap `fs-5` font size utility class, so the title's appearance is unchanged.
+
+  If your plugin renders headings inside modal dialogue content, set their levels relative to this `<h2>` (i.e. start at `<h3>`) so that the heading structure remains correctly nested. Headings that were previously nested beneath the old `<h5>` will now skip levels. If your plugin renders its own modal header markup, or overrides the `header` block of the `core/modal` template, apply the same `<h2 class="modal-title fs-5">` pattern.
+
+  For more information see [MDL-75699](https://tracker.moodle.org/browse/MDL-75699)
+
+### core_courseformat
+
+#### Changed
+
+- The course index tree semantics for subsections have moved from the delegated section wrapper to the activity that delegates it.
+
+  * The `li[role="treeitem"]` in `core_courseformat/local/courseindex/cm` should add the following attributes when the activity has a delegated section:
+    * `aria-owns`, set to the id of that section's collapsible content, `courseindexcollapse{{number}}`
+    * `aria-labelledby`, set to the id of that section's title element, `courseindexsection{{number}}-title`
+    * `aria-expanded`, set to `false` when the section's `indexcollapsed` is set and `true` otherwise
+  * In `core_courseformat/local/courseindex/section`, `role="treeitem"` and those same three attributes should no longer be set when the section is delegated, and the section title element needs `id="courseindexsection{{number}}-title"` so the tree item can reference it.
+
+  Note that the `core_courseformat/local/courseindex/section` JS keeps `aria-expanded` up to date by writing to the closest `[role="treeitem"]` ancestor, so the element carrying the role is the one that receives the state. Plugins overriding either template should update both, as the two are no longer independent.
+
+  For more information see [MDL-88949](https://tracker.moodle.org/browse/MDL-88949)
+
 ### core_reportbuilder
 
 #### Added
@@ -23,6 +49,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New `add_header_attributes(...)` method on column class instances for defining additional header attributes for the column when rendered in a report
 
   For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
+
+### aiprovider_gemini
+
+#### Added
+
+- A new `gemini31flashimage` model class has been added to support `gemini-3.1-flash-image`, the model Google recommends as the migration path for the retiring Imagen 4 endpoints (`imagen-4.0-generate-001`, `-ultra`, `-fast`), and it is now the default model for the "Generate image" action.
+
+  For more information see [MDL-89431](https://tracker.moodle.org/browse/MDL-89431)
+
+#### Changed
+
+- `process_generate_image` now branches its request and response handling on the configured endpoint's method (`:predict` for Imagen vs `:generateContent` for Gemini's native image generation), instead of assuming the Imagen protocol. This is determined from the endpoint URL rather than the model name, so it also applies to any custom model an admin configures.
+
+  For more information see [MDL-89431](https://tracker.moodle.org/browse/MDL-89431)
 
 ### mod_assign
 
