@@ -55,7 +55,7 @@ $string['pathshead'] = 'Confirme las rutas';
 $string['pathsrodataroot'] = 'El directorio dataroot no tiene permisos de escritura.';
 $string['pathsroparentdataroot'] = 'El directorio padre ({$a->parent}) no tiene permisos de escritura. El directorio de los datos ({$a->dataroot}) no puede ser creado por el instalador.';
 $string['pathssubadmindir'] = 'Muy pocos servidores web usan /admin como un URL especial para acceder a un
-panel de control o algo similar. Lamentablemente, esto entra en conflicto con la ubicación estándar para las páginas de administración de Moodle. Usted puede solucionar este problema, renombrando el directorio admin en su instalación Moodle, poniendo un nuevo nombre aquí. Por ejemplo: <em> moodleadmin </em>. Esto solucionará los enlaces de administración en instalación Moodle.';
+panel de control o algo similar. Lamentablemente, esto entra en conflicto con la ubicación estándar para las páginas de administración de Moodle. Usted puede solucionar este problema, renombrando el directorio admin en su instalación Moodle, poniendo un nuevo nombre aquí. Por ejemplo: <em> moodleadmin </em>. Esto corregirá los enlaces de administración en Moodle.';
 $string['pathssubdataroot'] = '<p>Un directorio en donde Moodle almacenará todo el contenido de los archivos subidos por usuarios.</p>
 <p>Este directorio debería de ser, tanto legible como escribible por el usuario del servidor web (usualmente \'www-data\', \'nobody\', o \'apache\').</p>
 <p>No debería de estar directamente accesible por web.</p>
