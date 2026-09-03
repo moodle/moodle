@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mariadb:11.4
+    container_name: moodle-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_DATABASE: moodle
+      MARIADB_USER: moodle
+      MARIADB_PASSWORD: moodlepassword
+    volumes:
+      - moodle-db-data:/var/lib/mysql
+
+  moodle:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moodle-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - moodle-data:/var/moodledata
+    depends_on:
+      - db
+
+volumes:
+  moodle-db-data:
+  moodle-data:
