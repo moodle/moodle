@@ -218,7 +218,6 @@ final class override_test extends \core_external\tests\externallib_testcase {
     }
 
     /**
-<<<<<<< HEAD
      * Provides values to test_save_reason_overrides
      *
      * @return array
