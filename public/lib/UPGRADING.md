@@ -4,6 +4,10 @@
 
 ### Added
 
+- Boost now has a dark colour mode, which a site turns on with the experimental theme_boost | enablecolourmodes setting, so a plugin's styles.css can no longer assume the page is light. Styles work in both modes if they take their colours from the Bootstrap custom properties (--bs-body-bg, --bs-body-color, --bs-secondary-bg, --bs-tertiary-bg, --bs-border-color, --bs-emphasis-color, --bs-link-color) or the design system tokens (--mds-bg-surface-*, --mds-text-*, --mds-border-*), all of which change with the mode. The equivalent utility classes (bg-body, bg-body-secondary, bg-body-tertiary, text-body, text-body-secondary, text-bg-*, border) do the same, and are safer than bg-white or text-dark. Where a colour genuinely has to differ between the modes, scope it with the [data-bs-theme="dark"] attribute selector, which is the Bootstrap standard rather than anything Boost-specific.
+  Two things to watch for. A literal colour is a problem when it is only half of a pair: a fixed light background behind text that follows the mode, or fixed dark text on a surface that follows the mode, will lose its contrast. Where a colour carries meaning and has to stay, such as a status tint, fix the other half of the pair alongside it rather than letting it follow the mode. And an SVG rendered through an <img> tag paints with the fill baked into the file, so icons should go through the icon API in order to inherit currentColor.
+
+  For more information see [MDL-68037](https://tracker.moodle.org/browse/MDL-68037)
 - `email_to_user()` now emits a hook `before_email_to_user`. This hook allows any subscriber to modify the email contents, add additional headers, or add reasons to block the email. If any block reasons are added, the email is stopped from being sent and the reasons are output.
 
   For more information see [MDL-69724](https://tracker.moodle.org/browse/MDL-69724)
@@ -46,6 +50,9 @@
 - Added `moodle_page::set_show_navigation_footer(bool $show)` to control whether the sticky navigation footer is rendered. Use $PAGE->set_show_navigation_footer(false); to suppress the footer on pages where it is not required.
 
   For more information see [MDL-87575](https://tracker.moodle.org/browse/MDL-87575)
+- A new `\core\api\token_manager` class mints personal access tokens for the REST API, applying the secret format and maximum lifetime that the `\core\api\repository` classes deliberately leave to policy. Users manage their own tokens at `/user/personalaccesstokens.php`, gated by the new `moodle/api:createtoken` capability.
+
+  For more information see [MDL-87706](https://tracker.moodle.org/browse/MDL-87706)
 - Added new 'url' optional parameter to `core\output\action_menu\subpanel` so subpanel menu elements can have their own link.
 
   For more information see [MDL-88312](https://tracker.moodle.org/browse/MDL-88312)
@@ -91,15 +98,92 @@
 - A new `\core\oauth2\server\client_manager` class manages the lifecycle of OAuth2 server clients, their secrets and their redirect URIs.
 
   For more information see [MDL-89181](https://tracker.moodle.org/browse/MDL-89181)
+- A new `core/imagedetails/modal` JavaScript module presents an image-details dialogue for an image the user is about to embed, collecting alternative text, a decorative flag and a display size. Any component that embeds an author-supplied image can use it to collect an accessible description before the image is stored.
+
+  For more information see [MDL-89214](https://tracker.moodle.org/browse/MDL-89214)
+- A new `\core\output\html_writer::react_component()` method has been added to assist with rendering a react component.
+
+  This should be used instead of manually writing the div.
+
+  Parameters should not be json-serialized before being passed into the method.
+
+  For more information see [MDL-89296](https://tracker.moodle.org/browse/MDL-89296)
+- A new `\core\output\react_component_renderable` interface has been created to
+  support rendering a renderable using React.
+
+  ```php
+  final class my_renderable implements \core\output\react_component_renderable {
+      #[\Override]
+      public function get_react_component_name(): string {
+          return 'block_timeline/Timeline';
+      }
+
+      #[\Override]
+      public function get_react_component_props(
+          \core\output\renderer_base $renderer,
+      ): \stdClass {
+          return (object) [
+              // ...
+          ];
+      }
+  }
+
+  // Create and prepare the renderable for React rendering.
+  $renderable = new my_renderable(...);
+  echo $OUTPUT->render($renderable);
+  ```
+
+  For more information see [MDL-89296](https://tracker.moodle.org/browse/MDL-89296)
 - New `flexible_table::set_columnheadersattributes(...)` method for tables to define additional attributes ('class', 'data-X', etc.) for column headers
 
   For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
+- Support for Attribute-based Dependency Injection has been added:
+
+  ```php
+  class example_class {
+      #[\DI\Attribute\Inject]
+      private \core\formatting $formatter;
+  }
+  // Fetch the example class using the `get` method for entries // stored in the container. $example1 = di::get(\core\tests\di\example_class::class); // Fetch the example class using the `make` method for entries // built on each call. $example2 = di::make(\core\tests\di\example_class::class);
+  ```
+
+  Attribute-based Dependency Injection is the best practice and recommended approach for use in controllers.
+
+  This also makes it easier to support the use of Dependency Injection in other areas of the codebase, such as legacy code, and factories using the `make` method.
+
+  For more information see [MDL-89528](https://tracker.moodle.org/browse/MDL-89528)
 
 ### Changed
 
+- The title of a modal dialogue rendered by the `core/modal` template is now an `<h2>` element instead of an `<h5>`, so that dialogue titles no longer break the page's heading hierarchy for assistive technology users.
+
+  The element carries the Bootstrap `fs-5` font size utility class, so the title's appearance is unchanged.
+
+  If your plugin renders headings inside modal dialogue content, set their levels relative to this `<h2>` (i.e. start at `<h3>`) so that the heading structure remains correctly nested. Headings that were previously nested beneath the old `<h5>` will now skip levels. If your plugin renders its own modal header markup, or overrides the `header` block of the `core/modal` template, apply the same `<h2 class="modal-title fs-5">` pattern.
+
+  For more information see [MDL-75699](https://tracker.moodle.org/browse/MDL-75699)
+- - The `get_users_search_sql` method now includes two new  parameters, `allowcustom` and `custommappings`
+    The parameter `allowcustom` specifies whether we include the custom field in search query
+    The parameter `custommappings` is an array with custom field that has been mapped with table prefix.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+- The secondary navigation bar (and, via `core/nav/PrimaryNav`, the primary navigation) is now rendered by the `core/nav/Nav` React component, using `@moodlehq/design-system`'s `NavPill` instead of legacy Bootstrap `.nav-link`/`.moremenu` markup.
+  Plugins or themes that targeted the old markup, classes, or IDs directly for the secondary/primary navigation bar should verify their CSS/JS still applies, as the DOM structure has changed (e.g. `.mds-nav-pill` instead of `.nav-link`).
+  Keyboard support (arrow keys, Home/End, and a single roving Tab stop per bar) is unchanged and continues to be driven by `core/menu_navigation`.
+
+  For more information see [MDL-87830](https://tracker.moodle.org/browse/MDL-87830)
+- The core/notification_base Mustache template now accepts an optional integer headinglevel context value to control the heading level used for the notification title. If not specified, the title continues to be rendered using the previous default heading level.
+
+  For more information see [MDL-88458](https://tracker.moodle.org/browse/MDL-88458)
 - The `search` landmark role in the `core/search_input_auto` template is enclosed within a `searchrole` Mustache block so that templates that use this template can override and remove the `search` landmark role when deemed unnecessary.
 
   For more information see [MDL-88833](https://tracker.moodle.org/browse/MDL-88833)
+- The `\core\task\manager::set_scheduled_task_nextruntime()` method now returns a boolean indicating whether the next run time was updated. It returns `false` when the scheduled task is already running.
+
+  For more information see [MDL-89200](https://tracker.moodle.org/browse/MDL-89200)
+- The primary navigation in the Boost navbar is now rendered by the `core/nav/PrimaryNav` React component via the new `core/primarymoremenu` template, replacing `core/moremenu`. With JavaScript enabled the markup no longer includes the `.moremenu` wrapper, and navigation items are rendered as `a.mds-nav-pill` (selected items carry `.mds-nav-pill--selected` and `aria-current="page"`) instead of `a.nav-link.active`. Themes and plugins that style or script `.primary-navigation .moremenu` or `.primary-navigation .nav-link` need updating. A server-rendered `core/moremenu_children` fallback is still emitted inside the mount point for non-JavaScript clients.
+
+  For more information see [MDL-89294](https://tracker.moodle.org/browse/MDL-89294)
 
 ### Deprecated
 
@@ -140,6 +224,15 @@
 - `get_dataroot_size` in `\core\hub\registration` has been deprecated in favour of `get_filepool_usage`, which approximates disk usage from the database rather than scanning the dataroot directory, making it significantly more performant on large sites.
 
   For more information see [MDL-88805](https://tracker.moodle.org/browse/MDL-88805)
+- The `core/external_content_banner` template has been deprecated. It was only used by the admin notifications page banners, which have been replaced by the `core_admin/notification_ctas` template. Final deprecation is planned for Moodle 6.0.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+
+### Fixed
+
+- The `core_course` scope classes for course content and course structure now resolve their summary and description language strings. The string identifiers in `lang/en/course.php` were missing the leading `course_` identifier segment, so `\core\router\scope\abstract_scope::get_summary()` failed for six scopes.
+
+  For more information see [MDL-87706](https://tracker.moodle.org/browse/MDL-87706)
 
 ## 5.2
 

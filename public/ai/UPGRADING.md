@@ -1,5 +1,19 @@
 # core_ai (subsystem) Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- The ai_action_register table now includes a courseid column, populated at log time (and backfilled in the background for existing rows) by resolving the action's context to a course. A new report_aiusage plugin adds a course-level AI usage report, with new report/aiusage:view and report/aiusage:viewown capabilities.
+
+  For more information see [MDL-80893](https://tracker.moodle.org/browse/MDL-80893)
+
+### Changed
+
+- The `prompttokens` and `completiontokens` fields have been moved from the AI action child tables (`ai_action_generate_text`, `ai_action_summarise_text`, `ai_action_explain_text`) up to the parent `ai_action_register` table, since they describe the AI provider call rather than the action-specific content. The token counts are now written to the register record by `core_ai\manager::store_action_result()`. Any code querying these columns directly on the child tables will need to be updated.
+
+  For more information see [MDL-89123](https://tracker.moodle.org/browse/MDL-89123)
+
 ## 5.1
 
 ### Added

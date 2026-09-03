@@ -125,12 +125,38 @@
   | `\admin_settings_sitepolicy_handler_select`           | `\core_admin\setting\setting\sitepolicy_handler_select`            |
 
   For more information see [MDL-81935](https://tracker.moodle.org/browse/MDL-81935)
+- `core_admin_renderer::warning_with_label()` has been added. It prefixes a notification with a bold severity category label (for example "Security" or "Warning") and then delegates to `core_admin_renderer::warning()`, whose signature is unchanged.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+
+### Changed
+
+- The admin notifications page (`/admin/index.php`) now groups and orders notifications by severity (danger, then warning, then notice) and shows a severity count summary line above the list. The legacy campaign banner, services-and-support banner, Marketplace one-line notice and feedback-encouragement notice have been replaced by a single "From Moodle" call to action card grid, rendered by the new `core_admin\output\notification_ctas` renderable and the `core_admin/notification_ctas` template. Individual cards can be hidden with the new config.php-only `$CFG->disablenotificationctas` array setting.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
 
 ### Deprecated
 
 - The `core_admin_renderer::upgradekey_form_page(...)` method has been deprecated, existing callers and/or overrides of this method should instead use replacement `core_admin_renderer::upgradekey_form_page_with_validation(...)`
 
   For more information see [MDL-87896](https://tracker.moodle.org/browse/MDL-87896)
+- `core_admin_renderer::admin_notifications_page()` has been deprecated in favour of `core_admin_renderer::notifications_page()`, which carries the same argument list without the `$showcampaigncontent`, `$showfeedbackencouragement` and `$showservicesandsupport` arguments. The deprecated method still renders the page and ignores those three arguments.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+- The following `core_admin_renderer` methods have been deprecated, as the content they rendered has been replaced by the "From Moodle" call to action cards:
+
+  - `campaign_content()`
+  - `services_and_support_content()`
+  - `userfeedback_encouragement()`
+  - `marketplace_integration_notice()`
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+
+### Removed
+
+- The `$CFG->showcampaigncontent` setting is no longer used, because the campaign banner it controlled has been removed from the admin notifications page. `$CFG->showservicesandsupportcontent` is still used, but now only controls the "Services and support" link in the help popover (`core_renderer::services_support_link()`); it no longer affects the notifications page.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
 
 ## 5.1
 

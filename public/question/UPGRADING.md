@@ -1,5 +1,13 @@
 # core_question (subsystem) Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- The `\core\question\local\bank\bulk_action_base` class now defines the `get_action_icon` method. Bulk action classes must override this to return an icon identifier. The icon is displayed on the action's button in the sticky footer. See `\qbank_bulkmove\bulk_move_action` for an example.
+
+  For more information see [MDL-73051](https://tracker.moodle.org/browse/MDL-73051)
+
 ## 5.2
 
 ### Added

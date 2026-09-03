@@ -1,5 +1,35 @@
 # mod_quiz Upgrade notes
 
+## 5.3dev
+
+### Added
+
+- - Add a new external web service get_users_in_report to get the list of users in quiz report.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+- A new function print_action_bar has been added to mod/quiz/classes/local/reports/report_base.php. This function is intended to be called by the Quiz report to render a new navigation bar with user-specific filters. Depending on the settings, the new navigation bar will consist of four components:
+    + Quiz Report selectors: Displays a list of the current quiz reports that the user can access.
+    + User search: Allows users to search and filter reports based on query string.
+    + Group selector: Provides a dropdown or selector to filter reports based on user groups.
+    + Initial bars filters
+  Quiz Report selectors is render by mod/quiz/classes/output/quiz_report_action_selector.php User search, group selector, initial bars filters is implement in mod/quiz/classes/output/quiz_report_navigation_bar.php Add new has_permission to check user permission for each quiz report. Add new setup_report_data function to allow reports customize their sql data and table class. Override QuizUserSearch from combosearch/user to allow quiz report can search and filter user.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+- A new duedate field added to 'quiz' and 'quiz_overrides' tables
+
+  For more information see [MDL-82521](https://tracker.moodle.org/browse/MDL-82521)
+
+### Changed
+
+- If your plugin implements its own quiz report (a subclass of `mod_quiz\local\reports\report_base`), you need to update it to keep the old group selector working, because `report_base::print_header_and_tabs()` no longer prints it, and to pick up the new navigation bar (report selector, group selector, user search and initials filter).
+  There are two ways to upgrade, depending on how much of the new bar you want:
+  - Minimal (see `quiz_statistics_report` for an example): pass `null` for `$options` when calling `$this->print_action_bar('statistics', null, $cm, $reporturl);`. This restores the report selector and group selector while omitting the user search and initials filter widgets.
+  IMPORTANT: If your plugin calls `print_standard_header_and_messages()` but does NOT implement `setup_report_data()`, you must explicitly replace `$options` with `null` as the 4th parameter (`$this->print_standard_header_and_messages($cm, $course, $quiz, null, ...)`). Passing `$options` without implementing `setup_report_data()` will cause the AJAX user search widget to fail.
+  - Full (see `quiz_responses_report` or `quiz_overview_report` for an example): override `setup_report_data(stdClass $quiz, cm_info $cm, stdClass $course, ?context $context = null): array` to build and return `[$options, $table, $allowedjoins]` for your report (this is what the new `mod_quiz_get_users_in_report` web service calls to populate the search widget), and pass your `attempts_report_options` instance as `$options` into `print_standard_header_and_messages()`.
+  If your report enforces its own capability check instead of `mod/quiz:viewreports`, override `has_permission(context $context): void` (see `quiz_grading_report` for an example) rather than calling `require_capability()` directly in `display()`, since `has_permission()` is also called by the `mod_quiz_get_users_in_report` web service before it builds your report's data.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+
 ## 5.2
 
 ### Added

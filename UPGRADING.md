@@ -12,6 +12,10 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- Boost now has a dark colour mode, which a site turns on with the experimental theme_boost | enablecolourmodes setting, so a plugin's styles.css can no longer assume the page is light. Styles work in both modes if they take their colours from the Bootstrap custom properties (--bs-body-bg, --bs-body-color, --bs-secondary-bg, --bs-tertiary-bg, --bs-border-color, --bs-emphasis-color, --bs-link-color) or the design system tokens (--mds-bg-surface-*, --mds-text-*, --mds-border-*), all of which change with the mode. The equivalent utility classes (bg-body, bg-body-secondary, bg-body-tertiary, text-body, text-body-secondary, text-bg-*, border) do the same, and are safer than bg-white or text-dark. Where a colour genuinely has to differ between the modes, scope it with the [data-bs-theme="dark"] attribute selector, which is the Bootstrap standard rather than anything Boost-specific.
+  Two things to watch for. A literal colour is a problem when it is only half of a pair: a fixed light background behind text that follows the mode, or fixed dark text on a surface that follows the mode, will lose its contrast. Where a colour carries meaning and has to stay, such as a status tint, fix the other half of the pair alongside it rather than letting it follow the mode. And an SVG rendered through an <img> tag paints with the fill baked into the file, so icons should go through the icon API in order to inherit currentColor.
+
+  For more information see [MDL-68037](https://tracker.moodle.org/browse/MDL-68037)
 - `email_to_user()` now emits a hook `before_email_to_user`. This hook allows any subscriber to modify the email contents, add additional headers, or add reasons to block the email. If any block reasons are added, the email is stopped from being sent and the reasons are output.
 
   For more information see [MDL-69724](https://tracker.moodle.org/browse/MDL-69724)
@@ -54,6 +58,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added `moodle_page::set_show_navigation_footer(bool $show)` to control whether the sticky navigation footer is rendered. Use $PAGE->set_show_navigation_footer(false); to suppress the footer on pages where it is not required.
 
   For more information see [MDL-87575](https://tracker.moodle.org/browse/MDL-87575)
+- A new `\core\api\token_manager` class mints personal access tokens for the REST API, applying the secret format and maximum lifetime that the `\core\api\repository` classes deliberately leave to policy. Users manage their own tokens at `/user/personalaccesstokens.php`, gated by the new `moodle/api:createtoken` capability.
+
+  For more information see [MDL-87706](https://tracker.moodle.org/browse/MDL-87706)
 - Added new 'url' optional parameter to `core\output\action_menu\subpanel` so subpanel menu elements can have their own link.
 
   For more information see [MDL-88312](https://tracker.moodle.org/browse/MDL-88312)
@@ -99,15 +106,92 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - A new `\core\oauth2\server\client_manager` class manages the lifecycle of OAuth2 server clients, their secrets and their redirect URIs.
 
   For more information see [MDL-89181](https://tracker.moodle.org/browse/MDL-89181)
+- A new `core/imagedetails/modal` JavaScript module presents an image-details dialogue for an image the user is about to embed, collecting alternative text, a decorative flag and a display size. Any component that embeds an author-supplied image can use it to collect an accessible description before the image is stored.
+
+  For more information see [MDL-89214](https://tracker.moodle.org/browse/MDL-89214)
+- A new `\core\output\html_writer::react_component()` method has been added to assist with rendering a react component.
+
+  This should be used instead of manually writing the div.
+
+  Parameters should not be json-serialized before being passed into the method.
+
+  For more information see [MDL-89296](https://tracker.moodle.org/browse/MDL-89296)
+- A new `\core\output\react_component_renderable` interface has been created to
+  support rendering a renderable using React.
+
+  ```php
+  final class my_renderable implements \core\output\react_component_renderable {
+      #[\Override]
+      public function get_react_component_name(): string {
+          return 'block_timeline/Timeline';
+      }
+
+      #[\Override]
+      public function get_react_component_props(
+          \core\output\renderer_base $renderer,
+      ): \stdClass {
+          return (object) [
+              // ...
+          ];
+      }
+  }
+
+  // Create and prepare the renderable for React rendering.
+  $renderable = new my_renderable(...);
+  echo $OUTPUT->render($renderable);
+  ```
+
+  For more information see [MDL-89296](https://tracker.moodle.org/browse/MDL-89296)
 - New `flexible_table::set_columnheadersattributes(...)` method for tables to define additional attributes ('class', 'data-X', etc.) for column headers
 
   For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
+- Support for Attribute-based Dependency Injection has been added:
+
+  ```php
+  class example_class {
+      #[\DI\Attribute\Inject]
+      private \core\formatting $formatter;
+  }
+  // Fetch the example class using the `get` method for entries // stored in the container. $example1 = di::get(\core\tests\di\example_class::class); // Fetch the example class using the `make` method for entries // built on each call. $example2 = di::make(\core\tests\di\example_class::class);
+  ```
+
+  Attribute-based Dependency Injection is the best practice and recommended approach for use in controllers.
+
+  This also makes it easier to support the use of Dependency Injection in other areas of the codebase, such as legacy code, and factories using the `make` method.
+
+  For more information see [MDL-89528](https://tracker.moodle.org/browse/MDL-89528)
 
 #### Changed
 
+- The title of a modal dialogue rendered by the `core/modal` template is now an `<h2>` element instead of an `<h5>`, so that dialogue titles no longer break the page's heading hierarchy for assistive technology users.
+
+  The element carries the Bootstrap `fs-5` font size utility class, so the title's appearance is unchanged.
+
+  If your plugin renders headings inside modal dialogue content, set their levels relative to this `<h2>` (i.e. start at `<h3>`) so that the heading structure remains correctly nested. Headings that were previously nested beneath the old `<h5>` will now skip levels. If your plugin renders its own modal header markup, or overrides the `header` block of the `core/modal` template, apply the same `<h2 class="modal-title fs-5">` pattern.
+
+  For more information see [MDL-75699](https://tracker.moodle.org/browse/MDL-75699)
+- - The `get_users_search_sql` method now includes two new  parameters, `allowcustom` and `custommappings`
+    The parameter `allowcustom` specifies whether we include the custom field in search query
+    The parameter `custommappings` is an array with custom field that has been mapped with table prefix.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+- The secondary navigation bar (and, via `core/nav/PrimaryNav`, the primary navigation) is now rendered by the `core/nav/Nav` React component, using `@moodlehq/design-system`'s `NavPill` instead of legacy Bootstrap `.nav-link`/`.moremenu` markup.
+  Plugins or themes that targeted the old markup, classes, or IDs directly for the secondary/primary navigation bar should verify their CSS/JS still applies, as the DOM structure has changed (e.g. `.mds-nav-pill` instead of `.nav-link`).
+  Keyboard support (arrow keys, Home/End, and a single roving Tab stop per bar) is unchanged and continues to be driven by `core/menu_navigation`.
+
+  For more information see [MDL-87830](https://tracker.moodle.org/browse/MDL-87830)
+- The core/notification_base Mustache template now accepts an optional integer headinglevel context value to control the heading level used for the notification title. If not specified, the title continues to be rendered using the previous default heading level.
+
+  For more information see [MDL-88458](https://tracker.moodle.org/browse/MDL-88458)
 - The `search` landmark role in the `core/search_input_auto` template is enclosed within a `searchrole` Mustache block so that templates that use this template can override and remove the `search` landmark role when deemed unnecessary.
 
   For more information see [MDL-88833](https://tracker.moodle.org/browse/MDL-88833)
+- The `\core\task\manager::set_scheduled_task_nextruntime()` method now returns a boolean indicating whether the next run time was updated. It returns `false` when the scheduled task is already running.
+
+  For more information see [MDL-89200](https://tracker.moodle.org/browse/MDL-89200)
+- The primary navigation in the Boost navbar is now rendered by the `core/nav/PrimaryNav` React component via the new `core/primarymoremenu` template, replacing `core/moremenu`. With JavaScript enabled the markup no longer includes the `.moremenu` wrapper, and navigation items are rendered as `a.mds-nav-pill` (selected items carry `.mds-nav-pill--selected` and `aria-current="page"`) instead of `a.nav-link.active`. Themes and plugins that style or script `.primary-navigation .moremenu` or `.primary-navigation .nav-link` need updating. A server-rendered `core/moremenu_children` fallback is still emitted inside the mount point for non-JavaScript clients.
+
+  For more information see [MDL-89294](https://tracker.moodle.org/browse/MDL-89294)
 
 #### Deprecated
 
@@ -148,6 +232,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - `get_dataroot_size` in `\core\hub\registration` has been deprecated in favour of `get_filepool_usage`, which approximates disk usage from the database rather than scanning the dataroot directory, making it significantly more performant on large sites.
 
   For more information see [MDL-88805](https://tracker.moodle.org/browse/MDL-88805)
+- The `core/external_content_banner` template has been deprecated. It was only used by the admin notifications page banners, which have been replaced by the `core_admin/notification_ctas` template. Final deprecation is planned for Moodle 6.0.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+
+#### Fixed
+
+- The `core_course` scope classes for course content and course structure now resolve their summary and description language strings. The string identifiers in `lang/en/course.php` were missing the leading `course_` identifier segment, so `\core\router\scope\abstract_scope::get_summary()` failed for six scopes.
+
+  For more information see [MDL-87706](https://tracker.moodle.org/browse/MDL-87706)
 
 ### core_admin
 
@@ -274,12 +367,52 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   | `\admin_settings_sitepolicy_handler_select`           | `\core_admin\setting\setting\sitepolicy_handler_select`            |
 
   For more information see [MDL-81935](https://tracker.moodle.org/browse/MDL-81935)
+- `core_admin_renderer::warning_with_label()` has been added. It prefixes a notification with a bold severity category label (for example "Security" or "Warning") and then delegates to `core_admin_renderer::warning()`, whose signature is unchanged.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+
+#### Changed
+
+- The admin notifications page (`/admin/index.php`) now groups and orders notifications by severity (danger, then warning, then notice) and shows a severity count summary line above the list. The legacy campaign banner, services-and-support banner, Marketplace one-line notice and feedback-encouragement notice have been replaced by a single "From Moodle" call to action card grid, rendered by the new `core_admin\output\notification_ctas` renderable and the `core_admin/notification_ctas` template. Individual cards can be hidden with the new config.php-only `$CFG->disablenotificationctas` array setting.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
 
 #### Deprecated
 
 - The `core_admin_renderer::upgradekey_form_page(...)` method has been deprecated, existing callers and/or overrides of this method should instead use replacement `core_admin_renderer::upgradekey_form_page_with_validation(...)`
 
   For more information see [MDL-87896](https://tracker.moodle.org/browse/MDL-87896)
+- `core_admin_renderer::admin_notifications_page()` has been deprecated in favour of `core_admin_renderer::notifications_page()`, which carries the same argument list without the `$showcampaigncontent`, `$showfeedbackencouragement` and `$showservicesandsupport` arguments. The deprecated method still renders the page and ignores those three arguments.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+- The following `core_admin_renderer` methods have been deprecated, as the content they rendered has been replaced by the "From Moodle" call to action cards:
+
+  - `campaign_content()`
+  - `services_and_support_content()`
+  - `userfeedback_encouragement()`
+  - `marketplace_integration_notice()`
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+
+#### Removed
+
+- The `$CFG->showcampaigncontent` setting is no longer used, because the campaign banner it controlled has been removed from the admin notifications page. `$CFG->showservicesandsupportcontent` is still used, but now only controls the "Services and support" link in the help popover (`core_renderer::services_support_link()`); it no longer affects the notifications page.
+
+  For more information see [MDL-89290](https://tracker.moodle.org/browse/MDL-89290)
+
+### core_ai
+
+#### Added
+
+- The ai_action_register table now includes a courseid column, populated at log time (and backfilled in the background for existing rows) by resolving the action's context to a course. A new report_aiusage plugin adds a course-level AI usage report, with new report/aiusage:view and report/aiusage:viewown capabilities.
+
+  For more information see [MDL-80893](https://tracker.moodle.org/browse/MDL-80893)
+
+#### Changed
+
+- The `prompttokens` and `completiontokens` fields have been moved from the AI action child tables (`ai_action_generate_text`, `ai_action_summarise_text`, `ai_action_explain_text`) up to the parent `ai_action_register` table, since they describe the AI provider call rather than the action-specific content. The token counts are now written to the register record by `core_ai\manager::store_action_result()`. Any code querying these columns directly on the child tables will need to be updated.
+
+  For more information see [MDL-89123](https://tracker.moodle.org/browse/MDL-89123)
 
 ### core_auth
 
@@ -312,6 +445,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87859](https://tracker.moodle.org/browse/MDL-87859)
 
+### core_behat
+
+#### Added
+
+- The Behat CLI tools take a --colourmode option, so that a whole run can be exercised in a given colour mode without every feature having to set a user preference, for example `php admin/tool/behat/cli/init.php --colourmode=dark`. The chosen mode is reported in the run header, and behat_get_colour_mode() exposes it to themes.
+  Precedence is user preference, then the run option, then the site settings, so a scenario which asserts a particular colour mode must pin it with a user preference rather than relying on the site default. See theme/boost/tests/behat/colour_mode_accessibility.feature. The option also turns colour modes on for the run, as they are off until a site opts in, so a scenario about them being off has to skip itself with "Given the run is not using a colour mode".
+
+  For more information see [MDL-68037](https://tracker.moodle.org/browse/MDL-68037)
+
 ### core_course
 
 #### Added
@@ -334,6 +476,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - New get_section() function has been added to get the main section (not delegated) of a course module in the course_navigation class.
 
   For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
+
+#### Changed
+
+- Web services returning course modules now use standard_coursemodule_elements consistently, aligning core_course and module web services (forum, h5p, assign).
+
+  For more information see [MDL-87241](https://tracker.moodle.org/browse/MDL-87241)
 
 #### Deprecated
 
@@ -363,6 +511,17 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The section collapse/expand-all toggle (collapsemenu) is no longer part of core_courseformat\output\local\content\section's exported data or the core_courseformat/local/content/section template. It has moved to core_courseformat\output\local\content and the core_courseformat/local/content template, and is now rendered once above the section list instead of as part of the first section. Course formats or themes that override these classes/templates to customise the toggle will need to update accordingly.
 
   For more information see [MDL-88410](https://tracker.moodle.org/browse/MDL-88410)
+- The course index tree semantics for subsections have moved from the delegated section wrapper to the activity that delegates it.
+
+  * The `li[role="treeitem"]` in `core_courseformat/local/courseindex/cm` should add the following attributes when the activity has a delegated section:
+    * `aria-owns`, set to the id of that section's collapsible content, `courseindexcollapse{{number}}`
+    * `aria-labelledby`, set to the id of that section's title element, `courseindexsection{{number}}-title`
+    * `aria-expanded`, set to `false` when the section's `indexcollapsed` is set and `true` otherwise
+  * In `core_courseformat/local/courseindex/section`, `role="treeitem"` and those same three attributes should no longer be set when the section is delegated, and the section title element needs `id="courseindexsection{{number}}-title"` so the tree item can reference it.
+
+  Note that the `core_courseformat/local/courseindex/section` JS keeps `aria-expanded` up to date by writing to the closest `[role="treeitem"]` ancestor, so the element carrying the role is the one that receives the state. Plugins overriding either template should update both, as the two are no longer independent.
+
+  For more information see [MDL-88949](https://tracker.moodle.org/browse/MDL-88949)
 
 ### core_external
 
@@ -408,16 +567,40 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ### core_grades
 
+#### Added
+
+- Outcomes can now be created without an associated scale and linked to course modules. The `grade_outcome` class now provides the methods `add_outcome_to_module()`, `remove_outcome_from_module()`, `get_outcomes_in_module()`, and `get_used_outcomes_in_course()` to manage and query scale-less outcomes in course modules.
+
+  For more information see [MDL-88881](https://tracker.moodle.org/browse/MDL-88881)
+
+#### Changed
+
+- - The `grade/classes/output/general_action_bar.php` now uses the template name `core/navigation_action_bar` instead of `core_grades/general_action_bar`. - The `grade/templates/general_action_bar.mustache` file will be relocated to `lib/templates/navigation_action_bar.mustache` to enable usage across multiple components. - The `grade/report/grader/classes/output/action_bar.php` now uses the template name `core/action_bar` instead of `gradereport_grader/action_bar`. - The `grade/report/grader/templates/action_bar.mustache` file will be relocated to
+        `lib/templates/action_bar.mustache` to enable usage across multiple components.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+
 #### Deprecated
 
 - The `grade_item::update_deducted_mark()` method has been deprecated and will be removed in a future release (See MDL-88663 for the final deprecation). Penalties are now applied directly in `penalty_manager` via `adjust_raw_grade()`. There is no replacement for this method.
 
   For more information see [MDL-88407](https://tracker.moodle.org/browse/MDL-88407)
 
+### core_question
+
+#### Added
+
+- The `\core\question\local\bank\bulk_action_base` class now defines the `get_action_icon` method. Bulk action classes must override this to return an icon identifier. The icon is displayed on the action's button in the sticky footer. See `\qbank_bulkmove\bulk_move_action` for an example.
+
+  For more information see [MDL-73051](https://tracker.moodle.org/browse/MDL-73051)
+
 ### core_reportbuilder
 
 #### Added
 
+- There are three new date-related aggregation types for `TYPE_TIMESTAMP` columns: `week`, `month` and `year`. An abstract `datebase` aggregation class, upon which all date-related types should extend has also been created
+
+  For more information see [MDL-84635](https://tracker.moodle.org/browse/MDL-84635)
 - The report `join` trait contains new `prepend_join[s]` methods, which are called from the base entity to ensure entity joins are automatically prepended to all entity columns, filters and conditions
 
   Entity implementations no longer have to manually add boilerplace to add the same joins to their own columns, filters and conditions
@@ -429,6 +612,11 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Changed
 
+- The default column `sortable` property is now true; for columns that were previously non-sortable by virtue of omitting a call to `->set_is_sortable(...)` they should now call this method passing false argument
+
+  Entity boilerplate that called the aforementioned method passing true argument can now be removed
+
+  For more information see [MDL-87404](https://tracker.moodle.org/browse/MDL-87404)
 - New method of the base report class for setting complex SQL as the main report table, `set_main_table_sql()`
 
   The `$tablealias` parameter of the existing `set_main_table()` method in the same class is now mandatory
@@ -468,6 +656,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87150](https://tracker.moodle.org/browse/MDL-87150)
 
+### aiprovider_gemini
+
+#### Added
+
+- A new `gemini31flashimage` model class has been added to support `gemini-3.1-flash-image`, the model Google recommends as the migration path for the retiring Imagen 4 endpoints (`imagen-4.0-generate-001`, `-ultra`, `-fast`), and it is now the default model for the "Generate image" action.
+
+  For more information see [MDL-89431](https://tracker.moodle.org/browse/MDL-89431)
+
+#### Changed
+
+- `process_generate_image` now branches its request and response handling on the configured endpoint's method (`:predict` for Imagen vs `:generateContent` for Gemini's native image generation), instead of assuming the Imagen protocol. This is determined from the endpoint URL rather than the model name, so it also applies to any custom model an admin configures.
+
+  For more information see [MDL-89431](https://tracker.moodle.org/browse/MDL-89431)
+
 ### assignfeedback_editpdf
 
 #### Fixed
@@ -484,6 +686,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-79755](https://tracker.moodle.org/browse/MDL-79755)
 
+### block_timeline
+
+#### Added
+
+- The legacy AMD/Mustache frontend for the Timeline block has been replaced with an ESM + React implementation.
+
+  For more information see [MDL-88287](https://tracker.moodle.org/browse/MDL-88287)
+
+#### Removed
+
+- block_timeline\output\main, block_timeline\output\renderer, and the block's external service classes (see db/services.php) have been removed entirely, with no deprecation stub — themes overriding the renderer, or code calling the removed external functions, must be updated.
+
+  For more information see [MDL-88287](https://tracker.moodle.org/browse/MDL-88287)
+
 ### core\task\adhoc_task
 
 #### Added
@@ -499,6 +715,26 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Added adhoc_task_delayed() method to allow an adhoc task to be retried after a delay without marking it as failed. The delay uses exponential backoff based on elapsed time since the task first started, capped at 24 hours.
 
   For more information see [MDL-79763](https://tracker.moodle.org/browse/MDL-79763)
+
+### editor_tiny
+
+#### Added
+
+- The editor follows the colour mode of the page it is on. The skin is chosen when the editor is set up, so an editor which is already open keeps the skin it started with until the page is loaded again, and the colour mode attribute is repeated on the root of the content iframe so that styles loaded through content_css can respond to it.
+  A plugin which styles the editor content, or its own dialogs, should take its colours the same way any other plugin does rather than assuming a light editor. Icons supplied to the toolbar are referenced by URL inside an <image> element, so they are an isolated document that neither currentColor nor a fill from the page stylesheet can reach; a monochrome icon drawn in a dark colour is lightened for dark mode by a filter on the svg[data-buttonsource="moodle"] wrapper.
+
+  For more information see [MDL-68037](https://tracker.moodle.org/browse/MDL-68037)
+- The Accordion and List Styles (advlist) bundled TinyMCE plugins have been enabled by default. HTMLPurifier now also allows the HTML5 <details> and <summary> elements, and the lower-greek CSS list-style-type value, so content produced by these plugins is preserved when saved.
+
+  For more information see [MDL-88618](https://tracker.moodle.org/browse/MDL-88618)
+
+### enrol_manual
+
+#### Deprecated
+
+- The manual enrol instance `->enrol_cohort(...)` method is deprecated as it is no longer used/lacked group support
+
+  For more information see [MDL-89439](https://tracker.moodle.org/browse/MDL-89439)
 
 ### format_topics
 
@@ -546,6 +782,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The delete_override, delete_all_overrides, move_group_override, reorder_group_overrides are now deprecated. Use the corresponding methods in the override_manager class instead: - override_manager::delete_override - override_manager::delete_all_overrides - override_manager::move_group_override - override_manager::reorder_group_overrides
 
   For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
+- The ASSIGN_MULTIMARKING_MAX_MARKERS constant has been deprecated. Use ASSIGN_MULTIMARKING_DEFAULT_MAX_MARKERS instead.
+
+  For more information see [MDL-87709](https://tracker.moodle.org/browse/MDL-87709)
+- The assign::get_allocated_markers() and assign::update_allocated_markers() functions are now deprecated. Use assign::get_marker_allocations() and assign::update_marker_allocations() instead.
+
+  For more information see [MDL-87709](https://tracker.moodle.org/browse/MDL-87709)
+- Event mod_assign\event\marker_updated is no longer triggered. Observers listening to this event should instead listen to mod_assign\event\marker_added and mod_assign\event\marker_removed instead.
+
+  For more information see [MDL-87709](https://tracker.moodle.org/browse/MDL-87709)
 
 ### mod_forum
 
@@ -560,6 +805,36 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add new mod_forum_set_read_state web service to allow clients to manually mark individual forum posts as read or unread (when manual read tracking is enabled), returning a simple status and warnings structure.
 
   For more information see [MDL-87887](https://tracker.moodle.org/browse/MDL-87887)
+
+### mod_quiz
+
+#### Added
+
+- - Add a new external web service get_users_in_report to get the list of users in quiz report.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+- A new function print_action_bar has been added to mod/quiz/classes/local/reports/report_base.php. This function is intended to be called by the Quiz report to render a new navigation bar with user-specific filters. Depending on the settings, the new navigation bar will consist of four components:
+    + Quiz Report selectors: Displays a list of the current quiz reports that the user can access.
+    + User search: Allows users to search and filter reports based on query string.
+    + Group selector: Provides a dropdown or selector to filter reports based on user groups.
+    + Initial bars filters
+  Quiz Report selectors is render by mod/quiz/classes/output/quiz_report_action_selector.php User search, group selector, initial bars filters is implement in mod/quiz/classes/output/quiz_report_navigation_bar.php Add new has_permission to check user permission for each quiz report. Add new setup_report_data function to allow reports customize their sql data and table class. Override QuizUserSearch from combosearch/user to allow quiz report can search and filter user.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+- A new duedate field added to 'quiz' and 'quiz_overrides' tables
+
+  For more information see [MDL-82521](https://tracker.moodle.org/browse/MDL-82521)
+
+#### Changed
+
+- If your plugin implements its own quiz report (a subclass of `mod_quiz\local\reports\report_base`), you need to update it to keep the old group selector working, because `report_base::print_header_and_tabs()` no longer prints it, and to pick up the new navigation bar (report selector, group selector, user search and initials filter).
+  There are two ways to upgrade, depending on how much of the new bar you want:
+  - Minimal (see `quiz_statistics_report` for an example): pass `null` for `$options` when calling `$this->print_action_bar('statistics', null, $cm, $reporturl);`. This restores the report selector and group selector while omitting the user search and initials filter widgets.
+  IMPORTANT: If your plugin calls `print_standard_header_and_messages()` but does NOT implement `setup_report_data()`, you must explicitly replace `$options` with `null` as the 4th parameter (`$this->print_standard_header_and_messages($cm, $course, $quiz, null, ...)`). Passing `$options` without implementing `setup_report_data()` will cause the AJAX user search widget to fail.
+  - Full (see `quiz_responses_report` or `quiz_overview_report` for an example): override `setup_report_data(stdClass $quiz, cm_info $cm, stdClass $course, ?context $context = null): array` to build and return `[$options, $table, $allowedjoins]` for your report (this is what the new `mod_quiz_get_users_in_report` web service calls to populate the search widget), and pass your `attempts_report_options` instance as `$options` into `print_standard_header_and_messages()`.
+  If your report enforces its own capability check instead of `mod/quiz:viewreports`, override `has_permission(context $context): void` (see `quiz_grading_report` for an example) rather than calling `require_capability()` directly in `display()`, since `has_permission()` is also called by the `mod_quiz_get_users_in_report` web service before it builds your report's data.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
 
 ### mod_workshop
 
@@ -584,6 +859,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- Boost supports a light and a dark colour mode, built on the Bootstrap 5.3 colour modes API. The mode in use is written to the data-bs-theme attribute of the html tag, and theme_boost\colour_mode is the entry point for reading or rendering it. The feature is experimental, so it is off until a site turns on enablecolourmodes on the new Experimental tab of the Boost settings, which is also where the default mode is chosen.
+  Themes inheriting from Boost need to be aware of three changes. Boost's stylesheets now refer to the greyscale and the body colours through var(--#{$prefix}gray-*), var(--#{$prefix}white), var(--#{$prefix}black), var(--#{$prefix}body-bg) and var(--#{$prefix}body-color) instead of the matching SCSS variables, so that they follow the mode; the light mode values are unchanged. $card-bg, $card-border-color and the $state-*-bg and $state-*-border variables now default to custom properties rather than literal colours, so a preset overriding them should set a colour that the dark mode can re-point, or override the custom property directly. The dark palette lives in scss/moodle/dark.scss, which is emitted through Bootstrap's color-mode mixin and must stay the last import so that it can override what comes before it.
+  A child theme which renders its own navbar should output theme_boost\colour_mode::render_menu() to give its users the switcher.
+  The chosen mode is stored as a user preference, and mirrored into a theme_boost_colourmode cookie so that a page which nobody is logged in to, the login page above all, can be rendered in it rather than reverting to the site default. The cookie holds one of light, dark or auto, is written by the browser with the site's own cookie path, domain and secure settings, and is only read when there is no preference to read. Sites which document the cookies they set should add it to their list. No cookie is set until a site turns colour modes on.
+
+  For more information see [MDL-68037](https://tracker.moodle.org/browse/MDL-68037)
 - The Noto Sans variable font's cyrillic and cyrillic-ext subsets (normal and italic styles, weights 100-900) are now included in `theme/boost/fonts/noto-sans/`. As a result, sites using cyrillic text will now render in Noto Sans.
 
   For more information see [MDL-89024](https://tracker.moodle.org/browse/MDL-89024)
@@ -599,6 +880,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The course index drawer now shows a single collapse/expand all toggle button instead of a dropdown menu. The `drawerheadercontent` block in `theme_boost/drawer` has been removed and replaced with a new `drawercontrols` block.
 
   For more information see [MDL-89050](https://tracker.moodle.org/browse/MDL-89050)
+- The `core/loginform` template from the Boost theme has been moved to core.
+
+  The previously used core version has not been used in core for some
+  time, and was not tested or validated.
+
+  For more information see [MDL-89196](https://tracker.moodle.org/browse/MDL-89196)
 
 #### Deprecated
 
@@ -644,6 +931,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-88766](https://tracker.moodle.org/browse/MDL-88766)
 
+### tiny_premium
+
+#### Added
+
+- Added support for the TinyMCE Premium Markdown plugin, including per-plugin capability and editor configuration.
+
+  For more information see [MDL-88547](https://tracker.moodle.org/browse/MDL-88547)
+
 ### tiny_recordrtc
 
 #### Added
@@ -663,6 +958,28 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Duration metadata is created when recording is stopped to accurately determine the recording duration.
 
   For more information see [MDL-88603](https://tracker.moodle.org/browse/MDL-88603)
+
+### tool_mobile
+
+#### Changed
+
+- The `\tool_mobile\api::get_subscription_information()` method now accepts an optional `$errormessage` parameter, passed by reference. If an error occurs while contacting the Apps Portal, it will be populated with a description of that error; it is left as an empty string when the request succeeds or when cached data is returned without contacting the Apps Portal.
+
+  For more information see [MDL-88458](https://tracker.moodle.org/browse/MDL-88458)
+
+### tool_task
+
+#### Deprecated
+
+- The `\core\task\manager::task_is_scheduled()` method has been deprecated. Use `\core\task\manager::get_queued_adhoc_task_record()` directly instead.
+
+  For more information see [MDL-86422](https://tracker.moodle.org/browse/MDL-86422)
+
+#### Fixed
+
+- Change semantic of queue_adhoc_task so now it always returns the task id of newly inserted task or existing task (depending on the $checkforexisting) or false if the task component is deprecated or the task could not be queued due to DML error.
+
+  For more information see [MDL-86422](https://tracker.moodle.org/browse/MDL-86422)
 
 ## 5.2
 

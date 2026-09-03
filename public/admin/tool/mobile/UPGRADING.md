@@ -1,5 +1,13 @@
 # tool_mobile Upgrade notes
 
+## 5.3dev
+
+### Changed
+
+- The `\tool_mobile\api::get_subscription_information()` method now accepts an optional `$errormessage` parameter, passed by reference. If an error occurs while contacting the Apps Portal, it will be populated with a description of that error; it is left as an empty string when the request succeeds or when cached data is returned without contacting the Apps Portal.
+
+  For more information see [MDL-88458](https://tracker.moodle.org/browse/MDL-88458)
+
 ## 5.2
 
 ### Changed

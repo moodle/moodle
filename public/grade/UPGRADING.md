@@ -2,6 +2,19 @@
 
 ## 5.3dev
 
+### Added
+
+- Outcomes can now be created without an associated scale and linked to course modules. The `grade_outcome` class now provides the methods `add_outcome_to_module()`, `remove_outcome_from_module()`, `get_outcomes_in_module()`, and `get_used_outcomes_in_course()` to manage and query scale-less outcomes in course modules.
+
+  For more information see [MDL-88881](https://tracker.moodle.org/browse/MDL-88881)
+
+### Changed
+
+- - The `grade/classes/output/general_action_bar.php` now uses the template name `core/navigation_action_bar` instead of `core_grades/general_action_bar`. - The `grade/templates/general_action_bar.mustache` file will be relocated to `lib/templates/navigation_action_bar.mustache` to enable usage across multiple components. - The `grade/report/grader/classes/output/action_bar.php` now uses the template name `core/action_bar` instead of `gradereport_grader/action_bar`. - The `grade/report/grader/templates/action_bar.mustache` file will be relocated to
+        `lib/templates/action_bar.mustache` to enable usage across multiple components.
+
+  For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+
 ### Deprecated
 
 - The `grade_item::update_deducted_mark()` method has been deprecated and will be removed in a future release (See MDL-88663 for the final deprecation). Penalties are now applied directly in `penalty_manager` via `adjust_raw_grade()`. There is no replacement for this method.

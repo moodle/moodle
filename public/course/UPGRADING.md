@@ -23,6 +23,12 @@
 
   For more information see [MDL-88604](https://tracker.moodle.org/browse/MDL-88604)
 
+### Changed
+
+- Web services returning course modules now use standard_coursemodule_elements consistently, aligning core_course and module web services (forum, h5p, assign).
+
+  For more information see [MDL-87241](https://tracker.moodle.org/browse/MDL-87241)
+
 ### Deprecated
 
 - The core_courseformat\base:get_view_url() $options sr is now deprecated.  Use pagesectionid instead.
