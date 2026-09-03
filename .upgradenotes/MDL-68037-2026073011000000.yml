@@ -41,7 +41,7 @@ notes:
         also turns colour modes on for the run, as they are off until a site
         opts in, so a scenario about them being off has to skip itself with
         "Given the run is not using a colour mode".
-      type: added
+      type: improved
   editor_tiny:
     - message: >-
         The editor follows the colour mode of the page it is on. The skin is
