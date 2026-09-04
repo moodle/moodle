@@ -74,6 +74,45 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
         return $dd;
     }
 
+    /**
+     * Gets the data for the fox drag-and-drop onto image question, as it might
+     * be returned from get_question_options, ready to be passed to the question
+     * type's methods (e.g. get_possible_responses).
+     *
+     * @return stdClass the question definition data.
+     */
+    public function get_ddimageortext_question_data_fox() {
+        $qdata = new stdClass();
+        test_question_maker::initialise_question_data($qdata);
+
+        $qdata->name = 'Drag-and-drop onto image question';
+        $qdata->qtype = 'ddimageortext';
+        $qdata->questiontext = 'The quick brown fox jumped over the lazy dog.';
+        $qdata->questiontextformat = FORMAT_HTML;
+        $qdata->generalfeedback = 'This sentence uses each letter of the alphabet.';
+        $qdata->generalfeedbackformat = FORMAT_HTML;
+
+        $qdata->options = new stdClass();
+        $qdata->options->shuffleanswers = 1;
+        test_question_maker::set_standard_combined_feedback_fields($qdata->options);
+
+        $qdata->options->drags = [
+            1 => (object) ['id' => 1, 'label' => 'quick', 'no' => 1, 'draggroup' => 1, 'infinite' => 0],
+            2 => (object) ['id' => 2, 'label' => 'fox', 'no' => 2, 'draggroup' => 1, 'infinite' => 0],
+            3 => (object) ['id' => 3, 'label' => 'lazy', 'no' => 3, 'draggroup' => 2, 'infinite' => 0],
+            4 => (object) ['id' => 4, 'label' => 'dog', 'no' => 4, 'draggroup' => 2, 'infinite' => 0],
+        ];
+
+        $qdata->options->drops = [
+            1 => (object) ['id' => 1, 'label' => '', 'no' => 1, 'choice' => 1, 'xleft' => 0, 'ytop' => 0],
+            2 => (object) ['id' => 2, 'label' => '', 'no' => 2, 'choice' => 2, 'xleft' => 0, 'ytop' => 0],
+            3 => (object) ['id' => 3, 'label' => '', 'no' => 3, 'choice' => 3, 'xleft' => 0, 'ytop' => 0],
+            4 => (object) ['id' => 4, 'label' => '', 'no' => 4, 'choice' => 4, 'xleft' => 0, 'ytop' => 0],
+        ];
+
+        return $qdata;
+    }
+
     protected function make_choice_structure($choices) {
         $choicestructure = array();
         foreach ($choices as $choice) {

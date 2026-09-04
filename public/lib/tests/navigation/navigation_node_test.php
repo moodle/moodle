@@ -251,6 +251,7 @@ final class navigation_node_test extends navigation_testcase {
         $this->assertSame('type_course', $csstype2);
         $this->assertSame('type_unknown', $csstype3);
         $this->assertSame('type_container', $csstype4);
+        $this->assertSame('type_unknown', (new navigation_node('Test node'))->get_css_type());
     }
 
     public function test_node_make_active(): void {
