@@ -1181,7 +1181,8 @@ function enrol_course_delete($course, $userid = null) {
         // the given user have a capability to perform unenrolment.
         $instances = array_filter($instances, function($instance) use ($userid, $plugins, $context) {
             $unenrolcap = "enrol/{$instance->enrol}:unenrol";
-            return $plugins[$instance->enrol]->allow_unenrol($instance) &&
+            return isset($plugins[$instance->enrol]) &&
+                $plugins[$instance->enrol]->allow_unenrol($instance) &&
                 has_capability($unenrolcap, $context, $userid);
         });
     }
