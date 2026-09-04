@@ -7,7 +7,9 @@ The Moodle `main` branch is named as the upcoming STABLE branch name, for exampl
 
 ## Patches included in this release
 
-N/A
+A security fix has been hand-applied on top of the vendored build (see
+MDL-89591), tightening how the media plugin parses and sanitises embedded
+HTML before it is inserted into the editor.
 
 ## Upgrade procedure for TinyMCE Editor
 

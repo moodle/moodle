@@ -6,5 +6,6 @@
     <license>MIT</license>
     <version>8.2.2</version>
     <repository>https://github.com/tinymce/tinymce</repository>
+    <customised/>
   </library>
 </libraries>
