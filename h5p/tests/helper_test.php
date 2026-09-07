@@ -406,6 +406,7 @@ final class helper_test extends \advanced_testcase {
      */
     public function test_get_export_info(): void {
          $this->resetAfterTest();
+         $this->setAdminUser();
 
         $filename = 'guess-the-answer.h5p';
         $syscontext = \context_system::instance();
