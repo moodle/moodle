@@ -93,9 +93,39 @@ function core_h5p_pluginfile($course, $cm, $context, string $filearea, array $ar
                 return false; // Invalid context because the content files are loaded always in the context system.
             }
             $itemid = array_shift($args);
+
+            // Content files are stored outside the original package's context.
+            if (!\core_h5p\api::can_access_content((int) $itemid)) {
+                return false;
+            }
+            break;
+        case \core_h5p\file_storage::EXPORT_FILEAREA:
+            if ($context->contextlevel != CONTEXT_SYSTEM) {
+                return false; // Invalid context because exports are always loaded in the context system.
+            }
+
+            $itemid = 0;
+
+            // Exports aren't tied to the original package's context;
+            // extract the content id embedded in the filename to check access.
+            $exportfilename = (string) end($args);
+            if (!preg_match('/(\d+)\.h5p$/', $exportfilename, $matches)) {
+                return false;
+            }
+            $h5pid = (int) $matches[1];
+            $h5precord = $DB->get_record('h5p', ['id' => $h5pid]);
+            if (!$h5precord || !\core_h5p\api::can_access_content($h5pid, $h5precord)) {
+                return false;
+            }
+
+            // The export file must only be served while the "Allow download" option is enabled for this content.
+            $core = (new \core_h5p\factory())->get_core();
+            $displayoptions = $core->getDisplayOptionsForView($h5precord->displayoptions, $h5pid);
+            if (empty($displayoptions[\core_h5p\core::DISPLAY_OPTION_DOWNLOAD])) {
+                return false;
+            }
             break;
         case \core_h5p\file_storage::CACHED_ASSETS_FILEAREA:
-        case \core_h5p\file_storage::EXPORT_FILEAREA:
         case \core_h5p\file_storage::CSS_FILEAREA:
             $itemid = 0;
             break;
