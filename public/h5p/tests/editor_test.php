@@ -78,6 +78,7 @@ final class editor_test extends advanced_testcase {
      */
     public function test_set_content(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         autoloader::register();
 
