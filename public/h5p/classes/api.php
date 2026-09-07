@@ -530,6 +530,18 @@ class api {
         }
 
         if (!is_siteadmin($USER)) {
+            // For CONTEXT_SYSTEM, require login and refuse guests unconditionally. This matches the access
+            // level enforced by core's own contentbank handling (see the 'contentbank' branch of
+            // file_pluginfile() in lib/filelib.php) for the original .h5p package stored in the same context,
+            // so the unpacked/exported content served from here cannot be more permissive than the package
+            // it was extracted from.
+            if ($context->contextlevel == CONTEXT_SYSTEM) {
+                if (isguestuser()) {
+                    throw new \moodle_exception('noguest');
+                }
+                require_login(null, true, null, false, true);
+            }
+
             // For CONTEXT_COURSECAT No login necessary - unless login forced everywhere.
             if ($context->contextlevel == CONTEXT_COURSECAT) {
                 if ($CFG->forcelogin) {
@@ -574,7 +586,9 @@ class api {
                 if ($context->contextlevel == CONTEXT_MODULE) {
                     $cminfo = \cm_info::create($cm);
                     if (!$cminfo->uservisible) {
-                        if (!$cm->showdescription || !$cminfo->is_visible_on_course_page()) {
+                        // The showdescription exception only applies to the module's intro files, matching core's
+                        // own file_pluginfile() handling; any other file area must not be exposed this way.
+                        if ($filearea !== 'intro' || !$cm->showdescription || !$cminfo->is_visible_on_course_page()) {
                             // Module intro is not visible on the course page and module is not available, show access error.
                             require_course_login($course, true, $cminfo, !$preventredirect, $preventredirect);
                         }
@@ -584,6 +598,62 @@ class api {
         }
 
         return true;
+    }
+
+    /**
+     * Whether the current user can access the content files (extracted or repackaged) for a given H5P content id.
+     *
+     * These are always stored in the system context, not the original package's, so check access against the
+     * original package instead.
+     *
+     * @param int $h5pid The id of the record in the {h5p} table (also the itemid used in the core_h5p content file area).
+     * @param \stdClass|null $h5p The {h5p} record for $h5pid, if already fetched by the caller, to avoid re-querying it.
+     *
+     * @return bool Whether the current user can access the content files for this H5P content id.
+     */
+    public static function can_access_content(int $h5pid, ?\stdClass $h5p = null): bool {
+        global $DB;
+
+        $cache = \cache::make_from_params(
+            \cache_store::MODE_SESSION,
+            'core_h5p',
+            'canaccesscontentcached'
+        );
+
+        $cached = $cache->get($h5pid);
+        if ($cached !== false && is_array($cached) && $cached['expires'] > time()) {
+            return (bool) $cached['result'];
+        }
+
+        $h5p = $h5p ?? $DB->get_record('h5p', ['id' => $h5pid]);
+        if (!$h5p || empty($h5p->pathnamehash)) {
+            return false;
+        }
+
+        $fs = get_file_storage();
+        $originalfile = $fs->get_file_by_hash($h5p->pathnamehash);
+        if (!$originalfile) {
+            return false;
+        }
+
+        // Build the pluginfile URL of the original package and run it through the existing access check, exactly
+        // as if the original .h5p file had been requested directly.
+        $url = \moodle_url::make_pluginfile_url(
+            $originalfile->get_contextid(),
+            $originalfile->get_component(),
+            $originalfile->get_filearea(),
+            $originalfile->get_itemid(),
+            $originalfile->get_filepath(),
+            $originalfile->get_filename()
+        );
+
+        $result = self::can_access_pluginfile_hash($url->out(false), false);
+        if ($result) {
+            // Only positive results are cached, so a user who gains access mid-session (e.g. gets
+            // enrolled) isn't left locked out until the cache entry expires.
+            $cache->set($h5pid, ['result' => true, 'expires' => time() + 60]);
+        }
+        return $result;
     }
 
     /**
