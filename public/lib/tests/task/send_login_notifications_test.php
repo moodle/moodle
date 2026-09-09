@@ -88,9 +88,9 @@ final class send_login_notifications_test extends \advanced_testcase {
     }
 
     /**
-     * Test new login notification is skipped because of same browser from last login.
+     * Test new login notification is sent when the IP address changes, regardless of session cookie state.
      */
-    public function test_login_notification_skip_same_browser(): void {
+    public function test_login_notification_new_ip(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -112,14 +112,16 @@ final class send_login_notifications_test extends \advanced_testcase {
         $messages = $sink->get_messages();
         $sink->close();
 
-        // Skip notification, different ip but same browser (probably, mobile phone browser).
-        $this->assertCount(0, $messages);
+        // Notification is sent: a different IP now triggers it even when the session cookie isn't new.
+        $this->assertCount(1, $messages);
+        $this->assertEquals($loginuser->id, $messages[0]->useridto);
+        $this->assertEquals('newlogin', $messages[0]->eventtype);
     }
 
     /**
-     * Test new login notification is skipped because of auto-login from the mobile app (skip duplicated notifications).
+     * Test new login notification is sent for mobile app logins from a new IP address.
      */
-    public function test_login_notification_skip_mobileapp(): void {
+    public function test_login_notification_mobileapp(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -142,7 +144,10 @@ final class send_login_notifications_test extends \advanced_testcase {
         $messages = $sink->get_messages();
         $sink->close();
 
-        $this->assertCount(0, $messages);
+        // Notification is sent: a mobile app user agent no longer exempts a new IP login.
+        $this->assertCount(1, $messages);
+        $this->assertEquals($loginuser->id, $messages[0]->useridto);
+        $this->assertEquals('newlogin', $messages[0]->eventtype);
     }
 
     /**
