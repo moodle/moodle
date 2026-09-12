@@ -5,7 +5,8 @@ Feature: Users view the course index with subsections
   I need to be able to effectively use the course index in an accessible way
 
   Background:
-    Given the following "users" exist:
+    Given I enable "subsection" "mod" plugin
+    And the following "users" exist:
       | username | firstname    | lastname  | email                 |
       | teacher1 | Teacher      | 1         | teacher1@example.com  |
       | student1 | Student      | 1         | student1@example.com  |

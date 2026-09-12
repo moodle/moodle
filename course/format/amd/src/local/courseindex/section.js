@@ -26,6 +26,7 @@
 
 import SectionTitle from 'core_courseformat/local/courseindex/sectiontitle';
 import DndSection from 'core_courseformat/local/courseeditor/dndsection';
+import jQuery from 'jquery';
 
 export default class Component extends DndSection {
 
@@ -123,8 +124,9 @@ export default class Component extends DndSection {
         // The section can be expanded before this component is ready, so the initial
         // value is taken from the collapsible itself instead of the state.
         this._refreshExpandedState(treeItem, collapsible);
-        this.addEventListener(collapsible, 'shown.bs.collapse', () => this._refreshExpandedState(treeItem, collapsible));
-        this.addEventListener(collapsible, 'hidden.bs.collapse', () => this._refreshExpandedState(treeItem, collapsible));
+        // Bootstrap 4 collapse events are triggered through jQuery, so they must be listened
+        // to with jQuery too: a native addEventListener never receives them.
+        jQuery(collapsible).on('shown.bs.collapse hidden.bs.collapse', () => this._refreshExpandedState(treeItem, collapsible));
     }
 
     /**
