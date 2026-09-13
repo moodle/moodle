@@ -1,6 +1,6 @@
 # core_grades (subsystem) Upgrade notes
 
-## 5.2.2+
+## 5.2.3
 
 ### Changed
 

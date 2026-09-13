@@ -1,7 +1,0 @@
-issueNumber: MDL-84065
-notes:
-  core:
-    - message: >-
-        A new Behat step `I set the focus on the "<element>" "<selector>"` has
-        been added to move keyboard focus onto an element without activating it.
-      type: improved
