@@ -161,6 +161,27 @@ final class login_lib_test extends \advanced_testcase {
         $sink->clear();
     }
 
+    /**
+     * Test that generating a new password reset token removes any previous outstanding token for the user.
+     *
+     * @covers ::core_login_generate_password_reset
+     */
+    public function test_core_login_generate_password_reset_removes_previous_token(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+
+        $firstreset = core_login_generate_password_reset($user);
+        $this->assertEquals(1, $DB->count_records('user_password_resets', ['userid' => $user->id]));
+
+        $secondreset = core_login_generate_password_reset($user);
+
+        // Only the newest token should remain, and it must be a different token/record.
+        $this->assertEquals(1, $DB->count_records('user_password_resets', ['userid' => $user->id]));
+        $this->assertNotSame($firstreset->token, $secondreset->token);
+    }
+
     public function test_core_login_process_password_reset_disabled_auth(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user(array('auth' => 'oauth2'));
