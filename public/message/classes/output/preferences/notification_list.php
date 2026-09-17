@@ -126,9 +126,9 @@ class notification_list implements templatable, renderable {
 
         $readyprocessors = [];
         // Make the unconfigured processors appear last in the array.
-        uasort($processors, function($a, $b) {
-            $aconf = $a->object->is_user_configured();
-            $bconf = $b->object->is_user_configured();
+        uasort($processors, function ($a, $b) use ($user) {
+            $aconf = $a->object->is_user_configured($user);
+            $bconf = $b->object->is_user_configured($user);
 
             if ($aconf == $bconf) {
                 return 0;
@@ -149,7 +149,7 @@ class notification_list implements templatable, renderable {
                 'name' => $processor->name,
                 'hassettings' => !empty($processor->object->config_form($preferences)),
                 'contextid' => $usercontext->id,
-                'userconfigured' => $processor->object->is_user_configured(),
+                'userconfigured' => $processor->object->is_user_configured($user),
             ];
 
             $readyprocessors[] = $processor;

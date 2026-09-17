@@ -3193,10 +3193,10 @@ class core_message_external extends external_api {
         $user = self::validate_preferences_permissions($params['userid']);
 
         // Filter out enabled, available system_configured and user_configured processors only.
-        $readyprocessors = array_filter(get_message_processors(), function($processor) {
+        $readyprocessors = array_filter(get_message_processors(), function ($processor) use ($user) {
             return $processor->enabled &&
                 $processor->configured &&
-                $processor->object->is_user_configured() &&
+                $processor->object->is_user_configured($user) &&
                 // Filter out processors that don't have and message preferences to configure.
                 $processor->object->has_message_preferences();
         });

@@ -56,16 +56,23 @@ class notification_list_processor implements templatable, renderable {
     protected $preferences;
 
     /**
+     * @var \stdClass The user these preferences belong to.
+     */
+    protected $user;
+
+    /**
      * Constructor.
      *
      * @param \stdClass $processor
      * @param \stdClass $provider
      * @param \stdClass $preferences
+     * @param \stdClass $user The user these preferences belong to.
      */
-    public function __construct($processor, $provider, $preferences) {
+    public function __construct($processor, $provider, $preferences, $user) {
         $this->processor = $processor;
         $this->provider = $provider;
         $this->preferences = $preferences;
+        $this->user = $user;
     }
 
     /**
@@ -127,7 +134,7 @@ class notification_list_processor implements templatable, renderable {
             'displayname' => $processorname,
             'name' => $processor->name,
             'locked' => false,
-            'userconfigured' => $processor->object->is_user_configured(),
+            'userconfigured' => $processor->object->is_user_configured($this->user),
             'enabled' => false,
             'enabledlabel' => get_string('sendingviaenabled', 'message', $labelparams),
         ];

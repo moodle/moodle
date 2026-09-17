@@ -154,7 +154,7 @@ class notification_list_component implements templatable, renderable {
             ];
 
             foreach ($processors as $processor) {
-                $notificationprocessor = new notification_list_processor($processor, $provider, $preferences);
+                $notificationprocessor = new notification_list_processor($processor, $provider, $preferences, $this->user);
                 $notificationcontext['processors'][] = $notificationprocessor->export_for_template($output);
             }
 

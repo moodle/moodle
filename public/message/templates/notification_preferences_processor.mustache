@@ -62,6 +62,7 @@
         </a>
     {{/hassettings}}
     {{^hassettings}}
-        {{displayname}}
+        <span {{^userconfigured}}class="dimmed_text"{{/userconfigured}}>{{displayname}}</span>
+        {{^userconfigured}}<span class="visually-hidden">{{#str}} requiresconfiguration, message {{/str}}</span>{{/userconfigured}}
     {{/hassettings}}
 </th>

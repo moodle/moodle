@@ -43,6 +43,7 @@ define(['jquery',
         PREFERENCE: '.preference-state',
         PREFERENCE_ROW: '[data-region="preference-row"]',
         PREFERENCE_INPUT: '.preference-state input',
+        UNCONFIGURED_INPUT: '[data-unconfigured="1"]',
         PROCESSOR_SETTING: '[data-processor-setting]',
     };
 
@@ -82,11 +83,14 @@ define(['jquery',
     /**
      * Enable all of the preferences.
      *
+     * Preferences belonging to a processor the user has not configured (e.g. SMS without a
+     * phone number) must stay disabled, so they are explicitly excluded here.
+     *
      * @method setEnabled
      */
     PreferencesController.prototype.setEnabled = function() {
         this.root.removeClass('disabled');
-        this.root.find(SELECTORS.PREFERENCE_INPUT).prop('disabled', false);
+        this.root.find(SELECTORS.PREFERENCE_INPUT).not(SELECTORS.UNCONFIGURED_INPUT).prop('disabled', false);
     };
 
     /**

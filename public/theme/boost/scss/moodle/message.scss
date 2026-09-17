@@ -69,11 +69,6 @@
             .preference-name {
                 vertical-align: middle;
             }
-            .disabled-message {
-                text-align: center;
-                height: 30px;
-                line-height: 30px;
-            }
             &.loading {
                 .preference-name {
                     .loading-icon {
@@ -81,20 +76,6 @@
                     }
                 }
             }
-        }
-    }
-}
-
-.disabled-message {
-    display: none;
-}
-
-.disabled {
-    .disabled-message {
-        display: block;
-
-        + form {
-            display: none;
         }
     }
 }

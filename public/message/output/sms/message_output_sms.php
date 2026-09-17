@@ -65,7 +65,9 @@ class message_output_sms extends message_output {
 
         // Skip any SMS if user doesn't have a mobile number.
         if (empty($user->phone2)) {
-            mtrace('No mobile number found for userid: ' . $user->id);
+            if (CLI_SCRIPT) {
+                mtrace('No mobile number found for userid: ' . $user->id);
+            }
             return false;
         }
 
@@ -75,7 +77,9 @@ class message_output_sms extends message_output {
             $user->suspended ||
             $user->deleted
         ) {
-            mtrace('The user with userid: ' . $user->id . ' is either deleted or suspended. Can not send SMS.');
+            if (CLI_SCRIPT) {
+                mtrace('The user with userid: ' . $user->id . ' is either deleted or suspended. Can not send SMS.');
+            }
             return false;
         }
 
@@ -91,12 +95,16 @@ class message_output_sms extends message_output {
     public function should_send_sms(stdclass $messagedata): bool {
         // Don't send SMS if it's not a production site and the following config is set.
         if (!empty($CFG->nosmsever)) {
-            mtrace('Can not send SMS while nosmsever is enabled.');
+            if (CLI_SCRIPT) {
+                mtrace('Can not send SMS while nosmsever is enabled.');
+            }
             return false;
         }
         // We don't have a fallback for SMS text. It has to be included.
         if (!isset($messagedata->fullmessagesms)) {
-            mtrace('No SMS string found for the message');
+            if (CLI_SCRIPT) {
+                mtrace('No SMS string found for the message');
+            }
             return false;
         }
         // Check support for SMS from the component.

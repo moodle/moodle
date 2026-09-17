@@ -33470,24 +33470,8 @@ a.ygtvspacer:hover {
 .preferences-container .preference-table .preference-row .preference-name {
   vertical-align: middle;
 }
-.preferences-container .preference-table .preference-row .disabled-message {
-  text-align: center;
-  height: 30px;
-  line-height: 30px;
-}
 .preferences-container .preference-table .preference-row.loading .preference-name .loading-icon {
   display: block;
-}
-
-.disabled-message {
-  display: none;
-}
-
-.disabled .disabled-message {
-  display: block;
-}
-.disabled .disabled-message + form {
-  display: none;
 }
 
 .general-settings-container .loading-icon {

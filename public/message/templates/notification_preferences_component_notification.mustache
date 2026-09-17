@@ -64,11 +64,17 @@
                                        name="{{{preferencekey}}}_{{{name}}}"
                                        class="form-check-input notification_enabled{{#disableall}} disabled{{/disableall}}"
                                     {{#disableall}} disabled="true" {{/disableall}}
+                                    {{^userconfigured}} disabled="true" data-unconfigured="1" aria-describedby="{{{preferencekey}}}_{{{name}}}_unconfigured"{{/userconfigured}}
                                     {{#enabled}}checked{{/enabled}}
                                 >
                                 <label for="{{{preferencekey}}}_{{{name}}}" class="visually-hidden">
                                     {{enabledlabel}}
                                 </label>
+                                {{^userconfigured}}
+                                    <span id="{{{preferencekey}}}_{{{name}}}_unconfigured" class="visually-hidden">
+                                        {{#str}} requiresconfiguration, message {{/str}}
+                                    </span>
+                                {{/userconfigured}}
                             </div>
                         </div>
                     </form>
