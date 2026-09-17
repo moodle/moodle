@@ -1,0 +1,16 @@
+issueNumber: MDL-89464
+notes:
+  core_hub:
+    - message: >-
+        Fixes a data-integrity bug: adding a new site registration field
+        previously stopped ALL registration updates from being sent while
+        that field awaited administrator confirmation, including fields the
+        administrator had already confirmed. \core\hub\registration::update_cron()
+        no longer returns early in that case; it now sends the previously
+        confirmed field set, omitting only the fields returned by
+        get_new_registration_fields(), until the administrator confirms
+        them on the registration form.
+        \core\hub\registration::get_site_info() accepts a new optional
+        $excludefields parameter listing site info keys to omit from the
+        payload, used to implement this.
+      type: fixed

@@ -489,7 +489,42 @@ class checker {
             $params['plugins'] = implode(',', $plugins);
         }
 
+        $siteidentifier = $this->prepare_site_identifier();
+        if ($siteidentifier !== null) {
+            $params['siteidentifier'] = $siteidentifier;
+        }
+
+        if (!empty($CFG->country)) {
+            $params['countrycode'] = $CFG->country;
+        }
+
         return $params;
+    }
+
+    /**
+     * Returns the site identifier to send with the update check, if the site is registered.
+     *
+     * The value is md5() of the site's registration secret, which is byte-identical to what
+     * the sites directory already holds in hub_site_directory.secret. That gives a direct
+     * equality join between update-check data and registration data with no change to the
+     * registration payload. An unregistered site has no registration secret, so it sends no
+     * identifier and this must never be used to make an unregistered site more identifiable.
+     *
+     * @return string|null the identifier, or null if the site is not registered or it could
+     *      not be determined
+     */
+    protected function prepare_site_identifier() {
+        try {
+            $secret = \core\hub\registration::get_secret();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if ($secret === '') {
+            return null;
+        }
+
+        return md5($secret);
     }
 
     /**

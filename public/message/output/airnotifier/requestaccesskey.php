@@ -48,7 +48,9 @@ $msg = "";
 // This check is also done in Airnotifier.
 if (strpos($CFG->airnotifierurl, message_airnotifier_manager::AIRNOTIFIER_PUBLICURL) !== false ) {
     $adminrenderer = $PAGE->get_renderer('core', 'admin');
-    $msg = $adminrenderer->warn_if_not_registered();
+    // Only an unregistered site blocks the key request. The admin renderer also warns a registered site whose
+    // reporting has paused, which must not stop it from requesting a key.
+    $msg = \core\hub\registration::is_registered() ? '' : $adminrenderer->warn_if_not_registered();
     if ($msg) {
         $msg .= html_writer::div(get_string('sitemustberegistered', 'message_airnotifier'));
 

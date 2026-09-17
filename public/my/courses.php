@@ -40,6 +40,9 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
     redirect(new moodle_url('/admin/index.php'));
 }
 
+// If site registration needs updating, redirect.
+\core\hub\registration::registration_reminder('/my/courses.php');
+
 $context = context_system::instance();
 
 // Get the My Moodle page info.  Should always return something unless the database is broken.

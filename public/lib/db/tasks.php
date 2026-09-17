@@ -221,6 +221,15 @@ $tasks = array(
         'dayofweek' => 'R',
         'month' => '*'
     ),
+    [
+        'classname' => 'core\task\registration_reporting_check_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+    ],
     array(
         'classname' => 'core\task\check_for_updates_task',
         'blocking' => 0,

@@ -1,0 +1,17 @@
+issueNumber: MDL-89474
+notes:
+  core_hub:
+    - message: >-
+        Fixes a data-integrity bug: initial site registration truncated at
+        2000 characters when the site info was spread across the redirect
+        to the hub, silently dropping the remainder. \core\hub\registration::register()
+        now sends only the token, site URL, privacy policy agreement,
+        contact email and language, and \core\hub\registration::confirm_registration()
+        always sends the full site info afterwards. confirm_registration()
+        now returns a bool indicating whether that full payload reached the
+        hub; when it did not, a new \core\task\complete_hub_registration_task
+        adhoc task is queued to retry it. \core\hub\api::call_rest() now
+        throws a moodle_exception when the hub responds with a non-200
+        status, an empty body or a body that is not valid JSON, instead of
+        silently treating such responses as success and losing the update.
+      type: fixed

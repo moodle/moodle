@@ -50,6 +50,9 @@ if ($hassiteconfig && moodle_needs_upgrading()) {
     redirect(new moodle_url('/admin/index.php'));
 }
 
+// If site registration needs updating, redirect.
+\core\hub\registration::registration_reminder('/my/index.php');
+
 $strmymoodle = get_string('myhome');
 
 if (empty($CFG->enabledashboard)) {

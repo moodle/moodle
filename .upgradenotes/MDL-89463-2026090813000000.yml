@@ -1,0 +1,20 @@
+issueNumber: MDL-89463
+notes:
+  core:
+    - message: >-
+        Fixes an operational-visibility gap: a registered site whose
+        reporting to the hub silently stopped previously gave
+        administrators no indication of the failure. This is now
+        surfaced to administrators. A new scheduled task
+        core\task\registration_reporting_check_task runs daily and sends a
+        notification through the new registrationreportingpaused message
+        provider when reporting pauses, either because new registration
+        fields await confirmation or because the Site registration scheduled
+        task is disabled. \core\hub\registration gains
+        get_reporting_paused_reason(), get_registration_page_notification()
+        and check_reporting_paused_notification(); registration_reminder()
+        is now also called from /my/index.php and /my/courses.php; and
+        core_admin_renderer::registration_warning() renders a warning for a
+        registered site whose reporting is paused because the task is
+        disabled.
+      type: fixed

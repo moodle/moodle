@@ -87,22 +87,9 @@ echo $OUTPUT->header();
 
 // Current status of registration.
 
-$notificationtype = \core\output\notification::NOTIFY_ERROR;
-if ($siteisregistered) {
-    $lastupdated = \core\hub\registration::get_last_updated();
-    if ($lastupdated == 0) {
-        $registrationmessage = get_string('pleaserefreshregistrationunknown', 'admin');
-    } else if (\core\hub\registration::get_new_registration_fields()) {
-        $registrationmessage = get_string('pleaserefreshregistrationnewdata', 'admin');
-    } else {
-        $lastupdated = userdate($lastupdated, get_string('strftimedate', 'langconfig'));
-        $registrationmessage = get_string('pleaserefreshregistration', 'admin', $lastupdated);
-        $notificationtype = \core\output\notification::NOTIFY_INFO;
-    }
-    echo $OUTPUT->notification($registrationmessage, $notificationtype);
-} else if (!$isinitialregistration) {
-    $registrationmessage = get_string('registrationwarning', 'admin');
-    echo $OUTPUT->notification($registrationmessage, $notificationtype);
+$notification = \core\hub\registration::get_registration_page_notification($siteisregistered, $isinitialregistration);
+if ($notification['message'] !== '') {
+    echo $OUTPUT->notification($notification['message'], $notification['type']);
 }
 
 // Heading.

@@ -70,6 +70,15 @@ $messageproviders = array (
         'capability' => 'moodle/site:config',
     ),
 
+    // Notification that a registered site has stopped sending registration updates.
+    'registrationreportingpaused' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+        'capability' => 'moodle/site:config',
+    ],
+
     'instantmessage' => array (
         'defaults' => array(
             'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,

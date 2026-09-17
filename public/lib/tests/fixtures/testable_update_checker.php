@@ -79,6 +79,15 @@ class testable_checker extends checker {
     protected function load_current_environment($forcereload=false) {
     }
 
+    /**
+     * Exposes the protected prepare_request_params() for testing.
+     *
+     * @return array
+     */
+    public function testable_prepare_request_params() {
+        return parent::prepare_request_params();
+    }
+
     public function fake_current_environment($version, $release, $branch, array $plugins) {
         $this->currentversion = $version;
         $this->currentrelease = $release;

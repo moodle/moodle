@@ -1,0 +1,15 @@
+issueNumber: MDL-89513
+notes:
+  core:
+    - message: >-
+        Closes an operational-visibility gap: available-updates check
+        requests could not previously be attributed to a specific
+        registered site, which limited abuse detection and support
+        diagnostics on the hub side. \core\update\checker now sends two
+        optional parameters with the available updates check: siteidentifier,
+        the md5() of the site's registration secret, sent only when the site
+        is registered with the sites directory, and countrycode, the
+        configured $CFG->country, sent whenever it is set. Either parameter
+        is omitted when it cannot be determined and the update check is
+        never blocked by them.
+      type: improved

@@ -63,13 +63,19 @@ if (!empty($error) and $error == 'urlalreadyexist') {
 }
 
 //check that we are waiting a confirmation from this hub, and check that the token is correct
-core\hub\registration::confirm_registration($token, $newtoken, $hubname);
+$fullpayloadsent = core\hub\registration::confirm_registration($token, $newtoken, $hubname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('registrationconfirmed', 'hub'), 3, 'main');
 
-// Display notification message.
-echo $OUTPUT->notification(get_string('registrationconfirmedon', 'hub'), 'notifysuccess');
+// Display notification message. Confirmation always succeeded to reach this point, but the
+// follow-up call that sends the full site info to the hub may not have - let the admin know
+// when that happened, instead of always claiming full success.
+if ($fullpayloadsent) {
+    echo $OUTPUT->notification(get_string('registrationconfirmedon', 'hub'), 'notifysuccess');
+} else {
+    echo $OUTPUT->notification(get_string('registrationconfirmedpending', 'hub'), 'notifywarning');
+}
 
 // Display continue button.
 $returnurl = !empty($SESSION->registrationredirect) ? clean_param($SESSION->registrationredirect, PARAM_LOCALURL) : null;

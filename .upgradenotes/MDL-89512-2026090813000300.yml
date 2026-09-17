@@ -1,0 +1,15 @@
+issueNumber: MDL-89512
+notes:
+  core_hub:
+    - message: >-
+        Fixes a security gap: previously a registration secret alone was
+        sufficient to submit registration updates for a site, so a leaked
+        or stolen secret could be replayed by anyone holding it.
+        \core\hub\api::update_registration() now signs each registration
+        update: it sends additional timestamp and signature parameters with
+        hub_update_site_info, where the signature is an HMAC-SHA256 over the
+        site URL and timestamp keyed on md5() of the site's registration
+        secret, proving control of the site rather than just possession of
+        the secret. Signing is best effort; if a signature cannot be
+        computed the update is still sent unsigned.
+      type: fixed

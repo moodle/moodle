@@ -128,6 +128,7 @@ $string['registerwithmoodleorginfostats'] = 'View global Moodle stats';
 $string['registerwithmoodleorgremove'] = 'You are about to unregister your site. You will no longer receive security alert notifications and users will not be able to receive push notifications from your site to their Moodle app. However, you will be able to re-register at any time! Are you sure you want to continue?';
 $string['registrationconfirmed'] = 'Site registration confirmed';
 $string['registrationconfirmedon'] = 'Thank you for registering your site. Registration information will be kept up to date by the \'Site registration\' scheduled task.';
+$string['registrationconfirmedpending'] = 'Thank you for registering your site. Moodle could not send your site\'s full registration details to the hub just now, so this will be retried automatically in the background.';
 $string['renewregistration'] = 'Renew registration';
 $string['resourcesnumber'] = 'Number of resources ({$a})';
 $string['restartregistration'] = 'Restart registration';

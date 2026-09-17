@@ -850,7 +850,8 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Display a warning about not being registered on Moodle.org if necesary.
+     * Display a warning if the site is not registered on Moodle.org, or is registered but has
+     * stopped sending registration updates.
      *
      * @param boolean $registered true if the site is registered on Moodle.org
      * @return string HTML to output.
@@ -872,11 +873,32 @@ class core_admin_renderer extends plugin_renderer_base {
             return $this->warning( get_string($str, 'admin') . '&nbsp;' . $registerbutton , $type);
         }
 
+        // The site is registered but may have paused reporting; only admins can act on that.
+        if (!$registered || !has_capability('moodle/site:config', context_system::instance())) {
+            return '';
+        }
+
+        // The new-fields-pending cause is deliberately not covered here: every page that renders this warning
+        // for a registered site also calls \core\hub\registration::registration_reminder(), which redirects
+        // the admin to the registration form under that exact condition before this warning could render.
+        $pausedreason = \core\hub\registration::get_reporting_paused_reason();
+        if ($pausedreason === \core\hub\registration::REPORTING_PAUSED_TASK_DISABLED) {
+            $actionbutton = $this->single_button(
+                new moodle_url('/admin/tool/task/scheduledtasks.php'),
+                get_string('scheduledtasks', 'tool_task'),
+            );
+            return $this->warning(
+                get_string('registrationreportingpausedtaskdisabled', 'admin') . '&nbsp;' . $actionbutton,
+                'warning'
+            );
+        }
+
         return '';
     }
 
     /**
-     * Return an admin page warning if site is not registered with moodle.org
+     * Return an admin page warning if the site is not registered with moodle.org, or is registered
+     * but has stopped sending registration updates.
      *
      * @return string
      */
