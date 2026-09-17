@@ -30,6 +30,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\markdown_extra;
+
 defined('MOODLE_INTERNAL') || die();
 
 // Constants.
@@ -1271,7 +1273,22 @@ function markdown_to_html($text) {
         return $text;
     }
 
-    return \Michelf\MarkdownExtra::defaultTransform($text);
+    // Reuse a single configured parser instance across calls (mirrors the caching
+    // that MarkdownExtra::defaultTransform() does internally).
+    static $markdown = null;
+    if ($markdown === null) {
+        $markdown = \core\di::get(markdown_extra::class);
+        // Render fenced code blocks with the markup that filter_codehighlighter
+        // (Prism.js) recognises: the language class must carry the "language-"
+        // prefix and must sit on the <pre> element followed by a bare <code>, so
+        // that it matches the filter's trigger pattern
+        // /<pre.+?class=".*?language-.*?"><code>/i. With the library defaults
+        // (empty prefix, class on <code>) the filter never activates.
+        $markdown->code_class_prefix = 'language-';
+        $markdown->code_attr_on_pre = true;
+    }
+
+    return $markdown->transform($text);
 }
 
 /**

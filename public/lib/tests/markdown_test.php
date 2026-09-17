@@ -61,4 +61,55 @@ final class markdown_test extends \basic_testcase {
         $result = "<p>a   bb  ccc я   юэ  水   abcd    abcde   abcdef</p>\n";
         $this->assertSame($result, markdown_to_html($text));
     }
+
+    /**
+     * Fenced code blocks must be rendered with the markup that
+     * filter_codehighlighter (Prism.js) recognises: a "language-*" class on the
+     * <pre> element followed by a bare <code>. The filter's trigger pattern is
+     * /<pre.+?class=".*?language-.*?"><code>/i.
+     *
+     * @covers ::markdown_to_html
+     */
+    public function test_fenced_code_block_uses_language_class_on_pre(): void {
+        $backticks = "\u{0060}\u{0060}\u{0060}";
+        $text = "{$backticks}php\necho 'hi';\n{$backticks}";
+        $output = markdown_to_html($text);
+
+        $this->assertStringContainsString('<pre class="language-php"><code>', $output);
+        $this->assertMatchesRegularExpression('/<pre.+?class=".*?language-.*?"><code>/i', $output);
+    }
+
+    /**
+     * A fenced code block without a language token must be mapped to the generic
+     * "language-none" class so filter_codehighlighter still styles it as a code
+     * block. Prism has no grammar for "none", so it applies the generic
+     * code-block styling without any language-specific highlighting.
+     *
+     * @covers ::markdown_to_html
+     */
+    public function test_fenced_code_block_without_language_maps_to_none(): void {
+        $backticks = "\u{0060}\u{0060}\u{0060}";
+        $text = "{$backticks}\nplain code\n{$backticks}";
+        $output = markdown_to_html($text);
+
+        $this->assertStringContainsString('<pre class="language-none"><code>', $output);
+        $this->assertMatchesRegularExpression('/<pre.+?class=".*?language-.*?"><code>/i', $output);
+        $this->assertStringNotContainsString('<pre><code>', $output);
+    }
+
+    /**
+     * Existing raw HTML code blocks must not be rewritten. Only fenced blocks
+     * without a language token should become "language-none".
+     *
+     * @covers ::markdown_to_html
+     */
+    public function test_existing_pre_code_markup_is_not_rewritten(): void {
+        $backticks = "\u{0060}\u{0060}\u{0060}";
+        $text = "<pre><code>raw html</code></pre>\n\n{$backticks}\nplain code\n{$backticks}";
+        $output = markdown_to_html($text);
+
+        $this->assertStringContainsString('<pre><code>raw html</code></pre>', $output);
+        $this->assertStringContainsString('<pre class="language-none"><code>plain code', $output);
+        $this->assertStringNotContainsString('<pre class="language-none"><code>raw html', $output);
+    }
 }

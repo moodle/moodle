@@ -21,6 +21,35 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['./prism'], function(PrismJS) {
+
+    /** @type {string} The language class selector Prism uses to collect the elements to highlight. */
+    const languageselector = '[class*="language-"], [class*="lang-"]';
+
+    /**
+     * Whether the language of the element comes from an actual code block markup rather than from the page itself.
+     *
+     * Prism resolves the language of a code block by walking up the DOM until it finds an ancestor carrying a
+     * "language-xxx" or "lang-xxx" class. That is intended behaviour and allows a wrapper element to set the
+     * language for several blocks at once. Moodle however adds a "lang-xx" class (e.g. "lang-en") to the body
+     * element, so that walk always succeeds and every plain <code> element on the page - including hand written
+     * <pre><code> blocks without any language - ends up being highlighted as language "en" (or whatever language
+     * the user currently is using).
+     *
+     * Discarding the elements whose closest language class is the one of the body leaves all regular Prism
+     * behaviour intact, while making sure the language of the page is never mistaken for the language of a
+     * code block.
+     *
+     * @param {Element} element The candidate element.
+     * @returns {boolean} True if the element should be highlighted.
+     */
+    const hasCodeBlockLanguage = (element) => {
+        const source = element.closest(languageselector);
+        return source !== null && source !== document.body;
+    };
+
     PrismJS.plugins.customClass.prefix('prism-');
+    PrismJS.hooks.add('before-all-elements-highlight', (env) => {
+        env.elements = env.elements.filter(hasCodeBlockLanguage);
+    });
     PrismJS.highlightAll();
 });
