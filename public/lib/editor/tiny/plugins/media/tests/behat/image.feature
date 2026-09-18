@@ -103,6 +103,16 @@ Feature: Use the TinyMCE editor to upload an image
     And I set the field "How would you describe this image to someone who cannot see it?" to "Lorem ipsum dolor sit amet."
     And I should see "27" in the "#currentcount" "css_element"
 
+  Scenario: Image URL without a protocol keeps the Add button disabled
+    Given I log in as "admin"
+    And I open my profile in edit mode
+    And I click on the "Image" button for the "Description" TinyMCE editor
+    Then the ".tiny_image_addurl" "css_element" should be disabled
+    And I set the field "Or add via URL" to "www.example.com/logo.png"
+    And the ".tiny_image_addurl" "css_element" should be disabled
+    And I set the field "Or add via URL" to "https://www.example.com/logo.png"
+    And the ".tiny_image_addurl" "css_element" should be enabled
+
   @javascript
   Scenario: Permissions can be configured to control access to media
     Given the following "users" exist:

@@ -84,7 +84,7 @@ export const setPropertiesFromData = async(instance, data) => {
  * @returns {boolean} True is valid, otherwise false.
  */
 export const isValidUrl = urlString => {
-    const urlPattern = new RegExp('^(https?:\\/\\/)?' + // Protocol.
+    const urlPattern = new RegExp('^(https?:\\/\\/)' + // Required protocol.
                                 '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // Domain name.
                                 '((\\d{1,3}\\.){3}\\d{1,3})|localhost)' + // OR ip (v4) address, localhost.
                                 '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'); // Port and path.
