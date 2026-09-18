@@ -107,6 +107,13 @@ Feature: Use the TinyMCE editor to upload a media file
     And I switch to the "Description" TinyMCE editor iframe
     And "//*[contains(@data-id, 'id_description_editor')]//video[contains(@poster, 'moodle-logo.png')]" "xpath_element" should exist
 
+  Scenario: Media URL without a protocol keeps the Add button disabled
+    Then the ".tiny_media_add_url" "css_element" should be disabled
+    And I set the field "Or add via URL" to "www.youtube.com/watch?v=JeimE8Wz6e4"
+    And the ".tiny_media_add_url" "css_element" should be disabled
+    And I set the field "Or add via URL" to "https://www.youtube.com/watch?v=JeimE8Wz6e4"
+    And the ".tiny_media_add_url" "css_element" should be enabled
+
   Scenario: Embed external video link - External video service
     Given the "mediaplugin" filter is "on"
     And I enable "youtube" "media" plugin
