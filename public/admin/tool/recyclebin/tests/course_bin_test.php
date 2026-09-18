@@ -26,6 +26,7 @@ use stdClass;
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(course_bin::class)]
 final class course_bin_test extends \advanced_testcase {
 
     /**
@@ -323,5 +324,25 @@ final class course_bin_test extends \advanced_testcase {
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_submit($timenow, false);
         $attemptobj->process_grade_submission($timenow);
+    }
+
+    /**
+     * Tests that an activity is stored in the recycle bin but a subsection is not.
+     */
+    public function test_store(): void {
+        $subsection = $this->getDataGenerator()->create_module('subsection', ['course' => $this->course->id]);
+
+        $recyclebin = new \tool_recyclebin\course_bin($this->course->id);
+
+        $quizcm = get_coursemodule_from_instance('quiz', $this->quiz->id);
+        $subsectioncm = get_coursemodule_from_instance('subsection', $subsection->id);
+
+        // Try to store both the quiz and the subsection in the recycle bin.
+        $recyclebin->store_item($quizcm);
+        $recyclebin->store_item($subsectioncm);
+
+        // Only the quiz should be stored.
+        $this->assertCount(1, $recyclebin->get_items());
+        $this->assertContains($this->quiz->name, array_column($recyclebin->get_items(), 'name'));
     }
 }

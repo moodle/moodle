@@ -107,6 +107,11 @@ class course_bin extends base_bin {
 
         $cminfo = $modinfo->cms[$cm->id];
 
+        // Skip delegated sections.
+        if ($cminfo->get_delegated_section_info()) {
+            return;
+        }
+
         // Check backup/restore support.
         if (!plugin_supports('mod', $cminfo->modname , FEATURE_BACKUP_MOODLE2)) {
             return;

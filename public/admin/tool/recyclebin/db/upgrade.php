@@ -78,5 +78,15 @@ function xmldb_tool_recyclebin_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025100601, 'tool', 'recyclebin');
     }
 
+    if ($oldversion < 2025100602) {
+        // Delete any existing recycle bin records for the subsection module.
+        if ($subsectionmoduleid = $DB->get_field('modules', 'id', ['name' => 'subsection'])) {
+            $DB->delete_records('tool_recyclebin_course', ['module' => $subsectionmoduleid]);
+        }
+
+        // Recyclebin savepoint reached.
+        upgrade_plugin_savepoint(true, 2025100602, 'tool', 'recyclebin');
+    }
+
     return true;
 }
