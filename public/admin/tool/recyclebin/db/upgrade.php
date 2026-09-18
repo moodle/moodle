@@ -75,5 +75,15 @@ function xmldb_tool_recyclebin_upgrade($oldversion) {
     // Automatically generated Moodle v5.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2026042001) {
+        // Delete any existing recycle bin records for the subsection module.
+        if ($subsectionmoduleid = $DB->get_field('modules', 'id', ['name' => 'subsection'])) {
+            $DB->delete_records('tool_recyclebin_course', ['module' => $subsectionmoduleid]);
+        }
+
+        // Recyclebin savepoint reached.
+        upgrade_plugin_savepoint(true, 2026042001, 'tool', 'recyclebin');
+    }
+
     return true;
 }
