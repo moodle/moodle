@@ -31,6 +31,6 @@ class access_denied_response extends exception_response {
 
     #[\Override]
     protected static function get_response_description(): string {
-        return 'Access was denied to the resource.';
+        return 'Forbidden';
     }
 }
