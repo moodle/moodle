@@ -17,6 +17,7 @@
 namespace core\router\middleware;
 
 use core\api\token_manager;
+use core\exception\insufficient_scope_exception;
 use core\router\exception\oauth_server_exception;
 use core\router\route;
 use core\router\scope\scopeset;
@@ -262,8 +263,9 @@ class moodle_api_authentication_middleware extends moodle_authentication_middlew
             }
         }
 
-        throw OAuthServerException::accessDenied(
+        throw new insufficient_scope_exception(
             $this->get_missing_scope_hint($requiredscopesets, $grantedscopes),
+            $requiredscopesets,
         );
     }
 

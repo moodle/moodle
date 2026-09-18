@@ -24,7 +24,10 @@ namespace core\exception;
  * @copyright  2026 Mihail Geshoski <mihailgesoski@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class expired_api_token_exception extends api_token_exception {
+class expired_api_token_exception extends api_token_exception implements
+    response_aware_exception,
+    www_authenticate_aware_exception
+{
     /**
      * Constructor.
      *
@@ -33,5 +36,17 @@ class expired_api_token_exception extends api_token_exception {
      */
     public function __construct($a = null, ?string $debuginfo = null) {
         parent::__construct('expiredapitoken', 'error', $a, $debuginfo);
+    }
+
+    #[\Override]
+    public function get_response_classname(): string {
+        return \core\router\response\unauthorized_api_response::class;
+    }
+
+    #[\Override]
+    public function get_www_authenticate_params(): array {
+        return [
+            'error="invalid_token"',
+        ];
     }
 }
