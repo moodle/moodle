@@ -74,6 +74,162 @@ final class router_test extends route_testcase {
     }
 
     /**
+     * Unmatched API requests return problem details regardless of the router base path or Accept header.
+     *
+     * @param string $basepath The router base path.
+     * @param string $path The requested API path.
+     * @param array $headers The request headers.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('api_not_found_provider')]
+    public function test_api_not_found(string $basepath, string $path, array $headers): void {
+        $this->set_basepath($basepath);
+        $response = $this->get_app()->handle($this->create_request(
+            method: 'GET',
+            path: $path,
+            prefix: '',
+            headers: $headers,
+        ));
+
+        $this->assertSame('application/problem+json', $response->getHeaderLine('Content-Type'));
+        $this->assert_not_found_response($response);
+        $payload = $this->decode_response($response);
+        $this->assertSame('about:blank', $payload->type);
+        $this->assertSame($basepath . $path, $payload->instance);
+    }
+
+    /**
+     * Requests which must return API problem details.
+     *
+     * @return \Generator
+     */
+    public static function api_not_found_provider(): \Generator {
+        foreach (['', '/r.php', '/moodle', '/moodle/r.php'] as $basepath) {
+            yield "{$basepath} without Accept" => [$basepath, '/api/rest/v2/missing', []];
+            yield "{$basepath} accepting HTML" => [$basepath, '/api/rest/v2/missing', ['Accept' => 'text/html']];
+        }
+        yield 'API root' => ['', '/api/rest/v2', []];
+    }
+
+    /**
+     * Unsupported API methods return problem details and the allowed methods.
+     *
+     * @param string $basepath The router base path.
+     * @param array $headers The request headers.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('api_method_not_allowed_provider')]
+    public function test_api_method_not_allowed(string $basepath, array $headers): void {
+        $this->set_basepath($basepath);
+        $renderer = $this->createMock(router\error_renderer::class);
+        $renderer->expects($this->never())->method('__invoke');
+        di::set(router\error_renderer::class, $renderer);
+        $app = $this->get_app();
+        $app->map(['GET', 'PUT'], '/api/rest/v2/test', fn () => $this->fail('The route must not be called'));
+        $response = $app->handle($this->create_request(
+            method: 'POST',
+            path: '/test',
+            headers: $headers,
+        ));
+
+        $this->assertSame('application/problem+json', $response->getHeaderLine('Content-Type'));
+        $this->assert_exception_response($response, 405);
+        $this->assertSame('GET, PUT', $response->getHeaderLine('Allow'));
+        $payload = $this->decode_response($response);
+        $this->assertSame('Method Not Allowed', $payload->title);
+        $this->assertSame('about:blank', $payload->type);
+        $this->assertSame($basepath . '/api/rest/v2/test', $payload->instance);
+    }
+
+    /**
+     * Base paths and Accept headers for unsupported API methods.
+     *
+     * @return \Generator
+     */
+    public static function api_method_not_allowed_provider(): \Generator {
+        foreach (['', '/r.php', '/moodle', '/moodle/r.php'] as $basepath) {
+            yield "{$basepath} without Accept" => [$basepath, []];
+            yield "{$basepath} accepting HTML" => [$basepath, ['Accept' => 'text/html']];
+        }
+    }
+
+    /**
+     * Unsupported non-API methods retain HTML responses and the allowed methods.
+     */
+    public function test_non_api_method_not_allowed(): void {
+        $this->set_basepath('');
+        $renderer = $this->createMock(router\error_renderer::class);
+        $renderer->expects($this->once())
+            ->method('__invoke')
+            ->willReturn('<html>Method not allowed</html>');
+        di::set(router\error_renderer::class, $renderer);
+        $app = $this->get_app();
+        $app->map(['GET', 'PUT'], '/test', fn () => $this->fail('The route must not be called'));
+        $response = $app->handle(new ServerRequest('POST', '/test', ['Accept' => 'text/html']));
+
+        $this->assertSame(405, $response->getStatusCode());
+        $this->assertSame('GET, PUT', $response->getHeaderLine('Allow'));
+        $this->assertStringStartsWith('text/html', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('<html', (string) $response->getBody());
+    }
+
+    /**
+     * The outer API error handler preserves the status of supported exceptions.
+     *
+     * @param \Exception $exception The exception to throw.
+     * @param int $expectedstatus The expected HTTP status code.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('api_exception_provider')]
+    public function test_api_exception_response(\Exception $exception, int $expectedstatus): void {
+        $this->set_basepath('');
+        $app = $this->get_app();
+        $app->get('/api/rest/v2/test', fn () => throw $exception);
+        $response = $app->handle(new ServerRequest('GET', '/api/rest/v2/test'));
+
+        $this->assertSame('application/problem+json', $response->getHeaderLine('Content-Type'));
+        $this->assert_exception_response($response, $expectedstatus);
+    }
+
+    /**
+     * Exceptions handled outside the API group middleware.
+     *
+     * @return \Generator
+     */
+    public static function api_exception_provider(): \Generator {
+        yield 'Forbidden' => [new \Slim\Exception\HttpForbiddenException(new ServerRequest('GET', '/api/rest/v2/test')), 403];
+        yield 'Response-aware' => [new \core\exception\invalid_parameter_exception('Invalid API parameter'), 400];
+    }
+
+    /**
+     * Unmatched non-API requests retain their HTML error responses.
+     *
+     * @param string $path The requested non-API path.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('non_api_not_found_provider')]
+    public function test_non_api_not_found(string $path): void {
+        $this->set_basepath('');
+        $renderer = $this->createMock(router\error_renderer::class);
+        $renderer->expects($this->once())
+            ->method('__invoke')
+            ->willReturn('<html>Not found</html>');
+        di::set(router\error_renderer::class, $renderer);
+        $response = $this->get_app()->handle(new ServerRequest('GET', $path, ['Accept' => 'text/html']));
+
+        $this->assertSame(404, $response->getStatusCode());
+        $this->assertStringStartsWith('text/html', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('<html', (string) $response->getBody());
+    }
+
+    /**
+     * Requests outside the API path boundary.
+     *
+     * @return \Generator
+     */
+    public static function non_api_not_found_provider(): \Generator {
+        yield 'Page' => ['/missing'];
+        yield 'Different API version' => ['/api/rest/v20/missing'];
+        yield 'Similar prefix' => ['/api/rest/v2other/missing'];
+    }
+
+    /**
      * Test an API route.
      */
     public function test_preferences_no_login(): void {

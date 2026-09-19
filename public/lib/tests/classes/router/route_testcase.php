@@ -466,12 +466,13 @@ abstract class route_testcase extends \advanced_testcase {
             );
         }
 
+        // The payload must conform to the RFC-9457 (Problem Details for HTTP APIs) format.
         $payload = $this->decode_response($response);
-        $this->assertObjectHasProperty('message', $payload);
-        $this->assertObjectHasProperty('stacktrace', $payload);
-        foreach ($payload->stacktrace as $frame) {
-            $this->assertObjectNotHasProperty('args', $frame);
-        }
+        $this->assertObjectHasProperty('type', $payload);
+        $this->assertObjectHasProperty('title', $payload);
+        $this->assertObjectHasProperty('status', $payload);
+        $this->assertObjectHasProperty('detail', $payload);
+        $this->assertEquals($response->getStatusCode(), $payload->status);
     }
 
     /**
@@ -485,8 +486,7 @@ abstract class route_testcase extends \advanced_testcase {
         $this->assert_exception_response($response, 400);
 
         $payload = $this->decode_response($response);
-        $this->assertObjectHasProperty('errorcode', $payload);
-        $this->assertEquals('invalidparameter', $payload->errorcode);
+        $this->assertEquals('Bad Request', $payload->title);
     }
 
     /**
@@ -500,7 +500,7 @@ abstract class route_testcase extends \advanced_testcase {
         $this->assert_exception_response($response, 403);
 
         $payload = $this->decode_response($response);
-        $this->assertObjectHasProperty('errorcode', $payload);
+        $this->assertEquals('Forbidden', $payload->title);
     }
 
     /**
@@ -514,7 +514,7 @@ abstract class route_testcase extends \advanced_testcase {
         $this->assert_exception_response($response, 404);
 
         $payload = $this->decode_response($response);
-        $this->assertObjectHasProperty('errorcode', $payload);
+        $this->assertEquals('Not Found', $payload->title);
     }
 
     /**

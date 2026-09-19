@@ -1,0 +1,9 @@
+issueNumber: MDL-89850
+notes:
+  core:
+    - message: >
+        The `\core\router\response\exception_response::get_payload_data()`
+        method has been deprecated and replaced with a new
+        `get_response_payload()` method which has strictly typed properties.
+
+      type: deprecated

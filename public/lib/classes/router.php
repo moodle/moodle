@@ -46,6 +46,7 @@ use Psr\Http\Message\{
 use Slim\App;
 use Slim\Exception\{
     HttpForbiddenException,
+    HttpMethodNotAllowedException,
     HttpNotFoundException,
 };
 use Slim\Interfaces\RouteGroupInterface;
@@ -228,8 +229,7 @@ class router {
             logErrorDetails: false,
         );
 
-        // Set a custom error handler for the HttpNotFoundException and HttpForbiddenException.
-        // We route these to a custom error handler to ensure that the error is displayed with a feedback form.
+        // Use Moodle's error handler for routing failures and response-aware exceptions.
         $errorhandler = new router\error_handler(
             $this->app->getCallableResolver(),
             $this->app->getResponseFactory(),
@@ -240,6 +240,7 @@ class router {
                 response_aware_exception::class,
                 HttpNotFoundException::class,
                 HttpForbiddenException::class,
+                HttpMethodNotAllowedException::class,
             ],
             $errorhandler,
             true,

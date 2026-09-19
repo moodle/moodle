@@ -18,10 +18,9 @@ namespace core\router;
 
 use core\di;
 use core\exception\access_denied_exception;
-use core\exception\response_aware_exception;
+use core\exception\invalid_parameter_exception;
 use core\router\schema\response\payload_response;
 use core\router\schema\response\view_response;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
@@ -153,18 +152,19 @@ final class response_handler_test extends \advanced_testcase {
         $result = $handler->get_response_from_exception($request, $exception);
         $this->assertInstanceOf(ResponseInterface::class, $result);
 
-        // The body should be json and contain the exception message.
+        // The body should be json and contain the exception message, per the RFC-9457 format.
         $value = json_decode($result->getBody(), true);
-        $this->assertArrayHasKey('message', (array) $value);
-        $this->assertArrayHasKey('stacktrace', (array) $value);
+        $this->assertArrayHasKey('detail', (array) $value);
+        $this->assertArrayHasKey('title', (array) $value);
+        $this->assertArrayHasKey('status', (array) $value);
 
         $this->assertEquals(
             'Test exception',
-            $value['message'],
+            $value['detail'],
         );
 
         // The content type should be application/json.
-        $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('application/problem+json', $result->getHeaderLine('Content-Type'));
 
         // The status code should be 500.
         $this->assertEquals(500, $result->getStatusCode());
@@ -182,15 +182,34 @@ final class response_handler_test extends \advanced_testcase {
         $result = $handler->get_response_from_exception($request, $exception);
         $this->assertInstanceOf(ResponseInterface::class, $result);
 
-        // The body should be json and contain the exception message.
+        // The body should be json and contain the exception message, per the RFC-9457 format.
         $value = json_decode($result->getBody(), true);
-        $this->assertArrayHasKey('message', (array) $value);
-        $this->assertArrayHasKey('stacktrace', (array) $value);
+        $this->assertArrayHasKey('detail', (array) $value);
+        $this->assertArrayHasKey('title', (array) $value);
+        $this->assertArrayHasKey('status', (array) $value);
 
         // The content type should be application/json.
-        $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('application/problem+json', $result->getHeaderLine('Content-Type'));
 
         // The status code should be 500.
         $this->assertEquals(403, $result->getStatusCode());
+    }
+
+    /**
+     * Invalid parameter exceptions are mapped to problem details with a 400 status.
+     */
+    public function test_get_response_from_invalid_parameter_exception(): void {
+        $request = new ServerRequest('GET', 'http://example.com/api/items?invalid=value');
+        $exception = new invalid_parameter_exception('Invalid value');
+
+        $result = di::get(response_handler::class)->get_response_from_exception($request, $exception);
+        $payload = json_decode((string) $result->getBody(), true);
+
+        $this->assertSame(400, $result->getStatusCode());
+        $this->assertSame('application/problem+json', $result->getHeaderLine('Content-Type'));
+        $this->assertSame(400, $payload['status']);
+        $this->assertSame('Bad Request', $payload['title']);
+        $this->assertSame('/api/items', $payload['instance']);
+        $this->assertSame('invalidparameter', $payload['errorcode']);
     }
 }

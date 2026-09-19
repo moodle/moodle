@@ -16,12 +16,14 @@
 
 namespace core\router\response;
 
+use core\exception\moodle_exception;
 use core\param;
 use core\router\schema\objects\scalar_type;
 use core\router\schema\objects\schema_object;
 use core\router\schema\objects\stacktrace;
 use core\router\schema\referenced_object;
-use core\router\schema\response\content\payload_response_type;
+use core\router\schema\response\content\problem_payload_response_type;
+use core\router\schema\response\exception_payload_response;
 use core\router\schema\response\payload_response;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,7 +45,7 @@ abstract class exception_response extends \core\router\schema\response\response 
         parent::__construct(
             statuscode: static::get_exception_status_code(),
             description: static::get_response_description(),
-            content: new payload_response_type(
+            content: new problem_payload_response_type(
                 schema: static::get_response_schema(),
             ),
         );
@@ -62,8 +64,8 @@ abstract class exception_response extends \core\router\schema\response\response 
         \Exception $exception,
         ...$extra,
     ): payload_response {
-        return new payload_response(
-            payload: static::get_payload_data($exception, ...$extra),
+        return new exception_payload_response(
+            payload: static::get_response_payload($exception, $request),
             request: $request,
             response: static::add_additional_headers(
                 new Response(
@@ -82,19 +84,9 @@ abstract class exception_response extends \core\router\schema\response\response 
      * @return schema_object
      */
     protected static function get_response_schema(): schema_object {
-        return new schema_object(
-            content: [
-                'message' => new scalar_type(
-                    type: param::ALPHANUMEXT,
-                    description: 'The message of the exception.',
-                ),
-                'errorcode' => new scalar_type(
-                    type: param::ALPHANUMEXT,
-                    description: 'The error code of the exception.',
-                ),
-                'stacktrace' => new stacktrace(),
-            ],
-        );
+        // This schema, and these descriptions, are defined in RFC-9457.
+        // See https://www.rfc-editor.org/info/rfc9457/ for further information.
+        return new \core\router\schema\objects\problem_response_schema();
     }
 
     /**
@@ -109,9 +101,87 @@ abstract class exception_response extends \core\router\schema\response\response 
     /**
      * Get the description of this response.
      *
+     * This should not normally be overridden.
+     *
      * @return string
      */
-    abstract protected static function get_response_description(): string;
+    protected static function get_response_description(): string {
+        return \core\router\util::get_status_description(static::get_exception_status_code());
+    }
+
+    /**
+     * Return a URL that identifies the problem type.
+     *
+     * See {@link https://www.rfc-editor.org/info/rfc9457/#name-type} for further information on valid values.
+     *
+     * @return null|\core\url
+     */
+    protected static function get_response_type(): ?\core\url {
+        return null;
+    }
+
+    /**
+     * Get the response payload data.
+     *
+     * @param \Exception $exception
+     * @param ServerRequestInterface $request
+     * @return array
+     * @since Moodle 6.0
+     */
+    protected static function get_response_payload(
+        \Exception $exception,
+        ServerRequestInterface $request,
+    ): array {
+        // Data for the API Token Exception should meet RFC 9457.
+        $data = [
+            'status' => static::get_exception_status_code(),
+            'title' => static::get_response_description(),
+            'detail' => $exception->getMessage(),
+            'type' => 'about:blank',
+        ];
+
+        $type = static::get_response_type();
+        if ($type !== null) {
+            $data['type'] = $type->out(false);
+        } else {
+            // If no type is specified, the RFC requires a value of 'about:blank'.
+            $data['type'] = 'about:blank';
+        }
+
+        $data['instance'] = $request->getUri()->getPath();
+
+        if (debugging(level: DEBUG_DEVELOPER)) {
+            // Append the debuginfo to the detail if available and not already included.
+            if (
+                $exception instanceof moodle_exception
+                && $exception->debuginfo !== null
+                && !str_contains($data['detail'], $exception->debuginfo)
+            ) {
+                $data['detail'] = rtrim($data['detail'], '.') . '. ' . $exception->debuginfo;
+            }
+
+            // Add the stacktrace.
+            // Do not use $CFG->dirroot because it might not be available in destructors.
+            $dirroot = realpath(dirname(__DIR__, 5));
+            $data['stacktrace'] = array_map(
+                fn($frame): array => array_filter($frame, fn($key) => $key !== 'args', ARRAY_FILTER_USE_KEY),
+                array_map(
+                    fn($trace): array => array_key_exists('file', $trace)
+                        ? array_merge($trace, ['file' => str_replace($dirroot, '', realpath($trace['file']))])
+                        : $trace,
+                    $exception->getTrace(),
+                ),
+            );
+        }
+
+        // The following are deprecated and will be removed soon.
+        $data['message'] = $data['detail'];
+        if ($exception instanceof moodle_exception) {
+            $data['errorcode'] = $exception->errorcode;
+        }
+
+        return $data;
+    }
 
     /**
      * Get the response payload data.
@@ -119,14 +189,14 @@ abstract class exception_response extends \core\router\schema\response\response 
      * @param \Exception $exception
      * @param mixed ...$extra
      * @return array
+     * @deprecated Since 6.0
      */
+    #[\core\attribute\deprecated('get_response_payload', '6.0', 'Use get_response_payload instead.', 'MDL-89850')]
     protected static function get_payload_data(
         \Exception $exception,
         ...$extra,
     ): array {
-        // Do not use $CFG->dirroot because it might not be available in destructors.
-        $dirroot = realpath(dirname(__DIR__, 5));
-
+        // Data for the API Token Exception should meet RFC 9457.
         $data = [
             'message' => $exception->getMessage(),
             'stacktrace' => [],
@@ -137,6 +207,8 @@ abstract class exception_response extends \core\router\schema\response\response 
         }
 
         if (debugging(level: DEBUG_DEVELOPER)) {
+            // Do not use $CFG->dirroot because it might not be available in destructors.
+            $dirroot = realpath(dirname(__DIR__, 5));
             $data['stacktrace'] = array_map(
                 fn ($frame): array => array_filter($frame, fn ($key) => $key !== 'args', ARRAY_FILTER_USE_KEY),
                 array_map(

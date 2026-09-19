@@ -31,7 +31,6 @@ class empty_response extends \core\router\schema\response\response implements
     public function __construct(...$args) {
         parent::__construct(
             statuscode: 204,
-            description: 'A successful response with no content.',
         );
     }
 }
