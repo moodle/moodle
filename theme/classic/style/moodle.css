@@ -28853,6 +28853,7 @@ span.editinstructions .alert-link {
 }
 #course-category-listings .listitem > div .idnumber {
   margin-right: 2em;
+  min-width: 0;
 }
 #course-category-listings .listitem[data-visible="0"] {
   color: #6a737b;

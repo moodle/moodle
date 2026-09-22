@@ -261,9 +261,9 @@ class core_course_management_renderer extends plugin_renderer_base {
             $textattributes['aria-label'] = $textlabel;
         }
         $html .= html_writer::link($viewcaturl, $text, $textattributes);
-        $html .= html_writer::start_div('float-end d-flex');
+        $html .= html_writer::start_div('float-end d-flex flex-wrap justify-content-end');
         if ($category->idnumber) {
-            $html .= html_writer::tag('span', s($category->idnumber), array('class' => 'text-muted idnumber'));
+            $html .= html_writer::tag('span', s($category->idnumber), ['class' => 'text-muted text-break idnumber']);
         }
         if ($hasactions) {
             $html .= $this->category_listitem_actions($category, $actions);
@@ -639,10 +639,14 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::link(
             $viewcourseurl, $text, array('class' => 'text-break col ps-0 mb-2 coursename aalink')
         );
-        $html .= html_writer::start_div('flex-shrink-0 ms-auto');
         if ($course->idnumber) {
-            $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'text-muted idnumber'));
+            $html .= html_writer::tag(
+                'span',
+                s($course->idnumber),
+                ['class' => 'text-muted text-break align-self-baseline idnumber']
+            );
         }
+        $html .= html_writer::start_div('flex-shrink-0 ms-auto');
         $html .= $this->course_listitem_actions($category, $course);
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
@@ -1221,9 +1225,9 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
         $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-start coursename aalink'));
         $html .= html_writer::tag('span', $categoryname, array('class' => 'float-start ms-3 text-muted'));
-        $html .= html_writer::start_div('float-end');
+        $html .= html_writer::start_div('float-end d-flex flex-wrap justify-content-end');
         $html .= $this->search_listitem_actions($course);
-        $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'text-muted idnumber'));
+        $html .= html_writer::tag('span', s($course->idnumber), ['class' => 'text-muted text-break idnumber']);
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
         $html .= html_writer::end_tag('li');
