@@ -32629,11 +32629,6 @@ body.drawer-ease {
   height: auto;
 }
 
-/* The javascript is adding a style="height: 0px;" to this element - we need to set the min-height so the height is ignored. */
-.filepicker .moodle-dialogue-bd {
-  min-height: 520px;
-}
-
 .fp-navbar {
   border-color: var(--bs-gray-500);
   border-bottom: 0;
@@ -32647,6 +32642,8 @@ body.drawer-ease {
   clear: none;
   overflow: auto;
   height: 452px;
+  min-height: 150px;
+  max-height: calc(100vh - 240px);
 }
 
 .filepicker.moodle-dialogue-fullscreen .file-picker .fp-content {

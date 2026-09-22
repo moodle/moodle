@@ -31,11 +31,6 @@
     height: auto;
 }
 
-/* The javascript is adding a style="height: 0px;" to this element - we need to set the min-height so the height is ignored. */
-.filepicker .moodle-dialogue-bd {
-    min-height: 520px;
-}
-
 .fp-navbar {
     border-color: $input-border-color;
     border-bottom: 0;
@@ -49,6 +44,10 @@
     clear: none;
     overflow: auto;
     height: 452px;
+    // Keep the dialogue inside short viewports. The 240px budget covers everything in the dialogue that is
+    // not this content area (header, navbar and body padding), plus a margin from the top and bottom edges.
+    min-height: 150px;
+    max-height: calc(100vh - 240px);
 }
 
 .filepicker.moodle-dialogue-fullscreen .file-picker .fp-content {
