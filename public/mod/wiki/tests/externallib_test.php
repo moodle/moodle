@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/mod/wiki/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_wiki_external::class)]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /** @var \stdClass course record. */
     protected $course;
@@ -1440,6 +1441,27 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
             $this->assertEquals('cannoteditpage', $e->errorcode);
         }
 
+    }
+
+    /**
+     * Test new_page when a student does not have the createpage capability.
+     */
+    public function test_new_page_without_createpage_capability(): void {
+        $this->create_individual_wikis_with_groups();
+        $this->setUser($this->student);
+
+        $wikisepindcontext = \context_module::instance($this->wikisepind->cmid);
+        assign_capability('mod/wiki:createpage', CAP_PROHIBIT, $this->studentrole->id, $wikisepindcontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage('Create page permission needed');
+        mod_wiki_external::new_page(
+            'Page without capability',
+            'Content for a page without capability',
+            'html',
+            $this->fpsepg1indstu->subwikiid
+        );
     }
 
     /**
