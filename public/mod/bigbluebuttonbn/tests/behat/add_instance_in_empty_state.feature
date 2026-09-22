@@ -36,6 +36,19 @@ Feature: I can create a bigbluebuttonbn instance with default server
       | Room only                     |
       | Recordings only               |
 
+  Scenario Outline: Add an activity when server credentials are empty
+    Given the BigBlueButton server is not configured
+    When I change window size to "large"
+    And I add a bigbluebuttonbn activity to course "Test course" section "1"
+    And I select "<type>" from the "Instance type" singleselect
+    Then I should see "Restrict access"
+
+    Examples:
+      | type                 |
+      | Room with recordings |
+      | Room only            |
+      | Recordings only      |
+
   Scenario Outline: Users should see a notification message when accessing activities if the default server is used
     When I am on the "BBB Instance name" Activity page logged in as <user>
     Then "Join session" "link" should exist

@@ -167,6 +167,15 @@ class settings {
             );
             $settingsgeneral->add($item);
 
+            if (empty(config::get('server_url')) || empty(config::get('shared_secret'))) {
+                // A notification should appear when server credentials are empty.
+                $settingsgeneral->add(new admin_setting_heading(
+                    'bigbluebuttonbn_notification_empty_credentials',
+                    '',
+                    $OUTPUT->notification(get_string('config_empty_credentials_warning', 'mod_bigbluebuttonbn'), 'error')
+                ));
+            }
+
             if (config::server_credentials_invalid()) {
                 // A notification should appear when default credentials are used.
                 $settingsgeneral->add(new admin_setting_heading(

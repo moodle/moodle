@@ -27,6 +27,8 @@ namespace mod_bigbluebuttonbn;
 
 use calendar_event;
 use context_module;
+use core_course\local\entity\content_item;
+use core_course\local\entity\string_title;
 use core_courseformat\formatactions;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 use mod_bigbluebuttonbn_mod_form;
@@ -441,6 +443,52 @@ final class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Check that the activity form can be opened when credentials are empty.
+     *
+     * @covers \mod_bigbluebuttonbn_mod_form::definition
+     */
+    public function test_mod_form_definition_allows_empty_credentials(): void {
+        global $PAGE;
+
+        $this->resetAfterTest(true);
+        $PAGE->set_course($this->get_course());
+        $this->setAdminUser();
+
+        set_config('bigbluebuttonbn_server_url', '');
+        set_config('bigbluebuttonbn_shared_secret', '');
+
+        [, $bbactivitycm, $bbactivity] = $this->create_instance();
+        $form = $this->create_mod_form($bbactivity, $bbactivitycm);
+
+        $this->assertInstanceOf(mod_bigbluebuttonbn_mod_form::class, $form);
+    }
+
+    /**
+     * Check that the activity form still fails when non-empty credentials cannot reach the server.
+     *
+     * @covers \mod_bigbluebuttonbn_mod_form::definition
+     */
+    public function test_mod_form_definition_throws_for_invalid_credentials(): void {
+        global $PAGE;
+
+        $this->resetAfterTest(true);
+        $PAGE->set_course($this->get_course());
+        $this->setAdminUser();
+
+        set_config('bigbluebuttonbn_server_url', 'https://bbb.example.invalid');
+        set_config('bigbluebuttonbn_shared_secret', 'test-shared-secret');
+
+        [, $bbactivitycm, $bbactivity] = $this->create_instance();
+
+        try {
+            $this->create_mod_form($bbactivity, $bbactivitycm);
+            $this->fail('Expected a moodle_exception for invalid non-empty credentials.');
+        } catch (\moodle_exception $exception) {
+            $this->assertEquals('general_error_unable_connect', $exception->errorcode);
+        }
+    }
+
+    /**
      * Check defaults for form
      *
      * @covers ::bigbluebuttonbn_reset_course_form_defaults
@@ -455,6 +503,25 @@ final class lib_test extends \advanced_testcase {
             'reset_bigbluebuttonbn_logs' => 0,
             'reset_bigbluebuttonbn_recordings' => 0,
         ], $results);
+    }
+
+    /**
+     * Build the activity form for testing.
+     *
+     * @param stdClass $bbactivity
+     * @param object $bbactivitycm
+     * @return mod_bigbluebuttonbn_mod_form
+     */
+    private function create_mod_form(stdClass $bbactivity, object $bbactivitycm): mod_bigbluebuttonbn_mod_form {
+        global $CFG;
+
+        include_once($CFG->dirroot . '/mod/bigbluebuttonbn/mod_form.php');
+        $data = new stdClass();
+        $data->instance = $bbactivity;
+        $data->id = $bbactivity->id;
+        $data->course = $bbactivity->course;
+
+        return new mod_bigbluebuttonbn_mod_form($data, 1, $bbactivitycm, $this->get_course());
     }
 
     /**
@@ -794,6 +861,99 @@ final class lib_test extends \advanced_testcase {
         $this->assertTrue(mod_bigbluebuttonbn_core_calendar_is_event_visible($event));
         $event->instance = 0;
         $this->assertFalse(mod_bigbluebuttonbn_core_calendar_is_event_visible($event));
+    }
+
+    /**
+     * Check the chooser item state when BBB is unconfigured for admins.
+     *
+     * @covers ::bigbluebuttonbn_get_course_content_items
+     */
+    public function test_bigbluebuttonbn_get_course_content_items_unconfigured_admin(): void {
+        $this->resetAfterTest(true);
+        $course = $this->get_course();
+        $defaultitem = $this->get_default_course_content_item($course);
+        $admin = get_admin();
+
+        set_config('bigbluebuttonbn_server_url', '');
+        set_config('bigbluebuttonbn_shared_secret', '');
+
+        $items = bigbluebuttonbn_get_course_content_items($defaultitem, $admin, $course);
+        $this->assertCount(1, $items);
+
+        $item = $items[0];
+        $this->assertEquals($defaultitem->get_id(), $item->get_id());
+        if (method_exists($item, 'is_disabled')) {
+            $this->assertTrue($item->is_disabled());
+            $this->assertEquals(get_string('unconfigured_chooser_admin', 'mod_bigbluebuttonbn'), $item->get_disabled_reason());
+        }
+    }
+
+    /**
+     * Check the chooser item state when BBB is unconfigured for teachers.
+     *
+     * @covers ::bigbluebuttonbn_get_course_content_items
+     */
+    public function test_bigbluebuttonbn_get_course_content_items_unconfigured_teacher(): void {
+        $this->resetAfterTest(true);
+        $course = $this->get_course();
+        $defaultitem = $this->get_default_course_content_item($course);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        set_config('bigbluebuttonbn_server_url', '');
+        set_config('bigbluebuttonbn_shared_secret', '');
+
+        $items = bigbluebuttonbn_get_course_content_items($defaultitem, $teacher, $course);
+        $this->assertCount(1, $items);
+
+        $item = $items[0];
+        $this->assertEquals($defaultitem->get_id(), $item->get_id());
+        if (method_exists($item, 'is_disabled')) {
+            $this->assertTrue($item->is_disabled());
+            $this->assertEquals(get_string('unconfigured_chooser_user', 'mod_bigbluebuttonbn'), $item->get_disabled_reason());
+        }
+    }
+
+    /**
+     * Check the chooser item state when BBB is configured.
+     *
+     * @covers ::bigbluebuttonbn_get_course_content_items
+     */
+    public function test_bigbluebuttonbn_get_course_content_items_configured(): void {
+        $this->resetAfterTest(true);
+        $course = $this->get_course();
+        $defaultitem = $this->get_default_course_content_item($course);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        set_config('bigbluebuttonbn_server_url', 'https://bbb.example.invalid');
+        set_config('bigbluebuttonbn_shared_secret', 'test-shared-secret');
+
+        $items = bigbluebuttonbn_get_course_content_items($defaultitem, $teacher, $course);
+        $this->assertCount(1, $items);
+        $this->assertSame($defaultitem, $items[0]);
+    }
+
+    /**
+     * Build a default module content item for chooser callback testing.
+     *
+     * @param stdClass $course
+     * @return content_item
+     */
+    private function get_default_course_content_item(stdClass $course): content_item {
+        return new content_item(
+            id: 1,
+            name: 'bigbluebuttonbn',
+            title: new string_title('BigBlueButton'),
+            link: new \moodle_url('/course/mod.php', ['id' => $course->id, 'add' => 'bigbluebuttonbn']),
+            icon: 'icon',
+            help: 'help',
+            archetype: MOD_ARCHETYPE_OTHER,
+            componentname: 'mod_bigbluebuttonbn',
+            purpose: MOD_PURPOSE_COMMUNICATION,
+            branded: false,
+            gradable: false,
+            otherpurpose: null,
+            summary: 'summary',
+        );
     }
 
 }

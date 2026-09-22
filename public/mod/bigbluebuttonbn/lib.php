@@ -77,6 +77,61 @@ function bigbluebuttonbn_supports($feature) {
 }
 
 /**
+ * Return the content items that can be added to a course.
+ *
+ * When the BBB server is not configured, the item is returned as disabled so the
+ * activity chooser shows it grayed-out with a role-appropriate tooltip.
+ *
+ * @param \core_course\local\entity\content_item $defaultitem
+ * @param \stdClass $user
+ * @param \stdClass $course
+ * @return \core_course\local\entity\content_item[]
+ */
+function bigbluebuttonbn_get_course_content_items(
+    \core_course\local\entity\content_item $defaultitem,
+    \stdClass $user,
+    \stdClass $course
+): array {
+    $serverurl = config::get('server_url');
+    $sharedsecret = config::get('shared_secret');
+    if (empty($serverurl) || empty($sharedsecret)) {
+        if (has_capability('moodle/site:config', \context_system::instance(), $user)) {
+            $reason = get_string('unconfigured_chooser_admin', 'mod_bigbluebuttonbn');
+        } else {
+            $reason = get_string('unconfigured_chooser_user', 'mod_bigbluebuttonbn');
+        }
+        $itemargs = [
+            'id' => $defaultitem->get_id(),
+            'name' => $defaultitem->get_name(),
+            'title' => $defaultitem->get_title(),
+            'link' => $defaultitem->get_link(),
+            'icon' => $defaultitem->get_icon(),
+            'help' => $defaultitem->get_help(),
+            'archetype' => $defaultitem->get_archetype(),
+            'componentname' => $defaultitem->get_component_name(),
+            'purpose' => $defaultitem->get_purpose(),
+            'branded' => $defaultitem->is_branded(),
+            'gradable' => $defaultitem->is_gradable(),
+            'otherpurpose' => $defaultitem->get_other_purpose(),
+            'summary' => $defaultitem->get_summary(),
+        ];
+
+        $constructor = new \ReflectionMethod(\core_course\local\entity\content_item::class, '__construct');
+        $supportedparams = array_map(
+            static fn(\ReflectionParameter $param): string => $param->getName(),
+            $constructor->getParameters()
+        );
+        if (in_array('disabled', $supportedparams) && in_array('disabledreason', $supportedparams)) {
+            $itemargs['disabled'] = true;
+            $itemargs['disabledreason'] = $reason;
+        }
+
+        return [new \core_course\local\entity\content_item(...$itemargs)];
+    }
+    return [$defaultitem];
+}
+
+/**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number
