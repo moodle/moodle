@@ -103,7 +103,7 @@ $functions = array(
         'methodname'    => 'new_page',
         'description'   => 'Create a new page in a subwiki.',
         'type'          => 'write',
-        'capabilities'  => 'mod/wiki:editpage',
+        'capabilities'  => 'mod/wiki:createpage, mod/wiki:editpage',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 

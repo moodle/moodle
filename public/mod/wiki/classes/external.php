@@ -1021,6 +1021,9 @@ class mod_wiki_external extends external_api {
                 }
             }
         }
+        if (!wiki_can_create_pages($context)) {
+            throw new moodle_exception('nocreatepermission', 'wiki');
+        }
 
         // Subwiki needed to check edit permissions.
         if (!wiki_user_can_edit($subwiki)) {
