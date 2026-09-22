@@ -31458,6 +31458,7 @@ body:not(.editing) [id^=module-]:target, body.editing [id^=module-]:target .acti
 }
 #course-category-listings .listitem > div .idnumber {
   margin-right: 2em;
+  min-width: 0;
 }
 #course-category-listings .listitem[data-visible="0"] {
   color: var(--bs-secondary-color);
