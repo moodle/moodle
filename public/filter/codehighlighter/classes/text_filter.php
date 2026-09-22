@@ -27,22 +27,16 @@ namespace filter_codehighlighter;
  */
 class text_filter extends \core_filters\text_filter {
     #[\Override]
+    public function setup($page, $context) {
+        // The setup() runs once per string filtered on the page, so guard the cardinality.
+        if (!$page->requires->should_create_one_time_item_now('filter_codehighlighter-scripts')) {
+            return;
+        }
+        $page->requires->js_call_amd('filter_codehighlighter/prism-init');
+    }
+
+    #[\Override]
     public function filter($text, array $options = []): string {
-        global $PAGE;
-
-        if (!isset($options['originalformat'])) {
-            return $text;
-        }
-
-        // The pattern.
-        $re = '/<pre.+?class=".*?language-.*?"><code>/i';
-
-        // Stops looking after the first match.
-        preg_match($re, $text, $matches);
-        if ($matches) {
-            $PAGE->requires->js_call_amd('filter_codehighlighter/prism-init');
-        }
-
         return $text;
     }
 }
