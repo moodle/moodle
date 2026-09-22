@@ -3284,15 +3284,25 @@ function repository_download_selected_files($context, string $component, string 
         $filepath = file_correct_filepath($filepath);
 
         $storedfile = $fs->get_file($context->id, $component, $filearea, $itemid, $filepath, $filename);
-        // If it is empty we are downloading a directory.
-        $archivefile = $storedfile->get_filename();
+        // Skip files or directories that do not exist, e.g. when the draft area is empty.
+        if (!$storedfile) {
+            continue;
+        }
         if (!$filename || $filename == '.' ) {
             $foldername = explode('/', trim($filepath, '/'));
             $folder = trim(array_pop($foldername), '/');
             $archivefile = $folder ?? '/';
+        } else {
+            $archivefile = $storedfile->get_filename();
         }
 
         $filestoarchive[$archivefile] = $storedfile;
+    }
+
+    // If there are no files to archive (e.g. the draft area is empty), return false so the
+    // caller can notify the user that there is nothing to download.
+    if (empty($filestoarchive)) {
+        return false;
     }
     $zippedfile = get_string('files') . '.zip';
     if ($zipper->archive_to_storage(

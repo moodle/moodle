@@ -263,6 +263,7 @@ M.form_filemanager.init = function(Y, options) {
          * @returns {void}
          */
         print_msg: function(msg, type, options, errorCode) {
+            options = options || {};
             var header = M.util.get_string('error', 'moodle');
             if (type != 'error') {
                 type = 'info'; // one of only two types excepted
