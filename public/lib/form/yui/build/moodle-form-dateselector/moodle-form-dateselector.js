@@ -119,6 +119,11 @@ M.form.dateselector = {
             showNextMonth: true,
             firstdayofweek: parseInt(config.firstdayofweek, 10),
             headerRenderer: function(date) {
+                if (!M.cfg.userId) {
+                    // Anonymous context (e.g. signup page) — avoid a login-required AJAX call.
+                    return date.toLocaleDateString(undefined, {month: 'long', year: 'numeric'});
+                }
+
                 var calendar = this;
                 var headerNode = calendar.get('contentBox')
                     .one('#' + calendar._calendarId + '_header');
