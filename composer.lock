@@ -4,83 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c33d813b332bcb4217b722b4db3dbd50",
+    "content-hash": "ef12f914bad99f2c7b0fdfee2ef1eb33",
     "packages": [
-        {
-            "name": "adodb/adodb-php",
-            "version": "v5.22.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ADOdb/ADOdb.git",
-                "reference": "a741375176f48b084ca9a110c112323fc7101b75"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ADOdb/ADOdb/zipball/a741375176f48b084ca9a110c112323fc7101b75",
-                "reference": "a741375176f48b084ca9a110c112323fc7101b75",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.0 || ^8.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.5"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "adodb.inc.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause",
-                "LGPL-2.1-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "John Lim",
-                    "email": "jlim@natsoft.com",
-                    "role": "Author"
-                },
-                {
-                    "name": "Damien Regad",
-                    "role": "Current maintainer"
-                },
-                {
-                    "name": "Mark Newnham",
-                    "role": "Developer"
-                }
-            ],
-            "description": "ADOdb is a PHP database abstraction layer library",
-            "homepage": "https://adodb.org/",
-            "keywords": [
-                "abstraction",
-                "database",
-                "layer",
-                "library",
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/ADOdb/ADOdb/issues",
-                "source": "https://github.com/ADOdb/ADOdb"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/ADOdb",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/dregad",
-                    "type": "github"
-                },
-                {
-                    "url": "https://thanks.dev/u/gh/adodb",
-                    "type": "thanks_dev"
-                }
-            ],
-            "time": "2025-11-22T15:37:23+00:00"
-        },
         {
             "name": "aws/aws-crt-php",
             "version": "v1.2.7",
