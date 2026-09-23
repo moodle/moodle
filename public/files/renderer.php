@@ -123,6 +123,8 @@ class core_files_renderer extends plugin_renderer_base {
                 ['updatefileextensiontitle', 'repository'],
                 ['originalextensionchange', 'repository'],
                 ['invalidfiletypetitle', 'repository'],
+                ['filenametoolong', 'repository'],
+                ['filenametoolongtitle', 'repository'],
             )
         );
         if ($this->page->requires->should_create_one_time_item_now('core_file_managertemplate')) {
@@ -130,7 +132,9 @@ class core_files_renderer extends plugin_renderer_base {
                     array($this->filemanager_js_templates()), true, $module);
         }
         $this->page->requires->js_call_amd('core/checkbox-toggleall', 'init');
-        $this->page->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
+        $options = clone $fm->options;
+        $options->maxfilenamelength = file_storage::MAX_FILENAME_LENGTH;
+        $this->page->requires->js_init_call('M.form_filemanager.init', [$options], true, $module);
 
         // non javascript file manager
         $html .= '<noscript>';
