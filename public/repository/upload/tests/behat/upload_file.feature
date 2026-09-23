@@ -31,3 +31,15 @@ Feature: Upload files
     And I click on "Get these logs" "button"
     Then I should see "The user with id '2' has uploaded file '/empty.txt' to the draft file area with item id" in the "File added to draft area" "table_row"
     And I should see "Size: 32 bytes. Content hash: " in the "File added to draft area" "table_row"
+
+  @javascript
+  Scenario: A file name longer than the database column is rejected instead of failing on write
+    Given I am on the "My private files" page logged in as "admin"
+    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
+    And I should see "1" elements in "Files" filemanager
+    # The name below has no extension, so the server appends '.txt' and the resulting name exceeds 255 characters.
+    When I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager as:
+      | Save as | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+    Then I should see "The file name, including its extension, must not be longer than 255 characters." in the "File name too long" "dialogue"
+    And I click on "OK" "button" in the "File name too long" "dialogue"
+    And I should see "1" elements in "Files" filemanager

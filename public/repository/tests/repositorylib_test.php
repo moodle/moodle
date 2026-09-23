@@ -16,6 +16,7 @@
 
 namespace core_repository;
 
+use file_storage;
 use repository;
 use repository_exception;
 use repository_type;
@@ -33,6 +34,7 @@ require_once("$CFG->dirroot/repository/lib.php");
  * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(repository::class)]
 final class repositorylib_test extends \advanced_testcase {
 
     /**
@@ -158,6 +160,48 @@ final class repositorylib_test extends \advanced_testcase {
         foreach (array('Terminator.movie', 'Where is Wally?', 'barfoo') as $filename) {
             $this->assertFalse(repository::draftfile_exists($draftitemid, '/', $filename));
         }
+    }
+
+    /**
+     * The files.filename column holds 255 characters, so renaming beyond that must be rejected rather than hitting the
+     * database.
+     */
+    public function test_update_draftfile_filename_length(): void {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $fs = get_file_storage();
+        $draftitemid = file_get_unused_draft_itemid();
+        $record = [
+            'contextid' => \context_user::instance($USER->id)->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => $draftitemid,
+            'filepath' => '/',
+            'filename' => 'original.txt',
+        ];
+        $fs->create_file_from_string($record, 'Content');
+
+        $basenamelength = file_storage::MAX_FILENAME_LENGTH - strlen('.txt');
+
+        // A name that exactly fills the column is accepted.
+        $maxlengthname = str_repeat('a', $basenamelength) . '.txt';
+        repository::update_draftfile($draftitemid, '/', 'original.txt', ['filename' => $maxlengthname]);
+        $this->assertTrue($fs->file_exists($record['contextid'], 'user', 'draft', $draftitemid, '/', $maxlengthname));
+
+        // The limit counts characters rather than bytes, so a multibyte name that fills the column is accepted too.
+        $multibytename = str_repeat("\u{3042}", $basenamelength) . '.txt';
+        repository::update_draftfile($draftitemid, '/', $maxlengthname, ['filename' => $multibytename]);
+        $this->assertTrue($fs->file_exists($record['contextid'], 'user', 'draft', $draftitemid, '/', $multibytename));
+
+        // One character more than the column holds is rejected.
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage(get_string('filenametoolong', 'repository', file_storage::MAX_FILENAME_LENGTH));
+        repository::update_draftfile($draftitemid, '/', $multibytename, [
+            'filename' => str_repeat('a', $basenamelength + 1) . '.txt',
+        ]);
     }
 
     public function test_delete_selected_files(): void {

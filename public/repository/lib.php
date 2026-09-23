@@ -2552,6 +2552,9 @@ abstract class repository implements cacheable_object {
         $usercontext = context_user::instance($USER->id);
         // make sure filename and filepath are present in $updatedata
         $updatedata = $updatedata + array('filepath' => $filepath, 'filename' => $filename);
+        if (core_text::strlen($updatedata['filename']) > file_storage::MAX_FILENAME_LENGTH) {
+            throw new moodle_exception('filenametoolong', 'repository', '', file_storage::MAX_FILENAME_LENGTH);
+        }
         $filemodified = false;
         if (!$file = $fs->get_file($usercontext->id, 'user', 'draft', $draftid, $filepath, $filename)) {
             if ($filename === '.') {
