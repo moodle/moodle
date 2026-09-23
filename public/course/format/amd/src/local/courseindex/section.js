@@ -192,8 +192,15 @@ export default class Component extends DndSection {
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.locked = element.locked;
+        // The section number is used as a positional reference elsewhere, so it must stay in sync after a move.
+        this.element.dataset.number = element.number;
         // Update title.
-        this.getElement(this.selectors.SECTION_TITLE).innerHTML = element.title;
+        const titleElement = this.getElement(this.selectors.SECTION_TITLE);
+        titleElement.innerHTML = element.title;
+        // Section links use positional anchors, so they must be refreshed after a move too.
+        if (titleElement.tagName === 'A' && element.sectionurl) {
+            titleElement.setAttribute('href', element.sectionurl);
+        }
     }
 
     /**
