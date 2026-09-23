@@ -76,3 +76,11 @@ Prerequisite: Make sure the grunt watcher is running during the below process:
 13. Edit the prism.js to make sure the indentation is made using spaces, not tabs, and remove trailing spaces.
 
 Note: As long as the grunt watcher says Done, then the upgrade process is complete.
+
+Moodle changes
+---------------------------------------------------
+MDL-89591: Backported an upstream fix to amd/src/prism.js so the
+currentScript lookup only accepts an actual <script> element, rather than
+anything reachable via `'currentScript' in document`. This branch otherwise
+stays on PrismJS 1.29.0; the fix was hand-applied rather than upgrading the
+full library. See upstream PrismJS 1.30.0 for the equivalent full-version fix.
