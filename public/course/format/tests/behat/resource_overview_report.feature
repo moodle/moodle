@@ -70,3 +70,19 @@ Feature: Testing overview_report with resources
     And I click on "Get these logs" "button"
     Then I should see "Course activities overview page viewed"
     And I should see "viewed the list of resources in the course"
+
+  Scenario: Students can see the resources overview when completion conditions are not shown
+    Given the following "courses" exist:
+      | fullname | shortname | enablecompletion | showcompletionconditions |
+      | Course 2 | C2        | 1                | 0                        |
+    And the following "course enrolments" exist:
+      | user     | course | role    |
+      | student1 | C2     | student |
+    And the following "activities" exist:
+      | activity | name        | intro     | course | defaultfilename                           | uploaded | completion | display |
+      | resource | File name 2 | Test file2 | C2     | mod/resource/tests/fixtures/samplefile.txt | 1        | 1          | 3       |
+    And I am on the "Course 2" course page logged in as "student1"
+    When I am on the "Course 2" "course > activities > resource" page
+    Then the following should exist in the "Table listing all Resource activities" table:
+      | Name        | Status       | Resource type |
+      | File name 2 | Mark as done | File          |
