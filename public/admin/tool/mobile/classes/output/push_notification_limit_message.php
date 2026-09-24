@@ -63,6 +63,7 @@ class push_notification_limit_message implements \renderable, \templatable {
      * @return array<string, mixed>
      */
     public function export_for_template(\core\output\renderer_base $output): array {
+        global $SITE;
         $currentdevices = $this->currentactivedevices;
         $ignorednotifications = $this->ignorednotifications;
         $devicelimit = $this->devicelimit;
@@ -77,10 +78,24 @@ class push_notification_limit_message implements \renderable, \templatable {
         } else {
             $subheading = get_string('missedadditionalusers', 'tool_mobile');
         }
+        $newwindowicon = $output->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ms-1']);
+        $learnmorelink = \html_writer::link(
+            get_docs_url('Moodle_app_plans'),
+            get_string('moodleappplansdocumentation', 'tool_mobile') . $newwindowicon,
+            ['target' => '_blank'],
+        );
 
         return [
             'heading' => get_string('limitreachedmonthly', 'tool_mobile'),
-            'subheading' => $subheading,
+            'messagegreeting' => get_string(
+                'messagegreeting',
+                'tool_mobile',
+                format_string($SITE->fullname, true, [
+                    'context' => \context_system::instance(),
+                    'escape' => false,
+                ]),
+            ),
+            'missedusers' => $subheading,
             'metriclabel' => get_string('activedeviceslabel', 'tool_mobile'),
             'limitlabel' => get_string('limitreached', 'tool_mobile'),
             'footer' => get_string('limitnewdevices', 'tool_mobile'),
@@ -90,6 +105,7 @@ class push_notification_limit_message implements \renderable, \templatable {
             'progresswidth' => $progresswidth,
             'illustrationurl' => (new \moodle_url('/admin/tool/mobile/pix/push_notification.svg'))->out(false),
             'alerticonurl' => (new \moodle_url('/pix/i/risk_xss.svg'))->out(false),
+            'learnmoreplan' => get_string('learnmoreplan', 'tool_mobile', $learnmorelink),
         ];
     }
 }
