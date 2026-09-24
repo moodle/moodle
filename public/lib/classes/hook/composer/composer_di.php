@@ -38,22 +38,7 @@ class composer_di {
             function (): \core\composer {
                 global $CFG;
 
-                $vendordir = null;
-                if (class_exists(\Composer\InstalledVersions::class)) {
-                    $rootpackage = \Composer\InstalledVersions::getRootPackage();
-                    if (!is_array($rootpackage) || empty($rootpackage['install_path'])) {
-                        $vendordir = $CFG->root . '/vendor';
-                    }
-                } else {
-                    $vendordir = $CFG->root . '/vendor';
-                }
-
-                if ($vendordir === null) {
-                    $realpath = realpath($rootpackage['install_path']);
-                    if ($realpath !== false) {
-                        $vendordir = $realpath . '/vendor';
-                    }
-                }
+                $vendordir = \core\composer::locate_moodle_vendor_directory($CFG->root);
 
                 return new \core\composer(
                     $vendordir,
