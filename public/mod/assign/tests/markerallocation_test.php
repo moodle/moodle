@@ -540,6 +540,7 @@ final class markerallocation_test extends \advanced_testcase {
     public function test_calculated_marker_workflow(): void {
         $this->setup_data();
         $assignment = $this->create_assignment();
+        $this->setUser($this->users[0]);
 
         // Allocate both teachers to the student assignment.
         $assignment->update_allocated_markers($this->users[2]->id, [

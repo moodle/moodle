@@ -170,3 +170,52 @@ Feature: View the grading status of an assignment
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I should see "Graded" in the "Grading status" "table_row"
     And I should see "Even better job! Really."
+
+  @javascript
+  Scenario: The grade is read-only once released, and is preserved when the workflow state is changed
+    Given the following "activity" exists:
+      | activity                            | assign                  |
+      | course                              | C1                      |
+      | name                                | Test assignment name    |
+      | intro                               | Submit your online text |
+      | submissiondrafts                    | 0                       |
+      | markingworkflow                     | 1                       |
+      | assignfeedback_comments_enabled     | 1                       |
+      | assignsubmission_onlinetext_enabled | 1                       |
+    And the following "mod_assign > submissions" exist:
+      | assign               | user     | onlinetext                       |
+      | Test assignment name | student1 | I'm the student first submission |
+    And I am on the "Test assignment name" "assign activity" page logged in as teacher1
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
+    # The grade is not editable in the grading panel once released.
+    When I set the following fields to these values:
+      | Grade out of 100       | 70       |
+      | Marking workflow state | Released |
+      | Notify student         | 0        |
+    And I press "Save changes"
+    Then the following fields match these values:
+      | Grade out of 100       | 70.00    |
+      | Marking workflow state | Released |
+    And the "Grade out of 100" "field" should be readonly
+    # The grade is also not editable in the quick grading table once released.
+    And I follow "View all submissions"
+    And I click on "Quick grading" "checkbox"
+    And "User grade" "field" should not exist in the "Student 1" "table_row"
+    And I should see "70.00" in the "Student 1" "table_row"
+    And I should see "Released" in the "Student 1" "table_row"
+    # The grade is editable again when the status it changed into an editable state.
+    And I go to "Student 1" "Test assignment name" activity advanced grading page
+    And I set the following fields to these values:
+      | Marking workflow state | In review |
+      | Notify student         | 0         |
+    And I press "Save changes"
+    And the following fields match these values:
+      | Grade out of 100       | 70.00     |
+      | Marking workflow state | In review |
+    And the "Grade out of 100" "field" should not be readonly
+    # The grade is editable again on the submissions page.
+    And I follow "View all submissions"
+    And the following fields match these values:
+      | User grade | 70.00 |
+    And I should see "In review" in the "Student 1" "table_row"
+    And "User grade" "field" should exist in the "Student 1" "table_row"
