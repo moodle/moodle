@@ -1067,7 +1067,8 @@ class assign_grading_table extends table_sql implements renderable {
      */
     public function col_gradecanbechanged(stdClass $row) {
         $gradingdisabled = $this->assignment->grading_disabled($row->id, true, $this->gradinginfo);
-        if ($gradingdisabled) {
+        $gradinglocked = $this->assignment->workflow_state_locked($row->workflowstate);
+        if ($gradingdisabled || $gradinglocked) {
             return get_string('no');
         } else {
             return get_string('yes');
@@ -1097,10 +1098,20 @@ class assign_grading_table extends table_sql implements renderable {
      */
     public function col_grade(stdClass $row): string {
         $gradingdisabled = $this->assignment->grading_disabled($row->id, true, $this->gradinginfo);
-        $editable = $this->quickgrading && !$gradingdisabled &&
-            !$this->assignment->grading_restricted($row->gradeid, $row->userid);
-        $displaygrade = $this->display_grade($row->grade, $editable, $row->userid, $row->timemarked);
-
+        $gradinglocked = $this->assignment->workflow_state_locked($row->workflowstate);
+        $gradingrestricted = $this->assignment->grading_restricted($row->gradeid, $row->userid);
+        $editable = (
+            $this->quickgrading &&
+            !$gradingdisabled &&
+            !$gradinglocked &&
+            !$gradingrestricted
+        );
+        $displaygrade = $this->display_grade(
+            $row->grade,
+            $editable,
+            $row->userid,
+            $row->timemarked,
+        );
 
         if (!$this->is_downloading() && $this->hasgrade) {
             $urlparams = [
@@ -1172,17 +1183,17 @@ class assign_grading_table extends table_sql implements renderable {
                 // Allocated markers are enabled: get the mark corresponding to the marker for this column.
                 $markerid = $row->allocatedmarkers[$col]->marker ?? '';
                 if ($markerid) {
+                    $gradinglocked = $this->assignment->workflow_state_locked($row->workflowstate);
                     $mark = $row->gradeid ? $this->assignment->get_mark($row->gradeid, $markerid) : null;
 
                     // Is this user the marker for this column?
                     $isallocatedmarker = $markerid == $USER->id;
 
-                    // Mark is only editable if we are quick grading, grading is not disabled, and if we are either
-                    // the marker for this column, or we have manageallocations permissions.
                     $editable = (
-                        ($this->quickgrading) &&
-                        (!$gradingdisabled) &&
-                        ($isallocatedmarker)
+                        $this->quickgrading &&
+                        !$gradingdisabled &&
+                        !$gradinglocked &&
+                        $isallocatedmarker
                     );
                     $displaymark = $this->display_grade(
                         $mark->mark ?? null,

@@ -3360,7 +3360,7 @@ You can see it appended to your <a href="' . $assignurl .
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
 
         $assign = $this->create_instance($course, [
             'markingworkflow' => 1,
@@ -3451,6 +3451,117 @@ You can see it appended to your <a href="' . $assignurl .
         // Make sure the grade is pushed to the gradebook.
         $grades = $assign->get_user_grades_for_gradebook($student->id);
         $this->assertEquals(50, (int)$grades[$student->id]->rawgrade);
+    }
+
+    /**
+     * Test that workflow_state_locked() reports a workflow state as locking the grade/mark value
+     * only once it is ready for release, or released - and never when marking workflow is disabled.
+     *
+     * @covers ::workflow_state_locked
+     */
+    public function test_workflow_state_locked(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->create_instance($course, ['markingworkflow' => 1]);
+
+        // No workflow state yet (e.g. a student who has never been marked).
+        $this->assertFalse($assign->workflow_state_locked(null));
+
+        $states = [
+            ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED => false,
+            ASSIGN_MARKING_WORKFLOW_STATE_INMARKING => false,
+            ASSIGN_MARKING_WORKFLOW_STATE_READYFORREVIEW => false,
+            ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW => false,
+            ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE => true,
+            ASSIGN_MARKING_WORKFLOW_STATE_RELEASED => true,
+        ];
+        foreach ($states as $state => $expectedlocked) {
+            $this->assertEquals($expectedlocked, $assign->workflow_state_locked($state), "Workflow state: $state");
+        }
+
+        // Disabling marking workflow on the same instance must not honour a 'released' workflow
+        // state that may still be present (e.g. left behind in a user's flags from before it was
+        // disabled).
+        $DB->set_field('assign', 'markingworkflow', 0, ['id' => $assign->get_instance()->id]);
+        $assign = new mod_assign_testable_assign($assign->get_context(), $assign->get_course_module(), $course);
+        $this->assertFalse($assign->workflow_state_locked(ASSIGN_MARKING_WORKFLOW_STATE_RELEASED));
+    }
+
+    /**
+     * Test that grading_locked() looks up the given user's own current workflow state (from
+     * assign_user_flags) and defers to workflow_state_locked() to decide if it is locked.
+     *
+     * @covers ::grading_locked
+     */
+    public function test_grading_locked(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assign = $this->create_instance($course, ['markingworkflow' => 1]);
+
+        // Before the student has ever been marked, there is no workflow state yet.
+        $this->assertFalse($assign->grading_locked($student->id));
+
+        // Not locked while the state is one that still allows editing.
+        $flags = $assign->get_user_flags($student->id, true);
+        $flags->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW;
+        $assign->update_user_flags($flags);
+        $this->assertFalse($assign->grading_locked($student->id));
+
+        // Locked once this particular user's own workflow state is released.
+        $flags->workflowstate = ASSIGN_MARKING_WORKFLOW_STATE_RELEASED;
+        $assign->update_user_flags($flags);
+        $this->assertTrue($assign->grading_locked($student->id));
+
+        // A different user's grade, with no flags of their own yet, is unaffected.
+        $otherstudent = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->assertFalse($assign->grading_locked($otherstudent->id));
+    }
+
+    /**
+     * Test that a grade cannot be changed once it is released, even by a user (such as an
+     * editingteacher) whose capability would otherwise let them set the workflow state to
+     * released. Only the workflow state itself, not the grade value, should remain changeable.
+     *
+     * @covers ::apply_grade_to_user
+     */
+    public function test_grade_not_editable_once_released(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assign = $this->create_instance($course, ['markingworkflow' => 1]);
+
+        $this->setUser($teacher);
+        $assign->testable_apply_grade_to_user((object) [
+            'grade' => 50.0,
+            'workflowstate' => ASSIGN_MARKING_WORKFLOW_STATE_RELEASED,
+        ], $student->id, 0);
+        $this->assertEquals(50, $assign->get_user_grade($student->id, false)->grade);
+
+        // Attempting to change the grade now must be ignored, despite the teacher having full
+        // capability to manage/release grades.
+        $assign->testable_apply_grade_to_user((object) [
+            'grade' => 90.0,
+        ], $student->id, 0);
+        $this->assertEquals(50, $assign->get_user_grade($student->id, false)->grade);
+
+        // Moving the workflow state back must still work.
+        $assign->testable_apply_grade_to_user((object) [
+            'workflowstate' => ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW,
+        ], $student->id, 0);
+        $this->assertEquals(
+            ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW,
+            $assign->get_user_flags($student->id, false)->workflowstate
+        );
+
+        // The grade is editable again now that it is back in an editable state.
+        $assign->testable_apply_grade_to_user((object) [
+            'grade' => 90.0,
+        ], $student->id, 0);
+        $this->assertEquals(90, $assign->get_user_grade($student->id, false)->grade);
     }
 
     /**
@@ -5255,7 +5366,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     public function test_release_grade_anon(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
         $assign = $this->create_instance($course, [

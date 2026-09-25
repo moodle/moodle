@@ -257,3 +257,60 @@ Feature: Complete multi-marking workflow
       | Student Two   | 50       | 30       | Released | 50          |
       | Student Three | 60       | 15       | Released | 60          |
       | Student Four  | 60       | 100      | Released | 99          |
+
+  @javascript
+  Scenario: The mark is read-only once released, and is preserved when the workflow state is changed
+    Given the following "mod_assign > submissions" exist:
+      | assign       | user     | onlinetext                       |
+      | Assignment 1 | student1 | I'm the student first submission |
+    And the following "mod_assign > marker_allocations" exist:
+      | assign       | user     | marker   |
+      | Assignment 1 | student1 | teacher1 |
+      | Assignment 1 | student1 | teacher2 |
+    And I am on the "Assignment 1" "assign activity" page logged in as teacher1
+    And I go to "Student One" "Assignment 1" activity advanced marking page
+    # Mark the assignment and check the field is still editable.
+    And I set the following fields to these values:
+      | Mark out of 100        | 50                |
+      | Notify student         | 0                 |
+      | Marking workflow state | Marking completed |
+    And the "Mark out of 100" "field" should not be readonly
+    And I press "Save changes"
+    # Marking is not yet complete, as the second marker has not marked, so the grade cannot be released.
+    And I am on the "Assignment 1" "assign activity" page logged in as teacher2
+    And I go to "Student One" "Assignment 1" activity advanced marking page
+    And I set the following fields to these values:
+      | Mark out of 100        | 50                |
+      | Notify student         | 0                 |
+      | Marking workflow state | Marking completed |
+    And I press "Save changes"
+    # The mark is not editable when the grade has been released.
+    And I am on the "Assignment 1" "assign activity" page logged in as teacher1
+    And I navigate to "Submissions" in current page administration
+    And I set the field "selectall" to "1"
+    And I click on "Change marking state" "button" in the "sticky-footer" "region"
+    And I click on "Change marking state" "button" in the ".modal-footer" "css_element"
+    And I select "Grade" from the "Workflow context" singleselect
+    When I select "Released" from the "Marking workflow state" singleselect
+    And I press "Save changes"
+    Then I should see "50.00" in the "Student One" "table_row"
+    And I should see "Released" in the "Student One" "table_row"
+    And "User mark" "field" should not exist in the "Student One" "table_row"
+    # The mark is not editable on the marker panel when the grade has been released.
+    And I go to "Student One" "Assignment 1" activity advanced marking page
+    And the following fields match these values:
+      | Mark out of 100 | 50.00 |
+    And the "Mark out of 100" "field" should be readonly
+    And I follow "View all submissions"
+    # The mark is editable again when the status it changed into an editable state.
+    And I click on "Quick grading" "checkbox"
+    And I set the field "selectall" to "1"
+    And I click on "Change marking state" "button" in the "sticky-footer" "region"
+    And I click on "Change marking state" "button" in the ".modal-footer" "css_element"
+    And I select "Grade" from the "Workflow context" singleselect
+    And I select "In review" from the "Marking workflow state" singleselect
+    And I press "Save changes"
+    And the following fields match these values:
+      | User mark | 50.00 |
+    And I should see "In review" in the "Student One" "table_row"
+    And "User mark" "field" should exist in the "Student One" "table_row"
