@@ -94,12 +94,6 @@ final class oauth2_test extends \advanced_testcase {
     /**
      * Create a client entity fixture with the specified identifier, name and description.
      *
-     * Built via create_from_record() (rather than a bare new client_entity() with only its
-     * identifier set), so that a test exercising anything that reads the client's name or
-     * description (e.g. oauth2_page::describe_client(), used by the OAuth2 login screen and
-     * the other OAuth2 pages) does not fail on those typed properties being uninitialised.
-     *
-     * @param string $identifier
      * @param string $name
      * @param string $description
      * @param bool $isconfidential Whether the client can keep a secret confidential.
@@ -2924,7 +2918,9 @@ final class oauth2_test extends \advanced_testcase {
         $moodleuser = $this->getDataGenerator()->create_user();
         $this->setUser($moodleuser);
 
-        $client = $this->make_client_entity();
+        $client = $this->make_client_entity(
+            scopes: ['moodle'],
+        );
         $user = $this->make_user_entity($moodleuser->id);
         $authrequest = $this->make_auth_request($client, scopes: ['moodle']);
         $authrequest->setUser($user);
