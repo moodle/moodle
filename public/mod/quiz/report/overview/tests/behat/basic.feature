@@ -121,6 +121,16 @@ Feature: Basic use of the Grades report
     Then I should see "Apple" in the "S1 Student1" "table_row"
     And I should see "Banana" in the "S2 Student2" "table_row"
 
+  Scenario: View identity fields which the grades report always selects anyway
+    # The report selects idnumber, institution and department whether or not they are identity
+    # fields, so naming them here used to put each of them in the query twice.
+    Given the following config values are set as admin:
+      | showuseridentity | idnumber,institution,department,email |
+    And I am on the "Quiz 1" "quiz activity" page logged in as teacher1
+    And I navigate to "Results" in current page administration
+    Then I should see "S1000" in the "S1 Student1" "table_row"
+    And I should see "S2000" in the "S2 Student2" "table_row"
+
   @javascript
   Scenario: A teacher can search the user attempt by user profile field in the grades report.
     Given the following config values are set as admin:

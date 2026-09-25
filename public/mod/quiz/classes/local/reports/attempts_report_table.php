@@ -529,20 +529,16 @@ abstract class attempts_report_table extends \table_sql {
             $fields .= "\n(CASE WHEN $this->qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
         }
 
-        $userfieldsapi = \core_user\fields::for_identity($this->context)->with_name()
-                ->excluding('id', 'picture', 'imagealt', 'email');
-        $userfields = $userfieldsapi->get_sql('u', true, '', '', false);
+        // Request idnumber, institution and department through the fields API rather than
+        // hard-coding them, so they are not selected twice when also configured as identity fields.
+        $userfieldsapi = \core_user\fields::for_identity($this->context)->with_name()->with_userpic()
+                ->including('idnumber', 'institution', 'department');
+        $userfields = $userfieldsapi->get_sql('u', true, '', 'userid', false);
 
         $fields .= '
                 quiza.uniqueid AS usageid,
                 quiza.id AS attempt,
-                u.id AS userid,
-                u.idnumber,
-                u.picture,
-                u.imagealt,
-                u.institution,
-                u.department,
-                u.email,' . $userfields->selects . ',
+                ' . $userfields->selects . ',
                 quiza.state,
                 quiza.sumgrades,
                 quiza.timefinish,

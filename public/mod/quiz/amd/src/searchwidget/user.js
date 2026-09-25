@@ -23,7 +23,6 @@
 import UserSearch from 'core_user/comboboxsearch/user';
 import Url from 'core/url';
 import * as Repository from 'mod_quiz/searchwidget/repository';
-import {getStrings} from 'core/str';
 
 export default class QuizUserSearch extends UserSearch {
 
@@ -49,12 +48,10 @@ export default class QuizUserSearch extends UserSearch {
         // Await the user fetch request
         const r = await Repository.userFetch(params);
 
-        // Await the result of getStrings
-        const stringArray = await getStrings(r.extrafields.map((key) => ({key})));
-
-        // Map the extrafields to profilestringmap
+        // The server already resolves the human-readable label for each field (including
+        // custom profile fields), so map extrafields to their matching extrafieldsdisplay entry.
         this.profilestringmap = new Map(
-            r.extrafields.map((key, index) => ([key, stringArray[index]]))
+            r.extrafields.map((key, index) => ([key, r.extrafieldsdisplay[index]]))
         );
 
         // Return r.users as the final result

@@ -1,0 +1,9 @@
+issueNumber: MDL-89765
+notes:
+  mod_quiz:
+    - message: >-
+        The external function mod_quiz_get_users_in_report now also returns a
+        new 'extrafieldsdisplay' array, containing the resolved display name
+        label for each field listed in 'extrafields' (in the same order),
+        including custom user profile fields.
+      type: improved

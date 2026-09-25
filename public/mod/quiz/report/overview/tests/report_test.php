@@ -261,6 +261,45 @@ final class report_test extends \advanced_testcase {
     }
 
     /**
+     * A column the report always selects (idnumber, institution, department) must not be
+     * selected again just because it is also configured as an identity field.
+     */
+    public function test_report_sql_with_duplicate_identity_fields(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        set_config('showuseridentity', 'idnumber,institution,department,email');
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id,
+                'grade' => 100.0, 'sumgrades' => 10.0]);
+        $student = $generator->create_user(['idnumber' => 'S1000']);
+        $generator->enrol_user($student->id, $course->id);
+
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $context = \context_module::instance($cm->id);
+        $studentsjoins = get_enrolled_with_capabilities_join($context, '',
+                ['mod/quiz:attempt', 'mod/quiz:reviewmyattempts']);
+
+        $reportoptions = new quiz_overview_options('overview', $quiz, $cm, null);
+        $reportoptions->attempts = attempts_report::ENROLLED_ALL;
+
+        $table = new quiz_overview_table($quiz, $context, quiz_report_qm_filter_select($quiz),
+                $reportoptions, new \core\dml\sql_join(), $studentsjoins, [], null);
+        $table->define_columns(['fullname']);
+        $table->define_baseurl(new \moodle_url('/mod/quiz/report.php'));
+        $table->sortable(true, 'uniqueid');
+        $table->setup();
+        $table->setup_sql_queries($studentsjoins);
+
+        $table->query_db(30, false);
+
+        $this->assertEquals(1, $table->totalrows);
+        $this->assertEquals('S1000', reset($table->rawdata)->idnumber);
+    }
+
+    /**
      * Bands provider.
      * @return array
      */

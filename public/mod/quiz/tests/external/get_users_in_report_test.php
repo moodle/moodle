@@ -101,4 +101,34 @@ final class get_users_in_report_test extends \advanced_testcase {
         )['users'];
         $this->assertCount(1, $users);
     }
+
+    /**
+     * Custom profile fields included in showuseridentity must get a display label resolved via
+     * \core_user\fields::get_display_name(), not the raw 'profile_field_<shortname>' key.
+     */
+    public function test_get_users_in_report_extrafields_display_custom_profile_field(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $dg->create_custom_profile_field(['datatype' => 'text', 'shortname' => 'fruit', 'name' => 'Fruit']);
+        set_config('showuseridentity', 'email,profile_field_fruit');
+
+        $course = $dg->create_course();
+        $quizgen = $dg->get_plugin_generator('mod_quiz');
+        $quiz = $quizgen->create_instance(['course' => $course->id]);
+
+        $result = get_users_in_report::execute(
+            $quiz->cmid,
+            'overview',
+            '{"attempts":"enrolled_with","onlygraded":"","search":"","onlyregraded":""}'
+        );
+
+        $index = array_search('profile_field_fruit', $result['extrafields']);
+        $this->assertNotFalse($index);
+        $this->assertSame('Fruit', $result['extrafieldsdisplay'][$index]);
+    }
 }

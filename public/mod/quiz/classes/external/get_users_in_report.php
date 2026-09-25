@@ -150,8 +150,14 @@ class get_users_in_report extends external_api {
         // We don't want the filter to strip out the picture field and other name fields,
         // since we already have the full name field.
         $allowfields = array_merge(['fullname'], $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]));
+        // Resolve the display name label for each field here.
+        $extrafieldsdisplay = array_map(
+            fn($field) => \core_user\fields::get_display_name($field),
+            $allowfields
+        );
         return [
             'extrafields' => $allowfields,
+            'extrafieldsdisplay' => $extrafieldsdisplay,
             'users' => $users,
             'warnings' => $warnings,
         ];
@@ -171,6 +177,9 @@ class get_users_in_report extends external_api {
 
         return new external_single_structure([
             'extrafields' => new external_multiple_structure(new external_value(PARAM_RAW, 'List of extra fields')),
+            'extrafieldsdisplay' => new external_multiple_structure(
+                new external_value(PARAM_RAW, 'Display name label for the extra field at the same index')
+            ),
             'users' => new external_multiple_structure(core_user_external::user_description($additionalfields)),
             'warnings' => new external_warnings(),
         ]);
