@@ -2357,7 +2357,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026091400.01);
     }
 
-    if ($oldversion < 2026092100.00) {
+    if ($oldversion < 2026092300.01) {
         // Define field scopes to be added to oauth2_server_clients.
         $table = new xmldb_table('oauth2_server_clients');
         $field = new xmldb_field('scopes', XMLDB_TYPE_TEXT, null, null, null, null, null, 'lastaccessed');
@@ -2375,7 +2375,7 @@ function xmldb_main_upgrade($oldversion) {
         $dbman->change_field_notnull($table, $field);
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2026092100.00);
+        upgrade_main_savepoint(true, 2026092300.01);
     }
 
     return true;
