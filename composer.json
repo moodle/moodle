@@ -67,7 +67,7 @@
         "kevinrob/guzzle-cache-middleware": "7.0.0",
         "laravel/serializable-closure": "2.0.16",
         "php-di/php-di": "7.0.8",
-        "php-di/invoker": "2.3.6",
+        "php-di/invoker": "2.3.7",
         "monolog/monolog": "3.9.0",
         "composer/pcre": "3.3.2",
         "maennchen/zipstream-php": "3.2.0",
