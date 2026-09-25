@@ -77,6 +77,39 @@
     min-height: 800px;
 }
 
+/* Deep Linking (content-item) modal: the iframe fills the modal, the tool scrolls inside it.
+   Tool UIs are full applications, so this modal is wider than any Bootstrap preset, and fluid below that cap. */
+.contentitem-modal {
+    --bs-modal-width: min(1600px, 85vw);
+}
+
+.contentitem-modal .modal-content {
+    height: 100%;
+}
+
+.contentitem-modal .modal-body,
+.contentitem-modal .contentitem-container,
+.contentitem-modal .contentitem-page {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.contentitem-modal #contentitem-page-iframe {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+/* While the tool loads, the empty page wrapper must not absorb the free space, or the spinner sticks to the top. */
+.contentitem-modal .contentitem-container {
+    justify-content: center;
+}
+
+.contentitem-modal .contentitem-loading-container:not(.hidden) ~ .contentitem-page {
+    flex: 0 0 auto;
+}
+
 .loading-screen {
     text-align: center;
     padding: 3em;

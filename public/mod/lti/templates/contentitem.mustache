@@ -74,14 +74,6 @@
         iframe.on('load', function() {
             loadingContainer.addClass('hidden');
             iframe.removeClass('hidden');
-
-            // Adjust iframe's width to the fit the container's width.
-            var containerWidth = $('div.contentitem-container').width();
-            $('#contentitem-page-iframe').width(containerWidth + 'px');
-
-            // Adjust iframe's height to 75% of the width.
-            var containerHeight = containerWidth * 0.75;
-            $('#contentitem-page-iframe').height(containerHeight + 'px');
         });
     });
 {{/js}}
