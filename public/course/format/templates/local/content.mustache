@@ -176,7 +176,6 @@
     {{#collapsemenu}}
         <div class="d-flex justify-content-end mb-1">
             <button type="button"
-                    id="collapsesections"
                     class="section-collapsemenu aabtn"
                     aria-expanded="true"
                     data-toggle="toggleall"
@@ -195,12 +194,22 @@
     <ul class="{{format}} section-list{{#collapsemenu}} has-collapsemenu{{/collapsemenu}}" data-for="course_sectionlist">
         {{#initialsection}}
             {{$ core_courseformat/local/content/section }}
-                {{> core_courseformat/local/content/section }}
+                {{!
+                    The deprecated collapse/expand all sections toggle inside the section content is
+                    suppressed here because this template renders it above the section list instead.
+                    Formats and themes overriding this template with an older version will not suppress
+                    it, and will keep the previous behaviour.
+                }}
+                {{< core_courseformat/local/content/section }}
+                    {{$ core_courseformat/local/content/section/collapsemenu }}{{/ core_courseformat/local/content/section/collapsemenu }}
+                {{/ core_courseformat/local/content/section }}
             {{/ core_courseformat/local/content/section }}
         {{/initialsection}}
         {{#sections}}
             {{$ core_courseformat/local/content/section }}
-                {{> core_courseformat/local/content/section }}
+                {{< core_courseformat/local/content/section }}
+                    {{$ core_courseformat/local/content/section/collapsemenu }}{{/ core_courseformat/local/content/section/collapsemenu }}
+                {{/ core_courseformat/local/content/section }}
             {{/ core_courseformat/local/content/section }}
         {{/sections}}
     </ul>
@@ -214,7 +223,9 @@
         <ul class="{{format}} section-list">
         {{#singlesection}}
             {{$ core_courseformat/local/content/section }}
-                {{> core_courseformat/local/content/section }}
+                {{< core_courseformat/local/content/section }}
+                    {{$ core_courseformat/local/content/section/collapsemenu }}{{/ core_courseformat/local/content/section/collapsemenu }}
+                {{/ core_courseformat/local/content/section }}
             {{/ core_courseformat/local/content/section }}
         {{/singlesection}}
         </ul>

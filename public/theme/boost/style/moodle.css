@@ -35381,13 +35381,6 @@ table.calendartable caption {
   list-style: square;
 }
 
-.section-collapsemenu {
-  padding: 0.5rem 0.75rem;
-  color: var(--bs-gray-600);
-  line-height: 1;
-  background: none;
-  border: 0;
-}
 .section-collapsemenu .collapseall {
   display: block;
 }
@@ -35400,8 +35393,20 @@ table.calendartable caption {
 .section-collapsemenu.collapsed .expandall {
   display: block;
 }
-.section-collapsemenu:hover .collapsemenu-text {
+
+button.section-collapsemenu {
+  padding: 0.5rem 0.75rem;
+  color: var(--bs-gray-600);
+  line-height: 1;
+  background: none;
+  border: 0;
+}
+button.section-collapsemenu:hover .collapsemenu-text {
   text-decoration: underline;
+}
+
+.section-list.has-collapsemenu .section-collapsemenu {
+  display: none;
 }
 
 .courseindex-collapsemenu {

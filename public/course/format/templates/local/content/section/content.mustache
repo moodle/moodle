@@ -19,6 +19,9 @@
 
     The internal content of a section.
 
+    The "collapsemenu" context value is deprecated since Moodle 5.3. The collapse/expand all sections
+    toggle is now part of the core_courseformat/local/content template.
+
     Example context (json):
     {
         "num": 3,
@@ -115,6 +118,30 @@
             {{> core_courseformat/local/content/section/badges }}
         {{/ core_courseformat/local/content/section/badges }}
     </div>
+    {{!
+        @deprecated since Moodle 5.3. The collapse/expand all sections toggle is now rendered by the
+        core_courseformat/local/content template, above the section list. The markup below is only kept
+        so that course formats and themes overriding core_courseformat/local/content (but not this
+        template) keep working. The core content template suppresses it by overriding this block.
+    }}
+    {{$ core_courseformat/local/content/section/collapsemenu }}
+        {{#collapsemenu}}
+            {{^displayonesection}}
+                <div class="flex-fill d-flex justify-content-end me-2 align-self-start mt-2">
+                    <a id="collapsesections"
+                       class="section-collapsemenu"
+                       href="#"
+                       aria-expanded="true"
+                       role="button"
+                       data-toggle="toggleall"
+                    >
+                        <span class="collapseall text-nowrap">{{#str}}collapseall{{/str}}</span>
+                        <span class="expandall text-nowrap">{{#str}}expandall{{/str}}</span>
+                    </a>
+                </div>
+            {{/displayonesection}}
+        {{/collapsemenu}}
+    {{/ core_courseformat/local/content/section/collapsemenu }}
     {{#controlmenu}}
         {{^displayonesection}}
             {{$ core_courseformat/local/content/section/controlmenu }}

@@ -334,6 +334,14 @@ class section implements named_templatable, renderable {
             !$section->is_delegated()
         );
 
+        // The collapsemenu attribute is deprecated since Moodle 5.3. The collapse/expand all sections
+        // toggle is now exported by \core_courseformat\output\local\content and rendered above the
+        // section list. It is kept here only for course formats and themes still overriding the
+        // core_courseformat/local/content template with a version that does not render the toggle.
+        // It must always be set: \core_courseformat\output\local\content exports a collapsemenu
+        // attribute too, and Mustache would otherwise fall back to it for every section.
+        $data->collapsemenu = ($data->num === 0 && !$data->iscoursedisplaymultipage);
+
         $data->contentcollapsed = $this->is_section_collapsed();
 
         if ($format->is_section_current($section)) {

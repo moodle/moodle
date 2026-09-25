@@ -1,0 +1,22 @@
+issueNumber: MDL-89496
+notes:
+  core_courseformat:
+    - message: >-
+        The section collapse/expand-all toggle (collapsemenu) in
+        core_courseformat\output\local\content\section and in the
+        core_courseformat/local/content/section/content template is deprecated.
+        It is still exported and rendered so that course formats and themes
+        overriding the core_courseformat/local/content template keep working,
+        but the toggle is now part of core_courseformat\output\local\content and
+        the core_courseformat/local/content template, which suppresses the
+        deprecated markup by overriding the
+        core_courseformat/local/content/section/collapsemenu block. Course
+        formats and themes overriding core_courseformat/local/content should
+        update their copy to render the toggle above the section list.
+      type: deprecated
+    - message: >-
+        The collapse/expand-all toggle rendered by the
+        core_courseformat/local/content template no longer has the
+        collapsesections id. Use the [data-toggle="toggleall"] selector to
+        target it instead.
+      type: changed

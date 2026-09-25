@@ -94,11 +94,11 @@ Feature: Course content collapsed user preferences
     And I turn editing mode on
     And I click on "Collapse all" "button" in the "region-main" "region"
     And I should see "Expand all" in the "region-main" "region"
-    And the "aria-expanded" attribute of "#collapsesections" "css_element" should contain "false"
+    And the "aria-expanded" attribute of "[data-toggle='toggleall']" "css_element" should contain "false"
     # New sections are expanded by default, so the toggle switches back to "Collapse all".
     When I click on "Add section" "link" in the "course-addsection" "region"
     Then I should see "Collapse all" in the "region-main" "region"
-    And the "aria-expanded" attribute of "#collapsesections" "css_element" should contain "true"
+    And the "aria-expanded" attribute of "[data-toggle='toggleall']" "css_element" should contain "true"
     But I should not see "Expand all" in the "region-main" "region"
 
   @javascript

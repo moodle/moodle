@@ -52,9 +52,15 @@ $divider-hover-color: $primary !default;
     }
 }
 
-// Expand all/Collapse all toggle in the section header.
+// Expand all/Collapse all toggle above the section list.
 .section-collapsemenu {
     @include collapsemenu-toggle;
+}
+
+// The toggle is only rendered as a button since Moodle 5.3. Course formats and themes overriding the
+// core_courseformat/local/content template with an older version still render it as a link inside the
+// first section, and must keep the previous appearance.
+button.section-collapsemenu {
     padding: map-get($spacers, 2) .75rem;
     // The custom property, not the SCSS variable: this toggle sits on the page rather than in a card, and gray 600
     // only reaches 3.35:1 there once the page is dark. The light value is unchanged.
@@ -66,6 +72,14 @@ $divider-hover-color: $primary !default;
     &:hover .collapsemenu-text {
         text-decoration: underline;
     }
+}
+
+// Deprecated since Moodle 5.3. Course formats and themes overriding the
+// core_courseformat/local/content/section/content template with a version older than Moodle 5.3 still
+// render the toggle inside the first section. Hide it when the section list is already preceded by the
+// toggle, so that it is not displayed twice.
+.section-list.has-collapsemenu .section-collapsemenu {
+    display: none;
 }
 
 // Expand all/Collapse all toggle in the course index drawer.
