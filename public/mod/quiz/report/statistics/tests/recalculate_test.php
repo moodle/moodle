@@ -249,6 +249,23 @@ final class recalculate_test extends \advanced_testcase {
     }
 
     /**
+     * Tasks that have exhausted their retries should not be reported as pending.
+     */
+    public function test_task_due_in_ignores_exhausted_task(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->mock_clock_with_frozen();
+        $quizid = $this->create_quiz_id();
+
+        recalculate::queue_future_run($quizid, true);
+        $task = manager::get_queued_adhoc_task_record(recalculate::instance($quizid));
+        $DB->set_field('task_adhoc', 'attemptsavailable', 0, ['id' => $task->id]);
+
+        $this->assertNull(recalculate::task_due_in($quizid));
+    }
+
+    /**
      * task_due_in should return null for a different quiz even when another quiz has a pending task.
      */
     public function test_task_due_in_is_null_for_different_quiz(): void {

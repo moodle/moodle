@@ -140,7 +140,7 @@ class recalculate extends \core\task\adhoc_task {
      */
     public static function task_due_in(int $quizid): ?int {
         $task = self::instance($quizid);
-        $scheduledtask = manager::get_queued_adhoc_task_record($task);
+        $scheduledtask = manager::get_queued_adhoc_task_record($task, false);
         if (!$scheduledtask) {
             return null;
         }
