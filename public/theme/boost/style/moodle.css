@@ -33104,8 +33104,8 @@ blockquote {
 body.behat-site .action-menu .dropdown-subpanel-content.show {
   animation: none;
 }
-.action-menu .dropstart .dropdown-subpanel-content.dropdown-menu[data-bs-popper],
-.action-menu .dropend .dropdown-subpanel-content.dropdown-menu[data-bs-popper] {
+.action-menu .dropstart .dropdown-subpanel-content.dropdown-menu[data-bs-popper][data-popper-placement$=-start],
+.action-menu .dropend .dropdown-subpanel-content.dropdown-menu[data-bs-popper][data-popper-placement$=-start] {
   /* stylelint-disable declaration-no-important */
   top: calc(-0.5rem - var(--bs-border-width)) !important;
   /* stylelint-enable declaration-no-important */
