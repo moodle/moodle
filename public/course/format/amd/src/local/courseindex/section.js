@@ -41,6 +41,7 @@ export default class Component extends DndSection {
             SECTION: `[data-for='section']`,
             SECTION_ITEM: `[data-for='section_item']`,
             SECTION_TITLE: `[data-for='section_title']`,
+            SECTION_COLLAPSE: `[data-for='section_collapse']`,
             CM_LAST: `[data-for="cm"]:last-child`,
             DND_ALLOWED: `[data-courseindexdndallowed='true']`,
             COLLAPSE: `[data-bs-toggle="collapse"]`,
@@ -183,7 +184,7 @@ export default class Component extends DndSection {
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.locked = element.locked;
         // The section number is used as a positional reference elsewhere, so it must stay in sync after a move.
-        this.element.dataset.number = element.number;
+        this._refreshNumberDependentIds(element.number);
         // Update title.
         const titleElement = this.getElement(this.selectors.SECTION_TITLE);
         titleElement.innerHTML = element.title;
@@ -191,6 +192,33 @@ export default class Component extends DndSection {
         if (titleElement.tagName === 'A' && element.sectionurl) {
             titleElement.setAttribute('href', element.sectionurl);
         }
+    }
+
+    /**
+     * Update the section number and the collapsible element id derived from it.
+     *
+     * The collapsible region id (and the toggler pointing at it) is built from the section
+     * number. Leaving it stale after a move or a delete lets a later section reuse the same
+     * number, so its own freshly rendered collapsible would share the same id, and expanding
+     * or collapsing either of them would affect whichever one the browser finds first.
+     *
+     * @param {Number} number the new section number
+     */
+    _refreshNumberDependentIds(number) {
+        const previousNumber = this.element.dataset.number;
+        this.element.dataset.number = number;
+        if (previousNumber == number) {
+            return;
+        }
+        const toggler = this.getElement(this.selectors.COLLAPSE);
+        const collapsible = this.getElement(this.selectors.SECTION_COLLAPSE);
+        if (!toggler || !collapsible) {
+            return;
+        }
+        const newId = `courseindexcollapse${number}`;
+        collapsible.id = newId;
+        toggler.setAttribute('href', `#${newId}`);
+        toggler.setAttribute('aria-controls', newId);
     }
 
     /**
