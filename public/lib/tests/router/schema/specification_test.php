@@ -388,7 +388,7 @@ final class specification_test extends route_testcase {
         $this->assertSame(['oauth2' => $scopesets[0]->requiredscopes], $requestschema->get->security[0]);
         $this->assertSame(['oauth2' => $scopesets[1]->requiredscopes], $requestschema->get->security[1]);
 
-        $this->assertStringContainsString('Required OAuth Scopes:', $requestschema->get->description);
+        $this->assertStringContainsString('Required OAuth scopes:', $requestschema->get->description);
         $this->assertStringContainsString('fake_oauth2scope:resource:read', $requestschema->get->description);
         $this->assertStringContainsString('fake_oauth2scope:resource:write', $requestschema->get->description);
     }
@@ -411,7 +411,7 @@ final class specification_test extends route_testcase {
         );
 
         $this->assertSame('An example route.', $requestschema->get->description);
-        $this->assertStringNotContainsString('Required OAuth Scopes', $requestschema->get->description);
+        $this->assertStringNotContainsString('Required OAuth scopes', $requestschema->get->description);
     }
 
     public function test_is_reference_defined(): void {

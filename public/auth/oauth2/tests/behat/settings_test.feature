@@ -11,7 +11,7 @@ Feature: OAuth2 settings test functionality
   Scenario: Test oAuth2 authentication settings with no configured service.
     Given I navigate to "Plugins > Authentication > Manage authentication" in site administration
     And I click on "Test settings" "link" in the "OAuth 2" "table_row"
-    Then I should see "There are no configured OAuth2 providers"
+    Then I should see "There are no configured OAuth 2 providers"
 
   Scenario: Test oAuth2 authentication settings for a configured service.
     Given I navigate to "Server > OAuth 2 services" in site administration
