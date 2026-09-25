@@ -2757,7 +2757,7 @@ class backup_questions_structure_step extends backup_structure_step {
             ],
         );
 
-        $questionverion->set_source_table('question_versions', ['questionbankentryid' => backup::VAR_PARENTID]);
+        $questionverion->set_source_table('question_versions', ['questionbankentryid' => backup::VAR_PARENTID], 'version ASC');
 
         $question->set_source_sql('
                 SELECT q.*
