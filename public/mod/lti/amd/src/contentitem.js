@@ -67,7 +67,7 @@ define(
                     return Modal.create({
                         title: title,
                         body: bodyPromise,
-                        large: true,
+                        templateContext: {classes: 'contentitem-modal'},
                         show: true,
                     });
                 }).then(function(modal) {
