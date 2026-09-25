@@ -29,9 +29,19 @@ interface TOTPInterface extends OTPInterface
         int $digits = self::DEFAULT_DIGITS
     ): self;
 
+    /**
+     * @deprecated Deprecated since v11.4, use {@see self::withPeriod()} instead
+     */
     public function setPeriod(int $period): void;
 
+    public function withPeriod(int $period): self;
+
+    /**
+     * @deprecated Deprecated since v11.4, use {@see self::withEpoch()} instead
+     */
     public function setEpoch(int $epoch): void;
+
+    public function withEpoch(int $epoch): self;
 
     /**
      * Return the TOTP at the current time.

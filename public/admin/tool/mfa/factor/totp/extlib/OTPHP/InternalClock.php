@@ -8,6 +8,8 @@ use DateTimeImmutable;
 use Psr\Clock\ClockInterface;
 
 /**
+ * @readonly
+ *
  * @internal
  */
 final class InternalClock implements ClockInterface

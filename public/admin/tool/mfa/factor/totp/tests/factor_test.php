@@ -20,7 +20,11 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../extlib/OTPHP/OTPInterface.php');
 require_once(__DIR__.'/../extlib/OTPHP/TOTPInterface.php');
-require_once(__DIR__.'/../extlib/OTPHP/ParameterTrait.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/OTPExceptionInterface.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/InvalidLabelException.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/InvalidParameterException.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/ParameterNotFoundException.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/SecretDecodingException.php');
 require_once(__DIR__.'/../extlib/OTPHP/InternalClock.php');
 require_once(__DIR__.'/../extlib/OTPHP/OTP.php');
 require_once(__DIR__.'/../extlib/OTPHP/TOTP.php');

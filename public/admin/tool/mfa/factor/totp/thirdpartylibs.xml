@@ -3,7 +3,7 @@
   <library>
     <location>extlib/OTPHP</location>
     <name>OTPHP</name>
-    <version>11.3.0</version>
+    <version>11.5.0</version>
     <license>MIT</license>
     <repository>https://github.com/Spomky-Labs/otphp</repository>
   </library>

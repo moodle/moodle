@@ -21,7 +21,11 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/tcpdf/tcpdf_barcodes_2d.php');
 require_once(__DIR__.'/../extlib/OTPHP/OTPInterface.php');
 require_once(__DIR__.'/../extlib/OTPHP/TOTPInterface.php');
-require_once(__DIR__.'/../extlib/OTPHP/ParameterTrait.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/OTPExceptionInterface.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/InvalidLabelException.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/InvalidParameterException.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/ParameterNotFoundException.php');
+require_once(__DIR__ . '/../extlib/OTPHP/Exception/SecretDecodingException.php');
 require_once(__DIR__.'/../extlib/OTPHP/OTP.php');
 require_once(__DIR__.'/../extlib/OTPHP/TOTP.php');
 
@@ -94,8 +98,8 @@ class factor extends object_factor_base {
         $sitename = str_replace(':', '', format_string($SITE->fullname, true, ['context' => system::instance()]));
         $issuer = $sitename.' '.$host;
         $totp = TOTP::create($secret, clock: $this->clock);
-        $totp->setLabel($USER->username);
-        $totp->setIssuer($issuer);
+        $totp = $totp->withLabel($USER->username);
+        $totp = $totp->withIssuer($issuer);
         return $totp->getProvisioningUri();
     }
 
