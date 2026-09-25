@@ -706,6 +706,18 @@ M.core_filepicker.init = function(Y, options) {
                     }
                     if (data) {
                         if (data.error) {
+                            if (args.hasOwnProperty('callbackUploadFinished')) {
+                                args.callbackUploadFinished();
+                            }
+                            if (args.hasOwnProperty('onerror')) {
+                                args.onerror(null, data, {scope: scope});
+                            } else {
+                                // Blank the dialogue to ensure it is not left in an inconsistent state.
+                                scope.fpnode.one('.fp-content').setContent('');
+                            }
+                            // Show the error dialogue after any recovery UI above (for example the
+                            // filemanager re-showing the file picker) so that it is the last dialogue
+                            // to trap focus, and therefore the one that keeps it.
                             if (data.errorcode === 'invalidfiletypewithaccepted') {
                                 // File type errors are not really errors, so report them less scarily.
                                 Y.use('moodle-core-notification-alert', function() {
@@ -718,15 +730,6 @@ M.core_filepicker.init = function(Y, options) {
                                 Y.use('moodle-core-notification-ajaxexception', function() {
                                     return new M.core.ajaxException(data);
                                 });
-                            }
-                            if (args.hasOwnProperty('callbackUploadFinished')) {
-                                args.callbackUploadFinished();
-                            }
-                            if (args.hasOwnProperty('onerror')) {
-                                args.onerror(null, data, {scope: scope});
-                            } else {
-                                // Blank the dialogue to ensure it is not left in an inconsistent state.
-                                scope.fpnode.one('.fp-content').setContent('');
                             }
                             return;
                         }
