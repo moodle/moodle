@@ -5342,7 +5342,8 @@ class restore_create_categories_and_questions extends restore_structure_step {
         // Check if this is a pre 4.0 backup, then there will not be a question bank entry
         // or question version in the file. So, we need to set up that data ready to be used below.
         $restoretask = $this->get_task();
-        if ($restoretask->backup_release_compare('4.0', '<') || $restoretask->backup_version_compare(20220202, '<')) {
+        $before40 = $restoretask->backup_release_compare('4.0', '<') || $restoretask->backup_version_compare(20220202, '<');
+        if ($before40) {
             // Get the mapped category (cannot use get_new_parentid() because not
             // all the categories have been created, so it is not always available
             // Instead we get the mapping for the question->parentitemid because
@@ -5403,24 +5404,37 @@ class restore_create_categories_and_questions extends restore_structure_step {
             // Now we know we are inserting a question, we may need to insert the questionbankentry.
             if (empty($this->latestqbe->newid)) {
                 $this->latestqbe->oldid = $this->latestqbe->id;
+                $targetcategoryid = $this->get_new_parentid('question_category');
+                $qbeexistsintargetcategory = !$before40 && $DB->record_exists('question_bank_entries', [
+                    'id' => $this->latestqbe->id,
+                    'questioncategoryid' => $targetcategoryid,
+                ]);
 
-                $this->latestqbe->questioncategoryid = $this->get_new_parentid('question_category');
-                $userid = $this->get_mappingid('user', $this->latestqbe->ownerid);
-                if ($userid) {
-                    $this->latestqbe->ownerid = $userid;
+                if ($this->task->is_samesite() && $targetcategoryid && $qbeexistsintargetcategory) {
+                    $this->latestqbe->newid = $this->latestqbe->id;
                 } else {
-                    if (!$this->task->is_samesite()) {
-                        $this->latestqbe->ownerid = $this->task->get_userid();
+                    $this->latestqbe->questioncategoryid = $targetcategoryid;
+                    $userid = $this->get_mappingid('user', $this->latestqbe->ownerid);
+                    if ($userid) {
+                        $this->latestqbe->ownerid = $userid;
+                    } else {
+                        if (!$this->task->is_samesite()) {
+                            $this->latestqbe->ownerid = $this->task->get_userid();
+                        }
                     }
-                }
 
-                // The idnumber if it exists also needs to be unique within a category or reset it to null.
-                if (!empty($this->latestqbe->idnumber) && $DB->record_exists('question_bank_entries',
-                        ['idnumber' => $this->latestqbe->idnumber, 'questioncategoryid' => $this->latestqbe->questioncategoryid])) {
-                    unset($this->latestqbe->idnumber);
-                }
+                    // The idnumber if it exists also needs to be unique within a category or reset it to null.
+                    $idnumberconditions = [
+                        'idnumber' => $this->latestqbe->idnumber,
+                        'questioncategoryid' => $this->latestqbe->questioncategoryid,
+                    ];
 
-                $this->latestqbe->newid = $DB->insert_record('question_bank_entries', $this->latestqbe);
+                    if (!empty($this->latestqbe->idnumber) && $DB->record_exists('question_bank_entries', $idnumberconditions)) {
+                        unset($this->latestqbe->idnumber);
+                    }
+
+                    $this->latestqbe->newid = $DB->insert_record('question_bank_entries', $this->latestqbe);
+                }
                 $this->set_mapping('question_bank_entry', $this->latestqbe->oldid, $this->latestqbe->newid);
             }
 
