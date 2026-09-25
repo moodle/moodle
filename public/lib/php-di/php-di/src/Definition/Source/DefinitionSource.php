@@ -19,7 +19,7 @@ interface DefinitionSource
      *
      * @throws InvalidDefinition An invalid definition was found.
      */
-    public function getDefinition(string $name) : Definition|null;
+    public function getDefinition(string $name) : ?Definition;
 
     /**
      * @return array<string,Definition> Definitions indexed by their name.

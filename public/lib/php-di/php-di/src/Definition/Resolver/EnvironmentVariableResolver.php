@@ -22,7 +22,7 @@ class EnvironmentVariableResolver implements DefinitionResolver
 
     public function __construct(
         private DefinitionResolver $definitionResolver,
-        $variableReader = null
+        $variableReader = null,
     ) {
         $this->variableReader = $variableReader ?? [$this, 'getEnvVariable'];
     }

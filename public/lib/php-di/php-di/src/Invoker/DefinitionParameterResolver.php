@@ -19,14 +19,14 @@ use ReflectionFunctionAbstract;
 class DefinitionParameterResolver implements ParameterResolver
 {
     public function __construct(
-        private DefinitionResolver $definitionResolver
+        private DefinitionResolver $definitionResolver,
     ) {
     }
 
     public function getParameters(
         ReflectionFunctionAbstract $reflection,
         array $providedParameters,
-        array $resolvedParameters
+        array $resolvedParameters,
     ) : array {
         // Skip parameters already resolved
         if (! empty($resolvedParameters)) {

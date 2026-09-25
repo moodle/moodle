@@ -17,7 +17,7 @@ use DI\Definition\Exception\InvalidAttribute;
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD | Attribute::TARGET_PARAMETER)]
-final class Inject
+class Inject
 {
     /**
      * Entry name.
@@ -59,7 +59,7 @@ final class Inject
     /**
      * @return string|null Name of the entry to inject
      */
-    public function getName() : string|null
+    public function getName() : ?string
     {
         return $this->name;
     }

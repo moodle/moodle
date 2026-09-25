@@ -13,7 +13,7 @@ use DI\Definition\FactoryDefinition;
 use DI\Definition\InstanceDefinition;
 use DI\Definition\ObjectDefinition;
 use DI\Definition\SelfResolvingDefinition;
-use DI\Proxy\ProxyFactory;
+use DI\Proxy\ProxyFactoryInterface;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -23,6 +23,8 @@ use Psr\Container\ContainerInterface;
  *
  * @since 5.0
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
+ *
+ * @psalm-suppress MissingTemplateParam
  */
 class ResolverDispatcher implements DefinitionResolver
 {
@@ -35,7 +37,7 @@ class ResolverDispatcher implements DefinitionResolver
 
     public function __construct(
         private ContainerInterface $container,
-        private ProxyFactory $proxyFactory,
+        private ProxyFactoryInterface $proxyFactory,
     ) {
     }
 

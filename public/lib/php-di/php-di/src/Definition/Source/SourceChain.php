@@ -28,7 +28,7 @@ class SourceChain implements DefinitionSource, MutableDefinitionSource
      * @param int $startIndex Use this parameter to start looking from a specific
      *                        point in the source chain.
      */
-    public function getDefinition(string $name, int $startIndex = 0) : Definition|null
+    public function getDefinition(string $name, int $startIndex = 0) : ?Definition
     {
         $count = count($this->sources);
         for ($i = $startIndex; $i < $count; ++$i) {

@@ -17,7 +17,7 @@ use Attribute;
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class Injectable
+class Injectable
 {
     /**
      * @param bool|null $lazy Should the object be lazy-loaded.
@@ -27,7 +27,7 @@ final class Injectable
     ) {
     }
 
-    public function isLazy() : bool|null
+    public function isLazy() : ?bool
     {
         return $this->lazy;
     }

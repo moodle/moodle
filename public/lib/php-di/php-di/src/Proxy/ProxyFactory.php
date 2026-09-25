@@ -9,7 +9,6 @@ use ProxyManager\Factory\LazyLoadingValueHolderFactory;
 use ProxyManager\FileLocator\FileLocator;
 use ProxyManager\GeneratorStrategy\EvaluatingGeneratorStrategy;
 use ProxyManager\GeneratorStrategy\FileWriterGeneratorStrategy;
-use ProxyManager\Proxy\LazyLoadingInterface;
 
 /**
  * Creates proxy classes.
@@ -21,7 +20,7 @@ use ProxyManager\Proxy\LazyLoadingInterface;
  * @since  5.0
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class ProxyFactory
+class ProxyFactory implements ProxyFactoryInterface
 {
     private ?LazyLoadingValueHolderFactory $proxyManager = null;
 
@@ -37,12 +36,19 @@ class ProxyFactory
      * Creates a new lazy proxy instance of the given class with
      * the given initializer.
      *
-     * @param class-string $className name of the class to be proxied
-     * @param \Closure $initializer initializer to be passed to the proxy
+     * {@inheritDoc}
      */
-    public function createProxy(string $className, \Closure $initializer) : LazyLoadingInterface
+    public function createProxy(string $className, \Closure $createFunction): object
     {
-        return $this->proxyManager()->createProxy($className, $initializer);
+        return $this->proxyManager()->createProxy(
+            $className,
+            function (& $wrappedObject, $proxy, $method, $params, & $initializer) use ($createFunction) {
+                $wrappedObject = $createFunction();
+                $initializer = null; // turning off further lazy initialization
+
+                return true;
+            }
+        );
     }
 
     /**

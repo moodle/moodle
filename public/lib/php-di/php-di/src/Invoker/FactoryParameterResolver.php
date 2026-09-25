@@ -21,14 +21,14 @@ use ReflectionNamedType;
 class FactoryParameterResolver implements ParameterResolver
 {
     public function __construct(
-        private ContainerInterface $container
+        private ContainerInterface $container,
     ) {
     }
 
     public function getParameters(
         ReflectionFunctionAbstract $reflection,
         array $providedParameters,
-        array $resolvedParameters
+        array $resolvedParameters,
     ) : array {
         $parameters = $reflection->getParameters();
 

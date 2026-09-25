@@ -9,9 +9,8 @@ use DI\Definition\Exception\InvalidDefinition;
 use DI\Definition\ObjectDefinition;
 use DI\Definition\ObjectDefinition\PropertyInjection;
 use DI\DependencyException;
-use DI\Proxy\ProxyFactory;
+use DI\Proxy\ProxyFactoryInterface;
 use Exception;
-use ProxyManager\Proxy\LazyLoadingInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionProperty;
@@ -29,12 +28,12 @@ class ObjectCreator implements DefinitionResolver
     private ParameterResolver $parameterResolver;
 
     /**
-     * @param DefinitionResolver $definitionResolver Used to resolve nested definitions.
-     * @param ProxyFactory       $proxyFactory       Used to create proxies for lazy injections.
+     * @param DefinitionResolver    $definitionResolver Used to resolve nested definitions.
+     * @param ProxyFactoryInterface $proxyFactory       Used to create proxies for lazy injections.
      */
     public function __construct(
         private DefinitionResolver $definitionResolver,
-        private ProxyFactory $proxyFactory
+        private ProxyFactoryInterface $proxyFactory,
     ) {
         $this->parameterResolver = new ParameterResolver($definitionResolver);
     }
@@ -70,18 +69,15 @@ class ObjectCreator implements DefinitionResolver
     /**
      * Returns a proxy instance.
      */
-    private function createProxy(ObjectDefinition $definition, array $parameters) : LazyLoadingInterface
+    private function createProxy(ObjectDefinition $definition, array $parameters) : object
     {
         /** @var class-string $className */
         $className = $definition->getClassName();
 
         return $this->proxyFactory->createProxy(
             $className,
-            function (& $wrappedObject, $proxy, $method, $params, & $initializer) use ($definition, $parameters) {
-                $wrappedObject = $this->createInstance($definition, $parameters);
-                $initializer = null; // turning off further lazy initialization
-
-                return true;
+            function () use ($definition, $parameters) {
+                return $this->createInstance($definition, $parameters);
             }
         );
     }
