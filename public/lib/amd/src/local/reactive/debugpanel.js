@@ -151,6 +151,7 @@ class GlobalDebugPanel extends BaseComponent {
         this.subPanels.add(instance.id);
         const loaders = this.getElement(this.selectors.LOADERS);
         const btn = document.createElement("button");
+        btn.className = "btn btn-light btn-sm ms-1";
         btn.innerHTML = instance.id;
         btn.dataset.id = instance.id;
         loaders.appendChild(btn);
