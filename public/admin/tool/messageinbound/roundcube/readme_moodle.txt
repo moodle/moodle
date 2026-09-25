@@ -42,4 +42,12 @@ To upgrade this library:
    rcube_result_index.php \
    rcube_result_thread.php
    ```
-6. Update the library's version in admin/tool/messageinbound/thirdpartylibs.xml.
+6. Remove the `rcube_utils::is_local_url()` and `rcube_utils::is_ip_in_range()` methods from
+   rcube_utils.php, along with the `use IPLib\Factory;` and `use IPLib\ParseStringFlag;`
+   statements at the top of the file. These methods depend on the external `mlocati/ip-lib`
+   package (IPLib), which Moodle does not bundle or declare as a dependency. Moodle only vendors
+   the IMAP-client subset of Roundcube Framework and never calls these methods (they exist
+   upstream to support the webmail CSS proxy's SSRF protection, which Moodle does not use), so
+   they are dead code here - but if left in place, they reference classes that don't exist in our
+   tree and would fatal error if ever reached.
+7. Update the library's version in admin/tool/messageinbound/thirdpartylibs.xml.

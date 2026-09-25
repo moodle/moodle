@@ -5,7 +5,8 @@
         <name>Roundcube Framework</name>
         <license>GPL</license>
         <licenseversion>3.0+</licenseversion>
-        <version>1.6.11</version>
+        <version>1.7.4</version>
+        <customised/>
         <repository>https://github.com/roundcube/roundcubemail</repository>
         <copyrights>
             <copyright>The Roundcube Dev Team</copyright>
