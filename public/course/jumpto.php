@@ -26,16 +26,13 @@
 
 require('../config.php');
 
-$jump = required_param('jump', PARAM_RAW);
+$jump = required_param('jump', PARAM_LOCALURL);
+$PAGE->set_url('/course/jumpto.php', ['jump' => $jump]);
 
-$PAGE->set_url('/course/jumpto.php');
+require_sesskey();
 
-if (!confirm_sesskey()) {
-    throw new \moodle_exception('confirmsesskeybad');
+if ($jump === '') {
+    throw new \core\exception\moodle_exception('invalidurl', 'error');
 }
 
-if (strpos($jump, '/') === 0 || strpos($jump, $CFG->wwwroot) === 0) {
-    redirect(new moodle_url($jump));
-} else {
-    throw new \moodle_exception('error');
-}
+redirect(new moodle_url($jump));
