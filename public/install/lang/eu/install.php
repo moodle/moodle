@@ -61,7 +61,7 @@ $string['pathssubdataroot'] = '<p>Moodlek erabiltzaileek igotako fitxategien edu
 <p>Direktorioa existitzen ez bada, instalazioan sortzeko saiakera egingo da.</p>';
 $string['pathssubdirroot'] = '<p>Moodleko kodea daukan direktorioaren bide osoa.</p>';
 $string['pathssubwwwroot'] = '<p>Moodle eskuragarri egongo den helbide osoa, hau da, erabiltzaileek Moodlen sartzeko nabigatzailearen helbide barran idatziko duten helbidea</p>
-<p>Moodle ezin da hainbat helbidetatik eskuragarri egon. Zure gunea hainbat helbidetatik eskuragarri badago errazena aukeratu eta bertara beste helbideetatik behin-betiko berbideraketak konfiguratu itzazu.</p>
+<p>Moodle ezin da hainbat helbidetatik eskuragarri egon. Zure gunea hainbat helbidetatik eskuragarri badago errazena aukeratu eta bertara beste helbideetatik behin betiko berbideraketak konfiguratu itzazu.</p>
 <p>Zure gunea Internetetik eta barne-sare batetik eskuragarri badago (batzuetan Intranet deitutakoa), hemen helbide publikoa erabili ezazu.</p>
 <p>Oraingo helbidea egokia ez bada, mesedez aldatu ezazu URLa zure nabigatzailean eta instalazioa berriz abiatu ezazu.</p>';
 $string['pathsunsecuredataroot'] = 'Dataroot-en kokapena ez da segurua';
