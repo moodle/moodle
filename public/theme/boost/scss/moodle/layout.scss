@@ -40,6 +40,7 @@
         max-width: 100%;
         width: 100%;
         margin: 0 auto;
+        background-color: var(--#{$prefix}body-bg);
         @include border-radius();
         padding: 1.5rem 0.5rem;
         margin-top: 0.5rem;
@@ -231,6 +232,11 @@
     // Min() falls back to the viewport edge when there isn't enough room to anchor to main-inner.
     .pagelayout-standard,
     body.limitedwidth {
+        // Lines up the top of the rounded content card with the anchored side drawers.
+        #page.drawers .main-inner {
+            margin-top: calc(#{$drawer-anchored-top-offset} - #{$navbar-height});
+        }
+
         .drawer-toggles {
             // Keep the open togglers of closed drawers aligned with the drawers.
             .drawer-toggler {

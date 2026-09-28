@@ -36011,8 +36011,6 @@ body:not(.editing) .single-section > ul > .course-section .section_availability 
 }
 
 .single-section-page #page.drawers #topofscroll {
-  background-color: var(--bs-body-bg);
-  border-radius: 1rem;
   padding: 1rem;
 }
 .single-section-page #page-header {
@@ -45157,6 +45155,7 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   max-width: 100%;
   width: 100%;
   margin: 0 auto;
+  background-color: var(--bs-body-bg);
   border-radius: 0.5rem;
   padding: 1.5rem 0.5rem;
   margin-top: 0.5rem;
@@ -45326,6 +45325,10 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   }
 }
 @media (min-width: 992px) {
+  .pagelayout-standard #page.drawers .main-inner,
+  body.limitedwidth #page.drawers .main-inner {
+    margin-top: calc(calc(60px + 3rem - 0.5rem) - 60px);
+  }
   .pagelayout-standard .drawer-toggles .drawer-toggler,
   body.limitedwidth .drawer-toggles .drawer-toggler {
     top: calc(60px + 3rem);
@@ -47068,7 +47071,6 @@ div.editor_atto_toolbar button .icon {
 .secondary-navigation .navigation {
   border-bottom: 1px solid var(--bs-border-color);
   background-color: var(--bs-body-bg);
-  margin: 0 -0.5rem;
   padding: 0 0.5rem;
 }
 .secondary-navigation .navigation .nav-tabs {
