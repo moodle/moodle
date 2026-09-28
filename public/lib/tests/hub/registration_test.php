@@ -40,6 +40,15 @@ final class registration_test extends \advanced_testcase {
     }
 
     /**
+     * Clear the static registration cache so a confirmed registration created in this class does
+     * not leak into whichever test class runs next in the same process.
+     */
+    protected function tearDown(): void {
+        $this->reset_registration_cache();
+        parent::tearDown();
+    }
+
+    /**
      * Clear the static registration cache so a mid-test change to the database is picked up.
      */
     private function reset_registration_cache(): void {

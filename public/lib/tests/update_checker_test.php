@@ -46,6 +46,16 @@ final class update_checker_test extends \advanced_testcase {
         $property->setValue(null, null);
     }
 
+    /**
+     * Clear the static registration cache so a confirmed registration created in this class does
+     * not leak into whichever test class runs next in the same process, even if the test fails
+     * or throws before reaching its own manual reset_registration_cache() call.
+     */
+    protected function tearDown(): void {
+        $this->reset_registration_cache();
+        parent::tearDown();
+    }
+
     public function test_core_available_update(): void {
         $provider = testable_checker::instance();
         $this->assertInstanceOf('\core\update\checker', $provider);

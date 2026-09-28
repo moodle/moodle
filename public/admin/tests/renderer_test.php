@@ -48,6 +48,16 @@ final class renderer_test extends \advanced_testcase {
     }
 
     /**
+     * Clear the static registration cache so a confirmed registration created in this class does
+     * not leak into whichever test class runs next in the same process.
+     */
+    protected function tearDown(): void {
+        $property = new \ReflectionProperty(\core\hub\registration::class, 'registration');
+        $property->setValue(null, null);
+        parent::tearDown();
+    }
+
+    /**
      * Get a core_admin_renderer instance.
      *
      * @return \core_admin_renderer
