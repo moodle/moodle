@@ -23,6 +23,11 @@
     * data-region
     Context variables required for this template:
     * see mod/forum/classes/output/subscription_actionbar.php
+    * subscriptionoptions - core/url_select data for the subscription mode selector.
+    * viewandmanageselectmenu - core/select_menu data for the view and manage subscribers selector.
+    * viewandmanageselect - Deprecated since Moodle 5.3, use viewandmanageselectmenu instead.
+      core/url_select data for the view and manage subscribers selector. Not used by this template.
+      @todo: MDL-89964 Final deprecation on Moodle 7.0.
     Example context (json):
     {
         "subscriptionoptions": {
@@ -43,7 +48,7 @@
                 }
             ]
         },
-        "viewandmanageselect": {
+        "viewandmanageselectmenu": {
             "name": "selectviewandmanagesubscribers",
             "value": "/mod/forum/subscribers.php?id=3&edit=off",
             "baseid": "select-menu56789",
@@ -73,11 +78,11 @@
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="d-flex">
-        {{#viewandmanageselect}}
+        {{#viewandmanageselectmenu}}
             <div class="navitem">
                 {{>core/tertiary_navigation_selector}}
             </div>
-        {{/viewandmanageselect}}
+        {{/viewandmanageselectmenu}}
         {{#subscriptionoptions}}
             <div class="navitem ms-sm-auto">
                 {{>core/url_select}}

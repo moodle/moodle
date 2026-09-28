@@ -117,11 +117,11 @@ class subscription_actionbar implements renderable, templatable {
     }
 
     /**
-     * Create view and manage subscribers select menu tertiary navigation item.
+     * Get the options for the view and manage subscribers menu.
      *
-     * @return select_menu|null get select_menu object.
+     * @return array|null The menu options (label indexed by URL) and the selected URL, or null if the menu is not shown.
      */
-    private function create_view_manage_menu(): ?select_menu {
+    private function get_view_manage_options(): ?array {
         // If forced subscription is used then no need to show the view.
         if (\mod_forum\subscriptions::is_forcesubscribed($this->forum)) {
             return null;
@@ -134,17 +134,36 @@ class subscription_actionbar implements renderable, templatable {
             $viewlink->out(false) => get_string('forum:viewsubscribers', 'forum'),
             $managelink->out(false) => get_string('managesubscriptionson', 'forum'),
         ];
+        $selected = $this->edit === 0 ? $viewlink : $managelink;
 
-        if ($this->edit === 0) {
-            $this->currenturl = $viewlink;
-        } else {
-            $this->currenturl = $managelink;
-        }
-        $urlselect = new select_menu(
-            'selectviewandmanagesubscribers',
-            $menu,
-            $this->currenturl->out(false),
-        );
+        return [$menu, $selected->out(false)];
+    }
+
+    /**
+     * Create view and manage subscribers select menu tertiary navigation item.
+     *
+     * @param array $menu The menu options, label indexed by URL.
+     * @param string $selected The selected URL.
+     * @return select_menu
+     */
+    private function create_view_manage_menu(array $menu, string $selected): select_menu {
+        $selectmenu = new select_menu('selectviewandmanagesubscribers', $menu, $selected);
+        $selectmenu->set_label(get_string('subscribers', 'forum'), ['class' => 'accesshide']);
+        return $selectmenu;
+    }
+
+    /**
+     * Create the legacy view and manage subscribers url_select menu.
+     *
+     * Only exported for backwards compatibility with template overrides that render
+     * the 'viewandmanageselect' context variable using core/url_select.
+     *
+     * @param array $menu The menu options, label indexed by URL.
+     * @param string $selected The selected URL.
+     * @return url_select
+     */
+    private function create_legacy_view_manage_menu(array $menu, string $selected): url_select {
+        $urlselect = new url_select($menu, $selected, null, 'selectviewandmanagesubscribers');
         $urlselect->set_label(get_string('subscribers', 'forum'), ['class' => 'accesshide']);
         return $urlselect;
     }
@@ -158,13 +177,19 @@ class subscription_actionbar implements renderable, templatable {
     public function export_for_template(renderer_base $output): array {
         $data = [];
         $subscribeoptionselect = $this->create_subscription_menu();
-        $viewmanageselect = $this->create_view_manage_menu();
+        $viewmanageoptions = $this->get_view_manage_options();
 
         if ($subscribeoptionselect) {
-            $data ['subscriptionoptions'] = $subscribeoptionselect->export_for_template($output);
+            $data['subscriptionoptions'] = $subscribeoptionselect->export_for_template($output);
         }
-        if ($viewmanageselect) {
-            $data['viewandmanageselect'] = $viewmanageselect->export_for_template($output);
+        if ($viewmanageoptions) {
+            [$menu, $selected] = $viewmanageoptions;
+            $data['viewandmanageselectmenu'] = $this->create_view_manage_menu($menu, $selected)
+                ->export_for_template($output);
+            // Deprecated since Moodle 5.3 in favour of 'viewandmanageselectmenu'.
+            // @todo MDL-89964 Final deprecation on Moodle 7.0.
+            $data['viewandmanageselect'] = $this->create_legacy_view_manage_menu($menu, $selected)
+                ->export_for_template($output);
         }
         return $data;
     }
