@@ -1,6 +1,6 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
-## 5.3beta
+## 5.3rc1
 
 ### Added
 
@@ -16,9 +16,6 @@
 
 ### Changed
 
-- The section collapse/expand-all toggle (collapsemenu) is no longer part of core_courseformat\output\local\content\section's exported data or the core_courseformat/local/content/section template. It has moved to core_courseformat\output\local\content and the core_courseformat/local/content template, and is now rendered once above the section list instead of as part of the first section. Course formats or themes that override these classes/templates to customise the toggle will need to update accordingly.
-
-  For more information see [MDL-88410](https://tracker.moodle.org/browse/MDL-88410)
 - The course index tree semantics for subsections have moved from the delegated section wrapper to the activity that delegates it.
 
   * The `li[role="treeitem"]` in `core_courseformat/local/courseindex/cm` should add the following attributes when the activity has a delegated section:
@@ -30,6 +27,15 @@
   Note that the `core_courseformat/local/courseindex/section` JS keeps `aria-expanded` up to date by writing to the closest `[role="treeitem"]` ancestor, so the element carrying the role is the one that receives the state. Plugins overriding either template should update both, as the two are no longer independent.
 
   For more information see [MDL-88949](https://tracker.moodle.org/browse/MDL-88949)
+- The collapse/expand-all toggle rendered by the core_courseformat/local/content template no longer has the collapsesections id. Use the [data-toggle="toggleall"] selector to target it instead.
+
+  For more information see [MDL-89496](https://tracker.moodle.org/browse/MDL-89496)
+
+### Deprecated
+
+- The section collapse/expand-all toggle (collapsemenu) in core_courseformat\output\local\content\section and in the core_courseformat/local/content/section/content template is deprecated. It is still exported and rendered so that course formats and themes overriding the core_courseformat/local/content template keep working, but the toggle is now part of core_courseformat\output\local\content and the core_courseformat/local/content template, which suppresses the deprecated markup by overriding the core_courseformat/local/content/section/collapsemenu block. Course formats and themes overriding core_courseformat/local/content should update their copy to render the toggle above the section list.
+
+  For more information see [MDL-89496](https://tracker.moodle.org/browse/MDL-89496)
 
 ## 5.2
 

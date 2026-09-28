@@ -1,6 +1,6 @@
 # theme_boost Upgrade notes
 
-## 5.3beta
+## 5.3rc1
 
 ### Added
 
@@ -31,6 +31,12 @@
   time, and was not tested or validated.
 
   For more information see [MDL-89196](https://tracker.moodle.org/browse/MDL-89196)
+- The YUI dialogue variables in `theme_boost` now default to the design system's custom properties rather than literal colours, so that the dialogue chrome follows the colour mode:
+  * `$dialogue-base-bg` * `$dialogue-base-border-color` * `$dialogue-base-hd-border-color` * `$dialogue-exception-label-bg` * `$dialogue-exception-label-border-color` * `$dialogue-exception-pre-bg` * `$dialogue-exception-pre-border-color` * `$dialogue-exception-file-color` * `$dialogue-exception-call-color` * `$dialogue-exception-call-border-color` * `$dialogue-lightbox-bg`
+  A preset overriding any of these should set a colour which the dark mode can re-point, or override the custom property directly.
+  A new `$dialogue-exception-line-color` has been added for the stack trace line numbers, which previously took the warning theme colour directly. Light mode values are unchanged apart from those line numbers,  which were too pale to meet contrast on the dialogue surface.
+
+  For more information see [MDL-89735](https://tracker.moodle.org/browse/MDL-89735)
 
 ### Deprecated
 

@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 5.3beta
+## 5.3rc1
 
 ### Added
 
@@ -140,6 +140,9 @@
 - New `flexible_table::set_columnheadersattributes(...)` method for tables to define additional attributes ('class', 'data-X', etc.) for column headers
 
   For more information see [MDL-89384](https://tracker.moodle.org/browse/MDL-89384)
+- Closes an operational-visibility gap: available-updates check requests could not previously be attributed to a specific registered site, which limited abuse detection and support diagnostics on the hub side. \core\update\checker now sends two optional parameters with the available updates check: siteidentifier, the md5() of the site's registration secret, sent only when the site is registered with the sites directory, and countrycode, the configured $CFG->country, sent whenever it is set. Either parameter is omitted when it cannot be determined and the update check is never blocked by them.
+
+  For more information see [MDL-89513](https://tracker.moodle.org/browse/MDL-89513)
 - Support for Attribute-based Dependency Injection has been added:
 
   ```php
@@ -239,6 +242,9 @@
 - The `core_course` scope classes for course content and course structure now resolve their summary and description language strings. The string identifiers in `lang/en/course.php` were missing the leading `course_` identifier segment, so `\core\router\scope\abstract_scope::get_summary()` failed for six scopes.
 
   For more information see [MDL-87706](https://tracker.moodle.org/browse/MDL-87706)
+- Fixes an operational-visibility gap: a registered site whose reporting to the hub silently stopped previously gave administrators no indication of the failure. This is now surfaced to administrators. A new scheduled task core\task\registration_reporting_check_task runs daily and sends a notification through the new registrationreportingpaused message provider when reporting pauses, either because new registration fields await confirmation or because the Site registration scheduled task is disabled. \core\hub\registration gains get_reporting_paused_reason(), get_registration_page_notification() and check_reporting_paused_notification(); registration_reminder() is now also called from /my/index.php and /my/courses.php; and core_admin_renderer::registration_warning() renders a warning for a registered site whose reporting is paused because the task is disabled.
+
+  For more information see [MDL-89463](https://tracker.moodle.org/browse/MDL-89463)
 
 ## 5.2
 

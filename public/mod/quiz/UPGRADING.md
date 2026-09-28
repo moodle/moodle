@@ -1,6 +1,6 @@
 # mod_quiz Upgrade notes
 
-## 5.3beta
+## 5.3rc1
 
 ### Added
 
@@ -18,6 +18,9 @@
 - A new duedate field added to 'quiz' and 'quiz_overrides' tables
 
   For more information see [MDL-82521](https://tracker.moodle.org/browse/MDL-82521)
+- The external function mod_quiz_get_users_in_report now also returns a new 'extrafieldsdisplay' array, containing the resolved display name label for each field listed in 'extrafields' (in the same order), including custom user profile fields.
+
+  For more information see [MDL-89765](https://tracker.moodle.org/browse/MDL-89765)
 
 ### Changed
 
@@ -29,6 +32,12 @@
   If your report enforces its own capability check instead of `mod/quiz:viewreports`, override `has_permission(context $context): void` (see `quiz_grading_report` for an example) rather than calling `require_capability()` directly in `display()`, since `has_permission()` is also called by the `mod_quiz_get_users_in_report` web service before it builds your report's data.
 
   For more information see [MDL-81096](https://tracker.moodle.org/browse/MDL-81096)
+
+### Deprecated
+
+- override_manager::get_effective_open_close_times() has been restored as a deprecated wrapper around override_manager::get_effective_times(), preserving its original 'timeopen'/'timeclose'-only return contract. It had been renamed without a backwards-compatible shim; call sites still using the old name should migrate to get_effective_times().
+
+  For more information see [MDL-89711](https://tracker.moodle.org/browse/MDL-89711)
 
 ## 5.2
 

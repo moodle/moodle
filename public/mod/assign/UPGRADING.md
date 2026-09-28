@@ -1,12 +1,15 @@
 # mod_assign Upgrade notes
 
-## 5.3beta
+## 5.3rc1
 
 ### Added
 
 - Assignment override logic has been refactored and put in a new override_manager class. There are 3 new web services for managing assignment overrides: - mod_assign_save_overrides - mod_assign_get_overrides - mod_assign_delete_overrides
 
   For more information see [MDL-86513](https://tracker.moodle.org/browse/MDL-86513)
+- mod_assign_get_submission_status now returns an optional feedback.markerfeedback array with per-marker feedback (marker id, position, workflow state, and plugin data) when the assignment uses marking workflow with marking allocation.
+
+  For more information see [MDL-89346](https://tracker.moodle.org/browse/MDL-89346)
 
 ### Changed
 

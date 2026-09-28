@@ -1,6 +1,6 @@
 # enrol_manual Upgrade notes
 
-## 5.3beta
+## 5.3rc1
 
 ### Deprecated
 
