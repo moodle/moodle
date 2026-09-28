@@ -65,7 +65,10 @@ if (\core\session\manager::is_loggedinas() and $USER->loginascontext->contextlev
 }
 
 // Check if user has access to the category where the course is located.
-if (!core_course_category::can_view_course_info($course) && !is_enrolled($context, $USER, '', true)) {
+// Learners who cannot browse the catalog may still open a visible self-enrolment course.
+$mayenrol = class_exists(\local_requirelogin\access::class)
+    && \local_requirelogin\access::may_reach_enrol_page($course);
+if (!core_course_category::can_view_course_info($course) && !is_enrolled($context, $USER, '', true) && !$mayenrol) {
     throw new \moodle_exception('coursehidden', '', $CFG->wwwroot . '/');
 }
 

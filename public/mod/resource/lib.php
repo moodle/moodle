@@ -544,9 +544,13 @@ function resource_view($resource, $course, $cm, $context) {
     $event->add_record_snapshot('resource', $resource);
     $event->trigger();
 
-    // Completion.
-    $completion = new completion_info($course);
-    $completion->set_module_viewed($cm);
+    // An uploaded video stays incomplete until local_videowatch accepts the playback.
+    $deferwatch = class_exists(\local_videowatch\policy::class)
+        && \local_videowatch\policy::defers_view_completion($cm, $context);
+    if (!$deferwatch) {
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($cm);
+    }
 }
 
 /**

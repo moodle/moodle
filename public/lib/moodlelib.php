@@ -2612,14 +2612,19 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
                     }
                 } else {
                     // User is not enrolled and is not allowed to browse courses here.
-                    if ($preventredirect) {
-                        throw new require_login_exception('Course is not available');
+                    // A visible self-enrolment course is still reachable from its enrol page.
+                    $mayenrol = class_exists(\local_requirelogin\access::class)
+                        && \local_requirelogin\access::may_reach_enrol_page($course);
+                    if (!$mayenrol) {
+                        if ($preventredirect) {
+                            throw new require_login_exception('Course is not available');
+                        }
+                        $PAGE->set_context(null);
+                        // We need to override the navigation URL as the course won't have been added to the navigation and thus
+                        // the navigation will mess up when trying to find it.
+                        navigation_node::override_active_url(new moodle_url('/'));
+                        notice(get_string('coursehidden'), $CFG->wwwroot .'/');
                     }
-                    $PAGE->set_context(null);
-                    // We need to override the navigation URL as the course won't have been added to the navigation and thus
-                    // the navigation will mess up when trying to find it.
-                    navigation_node::override_active_url(new moodle_url('/'));
-                    notice(get_string('coursehidden'), $CFG->wwwroot .'/');
                 }
             }
         }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/videowatch/db" VERSION="20260928" COMMENT="XMLDB file for local_videowatch"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_videowatch" COMMENT="Watched position for a video file activity">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="duration" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Video length in milliseconds"/>
+        <FIELD NAME="frontier" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Watched position in milliseconds"/>
+        <FIELD NAME="startedat" TYPE="int" LENGTH="18" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="First accepted progress, unix milliseconds"/>
+        <FIELD NAME="lastping" TYPE="int" LENGTH="18" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last accepted progress, unix milliseconds"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_cmid" UNIQUE="true" FIELDS="userid, cmid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

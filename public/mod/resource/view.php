@@ -76,7 +76,13 @@ if (count($files) < 1) {
 
 $resource->mainfile = $file->get_filename();
 $displaytype = resource_get_final_display_type($resource);
-if ($displaytype == RESOURCELIB_DISPLAY_OPEN || $displaytype == RESOURCELIB_DISPLAY_DOWNLOAD) {
+$watchinpage = class_exists(\local_videowatch\policy::class)
+    && \local_videowatch\policy::must_play_in_page($cm, $file);
+if ($watchinpage) {
+    // Keep the player on this page so skipping to the raw file cannot count as a view.
+    $displaytype = RESOURCELIB_DISPLAY_EMBED;
+    $redirect = false;
+} else if ($displaytype == RESOURCELIB_DISPLAY_OPEN || $displaytype == RESOURCELIB_DISPLAY_DOWNLOAD) {
     $redirect = true;
 }
 
