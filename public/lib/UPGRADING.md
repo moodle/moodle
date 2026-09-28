@@ -1,5 +1,19 @@
 # core (subsystem) Upgrade notes
 
+## 5.2.3+
+
+### Added
+
+- Closes an operational-visibility gap: available-updates check requests could not previously be attributed to a specific registered site, which limited abuse detection and support diagnostics on the hub side. \core\update\checker now sends two optional parameters with the available updates check: siteidentifier, the md5() of the site's registration secret, sent only when the site is registered with the sites directory, and countrycode, the configured $CFG->country, sent whenever it is set. Either parameter is omitted when it cannot be determined and the update check is never blocked by them.
+
+  For more information see [MDL-89513](https://tracker.moodle.org/browse/MDL-89513)
+
+### Fixed
+
+- Fixes an operational-visibility gap: a registered site whose reporting to the hub silently stopped previously gave administrators no indication of the failure. This is now surfaced to administrators. A new scheduled task core\task\registration_reporting_check_task runs daily and sends a notification through the new registrationreportingpaused message provider when reporting pauses, either because new registration fields await confirmation or because the Site registration scheduled task is disabled. \core\hub\registration gains get_reporting_paused_reason(), get_registration_page_notification() and check_reporting_paused_notification(); registration_reminder() is now also called from /my/index.php and /my/courses.php; and core_admin_renderer::registration_warning() renders a warning for a registered site whose reporting is paused because the task is disabled.
+
+  For more information see [MDL-89463](https://tracker.moodle.org/browse/MDL-89463)
+
 ## 5.2.3
 
 ### Added
