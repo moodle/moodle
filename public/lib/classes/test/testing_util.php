@@ -1012,6 +1012,62 @@ abstract class testing_util {
     }
 
     /**
+     * Get the path to the root of the package Moodle is installed in.
+     *
+     * @return bool|string
+     */
+    public static function get_package_root(): string {
+        global $CFG;
+
+        if (!class_exists(\Composer\InstalledVersions::class)) {
+            // If composer is not being used, we assume that the root package is Moodle and return empty string.
+            return dirname(__DIR__, 5);
+        }
+
+        // There may be multiple vendor autoloads.
+        // Determine which is the Moodle one.
+        // We need to provide the package root directory for the Moodle composer installation.
+        // We accept the following locations:
+        // 1. The default root directory within the Moodle root were the package type is 'moodle-core'; or
+        // 2. A composer package type of 'project', and an install path which is:
+        // 2a. in the parent directory of the Moodle root; or
+        // 2b. completely separate from the Moodle root (symlink).
+        // If none of these conditions are met, we will fallback to the Moodle root.
+
+        $rootrealpath = realpath($CFG->root);
+        foreach (\Composer\InstalledVersions::getAllRawData() as $packagedata) {
+            $package = $packagedata['root'];
+            // First check if this is the main Moodle core package -- Moodle is not installed using Composer.
+            if ($package['type'] === 'moodle-core') {
+                if (isset($package['install_path']) && is_dir($package['install_path'] . '/vendor')) {
+                    return realpath($package['install_path']);
+                }
+            }
+
+            // Our next option is that Moodle is installed using Composer.
+            // In these cases we expect the Composer type to be 'project' rather than library or some other type.
+            if ($package['type'] === 'project' && array_key_exists('install_path', $package)) {
+                $realpath = $package['install_path'];
+                if (str_starts_with($rootrealpath, $realpath)) {
+                    return realpath($realpath);
+                }
+
+                // Our final option is that Moodle is installed using Composer,
+                // but the Composer install path is not a parent, or child, of the Moodle root.
+                // This can happen with symlinks.
+                // Note: We already checked if the realpath is a parent of the Moodle root,
+                // so here we only need to check if it is not a child.
+                if (!str_starts_with($realpath, $rootrealpath)) {
+                    return realpath($realpath);
+                }
+            }
+        }
+
+        // Fallback to the default vendor directory within the Moodle root if no specific vendor directory was found.
+        return realpath($CFG->root);
+    }
+
+    /**
      * Get the path to the Moodle root, relative to the root package.
      *
      * @return string
@@ -1024,7 +1080,7 @@ abstract class testing_util {
             return '';
         }
 
-        $rootpath = realpath(\Composer\InstalledVersions::getRootPackage()['install_path']);
+        $rootpath = self::get_package_root();
 
         $moodlepath = realpath($CFG->root);
         if ($rootpath === $moodlepath) {

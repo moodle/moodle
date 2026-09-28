@@ -1075,20 +1075,6 @@ class phpunit_util extends \core\test\testing_util {
     protected static function get_framework() {
         return 'phpunit';
     }
-
-    /**
-     * Get the path to the root of the package Moodle is installed in.
-     *
-     * @return bool|string
-     */
-    protected static function get_package_root(): string {
-        if (!class_exists(\Composer\InstalledVersions::class)) {
-            // If composer is not being used, we assume that the root package is Moodle and return empty string.
-            return dirname(__DIR__, 5);
-        }
-
-        return realpath(\Composer\InstalledVersions::getRootPackage()['install_path']);
-    }
 }
 
 // Alias this class to the old name.
