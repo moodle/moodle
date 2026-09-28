@@ -515,7 +515,8 @@ Feature: Create OAuth2 clients
     And I set the field "Description" to "A test confidential OAuth2 client"
     And I click on "Confidential" "radio"
     And I set the field "Authorization Code" to "0"
-    And I set the field "Client Credentials" to "1"
+    And I set the field "Client credentials" to "1"
+    And I set the field "View site configuration settings" to "1"
     When I press "Create client"
     Then "Test Confidential Client" "heading" should exist
     And "Secrets" "heading" should exist
