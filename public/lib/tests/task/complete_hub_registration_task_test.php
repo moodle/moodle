@@ -16,6 +16,7 @@
 
 namespace core\task;
 
+use core\hub\registration;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
@@ -27,6 +28,19 @@ use PHPUnit\Framework\Attributes\CoversClass;
  */
 #[CoversClass(complete_hub_registration_task::class)]
 final class complete_hub_registration_task_test extends \advanced_testcase {
+
+    /**
+     * Test tearDown.
+     */
+    protected function tearDown(): void {
+        // Registration caches the current registration record in a static property that
+        // resetAfterTest() does not clear, so a confirmed registration created here would
+        // otherwise leak into whichever test class runs next in the same process.
+        $property = new \ReflectionProperty(registration::class, 'registration');
+        $property->setValue(null, null);
+        parent::tearDown();
+    }
+
     /**
      * When the site is not registered (for example, it was unregistered before the task ran),
      * the task must not attempt to contact the hub.
