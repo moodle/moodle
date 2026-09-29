@@ -238,6 +238,14 @@ Feature: Course index depending on role
     Then I should see "New section" in the "courseindex-content" "region"
     But I should not see "Activity sample 4" in the "courseindex-content" "region"
 
+  @javascript @accessibility
+  Scenario: The course index meets accessibility standards after a section is deleted
+    Given I am on the "Course 1" course page logged in as teacher1
+    And I turn editing mode on
+    When I delete section "2"
+    And I click on "Delete" "button" in the ".modal" "css_element"
+    Then the "#course-index" "css_element" should meet accessibility standards with "best-practice" extra tests
+
   @javascript
   Scenario: Course index section preferences
     When I am on the "C1" "Course" page logged in as "teacher1"
