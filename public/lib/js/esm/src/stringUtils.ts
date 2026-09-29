@@ -156,8 +156,8 @@ export const getRequestedStrings = (requests: StringRequest[]): Promise<string>[
         const ajaxRequests = pendingFetches.map((pf) => pf.request);
 
         fetchMany<string>(ajaxRequests, {
-            loginrequired: true,
-            nosessionupdate: false,
+            loginrequired: false,
+            nosessionupdate: true,
             timeout: 0,
             cachekey: config.langrev,
         })

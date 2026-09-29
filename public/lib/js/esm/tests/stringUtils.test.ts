@@ -21,6 +21,7 @@
  */
 
 import {getString, getStrings, cacheStrings, getRequestedStrings} from '@moodle/lms/core/stringUtils';
+import * as Ajax from '@moodle/lms/core/ajax';
 
 describe('@moodle/lms/core/stringUtils', () => {
     beforeEach(() => {
@@ -51,6 +52,23 @@ describe('@moodle/lms/core/stringUtils', () => {
         ]);
 
         await expect(getString('precached', 'mod_forum')).resolves.toBe('Pre-cached');
+    });
+
+    it('fetches uncached strings without requiring login and without updating the session', async() => {
+        const fetchManySpy = jest.spyOn(Ajax, 'fetchMany');
+        fetchManySpy.mockImplementation((requests) => Promise.resolve(
+            requests.map(() => 'Fetched value'),
+        ));
+
+        await expect(getString('uncached', 'core')).resolves.toBe('Fetched value');
+
+        expect(fetchManySpy).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({
+                loginrequired: false,
+                nosessionupdate: true,
+            }),
+        );
     });
 
     describe('params', () => {

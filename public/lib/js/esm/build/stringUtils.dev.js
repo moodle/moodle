@@ -61,8 +61,8 @@ const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
   if (pendingFetches.length > 0) {
     const ajaxRequests = pendingFetches.map((pf) => pf.request);
     fetchMany(ajaxRequests, {
-      loginrequired: true,
-      nosessionupdate: false,
+      loginrequired: false,
+      nosessionupdate: true,
       timeout: 0,
       cachekey: config.langrev
     }).then((results) => {
