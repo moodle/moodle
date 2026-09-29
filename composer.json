@@ -82,7 +82,6 @@
         "mtdowling/jmespath.php": "2.8.0",
         "spatie/php-cloneable": "1.0.2",
         "lbuchs/webauthn": "2.2.0",
-        "adodb/adodb-php": "5.22.11",
         "html2text/html2text": "4.3.2",
         "michelf/php-markdown": "2.0.0",
         "mustache/mustache": "3.0.0",
