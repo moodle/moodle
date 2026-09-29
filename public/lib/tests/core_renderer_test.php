@@ -16,6 +16,7 @@
 
 namespace core;
 
+use core_courseformat\local\linearnavigationsettings;
 use core_renderer;
 use moodle_page;
 
@@ -446,5 +447,55 @@ EOF
         $attributes = $renderer->htmlattributes();
         $this->assertIsString($attributes);
         $this->assertStringContainsString('data-test="test"', $attributes);
+    }
+
+    /**
+     * Get a renderer for an activity page, in a course with linear navigation enabled, that has started printing its body.
+     *
+     * @return core_renderer
+     */
+    private function get_activity_page_renderer_with_linear_navigation(): core_renderer {
+        global $PAGE;
+
+        set_config(linearnavigationsettings::SETTING_ENABLE_LINEAR_NAV, 1, 'format_topics');
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics']);
+        $module = $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
+        $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
+
+        $PAGE->set_cm(get_coursemodule_from_id('page', $module->cmid), $course);
+        $PAGE->set_url('/mod/page/view.php', ['id' => $module->cmid]);
+        $PAGE->set_state(moodle_page::STATE_PRINTING_HEADER);
+        $PAGE->set_state(moodle_page::STATE_IN_BODY);
+        $PAGE->opencontainers->push('header/footer', '</body></html>');
+
+        return new core_renderer($PAGE, RENDERER_TARGET_GENERAL);
+    }
+
+    /**
+     * Test the linear navigation footer is shown on an activity page.
+     */
+    public function test_footer_shows_linear_navigation_footer(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $renderer = $this->get_activity_page_renderer_with_linear_navigation();
+
+        $html = $renderer->footer();
+        $this->assertStringContainsString('course-linear-navigation', $html);
+    }
+
+    /**
+     * Test the linear navigation footer is not shown on an error page raised from an activity page.
+     */
+    public function test_fatal_error_hides_linear_navigation_footer(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $renderer = $this->get_activity_page_renderer_with_linear_navigation();
+
+        $html = $renderer->fatal_error('Error message', '', '', []);
+        $this->assertStringContainsString('Error message', $html);
+        $this->assertStringNotContainsString('course-linear-navigation', $html);
+        $this->assertFalse($renderer->get_page()->should_show_navigation_footer());
     }
 }

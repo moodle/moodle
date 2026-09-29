@@ -2664,6 +2664,9 @@ EOD;
         $output = '';
         $obbuffer = '';
 
+        // Do not display the navigation footer when encountering an error.
+        $this->page->set_show_navigation_footer(false);
+
         if ($this->has_started()) {
             // we can not always recover properly here, we have problems with output buffering,
             // html tables, etc.
