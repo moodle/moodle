@@ -1537,7 +1537,12 @@ final class oauth2_test extends \advanced_testcase {
             ->withQueryParams(['authrequestid' => $requestid]);
 
         try {
-            $route->authorize($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $route->authorize(
+                $request,
+                new Response(),
+                $userrepository,
+                $this->make_granted_scopes_repository_stub(),
+            );
             $this->fail('Expected require_login() to attempt a redirect for the forced password change.');
         // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (\core\exception\moodle_exception $e) {
@@ -1601,7 +1606,12 @@ final class oauth2_test extends \advanced_testcase {
             ->withQueryParams(['authrequestid' => $requestid]);
 
         try {
-            $route->authorize($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $route->authorize(
+                $request,
+                new Response(),
+                $userrepository,
+                $this->make_granted_scopes_repository_stub(),
+            );
             $this->fail('Expected require_login() to attempt a redirect for the incomplete profile.');
         // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (\core\exception\moodle_exception $e) {
@@ -1657,7 +1667,12 @@ final class oauth2_test extends \advanced_testcase {
             ->withQueryParams(['authrequestid' => $requestid]);
 
         try {
-            $route->authorize($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $route->authorize(
+                $request,
+                new Response(),
+                $userrepository,
+                $this->make_granted_scopes_repository_stub(),
+            );
             $this->fail('Expected require_login() to attempt a redirect for the unagreed site policy.');
         // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (\core\exception\moodle_exception $e) {
@@ -1715,7 +1730,12 @@ final class oauth2_test extends \advanced_testcase {
             ->withQueryParams(['authrequestid' => $requestid]);
 
         try {
-            $route->authorize($request, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $route->authorize(
+                $request,
+                new Response(),
+                $userrepository,
+                $this->make_granted_scopes_repository_stub(),
+            );
             $this->fail('Expected require_login() to attempt a redirect for the forced password change.');
         // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (\core\exception\moodle_exception $e) {
@@ -2477,7 +2497,12 @@ final class oauth2_test extends \advanced_testcase {
             ->withQueryParams(['authrequestid' => $requestid]);
 
         try {
-            $route->authorize($authorizerequest, new Response(), $userrepository, $this->make_granted_scopes_repository_stub());
+            $route->authorize(
+                $authorizerequest,
+                new Response(),
+                $userrepository,
+                $this->make_granted_scopes_repository_stub(),
+            );
             $this->fail('Expected require_login() to attempt a redirect for the forced password change.');
         // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (\core\exception\moodle_exception $e) {

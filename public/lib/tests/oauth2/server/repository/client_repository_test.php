@@ -49,7 +49,7 @@ final class client_repository_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $repository = new client_repository();
+        $repository = \core\di::get(client_repository::class);
 
         if (!empty($clientdata)) {
             // Ensure valid system context is set.
@@ -149,6 +149,10 @@ final class client_repository_test extends \advanced_testcase {
     /**
      * Test validateClient under different scenarios using data providers.
      *
+     * Also verifies that the secret's lastaccessed timestamp is updated at the exact moment a
+     * secret is matched, and left untouched when validation fails, since that is the only
+     * signal available for tracking the secret.
+     *
      * @param array $clientdata The data to insert into the clients table.
      * @param string|null $plaintextsecret The plain secret to insert (hashed) into secrets table.
      * @param int $secretrevoked Whether the secret is marked revoked in db.
@@ -174,14 +178,16 @@ final class client_repository_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $repository = new client_repository();
+        $clock = $this->mock_clock_with_frozen();
+        $repository = \core\di::get(client_repository::class);
 
+        $secretid = null;
         if (!empty($clientdata)) {
             $clientdata['ownercontext'] = \context_system::instance()->id;
             $DB->insert_record('oauth2_server_clients', (object) $clientdata);
 
             if ($plaintextsecret !== null) {
-                $DB->insert_record('oauth2_server_client_secrets', (object) [
+                $secretid = $DB->insert_record('oauth2_server_client_secrets', (object) [
                     'clientidentifier' => $clientdata['clientidentifier'],
                     'secret' => password_hash($plaintextsecret, PASSWORD_DEFAULT),
                     'revoked' => $secretrevoked,
@@ -195,6 +201,15 @@ final class client_repository_test extends \advanced_testcase {
             $expectedresult,
             $repository->validateClient($checkidentifier, $checksecret, $checkgranttype)
         );
+
+        if ($secretid !== null) {
+            $lastaccessed = $DB->get_field('oauth2_server_client_secrets', 'lastaccessed', ['id' => $secretid]);
+            if ($expectedresult) {
+                $this->assertEquals($clock->time(), $lastaccessed);
+            } else {
+                $this->assertNull($lastaccessed);
+            }
+        }
     }
 
     /**
