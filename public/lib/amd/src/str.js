@@ -200,7 +200,7 @@ const getRequestedStrings = (requests) => {
     if (requestData.length) {
         // If we need to load any strings from the server then send
         // off the request.
-        Ajax.call(requestData, true, false, false, 0, M.cfg.langrev);
+        Ajax.call(requestData, true, false, true, 0, M.cfg.langrev);
     }
 
     return stringPromises;
