@@ -63,7 +63,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
                 $linktext = get_string('morehelp');
                 $arialabel = get_string('morehelpaboutmodule', '', get_string('modulename', $modname));
                 $doclink = $OUTPUT->doc_link($link, $linktext, true, ['aria-label' => $arialabel]);
-                $help .= \html_writer::tag('div', $doclink, ['class' => 'helpdoclink opacity-75 pt-3']);
+                $help .= \html_writer::tag('div', $doclink, ['class' => 'helpdoclink pt-3']);
             }
         }
         return $help;
