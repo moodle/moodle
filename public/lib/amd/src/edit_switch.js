@@ -110,6 +110,15 @@ const notifyEditModeSet = (container, editMode) => dispatchEvent(
  */
 export const init = editingSwitchId => {
     const editSwitch = document.getElementById(editingSwitchId);
+    if (!editSwitch || editSwitch.dataset.editSwitchInitialised) {
+        // Either the element isn't in the DOM yet (a mount still in progress elsewhere will call
+        // init() again once it lands), or it's already wired up: init() can be called more than
+        // once for the same id, e.g. once eagerly via the template's own require() and again once
+        // core/EditModeSwitch's React mount replaces the node, so this guards against double
+        // listeners on whichever node ends up being the final one.
+        return;
+    }
+    editSwitch.dataset.editSwitchInitialised = '1';
     editSwitch.addEventListener('change', () => {
         const pendingPromise = new Pending("core/edit_switch:toggle");
         setEditMode(editSwitch.dataset.context, editSwitch.checked)

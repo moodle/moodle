@@ -2600,13 +2600,28 @@ EOD;
      */
     public function edit_switch() {
         if ($this->page->user_allowed_editing()) {
+            // Generated once here, rather than via the template's own {{uniqid}} helper, so the
+            // same id can be shared between the reactprops below and the NonJS fallback markup.
+            $elementid = html_writer::random_id('editingswitch');
+            $checked = $this->page->user_is_editing();
             $temp = (object) [
                 'legacyseturl' => (new moodle_url('/editmode.php'))->out(false),
                 'pagecontextid' => $this->page->context->id,
                 'pageurl' => $this->page->url,
                 'sesskey' => sesskey(),
+                'elementid' => $elementid,
+                // JSON props for the core/EditModeSwitch React component (core/nav/PrimaryNav's
+                // export_react_props() pattern): built server-side so the React markup and the
+                // NonJS fallback markup below can never disagree about id/label/state.
+                'reactprops' => json_encode([
+                    'id' => $elementid,
+                    'context' => $this->page->context->id,
+                    'pageurl' => $this->page->url->out(false),
+                    'checked' => $checked,
+                    'label' => get_string('editmode'),
+                ], JSON_UNESCAPED_UNICODE),
             ];
-            if ($this->page->user_is_editing()) {
+            if ($checked) {
                 $temp->checked = true;
             }
             return $this->render_from_template('core/editswitch', $temp);
