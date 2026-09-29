@@ -12,6 +12,7 @@
       <copyright>2000-2013 John Lim (jlim#natsoft.com). All rights reserved.</copyright>
       <copyright>2014 Damien Regad, Mark Newnham and the ADOdb community</copyright>
     </copyrights>
+    <customised/>
   </library>
   <library>
     <location>behat/axe</location>

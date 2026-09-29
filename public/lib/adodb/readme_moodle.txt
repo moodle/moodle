@@ -20,3 +20,13 @@ Removed:
 Added:
  * index.html - prevent directory browsing on misconfigured servers
  * readme_moodle.txt - this file ;-)
+
+Modifications:
+ * MDL-81555: Declared the $_nestedSQL property on the ADODB_pdo base class
+   (drivers/adodb-pdo.inc.php). The pdo_pgsql and pdo_oci drivers'
+   _init() methods set $parentDriver->_nestedSQL, but nothing in the PDO
+   class chain declared it, so PHP 8.2 raised a "Creation of dynamic
+   property" deprecation notice.
+   Submitted upstream as https://github.com/ADOdb/ADOdb/pull/1253 - not
+   yet merged. Remove this patch once that lands in a release Moodle
+   upgrades to.
