@@ -165,6 +165,7 @@ export default class Component extends DndSection {
         return [
             {watch: `section[${this.id}]:deleted`, handler: this.remove},
             {watch: `section[${this.id}]:updated`, handler: this._refreshSection},
+            {watch: `section[${this.id}].number:updated`, handler: this._refreshNumberDependentIds},
             {watch: `course.pageItem:updated`, handler: this._refreshPageItem},
         ];
     }
@@ -193,8 +194,6 @@ export default class Component extends DndSection {
         this.element.classList.toggle(this.classes.DRAGGING, element.dragging ?? false);
         this.element.classList.toggle(this.classes.LOCKED, element.locked ?? false);
         this.locked = element.locked;
-        // The section number is used as a positional reference elsewhere, so it must stay in sync after a move.
-        this._refreshNumberDependentIds(element.number);
         // Update title.
         const titleElement = this.getElement(this.selectors.SECTION_TITLE);
         titleElement.innerHTML = element.title;
@@ -205,16 +204,19 @@ export default class Component extends DndSection {
     }
 
     /**
-     * Update the section number and the collapsible element id derived from it.
+     * Update the section number and every id and aria attribute derived from it.
      *
-     * The collapsible region id (and the toggler pointing at it) is built from the section
-     * number. Leaving it stale after a move or a delete lets a later section reuse the same
-     * number, so its own freshly rendered collapsible would share the same id, and expanding
-     * or collapsing either of them would affect whichever one the browser finds first.
+     * Several ids (the collapsible region, the section item and its title) and aria
+     * attributes (aria-owns, aria-labelledby, aria-controls) are built from the section
+     * number. Leaving any of them stale after a move or a delete lets a later section reuse
+     * the same number, so its own freshly rendered elements would share the same ids, and
+     * assistive technologies or the browser could target the wrong section.
      *
-     * @param {Number} number the new section number
+     * @param {Object} param the watcher details
+     * @param {Object} param.element the section state data
      */
-    _refreshNumberDependentIds(number) {
+    _refreshNumberDependentIds({element}) {
+        const number = element.number;
         const previousNumber = this.element.dataset.number;
         this.element.dataset.number = number;
         if (previousNumber == number) {
@@ -222,13 +224,26 @@ export default class Component extends DndSection {
         }
         const toggler = this.getElement(this.selectors.COLLAPSE);
         const collapsible = this.getElement(this.selectors.SECTION_COLLAPSE);
-        if (!toggler || !collapsible) {
+        const sectionItem = this.getElement(this.selectors.SECTION_ITEM);
+        const titleElement = this.getElement(this.selectors.SECTION_TITLE);
+        if (!toggler || !collapsible || !sectionItem || !titleElement) {
             return;
         }
-        const newId = `courseindexcollapse${number}`;
-        collapsible.id = newId;
-        toggler.setAttribute('href', `#${newId}`);
-        toggler.setAttribute('aria-controls', newId);
+        const newCollapseId = `courseindexcollapse${number}`;
+        const newTitleId = `courseindexsection${number}-title`;
+        collapsible.id = newCollapseId;
+        collapsible.setAttribute('aria-labelledby', newTitleId);
+        toggler.setAttribute('href', `#${newCollapseId}`);
+        toggler.setAttribute('aria-controls', newCollapseId);
+        sectionItem.id = `courseindexsection${number}`;
+        titleElement.id = newTitleId;
+        // A delegated section's own wrapper has no treeitem role; the activity element
+        // wrapping it owns that role instead (see cm.mustache), so find whichever applies.
+        const treeItem = this.element.closest(this.selectors.TREE_ITEM);
+        if (treeItem) {
+            treeItem.setAttribute('aria-owns', newCollapseId);
+            treeItem.setAttribute('aria-labelledby', newTitleId);
+        }
     }
 
     /**
