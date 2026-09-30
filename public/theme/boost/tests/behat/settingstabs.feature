@@ -21,3 +21,12 @@ Feature: Administration nav tabs
     # Testing the existence of at least one of the options in the node is sufficient.
     When I select "Users" from secondary navigation
     Then I should see "Browse list of users"
+
+  Scenario: Selecting an admin settings page tab outside the secondary navigation still updates the URL anchor
+    Given I log in as "admin"
+    And I navigate to "Appearance > Themes" in site administration
+    And I click on "Edit theme settings 'Boost'" "link"
+    When I click on "Advanced settings" "link"
+    Then the url should match "#theme_boost_advanced$"
+    And I reload the page
+    And "//a[@aria-selected = 'true' and normalize-space() = 'Advanced settings']" "xpath" should exist
