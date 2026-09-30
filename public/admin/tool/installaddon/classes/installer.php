@@ -57,20 +57,31 @@ class tool_installaddon_installer {
     }
 
     /**
-     * Returns URL to the repository that addons can be searched in and installed from
+     * Returns URL to the repository that addons can be searched in.
+     *
+     * Use an alternative add-ons repository if one is defined, otherwise Moodle Marketplace.
      *
      * @return moodle_url
      */
     public function get_addons_repository_url() {
         global $CFG;
 
-        if (!empty($CFG->config_php_settings['alternativeaddonsrepositoryurl'])) {
-            $url = $CFG->config_php_settings['alternativeaddonsrepositoryurl'];
-        } else {
-            $url = 'https://moodle.org/plugins/get.php';
+        if (!$this->has_alternative_addons_repository()) {
+            return $this->get_marketplace_url();
         }
 
-        return $this->get_external_service_url($url);
+        return $this->get_external_service_url($CFG->config_php_settings['alternativeaddonsrepositoryurl']);
+    }
+
+    /**
+     * Is an alternative add-ons repository defined in config.php?
+     *
+     * @return bool
+     */
+    public function has_alternative_addons_repository(): bool {
+        global $CFG;
+
+        return !empty($CFG->config_php_settings['alternativeaddonsrepositoryurl']);
     }
 
     /**
