@@ -122,14 +122,14 @@ class behat_command {
         $command = [];
 
         if ($absolutepath) {
-            $command[] = realpath(\Composer\InstalledVersions::getRootPackage()['install_path']);
+            $command[] = \core\composer::locate_package_root_directory(dirname(__DIR__, 3));
         }
         if ($parallerun) {
             $command[] = rtrim(\core\test\testing_util::get_moodle_relative_to_root_package(), '/');
         }
 
         if ($parallerun) {
-            $command = [
+            $command = array_filter([
                 ...$command,
                 'public',
                 'admin',
@@ -137,7 +137,7 @@ class behat_command {
                 'behat',
                 'cli',
                 'run.php',
-            ];
+            ], 'strlen');
             return 'php ' . implode($separator, $command);
         }
 
@@ -160,7 +160,7 @@ class behat_command {
         global $CFG;
 
         $currentcwd = getcwd();
-        $rootpath = realpath(\Composer\InstalledVersions::getRootPackage()['install_path']);
+        $rootpath = \core\test\testing_util::get_package_root();
         chdir($rootpath);
         exec(self::get_behat_command() . ' ' . $options, $output, $code);
         chdir($currentcwd);
