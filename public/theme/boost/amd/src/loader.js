@@ -31,25 +31,142 @@ import setupBootstrapPendingChecks from './pending';
 import SelectorEngine from './bootstrap/dom/selector-engine';
 
 /**
+ * CSS selector matching only the secondary navigation's own tablist, e.g. admin/search.php's
+ * category tabs. Deliberately narrower than "[data-bs-toggle=tab]" alone, which also matches
+ * unrelated Bootstrap tabs elsewhere on the page.
+ */
+const SECONDARY_NAV_TAB_SELECTOR = '.secondary-navigation [role="tablist"] [data-bs-toggle="tab"]';
+
+/**
  * Rember the last visited tabs.
  */
 const rememberTabs = () => {
-    const tabTriggerList = document.querySelectorAll('a[data-bs-toggle="tab"]');
-    [...tabTriggerList].map(tabTriggerEl => tabTriggerEl.addEventListener('shown.bs.tab', (e) => {
+    // Tabs already present in the DOM when this runs, e.g. admin settings page tabs. Kept
+    // separate from SECONDARY_NAV_TAB_SELECTOR so that tabs mounted later elsewhere on the page
+    // (e.g. the activity chooser) are not picked up by the delegated listener below.
+    const pageTabs = new Set(document.querySelectorAll('a[data-bs-toggle="tab"]'));
+
+    // Delegate on the document rather than binding to each tab trigger directly.
+    document.addEventListener('shown.bs.tab', (e) => {
+        if (!pageTabs.has(e.target) && !e.target.matches(SECONDARY_NAV_TAB_SELECTOR)) {
+            return;
+        }
         var hash = e.target.getAttribute('href');
         if (history.replaceState) {
             history.replaceState(null, null, hash);
         } else {
             location.hash = hash;
         }
-    }));
+    });
+
     const hash = window.location.hash;
-    if (hash) {
-        const tab = document.querySelector('[role="tablist"] [href="' + hash + '"]');
-        if (tab) {
+    if (!hash) {
+        return;
+    }
+
+    /**
+     * Find the tab whose href is the current hash.
+     *
+     * Compares attribute values rather than building a selector from the hash, so a fragment
+     * that isn't a valid CSS identifier can't throw and take the rest of the theme's boot with it.
+     *
+     * @param {ParentNode} root Where to look for tabs.
+     * @returns {Element|null} The matching tab, if any.
+     */
+    const findTab = (root) => [...root.querySelectorAll('[role="tablist"] [href^="#"]')]
+        .find((tab) => tab.getAttribute('href') === hash) ?? null;
+
+    /**
+     * Close the "More" dropdown if activating the given tab left it forced open.
+     *
+     * Bootstrap's Tab treats a tab inside a .dropdown as a dropdown item and adds .show to the
+     * dropdown's menu when it activates, without going through the Dropdown API. Nothing else
+     * closes that menu on page load, so it would stay open over the page.
+     *
+     * @param {Element} tab The tab element that was just activated.
+     */
+    const closeStrayDropdown = (tab) => {
+        const outerElem = tab.closest('.dropdown');
+        const menu = outerElem && outerElem.querySelector(':scope > .dropdown-menu');
+        if (!menu || !menu.classList.contains('show')) {
+            return;
+        }
+        menu.classList.remove('show');
+        const toggle = outerElem.querySelector(':scope > .dropdown-toggle');
+        if (toggle) {
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+    };
+
+    /**
+     * Switch to the pane matching location.hash.
+     *
+     * Used when the tab is already marked active (e.g. React rendered it from the hash), where
+     * Bootstrap's Tab.show() returns early without touching the panes, so the pane is left on
+     * the default tab. The Tab API can't be used to correct that, hence the direct class toggle.
+     */
+    const forceActivatePane = () => {
+        let id = hash.slice(1);
+        try {
+            id = decodeURIComponent(id);
+        } catch (e) {
+            // Malformed escape sequence, fall back to the raw fragment.
+        }
+        const pane = document.getElementById(id);
+        if (!pane) {
+            return;
+        }
+        const previousPane = pane.parentElement?.querySelector(':scope > .tab-pane.active');
+        if (pane === previousPane) {
+            return;
+        }
+        previousPane?.classList.remove('active', 'show');
+        pane.classList.add('active', 'show');
+    };
+
+    /**
+     * Select the given tab.
+     *
+     * @param {Element} tab The tab matching location.hash.
+     */
+    const selectTab = (tab) => {
+        if (tab.classList.contains('active')) {
+            forceActivatePane();
+        } else {
             tab.click();
         }
+        closeStrayDropdown(tab);
+    };
+
+    const existingTab = findTab(document);
+    if (existingTab) {
+        selectTab(existingTab);
+        return;
     }
+
+    // The matching tab is not in the DOM yet, e.g. the secondary navigation's React tablist is
+    // still mounting. Watch only that container, and only for added nodes, until it appears.
+    const secondaryNav = document.querySelector('.secondary-navigation');
+    if (!secondaryNav) {
+        return;
+    }
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+                if (!(node instanceof Element)) {
+                    continue;
+                }
+                const tab = findTab(node) ?? (node.matches('[role="tablist"] [href^="#"]') && findTab(node.parentNode));
+                if (tab) {
+                    observer.disconnect();
+                    selectTab(tab);
+                    return;
+                }
+            }
+        }
+    });
+    observer.observe(secondaryNav, {childList: true, subtree: true});
+    setTimeout(() => observer.disconnect(), 5000);
 };
 
 /**
