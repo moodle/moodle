@@ -815,8 +815,6 @@ button.section-collapsemenu {
 
 .single-section-page {
     #page.drawers #topofscroll {
-        background-color: var(--#{$prefix}body-bg);
-        @include border-radius($mds-border-radius-xl);
         padding: $mds-spacing-md;
     }
 
