@@ -199,7 +199,8 @@ class tool_installaddon_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders the widget for browsing the add-on repository
+     * Renders the widget for browsing Moodle Marketplace,
+     * or the alternative add-ons repository if one is defined.
      *
      * @return string
      */
@@ -207,13 +208,35 @@ class tool_installaddon_renderer extends plugin_renderer_base {
 
         $url = $this->installer->get_addons_repository_url();
 
-        $out = $this->box(
-            $this->output->single_button($url, get_string('installfromrepo', 'tool_installaddon'), 'get').
-            $this->output->help_icon('installfromrepo', 'tool_installaddon'),
-            'generalbox', 'installfromrepobox'
-        );
+        if ($this->installer->has_alternative_addons_repository()) {
+            $options = ['formtarget' => '_blank', 'title' => get_string('opensinnewwindow')];
+            $content = $this->output->single_button($url, get_string('installfromrepo', 'tool_installaddon'), 'get', $options) .
+                $this->output->help_icon('installfromrepo', 'tool_installaddon');
+            $content = $this->box($content, 'generalbox', 'installfromrepobox');
+        } else {
+            $externallinkicon = $this->output->pix_icon(
+                'i/externallink',
+                get_string('opensinnewwindow'),
+                'moodle',
+                ['class' => 'ms-1'],
+            );
+            $linktomarketplace = html_writer::link(
+                $url,
+                get_string('marketplacefindplugins', 'tool_installaddon') . $externallinkicon,
+                ['target' => '_blank', 'rel' => 'noopener noreferrer'],
+            );
+            $maintext = get_string('marketplacefindpluginsintro', 'tool_installaddon');
+            $documentationlink = html_writer::link(
+                'https://moodle.atlassian.net/wiki/external/YTI4MmY4MWU2MDQyNDk5MTllZWY4YTBiNjA5ZDRjNWY',
+                get_string('seedocumentation', 'tool_installaddon') . $externallinkicon,
+                ['target' => '_blank', 'rel' => 'noopener noreferrer'],
+            );
+            $content = html_writer::tag('p', $maintext);
+            $content .= html_writer::tag('p', $linktomarketplace);
+            $content .= html_writer::tag('p', $documentationlink);
+        }
 
-        return $out;
+        return $content;
     }
 
     /**
