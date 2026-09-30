@@ -28,6 +28,17 @@ use core\oauth2\server\entity\client_entity;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class client_repository implements ClientRepositoryInterface {
+    /**
+     * Constructor.
+     *
+     * @param \core\clock $clock The clock used to timestamp secret access.
+     */
+    public function __construct(
+        /** @var \core\clock The clock used to timestamp secret access. */
+        private readonly \core\clock $clock,
+    ) {
+    }
+
     #[\Override]
     public function getClientEntity(string $clientidentifier): ?ClientEntityInterface {
         global $DB;
@@ -81,16 +92,32 @@ class client_repository implements ClientRepositoryInterface {
            AND revoked = :revoked
            AND expirytime > :now';
 
+        $now = $this->clock->time();
         $params = [
             'clientidentifier' => $clientidentifier,
             'revoked' => client_entity::SECRET_REVOKED_NO,
-            'now' => time(),
+            'now' => $now,
         ];
 
         $secrets = $DB->get_records_select('oauth2_server_client_secrets', $select, $params);
 
         foreach ($secrets as $secret) {
             if (password_verify($clientsecret, $secret->secret)) {
+                // The matching secret is already in hand here, so record its use directly.
+                try {
+                    $DB->set_field(
+                        'oauth2_server_client_secrets',
+                        'lastaccessed',
+                        $now,
+                        ['id' => $secret->id],
+                    );
+                } catch (\Throwable $exception) {
+                    // Best-effort tracking: authentication has already succeeded above, so a failure here should not
+                    // affect the result. error_log() ensures it is still visible in server logs.
+                    // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
+                    error_log('Failed to update secret lastaccessed timestamp: ' . $exception->getMessage());
+                }
+
                 return true;
             }
         }

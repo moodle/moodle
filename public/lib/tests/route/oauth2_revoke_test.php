@@ -57,7 +57,7 @@ final class oauth2_revoke_test extends \advanced_testcase {
     private function get_route(): oauth2 {
         return new oauth2(
             $this->createStub(AuthorizationServer::class),
-            new client_repository(),
+            \core\di::get(client_repository::class),
             $this->createStub(ScopeRepositoryInterface::class),
         );
     }
