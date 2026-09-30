@@ -355,6 +355,17 @@ class assign_feedback_file extends assign_feedback_plugin {
 
         $filefeedbackitems = $this->get_all_file_feedback($grade->id);
         $data = ['filefeedback' => []];
+
+        // When hiding markers, label their attachments with the marker's position, matching the grading table's marker columns.
+        $hidemarkers = $this->assignment->is_hidden_grader()
+            && !has_capability('mod/assign:showhiddengrader', $this->assignment->get_context());
+        $markerpositions = [];
+        if ($hidemarkers) {
+            foreach ($this->assignment->get_marker_allocations($grade->userid, false) as $position => $allocation) {
+                $markerpositions[$allocation->marker] = $position;
+            }
+        }
+
         foreach ($filefeedbackitems as $filefeedbackitem) {
             $feedback = [];
             if (is_null($filefeedbackitem->mark)) {
@@ -362,8 +373,14 @@ class assign_feedback_file extends assign_feedback_plugin {
                 $overall = true;
             } else {
                 $mark = $DB->get_record('assign_mark', ['id' => $filefeedbackitem->mark], 'marker');
-                $marker = $DB->get_record('user', ['id' => $mark->marker]);
-                $feedback['context'] = get_string('markerfile', 'assignfeedback_file', fullname($marker));
+
+                if ($hidemarkers) {
+                    $feedback['context'] = get_string('markernumberfile', 'assignfeedback_file', $markerpositions[$mark->marker]);
+                } else {
+                    $marker = $DB->get_record('user', ['id' => $mark->marker]);
+                    $feedback['context'] = get_string('markerfile', 'assignfeedback_file', fullname($marker));
+                }
+
                 $overall = false;
             }
 

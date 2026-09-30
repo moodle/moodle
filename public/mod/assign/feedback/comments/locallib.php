@@ -626,6 +626,17 @@ class assign_feedback_comments extends assign_feedback_plugin {
         // Find all the comments for this grade object and render them one by one.
         $data = ['comments' => []];
         $comments = $this->get_all_feedback_comments($grade->id);
+        $hidemarkers = $this->assignment->is_hidden_grader()
+            && !has_capability('mod/assign:showhiddengrader', $this->assignment->get_context());
+
+        // When hiding markers, label each comment with the marker's position, matching the grading table's marker columns.
+        $markerpositions = [];
+        if ($hidemarkers) {
+            foreach ($this->assignment->get_marker_allocations($grade->userid, false) as $position => $allocation) {
+                $markerpositions[$allocation->marker] = $position;
+            }
+        }
+
         foreach ($comments as $comment) {
             $value = $this->view_text($grade, $showviewlink, $comment->mark);
             if ($value !== '') {
@@ -633,8 +644,14 @@ class assign_feedback_comments extends assign_feedback_plugin {
                     $context = get_string('overallcomment', 'assignfeedback_comments');
                 } else {
                     $mark = $DB->get_record('assign_mark', ['id' => $comment->mark], 'marker');
-                    $marker = $DB->get_record('user', ['id' => $mark->marker]);
-                    $context = get_string('markercomment', 'assignfeedback_comments', fullname($marker));
+
+                    // If hidegrader is enabled, do not display the markers' names.
+                    if ($hidemarkers) {
+                        $context = get_string('markercomment1', 'assignfeedback_comments', $markerpositions[$mark->marker]);
+                    } else {
+                        $marker = $DB->get_record('user', ['id' => $mark->marker]);
+                        $context = get_string('markercomment', 'assignfeedback_comments', fullname($marker));
+                    }
                 }
                 $data['comments'][] = [
                     'context' => $context,

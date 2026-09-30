@@ -67,6 +67,7 @@ $string['launcheditor'] = 'Launch PDF editor...';
 $string['line'] = 'Line';
 $string['loadingeditor'] = 'Loading PDF editor';
 $string['markerfeedback'] = 'Marker feedback ({$a})';
+$string['markernumberfeedback'] = 'Marker {$a} feedback';
 $string['markernumberpdf'] = 'Marker {$a} PDF';
 $string['navigatenext'] = 'Next page (Alt/Shift-Alt/Ctrl-Option + {$a})';
 $string['navigateprevious'] = 'Previous page (Alt/Shift-Alt/Ctrl-Option + {$a})';

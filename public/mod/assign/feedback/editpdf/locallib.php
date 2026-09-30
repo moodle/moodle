@@ -439,6 +439,17 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
 
             // Then the marker feedback.
             $marks = $this->assignment->get_mark_records($grade->id, $grade->userid);
+
+            // When hiding markers, label their feedback with the marker's position, matching the grading table's marker columns.
+            $hidemarkers = $this->assignment->is_hidden_grader()
+                && !has_capability('mod/assign:showhiddengrader', $this->assignment->get_context());
+            $markerpositions = [];
+            if ($hidemarkers) {
+                foreach ($this->assignment->get_marker_allocations($grade->userid, false) as $position => $allocation) {
+                    $markerpositions[$allocation->marker] = $position;
+                }
+            }
+
             foreach ($marks as $mark) {
                 if (page_editor::has_annotations_or_comments($grade->id, false, $mark->id)) {
                     $markdata = [];
@@ -457,8 +468,14 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
                     $renderer = $PAGE->get_renderer('assignfeedback_editpdf');
                     $widget = $this->get_widget($grade->userid, $grade, true, $USER->id, $mark->id);
                     $markdata['widget'] = $renderer->render($widget);
-                    $markeruser = $DB->get_record('user', ['id' => $mark->marker]);
-                    $markdata['markerlabel'] = get_string('markerfeedback', 'assignfeedback_editpdf', fullname($markeruser));
+                    if ($hidemarkers) {
+                        $position = $markerpositions[$mark->marker];
+                        $markdata['markerlabel'] = get_string('markernumberfeedback', 'assignfeedback_editpdf', $position);
+                    } else {
+                        $markeruser = $DB->get_record('user', ['id' => $mark->marker]);
+                        $markdata['markerlabel'] = get_string('markerfeedback', 'assignfeedback_editpdf', fullname($markeruser));
+                    }
+
                     $data['marks'][] = $markdata;
                 }
             }
