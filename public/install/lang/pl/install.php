@@ -62,6 +62,7 @@ $string['pathsunsecuredataroot'] = 'Lokalizacja głównego katalogu danych nie j
 $string['pathswrongadmindir'] = 'Katalog admin nie istnieje';
 $string['phpextension'] = 'rozszerzenie PHP {$a}';
 $string['phpversion'] = 'Wersja PHP';
+$string['webservernotconfigured'] = 'Serwer WWW nie został skonfigurowany';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Widzisz tę stronę, ponieważ pomyślnie zainstalowałeś i uruchomiłeś pakiet <strong>{$a->packname} {$a->packversion</strong> na swoim komputerze. Gratulacje!';
 $string['welcomep30'] = 'Ta wersja <strong>{$a->installername}</strong> zawiera aplikacje służące do tworzenia środowiska, w którym będzie działać <strong>Moodle</strong>, a mianowicie:';
