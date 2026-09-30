@@ -218,6 +218,35 @@ Feature: Course index depending on role
     And I should see "Activity sample 3" in the "courseindex-content" "region"
 
   @javascript
+  Scenario: Expanding a newly added section does not expand a different section
+    # A section created after a delete can end up with the same position as an earlier
+    # section whose own position shifted down, so its collapsible element must not be confused
+    # with that other section's.
+    Given the following "activities" exist:
+      | activity | name              | course | idnumber | section |
+      | page     | Activity sample 4 | C1     | sample4  | 4       |
+    And I am on the "Course 1" course page logged in as teacher1
+    And I turn editing mode on
+    And I click on "Course index options" "button" in the "#courseindexdrawercontrols" "css_element"
+    And I click on "Collapse all" "link" in the "#courseindexdrawercontrols" "css_element"
+    When I delete section "2"
+    And I click on "Delete" "button" in the ".modal" "css_element"
+    And I click on "Add section" "link" in the "course-addsection" "region"
+    And I click on "Course index options" "button" in the "#courseindexdrawercontrols" "css_element"
+    And I click on "Collapse all" "link" in the "#courseindexdrawercontrols" "css_element"
+    And I click on "Expand" "link" in the ".courseindex-section[data-number='4']" "css_element"
+    Then I should see "New section" in the "courseindex-content" "region"
+    But I should not see "Activity sample 4" in the "courseindex-content" "region"
+
+  @javascript @accessibility
+  Scenario: The course index meets accessibility standards after a section is deleted
+    Given I am on the "Course 1" course page logged in as teacher1
+    And I turn editing mode on
+    When I delete section "2"
+    And I click on "Delete" "button" in the ".modal" "css_element"
+    Then the "#course-index" "css_element" should meet accessibility standards with "best-practice" extra tests
+
+  @javascript
   Scenario: Course index section preferences
     When I am on the "C1" "Course" page logged in as "teacher1"
     Then I should see "Section 1" in the "courseindex-content" "region"
