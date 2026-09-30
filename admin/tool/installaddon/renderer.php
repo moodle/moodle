@@ -199,7 +199,8 @@ class tool_installaddon_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders the widget for browsing the add-on repository
+     * Renders the widget for browsing Moodle Marketplace,
+     * or the alternative add-ons repository if one is defined.
      *
      * @return string
      */
@@ -207,9 +208,17 @@ class tool_installaddon_renderer extends plugin_renderer_base {
 
         $url = $this->installer->get_addons_repository_url();
 
+        if ($this->installer->has_alternative_addons_repository()) {
+            $stringidentifier = 'installfromrepo';
+        } else {
+            $stringidentifier = 'marketplacefindplugins';
+        }
+
+        $options = ['formtarget' => '_blank', 'title' => get_string('opensinnewwindow')];
+
         $out = $this->box(
-            $this->output->single_button($url, get_string('installfromrepo', 'tool_installaddon'), 'get').
-            $this->output->help_icon('installfromrepo', 'tool_installaddon'),
+            $this->output->single_button($url, get_string($stringidentifier, 'tool_installaddon'), 'get', $options) .
+            $this->output->help_icon($stringidentifier, 'tool_installaddon'),
             'generalbox', 'installfromrepobox'
         );
 

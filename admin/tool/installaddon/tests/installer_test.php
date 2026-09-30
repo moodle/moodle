@@ -77,6 +77,22 @@ final class installer_test extends \advanced_testcase {
         $this->assertEmpty(parse_url($marketplaceurl, PHP_URL_QUERY));
     }
 
+    /**
+     * Tests that an alternative add-ons repository defined in config.php is detected and used.
+     */
+    public function test_alternative_addons_repository(): void {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $installer = testable_tool_installaddon_installer::instance();
+        $this->assertFalse($installer->has_alternative_addons_repository());
+        $this->assertEquals($installer->get_marketplace_url(), $installer->get_addons_repository_url());
+
+        $CFG->config_php_settings['alternativeaddonsrepositoryurl'] = 'https://plugins.example.com/get.php';
+        $this->assertTrue($installer->has_alternative_addons_repository());
+        $this->assertSame('plugins.example.com', parse_url($installer->get_addons_repository_url(), PHP_URL_HOST));
+    }
+
     public function test_decode_remote_request(): void {
         $installer = testable_tool_installaddon_installer::instance();
 
