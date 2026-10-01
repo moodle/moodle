@@ -53,37 +53,83 @@
     .primary-navigation {
         display: none;
     }
-    .editmode-switch-form label {
+    // Targets the label text specifically (not .mds-switch-control, which also wraps the
+    // indicator/track/thumb): hiding the whole control would hide the switch itself, not just
+    // its text, since the design system's Switch nests the indicator inside its own <label>.
+    .editmode-switch-form .mds-switch-label {
         @include visually-hidden();
     }
 }
 
-.editmode-switch-form {
-    .form-check.form-switch .form-check-input {
-        background-image: escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$gray-600}'/></svg>"));
-        background-color: var(--#{$prefix}gray-400);
-        border: none;
+// mds-switch-input hides the real checkbox with `clip: rect(0,0,0,0)`, collapsing its hit box to
+// 1x1px: the visible/clickable surface is meant to be its sibling <label>. That's an established
+// accessible-custom-control pattern for a human clicking near the visual switch, but Behat/WebDriver
+// (behat_form_checkbox::set_value(), used by every "I turn editing mode on/off" step) clicks the
+// checkbox <input> itself, and WebDriver refuses to click an element with no visible hit box at all.
+// Widen the hit box to cover the same area the visible control occupies instead: still invisible to
+// sighted users (opacity: 0, same as before), but directly clickable in the same place a mouse would
+// click the switch.
+.editmode-switch-form .mds-switch {
+    // Positioning context for .mds-switch-input's widened hit box below.
+    position: relative;
+}
 
-        // The knob is the same grey the track takes in dark mode, which leaves the switch looking like a plain pill.
-        &:not(:checked) {
-            @include dark-mode {
-                background-image: escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$gray-100}'/></svg>"));
-            }
-        }
+.editmode-switch-form .mds-switch-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    clip: auto;
+    opacity: 0;
+    cursor: pointer;
 
-        &:checked {
-            background-image: escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$white}'/></svg>"));
-            background-color: var(--#{$prefix}primary);
-            border: none;
-        }
-
-        &:focus {
-            border-color: transparent;
-            box-shadow: none;
-            outline: 2px solid var(--#{$prefix}primary);
-            outline-offset: 1px;
-        }
+    // The widened, positioned input above now paints above the non-positioned
+    // .mds-switch-control, so real pointer hover lands on the input rather than on
+    // .mds-switch-control as the design system's own `.mds-switch-input:not(:disabled) +
+    // .mds-switch-control:hover` selectors expect. Re-declare the same hover treatment keyed
+    // off the input's own :hover state instead, so the track/thumb still respond to hover.
+    &:not(:disabled):hover + .mds-switch-control .mds-switch-track {
+        background-color: var(--mds-bg-switch-track-hover);
+        color: var(--mds-bg-switch-track-hover);
     }
+
+    &:not(:disabled):hover + .mds-switch-control .mds-switch-thumb {
+        background-color: var(--mds-bg-switch-thumb-hover);
+    }
+
+    &:checked:not(:disabled):hover + .mds-switch-control .mds-switch-track {
+        background-color: var(--mds-bg-interactive-primary-hover);
+        color: var(--mds-bg-interactive-primary-hover);
+    }
+
+    &:checked:not(:disabled):hover + .mds-switch-control .mds-switch-thumb {
+        background-color: var(--mds-bg-interactive-primary-default-light);
+    }
+}
+
+// The design system's own Switch component CSS (lib/bundles/design-system/js/components/switch)
+// now supplies the track/thumb colours, icons, hover, disabled, and focus-ring states, superseding
+// the bespoke Bootstrap .form-switch styling that used to live here.
+
+// The Switch component's "on" state is styled entirely from its own fixed
+// --mds-bg-interactive-primary-* custom properties (design-system/js/index.css), which resolve to
+// a static design system blue rather than to Boost's own $primary. Unlike the bespoke
+// .form-switch this replaced (which used var(--#{$prefix}primary) directly), the switch would no
+// longer follow a site's custom brand colour. Boost already exposes brand-colour- and dark-mode-
+// aware equivalents of the first two tokens as --bs-primary and --bs-primary-bg-subtle, so reuse
+// those here; the hover shade has no ready-made equivalent, so it is darkened the same way Boost
+// darkens $primary for a button's own hover state. The disabled-checked track (briefly visible
+// while core/edit_switch disables the input during the post-toggle page reload) has no Boost
+// equivalent either, so it is tinted the same way the design system's own default is lighter than
+// the "on" fill.
+.editmode-switch-form {
+    --mds-bg-interactive-primary-default: var(--#{$prefix}primary);
+    --mds-bg-interactive-primary-default-light: var(--#{$prefix}primary-bg-subtle);
+    --mds-bg-interactive-primary-hover: #{shade-color($primary, $btn-hover-bg-shade-amount)};
+    --mds-bg-interactive-primary-disabled: #{tint-color($primary, 60%)};
 }
 
 .drawer-primary .drawercontent {

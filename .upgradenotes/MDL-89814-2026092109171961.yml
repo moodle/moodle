@@ -1,0 +1,11 @@
+issueNumber: MDL-89814
+notes:
+  core:
+    - message: >-
+        The Edit mode switch in the navbar now renders using the design system
+        Switch component instead of a hand-rolled Bootstrap .form-switch, to
+        meet WCAG SC 1.4.11 contrast requirements. Theme developers overriding
+        the edit switch markup (core/editswitch template,
+        primarynavigation.scss) should review their overrides against the new
+        DOM structure and CSS classes.
+      type: changed
