@@ -71,19 +71,29 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
-     * Get all the feedback comments for a grade, including all marker ones.
+     * Get all current feedback comments for a grade.
      *
      * Marker feedback is sorted first, followed by overall/grade feedback.
+     * Marker feedback is only included where the marker is still allocated to the submission.
      *
      * @param int $gradeid Assign grade ID.
      * @return array Array of assignfeedback_comments records.
      */
     public function get_all_feedback_comments(int $gradeid): array {
         global $DB;
-        $sql = "SELECT *
-                  FROM {assignfeedback_comments}
-                 WHERE grade = :gradeid
-              ORDER BY CASE WHEN mark IS NULL THEN 1 ELSE 0 END, mark ASC";
+        $sql = "SELECT c.*
+                  FROM {assignfeedback_comments} c
+                 WHERE c.grade = :gradeid
+                   AND (c.mark IS NULL OR EXISTS (
+                           SELECT 1
+                             FROM {assign_mark} m
+                             JOIN {assign_grades} g ON g.id = m.gradeid
+                             JOIN {assign_allocated_marker} am ON am.assignment = m.assignment
+                                  AND am.student = g.userid AND am.marker = m.marker
+                            WHERE m.id = c.mark
+                              AND (am.optional = 0 OR am.enabled = 1)
+                       ))
+              ORDER BY CASE WHEN c.mark IS NULL THEN 1 ELSE 0 END, c.mark ASC";
         return $DB->get_records_sql($sql, ['gradeid' => $gradeid]);
     }
 

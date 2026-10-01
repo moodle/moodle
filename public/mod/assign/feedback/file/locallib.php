@@ -61,13 +61,26 @@ class assign_feedback_file extends assign_feedback_plugin {
 
     /**
      * Get all file feedback information from the database, including marking feedback.
+     * Marker feedback is only included where the marker is still allocated to the submission.
      *
      * @param int $gradeid The Grade ID.
      * @return ?array Array of assignfeedback_file records, or null if none found.
      */
     public function get_all_file_feedback(int $gradeid): ?array {
         global $DB;
-        return $DB->get_records('assignfeedback_file', ['grade' => $gradeid]) ?? null;
+        $sql = "SELECT f.*
+                  FROM {assignfeedback_file} f
+                 WHERE f.grade = :gradeid
+                   AND (f.mark IS NULL OR EXISTS (
+                           SELECT 1
+                             FROM {assign_mark} m
+                             JOIN {assign_grades} g ON g.id = m.gradeid
+                             JOIN {assign_allocated_marker} am ON am.assignment = m.assignment
+                                  AND am.student = g.userid AND am.marker = m.marker
+                            WHERE m.id = f.mark
+                              AND (am.optional = 0 OR am.enabled = 1)
+                       ))";
+        return $DB->get_records_sql($sql, ['gradeid' => $gradeid]) ?? null;
     }
 
     /**
