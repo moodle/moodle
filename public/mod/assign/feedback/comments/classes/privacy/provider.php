@@ -102,11 +102,20 @@ class provider implements
      * information to help with exporting.
      */
     public static function export_feedback_user_data(assign_plugin_request_data $exportdata) {
+        global $DB;
+
         // Get that comment information and jam it into that exporter.
         $assign = $exportdata->get_assign();
-        $plugin = $assign->get_plugin_by_type('assignfeedback', 'comments');
         $gradeid = $exportdata->get_pluginobject()->id;
-        $comments = $plugin->get_all_feedback_comments($gradeid);
+        if ($exportdata->get_user()) {
+            // A user is only set when exporting on behalf of a teacher (it does not identify which teacher).
+            // Include every stored comment for the grade, even those retained from markers who are no longer allocated.
+            $comments = $DB->get_records('assignfeedback_comments', ['grade' => $gradeid]);
+        } else {
+            // Exporting the student's own data: only include feedback from the currently allocated markers, as shown to them.
+            $plugin = $assign->get_plugin_by_type('assignfeedback', 'comments');
+            $comments = $plugin->get_all_feedback_comments($gradeid);
+        }
         $markids = [];
         $data = new stdClass();
         $currentpath = array_merge(
