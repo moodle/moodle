@@ -738,6 +738,65 @@ export default function Nav(
     // //ul[@role='menubar']/li/a[...] for non-tablist navs) keep working under JS.
     const itemRole = 'none';
 
+    // Keyboard movement along an istablist bar, with manual activation: the arrow keys and Home/End only move
+    // focus, and Enter or Space activates the focused tab. Bootstrap's own Tab keydown handler can't be left to
+    // do this: it activates on every arrow press, skips the "More" toggle (a .dropdown-toggle) but counts the
+    // overflowed tabs inside the closed menu, so an arrow press can activate a hidden tab. It can't take focus,
+    // which is dropped to the page start. Move between the visible tabs and the toggle instead.
+    // Keys pressed inside the dropdown menu itself are left to Bootstrap.
+    //
+    // Bootstrap registers its delegated handlers in the capture phase on `document`, so neither a React
+    // onKeyDown nor a listener on the menu ever sees the event first. Listen on `window`, which sits before
+    // `document` in the capture path, and stop the event there.
+    useEffect(() => {
+        if (!istablist) {
+            return undefined;
+        }
+
+        const keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' '];
+        const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+            const target = event.target;
+            if (!keys.includes(event.key) || !(target instanceof HTMLElement) || target.closest('.dropdown-menu')) {
+                return;
+            }
+
+            // Up/Down/Space on a dropdown toggle open its menu (theme_boost/aria.js and Bootstrap's Dropdown).
+            if (target.matches('[data-bs-toggle="dropdown"]') && !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+                return;
+            }
+
+            const stops = Array.from(menuRef.current?.querySelectorAll<HTMLElement>(':scope > li > a[role="tab"]') ?? [])
+                .filter((stop) => !stop.closest('.d-none'));
+            const index = stops.indexOf(target);
+            if (index === -1) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (event.key === ' ') {
+                // Enter already clicks an <a>, Space does not.
+                target.click();
+                return;
+            }
+
+            let next: HTMLElement;
+            if (event.key === 'Home') {
+                next = stops[0];
+            } else if (event.key === 'End') {
+                next = stops[stops.length - 1];
+            } else {
+                const step = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
+                next = stops[(index + step + stops.length) % stops.length];
+            }
+            next.focus();
+        };
+
+        window.addEventListener('keydown', handleKeyDown, true);
+        return () => window.removeEventListener('keydown', handleKeyDown, true);
+    }, [istablist]);
+
     const menu = (
         <ul
             ref={menuRef}
