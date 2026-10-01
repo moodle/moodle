@@ -20,7 +20,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {render, act} from '@testing-library/react';
+import {render, act, fireEvent} from '@testing-library/react';
 import {type Ref} from 'react';
 import Nav, {type NavNode} from '@moodle/lms/core/nav/Nav';
 
@@ -521,6 +521,112 @@ describe('@moodle/lms/core/nav/Nav istablist overflow', () => {
         // A menu may only own menuitems, so the tabs stay owned by the enclosing tablist.
         expect(container.querySelector('[data-region="moredropdown"]')).toHaveAttribute('role', 'none');
         expect(container.querySelector('[role="menu"]')).toBeNull();
+    });
+
+    describe('arrow-key movement', () => {
+        const tabs = (container: HTMLElement) =>
+            Array.from(container.querySelectorAll<HTMLElement>('ul > li > a[role="tab"]'));
+
+        it('moves from the last visible tab to the More toggle, not into the closed menu', () => {
+            const container = renderItems(ITEMS, 4, true);
+            const stops = tabs(container);
+            const documentKeydown = jest.fn();
+            // Bootstrap listens in the capture phase on document, so spy on the same phase.
+            document.addEventListener('keydown', documentKeydown, true);
+            const clicked = jest.fn();
+            container.querySelectorAll('[data-region="moredropdown"] > a').forEach((a) => a.addEventListener('click', clicked));
+
+            const last = stops[stops.length - 2];
+            last.focus();
+            fireEvent.keyDown(last, {key: 'ArrowRight'});
+
+            document.removeEventListener('keydown', documentKeydown, true);
+            expect(document.activeElement).toBe(stops[stops.length - 1]);
+            expect(stops[stops.length - 1]).toHaveClass('dropdown-toggle');
+            expect(clicked).not.toHaveBeenCalled();
+            // Bootstrap's delegated Tab handler must not see it.
+            expect(documentKeydown).not.toHaveBeenCalled();
+        });
+
+        it('moves focus along the bar without activating tabs, until Space or Enter is used', () => {
+            const container = renderItems(ITEMS, 4, true);
+            const stops = tabs(container);
+            const clicked = jest.fn();
+            stops[stops.length - 2].addEventListener('click', clicked);
+
+            const toggle = stops[stops.length - 1];
+            toggle.focus();
+            fireEvent.keyDown(toggle, {key: 'ArrowLeft'});
+
+            expect(document.activeElement).toBe(stops[stops.length - 2]);
+            expect(clicked).not.toHaveBeenCalled();
+
+            fireEvent.keyDown(stops[stops.length - 2], {key: ' '});
+            expect(clicked).toHaveBeenCalledTimes(1);
+        });
+
+        it('leaves Space on the More toggle to open its menu', () => {
+            const container = renderItems(ITEMS, 4, true);
+            const stops = tabs(container);
+            const toggle = stops[stops.length - 1];
+            const clicked = jest.fn();
+            toggle.addEventListener('click', clicked);
+            toggle.focus();
+
+            fireEvent.keyDown(toggle, {key: ' '});
+
+            expect(clicked).not.toHaveBeenCalled();
+        });
+
+        it('wraps from the More toggle to the first tab and supports Home and End', () => {
+            const container = renderItems(ITEMS, 4, true);
+            const stops = tabs(container);
+            const toggle = stops[stops.length - 1];
+
+            toggle.focus();
+            fireEvent.keyDown(toggle, {key: 'ArrowRight'});
+            expect(document.activeElement).toBe(stops[0]);
+
+            fireEvent.keyDown(stops[0], {key: 'End'});
+            expect(document.activeElement).toBe(toggle);
+
+            fireEvent.keyDown(toggle, {key: 'Home'});
+            expect(document.activeElement).toBe(stops[0]);
+        });
+
+        it('skips the More toggle when nothing has overflowed', () => {
+            const container = renderItems(ITEMS, ITEMS.length, true);
+            const stops = tabs(container).filter((stop) => !stop.closest('.d-none'));
+
+            stops[stops.length - 1].focus();
+            fireEvent.keyDown(stops[stops.length - 1], {key: 'ArrowRight'});
+
+            expect(document.activeElement).toBe(stops[0]);
+        });
+
+        it('leaves Up and Down on the More toggle to Bootstrap so they can open the menu', () => {
+            const container = renderItems(ITEMS, 4, true);
+            const stops = tabs(container);
+            const toggle = stops[stops.length - 1];
+            toggle.focus();
+
+            fireEvent.keyDown(toggle, {key: 'ArrowDown'});
+
+            expect(document.activeElement).toBe(toggle);
+        });
+
+        it('leaves keys pressed inside the dropdown menu to Bootstrap', () => {
+            const container = renderItems(ITEMS, 4, true);
+            const item = container.querySelector<HTMLElement>('[data-region="moredropdown"] > a');
+            const documentKeydown = jest.fn();
+            // Bootstrap listens in the capture phase on document, so spy on the same phase.
+            document.addEventListener('keydown', documentKeydown, true);
+
+            fireEvent.keyDown(item!, {key: 'ArrowDown'});
+
+            document.removeEventListener('keydown', documentKeydown, true);
+            expect(documentKeydown).toHaveBeenCalled();
+        });
     });
 
     it('keeps role="menu" on the More dropdown of a non-tablist nav', () => {
