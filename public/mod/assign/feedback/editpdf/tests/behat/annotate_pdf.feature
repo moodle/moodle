@@ -313,3 +313,179 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     When I am on the "A1" "assign activity" page logged in as student1
     Then I should see "Marker feedback (Teacher 1)" in the "Annotate PDF" "table_row"
     And I should see "Marker feedback (Teacher 2)" in the "Annotate PDF" "table_row"
+
+  @javascript
+  Scenario: Students should see anonymised feedback labels in a multi-marker annotated PDF assignment if grader identities are hidden
+    Given ghostscript is installed
+    And the following "courses" exist:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1        | 0        | 0         |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | teacher2 | C1     | editingteacher |
+      | student1 | C1     | student        |
+    And the following "activity" exists:
+      | activity                           | assign        |
+      | course                             | C1            |
+      | idnumber                           | A1            |
+      | name                               | Assignment 1  |
+      | section                            | 1             |
+      | assignfeedback_editpdf_enabled     | 1             |
+      | assignsubmission_file_enabled      | 1             |
+      | assignsubmission_file_maxfiles     | 1             |
+      | assignsubmission_file_maxsizebytes | 102400        |
+      | submissiondrafts                   | 0             |
+      | markingworkflow                    | 1             |
+      | markingallocation                  | 1             |
+      | markercount                        | 2             |
+      | hidegrader                         | 1             |
+    And the following "mod_assign > submission" exists:
+      | assign | Assignment 1                                               |
+      | user   | student1                                                   |
+      | file   | mod/assign/feedback/editpdf/tests/fixtures/submission.pdf  |
+    And the following "mod_assign > marker_allocations" exist:
+      | assign       | user     | marker   |
+      | Assignment 1 | student1 | teacher1 |
+      | Assignment 1 | student1 | teacher2 |
+    And the following "role capability" exists:
+      | role                              | editingteacher |
+      | mod/assign:managerestrictedgrades | allow          |
+    # Marker 1 (Teacher 1) annotates the PDF.
+    And I am on the "A1" "assign activity" page logged in as teacher1
+    And I change window size to "large"
+    And I navigate to "Submissions" in current page administration
+    And I click on "Mark actions" "actionmenu"
+    And I choose "Mark" in the open action menu
+    And I wait for the complete PDF to load
+    And I click on ".linebutton" "css_element"
+    And I draw on the pdf
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Marker 2 (Teacher 2) annotates the PDF.
+    And I am on the "A1" "assign activity" page logged in as teacher2
+    And I change window size to "large"
+    And I navigate to "Submissions" in current page administration
+    And I click on "Mark actions" "actionmenu"
+    And I choose "Mark" in the open action menu
+    And I wait for the complete PDF to load
+    And I click on ".linebutton" "css_element"
+    And I draw on the pdf
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Release the grade so the student can view the feedback.
+    And I am on the "A1" "assign activity" page
+    And I navigate to "Submissions" in current page administration
+    And I click on "Grade actions" "actionmenu"
+    And I choose "Grade" in the open action menu
+    And I set the field "Marking workflow state" to "Released"
+    And I press "Save changes"
+    # The student views their assignment and should see each annotated PDF labelled with the marker's position only.
+    When I am on the "A1" "assign activity" page logged in as student1
+    Then I should see "Marker 1 feedback" in the "Annotate PDF" "table_row"
+    And I should see "Marker 2 feedback" in the "Annotate PDF" "table_row"
+    And I should not see "Marker feedback (Teacher 1)"
+    And I should not see "Teacher 1"
+    And I should not see "Teacher 2"
+
+  @javascript
+  Scenario: Students should only see annotated PDF feedback from currently allocated markers
+    Given ghostscript is installed
+    And the following "courses" exist:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1        | 0        | 0         |
+    And the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
+      | teacher3 | Teacher   | 3        | teacher3@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | teacher2 | C1     | editingteacher |
+      | teacher3 | C1     | editingteacher |
+      | student1 | C1     | student        |
+    And the following "activity" exists:
+      | activity                           | assign        |
+      | course                             | C1            |
+      | idnumber                           | A1            |
+      | name                               | Assignment 1  |
+      | section                            | 1             |
+      | assignfeedback_editpdf_enabled     | 1             |
+      | assignsubmission_file_enabled      | 1             |
+      | assignsubmission_file_maxfiles     | 1             |
+      | assignsubmission_file_maxsizebytes | 102400        |
+      | submissiondrafts                   | 0             |
+      | markingworkflow                    | 1             |
+      | markingallocation                  | 1             |
+      | markercount                        | 2             |
+    And the following "mod_assign > submission" exists:
+      | assign | Assignment 1                                               |
+      | user   | student1                                                   |
+      | file   | mod/assign/feedback/editpdf/tests/fixtures/submission.pdf  |
+    And the following "mod_assign > marker_allocations" exist:
+      | assign       | user     | marker   |
+      | Assignment 1 | student1 | teacher1 |
+      | Assignment 1 | student1 | teacher2 |
+    And the following "role capability" exists:
+      | role                               | editingteacher |
+      | mod/assign:managerestrictedgrades  | allow          |
+      | mod/assign:managemarkedallocations | allow          |
+    # Marker 1 (Teacher 1) annotates the PDF.
+    And I am on the "A1" "assign activity" page logged in as teacher1
+    And I change window size to "large"
+    And I navigate to "Submissions" in current page administration
+    And I click on "Mark actions" "actionmenu"
+    And I choose "Mark" in the open action menu
+    And I wait for the complete PDF to load
+    And I click on ".linebutton" "css_element"
+    And I draw on the pdf
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Marker 2 (Teacher 2) annotates the PDF.
+    And I am on the "A1" "assign activity" page logged in as teacher2
+    And I change window size to "large"
+    And I navigate to "Submissions" in current page administration
+    And I click on "Mark actions" "actionmenu"
+    And I choose "Mark" in the open action menu
+    And I wait for the complete PDF to load
+    And I click on ".linebutton" "css_element"
+    And I draw on the pdf
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Replace Teacher 2 with Teacher 3 as marker 2, who then annotates the PDF.
+    And I am on the "A1" "assign activity" page logged in as teacher3
+    And I change window size to "large"
+    And I navigate to "Submissions" in current page administration
+    And I click on "Grade actions" "actionmenu"
+    And I choose "Grade" in the open action menu
+    And I set the field "Marking workflow state" to "In marking"
+    And I set the field "Marker 2" to "Teacher 3"
+    And I press "Save changes"
+    And I am on the "A1" "assign activity" page
+    And I navigate to "Submissions" in current page administration
+    And I click on "Mark actions" "actionmenu"
+    And I choose "Mark" in the open action menu
+    And I wait for the complete PDF to load
+    And I click on ".linebutton" "css_element"
+    And I draw on the pdf
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Release the grade so the student can view the feedback.
+    And I am on the "A1" "assign activity" page
+    And I navigate to "Submissions" in current page administration
+    And I click on "Grade actions" "actionmenu"
+    And I choose "Grade" in the open action menu
+    And I set the field "Marking workflow state" to "Released"
+    And I press "Save changes"
+    # The student should only see annotated PDFs from the currently allocated markers.
+    When I am on the "A1" "assign activity" page logged in as student1
+    Then I should see "Marker feedback (Teacher 1)" in the "Annotate PDF" "table_row"
+    And I should see "Marker feedback (Teacher 3)" in the "Annotate PDF" "table_row"
+    And I should not see "Marker feedback (Teacher 2)"

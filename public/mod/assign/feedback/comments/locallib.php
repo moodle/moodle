@@ -71,19 +71,29 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
-     * Get all the feedback comments for a grade, including all marker ones.
+     * Get all current feedback comments for a grade.
      *
      * Marker feedback is sorted first, followed by overall/grade feedback.
+     * Marker feedback is only included where the marker is still allocated to the submission.
      *
      * @param int $gradeid Assign grade ID.
      * @return array Array of assignfeedback_comments records.
      */
     public function get_all_feedback_comments(int $gradeid): array {
         global $DB;
-        $sql = "SELECT *
-                  FROM {assignfeedback_comments}
-                 WHERE grade = :gradeid
-              ORDER BY CASE WHEN mark IS NULL THEN 1 ELSE 0 END, mark ASC";
+        $sql = "SELECT c.*
+                  FROM {assignfeedback_comments} c
+                 WHERE c.grade = :gradeid
+                   AND (c.mark IS NULL OR EXISTS (
+                           SELECT 1
+                             FROM {assign_mark} m
+                             JOIN {assign_grades} g ON g.id = m.gradeid
+                             JOIN {assign_allocated_marker} am ON am.assignment = m.assignment
+                                  AND am.student = g.userid AND am.marker = m.marker
+                            WHERE m.id = c.mark
+                              AND (am.optional = 0 OR am.enabled = 1)
+                       ))
+              ORDER BY CASE WHEN c.mark IS NULL THEN 1 ELSE 0 END, c.mark ASC";
         return $DB->get_records_sql($sql, ['gradeid' => $gradeid]);
     }
 
@@ -626,6 +636,17 @@ class assign_feedback_comments extends assign_feedback_plugin {
         // Find all the comments for this grade object and render them one by one.
         $data = ['comments' => []];
         $comments = $this->get_all_feedback_comments($grade->id);
+        $hidemarkers = $this->assignment->is_hidden_grader()
+            && !has_capability('mod/assign:showhiddengrader', $this->assignment->get_context());
+
+        // When hiding markers, label each comment with the marker's position, matching the grading table's marker columns.
+        $markerpositions = [];
+        if ($hidemarkers) {
+            foreach ($this->assignment->get_marker_allocations($grade->userid, false) as $position => $allocation) {
+                $markerpositions[$allocation->marker] = $position;
+            }
+        }
+
         foreach ($comments as $comment) {
             $value = $this->view_text($grade, $showviewlink, $comment->mark);
             if ($value !== '') {
@@ -633,8 +654,14 @@ class assign_feedback_comments extends assign_feedback_plugin {
                     $context = get_string('overallcomment', 'assignfeedback_comments');
                 } else {
                     $mark = $DB->get_record('assign_mark', ['id' => $comment->mark], 'marker');
-                    $marker = $DB->get_record('user', ['id' => $mark->marker]);
-                    $context = get_string('markercomment', 'assignfeedback_comments', fullname($marker));
+
+                    // If hidegrader is enabled, do not display the markers' names.
+                    if ($hidemarkers) {
+                        $context = get_string('markercomment1', 'assignfeedback_comments', $markerpositions[$mark->marker]);
+                    } else {
+                        $marker = $DB->get_record('user', ['id' => $mark->marker]);
+                        $context = get_string('markercomment', 'assignfeedback_comments', fullname($marker));
+                    }
                 }
                 $data['comments'][] = [
                     'context' => $context,

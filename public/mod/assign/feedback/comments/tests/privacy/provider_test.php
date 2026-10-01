@@ -118,6 +118,63 @@ final class provider_test extends provider_testcase {
     }
 
     /**
+     * Test that a retained comment from a marker who is no longer allocated is exported to the marker only.
+     */
+    public function test_export_feedback_user_data_unallocated_marker(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $teacher1 = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $teacher2 = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $assign = $this->create_instance([
+            'course' => $course,
+            'markingworkflow' => 1,
+            'markingallocation' => 1,
+            'markercount' => 2,
+        ]);
+        $context = $assign->get_context();
+
+        // Teacher 1 is allocated and leaves a marker comment.
+        $this->setAdminUser();
+        $assign->update_marker_allocations($student->id, [1 => [$teacher1->id]]);
+        $feedbacktext = '<p>Retained marker comment</p>';
+        [, $grade] = $this->create_feedback($assign, $student, $teacher1, 'Submission text', $feedbacktext, true);
+        $mark = $assign->get_mark($grade->id, $teacher1->id);
+        $prop = 'commenttext_mark_' . $mark->id;
+
+        // Replace teacher 1 with teacher 2. The comment is retained in the database.
+        $assign->update_marker_allocations($student->id, [1 => [$teacher2->id]]);
+        $this->assertTrue($DB->record_exists('assignfeedback_comments', ['grade' => $grade->id, 'mark' => $mark->id]));
+        $this->assertArrayNotHasKey($teacher1->id, $assign->get_mark_records($grade->id, $student->id));
+
+        // Teacher 2 leaves their own marker comment.
+        $currentfeedbacktext = '<p>Current marker comment</p>';
+        [, $grade] = $this->create_feedback($assign, $student, $teacher2, 'Submission text', $currentfeedbacktext, true);
+        $currentmark = $assign->get_mark($grade->id, $teacher2->id);
+        $currentprop = 'commenttext_mark_' . $currentmark->id;
+
+        // The student's own export only includes the comment from the currently allocated marker, as shown to them.
+        $writer = \core_privacy\local\request\writer::with_context($context);
+        $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade, []);
+        \assignfeedback_comments\privacy\provider::export_feedback_user_data($exportdata);
+        $data = $writer->get_data(['Feedback comments']);
+        $this->assertStringContainsString($currentfeedbacktext, $data->$currentprop);
+        $this->assertObjectNotHasProperty($prop, $data);
+
+        // A teacher export includes every stored comment for the grade, including the retained one.
+        // The assign provider passes the student's record as the user when exporting on behalf of a teacher.
+        \core_privacy\local\request\writer::reset();
+        $writer = \core_privacy\local\request\writer::with_context($context);
+        $exportdata = new \mod_assign\privacy\assign_plugin_request_data($context, $assign, $grade, [], $student);
+        \assignfeedback_comments\privacy\provider::export_feedback_user_data($exportdata);
+        $data = $writer->get_data(['Feedback comments']);
+        $this->assertStringContainsString($currentfeedbacktext, $data->$currentprop);
+        $this->assertStringContainsString($feedbacktext, $data->$prop);
+    }
+
+    /**
      * Test that all feedback is deleted for a context.
      */
     public function test_delete_feedback_for_context(): void {

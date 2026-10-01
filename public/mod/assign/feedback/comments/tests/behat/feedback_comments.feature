@@ -120,3 +120,124 @@ Feature: In an assignment, teachers can provide feedback comments on student sub
     And I should see "Feedback from marker one."
     And I should see "Marker comment (Teacher 2)"
     And I should see "Feedback from marker two."
+
+  @javascript
+  Scenario: Students should see anonymised feedback comments in a multi-marker assignment if grader identities are hidden
+    Given the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher2 | C1     | editingteacher |
+    And the following "activity" exists:
+      | activity                        | assign       |
+      | course                          | C1           |
+      | idnumber                        | A1           |
+      | name                            | Assignment 1 |
+      | section                         | 1            |
+      | markingworkflow                 | 1            |
+      | markingallocation               | 1            |
+      | markercount                     | 2            |
+      | assignfeedback_comments_enabled | 1            |
+      | hidegrader                      | 1            |
+    And the following "mod_assign > marker_allocations" exist:
+      | assign       | user     | marker   |
+      | Assignment 1 | student1 | teacher1 |
+      | Assignment 1 | student1 | teacher2 |
+    And the following "role capability" exists:
+      | role                              | editingteacher |
+      | mod/assign:managerestrictedgrades | allow          |
+    # Marker 1 (Teacher 1) leaves their personalised feedback comment.
+    And I am on the "A1" "assign activity" page logged in as teacher1
+    And I change window size to "large"
+    And I go to "Student 1" "Assignment 1" activity advanced marking page
+    And I set the field "Feedback comments" to "First feedback."
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Marker 2 (Teacher 2) leaves their personalised feedback comment.
+    And I am on the "A1" "assign activity" page logged in as teacher2
+    And I change window size to "large"
+    And I go to "Student 1" "Assignment 1" activity advanced marking page
+    And I set the field "Feedback comments" to "Second feedback."
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Release the grade so the student can view the feedback.
+    And I am on the "A1" "assign activity" page
+    And I navigate to "Submissions" in current page administration
+    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
+    And I choose "Grade" in the open action menu
+    And I set the field "Marking workflow state" to "Released"
+    And I press "Save changes"
+    # The student views their assignment and should see each marker's comment labelled with the marker's position only.
+    When I am on the "A1" "assign activity" page logged in as student1
+    Then I should see "Marker 1 comment"
+    And I should see "First feedback."
+    And I should see "Marker 2 comment"
+    And I should see "Second feedback."
+    And I should not see "Marker comment (Teacher 1)"
+    And I should not see "Teacher 1"
+    And I should not see "Teacher 2"
+
+  @javascript
+  Scenario: Students should only see feedback comments from currently allocated markers
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher3 | Teacher   | 3        | teacher3@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher2 | C1     | editingteacher |
+      | teacher3 | C1     | editingteacher |
+    And the following "activity" exists:
+      | activity                        | assign       |
+      | course                          | C1           |
+      | idnumber                        | A1           |
+      | name                            | Assignment 1 |
+      | section                         | 1            |
+      | markingworkflow                 | 1            |
+      | markingallocation               | 1            |
+      | markercount                     | 2            |
+      | assignfeedback_comments_enabled | 1            |
+    And the following "mod_assign > marker_allocations" exist:
+      | assign       | user     | marker   |
+      | Assignment 1 | student1 | teacher1 |
+      | Assignment 1 | student1 | teacher2 |
+    And the following "permission overrides" exist:
+      | capability                         | permission | role           | contextlevel | reference |
+      | mod/assign:managerestrictedgrades  | Allow      | editingteacher | Course       | C1        |
+      | mod/assign:managemarkedallocations | Allow      | editingteacher | Course       | C1        |
+    # Marker 1 (Teacher 1) leaves their personalised feedback comment.
+    And I am on the "A1" "assign activity" page logged in as teacher1
+    And I change window size to "large"
+    And I go to "Student 1" "Assignment 1" activity advanced marking page
+    And I set the field "Feedback comments" to "Feedback from marker one."
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Marker 2 (Teacher 2) leaves their personalised feedback comment.
+    And I am on the "A1" "assign activity" page logged in as teacher2
+    And I go to "Student 1" "Assignment 1" activity advanced marking page
+    And I set the field "Feedback comments" to "Feedback from marker two."
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Replace Teacher 2 with Teacher 3 as marker 2, who then leaves their own feedback comment.
+    And I am on the "A1" "assign activity" page logged in as teacher3
+    And I go to "Student 1" "Assignment 1" activity advanced grading page
+    And I set the field "Marking workflow state" to "In marking"
+    And I set the field "Marker 2" to "Teacher 3"
+    And I press "Save changes"
+    And I am on the "A1" "assign activity" page
+    And I go to "Student 1" "Assignment 1" activity advanced marking page
+    And I set the field "Feedback comments" to "Feedback from marker three."
+    And I set the field "Marking workflow state" to "Marking completed"
+    And I press "Save changes"
+    # Release the grade so the student can view the feedback.
+    And I am on the "A1" "assign activity" page
+    And I navigate to "Submissions" in current page administration
+    And I click on "Grade actions" "actionmenu" in the "Student 1" "table_row"
+    And I choose "Grade" in the open action menu
+    And I set the field "Marking workflow state" to "Released"
+    And I press "Save changes"
+    # The student should only see feedback from the currently allocated markers.
+    When I am on the "A1" "assign activity" page logged in as student1
+    Then I should see "Marker comment (Teacher 1)"
+    And I should see "Feedback from marker one."
+    And I should see "Marker comment (Teacher 3)"
+    And I should see "Feedback from marker three."
+    And I should not see "Marker comment (Teacher 2)"
+    And I should not see "Feedback from marker two."
