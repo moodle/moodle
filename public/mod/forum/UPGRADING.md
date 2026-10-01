@@ -1,6 +1,6 @@
 # mod_forum Upgrade notes
 
-## 5.3rc1
+## 5.3rc2
 
 ### Added
 
@@ -13,6 +13,15 @@
 - Add new mod_forum_set_read_state web service to allow clients to manually mark individual forum posts as read or unread (when manual read tracking is enabled), returning a simple status and warnings structure.
 
   For more information see [MDL-87887](https://tracker.moodle.org/browse/MDL-87887)
+- The view and manage subscribers selector of the `mod_forum/forum_subscription_action` template is now rendered as a tertiary navigation selector (`core/tertiary_navigation_selector`) using the new `viewandmanageselectmenu` context variable, which holds `core\output\select_menu` data. Theme overrides of this template should be updated to use it.
+
+  For more information see [MDL-89890](https://tracker.moodle.org/browse/MDL-89890)
+
+### Deprecated
+
+- The `viewandmanageselect` context variable of the `mod_forum/forum_subscription_action` template has been deprecated in favour of `viewandmanageselectmenu`. It is still exported with its `url_select` data, but is no longer used by the core template.
+
+  For more information see [MDL-89890](https://tracker.moodle.org/browse/MDL-89890)
 
 ## 5.2
 

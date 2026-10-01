@@ -1,6 +1,6 @@
 # core_auth (subsystem / plugintype) Upgrade notes
 
-## 5.3rc1
+## 5.3rc2
 
 ### Added
 

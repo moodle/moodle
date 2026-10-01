@@ -1,6 +1,6 @@
 # mod_assign Upgrade notes
 
-## 5.3rc1
+## 5.3rc2
 
 ### Added
 

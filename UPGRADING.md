@@ -6,7 +6,7 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## 5.3rc1
+## 5.3rc2
 
 ### core
 
@@ -201,6 +201,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The primary navigation in the Boost navbar is now rendered by the `core/nav/PrimaryNav` React component via the new `core/primarymoremenu` template, replacing `core/moremenu`. With JavaScript enabled the markup no longer includes the `.moremenu` wrapper, and navigation items are rendered as `a.mds-nav-pill` (selected items carry `.mds-nav-pill--selected` and `aria-current="page"`) instead of `a.nav-link.active`. Themes and plugins that style or script `.primary-navigation .moremenu` or `.primary-navigation .nav-link` need updating. A server-rendered `core/moremenu_children` fallback is still emitted inside the mount point for non-JavaScript clients.
 
   For more information see [MDL-89294](https://tracker.moodle.org/browse/MDL-89294)
+- The Edit mode switch in the navbar now renders using the design system Switch component instead of a hand-rolled Bootstrap .form-switch, to meet WCAG SC 1.4.11 contrast requirements. Theme developers overriding the edit switch markup (core/editswitch template, primarynavigation.scss) should review their overrides against the new DOM structure and CSS classes.
+
+  For more information see [MDL-89814](https://tracker.moodle.org/browse/MDL-89814)
 
 #### Deprecated
 
@@ -843,6 +846,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - Add new mod_forum_set_read_state web service to allow clients to manually mark individual forum posts as read or unread (when manual read tracking is enabled), returning a simple status and warnings structure.
 
   For more information see [MDL-87887](https://tracker.moodle.org/browse/MDL-87887)
+- The view and manage subscribers selector of the `mod_forum/forum_subscription_action` template is now rendered as a tertiary navigation selector (`core/tertiary_navigation_selector`) using the new `viewandmanageselectmenu` context variable, which holds `core\output\select_menu` data. Theme overrides of this template should be updated to use it.
+
+  For more information see [MDL-89890](https://tracker.moodle.org/browse/MDL-89890)
+
+#### Deprecated
+
+- The `viewandmanageselect` context variable of the `mod_forum/forum_subscription_action` template has been deprecated in favour of `viewandmanageselectmenu`. It is still exported with its `url_select` data, but is no longer used by the core template.
+
+  For more information see [MDL-89890](https://tracker.moodle.org/browse/MDL-89890)
 
 ### mod_quiz
 

@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 5.3rc1
+## 5.3rc2
 
 ### Added
 
@@ -193,6 +193,9 @@
 - The primary navigation in the Boost navbar is now rendered by the `core/nav/PrimaryNav` React component via the new `core/primarymoremenu` template, replacing `core/moremenu`. With JavaScript enabled the markup no longer includes the `.moremenu` wrapper, and navigation items are rendered as `a.mds-nav-pill` (selected items carry `.mds-nav-pill--selected` and `aria-current="page"`) instead of `a.nav-link.active`. Themes and plugins that style or script `.primary-navigation .moremenu` or `.primary-navigation .nav-link` need updating. A server-rendered `core/moremenu_children` fallback is still emitted inside the mount point for non-JavaScript clients.
 
   For more information see [MDL-89294](https://tracker.moodle.org/browse/MDL-89294)
+- The Edit mode switch in the navbar now renders using the design system Switch component instead of a hand-rolled Bootstrap .form-switch, to meet WCAG SC 1.4.11 contrast requirements. Theme developers overriding the edit switch markup (core/editswitch template, primarynavigation.scss) should review their overrides against the new DOM structure and CSS classes.
+
+  For more information see [MDL-89814](https://tracker.moodle.org/browse/MDL-89814)
 
 ### Deprecated
 
