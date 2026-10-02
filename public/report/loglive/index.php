@@ -69,6 +69,7 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_context($context);
 $strlivelogs = get_string('livelogs', 'report_loglive');
 $PAGE->set_title("$coursename: $strlivelogs");
+$PAGE->set_heading($coursename);
 $output = $PAGE->get_renderer('report_loglive');
 echo $output->header();
 if (!report_helper::has_valid_group($context)) {
@@ -81,7 +82,6 @@ $renderable = new report_loglive_renderable($logreader, $id, $url, 0, $page);
 $refresh = $renderable->get_refresh_rate();
 $logreader = $renderable->selectedlogreader;
 $strupdatesevery = get_string('updatesevery', 'moodle', $refresh);
-$PAGE->set_heading($coursename);
 
 // Print selector dropdown.
 $pluginname = get_string('pluginname', 'report_loglive');
