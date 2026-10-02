@@ -93,6 +93,8 @@ class message_output_sms extends message_output {
      * @return bool
      */
     public function should_send_sms(stdclass $messagedata): bool {
+        global $CFG;
+
         // Don't send SMS if it's not a production site and the following config is set.
         if (!empty($CFG->nosmsever)) {
             if (CLI_SCRIPT && !PHPUNIT_TEST) {
