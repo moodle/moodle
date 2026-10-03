@@ -1,9 +1,0 @@
-issueNumber: MDL-89434
-notes:
-  core_form:
-    - message: >-
-        The `duration` form element type now more strictly enforces units as
-        defined by the caller, to avoid undefined behaviour during submission.
-        An exception will be thrown where `defaultunit` is not part of the
-        element `units` array
-      type: changed

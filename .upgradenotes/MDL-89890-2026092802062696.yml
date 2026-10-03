@@ -1,9 +1,0 @@
-issueNumber: MDL-89890
-notes:
-  mod_forum:
-    - message: >-
-        The `viewandmanageselect` context variable of the
-        `mod_forum/forum_subscription_action` template has been deprecated in
-        favour of `viewandmanageselectmenu`. It is still exported with its
-        `url_select` data, but is no longer used by the core template.
-      type: deprecated

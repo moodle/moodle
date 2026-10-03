@@ -1,6 +1,6 @@
 # tiny_premium Upgrade notes
 
-## 5.3rc2
+## 5.3
 
 ### Added
 

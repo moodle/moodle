@@ -1,7 +1,0 @@
-issueNumber: MDL-83231
-notes:
-  core:
-    - message: >-
-        The `FEATURE_GROUPMEMBERSONLY` constant has been deprecated and is no
-        longer supported. It should be removed from any plugin code.
-      type: deprecated

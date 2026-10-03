@@ -1,6 +1,6 @@
 # core_filters (subsystem / plugintype) Upgrade notes
 
-## 5.3rc2
+## 5.3
 
 ### Added
 

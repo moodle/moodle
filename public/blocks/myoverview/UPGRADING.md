@@ -1,6 +1,6 @@
 # block_myoverview Upgrade notes
 
-## 5.3rc2
+## 5.3
 
 ### Changed
 

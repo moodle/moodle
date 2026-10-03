@@ -1,5 +1,0 @@
-issueNumber: MDL-88579
-notes:
-  core:
-    - message: The `moodle_exception` class now accepts a `$previous` Throwable.
-      type: improved

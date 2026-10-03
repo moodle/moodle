@@ -1,6 +1,6 @@
 # core_grades (subsystem) Upgrade notes
 
-## 5.3rc2
+## 5.3
 
 ### Added
 

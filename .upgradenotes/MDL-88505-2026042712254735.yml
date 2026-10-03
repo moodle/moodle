@@ -1,9 +1,0 @@
-issueNumber: MDL-88505
-notes:
-  core:
-    - message: >-
-        Two new AMD modules are now available. `core/import` lets AMD code do a
-        native ESM dynamic import without Babel rewriting it. `core/component`
-        provides `appendToDom` and `prependToDom` to mount React components into
-        the DOM, which are then picked up automatically by `react_autoinit`.
-      type: improved

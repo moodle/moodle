@@ -1,9 +1,0 @@
-issueNumber: MDL-89346
-notes:
-  mod_assign:
-    - message: >-
-        mod_assign_get_submission_status now returns an optional
-        feedback.markerfeedback array with per-marker feedback (marker id,
-        position, workflow state, and plugin data) when the assignment uses
-        marking workflow with marking allocation.
-      type: improved
