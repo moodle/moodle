@@ -1,6 +1,6 @@
 # core_form (subsystem) Upgrade notes
 
-## 5.2.3+
+## 5.2.4
 
 ### Changed
 
