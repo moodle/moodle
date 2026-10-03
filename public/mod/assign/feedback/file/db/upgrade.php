@@ -61,5 +61,8 @@ function xmldb_assignfeedback_file_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026062300, 'assignfeedback', 'file');
     }
 
+    // Automatically generated Moodle v5.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

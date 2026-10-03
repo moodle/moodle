@@ -111,5 +111,8 @@ function xmldb_tool_mobile_upgrade($oldversion) {
     // Automatically generated Moodle v5.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Automatically generated Moodle v5.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

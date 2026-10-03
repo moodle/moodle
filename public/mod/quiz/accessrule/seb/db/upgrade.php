@@ -112,5 +112,8 @@ function xmldb_quizaccess_seb_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026042002, 'quizaccess', 'seb');
     }
 
+    // Automatically generated Moodle v5.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

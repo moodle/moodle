@@ -132,5 +132,8 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026083100, 'quiz');
     }
 
+    // Automatically generated Moodle v5.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
