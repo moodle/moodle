@@ -77,6 +77,29 @@ class enrol_user_enrolment_form extends moodleform {
         ));
     }
 
+    /**
+     * Return the submitted data, discarding an unchanged period when the end date is disabled.
+     *
+     * @return stdClass|null submitted data, or null when the form was not submitted or did not validate
+     */
+    public function get_data() {
+        if ($data = parent::get_data()) {
+            $ue = $this->_customdata['ue'];
+            // The period defaults to the value calculated from the stored dates. Ignore it when unchanged so
+            // disabling the end date does not recalculate it. Re-selecting the same period cannot be detected.
+            if (
+                empty($data->timeend)
+                && !empty($ue->timeend)
+                && isset($data->duration)
+                && (int) $data->duration === (int) enrol_calculate_duration($ue->timestart, $ue->timeend)
+            ) {
+                $data->duration = 0;
+            }
+        }
+
+        return $data;
+    }
+
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
