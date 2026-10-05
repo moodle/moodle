@@ -57,3 +57,13 @@ Feature: Select file feature
     When I click on "Select this file" "button"
     Then I should see "1" elements in "Files" filemanager
     And I should see "empty.txt" in the ".fp-content .fp-file" "css_element"
+
+  @javascript
+  Scenario: A file name longer than the database column is rejected when selecting a file
+    Given I follow "Dashboard"
+    And I follow "Manage private files"
+    # The "Save as" name below is 256 characters, one more than the files.filename column holds.
+    When I add "empty.txt" file from "Recent files" to "Files" filemanager as:
+      | Save as | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.txt |
+    Then I should see "The file name, including its extension, must not be longer than 255 characters." in the "File name too long" "dialogue"
+    And I click on "OK" "button" in the "File name too long" "dialogue"

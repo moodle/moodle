@@ -679,6 +679,9 @@ M.form_dndupload.init = function(Y, options) {
             if (errorCode === 'invalidfiletypewithaccepted') {
                 header = M.util.get_string('invalidfiletypetitle', 'repository');
             }
+            if (errorCode === 'filenametoolong') {
+                header = M.util.get_string('filenametoolongtitle', 'repository');
+            }
             if (errorCode === 'uploaderrorfoldersnotsupported') {
                 header = M.util.get_string('upload_error_folders_not_supported_title', 'repository_upload');
             }
