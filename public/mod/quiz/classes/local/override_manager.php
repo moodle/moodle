@@ -216,6 +216,11 @@ class override_manager {
             $errors['general'][] = new \lang_string('overrideinvalidexistingid', 'quiz');
         }
 
+        // Override must belong to the authorized quiz.
+        if (!empty($existingrecord) && !empty($formdata->quiz) && $existingrecord->quiz != $formdata->quiz) {
+            $errors['general'][] = new \lang_string('overrideinvalidexistingid', 'quiz');
+        }
+
         // Group value must match existing record if it is set in the formdata.
         if (!empty($existingrecord) && !empty($formdata->groupid) && $existingrecord->groupid != $formdata->groupid) {
             $errors['groupid'][] = new \lang_string('overridecannotchange', 'quiz');
