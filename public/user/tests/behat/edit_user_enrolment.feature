@@ -6,18 +6,18 @@ Feature: Edit user enrolment
 
   Background:
     Given the following "users" exist:
-      | username  | firstname | lastname | email                 |
-      | teacher1  | Teacher   | 1        | teacher1@example.com  |
-      | student1  | Student   | 1        | student1@example.com  |
-      | student2  | Student   | 2        | student2@example.com  |
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+      | student2 | Student   | 2        | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1        | topics |
     And the following "course enrolments" exist:
-      | user      | course | role           | status |
-      | teacher1  | C1     | editingteacher |    0   |
-      | student1  | C1     | student        |    0   |
-      | student2  | C1     | student        |    1   |
+      | user     | course | role           | status |
+      | teacher1 | C1     | editingteacher | 0      |
+      | student1 | C1     | student        | 0      |
+      | student2 | C1     | student        | 1      |
 
   @javascript
   Scenario: Edit a user's enrolment
@@ -38,11 +38,46 @@ Feature: Edit user enrolment
     And I should see "Not current" in the "student2" "table_row"
 
   @javascript
+  Scenario: Disabled enrolment dates stay disabled after saving the edit dialogue
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | student3 | Student   | 3        | student3@example.com |
+    # The enrolment period must be 1 to 365 days, as that is what the enrolment duration menu offers.
+    And the following "course enrolments" exist:
+      | user     | course | role    | timestart      | timeend      |
+      | student3 | C1     | student | ##4 days ago## | ##tomorrow## |
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
+    When I click on "Edit enrolment" "icon" in the "student3" "table_row"
+    And I set the following fields to these values:
+      | timestart[enabled] | 0 |
+      | timeend[enabled]   | 0 |
+    And I click on "Save changes" "button"
+    And I click on "Edit enrolment" "icon" in the "student3" "table_row"
+    Then the field "timestart[enabled]" matches value "0"
+    And the field "timeend[enabled]" matches value "0"
+
+  @javascript
   Scenario: Unenrol a student
     Given I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     When I click on "Unenrol" "icon" in the "student1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     Then I should not see "Student 1" in the "participants" "table"
+
+  @javascript
+  Scenario: A disabled enrolment end date stays disabled when the start date remains enabled
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | student3 | Student   | 3        | student3@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role    | timestart      | timeend      |
+      | student3 | C1     | student | ##4 days ago## | ##tomorrow## |
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
+    When I click on "Edit enrolment" "icon" in the "student3" "table_row"
+    And I set the field "timeend[enabled]" to "0"
+    And I click on "Save changes" "button"
+    And I click on "Edit enrolment" "icon" in the "student3" "table_row"
+    Then the field "timestart[enabled]" matches value "1"
+    And the field "timeend[enabled]" matches value "0"
 
   @javascript
   Scenario: View a student's enrolment details
@@ -65,19 +100,19 @@ Feature: Edit user enrolment
   @javascript
   Scenario: View a student's enrolment details for a student enrolled via course meta link where editing can't be done
     Given the following "users" exist:
-      | username  | firstname | lastname | email                 |
-      | student3  | Student   | 3        | student3@example.com  |
+      | username | firstname | lastname | email                |
+      | student3 | Student   | 3        | student3@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 2 | C2        | topics |
     And the following "course enrolments" exist:
-      | user      | course | role           | status |
-      | student3  | C2     | student        |    0   |
+      | user     | course | role    | status |
+      | student3 | C2     | student | 0      |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Enable" "link" in the "Course meta link" "table_row"
     And I add "Course meta link" enrolment method in "Course 1" with:
-      | Link course  | C2      |
+      | Link course | C2 |
     And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
     Then I should see "Student 3" in the "participants" "table"
     And "Edit enrolment" "icon" should not exist in the "student3" "table_row"
@@ -203,6 +238,38 @@ Feature: Edit user enrolment
     And I click on "Save changes" "button"
     Then I should see "Suspended" in the "student1" "table_row"
     And I should see "Not current" in the "student2" "table_row"
+
+  Scenario: Disabled enrolment dates stay disabled after saving the edit form without JavaScript
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | student3 | Student   | 3        | student3@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role    | timestart      | timeend      |
+      | student3 | C1     | student | ##4 days ago## | ##tomorrow## |
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
+    When I click on "Edit enrolment" "link" in the "student3" "table_row"
+    And I set the following fields to these values:
+      | timestart[enabled] | 0 |
+      | timeend[enabled]   | 0 |
+    And I click on "Save changes" "button"
+    And I click on "Edit enrolment" "link" in the "student3" "table_row"
+    Then the field "timestart[enabled]" matches value "0"
+    And the field "timeend[enabled]" matches value "0"
+
+  Scenario: A disabled enrolment end date stays disabled when the start date remains enabled without JavaScript
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | student3 | Student   | 3        | student3@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role    | timestart      | timeend      |
+      | student3 | C1     | student | ##4 days ago## | ##tomorrow## |
+    And I am on the "Course 1" "enrolled users" page logged in as "teacher1"
+    When I click on "Edit enrolment" "link" in the "student3" "table_row"
+    And I set the field "timeend[enabled]" to "0"
+    And I click on "Save changes" "button"
+    And I click on "Edit enrolment" "link" in the "student3" "table_row"
+    Then the field "timestart[enabled]" matches value "1"
+    And the field "timeend[enabled]" matches value "0"
 
   # Without JS, the user should be redirected to the original unenrol confirmation page.
   Scenario: Unenrol a student
